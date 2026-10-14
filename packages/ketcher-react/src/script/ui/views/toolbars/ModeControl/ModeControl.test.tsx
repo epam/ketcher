@@ -1,13 +1,15 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ModeControl } from './ModeControl';
 
-jest.mock('components', () => ({
+vi.mock('components', () => ({
   Icon: ({ name }) => <span data-testid={`icon-${name}`} />,
 }));
 
 describe('ModeControl', () => {
   it('disables the molecules/macromolecules switcher', async () => {
-    render(<ModeControl toggle={jest.fn()} isPolymerEditor={false} disabled />);
+    render(<ModeControl toggle={vi.fn()} isPolymerEditor={false} disabled />);
 
     const switcher = screen.getByTestId('polymer-toggler');
     const leadingIcon = screen.getByTestId('mode-switcher-icon');
@@ -20,7 +22,7 @@ describe('ModeControl', () => {
   });
 
   it('opens the switcher menu when enabled', () => {
-    render(<ModeControl toggle={jest.fn()} isPolymerEditor={false} />);
+    render(<ModeControl toggle={vi.fn()} isPolymerEditor={false} />);
 
     expect(screen.getByTestId('mode-switcher-icon')).toHaveAttribute(
       'data-disabled',

@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { renderHook } from '@testing-library/react';
 import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
 import { useSelector } from 'react-redux';
@@ -5,16 +7,16 @@ import { useAppSelector } from 'hooks';
 import { selectIsBaseModificationBlocked } from 'state/rna-builder';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn(),
+vi.mock('react-redux', () => ({
+  useSelector: vi.fn(),
 }));
 
-jest.mock('hooks', () => ({
-  useAppSelector: jest.fn(),
+vi.mock('hooks', () => ({
+  useAppSelector: vi.fn(),
 }));
 
-const mockUseSelector = jest.mocked(useSelector);
-const mockUseAppSelector = jest.mocked(useAppSelector);
+const mockUseSelector = vi.mocked(useSelector);
+const mockUseAppSelector = vi.mocked(useAppSelector);
 
 // isSequenceEditInRNABuilderMode: true, isBaseModificationBlocked: false
 const mockAppSelectorsUnblocked = () => {

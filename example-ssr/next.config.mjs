@@ -2,20 +2,17 @@
 const nextConfig = {
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
-  // `ketcher-core` imports `paper` for rendering. `paper`'s Node entry point
-  // (dist/node/self.js) does `require('jsdom')` wrapped in a try/catch and
-  // falls back to a lightweight stub when it's unavailable - which is the
-  // desired behavior here, since jsdom isn't (and shouldn't be) a real
-  // dependency of this app. Left un-externalized, Turbopack/webpack
-  // statically resolve every `require()` inside `paper`'s Node build,
-  // including the internal `jsdom/lib/jsdom/living/generated/utils` path
-  // paper's optional canvas support pulls in - and that resolution is
-  // attempted even though the code only runs when jsdom is present, so it
-  // hard-fails the build regardless of the runtime guard. Marking `paper` as
-  // an external server package makes Next `require()` it directly at
-  // runtime instead, so Node's real module resolution (and paper's own
-  // try/catch) applies, and prerendering falls back gracefully as intended.
-  serverExternalPackages: ['paper'],
+  // `ketcher-core` imports `paper`. Its Node entry (dist/node/self.js) does
+  // `require('jsdom')` and, when jsdom is resolvable (the monorepo root has it
+  // for Vitest, so it is hoisted here), builds a jsdom window without canvas
+  // support and throws during prerender. Aliasing jsdom to a module that throws
+  // makes paper's own try/catch fall back to its stub, as when jsdom is absent.
+  turbopack: {
+    resolveAlias: {
+      jsdom: './shims/jsdom.cjs',
+      'jsdom/lib/jsdom/living/generated/utils': './shims/jsdom.cjs',
+    },
+  },
 };
 
 export default nextConfig;

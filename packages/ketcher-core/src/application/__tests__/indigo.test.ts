@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import { Indigo } from '../indigo';
 
 describe('Indigo.generateImageAsBase64', () => {
   it('does not pass backgroundColor when it is not provided', async () => {
-    const generateImageAsBase64 = jest.fn().mockResolvedValue('base64');
+    const generateImageAsBase64 = vi.fn().mockResolvedValue('base64');
     const indigo = new Indigo({
       generateImageAsBase64,
     });
@@ -19,7 +20,7 @@ describe('Indigo.generateImageAsBase64', () => {
   });
 
   it('passes backgroundColor when it is provided', async () => {
-    const generateImageAsBase64 = jest.fn().mockResolvedValue('base64');
+    const generateImageAsBase64 = vi.fn().mockResolvedValue('base64');
     const indigo = new Indigo({
       generateImageAsBase64,
     });

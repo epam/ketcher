@@ -27,6 +27,7 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.62.1",
+    "@types/node": "^20.19.43",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
     "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",

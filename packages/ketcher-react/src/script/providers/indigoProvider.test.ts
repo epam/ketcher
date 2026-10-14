@@ -1,8 +1,10 @@
+import { vi } from 'vitest';
+
 import type { StructService } from 'ketcher-core';
 import type { IndigoProvider as IndigoProviderClass } from './indigoProvider';
 
 const loadIndigoProvider = async (): Promise<typeof IndigoProviderClass> => {
-  jest.resetModules();
+  vi.resetModules();
 
   const module = await import('./indigoProvider');
 
@@ -19,7 +21,7 @@ describe('IndigoProvider', () => {
   it('returns the Indigo service instance that was set', async () => {
     const IndigoProvider = await loadIndigoProvider();
     const indigo = {
-      info: jest.fn(),
+      info: vi.fn(),
     } as unknown as StructService;
 
     IndigoProvider.setIndigo(indigo);

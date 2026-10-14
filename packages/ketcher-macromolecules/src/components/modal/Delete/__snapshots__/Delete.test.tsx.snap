@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Delete component should render correctly 1`] = `
+exports[`Delete component > should render correctly 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body
@@ -10,7 +10,7 @@ exports[`Delete component should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-6x6udt-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root e9123g50 MuiModal-root css-1jdzgd6-MuiModal-root-MuiDialog-root-StyledDialog"
       role="presentation"
     >
       <div
@@ -37,11 +37,11 @@ exports[`Delete component should render correctly 1`] = `
           testid="delete-preset-modal"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e9123g51 css-1qwf79-MuiTypography-root-MuiDialogTitle-root-Header"
             id="_r_0_"
           >
             <div
-              class="css-1g1p06n"
+              class="css-u244t4-Title e9123g52"
             >
               Delete RNA Preset
             </div>
@@ -54,7 +54,7 @@ exports[`Delete component should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1td8dcm"
+                  class="css-1w4ja22-StyledIcon e9123g53"
                   name="close"
                 />
                 <span
@@ -64,10 +64,10 @@ exports[`Delete component should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            class="MuiDialogContent-root e9123g54 css-1p0tn8w-MuiDialogContent-root-Content-scrollbarThin"
           >
             <div
-              class="css-pp7hf1"
+              class="css-1t7fiom-DeleteTextWrapper e1h66sin0"
               data-testid="delete-preset-popup-content"
             >
               <div>
@@ -82,10 +82,10 @@ exports[`Delete component should render correctly 1`] = `
             </div>
           </div>
           <div
-            class="MuiDialogActions-root MuiDialogActions-spacing css-k8y9qp-MuiDialogActions-root"
+            class="MuiDialogActions-root MuiDialogActions-spacing e9123g55 css-yxeup4-MuiDialogActions-root-Footer"
           >
             <button
-              class="MuiButtonBase-root css-1gtlr3p-MuiButtonBase-root"
+              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw1 css-4f1cqi-MuiButtonBase-root-SecondaryButton-baseButtonStyle-StyledActionButton"
               data-testid="cancel-delete-preset-button"
               tabindex="0"
               title="Cancel"
@@ -97,7 +97,7 @@ exports[`Delete component should render correctly 1`] = `
               />
             </button>
             <button
-              class="MuiButtonBase-root css-1arq8ci-MuiButtonBase-root"
+              class="MuiButtonBase-root e1bfqn4b0 e13vbsxw0 css-1o0l253-MuiButtonBase-root-PrimaryButton-baseButtonStyle-StyledActionButton"
               data-testid="delete-preset-button"
               tabindex="0"
               title="Delete"

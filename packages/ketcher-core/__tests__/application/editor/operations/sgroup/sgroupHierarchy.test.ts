@@ -1,12 +1,13 @@
+import { vi } from 'vitest';
 import { SGroupAddToHierarchy } from 'application/editor/operations';
 import type { ReStruct } from 'application/render';
 import { KetcherLogger } from 'utilities';
 
 describe('SGroupAddToHierarchy', () => {
   it('logs an error and returns when s-group is missing', () => {
-    const getSGroupMock = jest.fn().mockReturnValue(undefined);
-    const insertMock = jest.fn();
-    const loggerSpy = jest
+    const getSGroupMock = vi.fn().mockReturnValue(undefined);
+    const insertMock = vi.fn();
+    const loggerSpy = vi
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => undefined);
     const restruct = {

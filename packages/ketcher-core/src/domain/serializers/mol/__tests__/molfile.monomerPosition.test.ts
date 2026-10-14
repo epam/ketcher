@@ -19,7 +19,7 @@ const {
   assertDefined,
 }: {
   assertDefined: AssertDefined;
-} = require('../../../../../__tests__/utilities/assertDefined'); // eslint-disable-line @typescript-eslint/no-require-imports
+} = require('../../../../../__tests__/utilities/assertDefined.ts'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 function buildMonomerStruct(
   monomerLabel: string,

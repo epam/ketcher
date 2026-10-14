@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { FormatterFactory } from 'application/formatters/formatterFactory';
 import { MOLFILE_V2000_ATOM_BOND_LIMIT } from 'application/formatters/constants';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
@@ -18,13 +19,13 @@ function createStruct(atomCount: number): Struct {
 
 describe('getStructure: MDL Molfile V2000 size handling', () => {
   beforeEach(() => {
-    jest
-      .spyOn(ketcherProvider, 'getKetcher')
-      .mockReturnValue({ editor: { serverSettings: {} } } as never);
+    vi.spyOn(ketcherProvider, 'getKetcher').mockReturnValue({
+      editor: { serverSettings: {} },
+    } as never);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   /*
@@ -33,10 +34,10 @@ describe('getStructure: MDL Molfile V2000 size handling', () => {
    * serializer again (https://github.com/epam/ketcher/issues/6142).
    */
   it('saves an oversized structure through the server in auto mode', async () => {
-    const convert = jest.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
+    const convert = vi.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
     const factory = new FormatterFactory({
       convert,
-      layout: jest.fn(),
+      layout: vi.fn(),
     } as unknown as StructService);
 
     const result = await getStructure(
@@ -53,10 +54,10 @@ describe('getStructure: MDL Molfile V2000 size handling', () => {
   });
 
   it('keeps using the JS serializer for a structure within the limit', async () => {
-    const convert = jest.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
+    const convert = vi.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
     const factory = new FormatterFactory({
       convert,
-      layout: jest.fn(),
+      layout: vi.fn(),
     } as unknown as StructService);
 
     const result = await getStructure(

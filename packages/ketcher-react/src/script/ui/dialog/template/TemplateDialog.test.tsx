@@ -1,26 +1,35 @@
+import { vi } from 'vitest';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 import { TemplateDialog } from './TemplateDialog';
 
-const mockSerialize = jest.fn();
-const mockDispatch = jest.fn();
-
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  SdfSerializer: jest.fn().mockImplementation(() => ({
-    serialize: mockSerialize,
-  })),
-  KetcherLogger: {
-    error: jest.fn(),
-  },
+const { mockSerialize, mockDispatch } = vi.hoisted(() => ({
+  mockSerialize: vi.fn(),
+  mockDispatch: vi.fn(),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
+vi.mock('ketcher-core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('ketcher-core')>();
+  return {
+    ...actual,
+    SdfSerializer: vi.fn(function () {
+      return {
+        serialize: mockSerialize,
+      };
+    }),
+    KetcherLogger: {
+      error: vi.fn(),
+    },
+  };
+});
+
+vi.mock('react-redux', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-redux')>()),
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('../../views/components', () => ({
+vi.mock('../../views/components', () => ({
   Dialog: ({ children, footerContent }) => (
     <div>
       {children}
@@ -29,7 +38,7 @@ jest.mock('../../views/components', () => ({
   ),
 }));
 
-jest.mock('../../component/view/savebutton', () => ({
+vi.mock('../../component/view/savebutton', () => ({
   SaveButton: ({ children, getData, onError }) => (
     <button
       type="button"
@@ -46,9 +55,9 @@ jest.mock('../../component/view/savebutton', () => ({
   ),
 }));
 
-jest.mock('./TemplateTable', () => () => null);
-jest.mock('components', () => ({ Icon: () => null }));
-jest.mock('./useSaltsAndSolvets', () => () => []);
+vi.mock('./TemplateTable', () => ({ default: () => null }));
+vi.mock('components', () => ({ Icon: () => null }));
+vi.mock('./useSaltsAndSolvets', () => ({ default: () => [] }));
 
 const defaultProps = {
   filter: '',
@@ -59,19 +68,19 @@ const defaultProps = {
   initialTab: 0,
   saltsAndSolvents: [],
   functionalGroups: [],
-  onAttach: jest.fn(),
-  onCancel: jest.fn(),
-  onChangeGroup: jest.fn(),
-  onDelete: jest.fn(),
-  onFilter: jest.fn(),
-  onOk: jest.fn(),
-  onSelect: jest.fn(),
-  onTabChange: jest.fn(),
+  onAttach: vi.fn(),
+  onCancel: vi.fn(),
+  onChangeGroup: vi.fn(),
+  onDelete: vi.fn(),
+  onFilter: vi.fn(),
+  onOk: vi.fn(),
+  onSelect: vi.fn(),
+  onTabChange: vi.fn(),
 };
 
 describe('TemplateDialog', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('does not serialize a reaction with an R-Group fragment when opened', () => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
@@ -14,10 +15,10 @@ describe('Polymer Bond Renderer', () => {
     polymerBond.moveToLinkedEntities();
     const polymerBondRenderer =
       polymerBond.renderer as FlexModeOrSnakeModePolymerBondRenderer;
-    global.SVGElement.prototype.getBBox = jest.fn();
-    jest
-      .spyOn(global.SVGElement.prototype, 'getBBox')
-      .mockImplementation(() => ({ width: 30, height: 20 }) as DOMRect);
+    global.SVGElement.prototype.getBBox = vi.fn();
+    vi.spyOn(global.SVGElement.prototype, 'getBBox').mockImplementation(
+      () => ({ width: 30, height: 20 }) as DOMRect,
+    );
     polymerBondRenderer.show();
 
     expect(canvas).toMatchSnapshot();

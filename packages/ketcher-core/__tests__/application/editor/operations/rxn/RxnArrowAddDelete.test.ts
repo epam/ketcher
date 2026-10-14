@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RxnArrowAdd, RxnArrowDelete } from 'application/editor/operations';
 import { Render } from 'application/render';
 import { ReStruct } from 'application/render/restruct';
@@ -131,7 +132,7 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
   });
 
   it('should return empty delete operation on invert when add operation has no assigned arrow id', () => {
-    const loggerSpy = jest
+    const loggerSpy = vi
       .spyOn(KetcherLogger, 'error')
       .mockImplementation(() => {});
     const addOp = new RxnArrowAdd([new Vec2(0, 0), new Vec2(5, 0)]);

@@ -16,6 +16,7 @@
 
 import { Layout } from 'components/Layout';
 import { render, screen } from '@testing-library/react';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
 
 const TopElementMock = () => {
   return <div>top element</div>;

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { SGroupDataMove } from 'application/editor/operations';
 import type { ReStruct } from 'application/render';
 import { Vec2 } from 'domain/entities';
@@ -5,7 +6,7 @@ import { Vec2 } from 'domain/entities';
 describe('SGroupDataMove', () => {
   it('does not throw when sgroup is missing', () => {
     const operation = new SGroupDataMove(1, new Vec2(1, 2));
-    const markItem = jest.fn();
+    const markItem = vi.fn();
     const restruct = {
       molecule: {
         sgroups: new Map(),
@@ -22,9 +23,9 @@ describe('SGroupDataMove', () => {
 
   it('moves sgroup point and stores inverse vector when sgroup exists', () => {
     const operation = new SGroupDataMove(1, new Vec2(1, 2));
-    const add = jest.fn();
+    const add = vi.fn();
     const sgroup = { pp: { add_: add } };
-    const markItem = jest.fn();
+    const markItem = vi.fn();
     const restruct = {
       molecule: {
         sgroups: new Map([[1, sgroup]]),

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Polymer Bond Renderer should render bond 1`] = `
+exports[`Polymer Bond Renderer > should render bond 1`] = `
 <svg
   height="500"
   id="polymer-editor-canvas"

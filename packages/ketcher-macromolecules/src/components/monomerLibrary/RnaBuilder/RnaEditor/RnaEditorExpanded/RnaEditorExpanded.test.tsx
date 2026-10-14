@@ -1,3 +1,6 @@
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { Entities, MonomerOrAmbiguousType } from 'ketcher-core';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { Provider as StoreProvider } from 'react-redux';
@@ -16,15 +19,17 @@ import { defaultTheme } from 'theming/defaultTheme';
 
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
-const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
-const useIsCompactViewMock = jest.fn(() => true);
+const { useLayoutModeMock, useIsCompactViewMock } = vi.hoisted(() => ({
+  useLayoutModeMock: vi.fn(() => 'sequence-layout-mode'),
+  useIsCompactViewMock: vi.fn(() => true),
+}));
 const mockEditorEvents = {
   keyDown: { add: () => true, remove: () => true },
   cancelSequenceEditInRNABuilderMode: { add: () => true, remove: () => true },
 };
 
-jest.mock('hooks', () => ({
-  ...jest.requireActual('hooks'),
+vi.mock('hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('hooks')>()),
   useLayoutMode: () => useLayoutModeMock(),
   useIsCompactView: () => useIsCompactViewMock(),
 }));
@@ -112,7 +117,7 @@ describe('Test Rna Editor Expanded component', () => {
   });
 
   it('should render correctly in view mode', async () => {
-    const onDuplicateHandler = jest.fn();
+    const onDuplicateHandler = vi.fn();
 
     render(
       withThemeAndStoreProvider(

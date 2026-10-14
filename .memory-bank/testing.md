@@ -6,35 +6,24 @@
 
 The project uses three levels of testing:
 
-### 1. Unit Tests (Jest)
+### 1. Unit Tests (Vitest)
 
-Each package has its own Jest configuration. Tests live in `__tests__/` directories alongside source code.
+Each package runs unit tests with Vitest using a `vitest.config.mjs` that merges the package's
+Vite configuration. This keeps test transforms and path aliases aligned with production. Core,
+React, and macromolecules use the `jsdom` environment; standalone uses `node`.
 
-- **ketcher-core**: `packages/ketcher-core/__tests__/` and `packages/ketcher-core/src/**/__tests__/`
-  - Tests domain entities, serializers, helpers, and utilities
-  - Config: `packages/ketcher-core/jest.config.js`
-- **ketcher-react**: `packages/ketcher-react/src/__tests__/`
-  - Tests React components and editor utilities
-  - Config: `packages/ketcher-react/jest.config.js`
-- **ketcher-macromolecules**: `packages/ketcher-macromolecules/src/**/*.test.tsx`
-  - Tests Redux slices, hooks, and components
-  - Config: `packages/ketcher-macromolecules/jest.config.js`
-- **ketcher-standalone**: minimal unit tests
-  - Config: `packages/ketcher-standalone/jest.config.js` (`ts-jest`, `testEnvironment: 'node'`)
-  - `moduleNameMapper` swaps two build-time-only resolutions for test doubles: the
-    `_indigo-worker-import-alias_` placeholder (normally resolved to a real worker shim via
-    `resolve.alias` in `vite.config.mjs`) is pointed at
-    `__tests__/__mocks__/indigoWorkerAlias.ts`, a minimal fake worker; `d3` is pointed at
-    `node_modules/d3/dist/d3.min.js` because `ketcher-core`'s dist bundle re-exports its render
-    tools, which import `d3` as an ESM-only package that ts-jest's CJS transform can't otherwise
-    resolve (mirrors `ketcher-core`/`ketcher-react`'s own Jest config).
-  - `ketcher-core` itself is mocked per-test with `jest.mock('ketcher-core', () => ({
-    ...jest.requireActual('ketcher-core'), provideEditorInstance: jest.fn(...) }))` to control the
-    editor instance a test observes (see
-    `__tests__/infrastructure/services/struct/standaloneStructService.test.ts` for the pattern).
+- **ketcher-core**: `packages/ketcher-core/__tests__/` and
+  `packages/ketcher-core/src/**/__tests__/` (the former Jest `testMatch` also required
+  `*.spec`/`*.test` filenames with `.ts` or `.js` extensions)
+- **ketcher-react**: `packages/ketcher-react/src/**`
+- **ketcher-macromolecules**: `packages/ketcher-macromolecules/src/**`
+- **ketcher-standalone**: `packages/ketcher-standalone/__tests__/`
 
-Run all unit tests: `npm run test` (from root)
-Run type checks: `npm run test:types`
+Build core before testing the other packages: `npm run build:core`.
+
+Run the package test scripts for all four packages: `npm run test` (from root).
+Run one package's unit tests: `npm run test:unit --workspace=packages/<package-name>`.
+Run type checks: `npm run test:types` (from root).
 
 ### 2. End-to-End Tests (Playwright)
 

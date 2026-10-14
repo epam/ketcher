@@ -2,8 +2,8 @@ import type { Render } from 'ketcher-core';
 import { getItemCursor } from './getItemCursor';
 import { handleMovingPosibilityCursor } from './handleMovingPosibilityCursor';
 
-const mockRemoveAttribute = jest.fn();
-const mockSetAttribute = jest.fn();
+const mockRemoveAttribute = vi.fn();
+const mockSetAttribute = vi.fn();
 
 describe('handleMovingPosibilityCursor', () => {
   describe('When cursor is shown and not present hover item', () => {

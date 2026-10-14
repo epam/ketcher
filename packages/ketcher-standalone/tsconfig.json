@@ -25,7 +25,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node"]
+    "types": ["node", "vitest/globals"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

@@ -1,3 +1,4 @@
+import { type Mock } from 'vitest';
 import {
   Atom,
   AtomLabel,
@@ -18,9 +19,9 @@ import {
 import { Subscription } from 'subscription';
 import Editor from './Editor';
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  provideEditorInstance: jest.fn(),
+vi.mock('ketcher-core', async () => ({
+  ...(await vi.importActual('ketcher-core')),
+  provideEditorInstance: vi.fn(),
 }));
 
 const makeMonomer = () => {
@@ -54,20 +55,20 @@ const createEditor = (struct = new Struct()) => {
     ketcherId: 'wizard-test',
     render: { ctab: { molecule: struct }, monomerCreationState: null },
     event: { monomerWizardStateChange: new Subscription<boolean>() },
-    struct: jest.fn((value?: Struct) => value ?? struct),
-    selection: jest.fn(),
-    tool: jest.fn(),
-    unsubscribeFromChangeEventInMonomerCreationWizard: jest.fn(),
-    openMonomerCreationWizard: jest.fn(),
-    errorHandler: jest.fn(),
+    struct: vi.fn((value?: Struct) => value ?? struct),
+    selection: vi.fn(),
+    tool: vi.fn(),
+    unsubscribeFromChangeEventInMonomerCreationWizard: vi.fn(),
+    openMonomerCreationWizard: vi.fn(),
+    errorHandler: vi.fn(),
   });
   return editor;
 };
 
 describe('macro monomer wizard bridge', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
-    jest.useRealTimers();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it.each(['library', 'duplicate'] as const)(
@@ -75,15 +76,15 @@ describe('macro monomer wizard bridge', () => {
     (mode) => {
       const monomer = makeMonomer();
       const editor = createEditor();
-      const begin = jest.fn(() => ({
+      const begin = vi.fn(() => ({
         struct: new Struct(),
         monomerToAtomIdMap: new Map(),
       }));
-      (provideEditorInstance as jest.Mock).mockReturnValue({
+      (provideEditorInstance as Mock).mockReturnValue({
         drawingEntitiesManager: { selectedEntities: [] },
         beginMonomerWizardSession: begin,
       });
-      const finish = jest.fn();
+      const finish = vi.fn();
       editor.openMonomerCreationWizardFromMacro(
         { mode, libraryItem: monomer.monomerItem },
         finish,
@@ -100,7 +101,7 @@ describe('macro monomer wizard bridge', () => {
           expect.objectContaining({ atomId: 0, leaveAtomId: 1 }),
         ]),
       );
-      expect((editor.struct as jest.Mock).mock.calls[0][0]).not.toBe(
+      expect((editor.struct as Mock).mock.calls[0][0]).not.toBe(
         monomer.monomerItem.struct,
       );
       Reflect.get(editor, 'completeMonomerWizardSession').call(editor, true);
@@ -130,7 +131,7 @@ describe('macro monomer wizard bridge', () => {
         false,
       );
       const editor = createEditor(struct);
-      (provideEditorInstance as jest.Mock).mockReturnValue({
+      (provideEditorInstance as Mock).mockReturnValue({
         drawingEntitiesManager: { selectedEntities: [] },
         beginMonomerWizardSession: () => ({
           struct,
@@ -146,7 +147,7 @@ describe('macro monomer wizard bridge', () => {
         }),
       });
 
-      editor.openMonomerCreationWizardFromMacro({ mode, monomer }, jest.fn());
+      editor.openMonomerCreationWizardFromMacro({ mode, monomer }, vi.fn());
 
       expect(editor.openMonomerCreationWizard).toHaveBeenCalledWith(
         { atoms: [3, 4], bonds: [] },
@@ -182,7 +183,7 @@ describe('macro monomer wizard bridge', () => {
         );
       });
       const editor = createEditor(struct);
-      (provideEditorInstance as jest.Mock).mockReturnValue({
+      (provideEditorInstance as Mock).mockReturnValue({
         drawingEntitiesManager: {
           selectedEntities: monomers
             .slice(0, selectedCount)
@@ -193,12 +194,12 @@ describe('macro monomer wizard bridge', () => {
 
       editor.openMonomerCreationWizardFromMacro(
         { mode: 'all', monomer: monomers[0] },
-        jest.fn(),
+        vi.fn(),
       );
 
       // Scoping is left unset when there is nothing to narrow down to.
       expect(
-        (editor.openMonomerCreationWizard as jest.Mock).mock.calls[0][1]
+        (editor.openMonomerCreationWizard as Mock).mock.calls[0][1]
           .selectedSGroupIds,
       ).toEqual(selectedCount > 1 ? [0, 1] : undefined);
     },
@@ -215,7 +216,7 @@ describe('macro monomer wizard bridge', () => {
       Object.defineProperty(editor, 'isMonomerCreationWizardEnabled', {
         value: true,
       });
-      (provideEditorInstance as jest.Mock).mockReturnValue({
+      (provideEditorInstance as Mock).mockReturnValue({
         drawingEntitiesManager: {
           selectedEntities: [
             [0, monomer],
@@ -237,7 +238,7 @@ describe('macro monomer wizard bridge', () => {
         }),
       });
 
-      editor.openMonomerCreationWizardFromMacro({ mode: 'create' }, jest.fn());
+      editor.openMonomerCreationWizardFromMacro({ mode: 'create' }, vi.fn());
 
       expect(editor.openMonomerCreationWizard).toHaveBeenCalledWith({
         atoms: [3, 4, 9],
@@ -258,7 +259,7 @@ describe('macro monomer wizard bridge', () => {
     group.id = id;
     struct.atomAddToSGroup(id, 0);
     struct.atomAddToSGroup(id, 1);
-    jest.spyOn(monomer, 'isAttachmentPointUsed').mockReturnValue(true);
+    vi.spyOn(monomer, 'isAttachmentPointUsed').mockReturnValue(true);
     const selected = new Set([0, 1, 2]);
     const editor = createEditor();
     const prepare = Reflect.get(editor, 'prepareMacroMonomersForCreation') as (
@@ -320,12 +321,12 @@ describe('macro monomer wizard bridge', () => {
           [1, offset + 1],
         ]),
       );
-      jest.spyOn(monomer, 'isAttachmentPointUsed').mockReturnValue(true);
+      vi.spyOn(monomer, 'isAttachmentPointUsed').mockReturnValue(true);
     });
     struct.bonds.add(new Bond({ begin: 1, end: 3, type: 1 }));
     const selected = new Set([0, 1, 2, 3]);
     const editor = createEditor(struct);
-    (editor.selection as jest.Mock).mockImplementation(() => ({
+    (editor.selection as Mock).mockImplementation(() => ({
       atoms: Array.from(selected),
     }));
     Reflect.get(editor, 'prepareMacroMonomersForCreation').call(
@@ -344,19 +345,19 @@ describe('macro monomer wizard bridge', () => {
   });
 
   it('restores on discard and not before the deferred save merge completes', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const editor = createEditor();
-    const finish = jest.fn();
+    const finish = vi.fn();
     Reflect.set(editor, 'onMonomerWizardFinish', finish);
     Reflect.set(editor.render, 'monomerCreationState', {
       assignedAttachmentPoints: new Map([[AttachmentPointName.R1, [0, 1]]]),
     });
     editor.closeMonomerCreationWizard(false, false);
     expect(finish).not.toHaveBeenCalled();
-    const merge = jest.fn(() => expect(finish).not.toHaveBeenCalled());
+    const merge = vi.fn(() => expect(finish).not.toHaveBeenCalled());
     Reflect.get(editor, 'finishMonomerWizardAfterMerge').call(editor, merge);
     expect(merge).not.toHaveBeenCalled();
-    jest.runOnlyPendingTimers();
+    vi.runOnlyPendingTimers();
     expect(merge).toHaveBeenCalledTimes(1);
     expect(finish).toHaveBeenCalledWith(true);
 
@@ -367,10 +368,10 @@ describe('macro monomer wizard bridge', () => {
   });
 
   it('restores the original macro canvas if opening or deferred merge fails', () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const editor = createEditor();
-    const finish = jest.fn();
-    (provideEditorInstance as jest.Mock).mockReturnValue({
+    const finish = vi.fn();
+    (provideEditorInstance as Mock).mockReturnValue({
       drawingEntitiesManager: { selectedEntities: [] },
       beginMonomerWizardSession: () => ({
         struct: new Struct(),
@@ -386,7 +387,7 @@ describe('macro monomer wizard bridge', () => {
     Reflect.get(editor, 'finishMonomerWizardAfterMerge').call(editor, () => {
       throw new Error('Merge failed');
     });
-    jest.runOnlyPendingTimers();
+    vi.runOnlyPendingTimers();
     expect(finish).toHaveBeenLastCalledWith(false);
     expect(editor.errorHandler).toHaveBeenCalledWith('Merge failed');
   });

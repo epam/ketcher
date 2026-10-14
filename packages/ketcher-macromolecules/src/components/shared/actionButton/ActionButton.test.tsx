@@ -14,11 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { ActionButton } from '.';
 
-const mockClickHandler = jest.fn();
+const mockClickHandler = vi.fn();
 const MOCK_LABEL = 'Click Me!';
 
 const mockProps = {

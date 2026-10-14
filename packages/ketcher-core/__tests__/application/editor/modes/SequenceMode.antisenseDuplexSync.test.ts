@@ -46,13 +46,13 @@ const testRenderTheme = {
   },
 };
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -406,7 +406,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
 
       selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
       const newBaseItem = requireBaseLibraryItem(editor, 'C');
-      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+      const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
       mode.insertMonomerFromLibrary(newBaseItem);
 
@@ -452,7 +452,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       // insertMonomerFromLibrary reads from SequenceRenderer.
       selectBothStrandsAtPositionZero(senseNucleotides, antisenseNucleotides);
       const newBaseItem = requireBaseLibraryItem(editor, 'C');
-      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+      const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
       mode.insertMonomerFromLibrary(newBaseItem);
 
@@ -475,7 +475,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
     it('treats an edit-mode drag as a both-strands selection and refuses base replacement', () => {
       const { senseNucleotides, antisenseNucleotides } = enterEditMode(editor);
       dragAcrossBothPositions(senseNucleotides[0], antisenseNucleotides[1]);
-      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+      const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
       mode.insertMonomerFromLibrary(requireBaseLibraryItem(editor, 'C'));
 
@@ -492,7 +492,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
         buildTwoPositionDuplex(editor);
       // sense position 0 (A, partner U) and antisense position 1 (G, partner C)
       selectOnly([senseNucleotides[0], antisenseNucleotides[1]]);
-      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+      const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
       callReplaceSelectionsWithMonomer(
         mode,
@@ -516,7 +516,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
         antisenseNucleotides[0],
         senseNucleotides[1],
       ]);
-      const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+      const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
       mode.insertMonomerFromLibrary(requireBaseLibraryItem(editor, 'U'));
 

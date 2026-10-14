@@ -144,9 +144,10 @@ updateSettings({ myNewArraySetting: newItems });
 ### 4a — Mock `useSettings` at the top of the test file
 
 ```javascript
+import { vi } from 'vitest';
 import { useSettings } from 'src/hooks';
-jest.mock('src/hooks', () => ({
-  useSettings: jest.fn(),
+vi.mock('src/hooks', () => ({
+  useSettings: vi.fn(),
 }));
 ```
 
@@ -158,7 +159,7 @@ let mockUpdateSettings;
 
 beforeEach(() => {
   mockSettings = { myNewSetting: 'default', myNewArraySetting: [] };
-  mockUpdateSettings = jest.fn().mockResolvedValue({});
+  mockUpdateSettings = vi.fn().mockResolvedValue({});
   useSettings.mockReturnValue({
     settings: mockSettings,
     updateSettings: mockUpdateSettings,
@@ -215,7 +216,7 @@ useSettings.mockReturnValue({
 - [ ] Component reads via `settings?.fieldName ?? fallback`
 - [ ] Component writes via `updateSettings({ fieldName: newValue })`
 - [ ] No direct `localStorage` access in the component
-- [ ] Test mocks `useSettings` with `jest.mock`
+- [ ] Test mocks `useSettings` with `vi.mock`
 - [ ] Test verifies initial render from `mockSettings`
 - [ ] Test asserts `mockUpdateSettings` call arguments
 - [ ] TypeScript: no new compile errors in `types.ts` or `schema.ts`

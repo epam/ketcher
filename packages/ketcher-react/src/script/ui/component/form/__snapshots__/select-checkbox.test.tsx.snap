@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SelectCheckbox component should be rendered correctly should render with boolean schema 1`] = `
+exports[`SelectCheckbox component should be rendered correctly > should render with boolean schema 1`] = `
 <DocumentFragment>
   <select
-    class="select"
+    class="_select_7bdd01"
   >
     <option
       value="true"
@@ -19,56 +19,56 @@ exports[`SelectCheckbox component should be rendered correctly should render wit
 </DocumentFragment>
 `;
 
-exports[`SelectCheckbox component should be rendered correctly should render with enum schema 1`] = `
+exports[`SelectCheckbox component should be rendered correctly > should render with enum schema 1`] = `
 <DocumentFragment>
   <fieldset>
     <li
-      class="fieldSetItem"
+      class="_fieldSetItem_7bdd01"
     >
       <label
-        class="fieldSetLabel"
+        class="_fieldSetLabel_7bdd01"
       >
         <input
-          class="input"
+          class="_input_7bdd01"
           type="radio"
           value="option1"
         />
         <span
-          class="radioButton"
+          class="_radioButton_7bdd01"
         />
         Option 1
       </label>
     </li>
     <li
-      class="fieldSetItem"
+      class="_fieldSetItem_7bdd01"
     >
       <label
-        class="fieldSetLabel"
+        class="_fieldSetLabel_7bdd01"
       >
         <input
-          class="input"
+          class="_input_7bdd01"
           type="radio"
           value="option2"
         />
         <span
-          class="radioButton"
+          class="_radioButton_7bdd01"
         />
         Option 2
       </label>
     </li>
     <li
-      class="fieldSetItem"
+      class="_fieldSetItem_7bdd01"
     >
       <label
-        class="fieldSetLabel"
+        class="_fieldSetLabel_7bdd01"
       >
         <input
-          class="input"
+          class="_input_7bdd01"
           type="radio"
           value="option3"
         />
         <span
-          class="radioButton"
+          class="_radioButton_7bdd01"
         />
         Option 3
       </label>

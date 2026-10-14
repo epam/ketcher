@@ -48,7 +48,7 @@ i18nTestInstance.init({
 const t = i18nTestInstance.getFixedT('en', 'macromoleculesDialogs');
 
 const setSyncEditMode = (isSyncEditMode: boolean) => {
-  jest.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
+  vi.spyOn(ketcherCore, 'provideEditorInstance').mockReturnValue({
     mode: { isSyncEditMode },
   } as unknown as ketcherCore.CoreEditor);
 };
@@ -398,7 +398,7 @@ describe('SequenceItemContextMenu helpers', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should return undefined if no entry data', () => {

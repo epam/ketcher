@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`LoadingCircles component should render correctly 1`] = `
+exports[`LoadingCircles component > should render correctly 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="loading-spinner css-rmxyg7"
+        class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"
         data-testid="loading-spinner"
       >
         <span />
@@ -17,7 +17,7 @@ exports[`LoadingCircles component should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="loading-spinner css-rmxyg7"
+      class="loading-spinner css-1ocpz3q-LoadContainer ejf830p0"
       data-testid="loading-spinner"
     >
       <span />

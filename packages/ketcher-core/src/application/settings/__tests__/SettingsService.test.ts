@@ -2,6 +2,7 @@
  * Unit tests for SettingsService
  */
 
+import { vi } from 'vitest';
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
@@ -172,7 +173,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({
@@ -240,7 +241,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.resetToDefaults();
@@ -273,7 +274,7 @@ describe('SettingsService', () => {
     });
 
     it('should emit settings:changed event when loading preset', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.loadPreset('acs');
@@ -330,7 +331,7 @@ describe('SettingsService', () => {
 
   describe('subscription management', () => {
     it('should subscribe to settings changes', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });
@@ -339,8 +340,8 @@ describe('SettingsService', () => {
     });
 
     it('should support multiple subscribers', async () => {
-      const listener1 = jest.fn();
-      const listener2 = jest.fn();
+      const listener1 = vi.fn();
+      const listener2 = vi.fn();
 
       service.subscribe(listener1);
       service.subscribe(listener2);
@@ -352,7 +353,7 @@ describe('SettingsService', () => {
     });
 
     it('should unsubscribe correctly', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       const unsubscribe = service.subscribe(listener);
 
       unsubscribe();
@@ -363,7 +364,7 @@ describe('SettingsService', () => {
     });
 
     it('should pass updated settings to listener', async () => {
-      const listener = jest.fn();
+      const listener = vi.fn();
       service.subscribe(listener);
 
       await service.updateSettings({ resetToSelect: false });

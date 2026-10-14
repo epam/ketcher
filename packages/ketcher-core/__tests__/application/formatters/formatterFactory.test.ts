@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
   exceedsMolfileV2000Limit,
   MOLFILE_V2000_ATOM_BOND_LIMIT,
@@ -19,11 +20,11 @@ function createStruct(atomCount: number): Struct {
 }
 
 function createStructServiceMock() {
-  const convert = jest.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
+  const convert = vi.fn().mockResolvedValue({ struct: 'SERVER-OUTPUT' });
 
   return {
     convert,
-    structService: { convert, layout: jest.fn() } as unknown as StructService,
+    structService: { convert, layout: vi.fn() } as unknown as StructService,
   };
 }
 
@@ -43,9 +44,9 @@ describe('exceedsMolfileV2000Limit', () => {
   it('returns true when the bond count exceeds the limit', () => {
     const struct = createStruct(2);
     // emulate an oversized bond pool without building 1000 real bonds
-    jest
-      .spyOn(struct.bonds, 'size', 'get')
-      .mockReturnValue(MOLFILE_V2000_ATOM_BOND_LIMIT + 1);
+    vi.spyOn(struct.bonds, 'size', 'get').mockReturnValue(
+      MOLFILE_V2000_ATOM_BOND_LIMIT + 1,
+    );
 
     expect(exceedsMolfileV2000Limit(struct)).toBe(true);
   });

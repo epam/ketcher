@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { CoreEditor } from 'application/editor';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
@@ -15,13 +16,13 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
   x: 0,
   y: 0,
   width: 12,
@@ -360,7 +361,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   it.each(['Dab', 'ddC', '3InvdT', '3Puro', '5Ade', 'InvddT'])(
     'creates antisense for single-AP unsplit %s without dispatching errors',
     (alias) => {
-      const errorDispatch = jest.fn();
+      const errorDispatch = vi.fn();
       editor.events.error.add(errorDispatch);
 
       addUnsplitNucleotide(editor, alias, new Vec2(0, 0));

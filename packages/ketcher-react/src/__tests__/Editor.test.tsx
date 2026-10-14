@@ -1,10 +1,12 @@
+import { vi } from 'vitest';
+
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import type * as ReactTypes from 'react';
 import { ketcherProvider, type Ketcher } from 'ketcher-core';
 import { Editor } from '../Editor';
 
-jest.mock('../MicromoleculesEditor', () => {
-  const React = jest.requireActual('react') as typeof ReactTypes;
+vi.mock('../MicromoleculesEditor', async () => {
+  const React = await import('react');
 
   return {
     MicromoleculesEditor: ({
@@ -43,25 +45,21 @@ jest.mock('../MicromoleculesEditor', () => {
   };
 });
 
-jest.mock(
-  'ketcher-macromolecules',
-  () => {
-    const React = jest.requireActual('react') as typeof ReactTypes;
+vi.mock('ketcher-macromolecules', async () => {
+  const React = await import('react');
 
-    return {
-      __esModule: true,
-      default: () =>
-        React.createElement('div', {
-          'data-testid': 'macromolecules-editor',
-        }),
-    };
-  },
-  { virtual: true },
-);
+  return {
+    __esModule: true,
+    default: () =>
+      React.createElement('div', {
+        'data-testid': 'macromolecules-editor',
+      }),
+  };
+});
 
 const mockMoleculesEditor = {
   event: {
-    monomerWizardStateChange: { add: jest.fn(), remove: jest.fn() },
+    monomerWizardStateChange: { add: vi.fn(), remove: vi.fn() },
   },
 };
 const TEST_KETCHER_ID = 'disable-macromolecules-test';
@@ -77,7 +75,7 @@ const editorProps: Omit<
   structServiceProvider: {} as ReactTypes.ComponentProps<
     typeof Editor
   >['structServiceProvider'],
-  errorHandler: jest.fn(),
+  errorHandler: vi.fn(),
 };
 
 describe('Editor', () => {
@@ -101,7 +99,7 @@ describe('Editor', () => {
   });
 
   it('reports micromolecules initialization when the feature is disabled', async () => {
-    const onInit = jest.fn();
+    const onInit = vi.fn();
 
     render(
       <Editor {...editorProps} onInit={onInit} disableMacromoleculesEditor />,

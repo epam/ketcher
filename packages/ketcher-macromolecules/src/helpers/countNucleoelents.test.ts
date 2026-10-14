@@ -31,7 +31,7 @@ describe('getCountOfMirroredNucleoelements', () => {
   });
 
   it('asks the sequence mode for the count of mirrored base changes', () => {
-    const countMirroredBaseChanges = jest.fn(() => 3);
+    const countMirroredBaseChanges = vi.fn(() => 3);
     const editor = {
       mode: Object.assign(Object.create(SequenceMode.prototype), {
         countMirroredBaseChanges,

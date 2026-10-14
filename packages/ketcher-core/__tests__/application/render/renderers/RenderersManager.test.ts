@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
@@ -358,12 +359,12 @@ describe('RenderersManager', () => {
     let canvas: SVGSVGElement;
 
     beforeAll(() => {
-      global.ResizeObserver = jest.fn().mockImplementation(() => ({
-        observe: jest.fn(),
-        unobserve: jest.fn(),
-        disconnect: jest.fn(),
+      global.ResizeObserver = vi.fn().mockImplementation(() => ({
+        observe: vi.fn(),
+        unobserve: vi.fn(),
+        disconnect: vi.fn(),
       }));
-      SVGElement.prototype.getBBox = jest.fn().mockReturnValue({
+      SVGElement.prototype.getBBox = vi.fn().mockReturnValue({
         x: 0,
         y: 0,
         width: 12,

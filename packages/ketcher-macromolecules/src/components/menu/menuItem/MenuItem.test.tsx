@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -13,10 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { withThemeProvider } from 'src/testUtils/themeProvider';
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Menu, MenuContext } from 'components/menu';
 
-const mockClickHandler = jest.fn();
+const mockClickHandler = vi.fn();
 const MOCK_NAME = 'select-lasso';
 
 const mockValue = {

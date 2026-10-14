@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Monomer Group should apply correct style if selected 1`] = `
+exports[`Monomer Group > should apply correct style if selected 1`] = `
 <div
-  class="css-1fi9oj1"
+  class="css-15ccdup-Card e1dpkp1b0"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
   <span
-    class="css-uahybi"
+    class="css-1da7ffc-CardTitle e1dpkp1b2"
   >
     R
   </span>
@@ -18,17 +18,17 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
     type="button"
   >
     <svg
-      class="css-x2ejol"
+      class="css-ipnnca-StyledIcon e10ei3ya2"
       name="vertical-dots"
     />
   </button>
   <div
     aria-label=""
-    class="css-aj3s7v"
+    class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
     data-mui-internal-clone-element="true"
   >
     <svg
-      class="autochain css-1u7bcdc"
+      class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
       name="monomer-autochain"
     />
   </div>
@@ -42,29 +42,29 @@ exports[`Monomer Group should apply correct style if selected 1`] = `
 </div>
 `;
 
-exports[`Monomer Group should render correct with title prop 1`] = `
+exports[`Monomer Group > should render correct with title prop 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-4weiu8"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-a0lsh8"
+          class="css-tw020n-GroupTitle e8901gh3"
         >
           Mock title
         </div>
         <div
-          class="css-1a3tnc1"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-pq9ik7"
+            class="css-1m6l2wm-Card e1dpkp1b0"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               R
             </span>
@@ -75,17 +75,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -98,12 +98,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1azixe2"
+            class="css-17hii03-Card e1dpkp1b0"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               m
             </span>
@@ -114,17 +114,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -137,12 +137,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-2qnjv3"
+            class="css-1nng9t4-Card e1dpkp1b0"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               d
             </span>
@@ -153,17 +153,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -176,12 +176,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-pq9ik7"
+            class="css-1m6l2wm-Card e1dpkp1b0"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               ar
             </span>
@@ -192,17 +192,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -215,12 +215,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1azixe2"
+            class="css-17hii03-Card e1dpkp1b0"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               Ld
             </span>
@@ -231,17 +231,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -259,23 +259,23 @@ exports[`Monomer Group should render correct with title prop 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-4weiu8"
+      class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
     >
       <div
-        class="css-a0lsh8"
+        class="css-tw020n-GroupTitle e8901gh3"
       >
         Mock title
       </div>
       <div
-        class="css-1a3tnc1"
+        class="css-1ls8773-ItemsContainer e8901gh0"
       >
         <div
-          class="css-pq9ik7"
+          class="css-1m6l2wm-Card e1dpkp1b0"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             R
           </span>
@@ -286,17 +286,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -309,12 +309,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1azixe2"
+          class="css-17hii03-Card e1dpkp1b0"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             m
           </span>
@@ -325,17 +325,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -348,12 +348,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-2qnjv3"
+          class="css-1nng9t4-Card e1dpkp1b0"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             d
           </span>
@@ -364,17 +364,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -387,12 +387,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-pq9ik7"
+          class="css-1m6l2wm-Card e1dpkp1b0"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             ar
           </span>
@@ -403,17 +403,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -426,12 +426,12 @@ exports[`Monomer Group should render correct with title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1azixe2"
+          class="css-17hii03-Card e1dpkp1b0"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             Ld
           </span>
@@ -442,17 +442,17 @@ exports[`Monomer Group should render correct with title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -521,24 +521,24 @@ exports[`Monomer Group should render correct with title prop 1`] = `
 }
 `;
 
-exports[`Monomer Group should render correct without title prop 1`] = `
+exports[`Monomer Group > should render correct without title prop 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
-        class="css-4weiu8"
+        class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
       >
         <div
-          class="css-1a3tnc1"
+          class="css-1ls8773-ItemsContainer e8901gh0"
         >
           <div
-            class="css-pq9ik7"
+            class="css-1m6l2wm-Card e1dpkp1b0"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               R
             </span>
@@ -549,17 +549,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -572,12 +572,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1azixe2"
+            class="css-17hii03-Card e1dpkp1b0"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               m
             </span>
@@ -588,17 +588,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -611,12 +611,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-2qnjv3"
+            class="css-1nng9t4-Card e1dpkp1b0"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               d
             </span>
@@ -627,17 +627,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -650,12 +650,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-pq9ik7"
+            class="css-1m6l2wm-Card e1dpkp1b0"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               ar
             </span>
@@ -666,17 +666,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -689,12 +689,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             </button>
           </div>
           <div
-            class="css-1azixe2"
+            class="css-17hii03-Card e1dpkp1b0"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
             <span
-              class="css-uahybi"
+              class="css-1da7ffc-CardTitle e1dpkp1b2"
             >
               Ld
             </span>
@@ -705,17 +705,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
               type="button"
             >
               <svg
-                class="css-x2ejol"
+                class="css-ipnnca-StyledIcon e10ei3ya2"
                 name="vertical-dots"
               />
             </button>
             <div
               aria-label=""
-              class="css-aj3s7v"
+              class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
               data-mui-internal-clone-element="true"
             >
               <svg
-                class="autochain css-1u7bcdc"
+                class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
                 name="monomer-autochain"
               />
             </div>
@@ -733,18 +733,18 @@ exports[`Monomer Group should render correct without title prop 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-4weiu8"
+      class="css-1roke0u-GroupContainerRow-GroupContainerColumn e8901gh2"
     >
       <div
-        class="css-1a3tnc1"
+        class="css-1ls8773-ItemsContainer e8901gh0"
       >
         <div
-          class="css-pq9ik7"
+          class="css-1m6l2wm-Card e1dpkp1b0"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             R
           </span>
@@ -755,17 +755,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -778,12 +778,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1azixe2"
+          class="css-17hii03-Card e1dpkp1b0"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             m
           </span>
@@ -794,17 +794,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -817,12 +817,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-2qnjv3"
+          class="css-1nng9t4-Card e1dpkp1b0"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             d
           </span>
@@ -833,17 +833,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -856,12 +856,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-pq9ik7"
+          class="css-1m6l2wm-Card e1dpkp1b0"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             ar
           </span>
@@ -872,17 +872,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>
@@ -895,12 +895,12 @@ exports[`Monomer Group should render correct without title prop 1`] = `
           </button>
         </div>
         <div
-          class="css-1azixe2"
+          class="css-17hii03-Card e1dpkp1b0"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
           <span
-            class="css-uahybi"
+            class="css-1da7ffc-CardTitle e1dpkp1b2"
           >
             Ld
           </span>
@@ -911,17 +911,17 @@ exports[`Monomer Group should render correct without title prop 1`] = `
             type="button"
           >
             <svg
-              class="css-x2ejol"
+              class="css-ipnnca-StyledIcon e10ei3ya2"
               name="vertical-dots"
             />
           </button>
           <div
             aria-label=""
-            class="css-aj3s7v"
+            class="css-7xnoa5-AutochainIconWrapper e1dpkp1b4"
             data-mui-internal-clone-element="true"
           >
             <svg
-              class="autochain css-1u7bcdc"
+              class="autochain css-p643xf-AutochainIcon e1dpkp1b3"
               name="monomer-autochain"
             />
           </div>

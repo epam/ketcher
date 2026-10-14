@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import {
   type ClipboardData,
@@ -9,9 +10,9 @@ import {
 describe('clipboardUtils', () => {
   describe('legacyCopy', () => {
     it('copies plain text and additional mime types to clipboard data', () => {
-      const setData = jest.fn();
+      const setData = vi.fn();
       const clipboardData = {
-        getData: jest.fn(),
+        getData: vi.fn(),
         setData,
       };
       const data: ClipboardData = {
@@ -33,11 +34,11 @@ describe('clipboardUtils', () => {
         [ChemicalMimeType.Mol]: 'mol payload',
       };
       const clipboardData = {
-        getData: jest.fn(
+        getData: vi.fn(
           (mimeType: keyof typeof clipboardValues | string) =>
             clipboardValues[mimeType] || '',
         ),
-        setData: jest.fn(),
+        setData: vi.fn(),
       };
 
       expect(legacyPaste(clipboardData, [ChemicalMimeType.Mol])).toEqual({
@@ -61,7 +62,7 @@ describe('clipboardUtils', () => {
 
     it('reads the first available structured mime type from clipboard items', async () => {
       const clipboardItem = {
-        getType: jest.fn(async (mimeType: string) => {
+        getType: vi.fn(async (mimeType: string) => {
           if (mimeType === `web ${ChemicalMimeType.Mol}`) {
             return {
               size: 'mol payload'.length,

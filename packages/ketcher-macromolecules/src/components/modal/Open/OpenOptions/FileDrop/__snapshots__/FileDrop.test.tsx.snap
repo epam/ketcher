@@ -1,12 +1,12 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FileDrop component should render correctly 1`] = `
+exports[`FileDrop component > should render correctly 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <button
-        class="css-1mbhme1"
+        class="css-1e3isln-DropzoneButton e1o15pgq2"
         style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
         tabindex="0"
         type="button"
@@ -18,18 +18,18 @@ exports[`FileDrop component should render correctly 1`] = `
           type="file"
         />
         <svg
-          class="css-1opl6cd"
+          class="css-8ctlu6-StyledIcon e1o15pgq0"
           name="arrow-upward"
         />
         <div
-          class="css-1b8y5ux"
+          class="css-jm0alk-ButtonContainer e1o15pgq1"
         >
           <span>
             or drag file here
           </span>
         </div>
         <p
-          class="css-9x63nq"
+          class="css-xkeazw-OpenOptionText e1a1f80u0"
         >
           Open from file
         </p>
@@ -38,7 +38,7 @@ exports[`FileDrop component should render correctly 1`] = `
   </body>,
   "container": <div>
     <button
-      class="css-1mbhme1"
+      class="css-1e3isln-DropzoneButton e1o15pgq2"
       style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
       tabindex="0"
       type="button"
@@ -50,18 +50,18 @@ exports[`FileDrop component should render correctly 1`] = `
         type="file"
       />
       <svg
-        class="css-1opl6cd"
+        class="css-8ctlu6-StyledIcon e1o15pgq0"
         name="arrow-upward"
       />
       <div
-        class="css-1b8y5ux"
+        class="css-jm0alk-ButtonContainer e1o15pgq1"
       >
         <span>
           or drag file here
         </span>
       </div>
       <p
-        class="css-9x63nq"
+        class="css-xkeazw-OpenOptionText e1a1f80u0"
       >
         Open from file
       </p>

@@ -1,4 +1,5 @@
 import { ChemicalMimeType } from 'ketcher-core';
+import { vi } from 'vitest';
 import StandaloneStructService from '../../../../src/infrastructure/services/struct/standaloneStructService';
 
 // Lets any microtask chain that does NOT depend on a still-pending promise
@@ -10,20 +11,30 @@ import StandaloneStructService from '../../../../src/infrastructure/services/str
 const flushMicrotasks = () =>
   new Promise<void>((resolve) => setTimeout(resolve, 0));
 
-let order: string[];
+const { fakeEditor, order } = vi.hoisted(() => {
+  const order: string[] = [];
+
+  return {
+    fakeEditor: {
+      ensureDefaultMonomersLibraryLoaded: vi.fn(),
+      get monomersLibraryParsedJson() {
+        order.push('monomer-library-read');
+        return {};
+      },
+    },
+    order,
+  };
+});
+
 let resolveDefaultLoad: () => void;
 
-const fakeEditor = {
-  ensureDefaultMonomersLibraryLoaded: jest.fn(),
-  get monomersLibraryParsedJson() {
-    order.push('monomer-library-read');
-    return {};
-  },
-};
+vi.mock('paper', () => ({ default: {} }));
 
-jest.mock('ketcher-core', () => ({
-  ...jest.requireActual('ketcher-core'),
-  provideEditorInstance: jest.fn(() => fakeEditor),
+vi.mock('ketcher-core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('ketcher-core')>()),
+  getLabelRenderModeForIndigo: vi.fn(),
+  pickStandardServerOptions: vi.fn(() => ({})),
+  provideEditorInstance: vi.fn(() => fakeEditor),
 }));
 
 // Regression/guard test for the ordering fixed by #10326 (see the ADR:
@@ -35,15 +46,30 @@ jest.mock('ketcher-core', () => ({
 // is ever opened.
 describe('StandaloneStructService (IndigoService) convert()', () => {
   beforeEach(() => {
-    order = [];
+    order.length = 0;
+
+    // Vite's `?worker&inline` transform needs a Worker global, which Node lacks.
+    vi.stubGlobal(
+      'Worker',
+      class {
+        addEventListener = vi.fn();
+        removeEventListener = vi.fn();
+        postMessage = vi.fn();
+        terminate = vi.fn();
+      },
+    );
 
     const defaultLoadGate = new Promise<void>((resolve) => {
       resolveDefaultLoad = resolve;
     });
-    fakeEditor.ensureDefaultMonomersLibraryLoaded = jest.fn(async () => {
+    fakeEditor.ensureDefaultMonomersLibraryLoaded = vi.fn(async () => {
       await defaultLoadGate;
       order.push('default-library-loaded');
     });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('awaits the default monomers library before reading it into the convert command', async () => {

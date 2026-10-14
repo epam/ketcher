@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
+import { vi } from 'vitest';
 import { AtomList, Bond, Vec2 } from 'domain/entities';
 import { basic, reaction, rgroups } from './fixtures';
 
@@ -699,7 +700,7 @@ describe('parseRxn2000', () => {
   it('should correctly parse 3 mol structures', () => {
     const lines = reaction.split('\n');
     const shouldReactionRelayout = false;
-    const spy = jest.spyOn(utils, 'rxnMerge');
+    const spy = vi.spyOn(utils, 'rxnMerge');
     molParsers.parseRxn2000(lines, shouldReactionRelayout);
     expect(spy.mock.calls[0][0]).toHaveLength(3);
     expect(spy.mock.calls[0][1]).toBe(2);
@@ -766,7 +767,7 @@ describe('parseRg2000', () => {
 
   it('should parse correctly rg ext', () => {
     const lines = rgroups.split('\n');
-    const spy = jest.spyOn(utils, 'rgMerge');
+    const spy = vi.spyOn(utils, 'rgMerge');
     molParsers.parseRg2000(lines);
     expect(spy.mock.calls[0][0].atoms.size).toBe(14);
     expect(spy.mock.calls[0][0].bonds.size).toBe(14);

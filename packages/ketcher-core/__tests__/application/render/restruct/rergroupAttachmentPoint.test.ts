@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Render, ReStruct } from 'application/render';
 import draw from 'application/render/draw';
 import type { RenderOptions } from 'application/render/render.types';
@@ -212,8 +213,8 @@ function captureAttachmentPointRender({
   reAttachmentPoint,
   attachmentPointId,
 }: ReturnType<typeof createTwoNeighborAttachmentPointFixture>) {
-  const shapeSpy = jest.spyOn(draw, 'rgroupAttachmentPoint');
-  const labelSpy = jest.spyOn(draw, 'rgroupAttachmentPointLabel');
+  const shapeSpy = vi.spyOn(draw, 'rgroupAttachmentPoint');
+  const labelSpy = vi.spyOn(draw, 'rgroupAttachmentPointLabel');
 
   reAttachmentPoint.visel.clear();
   reAttachmentPoint.show(restruct, attachmentPointId);
@@ -418,8 +419,8 @@ describe('ReRGroupAttachmentPoint', () => {
     // logic under deterministic mocked dimensions, not real browser font geometry.
     const { render, restruct } = createQueryPropertyFixture(options);
 
-    const apLabelSpy = jest.spyOn(draw, 'rgroupAttachmentPointLabel');
-    const paperTextSpy = jest.spyOn(render.paper, 'text');
+    const apLabelSpy = vi.spyOn(draw, 'rgroupAttachmentPointLabel');
+    const paperTextSpy = vi.spyOn(render.paper, 'text');
 
     restruct.update(true);
 

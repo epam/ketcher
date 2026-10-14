@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
 import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
@@ -8,11 +10,11 @@ import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import BondTool from '../../editor/tool/bond';
 import type Editor from '../../editor/Editor';
 
-jest.mock('react-intersection-observer', () => {
+vi.mock('react-intersection-observer', () => {
   return {
-    observe: jest.fn(),
-    disconnect: jest.fn(),
-    useInView: jest.fn().mockReturnValue([]),
+    observe: vi.fn(),
+    disconnect: vi.fn(),
+    useInView: vi.fn().mockReturnValue([]),
   };
 });
 
@@ -101,16 +103,16 @@ function renderWithMockStore(component) {
   store.dispatch({
     type: 'INIT',
     editor: {
-      tool: jest.fn().mockReturnValue(true),
+      tool: vi.fn().mockReturnValue(true),
       historySize: () => {
         return { undo: [] };
       },
-      selection: jest.fn(),
+      selection: vi.fn(),
       struct: () => {
         return { atoms: { keys: () => new Set() } };
       },
       render: { ctab: {}, options: { viewOnlyMode: false } },
-      zoom: jest.fn(),
+      zoom: vi.fn(),
       _tool: { mode: '' },
       rotateController: { isRotating: false },
     },

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
   guardForMacromoleculesEditor,
   guardForMicromoleculesEditor,
@@ -12,7 +13,7 @@ describe('guardForMacromoleculesEditor', () => {
 
   it('calls the handler when the macromolecules editor is active', () => {
     window.isPolymerEditorTurnedOn = true;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const guarded = guardForMacromoleculesEditor(handler);
 
     guarded('arg1', 'arg2');
@@ -23,7 +24,7 @@ describe('guardForMacromoleculesEditor', () => {
 
   it('does not call the handler when the macromolecules editor is inactive', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const guarded = guardForMacromoleculesEditor(handler);
 
     guarded('arg1');
@@ -33,7 +34,7 @@ describe('guardForMacromoleculesEditor', () => {
 
   it('returns the handler return value when active', () => {
     window.isPolymerEditorTurnedOn = true;
-    const handler = jest.fn().mockReturnValue('result');
+    const handler = vi.fn().mockReturnValue('result');
     const guarded = guardForMacromoleculesEditor(handler);
 
     const result = guarded();
@@ -43,7 +44,7 @@ describe('guardForMacromoleculesEditor', () => {
 
   it('returns undefined when inactive', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn().mockReturnValue('result');
+    const handler = vi.fn().mockReturnValue('result');
     const guarded = guardForMacromoleculesEditor(handler);
 
     const result = guarded();
@@ -61,7 +62,7 @@ describe('guardForMicromoleculesEditor', () => {
 
   it('calls the handler when the micromolecules editor is active', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const guarded = guardForMicromoleculesEditor(handler);
 
     guarded('arg1', 'arg2');
@@ -72,7 +73,7 @@ describe('guardForMicromoleculesEditor', () => {
 
   it('does not call the handler when the micromolecules editor is inactive', () => {
     window.isPolymerEditorTurnedOn = true;
-    const handler = jest.fn();
+    const handler = vi.fn();
     const guarded = guardForMicromoleculesEditor(handler);
 
     guarded('arg1');
@@ -82,7 +83,7 @@ describe('guardForMicromoleculesEditor', () => {
 
   it('returns the handler return value when active', () => {
     window.isPolymerEditorTurnedOn = false;
-    const handler = jest.fn().mockReturnValue('result');
+    const handler = vi.fn().mockReturnValue('result');
     const guarded = guardForMicromoleculesEditor(handler);
 
     const result = guarded();
@@ -92,7 +93,7 @@ describe('guardForMicromoleculesEditor', () => {
 
   it('returns undefined when inactive', () => {
     window.isPolymerEditorTurnedOn = true;
-    const handler = jest.fn().mockReturnValue('result');
+    const handler = vi.fn().mockReturnValue('result');
     const guarded = guardForMicromoleculesEditor(handler);
 
     const result = guarded();

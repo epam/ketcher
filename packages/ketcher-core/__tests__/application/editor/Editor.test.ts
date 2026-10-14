@@ -1,3 +1,4 @@
+import { type MockInstance, type Mock, vi } from 'vitest';
 import {
   CoreEditor,
   EditorClassName,
@@ -42,8 +43,8 @@ type RescaleStructForModeTransitionContext = {
 };
 
 type RescaleStructForModeTransitionStruct = {
-  scale: jest.Mock;
-  scaleMonomerMicromoleculeSgroups: jest.Mock;
+  scale: Mock;
+  scaleMonomerMicromoleculeSgroups: Mock;
 };
 
 type RescaleStructForModeTransitionMethod = (
@@ -99,12 +100,12 @@ describe('CoreEditor', () => {
     beforeEach(() => {
       Object.defineProperty(SVGElement.prototype, 'getBBox', {
         configurable: true,
-        value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+        value: vi.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
       });
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      vi.restoreAllMocks();
 
       if (originalGetBBox) {
         Object.defineProperty(SVGElement.prototype, 'getBBox', {
@@ -132,7 +133,7 @@ describe('CoreEditor', () => {
         width: 500,
         height: 500,
       } as DOMRect;
-      jest.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(bounds);
+      vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue(bounds);
 
       editor.switchToMacromolecules();
 
@@ -164,8 +165,8 @@ describe('CoreEditor', () => {
 
     it('should be a no-op when micro and macro scales are equal', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -192,8 +193,8 @@ describe('CoreEditor', () => {
 
     it('should convert macro coordinates into micro coordinates using source-to-target scales', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -220,8 +221,8 @@ describe('CoreEditor', () => {
 
     it('should convert micro coordinates into macro coordinates and rescale monomer sgroups', () => {
       const struct = {
-        scale: jest.fn(),
-        scaleMonomerMicromoleculeSgroups: jest.fn(),
+        scale: vi.fn(),
+        scaleMonomerMicromoleculeSgroups: vi.fn(),
       };
       const editor = {
         micromoleculesEditor: {
@@ -254,10 +255,10 @@ describe('CoreEditor', () => {
       theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
-    const onMousemove = jest.fn();
-    jest
-      .spyOn(MonomerTool.prototype, 'mousemove')
-      .mockImplementation(onMousemove);
+    const onMousemove = vi.fn();
+    vi.spyOn(MonomerTool.prototype, 'mousemove').mockImplementation(
+      onMousemove,
+    );
     editor.selectTool(ToolName.monomer);
     canvas.dispatchEvent(new Event('mousemove', { bubbles: true }));
     expect(onMousemove).toHaveBeenCalled();
@@ -266,7 +267,7 @@ describe('CoreEditor', () => {
   describe('updateMonomersLibrary', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
-    let errorSpy: jest.SpyInstance;
+    let errorSpy: MockInstance;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
@@ -275,7 +276,7 @@ describe('CoreEditor', () => {
         theme: coreEditorTheme,
         renderersContainer: createRenderersManager(polymerEditorTheme),
       });
-      errorSpy = jest.spyOn(KetcherLogger, 'error').mockImplementation();
+      errorSpy = vi.spyOn(KetcherLogger, 'error').mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -1599,7 +1600,7 @@ describe('CoreEditor', () => {
       // The replace path passes the data through
       // ketcher.ensureMonomersLibraryDataInKetFormat; stub it to return the
       // already-KET-format data unchanged.
-      const getKetcherSpy = jest
+      const getKetcherSpy = vi
         .spyOn(ketcherProvider, 'getKetcher')
         .mockReturnValue({
           ensureMonomersLibraryDataInKetFormat: async (data: string | JSON) =>
@@ -1650,7 +1651,7 @@ describe('CoreEditor', () => {
 
     it('should not stop selection tool when it is already in standby mode', () => {
       const selectTool = editor.selectedTool as SelectBase;
-      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      const stopMovementSpy = vi.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'standby';
 
       window.dispatchEvent(new Event('blur'));
@@ -1660,7 +1661,7 @@ describe('CoreEditor', () => {
 
     it('should stop selection tool when blur happens during active movement', () => {
       const selectTool = editor.selectedTool as SelectBase;
-      const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
+      const stopMovementSpy = vi.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'moving';
 
       window.dispatchEvent(new Event('blur'));
@@ -1697,9 +1698,9 @@ describe('CoreEditor', () => {
       const outsideElement = document.createElement('div');
       document.body.appendChild(outsideElement);
 
-      const preventDefaultSpy = jest.fn();
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
+      const preventDefaultSpy = vi.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1740,7 +1741,7 @@ describe('CoreEditor', () => {
       editor.renderersContainer.update(modelChanges);
 
       const monomer = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
-      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1773,11 +1774,11 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {
       editor.setMode(new FlexMode());
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickCanvas.add(rightClickCanvasHandler);
 
       const canvasElement = document.createElement('div');
@@ -1801,11 +1802,11 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvas in snake mode on right-click on empty canvas', () => {
       editor.setMode(new SnakeMode());
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickCanvas.add(rightClickCanvasHandler);
 
       const canvasElement = document.createElement('div');
@@ -1829,15 +1830,15 @@ describe('CoreEditor', () => {
 
     it('should clear selection and dispatch rightClickCanvasSequence in sequence mode on right-click on empty canvas', () => {
       // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const unselectSequenceSpy = jest.spyOn(
+      const unselectSequenceSpy = vi.spyOn(
         SequenceRenderer,
         'unselectEmptyAndBackboneSequenceNodes',
       );
-      const rightClickCanvasSequenceHandler = jest.fn();
+      const rightClickCanvasSequenceHandler = vi.fn();
       editor.events.rightClickCanvasSequence.add(
         rightClickCanvasSequenceHandler,
       );
@@ -1883,12 +1884,12 @@ describe('CoreEditor', () => {
         editor.drawingEntitiesManager.selectDrawingEntity(monomer);
       editor.renderersContainer.update(selectChanges);
 
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1940,13 +1941,13 @@ describe('CoreEditor', () => {
         editor.drawingEntitiesManager.selectDrawingEntity(monomer);
       editor.renderersContainer.update(selectChanges);
 
-      const unselectSpy = jest.spyOn(
+      const unselectSpy = vi.spyOn(
         editor.drawingEntitiesManager,
         'unselectAllDrawingEntities',
       );
-      const rightClickSelectedMonomersHandler = jest.fn();
-      const rightClickCanvasHandler = jest.fn();
-      const rightClickCanvasSequenceHandler = jest.fn();
+      const rightClickSelectedMonomersHandler = vi.fn();
+      const rightClickCanvasHandler = vi.fn();
+      const rightClickCanvasSequenceHandler = vi.fn();
       editor.events.rightClickSelectedMonomers.add(
         rightClickSelectedMonomersHandler,
       );
@@ -1961,7 +1962,7 @@ describe('CoreEditor', () => {
 
       const hasEFP = 'elementsFromPoint' in document;
       const savedEFP = hasEFP ? document.elementsFromPoint : undefined;
-      (document as unknown as Record<string, unknown>).elementsFromPoint = jest
+      (document as unknown as Record<string, unknown>).elementsFromPoint = vi
         .fn()
         .mockReturnValue([rendererEl]);
 
@@ -2022,12 +2023,12 @@ describe('CoreEditor', () => {
     });
 
     it('should hide only autochain preview without clearing all transient views', () => {
-      const clearSpy = jest.spyOn(editor.transientDrawingView, 'clear');
-      const hideAutochainPreviewSpy = jest.spyOn(
+      const clearSpy = vi.spyOn(editor.transientDrawingView, 'clear');
+      const hideAutochainPreviewSpy = vi.spyOn(
         editor.transientDrawingView,
         'hideAutochainPreview',
       );
-      const updateSpy = jest.spyOn(editor.transientDrawingView, 'update');
+      const updateSpy = vi.spyOn(editor.transientDrawingView, 'update');
 
       editor.events.removeAutochainPreview.dispatch();
 
@@ -2056,7 +2057,7 @@ describe('CoreEditor', () => {
     });
 
     it('should register cut event listener on document', () => {
-      const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
 
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
@@ -2076,10 +2077,7 @@ describe('CoreEditor', () => {
     });
 
     it('should remove cut event listener on destroy', () => {
-      const removeEventListenerSpy = jest.spyOn(
-        document,
-        'removeEventListener',
-      );
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
       const testCanvas = createPolymerEditorCanvas();
       const testEditor = new CoreEditor({
@@ -2122,8 +2120,8 @@ describe('CoreEditor', () => {
       expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
 
       // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -2134,7 +2132,7 @@ describe('CoreEditor', () => {
       });
 
       // Spy on deleteSelectedStructure event
-      const deleteEventSpy = jest.fn();
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Call onCut directly (simulates cut event)
@@ -2154,8 +2152,8 @@ describe('CoreEditor', () => {
     });
 
     it('should do nothing when cutting with no selection', () => {
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -2182,7 +2180,7 @@ describe('CoreEditor', () => {
       // Mock event with input as target
       const cutEvent = {
         target: input,
-        preventDefault: jest.fn(),
+        preventDefault: vi.fn(),
       } as unknown as ClipboardEvent;
 
       // Add a monomer and select it
@@ -2237,8 +2235,8 @@ describe('CoreEditor', () => {
       editor.drawingEntitiesManager.selectDrawingEntity(monomer);
 
       // Mock clipboard API
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -2249,8 +2247,8 @@ describe('CoreEditor', () => {
       });
 
       // Spy on methods to verify order
-      const onCopySpy = jest.spyOn(editor.mode, 'onCopy');
-      const deleteEventSpy = jest.fn();
+      const onCopySpy = vi.spyOn(editor.mode, 'onCopy');
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Perform cut
@@ -2301,8 +2299,8 @@ describe('CoreEditor', () => {
       expect(editor.drawingEntitiesManager.monomers.size).toBe(2);
 
       // Mock clipboard API (need both writeText AND read for isClipboardAPIAvailable)
-      const writeTextSpy = jest.fn().mockResolvedValue(undefined);
-      const readSpy = jest.fn().mockResolvedValue([]);
+      const writeTextSpy = vi.fn().mockResolvedValue(undefined);
+      const readSpy = vi.fn().mockResolvedValue([]);
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: writeTextSpy,
@@ -2313,7 +2311,7 @@ describe('CoreEditor', () => {
       });
 
       // Spy on delete event
-      const deleteEventSpy = jest.fn();
+      const deleteEventSpy = vi.fn();
       editor.events.deleteSelectedStructure.add(deleteEventSpy);
 
       // Call onCut

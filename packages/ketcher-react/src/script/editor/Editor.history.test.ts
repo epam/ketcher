@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import {
   Action,
   Atom,
@@ -42,7 +44,7 @@ describe('History across molecule and macromolecule modes', () => {
     ketcherProvider.addKetcherInstance({
       id: ketcherId,
       editor: micro,
-      changeEvent: { dispatch: jest.fn() },
+      changeEvent: { dispatch: vi.fn() },
     } as never);
     const canvas = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -74,7 +76,9 @@ describe('History across molecule and macromolecule modes', () => {
     await macro.ensureDefaultMonomersLibraryLoaded();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    // Core defers mode initialization to a timer that uses the registered editor.
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
     macro.destroy();
     ketcherProvider.removeKetcherInstance(ketcherId);
     window.isPolymerEditorTurnedOn = false;

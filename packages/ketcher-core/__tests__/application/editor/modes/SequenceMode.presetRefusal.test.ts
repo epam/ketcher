@@ -47,13 +47,13 @@ const testRenderTheme = {
   },
 };
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
 }));
 
-SVGElement.prototype.getBBox = jest
+SVGElement.prototype.getBBox = vi
   .fn()
   .mockReturnValue({ x: 0, y: 0, width: 12, height: 12 });
 
@@ -211,7 +211,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
       .filter(Boolean)
       .map((monomer) => monomer.id);
     const originalSenseBaseId = senseNucleotides[0].rnaBase.id;
-    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+    const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
     mode.insertPresetFromLibrary(buildPreset(editor, 'C'));
 
@@ -240,7 +240,7 @@ describe('SequenceMode.insertPresetFromLibrary duplex refusal (task 3)', () => {
     const monomerCountBefore = editor.drawingEntitiesManager.monomers.size;
     const history = EditorHistory.getInstance(editor);
     const historyLengthBefore = history.historyStack.length;
-    const dispatchSpy = jest.spyOn(editor.events.error, 'dispatch');
+    const dispatchSpy = vi.spyOn(editor.events.error, 'dispatch');
 
     mode.insertPresetFromLibrary(buildPreset(editor, 'C'));
 

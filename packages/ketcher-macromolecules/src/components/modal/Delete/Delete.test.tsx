@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { vi } from 'vitest';
+import { withThemeAndStoreProvider } from 'src/testUtils/storeProviders';
+
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Delete } from './Delete';
@@ -21,7 +24,7 @@ import type { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
 describe('Delete component', () => {

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { RemoteStructService } from '../remoteStructService';
 
 describe('RemoteStructService custom headers error handling', () => {
@@ -8,7 +9,7 @@ describe('RemoteStructService custom headers error handling', () => {
   });
 
   it('rejects the returned promise instead of throwing synchronously when fetch throws (e.g. invalid custom headers)', () => {
-    global.fetch = jest.fn(() => {
+    global.fetch = vi.fn(() => {
       throw new TypeError('Invalid value');
     }) as unknown as typeof fetch;
 

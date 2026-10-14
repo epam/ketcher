@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ReSimpleObject, ReStruct, Render } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import {
@@ -30,8 +31,8 @@ describe('show selection', () => {
     ],
   };
   const reSimpleObject = new ReSimpleObject(ellipse);
-  reSimpleObject.showPoints = jest.fn();
-  reSimpleObject.hidePoints = jest.fn();
+  reSimpleObject.showPoints = vi.fn();
+  reSimpleObject.hidePoints = vi.fn();
   const option = {
     microModeScale: 20,
     width: 100,
@@ -57,10 +58,10 @@ describe('CIP label background on selection toggle', () => {
   } as RenderOptions;
   const render = new Render(document as unknown as HTMLElement, option);
   const restruct = new ReStruct(new Struct(), render);
-  const cipAttrMock = jest.fn();
+  const cipAttrMock = vi.fn();
   const selectionPlate = {
-    show: jest.fn(),
-    hide: jest.fn(),
+    show: vi.fn(),
+    hide: vi.fn(),
     removed: false,
   };
   const cipItem = {

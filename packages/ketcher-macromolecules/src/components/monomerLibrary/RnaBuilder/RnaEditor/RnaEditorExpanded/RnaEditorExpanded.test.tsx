@@ -8,8 +8,11 @@ import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEdito
 import { EmptyFunction } from 'helpers';
 import { configureAppStore } from 'state';
 import {
+  setActivePreset,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
+  setIsEditMode,
+  startPresetDuplication,
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
 import { defaultTheme } from 'theming/defaultTheme';
@@ -32,6 +35,27 @@ jest.mock('hooks', () => ({
 describe('Test Rna Editor Expanded component', () => {
   afterEach(() => {
     useIsCompactViewMock.mockReturnValue(true);
+  });
+
+  it('brings back the duplicated preset when Duplicate and Edit is cancelled (#4447)', () => {
+    const store = configureAppStore({});
+    const original = { name: 'A', nameInList: 'A' };
+    store.dispatch(setActivePreset(original));
+    store.dispatch(startPresetDuplication({ ...original, name: 'A_Copy' }));
+    store.dispatch(setIsEditMode(true));
+
+    render(
+      <ThemeProvider theme={testTheme}>
+        <StoreProvider store={store}>
+          <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+        </StoreProvider>
+      </ThemeProvider>,
+    );
+
+    fireEvent.click(screen.getByTestId('cancel-btn'));
+
+    expect(store.getState().rnaBuilder.activePreset.name).toBe('A');
+    expect(store.getState().rnaBuilder.presetBeforeDuplicate).toBeNull();
   });
 
   it('should render correctly in edit mode', async () => {

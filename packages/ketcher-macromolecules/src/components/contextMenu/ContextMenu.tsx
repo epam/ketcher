@@ -20,6 +20,7 @@ export interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
+  itemClassName?: string;
   icon?: ReactElement;
   disabled?:
     | boolean
@@ -72,6 +73,7 @@ const assembleMenuItems = (
       hidden,
       disabled,
       isMenuTitle,
+      itemClassName,
       separator,
       subMenuItems,
       onMouseOver,
@@ -95,7 +97,9 @@ const assembleMenuItems = (
           data-testid={name}
           hidden={hidden}
           disabled={disabled}
-          className={isMenuTitle ? 'contexify_item-title' : ''}
+          className={[isMenuTitle ? 'contexify_item-title' : '', itemClassName]
+            .filter(Boolean)
+            .join(' ')}
           onMouseOver={() => {
             if (isMouseOverThrottling) {
               return;

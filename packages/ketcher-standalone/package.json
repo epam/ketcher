@@ -29,7 +29,7 @@
     "node": ">=24.20.0"
   },
   "scripts": {
-    "build": "node ./scripts/build.mjs && tsc --emitDeclarationOnly -p tsconfig.build.json && shx cp -r .types/. dist && shx cp -r .types/. dist/cjs && shx cp -r .types/. dist/binaryWasm && shx cp -r .types/. dist/jsNoRender && shx cp -r .types/. dist/cjs/jsNoRender && shx cp -r .types/. dist/binaryWasmNoRender && shx rm -rf .types",
+    "build": "node ./scripts/build.mjs",
     "start": "run-p --print-label start:vite start:typecheck",
     "start:vite": "cross-env NODE_ENV=development vite build --watch",
     "start:typecheck": "tsc --watch --noEmit",
@@ -57,7 +57,6 @@
     "jest": "^29.7.0",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
-    "shx": "^0.3.3",
     "typescript": "^6.0.3",
     "vite": "8.3.1"
   },

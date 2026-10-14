@@ -23,7 +23,7 @@ const workerShim = (shim) =>
 // The six published build variants, selected by INDIGO_MODULE_NAME exactly as
 // the Rollup build did. `dir` and `format` are part of the frozen published
 // contract - see package.json's `exports` map.
-const VARIANTS = {
+export const VARIANTS = {
   base64: {
     dir: 'dist',
     format: 'es',

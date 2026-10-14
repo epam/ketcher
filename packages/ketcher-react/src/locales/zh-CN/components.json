@@ -40,7 +40,8 @@
     "title": "编辑连接点"
   },
   "structEditor": {
-    "queryComponent": "查询组件"
+    "queryComponent": "查询组件",
+    "dropImageHere": "将图片拖放到此处"
   },
   "monomerCreationWizard": {
     "types": {

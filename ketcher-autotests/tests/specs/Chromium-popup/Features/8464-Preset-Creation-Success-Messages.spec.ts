@@ -1,10 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import {
-  MonomerType,
-  selectAllStructuresOnCanvas,
-  shiftCanvas,
-} from '@utils/index';
+import { MonomerType, selectAllStructuresOnCanvas } from '@utils/index';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
@@ -62,7 +58,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetName);
     await presetSection.setupSugar({
@@ -124,7 +119,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     );
 
     // Should be on the molecules canvas now with the preset wizard open
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName(presetName);
     await presetSection.setupSugar({
@@ -177,7 +171,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('CanceledPreset');
     await presetSection.setupSugar({
@@ -256,7 +249,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     // Leave preset name empty (validation error)
@@ -332,7 +324,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     );
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
 
     // Create a regular nucleotide monomer (not preset)
     await dialog.selectType(MonomerTypeInDropdown.NucleotideMonomer);
@@ -369,7 +360,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('SingleMessagePreset');
     await presetSection.setupSugar({

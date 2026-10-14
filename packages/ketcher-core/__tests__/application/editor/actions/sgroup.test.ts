@@ -404,4 +404,46 @@ describe('setExpandMonomerSGroup', () => {
     expect(moleculeNodes[0].fragment?.atoms.size).toBe(2);
     expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
   });
+
+  it('preserves the leaving atom element when removing a collapsed monomer', () => {
+    const struct = new Struct();
+    const monomer = new Peptide({
+      ...peptideMonomerItem,
+      props: {
+        ...peptideMonomerItem.props,
+        MonomerCaps: { R2: 'OH' },
+      },
+    });
+    monomer.monomerItem.expanded = false;
+    const sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+    const sgroupId = struct.sgroups.add(sgroup);
+    sgroup.id = sgroupId;
+    sgroup.data.expanded = false;
+
+    const attachmentAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const leavingAtomId = struct.atoms.add(
+      new Atom({ label: 'O', rglabel: 2, pp: new Vec2(1, 0) }),
+    );
+    struct.atomAddToSGroup(sgroupId, attachmentAtomId);
+    struct.atomAddToSGroup(sgroupId, leavingAtomId);
+    sgroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(attachmentAtomId, leavingAtomId, undefined, 2),
+    );
+
+    const bond = new Bond({
+      begin: attachmentAtomId,
+      end: leavingAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const bondId = struct.bonds.add(bond);
+    struct.bondInitHalfBonds(bondId, bond);
+    struct.initNeighbors();
+
+    fromSgroupDeletion(createRestruct(struct), sgroupId);
+
+    expect(struct.atoms.get(leavingAtomId)?.label).toBe('O');
+    expect(struct.atoms.get(leavingAtomId)?.rglabel).toBeNull();
+  });
 });

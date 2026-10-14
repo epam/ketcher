@@ -639,8 +639,6 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   // After SGroup is deleted, resolve leaving groups on plain structure
   if (sG instanceof MonomerMicromolecule) {
-    const isExpanded = sG.isExpanded();
-    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps ?? {};
     cachedAttachmentPoints?.forEach((attachmentPoint) => {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;
@@ -686,12 +684,10 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
             },
           );
           action.addOp(new AtomDelete(leaveAtomId));
-        } else if (isExpanded) {
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
         } else {
-          const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
-          const newLabel = monomerCaps?.[apLabel] || 'H';
-          action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
+          // The leaving atom already has its chemical element from the monomer
+          // template. MonomerCaps is only a collapsed display label (e.g. OH),
+          // so preserve the atom's label when removing the grouping.
           action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
         }
       }

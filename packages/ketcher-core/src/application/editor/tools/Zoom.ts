@@ -47,6 +47,7 @@ export class ZoomTool implements BaseTool {
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
+  private rememberedZoomTransform: ZoomTransform | null = null;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
@@ -135,6 +136,24 @@ export class ZoomTool implements BaseTool {
     return this._zoomTransform;
   }
 
+  public rememberZoomTransform() {
+    this.rememberedZoomTransform ??= this._zoomTransform;
+  }
+
+  public forgetRememberedZoomTransform() {
+    this.rememberedZoomTransform = null;
+  }
+
+  public restoreRememberedZoomTransform() {
+    const transform = this.rememberedZoomTransform;
+
+    this.rememberedZoomTransform = null;
+
+    if (transform) {
+      this.zoom?.transform(this.canvasWrapper, transform);
+    }
+  }
+
   zoomAction({ transform }) {
     this.canvas.attr('transform', transform);
     this.zoomLevel = transform.k;
@@ -215,7 +234,7 @@ export class ZoomTool implements BaseTool {
     scrollBar.bar
       ?.attr('rx', this.RADIUS)
       .attr('draggable', true)
-      .attr('cursor', 'pointer')
+      .attr('cursor', 'default')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
       .attr('data-testid', scrollBar.name + '-bar')
@@ -403,6 +422,8 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
+    this.rememberedZoomTransform = null;
+
     const canvasWrapperNode = this.canvasWrapper.node();
 
     if (!canvasWrapperNode?.transform?.baseVal) {

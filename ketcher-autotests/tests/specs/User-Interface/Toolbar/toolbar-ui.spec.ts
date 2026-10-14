@@ -24,6 +24,31 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
+test.describe('Right toolbar scrolling', () => {
+  test.use({ viewport: { width: 1280, height: 400 } });
+
+  test('Issue #3234: scroll arrows reflect the right toolbar position and overflow', async ({
+    page,
+  }) => {
+    await waitForPageInit(page);
+    const { arrowScrollDownButton, arrowScrollUpButton } = RightToolbar(page);
+
+    await expect(arrowScrollDownButton).toBeVisible();
+    await expect(arrowScrollUpButton).toHaveCount(0);
+
+    await arrowScrollDownButton.click();
+    await expect(arrowScrollUpButton).toBeVisible();
+
+    await arrowScrollUpButton.click();
+    await expect(arrowScrollUpButton).toHaveCount(0);
+    await expect(arrowScrollDownButton).toBeVisible();
+
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    await expect(arrowScrollDownButton).toHaveCount(0);
+    await expect(arrowScrollUpButton).toHaveCount(0);
+  });
+});
+
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

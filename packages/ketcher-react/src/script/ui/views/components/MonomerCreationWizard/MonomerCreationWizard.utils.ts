@@ -252,9 +252,9 @@ const LEAVING_ATOM_BOND_LENGTH = 1;
 /**
  * Position for a leaving group atom created when a bond between two RNA preset
  * components is cut: along the cut bond, one bond length from the attachment
- * atom but no further than the bond's midpoint. Placing it past the
- * midpoint stretches the monomer's bounding box over the neighbor, and both
- * ends of the cut bond get a leaving atom.
+ * atom, or on the neighbor atom when the bond is shorter. Placing it on the
+ * neighbor of a long bond stretches the monomer's bounding box over the
+ * neighbor component.
  */
 export const getLeavingAtomPositionTowardsNeighbor = (
   attachmentAtomPosition?: Vec2,
@@ -272,7 +272,7 @@ export const getLeavingAtomPositionTowardsNeighbor = (
 
   return attachmentAtomPosition.add(
     bondVector.scaled(
-      Math.min(LEAVING_ATOM_BOND_LENGTH, bondLength / 2) / bondLength,
+      Math.min(LEAVING_ATOM_BOND_LENGTH, bondLength) / bondLength,
     ),
   );
 };

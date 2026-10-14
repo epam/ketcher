@@ -20,7 +20,7 @@ The UI kit SHALL live in a self-contained folder inside `ketcher-react` and SHAL
 
 Lint rules SHALL enforce that:
 
-- kit code imports only kit code, the headless library, React and the class-name utility;
+- kit code imports only kit code, static assets, the headless library, React and the class-name utility;
 - code outside the kit imports kit code only through the kit entry module;
 - no file outside an explicit allowlist imports `@mui/*` or `@emotion/*`.
 

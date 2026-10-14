@@ -2,7 +2,7 @@
 
 ### Requirement: Single token source for UI chrome
 
-UI-chrome design values (colours, typography, radii, shadows, borders, transitions, z-indices, and spacing when needed) SHALL be defined once as `--ketcher-*` CSS custom properties in a two-tier model:
+UI-chrome design values (colours, typography, radii, shadows, borders, transitions, z-indices, and spacing when needed) SHALL be defined once as `--ketcher-*` CSS custom properties. Colours SHALL use a two-tier model:
 
 - **primitive tokens**, which hold raw values;
 - **semantic tokens**, which reference primitives.

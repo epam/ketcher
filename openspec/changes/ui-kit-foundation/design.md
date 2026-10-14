@@ -139,7 +139,7 @@ Kit components wrap Base UI parts.
 - primitives, for example `--ketcher-palette-teal-600`;
 - semantic tokens, for example `--ketcher-color-accent`, `--ketcher-font-size-regular`, `--ketcher-radius-sm`.
 
-Kit components only reference semantic tokens. Spacing tokens are added when a migrated component needs them; there is no speculative scale.
+Kit components only reference semantic tokens. The two tiers apply to colours. Non-colour tokens (font sizes, line heights, font families, radii, z-indices) are single-tier semantic tokens with literal values. Spacing tokens are added when a migrated component needs them; there is no speculative scale. Where the two packages use the same semantic name for different values, the macromolecules token gets a `-macro` suffix, and the pair is listed in the discrepancy list.
 
 Tokens are declared on `:root`. They are prefixed, so they are inert for hosts. Hosts and individual editor instances override them on any ancestor element, and the nearest declaration wins through inheritance.
 
@@ -154,19 +154,26 @@ Tokens are declared on `:root`. They are prefixed, so they are inert for hosts. 
 
 **LESS:**
 
-- Each variable in `variables.less` becomes `@x: var(--ketcher-…)`.
-- LESS colour functions can't operate on `var()`:
-  - The 11 `fade(@x, N%)` calls become `color-mix(in srgb, var(--…) N%, transparent)`, which is pixel-identical.
-  - The 1 `lighten()` and 1 `mix()` operate in HSL or on resolved values, which `color-mix()` doesn't reproduce exactly. Their compiled outputs become literal primitive tokens.
-- LESS fails the build on any colour function left over, so a miss can't break pixels silently.
+- **What is bridged:** the font variables and the colour variables in the "new styles" sections of `variables.less` (new styles, buttons, text, icons, tabs, divider, scroll, borders, shadow colours, dropdown, slider, input, select). Each becomes `@x: var(--ketcher-x)`.
+- **What stays literal:**
+  - the "old styles" block (`@main-color`, `@active-color`, `@border-color` and so on), which feeds `lighten()` and a guarded mixin;
+  - sizes, dimensions, breakpoints (media queries can't use `var()`) and the periodic-table palette.
+  - The inputs of compile-time functions (`escape()` for SVG data URIs, and `mix()`) use private literal copies, `@_literal-*`. The parity checks pin these to the same values as the tokens.
+- **Colour functions:** LESS colour functions can't operate on `var()`. The 11 `fade(@x, N%)` calls become `color-mix(in srgb, @x N%, transparent)`. That is pixel-identical for opaque inputs, and every caller passes an opaque colour.
+- **Guarded mixin:** `.highlight-shadow(@color) when (iscolor(@color))` would silently skip a `var()` argument. Its guard becomes `when (default())`.
+- **Silent failures:** a guard or function silently skipping a `var()` doesn't fail the build. So the LESS bridge is verified by a CSS parity check. It compares the compiled `dist/index.css` before and after, with `var()` resolved through `tokens.css`, and requires zero differences.
+- **A dormant reference:** `ContextMenu.module.less` already uses `line-height: var(--ketcher-font-size-regular)`. That variable is undefined today, so the declaration resolves to `inherit`. Defining the token would change rendering, so the declaration becomes `line-height: inherit`.
 
 **Emotion:**
 
-- The UI-chrome keys of `defaultTheme.ts` become `'var(--ketcher-…)'` strings, so the existing 263 `theme.ketcher.*` usages read tokens unchanged.
-- Before converting, two audits run:
-  - which theme keys `ketcher-core`'s canvas renderer reads. Those stay literal, because SVG presentation attributes don't resolve `var()`;
-  - any JS colour maths or string manipulation applied to theme values.
-- `theme.less` is deleted.
+- **What is bridged:** the `color.*`, `font.size.*` and `font.family.*` keys of `defaultTheme.ts` become `'var(--ketcher-…)'` strings, so the existing 263 `theme.ketcher.*` usages read tokens unchanged.
+- **Audit results (2026-10-14):**
+  - `ketcher-core`'s canvas reads only `theme.monomer.*` and `theme.peptide.*`, which stay literal.
+  - `color.icon.active` is used as an SVG `fill` attribute in macromolecules' shared `Icon`, so it stays literal.
+  - No JS colour maths is applied to theme values.
+  - `font.weight`, `border`, `shadow`, `outline`, `transition` and `zIndex` stay literal for now. They are numeric or composite values with no current need.
+- **Parity:** a snapshot test of the resolved theme, recorded before the change, is the guard.
+- **`theme.less`:** deleted. Its three LESS consumers switch to the corresponding `--ketcher-*` tokens.
 
 ### Decision 8 — Theme prop: canvas palette only; CSS variables are the chrome theming API
 
@@ -201,7 +208,7 @@ The existing root resets (macromolecules `all: unset`, react with no reset) stay
 
 ESLint uses `import/no-restricted-paths` from the existing `eslint-plugin-import`:
 
-- `ui-kit/**` may only import from `ui-kit/**`, `@base-ui/react`, `react` and `clsx`;
+- `ui-kit/**` may only import from `ui-kit/**`, static assets in `src/assets/**`, `@base-ui/react`, `react` and `clsx`. For example, the `Icon` map's three tool-name keys from `ketcher-core` become string literals, guarded by a drift test that lives outside the kit;
 - code outside the kit may only import kit code through the `ui-kit` entry point.
 
 A second ESLint rule bans new `@mui/*` and `@emotion/*` imports, with an allowlist of the files that use them today. The allowlist shrinks with every migration.
@@ -239,7 +246,7 @@ A metrics script counts the remaining:
 **Storybook:**
 
 - One Storybook 10 instance using the Vite builder, configured in `ketcher-react`.
-- It collects stories from both `ketcher-react/src` and `ketcher-macromolecules/src`. Package aliases are reused from `example/vite.config.js` by moving them into a shared helper.
+- It collects stories from both `ketcher-react/src` and `ketcher-macromolecules/src`. This change's stories (kit components and the MUI Tooltip characterisation) need only SVGR. The `example/vite.config.js` package aliases move into a shared helper once the first story imports editor or macromolecules code (sub-project #2).
 - Decorators provide `KitProvider`, tokens and global LESS, plus the MUI and Emotion theme providers that legacy stories need.
 
 **Characterisation stories:**
@@ -254,7 +261,7 @@ A metrics script counts the remaining:
 - Open states are set through props such as `defaultOpen`. Hover and focus states are forced with the pseudo-states addon, or with explicit `hover()`/`focus()` calls if that addon is incompatible with Storybook 10.
 - A CI job builds Storybook and runs this project on PRs that touch either UI package's `src`.
 
-**Unit tests:** they stay on Jest + RTL; no Vitest in this change. Kit tests reuse stories as fixtures through `composeStories`.
+**Unit tests:** they stay on Jest + RTL, and there is no Vitest in this change. Kit tests render components directly. Storybook 10 is ESM-only, so the CJS Jest setup can't load `composeStories`. Reusing stories as test fixtures can come with the Vitest migration (#11974).
 
 **Gates for every migration PR:**
 

@@ -3055,8 +3055,8 @@ export class CoreEditor {
 
     render.setViewBox({
       ...render.viewBox,
-      minX: newMinX,
-      minY: newMinY,
+      minX: Math.round(newMinX),
+      minY: Math.round(newMinY),
     });
   }
 

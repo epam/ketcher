@@ -1,10 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import {
-  MonomerType,
-  selectAllStructuresOnCanvas,
-  shiftCanvas,
-} from '@utils/index';
+import { MonomerType, selectAllStructuresOnCanvas } from '@utils/index';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {

@@ -22,6 +22,7 @@ import {
   useCallback,
   RefObject,
 } from 'react';
+import { isTouchDevice } from 'react-device-detect';
 import { StyledInput } from 'components/ZoomControls/styles';
 import {
   hotkeysShortcuts,
@@ -76,8 +77,6 @@ export const ZoomInput = ({
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    const isTouchDevice =
-      'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (!isTouchDevice) {
       inputEl?.focus();
       inputEl?.select();

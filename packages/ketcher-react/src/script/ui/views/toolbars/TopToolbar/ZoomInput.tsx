@@ -23,6 +23,7 @@ import {
   useCallback,
 } from 'react';
 import styled from '@emotion/styled';
+import { isTouchDevice } from 'react-device-detect';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
@@ -108,8 +109,6 @@ export const ZoomInput = ({
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    const isTouchDevice =
-      'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (!isTouchDevice) {
       inputEl?.focus();
       inputEl?.select();

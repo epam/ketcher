@@ -44,7 +44,7 @@ export function toRlabel(values: number[]): number {
   return res;
 }
 
-export type KetMoleculeItem = KetItem & {
+type KetMoleculeItem = KetItem & {
   atoms?: KetMoleculeNode['atoms'];
   bonds?: KetMoleculeNode['bonds'];
   sgroups?: KetMoleculeNode['sgroups'];

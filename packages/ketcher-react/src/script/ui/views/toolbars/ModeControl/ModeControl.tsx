@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
@@ -158,14 +158,13 @@ export const ModeControl = ({
 }: ModeProps) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
 
   const handleModeSwitch = (isPolymer: boolean) => {
     toggle(isPolymer);
     setIsExpanded(false);
     setTimeout(() => {
-      if (btnRef.current) btnRef.current.blur();
+      btnElement?.blur();
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
       const canvas = document.querySelector('canvas') as HTMLElement;
@@ -174,10 +173,7 @@ export const ModeControl = ({
   };
 
   const onClose = () => setIsExpanded(false);
-  const onExpand = () => {
-    setAnchorEl(btnRef.current);
-    setIsExpanded(true);
-  };
+  const onExpand = () => setIsExpanded(true);
 
   const modeLabel = isPolymerEditor
     ? t('modeControl.macromolecules')
@@ -193,7 +189,7 @@ export const ModeControl = ({
         data-testid="polymer-toggler"
         disabled={disabled}
         onClick={onExpand}
-        ref={btnRef}
+        ref={setBtnElement}
       >
         <ModeIconWrapper
           disabled={disabled}
@@ -213,7 +209,7 @@ export const ModeControl = ({
         title=""
         open={isExpanded}
         onClose={onClose}
-        anchorEl={anchorEl}
+        anchorEl={btnElement}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

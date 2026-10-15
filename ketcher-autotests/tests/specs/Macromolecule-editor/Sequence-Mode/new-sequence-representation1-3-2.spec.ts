@@ -1474,7 +1474,7 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 }
 
-const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
+const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = new Set([
   2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 18, 19, 20, 21, 22, 23, 24, 24,
   25, 26, 27, 28, 29, 31, 32, 33, 33, 39, 40, 41, 42, 43, 43, 44, 55, 56, 57,
   58, 59, 60, 61, 62, 63, 74, 75, 76, 77, 78, 79, 85, 86, 87, 88, 89, 90, 95,
@@ -1484,13 +1484,13 @@ const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
   182, 183, 184, 185, 186, 187, 188, 193, 194, 195, 196, 197, 198, 201, 202,
   203, 204, 205, 206, 210, 211, 212, 213, 214, 215, 216, 223, 227, 230, 231,
   232, 233, 234, 235, 236, 237, 238,
-];
+]);
 const uniquePairsOfFirstAndSecondSymbols = sequences.filter(
   (sequence) =>
-    !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.includes(sequence.Id),
+    !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.has(sequence.Id),
 );
 
-const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = [
+const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = new Set([
   50, 51, 52, 53, 54, 56, 57, 58, 60, 61, 62, 65, 69, 73, 74, 75, 76, 77, 78,
   79, 80, 82, 84, 85, 86, 87, 88, 89, 90, 91, 93, 94, 95, 96, 97, 98, 99, 100,
   101, 102, 103, 104, 106, 107, 110, 111, 114, 115, 116, 117, 118, 119, 120,
@@ -1501,10 +1501,10 @@ const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = [
   183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
   198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213,
   214, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
-];
+]);
 const uniquePairsOfSecondAndThirdSymbols = sequences.filter(
   (sequence) =>
-    !excludeNonUniquePairsOfSecondAndThirdSymbolsIds.includes(sequence.Id),
+    !excludeNonUniquePairsOfSecondAndThirdSymbolsIds.has(sequence.Id),
 );
 for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 23-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
@@ -1712,7 +1712,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   });
 }
 
-const excludeNonUniqueFirstSymbolPairsIds = [
+const excludeNonUniqueFirstSymbolPairsIds = new Set([
   2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
   23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42, 43, 44, 47,
   51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 70, 74, 75, 76,
@@ -1725,9 +1725,9 @@ const excludeNonUniqueFirstSymbolPairsIds = [
   193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
   211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
   228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
-];
+]);
 const uniqueFirstSymbolPairs = sequences.filter(
-  (sequence) => !excludeNonUniqueFirstSymbolPairsIds.includes(sequence.Id),
+  (sequence) => !excludeNonUniqueFirstSymbolPairsIds.has(sequence.Id),
 );
 for (const monomer of monomersToAdd) {
   for (const sequence of uniqueFirstSymbolPairs) {

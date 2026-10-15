@@ -19,6 +19,7 @@ import {
   PLAIN_TEXT_MIME_TYPE,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
@@ -354,10 +355,18 @@ export abstract class BaseMode {
   private updateEntitiesPosition(
     drawingEntitiesManager: DrawingEntitiesManager,
   ): void {
+    const entities = drawingEntitiesManager.allEntitiesArray;
+    if (entities.length === 0) {
+      return;
+    }
+
     const newNodePosition = this.getNewNodePosition();
-    const firstEntityPosition =
-      drawingEntitiesManager.allEntities[0]?.[1].position;
-    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+    const bbox = getStructureBbox(entities);
+    const center = new Vec2(
+      bbox.left + bbox.width / 2,
+      bbox.top + bbox.height / 2,
+    );
+    const offset = Vec2.diff(newNodePosition, center);
 
     drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
       drawingEntitiesManager.moveDrawingEntityModelChange(

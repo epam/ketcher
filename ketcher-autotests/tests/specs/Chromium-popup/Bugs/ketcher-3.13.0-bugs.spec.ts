@@ -30,6 +30,8 @@ import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constan
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
+import { AttachmentPointOption } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -536,15 +538,17 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeEditorScreenshot(page);
   });
 
-  test('Case 11 — Ketcher saves incorrect attachment points configuration for new nucleotides', async () => {
+  test('Case 11 — Changing phosphate position swaps user-created sugar/phosphate attachment points for new nucleotides', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/9084
      * Behaviour changed in task: https://github.com/epam/ketcher/issues/9129
+     * Behaviour changed in task: https://github.com/epam/ketcher/issues/12133
      * Version: 3.13.0-rc.1
      * Description:
      * When creating a new Nucleotide in the monomer wizard and manually defining
-     * attachment points (AP). Ketcher saves it with R2(phosphate)-R1(sugar) connection.
+     * attachment points (AP), changing the phosphate position swaps the user-created
+     * sugar/phosphate APs instead of leaving a conflicting R1/R2 configuration.
      *
      * Scenario:
      * 1. Go to Molecules mode (clean canvas)
@@ -554,7 +558,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * 5. Configure Base/Sugar/Phosphate per picture from the issue and set APs:
      *    - Sugar: R2 is already defined (user tries to define it again)
      *    - Phosphate: R1 is already defined (user tries to define it again)
-     * 6. Try to submit
+     * 6. Change phosphate position to 3'
+     * 7. Try to submit
+     *
+     * Expected Result:
+     * - Phosphate position is inferred as 5' and then changed to 3'.
+     * - User-created sugar R2 becomes R1 and phosphate R1 becomes R2.
+     * - Submit does not show the invalid sugar/phosphate connection attachment points banner.
      */
 
     // Step 1–2: Load structure from file as a new project (Molecules mode)
@@ -605,27 +615,54 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [21, 23, 24],
     });
 
-    // Select phosphate position (required field; without it the validation dispatches
-    // phosphatePositionNotSelected which replaces invalidRnaPresetStructure in the reducer)
+    // Phosphate position is auto-inferred as 5' from sugar R2 / phosphate R1.
+    await expect(
+      page.getByTestId('phosphate-position-5-button'),
+    ).toHaveAttribute('aria-pressed', 'true');
+    // Readonly connection rows have a disabled name select; user-created rows do not.
+    // Leaving atom text includes a zero-width space.
+    const expectUserCreatedAttachmentPoint = async (
+      name: AttachmentPointOption,
+      leavingAtom: RegExp,
+    ) => {
+      const nameCombobox = dialog.getAttachmentPointNameCombobox(name);
+      await expect(nameCombobox).toHaveCount(1);
+      await expect(nameCombobox.locator('[aria-disabled="true"]')).toHaveCount(
+        0,
+      );
+      await expect(dialog.getAttachmentPointAtomCombobox(name)).toHaveText(
+        leavingAtom,
+      );
+    };
+    const H = /^H\u200B?$/;
+
+    await expectUserCreatedAttachmentPoint(AttachmentPointOption.R1, H);
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expectUserCreatedAttachmentPoint(AttachmentPointOption.R2, H);
+
+    // Change phosphate position to 3': user-created sugar R2 and phosphate R1 swap names.
     await presetSection.setPhosphatePosition('3');
+    await expect(
+      page.getByTestId('phosphate-position-3-button'),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await expectUserCreatedAttachmentPoint(AttachmentPointOption.R2, H);
+    await presetSection.openTab(NucleotidePresetTab.Sugar);
+    await expectUserCreatedAttachmentPoint(AttachmentPointOption.R1, H);
 
-    // Step 6: Try to submit with invalid AP configuration (duplicates)
+    // Submit must not report the invalid sugar/phosphate connection attachment points.
     await dialog.submit();
-
-    // When position is set, validator step 2a fires:
-    // hasPhosphatePositionAttachmentPointConflict → dispatches
-    // invalidPhosphatePositionAttachmentPoints to preset (replacing step 1's
-    // invalidRnaPresetStructure). Step 3 (phosphatePositionNotSelected) does not fire.
-    const invalidPhosphatePositionMessage = NotificationMessageBanner(
-      page,
-      ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
-    );
-
-    expect(
-      await invalidPhosphatePositionMessage.getNotificationMessage(),
-    ).toEqual(
-      'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
-    );
+    await expect(
+      NotificationMessageBanner(
+        page,
+        ErrorMessage.rnaPresetAtomsOutsideComponents,
+      ).notificationMessageBanner,
+    ).toBeVisible();
+    await expect(
+      NotificationMessageBanner(
+        page,
+        ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
+      ).notificationMessageBanner,
+    ).toHaveCount(0);
 
     await dialog.discard();
   });

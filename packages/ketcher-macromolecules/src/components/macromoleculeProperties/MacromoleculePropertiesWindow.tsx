@@ -1106,11 +1106,7 @@ export const MacromoleculePropertiesWindow = () => {
     </GrossFormula>
   );
 
-  const molecularMassValue = !isNumber(firstMacromoleculesProperties?.mass) ? (
-    <MolecularMassAmount data-testid="Molecular-Mass-Value">
-      {NO_DATA_VALUE}
-    </MolecularMassAmount>
-  ) : (
+  const molecularMassValue = isNumber(firstMacromoleculesProperties?.mass) ? (
     <>
       <MolecularMassAmount data-testid="Molecular-Mass-Value">
         {_round(
@@ -1120,6 +1116,10 @@ export const MacromoleculePropertiesWindow = () => {
         )}
       </MolecularMassAmount>{' '}
     </>
+  ) : (
+    <MolecularMassAmount data-testid="Molecular-Mass-Value">
+      {NO_DATA_VALUE}
+    </MolecularMassAmount>
   );
 
   return isMacromoleculesPropertiesWindowOpened ? (

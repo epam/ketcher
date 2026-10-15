@@ -84,15 +84,28 @@ jest.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
 
 // Create a mock store
 const createMockStore = (
-  selection = { atoms: [], bonds: [] },
-  monomerCreationState = {
-    assignedAttachmentPoints: new Map(),
+  selection?: {
+    atoms?: number[];
+    bonds?: number[];
+  },
+  monomerCreationState?: {
+    assignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   },
 ) => {
+  const resolvedSelection = {
+    atoms: [],
+    bonds: [],
+    ...selection,
+  };
+  const resolvedMonomerCreationState = {
+    assignedAttachmentPoints: new Map<AttachmentPointName, [number, number]>(),
+    ...monomerCreationState,
+  };
+
   const reducer = combineReducers({
     editor: () => ({
-      selection,
-      monomerCreationState,
+      selection: resolvedSelection,
+      monomerCreationState: resolvedMonomerCreationState,
     }),
   });
   return createStore(reducer);

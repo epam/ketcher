@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -38,8 +37,8 @@ async function copyImageToClipboard() {
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-    const item = new ClipboardItem({ [image.type]: image });
-    await navigator.clipboard.write([item]);
+    const item = new globalThis.ClipboardItem({ [image.type]: image });
+    await globalThis.navigator.clipboard.write([item]);
   } catch (e) {
     KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
     errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));

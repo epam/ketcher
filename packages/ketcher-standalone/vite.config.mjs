@@ -212,7 +212,9 @@ export default defineConfig({
     sourcemap: !isProduction,
     emptyOutDir: Boolean(variant.clean),
     modulePreload: false,
-    outDir: variant.dir,
+    // Absolute here and in output.dir: Rolldown resolves output.dir against
+    // process.cwd(), not the Vite root, so a relative path depends on the caller.
+    outDir: resolve(rootDir, variant.dir),
     // Without build.lib, Vite builds this as an *app*: it tree-shakes the
     // public API away entirely (the bundle ends up with no `export` clause at
     // all) because nothing in the graph consumes it. The Rollup baseline
@@ -230,7 +232,7 @@ export default defineConfig({
       },
       external,
       output: {
-        dir: variant.dir,
+        dir: resolve(rootDir, variant.dir),
         format: variant.format,
         exports: 'named',
         banner: license,

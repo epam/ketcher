@@ -9,6 +9,10 @@ import { VARIANTS } from '../build-variants.mjs';
 const rootDir = fileURLToPath(new URL('..', import.meta.url));
 const typesDir = join(rootDir, '.types');
 
+// Rolldown writes cwd-relative paths into `//#region` comments, so the build
+// runs from the package root to keep dist identical whatever cwd invoked it.
+process.chdir(rootDir);
+
 for (const [name, { separateIndigoRender }] of Object.entries(VARIANTS)) {
   process.env.NODE_ENV = 'production';
   process.env.INDIGO_MODULE_NAME = name;
@@ -19,7 +23,7 @@ for (const [name, { separateIndigoRender }] of Object.entries(VARIANTS)) {
     delete process.env.SEPARATE_INDIGO_RENDER;
   }
 
-  await build();
+  await build({ root: rootDir });
 }
 
 // Declarations are emitted once and then copied into every variant dir. The

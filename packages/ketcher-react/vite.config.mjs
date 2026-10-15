@@ -21,23 +21,11 @@ const pkg = JSON.parse(
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
-// Note `ketcher-macromolecules` is intentionally NOT a `dependencies` entry
-// here - it is only reached through the dynamic
-// `import('ketcher-macromolecules')` in `src/Editor.tsx`, and was never
-// externalized by peerDepsExternal either, so it stays bundled here exactly
-// as it was under Rollup.
-//
-// `extraExternals: [pkg.name]` is needed because ketcher-macromolecules'
-// compiled ESM entry (dist/index.modern.js, bundled here via the dynamic
-// import in src/Editor.tsx) itself imports the real `ketcher-react` package
-// - a documented circular-dependency workaround (see src/Editor.tsx's
-// comment on why it types that import as `unknown`). Rollup only ever
-// warned about this as an "unresolved dependency" and left it external;
-// Rolldown hard-fails unless it is listed explicitly.
-const { external } = createExternalPredicate({
-  pkg,
-  extraExternals: [pkg.name],
-});
+// `ketcher-macromolecules` is listed in `dependencies`, so the predicate
+// externalizes it. It is reached through the dynamic
+// `import('ketcher-macromolecules')` in `src/Editor.tsx`, which stays a plain
+// dynamic import (see `build.lib` below).
+const { external } = createExternalPredicate({ pkg });
 
 const sdfRawTextPlugin = createRawTextPlugin({
   name: 'ketcher-react-sdf-raw-text',
@@ -61,11 +49,11 @@ const output = (format, entryFileNames) => ({
   // behaviour for every CJS consumer using interop. Restored explicitly.
   // (Ignored for the `es` output, where it has no meaning.)
   esModule: true,
-  // Rolldown defaults chunk file extensions to `.mjs` for the `es` format's
-  // code-split chunks (the dynamically-imported `ketcher-macromolecules`
-  // bundle reached via `src/Editor.tsx`), unlike the Rollup baseline, which
-  // used a plain `.js` extension for every emitted file regardless of
-  // format. Forced back to `.js` to match.
+  // No code-split chunks are emitted today: `ketcher-macromolecules` is
+  // external, so its dynamic import stays a bare `import()`. This is a guard
+  // for when one appears. For the `es` format Rolldown names code-split chunks
+  // `*.mjs` by default, while the Rollup baseline used `.js` for every emitted
+  // file, so chunks are pinned to `.js`.
   chunkFileNames: '[name]-[hash].js',
 });
 

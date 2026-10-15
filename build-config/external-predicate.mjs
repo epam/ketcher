@@ -29,19 +29,11 @@
  * Node builtins that a package imports (such as `events`) are externalized the
  * same way when the package lists them in `dependencies`, as ketcher-core and
  * ketcher-standalone do. Nothing else is needed for them.
- *
- * `extraExternals` lets a package add to its own external set without
- * changing another package's: `ketcher-react` adds its own `pkg.name`
- * (`ketcher-macromolecules`' bundled ESM entry re-imports the real
- * `ketcher-react` package - a documented circular-dependency workaround
- * Rollup only ever warned about and left external; Rolldown hard-fails
- * unless it is listed explicitly).
  */
-export const createExternalPredicate = ({ pkg, extraExternals = [] }) => {
+export const createExternalPredicate = ({ pkg }) => {
   const allExternals = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
-    ...extraExternals,
   ];
 
   const external = (id) =>

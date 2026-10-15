@@ -263,15 +263,15 @@ The bump lands as a single commit after the migration completes, so that four in
 `package.json` files are not churning while the builds are still changing. It needs the release
 owner's agreement before it ships.
 
-**Vite version ranges vary by target.** `ketcher-core`, `ketcher-react`, and
-`ketcher-macromolecules` declare `^8.3.1`; `ketcher-standalone`, `example`, and `demo` pin
-`8.3.1`. The standalone exact pin is intentional: fetch variants rely on Vite's asset plugin
+**Vite version ranges vary by target.** `ketcher-core`, `ketcher-react`,
+`ketcher-macromolecules`, and `ketcher-standalone` declare `^8.3.1`; `example` and `demo` pin
+`8.3.1`. The lockfile resolves every package to 8.3.1. Fetch variants rely on Vite's asset plugin
 evaluating the `?no-inline` tag _ahead of_ the `if (build.lib) return true` branch that otherwise
 inlines rewritten assets in library mode (see "The `.wasm` for the two fetch variants is now
-emitted, not copied" above). A patch release could reorder or change that check and silently
-re-inline the ~16 MB `.wasm` into JavaScript. Vite 8.3.1 emits a separate `.wasm` file for each
-fetch variant, and its worker references that file. The version ranges and standalone pin are
-part of the follow-up ADR's stable-output policy.
+emitted, not copied" above). A patch release that changed that order would re-inline the ~16 MB
+`.wasm` into JavaScript, but `ketcher-standalone`'s `copyWasm` build fails loudly in that case
+(`got 1 worker rewrite(s) and 0 wasm rewrite(s)`), so an exact pin is not needed. Vite 8.3.1
+emits a separate `.wasm` file for each fetch variant, and its worker references that file.
 
 **`ketcher-macromolecules` does not emit a CSS source map.** Producing a single `dist/index.css`
 requires `build.cssCodeSplit: false`, and in that path Vite 8.3.1 emits the extracted CSS via a

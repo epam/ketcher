@@ -132,15 +132,16 @@ class ReText extends ReObject {
           : widestRow,
       paths[0],
     );
-    const lastElOfWidestRow: RaphaelBaseElement = widestRow.at(
-      -1,
-    ) as RaphaelBaseElement;
+    const lastElOfWidestRow = widestRow.at(-1);
+    const lastRow = paths.at(-1);
+
+    if (!lastElOfWidestRow || !lastRow) {
+      throw new Error('Cannot get the bounds of empty selection paths');
+    }
+
     const rightEdge: number =
       lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
 
-    const lastRow: Array<RaphaelBaseElement> = paths.at(
-      -1,
-    ) as Array<RaphaelBaseElement>;
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
     );

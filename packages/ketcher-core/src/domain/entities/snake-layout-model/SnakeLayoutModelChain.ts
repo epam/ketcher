@@ -9,7 +9,13 @@ export class SnakeLayoutModelChain {
   private readonly rows: ISnakeLayoutModelRow[] = [];
 
   public get lastRow() {
-    return this.rows.at(-1) as (typeof this.rows)[number];
+    const lastRow = this.rows.at(-1);
+
+    if (!lastRow) {
+      throw new Error('Cannot get the last row of an empty snake layout chain');
+    }
+
+    return lastRow;
   }
 
   public get lastNode() {

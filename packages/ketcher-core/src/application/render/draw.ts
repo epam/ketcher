@@ -1617,7 +1617,12 @@ function selectionPolygon(
   r: Vec2[],
   options: RenderOptions,
 ) {
-  const v = r.at(-1) as Vec2;
+  const v = r.at(-1);
+
+  if (!v) {
+    throw new Error('Cannot draw a selection polygon without points');
+  }
+
   let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
     pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);

@@ -96,7 +96,9 @@ export class SequenceViewModel {
       const lastSenseNode = this.nodes.at(-1);
 
       if (!lastSenseNode) {
-        return;
+        throw new Error(
+          'Cannot process antisense chain without sense sequence nodes',
+        );
       }
 
       let lastSenseChain: Chain = lastSenseNode.chain;

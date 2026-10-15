@@ -27,7 +27,13 @@ export class LinkerSequenceNode {
   }
 
   public get lastMonomerInNode() {
-    return this.monomers.at(-1) as (typeof this.monomers)[number];
+    const lastMonomer = this.monomers.at(-1);
+
+    if (!lastMonomer) {
+      throw new Error('Cannot get the last monomer of an empty linker node');
+    }
+
+    return lastMonomer;
   }
 
   public get monomers() {

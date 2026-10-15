@@ -37,4 +37,3 @@ export { default as ReSimpleObject } from './resimpleObject';
 export { default as ReText } from './retext';
 export { default as ReStruct } from './restruct';
 export { default as Visel } from './visel';
-export { paperPathFromSVGElement } from './resgroup';

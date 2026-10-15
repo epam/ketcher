@@ -624,6 +624,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await selectAllStructuresOnCanvas(page);
     const atom = getAtomLocator(page, { atomId: 15 });
     await collapseMonomers(page, atom);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await getAbbreviationLocator(page, { name: 'Base' }).hover({ force: true });
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();

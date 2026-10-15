@@ -2535,6 +2535,10 @@ export class CoreEditor {
     if (!editorTool) {
       return false;
     }
+    // Library item drag owns the pointer; tool handlers would reset its AP highlight
+    if (this.dragDropHandler.isDragging) {
+      return false;
+    }
     const conditions = [
       eventHandlerName in editorTool,
       this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),

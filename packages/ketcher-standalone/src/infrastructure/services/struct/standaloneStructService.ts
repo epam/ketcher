@@ -77,7 +77,10 @@ import {
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
   DEFAULT_WORKER_TIMEOUT,
 } from './constants';
-import { getIndigoWorker } from '_indigo-worker-import-alias_';
+import {
+  getIndigoWorker,
+  terminateIndigoWorker,
+} from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;
@@ -275,11 +278,14 @@ class IndigoService implements StructService {
   private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
   private ketcherId: string | null = null;
+  private readonly messageHandler: (
+    e: MessageEvent<OutputMessage<string>>,
+  ) => void;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
     this.worker = getIndigoWorker();
-    this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+    this.messageHandler = (e: MessageEvent<OutputMessage<string>>) => {
       if (e.data.type === Command.Info) {
         const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
           ? this.callIndigoNoRenderLoadedCallback
@@ -294,6 +300,7 @@ class IndigoService implements StructService {
         this.EE.emit(event, { data: message });
       }
     };
+    this.worker.addEventListener('message', this.messageHandler);
   }
 
   public addKetcherId(ketcherId: string) {
@@ -1001,8 +1008,12 @@ class IndigoService implements StructService {
   }
 
   public destroy() {
-    this.worker.terminate();
-    this.worker.onmessage = null;
+    this.worker.removeEventListener('message', this.messageHandler);
+  }
+
+  public terminateWorker() {
+    this.worker.removeEventListener('message', this.messageHandler);
+    terminateIndigoWorker();
   }
 }
 

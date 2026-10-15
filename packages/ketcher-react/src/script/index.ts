@@ -54,7 +54,7 @@ async function buildKetcherAsync({
   const ketcher = await builder.build();
   structService.addKetcherId(ketcher.id);
 
-  const { cleanup, setServer } = await builder.appendUiAsync(
+  const { cleanup: uiCleanup, setServer } = await builder.appendUiAsync(
     prevKetcherId,
     ketcher.id,
     element,
@@ -65,6 +65,11 @@ async function buildKetcherAsync({
     togglerComponent,
     customButtons,
   );
+
+  const cleanup = () => {
+    uiCleanup?.();
+    structService.destroy?.();
+  };
 
   return { ketcher, cleanup, builder, setServer };
 }

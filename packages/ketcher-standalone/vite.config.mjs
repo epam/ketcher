@@ -6,6 +6,7 @@ import { license } from '../../license-banner.mjs';
 import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import { mode } from '../../build-config/replace-values.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
+import { createConsoleStripPlugin } from '../../build-config/console-strip-plugin.mjs';
 import { VARIANTS } from './build-variants.mjs';
 
 const pkg = JSON.parse(
@@ -203,9 +204,10 @@ export default defineConfig({
     },
     plugins: () => (variant.copyWasm ? [noInlineWasmPlugin()] : []),
   },
-  plugins: variant.copyWasm
-    ? [literalWorkerUrlPlugin()]
-    : [dropInlineWorkerMapsPlugin()],
+  plugins: [
+    variant.copyWasm ? literalWorkerUrlPlugin() : dropInlineWorkerMapsPlugin(),
+    ...(isProduction ? [createConsoleStripPlugin()] : []),
+  ],
   build: {
     target: BROWSER_BUILD_TARGET,
     minify: false,

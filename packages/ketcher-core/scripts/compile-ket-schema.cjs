@@ -3,13 +3,14 @@ const path = require('node:path');
 const Ajv = require('ajv').default;
 const standaloneCode = require('ajv/dist/standalone').default;
 
+const rootDir = path.resolve(__dirname, '..');
 const schemaPath = path.resolve(
-  __dirname,
-  '../src/domain/serializers/ket/schema.json',
+  rootDir,
+  'src/domain/serializers/ket/schema.json',
 );
 const outputPath = path.resolve(
-  __dirname,
-  '../src/domain/serializers/ket/compiledSchema.js',
+  rootDir,
+  'src/domain/serializers/ket/compiledSchema.js',
 );
 
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
@@ -20,35 +21,51 @@ const ajv = new Ajv({
 });
 const validate = ajv.compile(schema);
 
-let generatedCode = standaloneCode(ajv, validate);
+// Even with `esm: true`, Ajv emits its runtime helpers as `require()` calls
+// (ajv-validator/ajv#2209). Bundling the generated module with Ajv inlined
+// turns those calls into plain ESM code, so the validator is self-contained
+// and needs no hand-written rewrite.
+// Vite's lib mode resolves `entry` to an absolute path before plugins run, so
+// the virtual entry is an absolute (non-existent) file inside the package -
+// that also lets Ajv's runtime imports resolve from this package.
+const VIRTUAL_ENTRY = path.join(rootDir, 'ket-schema-validator.virtual.js');
 
-// Convert any remaining require() calls to ES imports
-const requireMatches = generatedCode.match(
-  /const (\w+) = require\("([^"]+)"\)\.default;/g,
-);
-if (requireMatches) {
-  const imports = [];
-  requireMatches.forEach((match) => {
-    const [, varName, modulePath] = match.match(
-      /const (\w+) = require\("([^"]+)"\)\.default;/,
-    );
-    imports.push(`import ${varName} from "${modulePath}";`);
-    generatedCode = generatedCode.replace(match, '');
+async function main() {
+  const { build } = await import('vite');
+  const [output] = await build({
+    configFile: false,
+    root: rootDir,
+    logLevel: 'warn',
+    plugins: [
+      {
+        name: 'ket-schema-validator',
+        resolveId: (id) => (id === VIRTUAL_ENTRY ? VIRTUAL_ENTRY : null),
+        load: (id) =>
+          id === VIRTUAL_ENTRY ? standaloneCode(ajv, validate) : null,
+      },
+    ],
+    build: {
+      write: false,
+      minify: false,
+      lib: {
+        entry: VIRTUAL_ENTRY,
+        formats: ['es'],
+        fileName: 'compiledSchema',
+      },
+    },
   });
-  generatedCode = imports.join('\n') + '\n' + generatedCode;
+
+  const chunks = output.output.filter((file) => file.type === 'chunk');
+  if (chunks.length !== 1) {
+    throw new Error(
+      `compile-ket-schema: expected one bundled chunk, got ${chunks.length}.`,
+    );
+  }
+
+  fs.writeFileSync(outputPath, chunks[0].code, 'utf8');
 }
 
-// The rewrite above only recognises `const X = require("m").default;`. Any other
-// require() form would survive into this ESM output and throw at runtime, so fail
-// the build loudly instead of shipping a module that cannot load.
-const leftoverRequire = /\brequire\s*\(/.exec(generatedCode);
-if (leftoverRequire) {
-  const line = generatedCode.slice(0, leftoverRequire.index).split('\n').length;
-  throw new Error(
-    `compile-ket-schema: unconverted require() at generated line ${line}. ` +
-      'The rewriter only handles `const X = require("m").default;` - extend it ' +
-      'to cover this form.',
-  );
-}
-
-fs.writeFileSync(outputPath, `${generatedCode}\n`, 'utf8');
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

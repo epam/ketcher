@@ -16,7 +16,7 @@
 
 import type { IKetConnection } from 'application/formatters/types/ket';
 import type { Point } from 'domain/entities/vec2';
-import type { KetMoleculeNode } from './types';
+import type { KetItem, KetMoleculeNode } from './types';
 
 export type KetAtomLocation = {
   moleculeId: string;
@@ -28,12 +28,11 @@ export type KetAttachmentGroup = {
   atoms: number[];
 };
 
-export type KetMolecule = Partial<
-  Pick<KetMoleculeNode, 'atoms' | 'bonds' | 'sgroups' | 'properties'>
-> & {
-  stereoFlagPosition?: Point;
-  attachmentGroups?: KetAttachmentGroup[];
-};
+export type KetMolecule = KetItem &
+  Partial<Omit<KetMoleculeNode, 'type' | 'stereoFlagPosition'>> & {
+    stereoFlagPosition?: Point;
+    attachmentGroups?: KetAttachmentGroup[];
+  };
 
 export type HapticKet = {
   root: {

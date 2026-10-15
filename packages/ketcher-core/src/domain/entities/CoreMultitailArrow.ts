@@ -45,6 +45,13 @@ export class MultitailArrow extends DrawingEntity {
     this.renderer = renderer;
   }
 
+  public override get position(): Vec2 {
+    return new Vec2(
+      this.spineTopX.getFloatingPrecision(),
+      this.spineTopY.getFloatingPrecision(),
+    );
+  }
+
   public override moveRelative(delta: Vec2): void {
     this.spineTopX = this.spineTopX.add(
       FixedPrecisionCoordinates.fromFloatingPrecision(delta.x),

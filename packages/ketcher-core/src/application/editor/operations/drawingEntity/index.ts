@@ -46,7 +46,7 @@ export class DrawingEntityMoveOperation implements Operation {
     private readonly moveDrawingEntityChangeModel: () => void,
     private readonly invertMoveDrawingEntityChangeModel: () => void,
     private readonly redoDrawingEntityChangeModel: () => void,
-    private readonly drawingEntity: DrawingEntity,
+    public readonly drawingEntity: DrawingEntity,
   ) {}
 
   public execute() {

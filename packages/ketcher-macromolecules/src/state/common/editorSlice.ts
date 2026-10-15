@@ -178,6 +178,20 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
+      const preview = state.preview;
+      // Only the canonical closed shape is a no-op. Extra fields from any
+      // preview variant still need to be removed by the replacement below.
+      if (
+        action.payload === undefined &&
+        preview.type === PreviewType.Monomer &&
+        preview.monomer === undefined &&
+        Object.prototype.hasOwnProperty.call(preview, 'monomer') &&
+        preview.style !== undefined &&
+        Object.keys(preview.style).length === 0 &&
+        Object.keys(preview).length === 3
+      ) {
+        return;
+      }
       state.preview = castDraft(
         action.payload ?? {
           type: PreviewType.Monomer,

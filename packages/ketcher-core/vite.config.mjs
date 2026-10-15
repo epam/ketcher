@@ -134,6 +134,12 @@ export default defineConfig({
     rolldownOptions: {
       input: resolve(rootDir, pkg.source),
       external,
+      // Rolldown's default (`smart`) inlines module-level constants and drops
+      // the module that declared them, but the .d.ts still ships. A published
+      // .d.ts with no .js is a type for a value that is not there, so keep the
+      // constant modules as emitted files. The package-metadata check fails if
+      // this regresses.
+      optimization: { inlineConst: false },
       // Tree-shaking is left at Rolldown's default. It was briefly disabled
       // here on the theory that preserveModules needs every preserved module
       // treated as a root, but measurement says otherwise: comparing the

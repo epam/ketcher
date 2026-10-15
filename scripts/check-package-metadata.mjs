@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, rmSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { EXEC_TIMEOUT_MS, npmPack } from './npm-pack.mjs';
@@ -35,6 +41,23 @@ const ATW_EXCLUDED_ENTRYPOINTS = {
   'ketcher-macromolecules': ['./dist/index.css'],
   'ketcher-react': ['./dist/index.css'],
 };
+// A published .d.ts that declares runtime values must have a sibling .js. A
+// bundler that drops the .js (for example Rolldown inlining a constant module)
+// leaves consumers with a type for a value that is not there. Type-only .d.ts
+// files need no .js. The exemptions are the orphans measured at the time of
+// writing: each declares runtime values that no emitted .js uses, and the list
+// must shrink when they go. Stale entries fail the check.
+const DTS_RUNTIME_DECLARATION =
+  /^export (?:declare )?(?:const|let|var|function|class|enum|abstract class|namespace|default) /m;
+const DTS_WITHOUT_JS_EXEMPTIONS = {
+  'ketcher-core': [
+    // AtomCIP and BondCIP enums; no emitted .js references them.
+    'dist/domain/entities/types.d.ts',
+    'dist/domain/serializers/mol/__tests__/fixtures/basic.d.ts',
+    'dist/domain/serializers/mol/__tests__/fixtures/rgroups.d.ts',
+    'dist/domain/serializers/mol/__tests__/fixtures/reaction.d.ts',
+  ],
+};
 const packageDir = join(
   repoRoot,
   'node_modules',
@@ -51,6 +74,17 @@ function main() {
       const pkgDir = join(repoRoot, 'packages', packageName);
       log(`Packing ${packageName}...`);
       const tarball = npmPack(pkgDir, packageDir);
+
+      if (DTS_WITHOUT_JS_EXEMPTIONS[packageName]) {
+        log(
+          `Checking runtime .d.ts files have .js siblings in ${packageName}...`,
+        );
+        checkRuntimeDtsHaveJs(
+          tarball,
+          packageName,
+          join(packageDir, 'unpacked', packageName),
+        );
+      }
 
       log(`Running publint on ${packageName}...`);
       run(join(repoRoot, 'node_modules', '.bin', 'publint'), [
@@ -215,6 +249,47 @@ function validateAtwReport(report, packageName) {
   }
 
   return allowedFindings;
+}
+
+function checkRuntimeDtsHaveJs(tarball, packageName, unpackDir) {
+  rmSync(unpackDir, { recursive: true, force: true });
+  mkdirSync(unpackDir, { recursive: true });
+  execFileSync('tar', ['-xzf', tarball, '-C', unpackDir], {
+    timeout: EXEC_TIMEOUT_MS,
+  });
+
+  const packageRoot = join(unpackDir, 'package');
+  const orphans = readdirSync(join(packageRoot, 'dist'), { recursive: true })
+    .map((entry) => `dist/${entry.replaceAll('\\', '/')}`)
+    .filter((file) => file.endsWith('.d.ts'))
+    .filter(
+      (file) => !existsSync(join(packageRoot, file.replace(/\.d\.ts$/, '.js'))),
+    )
+    .filter((file) =>
+      DTS_RUNTIME_DECLARATION.test(
+        readFileSync(join(packageRoot, file), 'utf8'),
+      ),
+    );
+
+  const exemptions = DTS_WITHOUT_JS_EXEMPTIONS[packageName];
+  const problems = [
+    ...orphans
+      .filter((file) => !exemptions.includes(file))
+      .map(
+        (file) => `- ${file} declares runtime values but has no sibling .js`,
+      ),
+    ...exemptions
+      .filter((file) => !orphans.includes(file))
+      .map(
+        (file) =>
+          `- ${file} is in DTS_WITHOUT_JS_EXEMPTIONS but no longer lacks a .js; remove the exemption`,
+      ),
+  ];
+  if (problems.length) {
+    throw new Error(
+      `Runtime .d.ts check failed for ${packageName}:\n${problems.join('\n')}`,
+    );
+  }
 }
 
 function run(command, args) {

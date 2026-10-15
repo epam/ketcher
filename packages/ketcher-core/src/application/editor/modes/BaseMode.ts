@@ -35,9 +35,6 @@ type KeyboardEventHandler = {
 
 type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
 
-const TRANSIENT_LAYERS_SELECTOR =
-  '.transient-views-layer, .transient-views-top-layer';
-
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
 
@@ -228,7 +225,7 @@ export abstract class BaseMode {
    */
   private async copyCanvasAsImage(): Promise<void> {
     const editor = provideEditorInstance();
-    const svg = this.getCanvasSvgWithoutTransientViews(editor.canvas);
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
 
     if (!svg) {
       throw new Error('Cannot get drawn structures!');
@@ -239,33 +236,6 @@ export abstract class BaseMode {
     await navigator.clipboard.write([
       new ClipboardItem({ [image.type]: image }),
     ]);
-  }
-
-  /**
-   * Selection and hover highlights are dynamic elements and are left out by
-   * getSvgFromDrawnStructures. Transient views (e.g. the rotation frame and
-   * handles around the selection) are hidden for the time of the export, so
-   * they are neither drawn nor counted into the image size.
-   */
-  private getCanvasSvgWithoutTransientViews(canvas: SVGSVGElement) {
-    const transientLayers = Array.from(
-      canvas.querySelectorAll<SVGGElement>(TRANSIENT_LAYERS_SELECTOR),
-    );
-    const initialDisplayValues = transientLayers.map(
-      (layer) => layer.style.display,
-    );
-
-    transientLayers.forEach((layer) => {
-      layer.style.display = 'none';
-    });
-
-    try {
-      return getSvgFromDrawnStructures(canvas, 'file');
-    } finally {
-      transientLayers.forEach((layer, index) => {
-        layer.style.display = initialDisplayValues[index];
-      });
-    }
   }
 
   private async convertKetToMol(ket: string): Promise<string> {

@@ -144,30 +144,6 @@ describe('BaseMode.onCopyAs', () => {
     expect(writeText).not.toHaveBeenCalled();
   });
 
-  it('hides transient views (e.g. the rotation frame) only while the canvas is exported', async () => {
-    const { canvas, transientLayer, transientTopLayer } =
-      createCanvasWithTransientLayers();
-    transientTopLayer.style.display = 'block';
-    setupEditor(undefined, canvas);
-    let displayDuringExport: string[] = [];
-    (getSvgFromDrawnStructures as jest.Mock).mockImplementation(() => {
-      displayDuringExport = [
-        transientLayer.style.display,
-        transientTopLayer.style.display,
-      ];
-      return '<svg />';
-    });
-    (convertSvgToPng as jest.Mock).mockResolvedValue(
-      new Blob(['png'], { type: 'image/png' }),
-    );
-
-    await new TestMode().onCopyAs('image');
-
-    expect(displayDuringExport).toEqual(['none', 'none']);
-    expect(transientLayer.style.display).toBe('');
-    expect(transientTopLayer.style.display).toBe('block');
-  });
-
   it('shows an error modal and copies nothing when the canvas cannot be exported', async () => {
     (getSvgFromDrawnStructures as jest.Mock).mockReturnValue(undefined);
 

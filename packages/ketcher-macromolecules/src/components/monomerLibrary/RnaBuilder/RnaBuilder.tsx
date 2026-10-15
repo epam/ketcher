@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useTranslation } from 'react-i18next';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
 import { useAppDispatch, useAppSelector, useIsCompactView } from 'hooks';
@@ -30,6 +31,7 @@ import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsVi
 import { RnaElements } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/RnaElements';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
+  const { t } = useTranslation(['macromoleculesDialogs', 'common']);
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
   const invalidPresetError = useAppSelector(selectInvalidPresetError);
@@ -64,21 +66,23 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
           Boolean(invalidPresetError) ||
           Boolean(invalidPresetNameError)
         }
-        title="Error Message"
+        title={t('monomerLibrary.errorModalTitle')}
         onClose={closeErrorModal}
       >
         <Modal.Content>
           <div style={{ padding: '12px' }}>
             {uniqueNameError &&
-              `Preset with name "${uniqueNameError}" already exists. Please choose another name.`}
+              t('monomerLibrary.presetNameExists', { name: uniqueNameError })}
             {invalidPresetError &&
-              `Preset with name "${invalidPresetError}" can't be used. Because it is impossible to establish bonds between monomers. Edit it's structure or choose another one.`}
+              t('monomerLibrary.invalidPreset', { name: invalidPresetError })}
             {invalidPresetNameError &&
-              'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).'}
+              t('monomerLibrary.invalidPresetNameFormat')}
           </div>
         </Modal.Content>
         <Modal.Footer>
-          <StyledButton onClick={closeErrorModal}>Close</StyledButton>
+          <StyledButton onClick={closeErrorModal}>
+            {t('common:button.close')}
+          </StyledButton>
         </Modal.Footer>
       </Modal>
     </RnaBuilderContainer>

@@ -18,7 +18,6 @@
 import {
   type Struct,
   type EditorTemplate,
-  expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
@@ -74,24 +73,21 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(
-          this.editor.lastEvent as MouseEvent,
-          rnd,
-        )
-      : CoordinateTransformation.pageToModel(
-          {
-            clientX: clientAreaRect.left + clientWidth / 2,
-            clientY: clientAreaRect.top + clientHeight / 2,
-          },
-          rnd,
-        );
+    // Always center the pasted element initially. The mousemove handler will
+    // update the position as the user moves the mouse. Using lastEvent here
+    // would place the element at the position of a previous mouse event,
+    // which could be over an existing element and cause unwanted movement.
+    const point = CoordinateTransformation.pageToModel(
+      {
+        clientX: clientAreaRect.left + clientWidth / 2,
+        clientY: clientAreaRect.top + clientHeight / 2,
+      },
+      rnd,
+    );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
     this.editor.update(this.action, true);
-
-    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 

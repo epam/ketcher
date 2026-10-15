@@ -1,4 +1,5 @@
 import { KetMonomerClass, AttachmentPointName, AtomLabel } from 'ketcher-core';
+import i18n from 'src/i18n/i18n';
 
 export type LeavingGroupRequirement = {
   attachmentPoint: AttachmentPointName;
@@ -24,8 +25,9 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
         expectedLeavingGroup: AtomLabel.O,
       },
     ],
-    warningMessage:
-      'Amino acid monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?',
+    warningMessage: i18n.t(
+      'components:monomerCreationWizard.notifications.aminoAcidLeavingGroupWarning',
+    ),
   },
   {
     monomerType: KetMonomerClass.Sugar,
@@ -43,8 +45,9 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
         expectedLeavingGroup: AtomLabel.O,
       },
     ],
-    warningMessage:
-      'Sugar monomers typically have a hydrogen as the leaving group for R1 and R2, and a hydroxyl as a leaving group for R3. Do you wish to proceed with the current attachment points?',
+    warningMessage: i18n.t(
+      'components:monomerCreationWizard.notifications.sugarLeavingGroupWarning',
+    ),
   },
   {
     monomerType: KetMonomerClass.Base,
@@ -54,8 +57,9 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
         expectedLeavingGroup: AtomLabel.H,
       },
     ],
-    warningMessage:
-      'Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?',
+    warningMessage: i18n.t(
+      'components:monomerCreationWizard.notifications.baseLeavingGroupWarning',
+    ),
   },
   {
     monomerType: KetMonomerClass.Phosphate,
@@ -69,8 +73,9 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
         expectedLeavingGroup: AtomLabel.O,
       },
     ],
-    warningMessage:
-      'Phosphate monomers typically have a hydroxyl as the leaving group for R1 and R2. Do you wish to proceed with the current attachment points?',
+    warningMessage: i18n.t(
+      'components:monomerCreationWizard.notifications.phosphateLeavingGroupWarning',
+    ),
   },
   {
     monomerType: KetMonomerClass.RNA,
@@ -84,8 +89,9 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
         expectedLeavingGroup: AtomLabel.O,
       },
     ],
-    warningMessage:
-      'Nucleotide monomers typically have a hydrogen as the leaving group for R1, and a hydroxyl as a leaving group for R2. Do you wish to proceed with the current attachment points?',
+    warningMessage: i18n.t(
+      'components:monomerCreationWizard.notifications.nucleotideLeavingGroupWarning',
+    ),
   },
 ];
 

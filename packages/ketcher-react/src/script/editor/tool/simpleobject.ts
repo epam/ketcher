@@ -45,7 +45,7 @@ class SimpleObjectTool implements Tool {
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
-    if (ci && ci.map === 'simpleObjects') {
+    if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;
@@ -96,7 +96,7 @@ class SimpleObjectTool implements Tool {
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
           if (!(addOperation instanceof SimpleObjectDelete)) {
-            throw new Error(
+            throw new TypeError(
               'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
             );
           }

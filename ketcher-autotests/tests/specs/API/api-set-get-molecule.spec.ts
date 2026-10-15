@@ -80,28 +80,22 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Structure import if dearomotize-on-load is true for Mol V2000 file',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Structure import if dearomotize-on-load is true for Mol V2000 file', async () => {
+    /*
     Test case: https://github.com/epam/ketcher/issues/4320
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
-    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4320
-    After fix we need update screenshot.
     */
-      const MolV2000File = await readFileContent(
-        'Molfiles-V2000/aromatized-benzene-ring.mol',
-      );
-      await clickInTheMiddleOfTheCanvas(page);
-      await enableDearomatizeOnLoad(page);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await setMolecule(page, MolV2000File),
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    const MolV2000File = await readFileContent(
+      'Molfiles-V2000/aromatized-benzene-ring.mol',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await enableDearomatizeOnLoad(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Add a molecule with custom atom properties using ketcher.setMolecule() method', async () => {
     /*
@@ -759,7 +753,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     const containsReaction = await page.evaluate(() => {
-      return window.ketcher.containsReaction();
+      return globalThis.window.ketcher.containsReaction();
     });
 
     expect(containsReaction).toBe(true);
@@ -773,7 +767,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
-      return window.ketcher.containsReaction();
+      return globalThis.window.ketcher.containsReaction();
     });
 
     expect(containsReaction).not.toBe(true);

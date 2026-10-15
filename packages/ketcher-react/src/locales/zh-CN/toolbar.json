@@ -1,0 +1,125 @@
+{
+  "menu": {
+    "clear": "清空画布",
+    "open": "打开…",
+    "save": "另存为…",
+    "atomProps": "原子属性",
+    "bondProps": "键属性",
+    "undo": "撤销",
+    "redo": "重做",
+    "cut": "剪切",
+    "copy": "复制",
+    "copyImage": "复制为图片",
+    "copyMol": "复制为 MOL",
+    "copyKet": "复制为 KET",
+    "paste": "粘贴",
+    "settings": "设置",
+    "about": "关于",
+    "reactionAutomap": "反应自动映射工具",
+    "periodTable": "元素周期表",
+    "extendedTable": "扩展元素表",
+    "selectAll": "全选",
+    "deselectAll": "取消全选",
+    "selectDescriptors": "选择描述符",
+    "anyAtom": "任意原子",
+    "errorMessage": "错误信息"
+  },
+  "tools": {
+    "hand": "抓手工具",
+    "selectRectangle": "矩形选择",
+    "selectLasso": "套索选择",
+    "selectStructure": "结构选择",
+    "selectFragment": "片段选择",
+    "erase": "擦除",
+    "chain": "链",
+    "stereochemistry": "立体化学",
+    "chargePlus": "正电荷",
+    "chargeMinus": "负电荷",
+    "rotate": "旋转工具",
+    "flipHorizontal": "水平翻转",
+    "flipVertical": "垂直翻转",
+    "sgroup": "S-基团",
+    "arrowOpenAngle": "开放角箭头工具",
+    "arrowFilledTriangle": "实心三角箭头工具",
+    "arrowFilledBow": "实心弓形箭头工具",
+    "arrowDashedOpenAngle": "虚线开放角箭头工具",
+    "arrowFailed": "失败箭头工具",
+    "arrowRetrosynthetic": "逆合成箭头工具",
+    "arrowBothEndsFilledTriangle": "双端实心三角箭头工具",
+    "arrowEquilibriumFilledHalfBow": "平衡实心半弓箭头工具",
+    "arrowEquilibriumFilledTriangle": "平衡实心三角箭头工具",
+    "arrowEquilibriumOpenAngle": "平衡开放角箭头工具",
+    "arrowUnbalancedEquilibriumFilledHalfBow": "非平衡实心半弓箭头工具",
+    "arrowUnbalancedEquilibriumOpenHalfAngle": "非平衡开放半角箭头工具",
+    "arrowUnbalancedEquilibriumLargeFilledHalfBow": "非平衡大号实心半弓箭头工具",
+    "arrowUnbalancedEquilibriumFilledHalfTriangle": "非平衡实心半三角箭头工具",
+    "arrowEllipticalArcFilledBow": "椭圆弧实心弓形箭头工具",
+    "arrowEllipticalArcFilledTriangle": "椭圆弧实心三角箭头工具",
+    "arrowEllipticalArcOpenAngle": "椭圆弧开放角箭头工具",
+    "arrowEllipticalArcOpenHalfAngle": "椭圆弧开放半角箭头工具",
+    "multitailArrow": "多尾箭头工具",
+    "reactionPlus": "反应加号工具",
+    "reactionMap": "反应映射工具",
+    "reactionUnmap": "取消反应映射工具",
+    "rgroupLabel": "R-基团标签工具",
+    "rgroupFragment": "R-基团片段工具",
+    "attachmentPoint": "连接点工具",
+    "createMonomer": "创建单体",
+    "shapeEllipse": "椭圆形状",
+    "shapeRectangle": "矩形形状",
+    "shapeLine": "直线形状",
+    "addText": "添加文本",
+    "addImage": "添加图片",
+    "bondTypeTitles": {
+      "single": "单键",
+      "up": "上楔形键",
+      "down": "下楔形键",
+      "updown": "上下楔形键",
+      "double": "双键",
+      "crossed": "顺反双键",
+      "triple": "三键",
+      "aromatic": "芳香键",
+      "any": "任意键",
+      "hydrogen": "氢键",
+      "singledouble": "单或双键",
+      "singlearomatic": "单或芳香键",
+      "doublearomatic": "双或芳香键",
+      "dative": "配位键"
+    }
+  },
+  "server": {
+    "layout": "布局",
+    "clean": "清理结构",
+    "aromatize": "芳构化",
+    "dearomatize": "脱芳构化",
+    "calculateCip": "计算 CIP",
+    "checkStructure": "检查结构",
+    "calculatedValues": "计算值",
+    "recognizeMolecule": "识别分子结构",
+    "viewer3d": "3D 查看器",
+    "explicitHydrogens": "添加/移除显式氢原子"
+  },
+  "zoom": {
+    "in": "放大",
+    "out": "缩小"
+  },
+  "templates": {
+    "structureLibrary": "结构库"
+  },
+  "functionalGroups": {
+    "title": "官能团"
+  },
+  "fullscreen": {
+    "title": "全屏模式"
+  },
+  "atoms": {
+    "title": "原子 {symbol}"
+  },
+  "highlight": {
+    "label": "高亮",
+    "noHighlight": "无高亮"
+  },
+  "copy": {
+    "notAvailableForSimpleObjects": "此功能不适用于简单对象和文本对象"
+  }
+}

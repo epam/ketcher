@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export {};
 export * from './emptyFunction';
 export * from './getPreset';
 export * from './getConnectedAttachmentPoints';

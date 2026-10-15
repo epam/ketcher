@@ -29,12 +29,16 @@ import Select from '../Select';
 import classes from './form.module.less';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export interface FormOwnProps {
   children: React.ReactNode;
@@ -66,6 +70,25 @@ export interface FormState<TResult = Record<string, unknown>> {
 }
 
 type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
+
+function applySchemaDefaults<T extends Record<string, unknown>>(
+  state: T,
+  schema: FormSchema,
+): T {
+  const defaultsApplied: Record<string, unknown> = { ...state };
+
+  Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
+    if (property !== null && typeof property === 'object') {
+      const defaultValue = (property as SchemaProperty).default;
+      // Only set default if key is completely missing from state
+      if (defaultValue !== undefined && !(name in defaultsApplied)) {
+        defaultsApplied[name] = defaultValue;
+      }
+    }
+  });
+
+  return defaultsApplied as T;
+}
 
 // Keep backward-compatible export
 export type { FormProps };
@@ -136,9 +159,9 @@ class Form extends Component<FormProps> {
     this.schema = propSchema(schema, props);
 
     if (init) {
-      const { valid, errors } = this.schema.serialize(init);
+      const initialState = applySchemaDefaults({ ...init, init: true }, schema);
+      const { valid, errors } = this.schema.serialize(initialState);
       const errs = getErrorsObj(errors);
-      const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
@@ -148,14 +171,16 @@ class Form extends Component<FormProps> {
 
   componentDidUpdate(prevProps: FormProps) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
+
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
       (customValid !== prevProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result);
-      this.updateState(result);
+      const stateWithDefaults = applySchemaDefaults(result, schema);
+      this.schema.serialize(stateWithDefaults);
+      this.updateState(stateWithDefaults);
     }
   }
 
@@ -289,12 +314,16 @@ function Label({
   children,
   ...props
 }: Readonly<LabelProps>) {
+  const { t } = useTranslation();
+  const resolvedTitle = resolveTranslatableText(title, t) ?? '';
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
+      {labelPos !== 'after' &&
+        renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
       {labelPos === 'after' &&
-        renderLabelContentAfter(title ?? '', tooltip ?? null)}
+        renderLabelContentAfter(resolvedTitle, resolvedTooltip)}
     </label>
   );
 }
@@ -561,6 +590,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
 
 const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
+  const { t } = useTranslation();
 
   const selectDesc: {
     title?: string;
@@ -584,7 +614,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   return (
     <Field
       name={name}
-      options={getSelectOptionsFromSchema(selectDesc)}
+      options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
       {...prop}
       component={Select}
@@ -700,4 +730,4 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   return errs;
 }
 
-export { Field, CustomQueryField, FieldWithModal, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf, Label };

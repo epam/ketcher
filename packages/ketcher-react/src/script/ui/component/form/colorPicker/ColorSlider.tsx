@@ -38,7 +38,7 @@ function ColorSlider({
   background,
   thumbColor,
   ariaLabel,
-}: ColorSliderProps) {
+}: Readonly<ColorSliderProps>) {
   const containerRef = useRef<HTMLDivElement>(null);
   // Track container width as state so re-measuring on resize triggers re-render
   const [containerWidth, setContainerWidth] = useState(0);
@@ -115,7 +115,7 @@ function ColorSlider({
         max={max}
         step={step}
         value={value}
-        onChange={(e) => onValueChange(parseInt(e.target.value, 10))}
+        onChange={(e) => onValueChange(Number.parseInt(e.target.value, 10))}
         className={classes.sliderInput}
         style={{ background }}
         aria-label={ariaLabel}

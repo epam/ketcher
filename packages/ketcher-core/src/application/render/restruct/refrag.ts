@@ -48,8 +48,8 @@ class ReFrag extends ReObject {
         return false;
       }
 
-      const firstFrag = restruct.atoms.get(bond.begin)?.a.fragment;
-      const secondFrag = restruct.atoms.get(bond.end)?.a.fragment;
+      const firstFrag = restruct.getBondEndpoint(bond.begin)?.a.fragment;
+      const secondFrag = restruct.getBondEndpoint(bond.end)?.a.fragment;
 
       return firstFrag === fid && secondFrag === fid;
     });
@@ -77,7 +77,7 @@ class ReFrag extends ReObject {
           render = (global as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
-          .translate((render.options.offset || new Vec2()).negated())
+          .translate((render.options.offset ?? new Vec2()).negated())
           .transform(Scale.canvasToModel, render.options);
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;
@@ -122,7 +122,7 @@ class ReFrag extends ReObject {
       return;
     }
 
-    fid = parseInt(String(fid), 10);
+    fid = Number.parseInt(String(fid), 10);
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {
@@ -131,7 +131,7 @@ class ReFrag extends ReObject {
     });
 
     render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.atoms.get(bond.b.begin)?.a.fragment === fid) {
+      if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
         bond.setHover(hover, render);
       }
     });

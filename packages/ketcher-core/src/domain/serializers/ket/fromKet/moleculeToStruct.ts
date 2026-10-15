@@ -92,10 +92,12 @@ export function rglabelToStruct(source) {
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0,
+    z: source.location[2] || 0,
   });
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
-  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
+  const rglabel = toRlabel(
+    source.$refs.map((el) => Number.parseInt(el.slice(3))),
+  );
   ifDef(params, 'rglabel', rglabel);
   const newAtom = new Atom(params);
   newAtom.setInitiallySelected(source.selected);
@@ -120,8 +122,6 @@ function addRGroupAttachmentPointsToStruct(
   } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
-    );
-    rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }
@@ -201,7 +201,7 @@ function sgroupAttachmentPointToStruct(
     atomId,
     leavingAtomId,
     attachmentId,
-    attachmentId && !isNaN(Number(attachmentId))
+    attachmentId && !Number.isNaN(Number(attachmentId))
       ? Number(attachmentId)
       : attachmentPointNumber,
   );

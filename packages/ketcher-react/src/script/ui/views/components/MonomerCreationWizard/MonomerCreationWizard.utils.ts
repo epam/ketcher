@@ -1,52 +1,53 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
-  type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
+  type MonomerItemType,
   KetMonomerClass,
   KetTemplateType,
-  MonomerMicromolecule,
+  type MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
+import {
+  getMonomerPropertyVisibility,
+  isNaturalAnalogueRequired,
+} from './MonomerCreationWizardFields.utils';
 
 const COPY_SUFFIX = '_Copy';
 
 const getCopiedValue = (value?: string) =>
   value ? `${value}${COPY_SUFFIX}` : '';
 
-const isNaturalAnalogueSupported = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) =>
-  monomerType === KetMonomerClass.AminoAcid ||
-  monomerType === KetMonomerClass.Base ||
-  monomerType === KetMonomerClass.RNA;
-
 const getInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
   shouldAppendCopySuffix: boolean,
 ): MonomerCreationInitialValues => {
-  const { label, props } = monomer.monomerItem;
+  const { label, props } =
+    'monomerItem' in monomer ? monomer.monomerItem : monomer;
   const type = props.MonomerClass ?? KetMonomerClass.CHEM;
   const symbol = props.MonomerCode ?? label;
   const name = props.MonomerFullName ?? props.Name ?? symbol;
-  const naturalAnalogue = isNaturalAnalogueSupported(type)
+  const naturalAnalogue = isNaturalAnalogueRequired(type)
     ? props.MonomerNaturalAnalogCode
     : '';
   const getValue = shouldAppendCopySuffix
     ? getCopiedValue
     : (value?: string) => value ?? '';
-  const position = monomer.position
-    ? { position: new Vec2(monomer.position) }
-    : {};
+  const position =
+    'position' in monomer && monomer.position
+      ? { position: new Vec2(monomer.position) }
+      : {};
+  const { displayHelmAlias, displayBilnAlias } =
+    getMonomerPropertyVisibility(type);
 
   return {
     type,
     symbol: getValue(symbol),
     name: getValue(name),
     naturalAnalogue,
-    aliasHELM: getValue(props.aliasHELM),
-    aliasBILN: getValue(props.aliasBILN),
+    aliasHELM: displayHelmAlias ? getValue(props.aliasHELM) : '',
+    aliasBILN: displayBilnAlias ? getValue(props.aliasBILN) : '',
     originalType: type,
     originalSymbol: symbol,
     ...position,
@@ -54,13 +55,22 @@ const getInitialValues = (
 };
 
 export const getEditInstanceInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
 ): MonomerCreationInitialValues => {
   return {
     ...getInitialValues(monomer, true),
     editMode: 'instance',
   };
 };
+
+export const getLibraryEditInitialValues = (
+  libraryItem: MonomerItemType,
+): MonomerCreationInitialValues => ({
+  ...getInitialValues(libraryItem, false),
+  libraryOnly: true,
+  originalMonomerItem: libraryItem,
+  modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
+});
 
 const sortAttachmentPoints = (attachmentPoints: AttachmentPointName[]) =>
   [...attachmentPoints].sort((firstAttachmentPoint, secondAttachmentPoint) => {
@@ -217,42 +227,10 @@ export const getEditAllInstancesInitialValues = (
 };
 
 /**
- * Extracts the sgroup IDs from a list of functional groups that match the
- * primary monomer's type and symbol. Returns `undefined` when fewer than two
- * matching groups are found (no restriction needed in that case).
- *
- * Use this when the user has multiple monomers of the same type selected and
- * "Edit All Instances" should be scoped to only those selections.
- */
-export const getSelectedSGroupIdsForEditAll = (
-  functionalGroups: FunctionalGroup[],
-  primaryMonomer: BaseMonomer,
-): number[] | undefined => {
-  const primaryType = primaryMonomer.monomerItem.props.MonomerClass;
-  const primarySymbol =
-    primaryMonomer.monomerItem.props.MonomerCode ??
-    primaryMonomer.monomerItem.label;
-
-  const matchingIds = functionalGroups
-    .filter((fg) => {
-      if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
-        return false;
-      }
-      const { props, label } = fg.relatedSGroup.monomer.monomerItem;
-      const symbol = props.MonomerCode ?? label;
-      return props.MonomerClass === primaryType && symbol === primarySymbol;
-    })
-    .map((fg) => fg.relatedSGroupId);
-
-  return matchingIds.length > 1 ? matchingIds : undefined;
-};
-
-/**
  * Returns true when the given `MonomerMicromolecule` sgroup represents the
  * same monomer type and symbol as `primaryMonomer`.
  *
- * Use this to filter a plain list of sgroup IDs (e.g. from a dialog that
- * receives raw IDs rather than `FunctionalGroup` objects).
+ * Use this to scope "edit all instances" to the sgroups the user selected.
  */
 export const isSameMonomerType = (
   sgroup: MonomerMicromolecule,

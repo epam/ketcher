@@ -20,6 +20,5 @@ export function simpleObjectToKet(simpleObjectNode) {
   return {
     type: 'simpleObject',
     data: getNodeWithInvertedYCoord(simpleObjectNode.data),
-    selected: simpleObjectNode.selected,
   };
 }

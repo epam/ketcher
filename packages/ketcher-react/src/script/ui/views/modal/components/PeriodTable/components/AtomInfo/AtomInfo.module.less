@@ -19,7 +19,7 @@
 .ket_atom_info {
   position: absolute;
   padding: 0.75em;
-  left: 18em;
+  inset-inline-start: 18em;
   top: 2em;
   width: 60px;
   font-size: 10px;
@@ -27,10 +27,14 @@
   .highlight-shadow(black);
 
   opacity: 1;
-  transition: opacity 1s, visibility 0s;
+  transition:
+    opacity 1s,
+    visibility 0s;
 }
 
 .none {
   opacity: 0;
-  transition: opacity 2s, visibility 2s;
+  transition:
+    opacity 2s,
+    visibility 2s;
 }

@@ -63,7 +63,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       type: BondTypeOption.SingleDown,
     });
     await takeEditorScreenshot(page);
-    await verifySMARTSExport(page, '[#6](-[#6])(-[#6])\\[#6]');
+    await verifySMARTSExport(page, String.raw`[#6](-[#6])(-[#6])\[#6]`);
   });
 
   test('Setting bond type - single up/down', async () => {
@@ -335,7 +335,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
      * Test case: https://github.com/epam/ketcher/issues/3328
      * Description: Single down bond should be converted to custom query as: \
      */
-    const expectedValue = '\\';
+    const expectedValue = String.raw`${String.fromCharCode(92)}`;
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleDown);
     await BondPropertiesDialog(page).checkCustomQueryCheckbox();
     expect(await BondPropertiesDialog(page).getCustomQueryText()).toEqual(

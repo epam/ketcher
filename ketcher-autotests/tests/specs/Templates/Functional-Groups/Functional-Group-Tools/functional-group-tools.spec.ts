@@ -101,7 +101,9 @@ test.describe('Templates - Functional Group Tools', () => {
       page,
       'Molfiles-V2000/functional-group-expanded.mol',
     );
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
       force: true,
     });

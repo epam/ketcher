@@ -4,6 +4,7 @@ import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -110,19 +111,20 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMacromoleculesEditor(
-      options: TurnOnMacromoleculesEditorOptions = {
-        disableChainLengthRuler: true,
-        disableAutozoom: true,
-      },
+      options?: TurnOnMacromoleculesEditorOptions,
     ) {
-      if (options.disableChainLengthRuler !== false) {
+      const {
+        disableChainLengthRuler = true,
+        disableAutozoom = true,
+        enableFlexMode = false,
+      } = options ?? {};
+
+      if (disableChainLengthRuler) {
         await hideRuler(page);
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = page.locator(
-        '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
-      );
+      const macromoleculesCanvas = getCanvasByMode(page, 'macromolecules');
 
       if (!(await macromoleculesCanvas.isVisible())) {
         await waitForRender(page, async () => {
@@ -137,16 +139,16 @@ export const CommonTopRightToolbar = (page: Page) => {
         page,
       ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
-      if (options.enableFlexMode) {
+      if (enableFlexMode) {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Flex,
         );
       }
 
-      if (options.disableAutozoom !== false) {
+      if (disableAutozoom) {
         await page.evaluate(() => {
           // Temporary solution to disable autozoom for the macro editor in e2e tests
-          window._ketcher_isAutozoomDisabled = true;
+          globalThis.window._ketcher_isAutozoomDisabled = true;
         });
       }
     },
@@ -154,9 +156,7 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = page.locator(
-        '[data-testid="ketcher-canvas"][data-canvasmode="molecules-mode"]',
-      );
+      const moleculesCanvas = getCanvasByMode(page, 'molecules');
 
       if (!(await moleculesCanvas.isVisible())) {
         await waitForRender(page, async () => {

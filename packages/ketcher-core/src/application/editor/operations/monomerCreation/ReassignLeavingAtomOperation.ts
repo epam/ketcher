@@ -28,7 +28,7 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       newAtomPair,
     );
 
-    this.monomerCreationState = { ...(this.monomerCreationState || {}) };
+    this.monomerCreationState = { ...this.monomerCreationState };
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, this.newLeavingAtomId);

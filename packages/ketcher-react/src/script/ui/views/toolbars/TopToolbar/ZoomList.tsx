@@ -28,7 +28,7 @@ interface ZoomListProps {
 
 const ZoomList = ({ zoom, setZoom }: ZoomListProps) => {
   const handleChange = (event) => {
-    const parsedValue = parseFloat(event.target.value);
+    const parsedValue = Number.parseFloat(event.target.value);
     setZoom(parsedValue);
   };
 

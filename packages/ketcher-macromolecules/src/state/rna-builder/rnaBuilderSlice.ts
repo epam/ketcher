@@ -39,6 +39,7 @@ import {
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
+  isShortNameOnlySearch,
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
@@ -374,9 +375,8 @@ export const rnaBuilderSlice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === uniquePresetKey,
-      );
+      const isKeyAlreadyExisted: boolean =
+        favoriteItemsUniqueKeys.includes(uniquePresetKey);
 
       if (isKeyAlreadyExisted) {
         localStorageWrapper.setItem(
@@ -419,6 +419,13 @@ export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
 ): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
 
+export const selectIsBaseModificationBlocked = (state: RootState): boolean =>
+  Boolean(
+    state.rnaBuilder.sequenceSelection?.some(
+      (labeledNode) => labeledNode.isInSelectedAntisensePair,
+    ),
+  );
+
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
@@ -447,9 +454,6 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(
-    preset as RnaPresetWithOptionalFields,
-  );
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -460,11 +464,11 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
     fullName += base;
   }
 
+  // The phosphate is always appended, whatever position the picker holds:
+  // prefixing it for 5' leaves no cue where the phosphate label ends and the
+  // sugar label begins, so the name would become ambiguous (#9693).
   if (phosphate) {
-    fullName =
-      phosphatePosition === 'left'
-        ? `${phosphate}${fullName}`
-        : `${fullName}${phosphate}`;
+    fullName += phosphate;
   }
 
   return fullName;
@@ -529,10 +533,15 @@ export const selectFilteredPresets = createSelector(
     phosphateFilter,
   ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
+    // See isShortNameOnlySearch for why '-' and '_' bypass multi-field matching.
+    const shortNameOnly = isShortNameOnlySearch(searchText);
 
     return presetsAll
       .filter((item: IRnaPreset) => {
         const name = item.name?.toLowerCase();
+        if (shortNameOnly) {
+          return name?.includes(searchText) ?? false;
+        }
         const sugarName = item.sugar?.label?.toLowerCase();
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();

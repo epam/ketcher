@@ -9,7 +9,7 @@
 .wizardBox() {
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   height: calc(100% - 66px);
   width: calc(100% - 62px);
   margin: 16px 11px;
@@ -24,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  border-color: #F3F5F7;
+  border-color: #f3f5f7;
   pointer-events: none;
   font-family: @Inter;
   background-color: transparent;
@@ -59,7 +59,7 @@
   gap: 8px;
   max-height: 180px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-inline-end: 4px;
   pointer-events: auto;
 }
 
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: 16px;
   padding: 12px;
-  background-color: #F3F5F7;
+  background-color: #f3f5f7;
   border-radius: 8px;
   pointer-events: auto;
   overflow: auto;
@@ -108,15 +108,13 @@
 }
 
 .inputError {
-  background-color: #FDE0DF !important;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  background-color: #fde0df !important;
   border: 1px solid @color-secondary-red !important;
 }
 
 .divider {
   width: 100%;
   margin: 16px 0;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border-bottom: 1px solid @color-grey-3;
 }
 
@@ -173,14 +171,12 @@
 }
 
 .buttonDiscard {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   background-color: transparent;
   color: @color-grey-6;
 }
 
 .buttonSubmit {
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-primary;
   background-color: @color-primary;
   color: #fff;
@@ -202,12 +198,13 @@
     box-shadow: none !important;
   }
 
-  :global(.MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters) {
+  :global(
+    .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters
+  ) {
     min-height: 20px !important;
     height: 20px !important;
   }
 }
-
 
 .modificationTypeRow {
   display: flex;
@@ -221,7 +218,7 @@
   height: 20px !important;
   width: 20px !important;
   padding: 0;
-  margin-left: 4px;
+  margin-inline-start: 4px;
   color: @active-color !important;
   cursor: pointer;
 
@@ -235,7 +232,6 @@
   width: 100%;
   padding: 2px 0;
   background: none;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-6;
   color: @color-grey-6;
   border-radius: 3px;
@@ -297,7 +293,7 @@
   &.error {
     & :global(.MuiInputBase-input) {
       border-color: @color-secondary-red !important;
-      background: #FDE0DF !important;
+      background: #fde0df !important;
     }
   }
 }

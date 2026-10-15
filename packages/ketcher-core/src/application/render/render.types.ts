@@ -39,6 +39,11 @@ export type RenderOptions = {
 
   'dearomatize-on-load'?: boolean;
   ignoreChiralFlag?: boolean;
+  showStereoFlags?: boolean;
+  absFlagLabel?: string;
+  andFlagLabel?: string;
+  mixedFlagLabel?: string;
+  orFlagLabel?: string;
   disableQueryElements?: string[] | null;
 
   showAtomIds: boolean;

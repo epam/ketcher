@@ -31,7 +31,7 @@ const MAX_ATOMS = 7;
 
 function updateVisibleTools(visibleTool, activeTool) {
   const regExp = /(bond)(-)(common|stereo|query)/;
-  const menuHeight = window.innerHeight;
+  const menuHeight = globalThis.innerHeight;
 
   return Object.keys(visibleTool).reduce(
     (res, key) => {
@@ -47,15 +47,25 @@ function updateVisibleTools(visibleTool, activeTool) {
   );
 }
 
+let resizeListener = null;
+
 export function initResize() {
   return function (dispatch, getState) {
-    const onResize = throttle(250, () => {
+    resizeListener = throttle(250, () => {
       const state = getState();
+      if (!state.editor) return;
       state.editor.render.update();
       dispatch({ type: 'CLEAR_VISIBLE', data: state.actionState.activeTool });
     });
-    addEventListener('resize', onResize);
+    addEventListener('resize', resizeListener);
   };
+}
+
+export function removeResizeListener() {
+  if (resizeListener) {
+    removeEventListener('resize', resizeListener);
+    resizeListener = null;
+  }
 }
 
 /* REDUCER */
@@ -132,7 +142,7 @@ export function hiddenAncestor(el, base) {
 
   while (
     findEl &&
-    window.getComputedStyle(findEl).overflow !== 'hidden' &&
+    globalThis.getComputedStyle(findEl).overflow !== 'hidden' &&
     !findEl.classList.contains('opened')
   ) {
     if (findEl === base) return null;

@@ -1003,7 +1003,7 @@ abstract class SelectBase implements BaseTool {
       return a.connectionLength - b.connectionLength;
     });
 
-    return snappingOptions[0] || emptyResult;
+    return snappingOptions[0] ?? emptyResult;
   }
 
   mousemove(event: MouseEvent) {

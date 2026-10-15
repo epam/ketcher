@@ -1,3 +1,4 @@
+import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -35,11 +36,8 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
+  private readonly editorEvents: typeof editorEvents;
   private readonly editor: CoreEditor;
-  private get editorEvents() {
-    return provideEditorInstance().events;
-  }
-
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
@@ -81,6 +79,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
+    this.editorEvents = editorEvents;
     this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
@@ -89,12 +88,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // as getBoundingClientRect() and getBBox() return 0 values in Firefox
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
-      width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
-      ),
-      height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
-      ),
+      width: +(this.monomerSymbolElement?.dataset.actualWidth ?? 0),
+      height: +(this.monomerSymbolElement?.dataset.actualHeight ?? 0),
     };
     setMonomerSize(this.monomerSize);
   }
@@ -494,16 +489,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public static getScaledMonomerPosition(
     positionInAngstoms: Vec2,
-    monomerSize: { width: number; height: number } = { width: 0, height: 0 },
+    monomerSize?: { width?: number; height?: number },
   ) {
+    const { width = 0, height = 0 } = monomerSize ?? {};
+
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const monomerPositionInPixels =
       Coordinates.modelToCanvas(positionInAngstoms);
 
     return new Vec2(
-      monomerPositionInPixels.x - monomerSize.width / 2,
-      monomerPositionInPixels.y - monomerSize.height / 2,
+      monomerPositionInPixels.x - width / 2,
+      monomerPositionInPixels.y - height / 2,
     );
   }
 

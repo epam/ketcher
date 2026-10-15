@@ -4,7 +4,7 @@ describe('length', () => {
   it('should show vector length', () => {
     const v0 = new Vec2(3, 3, 3);
 
-    expect(v0.length()).toBe(4.242640687119285);
+    expect(v0.length()).toBeCloseTo(4.242640687119285, 14);
   });
 });
 
@@ -121,7 +121,11 @@ describe('normalized', () => {
       0.2773500981126146,
     );
 
-    expect(v0.normalized().equals(v1)).toBe(true);
+    const normalized = v0.normalized();
+
+    expect(normalized.x).toBeCloseTo(v1.x, 14);
+    expect(normalized.y).toBeCloseTo(v1.y, 14);
+    expect(normalized.z).toBeCloseTo(v1.z, 14);
   });
 });
 

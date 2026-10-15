@@ -25,12 +25,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node"],
-    "paths": {
-      "_indigo-worker-import-alias_": [
-        "./src/infrastructure/services/struct/indigoWorkerImports/useWasmLoader"
-      ]
-    }
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

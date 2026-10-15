@@ -56,13 +56,11 @@ export class RGroupAttr<
       return;
     }
 
-    if (!this.data2) {
-      this.data2 = {
-        rgid,
-        attribute,
-        value: rgp[attribute],
-      };
-    }
+    this.data2 ??= {
+      rgid,
+      attribute,
+      value: rgp[attribute],
+    };
 
     rgp[attribute] = value;
 

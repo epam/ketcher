@@ -554,12 +554,12 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
     AttachmentPoint.R1,
   ).first();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.EditConnectionPoint,
     ),
   ).toBeTruthy();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.RemoveAssignment,
     ),
   ).toBeTruthy();

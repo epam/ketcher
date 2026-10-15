@@ -18,7 +18,7 @@ export class SelectViewOnlyTool implements Tool {
     this.lassoHelper = new LassoHelper(
       this.mode === 'lasso' ? 0 : 1,
       editor,
-      this.mode === 'fragment',
+      this.mode === 'structure',
     );
   }
 

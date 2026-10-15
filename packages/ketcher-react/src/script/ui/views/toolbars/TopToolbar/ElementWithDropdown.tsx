@@ -104,8 +104,7 @@ const MenuItemWithDropdown = ({
   return (
     <ElementAndDropdown>
       {topElement}
-      {dropDownElements.filter((element) => !element.props.isHidden).length !==
-        0 && (
+      {dropDownElements.some((element) => !element.props.isHidden) && (
         <DropDownButton
           onClick={expand}
           data-testid="copy-button-dropdown-triangle"

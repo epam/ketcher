@@ -32,6 +32,7 @@ import { functionGroupInfoSelector } from '../../../state/functionalGroups/selec
 import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
+import { useTranslation } from 'react-i18next';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
@@ -90,15 +91,16 @@ interface InfoPanelProps {
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
+  const { t } = useTranslation('components');
 
   const sGroupData = useMemo<string | null>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
       return `${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`;
     } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
-      return 'Query component';
+      return t('structEditor.queryComponent');
     }
     return null;
-  }, [sGroup]);
+  }, [sGroup, t]);
 
   const molecule = useMemo<Struct | null>(
     () => (groupStruct ? groupStruct.clone() : null),

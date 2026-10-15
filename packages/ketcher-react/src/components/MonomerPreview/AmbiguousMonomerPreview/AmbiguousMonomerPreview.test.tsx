@@ -73,8 +73,9 @@ describe('AmbiguousMonomerPreview', () => {
     expect(percentMatches).not.toBeNull();
 
     const percentages =
-      percentMatches?.map((match) => parseInt(match.replace('%', ''), 10)) ||
-      [];
+      percentMatches?.map((match) =>
+        Number.parseInt(match.replace('%', ''), 10),
+      ) || [];
 
     // Verify percentages are sorted from highest to lowest
     for (let i = 0; i < percentages.length - 1; i++) {

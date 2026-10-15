@@ -54,6 +54,19 @@
   align-items: flex-end;
 }
 
+.phosphatePositionSelector {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  display: none;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid #b4b9d6;
+  border-radius: 6px;
+  background-color: #E1E6ED;
+  z-index: 1;
+}
+
 .phosphatePositionIconWrapperOnPresetCardActive:hover {
   .phosphatePositionSelector {
     display: flex;
@@ -72,20 +85,6 @@
   &:disabled {
     cursor: default;
   }
-}
-
-/* stylelint-disable-next-line no-descending-specificity */
-.phosphatePositionSelector {
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  display: none;
-  gap: 4px;
-  padding: 3px;
-  border: 1px solid #b4b9d6;
-  border-radius: 6px;
-  background-color: #E1E6ED;
-  z-index: 1;
 }
 
 .phosphatePositionOption {

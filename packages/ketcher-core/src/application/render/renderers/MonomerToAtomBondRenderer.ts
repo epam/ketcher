@@ -86,9 +86,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
-      const distance = Math.sqrt(
-        directionX * directionX + directionY * directionY,
-      );
+      const distance = Math.hypot(directionX, directionY);
 
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;

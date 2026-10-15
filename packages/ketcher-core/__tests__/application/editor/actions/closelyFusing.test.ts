@@ -5,23 +5,23 @@ import { Atom, Struct, Vec2 } from 'domain/entities';
 
 // Regression test for https://github.com/epam/ketcher/issues/346:
 // fromItemsFuse's single-atom merge loop must not crash on a stale dst.
+function buildReStruct(struct: Struct) {
+  const options = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
+  const render = new Render(document as unknown as HTMLElement, options);
+  const reStruct = new ReStruct(struct, render);
+  reStruct.assignConnectedComponents();
+  return reStruct;
+}
+
+function addAtom(struct: Struct, pos: Vec2) {
+  return struct.atoms.add(new Atom({ label: 'C', pp: pos, fragment: 0 }));
+}
+
 describe('fromItemsFuse: stale atom-merge target', () => {
-  function buildReStruct(struct: Struct) {
-    const options = {
-      microModeScale: 20,
-      width: 100,
-      height: 100,
-    } as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, options);
-    const reStruct = new ReStruct(struct, render);
-    reStruct.assignConnectedComponents();
-    return reStruct;
-  }
-
-  function addAtom(struct: Struct, pos: Vec2) {
-    return struct.atoms.add(new Atom({ label: 'C', pp: pos, fragment: 0 }));
-  }
-
   it('does not throw when items.atoms references an already-deleted dst atom', () => {
     const struct = new Struct();
 

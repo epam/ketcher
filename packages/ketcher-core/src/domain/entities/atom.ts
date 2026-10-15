@@ -29,6 +29,7 @@ import { isNumber } from 'lodash';
 import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { BondEndpoint } from './bondEndpoint';
 
 /**
  * Return unions of Pick.
@@ -129,7 +130,7 @@ type ValenceComputationResult = {
   hydrogenCount: number;
 };
 
-export class Atom extends BaseMicromoleculeEntity {
+export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -329,19 +330,13 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
-    const result: number[] = [];
-    for (const [bondId, bond] of struct.bonds.entries()) {
-      if (bond.begin === atomId || bond.end === atomId) {
-        result.push(bondId);
-      }
-    }
-    return result;
+    return struct.getConnectedBondIds(atomId);
   }
 
   static getAttrHash(atom: Atom) {
     const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attr in Atom.attrlist) {
-      if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr];
+      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
     }
     return attrs;
   }
@@ -1122,7 +1117,7 @@ export function radicalElectrons(radical: unknown) {
 }
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return typeof value !== 'undefined' ? value : defaultValue;
+  return value !== undefined ? value : defaultValue;
 }
 
 function isCorrectPseudo(label) {

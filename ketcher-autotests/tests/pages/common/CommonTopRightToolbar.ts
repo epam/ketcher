@@ -27,7 +27,7 @@ type TurnOnMacromoleculesEditorOptions = {
 };
 
 // Generous ceiling for the Molecules -> Macromolecules switch's render,
-// which can start late while the default monomers library is fetched.
+// which can start late while the default monomers library is loading.
 const MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS = 3000;
 
 export const CommonTopRightToolbar = (page: Page) => {
@@ -141,7 +141,7 @@ export const CommonTopRightToolbar = (page: Page) => {
             await macroOption.click();
           },
           // Give the switch's render enough time to start once the default
-          // monomers library (lazily fetched) resolves.
+          // monomers library (a code-split chunk) resolves.
           MACROMOLECULES_SWITCH_RENDER_TIMEOUT_MS,
         );
       }

@@ -28,11 +28,11 @@ jest.mock('ketcher-core', () => ({
 
 // Regression/guard test for the ordering fixed by #10326 (see the ADR:
 // .memory-bank/adr/2026-08-28-vite-for-library-builds.md): the default
-// monomers library is a lazily fetched asset, so anything that reads it
-// (here, the monomer library baked into a `convert` worker command) must
-// await `ensureDefaultMonomersLibraryLoaded()` first - otherwise the worker
-// can receive no monomer library when this runs before macromolecules mode
-// is ever opened.
+// monomers library is a code-split chunk loaded via dynamic import(), so
+// anything that reads it (here, the monomer library baked into a `convert`
+// worker command) must await `ensureDefaultMonomersLibraryLoaded()` first -
+// otherwise the worker can receive no monomer library when this runs before
+// macromolecules mode is ever opened.
 describe('StandaloneStructService (IndigoService) convert()', () => {
   beforeEach(() => {
     order = [];

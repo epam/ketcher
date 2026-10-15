@@ -42,10 +42,11 @@ export class KetFormatter implements StructFormatter {
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {
-    // The default monomers library is a lazily fetched asset. The KET
-    // serializer reads it synchronously to enrich monomer templates while
-    // parsing, so await it here: UI file loads reach this formatter directly,
-    // without passing through ketcher.setMolecule's own wait.
+    // The default monomers library is a code-split chunk loaded via dynamic
+    // import(). The KET serializer reads it synchronously to enrich monomer
+    // templates while parsing, so await it here: UI file loads reach this
+    // formatter directly, without passing through ketcher.setMolecule's own
+    // wait.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return this.#ketSerializer.deserialize(content);

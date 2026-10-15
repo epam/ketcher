@@ -333,11 +333,11 @@ export class Ketcher {
   }
 
   async getKet(): Promise<string> {
-    // The default monomers library is a lazily fetched asset. The KET
-    // serializer reads it synchronously to enrich monomer templates (idtAliases,
-    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
-    // when it is absent, so await it here at the async public boundary rather
-    // than making the serializer async.
+    // The default monomers library is a code-split chunk loaded via dynamic
+    // import(). The KET serializer reads it synchronously to enrich monomer
+    // templates (idtAliases, aliasAxoLabs, aliasBILN, modificationTypes) and
+    // silently skips enrichment when it is absent, so await it here at the
+    // async public boundary rather than making the serializer async.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return getStructure(
@@ -567,11 +567,11 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    // The default monomers library is a lazily fetched asset. The KET
-    // serializer reads it synchronously to enrich monomer templates (idtAliases,
-    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
-    // when it is absent, so await it here at the async public boundary rather
-    // than making the serializer async.
+    // The default monomers library is a code-split chunk loaded via dynamic
+    // import(). The KET serializer reads it synchronously to enrich monomer
+    // templates (idtAliases, aliasAxoLabs, aliasBILN, modificationTypes) and
+    // silently skips enrichment when it is absent, so await it here at the
+    // async public boundary rather than making the serializer async.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
@@ -642,11 +642,11 @@ export class Ketcher {
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    // The default monomers library is a lazily fetched asset. The KET
-    // serializer reads it synchronously to enrich monomer templates (idtAliases,
-    // aliasAxoLabs, aliasBILN, modificationTypes) and silently skips enrichment
-    // when it is absent, so await it here at the async public boundary rather
-    // than making the serializer async.
+    // The default monomers library is a code-split chunk loaded via dynamic
+    // import(). The KET serializer reads it synchronously to enrich monomer
+    // templates (idtAliases, aliasAxoLabs, aliasBILN, modificationTypes) and
+    // silently skips enrichment when it is absent, so await it here at the
+    // async public boundary rather than making the serializer async.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
@@ -924,12 +924,12 @@ export class Ketcher {
     return convertResult.struct;
   }
 
-  // The default monomers library is a lazily fetched asset. If a default
-  // load is already in flight (e.g. kicked off elsewhere without being
-  // awaited), it must finish - and be applied - before a consumer's
-  // update/replace is applied, otherwise the default load resolving
-  // afterwards would overwrite it via its own wholesale library replace.
-  // Shared by updateMonomersLibrary/replaceMonomersLibrary below.
+  // The default monomers library is a code-split chunk loaded via dynamic
+  // import(). If a default load is already in flight (e.g. kicked off
+  // elsewhere without being awaited), it must finish - and be applied - before
+  // a consumer's update/replace is applied, otherwise the default load
+  // resolving afterwards would overwrite it via its own wholesale library
+  // replace. Shared by updateMonomersLibrary/replaceMonomersLibrary below.
   private async ensureDefaultLibraryLoadedBeforeConsumerWrite(
     editor: CoreEditor,
   ) {

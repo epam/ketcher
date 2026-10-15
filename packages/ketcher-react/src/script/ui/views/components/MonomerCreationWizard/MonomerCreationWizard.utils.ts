@@ -18,8 +18,9 @@ import {
 // Submit-time validation (validateMonomerWizard/validateRnaPresetWizard in
 // MonomerCreationWizard.tsx) reads the default monomers library for
 // symbol/HELM/BILN alias uniqueness and RNA preset code uniqueness. That
-// library is lazily fetched, so a submit that races the fetch would run
-// those checks against an empty library and silently let a colliding
+// library is a code-split chunk loaded via dynamic import(), so a submit
+// that races the load would run those checks against an empty library and
+// silently let a colliding
 // monomer/preset through. This guard - await the load, then read the
 // library it resolved to - closes that window; the underlying promise is
 // memoized, so once the library is loaded this is a no-op that doesn't

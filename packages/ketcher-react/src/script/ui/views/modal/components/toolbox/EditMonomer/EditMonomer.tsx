@@ -62,9 +62,10 @@ const EditMonomer = (props: Props) => {
   };
 
   const handleEditMonomer = async (editAllInstances = false) => {
-    // The default monomers library is a lazily fetched asset, so make sure it
-    // has resolved before reading it below - this dialog is reachable from
-    // molecules mode, without macromolecules mode ever being opened.
+    // The default monomers library is a code-split chunk loaded via dynamic
+    // import(), so make sure it has resolved before reading it below - this
+    // dialog is reachable from molecules mode, without macromolecules mode ever
+    // being opened.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {

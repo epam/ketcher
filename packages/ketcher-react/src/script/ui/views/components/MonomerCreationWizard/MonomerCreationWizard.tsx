@@ -928,7 +928,7 @@ const MonomerCreationWizardInternal = ({
     () =>
       monomerCreationState.editInstanceInitialValues?.modificationTypes ?? [],
   );
-  // Bumped once when the lazily fetched default monomers library resolves
+  // Bumped once when the default monomers library finishes loading
   // (see the `updateMonomersLibrary` handler below). Nothing here reads the
   // counter itself - components such as ModificationTypeDropdown read the
   // library straight from `provideEditorInstance()` during render, so all
@@ -1016,9 +1016,9 @@ const MonomerCreationWizardInternal = ({
 
   useEffect(() => {
     // The wizard validates against the monomer library (HELM/BILN alias
-    // uniqueness, amino-acid modification types), which is a lazily fetched
-    // asset. Start the fetch as the wizard opens so those checks are not
-    // silently skipped against an empty library.
+    // uniqueness, amino-acid modification types), which is a code-split chunk
+    // loaded via dynamic import(). Start the load as the wizard opens so those
+    // checks are not silently skipped against an empty library.
     void provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
   }, []);
 
@@ -1040,10 +1040,10 @@ const MonomerCreationWizardInternal = ({
     }
 
     // `ensureDefaultMonomersLibraryLoaded` above is fire-and-forget: the
-    // wizard opens before the library fetch settles, so `symbol`/aliasHELM`/
+    // wizard opens before the library load settles, so `symbol`/aliasHELM`/
     // `aliasBILN` uniqueness checks (validateInputs, lines ~583-648) can run
     // against an empty library and silently miss a real conflict. Editor.ts
-    // dispatches `updateMonomersLibrary` exactly once, when the fetch
+    // dispatches `updateMonomersLibrary` exactly once, when the load
     // settles - on success AND on failure - and never again once the
     // library is loaded, so re-running the same checks here is purely
     // additive: it either surfaces a conflict that was missed, or clears a

@@ -105,7 +105,7 @@ export function resolveTranslatableText<T>(value: T, t: TFunction): T {
 }
 
 export const getSelectOptionsFromSchema = (
-  schema?: EnumSchemaLike | null,
+  schema: EnumSchemaLike | null | undefined,
   t: TFunction,
 ): Array<Option> => {
   const values = Array.isArray(schema?.enum) ? schema.enum : [];

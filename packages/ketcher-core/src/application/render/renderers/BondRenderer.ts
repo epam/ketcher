@@ -12,9 +12,10 @@ import type { HalfEdge } from 'application/render/view-model/HalfEdge';
 import type { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import type { D3SvgElementSelection } from 'application/render/types';
-import type {
-  SVGPathAttributes,
-  BondVectors,
+import {
+  type SVGPathAttributes,
+  type BondVectors,
+  DATIVE_ARROW_END_OFFSET,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import {
   DoubleBondPathRenderer,
@@ -386,6 +387,19 @@ export class BondRenderer extends BaseRenderer {
       secondHalfEdge,
     );
 
+    // Match the dative-bond arrowhead clearance applied in `bondVectors` so the
+    // selection/hover contour follows the shortened line rather than overshooting
+    // to the atom center.
+    if (
+      this.bond.type === BondType.Dative &&
+      !this.bond.secondAtom.renderer?.isLabelVisible
+    ) {
+      halfEdgeEnd = halfEdgeEnd.addScaled(
+        secondHalfEdge.direction,
+        DATIVE_ARROW_END_OFFSET,
+      );
+    }
+
     const isStereoBond = bond.stereo !== 0 && bond.stereo !== 3;
 
     const addPadding = isStereoBond ? 0 : -2;
@@ -599,6 +613,20 @@ export class BondRenderer extends BaseRenderer {
       this.bond.secondAtom,
       secondHalfEdge,
     );
+
+    // When a dative bond ends on an atom without a visible label (e.g. a plain
+    // carbon), its arrowhead marker sits exactly at the atom center. Multiple
+    // dative bonds converging on the same atom would then stack their arrowheads
+    // on one point. Shorten the end slightly so the tips spread around the center.
+    if (
+      this.bond.type === BondType.Dative &&
+      !this.bond.secondAtom.renderer?.isLabelVisible
+    ) {
+      endPosition = endPosition.addScaled(
+        secondHalfEdge.direction,
+        DATIVE_ARROW_END_OFFSET,
+      );
+    }
 
     return {
       startPosition,

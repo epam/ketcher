@@ -257,7 +257,9 @@ the reason instead.
 **Other package metadata:** aside from the documented `main`/`module`, `types`, and export
 condition corrections above, `sideEffects`, peer dependencies, and `engines` match the prior
 contract. The `ketcher-react` Vite 8.3.1 CJS build emits the same 42 public exports as the 8.0.16
-baseline, with no leaked Rolldown runtime helpers; no helper-stripping plugin is needed.
+baseline and no Rolldown runtime helper file. `ketcher-core` does emit one
+(`_virtual/_rolldown/runtime.js`, which its CJS and ESM modules import), and its ESM output needs
+the `__require` rewrite described below.
 
 The bump lands as a single commit after the migration completes, so that four interdependent
 `package.json` files are not churning while the builds are still changing. It needs the release
@@ -265,7 +267,10 @@ owner's agreement before it ships.
 
 **Vite version ranges vary by target.** `ketcher-core`, `ketcher-react`,
 `ketcher-macromolecules`, and `ketcher-standalone` declare `^8.3.1`; `example` and `demo` pin
-`8.3.1`. The lockfile resolves every package to 8.3.1. Fetch variants rely on Vite's asset plugin
+`8.3.1`. The lockfile resolves Vite to a single 8.3.1 entry, and
+`scripts/check-standalone-consumer.mjs` installs its Vite and jsdom consumers at those locked
+versions rather than at the ranges, so the consumer check tests the version the repository builds
+with. Fetch variants rely on Vite's asset plugin
 evaluating the `?no-inline` tag _ahead of_ the `if (build.lib) return true` branch that otherwise
 inlines rewritten assets in library mode (see "The `.wasm` for the two fetch variants is now
 emitted, not copied" above). A patch release that changed that order would re-inline the ~16 MB
@@ -282,6 +287,24 @@ including in watch builds. This affects CSS debugging in devtools only.
 `tsc --emitDeclarationOnly` (plus `tsc-alias` where path aliases are used) alongside its Vite
 build. Declarations no longer appear as a side effect of bundling, so a broken `tsconfig` now
 fails the build loudly rather than silently emitting nothing.
+
+**Production builds strip `console.*` and `assert.*` from `src/**`.** The Rollup baseline ran
+`@rollup/plugin-strip` in production, and Rolldown has no equivalent, so
+`build-config/console-strip-plugin.mjs` runs the same plugin in the production builds of
+ketcher-core, ketcher-react, ketcher-macromolecules, and ketcher-standalone. Only each package's own
+`src/` is stripped, so calls in emitted third-party glue (the Indigo worker in ketcher-standalone)
+stay. Development builds keep every call.
+
+**ketcher-core's ESM output keeps a plain `require("raphael")`.** Rolldown rewrites the bare
+`require("raphael")` in `raphael-ext.ts` into a `__require` helper call. Consumer bundlers (Vite,
+webpack) do not recognise that form, so Raphael is dropped and the call throws at load. The build
+restores the plain `require` in ESM output and fails if any other `__require(` reaches it. The
+call stays behind the `typeof window` guard: a top-level import would throw under Node SSR.
+
+**ketcher-core sets `optimization.inlineConst: false`.** Rolldown's default inlines module-level
+constants and drops the modules that declared them, while their `.d.ts` files still ship. The
+published types would then describe values that are not emitted (for example
+`domain/constants/bonds`). The package-metadata check fails if a runtime `.d.ts` loses its `.js`.
 
 **Build configuration is shared, not reached for.** Constants previously read out of the
 packages' Rollup configs move to a root `build-config/` directory that every package and

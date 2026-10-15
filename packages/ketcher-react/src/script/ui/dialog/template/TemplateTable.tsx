@@ -20,6 +20,7 @@ import {
   type FC,
   useState,
   useEffect,
+  useMemo,
   useRef,
   useTransition,
   useLayoutEffect,
@@ -140,6 +141,24 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     }
   }, [previewRenderedCount, templates.length, startTransition]);
 
+  // For each template, compute how many times its name appears in this group array
+  // and what ordinal position it holds among same-name siblings.
+  const [nameCounts, nameOccurrences] = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const tmpl of templates) {
+      counts.set(tmpl.struct.name, (counts.get(tmpl.struct.name) ?? 0) + 1);
+    }
+    const occurrences: number[] = [];
+    const counter = new Map<string, number>();
+    for (const tmpl of templates) {
+      const name = tmpl.struct.name;
+      const idx = counter.get(name) ?? 0;
+      occurrences.push(idx);
+      counter.set(name, idx + 1);
+    }
+    return [counts, occurrences] as const;
+  }, [templates]);
+
   // Pass container size to StructRender to avoid getBoundingClientRect() calls
   // This eliminates forced reflows during rendering batches
   const optimizedRenderOptions = {
@@ -161,6 +180,11 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
           key={`${tmpl.struct.name}_${i}`}
           tmpl={tmpl}
           index={i}
+          nameOccurrenceIndex={
+            (nameCounts.get(tmpl.struct.name) ?? 0) > 1
+              ? nameOccurrences[i]
+              : undefined
+          }
           isSelected={selected?.struct === tmpl.struct}
           shouldRenderPreview={i < previewRenderedCount}
           renderOptions={optimizedRenderOptions}

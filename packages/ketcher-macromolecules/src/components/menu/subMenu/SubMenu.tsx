@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -31,7 +31,7 @@ import {
   usePortalStyle,
 } from 'ketcher-react';
 import { createPortal } from 'react-dom';
-import { selectSelectedMenuGroupItem } from 'state/common';
+import { selectEditor, selectSelectedMenuGroupItem } from 'state/common';
 import { useAppSelector } from 'hooks';
 
 type SubMenuProps = {
@@ -72,6 +72,39 @@ const SubMenu = ({
     selectSelectedMenuGroupItem(subMenuId),
   );
   const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
+  const editor = useAppSelector(selectEditor);
+
+  // Typing and the "+" button start a sequence without a click the
+  // ClickAwayListener could see (the button stops the click's propagation).
+  // Keys are caught in the capture phase, as the editor's own document
+  // handler stops their propagation in Sequence mode. Only typed characters
+  // count, so keyboard shortcuts leave the dropdown open
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const close = () => setOpen(false);
+    const closeOnTyping = (event: KeyboardEvent) => {
+      const isTyping =
+        event.key.length === 1 &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey;
+
+      if (isTyping) {
+        close();
+      }
+    };
+    document.addEventListener('keydown', closeOnTyping, true);
+    editor?.events.startNewSequence.add(close);
+
+    return () => {
+      document.removeEventListener('keydown', closeOnTyping, true);
+      editor?.events.startNewSequence.remove(close);
+    };
+  }, [open, editor]);
+
   const handleDropDownClick = () => {
     if (disabled) return;
     setOpen((prev) => !prev);

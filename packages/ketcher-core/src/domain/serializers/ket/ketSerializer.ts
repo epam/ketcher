@@ -121,22 +121,28 @@ import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import type {
   KetHeader,
+  KetMoleculeNode,
   KetReactionNode,
   KetSimpleObjectNode,
 } from 'domain/serializers/ket/types';
 
-type KetMicromoleculeNode =
+type KetMicromoleculeDefinition =
   | KetSimpleObjectNode
   | KetReactionNode
+  | KetMoleculeNode
   | {
       type?:
-        | 'molecule'
         | 'rgroup'
         | 'text'
         | typeof MULTITAIL_ARROW_SERIALIZE_KEY
         | typeof IMAGE_SERIALIZE_KEY;
-      $ref?: string;
       stereoFlagPosition?: Point;
+    };
+
+type KetMicromoleculeNode =
+  | KetMicromoleculeDefinition
+  | {
+      $ref: string;
     };
 
 type KetMicromoleculeSerializedNode =
@@ -168,7 +174,7 @@ interface IKetMicromoleculeSerializedResult {
   [key: string]: unknown;
 }
 
-function parseNode(node: KetMicromoleculeNode, struct: Struct) {
+function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -248,14 +254,15 @@ export class KetSerializer implements Serializer<Struct> {
 
     Object.keys(nodes).forEach((i) => {
       const node = nodes[i];
-      const nodeDefinition = (node.$ref ? ket[node.$ref] : node) as
-        KetMicromoleculeNode | undefined;
+      const nodeReference = '$ref' in node ? node.$ref : undefined;
+      const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
+        KetMicromoleculeDefinition | undefined;
 
       if (nodeDefinition?.type === 'molecule') {
         parseMoleculeNode(
           nodeDefinition,
           resultingStruct,
-          node.$ref ?? `inline-${i}`,
+          nodeReference ?? `inline-${i}`,
           moleculeAtomIdMaps,
         );
       } else if (nodeDefinition) {
@@ -270,7 +277,7 @@ export class KetSerializer implements Serializer<Struct> {
 
       getHapticConnectionMoleculeIds(connection).forEach((moleculeId) => {
         const nodeDefinition = ket[moleculeId] as
-          KetMicromoleculeNode | undefined;
+          KetMicromoleculeDefinition | undefined;
         if (nodeDefinition?.type === 'molecule') {
           parseMoleculeNode(
             nodeDefinition,

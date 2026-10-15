@@ -29,6 +29,7 @@ type ToolVariant =
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
@@ -120,7 +121,7 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-export type ActionStateOptions = {
+type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
@@ -148,6 +149,7 @@ type ActionObj = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
+  prop?: Record<string, unknown>;
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
@@ -174,7 +176,10 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
+  /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
   title?: string;
+  /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+  titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
   action: UiActionAction;
@@ -188,4 +193,10 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction, AtomActionOpts };
+export type {
+  ActionStateOptions,
+  Tools,
+  UiAction,
+  UiActionAction,
+  AtomActionOpts,
+};

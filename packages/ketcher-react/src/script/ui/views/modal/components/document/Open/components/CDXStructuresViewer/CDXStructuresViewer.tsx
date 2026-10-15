@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -45,6 +46,7 @@ export const CDXStructuresViewer = ({
   inputHandler,
   fileName,
 }: CDXStructuresViewerProps) => {
+  const { t } = useTranslation('dialogs');
   const server = useSelector(serverSelector);
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -95,7 +97,11 @@ export const CDXStructuresViewer = ({
       );
     }
     if (structure?.error) {
-      return <div>Error: {itemsMap[selectedIndex]?.error}</div>;
+      return (
+        <div>
+          {t('document.cdxViewer.errorLabel')} {itemsMap[selectedIndex]?.error}
+        </div>
+      );
     }
     if (structure?.struct) {
       return (
@@ -112,14 +118,16 @@ export const CDXStructuresViewer = ({
     if (!structList?.length) {
       return (
         <div className={styles.centerWrapper}>
-          <div>No embedded structures found in the file</div>
+          <div>{t('document.cdxViewer.noEmbeddedStructures')}</div>
         </div>
       );
     }
     return (
       <div className={styles.structuresWrapper}>
         <div className={styles.menuListWrapper}>
-          <div className={styles.header}>Select structure</div>
+          <div className={styles.header}>
+            {t('document.cdxViewer.selectStructure')}
+          </div>
           <MenuList>
             {structList.map((value, index) => (
               <MenuItem
@@ -128,7 +136,7 @@ export const CDXStructuresViewer = ({
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >
-                {`Structure ${index + 1}`}
+                {t('document.cdxViewer.structureN', { number: index + 1 })}
                 {itemsMap[index]?.error && <Icon name="error" />}
               </MenuItem>
             ))}
@@ -144,7 +152,8 @@ export const CDXStructuresViewer = ({
   return (
     <div className={styles.wrapper}>
       <div>
-        File: <span className={styles.fileName}>{fileName}</span>
+        {t('document.cdxViewer.fileLabel')}{' '}
+        <span className={styles.fileName}>{fileName}</span>
       </div>
       {renderStructures()}
     </div>

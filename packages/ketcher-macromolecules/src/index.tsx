@@ -14,4 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
+import './i18n/registerNamespaces';
+
 export { default } from './Editor';

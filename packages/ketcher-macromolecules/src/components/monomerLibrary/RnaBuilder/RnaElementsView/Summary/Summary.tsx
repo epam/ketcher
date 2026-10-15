@@ -19,6 +19,7 @@ import { ISummaryProps } from './types';
 
 export const Summary = ({
   groupName,
+  label,
   quantity,
   expanded,
   iconName,
@@ -27,7 +28,7 @@ export const Summary = ({
     <SummaryContainer data-testid={`summary-${groupName}`}>
       <StyledIcon name={iconName} />
       <SummaryText>
-        {groupName} ({quantity})
+        {label} ({quantity})
       </SummaryText>
       <StyledIcon name="chevron" expanded={expanded} />
     </SummaryContainer>

@@ -4,7 +4,7 @@
 
 import type { DeepPartial } from 'types';
 
-export type { DeepPartial };
+export type { DeepPartial } from 'types';
 
 export type CssLengthUnit = 'px' | 'pt' | 'cm' | 'inch';
 

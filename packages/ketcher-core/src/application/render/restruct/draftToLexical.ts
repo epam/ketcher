@@ -59,8 +59,6 @@ export function convertDraftToLexical(
   };
 }
 
-const LINE_BREAK = /\r\n|\r|\n/;
-
 function createTextNode(
   text: string,
   format: number,
@@ -77,31 +75,21 @@ function createTextNode(
  * An empty line becomes a paragraph with an empty text node.
  */
 function blockToParagraphs(block: DraftBlock): SerializedParagraphNode[] {
-  const lines: SerializedTextNode[][] = [[]];
-
-  buildTextSegments(block.text, block.inlineStyleRanges || []).forEach(
-    (segment) => {
-      segment.text.split(LINE_BREAK).forEach((lineText, index) => {
-        if (index > 0) {
-          lines.push([]);
-        }
-        if (lineText !== '') {
-          lines[lines.length - 1].push(
-            createTextNode(lineText, segment.format, segment.style),
-          );
-        }
-      });
-    },
+  return buildTextLines(block.text, block.inlineStyleRanges || []).map(
+    (segments) => ({
+      type: 'paragraph',
+      // Lexical doesn't have a 'br' node type in serialized state. Emit an
+      // empty text node instead so Lexical can parse it and the renderer will
+      // treat it as an empty paragraph.
+      children:
+        segments.length > 0
+          ? segments.map(({ text, format, style }) =>
+              createTextNode(text, format, style),
+            )
+          : [createTextNode('', 0, '')],
+      version: 1,
+    }),
   );
-
-  return lines.map((textNodes) => ({
-    type: 'paragraph',
-    // Lexical doesn't have a 'br' node type in serialized state. Emit an empty
-    // text node instead so Lexical can parse it and the renderer will treat it
-    // as an empty paragraph.
-    children: textNodes.length > 0 ? textNodes : [createTextNode('', 0, '')],
-    version: 1,
-  }));
 }
 
 interface TextSegment {
@@ -110,10 +98,13 @@ interface TextSegment {
   style: string;
 }
 
-function buildTextSegments(
+// Splits the text into lines, each one a list of segments of identical style.
+// A line break is "\n", "\r" or "\r\n"; the pair counts once even when the
+// two characters have different styles.
+function buildTextLines(
   text: string,
   styleRanges: Array<{ offset: number; length: number; style: string }>,
-): TextSegment[] {
+): TextSegment[][] {
   // Create an array of style info for each character position
   const charStyles: Array<{ format: number; style: string }> = Array.from(
     { length: text.length },
@@ -131,12 +122,21 @@ function buildTextSegments(
   });
 
   // Group consecutive characters with identical styles into segments
-  const segments: TextSegment[] = [];
+  const lines: TextSegment[][] = [[]];
   let currentSegment: TextSegment | null = null;
 
   for (let i = 0; i < text.length; i++) {
     const charStyle = charStyles[i];
     const char = text[i];
+
+    if (char === '\n' || char === '\r') {
+      // The "\n" of a "\r\n" pair ends the line, the "\r" before it is skipped
+      if (!(char === '\r' && text[i + 1] === '\n')) {
+        lines.push([]);
+        currentSegment = null;
+      }
+      continue;
+    }
 
     // Check if we need to start a new segment
     if (
@@ -144,25 +144,19 @@ function buildTextSegments(
       currentSegment.format !== charStyle.format ||
       currentSegment.style !== charStyle.style
     ) {
-      if (currentSegment) {
-        segments.push(currentSegment);
-      }
       currentSegment = {
         text: char,
         format: charStyle.format,
         style: charStyle.style,
       };
+      lines[lines.length - 1].push(currentSegment);
     } else {
       // Continue current segment
       currentSegment.text += char;
     }
   }
 
-  if (currentSegment) {
-    segments.push(currentSegment);
-  }
-
-  return segments;
+  return lines;
 }
 
 function applyStyleToChar(

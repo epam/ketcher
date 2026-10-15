@@ -147,6 +147,69 @@ describe('convertDraftToLexical', () => {
       expect(getParagraphTexts(draft)).toEqual(['first', 'second']);
     });
 
+    it('treats a lone carriage return as a line break', () => {
+      const draft: DraftEditorState = {
+        blocks: [{ text: 'first\rsecond', type: 'unstyled' }],
+      };
+
+      expect(getParagraphTexts(draft)).toEqual(['first', 'second']);
+    });
+
+    it.each([
+      ['the line feed', { offset: 6, length: 1, style: 'BOLD' }],
+      ['the carriage return', { offset: 5, length: 1, style: 'BOLD' }],
+      [
+        'the line break and the next word',
+        { offset: 5, length: 7, style: 'BOLD' },
+      ],
+    ])(
+      'counts a CRLF pair once when only %s is styled',
+      (_name, styleRange) => {
+        const draft: DraftEditorState = {
+          blocks: [
+            {
+              text: 'first\r\nsecond',
+              type: 'unstyled',
+              inlineStyleRanges: [styleRange],
+            },
+          ],
+        };
+
+        expect(getParagraphTexts(draft)).toEqual(['first', 'second']);
+      },
+    );
+
+    it('keeps the styles of the text around a styled CRLF pair', () => {
+      const draft: DraftEditorState = {
+        blocks: [
+          {
+            text: 'ab\r\ncd',
+            type: 'unstyled',
+            inlineStyleRanges: [{ offset: 1, length: 4, style: 'ITALIC' }],
+          },
+        ],
+      };
+
+      const [first, second] = convertDraftToLexical(draft).root.children;
+
+      expect(getTextNodes(first).map((n) => [n.text, n.format])).toEqual([
+        ['a', 0],
+        ['b', IS_ITALIC],
+      ]);
+      expect(getTextNodes(second).map((n) => [n.text, n.format])).toEqual([
+        ['c', IS_ITALIC],
+        ['d', 0],
+      ]);
+    });
+
+    it('counts every line break of a mixed sequence', () => {
+      const draft: DraftEditorState = {
+        blocks: [{ text: 'a\r\n\r\nb\n\rc', type: 'unstyled' }],
+      };
+
+      expect(getParagraphTexts(draft)).toEqual(['a', '', 'b', '', 'c']);
+    });
+
     it('splits every block that has line breaks and keeps the order of the blocks', () => {
       const draft: DraftEditorState = {
         blocks: [

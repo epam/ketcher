@@ -265,7 +265,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
-        circle.node.setAttribute('data-testid', 'rotation-center-handle');
+        circle.node.dataset.testid = 'rotation-center-handle';
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);
@@ -377,7 +377,7 @@ class RotateController {
           fill: STYLE.INITIAL_COLOR,
           stroke: 'none',
         });
-        circle.node.setAttribute('data-testid', 'rotation-handle');
+        circle.node.dataset.testid = 'rotation-handle';
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)
@@ -665,7 +665,7 @@ class RotateController {
       Vec2.dist(this.handleCenter, this.center) -
       STYLE.HANDLE_MARGIN -
       STYLE.HANDLE_RADIUS;
-    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+    this.initialRadius = Math.max(newProtractorRadius, 0);
     const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
       this.initialRadius,
     );
@@ -712,7 +712,7 @@ class RotateController {
           Vec2.dist(this.handleCenter, this.center) -
           STYLE.HANDLE_MARGIN -
           STYLE.HANDLE_RADIUS;
-        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+        let newRadius = Math.max(newProtractorRadius, 0);
         lastSnappingRadius = lastSnappingRadius ?? this.initialRadius;
         if (
           newRadius >= lastSnappingRadius * 1.4 ||
@@ -908,8 +908,7 @@ class RotateController {
         const text = drawText(textPosition).attr({
           fill: STYLE.INITIAL_COLOR,
         });
-        this.snapAngleIndicator.push(line);
-        this.snapAngleIndicator.push(text);
+        this.snapAngleIndicator.push(line, text);
         break;
       }
     }

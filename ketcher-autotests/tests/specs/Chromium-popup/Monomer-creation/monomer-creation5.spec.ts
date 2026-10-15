@@ -382,7 +382,7 @@ test(`6. Check that if the user changes the monomer type after they've entered a
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
-  expect(await MonomerPreviewTooltip(page).getModificationTypes()).toEqual('');
+  expect(await MonomerPreviewTooltip(page).getModificationTypes()).toBeNull();
 });
 
 test(`7. Check that the user can remove a modification type after it is set`, async () => {

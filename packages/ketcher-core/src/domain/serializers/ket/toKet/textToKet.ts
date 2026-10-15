@@ -113,7 +113,7 @@ function applyFontStyleOverrides(
   if (child.style) {
     const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(child.style);
     if (fontSizeMatch) {
-      font.size = parseFloat(fontSizeMatch[1]);
+      font.size = Number.parseFloat(fontSizeMatch[1]);
       hasFont = true;
     }
   }
@@ -194,7 +194,7 @@ export function textToKet(textNode) {
 
             return part;
           })
-          .filter((p: KETTextPart | null): p is KETTextPart => Boolean(p));
+          .filter(Boolean) as KETTextPart[];
 
         return paraObj;
       },
@@ -204,7 +204,6 @@ export function textToKet(textNode) {
   };
 
   return {
-    selected: textNode.selected,
     ...convertToKET20Text(getNodeWithInvertedYCoord(textNode.data)),
   };
 }

@@ -77,13 +77,21 @@ export class FormatterFactory {
       this.separateOptions(options);
 
     let formatter: StructFormatter;
+    // `struct` is provided only when saving, so its absence means we are loading.
+    // Dearomatizing on load has to be done by Indigo, which the JS molfile
+    // parser cannot do, so such structures are delegated to it as well.
+    const isLoading = struct === undefined;
+    const shouldDelegateToIndigo =
+      Boolean(queryPropertiesAreUsed) ||
+      (isLoading && Boolean(structServiceOptions['dearomatize-on-load']));
+
     switch (format) {
       case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer());
         break;
 
       case SupportedFormat.mol:
-        if (queryPropertiesAreUsed) {
+        if (shouldDelegateToIndigo) {
           formatter = new ServerFormatter(
             this.#structService,
             new KetSerializer(),

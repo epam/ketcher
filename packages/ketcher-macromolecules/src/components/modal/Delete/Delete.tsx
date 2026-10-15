@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
@@ -36,6 +37,7 @@ const DeleteTextWrapper = styled.div`
 `;
 
 const Delete = ({ isModalOpen, onClose }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
@@ -60,29 +62,33 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
   return (
     <Modal
       isOpen={isModalOpen}
-      title="Delete RNA Preset"
+      title={t('delete.title')}
       onClose={onCloseCallback}
       testId="delete-preset-modal"
     >
       <Modal.Content>
         <DeleteTextWrapper data-testid="delete-preset-popup-content">
-          <div>You are about to delete</div>
-          <div>"{activePresetForContextMenu.name}" RNA preset.</div>
-          <div>This operation cannot be undone.</div>
+          <div>{t('delete.confirmationLineOne')}</div>
+          <div>
+            {t('delete.confirmationLineTwo', {
+              name: activePresetForContextMenu.name,
+            })}
+          </div>
+          <div>{t('delete.irreversible')}</div>
         </DeleteTextWrapper>
       </Modal.Content>
       <Modal.Footer>
         <StyledActionButton
           key="cancel"
           clickHandler={cancelHandler}
-          label="Cancel"
+          label={t('common:button.cancel')}
           styleType="secondary"
           data-testid="cancel-delete-preset-button"
         />
         <StyledActionButton
           key="delete"
           clickHandler={deleteHandler}
-          label="Delete"
+          label={t('common:delete')}
           data-testid="delete-preset-button"
         />
       </Modal.Footer>

@@ -21,7 +21,6 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectIsSequenceEditInRNABuilderMode,
-  selectTool,
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
@@ -39,8 +38,10 @@ import { useEffect, useState } from 'react';
 import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
+import { useTranslation } from 'react-i18next';
 
 export function TopMenuComponent() {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
@@ -108,7 +109,6 @@ export function TopMenuComponent() {
     } else if (name === 'clear') {
       editor?.events.resetSequenceEditMode.dispatch();
       editor?.events.selectTool.dispatch([name]);
-      dispatch(selectTool(lastSelectedSelectionMenuItem));
       editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
@@ -130,27 +130,31 @@ export function TopMenuComponent() {
       <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Item
           itemId="clear"
-          title={`Clear Canvas (${hotkeysShortcuts.clear})`}
+          title={t('topMenu.clearCanvas', { shortcut: hotkeysShortcuts.clear })}
           testId="clear-canvas"
         />
         <Menu.Item
           itemId="open"
-          title="Open..."
+          title={t('topMenu.open')}
           disabled={isDisabled}
           testId="open-file-button"
         />
-        <Menu.Item itemId="save" title="Save as..." testId="save-file-button" />
+        <Menu.Item
+          itemId="save"
+          title={t('topMenu.saveAs')}
+          testId="save-file-button"
+        />
       </Menu.Group>
       <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Item
           itemId="undo"
-          title={`Undo (${hotkeysShortcuts.undo})`}
+          title={t('topMenu.undo', { shortcut: hotkeysShortcuts.undo })}
           disabled={isDisabled}
           testId="undo"
         />
         <Menu.Item
           itemId="redo"
-          title={`Redo (${hotkeysShortcuts.redo})`}
+          title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
           disabled={isDisabled}
           testId="redo"
         />
@@ -159,7 +163,9 @@ export function TopMenuComponent() {
         <Menu.Group isHorizontal={true} divider={true}>
           <Menu.Item
             itemId={'arrange-ring' as IconName}
-            title={`Arrange as a Ring (${hotkeysShortcuts.arrangeRing})`}
+            title={t('topMenu.arrangeAsRing', {
+              shortcut: hotkeysShortcuts.arrangeRing,
+            })}
             disabled={cyclicStructureFormationDisabled}
             testId="arrange-ring"
           />
@@ -176,13 +182,15 @@ export function TopMenuComponent() {
           vertical={true}
           autoSize={true}
           layoutModeButton={true}
-          generalTitle="Create Antisense Strand"
+          generalTitle={t('topMenu.createAntisenseStrand')}
           testId="Create Antisense Strand"
           activeItem={antisenseActiveOption}
         >
           <Menu.Item
             itemId="antisenseRnaStrand"
-            title={`Create RNA Antisense Strand (${hotkeysShortcuts.createRnaAntisenseStrand})`}
+            title={t('topMenu.createRnaAntisenseStrand', {
+              shortcut: hotkeysShortcuts.createRnaAntisenseStrand,
+            })}
             disabled={
               !selectedEntities?.length ||
               !isAntisenseOptionVisible(selectedEntities) ||
@@ -193,7 +201,9 @@ export function TopMenuComponent() {
           />
           <Menu.Item
             itemId="antisenseDnaStrand"
-            title={`Create DNA Antisense Strand (${hotkeysShortcuts.createDnaAntisenseStrand})`}
+            title={t('topMenu.createDnaAntisenseStrand', {
+              shortcut: hotkeysShortcuts.createDnaAntisenseStrand,
+            })}
             disabled={
               !selectedEntities?.length ||
               !isAntisenseOptionVisible(selectedEntities) ||

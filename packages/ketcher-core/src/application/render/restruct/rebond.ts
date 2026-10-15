@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Atom } from 'domain/entities/atom';
+import type { BondEndpoint } from 'domain/entities/bondEndpoint';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { HalfBond } from 'domain/entities/halfBond';
@@ -91,10 +91,10 @@ class ReBond extends ReObject {
     const render = restruct.render;
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
-    const beginAtom = restruct.atoms.get(
+    const beginAtom = restruct.getBondEndpoint(
       ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
-    const endAtom = restruct.atoms.get(
+    const endAtom = restruct.getBondEndpoint(
       ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
     );
 
@@ -569,20 +569,16 @@ class ReBond extends ReObject {
       return;
     }
 
-    bondPathElement.setAttribute('data-testid', 'bond');
-    bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
-    bondPathElement.setAttribute(
-      'data-bondtype',
+    bondPathElement.dataset.testid = 'bond';
+    bondPathElement.dataset.bondid = String(struct.bonds.keyOf(bond));
+    bondPathElement.dataset.bondtype = String(
       bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
     );
-    bondPathElement.setAttribute('data-bondstereo', bond.stereo);
-    bondPathElement.setAttribute('data-fromatomid', bond.begin);
-    bondPathElement.setAttribute('data-toatomid', bond.end);
-    bondPathElement.setAttribute('data-topology', bond.topology);
-    bondPathElement.setAttribute(
-      'data-reacting-center',
-      bond.reactingCenterStatus,
-    );
+    bondPathElement.dataset.bondstereo = String(bond.stereo);
+    bondPathElement.dataset.fromatomid = String(bond.begin);
+    bondPathElement.dataset.toatomid = String(bond.end);
+    bondPathElement.dataset.topology = String(bond.topology);
+    bondPathElement.dataset.reactingCenter = String(bond.reactingCenterStatus);
 
     const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
     const endSGroupId = struct.getGroupIdFromAtomId(bond.end);
@@ -592,18 +588,18 @@ class ReBond extends ReObject {
     }
 
     if (isNumber(beginSGroupId)) {
-      bondPathElement.setAttribute('data-fromsgroupid', beginSGroupId);
+      bondPathElement.dataset.fromsgroupid = String(beginSGroupId);
 
       if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-frommonomerid', beginSGroupId);
+        bondPathElement.dataset.frommonomerid = String(beginSGroupId);
       }
     }
 
     if (isNumber(endSGroupId)) {
-      bondPathElement.setAttribute('data-tosgroupid', endSGroupId);
+      bondPathElement.dataset.tosgroupid = String(endSGroupId);
 
       if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
+        bondPathElement.dataset.tomonomerid = String(endSGroupId);
       }
     }
   }
@@ -619,8 +615,8 @@ class ReBond extends ReObject {
       this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
     const halfBond2 =
       this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
-    const atom1 = render.ctab.molecule.atoms.get(this.b.begin);
-    const atom2 = render.ctab.molecule.atoms.get(this.b.end);
+    const atom1 = render.ctab.molecule.getBondEndpoint(this.b.begin);
+    const atom2 = render.ctab.molecule.getBondEndpoint(this.b.end);
 
     if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
       return null;
@@ -737,7 +733,7 @@ class ReBond extends ReObject {
 }
 
 function findIncomingStereoUpBond(
-  atom: Atom,
+  atom: BondEndpoint,
   bid0: number,
   includeBoldStereoBond: boolean,
   restruct: ReStruct,
@@ -784,7 +780,7 @@ function findIncomingUpBonds(
   restruct: ReStruct,
 ): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
-    const atom = restruct.molecule.atoms.get(aid);
+    const atom = restruct.molecule.getBondEndpoint(aid);
     if (!atom) return -1;
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
     return pos < 0 ? -1 : atom.neighbors[pos];
@@ -793,18 +789,18 @@ function findIncomingUpBonds(
   // Keep bold stereo rendering independent from endpoint label visibility:
   // half-bond coordinates are already shifted away from visible labels.
   bond.neihbid1 =
-    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+    restruct.getBondEndpoint(bond.b.begin)?.showLabel && !bond.boldStereo
       ? -1
       : halfbonds[0];
   bond.neihbid2 =
-    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+    restruct.getBondEndpoint(bond.b.end)?.showLabel && !bond.boldStereo
       ? -1
       : halfbonds[1];
 }
 
 function checkStereoBold(bid0: number, bond: ReBond, restruct: ReStruct): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
-    const atom = restruct.molecule.atoms.get(aid);
+    const atom = restruct.molecule.getBondEndpoint(aid);
     if (!atom) return -1;
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct);
     return pos < 0 ? -1 : atom.neighbors[pos];
@@ -822,8 +818,8 @@ function getBondPath(
   let path: RenderPath | null;
   const render = restruct.render;
   const struct = restruct.molecule;
-  const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
-  const shiftB = !restruct.atoms.get(hb2.begin)?.showLabel;
+  const shiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
+  const shiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
   let newHalfBonds: [HalfBond, HalfBond];
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;
@@ -992,6 +988,15 @@ function getBondPath(
       break;
     case Bond.PATTERN.TYPE.DATIVE:
       path = draw.bondDative(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
+      break;
+    case Bond.PATTERN.TYPE.HAPTIC:
+      path = draw.bondHaptic(
         render.paper,
         hb1,
         hb2,
@@ -1506,15 +1511,17 @@ function getReactingCenterPath(
   const alongIntMadeBroken = 2 * lw; // half interval between along for MADE_OR_BROKEN
   const alongSz = 1.5 * bs; // half size along for CENTER
   const acrossInt = 1.5 * bs; // half interval across for CENTER
-  const acrossSz = 3.0 * bs; // half size across for all
+  const acrossSz = 3 * bs; // half size across for all
   const tiltTan = 0.2; // tangent of the tilt angle
 
   switch (bond.b.reactingCenterStatus) {
     case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
-      p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.CENTER: // #
       p.push(
@@ -1522,48 +1529,45 @@ function getReactingCenterPath(
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
+        c.addScaled(d, alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, alongSz).addScaled(n, -acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, -acrossInt),
       );
-      p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
       break;
     // case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(c.addScaled(n, acrossSz), c.addScaled(n, -acrossSz));
       break;
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, acrossSz),
+        c.addScaled(n, -acrossSz),
+      );
       break;
     default:
       return null;

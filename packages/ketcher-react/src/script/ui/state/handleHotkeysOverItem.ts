@@ -29,6 +29,7 @@ import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 import TemplateTool from '../../editor/tool/template';
 import { dispatchMonomerOrGroupDialog } from '../../editor/tool/monomerDialog.helpers';
+import { runDeleteWithAttachmentGroupSplitConfirm } from '../../editor/utils/attachmentGroupSplit';
 
 type TNewAction = {
   tool?: string;
@@ -76,10 +77,12 @@ function eraseItem({
   editor: Editor;
   item: Record<string, number[]>;
 }) {
-  const action = fromFragmentDeletion(editor.render.ctab, item);
-
-  editor.update(action);
-  editor.hover(null);
+  runDeleteWithAttachmentGroupSplitConfirm(
+    editor,
+    item,
+    () => fromFragmentDeletion(editor.render.ctab, item),
+    () => editor.hover(null),
+  );
 }
 
 function handleEraser({
@@ -383,7 +386,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       rglabel,
       fragId: atom ? atom.fragment : null,
     });
-    element = { ...Atom.attrlist, ...(element || {}) };
+    element = { ...Atom.attrlist, ...element };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
@@ -425,7 +428,7 @@ async function isChangingFunctionalGroup(
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await dispatchMonomerOrGroupDialog(editor, [fgId]);
+    dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;
   }

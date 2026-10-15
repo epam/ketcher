@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct } from 'ketcher-core';
+import type { Editor, Struct, StructService } from 'ketcher-core';
+import type { Action, compose } from 'redux';
+import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
+import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 import type { OptionsState } from './options/types';
 
 export type {
@@ -60,3 +63,43 @@ export interface StoreState {
   modal: ModalState;
   options: OptionsState;
 }
+
+export type SetEditor = (editor: Editor) => void;
+
+// In standalone mode the server is a rejected promise instead of a StructService
+export type ServerState = StructService | Promise<never>;
+
+export interface StoreOptions {
+  buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
+  [key: string]: unknown;
+}
+
+export interface InitAction extends Action<'INIT'> {
+  editor: Editor;
+  server?: ServerState;
+  [key: string]: unknown;
+}
+
+export interface UpdateAction extends Action<'UPDATE'> {
+  [key: string]: unknown;
+}
+
+export interface SetServerAction extends Action<'SET_SERVER'> {
+  server?: ServerState;
+}
+
+export type DevToolsSanitizer = (value: unknown) => unknown;
+
+export interface ReduxDevToolsOptions {
+  stateSanitizer?: DevToolsSanitizer;
+  actionSanitizer?: DevToolsSanitizer;
+}
+
+export type ReduxDevToolsCompose = (
+  options?: ReduxDevToolsOptions,
+) => typeof compose;
+
+export type DevToolsGlobal = typeof globalThis & {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+};

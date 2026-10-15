@@ -438,13 +438,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return invisibleAtomTarget;
   }
 
-  private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
-    const MIN_BOND_LENGTH = 24;
-    const isBondLengthTooShort = bondLength <= MIN_BOND_LENGTH;
-    const hasCharge = this.a.charge !== null && this.a.charge !== 0;
-    return showCharge && isBondLengthTooShort && hasCharge;
-  }
-
   private getRatio(
     renderOptions: RenderOptions,
     bondLen: number | null,
@@ -453,18 +446,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const DEFAULT_SUB_FONT_SIZE = 13;
     const subFontSize = renderOptions.fontszsubInPx ?? DEFAULT_SUB_FONT_SIZE;
     if (!bondLen) return 1;
-    const showCharge = renderOptions.showCharge;
-
-    const isNeedShift = this.isNeedShiftForCharge(showCharge, bondLen);
-
-    if (!isNeedShift) {
-      return 1;
-    }
 
     const DEFAULT_PROPORTION = DEFAULT_BOND_LENGTH / DEFAULT_SUB_FONT_SIZE;
     const currentProportion = bondLen / subFontSize;
-    const ratio = currentProportion / DEFAULT_PROPORTION;
-    return ratio;
+
+    return Math.min(currentProportion / DEFAULT_PROPORTION, 1);
   }
 
   /**

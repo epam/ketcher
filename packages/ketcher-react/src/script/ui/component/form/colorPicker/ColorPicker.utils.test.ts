@@ -203,6 +203,6 @@ describe('addCustomColor', () => {
     const result = addCustomColor(colors, '#AABBCC');
     expect(result).toHaveLength(MAX_CUSTOM_COLORS);
     expect(result[0]).toBe('#AABBCC');
-    expect(result).not.toContain(colors[colors.length - 1]);
+    expect(result).not.toContain(colors.at(-1));
   });
 });

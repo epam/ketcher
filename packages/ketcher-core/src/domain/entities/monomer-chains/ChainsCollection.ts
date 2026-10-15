@@ -347,7 +347,13 @@ export class ChainsCollection {
   }
 
   public get lastNode() {
-    return this.chains[0].lastSubChain.lastNode;
+    const lastNode = this.chains[0]?.lastSubChain?.lastNode;
+
+    if (!lastNode) {
+      throw new Error('Cannot get the last node of an empty chains collection');
+    }
+
+    return lastNode;
   }
 
   public get length() {

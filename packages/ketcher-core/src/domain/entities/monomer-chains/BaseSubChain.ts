@@ -11,7 +11,7 @@ export class BaseSubChain {
   public modified = true;
 
   public get lastNode() {
-    return this.nodes[this.nodes.length - 1];
+    return this.nodes.at(-1);
   }
 
   public get firstNode() {

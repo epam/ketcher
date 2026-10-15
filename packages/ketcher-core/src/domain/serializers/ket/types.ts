@@ -22,7 +22,7 @@ import type { AtomCIP, BondCIP } from 'domain/entities/types';
 import type { RxnArrowAttributes } from 'domain/entities/rxnArrow';
 import type { StructProperty } from 'domain/entities/struct';
 import type { SimpleObjectAttributes } from 'domain/entities/simpleObject';
-import type { Vec2 } from 'domain/entities/vec2';
+import type { Point, Vec2 } from 'domain/entities/vec2';
 
 export interface KetHeader {
   moleculeName?: string;
@@ -145,4 +145,5 @@ export interface KetItem {
   type?: string;
   fragments?: KetFragment[];
   rlogic?: KetRGroupLogic;
+  stereoFlagPosition?: Point;
 }

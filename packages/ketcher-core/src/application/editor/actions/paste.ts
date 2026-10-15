@@ -30,6 +30,7 @@ import {
   AtomAttr,
   ImageUpsert,
   MultitailArrowUpsert,
+  AttachmentGroupAdd,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -49,6 +50,7 @@ import { KetcherLogger } from 'utilities';
 
 export type CreatedItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
   rxnArrows: number[];
   rxnPluses: number[];
@@ -60,6 +62,7 @@ export type CreatedItems = {
 
 type PasteItems = {
   atoms: number[];
+  attachmentGroups: number[];
   bonds: number[];
 };
 
@@ -84,11 +87,13 @@ export function fromPaste(
   const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
   };
 
   const items: CreatedItems = {
     atoms: [],
+    attachmentGroups: [],
     bonds: [],
     rxnArrows: [],
     rxnPluses: [],
@@ -157,6 +162,22 @@ export function fromPaste(
         operation.data.aid as number,
       ),
     );
+  });
+
+  pstruct.attachmentGroups.forEach((attachmentGroup, id) => {
+    const atomIds = attachmentGroup.atomIds
+      .map((atomId) => aidMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined);
+    const operation = new AttachmentGroupAdd({ atomIds }).perform(
+      restruct,
+    ) as AttachmentGroupAdd;
+    action.addOp(operation);
+
+    const pastedId = operation.data.id;
+    if (pastedId === null) return;
+    aidMap.set(id, pastedId);
+    pasteItems.attachmentGroups.push(pastedId);
+    items.attachmentGroups.push(pastedId);
   });
 
   pstruct.frags.forEach((frag, frid) => {

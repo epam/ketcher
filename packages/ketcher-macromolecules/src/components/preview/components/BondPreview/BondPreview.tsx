@@ -19,19 +19,37 @@ const BondPreview = ({ className }: Props) => {
 
   const { polymerBond, style } = preview;
 
-  const {
+  // Show the monomers in the same left-to-right order as on the canvas,
+  // whichever end the bond was created from (e.g. a 5' phosphate of a preset)
+  const isBondDrawnRightToLeft = Boolean(
+    polymerBond.secondMonomer &&
+    polymerBond.firstMonomer.position.x > polymerBond.secondMonomer.position.x,
+  );
+  const [
     firstMonomer,
     secondMonomer,
     firstMonomerAttachmentPoint,
     secondMonomerAttachmentPoint,
-  } = polymerBond;
+  ] = isBondDrawnRightToLeft
+    ? [
+        polymerBond.secondMonomer,
+        polymerBond.firstMonomer,
+        polymerBond.secondMonomerAttachmentPoint,
+        polymerBond.firstMonomerAttachmentPoint,
+      ]
+    : [
+        polymerBond.firstMonomer,
+        polymerBond.secondMonomer,
+        polymerBond.firstMonomerAttachmentPoint,
+        polymerBond.secondMonomerAttachmentPoint,
+      ];
 
   const {
     preparedAttachmentPointsData: firstMonomerPreparedAPsData,
     connectedAttachmentPoints: firstMonomerConnectedAPs,
   } = useAttachmentPoints({
-    monomerCaps: firstMonomer.monomerCaps,
-    attachmentPointsToBonds: firstMonomer.attachmentPointsToBonds,
+    monomerCaps: firstMonomer?.monomerCaps,
+    attachmentPointsToBonds: firstMonomer?.attachmentPointsToBonds,
   });
 
   const {

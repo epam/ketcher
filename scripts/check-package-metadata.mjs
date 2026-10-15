@@ -53,9 +53,6 @@ const DTS_WITHOUT_JS_EXEMPTIONS = {
   'ketcher-core': [
     // AtomCIP and BondCIP enums; no emitted .js references them.
     'dist/domain/entities/types.d.ts',
-    'dist/domain/serializers/mol/__tests__/fixtures/basic.d.ts',
-    'dist/domain/serializers/mol/__tests__/fixtures/rgroups.d.ts',
-    'dist/domain/serializers/mol/__tests__/fixtures/reaction.d.ts',
   ],
 };
 const packageDir = join(

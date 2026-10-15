@@ -8,6 +8,7 @@ import { BROWSER_BUILD_TARGET } from '../../build-config/browser-target.mjs';
 import { createTsconfigPathResolution } from '../../build-config/tsconfig-path-resolution.mjs';
 import { createExternalPredicate } from '../../build-config/external-predicate.mjs';
 import { createRawTextPlugin } from '../../build-config/raw-text-plugin.mjs';
+import { createConsoleStripPlugin } from '../../build-config/console-strip-plugin.mjs';
 
 const pkg = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -107,6 +108,7 @@ export default defineConfig({
     ketRawTextPlugin,
     plainRaphaelRequireInEsmPlugin,
     forbidRequireHelperInEsmPlugin,
+    ...(isProduction ? [createConsoleStripPlugin()] : []),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,

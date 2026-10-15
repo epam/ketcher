@@ -75,6 +75,7 @@
   "devDependencies": {
     "@emotion/core": "^11.0.0",
     "@rolldown/plugin-emotion": "^0.2.0",
+    "@rollup/plugin-strip": "^2.0.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.0",

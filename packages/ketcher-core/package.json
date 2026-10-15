@@ -61,6 +61,7 @@
     "svgpath": "^2.3.1"
   },
   "devDependencies": {
+    "@rollup/plugin-strip": "^2.0.0",
     "@types/d3": "^7.4.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",

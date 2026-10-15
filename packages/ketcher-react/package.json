@@ -91,6 +91,7 @@
     "use-resize-observer": "^7.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-strip": "^2.0.0",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",

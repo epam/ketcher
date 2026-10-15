@@ -224,6 +224,7 @@ export abstract class BaseMode {
     serializedKet: string,
   ): Promise<string | undefined> {
     if (
+      this.modeName !== 'sequence-layout-mode' ||
       drawingEntitiesManager.monomers.size === 0 ||
       !drawingEntitiesManager.validateIfApplicableForFasta()
     ) {

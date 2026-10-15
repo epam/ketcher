@@ -4,6 +4,7 @@ import { Vec2 } from 'domain/entities';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { provideEditorInstance } from '../../editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 jest.mock('../../editorSingleton', () => ({
   provideEditorInstance: jest.fn(),
@@ -20,8 +21,8 @@ jest.mock('domain/serializers/ket/ketSerializer', () => ({
 }));
 
 class TestMode extends BaseMode {
-  constructor() {
-    super('flex-layout-mode');
+  constructor(modeName: LayoutMode = 'sequence-layout-mode') {
+    super(modeName);
   }
 
   getNewNodePosition() {
@@ -116,6 +117,17 @@ describe('BaseMode.onCopy', () => {
     expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('AC');
     expect(writeText).not.toHaveBeenCalled();
   });
+
+  it.each<LayoutMode>(['flex-layout-mode', 'snake-layout-mode'])(
+    'puts KET as plain text in %s, the sequence is only copied in Sequence mode',
+    async (modeName) => {
+      new TestMode(modeName).onCopy();
+
+      expect(convert).not.toHaveBeenCalled();
+      expect(await readClipboardType(KET_MIME_TYPE)).toBe('KET_STRING');
+      expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('KET_STRING');
+    },
+  );
 
   it('puts KET as plain text when the selection is not sequence-compatible', async () => {
     validateIfApplicableForFasta.mockReturnValue(false);

@@ -142,20 +142,6 @@ export function TopMenuComponent() {
         />
       </Menu.Group>
       <Menu.Group isHorizontal={true} divider={true}>
-        <Menu.Item
-          itemId="undo"
-          title={t('topMenu.undo', { shortcut: hotkeysShortcuts.undo })}
-          disabled={isDisabled}
-          testId="undo"
-        />
-        <Menu.Item
-          itemId="redo"
-          title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
-          disabled={isDisabled}
-          testId="redo"
-        />
-      </Menu.Group>
-      <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Submenu
           disabled={isDisabled || !selectedEntities?.length}
           testId="copy-dropdown-button"
@@ -168,20 +154,20 @@ export function TopMenuComponent() {
             testId="macro-copy-button"
           />
           <Menu.Item
-            itemId="copy-ket"
-            title={t('topMenu.copyAsKet', {
-              shortcut: shortcutStr('Mod+Shift+k'),
-            })}
-            disabled={isDisabled || !selectedEntities?.length}
-            testId="macro-copy-ket-button"
-          />
-          <Menu.Item
             itemId="copy-mol"
             title={t('topMenu.copyAsMol', {
               shortcut: shortcutStr('Mod+Shift+m'),
             })}
             disabled={isDisabled || !selectedEntities?.length}
             testId="macro-copy-mol-button"
+          />
+          <Menu.Item
+            itemId="copy-ket"
+            title={t('topMenu.copyAsKet', {
+              shortcut: shortcutStr('Mod+Shift+k'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="macro-copy-ket-button"
           />
           <Menu.Item
             itemId="copy-image"
@@ -203,6 +189,20 @@ export function TopMenuComponent() {
           title={t('topMenu.cut', { shortcut: shortcutStr('Mod+x') })}
           disabled={isDisabled || !selectedEntities?.length}
           testId="macro-cut-button"
+        />
+      </Menu.Group>
+      <Menu.Group isHorizontal={true} divider={true}>
+        <Menu.Item
+          itemId="undo"
+          title={t('topMenu.undo', { shortcut: hotkeysShortcuts.undo })}
+          disabled={isDisabled}
+          testId="undo"
+        />
+        <Menu.Item
+          itemId="redo"
+          title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
+          disabled={isDisabled}
+          testId="redo"
         />
       </Menu.Group>
       {isFlexMode && (

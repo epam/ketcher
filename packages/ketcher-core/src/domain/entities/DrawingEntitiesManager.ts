@@ -3862,6 +3862,26 @@ export class DrawingEntitiesManager {
       },
     );
     const selectedPiecesInChains: SubChainNode[][] = [];
+    // Ring-closing phosphates are not mirrored: the antisense strand is linear
+    const ringClosingNodes = new Set<SubChainNode>();
+
+    chainsForAntisenseCreation.forEach((chain) => {
+      const lastNode = chain.lastNonEmptyNode;
+
+      if (!chain.isCyclic || !lastNode) {
+        return;
+      }
+
+      const lastNodeHasPhosphate =
+        lastNode instanceof Nucleotide || isUnsplitNucleotideNode(lastNode);
+      const isWholeChainSelected = chain.nodes.every((node) =>
+        node.monomers.some((monomer) => monomer.selected),
+      );
+
+      if (lastNodeHasPhosphate && isWholeChainSelected) {
+        ringClosingNodes.add(lastNode);
+      }
+    });
 
     chainsForAntisenseCreation.forEach((chain) => {
       let selectedPiece: SubChainNode[] = [];
@@ -3943,10 +3963,11 @@ export class DrawingEntitiesManager {
 
           let addedPhosphate: BaseMonomer | undefined;
 
-          if (
+          const hasPhosphateToMirror =
             (senseNode instanceof Nucleotide && senseNode.phosphate.selected) ||
-            isUnsplitNucleotideNode(senseNode)
-          ) {
+            isUnsplitNucleotideNode(senseNode);
+
+          if (hasPhosphateToMirror && !ringClosingNodes.has(senseNode)) {
             const phosphateLibraryItem = getRnaPartLibraryItem(
               editor,
               RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,

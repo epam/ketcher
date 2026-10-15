@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';

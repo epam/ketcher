@@ -27,6 +27,7 @@ import {
   type Pool,
   type ReStruct,
   type RenderOptions,
+  type ViewBox,
   type SGroupAttachmentPoint,
   type RnaPresetComponentKey,
   type ComponentStructureUpdateData,
@@ -657,6 +658,15 @@ class Editor implements KetcherEditor {
       return;
     }
 
+    // Remember the view only once per wizard session, the wizard may fit
+    // the structure several times (e.g. on resize)
+    if (!this.viewBeforeMonomerCreationWizard) {
+      this.viewBeforeMonomerCreationWizard = {
+        zoom: this.render.options.zoom,
+        viewBox: { ...this.render.viewBox },
+      };
+    }
+
     const viewportRect = viewportElement.getBoundingClientRect();
     const newZoom = this.getMonomerCreationWizardZoom({
       structBoundingBox: this.render.ctab.molecule.getCoordBoundingBox(),
@@ -1180,6 +1190,12 @@ class Editor implements KetcherEditor {
   private originalSelection: Selection = {};
   private originalHistoryStack: Action[] = [];
   private originalHistoryPointer = 0;
+  // Zoom and view box of the canvas before the monomer creation wizard zoomed
+  // into the structure, restored when the wizard is discarded
+  private viewBeforeMonomerCreationWizard: {
+    zoom: number;
+    viewBox: ViewBox;
+  } | null = null;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
   private changeEventSubscriber: {
@@ -1963,14 +1979,28 @@ class Editor implements KetcherEditor {
 
     if (restoreOriginalStruct) {
       this.struct(this.originalStruct, false);
+      this.restoreViewBeforeMonomerCreationWizard();
     }
 
+    this.viewBeforeMonomerCreationWizard = null;
     this.monomerCreationState = null;
 
     this.tool('select');
     if (notifySession) {
       this.completeMonomerWizardSession(false);
     }
+  }
+
+  private restoreViewBeforeMonomerCreationWizard() {
+    const savedView = this.viewBeforeMonomerCreationWizard;
+
+    if (!savedView) {
+      return;
+    }
+
+    this.zoom(savedView.zoom);
+    this.render.setViewBox(savedView.viewBox);
+    this.event.zoomChanged.dispatch();
   }
 
   saveNewMonomer(data: SaveNewMonomerData) {

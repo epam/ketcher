@@ -15,6 +15,7 @@
  ***************************************************************************/
 import _ from 'lodash';
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp';
+import type { TFunction } from 'i18next';
 import type { Option } from '../component/form/Select';
 import type { Template } from '../dialog/template/TemplateTable';
 
@@ -28,7 +29,9 @@ const GREEK_SIMBOLS: Record<string, string> = {
 };
 
 const greekRe = new RegExp(
-  '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
+  String.raw`\b` +
+    Object.keys(GREEK_SIMBOLS).join(String.raw`\b|\b`) +
+    String.raw`\b`,
   'g',
 );
 
@@ -88,19 +91,33 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   )(lib);
 }
 
+/**
+ * Every schema `title`/`enumNames` value must be an explicit
+ * "namespace:key.path" translation key — there is no literal-text
+ * passthrough. `t` is required (not optional) so a call site can't
+ * silently skip translation by omitting it.
+ */
+export function resolveTranslatableText<T>(value: T, t: TFunction): T {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  return t(value) as unknown as T;
+}
+
 export const getSelectOptionsFromSchema = (
   schema?: EnumSchemaLike | null,
+  t: TFunction,
 ): Array<Option> => {
   const values = Array.isArray(schema?.enum) ? schema.enum : [];
   const names = Array.isArray(schema?.enumNames) ? schema.enumNames : undefined;
   return values.reduce<Array<Option>>((options, value, index) => {
-    const label = names?.[index];
+    const label = resolveTranslatableText(names?.[index] ?? value, t);
     options.push({
       // Preserve the schema's native enum value (number/string/null) rather than
       // stringifying it, so numeric query fields (e.g. substitution/H counts)
       // stay valid against their numeric schema enums.
       value: value as Option['value'],
-      label: typeof label === 'string' ? label : String(value),
+      label: typeof label === 'string' ? label : String(label),
     });
 
     return options;

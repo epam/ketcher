@@ -44,7 +44,7 @@ function ColorPickerContent({
   onCancel,
   onApply,
   onContentResize,
-}: ColorPickerContentProps) {
+}: Readonly<ColorPickerContentProps>) {
   const { settings, updateSettings } = useSettings();
   const customColors =
     settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS;

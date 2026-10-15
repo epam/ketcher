@@ -87,7 +87,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     }
 
     const dragCtx = this.dragCtx;
-    assert(dragCtx != null && dragCtx.action != null);
+    assert(dragCtx?.action != null);
     this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
     dragCtx.action = fromArrowResizing(

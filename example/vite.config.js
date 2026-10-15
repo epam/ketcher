@@ -1,6 +1,6 @@
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { createLogger, defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';

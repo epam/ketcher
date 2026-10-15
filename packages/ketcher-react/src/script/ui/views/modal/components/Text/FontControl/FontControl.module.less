@@ -20,7 +20,7 @@
   display: inline-block;
   position: absolute;
   top: 74px;
-  right: 12px;
+  inset-inline-end: 12px;
   background: @color-background-primary;
   max-height: 155px;
   overflow-y: scroll;
@@ -29,7 +29,6 @@
   font-size: 16px;
   border-radius: 4px;
   width: 58px;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-4;
 
   .scrollbar();
@@ -39,7 +38,7 @@
   width: 100%;
   background: @color-background-primary;
   border: none;
-  text-align: left;
+  text-align: start;
   padding: 4px;
   font-size: 14px;
   line-height: 16px;
@@ -55,12 +54,11 @@
   width: 68px;
   height: 24px;
   background-color: @color-background-primary;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   border: 1px solid @color-grey-4;
   border-radius: 4px;
   font-size: 14px;
   line-height: 20px;
-  text-align: left;
+  text-align: start;
 }
 
 .fontBtn::after {
@@ -71,10 +69,9 @@
   width: 22px;
   height: 22px;
   bottom: 20px;
-  left: 18px;
+  inset-inline-start: 18px;
   margin: auto;
   z-index: 10;
-  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   background-image: data-uri(
     '../../../../../../../assets/icons/files/dropdown-indicator.svg'
   );

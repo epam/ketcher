@@ -14,44 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { getNodeWithInvertedYCoord } from '../helpers';
-
-interface KETFont {
-  family?: string;
-  size?: number;
-}
-
-interface KETIndent {
-  first_line?: number;
-  left?: number;
-  right?: number;
-}
-
-interface KETFontStyleOverrides {
-  font?: KETFont;
-  color?: string;
-  bold?: boolean;
-  italic?: boolean;
-  superscript?: boolean;
-  subscript?: boolean;
-}
-
-interface KETTextPart extends KETFontStyleOverrides {
-  text: string;
-}
-
-interface KETParagraph extends KETFontStyleOverrides {
-  alignment?: string;
-  indent?: KETIndent;
-  parts: KETTextPart[];
-}
-
-interface KETText extends KETFontStyleOverrides {
-  type: 'text';
-  boundingBox: { x: number; y: number; width: number; height: number };
-  alignment?: string;
-  indent?: KETIndent;
-  paragraphs: KETParagraph[];
-}
+import type {
+  KetTextFont,
+  KetTextIndent,
+  KetTextParagraph,
+  KetTextPart,
+  KetTextStyleOverrides,
+  KetTextV2Node,
+} from '../types';
 
 interface TextNode {
   selected: boolean;
@@ -69,15 +39,9 @@ interface LexicalTextChild {
   style?: string;
 }
 
-interface LexicalParagraph {
+interface LexicalParagraph extends KetTextStyleOverrides {
   alignment?: string;
-  indent?: KETIndent;
-  font?: KETFont;
-  color?: string;
-  bold?: boolean;
-  italic?: boolean;
-  superscript?: boolean;
-  subscript?: boolean;
+  indent?: KetTextIndent;
   children?: LexicalTextChild[];
 }
 
@@ -91,7 +55,7 @@ const IS_SUPERSCRIPT = 64;
  * to the target KET object (part, paragraph, or root text).
  */
 function applyFontStyleOverrides(
-  target: KETFontStyleOverrides,
+  target: KetTextStyleOverrides,
   child: LexicalTextChild,
 ): void {
   const format = child.format ?? 0;
@@ -102,7 +66,7 @@ function applyFontStyleOverrides(
   if (format & IS_SUBSCRIPT) target.subscript = true;
 
   // Build font object from Lexical style string and font property
-  const font: KETFont = {};
+  const font: KetTextFont = {};
   let hasFont = false;
 
   if (child.font !== undefined) {
@@ -132,7 +96,7 @@ function applyFontStyleOverrides(
 }
 
 export function textToKet(textNode) {
-  const convertToKET20Text = (source: TextNode['data']): KETText => {
+  const convertToKET20Text = (source: TextNode['data']): KetTextV2Node => {
     // Calculate boundingBox from pos array
     const pos = source.pos;
     const x = pos[0].x;
@@ -149,10 +113,10 @@ export function textToKet(textNode) {
       return {
         type: 'text',
         data: source,
-      } as unknown as KETText;
+      } as unknown as KetTextV2Node;
     }
 
-    const ketText: KETText = {
+    const ketText: KetTextV2Node = {
       type: 'text',
       boundingBox: { x, y, width, height },
       paragraphs: [],
@@ -171,7 +135,7 @@ export function textToKet(textNode) {
     // Build paragraphs array
     ketText.paragraphs = (root.children || []).map(
       (paragraph: LexicalParagraph) => {
-        const paraObj: KETParagraph = { parts: [] };
+        const paraObj: KetTextParagraph = { parts: [] };
         if (paragraph.alignment !== undefined)
           paraObj.alignment = paragraph.alignment;
         if (paragraph.indent !== undefined) paraObj.indent = paragraph.indent;
@@ -189,12 +153,12 @@ export function textToKet(textNode) {
           .map((child: LexicalTextChild) => {
             if (child.type !== 'text' || child.text === undefined) return null;
 
-            const part: KETTextPart = { text: child.text };
+            const part: KetTextPart = { text: child.text };
             applyFontStyleOverrides(part, child);
 
             return part;
           })
-          .filter(Boolean) as KETTextPart[];
+          .filter(Boolean) as KetTextPart[];
 
         return paraObj;
       },

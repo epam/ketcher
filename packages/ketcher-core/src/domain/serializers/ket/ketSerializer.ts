@@ -124,6 +124,7 @@ import type {
   KetMoleculeNode,
   KetReactionNode,
   KetSimpleObjectNode,
+  KetTextNode,
 } from 'domain/serializers/ket/types';
 
 type KetMicromoleculeDefinition =
@@ -203,7 +204,7 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
       break;
     }
     case 'text': {
-      textToStruct(node, struct);
+      textToStruct(node as KetTextNode, struct);
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {

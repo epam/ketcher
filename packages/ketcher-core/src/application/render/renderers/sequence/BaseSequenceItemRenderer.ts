@@ -591,7 +591,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret(xOffset = CARET_X_OFFSET_BEFORE_NODE) {
-    this.caretElement = this.spacerElement?.append('g');
+    // The caret only marks the edit position, so it stays out of exported images
+    this.caretElement = this.spacerElement
+      ?.append('g')
+      .attr('class', 'dynamic-element');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
       this.caretElement
@@ -668,7 +671,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', -17)
       .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
-      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`)
+      // Shown only while editing, so it stays out of exported images
+      .attr('class', 'dynamic-element');
 
     if (this.isAntisenseNode) {
       // Rotate around the arrow glyph's own center (not the whole use/symbol box,

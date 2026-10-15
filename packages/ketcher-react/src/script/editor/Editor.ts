@@ -116,6 +116,7 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
+import { createMonomerCreationWizardZoomCalculator } from './utils/monomerCreationWizardZoom';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 import {
@@ -263,6 +264,8 @@ class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: Action | null;
   render: Render;
+  private readonly getMonomerCreationWizardZoom =
+    createMonomerCreationWizardZoomCalculator();
   _selection: Selection | null;
   _tool: Tool | null;
   historyStack: Action[];
@@ -588,7 +591,14 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom;
   }
 
-  centerStruct() {
+  /**
+   * Moves the structure so that its center is in the center of the view.
+   *
+   * @param viewportElement optional element that covers the part of the
+   * canvas the structure should be centered in (e.g. the area left free by
+   * the monomer creation wizard's panels). The whole canvas is used if omitted.
+   */
+  centerStruct(viewportElement?: HTMLElement) {
     const structure = this.render.ctab;
 
     /*
@@ -603,12 +613,8 @@ class Editor implements KetcherEditor {
     }
 
     const structCenter = getStructCenter(structure);
-    const viewBoxCenter = new Vec2(
-      this.render.viewBox.minX + this.render.viewBox.width / 2,
-      this.render.viewBox.minY + this.render.viewBox.height / 2,
-    );
     const viewBoxCenterInProto = Scale.canvasToModel(
-      viewBoxCenter,
+      this.getViewportCenterInCanvas(viewportElement),
       this.render.options,
     );
     const shiftVector = viewBoxCenterInProto.sub(structCenter);
@@ -617,6 +623,55 @@ class Editor implements KetcherEditor {
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
+  }
+
+  private getViewportCenterInCanvas(viewportElement?: HTMLElement): Vec2 {
+    const { viewBox, options } = this.render;
+
+    if (!viewportElement) {
+      return new Vec2(
+        viewBox.minX + viewBox.width / 2,
+        viewBox.minY + viewBox.height / 2,
+      );
+    }
+
+    const clientAreaRect = this.render.clientArea.getBoundingClientRect();
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const viewportLeft = viewportRect.left - clientAreaRect.left;
+    const viewportTop = viewportRect.top - clientAreaRect.top;
+
+    return new Vec2(
+      viewBox.minX + (viewportLeft + viewportRect.width / 2) / options.zoom,
+      viewBox.minY + (viewportTop + viewportRect.height / 2) / options.zoom,
+    );
+  }
+
+  /**
+   * Zooms and centers the structure loaded into the monomer creation wizard
+   * so that it fits the area left free by the wizard's panels.
+   *
+   * @param viewportElement the element that covers the available viewport
+   */
+  public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
+    if (this.render.ctab.molecule.atoms.size === 0) {
+      return;
+    }
+
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const newZoom = this.getMonomerCreationWizardZoom({
+      structBoundingBox: this.render.ctab.molecule.getCoordBoundingBox(),
+      microModeScale: this.render.options.microModeScale,
+      viewportWidth: viewportRect.width,
+      viewportHeight: viewportRect.height,
+      currentZoom: this.render.options.zoom,
+    });
+
+    if (newZoom !== this.render.options.zoom) {
+      this.zoom(newZoom);
+      this.event.zoomChanged.dispatch();
+    }
+
+    this.centerStruct(viewportElement);
   }
 
   public centerViewportAccordingToStruct(struct: Struct = this.struct()) {

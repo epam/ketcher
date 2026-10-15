@@ -74,6 +74,7 @@
   },
   "overrides": {
     "nth-check": "^2.1.1",
+    "proxy-addr": "2.0.8",
     "eslint": "10.9.0",
     "react-scripts": {
       "eslint": "10.9.0"

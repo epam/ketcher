@@ -2,6 +2,8 @@
 
 import * as moleculeToKet from 'domain/serializers/ket/toKet/moleculeToKet';
 import * as moleculeToStruct from 'domain/serializers/ket/fromKet/moleculeToStruct';
+import { parseMoleculeNode } from 'domain/serializers/ket/fromKet/hapticKet';
+import type { KetMolecule } from 'domain/serializers/ket/hapticKet.types';
 import * as prepareStructForKet from 'domain/serializers/ket/toKet/prepare';
 import * as rgroupToKet from 'domain/serializers/ket/toKet/rgroupToKet';
 import * as rgroupToStruct from 'domain/serializers/ket/fromKet/rgroupToStruct';
@@ -508,6 +510,34 @@ describe('deserialize (ToStruct)', () => {
       'Cannot deserialize input JSON.',
     );
     expect(spy.mock.results[1].value).toBeFalsy();
+  });
+  it('parses typed haptic molecules with standard molecule fields', () => {
+    const node: KetMolecule = {
+      type: 'molecule',
+      atoms: [
+        { label: 'C', location: [0, 0, 0] },
+        { label: 'N', location: [1, 0, 0] },
+      ],
+      bonds: [{ type: 1, atoms: [0, 1] }],
+      stereoFlagPosition: { x: 2, y: 3 },
+      attachmentGroups: [{ id: '0', atoms: [0, 1] }],
+    };
+    const struct = new Struct();
+    const atomIdMaps = new Map<string, Map<number, number>>();
+
+    expect(moleculeToStruct.moleculeToStruct(node).atoms.size).toBe(2);
+    parseMoleculeNode(node, struct, 'mol0', atomIdMaps);
+
+    expect(struct.atoms.size).toBe(2);
+    expect(struct.atoms.get(1)?.label).toBe('N');
+    expect(struct.bonds.size).toBe(1);
+    expect(struct.frags.get(0)?.stereoFlagPosition).toEqual(new Vec2(2, 3));
+    expect(atomIdMaps.get('mol0')).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+      ]),
+    );
   });
   it('deserializes haptic atom-atom connections from root connections', () => {
     const struct = ket.deserialize(hapticAtomAtomKet);

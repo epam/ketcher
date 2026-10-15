@@ -246,12 +246,13 @@ the reason instead.
 - **CSS Modules class names now match the Rollup baseline format.** Vite's default
   (`postcss-modules`' own bare default) differs from Rolldown's `_root_hash_N` cited above — it's
   `_${name}_${hash}_${lineNumber}`, since `ketcher-react`'s and `ketcher-macromolecules`' Vite
-  configs left `css.modules` unset. `rollup-plugin-postcss` (used by both on `master`) does not
-  leave its own default either: it explicitly hard-codes
-  `generateScopedName: '[name]_[local]__[hash:base64:5]'`. Both packages' `vite.config.mjs` now
-  set the same pattern via `css.modules.generateScopedName`, producing the same class-name format
-  (`[name]_[local]__[hash]`, e.g. `App-module_canvas__<hash>`) as the `master` Rollup build (hashes
-  were not compared against a master build).
+  configs left `css.modules` unset. `rollup-plugin-postcss` (used by both on `master`) uses
+  `generateScopedName: '[name]_[local]__[hash:base64:5]'` as its own default, and neither Rollup
+  config overrides it. Both packages' `vite.config.mjs` now set the same pattern via
+  `css.modules.generateScopedName`, producing the same class-name format
+  (`[name]_[local]__[hash]`, e.g. `App-module_canvas__<hash>`). The hashes match too: the sets of
+  CSS Module class names in `ketcher-react`'s `dist/index.css` from the Rollup baseline
+  (`dd2c6804df`) and from this branch (Vite) are identical, 588 unique names each.
 
 **Other package metadata:** aside from the documented `main`/`module`, `types`, and export
 condition corrections above, `sideEffects`, peer dependencies, and `engines` match the prior

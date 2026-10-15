@@ -44,15 +44,37 @@ const ATW_EXCLUDED_ENTRYPOINTS = {
 // A published .d.ts that declares runtime values must have a sibling .js. A
 // bundler that drops the .js (for example Rolldown inlining a constant module)
 // leaves consumers with a type for a value that is not there. Type-only .d.ts
-// files need no .js. The exemptions are the orphans measured at the time of
-// writing: each declares runtime values that no emitted .js uses, and the list
-// must shrink when they go. Stale entries fail the check.
+// files need no .js. A `const enum` declaration has no runtime value, so it
+// does not count. A barrel that re-exports a runtime value (`export * from`, or
+// `export { x } from` without a `type` modifier) needs its .js too.
+//
+// Only the packages listed here are checked. Exemptions are the orphans
+// measured at the time of writing: each declares runtime values that no
+// emitted .js uses, and the list must shrink when they go. Stale entries fail
+// the check.
+const DTS_RUNTIME_CHECKED_PACKAGES = ['ketcher-core'];
 const DTS_RUNTIME_DECLARATION =
-  /^export (?:declare )?(?:const|let|var|function|class|enum|abstract class|namespace|default) /m;
+  /^export (?:declare )?(?:const (?!enum )|let |var |function |class |enum |abstract class |namespace |default )/m;
+const DTS_REEXPORT = /^export (\*(?: as \w+)?|\{([^}]*)\}) from /gm;
 const DTS_WITHOUT_JS_EXEMPTIONS = {
   'ketcher-core': [
     // AtomCIP and BondCIP enums; no emitted .js references them.
     'dist/domain/entities/types.d.ts',
+    // Barrels that re-export runtime values but emit no .js. Each re-exported
+    // value still ships from its own emitted .js, and no emitted .js imports
+    // these paths. The package has no `exports` map, so a deep runtime import
+    // of one of these paths would fail: a real gap, not just a type-only file.
+    // Remove the entry once the barrel is emitted or deleted.
+    'dist/domain/entities/internal.d.ts',
+    'dist/domain/services/index.d.ts',
+    'dist/domain/services/struct/index.d.ts',
+    'dist/domain/types/index.d.ts',
+    'dist/application/editor/modes/internal.d.ts',
+    'dist/application/render/renderers/TransientView/index.d.ts',
+    // Type-only barrels: they re-export types, so no .js is emitted. The
+    // syntactic rule above cannot tell them apart from runtime barrels.
+    'dist/types/index.d.ts',
+    'dist/domain/services/renderer/index.d.ts',
   ],
 };
 const packageDir = join(
@@ -72,7 +94,7 @@ function main() {
       log(`Packing ${packageName}...`);
       const tarball = npmPack(pkgDir, packageDir);
 
-      if (DTS_WITHOUT_JS_EXEMPTIONS[packageName]) {
+      if (DTS_RUNTIME_CHECKED_PACKAGES.includes(packageName)) {
         log(
           `Checking runtime .d.ts files have .js siblings in ${packageName}...`,
         );
@@ -262,13 +284,14 @@ function checkRuntimeDtsHaveJs(tarball, packageName, unpackDir) {
     .filter(
       (file) => !existsSync(join(packageRoot, file.replace(/\.d\.ts$/, '.js'))),
     )
-    .filter((file) =>
-      DTS_RUNTIME_DECLARATION.test(
-        readFileSync(join(packageRoot, file), 'utf8'),
-      ),
-    );
+    .filter((file) => {
+      const source = readFileSync(join(packageRoot, file), 'utf8');
+      return (
+        DTS_RUNTIME_DECLARATION.test(source) || declaresRuntimeReexport(source)
+      );
+    });
 
-  const exemptions = DTS_WITHOUT_JS_EXEMPTIONS[packageName];
+  const exemptions = DTS_WITHOUT_JS_EXEMPTIONS[packageName] ?? [];
   const problems = [
     ...orphans
       .filter((file) => !exemptions.includes(file))
@@ -287,6 +310,22 @@ function checkRuntimeDtsHaveJs(tarball, packageName, unpackDir) {
       `Runtime .d.ts check failed for ${packageName}:\n${problems.join('\n')}`,
     );
   }
+}
+
+// `export * from` and named re-exports are runtime unless every specifier is
+// `type`-only (`export type * from` is a separate form that does not match).
+function declaresRuntimeReexport(source) {
+  for (const [, starOrClause, specifierList] of source.matchAll(DTS_REEXPORT)) {
+    if (starOrClause.startsWith('*')) return true;
+    const specifiers = specifierList
+      .split(',')
+      .map((specifier) => specifier.trim())
+      .filter(Boolean);
+    if (specifiers.some((specifier) => !/^type\s/.test(specifier))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function run(command, args) {

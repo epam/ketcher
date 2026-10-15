@@ -102,7 +102,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
     });
     if (badVal > 0) {
       errors.valence = `Structure contains ${badVal} atom${
-        badVal !== 1 ? 's' : ''
+        badVal === 1 ? '' : 's'
       } with bad valence`;
     }
   }

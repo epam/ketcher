@@ -30,6 +30,7 @@ export type ToolVariant =
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
@@ -121,7 +122,7 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-export type ActionStateOptions = {
+type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
@@ -149,6 +150,7 @@ type ActionObj = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
+  prop?: Record<string, unknown>;
   thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
@@ -192,4 +194,10 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction, AtomActionOpts };
+export type {
+  ActionStateOptions,
+  Tools,
+  UiAction,
+  UiActionAction,
+  AtomActionOpts,
+};

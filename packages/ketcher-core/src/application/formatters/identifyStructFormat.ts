@@ -79,7 +79,7 @@ export function identifyStructFormat(
 
   if (
     sanitizedString.startsWith('<') &&
-    sanitizedString.indexOf('<molecule') !== -1
+    sanitizedString.includes('<molecule')
   ) {
     return SupportedFormat.cml;
   }
@@ -104,7 +104,7 @@ export function identifyStructFormat(
     return SupportedFormat.inChI;
   }
 
-  if (sanitizedString.indexOf('<CDXML') !== -1) {
+  if (sanitizedString.includes('<CDXML')) {
     return SupportedFormat.cdxml;
   }
 
@@ -116,7 +116,7 @@ export function identifyStructFormat(
     return SupportedFormat.idt;
   }
 
-  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
+  if (!sanitizedString.includes('\n') && !isMacromolecules) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }

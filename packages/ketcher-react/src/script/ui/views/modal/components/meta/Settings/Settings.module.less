@@ -91,6 +91,7 @@
 .settings {
   width: @width-settings;
   height: 70vh;
+  max-height: 90%;
   overflow: hidden;
 
   fieldset[disabled] {
@@ -105,13 +106,11 @@
 
   > header {
     flex-shrink: 0;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
 
   > footer {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }

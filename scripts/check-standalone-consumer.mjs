@@ -65,17 +65,43 @@ const WASM_FILE_NAMES = {
   binaryWasmNoRender: `indigo-ketcher-norender-${INDIGO_VERSION}.wasm`,
 };
 
-// Pin the consumers' bundler versions to what this repo already builds
-// with (or a webpack 5 baseline, since nothing in the repo uses webpack) -
-// exact versions, not ranges or "latest", so this check doesn't start
-// failing from an unrelated bundler release (mirrors the exact Vite version
-// pinned in ketcher-standalone's package.json).
-const VITE_VERSION = readJson(join(standalonePkgDir, 'package.json'))
-  .devDependencies.vite;
+// Vite and jsdom are the exact versions the root lockfile resolves, so the
+// consumer installs match what this repo builds and tests with. The
+// standalone package declares `^8.3.1`, which would let the consumer float.
+const ROOT_LOCKFILE_PACKAGES = readJson(
+  join(repoRoot, 'package-lock.json'),
+).packages;
+
+// Top-level entry first. A workspace that does not hoist a package gets its
+// own copy (jsdom is nested under each workspace), which is accepted only if
+// every copy agrees on one version.
+function lockedVersion(name) {
+  const hoisted = ROOT_LOCKFILE_PACKAGES[`node_modules/${name}`]?.version;
+  if (hoisted) return hoisted;
+  const nested = [
+    ...new Set(
+      Object.entries(ROOT_LOCKFILE_PACKAGES)
+        .filter(([key]) => key.endsWith(`/node_modules/${name}`))
+        .map(([, entry]) => entry.version),
+    ),
+  ];
+  if (nested.length !== 1) {
+    throw new Error(
+      `root package-lock.json has no single resolved version for "${name}" ` +
+        `(top-level entry missing, nested versions: [${nested.join(', ')}]). ` +
+        'Install dependencies so the lockfile resolves it.',
+    );
+  }
+  return nested[0];
+}
+
+const VITE_VERSION = lockedVersion('vite');
+const JSDOM_VERSION = lockedVersion('jsdom');
+// Webpack is not a dependency of anything in this repo, so the lockfile has
+// no version to read. It stays an exact literal, not a range, so this check
+// does not start failing from an unrelated bundler release.
 const WEBPACK_VERSION = '5.99.0';
 const WEBPACK_CLI_VERSION = '5.1.4';
-// Same jsdom version the workspaces test with; used to execute the built bundles.
-const JSDOM_VERSION = '26.1.0';
 
 // Instantiate at module scope, not behind an unused export - the
 // constructor is what calls getIndigoWorker()/new Worker(). An export

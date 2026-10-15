@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-02T15:26:04.574Z",
+    "rangeLabel": "all",
+    "agents": ["claude"],
+    "projectFilter": "all",
+    "totals": {
+      "sessions": 1,
+      "durationMs": 43599,
+      "turns": 1,
+      "files": 0,
+      "netLines": 0,
+      "toolCallsTotal": 0,
+      "toolSuccessRate": 0,
+      "totalCostUSD": 0.09372720000000001,
+      "cacheReadCostUSD": 0.0128832,
+      "pricedSessions": 1
+    },
+    "unpricedModels": [],
+    "coverage": [
+      {
+        "agentName": "claude",
+        "total": 1,
+        "priced": 1,
+        "withLog": 1
+      }
+    ],
+    "userEmail": "hovik_poghosyan@epam.com",
+    "periodStart": "2026-10-02T15:23:04.303Z",
+    "periodEnd": "2026-10-02T15:23:47.902Z"
+  },
+  "sessions": [
+    {
+      "sessionId": "4d5f2860-90a0-4bfd-8387-c8288483724d",
+      "agentName": "claude",
+      "provider": "ai-run-sso",
+      "title": "hello",
+      "project": "/home/hovikpoghosyan/ketcher",
+      "branch": "6964-update-muimaterial-to-v9-v931",
+      "startTime": 1790954584303,
+      "durationMs": 43599,
+      "turns": 1,
+      "fileOps": 0,
+      "linesAdded": 0,
+      "linesRemoved": 0,
+      "linesModified": 0,
+      "netLines": 0,
+      "filesChanged": 0,
+      "filesWritten": 0,
+      "filesEdited": 0,
+      "toolCallsTotal": 0,
+      "toolCallsSuccess": 0,
+      "toolCallsFailure": 0,
+      "models": ["claude-sonnet-5"],
+      "languages": [],
+      "tools": [],
+      "tokens": {
+        "input": 4587,
+        "output": 13,
+        "cacheRead": 42944,
+        "cacheCreation": 11148,
+        "cacheCreation1h": 11148,
+        "total": 58692
+      },
+      "costUSD": 0.09372720000000001,
+      "cacheReadCostUSD": 0.0128832,
+      "perModelCost": [
+        {
+          "model": "claude-sonnet-5",
+          "tokens": {
+            "input": 4587,
+            "output": 13,
+            "cacheRead": 42944,
+            "cacheCreation": 11148,
+            "cacheCreation1h": 11148,
+            "total": 58692
+          },
+          "costUSD": 0.09372720000000001,
+          "unpriced": false
+        }
+      ],
+      "hadLog": true,
+      "agentSessionFile": "/home/hovikpoghosyan/.claude/projects/-home-hovikpoghosyan-ketcher/a5631e2f-5f2d-4c0a-ac54-2f2fe5dada77.jsonl",
+      "skillInvocations": [],
+      "agentInvocations": [],
+      "commandInvocations": [],
+      "sessionSource": "Pure chat"
+    }
+  ]
+}

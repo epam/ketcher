@@ -17,8 +17,9 @@
 import type { Dispatch } from 'redux';
 import type { Struct } from 'ketcher-core';
 import type Editor from '../../editor/Editor';
+import type { StoreState } from '../state/store.types';
 
-type ToolVariant =
+export type ToolVariant =
   | 'any-atom'
   | 'about'
   | 'analyse'
@@ -130,14 +131,14 @@ type ActionStateOptions = {
   buttons?: Record<string, { hidden?: boolean }>;
 };
 
-type ActionThunkState = {
-  editor: ActionStateEditor;
-  toolbar: {
-    visibleTools: {
-      select: ToolVariant;
-    };
-  };
-};
+// type ActionThunkState = {
+//   editor: ActionStateEditor;
+//   toolbar: {
+//     visibleTools: {
+//       select: ToolVariant;
+//     };
+//   };
+// };
 
 // Specific action option types
 type AtomActionOpts = {
@@ -150,7 +151,7 @@ type ActionObj = {
   opts?: unknown;
   dialog?: string;
   prop?: Record<string, unknown>;
-  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
+  thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name

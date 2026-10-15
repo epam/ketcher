@@ -16,6 +16,7 @@
 
 import type { IKetConnection } from 'application/formatters/types/ket';
 import type { Point } from 'domain/entities/vec2';
+import type { KetMoleculeItem } from './fromKet/moleculeToStruct';
 
 export type KetAtomLocation = {
   moleculeId: string;
@@ -27,7 +28,7 @@ export type KetAttachmentGroup = {
   atoms: number[];
 };
 
-export type KetMolecule = {
+export type KetMolecule = KetMoleculeItem & {
   stereoFlagPosition?: Point;
   attachmentGroups?: KetAttachmentGroup[];
 };

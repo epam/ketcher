@@ -14,16 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-const BUILD_RESOLVE_EXTENSIONS = [
-  '.mjs',
-  '.js',
-  '.mts',
-  '.ts',
-  '.jsx',
-  '.tsx',
-  '.json',
-];
-
 /**
  * Shared Vite options for resolving each package's build-time tsconfig paths.
  */
@@ -31,6 +21,5 @@ export const createTsconfigPathResolution = () => ({
   tsconfig: 'tsconfig.build.json',
   resolve: {
     tsconfigPaths: true,
-    extensions: [...BUILD_RESOLVE_EXTENSIONS],
   },
 });

@@ -180,7 +180,6 @@ export default defineConfig({
   base: './',
   resolve: {
     alias: {
-      _indigo_ketcher_import_alias_: variant.indigo,
       '_indigo-ketcher-import-alias_': variant.indigo,
       '_indigo-worker-import-alias_': workerShim(variant.worker),
     },

@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type FileContent = string | { structures: string[]; isPPTX: boolean };
-
-export type OpenerFunction = (file: File) => Promise<FileContent>;
+export type { FileContent, OpenerFunction } from '../../utils/fileOpener.types';

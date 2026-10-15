@@ -345,17 +345,21 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    // Bonds to monomers (attachment points) are real connections, but they are
-    // not represented as half-edges. Count them so an attachment atom that still
-    // has a bond is not treated as terminal (otherwise it would be labelled,
-    // e.g. "CH₂" appearing at an attachment point after a Micro↔Macro switch).
-    const monomerBondCount = this.atom.bonds.filter(
-      (bond) => bond instanceof MonomerToAtomBond,
-    ).length;
-    const neighborCount =
-      (atomNeighborsHalfEdges?.length ?? 0) + monomerBondCount;
+    return (
+      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
+    );
+  }
 
-    return neighborCount <= 1;
+  /**
+   * Bonds to monomers (attachment points) are real connections, but they are
+   * not represented as half-edges, so they are invisible to `isAtomTerminal`.
+   * Only carbon labels are suppressed based on this (see `isLabelVisible`):
+   * an attachment carbon must behave like a mid-chain carbon and stay unlabelled
+   * (otherwise "CH₂" appears at the attachment point after a Micro↔Macro switch),
+   * while heteroatoms such as N or Cl must always keep their label.
+   */
+  private get hasBondToMonomer() {
+    return this.atom.bonds.some((bond) => bond instanceof MonomerToAtomBond);
   }
 
   public get isLabelVisible() {
@@ -374,7 +378,7 @@ export class AtomRenderer extends BaseRenderer {
 
     if (
       isCarbon &&
-      !isAtomTerminal &&
+      (!isAtomTerminal || this.hasBondToMonomer) &&
       !hasCharge &&
       !hasRadical &&
       !hasAlias &&

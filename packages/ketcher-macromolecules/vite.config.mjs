@@ -74,7 +74,7 @@ export default defineConfig({
       autoLabel: 'dev-only',
       labelFormat: '[local]',
     }),
-    ...(isProduction ? [createConsoleStripPlugin()] : []),
+    ...createConsoleStripPlugin({ root: rootDir, isProduction }),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,

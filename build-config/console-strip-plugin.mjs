@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { resolve, sep } from 'node:path';
 import strip from '@rollup/plugin-strip';
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * The Rollup baseline ran `@rollup/plugin-strip` in production builds, which
@@ -24,8 +27,22 @@ import strip from '@rollup/plugin-strip';
  * see the output of Vite's TypeScript/JSX transform, not the raw source.
  * Shared so the include pattern and ordering are defined once for every
  * package that strips in production.
+ *
+ * `root` is the package directory. Returns `[]` outside production, so callers
+ * spread it unconditionally. The include is a RegExp on purpose: plugin-strip
+ * passes string patterns to `createFilter`, which resolves them against
+ * `process.cwd()`, so a glob only matches when the build starts in the package.
  */
-export const createConsoleStripPlugin = () => ({
-  ...strip({ include: 'src/**/*' }),
-  enforce: 'post',
-});
+export const createConsoleStripPlugin = ({ root, isProduction }) => {
+  if (!isProduction) {
+    return [];
+  }
+
+  const srcDir = resolve(root, 'src').split(sep).join('/');
+  return [
+    {
+      ...strip({ include: new RegExp(`^${escapeRegExp(srcDir)}/`) }),
+      enforce: 'post',
+    },
+  ];
+};

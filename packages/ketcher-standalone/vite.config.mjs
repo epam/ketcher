@@ -206,7 +206,7 @@ export default defineConfig({
   },
   plugins: [
     variant.copyWasm ? literalWorkerUrlPlugin() : dropInlineWorkerMapsPlugin(),
-    ...(isProduction ? [createConsoleStripPlugin()] : []),
+    ...createConsoleStripPlugin({ root: rootDir, isProduction }),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,

@@ -77,7 +77,7 @@ export default defineConfig({
   plugins: [
     svgr({ include: '**/*.svg' }),
     sdfRawTextPlugin,
-    ...(isProduction ? [createConsoleStripPlugin()] : []),
+    ...createConsoleStripPlugin({ root: rootDir, isProduction }),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,

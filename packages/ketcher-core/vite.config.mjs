@@ -108,7 +108,7 @@ export default defineConfig({
     ketRawTextPlugin,
     plainRaphaelRequireInEsmPlugin,
     forbidRequireHelperInEsmPlugin,
-    ...(isProduction ? [createConsoleStripPlugin()] : []),
+    ...createConsoleStripPlugin({ root: rootDir, isProduction }),
   ],
   build: {
     target: BROWSER_BUILD_TARGET,

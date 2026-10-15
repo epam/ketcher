@@ -199,4 +199,5 @@ export type {
   UiAction,
   UiActionAction,
   AtomActionOpts,
+  ToolVariant,
 };

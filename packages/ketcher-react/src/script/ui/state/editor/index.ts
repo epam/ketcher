@@ -24,9 +24,20 @@ import {
   toElement,
   toSgroup,
   toStereoLabel,
+  type ElementFormData,
+  type SGroupFormData,
+  type SGroupInput,
 } from '../../data/convert/structconv';
 
-import { Elements, KetcherLogger } from 'ketcher-core';
+import {
+  Elements,
+  KetcherLogger,
+  type Atom,
+  type Bond,
+  type EditMonomerPayload,
+  type FloatingToolsParams,
+  type Struct,
+} from 'ketcher-core';
 import acts from '../../action';
 import { debounce } from 'lodash/fp';
 import { openDialog } from '../modal';
@@ -39,11 +50,24 @@ import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
+import type { AppDispatch } from '../hooks';
+import type {
+  EditorInitState,
+  RGroupEditParams,
+  ShowInfoPayload,
+} from './types';
+import type Editor from '../../../editor/Editor';
 
-export default function initEditor(dispatch, getState, ketcherId) {
+export default function initEditor(
+  dispatch: AppDispatch,
+  getState: () => EditorInitState,
+  ketcherId: string,
+) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
-  const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const getSelectedSruCount = (sgroupType) => {
+  const sleep = (time: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, time));
+
+  const getSelectedSruCount = (sgroupType: string | undefined): number => {
     const editor = getState().editor;
     if (!editor?.structSelected) return 0;
     const selectedStruct = editor.structSelected();
@@ -58,15 +82,21 @@ export default function initEditor(dispatch, getState, ketcherId) {
 
   const resetToSelect =
     (force = false) =>
-    async (dispatch) => {
+    async (dispatch: AppDispatch) => {
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
-      const activeTool = activeToolAction?.tool;
+      const toolAction =
+        typeof activeToolAction !== 'function' ? activeToolAction : null;
+      const activeTool = toolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (
-        shouldResetToSelect(activeTool, resetOption, activeToolAction.opts) ||
+        shouldResetToSelect(
+          activeTool,
+          resetOption,
+          toolAction?.opts as string | undefined,
+        ) ||
         force === true
       )
         // example: 'paste'
@@ -75,10 +105,10 @@ export default function initEditor(dispatch, getState, ketcherId) {
     };
 
   return {
-    onInit: (editor) => {
+    onInit: (editor: Editor) => {
       dispatch({ type: 'INIT', editor });
     },
-    onChange: (action) => {
+    onChange: (action: string | undefined) => {
       if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
       // Editor switched to view only mode
       if (action === 'force')
@@ -89,7 +119,7 @@ export default function initEditor(dispatch, getState, ketcherId) {
     onSelectionChange: () => {
       updateAction();
     },
-    onElementEdit: (selem) => {
+    onElementEdit: (selem: Atom | Atom[]) => {
       if (isAtomsArray(selem)) {
         const atomAttributes = generateCommonProperties(
           selem,
@@ -98,35 +128,48 @@ export default function initEditor(dispatch, getState, ketcherId) {
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
           isMultipleAtoms: true,
-        }).then(toElement);
+        }).then((res) => toElement(res as ElementFormData));
       }
-      const elem = selem.type === 'text' ? selem : fromElement(selem);
-      let dlg;
-      if (elem.type === 'text') {
+      const singleElem = selem as Atom & { type?: string };
+      if (singleElem.type === 'text') {
         // TODO: move textdialog opening logic to another place
-        return openDialog(dispatch, 'text', elem);
-      } else if (Elements.get(elem.label)) {
-        dlg = openDialog(dispatch, 'atomProps', elem);
+        return openDialog(
+          dispatch,
+          'text',
+          Object.fromEntries(Object.entries(singleElem)),
+        );
+      }
+      const fromResult = fromElement(selem);
+      if (!fromResult) return;
+      const elem = fromResult as ElementFormData;
+      let dlg: Promise<unknown>;
+      if (Elements.get(elem.label ?? '')) {
+        dlg = openDialog(
+          dispatch,
+          'atomProps',
+          elem as Record<string, unknown>,
+        );
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
-        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
-          ap: res,
-        }));
+        dlg = openDialog(
+          dispatch,
+          'attachmentPoints',
+          elem.ap as Record<string, unknown>,
+        ).then((res) => ({ ap: res }));
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
           type: 'atom',
           values: elem.values,
-          disabledIds: Array.from(rgroups.entries()).reduce(
+          disabledIds: Array.from(rgroups.entries()).reduce<number[]>(
             (acc, [rgid, rg]) => {
-              if (rg.frags.has(elem.fragId)) acc.push(rgid);
-
+              if (rg.frags.has(elem.fragId as number)) acc.push(rgid);
               return acc;
             },
             [],
           ),
         };
         dlg = openDialog(dispatch, 'rgroup', params).then((res) => ({
-          values: res.values,
+          values: (res as { values: unknown[] }).values,
           type: 'rlabel',
         }));
       } else {
@@ -137,43 +180,55 @@ export default function initEditor(dispatch, getState, ketcherId) {
           { ...elem, pseudo: elem.pseudo },
         );
       }
-      return dlg.then(toElement);
+      return dlg.then((res) => toElement(res as ElementFormData));
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: ({ ...init }) =>
+    onEnhancedStereoEdit: (params: { stereoLabel: string | null }) =>
       sleep(0).then(() => {
-        init = fromStereoLabel(init.stereoLabel);
+        const init = fromStereoLabel(params.stereoLabel);
         return openDialog(dispatch, 'enhancedStereo', {
           init,
         }).then(
-          (res) => toStereoLabel(res),
+          (res) => toStereoLabel(res as ReturnType<typeof fromStereoLabel>),
           () => null,
         );
       }),
 
-    onQuickEdit: (atom) => openDialog(dispatch, 'labelEdit', atom),
-    onBondEdit: (bonds) => {
+    onQuickEdit: (atom: Atom) =>
+      openDialog(
+        dispatch,
+        'labelEdit',
+        atom as unknown as Record<string, unknown>,
+      ),
+    onBondEdit: (bonds: Bond[]) => {
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
-      return openDialog(dispatch, 'bondProps', fromBond(bondsAttributes)).then(
-        toBond,
-      );
+      return openDialog(
+        dispatch,
+        'bondProps',
+        fromBond(bondsAttributes as unknown as Bond) as Record<string, unknown>,
+      ).then((res) => toBond(res as ReturnType<typeof fromBond>));
     },
-    onRgroupEdit: (rgroup) => {
+    onRgroupEdit: (rgroup: RGroupEditParams) => {
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
         const rgroupLabels = Array.from(struct.rgroups.keys());
         if (!rgroup.range) rgroup.range = '>0';
 
-        return openDialog(dispatch, 'rgroupLogic', { rgroupLabels, ...rgroup });
+        return openDialog(dispatch, 'rgroupLogic', {
+          rgroupLabels,
+          ...rgroup,
+        } as Record<string, unknown>);
       }
 
-      const disabledIds = Array.from(struct.atoms.values()).reduce(
+      const disabledIds = Array.from(struct.atoms.values()).reduce<unknown[]>(
         (acc, atom) => {
           if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
-            return acc.concat(fromElement(atom).values);
-
+            return acc.concat(
+              (fromElement(atom) as { values?: (string | number)[] })?.values ??
+                [],
+            );
           return acc;
         },
         [],
@@ -184,28 +239,34 @@ export default function initEditor(dispatch, getState, ketcherId) {
         disabledIds,
       };
       return openDialog(dispatch, 'rgroup', params).then((res) => ({
-        label: res.values[0],
+        label: (res as { values: unknown[] }).values[0],
       }));
     },
-    onSgroupEdit: (sgroup) =>
-      sleep(0) // huck to open dialog after dispatch sgroup tool action
+    onSgroupEdit: (sgroup: SGroupInput) =>
+      sleep(0) // hack to open dialog after dispatch sgroup tool action
         .then(() =>
           openDialog(dispatch, 'sgroup', {
-            ...fromSgroup(sgroup),
+            ...(fromSgroup(sgroup) as Record<string, unknown>),
             selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
-        .then(toSgroup),
-    onRemoveFG: (result) =>
+        .then((res) => toSgroup(res as SGroupFormData)),
+    onRemoveFG: (result: Record<string, unknown>) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
-    onEditMonomer: (payload) =>
-      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
-    onMessage: (msg) => {
+    onEditMonomer: (payload: EditMonomerPayload) =>
+      sleep(0).then(() =>
+        openDialog(
+          dispatch,
+          'editMonomer',
+          payload as unknown as Record<string, unknown>,
+        ),
+      ),
+    onMessage: (msg: { error?: unknown }) => {
       if (msg.error) {
         // TODO: add error handler call
       }
     },
-    onAromatizeStruct: (struct) => {
+    onAromatizeStruct: (struct: Struct) => {
       const state = getState();
       const serverOpts = state.options.getServerSettings();
       return serverCall(
@@ -214,12 +275,12 @@ export default function initEditor(dispatch, getState, ketcherId) {
         'aromatize',
         serverOpts,
         struct,
-      ).catch((e) => {
-        KetcherLogger.error('index.js::initEditor::onAromatizeStruct', e);
-        state.editor.errorHandler(e);
+      ).catch((e: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
       });
     },
-    onDearomatizeStruct: (struct) => {
+    onDearomatizeStruct: (struct: Struct) => {
       const state = getState();
       const serverOpts = state.options.getServerSettings();
       return serverCall(
@@ -228,16 +289,17 @@ export default function initEditor(dispatch, getState, ketcherId) {
         'dearomatize',
         serverOpts,
         struct,
-      ).catch((e) => {
-        KetcherLogger.error('index.js::initEditor::onDearomatizeStruct', e);
-        state.editor.errorHandler(e);
+      ).catch((e: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
       });
     },
     onMouseDown: () => {
       updateAction();
     },
-    onConfirm: (payload) => openDialog(dispatch, 'confirm', payload),
-    onShowInfo: (payload) => {
+    onConfirm: (payload: Record<string, unknown>) =>
+      openDialog(dispatch, 'confirm', payload),
+    onShowInfo: (payload: ShowInfoPayload | null | undefined) => {
       if (payload) {
         const { groupStruct, event, sGroup } = payload;
         highlightFG(dispatch, { groupStruct, event, sGroup });
@@ -245,22 +307,18 @@ export default function initEditor(dispatch, getState, ketcherId) {
         highlightFG(dispatch, { groupStruct: null, sGroup: null });
       }
     },
-    onApiSettings: (payload) => dispatch(saveSettings(payload, ketcherId)),
+    onApiSettings: (payload: Record<string, unknown>) =>
+      dispatch(saveSettings(payload, ketcherId)),
 
-    onUpdateFloatingTools: memoizedDebounce(
-      /**
-       * @param {import('src/script/editor/Editor').FloatingToolsParams} payload
-       */
-      (payload) => {
-        dispatch(updateFloatingTools(payload));
-      },
-    ),
+    onUpdateFloatingTools: memoizedDebounce((payload: FloatingToolsParams) => {
+      dispatch(updateFloatingTools(payload));
+    }),
 
     onZoomIn: updateAction,
     onZoomOut: updateAction,
     onZoomChanged: updateAction,
 
-    onShowMacromoleculesErrorMessage: (payload) =>
+    onShowMacromoleculesErrorMessage: (payload: string) =>
       dispatch(openInfoModalWithCustomMessage(payload)),
   };
 }

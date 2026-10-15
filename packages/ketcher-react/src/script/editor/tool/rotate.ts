@@ -181,24 +181,25 @@ class RotateTool implements Tool {
     }
 
     const { texts, rxnArrows, rxnPluses, bonds } = this.selection;
+    // Bonds selected without any of their atoms are centered on the atoms
+    // they connect, which the explicit selection adds
+    const boxAtoms =
+      visibleAtoms.length || !bonds?.length
+        ? visibleAtoms
+        : this.struct.getSelectedVisibleAtoms(this.editor.explicitSelected());
     if (
       !center &&
-      (visibleAtoms.length ||
+      (boxAtoms.length ||
         texts?.length ||
         rxnArrows?.length ||
         rxnPluses?.length)
     ) {
       center = this.reStruct.getSelectionBoxCenter({
-        atoms: visibleAtoms,
+        atoms: boxAtoms,
         texts,
         rxnArrows,
         rxnPluses,
       });
-    }
-
-    // Bonds selected without any of their atoms
-    if (!center && bonds?.length) {
-      center = this.reStruct.getSelectionBoxCenter({ bonds });
     }
 
     return center;

@@ -157,25 +157,32 @@ class RotateController {
   private show() {
     const originalCenter = this.rotateTool.getCenter();
     const selection = this.editor.selection();
-    const visibleAtoms =
-      this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
-
-    const { texts, rxnArrows, rxnPluses, bonds } = selection || {};
-
-    const rotatableItems = visibleAtoms.concat(
-      texts || [],
-      rxnArrows || [],
-      rxnPluses || [],
-    );
-    const isMoreThanOneItemBeingSelected = rotatableItems.length > 1;
-    // Only bonds, without any of their atoms: they can be flipped or deleted
-    // but rotation moves atoms, so the frame is shown without its handle
+    // Rotation moves the selected atoms, so bonds selected without any of
+    // them get the frame without its rotation handle
     const isOnlyBondsSelected =
-      rotatableItems.length === 0 && (bonds?.length ?? 0) > 1;
+      Boolean(selection?.bonds?.length) &&
+      !selection?.atoms?.length &&
+      !selection?.texts?.length &&
+      !selection?.rxnArrows?.length &&
+      !selection?.rxnPluses?.length;
+    // The explicit selection adds the atoms of the bonds, so they are framed
+    // like the atoms they connect
+    const frameSelection = isOnlyBondsSelected
+      ? this.editor.explicitSelected()
+      : selection;
+    const visibleAtoms =
+      this.render.ctab.molecule.getSelectedVisibleAtoms(frameSelection);
+
+    const { texts, rxnArrows, rxnPluses, bonds } = frameSelection || {};
+
+    const selectedItems = isOnlyBondsSelected
+      ? (selection?.bonds ?? [])
+      : visibleAtoms.concat(texts ?? [], rxnArrows ?? [], rxnPluses ?? []);
+    const isMoreThanOneItemBeingSelected = selectedItems.length > 1;
 
     const currentTool = this.editor.tool();
     const enable =
-      (isMoreThanOneItemBeingSelected || isOnlyBondsSelected) &&
+      isMoreThanOneItemBeingSelected &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;

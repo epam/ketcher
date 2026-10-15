@@ -162,19 +162,19 @@ class RotateController {
 
     const { texts, rxnArrows, rxnPluses, multitailArrows } = selection;
 
-    const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(
-        texts || [],
-        rxnArrows || [],
-        rxnPluses || [],
-        multitailArrows || [],
-      ).length > 1;
-    const isRotatableSelection =
-      isMoreThanOneItemBeingSelected || Boolean(rxnArrows?.length);
+    const selectedItemsCount = Object.entries({
+      ...selection,
+      atoms: visibleAtoms,
+    })
+      .filter(([key]) => key !== 'enhancedFlags')
+      .reduce((count, [, ids]) => count + (ids?.length ?? 0), 0);
+    const isSingleAtomOrPlus =
+      selectedItemsCount === 1 &&
+      (visibleAtoms.length === 1 || Boolean(rxnPluses?.length));
 
     const currentTool = this.editor.tool();
     const enable =
-      isRotatableSelection &&
+      !isSingleAtomOrPlus &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;

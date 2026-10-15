@@ -196,5 +196,6 @@ build. `scripts/check-standalone-consumer.mjs` closes that gap and runs in CI af
 check. It `npm pack`s `ketcher-core` and `ketcher-standalone`, installs the tarballs into separate
 Vite and webpack 5 consumer projects in an OS temporary directory outside the repository, and
 asserts that each consumer emits a distinct worker file and matching `.wasm` asset for both
-variants. Keeping the consumers outside the repository prevents Node and npm from falling back
+variants. It then loads each consumer's bundle in jsdom and fails if the bundle throws on load or
+does not instantiate the services. Keeping the consumers outside the repository prevents Node and npm from falling back
 to workspace links or local `dist/` output and masking undeclared package dependencies.

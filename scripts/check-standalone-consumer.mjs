@@ -74,6 +74,8 @@ const VITE_VERSION = readJson(join(standalonePkgDir, 'package.json'))
   .devDependencies.vite;
 const WEBPACK_VERSION = '5.99.0';
 const WEBPACK_CLI_VERSION = '5.1.4';
+// Same jsdom version the workspaces test with; used to execute the built bundles.
+const JSDOM_VERSION = '26.1.0';
 
 // Instantiate at module scope, not behind an unused export - the
 // constructor is what calls getIndigoWorker()/new Worker(). An export
@@ -128,6 +130,7 @@ function main() {
     npmInstall(viteDir);
     run(join(viteDir, 'node_modules/.bin/vite'), ['build'], viteDir);
     verifyConsumerOutput('Vite', join(viteDir, 'dist'));
+    runConsumerBundle('Vite', viteDir, 'module');
 
     log('Installing and building the webpack 5 consumer...');
     npmInstall(webpackDir);
@@ -137,9 +140,10 @@ function main() {
       webpackDir,
     );
     verifyConsumerOutput('webpack 5', join(webpackDir, 'dist'));
+    runConsumerBundle('webpack 5', webpackDir, 'script');
 
     console.log(
-      '\n✅ ketcher-standalone default/binaryWasm/binaryWasmNoRender builds work in both a Vite and a webpack 5 consumer\n',
+      '\n✅ ketcher-standalone default/binaryWasm/binaryWasmNoRender builds in a Vite and a webpack 5 consumer, and their bundles load and instantiate the services\n',
     );
   } finally {
     rmSync(workDir, { recursive: true, force: true });
@@ -221,6 +225,7 @@ function setUpViteConsumer(dir, coreTarball, standaloneTarball) {
     },
     devDependencies: {
       vite: VITE_VERSION,
+      jsdom: JSDOM_VERSION,
     },
   });
 
@@ -233,7 +238,10 @@ function setUpViteConsumer(dir, coreTarball, standaloneTarball) {
 export default defineConfig({
   build: {
     outDir: 'dist',
-    rollupOptions: { input: 'src/main.js' },
+    rollupOptions: {
+      input: 'src/main.js',
+      output: { entryFileNames: 'main.js' },
+    },
   },
 });
 `,
@@ -254,6 +262,7 @@ function setUpWebpackConsumer(dir, coreTarball, standaloneTarball) {
     devDependencies: {
       webpack: WEBPACK_VERSION,
       'webpack-cli': WEBPACK_CLI_VERSION,
+      jsdom: JSDOM_VERSION,
     },
   });
 
@@ -357,6 +366,140 @@ function verifyConsumerOutput(bundlerName, distDir) {
     `${bundlerName}: OK (${wasmFiles.length} .wasm file(s), ${workerFiles.size} distinct ` +
       'worker file(s), with a matching worker/.wasm pair for each checked variant)',
   );
+}
+
+// Builds are not enough: a bundler can emit every file and still ship a module
+// graph that throws on load (for example a bare `require('raphael')` that the
+// bundle cannot resolve). Load the built bundle in jsdom and instantiate the
+// services, the way a browser page would. `kind` is 'module' for ESM output and
+// 'script' for a classic script.
+function runConsumerBundle(bundlerName, consumerDir, kind) {
+  const runnerPath = join(consumerDir, 'run-bundle.mjs');
+  const bundlePath = join(consumerDir, 'dist', 'main.js');
+  writeFileSync(runnerPath, buildBundleRunner());
+
+  log(`Loading the ${bundlerName} consumer bundle in jsdom...`);
+  run(process.execPath, [runnerPath, kind, bundlePath], consumerDir);
+  log(`${bundlerName}: bundle loaded and services instantiated`);
+}
+
+function buildBundleRunner() {
+  return `import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { JSDOM } from 'jsdom';
+
+const [kind, bundlePath] = process.argv.slice(2);
+const SERVICE_GLOBALS = [
+  '__ketcherStandaloneDefaultService',
+  '__ketcherStandaloneService0',
+  '__ketcherStandaloneService1',
+];
+
+// A classic script is loaded the way a page loads it: a <script src> on a file:
+// page, so jsdom fetches its async chunks too. An ESM bundle is imported by
+// Node, below, with the same globals.
+const isScript = kind === 'script';
+const dom = new JSDOM(
+  isScript
+    ? '<!doctype html><script src="main.js"></script>'
+    : '<!doctype html><html><body></body></html>',
+  {
+    pretendToBeVisual: true,
+    url: isScript
+      ? pathToFileURL(join(dirname(bundlePath), 'index.html')).href
+      : 'http://localhost/',
+    runScripts: isScript ? 'dangerously' : undefined,
+    resources: isScript ? 'usable' : undefined,
+  },
+);
+// jsdom's own user agent contains "jsdom", which Paper.js reads as a Node
+// runtime and then takes its Node-only code path. Report a browser instead.
+Object.defineProperty(dom.window.navigator, 'userAgent', {
+  value:
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
+});
+
+// The Indigo worker is constructed but never run: the check is about the
+// bundle's module graph and load-time behaviour, not the wasm itself.
+class StubWorker {
+  constructor(url) {
+    this.url = String(url);
+  }
+  postMessage() {}
+  terminate() {}
+  addEventListener() {}
+  removeEventListener() {}
+}
+dom.window.Worker = StubWorker;
+
+// Paper.js probes a 2D canvas context while loading. jsdom has none without
+// the optional canvas package, so hand out a context whose methods do nothing.
+const noop = () => undefined;
+const canvasContextStub = new Proxy(
+  {},
+  {
+    get: (target, property) =>
+      property in target ? target[property] : noop,
+    set: (target, property, value) => {
+      target[property] = value;
+      return true;
+    },
+  },
+);
+dom.window.HTMLCanvasElement.prototype.getContext = () => canvasContextStub;
+
+// The bundle expects a browser global scope. Copy jsdom's DOM interfaces that
+// Node lacks (for example HTMLAnchorElement, used at module load) onto the
+// global object, and point window, self, document and navigator at jsdom.
+const browserGlobals = {};
+for (const name of Object.getOwnPropertyNames(dom.window)) {
+  if (name in globalThis) {
+    continue;
+  }
+  try {
+    browserGlobals[name] = dom.window[name];
+  } catch {
+    // jsdom refuses some accessors on an opaque origin (localStorage).
+  }
+}
+Object.assign(browserGlobals, {
+  window: dom.window,
+  self: dom.window,
+  document: dom.window.document,
+  navigator: dom.window.navigator,
+  Worker: StubWorker,
+});
+for (const [name, value] of Object.entries(browserGlobals)) {
+  Object.defineProperty(globalThis, name, {
+    value,
+    configurable: true,
+    writable: true,
+  });
+}
+
+// Errors thrown by page scripts are reported to the window, not to this
+// process, so collect them and fail on the first one.
+const pageErrors = [];
+const scope = isScript ? dom.window : globalThis;
+if (isScript) {
+  dom.window.addEventListener('error', (event) =>
+    pageErrors.push(event.error ?? new Error(event.message)),
+  );
+  await new Promise((resolve) => dom.window.addEventListener('load', resolve));
+  if (pageErrors.length > 0) {
+    throw pageErrors[0];
+  }
+} else {
+  await import(pathToFileURL(bundlePath).href);
+}
+
+const missing = SERVICE_GLOBALS.filter((name) => !scope[name]);
+if (missing.length > 0) {
+  throw new Error('bundle did not instantiate: ' + missing.join(', '));
+}
+dom.window.close();
+`;
 }
 
 function listFilesRecursive(dir) {

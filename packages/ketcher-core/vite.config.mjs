@@ -23,6 +23,61 @@ const ketRawTextPlugin = createRawTextPlugin({
   extension: '.ket',
 });
 
+// Rolldown rewrites the bare `require('raphael')` in raphael-ext.ts into a
+// `__require('raphael')` helper call in ESM output. Consumer bundlers (Vite,
+// webpack) do not recognise that form, so Raphael is dropped and the call throws
+// at load time. The Rollup baseline emitted the plain `require`, so restore it
+// here. The call stays behind the `typeof window` guard in raphael-ext.ts, which
+// keeps SSR safe (a top-level import would throw under Node).
+const RAPHAEL_REQUIRE_HELPER_CALL = '__require("raphael")';
+const RAPHAEL_REQUIRE_HELPER_IMPORT =
+  /^import \{ __require \} from "[^"\n]*runtime[^"\n]*";\n/m;
+
+const plainRaphaelRequireInEsmPlugin = {
+  name: 'ketcher-core-plain-raphael-require-in-esm',
+  renderChunk(code, _chunk, outputOptions) {
+    if (
+      outputOptions.format !== 'es' ||
+      !code.includes(RAPHAEL_REQUIRE_HELPER_CALL)
+    ) {
+      return null;
+    }
+
+    let restored = code.replaceAll(
+      RAPHAEL_REQUIRE_HELPER_CALL,
+      'require("raphael")',
+    );
+    if (!restored.includes('__require(')) {
+      restored = restored.replace(RAPHAEL_REQUIRE_HELPER_IMPORT, '');
+    }
+
+    // The rewrite shortens one line by two columns; the chunk map is not
+    // adjusted for that, which only matters for this single call.
+    return { code: restored, map: null };
+  },
+};
+
+// Rolldown emits `__require(` in ESM output for any other bare require() call of
+// an external module. Consumer bundlers cannot resolve that helper, so fail the
+// build if it reaches ESM output.
+const forbidRequireHelperInEsmPlugin = {
+  name: 'ketcher-core-forbid-require-helper-in-esm',
+  generateBundle(outputOptions, bundle) {
+    if (outputOptions.format !== 'es') {
+      return;
+    }
+
+    for (const [fileName, chunk] of Object.entries(bundle)) {
+      if (chunk.type === 'chunk' && chunk.code.includes('__require(')) {
+        this.error(
+          `ESM output ${fileName} contains __require(; consumer bundlers cannot resolve it. ` +
+            'Keep bare require() calls out of the ESM build (see vite.config.mjs).',
+        );
+      }
+    }
+  },
+};
+
 const output = (format, entryFileNames) => ({
   dir: 'dist',
   format,
@@ -48,7 +103,11 @@ export default defineConfig({
       isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
     ),
   },
-  plugins: [ketRawTextPlugin],
+  plugins: [
+    ketRawTextPlugin,
+    plainRaphaelRequireInEsmPlugin,
+    forbidRequireHelperInEsmPlugin,
+  ],
   build: {
     target: BROWSER_BUILD_TARGET,
     // Rolldown minifies library output by default; Rollup did not. Publishing

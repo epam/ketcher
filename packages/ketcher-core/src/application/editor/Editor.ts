@@ -2970,15 +2970,8 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = getRenderedStructuresBbox();
-
-    this.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
-      const bondBbox = polymerBond.baseRenderer?.rootBBox;
-
-      if (bondBbox) {
-        structureBbox.left = Math.min(structureBbox.left, bondBbox.x);
-        structureBbox.top = Math.min(structureBbox.top, bondBbox.y);
-      }
+    const structureBbox = getRenderedStructuresBbox(undefined, {
+      includePolymerBonds: true,
     });
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);

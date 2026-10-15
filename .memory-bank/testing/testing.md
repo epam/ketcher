@@ -118,6 +118,12 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+### Local run caveats
+
+- **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
+- **Screenshot/snapshot tests only pass where Linux baselines exist.** On macOS they fail with `A snapshot doesn't exist … -darwin.png` because baselines are generated via Docker. Run the screenshot suite through Docker (or CI); don't treat local `-darwin.png` misses as real regressions.
+- **`GENERATE_DATA=true` rewrites many expected files** under `tests/test-data/`. If that was unintended, restore them with `git checkout`.
+
 ### Playwright Projects
 
 | Project name     | Test match                               | Viewport | Base URL       |
@@ -182,6 +188,8 @@ test('some test', async ({ page }) => {
 
 **When to use**: Small suites, isolated tests, or tests that need a fresh page each time.
 
+**Choosing between A and B.** Pattern A reuses one page for the whole suite, so it is fast — but the canvas fixtures only reset the canvas, zoom, localStorage and settings; they do **not** fully reset the undo/redo history (some cleanup steps leave entries behind), and other subtle editor state can persist across tests. Use Pattern B when a test asserts on undo/redo stack depth or boundaries, or otherwise depends on a fully clean editor state — the extra per-test page-init cost is worth the isolation.
+
 ### Canvas Fixtures (what they do)
 
 | Fixture           | `beforeEach` setup                                                                   | `afterEach` teardown                                                   |
@@ -191,6 +199,8 @@ test('some test', async ({ page }) => {
 | `SnakeCanvas`     | Switch to macro editor, select Snake layout                                          | (similar to Flex)                                                      |
 | `SequenceCanvas`  | Switch to macro editor, select Sequence layout                                       | (similar to Flex)                                                      |
 
+**Caveat — history entries from fixture cleanup:** the `resetSettingsValuesToDefault` step of the canvas fixtures leaves **one entry in the undo/redo stack** (verified 2026-10-09: `clearCanvas` and `resetZoomLevelToDefault` leave none). Tests that assert undo/redo stack boundaries (e.g. "undo button disabled at history start") must account for this extra entry — loop until the button is disabled rather than hardcoding the expected undo count.
+
 ### `initXxxCanvas` Worker Fixtures
 
 Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates a fresh page already initialized in the right mode. Used only in `test.beforeAll`.
@@ -199,7 +209,7 @@ Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates
 
 ## Page Object Model (POM)
 
-All UI interactions go through POM objects. Never interact with raw `page.locator` in test files for reusable UI elements.
+All UI interactions **and assertions** go through POM objects. Never use raw `page.locator` / `page.getByTestId` in test files for reusable UI elements — including state checks like `expect(page.getByTestId('undo')).toBeDisabled()`. Use the locator the POM already exposes (e.g. `expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled()`).
 
 ### POM Style: factory function, not class
 
@@ -327,6 +337,13 @@ const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
 Each entry has `{ alias, testId }`. Always use these enums — never hardcode monomer strings.
 
+### Editor-mode content-creation caveats
+
+- **Micro mode — placing atoms:** use the `addAtoms(page, atom, points)` helper (`@utils/canvas/atoms/addAtoms`) — it selects the element tool once, clicks each point in turn (the tool stays active between clicks), then presses Escape and moves the mouse away. Note: typing an element symbol on the canvas does *not* place an atom; it only selects that element in the periodic-table panel.
+- **Macro mode — adding monomers depends on the layout mode.** The way you place monomers/bases differs by the selected layout (`LayoutMode.Flex` / `Snake` / `Sequence`):
+  - **Flex & Snake:** drag from the library with `Library(page).dragMonomerOnCanvas(monomer, { x, y })`.
+  - **Sequence:** dragging from the library is not available. Add monomers by clicking on monomer card in library.
+
 ---
 
 ## Good Practices to Follow
@@ -344,19 +361,29 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Test Structure
 
-6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time.
+6. **Use the shared-page pattern (`initXxxCanvas`)** for suites with more than ~5 tests — it significantly reduces test suite execution time. Prefer a per-test page (Pattern B) instead when tests assert on undo/redo stack boundaries or need a fully clean editor state, since the shared canvas fixtures do not fully reset history.
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
-8. **Add a comment block** in each test with the test case ID and description:
+8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
-   test('Create bond between two peptides', async () => {
+   test('Copy action stays enabled after switching to Macro mode', async () => {
      /*
-     Test case: #2334 - Create peptide chain
-     Description: Polymer bond tool
-     */
+      * Test task: https://github.com/epam/ketcher/issues/9999
+      * Description: Copy action stays enabled for selected microstructure after switching to Macro mode
+      * Scenario:
+      * 1. Draw a benzene ring in Molecules mode
+      * 2. Switch to Macro mode
+      * 3. Select the structure on the canvas
+      * 4. Verify that Copy is enabled in the context menu
+      *
+      * Version 3.12.0
+      */
    ```
+   The `Version` line is the Ketcher release the test targets (take it from `packages/ketcher-react/package.json`, dropping any `-rc.N` suffix).
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Screenshot Testing
+
+Prefer **structural assertions over screenshots** for editor mode and content presence where possible: the canvas exposes a `data-canvasmode` attribute, atoms/monomers/bonds have stable test ids, and toolbar buttons expose disabled state. These are deterministic and don't depend on Docker-generated Linux snapshots — reserve screenshots for genuine visual-regression checks.
 
 10. **Use `takeEditorScreenshot`** for canvas comparisons, not `takePageScreenshot`. Canvas screenshots are more stable across viewport changes.
 11. **Add `hideMacromoleculeEditorScrollBars: true`** when macromolecule editor scroll bars might appear and affect snapshots.
@@ -375,14 +402,9 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### TypeScript Discipline
 
-18. **No magic numbers** — extract coordinate constants to named variables:
+18. **Use direct coordinate numbers inline** in tests — do not extract canvas coordinates into named constants (e.g. `const CARBON_1_X = 400`). Inline literals keep each test self-contained and readable, and a changed constant would silently move the setup of every test that shares it:
     ```ts
-    const PEPTIDE_X = 300;
-    const PEPTIDE_Y = 300;
-    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
-      x: PEPTIDE_X,
-      y: PEPTIDE_Y,
-    });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
     ```
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
@@ -397,6 +419,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
 - **Bare `await page.keyboard.press(key)`** for canvas actions — always wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
+- **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 
 ### Selector Anti-Patterns
 
@@ -461,7 +484,8 @@ Every new feature must have e2e tests that cover:
 
 ### E2E Test Plans
 
-Before writing a **new spec file or folder** of E2E tests, draft an E2E test plan following [e2e-test-plan-template.md](./e2e-test-plan-template.md) and get user approval before writing spec code. The template covers structure (requirements table, verified codebase facts, infrastructure, per-file test case tables, verification strategy, fixtures, phased implementation with a spike phase, open questions) and lessons learned from past planning exercises.
+- Before writing a **new spec file or folder** of E2E tests, draft an E2E test plan following [e2e-test-plan-template.md](./e2e-test-plan-template.md) and get user approval before writing spec code. The template covers structure (requirements table, verified codebase facts, infrastructure, per-file test case tables, verification strategy, fixtures, phased implementation with a spike phase, open questions) and lessons learned from past planning exercises.
+- **Keep `.memory-bank/testing/` current:** when you learn a reusable lesson about E2E testing or planning (a gotcha, a new helper, a pattern trade-off), add it to the right file — `testing/testing.md` for how-to-write guidance, `testing/e2e-test-plan-template.md` for planning-process lessons. Do this as you go and again when you finish writing/planning tests, so future sessions inherit the knowledge.
 
 ## Other rules to follow
 - Run tests after implementation to ensure they pass and do what they are supposed to do.

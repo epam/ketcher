@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Atom } from './atom';
-import type { Bond } from './bond';
+import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
@@ -642,7 +642,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructAtomsAndBondsAccess,
+    mol: StructAtomsAndBondsAccess & StructBondEndpointAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,

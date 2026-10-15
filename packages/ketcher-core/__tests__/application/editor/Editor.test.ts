@@ -24,12 +24,17 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import {
+  type NodeSelection,
+  SequenceRenderer,
+} from 'application/render/renderers/sequence/SequenceRenderer';
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -1769,6 +1774,94 @@ describe('CoreEditor', () => {
       } else {
         Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
       }
+    });
+
+    describe('right-click on a sequence item (#4446)', () => {
+      const svgElementWithBBox = SVGElement.prototype as SVGElement & {
+        getBBox?: () => DOMRect;
+      };
+      let initialGetBBox: (() => DOMRect) | undefined;
+      let firstMonomer: BaseMonomer;
+      let secondMonomer: BaseMonomer;
+      let rightClickSequenceHandler: jest.Mock;
+
+      const rightClick = (monomer: BaseMonomer) => {
+        const sequenceItemElement = document.createElement('div');
+        (sequenceItemElement as unknown as { __data__: unknown }).__data__ =
+          monomer.renderer;
+        rootElement.appendChild(sequenceItemElement);
+        sequenceItemElement.dispatchEvent(
+          new MouseEvent('contextmenu', {
+            bubbles: true,
+            clientX: 0,
+            clientY: 0,
+          }),
+        );
+        sequenceItemElement.remove();
+      };
+
+      const getMenuSelection = () => {
+        const [, selections] = rightClickSequenceHandler.mock.calls[0][0];
+        return selections.flat().map(({ node }: NodeSelection) => node.monomer);
+      };
+
+      beforeEach(() => {
+        // editor defaults to sequence-layout-mode (DEFAULT_LAYOUT_MODE)
+        initialGetBBox = svgElementWithBBox.getBBox;
+        svgElementWithBBox.getBBox = () =>
+          ({ x: 0, y: 0, width: 0, height: 0 }) as DOMRect;
+
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.addMonomer(
+            peptideMonomerItem,
+            new Vec2(0, 0),
+          ),
+        );
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.addMonomer(
+            peptideMonomerItem,
+            new Vec2(10, 0),
+          ),
+        );
+        [firstMonomer, secondMonomer] = [
+          ...editor.drawingEntitiesManager.monomers.values(),
+        ];
+        editor.drawingEntitiesManager.clearCanvas();
+        SequenceRenderer.show(
+          ChainsCollection.fromMonomers([firstMonomer, secondMonomer]),
+        );
+
+        rightClickSequenceHandler = jest.fn();
+        editor.events.rightClickSequence.add(rightClickSequenceHandler);
+      });
+
+      afterEach(() => {
+        SequenceRenderer.clear();
+        if (initialGetBBox) {
+          svgElementWithBBox.getBBox = initialGetBBox;
+        } else {
+          Reflect.deleteProperty(svgElementWithBBox, 'getBBox');
+        }
+      });
+
+      it('should select the clicked item instead of the current selection', () => {
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.selectDrawingEntity(firstMonomer),
+        );
+
+        rightClick(secondMonomer);
+
+        expect(firstMonomer.selected).toBe(false);
+        expect(secondMonomer.selected).toBe(true);
+        expect(getMenuSelection()).toEqual([secondMonomer]);
+      });
+
+      it('should keep the selection empty when nothing is selected (#6472)', () => {
+        rightClick(secondMonomer);
+
+        expect(secondMonomer.selected).toBeFalsy();
+        expect(getMenuSelection()).toEqual([]);
+      });
     });
 
     it('should clear selection and dispatch rightClickCanvas in flex mode on right-click on empty canvas', () => {

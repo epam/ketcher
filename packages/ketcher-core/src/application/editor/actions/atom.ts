@@ -193,9 +193,9 @@ export function mergeFragmentsIfNeeded(
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
   assert(isNumber(frid), `Fragment of atom ${srcId} was not found`);
 
-  if (frid2 !== frid && isNumber(frid2)) {
-    const struct = restruct.molecule;
+  const struct = restruct.molecule;
 
+  if (frid2 !== frid && isNumber(frid2) && struct.frags.has(frid2)) {
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
     if (rgid !== undefined) {
       action

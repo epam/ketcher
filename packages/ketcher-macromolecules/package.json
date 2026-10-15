@@ -33,7 +33,7 @@
     "prebuild": "npm run i18n:generate && shx rm -rf dist",
     "prestart": "npm run i18n:generate",
     "pretest": "npm run i18n:generate",
-    "build": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --inputglob 'd.{mts,cts,ts,tsx}'",
+    "build": "cross-env NODE_ENV=production vite build && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --inputglob \"d.{mts,cts,ts,tsx}\"",
     "start": "run-p --print-label start:vite start:typecheck",
     "start:vite": "cross-env NODE_ENV=development vite build --watch",
     "start:typecheck": "tsc --watch --noEmit",

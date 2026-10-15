@@ -71,7 +71,7 @@ async function getVisibleAttachmentPointAtomOptionTexts() {
       continue;
     }
 
-    const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
+    const text = (await option.textContent())?.replaceAll('\u200b', '').trim();
     if (text) {
       optionTexts.push(text);
     }
@@ -241,7 +241,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     );
 
     const currentLgaText = (await r1AtomDropdown.textContent())
-      ?.replace(/\u200b/g, '')
+      ?.replaceAll('\u200b', '')
       .trim();
     expect(currentLgaText).toBeTruthy();
 
@@ -330,7 +330,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     // Verify the leaving atom type has changed.
     await expect
       .poll(async () =>
-        (await r1AtomDropdown.textContent())?.replace(/\u200b/g, '').trim(),
+        (await r1AtomDropdown.textContent())?.replaceAll('\u200b', '').trim(),
       )
       .toBe(getAttachmentPointAtomLabel(AttachmentPointAtom.OH));
   });
@@ -411,7 +411,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     );
 
     const r2CurrentLgaText = (await r2AtomDropdown.textContent())
-      ?.replace(/\u200b/g, '')
+      ?.replaceAll('\u200b', '')
       .trim();
     expect(r2CurrentLgaText).toBeTruthy();
 

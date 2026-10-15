@@ -112,8 +112,9 @@ export function isValidHex(hex: string): boolean {
 }
 
 export function sanitizeHexInput(rawInput: string): string {
-  return rawInput
-    .replace(/[^0-9a-fA-F]/g, '')
+  return Array.from(rawInput)
+    .filter((char) => /[0-9a-fA-F]/.test(char))
+    .join('')
     .slice(0, 6)
     .toUpperCase();
 }

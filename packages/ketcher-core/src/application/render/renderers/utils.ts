@@ -7,7 +7,10 @@ import { Chem } from 'domain/entities/Chem';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
-export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
+export function getRenderedStructuresBbox(
+  drawingEntities?: DrawingEntity[],
+  { includePolymerBonds = false } = {},
+) {
   let left: number | undefined;
   let right: number | undefined;
   let top: number | undefined;
@@ -55,6 +58,22 @@ export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
         ? monomerPosition.y
         : Math.max(bottom, monomerPosition.y);
   });
+
+  if (includePolymerBonds) {
+    editor.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      const bondBbox = polymerBond.baseRenderer?.rootBBox;
+
+      if (!bondBbox) {
+        return;
+      }
+
+      left = Math.min(left ?? bondBbox.x, bondBbox.x);
+      right = Math.max(right ?? bondBbox.x, bondBbox.x + bondBbox.width);
+      top = Math.min(top ?? bondBbox.y, bondBbox.y);
+      bottom = Math.max(bottom ?? bondBbox.y, bondBbox.y + bondBbox.height);
+    });
+  }
+
   assert(
     left !== undefined &&
       right !== undefined &&

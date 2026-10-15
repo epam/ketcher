@@ -73,6 +73,21 @@ export const Card = styled.div<{
       opacity: 1;
     }
   }
+  > button.dots {
+    opacity: 0;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+  }
+  &:hover > button.dots,
+  &:focus-within > button.dots {
+    opacity: 1;
+  }
   &::after {
     content: '';
     display: block;

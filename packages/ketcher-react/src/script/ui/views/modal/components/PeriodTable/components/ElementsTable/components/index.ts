@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Header from './Header';
-import MainRow from './MainRow';
-import OutinerRow from './OutinerRow';
-
-export { Header, MainRow, OutinerRow };
+export { default as Header } from './Header';
+export { default as MainRow } from './MainRow';
+export { default as OutinerRow } from './OutinerRow';

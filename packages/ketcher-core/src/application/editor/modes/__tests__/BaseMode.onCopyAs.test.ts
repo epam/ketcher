@@ -4,6 +4,7 @@ import { Vec2 } from 'domain/entities';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { provideEditorInstance } from '../../editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
+import { convertSvgToPng, getSvgFromDrawnStructures } from 'utilities';
 
 jest.mock('../../editorSingleton', () => ({
   provideEditorInstance: jest.fn(),
@@ -18,6 +19,14 @@ jest.mock('domain/serializers/ket/ketSerializer', () => ({
     serialize: jest.fn(() => 'KET_STRING'),
   })),
 }));
+
+jest.mock('utilities', () => ({
+  ...jest.requireActual('utilities'),
+  getSvgFromDrawnStructures: jest.fn(),
+  convertSvgToPng: jest.fn(),
+}));
+
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 
 class TestMode extends BaseMode {
   constructor() {
@@ -49,16 +58,30 @@ class ClipboardItemMock {
   constructor(public items: Record<string, Blob>) {}
 }
 
+const createCanvasWithTransientLayers = () => {
+  const canvas = document.createElementNS(SVG_NAMESPACE_URI, 'svg');
+  const transientLayer = document.createElementNS(SVG_NAMESPACE_URI, 'g');
+  transientLayer.classList.add('transient-views-layer');
+  const transientTopLayer = document.createElementNS(SVG_NAMESPACE_URI, 'g');
+  transientTopLayer.classList.add('transient-views-top-layer');
+  canvas.append(transientLayer, transientTopLayer);
+
+  return { canvas, transientLayer, transientTopLayer };
+};
+
 describe('BaseMode.onCopyAs', () => {
   const writeText = jest.fn();
   const write = jest.fn();
   const convert = jest.fn();
-  const generateImage = jest.fn();
   const openErrorModalDispatch = jest.fn();
 
-  const setupEditor = (selectedEntities: unknown[] = [['id', {}]]) => {
+  const setupEditor = (
+    selectedEntities: unknown[] = [['id', {}]],
+    canvas: SVGSVGElement = document.createElementNS(SVG_NAMESPACE_URI, 'svg'),
+  ) => {
     (provideEditorInstance as jest.Mock).mockReturnValue({
       ketcherId: 'ketcher-id',
+      canvas,
       drawingEntitiesManager: {
         selectedEntities,
         filterSelection: jest.fn(() => ({})),
@@ -79,7 +102,6 @@ describe('BaseMode.onCopyAs', () => {
       ClipboardItemMock;
     (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
       structService: { convert },
-      generateImage,
     });
     setupEditor();
   });
@@ -89,7 +111,7 @@ describe('BaseMode.onCopyAs', () => {
 
     expect(writeText).toHaveBeenCalledWith('KET_STRING');
     expect(convert).not.toHaveBeenCalled();
-    expect(generateImage).not.toHaveBeenCalled();
+    expect(getSvgFromDrawnStructures).not.toHaveBeenCalled();
   });
 
   it('converts the selection to MOL V3000 with Indigo and copies it', async () => {
@@ -104,21 +126,59 @@ describe('BaseMode.onCopyAs', () => {
     expect(writeText).toHaveBeenCalledWith('MOL_STRING');
   });
 
-  it('copies the selection as a PNG image', async () => {
+  it('copies the canvas as a PNG image the same way as it is saved to SVG', async () => {
+    const { canvas } = createCanvasWithTransientLayers();
+    setupEditor(undefined, canvas);
     const image = new Blob(['png'], { type: 'image/png' });
-    generateImage.mockResolvedValue(image);
+    (getSvgFromDrawnStructures as jest.Mock).mockReturnValue('<svg />');
+    (convertSvgToPng as jest.Mock).mockResolvedValue(image);
 
     await new TestMode().onCopyAs('image');
 
-    expect(generateImage).toHaveBeenCalledWith('KET_STRING', {
-      outputFormat: 'png',
-      backgroundColor: '255, 255, 255',
-    });
+    expect(getSvgFromDrawnStructures).toHaveBeenCalledWith(canvas, 'file');
+    expect(convertSvgToPng).toHaveBeenCalledWith('<svg />', expect.any(Number));
     expect(write).toHaveBeenCalledTimes(1);
     const [[clipboardItem]] = write.mock.calls[0];
     expect(clipboardItem).toBeInstanceOf(ClipboardItemMock);
     expect(clipboardItem.items['image/png']).toBe(image);
     expect(writeText).not.toHaveBeenCalled();
+  });
+
+  it('hides transient views (e.g. the rotation frame) only while the canvas is exported', async () => {
+    const { canvas, transientLayer, transientTopLayer } =
+      createCanvasWithTransientLayers();
+    transientTopLayer.style.display = 'block';
+    setupEditor(undefined, canvas);
+    let displayDuringExport: string[] = [];
+    (getSvgFromDrawnStructures as jest.Mock).mockImplementation(() => {
+      displayDuringExport = [
+        transientLayer.style.display,
+        transientTopLayer.style.display,
+      ];
+      return '<svg />';
+    });
+    (convertSvgToPng as jest.Mock).mockResolvedValue(
+      new Blob(['png'], { type: 'image/png' }),
+    );
+
+    await new TestMode().onCopyAs('image');
+
+    expect(displayDuringExport).toEqual(['none', 'none']);
+    expect(transientLayer.style.display).toBe('');
+    expect(transientTopLayer.style.display).toBe('block');
+  });
+
+  it('shows an error modal and copies nothing when the canvas cannot be exported', async () => {
+    (getSvgFromDrawnStructures as jest.Mock).mockReturnValue(undefined);
+
+    await new TestMode().onCopyAs('image');
+
+    expect(convertSvgToPng).not.toHaveBeenCalled();
+    expect(write).not.toHaveBeenCalled();
+    expect(openErrorModalDispatch).toHaveBeenCalledWith({
+      errorTitle: 'Error Message',
+      errorMessage: 'Cannot get drawn structures!',
+    });
   });
 
   it('does nothing when nothing is selected', async () => {

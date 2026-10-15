@@ -15,8 +15,10 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  getSvgFromDrawnStructures,
   normalizeError,
   PLAIN_TEXT_MIME_TYPE,
+  convertSvgToPng,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -32,6 +34,9 @@ type KeyboardEventHandler = {
 };
 
 type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
+
+const TRANSIENT_LAYERS_SELECTOR =
+  '.transient-views-layer, .transient-views-top-layer';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -190,26 +195,18 @@ export abstract class BaseMode {
       return;
     }
 
-    const drawingEntitiesManager =
-      editor.drawingEntitiesManager.filterSelection();
-    const serializedKet = new KetSerializer().serialize(
-      new Struct(),
-      drawingEntitiesManager,
-    );
-
     try {
       if (format === 'image') {
-        const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
-        const image = await ketcher.generateImage(serializedKet, {
-          outputFormat: 'png',
-          backgroundColor: '255, 255, 255',
-        });
-        await navigator.clipboard.write([
-          new ClipboardItem({ [image.type]: image }),
-        ]);
+        await this.copyCanvasAsImage();
         return;
       }
 
+      const drawingEntitiesManager =
+        editor.drawingEntitiesManager.filterSelection();
+      const serializedKet = new KetSerializer().serialize(
+        new Struct(),
+        drawingEntitiesManager,
+      );
       const text =
         format === 'mol'
           ? await this.convertKetToMol(serializedKet)
@@ -221,6 +218,52 @@ export abstract class BaseMode {
       editor.events.openErrorModal.dispatch({
         errorTitle: 'Error Message',
         errorMessage: normalizeError(error).message,
+      });
+    }
+  }
+
+  /**
+   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+   * exports it (monomers are drawn as they look on the canvas).
+   */
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = this.getCanvasSvgWithoutTransientViews(editor.canvas);
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  /**
+   * Selection and hover highlights are dynamic elements and are left out by
+   * getSvgFromDrawnStructures. Transient views (e.g. the rotation frame and
+   * handles around the selection) are hidden for the time of the export, so
+   * they are neither drawn nor counted into the image size.
+   */
+  private getCanvasSvgWithoutTransientViews(canvas: SVGSVGElement) {
+    const transientLayers = Array.from(
+      canvas.querySelectorAll<SVGGElement>(TRANSIENT_LAYERS_SELECTOR),
+    );
+    const initialDisplayValues = transientLayers.map(
+      (layer) => layer.style.display,
+    );
+
+    transientLayers.forEach((layer) => {
+      layer.style.display = 'none';
+    });
+
+    try {
+      return getSvgFromDrawnStructures(canvas, 'file');
+    } finally {
+      transientLayers.forEach((layer, index) => {
+        layer.style.display = initialDisplayValues[index];
       });
     }
   }

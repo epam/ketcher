@@ -17,4 +17,4 @@ export const EXTRA_LOCALE_RESOURCES = {
     macromolecules: macromolecules_zh_CN,
     macromoleculesDialogs: macromoleculesDialogs_zh_CN,
   },
-} as const;
+} as const satisfies Record<string, typeof BASE_RESOURCES>;

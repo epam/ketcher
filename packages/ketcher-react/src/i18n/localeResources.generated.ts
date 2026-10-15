@@ -36,4 +36,4 @@ export const EXTRA_LOCALE_RESOURCES = {
     components: components_zh_CN,
     settings: settings_zh_CN,
   },
-} as const;
+} as const satisfies Record<string, typeof BASE_RESOURCES>;

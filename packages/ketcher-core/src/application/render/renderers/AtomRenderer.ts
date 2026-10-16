@@ -1,6 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -349,6 +350,23 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  /**
+   * Bonds to monomers (attachment points) are real connections, but they are
+   * not represented as half-edges, so `isAtomTerminal` (which counts only
+   * half-edges) sees one fewer neighbour than the atom really has. For carbon
+   * label visibility (see `isLabelVisible`) these bonds must be counted:
+   * a carbon that is mid-chain only because one of its neighbours is a monomer
+   * must stay unlabelled (otherwise a stray "CH₂" appears at the attachment
+   * point after a Micro↔Macro switch), while a genuine terminal carbon whose
+   * only heavy neighbour is the monomer keeps its label (e.g. a methyl "CH₃").
+   */
+  private get monomerBondCount() {
+    return this.atom.bonds.reduce(
+      (count, bond) => (bond instanceof MonomerToAtomBond ? count + 1 : count),
+      0,
+    );
+  }
+
   public get isLabelVisible() {
     const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
@@ -357,6 +375,12 @@ export class AtomRenderer extends BaseRenderer {
     const visibleTerminal = true;
     const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
+    // Count invisible monomer bonds alongside the visible half-edges so that a
+    // carbon which is only terminal because its monomer bond is not a half-edge
+    // is still treated as mid-chain (suppressing a stray "CH₂"), while a carbon
+    // whose single heavy neighbour is the monomer stays terminal (keeps "CH₃").
+    const isMidChainCountingMonomerBonds =
+      (atomNeighborsHalfEdges?.length ?? 0) + this.monomerBondCount >= 2;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
     const hasAlias = this.atom.hasAlias;
@@ -365,7 +389,7 @@ export class AtomRenderer extends BaseRenderer {
 
     if (
       isCarbon &&
-      !isAtomTerminal &&
+      isMidChainCountingMonomerBonds &&
       !hasCharge &&
       !hasRadical &&
       !hasAlias &&

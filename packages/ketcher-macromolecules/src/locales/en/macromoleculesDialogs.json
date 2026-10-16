@@ -227,7 +227,8 @@
     "convertError": "Convert error! {error}",
     "helmSmilesExportNotice": "The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer",
     "helmAliasExportNotice": "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
-    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)"
+    "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)",
+    "fastaBranchedStructureError": "Exporting branched structures to FASTA is not supported."
   },
   "updateSequence": {
     "title": "Update sequence",

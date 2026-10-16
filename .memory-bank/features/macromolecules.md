@@ -140,6 +140,11 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **AND** positioning works both at the page origin and in an offset popup
 - **AND** canvas previews without interactive content allow pointer events to reach the canvas underneath
 
+#### Scenario: Large monomer previews fit inside the tooltip
+
+- **WHEN** a large monomer is shown in a hover preview
+- **THEN** its structure is scaled to remain inside the preview content area with a visible margin
+
 ## Guarantees
 
 - Monomer shape and color encode type (hexagons = amino acids, rounded squares = sugars, rhombuses = bases, circles = phosphates, pentagons = nucleotides, etc.).

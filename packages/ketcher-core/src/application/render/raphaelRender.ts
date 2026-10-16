@@ -27,6 +27,7 @@ import defaultOptions from './options';
 import draw from './draw';
 import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
@@ -321,11 +322,23 @@ export class Render {
           this.options.rescaleAmount ??
           Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 
+        if (this.options.limitZoomToMicroScale) {
+          // This render draws one Angstrom as options.microModeScale pixels, while the
+          // micro mode canvas draws it as editorSettings.microModeScale pixels at 100% zoom.
+          // A 1:1 view box would therefore display structures bigger than on that canvas
+          const microCanvasScale = provideEditorSettings().microModeScale;
+          rescale = Math.max(
+            rescale,
+            this.options.microModeScale / microCanvasScale,
+          );
+        }
+
         const isForceDownscale = this.options.downScale && rescale < 1;
         const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
         if (isBondsLengthFit || isForceDownscale) {
           rescale = 1;
         }
+
         const sz2 = sz1.add(mv.scaled(2 * rescale));
         this.paper.setViewBox(
           bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,

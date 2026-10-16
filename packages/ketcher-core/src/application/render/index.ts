@@ -5,5 +5,6 @@ export * from './renderers';
 export * from './coordinateTransformation';
 export * from './scrollbar';
 export * from './notifyRenderComplete';
+export { PREVIEW_AUTO_SCALE_MARGIN } from './render.constants';
 export { getOptionsWithConvertedUnits } from './options';
 export * from './render.types';

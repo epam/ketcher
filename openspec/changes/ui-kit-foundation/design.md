@@ -49,16 +49,19 @@ Cross-cutting facts:
 
 ## Decisions
 
-### Decision 1 — Visual policy: strict pixel parity during migration; refresh later
+### Decision 1 — Visual policy: strict pixel parity during migration, releasable after every merge; refresh later
 
 Every step of the migration must keep rendering pixel-identical. Tokens make a later visual refresh cheap, and that refresh is a separate initiative.
 
-**Rationale:** the ~28.5k zero-tolerance e2e baselines make any visual change in a shared primitive regenerate thousands of screenshots, which would bury real regressions. With parity, a diff is always a signal.
+**Releasable after every merge.** `master` stays releasable after every merged PR, and that holds for each sub-task, not only at the end of a sub-project. There is no long-lived integration branch and no PR that leaves something broken for a later PR to fix. Each PR passes the full gate on its own: unit tests, type checks and lint, the e2e suite with no baseline updates, every build (packages, `example` standalone and remote, `example-ssr`), and the metrics check and story screenshot tests once they exist. A PR that makes a host-visible change records it in the release notes itself, so the notes are right whichever release it ships in. This is the same rule as the React/Redux initiative's Decision 1.
+
+**Rationale:** the ~28.5k zero-tolerance e2e baselines make any visual change in a shared primitive regenerate thousands of screenshots, which would bury real regressions. With parity, a diff is always a signal. Releasing after every merge keeps regressions small and attributable to one PR, and lets the initiative pause at any point.
 
 **Alternatives considered:**
 
 - _Refresh while migrating_: rejected. It turns every migration PR into a design review plus a mass baseline regeneration.
 - _Parity without tokens_: rejected. It leaves the later refresh as expensive as today.
+- _A long-lived integration branch per sub-project_, merged when the sub-project is done: rejected. It postpones finding regressions and produces one large, risky merge.
 
 ### Decision 2 — Source of truth for values: the current code
 
@@ -336,7 +339,7 @@ The custom `script/ui/views/components/Tooltip` (LESS, not MUI) is out of scope 
 
    Gate: all of Decision 13's gates.
 
-**Rollback:** each step is an independent PR. The bridges are plain variable re-pointing, and reverting a PR restores the previous values. The kit is additive until call sites migrate.
+**Rollback:** each step is an independent PR that leaves `master` releasable (Decision 1). The bridges are plain variable re-pointing, and reverting a PR restores the previous values. The kit is additive until call sites migrate.
 
 ## Open Questions
 

@@ -2,13 +2,15 @@
 
 Tracking: umbrella issue #12192.
 
+Each sub-project issue is split into sub-issues, one for each PR in its plan. Each PR has its own branch off `master` and closes its sub-issue, and the sub-project issue closes with the last one. The plan's PR grouping table names the sub-issues; #0 and #1's are #12231–#12240, under #12193. The spec and plan land first in a docs-only PR that closes no issue.
+
 This file is the long-lived plan for the whole initiative. The change it sits in (`ui-kit-foundation`) delivers sub-projects **#0** and **#1**. Every later sub-project becomes its own OpenSpec change when work on it starts, and its `proposal.md` links back here. When `ui-kit-foundation` is archived, the lasting decisions move into the memory bank as an ADR (`adr/<date>-ui-kit-and-styling-architecture.md`), `modules/ui-kit.md` and `features/theming.md`. This roadmap is then archived with the change.
 
 ## Goals of the initiative
 
 1. One styling approach: plain CSS Modules plus `--ketcher-*` tokens. This replaces LESS + CSS Modules in `ketcher-react` and Emotion in `ketcher-macromolecules`.
 2. A kit of stylised building blocks on a headless library (Base UI), with only our own styles applied and no overriding of third-party styles.
-3. Step-by-step, component-by-component migration in which every step is verifiable at zero pixel diff.
+3. Step-by-step, component-by-component migration in which every step is verifiable at zero pixel diff, and `master` is releasable after every merged PR, including each sub-task of a sub-project (`design.md` Decision 1). The initiative can stop after any PR without leaving anything half-broken.
 4. At the end, MUI, Emotion and LESS are all removed.
 
 Decisions and trade-offs: see `design.md` Decisions 1–15.

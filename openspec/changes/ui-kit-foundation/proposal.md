@@ -10,7 +10,7 @@ Ketcher's two UI packages style their components in incompatible ways, and both 
 - Generic components are duplicated between the packages (Modal, Dropdown, Button, Input), and macromolecules imports primitives (`Icon`, `Button`, `Input`, `Accordion`) from `ketcher-react` ad hoc.
 - There is no component-level visual safety net (no Storybook, few component tests), only the full-app Playwright screenshot suite.
 
-This change is the first step of a multi-step initiative (see `roadmap.md`): it lays the foundation (unified tokens, browser baseline, bridges for legacy styles) and scaffolds a headless-component UI kit with its own safety net, proving the whole pipeline end-to-end on one pilot component. It is pixel-neutral by design.
+This change is the first step of a multi-step initiative (see `roadmap.md`): it lays the foundation (unified tokens, browser baseline, bridges for legacy styles) and scaffolds a headless-component UI kit with its own safety net, proving the whole pipeline end-to-end on one pilot component. It is pixel-neutral by design, and every PR, down to each sub-task, leaves `master` releasable with no regression.
 
 ## What Changes
 

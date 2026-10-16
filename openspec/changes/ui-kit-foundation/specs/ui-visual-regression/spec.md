@@ -59,6 +59,41 @@ A pull request that migrates a component to the kit SHALL:
 
 ---
 
+### Requirement: Releasable after every merge
+
+Every PR in this initiative SHALL leave `master` releasable, with no regression. That applies to each sub-task of a sub-project, not only to the last one. Every PR SHALL pass these gates on its own:
+
+- the unit tests, type checks and lint;
+- the existing e2e suite, in the `chromium` and `chromium-popup` projects, without updating any baseline image;
+- the builds of both UI packages, of the `example` app in standalone and remote mode, and of `example-ssr`;
+- once they exist, the metrics check and the story screenshot tests.
+
+Work SHALL land on `master` in small PRs, not on a long-lived integration branch. No PR SHALL rely on a later PR to restore behaviour or pixels it broke. Wherever legacy and kit styling coexist, both SHALL work.
+
+#### Scenario: A sub-task is merged
+
+- **WHEN** one sub-task's PR is merged and the rest of its sub-project is not
+- **THEN** `master` SHALL pass every gate listed above
+- **AND** it SHALL be releasable as it stands
+
+#### Scenario: A change that needs several steps
+
+- **WHEN** a migration can't be split into steps that each keep the rendering intact
+- **THEN** the steps SHALL be reordered, or the kit component SHALL be added alongside the legacy one and the call sites moved over PR by PR
+- **AND** it SHALL NOT be merged in a broken intermediate state
+
+#### Scenario: A host-visible change is merged
+
+- **WHEN** a PR changes something hosts can observe, such as the declared CSS custom properties, the `theme` prop contract or where popups render
+- **THEN** the same PR SHALL add the change to the release notes
+
+#### Scenario: The initiative pauses
+
+- **WHEN** work stops after any merged PR
+- **THEN** the product SHALL render and behave as it did before the initiative began, with the guardrails still enforced
+
+---
+
 ### Requirement: Continuous integration and progress metrics
 
 CI SHALL build Storybook and run the story screenshot tests for pull requests that change either UI package's sources. A metrics script SHALL report the remaining counts of the following, and CI SHALL fail when any of them increases:

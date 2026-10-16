@@ -12,7 +12,7 @@
 
 **Tech stack:** TypeScript 6, React 19 (peer range `^18.2 || ^19`), `@base-ui/react` 1.9, CSS Modules (`.module.css`) with PostCSS (`postcss-nesting` 14, `autoprefixer` 10), LESS 3 (legacy), Emotion 11 (legacy), rollup 2 with `rollup-plugin-postcss` 4, Jest 30 + React Testing Library, Node's `node:test`, Storybook 10.6 (`@storybook/react-vite`), Playwright 1.62 (Docker image `mcr.microsoft.com/playwright:v1.62.1-jammy`).
 
-**Spec:** `openspec/changes/ui-kit-foundation/`. Read `proposal.md`, `design.md` (Decisions 1–15), `roadmap.md` and `specs/*/spec.md`. Tracking: #12193 (umbrella #12192). Branch: `12193-ui-kit-foundation`.
+**Spec:** `openspec/changes/ui-kit-foundation/`. Read `proposal.md`, `design.md` (Decisions 1–15), `roadmap.md` and `specs/*/spec.md`. Tracking: #12193 (umbrella #12192), split into one sub-issue and one branch per PR (see the execution protocol).
 
 ## Global Constraints
 
@@ -22,11 +22,23 @@
 - **Kit boundary.** `src/ui-kit/**` may import only from `src/ui-kit/**`, `src/assets/**`, `@base-ui/react`, `react`, `react-dom` and `clsx`. Code outside the kit imports it only through `src/ui-kit` (ketcher-react) or `'ketcher-react'` (macromolecules).
 - **Kit CSS:** plain `.module.css`; class and attribute selectors only; no element selectors, `:global`, `!important` or physical `left`/`right` properties; values come only from `--ketcher-*` tokens; no `@layer`.
 - **Token placement:** tokens are declared on `:root`. Colours use two tiers (`--ketcher-palette-*` primitives, `--ketcher-color-*` semantics). Non-colour tokens are single-tier. When the two packages use the same name for different values, the macromolecules token takes the `-macro` suffix and the pair is listed in `DISCREPANCIES.md`.
-- **No new MUI or Emotion imports** outside the allowlist (`scripts/ui-kit/legacyStylingAllowlist.mjs`) once Section 7 lands.
+- **No new MUI or Emotion imports** outside the allowlist (`scripts/ui-kit/legacyStylingAllowlist.json`) once Section 7 lands.
+- **New files are TypeScript.** Every new source, test and repo script is `.ts` or `.tsx`, and generated data is JSON.
+  - Node runs the scripts under `scripts/` directly by stripping their types (Node 22.18 and later; the repo requires 24.20). `scripts/package.json` marks them as ES modules, and `scripts/tsconfig.json` type-checks them.
+  - The only new non-TypeScript code file is `postcss.config.cjs`. It is a tool config that rollup, Vite and Next each load themselves, as `eslint.config.mjs` is.
 - **Unchanged:** all `data-testid`s, published package names and the host CSS import (`ketcher-react/dist/index.css`).
 - **Translations:** the kit never imports i18n. Translated strings come from the call sites.
-- **Commits:** never commit without the user's explicit approval (CLAUDE.md). Message format: `#12193 - <summary>`, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The pre-commit hook runs Prettier across every workspace, so back up unrelated uncommitted edits first.
-- **E2E/Playwright:** before writing any Playwright test (Section 10), ask the user to proceed. Read `.memory-bank/testing.md` first, and draft an e2e test plan per `.memory-bank/e2e-test-plan-template.md`.
+- **Releasable after every merge.** Every PR leaves `master` releasable, with no regression. Each one passes its **release gate** on its own:
+  - unit tests, type checks and lint (`npm test`), plus `npm run test:ui-kit-scripts` once Section 1 has added it;
+  - the full e2e suite, `chromium` and `chromium-popup`, with **no baseline updates**;
+  - `npm run build`, which covers the packages and `example` in standalone and remote mode, and the `example-ssr` build;
+  - the metrics check from PR 5 on, and the story screenshot tests with zero diff from PR 6 on;
+  - the visual checks of the PR's sections.
+
+  A PR that makes a host-visible change adds its entry to `openspec/changes/ui-kit-foundation/release-notes.md` in the same PR, so the notes are right whichever release it ships in.
+
+- **Commits:** never commit without the user's explicit approval (CLAUDE.md). Message format: `#<sub-issue> - <summary>`, where `<sub-issue>` is the PR group's sub-issue from the execution protocol, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The pre-commit hook runs Prettier across every workspace, so back up unrelated uncommitted edits first.
+- **E2E/Playwright:** before writing any Playwright test (Section 10), ask the user to proceed. Read `.memory-bank/testing/testing.md` first, and draft an e2e test plan per `.memory-bank/testing/e2e-test-plan-template.md`.
 
 ## Review Focus
 
@@ -40,22 +52,45 @@
 
 ## Execution protocol
 
-- Work directly on `12193-ui-kit-foundation`.
-- For each section:
-  1. Complete its subtasks.
-  2. Run its **Code check** and **Visual check**.
-  3. **STOP:** ask the user for approval to commit, then commit only that section's files.
-  4. Report the commit hash and `git show --stat HEAD`.
-  5. Wait for the user's go-ahead before starting the next section.
+- **Start after PR #12198, which adds this plan, is merged.** The docs land on `master` first and close no issue.
+- **PR grouping.** Each group is one PR with its own sub-issue of #12193 and its own branch off `master`. Each PR must pass the release gate (Global Constraints) on its own and closes its sub-issue. #12193 closes with the last one. The groups are merged in this order, and each one starts only after the previous one is merged: each depends on the one before it.
+
+  | PR  | Sub-issue | Branch                                     | Sections | Content                                   |
+  | --- | --------- | ------------------------------------------ | -------- | ----------------------------------------- |
+  | 1   | #12231    | `12231-ui-kit-token-tooling-browser-floor` | 0–2      | Token tooling and CSS browser floor       |
+  | 2   | #12232    | `12232-ui-kit-tokens-less-bridge`          | 3–4      | Tokens and LESS bridge                    |
+  | 3   | #12233    | `12233-ui-kit-emotion-bridge`              | 5        | Emotion bridge; end of sub-project #0     |
+  | 4   | #12234    | `12234-ui-kit-kit-provider`                | 6        | Base UI and `KitProvider`                 |
+  | 5   | #12235    | `12235-ui-kit-lint-metrics`                | 7–8      | Lint boundaries, metrics and CI           |
+  | 6   | #12236    | `12236-ui-kit-storybook-screenshots`       | 9–10     | Storybook and story screenshot tests      |
+  | 7   | #12237    | `12237-ui-kit-icon-move`                   | 11       | `Icon` move                               |
+  | 8   | #12238    | `12238-ui-kit-tooltip-characterisation`    | 12       | Tooltip characterisation                  |
+  | 9   | #12239    | `12239-ui-kit-tooltip`                     | 13       | Kit `Tooltip`                             |
+  | 10  | #12240    | `12240-ui-kit-tooltip-migration`           | 14–15    | Tooltip call sites; end of sub-project #1 |
+
+- For each PR group:
+  1. Create its branch from an up-to-date `master`:
+     ```bash
+     git switch master && git pull --ff-only && git switch -c <branch> && npm ci
+     ```
+  2. For each section in the group:
+     1. Complete its subtasks, ticking each one in this file as it's done.
+     2. Run its **Code check** and **Visual check**.
+     3. **STOP:** ask the user for approval to commit, then commit only that section's files. The message starts with the group's sub-issue number (Global Constraints).
+     4. Report the commit hash and `git show --stat HEAD`.
+     5. Wait for the user's go-ahead before starting the next section.
+  3. Run the **release gate** (Global Constraints) on the branch. For the e2e suite, ask the user to run it through CI, or locally with `npm run docker:test` and `npm run docker:test-popup` in `ketcher-autotests`. **Expected:** green with no baseline updates.
+  4. **STOP:** ask the user whether to push the branch and open the PR. Don't open a PR without their approval. The PR follows the repo's PR template, is titled `#<sub-issue> – <sub-issue title without the "[UI kit] Foundation n/10: " prefix>`, and says `Closes #<sub-issue>` and `Part of #12193`. Its description gives the release-gate results and any host-visible change.
+  5. Start the next group only after this PR is merged.
 - If a check fails, fix the problem inside the section. Never update test snapshots or e2e baselines to make a check pass, unless the section explicitly says to.
 
 ---
 
 ## 0. Baselines (no code changes)
 
-- [ ] 0.1 Make sure you are on the branch and dependencies are installed:
+- [ ] 0.1 Create PR 1's branch from an up-to-date `master` and install:
   ```bash
-  git switch 12193-ui-kit-foundation && git status --short && npm ci
+  git switch master && git pull --ff-only && git switch -c 12231-ui-kit-token-tooling-browser-floor && git status --short && npm ci
   ```
 - [ ] 0.2 Create a local baseline folder that git ignores:
   ```bash
@@ -78,32 +113,30 @@
 
 **Files:**
 
-- Create: `scripts/ui-kit/tokenUtils.cjs`, `scripts/ui-kit/tokenUtils.d.cts`, `scripts/ui-kit/tokenUtils.test.mjs`
-- Create: `scripts/ui-kit/cssParity.mjs`, `scripts/ui-kit/cssParity.test.mjs`
+- Create: `scripts/ui-kit/tokenUtils.ts`, `scripts/ui-kit/tokenUtils.test.ts`
+- Create: `scripts/ui-kit/cssParity.ts`, `scripts/ui-kit/cssParity.test.ts`
+- Create, unless the React/Redux change has already added them: `scripts/package.json`, `scripts/tsconfig.json`
 - Modify: root `package.json` (`scripts`)
 
 **Interfaces produced:**
 
-- `parseTokens(cssText: string): Map<string, string>`: every `--*` declaration, where the last one wins.
+- From `tokenUtils.ts`: `parseTokens(cssText: string): Map<string, string>`: every `--*` declaration, where the last one wins.
 - `listSelectors(cssText: string): string[]`: the selector of every rule.
 - `resolveVars(value: string, tokens: Map<string, string>): string`: recursive `var()` resolution. It handles fallbacks, leaves unknown variables as they are, and throws on cycles.
 - `normalizeValue(value: string): string`: lowercases, strips quotes, collapses whitespace, turns every colour into `rgba(r,g,b,a)`, and evaluates `color-mix(in srgb, C P%, transparent)`.
-- `collectDeclarations(cssText, tokens, { ignoreVendorPrefixes })`, `diffDeclarations(before, after)`, and a CLI: `node scripts/ui-kit/cssParity.mjs --before <a.css> --after <b.css> [--tokens <tokens.css>] [--ignore-vendor-prefixes]`. The CLI exits with 1 when there are differences.
+- `collectDeclarations(cssText: string, tokens: Map<string, string>, options?: CollectOptions): string[]`, where `CollectOptions` is `{ ignoreVendorPrefixes?: boolean }`; `diffDeclarations(before: string[], after: string[]): { removed: string[]; added: string[] }`; and a CLI: `node scripts/ui-kit/cssParity.ts --before <a.css> --after <b.css> [--tokens <tokens.css>] [--ignore-vendor-prefixes]`. The CLI exits with 1 when there are differences.
 
-- [ ] 1.1 Write the failing tests in `scripts/ui-kit/tokenUtils.test.mjs`:
+- [ ] 1.1 Write the failing tests in `scripts/ui-kit/tokenUtils.test.ts`:
 
-  ```js
+  ```ts
   import { test } from 'node:test';
   import assert from 'node:assert/strict';
-  import { createRequire } from 'node:module';
-
-  const require = createRequire(import.meta.url);
-  const {
-    parseTokens,
+  import {
     listSelectors,
-    resolveVars,
     normalizeValue,
-  } = require('./tokenUtils.cjs');
+    parseTokens,
+    resolveVars,
+  } from './tokenUtils.ts';
 
   const TOKENS_CSS = `:root {
     --ketcher-palette-teal-30: #167782;
@@ -172,19 +205,20 @@
   });
   ```
 
-- [ ] 1.2 Run `node --test scripts/ui-kit/tokenUtils.test.mjs`. Expected: FAIL with `Cannot find module './tokenUtils.cjs'`.
-- [ ] 1.3 Implement `scripts/ui-kit/tokenUtils.cjs`:
+- [ ] 1.2 Run `node --test scripts/ui-kit/tokenUtils.test.ts`. Expected: FAIL with `ERR_MODULE_NOT_FOUND` for `tokenUtils.ts`.
+- [ ] 1.3 Implement `scripts/ui-kit/tokenUtils.ts`:
 
-  ```js
-  'use strict';
+  ```ts
   /**
    * Value helpers for the UI-kit token migration
    * (openspec/changes/ui-kit-foundation, design.md Decisions 6-7).
-   * Shared by scripts/ui-kit/cssParity.mjs and the token parity Jest tests.
+   * Shared by scripts/ui-kit/cssParity.ts and the token parity Jest tests.
    */
-  const postcss = require('postcss');
+  import postcss from 'postcss';
 
-  const NAMED_COLORS = {
+  type Rgba = [number, number, number, number];
+
+  const NAMED_COLORS: Record<string, Rgba> = {
     transparent: [0, 0, 0, 0],
     black: [0, 0, 0, 1],
     white: [255, 255, 255, 1],
@@ -203,8 +237,8 @@
   const COLOR_MIX_RE =
     /color-mix\(in srgb,(rgba\(\d+,\d+,\d+,[\d.]+\)) ([\d.]+)%,rgba\(0,0,0,0\)\)/g;
 
-  function parseTokens(cssText) {
-    const tokens = new Map();
+  export function parseTokens(cssText: string): Map<string, string> {
+    const tokens = new Map<string, string>();
     postcss.parse(cssText).walkDecls((decl) => {
       if (decl.prop.startsWith('--')) {
         tokens.set(decl.prop, decl.value.trim());
@@ -213,15 +247,15 @@
     return tokens;
   }
 
-  function listSelectors(cssText) {
-    const selectors = [];
+  export function listSelectors(cssText: string): string[] {
+    const selectors: string[] = [];
     postcss.parse(cssText).walkRules((rule) => {
       selectors.push(rule.selector);
     });
     return selectors;
   }
 
-  function findClosingParen(text, openIndex) {
+  function findClosingParen(text: string, openIndex: number): number {
     let depth = 0;
     for (let i = openIndex; i < text.length; i += 1) {
       if (text[i] === '(') depth += 1;
@@ -233,7 +267,7 @@
     return -1;
   }
 
-  function splitFallback(text) {
+  function splitFallback(text: string): [string, string | undefined] {
     let depth = 0;
     for (let i = 0; i < text.length; i += 1) {
       if (text[i] === '(') depth += 1;
@@ -245,7 +279,11 @@
     return [text, undefined];
   }
 
-  function resolveVars(value, tokens, depth = 0) {
+  export function resolveVars(
+    value: string,
+    tokens: Map<string, string>,
+    depth = 0,
+  ): string {
     if (depth > MAX_DEPTH) {
       throw new Error(`Token reference cycle while resolving "${value}"`);
     }
@@ -258,10 +296,10 @@
       const close = findClosingParen(value, open);
       if (close === -1) return result + value.slice(cursor);
       const [rawName, fallback] = splitFallback(value.slice(open + 1, close));
-      const name = rawName.trim();
+      const token = tokens.get(rawName.trim());
       let replacement = value.slice(start, close + 1);
-      if (tokens.has(name)) {
-        replacement = resolveVars(tokens.get(name), tokens, depth + 1);
+      if (token !== undefined) {
+        replacement = resolveVars(token, tokens, depth + 1);
       } else if (fallback !== undefined) {
         replacement = resolveVars(fallback.trim(), tokens, depth + 1);
       }
@@ -270,29 +308,30 @@
     }
   }
 
-  function formatRgba([r, g, b, a]) {
+  function formatRgba([r, g, b, a]: Rgba): string {
     const alpha = Math.round(a * 1000) / 1000;
     return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${alpha})`;
   }
 
-  function hexToRgba(hex) {
+  function hexToRgba(hex: string): Rgba {
     let digits = hex.slice(1);
     if (digits.length <= 4) {
       digits = [...digits].map((digit) => digit + digit).join('');
     }
-    const channel = (index) => parseInt(digits.slice(index, index + 2), 16);
+    const channel = (index: number) =>
+      parseInt(digits.slice(index, index + 2), 16);
     const alpha = digits.length === 8 ? channel(6) / 255 : 1;
     return [channel(0), channel(2), channel(4), alpha];
   }
 
-  function parseAlpha(token) {
+  function parseAlpha(token: string | undefined): number {
     if (token === undefined) return 1;
     return token.endsWith('%') ? parseFloat(token) / 100 : parseFloat(token);
   }
 
   // Accepts both "r, g, b[, a]" and "r g b[ / a]".
-  function rgbArgsToRgba(args) {
-    const [channels, slashAlpha] = args.split('/');
+  function rgbArgsToRgba(args: string): Rgba {
+    const [channels = '', slashAlpha] = args.split('/');
     const parts = channels.split(/[\s,]+/).filter(Boolean);
     const alpha = slashAlpha === undefined ? parts[3] : slashAlpha.trim();
     return [
@@ -303,7 +342,7 @@
     ];
   }
 
-  function normalizeValue(value) {
+  export function normalizeValue(value: string): string {
     let normalized = value
       .toLowerCase()
       .replace(/["']/g, '')
@@ -312,49 +351,43 @@
       .replace(/\(\s+/g, '(')
       .replace(/\s+\)/g, ')')
       .trim();
-    normalized = normalized.replace(RGB_RE, (_, args) =>
+    normalized = normalized.replace(RGB_RE, (_, args: string) =>
       formatRgba(rgbArgsToRgba(args)),
     );
     normalized = normalized.replace(HEX_RE, (hex) =>
       formatRgba(hexToRgba(hex)),
     );
-    normalized = normalized.replace(NAMED_RE, (name) =>
-      formatRgba(NAMED_COLORS[name]),
-    );
-    return normalized.replace(COLOR_MIX_RE, (_, color, percent) => {
-      const [r, g, b, a] = rgbArgsToRgba(color.slice('rgba('.length, -1));
-      return formatRgba([r, g, b, (a * Number(percent)) / 100]);
+    normalized = normalized.replace(NAMED_RE, (name) => {
+      const rgba = NAMED_COLORS[name];
+      return rgba === undefined ? name : formatRgba(rgba);
     });
+    return normalized.replace(
+      COLOR_MIX_RE,
+      (_, color: string, percent: string) => {
+        const [r, g, b, a] = rgbArgsToRgba(color.slice('rgba('.length, -1));
+        return formatRgba([r, g, b, (a * Number(percent)) / 100]);
+      },
+    );
   }
-
-  module.exports = { parseTokens, listSelectors, resolveVars, normalizeValue };
   ```
 
-  And `scripts/ui-kit/tokenUtils.d.cts`:
+- [ ] 1.4 Run `node --test scripts/ui-kit/tokenUtils.test.ts`. Expected: PASS (6 tests).
+- [ ] 1.5 Write the failing tests in `scripts/ui-kit/cssParity.test.ts`:
 
   ```ts
-  export declare function parseTokens(cssText: string): Map<string, string>;
-  export declare function listSelectors(cssText: string): string[];
-  export declare function resolveVars(
-    value: string,
-    tokens: Map<string, string>,
-  ): string;
-  export declare function normalizeValue(value: string): string;
-  ```
-
-- [ ] 1.4 Run `node --test scripts/ui-kit/tokenUtils.test.mjs`. Expected: PASS (6 tests).
-- [ ] 1.5 Write the failing tests in `scripts/ui-kit/cssParity.test.mjs`:
-
-  ```js
   import { test } from 'node:test';
   import assert from 'node:assert/strict';
-  import { collectDeclarations, diffDeclarations } from './cssParity.mjs';
+  import {
+    collectDeclarations,
+    diffDeclarations,
+    type CollectOptions,
+  } from './cssParity.ts';
 
   const tokens = new Map([
     ['--ketcher-palette-grey-35', '#585858'],
     ['--ketcher-color-text-secondary', 'var(--ketcher-palette-grey-35)'],
   ]);
-  const diff = (before, after, options) =>
+  const diff = (before: string, after: string, options?: CollectOptions) =>
     diffDeclarations(
       collectDeclarations(before, tokens, options),
       collectDeclarations(after, tokens, options),
@@ -377,7 +410,7 @@
   test('a dropped declaration is reported', () => {
     const result = diff('.a{color:red;box-shadow:none}', '.a{color:red}');
     assert.equal(result.removed.length, 1);
-    assert.match(result.removed[0], /box-shadow: none/);
+    assert.match(result.removed[0] ?? '', /box-shadow: none/);
   });
 
   test('CSS-module hashes and custom property declarations are ignored', () => {
@@ -401,10 +434,10 @@
   });
   ```
 
-- [ ] 1.6 Run `node --test scripts/ui-kit/cssParity.test.mjs`. Expected: FAIL with `Cannot find module './cssParity.mjs'`.
-- [ ] 1.7 Implement `scripts/ui-kit/cssParity.mjs`:
+- [ ] 1.6 Run `node --test scripts/ui-kit/cssParity.test.ts`. Expected: FAIL with `ERR_MODULE_NOT_FOUND` for `cssParity.ts`.
+- [ ] 1.7 Implement `scripts/ui-kit/cssParity.ts`. It tells rules from at-rules with `instanceof`, so no cast is needed:
 
-  ```js
+  ```ts
   #!/usr/bin/env node
   /**
    * Compares two compiled stylesheets declaration by declaration, after resolving
@@ -412,44 +445,45 @@
    * pixel-neutral (openspec/changes/ui-kit-foundation, design.md Decision 7).
    */
   import { readFileSync } from 'node:fs';
-  import { createRequire } from 'node:module';
   import { pathToFileURL } from 'node:url';
   import { parseArgs } from 'node:util';
-  import postcss from 'postcss';
+  import postcss, { AtRule, Rule, type Node as CssNode } from 'postcss';
+  import { normalizeValue, parseTokens, resolveVars } from './tokenUtils.ts';
 
-  const require = createRequire(import.meta.url);
-  const {
-    parseTokens,
-    resolveVars,
-    normalizeValue,
-  } = require('./tokenUtils.cjs');
+  export interface CollectOptions {
+    ignoreVendorPrefixes?: boolean;
+  }
 
   const VENDOR_RE = /(^|[^a-z])-(webkit|moz|ms|o)-/;
   const MODULE_HASH_RE = /__[\w-]{5}(?![\w-])/g;
 
+  function containerLabel(node: CssNode | undefined): string {
+    if (node instanceof Rule) {
+      return node.selector
+        .replace(MODULE_HASH_RE, '__')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+    if (node instanceof AtRule) return `@${node.name} ${node.params}`;
+    return '';
+  }
+
   export function collectDeclarations(
-    cssText,
-    tokens,
-    { ignoreVendorPrefixes = false } = {},
-  ) {
-    const entries = [];
+    cssText: string,
+    tokens: Map<string, string>,
+    { ignoreVendorPrefixes = false }: CollectOptions = {},
+  ): string[] {
+    const entries: string[] = [];
     postcss.parse(cssText).walkDecls((decl) => {
       if (decl.prop.startsWith('--')) return;
-      const parent = decl.parent;
-      const selector =
-        parent.type === 'rule'
-          ? parent.selector
-              .replace(MODULE_HASH_RE, '__')
-              .replace(/\s+/g, ' ')
-              .trim()
-          : `@${parent.name} ${parent.params}`;
-      const atRules = [];
+      const selector = containerLabel(decl.parent);
+      const atRules: string[] = [];
       for (
-        let node = parent.parent;
+        let node: CssNode | undefined = decl.parent?.parent;
         node && node.type !== 'root';
         node = node.parent
       ) {
-        if (node.type === 'atrule')
+        if (node instanceof AtRule)
           atRules.unshift(`@${node.name} ${node.params}`);
       }
       const isVendor = [decl.prop, decl.value, selector, ...atRules].some(
@@ -465,12 +499,15 @@
     return entries;
   }
 
-  export function diffDeclarations(before, after) {
-    const counts = new Map();
+  export function diffDeclarations(
+    before: string[],
+    after: string[],
+  ): { removed: string[]; added: string[] } {
+    const counts = new Map<string, number>();
     for (const entry of before) counts.set(entry, (counts.get(entry) ?? 0) + 1);
     for (const entry of after) counts.set(entry, (counts.get(entry) ?? 0) - 1);
-    const removed = [];
-    const added = [];
+    const removed: string[] = [];
+    const added: string[] = [];
     for (const [entry, count] of counts) {
       for (let i = 0; i < Math.abs(count); i += 1) {
         (count > 0 ? removed : added).push(entry);
@@ -490,13 +527,13 @@
     });
     if (!values.before || !values.after) {
       console.error(
-        'Usage: cssParity.mjs --before <a.css> --after <b.css> [--tokens <tokens.css>] [--ignore-vendor-prefixes]',
+        'Usage: cssParity.ts --before <a.css> --after <b.css> [--tokens <tokens.css>] [--ignore-vendor-prefixes]',
       );
       process.exit(2);
     }
     const tokens = values.tokens
       ? parseTokens(readFileSync(values.tokens, 'utf8'))
-      : new Map();
+      : new Map<string, string>();
     const options = { ignoreVendorPrefixes: values['ignore-vendor-prefixes'] };
     const { removed, added } = diffDeclarations(
       collectDeclarations(readFileSync(values.before, 'utf8'), tokens, options),
@@ -516,34 +553,70 @@
   }
   ```
 
-- [ ] 1.8 Run `node --test scripts/ui-kit/cssParity.test.mjs`. Expected: PASS (5 tests).
-- [ ] 1.9 Add a root script to `package.json` `scripts`, after `"check:autotests"`:
-  ```json
-  "test:ui-kit-scripts": "node --test \"scripts/ui-kit/**/*.test.mjs\"",
-  ```
-  Run `npm run test:ui-kit-scripts`. Expected: 11 passing tests.
+- [ ] 1.8 Run `node --test scripts/ui-kit/cssParity.test.ts`. Expected: PASS (5 tests).
+- [ ] 1.9 Set up type checking for the scripts, and add the script that runs them. The React/Redux change (#12229) sets up the same two files. If it has landed, only add the `ui-kit` entries to its `include`.
+  1. Create `scripts/package.json`, so that Node and `tsc` treat the scripts as ES modules. Without it the root `package.json`, which has no `"type"`, makes `tsc` read them as CommonJS and reject their `import` statements:
+     ```json
+     {
+       "private": true,
+       "type": "module"
+     }
+     ```
+  2. Create `scripts/tsconfig.json`. Node strips the types without checking them, so this config is what checks them:
+     ```jsonc
+     {
+       // Repo scripts run by Node directly, which strips the types without
+       // checking them; this config checks them.
+       "compilerOptions": {
+         "target": "es2024",
+         "module": "nodenext",
+         "strict": true,
+         "noEmit": true,
+         "allowImportingTsExtensions": true,
+         "erasableSyntaxOnly": true,
+         "verbatimModuleSyntax": true,
+         "resolveJsonModule": true,
+         "skipLibCheck": true,
+         "types": ["node"],
+       },
+       "include": ["ui-kit/**/*.ts", "ui-kit/**/*.json"],
+     }
+     ```
+     - `erasableSyntaxOnly` rejects syntax Node can't strip, such as `enum` and parameter properties.
+     - `verbatimModuleSyntax` requires `import type` for types, because Node keeps every other import.
+     - Relative imports name the `.ts` file, as Node requires (`allowImportingTsExtensions`).
+     - The existing `scripts/build-run.mjs` isn't included and stays as it is. Don't run it to try things out: it deletes the packages' `dist` folders and starts a full build.
+  3. Add a root script to `package.json` `scripts`, after `"check:autotests"`:
+     ```json
+     "test:ui-kit-scripts": "tsc -p scripts/tsconfig.json && node --test 'scripts/ui-kit/*.test.ts'",
+     ```
+     `node --test` needs glob patterns, because Node 25 treats a directory argument as a module path.
+
+  Run `npm run test:ui-kit-scripts`. Expected: `tsc` reports nothing, and 11 tests pass.
+
 - [ ] 1.10 **Code check:**
   - `npm run test:ui-kit-scripts` passes.
   - `npx eslint scripts/ui-kit` is clean.
-  - `npx prettier --check "scripts/ui-kit/**/*.{mjs,cjs,cts}"` is clean.
+  - `npx prettier --check scripts/package.json scripts/tsconfig.json "scripts/ui-kit/**/*.ts"` is clean.
 - [ ] 1.11 **Visual check:** not applicable, because these are tools only.
-- [ ] 1.12 **STOP:** ask to commit `scripts/ui-kit/*` and `package.json`, using the message `#12193 - Add token parity tooling`.
+- [ ] 1.12 **STOP:** ask to commit `scripts/ui-kit/*` and `package.json`, using the message `#12231 - Add token parity tooling`.
 
 ## 2. Shared PostCSS config and CSS browser floor
 
 **Files:**
 
-- Create: `postcss.config.cjs` (repo root), `scripts/ui-kit/cssBrowserFloor.cjs`, `scripts/ui-kit/postcssConfig.test.mjs`
-- Modify: root `package.json` (`devDependencies`), `packages/ketcher-react/rollup.config.mjs`, `packages/ketcher-macromolecules/rollup.config.mjs`
+- Create: `postcss.config.cjs` (repo root), `scripts/ui-kit/postcssConfig.test.ts`, `openspec/changes/ui-kit-foundation/release-notes.md`
+- Modify: root `package.json` (`devDependencies`), `packages/ketcher-react/rollup.config.mjs`, `packages/ketcher-macromolecules/rollup.config.mjs`, `README.md` (repo root)
 
 **Why:**
 
 - `rollup-plugin-postcss` and Vite both find the root config by searching up from each file. `example-ssr` (Next) also discovers it, and Next only accepts the object/string plugin form, so the config must use that form.
 - The config must **not** carry browser targets in a place Babel reads.
+- It is the one new file that isn't TypeScript. Every tool that reads it loads it by itself, and Next doesn't load a TypeScript PostCSS config. The browser floor is written inline in it, so it needs no helper file.
 
-- [ ] 2.1 Write the failing test `scripts/ui-kit/postcssConfig.test.mjs`:
+- [ ] 2.1 Write the failing test `scripts/ui-kit/postcssConfig.test.ts`. The autoprefixer test reads the lowest version `info()` lists for each browser, such as `  Safari: 26.6, …, 16.4`:
 
-  ```js
+  ```ts
   import { test } from 'node:test';
   import assert from 'node:assert/strict';
   import { dirname, resolve } from 'node:path';
@@ -567,44 +640,52 @@
   test('autoprefixer targets the CSS browser floor', async () => {
     const { plugins } = await postcssrc({}, repoRoot);
     const autoprefixer = plugins.find(
-      (plugin) => plugin.postcssPlugin === 'autoprefixer',
+      (plugin) =>
+        typeof plugin === 'object' &&
+        'postcssPlugin' in plugin &&
+        plugin.postcssPlugin === 'autoprefixer',
     );
-    const info = autoprefixer.info();
-    assert.match(info, /safari 16\.4/);
-    assert.match(info, /chrome 111/);
-    assert.doesNotMatch(info, /\bie \d/);
+    assert.ok(
+      typeof autoprefixer === 'object' &&
+        'info' in autoprefixer &&
+        typeof autoprefixer.info === 'function',
+      'autoprefixer is configured',
+    );
+    const info: unknown = autoprefixer.info();
+    assert.ok(typeof info === 'string');
+    // info() lists each browser's versions, newest first: "  Safari: 26.6, ..., 16.4".
+    const lowestVersion = (browser: string) =>
+      info.match(new RegExp(`^  ${browser}: .*?([\\d.]+)$`, 'm'))?.[1];
+    assert.equal(lowestVersion('Chrome'), '111');
+    assert.equal(lowestVersion('Edge'), '111');
+    assert.equal(lowestVersion('Firefox'), '114');
+    assert.equal(lowestVersion('Safari'), '16.4');
+    assert.equal(lowestVersion('iOS Safari'), '16.4');
+    assert.doesNotMatch(info, /^ {2}IE:/m);
   });
   ```
 
-- [ ] 2.2 Run `node --test scripts/ui-kit/postcssConfig.test.mjs`. Expected: FAIL, because no PostCSS config is found (`plugins` is empty).
-- [ ] 2.3 Install the tools at the root (run from the repo root, without `-w`): `npm install -D postcss-nesting@^14.0.3 autoprefixer@^10.5.4`. Then create `scripts/ui-kit/cssBrowserFloor.cjs`:
-
-  ```js
-  'use strict';
-  /**
-   * CSS-only browser floor, aligned with issue #11997
-   * (openspec/changes/ui-kit-foundation, design.md Decision 14).
-   * Passed explicitly to CSS tooling. Do NOT move it into .browserslistrc or a
-   * package.json "browserslist" field: Babel would pick it up and change the
-   * published JS syntax level.
-   */
-  module.exports = [
-    'chrome >= 111',
-    'edge >= 111',
-    'firefox >= 114',
-    'safari >= 16.4',
-    'ios_saf >= 16.4',
-  ];
-  ```
-
-  and `postcss.config.cjs`:
+- [ ] 2.2 Run `node --test scripts/ui-kit/postcssConfig.test.ts`. Expected: FAIL, because no PostCSS config is found (`plugins` is empty).
+- [ ] 2.3 Install the tools at the root (run from the repo root, without `-w`): `npm install -D postcss-nesting@^14.0.3 autoprefixer@^10.5.4`. Then create `postcss.config.cjs`:
 
   ```js
   /**
    * Shared PostCSS config for every package (rollup builds, the example Vite dev
    * server, Storybook). Object form so Next.js (example-ssr) accepts it too.
    */
-  const CSS_BROWSER_FLOOR = require('./scripts/ui-kit/cssBrowserFloor.cjs');
+
+  // CSS-only browser floor, aligned with issue #11997
+  // (openspec/changes/ui-kit-foundation, design.md Decision 14).
+  // Passed explicitly to CSS tooling. Do NOT move it into .browserslistrc or a
+  // package.json "browserslist" field: Babel would pick it up and change the
+  // published JS syntax level.
+  const CSS_BROWSER_FLOOR = [
+    'chrome >= 111',
+    'edge >= 111',
+    'firefox >= 114',
+    'safari >= 16.4',
+    'ios_saf >= 16.4',
+  ];
 
   module.exports = {
     plugins: {
@@ -617,7 +698,7 @@
   };
   ```
 
-- [ ] 2.4 Run `node --test scripts/ui-kit/postcssConfig.test.mjs`. Expected: PASS.
+- [ ] 2.4 Run `node --test scripts/ui-kit/postcssConfig.test.ts`. Expected: PASS. To see that the floor test can fail, change `'safari >= 16.4'` to `'safari >= 15'`, check that it reports `actual: '15'`, and change it back.
 - [ ] 2.5 Remove the inline autoprefixer from both rollup configs, so it doesn't run twice. In `packages/ketcher-react/rollup.config.mjs` and `packages/ketcher-macromolecules/rollup.config.mjs`:
   - delete the line `plugins: [autoprefixer({ grid: 'autoplace' })],` inside `postcss({...})`;
   - delete the now-unused `import autoprefixer from 'autoprefixer';`.
@@ -627,8 +708,8 @@
 - [ ] 2.6 Rebuild and compare against the baseline:
   ```bash
   npm run build:packages
-  node scripts/ui-kit/cssParity.mjs --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --ignore-vendor-prefixes
-  node scripts/ui-kit/cssParity.mjs --before .ui-kit-baseline/macro-index.css --after packages/ketcher-macromolecules/dist/index.css --ignore-vendor-prefixes
+  node scripts/ui-kit/cssParity.ts --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --ignore-vendor-prefixes
+  node scripts/ui-kit/cssParity.ts --before .ui-kit-baseline/macro-index.css --after packages/ketcher-macromolecules/dist/index.css --ignore-vendor-prefixes
   ```
   Expected: `0 removed, 0 added` for both. Then run them again **without** `--ignore-vendor-prefixes` and paste the summary line into the section report. Differences there may only be vendor-prefixed lines.
 - [ ] 2.7 Prove Babel's targets are unchanged:
@@ -642,12 +723,17 @@
   - `npm run test -w ketcher-react` and `npm run test -w ketcher-macromolecules` pass.
   - `npm run build -w example-ssr` succeeds. This proves Next accepts the shared config.
 - [ ] 2.9 **Visual check:** run `npm run serve:standalone` from `example/`, open the app, and confirm that the molecules and macromolecules editors look unchanged. Check toolbars, an open dialog, and the monomer library.
-- [ ] 2.10 **STOP:** ask to commit, using the message `#12193 - Share PostCSS config with a CSS-only browser floor`.
+- [ ] 2.10 In `README.md`, add a **Supported browsers** subsection, next to the existing integration/setup docs. It says:
+  - Ketcher's styles target Chrome/Edge 111+, Firefox 114+ and Safari 16.4+, per #11997;
+  - the JavaScript syntax level is unchanged for now.
+- [ ] 2.11 Create `openspec/changes/ui-kit-foundation/release-notes.md`, which collects the host-visible changes for the release notes. Later PRs add their entries to it. Its first entry: the CSS browser floor is documented in the README's "Supported browsers" section.
+- [ ] 2.12 **STOP:** ask to commit, including `README.md` and `release-notes.md`, using the message `#12231 - Share PostCSS config with a CSS-only browser floor`.
 
 ## 3. Tokens, kit entry point and discrepancy list
 
 **Files:**
 
+- Modify: `openspec/changes/ui-kit-foundation/release-notes.md`, to add this PR's host-visible entry
 - Create:
   - `packages/ketcher-react/src/ui-kit/tokens/tokens.css`
   - `packages/ketcher-react/src/ui-kit/tokens/DISCREPANCIES.md`
@@ -668,21 +754,25 @@
   import fs from 'node:fs';
   import path from 'node:path';
 
-  // Plain CommonJS helper shared with scripts/ui-kit/cssParity.mjs.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const tokenUtils = require('../../../../../scripts/ui-kit/tokenUtils.cjs');
+  // Shared with scripts/ui-kit/cssParity.ts. ketcher-react's rootDir is the
+  // repo root, so tsc checks this import.
+  import {
+    listSelectors,
+    parseTokens,
+    resolveVars,
+  } from '../../../../../scripts/ui-kit/tokenUtils';
 
   const css = fs.readFileSync(path.join(__dirname, 'tokens.css'), 'utf8');
-  const tokens: Map<string, string> = tokenUtils.parseTokens(css);
+  const tokens = parseTokens(css);
 
   describe('tokens.css', () => {
     it('declares tokens on :root only', () => {
-      expect(tokenUtils.listSelectors(css)).toEqual([':root']);
+      expect(listSelectors(css)).toEqual([':root']);
     });
 
     it('resolves every reference', () => {
       for (const value of tokens.values()) {
-        expect(tokenUtils.resolveVars(value, tokens)).not.toContain('var(');
+        expect(resolveVars(value, tokens)).not.toContain('var(');
       }
     });
 
@@ -985,12 +1075,13 @@
   ```bash
   npm run build:packages
   grep -c -- '--ketcher-color-primary:' packages/ketcher-react/dist/index.css   # expected: 1
-  node scripts/ui-kit/cssParity.mjs --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
+  node scripts/ui-kit/cssParity.ts --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
   ```
   Expected: `0 removed, 0 added`. The ContextMenu change shows up as `line-height: inherit` against the baseline's `line-height: var(--ketcher-font-size-regular)`, which is unresolvable. That one pair is the only accepted difference; note it in the report.
 - [ ] 3.9 **Code check:** `npm run test -w ketcher-react` passes. That covers prettier, stylelint, eslint, types, circular dependencies and unit tests.
 - [ ] 3.10 **Visual check:** in the example app, open a context menu (right-click an atom) and confirm the line height looks unchanged.
-- [ ] 3.11 **STOP:** ask to commit, using the message `#12193 - Add --ketcher-* design tokens`.
+- [ ] 3.11 Add to `release-notes.md`: new `--ketcher-*` CSS custom properties are declared on `:root`. Override them on an ancestor of the editor to theme UI chrome.
+- [ ] 3.12 **STOP:** ask to commit, using the message `#12232 - Add --ketcher-* design tokens`.
 
 ## 4. LESS bridge
 
@@ -1016,14 +1107,19 @@
   import fs from 'node:fs';
   import path from 'node:path';
 
+  import {
+    normalizeValue,
+    parseTokens,
+    resolveVars,
+  } from '../../../../../scripts/ui-kit/tokenUtils';
+
   /* eslint-disable @typescript-eslint/no-require-imports */
   const less = require('less');
   const postcss = require('postcss');
-  const tokenUtils = require('../../../../../scripts/ui-kit/tokenUtils.cjs');
   /* eslint-enable @typescript-eslint/no-require-imports */
 
   const VARIABLES_LESS = path.resolve(__dirname, '../../style/variables.less');
-  const tokens: Map<string, string> = tokenUtils.parseTokens(
+  const tokens = parseTokens(
     fs.readFileSync(path.join(__dirname, 'tokens.css'), 'utf8'),
   );
 
@@ -1114,8 +1210,8 @@
     const { css } = await less.render(probe, { filename: VARIABLES_LESS });
     const values: Record<string, string> = {};
     postcss.parse(css).walkDecls((decl: { prop: string; value: string }) => {
-      values[decl.prop.slice(2)] = tokenUtils.normalizeValue(
-        tokenUtils.resolveVars(decl.value, tokens),
+      values[decl.prop.slice(2)] = normalizeValue(
+        resolveVars(decl.value, tokens),
       );
     });
     expect(Object.keys(values)).toHaveLength(PROBED_VARIABLES.length);
@@ -1202,7 +1298,7 @@
 - [ ] 4.7 Run the full-stylesheet check:
   ```bash
   npm run build:packages
-  node scripts/ui-kit/cssParity.mjs --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
+  node scripts/ui-kit/cssParity.ts --before .ui-kit-baseline/react-index.css --after packages/ketcher-react/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
   ```
   Expected: only the ContextMenu `line-height` pair accepted in 3.8. Anything else, especially a `removed` line with no matching `added` line, means a guard or function dropped a declaration. Fix it.
 - [ ] 4.8 **Code check:** `npm run test -w ketcher-react` passes.
@@ -1215,7 +1311,7 @@
 
   Everything must look unchanged.
 
-- [ ] 4.10 **STOP:** ask to commit, using the message `#12193 - Bridge ketcher-react LESS variables to design tokens`.
+- [ ] 4.10 **STOP:** ask to commit, using the message `#12232 - Bridge ketcher-react LESS variables to design tokens`.
 
 ## 5. Emotion bridge, `theme.less` removal and hygiene
 
@@ -1223,6 +1319,7 @@ This is the end of sub-project #0.
 
 **Files:**
 
+- Modify: `openspec/changes/ui-kit-foundation/release-notes.md`, to add this PR's host-visible entry
 - Create: `packages/ketcher-macromolecules/src/theming/defaultTheme/defaultTheme.parity.test.ts`
 - Modify:
   - `packages/ketcher-macromolecules/src/theming/defaultTheme/defaultTheme.ts`
@@ -1243,8 +1340,11 @@ This is the end of sub-project #0.
   import path from 'node:path';
   import { defaultTheme } from './defaultTheme';
 
+  // Shared with scripts/ui-kit/cssParity.ts. Macromolecules' rootDir is src, so
+  // tsc rejects an import from outside it (TS6059); require() keeps the helper
+  // out of the type-checked program, and ts-jest still compiles it.
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const tokenUtils = require('../../../../../scripts/ui-kit/tokenUtils.cjs');
+  const tokenUtils = require('../../../../../scripts/ui-kit/tokenUtils.ts');
 
   const tokens: Map<string, string> = tokenUtils.parseTokens(
     fs.readFileSync(
@@ -1437,15 +1537,16 @@ This is the end of sub-project #0.
 - [ ] 5.8 Rebuild and run the parity check for macromolecules:
   ```bash
   npm run build:packages
-  node scripts/ui-kit/cssParity.mjs --before .ui-kit-baseline/macro-index.css --after packages/ketcher-macromolecules/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
+  node scripts/ui-kit/cssParity.ts --before .ui-kit-baseline/macro-index.css --after packages/ketcher-macromolecules/dist/index.css --tokens packages/ketcher-react/src/ui-kit/tokens/tokens.css --ignore-vendor-prefixes
   ```
   Expected: `0 removed, 0 added`. The deleted `theme.less` held only custom properties, which the script skips, and the three replaced `var()` references resolve to the same values.
 - [ ] 5.9 **Code check:**
   - `npm test` at the root passes (all four packages).
   - `npm run test:ui-kit-scripts` passes.
 - [ ] 5.10 **Visual check:** in the example app's macromolecules mode, check the monomer library (tabs, items, hover), the RNA builder, the ruler, the sequence/snake/flex modes, a modal (Open), the macromolecule properties window and the settings dialog. Everything must look unchanged.
-- [ ] 5.11 **STOP:** ask to commit, using the message `#12193 - Bridge macromolecules theme to design tokens; remove theme.less`.
-- [ ] 5.12 **Sub-project #0 gate.** Ask the user to push the branch and open a **draft PR** referencing #12193, so CI runs the full e2e suite. Expected: green, with **no baseline updates**. Do not continue to Section 6 until the user confirms.
+- [ ] 5.11 Add to `release-notes.md`: UI-chrome overrides passed through the macromolecules `Editor` `theme` prop are **deprecated**. Canvas colours still work.
+- [ ] 5.12 **STOP:** ask to commit, using the message `#12233 - Bridge macromolecules theme to design tokens; remove theme.less`.
+- [ ] 5.13 **End of sub-project #0.** PR 3's release gate (execution protocol) is also the sub-project #0 gate. Expected: green, with **no baseline updates**.
 
 ## 6. Kit scaffold: Base UI dependency and `KitProvider`
 
@@ -1679,25 +1780,28 @@ This is the end of sub-project #0.
   - "never import i18n".
 - [ ] 6.10 **Code check:** `npm test` at the root passes.
 - [ ] 6.11 **Visual check:** in the example app, check both editors. They must look unchanged, and the DOM must contain exactly one `[data-ketcher-portal-root]` inside `.Ketcher-root` and one inside `.Ketcher-polymer-editor-root`. Switch the language if a non-English locale is enabled, or set `dir="rtl"` on the wrapper in devtools; nothing should break.
-- [ ] 6.12 **STOP:** ask to commit, using the message `#12193 - Add UI kit provider with portal root and direction`.
+- [ ] 6.12 **STOP:** ask to commit, using the message `#12234 - Add UI kit provider with portal root and direction`.
 
 ## 7. Lint boundaries: ESLint and stylelint
 
 **Files:**
 
 - Create:
-  - `scripts/ui-kit/generateLegacyAllowlist.mjs`
-  - `scripts/ui-kit/legacyStylingAllowlist.mjs` (generated)
-  - `scripts/ui-kit/lintBoundaries.test.mjs`
+  - `scripts/ui-kit/generateLegacyAllowlist.ts`
+  - `scripts/ui-kit/legacyStylingAllowlist.json` (generated)
+  - `scripts/ui-kit/lintBoundaries.test.ts`
 - Modify: `eslint.config.mjs`, `.stylelintrc.json`
 
-- [ ] 7.1 Write the generator `scripts/ui-kit/generateLegacyAllowlist.mjs`:
+- [ ] 7.1 Write the generator `scripts/ui-kit/generateLegacyAllowlist.ts`. The allowlist is data only, so it is JSON:
 
-  ```js
+  ```ts
   #!/usr/bin/env node
-  /** Writes legacyStylingAllowlist.mjs: files allowed to import @mui/* or @emotion/*. */
+  /**
+   * Writes legacyStylingAllowlist.json: the files allowed to import @mui/* or
+   * @emotion/*. Shrink the list as components migrate; never grow it.
+   */
   import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
-  import { dirname, join, relative, resolve } from 'node:path';
+  import { dirname, join, resolve } from 'node:path';
   import { fileURLToPath } from 'node:url';
 
   const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -1708,49 +1812,47 @@ This is the end of sub-project #0.
   const IMPORT_RE = /from\s+['"]@(mui|emotion)\//;
 
   const files = SOURCE_DIRS.flatMap((dir) =>
-    readdirSync(join(repoRoot, dir), { recursive: true })
-      .map((file) => join(dir, file))
+    readdirSync(join(repoRoot, dir), { recursive: true, encoding: 'utf8' })
+      .map((file) => join(dir, file).split('\\').join('/'))
       .filter((file) => /\.(ts|tsx)$/.test(file))
       .filter((file) =>
         IMPORT_RE.test(readFileSync(join(repoRoot, file), 'utf8')),
       ),
-  )
-    .map((file) =>
-      relative(repoRoot, join(repoRoot, file)).split('\\').join('/'),
-    )
-    .sort();
+  ).sort();
 
   writeFileSync(
-    join(repoRoot, 'scripts/ui-kit/legacyStylingAllowlist.mjs'),
-    `// Generated by generateLegacyAllowlist.mjs. Shrink it as components migrate; never grow it.\nexport const LEGACY_STYLING_ALLOWLIST = ${JSON.stringify(files, null, 2)};\n`,
+    join(repoRoot, 'scripts/ui-kit/legacyStylingAllowlist.json'),
+    `${JSON.stringify(files, null, 2)}\n`,
   );
   console.log(`${files.length} files allowlisted`);
   ```
 
-  Run `node scripts/ui-kit/generateLegacyAllowlist.mjs`. Expected: roughly 100–120 files, because test files and the macromolecules Emotion files are included.
+  Run `node scripts/ui-kit/generateLegacyAllowlist.ts`. Expected: roughly 100–120 files, because test files and the macromolecules Emotion files are included.
 
-- [ ] 7.2 Write the failing lint tests in `scripts/ui-kit/lintBoundaries.test.mjs`:
+- [ ] 7.2 Write the failing lint tests in `scripts/ui-kit/lintBoundaries.test.ts`:
 
-  ```js
+  ```ts
   import { test } from 'node:test';
   import assert from 'node:assert/strict';
   import { dirname, resolve } from 'node:path';
   import { fileURLToPath } from 'node:url';
-  import { ESLint } from 'eslint';
+  import { ESLint, type Linter } from 'eslint';
   import stylelint from 'stylelint';
-  import { LEGACY_STYLING_ALLOWLIST } from './legacyStylingAllowlist.mjs';
+  import LEGACY_STYLING_ALLOWLIST from './legacyStylingAllowlist.json' with { type: 'json' };
 
   const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
   const eslint = new ESLint({ cwd: repoRoot });
-  const lint = async (code, filePath) => {
+  const lint = async (code: string, filePath: string) => {
     const [result] = await eslint.lintText(code, {
       filePath: resolve(repoRoot, filePath),
     });
+    assert.ok(result, filePath);
     return result.messages.filter(
       (message) => message.ruleId !== 'prettier/prettier',
     );
   };
-  const ruleIds = (messages) => messages.map((message) => message.ruleId);
+  const ruleIds = (messages: Linter.LintMessage[]) =>
+    messages.map((message) => message.ruleId);
 
   const KIT_FILE =
     'packages/ketcher-react/src/ui-kit/components/Probe/Probe.tsx';
@@ -1779,7 +1881,7 @@ This is the end of sub-project #0.
   });
 
   test('kit code may import kit code, assets and Base UI', async () => {
-    const isBoundaryRule = (id) =>
+    const isBoundaryRule = (id: string | null) =>
       id?.startsWith('import/') || id === 'no-restricted-imports';
     const component = await lint(
       "import { Tooltip } from '@base-ui/react/tooltip';\nimport clsx from 'clsx';\nimport { KitProvider } from '../../providers';\nimport Svg from '../../../assets/icons/files/about.svg';\nexport { Tooltip, clsx, KitProvider, Svg };\n",
@@ -1807,6 +1909,7 @@ This is the end of sub-project #0.
     const file = LEGACY_STYLING_ALLOWLIST.find((path) =>
       path.startsWith('packages/ketcher-react/'),
     );
+    assert.ok(file, 'the allowlist has a ketcher-react file');
     const messages = await lint(
       "import { Tooltip } from '@mui/material';\nexport { Tooltip };\n",
       file,
@@ -1833,7 +1936,9 @@ This is the end of sub-project #0.
       ),
       cwd: repoRoot,
     });
-    const rules = results[0].warnings.map((warning) => warning.rule);
+    const [result] = results;
+    assert.ok(result);
+    const rules = result.warnings.map((warning) => warning.rule);
     for (const rule of [
       'property-disallowed-list',
       'declaration-no-important',
@@ -1849,7 +1954,7 @@ This is the end of sub-project #0.
 - [ ] 7.4 Implement the ESLint rules in `eslint.config.mjs`:
   1. Add the import and helpers after the existing imports:
      ```js
-     import { LEGACY_STYLING_ALLOWLIST } from './scripts/ui-kit/legacyStylingAllowlist.mjs';
+     import LEGACY_STYLING_ALLOWLIST from './scripts/ui-kit/legacyStylingAllowlist.json' with { type: 'json' };
 
      const ASSERT_RESTRICTION = {
        name: 'assert',
@@ -1961,42 +2066,44 @@ This is the end of sub-project #0.
   - `npm test` at the root passes. That proves the whole repo, including the allowlisted files and the kit, lints clean.
   - `npx stylelint "packages/ketcher-react/src/ui-kit/**/*.css"` is clean.
 - [ ] 7.8 **Visual check:** not applicable.
-- [ ] 7.9 **STOP:** ask to commit, using the message `#12193 - Enforce UI kit import boundaries and legacy styling allowlist`.
+- [ ] 7.9 **STOP:** ask to commit, using the message `#12235 - Enforce UI kit import boundaries and legacy styling allowlist`.
 
 ## 8. Migration metrics and CI
 
 **Files:**
 
 - Create:
-  - `scripts/ui-kit/metrics.mjs`
-  - `scripts/ui-kit/metrics.test.mjs`
+  - `scripts/ui-kit/metrics.ts`
+  - `scripts/ui-kit/metrics.test.ts`
   - `scripts/ui-kit/metrics-baseline.json` (generated)
 - Modify: root `package.json`, `.github/workflows/ci.yml`
 
 **Interfaces produced:**
 
-- `collectMetrics(rootDir: string): { muiImportFiles: number; emotionImportFiles: number; muiClassSelectors: number; importantDeclarations: number; lessFiles: number }`
-- CLI: `node scripts/ui-kit/metrics.mjs [--check | --write]`
+- `collectMetrics(rootDir: string): Metrics`, where `Metrics` is `{ muiImportFiles: number; emotionImportFiles: number; muiClassSelectors: number; importantDeclarations: number; lessFiles: number }`.
+- `compareMetrics(current: MetricCounts, baseline: MetricCounts): string[]`, where `MetricCounts` is `Partial<Record<string, number>>`, the shape of `metrics-baseline.json`.
+- CLI: `node scripts/ui-kit/metrics.ts [--check | --write]`
   - `--check` fails when any count is above `metrics-baseline.json`.
   - `--write` rewrites the baseline. Use it only when counts went down.
   - Both modes print the sizes of `dist/index.css` and `dist/index.js`, when present, for information only.
 
-- [ ] 8.1 Write the failing test `scripts/ui-kit/metrics.test.mjs`:
+- [ ] 8.1 Write the failing test `scripts/ui-kit/metrics.test.ts`:
 
-  ```js
+  ```ts
   import { test } from 'node:test';
   import assert from 'node:assert/strict';
   import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
   import { tmpdir } from 'node:os';
   import { join } from 'node:path';
-  import { collectMetrics, compareMetrics } from './metrics.mjs';
+  import { collectMetrics, compareMetrics } from './metrics.ts';
 
   const fixture = () => {
     const root = mkdtempSync(join(tmpdir(), 'ui-kit-metrics-'));
     for (const pkg of ['ketcher-react', 'ketcher-macromolecules']) {
       mkdirSync(join(root, 'packages', pkg, 'src'), { recursive: true });
     }
-    const src = (pkg, file) => join(root, 'packages', pkg, 'src', file);
+    const src = (pkg: string, file: string) =>
+      join(root, 'packages', pkg, 'src', file);
     writeFileSync(
       src('ketcher-react', 'a.tsx'),
       "import { Tooltip } from '@mui/material';\n",
@@ -2035,10 +2142,10 @@ This is the end of sub-project #0.
   });
   ```
 
-- [ ] 8.2 Run `npm run test:ui-kit-scripts`. Expected: FAIL, because `metrics.mjs` is missing.
-- [ ] 8.3 Implement `scripts/ui-kit/metrics.mjs`:
+- [ ] 8.2 Run `npm run test:ui-kit-scripts`. Expected: FAIL, because `metrics.ts` is missing.
+- [ ] 8.3 Implement `scripts/ui-kit/metrics.ts`:
 
-  ```js
+  ```ts
   #!/usr/bin/env node
   /** UI-kit migration burn-down (openspec/changes/ui-kit-foundation, Decision 11). */
   import {
@@ -2052,6 +2159,17 @@ This is the end of sub-project #0.
   import { fileURLToPath, pathToFileURL } from 'node:url';
   import { parseArgs } from 'node:util';
 
+  // A type alias, not an interface, so it is assignable to MetricCounts.
+  export type Metrics = {
+    muiImportFiles: number;
+    emotionImportFiles: number;
+    muiClassSelectors: number;
+    importantDeclarations: number;
+    lessFiles: number;
+  };
+  // The shape of metrics-baseline.json.
+  export type MetricCounts = Partial<Record<string, number>>;
+
   const SOURCE_DIRS = [
     'packages/ketcher-react/src',
     'packages/ketcher-macromolecules/src',
@@ -2059,19 +2177,19 @@ This is the end of sub-project #0.
   const EXCLUDED =
     /(\.test\.|\.spec\.|\.stories\.|[\\/]testMocks[\\/]|__snapshots__)/;
 
-  const sourceFiles = (rootDir) =>
+  const sourceFiles = (rootDir: string): string[] =>
     SOURCE_DIRS.flatMap((dir) => {
       const absolute = join(rootDir, dir);
       if (!existsSync(absolute)) return [];
-      return readdirSync(absolute, { recursive: true })
+      return readdirSync(absolute, { recursive: true, encoding: 'utf8' })
         .map((file) => join(absolute, file))
         .filter((file) => statSync(file).isFile() && !EXCLUDED.test(file));
     });
 
-  const count = (text, re) => (text.match(re) ?? []).length;
+  const count = (text: string, re: RegExp) => (text.match(re) ?? []).length;
 
-  export function collectMetrics(rootDir) {
-    const metrics = {
+  export function collectMetrics(rootDir: string): Metrics {
+    const metrics: Metrics = {
       muiImportFiles: 0,
       emotionImportFiles: 0,
       muiClassSelectors: 0,
@@ -2093,23 +2211,29 @@ This is the end of sub-project #0.
     return metrics;
   }
 
-  export function compareMetrics(current, baseline) {
-    return Object.entries(baseline)
-      .filter(([key, value]) => current[key] > value)
-      .map(([key, value]) => `${key}: ${value} -> ${current[key]}`);
+  export function compareMetrics(
+    current: MetricCounts,
+    baseline: MetricCounts,
+  ): string[] {
+    const increases: string[] = [];
+    for (const [key, value] of Object.entries(baseline)) {
+      const now = current[key];
+      if (value !== undefined && now !== undefined && now > value) {
+        increases.push(`${key}: ${value} -> ${now}`);
+      }
+    }
+    return increases;
   }
 
-  function distSizes(rootDir) {
-    return ['ketcher-react', 'ketcher-macromolecules']
-      .flatMap((pkg) =>
-        ['dist/index.css', 'dist/index.js'].map((file) => {
-          const path = join(rootDir, 'packages', pkg, file);
-          return existsSync(path)
-            ? `${pkg}/${file}: ${statSync(path).size} bytes`
-            : null;
-        }),
-      )
-      .filter(Boolean);
+  function distSizes(rootDir: string): string[] {
+    return ['ketcher-react', 'ketcher-macromolecules'].flatMap((pkg) =>
+      ['dist/index.css', 'dist/index.js'].flatMap((file) => {
+        const path = join(rootDir, 'packages', pkg, file);
+        return existsSync(path)
+          ? [`${pkg}/${file}: ${statSync(path).size} bytes`]
+          : [];
+      }),
+    );
   }
 
   function main() {
@@ -2126,10 +2250,10 @@ This is the end of sub-project #0.
       return;
     }
     if (values.check) {
-      const increases = compareMetrics(
-        current,
-        JSON.parse(readFileSync(baselinePath, 'utf8')),
+      const baseline: MetricCounts = JSON.parse(
+        readFileSync(baselinePath, 'utf8'),
       );
+      const increases = compareMetrics(current, baseline);
       if (increases.length) {
         console.error(`UI-kit metrics went up:\n${increases.join('\n')}`);
         process.exit(1);
@@ -2145,8 +2269,8 @@ This is the end of sub-project #0.
   }
   ```
 
-- [ ] 8.4 Run `npm run test:ui-kit-scripts`. Expected: PASS. Then write the baseline with `node scripts/ui-kit/metrics.mjs --write` and paste the printed table into the section report.
-- [ ] 8.5 Add a root script to `package.json`: `"check:ui-kit-metrics": "node scripts/ui-kit/metrics.mjs --check"`. Then, in `.github/workflows/ci.yml`, add two steps right after the existing `npm test` step of the `build` job:
+- [ ] 8.4 Run `npm run test:ui-kit-scripts`. Expected: PASS. Then write the baseline with `node scripts/ui-kit/metrics.ts --write` and paste the printed table into the section report.
+- [ ] 8.5 Add a root script to `package.json`: `"check:ui-kit-metrics": "node scripts/ui-kit/metrics.ts --check"`. Then, in `.github/workflows/ci.yml`, add two steps right after the existing `npm test` step of the `build` job:
 
   ```yaml
   - name: UI kit tooling tests
@@ -2156,7 +2280,7 @@ This is the end of sub-project #0.
   ```
 
 - [ ] 8.6 **Code check:** `npm run test:ui-kit-scripts && npm run check:ui-kit-metrics` passes.
-- [ ] 8.7 **STOP:** ask to commit, using the message `#12193 - Track UI kit migration metrics in CI`.
+- [ ] 8.7 **STOP:** ask to commit, using the message `#12235 - Track UI kit migration metrics in CI`.
 
 ## 9. Storybook
 
@@ -2266,15 +2390,15 @@ This is the end of sub-project #0.
 - [ ] 9.5 Run `npm run build-storybook -w ketcher-react`. Expected: success, with `packages/ketcher-react/storybook-static/index.json` listing `ui-kit-kitprovider--left-to-right`. If Storybook fails because the macromolecules glob matches no files, remove that glob for now and leave a comment. Sub-project #2 adds it back with the first macromolecules story.
 - [ ] 9.6 **Code check:** `npm run test -w ketcher-react` passes. The stories are type-checked and linted, and `storybook-static` is ignored by prettier, eslint and stylelint.
 - [ ] 9.7 **Visual check:** run `npm run storybook -w ketcher-react` and open `http://localhost:6006`. Both KitProvider stories render, and the RTL one says `direction: rtl`.
-- [ ] 9.8 **STOP:** ask to commit, using the message `#12193 - Add Storybook for the UI kit`.
+- [ ] 9.8 **STOP:** ask to commit, using the message `#12236 - Add Storybook for the UI kit`.
 
 ## 10. Story screenshot tests (Playwright `ui-kit` project)
 
 > **Gate:** this section writes Playwright tests. Before starting it:
 >
 > 1. ask the user whether to proceed;
-> 2. read `.memory-bank/testing.md`;
-> 3. draft an e2e test plan per `.memory-bank/e2e-test-plan-template.md` and get it approved.
+> 2. read `.memory-bank/testing/testing.md`;
+> 3. draft an e2e test plan per `.memory-bank/testing/e2e-test-plan-template.md` and get it approved.
 >
 > The code below is the proposed starting point for that plan.
 
@@ -2409,7 +2533,7 @@ This is the end of sub-project #0.
   ```
   Expected: `0 tests` and success. There are no `visual` stories yet; Section 11 adds the first.
 - [ ] 10.7 **Code check:** `npm run check:code` in `ketcher-autotests` passes.
-- [ ] 10.8 **STOP:** ask to commit, using the message `#12193 - Add story screenshot tests for the UI kit`.
+- [ ] 10.8 **STOP:** ask to commit, using the message `#12236 - Add story screenshot tests for the UI kit`.
 
 ## 11. Move `Icon` into the kit
 
@@ -2421,7 +2545,7 @@ This is the end of sub-project #0.
   - `packages/ketcher-react/src/components/Icon/iconNameKeys.test.ts`
   - `packages/ketcher-react/src/ui-kit/components/Icon/Icon.test.tsx`
   - `packages/ketcher-react/src/ui-kit/components/Icon/Icon.stories.tsx`
-- Modify: `packages/ketcher-react/src/ui-kit/index.ts`, `scripts/ui-kit/legacyStylingAllowlist.mjs` (only if paths change)
+- Modify: `packages/ketcher-react/src/ui-kit/index.ts`, `scripts/ui-kit/legacyStylingAllowlist.json` (only if paths change)
 
 **Interfaces:** unchanged. `Icon`, `getIconName`, `IconName` and `IIconProps` are still exported from `'ketcher-react'` and from `components`.
 
@@ -2547,14 +2671,14 @@ This is the end of sub-project #0.
   - `npm run test:ui-kit-scripts` passes.
   - `npm run check:ui-kit-metrics` passes.
 - [ ] 11.8 **Visual check:** the example app's toolbars and the macromolecules library icons look unchanged.
-- [ ] 11.9 **STOP:** ask to commit, including the baseline PNG, using the message `#12193 - Move Icon into the UI kit`.
+- [ ] 11.9 **STOP:** ask to commit, including the baseline PNG, using the message `#12237 - Move Icon into the UI kit`.
 
 ## 12. Tooltip characterisation (legacy MUI stories and baselines)
 
 **Files:**
 
 - Create: `packages/ketcher-react/src/script/ui/legacyStories/Tooltip.legacy.stories.tsx`
-- Modify: `scripts/ui-kit/legacyStylingAllowlist.mjs`, to add this file. It imports `@mui/material` and is deleted in Section 13.
+- Modify: `scripts/ui-kit/legacyStylingAllowlist.json`, to add this file. It imports `@mui/material` and is deleted in Section 13.
 
 The story names below are the **contract** for Section 13. The kit stories reuse the same `title` and export names, so their story IDs, and therefore their baselines, stay the same.
 
@@ -2640,7 +2764,7 @@ The story names below are the **contract** for Section 13. The kit stories reuse
   ```
   Expected: five new PNGs named `ui-kit-tooltip--{dark-bottom,dark-long-text,dark-right,light-bottom,right-to-left}-ui-kit-linux.png`. Open each one, and check it shows the tooltip with the right look and placement.
 - [ ] 12.4 **Code check:** `npm run test -w ketcher-react` and `npm run test:ui-kit-scripts` pass.
-- [ ] 12.5 **STOP:** ask to commit, using the message `#12193 - Characterise MUI tooltips in Storybook`.
+- [ ] 12.5 **STOP:** ask to commit, using the message `#12238 - Characterise MUI tooltips in Storybook`.
 
 ## 13. Kit `Tooltip`
 
@@ -3054,12 +3178,13 @@ The popup reads `--ketcher-tooltip-background`, a component-scoped custom proper
   - `npm run test -w ketcher-react` passes.
   - `npm run test:ui-kit-scripts` passes.
   - `npm run check:ui-kit-metrics` passes.
-- [ ] 13.8 **STOP:** ask to commit, using the message `#12193 - Add UI kit Tooltip on Base UI`.
+- [ ] 13.8 **STOP:** ask to commit, using the message `#12239 - Add UI kit Tooltip on Base UI`.
 
 ## 14. Migrate every MUI `Tooltip` call site
 
 **Files:**
 
+- Modify: `openspec/changes/ui-kit-foundation/release-notes.md`, to add this PR's host-visible entry
 - Modify (ketcher-react, import from `'src/ui-kit'`):
   - `src/script/ui/component/form/form/form.tsx` (lines 40, 270, 297)
   - `src/script/ui/component/form/MeasureInput/measure-input.tsx` (lines 33, 181)
@@ -3073,7 +3198,7 @@ The popup reads `--ketcher-tooltip-background`, a component-scoped custom proper
 - Modify:
   - `packages/ketcher-macromolecules/src/types/ketcher-react.d.ts`
   - `packages/ketcher-macromolecules/src/testMocks/ketcher-react.tsx`
-  - `scripts/ui-kit/legacyStylingAllowlist.mjs`
+  - `scripts/ui-kit/legacyStylingAllowlist.json`
   - `scripts/ui-kit/metrics-baseline.json`
 
 - [ ] 14.1 Declare the kit `Tooltip` for macromolecules:
@@ -3140,8 +3265,8 @@ The popup reads `--ketcher-tooltip-background`, a component-scoped custom proper
   - at line 424, render `<Tooltip title={props.hint} variant="light">…</Tooltip>`, keeping the existing children.
 - [ ] 14.5 Shrink the allowlist and the metrics:
   ```bash
-  node scripts/ui-kit/generateLegacyAllowlist.mjs
-  node scripts/ui-kit/metrics.mjs --write
+  node scripts/ui-kit/generateLegacyAllowlist.ts
+  node scripts/ui-kit/metrics.ts --write
   git diff --stat scripts/ui-kit/
   ```
   Expected:
@@ -3163,26 +3288,20 @@ The popup reads `--ketcher-tooltip-background`, a component-scoped custom proper
   6. RNA builder (expanded): phosphate-position options and the trigger tooltip; the "Add to presets"/"Save" disabled-reason tooltips.
   7. Macromolecule properties window: hover the hydrophobicity hint; light look, max 220 px wide.
   8. Repeat 5 and 7 in **fullscreen** mode. The tooltips must be visible; under MUI they rendered into `<body>` outside the fullscreen element.
-- [ ] 14.8 **STOP:** ask to commit, using the message `#12193 - Migrate MUI tooltips to the UI kit Tooltip`.
-- [ ] 14.9 **Sub-project #1 gate.** Ask the user to push. The draft PR's CI must show:
-  - full e2e green with **no baseline updates**;
-  - the `UI kit visual tests` workflow green;
-  - `ci.yml` green, including tooling tests and metrics.
+- [ ] 14.8 Add to `release-notes.md`: tooltips now render inside the editor root (`[data-ketcher-portal-root]`) instead of `<body>`, so host CSS that targeted `.MuiTooltip-*` no longer applies. Tooltips no longer read UI-chrome overrides from the `theme` prop.
+- [ ] 14.9 **STOP:** ask to commit, using the message `#12240 - Migrate MUI tooltips to the UI kit Tooltip`.
+- [ ] 14.10 **No push yet.** PR 10 also contains Section 15, so its release gate runs after Section 15. That gate is also the sub-project #1 gate: CI must show the full e2e suite green with **no baseline updates**, the `UI kit visual tests` workflow green, and `ci.yml` green, including the tooling tests and metrics.
 
-## 15. Documentation and release notes
+## 15. Release notes check
 
 **Files:**
 
-- Modify: `README.md` (repo root)
-- Create: `openspec/changes/ui-kit-foundation/release-notes.md`
+- Modify, only if something is missing: `openspec/changes/ui-kit-foundation/release-notes.md`
 
-- [ ] 15.1 In `README.md`, add a **Supported browsers** subsection, next to the existing integration/setup docs. It says:
-  - Ketcher's styles target Chrome/Edge 111+, Firefox 114+ and Safari 16.4+, per #11997;
-  - the JavaScript syntax level is unchanged for now.
-- [ ] 15.2 Create `release-notes.md` with the host-visible changes, for the next release's notes:
-  - new `--ketcher-*` CSS custom properties are declared on `:root`. Override them on an ancestor of the editor to theme UI chrome;
-  - UI-chrome overrides passed through the macromolecules `Editor` `theme` prop are **deprecated** (canvas colours still work). Tooltips no longer read them;
-  - tooltips now render inside the editor root (`[data-ketcher-portal-root]`) instead of `<body>`. Host CSS that targeted `.MuiTooltip-*` no longer applies;
-  - the CSS browser floor is documented.
-- [ ] 15.3 Do **not** update the memory bank here. That happens at `/opsx:archive` (CLAUDE.md).
-- [ ] 15.4 **STOP:** ask to commit, using the message `#12193 - Document browser floor and UI kit release notes`.
+- [ ] 15.1 Read `release-notes.md` and check that it has these entries, each added by the PR that made the change. Correct any that is missing or no longer matches what shipped:
+  - the CSS browser floor is documented (PR 1, step 2.11);
+  - new `--ketcher-*` custom properties on `:root` (PR 2, step 3.11);
+  - UI-chrome overrides through the macromolecules `theme` prop are deprecated (PR 3, step 5.11);
+  - tooltips render inside the editor root instead of `<body>` (PR 10, step 14.8).
+- [ ] 15.2 Do **not** update the memory bank here. That happens at `/opsx:archive` (CLAUDE.md).
+- [ ] 15.3 **STOP:** if step 15.1 changed anything, ask to commit, using the message `#12240 - Complete UI kit foundation release notes`.

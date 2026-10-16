@@ -157,14 +157,28 @@ class RotateController {
   private show() {
     const originalCenter = this.rotateTool.getCenter();
     const selection = this.editor.selection();
+    // Rotation moves the selected atoms, so bonds selected without any of
+    // them get the frame without its rotation handle
+    const isOnlyBondsSelected =
+      Boolean(selection?.bonds?.length) &&
+      !selection?.atoms?.length &&
+      !selection?.texts?.length &&
+      !selection?.rxnArrows?.length &&
+      !selection?.rxnPluses?.length;
+    // The explicit selection adds the atoms of the bonds, so they are framed
+    // like the atoms they connect
+    const frameSelection = isOnlyBondsSelected
+      ? this.editor.explicitSelected()
+      : selection;
     const visibleAtoms =
-      this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
+      this.render.ctab.molecule.getSelectedVisibleAtoms(frameSelection);
 
-    const { texts, rxnArrows, rxnPluses } = selection || {};
+    const { texts, rxnArrows, rxnPluses, bonds } = frameSelection || {};
 
-    const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1;
+    const selectedItems = isOnlyBondsSelected
+      ? (selection?.bonds ?? [])
+      : visibleAtoms.concat(texts ?? [], rxnArrows ?? [], rxnPluses ?? []);
+    const isMoreThanOneItemBeingSelected = selectedItems.length > 1;
 
     const currentTool = this.editor.tool();
     const enable =
@@ -184,7 +198,7 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      selection?.bonds,
+      bonds,
       selection?.rgroupAttachmentPoints,
     );
 
@@ -201,6 +215,10 @@ class RotateController {
       visible: true,
       rotateHandlePosition: handleCenterInViewport,
     });
+
+    if (isOnlyBondsSelected) {
+      return;
+    }
 
     this.drawLink();
     this.drawCross();

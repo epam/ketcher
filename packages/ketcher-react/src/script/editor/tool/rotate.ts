@@ -180,7 +180,7 @@ class RotateTool implements Tool {
       }
     }
 
-    const { texts, rxnArrows, rxnPluses } = this.selection;
+    const { texts, rxnArrows, rxnPluses, bonds } = this.selection;
     if (
       !center &&
       (visibleAtoms.length ||
@@ -194,6 +194,11 @@ class RotateTool implements Tool {
         rxnArrows,
         rxnPluses,
       });
+    }
+
+    // Bonds selected without any of their atoms
+    if (!center && bonds?.length) {
+      center = this.reStruct.getSelectionBoxCenter({ bonds });
     }
 
     return center;

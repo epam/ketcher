@@ -15,8 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { SdfItem, StructAssociatedData } from './sdf.types';
+import type {
+  SdfItem,
+  SdfSerializeResult,
+  StructAssociatedData,
+} from './sdf.types';
 
+import { KetcherLogger } from 'utilities';
 import { MolSerializer } from '../mol/molSerializer';
 import type { Serializer } from '../serializers.types';
 import type { MolSerializerOptions } from '../mol';
@@ -82,5 +87,36 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
       return `${res}$$$$\n`;
     }, '');
+  }
+
+  serializeWithSkipInvalid(sdfItems: Array<SdfItem>): SdfSerializeResult {
+    const molSerializer = new MolSerializer(this.molSerializerOptions);
+    const skipped: SdfSerializeResult['skipped'] = [];
+
+    const sdf = sdfItems.reduce((res, item) => {
+      try {
+        let chunk = molSerializer.serialize(item.struct);
+
+        Object.keys(item.props).forEach((prop) => {
+          chunk += `> <${prop}>\n`;
+          chunk += `${item.props[prop]}\n\n`;
+        });
+
+        return `${res}${chunk}$$$$\n`;
+      } catch (e) {
+        const name =
+          item.struct.name ||
+          String(item.props.name ?? item.props.abbreviation ?? '');
+        const reason = e instanceof Error ? e.message : String(e);
+        KetcherLogger.warn(
+          'sdfSerializer.ts::SdfSerializer::serializeWithSkipInvalid',
+          `Skipping template "${name}": ${reason}`,
+        );
+        skipped.push({ name: name || 'Unknown', reason });
+        return res;
+      }
+    }, '');
+
+    return { sdf, skipped };
   }
 }

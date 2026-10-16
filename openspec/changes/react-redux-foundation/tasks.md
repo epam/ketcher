@@ -30,13 +30,16 @@
   - the full e2e suite, `chromium` and `chromium-popup`, with **no baseline updates**;
   - `npm run build`, which covers the packages and `example` in standalone and remote mode;
   - the `example-ssr` build.
+
+  A PR that makes a host-visible change adds its entry to `openspec/changes/react-redux-foundation/release-notes.md` in the same PR, so the notes are right whichever release it ships in. In this plan those are PR 1 (step 1.14) and PR 2 (step 2.15), which change the dependencies hosts get.
+
 - **Types follow runtime.** When inference reveals a wrong type, the type changes to match what the code actually stores or passes; the code doesn't change to match the type.
   - No new `as` type assertions or non-null assertions in source files (`@typescript-eslint/no-non-null-assertion` is already an error). Test files may cast partial fixtures and stand-in objects.
   - `castDraft` is allowed only in the allowlisted slice files.
   - Test fixtures are made complete rather than cast.
   - If a type can't be made honest without changing runtime behaviour, stop and ask.
 - **New files are TypeScript.** Every new source or test file under `packages/*/src` is `.ts` or `.tsx`. Existing `.js` files may be edited in place; converting them belongs to the project's TypeScript migration. When a step moves code out of a JS file into a new file, the new file is TypeScript, and the step lists each change the conversion needs.
-  - The repo scripts this plan adds under `scripts/` are TypeScript too. Node runs them directly by stripping their types (Node 22.18 and later; the repo requires 24.20), and `scripts/tsconfig.json` type-checks them. Only `eslint.config.mjs` stays `.mjs`.
+  - The repo scripts this plan adds under `scripts/` are TypeScript too. Node runs them directly by stripping their types (Node 22.18 and later; the repo requires 24.20). `scripts/package.json` marks them as ES modules, and `scripts/tsconfig.json` type-checks them. Only `eslint.config.mjs` stays `.mjs`.
 - **Versions:** `@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0`, or newer if `npm view` reports a newer release in Section 1. Use one deduplicated copy of each.
 - **React 18 compatibility:** no React 19-only APIs; keep `forwardRef`.
 - **No module-level state is added.** The macro module-level `store` singleton stays until sub-project #1. It isn't fixed here.
@@ -144,6 +147,7 @@
   - `packages/ketcher-macromolecules/src/components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/resetRnaBuilder.ts`.
 - Modify: `packages/ketcher-react/src/setupTests.ts`, `packages/ketcher-macromolecules/src/setupTests.tsx`.
 - Create: `packages/ketcher-react/src/script/ui/dialog/template/TemplateDialog.selectors.test.ts`.
+- Create: `openspec/changes/react-redux-foundation/release-notes.md`, which collects the host-visible changes for the release notes. PR 2 adds to it.
 
 **Interfaces produced:** none. These are import-path changes only. `ThunkDispatch`, `Dispatch`, `AnyAction`, `Action`, `Store`, `createSelector`, `createStore`, `legacy_createStore`, `combineReducers` and `applyMiddleware` are all exported by `@reduxjs/toolkit`.
 
@@ -285,7 +289,12 @@
   - `npm run build` and the `example-ssr` build: `cd example-ssr && npm run build && npm run lint && npm run test:types`.
   - Ask the user to run the full e2e suite through CI, or locally with `npm run docker:test` and `npm run docker:test-popup` in `ketcher-autotests`. **Expected:** green with no baseline updates.
   - Manual check: repeat the step 0.5 walkthrough. The console shows no new errors or warnings compared with `console-dev.txt`.
-- [ ] 1.14 **STOP:** ask to commit, using the message `#12225 - Upgrade Redux Toolkit and route Redux imports through it`.
+- [ ] 1.14 Create `openspec/changes/react-redux-foundation/release-notes.md` with this PR's host-visible changes:
+  - `ketcher-react` now depends on `@reduxjs/toolkit` and no longer on `reselect`. Hosts that imported `reselect` through Ketcher's dependency tree must declare it.
+  - `ketcher-macromolecules` no longer depends on `redux` or `redux-saga`. It declares `immer` (11.x), which it was already using undeclared.
+  - No UI, behaviour or public API change.
+
+  **STOP:** ask to commit, including `release-notes.md`, using the message `#12225 - Upgrade Redux Toolkit and route Redux imports through it`.
 
 ## 2. `ketcher-react` on `configureStore`
 
@@ -303,7 +312,8 @@
   - `packages/ketcher-react/src/script/ui/state/hooks.ts`;
   - `packages/ketcher-react/src/script/ui/state/action/index.ts`, `functionalGroups/index.ts` and `saltsAndSolvents/index.ts`, to export their state types;
   - `packages/ketcher-react/src/script/ui/App/initApp.tsx`;
-  - `packages/ketcher-react/package.json` and `package-lock.json`.
+  - `packages/ketcher-react/package.json` and `package-lock.json`;
+  - `openspec/changes/react-redux-foundation/release-notes.md`, to add this PR's entries.
 
 **Interfaces produced:**
 
@@ -787,7 +797,11 @@
   - With the Redux DevTools extension installed, open it on the example in development. **Expected:** the editor, server and libraries show as `<not serialized>`, and the tab stays responsive.
   - Run `KETCHER_ENABLE_REDUX_LOGGER=true npm run start:standalone -w example`. **Expected:** actions are logged.
   - Run a production build (`npm run build:example:standalone`) and serve `example/build`. **Expected:** the extension shows no store.
-- [ ] 2.15 **STOP:** ask to commit, using the message `#12226 - Create the ketcher-react store with configureStore`.
+- [ ] 2.15 Add to `release-notes.md`:
+  - `ketcher-react` no longer depends on `redux` or `redux-thunk`; both come with `@reduxjs/toolkit`. Hosts that imported them through Ketcher's dependency tree must declare them.
+  - Redux DevTools still connect only in development builds, with the same sanitised state.
+
+  **STOP:** ask to commit, including `release-notes.md`, using the message `#12226 - Create the ketcher-react store with configureStore`.
 
 ## 3. Macromolecules: inferred store types
 
@@ -1265,7 +1279,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   - `scripts/react-redux/collect.ts`, the source scanners shared with the metrics;
   - `scripts/react-redux/allowlists.ts`, the CLI with `--write` and `--check`;
   - `scripts/react-redux/allowlists.generated.json`, generated;
-  - `scripts/tsconfig.json`, which type-checks the scripts;
+  - `scripts/package.json`, which marks the scripts as ES modules, and `scripts/tsconfig.json`, which type-checks them. If the UI-kit change (#12231) has added them already, modify them instead;
   - `scripts/react-redux/collect.test.ts` and `scripts/react-redux/lintRules.test.ts`.
 - Modify: `eslint.config.mjs`, and the root `package.json` (scripts).
 
@@ -1451,8 +1465,15 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   }
   ```
 
-- [ ] 6.3 Set up type checking for the scripts, and add the script that runs them.
-  1. Create `scripts/tsconfig.json`. Node runs the scripts by stripping their types without checking them, so this config is what checks them:
+- [ ] 6.3 Set up type checking for the scripts, and add the script that runs them. The UI-kit change (#12231) sets up the same two files. If it has landed, only add this change's entries (`lint/**/*.ts`, `react-redux/**/*.ts`, `react-redux/**/*.json`) to the existing `include`.
+  1. Create `scripts/package.json`, so that Node and `tsc` treat the scripts as ES modules. Without it the root `package.json`, which has no `"type"`, makes `tsc` read them as CommonJS and reject every `import` (`TS1295`):
+     ```json
+     {
+       "private": true,
+       "type": "module"
+     }
+     ```
+  2. Create `scripts/tsconfig.json`. Node runs the scripts by stripping their types without checking them, so this config is what checks them:
      ```jsonc
      {
        // Repo scripts run by Node directly, which strips the types without
@@ -1479,10 +1500,13 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
      - `erasableSyntaxOnly` rejects syntax Node can't strip, such as `enum` and parameter properties.
      - `verbatimModuleSyntax` requires `import type` for types, because Node keeps every other import.
      - Relative imports name the `.ts` file, as Node requires (`allowImportingTsExtensions`).
-     - The existing `scripts/build-run.mjs` isn't included and stays as it is.
-  2. Add the root script `"test:guardrail-scripts": "tsc -p scripts/tsconfig.json && node --test 'scripts/lint/*.test.ts' 'scripts/react-redux/*.test.ts'"`.
+     - The existing `scripts/build-run.mjs` isn't included and stays as it is. Don't run it to try things out: it deletes the packages' `dist` folders and starts a full build.
+  3. Add the root script `"test:guardrail-scripts": "tsc -p scripts/tsconfig.json && node --test 'scripts/lint/*.test.ts' 'scripts/react-redux/*.test.ts'"`.
   - `node --test` needs glob patterns; Node 25 treats a directory argument as a module path and fails.
-  - If the UI-kit change has landed, add `'scripts/ui-kit/*.test.mjs'` to the same script and keep `test:ui-kit-scripts` as an alias. Run it. **Expected:** the helper tests PASS.
+  - If the UI-kit change has landed, its `test:ui-kit-scripts` stays as it is. Both scripts run `tsc` over the whole `scripts/` config, so each checks the other's files too.
+
+  Run it. **Expected:** `tsc` reports nothing, and the helper tests PASS.
+
 - [ ] 6.4 Create `scripts/react-redux/rules.ts`:
 
   ```ts
@@ -2102,7 +2126,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 
 ## 7. Metrics ratchet and CI
 
-**Coordination.** If the UI-kit change's `scripts/ui-kit/metrics.mjs` has landed, add these counters to it under a `reactRedux` key and reuse its `--check`/`--write` CLI, instead of creating `scripts/react-redux/metrics.ts`. Otherwise create the script below; the UI-kit change then adds its counters here.
+**Coordination.** If the UI-kit change's `scripts/ui-kit/metrics.ts` has landed (#12235), add these counters to it under a `reactRedux` key and reuse its `--check`/`--write` CLI, instead of creating `scripts/react-redux/metrics.ts`. Otherwise create the script below; the UI-kit change then adds its counters here.
 
 **Files:**
 
@@ -2516,18 +2540,18 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 - [ ] 8.7 **Code check:** run `npm test`, `npm run test:guardrail-scripts` and `npm run check:react-redux`.
 - [ ] 8.8 **STOP:** ask to commit, using the message `#12230 - Add renderWithStore test helpers`.
 
-## 9. Release gate and release notes
+## 9. Final release gate and release notes check
 
 **Files:**
 
-- Create: `openspec/changes/react-redux-foundation/release-notes.md`.
+- Modify, only if something is missing: `openspec/changes/react-redux-foundation/release-notes.md`.
 - Modify: `openspec/changes/react-redux-foundation/roadmap.md`, its "Starting metrics" table only.
 
-- [ ] 9.1 Write `release-notes.md` with the host-visible changes:
-  - `ketcher-react` now depends on `@reduxjs/toolkit` and no longer on `redux`, `redux-thunk` or `reselect`. Hosts that imported those packages through Ketcher's dependency tree must declare them.
-  - `ketcher-macromolecules` no longer depends on `redux` or `redux-saga`. It declares `immer` (11.x), which it was already using undeclared.
-  - Redux DevTools still connect only in development builds, with the same sanitised state.
-  - No UI, behaviour or public API change.
+- [ ] 9.1 Read `release-notes.md` and check that it has these entries, each added by the PR that made the change. Correct any that is missing or no longer matches what shipped:
+  - `ketcher-react` depends on `@reduxjs/toolkit` and no longer on `reselect` (PR 1, step 1.14), `redux` or `redux-thunk` (PR 2, step 2.15);
+  - `ketcher-macromolecules` no longer depends on `redux` or `redux-saga`, and declares `immer` 11.x (PR 1);
+  - Redux DevTools still connect only in development builds, with the same sanitised state (PR 2);
+  - no UI, behaviour or public API change.
 - [ ] 9.2 In `roadmap.md`, add an "After #0" column to the starting-metrics table with the numbers from `metrics-baseline.json`. Don't edit the memory bank (CLAUDE.md).
 - [ ] 9.3 **Final release gate**, on PR 6's branch. It is based on a `master` that has PRs 1–5, so every section is in place:
   - `npm ci && npm run build && npm test && npm run test:guardrail-scripts && npm run check:react-redux`;
@@ -2536,4 +2560,4 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   - the step 0.5 walkthrough in both standalone and remote mode (`npm run start:remote -w example`). The console matches `console-dev.txt`, minus the expected `editor.editor` mutation errors.
   - **Duo mode:** open the example with two editors, if the example exposes that, or the macromolecules toggle twice in a row. Edit in one and check that the other is unchanged. Known shared-state bugs (#1) are allowed, but nothing new may appear.
 - [ ] 9.4 Cross-check the spec, and list each requirement with the section that implements it in the PR 6 description. Requirements whose implementation belongs to later sub-projects are listed as "convention recorded, enforced by lint". Examples: the editor holder, and RTK Query rules.
-- [ ] 9.5 **STOP:** ask to commit, using the message `#12230 - Add React/Redux foundation release notes`. Then ask whether to push the branch and open PR 6, as in the execution protocol.
+- [ ] 9.5 **STOP:** ask to commit, using the message `#12230 - Record the React/Redux foundation's final metrics`. Then ask whether to push the branch and open PR 6, as in the execution protocol.

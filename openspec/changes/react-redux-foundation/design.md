@@ -58,7 +58,7 @@ Cross-cutting facts:
 
 ### Decision 1 — Behaviour policy: no change, releasable after every merge, one axis per PR
 
-**Choice.** The whole initiative is behaviour-neutral, and `master` stays releasable after every merged PR. That holds for each sub-task, not only at the end of a sub-project. There is no long-lived integration branch and no PR that leaves something broken for a later PR to fix. A half-migrated codebase is the normal state, with old and new patterns side by side, so both must work at every merge.
+**Choice.** The whole initiative is behaviour-neutral, and `master` stays releasable after every merged PR. That holds for each sub-task, not only at the end of a sub-project. There is no long-lived integration branch and no PR that leaves something broken for a later PR to fix. A half-migrated codebase is the normal state, with old and new patterns side by side, so both must work at every merge. A PR that makes a host-visible change, such as a dependency change, records it in the release notes itself, so the notes are right whichever release it ships in.
 
 Each PR changes **either** behaviour wiring (state, hooks, component model) **or** markup (UI-kit swaps), never both. A behaviour PR must:
 

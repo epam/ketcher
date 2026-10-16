@@ -81,6 +81,11 @@ Every PR in this initiative SHALL leave `master` releasable, with no regression.
 - **THEN** the steps SHALL be reordered, or the new path SHALL be added alongside the old one and the callers moved over PR by PR
 - **AND** it SHALL NOT be merged in a broken intermediate state
 
+#### Scenario: A host-visible change is merged
+
+- **WHEN** a PR changes something hosts can observe, such as the declared dependencies or the Redux DevTools behaviour
+- **THEN** the same PR SHALL add the change to the release notes
+
 #### Scenario: The initiative pauses
 
 - **WHEN** work stops after any merged PR

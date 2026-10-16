@@ -227,6 +227,7 @@
     "convertError": "Convert error! {error}",
     "helmSmilesExportNotice": "The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer",
     "helmAliasExportNotice": "Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.",
+    "fastaPhosphateLossNotice": "The FASTA format does not support phosphates at the ends of nucleotide chains: these phosphates will be lost.",
     "sequenceTypeRecognitionError": "Error during sequence type recognition(RNA, DNA or Peptide)"
   },
   "updateSequence": {

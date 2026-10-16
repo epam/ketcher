@@ -2,6 +2,8 @@
 
 Tracking: umbrella #12222. This change is sub-project #0 (#12223). Each later sub-project gets its own OpenSpec change and issue when it starts.
 
+Each sub-project issue is split into sub-issues, one for each PR in its plan. Each PR has its own branch off `master` and closes its sub-issue, and the sub-project issue closes with the last one. The plan's PR grouping table names the sub-issues; #0's are #12225–#12230. The spec and plan for #0 land first in a docs-only PR that closes no issue.
+
 ## Goals of the initiative
 
 - Both UI packages build Redux the same way, on the latest RTK, as recorded in `adr.md`.

@@ -20,7 +20,7 @@
 - Rollup 2 with `rollup-plugin-peer-deps-external` (`includeDependencies: true`).
 - Playwright e2e, in the `chromium` and `chromium-popup` projects, run through Docker.
 
-**Spec:** `openspec/changes/react-redux-foundation/`. Read `proposal.md`, `design.md` (Decisions 1–15), `adr.md`, `roadmap.md` and `specs/*/spec.md`. Tracking: #12223 (umbrella #12222). Branch: `12223-react-redux-foundation`.
+**Spec:** `openspec/changes/react-redux-foundation/`. Read `proposal.md`, `design.md` (Decisions 1–15), `adr.md`, `roadmap.md` and `specs/*/spec.md`. Tracking: #12223 (umbrella #12222), split into one sub-issue and one branch per PR (see the execution protocol).
 
 ## Global Constraints
 
@@ -40,7 +40,7 @@
 - **Versions:** `@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0`, or newer if `npm view` reports a newer release in Section 1. Use one deduplicated copy of each.
 - **React 18 compatibility:** no React 19-only APIs; keep `forwardRef`.
 - **No module-level state is added.** The macro module-level `store` singleton stays until sub-project #1. It isn't fixed here.
-- **Commits:** never commit without the user's explicit approval (CLAUDE.md). The message format is `#12223 - <summary>`, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The pre-commit hook runs Prettier across every workspace, so back up unrelated uncommitted edits first.
+- **Commits:** never commit without the user's explicit approval (CLAUDE.md). The message format is `#<sub-issue> - <summary>`, where `<sub-issue>` is the PR group's sub-issue from the execution protocol, ending with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The pre-commit hook runs Prettier across every workspace, so back up unrelated uncommitted edits first.
 - **E2E/Playwright:** this plan writes no new Playwright specs. If one turns out to be needed, ask the user first, read `.memory-bank/testing/testing.md`, and draft a plan per `.memory-bank/testing/e2e-test-plan-template.md`.
 - **Memory bank:** don't update it in this change. That happens at `/opsx:archive`.
 
@@ -61,23 +61,31 @@
 
 ## Execution protocol
 
-- Work directly on `12223-react-redux-foundation`.
-- For each section:
-  1. Complete its subtasks.
-  2. Run its **Code check**, and its **Release gate** where the section has one.
-  3. **STOP:** ask the user for approval to commit, then commit only that section's files.
-  4. Report the commit hash and `git show --stat HEAD`.
-  5. Wait for the user's go-ahead before starting the next section.
-- **PR grouping.** Each group is one PR that must pass the full release gate on its own. Don't open a PR without the user's approval.
+- **Start after PR #12224, which adds this plan, is merged.** The docs land on `master` first and close no issue.
+- **PR grouping.** Each group is one PR with its own sub-issue of #12223 and its own branch off `master`. Each PR must pass the full release gate on its own and closes its sub-issue. #12223 closes with the last one. The groups are merged in this order, and each one starts only after the previous one is merged: each depends on the one before it.
 
-  | PR  | Sections | Content                        |
-  | --- | -------- | ------------------------------ |
-  | 1   | 1        | Upgrade and imports            |
-  | 2   | 2        | `ketcher-react` store          |
-  | 3   | 3–4      | Macro types and dev checks     |
-  | 4   | 5        | Typed hooks                    |
-  | 5   | 6–7      | Lint, metrics and CI           |
-  | 6   | 8–9      | Test helpers and release notes |
+  | PR  | Sub-issue | Branch                                  | Sections | Content                        |
+  | --- | --------- | --------------------------------------- | -------- | ------------------------------ |
+  | 1   | #12225    | `12225-upgrade-redux-toolkit`           | 0–1      | Upgrade and imports            |
+  | 2   | #12226    | `12226-react-configure-store`           | 2        | `ketcher-react` store          |
+  | 3   | #12227    | `12227-macro-store-types-dev-checks`    | 3–4      | Macro types and dev checks     |
+  | 4   | #12228    | `12228-strict-typed-hooks`              | 5        | Typed hooks                    |
+  | 5   | #12229    | `12229-react-redux-lint-metrics`        | 6–7      | Lint, metrics and CI           |
+  | 6   | #12230    | `12230-render-with-store-release-notes` | 8–9      | Test helpers and release notes |
+
+- For each PR group:
+  1. Create its branch from an up-to-date `master`:
+     ```bash
+     git switch master && git pull --ff-only && git switch -c <branch> && npm ci
+     ```
+  2. For each section in the group:
+     1. Complete its subtasks, ticking each one in this file as it's done.
+     2. Run its **Code check**, and its **Release gate** where the section has one.
+     3. **STOP:** ask the user for approval to commit, then commit only that section's files. The message starts with the group's sub-issue number (Global Constraints).
+     4. Report the commit hash and `git show --stat HEAD`.
+     5. Wait for the user's go-ahead before starting the next section.
+  3. **STOP:** ask the user whether to push the branch and open the PR. Don't open a PR without their approval. The PR follows the repo's PR template, is titled `#<sub-issue> – <sub-issue title without the "[React/Redux] Foundation n/6: " prefix>`, and says `Closes #<sub-issue>` and `Part of #12223`.
+  4. Start the next group only after this PR is merged.
 
 - **Failing checks.** If a check fails, fix the problem inside the section. Never update test snapshots or e2e baselines to make a check pass.
 
@@ -85,9 +93,9 @@
 
 ## 0. Baselines (no code changes)
 
-- [ ] 0.1 Switch to the branch and install:
+- [ ] 0.1 Create PR 1's branch from an up-to-date `master` and install:
   ```bash
-  git switch 12223-react-redux-foundation && git status --short && npm ci
+  git switch master && git pull --ff-only && git switch -c 12225-upgrade-redux-toolkit && git status --short && npm ci
   ```
 - [ ] 0.2 Create a local baseline folder that git ignores:
   ```bash
@@ -277,7 +285,7 @@
   - `npm run build` and the `example-ssr` build: `cd example-ssr && npm run build && npm run lint && npm run test:types`.
   - Ask the user to run the full e2e suite through CI, or locally with `npm run docker:test` and `npm run docker:test-popup` in `ketcher-autotests`. **Expected:** green with no baseline updates.
   - Manual check: repeat the step 0.5 walkthrough. The console shows no new errors or warnings compared with `console-dev.txt`.
-- [ ] 1.14 **STOP:** ask to commit, using the message `#12223 - Upgrade Redux Toolkit and route Redux imports through it`.
+- [ ] 1.14 **STOP:** ask to commit, using the message `#12225 - Upgrade Redux Toolkit and route Redux imports through it`.
 
 ## 2. `ketcher-react` on `configureStore`
 
@@ -779,7 +787,7 @@
   - With the Redux DevTools extension installed, open it on the example in development. **Expected:** the editor, server and libraries show as `<not serialized>`, and the tab stays responsive.
   - Run `KETCHER_ENABLE_REDUX_LOGGER=true npm run start:standalone -w example`. **Expected:** actions are logged.
   - Run a production build (`npm run build:example:standalone`) and serve `example/build`. **Expected:** the extension shows no store.
-- [ ] 2.15 **STOP:** ask to commit, using the message `#12223 - Create the ketcher-react store with configureStore`.
+- [ ] 2.15 **STOP:** ask to commit, using the message `#12226 - Create the ketcher-react store with configureStore`.
 
 ## 3. Macromolecules: inferred store types
 
@@ -928,7 +936,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 - [ ] 3.8 **Code check:** run `npm test -w packages/ketcher-macromolecules` and `npm run build:macromolecules`.
   - The build emits declarations, so it catches TS2742 or TS4023 ("inferred type cannot be named") on the slices. That's why the `Slice` annotations may have been added originally.
   - If it fails, annotate with the full generic form, `Slice<EditorState, typeof editorReducers, 'editor'>`. To do that, move the `reducers` object into a `const editorReducers = { … } satisfies SliceCaseReducers<EditorState>`. Don't go back to the bare `Slice`.
-- [ ] 3.9 **No commit yet.** PR 3 also contains Section 4, so the release gate runs at step 4.9. Ask the user whether to commit this section on its own now. The message would be `#12223 - Infer macromolecules store types`.
+- [ ] 3.9 **No commit yet.** PR 3 also contains Section 4, so the release gate runs at step 4.9. Ask the user whether to commit this section on its own now. The message would be `#12227 - Infer macromolecules store types`.
 
 ## 4. Dev checks: explicit configuration with tracked exceptions
 
@@ -1101,7 +1109,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   - Run it. **Expected:** PASS. If the `immutableCheck` now reports a path inside `fakeEditor`'s event objects, that path is under `editor.editor` and is ignored. Any other path is a real finding: stop and report it.
 - [ ] 4.8 **Code check:** run `npm test -w packages/ketcher-react -w packages/ketcher-macromolecules`.
 - [ ] 4.9 **Release gate** (PR 3, covering Sections 3 and 4): the same as step 1.13. In the manual walkthrough, compare the dev console with `console-dev.txt`. **Expected:** the same output, minus any "state mutation detected" errors for `editor.editor`.
-- [ ] 4.10 **STOP:** ask to commit, using the message `#12223 - Configure Redux dev checks with tracked exceptions`. If Section 3 wasn't committed separately, use `#12223 - Infer macromolecules store types and configure dev checks`.
+- [ ] 4.10 **STOP:** ask to commit, using the message `#12227 - Configure Redux dev checks with tracked exceptions`. If Section 3 wasn't committed separately, use `#12227 - Infer macromolecules store types and configure dev checks`.
 
 ## 5. Strict typed hooks
 
@@ -1240,7 +1248,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 - [ ] 5.6 Run `npx tsc --noEmit -p .` in both packages. Typed hooks now check the inline selectors. Fix any errors under the step 3.5 rules.
 - [ ] 5.7 **Code check:** run `npm test -w packages/ketcher-react -w packages/ketcher-macromolecules`.
 - [ ] 5.8 **Release gate** (PR 4): the same as step 1.13.
-- [ ] 5.9 **STOP:** ask to commit, using the message `#12223 - Use typed Redux hooks only`.
+- [ ] 5.9 **STOP:** ask to commit, using the message `#12228 - Use typed Redux hooks only`.
 
 ## 6. Lint guardrails
 
@@ -2090,7 +2098,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 - [ ] 6.13 **Code check:**
   - `npm test` at the root passes. That proves every allowlisted file lints clean and nothing else violates the rules.
   - `node scripts/react-redux/allowlists.ts --check` exits 0.
-- [ ] 6.14 **No commit yet.** PR 5 also contains Section 7. Ask the user whether to commit this section on its own now. The message would be `#12223 - Ban legacy Redux and class components with shrinking allowlists`.
+- [ ] 6.14 **No commit yet.** PR 5 also contains Section 7. Ask the user whether to commit this section on its own now. The message would be `#12229 - Ban legacy Redux and class components with shrinking allowlists`.
 
 ## 7. Metrics ratchet and CI
 
@@ -2359,7 +2367,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   - Simulate a regression. Add `import { connect } from 'react-redux';` to an allowlist-free file. `npm test -w packages/ketcher-react` fails on lint, and `npm run check:react-redux` reports a new violation. Revert the change.
   - Simulate an unrecorded fix. Remove a file from `allowlists.generated.json`. `npm run check:react-redux` passes the metrics check but fails the allowlist check, because the file still violates. Revert.
 - [ ] 7.7 **Release gate** (PR 5): the same as step 1.13. Behaviour can't change here, so the e2e run may be the PR's CI run. In addition, check that the new CI steps run and pass on the PR.
-- [ ] 7.8 **STOP:** ask to commit, using the message `#12223 - Track React/Redux migration metrics in CI`. If Section 6 wasn't committed separately, use `#12223 - Add React/Redux lint guardrails and metrics ratchet`.
+- [ ] 7.8 **STOP:** ask to commit, using the message `#12229 - Track React/Redux migration metrics in CI`. If Section 6 wasn't committed separately, use `#12229 - Add React/Redux lint guardrails and metrics ratchet`.
 
 ## 8. `renderWithStore` test helpers
 
@@ -2506,7 +2514,7 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
 - [ ] 8.6 Rerun `node scripts/react-redux/allowlists.ts --write` and `node scripts/react-redux/metrics.ts --write`.
   - **Expected:** `legacyStoreApis` loses `InfoModal.test.utils.tsx`, and `testsBuildingOwnStore` drops by one in `ketcher-react`. `storeConstruction` stays empty.
 - [ ] 8.7 **Code check:** run `npm test`, `npm run test:guardrail-scripts` and `npm run check:react-redux`.
-- [ ] 8.8 **STOP:** ask to commit, using the message `#12223 - Add renderWithStore test helpers`.
+- [ ] 8.8 **STOP:** ask to commit, using the message `#12230 - Add renderWithStore test helpers`.
 
 ## 9. Release gate and release notes
 
@@ -2521,11 +2529,11 @@ Today `const store: Store = configureStore(...)` makes `RootState` `any`, so eve
   - Redux DevTools still connect only in development builds, with the same sanitised state.
   - No UI, behaviour or public API change.
 - [ ] 9.2 In `roadmap.md`, add an "After #0" column to the starting-metrics table with the numbers from `metrics-baseline.json`. Don't edit the memory bank (CLAUDE.md).
-- [ ] 9.3 **Final release gate**, on the branch with every section in place:
+- [ ] 9.3 **Final release gate**, on PR 6's branch. It is based on a `master` that has PRs 1–5, so every section is in place:
   - `npm ci && npm run build && npm test && npm run test:guardrail-scripts && npm run check:react-redux`;
   - the `example-ssr` build, lint and types;
   - the full e2e suite (`chromium` and `chromium-popup`) with no baseline updates;
   - the step 0.5 walkthrough in both standalone and remote mode (`npm run start:remote -w example`). The console matches `console-dev.txt`, minus the expected `editor.editor` mutation errors.
   - **Duo mode:** open the example with two editors, if the example exposes that, or the macromolecules toggle twice in a row. Edit in one and check that the other is unchanged. Known shared-state bugs (#1) are allowed, but nothing new may appear.
 - [ ] 9.4 Cross-check the spec, and list each requirement with the section that implements it in the PR 6 description. Requirements whose implementation belongs to later sub-projects are listed as "convention recorded, enforced by lint". Examples: the editor holder, and RTK Query rules.
-- [ ] 9.5 **STOP:** ask to commit, using the message `#12223 - Add React/Redux foundation release notes`. Then ask whether to push the branch and open the PRs in the order of the execution protocol.
+- [ ] 9.5 **STOP:** ask to commit, using the message `#12230 - Add React/Redux foundation release notes`. Then ask whether to push the branch and open PR 6, as in the execution protocol.

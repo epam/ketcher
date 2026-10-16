@@ -71,19 +71,19 @@ describe('atom, bond, and CIP label rendering order', () => {
     const secondAtom = restruct.atoms.get(secondAtomId)!;
     const calls: string[] = [];
 
-    jest.spyOn(firstAtom, 'show').mockImplementation(() => {
+    vi.spyOn(firstAtom, 'show').mockImplementation(() => {
       calls.push('first atom');
     });
-    jest.spyOn(secondAtom, 'show').mockImplementation(() => {
+    vi.spyOn(secondAtom, 'show').mockImplementation(() => {
       calls.push('second atom');
     });
-    jest.spyOn(restruct, 'showBonds').mockImplementation(() => {
+    vi.spyOn(restruct, 'showBonds').mockImplementation(() => {
       calls.push('bonds');
     });
-    jest.spyOn(firstAtom, 'showCIPLabel').mockImplementation(() => {
+    vi.spyOn(firstAtom, 'showCIPLabel').mockImplementation(() => {
       calls.push('first CIP');
     });
-    jest.spyOn(secondAtom, 'showCIPLabel').mockImplementation(() => {
+    vi.spyOn(secondAtom, 'showCIPLabel').mockImplementation(() => {
       calls.push('second CIP');
     });
 

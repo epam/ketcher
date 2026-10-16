@@ -329,7 +329,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
-    const height = fontszInPx * 1.23;
+    const height = ps2.y - ps1.y;
     return paper.rect(
       ps1.x - padding,
       ps1.y - padding,
@@ -1411,7 +1411,14 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         largeAngles.push(angles[(index + 1) % angles.length] - angle);
       }
     }
-    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    const firstAngle = angles.at(0);
+    const lastAngle = angles.at(-1);
+
+    if (firstAngle === undefined || lastAngle === undefined) {
+      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
+    }
+
+    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (const [index, angle] of angles.entries()) {

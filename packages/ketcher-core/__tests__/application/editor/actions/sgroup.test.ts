@@ -446,4 +446,37 @@ describe('setExpandMonomerSGroup', () => {
     expect(struct.atoms.get(leavingAtomId)?.label).toBe('O');
     expect(struct.atoms.get(leavingAtomId)?.rglabel).toBeNull();
   });
+
+  it('keeps the connected monomer intact when removing grouping is undone', () => {
+    const struct = new Struct();
+    const atom1Id = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(0, 0) }),
+    );
+    const atom2Id = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(1, 0) }),
+    );
+    const bondId = struct.bonds.add(
+      new Bond({
+        begin: atom1Id,
+        end: atom2Id,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+    struct.bondInitHalfBonds(bondId);
+    struct.initNeighbors();
+
+    const firstMonomerSGroupId = createMonomerSGroup(struct, atom1Id);
+    const secondMonomerSGroupId = createMonomerSGroup(struct, atom2Id);
+    const restruct = createRestruct(struct);
+
+    const undoAction = fromSgroupDeletion(restruct, firstMonomerSGroupId);
+    undoAction.perform(restruct);
+
+    expect(struct.sgroups.get(secondMonomerSGroupId)?.atoms).toEqual([atom2Id]);
+    expect(struct.getGroupFromAtomId(atom2Id)?.id).toBe(secondMonomerSGroupId);
+    expect(struct.getGroupFromAtomId(atom1Id)).toBeInstanceOf(
+      MonomerMicromolecule,
+    );
+    expect(struct.frags.has(-1)).toBe(false);
+  });
 });

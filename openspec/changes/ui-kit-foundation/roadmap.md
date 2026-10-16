@@ -76,6 +76,10 @@ The `ui-kit/` folder, `KitProvider`, lint boundaries, Storybook, story screensho
 - Remove `@mui/material`, `@emotion/*`, `@emotion/core` (a stray dev dependency) and `@emotion/babel-plugin`.
 - Final LESS → CSS sweep of any remaining `.module.less` files, the `mixins.less` → utilities conversion, and removal of `less`.
 - Delete the MUI/Emotion import allowlist, since the ban becomes absolute.
+- Remove the Emotion theme from macromolecules' test helpers.
+  - Once react-redux #0 (#12223) has landed, that means deleting `src/testUtils/TestThemeProvider.tsx`, the single place macro tests get the theme from. `renderWithStore` and the `setupTests` globals then wrap only the store and keep their signatures, so no test changes.
+  - Before #0 lands, it means the `ThemeProvider` built inline in `setupTests.tsx`.
+  - Either way, `withThemeProvider` becomes a no-op, or its call sites are inlined in the same PR.
 - Decide on `@layer` for kit and package CSS. This is host-visible and needs a changelog note.
 - Memory-bank updates per CLAUDE.md archive rules.
 

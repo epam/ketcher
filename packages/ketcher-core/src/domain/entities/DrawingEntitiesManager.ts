@@ -55,6 +55,7 @@ import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
+  isPeptideOrAmbiguousPeptide,
   isRnaBaseOrAmbiguousRnaBase,
   isPhosphateOrAmbiguousPhosphate,
   isSugarOrAmbiguousSugar,
@@ -3053,6 +3054,41 @@ export class DrawingEntitiesManager {
     });
 
     return isValid;
+  }
+
+  // FASTA and sequence formats keep only the backbone order of each chain
+  public hasConnectionsLostInSequenceFormats() {
+    const hasSideChainConnections = [...this.polymerBonds.values()].some(
+      (polymerBond) =>
+        !(polymerBond instanceof HydrogenBond) &&
+        polymerBond.isSideChainConnection,
+    );
+
+    if (hasSideChainConnections) {
+      return true;
+    }
+
+    return ChainsCollection.fromMonomers([
+      ...this.monomers.values(),
+    ]).chains.some((chain) => chain.isCyclic);
+  }
+
+  public hasModificationsLostInSequenceFormats() {
+    return [...this.monomers.values()].some(
+      (monomer) =>
+        !(monomer instanceof AmbiguousMonomer) &&
+        (isPeptideOrAmbiguousPeptide(monomer) ||
+          isRnaBaseOrAmbiguousRnaBase(monomer) ||
+          isSugarOrAmbiguousSugar(monomer) ||
+          isPhosphateOrAmbiguousPhosphate(monomer) ||
+          monomer instanceof UnsplitNucleotide) &&
+        // DNA sugar is natural for sequence formats, though its analog is R
+        !(
+          isSugarOrAmbiguousSugar(monomer) &&
+          monomer.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
+        ) &&
+        monomer.isModification,
+    );
   }
 
   public moveMonomer(monomer: BaseMonomer, position: Vec2) {

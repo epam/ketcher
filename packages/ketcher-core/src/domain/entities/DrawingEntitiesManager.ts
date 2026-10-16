@@ -56,6 +56,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
+  isRnaBaseApplicableForAntisense,
   isPhosphateOrAmbiguousPhosphate,
   isSugarOrAmbiguousSugar,
   isValidNucleoside,
@@ -175,16 +176,33 @@ function isUnsplitNucleotideNode(
   );
 }
 
-// Weighs a chain for the sense/antisense flip decision (see issue #5712, req. 2.2):
-// an unsplit nucleotide represents a sugar+base+phosphate triplet, so it counts as
-// three monomers, matching a split nucleotide of the same chain length.
+const isMonomerRelevantForAntisenseSize = (monomer: BaseMonomer) =>
+  monomer instanceof UnsplitNucleotide ||
+  isSugarOrAmbiguousSugar(monomer) ||
+  isRnaBaseApplicableForAntisense(monomer) ||
+  isPhosphateOrAmbiguousPhosphate(monomer);
+
+// Weighs a chain for the sense/antisense flip decision (see issue #5712, req. 2.2).
+// Only nucleic-acid monomers should affect this decision. An unsplit nucleotide
+// represents a sugar+base+phosphate triplet, so it counts as three monomers,
+// matching a split nucleotide of the same chain length.
 const getAntisenseSizeWeight = (monomers: BaseMonomer[]) =>
+  monomers.reduce((amount, monomer) => {
+    if (monomer instanceof UnsplitNucleotide) {
+      return amount + UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT;
+    }
+
+    if (!isMonomerRelevantForAntisenseSize(monomer)) {
+      return amount;
+    }
+
+    return amount + 1;
+  }, 0);
+
+const getSideContextSizeWeight = (monomers: BaseMonomer[]) =>
   monomers.reduce(
     (amount, monomer) =>
-      amount +
-      (monomer instanceof UnsplitNucleotide
-        ? UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT
-        : 1),
+      isMonomerRelevantForAntisenseSize(monomer) ? amount : amount + 1,
     0,
   );
 
@@ -3669,8 +3687,19 @@ export class DrawingEntitiesManager {
           getAntisenseSizeWeight(monomers) === largestChainsMonomersAmount,
       );
 
-      if (largestChains.length === 1) {
-        senseChain = largestChains[0][0];
+      const smallestSideContextAmount = Math.min(
+        ...largestChains.map(([, monomers]) =>
+          getSideContextSizeWeight(monomers),
+        ),
+      );
+
+      const senseCandidates = largestChains.filter(
+        ([, monomers]) =>
+          getSideContextSizeWeight(monomers) === smallestSideContextAmount,
+      );
+
+      if (senseCandidates.length === 1) {
+        senseChain = senseCandidates[0][0];
       } else {
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
         const chainsToComplimentaryChainsAmount = new Map<
@@ -3678,7 +3707,7 @@ export class DrawingEntitiesManager {
           number
         >();
 
-        largestChains.forEach(([chainToCheck]) => {
+        senseCandidates.forEach(([chainToCheck]) => {
           const complimentayChains =
             chainsCollection.getComplimentaryChainsWithData(chainToCheck.chain);
 
@@ -3688,7 +3717,7 @@ export class DrawingEntitiesManager {
           );
         });
 
-        largestChains.forEach(([chainToCheck, monomers]) => {
+        senseCandidates.forEach(([chainToCheck, monomers]) => {
           const chainBbox = getStructureBbox(monomers);
 
           chainsToCenters.set(

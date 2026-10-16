@@ -198,5 +198,6 @@ export type {
   Tools,
   UiAction,
   UiActionAction,
+  ActionStateEditor,
   AtomActionOpts,
 };

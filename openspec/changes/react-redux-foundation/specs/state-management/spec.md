@@ -2,7 +2,9 @@
 
 ### Requirement: Redux Toolkit as the only Redux toolchain
 
-`ketcher-react` and `ketcher-macromolecules` SHALL depend on `@reduxjs/toolkit` and `react-redux` for Redux, at the versions recorded in the ADR (`@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0` at adoption), resolved to a single copy in the lockfile. Neither package SHALL declare `redux`, `redux-thunk`, `reselect`, `immer` or `redux-saga` as a direct dependency, and source files SHALL import those APIs only from `@reduxjs/toolkit`.
+`ketcher-react` and `ketcher-macromolecules` SHALL depend on `@reduxjs/toolkit` and `react-redux` for Redux, at the versions recorded in the ADR (`@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0` at adoption), resolved to a single copy in the lockfile. Neither package SHALL declare `redux`, `redux-thunk`, `reselect` or `redux-saga` as a direct dependency, and source files SHALL import those APIs only from `@reduxjs/toolkit`.
+
+There is one tracked exception. `ketcher-macromolecules` MAY declare `immer`, at the major version `@reduxjs/toolkit` depends on, for `castDraft` only, which RTK doesn't re-export. Only the files on the `castDraft` allowlist may import it, and the import and the dependency SHALL be removed once the class instances they cast are out of state.
 
 #### Scenario: One installed copy
 
@@ -13,6 +15,12 @@
 
 - **WHEN** a source file imports from `reselect`, `immer`, `redux` or `redux-thunk`
 - **THEN** lint SHALL fail, unless the file is on the allowlist for that rule
+
+#### Scenario: Assigning a class instance in a reducer
+
+- **WHEN** a reducer has to store a value Immer's draft types can't express, such as a class instance or a readonly array
+- **THEN** it SHALL use `castDraft` on that value, in a file on the `castDraft` allowlist
+- **AND** it SHALL NOT assert the type of the whole state with `as`
 
 #### Scenario: Version bump
 

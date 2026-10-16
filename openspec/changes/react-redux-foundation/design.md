@@ -12,7 +12,7 @@ This change is sub-project **#0 (Foundation)** of the React/Redux modernisation 
 | Non-serialisable state   | Editor instance, structure service (or a rejected Promise), `modal.prop.onResult/onCancel`, `Struct` libraries in `templates`, `functionalGroups` and `saltsAndSolvents`, `options.getServerSettings()` | `CoreEditor` (created inside the `createEditor` reducer), `preview.target: Element`, `PolymerBond`, `BaseMonomer` and `onConfirm` in modal props, a `Struct` inside every `MonomerItemType` |
 | Side effects in reducers | `INIT` → `setEditor()`; `globalThis.currentState` written on every reduce                                                                                                                               | `createEditor` and `destroyEditor` reducers; `localStorage` in 7 reducers                                                                                                                   |
 | Shared across instances  | `globalThis.currentState`, read by `copyAs.js` and `copyImageToClipboard.js`; module-level `initOptionsState` mutated per instance                                                                      | The whole store                                                                                                                                                                             |
-| React binding            | 36 `connect` files; raw `useSelector` in 10 files, raw `useDispatch` in 6; typed hooks (`withTypes`) in 3 files                                                                                         | 0 `connect`; typed hooks (`TypedUseSelectorHook`) in 50 files; raw `useSelector` in 5 files, raw `useDispatch` in 7                                                                         |
+| React binding            | 37 `connect` files; raw `useSelector` in 10 files, raw `useDispatch` in 6; typed hooks (`withTypes`) in 3 files                                                                                         | 0 `connect`; typed hooks (`TypedUseSelectorHook`) in 50 files; raw `useSelector` in 5 files, raw `useDispatch` in 7                                                                         |
 | Selectors                | `reselect@4` in 4 files; the store state type is partial (`store.types.ts` TODO)                                                                                                                        | `createSelector` in 4 places, some taking a whole slice as input; plain functions named `select*` called during render; 6 selectors read live editor fields                                 |
 | Async                    | ~35–40 hand-written thunks; Indigo calls via `serverCall`                                                                                                                                               | No thunks; one hand-written async hook for Calculate Properties                                                                                                                             |
 | Class components         | 12 (~3.8k LOC), none public, no error boundaries                                                                                                                                                        | 0                                                                                                                                                                                           |
@@ -119,7 +119,15 @@ The PR description records what was checked.
 
 ### Decision 4 — Latest RTK and react-redux, the modern API set, and bumps when needed
 
-**Choice.** `@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0` in both packages, deduplicated at the root. `redux`, `reselect` and `immer` come only through RTK and are imported only from `@reduxjs/toolkit`.
+**Choice.** `@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0` in both packages, deduplicated at the root. `redux` and `reselect` come only through RTK and are imported only from `@reduxjs/toolkit`.
+
+**One exception: `castDraft`.** RTK re-exports Immer's runtime helpers, but not `castDraft`. Three macromolecules slices use it to store values Immer's draft types can't express: the `CoreEditor`, a preview that holds a DOM element and a `PolymerBond`, modal props that hold entity instances, and library items that hold a `Struct`.
+
+- **Why it stays.** There is no cast-free alternative while those instances live in state, because the type system is right that they aren't draftable data. The alternatives tried were weaker:
+  - returning `{ ...state, field }` from the reducer doesn't type-check, because it mixes draft and plain types;
+  - adding `as SliceState` to that return compiles, but it asserts the whole state, where `castDraft` asserts just one value.
+- **How it's tracked.** `castDraft` therefore stays, imported from `immer`, which macromolecules declares at RTK's Immer major. Lint allows the import only in the files on a `castDraft` allowlist.
+- **When it goes.** #2 removes it together with the instances: the editor moves to the holder, previews and modal props hold ids and plain values, and library items stop carrying `Struct`. The dependency goes with it.
 
 These APIs are the standard. Each one maps to a problem found in the audit:
 
@@ -235,7 +243,7 @@ These change the structure or run once, so they stay as thunks.
 **Choice.** Each package defines `useAppSelector = useSelector.withTypes<RootState>()` and `useAppDispatch = useDispatch.withTypes<AppDispatch>()`. Lint bans:
 
 - importing `useSelector`, `useDispatch` or `TypedUseSelectorHook` from `react-redux` anywhere except the file that defines the typed hooks;
-- `useStore`, except in that file and tests.
+- `useStore`, except in that file. Tests use the store that `renderWithStore` returns.
 
 **Why.**
 
@@ -299,7 +307,7 @@ These change the structure or run once, so they stay as thunks.
   - `createStore`, `combineReducers`, `applyMiddleware` and `compose` from `redux`;
   - `connect`;
   - raw hooks and `TypedUseSelectorHook`;
-  - `reselect`, `immer`, `redux` and `redux-thunk` imports;
+  - `reselect`, `immer`, `redux` and `redux-thunk` imports (`castDraft` from `immer` is allowlisted until #2);
   - class components extending `Component` or `PureComponent`.
 - **Allowlists.** Existing violations go in a generated allowlist file, one list per rule. A script regenerates the lists, and CI fails if a regenerated list grows.
 - **One `no-restricted-imports` helper.** All restricted imports go through one helper that combines `paths` and `patterns`, because flat config replaces the rule rather than merging it. The UI-kit plan introduces the same kind of helper for `@mui`/`@emotion`, so whichever change lands second extends the first one's helper instead of adding a competing block.
@@ -315,11 +323,11 @@ These change the structure or run once, so they stay as thunks.
 
 ### Decision 15 — Test helpers
 
-Each package gets a `renderWithStore(ui, { preloadedState, extra })` helper that builds the store with the package's real factory and wraps the UI in the providers the editor uses. New tests use it. The 8 react and 6 macro test files that build their own store move to it as they are touched, and the lint allowlist tracks those that remain.
+Each package gets a `renderWithStore(ui, { preloadedState, extra })` helper that builds the store with the package's real factory and wraps the UI in the providers the editor uses. New tests use it. In macromolecules, one of those providers is the Emotion theme. It lives in a single `TestThemeProvider`, which UI-kit #5 deletes when it removes Emotion (see the roadmap's interleaving section). The 8 react and 6 macro test files that build their own store move to it as they are touched, and the lint allowlist tracks those that remain.
 
 ## Risks / Trade-offs
 
-- **`configureStore` around react's custom root reducer.** The reducer is JS, spreads action fields into state and injects values into actions. → It is passed through unchanged with the checks off, and unit and e2e suites are the parity gate. The devtools sanitizers move to the `devTools` option one-for-one.
+- **`configureStore` around react's custom root reducer.** The reducer spreads action fields into state and injects values into actions. → It moves to TypeScript with type-only changes plus removing one always-false comparison, and runs with the checks off. Unit and e2e suites are the parity gate. The devtools sanitizers move to the `devTools` option one-for-one.
 - **The RTK 2.8 → 2.13 upgrade in macromolecules.** Behaviour could change between minors. One change is confirmed from the published dependency ranges: Immer goes from `^10.0.3` (RTK 2.8.2) to `^11.0.0` (RTK 2.13.0). → Read the 2.9–2.13 release notes and the Immer 11 changelog as part of the task, then run the slice tests and the macro e2e projects.
 - **Removing `redux-thunk` and `reselect` from `ketcher-react`.** Types come from `redux-thunk` (`ThunkDispatch`) in 5 components and `state/hooks.ts`. → `AppDispatch` is derived from the store type, and `ThunkDispatch` is imported from `@reduxjs/toolkit`.
 - **Bundle contents.** RTK becomes a dependency of `ketcher-react`. Rollup treats it as external, as macro already does, so hosts install it rather than receiving it bundled. → Check `dist` for an inlined RTK, and check `example-ssr`.

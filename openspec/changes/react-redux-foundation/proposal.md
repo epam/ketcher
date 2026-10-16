@@ -8,7 +8,7 @@ The two UI packages manage state in different ways, and both keep things in Redu
   - It is built on `createStore`, `redux-thunk` and switch reducers, with no Redux Toolkit.
   - The root reducer is custom. Its `INIT` case calls `setEditor()`, a side effect inside a reducer, and it injects `editor`, `server` and `options` into every action.
   - State holds the Editor instance, the structure service (sometimes a rejected Promise), Promise resolve/reject functions for dialogs, `Struct` libraries and a function.
-  - 36 files use `connect`. Typed hooks exist but only 3 files use them.
+  - 37 files use `connect`. Typed hooks exist but only 3 files use them.
   - 12 class components remain, among them the form system and the canvas wrapper.
 - **`ketcher-macromolecules` uses RTK 2.8, but has the same core problems.**
   - The `CoreEditor` instance is created inside a reducer and kept in state, with `serializableCheck: false`.
@@ -34,7 +34,8 @@ This change is the first step of a multi-step initiative (see `roadmap.md`). It 
   - Selectors are memoised and narrow; only function components and typed hooks are allowed.
 - **Upgrade:**
   - Both packages move to `@reduxjs/toolkit@^2.13.0` and `react-redux@^9.3.0`, with one deduplicated copy.
-  - The direct `redux`, `redux-thunk`, `reselect`, `redux-saga` and `immer` dependencies are removed. They either come with RTK or are unused.
+  - The direct `redux`, `redux-thunk`, `reselect` and `redux-saga` dependencies are removed. They either come with RTK or are unused.
+  - Macromolecules declares `immer`, at RTK's major, for `castDraft` only. That import is allowlisted until #2 takes the class instances out of state.
 - **`ketcher-react` store:**
   - `createStore` becomes `configureStore`, wrapping the existing root reducer unchanged.
   - The dev checks are configured explicitly, with tracked exceptions.

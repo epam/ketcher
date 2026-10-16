@@ -34,7 +34,7 @@ The audit on 2026-10-16 found the following.
   - It is built on `createStore` and `redux-thunk`, with a custom root reducer.
   - The root reducer calls `setEditor()` and injects the editor, server and options into every action.
   - State holds the Editor instance, the service, Promise callbacks and `Struct` libraries.
-  - 36 files use `connect`, and 12 class components remain.
+  - 37 files use `connect`, and 12 class components remain.
 - **`ketcher-macromolecules` uses RTK, but with the same core problems.**
   - It creates `CoreEditor` inside a reducer and keeps it in state.
   - DOM nodes, entity instances and callbacks are in state.
@@ -75,7 +75,10 @@ The audit on 2026-10-16 found the following.
 
 ## Consequences
 
-- **Dependencies.** Both packages depend on `@reduxjs/toolkit` and `react-redux` only. `redux`, `reselect`, `immer` and `redux-thunk` are imported from `@reduxjs/toolkit`, and `redux-saga` is removed.
+- **Dependencies.**
+  - Both packages depend on `@reduxjs/toolkit` and `react-redux` for Redux.
+  - `redux`, `reselect` and `redux-thunk` are imported from `@reduxjs/toolkit`, and `redux-saga` is removed.
+  - The one exception is `castDraft` from `immer`, which RTK doesn't re-export. Macromolecules keeps it, allowlisted, until class instances leave its state.
 - **RTK versions.** Both packages are upgraded to the latest at adoption. After that, versions are bumped when there's a reason, not on a release schedule. The repo has no automated dependency bot.
 - **Testing cost.** The release gate makes each PR slower:
   - the full e2e suite and every build run on each PR;

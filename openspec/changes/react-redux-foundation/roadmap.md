@@ -57,6 +57,7 @@ Each fix is its own PR, filed as an ordinary bug ticket so it can ship early:
 - An editor-status slice mirrored by one listener on editor events. It replaces the 6 selectors that read live editor fields (`selectIsSequenceMode`, `selectIsSequenceEditInRNABuilderMode`, `selectIsSequenceSyncEditMode`, `selectIsHandToolSelected`, `hasAntisenseChains`, `selectMonomers`) and the hooks that copy them into local state.
 - `preview` and the modal `additionalProps` hold ids and plain values, not DOM nodes, entities or callbacks.
 - Then turn `serializableCheck` on and empty the exception list.
+- Remove every `castDraft` and the `immer` dependency, which only existed to store those instances.
 
 **Then `ketcher-react`, copying the pattern:**
 
@@ -72,7 +73,7 @@ Each fix is its own PR, filed as an ordinary bug ticket so it can ship early:
 - **Macromolecules:** `localStorage` persistence moves to listener middleware. That covers favourites, the phosphate filter and the cached custom presets. The toast timer becomes a listener.
 - **`ketcher-react`:** `createSlice` with the `selectors` field, simple slices first:
   1. `notifications`, `floatingTools`, `common`, `requestsStatuses`, `abbreviationLookup`, `toolbar`;
-  2. `templates`, `functionalGroups`, `saltsAndSolvents`, with the libraries in entity adapters once `Struct` no longer sits in state;
+  2. `templates`, `functionalGroups`, `saltsAndSolvents`, with the libraries in entity adapters once `Struct` no longer sits in state. Their reducers spread untyped action data, so after #0 their `StoreState` keys are `any`. Typed `PayloadAction`s make the inferred type strict, and the errors that surfaces are fixed here; one known case is `template-attach.tsx`, where `ModalFormState` doesn't match the dialog's `FormState`;
   3. `options`;
   4. `actionState`, with the debounced `UPDATE` replaced by a listener using the `cancelActiveListeners` and `delay` debounce pattern.
 - `modal` and `form` are excluded here; see #7.
@@ -148,6 +149,12 @@ Behaviour-only. One file or feature per PR. Scheduled around the UI-kit migratio
 | #3 Emotion → CSS Modules (`monomerLibraryItem`) | Selector performance (#5)              | —                                                    | —                                  |
 | #4 Form rework                                  | 4a (behaviour)                         | —                                                    | 4b (markup) is UI-kit #4 itself    |
 
+**Test theme handover.** #0 adds macro's `TestThemeProvider`, the single place macro tests get the Emotion theme from. `renderWithStore` and the `setupTests` globals `withThemeProvider` and `withThemeAndStoreProvider` use it. #0 lands long before Emotion goes, so the removal belongs to UI-kit:
+
+- UI-kit #3 removes nothing here: until the last Emotion component is converted, some tested component still reads the theme.
+- UI-kit #5, which removes `@emotion/*`, deletes `TestThemeProvider`. The helpers then wrap only the store and keep their signatures, so no test changes. `withThemeProvider` becomes a no-op, or its call sites are inlined in the same PR.
+- The UI-kit roadmap's #5 lists this step. If it doesn't yet when #0 merges, add it then.
+
 ## Ideas backlog
 
 - A shared `createAppStore` helper exported from `ketcher-react`, if the two factories grow alike enough.
@@ -161,7 +168,7 @@ Behaviour-only. One file or feature per PR. Scheduled around the UI-kit migratio
 | Metric                              | `ketcher-react` | `ketcher-macromolecules` |
 | ----------------------------------- | --------------- | ------------------------ |
 | Class components                    | 12              | 0                        |
-| Files using `connect`               | 36              | 0                        |
+| Files using `connect`               | 37              | 0                        |
 | Files calling raw `useSelector`     | 10              | 5                        |
 | Files calling raw `useDispatch`     | 6               | 7                        |
 | Files using typed hooks             | 3               | 50                       |

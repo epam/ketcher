@@ -17,7 +17,7 @@
 import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
 import { Atom } from 'domain/entities/atom';
 import type { Bond } from 'domain/entities/bond';
-import type { Box2Abs } from 'domain/entities/box2Abs';
+import { Box2Abs } from 'domain/entities/box2Abs';
 import type { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
 import { assert } from 'utilities';
@@ -88,6 +88,52 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   );
+}
+
+function getPolygonCollisionBoxes(points: Vec2[], padding: number): Box2Abs[] {
+  if (points.length === 0) return [];
+
+  const minY = Math.min(...points.map((point) => point.y));
+  const maxY = Math.max(...points.map((point) => point.y));
+  const sliceCount = Math.max(1, Math.ceil(maxY - minY));
+  const boxes: Box2Abs[] = [];
+  const clearance = new Vec2(padding, padding);
+
+  for (let slice = 0; slice < sliceCount; slice += 1) {
+    const bottom = minY + ((maxY - minY) * slice) / sliceCount;
+    const top = minY + ((maxY - minY) * (slice + 1)) / sliceCount;
+    const intersections: number[] = [];
+
+    points.forEach((point, index) => {
+      const next = points[(index + 1) % points.length];
+      if (point.y >= bottom && point.y <= top) intersections.push(point.x);
+      for (const boundary of [bottom, top]) {
+        if (
+          point.y !== next.y &&
+          boundary >= Math.min(point.y, next.y) &&
+          boundary <= Math.max(point.y, next.y)
+        ) {
+          intersections.push(
+            point.x +
+              ((boundary - point.y) * (next.x - point.x)) / (next.y - point.y),
+          );
+        }
+      }
+    });
+
+    if (intersections.length > 0) {
+      boxes.push(
+        new Box2Abs(
+          Math.min(...intersections),
+          bottom,
+          Math.max(...intersections),
+          top,
+        ).extend(clearance, clearance),
+      );
+    }
+  }
+
+  return boxes;
 }
 
 function chooseNonOverlappingLabelPlacement(
@@ -327,6 +373,7 @@ function useLabelStyles(
 const util = {
   relBox,
   shiftRayBox,
+  getPolygonCollisionBoxes,
   chooseNonOverlappingLabelPlacement,
   calcCoordinates,
   drawCIPLabel,

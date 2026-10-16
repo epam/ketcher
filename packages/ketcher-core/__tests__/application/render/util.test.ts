@@ -2,6 +2,26 @@ import { Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import util from './../../../src/application/render/util';
 
 describe('util', () => {
+  describe('getPolygonCollisionBoxes()', () => {
+    it('leaves empty corners of a diagonal bond bounding box available', () => {
+      const boxes = util.getPolygonCollisionBoxes(
+        [new Vec2(0, 0), new Vec2(20, 20)],
+        1,
+      );
+      expect(boxes.some((box) => box.contains(new Vec2(2, 18)))).toBe(false);
+      expect(boxes.some((box) => box.contains(new Vec2(10, 10)))).toBe(true);
+    });
+
+    it('keeps the filled interior of a wedge occupied', () => {
+      const boxes = util.getPolygonCollisionBoxes(
+        [new Vec2(0, 0), new Vec2(16, 20), new Vec2(24, 20)],
+        1,
+      );
+      expect(boxes.some((box) => box.contains(new Vec2(20, 18)))).toBe(true);
+      expect(boxes.some((box) => box.contains(new Vec2(2, 18)))).toBe(false);
+    });
+  });
+
   describe('chooseNonOverlappingLabelPlacement()', () => {
     it('moves labels out of occupied boxes when all sectors initially collide', () => {
       const directions = [new Vec2(1, 0), new Vec2(0, 1)];

@@ -1390,27 +1390,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         ),
       ];
     });
-    const occupiedStereoBondBoxes = Array.from(
-      render.ctab.bonds.values(),
-    ).flatMap((bondRenderer) => {
-      const stereo = bondRenderer.b.stereo;
-      const isThickStereoBond =
-        stereo === Bond.PATTERN.STEREO.UP ||
-        stereo === Bond.PATTERN.STEREO.DOWN ||
-        bondRenderer.boldStereo;
-
-      return isThickStereoBond
-        ? bondRenderer.visel.boxes.map((box) =>
-            box.translate(options.offset.negated()).extend(gap, gap),
-          )
-        : [];
-    });
+    const occupiedBondBoxes = Array.from(render.ctab.bonds.values()).flatMap(
+      (bondRenderer) => {
+        return bondRenderer.getCIPCollisionBoxes(options, CIP_LABEL_GAP);
+      },
+    );
     const occupiedLabelBoxes = [
       ...occupiedAtomLabelBoxes,
-      ...occupiedStereoBondBoxes,
+      ...occupiedBondBoxes,
     ];
     const getShiftVector = (direction: Vec2) => {
-      let baseDistance = 0;
+      let baseDistance = 3;
       for (const ext of this.visel.exts) {
         baseDistance = Math.max(
           baseDistance,
@@ -1418,8 +1408,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         );
       }
       const shiftDistance =
-        baseDistance + util.shiftRayBox(ps, direction.negated(), cipLabelBox);
-      return direction.scaled(CIP_LABEL_GAP + shiftDistance);
+        baseDistance +
+        util.shiftRayBox(
+          ps,
+          direction.negated(),
+          Box2Abs.fromRelBox(cipTextBBox),
+        );
+      return direction.scaled(2 + shiftDistance);
     };
     const placement = util.chooseNonOverlappingLabelPlacement(
       this.getLabelDirections(render.ctab.molecule),

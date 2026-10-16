@@ -17,7 +17,10 @@ const createState = (
 
 describe('attachment point name assignment in monomer creation', () => {
   // No atoms in restruct, so atom invalidation is skipped
-  const restruct = { atoms: new Map() } as unknown as ReStruct;
+  const restruct = {
+    atoms: new Map(),
+    getBondEndpoint: () => undefined,
+  } as unknown as ReStruct;
 
   describe.each([
     [

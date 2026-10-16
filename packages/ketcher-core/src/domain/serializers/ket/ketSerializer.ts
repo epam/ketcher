@@ -174,6 +174,13 @@ interface IKetMicromoleculeSerializedResult {
   [key: string]: unknown;
 }
 
+export class MissingKetTemplateDefinitionError extends Error {
+  constructor(templateRef: string) {
+    super(`File doesn't contain definition for "${templateRef}" template`);
+    this.name = 'MissingKetTemplateDefinitionError';
+  }
+}
+
 function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
   const type = node.type;
   switch (type) {
@@ -437,6 +444,14 @@ export class KetSerializer implements Serializer<Struct> {
       );
       return { error: true };
     }
+
+    const missingTemplate = parsedFileContent.root.templates?.find(
+      ({ $ref }) => !parsedFileContent[$ref],
+    );
+    if (missingTemplate) {
+      throw new MissingKetTemplateDefinitionError(missingTemplate.$ref);
+    }
+
     let error = false;
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];

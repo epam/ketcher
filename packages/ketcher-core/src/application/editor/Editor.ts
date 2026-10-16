@@ -272,6 +272,11 @@ export class CoreEditor {
   public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragCancelled = false;
+  private _macroZoomTransformBeforeMicroMode: {
+    k: number;
+    x: number;
+    y: number;
+  } | null = null;
 
   public theme: CoreEditorTheme;
   /** Handles all drag-and-drop attachment-point logic for library items. */
@@ -2783,10 +2788,17 @@ export class CoreEditor {
       'macroToMicro',
     );
 
+    // Capture the macro ZoomTransform before resetting it so we can
+    // restore the macro viewport when the user switches back.
+    const macroZoomTransform = zoomTool.zoomTransform;
+    this._macroZoomTransformBeforeMicroMode = macroZoomTransform;
+
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
     this.micromoleculesEditor.render.setMolecule(struct);
+
+    this.syncMicroViewportFromMacro(struct, macroZoomTransform);
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -2863,6 +2875,15 @@ export class CoreEditor {
       this.mode.initialize(false, false, false);
     } else {
       this.renderersContainer.update(modelChanges);
+    }
+
+    // Restore the macro viewport to the same zoom/pan that was in effect when
+    // the user left macro mode.  resetZoom() cleared it during switchToMicro;
+    // without this restore the structure appears at a different position.
+    if (this._macroZoomTransformBeforeMicroMode) {
+      const { k, x, y } = this._macroZoomTransformBeforeMicroMode;
+      this.zoomTool.applyZoomTransform(k, x, y);
+      this._macroZoomTransformBeforeMicroMode = null;
     }
 
     this.micromoleculesEditor?.render.setMolecule(new Struct());
@@ -2987,6 +3008,120 @@ export class CoreEditor {
       MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
+  }
+
+  /**
+   * Positions the micro-molecules viewport so the molecule is centered and the
+   * visual zoom matches the macro-mode zoom level.
+   *
+   * Key design decisions vs. the previous implementation:
+   *  - We use `macroCanvasWidth / k` (not `microCanvas.clientWidth`) because
+   *    the micro canvas is hidden at call time (clientWidth = 0).
+   *  - We center the molecule instead of mapping the macro translation (tx/ty).
+   *    Centering only depends on molecule geometry, making the result fully
+   *    deterministic across CI runs regardless of auto-fit variations in k.
+   *
+   * Why we intercept resizeViewBox() instead of reading canvas dimensions now:
+   *
+   * The macro canvas SVG (#polymer-editor-canvas) has a 0×0 CSS box (its
+   * content overflows visibly, but getBoundingClientRect() returns {0,0}).
+   * The micro canvas is hidden (display:none) so its sz is also {0,0}.
+   * There is no reliable way to read the viewport size synchronously at
+   * switch time.
+   *
+   * Instead, we:
+   *  1. Set render.options.zoom = k now, so the next resizeViewBox() call
+   *     uses the correct zoom when it computes the new viewBox dimensions.
+   *  2. Intercept the NEXT resizeViewBox() call on the micro render.
+   *     This fires synchronously (ResizeObserver → layout) when the micro
+   *     canvas becomes visible after _type = EditorType.Micromolecules is set.
+   *     At that point, render.sz contains the real canvas pixel dimensions,
+   *     so we can compute a perfectly centred viewport with the correct zoom.
+   */
+  /**
+   * Transfers the macro viewport (zoom + position) to the micro editor.
+   *
+   * Position formula — minX = −tx / k:
+   *   In macro mode a canvas point cx maps to screen position cx·k + tx.
+   *   In micro mode (zoom = k, viewBox.width = w/k) it maps to (cx − minX)·k.
+   *   Setting them equal gives minX = −tx/k, minY = −ty/k.
+   *
+   * Scrollbar prevention:
+   *   The Raphael scrollbar appears whenever viewBox.minX > rendered_bbox.minX.
+   *   The rendered bbox (from ctab.getVBoxObj()) includes atom labels and bond
+   *   caps, so it is slightly larger than the pure-atom bounding box.
+   *   We clamp minX to be at most rendered_bbox.minX so the scrollbar is never
+   *   triggered by label overflow.
+   *
+   * Why we intercept resizeViewBox():
+   *   Both SVG canvases have a 0×0 CSS box at switch time (content is
+   *   visible via overflow:visible, but getBoundingClientRect returns {0,0}).
+   *   We cannot read pixel dimensions synchronously, so we intercept the
+   *   one resizeViewBox() call that fires synchronously via ResizeObserver
+   *   when the micro canvas becomes visible.  At that point render.sz is set.
+   */
+  private syncMicroViewportFromMacro(
+    _struct: Struct,
+    macroZoomTransform: { k: number; x: number; y: number },
+  ): void {
+    const render = this.micromoleculesEditor.render;
+    const zoom = macroZoomTransform.k;
+
+    // Step 1 – pre-set zoom so the next resizeViewBox() uses the right scale.
+    render.options.zoom = zoom;
+
+    // Step 2 – intercept the next resizeViewBox() call (one-time monkey-patch).
+    const editor = this.micromoleculesEditor;
+    const originalResizeViewBox: () => void = render.resizeViewBox.bind(render);
+
+    (render as unknown as Record<string, unknown>).resizeViewBox = function () {
+      render.resizeViewBox = originalResizeViewBox; // restore before doing anything
+      originalResizeViewBox(); // update sz + viewBox dimensions
+
+      const { x: w, y: h } = render.sz;
+      if (w > 0 && h > 0) {
+        const vw = w / zoom;
+        const vh = h / zoom;
+
+        // "Same position" target derived from the macro zoom transform.
+        let minX = -macroZoomTransform.x / zoom;
+        let minY = -macroZoomTransform.y / zoom;
+
+        // Clamp using the RENDERED bounding box (Scale.modelToCanvas uses
+        // microModeScale as the scale factor).  This box includes atom labels
+        // and bond caps, so it can extend beyond the atom-coordinate bbox.
+        // Scrollbar fires when viewBox.minX > content.minX, so we ensure
+        // minX ≤ content.minX and minX + vw ≥ content.maxX.
+        const ctabBox = render.ctab.getVBoxObj();
+        if (!ctabBox.hasZeroArea()) {
+          const s = render.options.microModeScale;
+          const cMinX = ctabBox.p0.x * s;
+          const cMaxX = ctabBox.p1.x * s;
+          const cMinY = ctabBox.p0.y * s;
+          const cMaxY = ctabBox.p1.y * s;
+
+          minX = Math.min(minX, cMinX);
+          minY = Math.min(minY, cMinY);
+          // Also prevent right/bottom scrollbar when content fits in viewport
+          if (cMaxX - cMinX <= vw) minX = Math.max(minX, cMaxX - vw);
+          if (cMaxY - cMinY <= vh) minY = Math.max(minY, cMaxY - vh);
+        }
+
+        // Use Math.floor (not Math.round) so the rounded value always stays
+        // at or below the clamped boundary.  Math.round(-60.32) = -60 which
+        // is > cMinY = -60.32, producing a 0.32-unit "up" offset that makes
+        // the vertical scrollbar appear.  Math.floor(-60.32) = -61 < cMinY.
+        render.setViewBox({
+          minX: Math.floor(minX),
+          minY: Math.floor(minY),
+          width: vw,
+          height: vh,
+        });
+      }
+
+      // Trigger the Redux UPDATE that refreshes the zoom indicator in the UI.
+      editor.event.zoomChanged.dispatch();
+    };
   }
 
   public destroy() {

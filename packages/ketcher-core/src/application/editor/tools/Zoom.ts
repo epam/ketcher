@@ -433,6 +433,20 @@ export class ZoomTool implements BaseTool {
     this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
   }
 
+  /**
+   * Applies an arbitrary ZoomTransform to the canvas.
+   * Used to restore the viewport when switching between editor modes.
+   */
+  public applyZoomTransform(k: number, tx: number, ty: number) {
+    const canvasWrapperNode = this.canvasWrapper.node();
+
+    if (!canvasWrapperNode?.transform?.baseVal) {
+      return;
+    }
+
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(k, tx, ty));
+  }
+
   observeCanvasResize = () => {
     this.resizeObserver = new ResizeObserver(() => {
       this.drawScrollBars();

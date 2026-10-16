@@ -119,13 +119,40 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
-import type { KetHeader, KetReactionNode } from 'domain/serializers/ket/types';
+import type {
+  KetHeader,
+  KetMoleculeNode,
+  KetReactionNode,
+  KetSimpleObjectNode,
+} from 'domain/serializers/ket/types';
 
-type KetMicromoleculeNode = {
-  type?: string;
-  $ref?: string;
-  stereoFlagPosition?: Point;
-};
+type KetMicromoleculeDefinition =
+  | KetSimpleObjectNode
+  | KetReactionNode
+  | KetMoleculeNode
+  | {
+      type?:
+        | 'rgroup'
+        | 'text'
+        | typeof MULTITAIL_ARROW_SERIALIZE_KEY
+        | typeof IMAGE_SERIALIZE_KEY;
+      stereoFlagPosition?: Point;
+    };
+
+type KetMicromoleculeNode =
+  | KetMicromoleculeDefinition
+  | {
+      $ref: string;
+    };
+
+type KetMicromoleculeSerializedNode =
+  | { $ref: string }
+  | ReturnType<typeof plusToKet>
+  | ReturnType<typeof arrowToKet>
+  | ReturnType<typeof simpleObjectToKet>
+  | ReturnType<typeof textToKet>
+  | ReturnType<typeof imageToKet>
+  | ReturnType<typeof multitailArrowToKet>;
 
 interface IKetMicromoleculeFile {
   header?: KetHeader;
@@ -139,7 +166,7 @@ interface IKetMicromoleculeFile {
 
 interface IKetMicromoleculeSerializedResult {
   root: {
-    nodes: KetMicromoleculeNode[];
+    nodes: KetMicromoleculeSerializedNode[];
     connections?: IKetConnection[];
   };
   header?: KetHeader;
@@ -154,12 +181,12 @@ export class MissingKetTemplateDefinitionError extends Error {
   }
 }
 
-function parseNode(node: KetMicromoleculeNode, struct: Struct) {
+function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
     case 'plus': {
-      rxnToStruct(node as KetReactionNode, struct);
+      rxnToStruct(node, struct);
       break;
     }
     case 'simpleObject': {
@@ -234,14 +261,15 @@ export class KetSerializer implements Serializer<Struct> {
 
     Object.keys(nodes).forEach((i) => {
       const node = nodes[i];
-      const nodeDefinition = (node.$ref ? ket[node.$ref] : node) as
-        KetMicromoleculeNode | undefined;
+      const nodeReference = '$ref' in node ? node.$ref : undefined;
+      const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
+        KetMicromoleculeDefinition | undefined;
 
       if (nodeDefinition?.type === 'molecule') {
         parseMoleculeNode(
           nodeDefinition,
           resultingStruct,
-          node.$ref ?? `inline-${i}`,
+          nodeReference ?? `inline-${i}`,
           moleculeAtomIdMaps,
         );
       } else if (nodeDefinition) {
@@ -256,7 +284,7 @@ export class KetSerializer implements Serializer<Struct> {
 
       getHapticConnectionMoleculeIds(connection).forEach((moleculeId) => {
         const nodeDefinition = ket[moleculeId] as
-          KetMicromoleculeNode | undefined;
+          KetMicromoleculeDefinition | undefined;
         if (nodeDefinition?.type === 'molecule') {
           parseMoleculeNode(
             nodeDefinition,

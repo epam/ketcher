@@ -192,7 +192,34 @@ export class SequenceRenderer {
       chain.forEachRow((row) => {
         hasAntisenseInRow = false;
 
-        row.sequenceViewModelItems.forEach((chainItem) => {
+        // In a multi-strand row (sense chain paired with more than one antisense
+        // chain) the antisense symbols are rendered above the sense symbols, and
+        // the horizontal order is reversed so that complementary bases align.
+        const TWO_STRANDED_ROW_Y_OFFSET = 30;
+        const isMultiStrandRow =
+          chain.hasAntisense &&
+          row.sequenceViewModelItems.some(
+            (item) =>
+              SequenceRenderer.chainsCollection.getComplimentaryChainsWithData(
+                item.chain,
+              ).length > 1,
+          );
+
+        const senseRowPosition = isMultiStrandRow
+          ? currentChainStartPosition.add(
+              new Vec2(0, TWO_STRANDED_ROW_Y_OFFSET),
+            )
+          : currentChainStartPosition;
+
+        const antisenseRowPosition = isMultiStrandRow
+          ? currentChainStartPosition
+          : currentChainStartPosition.add(
+              new Vec2(0, TWO_STRANDED_ROW_Y_OFFSET),
+            );
+
+        const rowLength = row.sequenceViewModelItems.length;
+
+        row.sequenceViewModelItems.forEach((chainItem, currentItemIndex) => {
           const node = chainItem.senseNode;
 
           if (node && handledNodes.has(node)) {
@@ -207,7 +234,7 @@ export class SequenceRenderer {
           ) {
             antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
               chainItem.antisenseNode,
-              currentChainStartPosition.add(new Vec2(0, 30)),
+              antisenseRowPosition,
               currentMonomerIndexInChain,
               chainItem.antisenseNode === chain.lastNode.senseNode,
               chainItem.antisenseChain ?? chainItem.chain,
@@ -217,6 +244,12 @@ export class SequenceRenderer {
               chainItem.antisenseNode?.monomer?.renderer,
               previousRowsWithAntisense,
             );
+
+            if (isMultiStrandRow) {
+              antisenseNodeRenderer.setHorizontalIndexInRow(
+                rowLength - 1 - currentItemIndex,
+              );
+            }
 
             antisenseNodeRenderer.show();
             chainItem.antisenseNode.monomers?.forEach((monomer) =>
@@ -244,7 +277,7 @@ export class SequenceRenderer {
 
           const renderer = SequenceNodeRendererFactory.fromNode(
             node,
-            currentChainStartPosition,
+            senseRowPosition,
             currentMonomerIndexInChain,
             node === chainItem.chain.lastNode,
             chainItem.chain,
@@ -254,6 +287,10 @@ export class SequenceRenderer {
             node.monomer.renderer,
             previousRowsWithAntisense,
           );
+
+          if (isMultiStrandRow) {
+            renderer.setHorizontalIndexInRow(rowLength - 1 - currentItemIndex);
+          }
 
           renderer.show();
           node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));

@@ -3658,13 +3658,41 @@ export class DrawingEntitiesManager {
         chainToMonomers.set(chainToCheck, chainToCheck.chain.monomers);
       });
 
+      // Priority 1: chain with the most complementary connections is the sense strand.
+      // This handles the case where a shorter chain connects to multiple antisense chains.
+      const chainsToComplimentaryChainsAmount = new Map<
+        GrouppedChain,
+        number
+      >();
+
+      chainToMonomers.forEach((_monomers, chainToCheck) => {
+        const complimentaryChains =
+          chainsCollection.getComplimentaryChainsWithData(chainToCheck.chain);
+
+        chainsToComplimentaryChainsAmount.set(
+          chainToCheck,
+          complimentaryChains.length,
+        );
+      });
+
+      const largestComplimentaryChainsAmount = Math.max(
+        ...chainsToComplimentaryChainsAmount.values(),
+      );
+
+      const mostConnectedChains = [...chainToMonomers.entries()].filter(
+        ([chainToCheck]) =>
+          chainsToComplimentaryChainsAmount.get(chainToCheck) ===
+          largestComplimentaryChainsAmount,
+      );
+
+      // Priority 2: among most-connected chains, the longest one is the sense strand.
       const largestChainsMonomersAmount = Math.max(
-        ...[...chainToMonomers.values()].map((monomers) =>
+        ...mostConnectedChains.map(([, monomers]) =>
           getAntisenseSizeWeight(monomers),
         ),
       );
 
-      const largestChains = [...chainToMonomers.entries()].filter(
+      const largestChains = mostConnectedChains.filter(
         ([, monomers]) =>
           getAntisenseSizeWeight(monomers) === largestChainsMonomersAmount,
       );
@@ -3672,21 +3700,8 @@ export class DrawingEntitiesManager {
       if (largestChains.length === 1) {
         senseChain = largestChains[0][0];
       } else {
+        // Final tiebreaker: chain with the lowest y-center (topmost position on canvas).
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
-        const chainsToComplimentaryChainsAmount = new Map<
-          GrouppedChain,
-          number
-        >();
-
-        largestChains.forEach(([chainToCheck]) => {
-          const complimentayChains =
-            chainsCollection.getComplimentaryChainsWithData(chainToCheck.chain);
-
-          chainsToComplimentaryChainsAmount.set(
-            chainToCheck,
-            complimentayChains.length,
-          );
-        });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
           const chainBbox = getStructureBbox(monomers);
@@ -3709,27 +3724,8 @@ export class DrawingEntitiesManager {
           },
           chainsToCenterArray[0],
         );
-        const chainsToComplimentaryChainsAmountArray = [
-          ...chainsToComplimentaryChainsAmount.entries(),
-        ];
-        const chainWithMoreComplimentaryChains =
-          chainsToComplimentaryChainsAmountArray.reduce(
-            (
-              [previousChain, previousChainComplimentaryChainsAmount],
-              [chainToCheck, complimentaryChainsAmount],
-            ) => {
-              return complimentaryChainsAmount >
-                previousChainComplimentaryChainsAmount
-                ? [chainToCheck, complimentaryChainsAmount]
-                : [previousChain, previousChainComplimentaryChainsAmount];
-            },
-            chainsToComplimentaryChainsAmountArray[0],
-          );
 
-        senseChain =
-          chainsToComplimentaryChainsAmount.size === 1
-            ? chainWithMoreComplimentaryChains[0]
-            : chainWithLowestCenter[0];
+        senseChain = chainWithLowestCenter[0];
       }
 
       const { group: senseGroup } = senseChain;

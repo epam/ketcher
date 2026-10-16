@@ -227,6 +227,21 @@ const getComponentSuffix = (componentType: KetMonomerClass): string => {
   }
 };
 
+/** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
+const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
+  if (points.length <= 1) {
+    return points[0] ?? '';
+  }
+
+  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
+};
+
+const presetTypeLabelKey: Partial<Record<KetMonomerClass, string>> = {
+  [KetMonomerClass.Sugar]: 'common:monomerType.sugar',
+  [KetMonomerClass.Base]: 'common:monomerType.base',
+  [KetMonomerClass.Phosphate]: 'common:monomerType.phosphate',
+};
+
 const wizardReducer = (
   state: WizardState,
   action: WizardAction,
@@ -934,6 +949,8 @@ const MonomerCreationWizardInternal = ({
     monomerCreationState.editInstanceInitialValues?.originalMonomerItem;
   const libraryOnly =
     monomerCreationState.editInstanceInitialValues?.libraryOnly;
+  const presetRequirements =
+    monomerCreationState.editInstanceInitialValues?.presetRequirements;
   const [modificationTypes, setModificationTypes] = useState<string[]>(
     () =>
       monomerCreationState.editInstanceInitialValues?.modificationTypes ?? [],
@@ -1311,6 +1328,33 @@ const MonomerCreationWizardInternal = ({
     });
   }, [t]);
 
+  // Show a dismissible warning when a library monomer that takes part in an
+  // RNA preset is loaded for editing: its type and the presets' attachment
+  // points must be kept, otherwise it loses preset eligibility.
+  useEffect(() => {
+    if (!libraryOnly || !presetRequirements) {
+      return;
+    }
+
+    const message = t(
+      'components:monomerCreationWizard.notifications.editAllPresetWarning',
+      { points: formatAttachmentPoints(presetRequirements.attachmentPoints) },
+    );
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'editAllPresetWarning',
+          {
+            type: 'warning',
+            message,
+          },
+        ],
+      ]),
+    });
+  }, [t, libraryOnly, presetRequirements]);
+
   const { assignedAttachmentPoints } = monomerCreationState;
 
   const autoPhosphatePosition = useMemo(() => {
@@ -1388,6 +1432,51 @@ const MonomerCreationWizardInternal = ({
       KetcherLogger.error('Monomer attachment points map is undefined');
 
       return;
+    }
+
+    /*
+     * A library monomer that participates in a preset must keep its type and
+     * the attachment points its presets require. Losing eligibility is
+     * reported as a single error that takes precedence over all other
+     * validation results.
+     */
+    if (libraryOnly && presetRequirements) {
+      const missingRequiredAttachmentPoints =
+        presetRequirements.attachmentPoints.filter(
+          (attachmentPoint) =>
+            !monomerAssignedAttachmentPoints.has(attachmentPoint),
+        );
+
+      if (
+        type !== presetRequirements.type ||
+        missingRequiredAttachmentPoints.length > 0
+      ) {
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'editAllPresetError',
+              {
+                type: 'error',
+                message: t(
+                  'components:monomerCreationWizard.notifications.editAllPresetError',
+                  {
+                    type: t(
+                      presetTypeLabelKey[presetRequirements.type] ??
+                        'common:monomerType.sugar',
+                    ),
+                    points: formatAttachmentPoints(
+                      presetRequirements.attachmentPoints,
+                    ),
+                  },
+                ),
+              },
+            ],
+          ]),
+        });
+
+        return false;
+      }
     }
 
     const structure = editor.structSelected(wizardState.structure);

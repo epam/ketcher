@@ -89,6 +89,68 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   );
 }
+
+function chooseNonOverlappingLabelPlacement(
+  directions: Vec2[],
+  getLabelBox: (direction: Vec2, additionalDistance: number) => Box2Abs,
+  getLabelDistance: (direction: Vec2, additionalDistance: number) => number,
+  occupiedBoxes: Box2Abs[],
+): { direction: Vec2; additionalDistance: number } {
+  assert(directions.length > 0);
+
+  let selectedPlacement = {
+    direction: directions[0],
+    additionalDistance: Number.POSITIVE_INFINITY,
+  };
+  let shortestDistance = Number.POSITIVE_INFINITY;
+
+  for (const direction of directions) {
+    let additionalDistance = 0;
+
+    for (let attempt = 0; attempt <= occupiedBoxes.length; attempt += 1) {
+      const labelBox = getLabelBox(direction, additionalDistance);
+      const overlappingBoxes = occupiedBoxes.filter(
+        (occupiedBox) =>
+          labelBox.p0.x < occupiedBox.p1.x &&
+          labelBox.p1.x > occupiedBox.p0.x &&
+          labelBox.p0.y < occupiedBox.p1.y &&
+          labelBox.p1.y > occupiedBox.p0.y,
+      );
+
+      if (overlappingBoxes.length === 0) {
+        const distance = getLabelDistance(direction, additionalDistance);
+        if (distance < shortestDistance) {
+          selectedPlacement = { direction, additionalDistance };
+          shortestDistance = distance;
+        }
+        break;
+      }
+
+      const distanceToClear = Math.min(
+        ...overlappingBoxes.map((occupiedBox) => {
+          const horizontalDistance =
+            direction.x > 0
+              ? (occupiedBox.p1.x - labelBox.p0.x) / direction.x
+              : direction.x < 0
+                ? (labelBox.p1.x - occupiedBox.p0.x) / -direction.x
+                : Number.POSITIVE_INFINITY;
+          const verticalDistance =
+            direction.y > 0
+              ? (occupiedBox.p1.y - labelBox.p0.y) / direction.y
+              : direction.y < 0
+                ? (labelBox.p1.y - occupiedBox.p0.y) / -direction.y
+                : Number.POSITIVE_INFINITY;
+
+          return Math.min(horizontalDistance, verticalDistance);
+        }),
+      );
+      additionalDistance += distanceToClear + 0.5;
+    }
+  }
+
+  return selectedPlacement;
+}
+
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
     pos1: null | { x: number; y: number };
@@ -265,6 +327,7 @@ function useLabelStyles(
 const util = {
   relBox,
   shiftRayBox,
+  chooseNonOverlappingLabelPlacement,
   calcCoordinates,
   drawCIPLabel,
   updateHalfBondCoordinates,

@@ -19,7 +19,6 @@ env:
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
-  USE_SEPARATE_INDIGO_WASM: true
 jobs:
   build_ketcher:
     runs-on: ubuntu-latest
@@ -75,7 +74,6 @@ jobs:
           MODE=$MODE
           IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
           CI_ENVIRONMENT=$CI_ENVIRONMENT
-          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
           EOF
       - name: Run tests
         run: |

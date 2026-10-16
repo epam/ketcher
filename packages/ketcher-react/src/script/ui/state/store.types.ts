@@ -16,6 +16,7 @@
 
 import type { Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
+import type { ToolbarState } from './toolbar/types';
 
 export type {
   AnalyseRoundName,
@@ -59,4 +60,5 @@ export interface StoreState {
   templates: TemplatesState;
   modal: ModalState;
   options: OptionsState;
+  toolbar: ToolbarState;
 }

@@ -17,7 +17,7 @@
 import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
 import { Atom } from 'domain/entities/atom';
 import type { Bond } from 'domain/entities/bond';
-import type { Box2Abs } from 'domain/entities/box2Abs';
+import { Box2Abs } from 'domain/entities/box2Abs';
 import type { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
 import { assert } from 'utilities';
@@ -89,6 +89,114 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   );
 }
+
+function getPolygonCollisionBoxes(points: Vec2[], padding: number): Box2Abs[] {
+  if (points.length === 0) return [];
+
+  const minY = Math.min(...points.map((point) => point.y));
+  const maxY = Math.max(...points.map((point) => point.y));
+  const sliceCount = Math.max(1, Math.ceil(maxY - minY));
+  const boxes: Box2Abs[] = [];
+  const clearance = new Vec2(padding, padding);
+
+  for (let slice = 0; slice < sliceCount; slice += 1) {
+    const bottom = minY + ((maxY - minY) * slice) / sliceCount;
+    const top = minY + ((maxY - minY) * (slice + 1)) / sliceCount;
+    const intersections: number[] = [];
+
+    points.forEach((point, index) => {
+      const next = points[(index + 1) % points.length];
+      if (point.y >= bottom && point.y <= top) intersections.push(point.x);
+      for (const boundary of [bottom, top]) {
+        if (
+          point.y !== next.y &&
+          boundary >= Math.min(point.y, next.y) &&
+          boundary <= Math.max(point.y, next.y)
+        ) {
+          intersections.push(
+            point.x +
+              ((boundary - point.y) * (next.x - point.x)) / (next.y - point.y),
+          );
+        }
+      }
+    });
+
+    if (intersections.length > 0) {
+      boxes.push(
+        new Box2Abs(
+          Math.min(...intersections),
+          bottom,
+          Math.max(...intersections),
+          top,
+        ).extend(clearance, clearance),
+      );
+    }
+  }
+
+  return boxes;
+}
+
+function chooseNonOverlappingLabelPlacement(
+  directions: Vec2[],
+  getLabelBox: (direction: Vec2, additionalDistance: number) => Box2Abs,
+  getLabelDistance: (direction: Vec2, additionalDistance: number) => number,
+  occupiedBoxes: Box2Abs[],
+): { direction: Vec2; additionalDistance: number } {
+  assert(directions.length > 0);
+
+  let selectedPlacement = {
+    direction: directions[0],
+    additionalDistance: Number.POSITIVE_INFINITY,
+  };
+  let shortestDistance = Number.POSITIVE_INFINITY;
+
+  for (const direction of directions) {
+    let additionalDistance = 0;
+
+    for (let attempt = 0; attempt <= occupiedBoxes.length; attempt += 1) {
+      const labelBox = getLabelBox(direction, additionalDistance);
+      const overlappingBoxes = occupiedBoxes.filter(
+        (occupiedBox) =>
+          labelBox.p0.x < occupiedBox.p1.x &&
+          labelBox.p1.x > occupiedBox.p0.x &&
+          labelBox.p0.y < occupiedBox.p1.y &&
+          labelBox.p1.y > occupiedBox.p0.y,
+      );
+
+      if (overlappingBoxes.length === 0) {
+        const distance = getLabelDistance(direction, additionalDistance);
+        if (distance < shortestDistance) {
+          selectedPlacement = { direction, additionalDistance };
+          shortestDistance = distance;
+        }
+        break;
+      }
+
+      const distanceToClear = Math.min(
+        ...overlappingBoxes.map((occupiedBox) => {
+          const horizontalDistance =
+            direction.x > 0
+              ? (occupiedBox.p1.x - labelBox.p0.x) / direction.x
+              : direction.x < 0
+                ? (labelBox.p1.x - occupiedBox.p0.x) / -direction.x
+                : Number.POSITIVE_INFINITY;
+          const verticalDistance =
+            direction.y > 0
+              ? (occupiedBox.p1.y - labelBox.p0.y) / direction.y
+              : direction.y < 0
+                ? (labelBox.p1.y - occupiedBox.p0.y) / -direction.y
+                : Number.POSITIVE_INFINITY;
+
+          return Math.min(horizontalDistance, verticalDistance);
+        }),
+      );
+      additionalDistance += distanceToClear + 0.5;
+    }
+  }
+
+  return selectedPlacement;
+}
+
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
     pos1: null | { x: number; y: number };
@@ -265,6 +373,8 @@ function useLabelStyles(
 const util = {
   relBox,
   shiftRayBox,
+  getPolygonCollisionBoxes,
+  chooseNonOverlappingLabelPlacement,
   calcCoordinates,
   drawCIPLabel,
   updateHalfBondCoordinates,

@@ -38,6 +38,12 @@ The render object owns the paper, viewBox, zoom, and connection table. There are
 
 Selection is drawn on dedicated selection/info layers. The layer map fixes z-order from low to high: background, images, selection plate, selection points, hovering, atoms, bond skeleton, warnings, data, additional info, indices.
 
+### CIP placement
+
+Atom CIP labels are positioned after atom labels and bonds have been drawn. Placement checks occupied label and bond geometry and chooses the closest available candidate across bond sectors.
+
+For straight paths, wedges, and hashed bonds, `ReBond.getCIPCollisionBoxes` splits rendered path geometry into narrow horizontal strips, including stroke clearance. This preserves the filled interior of wedges without reserving the empty corners of a diagonal bond's bounding box. Complex paths retain the conservative bounding-box fallback.
+
 ### Editor integration
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.

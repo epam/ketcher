@@ -271,3 +271,12 @@ Do **not** use for sequence probes: `KET/dna-AAAAAA-sequence-expected.ket`, `KET
 | Q6 | Edit options disabled when atoms co-selected — intended per ticket? | Code-verified (`monomerCreation.helpers.ts`); assert actual behavior in 5.1/5.2 and note the ticket discrepancy |
 | Q7 | "Library entry overwritten / default version hidden" (3.2.5) — observable difference? | Card count by testid unchanged + card shows edited values, no duplicate card — assert via library DOM only |
 | Q8 | Why is an "Edit" save with a changed code a silent no-op (3.2.4)? | Probed 2026-10-13: wizard closes, but no new entry, original untouched, canvas unchanged (before/after card dumps identical). Changing the *type* does create a new entry (Q2/P4) — likely the code-only path hits an update branch that fails silently. **Flag to team as probable bug** |
+
+
+## 11. Items to fix after manual verification
+- edit-library-monomer.spec.ts:
+  - 3.0b: An ambiguous library card has no three-dot menu - await expect(library.getMonomerLibraryCardLocator(Peptide.X)).toBeVisible() returns true but I don't see that library scrolled down to this monomer. Also expect(await library.getMonomerCardDotsButton(Peptide.X).count()).toBe(0) checks is correct but three dots usually appear only when mouse is over the monomer card.
+  - 3.2.4 (gap): "Edit" save with a new code changes nothing - fix the bug and check that test becaomes working
+  - 3.2.5: "Edit" save with unchanged type and code overwrites the library entry - tests does not check that monomer instance on canvas was changed also. Please fix
+  - 3.2.2 (gap): editing a preset-participating monomer shows no entry warning - read requirements related to this test from ticket https://github.com/epam/ketcher/issues/9370 and fix the issue and test
+  - 3.2.3 (gap): changing a preset sugar type is not blocked on submit - read requirements related to this test from ticket https://github.com/epam/ketcher/issues/9370 and fix the issue and test

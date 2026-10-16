@@ -172,7 +172,7 @@ test.describe('#9370 Editing library monomers', () => {
     await dialog.submit({ ignoreWarning: true });
     await expect(dialog.window).toBeHidden();
 
-    // The original card is retained and a new card appears next to it.
+    // The original card is retained and a new card appears.
     await expect(library.getMonomerLibraryCardLocator(Peptide.A)).toBeVisible();
     await expect(
       library.getMonomerCardByCodeAndNameLocator(

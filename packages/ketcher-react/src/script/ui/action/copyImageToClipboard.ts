@@ -24,12 +24,6 @@ import {
 import type { CurrentAppState } from './types';
 import i18n from '../../../i18n/i18n';
 
-declare global {
-  interface Window {
-    currentState: CurrentAppState;
-  }
-}
-
 async function copyImageToClipboard(): Promise<void> {
   const state: CurrentAppState = globalThis.currentState;
   const editor = state.editor;

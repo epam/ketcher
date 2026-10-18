@@ -158,6 +158,13 @@ function handleSimpleAtomProperty(
   propertyData: string,
   props: MPropertyProps,
 ): void {
+  if (propName !== 'ringBondCount') {
+    if (!props.get(propName)) {
+      props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
+    }
+    return;
+  }
+
   let values = props.get(propName);
   if (!values) {
     values = new Pool();

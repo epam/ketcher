@@ -19,15 +19,23 @@ import {
   selectModalIsOpen,
   selectModalName,
 } from 'state/modal';
+import { selectEditor } from 'state/common';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { modalComponentList } from './modalComponentList';
 
 export const ModalContainer = () => {
   const isOpen = useAppSelector(selectModalIsOpen);
   const modalName = useAppSelector(selectModalName);
   const additionalProps = useAppSelector(selectAdditionalProps);
+  const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
+
+  // The editor listens to paste on the whole document, so it has to be told
+  // when a dialog covers the canvas
+  useEffect(() => {
+    editor?.setIsModalOpen(isOpen);
+  }, [editor, isOpen]);
 
   const handleClose = useCallback(() => {
     dispatch(closeModal());

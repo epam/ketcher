@@ -158,9 +158,15 @@ function handleSimpleAtomProperty(
   propertyData: string,
   props: MPropertyProps,
 ): void {
-  if (!props.get(propName)) {
-    props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
+  let values = props.get(propName);
+  if (!values) {
+    values = new Pool();
+    props.set(propName, values);
   }
+
+  sGroup.readKeyValuePairs(propertyData, false).forEach((value, atomId) => {
+    values.set(atomId, value);
+  });
 }
 
 /**

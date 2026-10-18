@@ -464,6 +464,22 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.ringBondCount).toBe(4);
     });
 
+    it('should parse ringBondCount from multiple property lines', () => {
+      const atomLine =
+        '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0';
+      const lines = [
+        ...Array.from({ length: 10 }, () => atomLine),
+        'M  RBC  8   1  -2   2  -1   3   2   4   3   5   4   6   5   7   6   8   7',
+        'M  RBC  2   9   8  10   9',
+      ];
+
+      const struct = molParsers.parseCTabV2000(lines, createCountsLine(10));
+
+      expect(
+        Array.from(struct.atoms.values(), (atom) => atom.ringBondCount),
+      ).toEqual([-2, -1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    });
+
     it('should parse substitutionCount', () => {
       const lines = [
         '   14.0000   -3.0000    0.0000 S   0  0  0  0  0  0  0  0  0  0  0  0',

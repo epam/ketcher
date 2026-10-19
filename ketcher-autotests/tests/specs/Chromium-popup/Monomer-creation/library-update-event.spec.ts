@@ -33,20 +33,15 @@ test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
   return await page.evaluate(
     async ({ timeout }: { timeout: number }) => {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<string>((resolve) => {
         let resolved = false;
 
-        const handler = (sdf?: unknown) => {
-          if (typeof sdf !== 'string') {
-            reject(new Error('libraryUpdate payload must be a string'));
-            return;
-          }
-
+        const handler = (sdf: string) => {
           resolved = true;
           resolve(sdf);
         };
 
-        window.ketcher.editor.subscribe('libraryUpdate', handler);
+        globalThis.window.ketcher.editor.subscribe('libraryUpdate', handler);
 
         setTimeout(() => {
           if (!resolved) resolve('');

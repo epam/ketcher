@@ -108,7 +108,9 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         {
           ...data.options,
           'render-output-format': data.outputFormat,
-          'render-background-color': data.backgroundColor,
+          ...(data.backgroundColor === undefined
+            ? {}
+            : { 'render-background-color': data.backgroundColor }),
         },
         Command.GenerateImageAsBase64,
         data.struct,
@@ -290,6 +292,6 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     default:
-      throw Error('Unsupported enum type');
+      throw new Error('Unsupported enum type');
   }
 };

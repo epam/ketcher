@@ -153,7 +153,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.monomerLibraryLoadError = null;
 
       const editor = new CoreEditor({
-        ketcherId: action.payload.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         renderersContainer: new RenderersManager({

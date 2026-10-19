@@ -1,9 +1,9 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable react-hooks/set-state-in-effect */
 import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { selectIsSequenceFirstsOnlyNucleotidesSelected } from 'state/rna-builder';
+import {
+  selectIsSequenceFirstsOnlyNucleotidesSelected,
+  selectIsBaseModificationBlocked,
+} from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
@@ -17,43 +17,32 @@ const useDisabledForSequenceMode = (
   const isSequenceFirstsOnlyNucleoelementsSelected = useSelector(
     selectIsSequenceFirstsOnlyNucleotidesSelected,
   );
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const isBaseModificationBlocked = useAppSelector(
+    selectIsBaseModificationBlocked,
+  );
 
-  useEffect(() => {
-    if (!isSequenceEditInRNABuilderMode) return setIsDisabled(false);
+  if (!isSequenceEditInRNABuilderMode) return false;
 
-    if (groupName === MonomerGroups.BASES) {
-      setIsDisabled(!item?.props?.MonomerCaps?.R1);
-    } else if (groupName === MonomerGroups.PHOSPHATES) {
-      setIsDisabled(
-        !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2),
+  // Ambiguous monomers don't have MonomerCaps; they are handled separately and
+  // must not be disabled by this hook (they lack MonomerCaps by design).
+  if (!item?.props?.MonomerCaps) return false;
+  if (groupName === MonomerGroups.BASES) {
+    return isBaseModificationBlocked || !item?.props?.MonomerCaps?.R1;
+  } else if (groupName === MonomerGroups.PHOSPHATES) {
+    return !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2);
+  } else if (groupName === MonomerGroups.SUGARS) {
+    if (isSequenceFirstsOnlyNucleoelementsSelected) {
+      return !(item?.props?.MonomerCaps?.R3 && item?.props?.MonomerCaps?.R2);
+    } else {
+      return !(
+        item?.props?.MonomerCaps?.R3 &&
+        item?.props?.MonomerCaps?.R2 &&
+        item?.props?.MonomerCaps?.R1
       );
-    } else if (groupName === MonomerGroups.SUGARS) {
-      if (isSequenceFirstsOnlyNucleoelementsSelected) {
-        setIsDisabled(
-          !(item?.props?.MonomerCaps?.R3 && item?.props?.MonomerCaps?.R2),
-        );
-      } else {
-        setIsDisabled(
-          !(
-            item?.props?.MonomerCaps?.R3 &&
-            item?.props?.MonomerCaps?.R2 &&
-            item?.props?.MonomerCaps?.R1
-          ),
-        );
-      }
     }
-  }, [
-    groupName,
-    isSequenceEditInRNABuilderMode,
-    isSequenceFirstsOnlyNucleoelementsSelected,
-    item?.props?.MonomerCaps?.R1,
-    item?.props?.MonomerCaps?.R2,
-    item?.props?.MonomerCaps?.R3,
-    setIsDisabled,
-  ]);
+  }
 
-  return isDisabled;
+  return false;
 };
 
 export default useDisabledForSequenceMode;

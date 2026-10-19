@@ -38,12 +38,12 @@ class AlignDescriptors extends BaseOperation {
     if (!structBox) return;
 
     let alignPoint = new Vec2(structBox.max.x, structBox.min.y).add(
-      new Vec2(2.0, -1.0),
+      new Vec2(2, -1),
     );
 
     sgroups.forEach((sgroup) => {
       this.history[sgroup.id] = sgroup.pp ? new Vec2(sgroup.pp) : null;
-      alignPoint = alignPoint.add(new Vec2(0.0, 0.5));
+      alignPoint = alignPoint.add(new Vec2(0, 0.5));
       sgroup.pp = alignPoint;
       struct.sgroups.set(sgroup.id, sgroup);
       BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1);

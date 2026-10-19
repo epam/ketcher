@@ -90,7 +90,7 @@ describe('SettingsMigration', () => {
       const namespacedFormat = {
         render: {
           atomColoring: false,
-          bondThickness: 2.0,
+          bondThickness: 2,
           font: '30px Arial',
           showStereoFlags: true,
         },
@@ -100,7 +100,7 @@ describe('SettingsMigration', () => {
 
       expect(migrated).toEqual({
         atomColoring: false,
-        bondThickness: 2.0,
+        bondThickness: 2,
         font: '30px Arial',
         showStereoFlags: true,
       });

@@ -51,6 +51,11 @@ export default [
     ],
   },
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+  {
     ...js.configs.recommended,
     files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
   },
@@ -74,6 +79,7 @@ export default [
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        ClipboardItem: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         JSX: 'readonly',

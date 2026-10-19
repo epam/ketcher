@@ -122,7 +122,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 
     key = normalizeCode(e.code);
   } else {
-    throw new Error('normalizeShortcut expects string or KeyboardEvent');
+    throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }
 
   const appliedModifiersInOrder = CanonicalModifiersOrder.filter((modifier) =>

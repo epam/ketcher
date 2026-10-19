@@ -473,7 +473,7 @@ describe('RenderersManager', () => {
 
       // Exactly one antisense sugar renders a terminal indicator.
       const antisenseTerminalIndices = antisenseLabels
-        .map((label, index) => (label !== null ? index : -1))
+        .map((label, index) => (label === null ? -1 : index))
         .filter((index) => index !== -1);
 
       expect(antisenseTerminalIndices).toHaveLength(1);

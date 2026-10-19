@@ -5,7 +5,7 @@ export const EditorWrapper = styled.div((): CSSObject => ({
   position: 'relative',
 }));
 
-export const TopMenuRightWrapper = styled.div((): CSSObject => ({
+export const TopMenuRightWrapper = styled.div(() => ({
   display: 'flex',
   alignItems: 'center',
 }));

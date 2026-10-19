@@ -51,12 +51,15 @@ import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
 import type { AppDispatch } from '../hooks';
-import type {
-  EditorInitState,
-  RGroupEditParams,
-  ShowInfoPayload,
-} from './types';
+import type { EditorInitState, RGroupEditParams } from './types';
+import type { InfoPanelData } from '../../../editor/utils/functionalGroupsTooltip';
 import type Editor from '../../../editor/Editor';
+
+type TextEditPayload = { type: 'text' } & Record<string, unknown>;
+
+const isTextEditPayload = (
+  selem: Atom | Atom[] | TextEditPayload,
+): selem is TextEditPayload => 'type' in selem && selem.type === 'text';
 
 export default function initEditor(
   dispatch: AppDispatch,
@@ -119,7 +122,11 @@ export default function initEditor(
     onSelectionChange: () => {
       updateAction();
     },
-    onElementEdit: (selem: Atom | Atom[]) => {
+    onElementEdit: (selem: Atom | Atom[] | TextEditPayload) => {
+      if (isTextEditPayload(selem)) {
+        // TODO: move textdialog opening logic to another place
+        return openDialog(dispatch, 'text', selem);
+      }
       if (isAtomsArray(selem)) {
         const atomAttributes = generateCommonProperties(
           selem,
@@ -130,31 +137,16 @@ export default function initEditor(
           isMultipleAtoms: true,
         }).then((res) => toElement(res as ElementFormData));
       }
-      const singleElem = selem as Atom & { type?: string };
-      if (singleElem.type === 'text') {
-        // TODO: move textdialog opening logic to another place
-        return openDialog(
-          dispatch,
-          'text',
-          Object.fromEntries(Object.entries(singleElem)),
-        );
-      }
       const fromResult = fromElement(selem);
       if (!fromResult) return;
       const elem = fromResult as ElementFormData;
       let dlg: Promise<unknown>;
       if (Elements.get(elem.label ?? '')) {
-        dlg = openDialog(
-          dispatch,
-          'atomProps',
-          elem as Record<string, unknown>,
-        );
+        dlg = openDialog(dispatch, 'atomProps', elem);
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
-        dlg = openDialog(
-          dispatch,
-          'attachmentPoints',
-          elem.ap as Record<string, unknown>,
-        ).then((res) => ({ ap: res }));
+        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
+          ap: res,
+        }));
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -195,18 +187,13 @@ export default function initEditor(
         );
       }),
 
-    onQuickEdit: (atom: Atom) =>
-      openDialog(
-        dispatch,
-        'labelEdit',
-        atom as unknown as Record<string, unknown>,
-      ),
+    onQuickEdit: (atom: Atom) => openDialog(dispatch, 'labelEdit', atom),
     onBondEdit: (bonds: Bond[]) => {
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
       return openDialog(
         dispatch,
         'bondProps',
-        fromBond(bondsAttributes as unknown as Bond) as Record<string, unknown>,
+        fromBond(bondsAttributes as unknown as Bond),
       ).then((res) => toBond(res as ReturnType<typeof fromBond>));
     },
     onRgroupEdit: (rgroup: RGroupEditParams) => {
@@ -219,7 +206,7 @@ export default function initEditor(
         return openDialog(dispatch, 'rgroupLogic', {
           rgroupLabels,
           ...rgroup,
-        } as Record<string, unknown>);
+        });
       }
 
       const disabledIds = Array.from(struct.atoms.values()).reduce<unknown[]>(
@@ -246,7 +233,7 @@ export default function initEditor(
       sleep(0) // hack to open dialog after dispatch sgroup tool action
         .then(() =>
           openDialog(dispatch, 'sgroup', {
-            ...(fromSgroup(sgroup) as Record<string, unknown>),
+            ...fromSgroup(sgroup),
             selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
@@ -254,13 +241,7 @@ export default function initEditor(
     onRemoveFG: (result: Record<string, unknown>) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
     onEditMonomer: (payload: EditMonomerPayload) =>
-      sleep(0).then(() =>
-        openDialog(
-          dispatch,
-          'editMonomer',
-          payload as unknown as Record<string, unknown>,
-        ),
-      ),
+      sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
     onMessage: (msg: { error?: unknown }) => {
       if (msg.error) {
         // TODO: add error handler call
@@ -297,9 +278,9 @@ export default function initEditor(
     onMouseDown: () => {
       updateAction();
     },
-    onConfirm: (payload: Record<string, unknown>) =>
+    onConfirm: (payload?: Record<string, unknown>) =>
       openDialog(dispatch, 'confirm', payload),
-    onShowInfo: (payload: ShowInfoPayload | null | undefined) => {
+    onShowInfo: (payload: InfoPanelData | null | undefined) => {
       if (payload) {
         const { groupStruct, event, sGroup } = payload;
         highlightFG(dispatch, { groupStruct, event, sGroup });

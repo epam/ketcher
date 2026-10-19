@@ -16,7 +16,6 @@
 
 import type Editor from '../../../editor/Editor';
 import type { ToolVariant, UiActionAction } from '../../action/action.types';
-import type { Struct } from 'ketcher-core';
 
 /** The slice of Redux store state accessed by initEditor. */
 export interface EditorInitState {
@@ -40,15 +39,8 @@ export interface EditorInitState {
 
 /** Parameter shape for the onRgroupEdit callback. */
 export interface RGroupEditParams {
-  fragId: number;
-  label: number;
+  fragId?: number;
+  label: number | null;
   range?: string;
   [key: string]: unknown;
-}
-
-/** Payload shape for the onShowInfo callback. */
-export interface ShowInfoPayload {
-  groupStruct: Struct | null;
-  event: unknown;
-  sGroup: unknown;
 }

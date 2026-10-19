@@ -73,7 +73,7 @@ const shared = combineReducers({
   notifications: notificationsReducer,
 });
 
-export type RootState = ReturnType<typeof shared>;
+type RootState = ReturnType<typeof shared>;
 
 type PreloadedRootState = Pick<
   RootState,

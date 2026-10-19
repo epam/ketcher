@@ -24,7 +24,7 @@ import {
   type Store,
   type UnknownAction,
 } from 'redux';
-import type { Editor } from 'ketcher-core';
+import type Editor from 'src/script/editor';
 import { load, onAction } from './shared';
 import optionsReducer, { initOptionsState } from './options';
 import templatesReducer, { initTmplsState } from './templates';

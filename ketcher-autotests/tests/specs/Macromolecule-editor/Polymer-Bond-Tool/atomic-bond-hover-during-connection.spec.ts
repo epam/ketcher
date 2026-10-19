@@ -46,7 +46,7 @@ for (const mode of [LayoutMode.Flex, LayoutMode.Snake]) {
     await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 300, y: 300 });
 
     const canvas = page.locator('#polymer-editor-canvas');
-    const bond = canvas.locator('g[data-fromatomid][data-toatomid]');
+    const bond = canvas.locator('.atomic-bond');
     await expect(bond).toHaveCount(1);
     const fromAtomId = await bond.getAttribute('data-fromatomid');
     const toAtomId = await bond.getAttribute('data-toatomid');

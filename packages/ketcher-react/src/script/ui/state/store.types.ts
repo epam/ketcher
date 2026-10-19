@@ -81,10 +81,6 @@ export interface InitAction extends Action<'INIT'> {
   [key: string]: unknown;
 }
 
-export interface UpdateAction extends Action<'UPDATE'> {
-  [key: string]: unknown;
-}
-
 export interface SetServerAction extends Action<'SET_SERVER'> {
   server?: ServerState;
 }

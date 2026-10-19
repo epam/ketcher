@@ -1,7 +1,6 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import { Command } from 'domain/entities/Command';
 import { Vec2 } from 'domain/entities';
-import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { provideEditorInstance } from '../../editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { LayoutMode } from 'application/editor/modes/types';
@@ -21,7 +20,7 @@ jest.mock('domain/serializers/ket/ketSerializer', () => ({
 }));
 
 class TestMode extends BaseMode {
-  constructor(modeName: LayoutMode = 'sequence-layout-mode') {
+  constructor(modeName: LayoutMode) {
     super(modeName);
   }
 
@@ -46,47 +45,11 @@ class TestMode extends BaseMode {
   }
 }
 
-class ClipboardItemMock {
-  constructor(public items: Record<string, Blob | Promise<Blob>>) {}
-}
-
-const KET_MIME_TYPE = `web ${ChemicalMimeType.KET}`;
-const PLAIN_TEXT_MIME_TYPE = 'text/plain';
-
-// jsdom 16 has no Blob.text(), so read the blob with FileReader
-const readBlob = (blob: Blob) =>
-  new Promise<string>((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.readAsText(blob);
-  });
-
 describe('BaseMode.onCopy', () => {
   const write = jest.fn();
   const writeText = jest.fn();
   const read = jest.fn();
   const convert = jest.fn();
-  const validateIfApplicableForFasta = jest.fn();
-
-  const setupSelection = (monomerCount: number) => {
-    (provideEditorInstance as jest.Mock).mockReturnValue({
-      ketcherId: 'ketcher-id',
-      drawingEntitiesManager: {
-        filterSelection: jest.fn(() => ({
-          monomers: new Map(
-            Array.from({ length: monomerCount }, (_, index) => [index, {}]),
-          ),
-          validateIfApplicableForFasta,
-        })),
-      },
-    });
-  };
-
-  const getWrittenClipboardItem = (): ClipboardItemMock =>
-    write.mock.calls[0][0][0];
-
-  const readClipboardType = async (mimeType: string) =>
-    readBlob(await getWrittenClipboardItem().items[mimeType]);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -96,76 +59,28 @@ describe('BaseMode.onCopy', () => {
       value: { write, writeText, read },
       configurable: true,
     });
-    (globalThis as unknown as { ClipboardItem: unknown }).ClipboardItem =
-      ClipboardItemMock;
     (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
       indigo: { convert },
     });
-    validateIfApplicableForFasta.mockReturnValue(true);
-    setupSelection(2);
-  });
-
-  it('puts KET and the plain-text sequence on the clipboard', async () => {
-    convert.mockResolvedValue({ struct: 'AC' });
-
-    new TestMode().onCopy();
-
-    expect(convert).toHaveBeenCalledWith('KET_STRING', {
-      outputFormat: ChemicalMimeType.SEQUENCE,
+    (provideEditorInstance as jest.Mock).mockReturnValue({
+      ketcherId: 'ketcher-id',
+      drawingEntitiesManager: {
+        filterSelection: jest.fn(() => ({
+          monomers: new Map([[0, {}]]),
+          validateIfApplicableForFasta: jest.fn(() => true),
+        })),
+      },
     });
-    expect(await readClipboardType(KET_MIME_TYPE)).toBe('KET_STRING');
-    expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('AC');
-    expect(writeText).not.toHaveBeenCalled();
   });
 
   it.each<LayoutMode>(['flex-layout-mode', 'snake-layout-mode'])(
-    'puts KET as plain text in %s, the sequence is only copied in Sequence mode',
-    async (modeName) => {
+    'puts only KET as plain text on the clipboard in %s',
+    (modeName) => {
       new TestMode(modeName).onCopy();
 
+      expect(writeText).toHaveBeenCalledWith('KET_STRING');
+      expect(write).not.toHaveBeenCalled();
       expect(convert).not.toHaveBeenCalled();
-      expect(await readClipboardType(KET_MIME_TYPE)).toBe('KET_STRING');
-      expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('KET_STRING');
     },
   );
-
-  it('puts KET as plain text when the selection is not sequence-compatible', async () => {
-    validateIfApplicableForFasta.mockReturnValue(false);
-
-    new TestMode().onCopy();
-
-    expect(convert).not.toHaveBeenCalled();
-    expect(await readClipboardType(KET_MIME_TYPE)).toBe('KET_STRING');
-    expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('KET_STRING');
-  });
-
-  it('puts KET as plain text when no monomers are selected', async () => {
-    setupSelection(0);
-
-    new TestMode().onCopy();
-
-    expect(convert).not.toHaveBeenCalled();
-    expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('KET_STRING');
-  });
-
-  it('puts KET as plain text when the Indigo conversion fails', async () => {
-    convert.mockRejectedValue(new Error('Indigo failed'));
-
-    new TestMode().onCopy();
-
-    expect(await readClipboardType(KET_MIME_TYPE)).toBe('KET_STRING');
-    expect(await readClipboardType(PLAIN_TEXT_MIME_TYPE)).toBe('KET_STRING');
-  });
-
-  it('falls back to writeText with KET when ClipboardItem is not supported', () => {
-    (globalThis as unknown as { ClipboardItem: unknown }).ClipboardItem =
-      jest.fn(() => {
-        throw new TypeError('Unsupported clipboard type');
-      });
-
-    new TestMode().onCopy();
-
-    expect(write).not.toHaveBeenCalled();
-    expect(writeText).toHaveBeenCalledWith('KET_STRING');
-  });
 });

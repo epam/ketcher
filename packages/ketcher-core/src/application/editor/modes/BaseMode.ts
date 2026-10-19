@@ -183,67 +183,15 @@ export abstract class BaseMode {
     }
   }
 
-  private async writeToClipboard(
+  /**
+   * Puts the copied structure on the clipboard. By default only KET is written
+   * as plain text; modes can override it to add other formats.
+   */
+  protected writeToClipboard(
     serializedKet: string,
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ): Promise<void> {
-    try {
-      const ketMimeType = `web ${ChemicalMimeType.KET}`;
-      const sequence = this.getSequenceForClipboard(
-        drawingEntitiesManager,
-        serializedKet,
-      );
-
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
-          [PLAIN_TEXT_MIME_TYPE]: sequence.then(
-            (sequenceString) =>
-              new Blob([sequenceString ?? serializedKet], {
-                type: PLAIN_TEXT_MIME_TYPE,
-              }),
-          ),
-        }),
-      ]);
-    } catch (error) {
-      KetcherLogger.info(
-        'Cannot write multiple formats to the clipboard, falling back to KET only',
-        error,
-      );
-
-      try {
-        await navigator.clipboard.writeText(serializedKet);
-      } catch (writeError) {
-        KetcherLogger.error('BaseMode.ts::writeToClipboard', writeError);
-      }
-    }
-  }
-
-  private async getSequenceForClipboard(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    serializedKet: string,
-  ): Promise<string | undefined> {
-    if (
-      this.modeName !== 'sequence-layout-mode' ||
-      drawingEntitiesManager.monomers.size === 0 ||
-      !drawingEntitiesManager.validateIfApplicableForFasta()
-    ) {
-      return undefined;
-    }
-
-    try {
-      const editor = provideEditorInstance();
-      const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
-      const result = await indigo.convert(serializedKet, {
-        outputFormat: ChemicalMimeType.SEQUENCE,
-      });
-
-      return result.struct;
-    } catch (error) {
-      KetcherLogger.error('BaseMode.ts::getSequenceForClipboard', error);
-
-      return undefined;
-    }
+    _drawingEntitiesManager: DrawingEntitiesManager,
+  ): void | Promise<void> {
+    navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {

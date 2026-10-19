@@ -1040,12 +1040,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       HELMAlias: 'BaseAlias',
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
       bondIds: [5, 6],

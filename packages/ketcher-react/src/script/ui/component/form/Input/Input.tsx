@@ -104,7 +104,7 @@ GenericInput.val = function (ev, schema) {
   const isNumber =
     input.type === 'number' || input.type === 'range' || isInteger || isFloat;
 
-  const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
+  const value = isNumber ? input.value.replaceAll(',', '.') : input.value;
 
   if (isInteger) {
     return Number(value) || 0;

@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Editor, Struct, StructService } from 'ketcher-core';
+import type { Struct, StructService } from 'ketcher-core';
+import type Editor from 'src/script/editor';
 import type { Action, compose } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
 import type { CustomButton } from '../../builders/ketcher/CustomButtons';

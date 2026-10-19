@@ -136,7 +136,7 @@ function getRootReducer(
     };
 
     // TODO: temporary solution. Need to review work with redux store
-    (globalThis as { currentState?: RootState }).currentState = finalState;
+    globalThis.currentState = finalState;
     return finalState;
   };
 }

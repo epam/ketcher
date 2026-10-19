@@ -525,7 +525,6 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    // await CommonTopRightToolbar(page).setZoomInputValue('50');
     await LeftToolbar(page).createMonomer();
 
     const dialog = CreateMonomerDialog(page);

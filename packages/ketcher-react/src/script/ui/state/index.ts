@@ -77,8 +77,14 @@ export type RootState = ReturnType<typeof shared>;
 
 type PreloadedRootState = Pick<
   RootState,
-  'actionState' | 'editor' | 'modal' | 'server' | 'templates' | 'notifications'
-> & { options: RootState['options'] };
+  | 'actionState'
+  | 'editor'
+  | 'modal'
+  | 'options'
+  | 'server'
+  | 'templates'
+  | 'notifications'
+>;
 
 export type AppStore = Store<RootState, UnknownAction> & {
   dispatch: AppDispatch;

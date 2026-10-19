@@ -1,4 +1,4 @@
-import { Entities, MonomerOrAmbiguousType } from 'ketcher-core';
+import { Entities, MonomerOrAmbiguousType, STRAND_TYPE } from 'ketcher-core';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { Provider as StoreProvider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
@@ -12,6 +12,7 @@ import {
   setActivePresetMonomerGroup,
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
+import { UpdateSequenceInRNABuilder } from 'components/modal/UpdateSequenceInRNABuilder/UpdateSequenceInRNABuilder';
 import { defaultTheme } from 'theming/defaultTheme';
 
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
@@ -275,4 +276,88 @@ describe('Test Rna Editor Expanded component', () => {
     // disabled until a monomer is actually picked again.
     expect(screen.getByTestId('save-btn')).toBeDisabled();
   });
+});
+
+describe('RNA Builder successful update selection', () => {
+  it.each([false, true])(
+    'preserves canvas selection and clears form state (confirmation: %s)',
+    (confirm) => {
+      const modify = jest.fn();
+      const leaveBuilder = jest.fn();
+      const leaveEdit = jest.fn();
+      const store = configureAppStore({
+        editor: {
+          editor: {
+            isSequenceEditInRNABuilderMode: true,
+            mode: {
+              modeName: 'sequence-layout-mode',
+              turnOffEditMode: leaveEdit,
+            },
+            events: {
+              ...mockEditorEvents,
+              modifySequenceInRnaBuilder: { dispatch: modify },
+              turnOffSequenceEditInRNABuilderMode: { dispatch: leaveBuilder },
+            },
+          },
+        },
+        rnaBuilder: {
+          activePreset: {},
+          presetsDefault: [],
+          presetsCustom: [],
+          sequenceSelectionName: confirm ? '2 nucleotides' : '1 nucleotide',
+          sequenceSelection: Array.from(
+            { length: confirm ? 2 : 1 },
+            (_, index) => ({
+              type: Entities.Nucleotide,
+              baseLabel: 'C',
+              sugarLabel: 'R',
+              phosphateLabel: 'P',
+              nodeIndexOverall: index,
+              strandType: STRAND_TYPE.SENSE,
+              hasR1Connection: index > 0,
+            }),
+          ),
+        },
+      });
+      const tree = (modal = false) => (
+        <ThemeProvider theme={testTheme}>
+          <StoreProvider store={store}>
+            {modal ? (
+              <UpdateSequenceInRNABuilder isModalOpen onClose={jest.fn()} />
+            ) : (
+              <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+            )}
+          </StoreProvider>
+        </ThemeProvider>
+      );
+      const { rerender } = render(tree());
+      act(() => {
+        store.dispatch(
+          setActivePresetMonomerGroup({
+            groupName: MonomerGroups.BASES,
+            groupItem: { label: 'G' } as MonomerOrAmbiguousType,
+          }),
+        );
+      });
+      fireEvent.click(screen.getByTestId('save-btn'));
+      if (confirm) {
+        expect(modify).not.toHaveBeenCalled();
+        expect(store.getState().modal).toEqual(
+          expect.objectContaining({ isOpen: true }),
+        );
+        rerender(tree(true));
+        fireEvent.click(screen.getByTestId('update-sequence-yes-button'));
+      }
+      expect(modify).toHaveBeenCalledTimes(1);
+      expect(modify.mock.calls[0][0]).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ baseLabel: 'G', nodeIndexOverall: 0 }),
+        ]),
+      );
+      expect(leaveBuilder).toHaveBeenCalledWith(false);
+      expect(leaveEdit).toHaveBeenCalledWith(false);
+      expect(store.getState().rnaBuilder.sequenceSelection).toEqual([]);
+      expect(store.getState().rnaBuilder.isEditMode).toBe(false);
+    },
+  );
 });

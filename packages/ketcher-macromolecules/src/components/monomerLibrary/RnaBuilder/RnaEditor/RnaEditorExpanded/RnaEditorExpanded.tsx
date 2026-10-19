@@ -573,7 +573,7 @@ export const RnaEditorExpanded = ({
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor?.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
-      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor, false);
     }
   };
 

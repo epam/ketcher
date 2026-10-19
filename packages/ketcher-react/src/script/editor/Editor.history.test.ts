@@ -11,6 +11,7 @@ import {
   KetMonomerClass,
   MacromoleculesConverter,
   RenderersManager,
+  StereoFlag,
   Struct,
   Vec2,
   assert,
@@ -364,6 +365,89 @@ describe('History across molecule and macromolecule modes', () => {
       expectAttachmentGroupPreserved();
     },
   );
+
+  it('preserves ABS after saving a monomer connected to a stereocenter', () => {
+    jest.useFakeTimers();
+    const struct = new Struct();
+    ['N', 'C', 'N', 'C', 'C', 'N', 'C', 'N', 'C', 'C', 'C', 'C', 'C'].forEach(
+      (label, index) => {
+        struct.atoms.add(new Atom({ label, pp: new Vec2(index, index % 2) }));
+      },
+    );
+    [
+      [0, 1, 0],
+      [0, 2, Bond.PATTERN.STEREO.UP],
+      [2, 3, 0],
+      [2, 4, Bond.PATTERN.STEREO.UP],
+      [4, 5, Bond.PATTERN.STEREO.UP],
+      [5, 6, 0],
+      [5, 7, Bond.PATTERN.STEREO.UP],
+      [7, 8, 0],
+      [7, 9, Bond.PATTERN.STEREO.UP],
+      [9, 10, Bond.PATTERN.STEREO.UP],
+      [0, 11, Bond.PATTERN.STEREO.UP],
+      [11, 12, Bond.PATTERN.STEREO.UP],
+    ].forEach(([begin, end, stereo]) => {
+      struct.bonds.add(new Bond({ begin, end, stereo, type: 1 }));
+    });
+    struct.initHalfBonds();
+    struct.initNeighbors();
+    // Import can assign atom stereo labels after fragments have been built.
+    struct.markFragments();
+    struct.setStereoLabelsToAtoms();
+    micro.update(fromNewCanvas(micro.render.ctab, struct));
+    const expectAbs = () => {
+      const absoluteFragments = Array.from(
+        micro.struct().frags.entries(),
+      ).filter(
+        ([, fragment]) => fragment?.enhancedStereoFlag === StereoFlag.Abs,
+      );
+      expect(absoluteFragments.length).toBeGreaterThan(0);
+      absoluteFragments.forEach(([fragmentId]) => {
+        expect(micro.render.ctab.enhancedFlags.has(fragmentId)).toBe(true);
+      });
+    };
+    micro.selection({ atoms: [10, 9, 8, 7], bonds: [9, 8, 7] });
+    expect(micro.isMonomerCreationWizardEnabled).toBe(true);
+    micro.openMonomerCreationWizard();
+    const wizardStruct = micro.struct();
+    const atomIdMap = new Map<number, number>();
+    const structure = wizardStruct.clone(
+      undefined,
+      undefined,
+      undefined,
+      atomIdMap,
+    );
+    const state = micro.monomerCreationState;
+    assert(state);
+    const monomerData = micro.saveNewMonomer({
+      type: KetMonomerClass.CHEM,
+      symbol: 'StereoTest',
+      name: 'Stereo test monomer',
+      naturalAnalogue: '',
+      aliasHELM: '',
+      aliasBILN: '',
+      structure,
+      attachmentPoints: state.assignedAttachmentPoints,
+    });
+    micro.finishNewMonomersCreation([
+      {
+        ...monomerData,
+        atomIdMap,
+        monomerStructureInWizard: {
+          atoms: Array.from(wizardStruct.atoms.keys()),
+          bonds: Array.from(wizardStruct.bonds.keys()),
+        },
+      },
+    ]);
+    jest.runAllTimers();
+    expect(micro.struct().sgroups.size).toBe(1);
+    expectAbs();
+    micro.undo();
+    expect(micro.struct()).toBe(struct);
+    micro.redo();
+    expectAbs();
+  });
 
   it('exports Flex positions when switching to molecules from Snake mode', () => {
     macro.switchToMacromolecules();

@@ -2796,6 +2796,14 @@ class Editor implements KetcherEditor {
         undefined,
         true,
       );
+      // Cloning retains fragments, whose stereo-atom lists may predate import.
+      mergedStruct.atoms.forEach((atom, atomId) => {
+        if (atom.stereoLabel) {
+          mergedStruct.frags
+            .get(atom.fragment)
+            ?.updateStereoAtom(mergedStruct, atomId, atom.fragment, true);
+        }
+      });
       // Record a swap from the untouched original, not the intermediate merge.
       this.update(fromNewCanvas(this.render.ctab, this.originalStruct), true);
       this.struct(mergedStruct, false);

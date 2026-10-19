@@ -8,7 +8,7 @@ describe('connection drawing hit targets', () => {
         <g data-testid="atom" pointerEvents="all">
           <circle data-testid="atom-hit-area" r="8" />
         </g>
-        <g data-testid="bond" data-fromatomid="1" data-toatomid="2">
+        <g data-testid="bond" className="atomic-bond">
           <path
             data-testid="bond-hit-area"
             stroke="transparent"
@@ -16,6 +16,13 @@ describe('connection drawing hit targets', () => {
             d="M0,0L40,0"
           />
           <rect data-testid="bond-annotation" width="10" height="10" />
+        </g>
+        <g
+          data-testid="monomer-to-atom-bond"
+          data-frommonomerid="3"
+          data-toatomid="1"
+        >
+          <path data-testid="monomer-to-atom-hit-area" d="M0,60L40,60" />
         </g>
         <g pointerEvents="stroke">
           <path
@@ -51,6 +58,8 @@ describe('connection drawing hit targets', () => {
       screen.getByTestId('flex-polymer-bond'),
       screen.getByTestId('snake-polymer-bond'),
       screen.getByTestId('polymer-hit-area'),
+      screen.getByTestId('monomer-to-atom-bond'),
+      screen.getByTestId('monomer-to-atom-hit-area'),
     ];
     // Both renderer modes use data-testid="bond" on the body.
     polymerElements

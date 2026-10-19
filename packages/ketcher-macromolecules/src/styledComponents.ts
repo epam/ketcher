@@ -20,7 +20,7 @@ export const TogglerComponentWrapper = styled.div((): CSSObject => ({
 }));
 
 export const CanvasWrapper = styled.svg((): CSSObject => ({
-  '&[data-drawing-connection] [data-fromatomid], &[data-drawing-connection] [data-fromatomid] *':
+  '&[data-drawing-connection] .atomic-bond, &[data-drawing-connection] .atomic-bond *':
     {
       pointerEvents: 'none',
     },

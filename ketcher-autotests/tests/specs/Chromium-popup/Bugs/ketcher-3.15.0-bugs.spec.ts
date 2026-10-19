@@ -525,7 +525,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    await CommonTopRightToolbar(page).setZoomInputValue('50');
+    // await CommonTopRightToolbar(page).setZoomInputValue('50');
     await LeftToolbar(page).createMonomer();
 
     const dialog = CreateMonomerDialog(page);
@@ -533,10 +533,6 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await dialog.selectType(MonomerType.NucleotidePreset);
     await presetSection.setName('sugarPhosphateOnly');
-
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupSugar({
       atomIds: [0, 1, 2],

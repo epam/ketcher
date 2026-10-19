@@ -207,7 +207,7 @@ test.describe('Mark as... related cases: ', () => {
     ).toBeFalsy();
 
     // Clear selection by clicking on empty canvas
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 0, 0);
 
     // Now select continuous atoms
     await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });

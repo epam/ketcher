@@ -303,6 +303,12 @@ export class CoreEditor {
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
   private defaultMonomersLibraryReady?: Promise<void>;
+  private defaultMonomersLibraryInitialized = false;
+  private pendingMonomerLibraryUpdates: Array<{
+    data: string;
+    editedMonomerRef?: string;
+    isUserCreated?: boolean;
+  }> = [];
 
   constructor({
     ketcherId,
@@ -481,6 +487,9 @@ export class CoreEditor {
   private async initializeDefaultMonomersLibrary(): Promise<void> {
     try {
       const monomersDataRaw = await loadDefaultMonomersData();
+      // Stored updates applied by setMonomersLibrary are already ordered after
+      // defaults; only direct writes made before this point need replaying.
+      this.defaultMonomersLibraryInitialized = true;
       this.setMonomersLibrary(monomersDataRaw);
     } catch (err) {
       KetcherLogger.error(
@@ -492,6 +501,14 @@ export class CoreEditor {
         errorMessage: 'Failed to load default monomers library',
         errorTitle: 'Monomer library load failed',
       });
+    }
+
+    // Preserve direct caller updates even when the default chunk failed to load.
+    this.defaultMonomersLibraryInitialized = true;
+    const pendingUpdates = this.pendingMonomerLibraryUpdates;
+    this.pendingMonomerLibraryUpdates = [];
+    for (const { data, editedMonomerRef, isUserCreated } of pendingUpdates) {
+      this.updateMonomersLibrary(data, editedMonomerRef, isUserCreated);
     }
 
     this.events.updateMonomersLibrary.dispatch();
@@ -560,8 +577,8 @@ export class CoreEditor {
     editedMonomerRef?: string,
     isUserCreated?: boolean,
   ) {
-    // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
-    // in the constructor before any consumer can call `updateMonomersLibrary`.
+    // The constructor initializes an empty library before defaults are loaded,
+    // so synchronous consumers can update it immediately.
     // A `null` value here would indicate a programming error (e.g. calling
     // this method before the editor finished constructing), not a normal
     // runtime case, so we fail loudly instead of silently no-op-ing.
@@ -997,6 +1014,19 @@ export class CoreEditor {
         monomersLibraryParsedJson.root.templates.push(templateRef);
       }
     });
+
+    if (!this.defaultMonomersLibraryInitialized) {
+      // Keep synchronous writes visible immediately, then replay them in order
+      // after deferred defaults (and persisted updates) have been installed.
+      this.pendingMonomerLibraryUpdates.push({
+        data:
+          typeof monomersDataRaw === 'string'
+            ? monomersDataRaw
+            : JSON.stringify(monomersDataRaw),
+        editedMonomerRef,
+        isUserCreated,
+      });
+    }
 
     this.events.updateMonomersLibrary.dispatch();
   }

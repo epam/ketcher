@@ -554,7 +554,7 @@ const publicUrlBase = process.env.PUBLIC_URL
   ? `${process.env.PUBLIC_URL.replace(/\/$/, '')}/`
   : '/';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   base: publicUrlBase,
   server: {
     host: '127.0.0.1',
@@ -642,6 +642,19 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom', 'react-is'],
     alias: [
+      // A fresh checkout has no standalone dist. Development uses its source
+      // and the worker aliases below; production still exercises binaryWasm.
+      ...(command === 'serve'
+        ? [
+            {
+              find: /^ketcher-standalone\/dist\/binaryWasm$/,
+              replacement: resolve(
+                __dirname,
+                '../packages/ketcher-standalone/src/index.ts',
+              ),
+            },
+          ]
+        : []),
       {
         // HACK: to ignore dist/index.css, you can set any file as replacement
         find: 'ketcher-react/dist/index.css',
@@ -711,4 +724,4 @@ export default defineConfig({
   },
   customLogger: logger,
   tsconfig: './tsconfig.json',
-});
+}));

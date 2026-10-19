@@ -34,6 +34,8 @@ const makeEditor = () => {
   Object.assign(editor, {
     _monomersLibrary: [],
     _monomersLibraryParsedJson: { root: { templates: [] } },
+    // These isolated editing tests start after default-library initialization.
+    defaultMonomersLibraryInitialized: true,
     events: { updateMonomersLibrary: { dispatch: jest.fn() } },
   });
   return editor;

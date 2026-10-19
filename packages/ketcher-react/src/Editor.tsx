@@ -182,8 +182,22 @@ export const Editor = (props: Props) => {
     window.isPolymerEditorTurnedOn = isMacromoleculesEditorTurnedOn;
   }, [isMacromoleculesEditorTurnedOn]);
 
+  useLayoutEffect(() => {
+    if (!isMacromoleculesEditorEnabled && macromoleculesEditor) {
+      // Preserve the structure before the child's passive cleanup destroys its
+      // imperative editor. Drop that instance before it can be enabled again.
+      macromoleculesEditor.switchToMicromolecules();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMacromoleculesEditor(undefined);
+    }
+  }, [isMacromoleculesEditorEnabled, macromoleculesEditor]);
+
   useEffect(() => {
-    if (!moleculesEditor || !macromoleculesEditor) {
+    if (
+      !isMacromoleculesEditorEnabled ||
+      !moleculesEditor ||
+      !macromoleculesEditor
+    ) {
       return;
     }
 
@@ -247,7 +261,12 @@ export const Editor = (props: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [isMacromoleculesEditorTurnedOn]);
+  }, [
+    isMacromoleculesEditorEnabled,
+    isMacromoleculesEditorTurnedOn,
+    moleculesEditor,
+    macromoleculesEditor,
+  ]);
 
   useEffect(() => {
     if (

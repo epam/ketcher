@@ -25,6 +25,7 @@ const HtmlPublicUrlPlugin = () => {
 };
 
 export default defineConfig({
+  base: publicUrl ? `${publicUrl.replace(/\/$/, '')}/` : '/',
   envPrefix: 'REACT_APP_',
   plugins: [react(), HtmlPublicUrlPlugin()],
   define: {

@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import type * as ReactTypes from 'react';
 import { ketcherProvider, type Ketcher } from 'ketcher-core';
 import { Editor } from '../Editor';
@@ -50,10 +50,24 @@ jest.mock(
 
     return {
       __esModule: true,
-      default: () =>
-        React.createElement('div', {
+      default: ({
+        onInit,
+      }: {
+        onInit: (
+          editor: ReturnType<typeof mockCreateMacromoleculesEditor>,
+        ) => void;
+      }) => {
+        React.useEffect(() => {
+          const editor = mockCreateMacromoleculesEditor();
+          mockMacromoleculesEditors.push(editor);
+          onInit(editor);
+          return () => editor.destroy();
+        }, []);
+
+        return React.createElement('div', {
           'data-testid': 'macromolecules-editor',
-        }),
+        });
+      },
     };
   },
   { virtual: true },
@@ -63,7 +77,31 @@ const mockMoleculesEditor = {
   event: {
     monomerWizardStateChange: { add: jest.fn(), remove: jest.fn() },
   },
+  closeMonomerCreationWizard: jest.fn(),
+  focusCliparea: jest.fn(),
 };
+const mockCreateEvent = () => {
+  const handlers = new Set<() => void>();
+  return {
+    add: (handler: () => void) => handlers.add(handler),
+    remove: (handler: () => void) => handlers.delete(handler),
+    dispatch: () => handlers.forEach((handler) => handler()),
+  };
+};
+const mockCreateMacromoleculesEditor = () => ({
+  events: {
+    switchToMacromoleculesMode: mockCreateEvent(),
+    switchToMoleculesMode: mockCreateEvent(),
+    openMonomerCreationWizard: mockCreateEvent(),
+  },
+  ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
+  switchToMacromolecules: jest.fn(),
+  switchToMicromolecules: jest.fn(),
+  destroy: jest.fn(),
+});
+const mockMacromoleculesEditors: Array<
+  ReturnType<typeof mockCreateMacromoleculesEditor>
+> = [];
 const TEST_KETCHER_ID = 'disable-macromolecules-test';
 const testKetcher = {
   id: TEST_KETCHER_ID,
@@ -82,6 +120,8 @@ const editorProps: Omit<
 
 describe('Editor', () => {
   beforeEach(() => {
+    mockMacromoleculesEditors.length = 0;
+    jest.clearAllMocks();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     ketcherProvider.addKetcherInstance(testKetcher);
   });
@@ -125,5 +165,63 @@ describe('Editor', () => {
     render(<Editor {...editorProps} />);
 
     expect(screen.getByTestId('polymer-toggler')).toBeInTheDocument();
+  });
+
+  it('converts through the replacement editor after disabling and re-enabling macromolecules', async () => {
+    const { rerender } = render(<Editor {...editorProps} />);
+    await screen.findByTestId('macromolecules-editor');
+    const original = mockMacromoleculesEditors[0];
+
+    act(() => original.events.switchToMacromoleculesMode.dispatch());
+    await waitFor(() => {
+      expect(original.switchToMacromolecules).toHaveBeenCalledTimes(1);
+    });
+    original.switchToMicromolecules.mockClear();
+
+    rerender(<Editor {...editorProps} disableMacromoleculesEditor />);
+    expect(original.destroy).toHaveBeenCalledTimes(1);
+    expect(original.switchToMicromolecules).toHaveBeenCalledTimes(1);
+    const conversionOrder =
+      original.switchToMicromolecules.mock.invocationCallOrder;
+    expect(conversionOrder[conversionOrder.length - 1]).toBeLessThan(
+      original.destroy.mock.invocationCallOrder[0],
+    );
+
+    rerender(<Editor {...editorProps} disableMacromoleculesEditor={false} />);
+    await waitFor(() => {
+      expect(mockMacromoleculesEditors).toHaveLength(2);
+      expect(
+        mockMacromoleculesEditors[1].switchToMacromolecules,
+      ).toHaveBeenCalledTimes(1);
+    });
+    expect(original.switchToMacromolecules).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a pending conversion when macromolecules is disabled', async () => {
+    const { rerender } = render(<Editor {...editorProps} />);
+    await screen.findByTestId('macromolecules-editor');
+    const original = mockMacromoleculesEditors[0];
+    let resolveDefaultLoad!: () => void;
+    original.ensureDefaultMonomersLibraryLoaded.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveDefaultLoad = resolve;
+      }),
+    );
+
+    act(() => original.events.switchToMacromoleculesMode.dispatch());
+    rerender(<Editor {...editorProps} disableMacromoleculesEditor />);
+    rerender(<Editor {...editorProps} disableMacromoleculesEditor={false} />);
+    await waitFor(() => {
+      expect(mockMacromoleculesEditors).toHaveLength(2);
+      expect(
+        mockMacromoleculesEditors[1].switchToMacromolecules,
+      ).toHaveBeenCalledTimes(1);
+    });
+    await act(async () => resolveDefaultLoad());
+
+    expect(original.switchToMacromolecules).not.toHaveBeenCalled();
+    expect(
+      mockMacromoleculesEditors[1].switchToMacromolecules,
+    ).toHaveBeenCalledTimes(1);
   });
 });

@@ -120,6 +120,36 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
     return { resolveDefaultLoad };
   }
 
+  it('preserves a synchronous CoreEditor update when defaults load afterward', async () => {
+    coreEditor.updateMonomersLibrary(JSON.stringify(consumerMonomer));
+    expect(coreEditor.monomersLibraryParsedJson).toHaveProperty(
+      `monomerTemplate-${CONSUMER_MONOMER_NAME}`,
+    );
+
+    await coreEditor.ensureDefaultMonomersLibraryLoaded();
+
+    expect(coreEditor.monomersLibraryParsedJson).toHaveProperty(
+      `monomerTemplate-${CONSUMER_MONOMER_NAME}`,
+    );
+    expect(coreEditor.monomersLibrary.length).toBeGreaterThan(1);
+  });
+
+  it('preserves ordered direct updates while the default import is pending', async () => {
+    const defaultLoad = coreEditor.ensureDefaultMonomersLibraryLoaded();
+    coreEditor.updateMonomersLibrary(JSON.stringify(consumerMonomer));
+    const editedMonomer = makeMonomer(CONSUMER_MONOMER_NAME);
+    editedMonomer[`monomerTemplate-${CONSUMER_MONOMER_NAME}`].fullName =
+      'Updated consumer monomer';
+    coreEditor.updateMonomersLibrary(JSON.stringify(editedMonomer));
+
+    await defaultLoad;
+
+    expect(coreEditor.monomersLibraryParsedJson).toHaveProperty(
+      `monomerTemplate-${CONSUMER_MONOMER_NAME}.fullName`,
+      'Updated consumer monomer',
+    );
+  });
+
   it('keeps the consumer library in place after replaceMonomersLibrary races the pending default load', async () => {
     const { resolveDefaultLoad } = deferDefaultMonomersLoad();
 

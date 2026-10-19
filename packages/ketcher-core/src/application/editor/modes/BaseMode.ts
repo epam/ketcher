@@ -150,7 +150,7 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(serializedKet);
+      this.writeToClipboard(serializedKet, drawingEntitiesManager);
     } else if (event) {
       legacyCopy(event.clipboardData, {
         [PLAIN_TEXT_MIME_TYPE]: serializedKet,
@@ -181,6 +181,17 @@ export abstract class BaseMode {
     if (event) {
       event.preventDefault();
     }
+  }
+
+  /**
+   * Puts the copied structure on the clipboard. By default only KET is written
+   * as plain text; modes can override it to add other formats.
+   */
+  protected writeToClipboard(
+    serializedKet: string,
+    _drawingEntitiesManager: DrawingEntitiesManager,
+  ): void | Promise<void> {
+    navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {

@@ -4,6 +4,7 @@ import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -127,9 +128,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = page.locator(
-        '[data-testid="ketcher-canvas"][data-canvasmode="macromolecules-mode"]',
-      );
+      const macromoleculesCanvas = getCanvasByMode(page, 'macromolecules');
 
       if (!(await macromoleculesCanvas.isVisible())) {
         await waitForRender(
@@ -167,9 +166,7 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = page.locator(
-        '[data-testid="ketcher-canvas"][data-canvasmode="molecules-mode"]',
-      );
+      const moleculesCanvas = getCanvasByMode(page, 'molecules');
 
       if (!(await moleculesCanvas.isVisible())) {
         await waitForRender(page, async () => {

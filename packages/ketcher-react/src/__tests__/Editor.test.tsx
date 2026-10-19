@@ -167,6 +167,30 @@ describe('Editor', () => {
     expect(screen.getByTestId('polymer-toggler')).toBeInTheDocument();
   });
 
+  it('does not convert or steal focus when the hidden macro editor initializes', async () => {
+    render(<Editor {...editorProps} />);
+    await screen.findByTestId('macromolecules-editor');
+
+    expect(mockMacromoleculesEditors).toHaveLength(1);
+    expect(
+      mockMacromoleculesEditors[0].switchToMicromolecules,
+    ).not.toHaveBeenCalled();
+    expect(mockMoleculesEditor.focusCliparea).not.toHaveBeenCalled();
+  });
+
+  it('does not repeat initialization when the consumer callback changes', async () => {
+    const onInit = jest.fn();
+    const { rerender } = render(<Editor {...editorProps} onInit={onInit} />);
+    await waitFor(() => expect(onInit).toHaveBeenCalledTimes(1));
+
+    const replacementOnInit = jest.fn();
+    rerender(<Editor {...editorProps} onInit={replacementOnInit} />);
+
+    expect(onInit).toHaveBeenCalledTimes(1);
+    expect(replacementOnInit).not.toHaveBeenCalled();
+    expect(mockMoleculesEditor.focusCliparea).not.toHaveBeenCalled();
+  });
+
   it('converts through the replacement editor after disabling and re-enabling macromolecules', async () => {
     const { rerender } = render(<Editor {...editorProps} />);
     await screen.findByTestId('macromolecules-editor');

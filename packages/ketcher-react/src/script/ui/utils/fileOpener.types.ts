@@ -14,12 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type PPTXFileContent = { structures: string[]; isPPTX: true };
-
-export type FileContent = string | PPTXFileContent;
-
-export type OpenerFunction = (file: File) => Promise<FileContent>;
-
 // IE-only extension of File that must be released after reading
 export type FileWithMsClose = File & { msClose?: () => void };
 

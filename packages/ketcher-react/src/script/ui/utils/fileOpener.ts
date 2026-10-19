@@ -15,11 +15,13 @@
  ***************************************************************************/
 import * as CFB from 'cfb';
 import type {
-  ActiveXObjectConstructor,
   FileContent,
+  OpenerFunction,
+} from '../component/view/openButton.types';
+import type {
+  ActiveXObjectConstructor,
   FileSystemObject,
   FileWithMsClose,
-  OpenerFunction,
 } from './fileOpener.types';
 
 const ForReading = 1;

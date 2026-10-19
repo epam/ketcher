@@ -115,7 +115,7 @@ test.describe('Mark as... related cases: ', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
+    await shiftCanvas(page, -150, 0);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment
@@ -161,7 +161,7 @@ test.describe('Mark as... related cases: ', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
+    await shiftCanvas(page, -150, 0);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select non-continuous atoms (atoms 0 and 3 are not directly connected)

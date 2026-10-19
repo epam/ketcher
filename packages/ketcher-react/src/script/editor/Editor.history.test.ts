@@ -1,12 +1,15 @@
 import {
   Action,
   Atom,
+  AttachmentGroup,
+  Bond,
   Command,
   CoreEditor,
   EditorHistory,
   EditorType,
   FlexMode,
   KetMonomerClass,
+  MacromoleculesConverter,
   RenderersManager,
   Struct,
   Vec2,
@@ -15,6 +18,7 @@ import {
   ketcherProvider,
 } from 'ketcher-core';
 import Editor from './Editor';
+import { Subscription } from 'subscription';
 import {
   initKeydownListener,
   removeKeydownListener,
@@ -42,7 +46,8 @@ describe('History across molecule and macromolecule modes', () => {
     ketcherProvider.addKetcherInstance({
       id: ketcherId,
       editor: micro,
-      changeEvent: { dispatch: jest.fn() },
+      changeEvent: new Subscription(),
+      updateMonomersLibrary: jest.fn(),
     } as never);
     const canvas = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -74,6 +79,8 @@ describe('History across molecule and macromolecule modes', () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
+    jest.useRealTimers();
     macro.destroy();
     ketcherProvider.removeKetcherInstance(ketcherId);
     window.isPolymerEditorTurnedOn = false;
@@ -195,6 +202,168 @@ describe('History across molecule and macromolecule modes', () => {
     macro.switchToMacromolecules();
     expect(micro.historySize().undo).toBe(1);
   });
+
+  it('keeps a monomer wizard canvas save undoable', () => {
+    addMicroStructure();
+    macro.switchToMacromolecules();
+    const originalManager = macro.drawingEntitiesManager;
+    expect(originalManager.atoms.size).toBe(1);
+    const previousHistoryPointer = history.historyPointer;
+    jest
+      .spyOn(MacromoleculesConverter, 'convertStructToDrawingEntities')
+      .mockReturnValue({ modelChanges: new Command() } as never);
+
+    macro.beginMonomerWizardSession();
+    macro.finishMonomerWizardSession(true);
+
+    expect(history.historyPointer).toBe(previousHistoryPointer + 1);
+    history.undo();
+    expect(macro.drawingEntitiesManager).toBe(originalManager);
+    expect(originalManager.atoms.size).toBe(1);
+    expect(history.historyPointer).toBe(previousHistoryPointer);
+    history.redo();
+    expect(macro.drawingEntitiesManager).not.toBe(originalManager);
+    expect(history.historyPointer).toBe(previousHistoryPointer + 1);
+  });
+
+  it.each([
+    { partialSelection: false, withAttachmentGroup: false },
+    { partialSelection: true, withAttachmentGroup: false },
+    { partialSelection: false, withAttachmentGroup: true },
+    { partialSelection: true, withAttachmentGroup: true },
+  ])(
+    'undoes a saved molecule monomer (partial selection: $partialSelection, attachment group: $withAttachmentGroup)',
+    ({ partialSelection, withAttachmentGroup }) => {
+      jest.useFakeTimers();
+      const struct = new Struct();
+      for (let index = 0; index < 12; index++) {
+        struct.atoms.add(
+          new Atom({ label: 'C', pp: new Vec2(index, index % 2) }),
+        );
+        if (index > 0) {
+          struct.bonds.add(new Bond({ begin: index - 1, end: index, type: 1 }));
+        }
+      }
+      if (withAttachmentGroup) {
+        const memberAtomIds = [0, 1].map((index) =>
+          struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(index, 5) })),
+        );
+        const metalAtomId = struct.atoms.add(
+          new Atom({ label: 'Fe', pp: new Vec2(0, 7) }),
+        );
+        const groupId = struct.addAttachmentGroup(
+          new AttachmentGroup({ atomIds: memberAtomIds }),
+        );
+        struct.bonds.add(
+          new Bond({
+            begin: groupId,
+            end: metalAtomId,
+            type: Bond.PATTERN.TYPE.HAPTIC,
+          }),
+        );
+      }
+      const expectAttachmentGroupPreserved = () => {
+        const current = micro.struct();
+        expect(current.attachmentGroups.size).toBe(withAttachmentGroup ? 1 : 0);
+        if (!withAttachmentGroup) return;
+        const [groupId, group] = Array.from(
+          current.attachmentGroups.entries(),
+        )[0];
+        expect(group.atomIds).toHaveLength(2);
+        expect(
+          group.atomIds.map((atomId) => current.atoms.get(atomId)?.pp),
+        ).toEqual([new Vec2(0, 5), new Vec2(1, 5)]);
+        const hapticBonds = Array.from(current.bonds.values()).filter(
+          (bond) => bond.type === Bond.PATTERN.TYPE.HAPTIC,
+        );
+        expect(hapticBonds).toHaveLength(1);
+        expect(hapticBonds[0].begin).toBe(groupId);
+        expect(current.atoms.get(hapticBonds[0].end)?.label).toBe('Fe');
+      };
+      micro.update(fromNewCanvas(micro.render.ctab, struct));
+      const originalStruct = micro.struct();
+      const positions = Array.from(
+        originalStruct.atoms.values(),
+        (atom) => new Vec2(atom.pp),
+      );
+      if (partialSelection) {
+        micro.selection({ atoms: [0, 1, 2, 3], bonds: [0, 1, 2] });
+      } else if (withAttachmentGroup) {
+        micro.selection({
+          atoms: Array.from({ length: 12 }, (_, index) => index),
+          bonds: Array.from({ length: 11 }, (_, index) => index),
+        });
+      }
+      expect(micro.isMonomerCreationWizardEnabled).toBe(true);
+      micro.openMonomerCreationWizard();
+      if (!partialSelection) {
+        micro.assignLeavingGroupAtom(11);
+      }
+      const wizardStruct = micro.struct();
+      const atomIdMap = new Map<number, number>();
+      const structure = wizardStruct.clone(
+        undefined,
+        undefined,
+        undefined,
+        atomIdMap,
+      );
+      const monomerCreationState = micro.monomerCreationState;
+      assert(monomerCreationState);
+      const monomerData = micro.saveNewMonomer({
+        type: KetMonomerClass.CHEM,
+        symbol: 'UndoTest',
+        name: 'Undo test monomer',
+        naturalAnalogue: '',
+        aliasHELM: '',
+        aliasBILN: '',
+        structure,
+        attachmentPoints: monomerCreationState.assignedAttachmentPoints,
+      });
+      micro.finishNewMonomersCreation([
+        {
+          ...monomerData,
+          atomIdMap,
+          monomerStructureInWizard: {
+            atoms: Array.from(wizardStruct.atoms.keys()),
+            bonds: Array.from(wizardStruct.bonds.keys()),
+          },
+        },
+      ]);
+      jest.runAllTimers();
+
+      expect(micro.historySize()).toEqual({ undo: 2, redo: 0 });
+      expect(micro.struct().sgroups.size).toBe(1);
+      expect(micro.struct().bonds.size).toBe(
+        (partialSelection ? 12 : 11) + (withAttachmentGroup ? 1 : 0),
+      );
+      expectAttachmentGroupPreserved();
+      micro.struct().bonds.forEach((bond) => {
+        expect(micro.struct().getBondEndpoint(bond.begin)).toBeDefined();
+        expect(micro.struct().getBondEndpoint(bond.end)).toBeDefined();
+      });
+      expect(originalStruct.sgroups.size).toBe(0);
+      const savedStruct = micro.struct();
+      micro.undo();
+      expect(micro.struct()).toBe(originalStruct);
+      expect(micro.struct().sgroups.size).toBe(0);
+      expect(micro.struct().atoms.size).toBe(withAttachmentGroup ? 15 : 12);
+      expectAttachmentGroupPreserved();
+      expect(
+        Array.from(micro.struct().atoms.values(), (atom) => atom.pp),
+      ).toEqual(positions);
+      micro.redo();
+      expect(micro.struct()).toBe(savedStruct);
+      expect(micro.struct().sgroups.size).toBe(1);
+      expectAttachmentGroupPreserved();
+      micro.undo();
+      micro.undo();
+      expect(micro.struct().isBlank()).toBe(true);
+      micro.redo();
+      micro.redo();
+      expect(micro.struct()).toBe(savedStruct);
+      expectAttachmentGroupPreserved();
+    },
+  );
 
   it('exports Flex positions when switching to molecules from Snake mode', () => {
     macro.switchToMacromolecules();

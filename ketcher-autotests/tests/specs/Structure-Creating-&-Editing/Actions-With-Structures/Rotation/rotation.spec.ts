@@ -517,25 +517,33 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-    await page.setViewportSize({ width: 1200, height: 1080 });
-    await zoomOutByKeyboard(page, { repeat: 5 });
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V2000/rings-heteroatoms-query-features.mol',
-    );
-    await selectAllStructuresOnCanvas(page);
-    await RotationTool(page).moveRotationHandleTo({
-      x: 20,
-      y: 100,
-    });
-    await clickOnCanvas(page, 70, 90, {
-      from: 'pageTopLeft',
-    });
-    const targetAtom = getAtomLocator(page, {
-      atomLabel: 'C',
-      atomId: 32,
-    });
-    await takeElementScreenshot(page, targetAtom, { padding: 100 });
+    const originalViewport = page.viewportSize();
+    if (!originalViewport) {
+      throw new Error('Page viewport size is not available.');
+    }
+    try {
+      await page.setViewportSize({ width: 1200, height: 1080 });
+      await zoomOutByKeyboard(page, { repeat: 5 });
+      await openFileAndAddToCanvas(
+        page,
+        'Molfiles-V2000/rings-heteroatoms-query-features.mol',
+      );
+      await selectAllStructuresOnCanvas(page);
+      await RotationTool(page).moveRotationHandleTo({
+        x: 20,
+        y: 100,
+      });
+      await clickOnCanvas(page, 70, 90, {
+        from: 'pageTopLeft',
+      });
+      const targetAtom = getAtomLocator(page, {
+        atomLabel: 'C',
+        atomId: 32,
+      });
+      await takeElementScreenshot(page, targetAtom, { padding: 100 });
+    } finally {
+      await page.setViewportSize(originalViewport);
+    }
   });
 
   test('Cancel rotation on "Escape" key', async () => {

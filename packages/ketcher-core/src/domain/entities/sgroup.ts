@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Atom } from './atom';
-import type { Bond } from './bond';
+import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
@@ -92,7 +92,6 @@ interface SGroupData {
 
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
-type StructBondsAccess = Pick<Struct, 'bonds'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type RenderableSGroupAtom =
   | Atom
@@ -563,7 +562,7 @@ export class SGroup {
   }
 
   static getCrossBonds(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess,
     parentAtomSet: Pile<number>,
   ): { [key: number]: Array<number> } {
     const crossBonds: { [key: number]: Array<number> } = {};
@@ -643,7 +642,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess & StructBondEndpointAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,

@@ -37,6 +37,11 @@ Drawing a bond creates any missing endpoint atoms and keeps hydrogen counts cons
 - **WHEN** the user clicks an existing stereo or dative bond
 - **THEN** the bond's direction is reversed
 
+#### Scenario: Flipping or retyping a bond with dative atoms
+
+- **WHEN** the user flips a dative bond or changes a bond's type
+- **THEN** implicit hydrogens are recalculated at both endpoints, and at every other dative atom in the same aromatic ring system
+
 ## Guarantees
 
 - Endpoint atoms and implicit hydrogen counts stay consistent with bond additions, removals, and type changes.

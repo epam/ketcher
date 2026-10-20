@@ -42,6 +42,46 @@ Placing or replacing an atom keeps implicit hydrogen counts and valence consiste
 - **WHEN** the user clicks an atom with the _Charge Plus_ or _Charge Minus_ tool
 - **THEN** the atom's charge increases or decreases by one and implicit hydrogens are recalculated
 
+#### Scenario: Dative donor and acceptor bonds
+
+- **WHEN** an atom has dative bonds
+- **THEN** a dative bond that starts on the atom (donor) uses an electron pair, and one that ends on it (acceptor) uses an empty orbital; the atom's implicit hydrogens are what its remaining electrons and orbitals allow
+
+#### Scenario: Dative limits exceeded
+
+- **WHEN** an atom has more donor bonds or more acceptor bonds than its valence electron pairs and empty orbitals allow
+- **THEN** the atom is underlined in red; the underline comes only from these donor/acceptor limits, not from covalent over-valence alone
+
+#### Scenario: Donor and acceptor on the same atom cancel
+
+- **WHEN** an atom has one donor bond and one acceptor bond
+- **THEN** the two cancel out and do not count against the limits
+
+#### Scenario: Dative bond on an aromatic atom
+
+- **WHEN** an aromatic atom has a dative bond and its ring system can be assigned a Kekulé structure
+- **THEN** the atom's implicit hydrogens use its Kekulé bond orders, without changing the drawn structure; in a ring, an atom with more donor than acceptor bonds is preferred to take the double bond (so a donor nitrogen in imidazole is the pyridine-like one)
+
+#### Scenario: Dative bond on an aromatic atom without a Kekulé structure
+
+- **WHEN** an aromatic atom has a dative bond but its ring system cannot be assigned a Kekulé structure (for example, it contains query atoms or elements outside the main-group s/p set)
+- **THEN** its implicit hydrogens follow the usual aromatic rules, and it is underlined only if the limits are exceeded even when each aromatic bond counts as one
+
+#### Scenario: Atom with explicit valence and dative bonds
+
+- **WHEN** an atom has an explicit valence and a dative bond
+- **THEN** its implicit hydrogens still follow the explicit valence, and exceeding the donor/acceptor limits also underlines it
+
+#### Scenario: User-set implicit hydrogen count
+
+- **WHEN** the user has set an atom's implicit hydrogen count
+- **THEN** that count is kept as the implicit hydrogen count, and it is counted as covalent bonds when the electron and orbital limits are checked
+
+#### Scenario: Dative implicit hydrogens for listed elements only
+
+- **WHEN** an atom with a dative bond is an element outside H, Li, B, C, N, O, F, Na, Al, Si, P, S, Cl, K, Ga, Ge, As, Se, Br, Rb, In, Sn, Sb, Te, I, Cs, Tl, Pb, Bi, Po, At, Fr
+- **THEN** its implicit hydrogen count from the dative calculation is zero, unless the user has set a count
+
 ## Guarantees
 
 - Implicit hydrogen counts stay consistent with element, charge, isotope, and bond changes.
@@ -52,6 +92,7 @@ Placing or replacing an atom keeps implicit hydrogen counts and valence consiste
 
 - This is a **molecules-mode** feature. In macromolecules mode the equivalent is placing monomers (see [macromolecules](./macromolecules.md)); individual atoms of an abbreviated group / functional group cannot be edited until the abbreviation is removed.
 - Query atom features (lists, not-lists, generics) are meaningful only for query-capable export formats.
+- Dative-bond valence in aromatic rings uses a simplified Kekulé model: element-specific cases such as hypervalent S/Se or N(V) are not modelled.
 
 ## Related
 

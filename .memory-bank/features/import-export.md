@@ -21,6 +21,11 @@ Import parses recognized formats into an editable structure; export serializes t
 - **WHEN** the user opens a file in a supported format
 - **THEN** its editable contents are previewed and, on confirmation, the parsed structure is placed on the canvas
 
+#### Scenario: Repeated Molfile V2000 atom property lines
+
+- **WHEN** a V2000 molfile repeats an `M  CHG`, `M  RAD`, `M  ISO`, `M  RBC`, `M  UNS`, or `M  APO` line
+- **THEN** every line is read, and when two entries name the same atom the later one wins
+
 #### Scenario: Format auto-recognition in molecules mode
 
 - **WHEN** the user pastes structure text in molecules mode

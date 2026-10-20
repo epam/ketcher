@@ -69,11 +69,11 @@ export default function copyAs(type: SerializationType): void {
 
     const structData = serializer.serialize(struct);
 
-    const legacyGlobal = globalThis as unknown as {
-      clipboardData?: { setData: (type: string, data: string) => void };
+    const { clipboardData } = globalThis as typeof globalThis & {
+      clipboardData?: DataTransfer;
     };
-    if (legacyGlobal.clipboardData) {
-      legacyGlobal.clipboardData.setData('text', structData);
+    if (clipboardData) {
+      clipboardData.setData('text', structData);
     } else {
       navigator.clipboard.writeText(structData);
     }

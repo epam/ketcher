@@ -39,8 +39,7 @@ async function copyImageToClipboard(): Promise<void> {
     const generateImageOptions: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
-      bondThickness:
-        (options.settings.bondThickness as number) || defaultBondThickness,
+      bondThickness: options.settings.bondThickness || defaultBondThickness,
     };
 
     const image: Blob = await ketcher.generateImage(

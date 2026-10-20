@@ -31,8 +31,9 @@ The `.memory-bank/` directory at the repo root is the **canonical knowledge base
 ├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions, etc.
 ├── glossary.md         # Term definitions used in code and product
 ├── invariants.md       # Rules that must never be broken (architectural + domain)
-├── testing.md          # Testing strategy: unit (Jest), integration, E2E (Playwright)
-├── e2e-test-plan-template.md  # How to write a plan before creating new E2E test specs
+├── testing/            # Test strategy + E2E planning
+│   ├── testing.md      # Testing strategy: unit (Jest), integration, E2E (Playwright)
+│   └── e2e-test-plan-template.md  # How to write a plan before creating new E2E test specs
 │
 ├── features/           # Current observable behavior of each product feature
 │   ├── README.md       # Index + format convention
@@ -61,8 +62,8 @@ The `.memory-bank/` directory at the repo root is the **canonical knowledge base
 | `domain.md`                | Domain model concepts        | Entities, relationships, constraints                                                        |
 | `glossary.md`              | Shared vocabulary            | Term, Definition, Used In                                                                   |
 | `invariants.md`            | Non-negotiable rules         | Labeled D1/A1/etc., what must never break                                                   |
-| `testing.md`               | Test strategy                | Levels, locations, how to run                                                               |
-| `e2e-test-plan-template.md`| E2E test plan guide          | Structure + lessons for planning a new batch of Playwright specs before writing them         |
+| `testing/testing.md`       | Test strategy                | Levels, locations, how to run                                                               |
+| `testing/e2e-test-plan-template.md` | E2E test plan guide | Structure + lessons for planning a new batch of Playwright specs before writing them         |
 | `features/<name>.md`       | Product behavior             | Problem, User interaction, Expected behavior (WHEN/THEN scenarios), Guarantees, Limitations |
 | `modules/<name>.md`        | Subsystem docs               | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints      |
 | `adr/<date>-<title>.md`    | Architectural decisions      | Decision, Context, Alternatives considered, Rationale, Consequences                         |
@@ -83,6 +84,7 @@ What goes where:
 - New subsystem → `modules/<name>.md`
 - New terms → `glossary.md`
 - New non-negotiable rules → `invariants.md`
+- Reusable E2E testing/planning lessons → `testing/testing.md` (how-to) or `testing/e2e-test-plan-template.md` (planning process)
 - Completed change specs → move from `specs/active/` to `specs/archived/`
 
 Do **not** put implementation details (function names, file paths, variable names) into `features/` or `domain.md`. Those belong in `modules/` or code comments.
@@ -106,8 +108,8 @@ When archiving a change, also update the memory bank as described above.
 - Only update the memory bank when archiving a change. Do not update it for proposals or specs in progress.
 - When completeing tasks then mark them as done one by one to not lose track of what has been done and what is left to do. Do not mark all tasks as done at once at the end.
 - Before starting writing e2e playwrite tests always ask to proceed, to ensure that context is not overloaded.
-- Before writing e2e playwrite tests read the testing.md file in the memory bank to understand the test strategy and existing test coverage.
-- When a task means a new spec file or folder of E2E tests, first draft an E2E test plan following `.memory-bank/e2e-test-plan-template.md` and present it for approval before writing spec code.
+- Before writing e2e playwrite tests read the testing strategy doc (`.memory-bank/testing/testing.md`) to understand the test strategy and existing test coverage.
+- When a task means a new spec file or folder of E2E tests, first draft an E2E test plan following `.memory-bank/testing/e2e-test-plan-template.md` and present it for approval before writing spec code.
 
 ### Additional rules for opsx:archive
 - When updating any of the memory bank files, use the format described in the "File format details" section above.

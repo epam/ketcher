@@ -70,6 +70,44 @@ export function countDativeBonds(
   return { donorCount, acceptorCount };
 }
 
+/** Lower bound of the covalent bond order sum, used when exact orders are unknown */
+export function calcCovalentBondOrderLowerBound(
+  struct: Struct,
+  atom: Atom,
+  includeAtomsInCollapsedSgroups: boolean,
+): number {
+  let bondOrderSum = 0;
+  for (const { bond } of getVisibleBonds(
+    struct,
+    atom,
+    includeAtomsInCollapsedSgroups,
+  )) {
+    switch (bond.type) {
+      case Bond.PATTERN.TYPE.SINGLE:
+      case Bond.PATTERN.TYPE.DOUBLE:
+      case Bond.PATTERN.TYPE.TRIPLE:
+        bondOrderSum += bond.type;
+        break;
+      case Bond.PATTERN.TYPE.HAPTIC:
+        if (!isAllowedNonAttachmentGroupHapticBondMetal(atom)) {
+          bondOrderSum += 1;
+        }
+        break;
+      case Bond.PATTERN.TYPE.DATIVE:
+      case Bond.PATTERN.TYPE.HYDROGEN:
+        break;
+      case Bond.PATTERN.TYPE.AROMATIC:
+      case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
+      case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
+      case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+      case Bond.PATTERN.TYPE.ANY:
+        bondOrderSum += 1;
+        break;
+    }
+  }
+  return bondOrderSum;
+}
+
 /** Covalent bond order sum of an aromatic atom in the Kekulé structure, or null */
 export function calcKekuleBondOrderSum(
   struct: Struct,

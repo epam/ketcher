@@ -298,6 +298,7 @@ export class BondRenderer extends BaseRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'atomic-bond')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', this.bond.type)
       .attr('data-bondstereo', this.bond.stereo)

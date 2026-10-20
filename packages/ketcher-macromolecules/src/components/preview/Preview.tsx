@@ -41,7 +41,7 @@ export const Preview = () => {
   const editor = useSelector(selectEditor);
 
   useLayoutEffect(() => {
-    if (!previewRef.current || preview.style) {
+    if (!previewRef.current || preview?.style) {
       return;
     }
 

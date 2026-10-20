@@ -26,7 +26,6 @@ import {
   DeepPartial,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
-import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { PresetPosition } from 'ketcher-react';
 import { SELECT_SUBMENU_ID } from 'components/menu/constants';
@@ -58,7 +57,7 @@ interface EditorState {
   monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
-  preview: EditorStatePreview;
+  preview: EditorStatePreview | undefined;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
   isDragging: boolean;
@@ -80,11 +79,7 @@ const initialState: EditorState = {
   monomerLibraryLoadError: null,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
-  preview: {
-    type: PreviewType.Monomer,
-    monomer: undefined,
-    style: {},
-  },
+  preview: undefined,
   position: undefined,
   isContextMenuActive: false,
   isDragging: false,
@@ -171,13 +166,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
-      state.preview = castDraft(
-        action.payload ?? {
-          type: PreviewType.Monomer,
-          monomer: undefined,
-          style: {},
-        },
-      );
+      state.preview = action.payload ? castDraft(action.payload) : undefined;
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
@@ -268,8 +257,9 @@ export const {
   setSelectedMenuGroupItem,
 } = editorSlice.actions;
 
-export const selectShowPreview = (state: RootState): EditorStatePreview =>
-  state.editor.preview;
+export const selectShowPreview = (
+  state: RootState,
+): EditorStatePreview | undefined => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
 export const selectEditorPosition = (

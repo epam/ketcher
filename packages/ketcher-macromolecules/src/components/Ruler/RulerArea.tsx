@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
+/* eslint-disable react-hooks/preserve-manual-memoization */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { D3DragEvent } from 'd3';
+import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
@@ -51,6 +51,12 @@ const getTranslateValue = (layoutMode: LayoutMode, lineLength: number) => {
 
   return 0;
 };
+
+const getDragPosition = (
+  transform: ZoomTransform,
+  translateValue: number,
+  dragDelta: number,
+): number => transform.invertX(transform.applyX(translateValue) + dragDelta);
 
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
@@ -135,8 +141,7 @@ export const RulerArea = () => {
   const calculateDragPosition = useCallback(
     (initialScreenX: number) => {
       const dragDelta = initialScreenX - dragStartX.current;
-      const screenX = transform.applyX(translateValue) + dragDelta;
-      return [dragDelta, transform.invertX(screenX)];
+      return [dragDelta, getDragPosition(transform, translateValue, dragDelta)];
     },
     [transform, translateValue],
   );
@@ -146,15 +151,14 @@ export const RulerArea = () => {
       return lineLengthValue;
     }
 
-    const [, dragPosition] = calculateDragPosition(
-      dragStartX.current + dragDelta,
+    return calculateLineLength(
+      getDragPosition(transform, translateValue, dragDelta),
     );
-    return calculateLineLength(dragPosition);
   }, [
     isDragging,
     lineLengthValue,
-    calculateDragPosition,
-    dragStartX,
+    transform,
+    translateValue,
     dragDelta,
     calculateLineLength,
   ]);

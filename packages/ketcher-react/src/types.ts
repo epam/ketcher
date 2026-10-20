@@ -15,24 +15,11 @@
  ***************************************************************************/
 
 import type { Serializer, Struct } from 'ketcher-core';
-import type Editor from './script/editor/Editor';
 
 /**
  * Supported serialization format types for structure copying.
  */
 export type SerializationType = 'mol' | 'ket';
-
-/**
- * Global application state containing editor and other configuration.
- */
-export interface CurrentState {
-  editor: Editor;
-  options?: {
-    settings?: Record<string, unknown>;
-  };
-  server?: unknown;
-  [key: string]: unknown;
-}
 
 /**
  * Serializer for a Struct type.

@@ -19,6 +19,9 @@ import {
   KetcherLogger,
   KetSerializer,
   type Struct,
+  type CheckResult,
+  type CalculateResult,
+  type LayoutResult,
   StereoFlag,
 } from 'ketcher-core';
 import { appUpdate } from '../options/actions';
@@ -72,9 +75,7 @@ export function recognize(file: File | null, version: string) {
       },
       (e) => {
         dispatch(setStruct(null));
-        if (editor?.errorHandler) {
-          editor.errorHandler(e instanceof Error ? e.message : String(e));
-        }
+        editor?.errorHandler?.(String(e));
       },
     );
     dispatch(setStruct(process));
@@ -122,16 +123,14 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
     const options = getState().options.getServerSettings();
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
 
-    return serverCall(editor, server, 'check', options)
+    return serverCall<CheckResult>(editor, server, 'check', options)
       .then((res) => {
         res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
         dispatch(checkErrors(res));
       })
       .catch((e) => {
         KetcherLogger.error('index.js::check', e);
-        if (editor?.errorHandler) {
-          editor.errorHandler(e instanceof Error ? e.message : String(e));
-        }
+        editor?.errorHandler?.(String(e));
       });
   };
 }
@@ -167,9 +166,7 @@ export function analyse(): AppThunk {
       )
       .catch((e) => {
         KetcherLogger.error('index.js::analyse', e);
-        if (editor?.errorHandler) {
-          editor.errorHandler(e instanceof Error ? e.message : String(e));
-        }
+        editor?.errorHandler?.(String(e));
       });
   };
 }
@@ -186,7 +183,7 @@ export function serverTransform(
     opts.data = data;
     dispatch(indigoVerification(true));
 
-    serverCall(state.editor, state.server, method, opts, struct)
+    serverCall<LayoutResult>(state.editor, state.server, method, opts, struct)
       .then((res) => {
         const loadedStruct = new KetSerializer().deserialize(res.struct);
 
@@ -201,9 +198,7 @@ export function serverTransform(
       })
       .catch((e) => {
         KetcherLogger.error('index.js::serverTransform', e);
-        if (state.editor?.errorHandler) {
-          state.editor.errorHandler(e instanceof Error ? e.message : String(e));
-        }
+        state.editor?.errorHandler?.(String(e));
       })
       .finally(() => {
         dispatch(indigoVerification(false));
@@ -225,13 +220,14 @@ function resetStereoFlagsPosition(struct: Struct): void {
 }
 
 // TODO: serverCall function should not be exported
-export function serverCall(
+// TODO: serverCall function should not be exported
+export function serverCall<T>(
   editor: Editor,
   server: Api,
   method: ServerTransformMethod,
   options: ServerSettings,
   struct?: Struct,
-) {
+): Promise<T> {
   const selection = editor.selection();
 
   let selectedAtoms: number[] = [];
@@ -277,19 +273,19 @@ export function serverCall(
     bonds: selectedBonds,
   });
 
-  return server.then((api) =>
-    api[method](
-      {
-        struct: serializedStruct,
-        ...(method !== 'calculate' && method !== 'check'
-          ? { output_format: ChemicalMimeType.KET }
-          : {}),
+  const call = server[method] as unknown as (
+    data: { struct: string; [key: string]: unknown },
+    options?: Record<string, unknown>,
+  ) => Promise<T>;
 
-        ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
+  const request: { struct: string; [key: string]: unknown } = {
+    struct: serializedStruct,
+    ...(method !== 'calculate' && method !== 'check'
+      ? { output_format: ChemicalMimeType.KET }
+      : {}),
+    ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
+    ...(options.data ?? {}),
+  };
 
-        ...(options.data ?? {}),
-      },
-      omit('data', options),
-    ),
-  );
+  return server.then(() => call(request, omit('data', options)));
 }

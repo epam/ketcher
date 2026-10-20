@@ -25,7 +25,7 @@ import type { SerializationType, StructSerializer } from '../../../types';
  * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
  */
 export default function copyAs(type: SerializationType): void {
-  const { editor } = globalThis.currentState;
+  const { editor } = currentState;
 
   if (!editor) {
     KetcherLogger.error('copyAs.ts::copyAs', 'Editor is not initialized');

@@ -3,7 +3,7 @@ import type { CurrentAppState } from './script/ui/state/store.types';
 
 declare global {
   let global: typeof globalThis;
-  var currentState: CurrentAppState;
+  let currentState: CurrentAppState;
 
   export interface Window {
     ketcher?: Ketcher;

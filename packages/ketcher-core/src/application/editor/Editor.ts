@@ -2961,7 +2961,13 @@ export class CoreEditor {
       x: this.canvasOffset.left + tx,
       y: this.canvasOffset.top + ty,
     };
-    const { left, top } = render.clientArea.getBoundingClientRect();
+    const getBounds = render.clientArea?.getBoundingClientRect;
+    const bounds =
+      typeof getBounds === 'function'
+        ? getBounds.call(render.clientArea)
+        : undefined;
+    const left = bounds?.left ?? 0;
+    const top = bounds?.top ?? 0;
     const zoom = viewport.zoom;
 
     render.options.zoom = zoom;
@@ -2984,7 +2990,13 @@ export class CoreEditor {
 
     const { minX, minY } = render.viewBox;
     const zoom = render.options.zoom;
-    const { left, top } = render.clientArea.getBoundingClientRect();
+    const getBounds = render.clientArea?.getBoundingClientRect;
+    const bounds =
+      typeof getBounds === 'function'
+        ? getBounds.call(render.clientArea)
+        : undefined;
+    const left = bounds?.left ?? 0;
+    const top = bounds?.top ?? 0;
 
     return {
       zoom,

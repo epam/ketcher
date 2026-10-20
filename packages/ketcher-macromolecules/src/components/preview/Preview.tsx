@@ -46,19 +46,7 @@ export const Preview = () => {
   const isPopupMode = Boolean(ketcherRootRect?.x || ketcherRootRect?.y);
 
   useLayoutEffect(() => {
-    if (!previewRef.current) {
-      return;
-    }
-
-    if (preview.style) {
-      // Clear coordinates left over from a canvas-anchored preview;
-      // React does not reset inline styles it did not set itself.
-      if (preview.style.left === undefined) {
-        previewRef.current.style.left = '';
-      }
-      if (preview.style.top === undefined) {
-        previewRef.current.style.top = '';
-      }
+    if (!previewRef.current || preview?.style) {
       return;
     }
 

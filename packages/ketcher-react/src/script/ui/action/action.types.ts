@@ -131,15 +131,6 @@ type ActionStateOptions = {
   buttons?: Record<string, { hidden?: boolean }>;
 };
 
-// type ActionThunkState = {
-//   editor: ActionStateEditor;
-//   toolbar: {
-//     visibleTools: {
-//       select: ToolVariant;
-//     };
-//   };
-// };
-
 // Specific action option types
 type AtomActionOpts = {
   label: string;

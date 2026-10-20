@@ -51,6 +51,7 @@ import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointS
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 import {
   calcKekuleBondOrderSum,
+  collectDativeAtomsToRecalculate,
   countDativeBonds,
   type DativeBondCounts,
   type KekulizationCache,
@@ -1592,7 +1593,11 @@ export class Struct {
         );
       });
     } else {
-      list.forEach((aid) => {
+      collectDativeAtomsToRecalculate(
+        this,
+        list,
+        includeAtomsInCollapsedSgroups,
+      ).forEach((aid) => {
         if (this.atoms.get(aid)) {
           this.calcImplicitHydrogen(
             aid,

@@ -1,7 +1,12 @@
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 import { MolSerializer } from 'domain/serializers/mol/molSerializer';
 
-type AtomSpec = { label: string; charge?: number; explicitValence?: number };
+type AtomSpec = {
+  label: string;
+  charge?: number;
+  explicitValence?: number;
+  implicitHCount?: number;
+};
 type BondSpec = { begin: number; end: number; type: number };
 
 function buildStruct(atomSpecs: AtomSpec[], bondSpecs: BondSpec[]) {
@@ -12,6 +17,7 @@ function buildStruct(atomSpecs: AtomSpec[], bondSpecs: BondSpec[]) {
         label: spec.label,
         charge: spec.charge ?? 0,
         explicitValence: spec.explicitValence ?? -1,
+        implicitHCount: spec.implicitHCount ?? null,
         pp: new Vec2(index, 0),
       }),
     ),
@@ -115,7 +121,7 @@ describe('Struct dative bond valence', () => {
       expect(carbon?.implicitH).toBe(4);
     });
 
-    it('underlines a carbon with five single bonds even when one donor and one acceptor cancel', () => {
+    it('does not underline a carbon with five single bonds when one donor and one acceptor cancel', () => {
       const { struct, ids } = buildStruct(
         [
           { label: 'C' },
@@ -134,7 +140,7 @@ describe('Struct dative bond valence', () => {
         ],
       );
       const carbon = struct.atoms.get(ids[0]);
-      expect(carbon?.badConn).toBe(true);
+      expect(carbon?.badConn).toBe(false);
       expect(carbon?.implicitH).toBe(0);
     });
 
@@ -147,6 +153,46 @@ describe('Struct dative bond valence', () => {
         ],
       );
       expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('does not underline fluoride cation with one single bond and one dative donor', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'F', charge: 1 }, { label: 'C' }, { label: 'N' }],
+        [
+          { begin: 0, end: 1, type: SINGLE },
+          { begin: 0, end: 2, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('does not underline chlorine cation with three single bonds and one dative donor', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'Cl', charge: 1 },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'N' },
+        ],
+        [
+          { begin: 0, end: 1, type: SINGLE },
+          { begin: 0, end: 2, type: SINGLE },
+          { begin: 0, end: 3, type: SINGLE },
+          { begin: 0, end: 4, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('counts a user-set implicit hydrogen count as covalent bonds', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'C', implicitHCount: 4 }, { label: 'N' }],
+        [{ begin: 0, end: 1, type: DATIVE }],
+      );
+      const carbon = struct.atoms.get(ids[0]);
+      expect(carbon?.badConn).toBe(true);
+      expect(carbon?.implicitH).toBe(4);
     });
 
     it('sets valence from bond orders, radicals and implicit hydrogen for a phosphorus donor and acceptor', () => {

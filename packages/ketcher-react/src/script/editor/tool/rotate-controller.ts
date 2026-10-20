@@ -31,6 +31,8 @@ const STYLE = {
   ACTIVE_COLOR: '#365CFF',
 };
 
+const NON_COUNTED_SELECTION_KEYS = ['enhancedFlags', 'bonds'];
+
 const LEFT_ARROW_PATH =
   'M12.7034 14.8189L9.39616 17.6218L9.13674 16.1892C8.12927 16.0487 7.17132 15.6644 6.34605 15.0697C5.52078 14.475 4.85314 13.6878 4.40108 12.7766C3.94903 11.8653 3.72622 10.8575 3.75201 9.84062C3.7778 8.82373 4.0514 7.8285 4.54906 6.94133L5.8121 7.65148C5.45018 8.29719 5.24246 9.01784 5.20516 9.75712C5.16786 10.4964 5.302 11.2343 5.59709 11.9132C5.89218 12.592 6.34023 13.1935 6.90624 13.6705C7.47225 14.1475 8.1409 14.4872 8.85993 14.6631L8.62297 13.3587L12.7034 14.8189Z';
 const RIGHT_ARROW_PATH =
@@ -166,7 +168,7 @@ class RotateController {
       ...selection,
       atoms: visibleAtoms,
     })
-      .filter(([key]) => key !== 'enhancedFlags')
+      .filter(([key]) => !NON_COUNTED_SELECTION_KEYS.includes(key))
       .reduce((count, [, ids]) => count + (ids?.length ?? 0), 0);
     const isSingleAtomOrPlus =
       selectedItemsCount === 1 &&

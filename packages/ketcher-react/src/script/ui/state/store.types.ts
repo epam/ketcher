@@ -62,5 +62,5 @@ export interface StoreState {
 }
 
 export type CurrentAppState = Pick<StoreState, 'options'> & {
-  editor: Editor;
+  editor: Editor | null;
 };

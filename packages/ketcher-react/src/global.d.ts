@@ -1,8 +1,9 @@
 import type { BaseRenderer, Ketcher } from 'ketcher-core';
-import type { CurrentState } from './types';
+import type { CurrentAppState } from './script/ui/state/store.types';
 
 declare global {
-  var currentState: CurrentState;
+  let global: typeof globalThis;
+  var currentState: CurrentAppState;
 
   export interface Window {
     ketcher?: Ketcher;

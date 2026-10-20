@@ -328,6 +328,33 @@ describe('Struct dative bond valence', () => {
         expect(struct.atoms.get(aid)?.badConn).toBe(false);
       });
     });
+
+    it('gives exactly one hydrogen to imidazole when both nitrogens donate', () => {
+      // Ring order: N1, C2, N3, C4, C5; the partner Ni is atom 5
+      const ringBonds = [0, 1, 2, 3, 4].map((index) => ({
+        begin: index,
+        end: (index + 1) % 5,
+        type: AROMATIC,
+      }));
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'N' },
+          { label: 'C' },
+          { label: 'N' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Ni' },
+        ],
+        [
+          ...ringBonds,
+          { begin: 0, end: 5, type: DATIVE },
+          { begin: 2, end: 5, type: DATIVE },
+        ],
+      );
+      const nitrogens = [ids[0], ids[2]].map((aid) => struct.atoms.get(aid));
+      expect(nitrogens.filter((atom) => atom?.implicitH === 1)).toHaveLength(1);
+      expect(nitrogens.map((atom) => atom?.badConn)).toEqual([false, false]);
+    });
   });
 });
 

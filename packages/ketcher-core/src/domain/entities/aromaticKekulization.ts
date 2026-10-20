@@ -61,7 +61,10 @@ export function getKekuleRole(atom: KekuleAtom): KekuleRole | null {
 /**
  * Finds the atoms that carry a Kekulé double bond in one aromatic system: a matching
  * over aromatic bonds that covers every mandatory atom and never uses a forbidden one.
- * Preferred atoms are matched if any valid structure allows all of them to be.
+ * Preferred atoms are matched as many as possible. They are added in ascending atom
+ * ID order whenever the system still kekulizes with them, so a tie between equally
+ * large sets resolves toward lower IDs. A symmetric tie, such as the two nitrogens of
+ * imidazole, resolves the same way.
  * Returns null when no Kekulé structure exists or an atom is not supported.
  */
 export function findKekuleDoubleBondAtoms(
@@ -76,19 +79,30 @@ export function findKekuleDoubleBondAtoms(
     roles.set(atomId, role);
   }
 
-  const preferred = [...atoms.keys()].filter(
-    (atomId) =>
-      atoms.get(atomId)?.preferDoubleBond && roles.get(atomId) === 'optional',
-  );
-  if (preferred.length > 0) {
-    const promotedRoles = new Map(roles);
-    preferred.forEach((atomId) => promotedRoles.set(atomId, 'mandatory'));
-    const matching = findMatching(atoms, promotedRoles);
-    if (matching) {
-      return matching;
+  let matching = findMatching(atoms, roles);
+  if (!matching) {
+    return null;
+  }
+
+  // Sets of atoms coverable by a matching form a matroid, so this greedy pass ends
+  // with a largest preferred set rather than an arbitrary one.
+  const promotedRoles = new Map(roles);
+  const preferred = [...atoms.keys()]
+    .filter(
+      (atomId) =>
+        atoms.get(atomId)?.preferDoubleBond && roles.get(atomId) === 'optional',
+    )
+    .sort((a, b) => a - b);
+  for (const atomId of preferred) {
+    promotedRoles.set(atomId, 'mandatory');
+    const promotedMatching = findMatching(atoms, promotedRoles);
+    if (promotedMatching) {
+      matching = promotedMatching;
+    } else {
+      promotedRoles.set(atomId, 'optional');
     }
   }
-  return findMatching(atoms, roles);
+  return matching;
 }
 
 function findMatching(

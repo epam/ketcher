@@ -104,6 +104,21 @@ describe('findKekuleDoubleBondAtoms', () => {
     expect(findKekuleDoubleBondAtoms(imidazole(2))?.has(0)).toBe(false);
   });
 
+  it('matches as many preferred atoms as possible', () => {
+    // Five-membered ring: three preferred nitrogens and two carbons. Only two of
+    // the nitrogens can share the double bonds with the carbons.
+    const result = findKekuleDoubleBondAtoms(
+      ring([
+        { label: 'N', preferDoubleBond: true },
+        { label: 'N', preferDoubleBond: true },
+        { label: 'N', preferDoubleBond: true },
+        ...carbons(2),
+      ]),
+    );
+    const matchedPreferred = [0, 1, 2].filter((atomId) => result?.has(atomId));
+    expect(matchedPreferred).toHaveLength(2);
+  });
+
   it('kekulizes fused rings (naphthalene)', () => {
     // Two six-membered rings sharing atoms 0 and 5
     const neighbors = [

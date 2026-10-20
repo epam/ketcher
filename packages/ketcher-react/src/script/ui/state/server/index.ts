@@ -113,9 +113,6 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
-    if (!editor) {
-      return Promise.resolve();
-    }
     const struct = editor.struct();
 
     // recalculate implicit hydrogens before validation

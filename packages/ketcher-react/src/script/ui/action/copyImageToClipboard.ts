@@ -23,7 +23,8 @@ import {
 import i18n from '../../../i18n/i18n';
 
 async function copyImageToClipboard(): Promise<void> {
-  const { editor, options } = globalThis.currentState;
+  const { editor, options } = (globalThis as typeof globalThis & Window)
+    .currentState;
 
   if (!editor) {
     KetcherLogger.error(

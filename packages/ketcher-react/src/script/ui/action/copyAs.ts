@@ -38,7 +38,6 @@ export default function copyAs(type: SerializationType): void | null {
   let serializer: StructSerializer;
 
   try {
-    // Select and instantiate the appropriate serializer
     switch (type) {
       case 'mol': {
         serializer = new MolSerializer();
@@ -58,7 +57,6 @@ export default function copyAs(type: SerializationType): void | null {
       }
     }
 
-    // Check if structure contains simple objects or text objects
     const hasSimpleObjectsOrTexts = Boolean(
       struct.simpleObjects.size || struct.texts.size,
     );
@@ -69,18 +67,14 @@ export default function copyAs(type: SerializationType): void | null {
       return null;
     }
 
-    // Serialize the structure
     const structData = serializer.serialize(struct);
 
-    // Attempt to copy to clipboard using the appropriate API
     const legacyGlobal = globalThis as unknown as {
       clipboardData?: { setData: (type: string, data: string) => void };
     };
     if (legacyGlobal.clipboardData) {
-      // Legacy IE support
       legacyGlobal.clipboardData.setData('text', structData);
     } else {
-      // Modern browsers using Clipboard API
       navigator.clipboard.writeText(structData);
     }
 

@@ -8,3 +8,4 @@ export * from './multitailArrow';
 export * from './chains';
 export * from './monomers';
 export * from './layout';
+export * from './dativeValence';

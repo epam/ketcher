@@ -19,15 +19,10 @@ import { Atom, radicalElectrons } from './atom';
 import type { AttachmentGroup } from './attachmentGroup';
 import type { EditorSelection } from 'application/editor/editor.types';
 import { calcDativeValence } from './atomDativeValence';
-import {
-  findKekuleDoubleBondAtoms,
-  type KekuleAtom,
-} from './aromaticKekulization';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
 import { DATIVE_IMPLICIT_HYDROGEN_LABELS } from 'domain/constants/dativeValence';
-import type { ElementLabel } from 'domain/constants/element.types';
 import { Fragment } from './fragment';
 import { FunctionalGroup } from './functionalGroup';
 import { HalfBond } from './halfBond';
@@ -55,14 +50,12 @@ import {
 } from 'application/editor/shared/utils';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
-
-type AromaticSystemKekulization = {
-  atoms: Map<number, KekuleAtom> | null;
-  doubleBondAtoms: Set<number> | null;
-};
-
-/** Kekulé structures of aromatic systems, shared by the atoms of one recalculation */
-export type KekulizationCache = Map<number, AromaticSystemKekulization>;
+import {
+  calcKekuleBondOrderSum,
+  countDativeBonds,
+  type DativeBondCounts,
+  type KekulizationCache,
+} from 'domain/helpers/dativeValence';
 
 export type Neighbor = {
   aid: number;
@@ -1467,27 +1460,33 @@ export class Struct {
     let correctConn = conn;
     atom.badConn = false;
 
-    // Req 1.1: aromatic bonds are resolved to Kekulé orders; legacy path if that fails.
+    const dativeCounts = countDativeBonds(
+      this,
+      aid,
+      atom,
+      includeAtomsInCollapsedSgroups,
+    );
+    const hasDativeBond =
+      dativeCounts.donorCount + dativeCounts.acceptorCount > 0;
+
+    // Dative valence of an aromatic atom is calculated on a Kekulé structure.
+    // If that fails, the legacy path below is used.
     if (
       isAromatic &&
       atom.explicitValence < 0 &&
       !atom.isQuery() &&
       !atom.attachmentPoints &&
-      this.hasDativeBond(aid, atom, includeAtomsInCollapsedSgroups)
+      hasDativeBond
     ) {
-      const kekuleBondOrderSum = this.calcKekuleBondOrderSum(
+      const kekuleBondOrderSum = calcKekuleBondOrderSum(
+        this,
         aid,
         includeAtomsInCollapsedSgroups,
         kekulizationCache,
       );
       if (
         kekuleBondOrderSum !== null &&
-        this.calcDativeImplicitHydrogen(
-          aid,
-          atom,
-          kekuleBondOrderSum,
-          includeAtomsInCollapsedSgroups,
-        )
+        this.calcDativeImplicitHydrogen(atom, kekuleBondOrderSum, dativeCounts)
       ) {
         return;
       }
@@ -1525,12 +1524,7 @@ export class Struct {
     if (
       !isAromatic &&
       atom.explicitValence < 0 &&
-      this.calcDativeImplicitHydrogen(
-        aid,
-        atom,
-        correctConn,
-        includeAtomsInCollapsedSgroups,
-      )
+      this.calcDativeImplicitHydrogen(atom, correctConn, dativeCounts)
     ) {
       return;
     }
@@ -1550,16 +1544,10 @@ export class Struct {
   }
 
   private calcDativeImplicitHydrogen(
-    aid: number,
     atom: Atom,
     bondOrderSum: number,
-    includeAtomsInCollapsedSgroups: boolean,
+    { donorCount, acceptorCount }: DativeBondCounts,
   ): boolean {
-    const { donorCount, acceptorCount } = this.countDativeBonds(
-      aid,
-      atom,
-      includeAtomsInCollapsedSgroups,
-    );
     if (donorCount + acceptorCount === 0) {
       return false;
     }
@@ -1577,172 +1565,13 @@ export class Struct {
     }
 
     const covalentError =
-      DATIVE_IMPLICIT_HYDROGEN_LABELS.has(atom.label as ElementLabel) &&
+      DATIVE_IMPLICIT_HYDROGEN_LABELS.has(atom.label) &&
       !atom.calcValence(bondOrderSum);
     atom.implicitH = atom.implicitHCount ?? result.implicitHydrogenCount;
     atom.badConn = result.hasValenceError || covalentError;
     atom.valence =
       bondOrderSum + radicalElectrons(atom.radical) + atom.implicitH;
     return true;
-  }
-
-  private countDativeBonds(
-    aid: number,
-    atom: Atom,
-    includeAtomsInCollapsedSgroups: boolean,
-  ) {
-    let donorCount = 0;
-    let acceptorCount = 0;
-    for (const neighborId of atom.neighbors) {
-      const hb = this.halfBonds.get(neighborId);
-      assert(hb, `HalfBond ${neighborId} not found`);
-      const bond = this.bonds.get(hb.bid);
-      assert(bond, `Bond ${hb.bid} not found`);
-
-      if (
-        bond.type !== Bond.PATTERN.TYPE.DATIVE ||
-        Bond.isBondToHiddenLeavingGroup(
-          this,
-          bond,
-          includeAtomsInCollapsedSgroups,
-        )
-      ) {
-        continue;
-      }
-
-      if (bond.begin === aid) {
-        donorCount++;
-      } else {
-        acceptorCount++;
-      }
-    }
-    return { donorCount, acceptorCount };
-  }
-
-  private hasDativeBond(
-    aid: number,
-    atom: Atom,
-    includeAtomsInCollapsedSgroups: boolean,
-  ) {
-    const { donorCount, acceptorCount } = this.countDativeBonds(
-      aid,
-      atom,
-      includeAtomsInCollapsedSgroups,
-    );
-    return donorCount + acceptorCount > 0;
-  }
-
-  /** Covalent bond order sum of an aromatic atom in the Kekulé structure, or null */
-  private calcKekuleBondOrderSum(
-    aid: number,
-    includeAtomsInCollapsedSgroups: boolean,
-    kekulizationCache: KekulizationCache,
-  ): number | null {
-    let kekulization = kekulizationCache.get(aid);
-    if (!kekulization) {
-      const atoms = this.collectAromaticSystem(
-        aid,
-        includeAtomsInCollapsedSgroups,
-      );
-      const systemKekulization = {
-        atoms,
-        doubleBondAtoms: atoms ? findKekuleDoubleBondAtoms(atoms) : null,
-      };
-      (atoms ? [...atoms.keys()] : [aid]).forEach((atomId) =>
-        kekulizationCache.set(atomId, systemKekulization),
-      );
-      kekulization = systemKekulization;
-    }
-
-    const kekuleAtom = kekulization.atoms?.get(aid);
-    if (!kekuleAtom || !kekulization.doubleBondAtoms) {
-      return null;
-    }
-    return (
-      kekuleAtom.externalBondOrderSum +
-      kekuleAtom.aromaticNeighbors.length +
-      (kekulization.doubleBondAtoms.has(aid) ? 1 : 0)
-    );
-  }
-
-  /** Atoms connected to aid through aromatic bonds, or null if one is not supported */
-  private collectAromaticSystem(
-    aid: number,
-    includeAtomsInCollapsedSgroups: boolean,
-  ): Map<number, KekuleAtom> | null {
-    const system = new Map<number, KekuleAtom>();
-    const queue = [aid];
-    const visited = new Set([aid]);
-
-    while (queue.length > 0) {
-      const atomId = queue.shift() as number;
-      const atom = this.atoms.get(atomId);
-      if (!atom || atom.isQuery() || atom.attachmentPoints) {
-        return null;
-      }
-
-      let externalBondOrderSum = 0;
-      let donorCount = 0;
-      let acceptorCount = 0;
-      const aromaticNeighbors: number[] = [];
-      for (const neighborId of atom.neighbors) {
-        const hb = this.halfBonds.get(neighborId);
-        assert(hb, `HalfBond ${neighborId} not found`);
-        const bond = this.bonds.get(hb.bid);
-        assert(bond, `Bond ${hb.bid} not found`);
-        if (
-          Bond.isBondToHiddenLeavingGroup(
-            this,
-            bond,
-            includeAtomsInCollapsedSgroups,
-          )
-        ) {
-          continue;
-        }
-
-        switch (bond.type) {
-          case Bond.PATTERN.TYPE.AROMATIC:
-            aromaticNeighbors.push(hb.end);
-            if (!visited.has(hb.end)) {
-              visited.add(hb.end);
-              queue.push(hb.end);
-            }
-            break;
-          case Bond.PATTERN.TYPE.SINGLE:
-          case Bond.PATTERN.TYPE.DOUBLE:
-          case Bond.PATTERN.TYPE.TRIPLE:
-            externalBondOrderSum += bond.type;
-            break;
-          case Bond.PATTERN.TYPE.DATIVE:
-            if (bond.begin === atomId) {
-              donorCount++;
-            } else {
-              acceptorCount++;
-            }
-            break;
-          case Bond.PATTERN.TYPE.HYDROGEN:
-            break;
-          case Bond.PATTERN.TYPE.HAPTIC:
-            if (!isAllowedNonAttachmentGroupHapticBondMetal(atom)) {
-              externalBondOrderSum += 1;
-            }
-            break;
-          default:
-            return null;
-        }
-      }
-
-      system.set(atomId, {
-        label: atom.label,
-        charge: atom.charge ?? 0,
-        radicalCount: radicalElectrons(atom.radical),
-        externalBondOrderSum,
-        fixedHydrogenCount: atom.implicitHCount ?? 0,
-        aromaticNeighbors,
-        preferDoubleBond: donorCount > acceptorCount,
-      });
-    }
-    return system;
   }
 
   setImplicitHydrogen(

@@ -7,6 +7,16 @@ import { ReStruct, Render } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
+const createReStruct = (struct: Struct) => {
+  const options = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
+  const render = new Render(document as unknown as HTMLElement, options);
+  return new ReStruct(struct, render);
+};
+
 describe('flipping a dative bond', () => {
   const buildFlippableStruct = () => {
     const struct = new Struct();
@@ -26,18 +36,12 @@ describe('flipping a dative bond', () => {
     struct.initHalfBonds();
     struct.initNeighbors();
     struct.setImplicitHydrogen();
-    const options = {
-      microModeScale: 20,
-      width: 100,
-      height: 100,
-    } as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, options);
     return {
       struct,
       donorId,
       acceptorId,
       bondId,
-      reStruct: new ReStruct(struct, render),
+      reStruct: createReStruct(struct),
     };
   };
 
@@ -92,13 +96,7 @@ describe('flipping a dative bond', () => {
     expect(struct.atoms.get(donorId)?.implicitH).toBe(3);
     expect(struct.atoms.get(acceptorId)?.implicitH).toBe(3);
 
-    const options = {
-      microModeScale: 20,
-      width: 100,
-      height: 100,
-    } as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, options);
-    const reStruct = new ReStruct(struct, render);
+    const reStruct = createReStruct(struct);
     const bond = struct.bonds.get(bondId) as Bond;
 
     bondChangingAction(reStruct, bondId, bond, {
@@ -138,13 +136,7 @@ describe('changing a bond type with fromBondsAttrs', () => {
     expect(struct.atoms.get(donorId)?.implicitH).toBe(2);
     expect(struct.atoms.get(acceptorId)?.implicitH).toBe(2);
 
-    const options = {
-      microModeScale: 20,
-      width: 100,
-      height: 100,
-    } as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, options);
-    const reStruct = new ReStruct(struct, render);
+    const reStruct = createReStruct(struct);
 
     fromBondsAttrs(reStruct, bondId, { type: Bond.PATTERN.TYPE.DATIVE });
 

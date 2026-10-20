@@ -1,8 +1,7 @@
-import { DATIVE_VALENCE_TABLE } from 'domain/constants/dativeValence';
+import { getDativeValenceConfig } from 'domain/constants/dativeValence';
 
-// Requirement 1.1 of #10427: dative valence of an aromatic atom is calculated on a
-// Kekulé structure. This module assigns the Kekulé double bonds of one aromatic system
-// without touching the molecule.
+// Dative valence of an aromatic atom is calculated on a Kekulé structure. This module
+// assigns the Kekulé double bonds of one aromatic system without touching the molecule.
 
 export interface KekuleAtom {
   label: string;
@@ -19,7 +18,10 @@ export interface KekuleAtom {
 
 export type KekuleRole = 'mandatory' | 'optional' | 'forbidden';
 
-// Upper bound on backtracking steps; aromatic systems in practice need far fewer.
+// Upper bound on backtracking steps of one matching search. It caps the work a single
+// recalculation can do, since recalculation runs on every edit, while leaving far more
+// room than real aromatic systems need. Reaching it makes the search return null, and
+// the caller then falls back to the legacy valence path.
 const MAX_SEARCH_STEPS = 20000;
 
 /**
@@ -33,12 +35,8 @@ const MAX_SEARCH_STEPS = 20000;
  * Returns null for atoms this model does not describe.
  */
 export function getKekuleRole(atom: KekuleAtom): KekuleRole | null {
-  if (!Object.hasOwn(DATIVE_VALENCE_TABLE, atom.label)) {
-    return null;
-  }
-  const config =
-    DATIVE_VALENCE_TABLE[atom.label as keyof typeof DATIVE_VALENCE_TABLE];
-  if (config.valenceOrbitals !== 4) {
+  const config = getDativeValenceConfig(atom.label);
+  if (!config || config.valenceOrbitals !== 4) {
     return null;
   }
 

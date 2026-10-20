@@ -55,9 +55,7 @@ export function checkServer() {
           }),
         ),
       (e: unknown) => {
-        if (editor?.errorHandler) {
-          editor.errorHandler(e instanceof Error ? e.message : String(e));
-        }
+        editor?.errorHandler?.(String(e));
       },
     );
   };

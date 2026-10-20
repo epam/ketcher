@@ -21,11 +21,10 @@ import {
   KetSerializer,
   type GenerateImageOptions,
 } from 'ketcher-core';
-import type { CurrentAppState } from './types';
 import i18n from '../../../i18n/i18n';
 
 async function copyImageToClipboard(): Promise<void> {
-  const state: CurrentAppState = globalThis.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const options = state.options;
   const struct = editor.structSelected();
@@ -34,7 +33,7 @@ async function copyImageToClipboard(): Promise<void> {
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
-    const structStr: string = ketSerializer.serialize(struct);
+    const structStr = ketSerializer.serialize(struct);
 
     const generateImageOptions: GenerateImageOptions = {
       outputFormat: 'png',
@@ -42,14 +41,14 @@ async function copyImageToClipboard(): Promise<void> {
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     };
 
-    const image: Blob = await ketcher.generateImage(
+    const image = await ketcher.generateImage(
       structStr,
       generateImageOptions,
     );
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
-  } catch (e: unknown) {
+  } catch (e) {
     KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
 
     if (errorHandler) {

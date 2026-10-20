@@ -20,7 +20,6 @@ import {
   KetSerializer,
   type Struct,
   type CheckResult,
-  type CalculateResult,
   type LayoutResult,
   StereoFlag,
 } from 'ketcher-core';
@@ -87,7 +86,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 
   if (checkParams.includes('chiral_flag')) {
     const isAbs = Array.from(struct.frags.values()).some(
-      (fr) => fr?.enhancedStereoFlag === StereoFlag.Abs,
+      (fr) => fr?.enhancedStereoFlag?.toUpperCase() === StereoFlag.Abs,
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }

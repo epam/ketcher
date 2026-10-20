@@ -213,18 +213,31 @@ describe('Struct dative bond valence', () => {
       expect(struct.atoms.get(ids[1])?.valence).toBe(2);
     });
 
-    it('keeps explicit valence atoms on the legacy path', () => {
+    it('underlines an explicit valence atom over its dative capacity and keeps its implicit H', () => {
       const withDative = buildStruct(
-        [{ label: 'N', explicitValence: 3 }, { label: 'C' }],
-        [{ begin: 0, end: 1, type: DATIVE }],
+        [{ label: 'N', explicitValence: 3 }, { label: 'N' }, { label: 'N' }],
+        [
+          { begin: 1, end: 0, type: DATIVE },
+          { begin: 2, end: 0, type: DATIVE },
+        ],
       );
       const withoutDative = buildStruct(
-        [{ label: 'N', explicitValence: 3 }, { label: 'C' }],
+        [{ label: 'N', explicitValence: 3 }],
         [],
       );
-      expect(withDative.struct.atoms.get(withDative.ids[0])?.implicitH).toBe(
+      const nitrogen = withDative.struct.atoms.get(withDative.ids[0]);
+      expect(nitrogen?.badConn).toBe(true);
+      expect(nitrogen?.implicitH).toBe(
         withoutDative.struct.atoms.get(withoutDative.ids[0])?.implicitH,
       );
+    });
+
+    it('does not underline an explicit valence atom with one dative acceptor', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'N', explicitValence: 3 }, { label: 'N' }],
+        [{ begin: 1, end: 0, type: DATIVE }],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
     });
 
     it('falls back to the legacy path when aromatic bonds cannot be kekulized', () => {
@@ -239,6 +252,113 @@ describe('Struct dative bond valence', () => {
       const carbon = struct.atoms.get(ids[0]);
       expect(carbon?.implicitH).toBeCloseTo(0);
       expect(carbon?.badConn).toBe(false);
+    });
+  });
+
+  describe('dative capacity when bond orders are not exact', () => {
+    it('underlines an aromatic carbon accepting three dative bonds when the ring has an unsupported element', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Fe' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'N' },
+          { label: 'N' },
+          { label: 'N' },
+        ],
+        [
+          ...[0, 1, 2, 3, 4, 5].map((index) => ({
+            begin: index,
+            end: (index + 1) % 6,
+            type: AROMATIC,
+          })),
+          { begin: 6, end: 0, type: DATIVE },
+          { begin: 7, end: 0, type: DATIVE },
+          { begin: 8, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
+    });
+
+    it('underlines an aromatic carbon accepting two dative bonds when the ring has an unsupported element', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Fe' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'N' },
+          { label: 'N' },
+        ],
+        [
+          ...[0, 1, 2, 3, 4, 5].map((index) => ({
+            begin: index,
+            end: (index + 1) % 6,
+            type: AROMATIC,
+          })),
+          { begin: 6, end: 0, type: DATIVE },
+          { begin: 7, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
+    });
+
+    it('does not underline an aromatic carbon accepting one dative bond when the ring has an unsupported element', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'Fe' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'N' },
+        ],
+        [
+          ...[0, 1, 2, 3, 4, 5].map((index) => ({
+            begin: index,
+            end: (index + 1) % 6,
+            type: AROMATIC,
+          })),
+          { begin: 6, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('underlines a carbon with a query bond neighbour accepting three dative bonds', () => {
+      const { struct, ids } = buildStruct(
+        [
+          { label: 'C' },
+          { label: 'C' },
+          { label: 'N' },
+          { label: 'N' },
+          { label: 'N' },
+        ],
+        [
+          { begin: 0, end: 1, type: Bond.PATTERN.TYPE.ANY },
+          { begin: 2, end: 0, type: DATIVE },
+          { begin: 3, end: 0, type: DATIVE },
+          { begin: 4, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
+    });
+
+    it('does not underline a carbon with a query bond neighbour accepting one dative bond', () => {
+      const { struct, ids } = buildStruct(
+        [{ label: 'C' }, { label: 'C' }, { label: 'N' }],
+        [
+          { begin: 0, end: 1, type: Bond.PATTERN.TYPE.ANY },
+          { begin: 2, end: 0, type: DATIVE },
+        ],
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
     });
   });
 

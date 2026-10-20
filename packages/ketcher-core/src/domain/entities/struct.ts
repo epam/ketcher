@@ -50,6 +50,7 @@ import {
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 import {
+  calcCovalentBondOrderLowerBound,
   calcKekuleBondOrderSum,
   collectDativeAtomsToRecalculate,
   countDativeBonds,
@@ -1502,6 +1503,15 @@ export class Struct {
       }
     }
 
+    if (hasDativeBond && !atom.isQuery() && !atom.attachmentPoints) {
+      // Where no exact bond order sum is available, only a failure on a lower bound is flagged
+      atom.badConn = this.hasDativeCapacityLowerBoundError(
+        atom,
+        dativeCounts,
+        includeAtomsInCollapsedSgroups,
+      );
+    }
+
     if (isAromatic) {
       if (charge === 0 && atom.label === 'C') {
         if (conn === 3) {
@@ -1579,6 +1589,27 @@ export class Struct {
     atom.valence =
       bondOrderSum + radicalElectrons(atom.radical) + atom.implicitH;
     return true;
+  }
+
+  private hasDativeCapacityLowerBoundError(
+    atom: Atom,
+    { donorCount, acceptorCount }: DativeBondCounts,
+    includeAtomsInCollapsedSgroups: boolean,
+  ): boolean {
+    const result = calcDativeValence({
+      label: atom.label,
+      charge: atom.charge ?? 0,
+      radicalCount: radicalElectrons(atom.radical),
+      bondOrderSum:
+        calcCovalentBondOrderLowerBound(
+          this,
+          atom,
+          includeAtomsInCollapsedSgroups,
+        ) + (atom.implicitHCount ?? 0),
+      donorCount,
+      acceptorCount,
+    });
+    return result?.hasValenceError ?? false;
   }
 
   setImplicitHydrogen(

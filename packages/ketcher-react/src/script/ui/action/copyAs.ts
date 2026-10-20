@@ -85,8 +85,7 @@ export default function copyAs(type: SerializationType): void | null {
     }
 
   } catch (e) {
-    const error = e instanceof Error ? e : new Error(String(e));
-    KetcherLogger.error('copyAs.ts::copyAs', error);
+    KetcherLogger.error('copyAs.ts::copyAs', e);
     errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
     return null;
   }

@@ -355,6 +355,30 @@ describe('Struct dative bond valence', () => {
       expect(nitrogens.filter((atom) => atom?.implicitH === 1)).toHaveLength(1);
       expect(nitrogens.map((atom) => atom?.badConn)).toEqual([false, false]);
     });
+
+    it('recalculates the other dative atoms of the aromatic system after a ring atom changes', () => {
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'N', 'C', 'C'],
+        'Ni',
+        'donor',
+        2,
+      );
+      const donor = struct.atoms.get(ids[2]) as Atom;
+      const nitrogen = struct.atoms.get(ids[0]) as Atom;
+      nitrogen.charge = 1;
+
+      struct.setImplicitHydrogen([ids[0]]);
+      const afterPartial = {
+        implicitH: donor.implicitH,
+        badConn: donor.badConn,
+      };
+
+      struct.setImplicitHydrogen();
+      expect(afterPartial).toEqual({
+        implicitH: donor.implicitH,
+        badConn: donor.badConn,
+      });
+    });
   });
 });
 

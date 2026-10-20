@@ -105,6 +105,61 @@ export function calcKekuleBondOrderSum(
   );
 }
 
+/** Atoms whose dative valence must be recalculated after the atoms in aids changed */
+export function collectDativeAtomsToRecalculate(
+  struct: Struct,
+  aids: Array<number>,
+  includeAtomsInCollapsedSgroups: boolean,
+): Set<number> {
+  const result = new Set(aids);
+  const seedIds = new Set(aids);
+  aids.forEach((aid) => {
+    const atom = struct.atoms.get(aid);
+    if (!atom) {
+      return;
+    }
+    for (const { otherAtomId } of getVisibleBonds(
+      struct,
+      atom,
+      includeAtomsInCollapsedSgroups,
+    )) {
+      seedIds.add(otherAtomId);
+    }
+  });
+
+  const walkedAtomIds = new Set<number>();
+  seedIds.forEach((seedId) => {
+    if (walkedAtomIds.has(seedId)) {
+      return;
+    }
+    const system = collectAromaticSystem(
+      struct,
+      seedId,
+      includeAtomsInCollapsedSgroups,
+    );
+    if (!system || system.size < 2) {
+      return;
+    }
+    system.forEach((_kekuleAtom, atomId) => {
+      walkedAtomIds.add(atomId);
+      const atom = struct.atoms.get(atomId);
+      if (!atom) {
+        return;
+      }
+      const { donorCount, acceptorCount } = countDativeBonds(
+        struct,
+        atomId,
+        atom,
+        includeAtomsInCollapsedSgroups,
+      );
+      if (donorCount + acceptorCount > 0) {
+        result.add(atomId);
+      }
+    });
+  });
+  return result;
+}
+
 /** Atoms connected to aid through aromatic bonds, or null if one is not supported */
 function collectAromaticSystem(
   struct: Struct,

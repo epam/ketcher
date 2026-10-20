@@ -16,6 +16,7 @@
 
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
 import i18n from '../../../i18n/i18n';
+import type { CurrentAppState } from '../state/store.types';
 import type { SerializationType, StructSerializer } from '../../../types';
 
 /**
@@ -25,7 +26,9 @@ import type { SerializationType, StructSerializer } from '../../../types';
  * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
  */
 export default function copyAs(type: SerializationType): void {
-  const { editor } = currentState;
+  const { editor } = (
+    globalThis as typeof globalThis & { currentState: CurrentAppState }
+  ).currentState;
 
   if (!editor) {
     KetcherLogger.error('copyAs.ts::copyAs', 'Editor is not initialized');

@@ -42,6 +42,24 @@ Selection is drawn on dedicated selection/info layers. The layer map fixes z-ord
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.
 
+### Mode viewport handoff
+
+Switching between Flex and Molecules preserves zoom and the screen positions
+of corresponding structure coordinates. The React wrapper captures the source
+viewport through `CoreEditor.captureViewportForModeSwitch()` before hiding it.
+The transfer uses page-relative translation, including the different origins
+of the two canvases, and applies it once the destination canvas is visible.
+The wrapper retains the current core editor in a ref because the Molecules
+toolbar can retain an earlier toggle callback.
+
+Snake and Sequence still use their own layout rules rather than this Flex
+viewport transfer. Mode-coordinate rescaling remains independent of zoom.
+
+Molecules scrollbars use `ReStruct.getVisibleVBoxObj()`: visible atom and bond
+maps plus the other rendered entities. Hidden atoms inside contracted monomers
+must not create scrollable overflow; visible content outside the viewport must
+still enable scrolling. Selection and transformation bounds remain unchanged.
+
 ## Macromolecules rendering (D3)
 
 Each drawing-entity subclass gets a renderer subclass that draws D3 selections into the SVG canvas. A renderers manager orchestrates create/update/delete in response to a Command.

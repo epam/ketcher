@@ -77,7 +77,9 @@ export const Editor = (props: Props) => {
   const wizardSessionActive = useRef(false);
   const skipModeConversion = useRef(false);
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
+  const macromoleculesEditorRef = useRef<CoreEditor | null>(null);
   const togglePolymerEditor = (toggleValue: boolean) => {
+    macromoleculesEditorRef.current?.captureViewportForModeSwitch();
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
   };
@@ -242,6 +244,7 @@ export const Editor = (props: Props) => {
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
+    macromoleculesEditorRef.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
   };
 

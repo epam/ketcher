@@ -460,6 +460,15 @@ class ReStruct {
     return selection;
   }
 
+  getVisibleVBoxObj(): Box2Abs {
+    const selection = this.getAllElementsAsSelectionMap();
+    selection.atoms = Array.from(this.visibleAtoms.keys());
+    selection.bonds = Array.from(this.visibleBonds.keys());
+    return (
+      this.getBoundingBoxForSelection(selection) ?? new Box2Abs(0, 0, 0, 0)
+    );
+  }
+
   private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
     let boundingBox: Box2Abs | null = null;
     Object.keys(ReStruct.maps).forEach((elementKey) => {

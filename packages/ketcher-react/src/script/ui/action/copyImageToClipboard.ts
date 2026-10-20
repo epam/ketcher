@@ -19,14 +19,20 @@ import {
   KetcherLogger,
   ketcherProvider,
   KetSerializer,
-  type GenerateImageOptions,
 } from 'ketcher-core';
 import i18n from '../../../i18n/i18n';
 
 async function copyImageToClipboard(): Promise<void> {
-  const state = globalThis.currentState;
-  const editor = state.editor;
-  const options = state.options;
+  const { editor, options } = globalThis.currentState;
+
+  if (!editor) {
+    KetcherLogger.error(
+      'copyImageToClipboard.ts::copyImageToClipboard',
+      'Editor is not initialized',
+    );
+    return;
+  }
+
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
@@ -35,13 +41,11 @@ async function copyImageToClipboard(): Promise<void> {
     const ketSerializer = new KetSerializer();
     const structStr = ketSerializer.serialize(struct);
 
-    const generateImageOptions: GenerateImageOptions = {
+    const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
-    };
-
-    const image = await ketcher.generateImage(structStr, generateImageOptions);
+    });
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);

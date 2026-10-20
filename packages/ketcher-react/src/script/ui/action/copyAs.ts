@@ -23,7 +23,6 @@ import type { SerializationType, StructSerializer } from '../../../types';
  * Simple objects and text objects are not supported in MOL format.
  *
  * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
- * @throws Logs error to KetcherLogger if operation fails
  */
 export default function copyAs(type: SerializationType): string | null {
   const state = globalThis.currentState;

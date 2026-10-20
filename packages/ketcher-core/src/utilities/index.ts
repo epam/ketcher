@@ -33,3 +33,4 @@ export * from './getOrThrow';
 export * from './errorMessages';
 export * from './assert';
 export * from './compareStrings';
+export * from './convertSvgToPng';

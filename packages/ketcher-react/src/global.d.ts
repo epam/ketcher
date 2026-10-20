@@ -2,7 +2,7 @@ import type { BaseRenderer, Ketcher } from 'ketcher-core';
 import type { CurrentState } from './types';
 
 declare global {
-  var currentState: CurrentState | undefined;
+  var currentState: CurrentState;
 
   export interface Window {
     ketcher?: Ketcher;

@@ -24,7 +24,7 @@ import type { SerializationType, StructSerializer } from '../../../types';
  *
  * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
  */
-export default function copyAs(type: SerializationType): string | null {
+export default function copyAs(type: SerializationType): void | null {
   const state = globalThis.currentState;
 
   if (!state || !state.editor) {
@@ -88,7 +88,6 @@ export default function copyAs(type: SerializationType): string | null {
       navigator.clipboard.writeText(structData);
     }
 
-    return structData;
   } catch (e) {
     const error = e instanceof Error ? e : new Error(String(e));
     KetcherLogger.error('copyAs.ts::copyAs', error);

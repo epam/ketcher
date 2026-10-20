@@ -63,7 +63,7 @@ export default function copyAs(type: SerializationType): void | null {
 
     // MOL format doesn't support simple objects and text objects
     if (hasSimpleObjectsOrTexts && serializer instanceof MolSerializer) {
-      errorHandler(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
+      errorHandler?.(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
       return null;
     }
 
@@ -80,7 +80,7 @@ export default function copyAs(type: SerializationType): void | null {
 
   } catch (e) {
     KetcherLogger.error('copyAs.ts::copyAs', e);
-    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
+    errorHandler?.(i18n.t('common:errors.featureNotAvailableInBrowser'));
     return null;
   }
 }

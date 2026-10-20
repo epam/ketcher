@@ -23,22 +23,10 @@ import type Editor from './script/editor/Editor';
 export type SerializationType = 'mol' | 'ket';
 
 /**
- * Error handler function that accepts error messages.
- */
-export type ErrorHandler = (message: string) => void;
-
-/**
- * Editor with error handler capability.
- */
-export interface EditorWithErrorHandler extends Editor {
-  errorHandler: ErrorHandler;
-}
-
-/**
  * Global application state containing editor and other configuration.
  */
 export interface CurrentState {
-  editor: EditorWithErrorHandler;
+  editor: Editor;
   options?: {
     settings?: Record<string, unknown>;
   };

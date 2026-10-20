@@ -24,12 +24,12 @@ import type { SerializationType, StructSerializer } from '../../../types';
  *
  * @param type - The serialization format: 'mol' for MOL format or 'ket' for KET format
  */
-export default function copyAs(type: SerializationType): void | null {
+export default function copyAs(type: SerializationType): void {
   const { editor } = globalThis.currentState;
 
   if (!editor) {
     KetcherLogger.error('copyAs.ts::copyAs', 'Editor is not initialized');
-    return null;
+    return;
   }
 
   const struct = editor.structSelected();
@@ -53,7 +53,7 @@ export default function copyAs(type: SerializationType): void | null {
           'copyAs.ts::copyAs',
           `Unknown serialization type: ${exhaustiveCheck}`,
         );
-        return null;
+        return;
       }
     }
 
@@ -64,7 +64,7 @@ export default function copyAs(type: SerializationType): void | null {
     // MOL format doesn't support simple objects and text objects
     if (hasSimpleObjectsOrTexts && serializer instanceof MolSerializer) {
       errorHandler?.(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
-      return null;
+      return;
     }
 
     const structData = serializer.serialize(struct);
@@ -80,6 +80,5 @@ export default function copyAs(type: SerializationType): void | null {
   } catch (e) {
     KetcherLogger.error('copyAs.ts::copyAs', e);
     errorHandler?.(i18n.t('common:errors.featureNotAvailableInBrowser'));
-    return null;
   }
 }

@@ -77,7 +77,6 @@ export default function copyAs(type: SerializationType): void | null {
     } else {
       navigator.clipboard.writeText(structData);
     }
-
   } catch (e) {
     KetcherLogger.error('copyAs.ts::copyAs', e);
     errorHandler?.(i18n.t('common:errors.featureNotAvailableInBrowser'));

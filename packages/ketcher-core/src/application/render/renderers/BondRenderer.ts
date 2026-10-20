@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -349,8 +348,7 @@ export class BondRenderer extends BaseRenderer {
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
+    const viewModel = this.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
     const secondHalfEdge = halfEdges?.[1];
@@ -570,8 +568,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private get halfEdges() {
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
+    const viewModel = this.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
 
@@ -610,8 +607,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
+    const viewModel = this.viewModel;
 
     this.rootElement = this.rootElement || this.appendRootElement();
 
@@ -781,7 +777,7 @@ export class BondRenderer extends BaseRenderer {
 
     // Adjust position based on double bond shift
     const doubleBondShift = this.getDoubleBondShift(
-      provideEditorInstance().viewModel,
+      this.viewModel,
       firstHalfEdge,
       secondHalfEdge,
     );

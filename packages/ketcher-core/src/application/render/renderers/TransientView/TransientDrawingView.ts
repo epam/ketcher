@@ -209,6 +209,20 @@ export class TransientDrawingView {
     this.removeView(AutochainPreviewView.viewName);
   }
 
+  public showStructurePreview(preview: SVGGElement) {
+    this.addView('StructurePreviewView', {
+      show: (layer, element: SVGGElement) => {
+        layer.node()?.appendChild(element);
+      },
+      params: preview,
+      topLayer: true,
+    });
+  }
+
+  public hideStructurePreview() {
+    this.removeView('StructurePreviewView');
+  }
+
   public showSelection(params: SelectionViewParams) {
     this.addView(SelectionView.viewName, {
       show: SelectionView.show,
@@ -250,8 +264,8 @@ export class TransientDrawingView {
   }
 
   public update() {
-    this.topLayer.selectAll('*').remove();
-    this.defaultLayer.selectAll('*').remove();
+    this.topLayer.selectChildren().remove();
+    this.defaultLayer.selectChildren().remove();
 
     this.views.forEach((viewData) => {
       viewData.render(viewData.topLayer ? this.topLayer : this.defaultLayer);

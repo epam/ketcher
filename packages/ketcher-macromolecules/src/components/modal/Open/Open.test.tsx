@@ -15,11 +15,18 @@
  ***************************************************************************/
 
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { mock, mockDeep } from 'jest-mock-extended';
 
 import { Open } from './Open';
 import { IndigoProvider } from 'ketcher-react';
-import { type CoreEditor, Struct } from 'ketcher-core';
+import {
+  type CoreEditor,
+  Struct,
+  Command,
+  EditorHistory,
+  KetSerializer,
+} from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
@@ -36,6 +43,65 @@ describe('Open component', () => {
         ),
       ),
     ).toMatchSnapshot();
+  });
+
+  it('cancels pending placement before Open as New changes or renders the document', async () => {
+    const editor = mockDeep<CoreEditor>();
+    const history = mock<EditorHistory>();
+    const command = new Command();
+    const deserialized =
+      mockDeep<
+        NonNullable<ReturnType<KetSerializer['deserializeToDrawingEntities']>>
+      >();
+    Object.defineProperty(
+      deserialized.drawingEntitiesManager,
+      'hasDrawingEntities',
+      {
+        value: false,
+      },
+    );
+    const provider = jest
+      .spyOn(ketcherCore, 'provideEditorInstance')
+      .mockReturnValue(editor);
+    const getHistory = jest
+      .spyOn(EditorHistory, 'getInstance')
+      .mockReturnValue(history);
+    const deserialize = jest
+      .spyOn(KetSerializer.prototype, 'deserializeToDrawingEntities')
+      .mockReturnValue(deserialized);
+    editor.drawingEntitiesManager.deleteAllEntities.mockImplementation(() => {
+      expect(editor.cancelPaste).toHaveBeenCalledTimes(1);
+      return command;
+    });
+    editor.renderersContainer.update.mockImplementation(() => {
+      expect(editor.cancelPaste).toHaveBeenCalledTimes(1);
+    });
+    const onClose = jest.fn();
+
+    try {
+      render(
+        withThemeAndStoreProvider(
+          <Open isModalOpen={true} onClose={onClose} />,
+        ),
+      );
+      fireEvent.click(screen.getByText('Paste from clipboard'));
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: '{"root":{"nodes":[]}}' },
+      });
+      fireEvent.click(screen.getByTestId('open-as-new-button'));
+      await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+      expect(
+        editor.drawingEntitiesManager.deleteAllEntities,
+      ).toHaveBeenCalledTimes(1);
+      expect(editor.renderersContainer.update).toHaveBeenCalledWith(command);
+      expect(history.update).toHaveBeenCalledWith(command);
+      expect(editor.previewStructure).not.toHaveBeenCalled();
+    } finally {
+      provider.mockRestore();
+      getHistory.mockRestore();
+      deserialize.mockRestore();
+    }
   });
 
   it('paste from clipboard', () => {

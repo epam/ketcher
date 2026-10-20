@@ -36,7 +36,12 @@ type KeyboardEventHandler = {
 type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
 
 export abstract class BaseMode {
-  private _pasteIsInProgress = false;
+  private pasteController?: AbortController;
+
+  public cancelPaste(): void {
+    this.pasteController?.abort();
+    this.pasteController = undefined;
+  }
 
   protected constructor(
     public modeName: LayoutMode,
@@ -268,39 +273,52 @@ export abstract class BaseMode {
     const isCanvasEmptyBeforePaste =
       !editor.drawingEntitiesManager.hasDrawingEntities;
 
-    if (isClipboardAPIAvailable()) {
-      const isSequenceEditInRNABuilderMode =
-        provideEditorInstance().isSequenceEditInRNABuilderMode;
-
-      if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
-      this._pasteIsInProgress = true;
-
-      const clipboardData = await navigator.clipboard.read();
-      this.pasteFromClipboard(clipboardData).finally(() => {
-        this._pasteIsInProgress = false;
-
-        if (!isCanvasEmptyBeforePaste) {
-          return;
-        }
-
-        editor.zoomToStructuresIfNeeded();
-      });
-    } else if (event) {
-      const clipboardData = legacyPaste(event.clipboardData, [
-        PLAIN_TEXT_MIME_TYPE,
-      ]);
-      this.pasteFromClipboard(clipboardData);
-      event.preventDefault();
-
-      if (!isCanvasEmptyBeforePaste) {
-        return;
-      }
-
-      editor.zoomToStructuresIfNeeded();
-    } else {
+    const useClipboardAPI = isClipboardAPIAvailable();
+    if (!useClipboardAPI && !event) {
       KetcherLogger.warn(
         'Cannot paste because Clipboard API is not available and paste event does not contain clipboardData',
       );
+      return;
+    }
+
+    if (editor.isSequenceEditInRNABuilderMode || this.pasteController) {
+      return;
+    }
+
+    const controller = new AbortController();
+    this.pasteController = controller;
+    const { signal } = controller;
+    if (!useClipboardAPI) {
+      event?.preventDefault();
+    }
+    try {
+      const clipboardData = useClipboardAPI
+        ? await navigator.clipboard.read()
+        : legacyPaste(event?.clipboardData, [PLAIN_TEXT_MIME_TYPE]);
+      if (signal.aborted) {
+        return;
+      }
+      await this.pasteFromClipboard(clipboardData, signal);
+      if (
+        !signal.aborted &&
+        isCanvasEmptyBeforePaste &&
+        this.modeName !== 'flex-layout-mode'
+      ) {
+        editor.zoomToStructuresIfNeeded();
+      }
+    } catch (error) {
+      if (signal.aborted) {
+        return;
+      }
+      KetcherLogger.error('BaseMode.ts::onPaste', error);
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage: normalizeError(error).message,
+      });
+    } finally {
+      if (this.pasteController === controller) {
+        this.pasteController = undefined;
+      }
     }
   }
 
@@ -339,20 +357,24 @@ export abstract class BaseMode {
     }
   }
 
-  async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
+  async pasteFromClipboard(
+    clipboardData: ClipboardData,
+    signal?: AbortSignal,
+  ): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    if (!pastedStr?.trim()) {
+    if (signal?.aborted || !pastedStr?.trim()) {
       return;
     }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedStr);
+      pasteOperations = this.pasteKetFormatFragment(pastedStr, signal);
     } else {
       pasteOperations = await this.pasteWithIndigoConversion(
         pastedStr,
         editor.sequenceTypeEnterMode,
+        signal,
       );
     }
 
@@ -367,7 +389,17 @@ export abstract class BaseMode {
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | undefined {
+  pasteKetFormatFragment(
+    pastedStr: string,
+    signal?: AbortSignal,
+  ): Command | undefined {
+    if (signal?.aborted) {
+      return;
+    }
+    // Preparation is complete; placement's own tool changes must not abort it.
+    if (this.pasteController?.signal === signal) {
+      this.pasteController = undefined;
+    }
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
@@ -392,6 +424,11 @@ export abstract class BaseMode {
       return;
     }
 
+    if (this.modeName === 'flex-layout-mode') {
+      editor.previewStructure(drawingEntitiesManager);
+      return;
+    }
+
     this.updateEntitiesPosition(drawingEntitiesManager);
     editor.calculateAndStoreNextAutochainPosition(drawingEntitiesManager);
 
@@ -408,6 +445,7 @@ export abstract class BaseMode {
   async pasteWithIndigoConversion(
     pastedStr: string,
     sequenceType: SequenceType,
+    signal?: AbortSignal,
   ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
@@ -417,8 +455,14 @@ export abstract class BaseMode {
         sequenceType,
       });
 
-      return this.pasteKetFormatFragment(ketStruct.struct);
+      if (signal?.aborted) {
+        return;
+      }
+      return this.pasteKetFormatFragment(ketStruct.struct, signal);
     } catch (error) {
+      if (signal?.aborted) {
+        return;
+      }
       const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
 
@@ -466,6 +510,6 @@ export abstract class BaseMode {
   }
 
   public destroy(): void {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+    this.cancelPaste();
   }
 }

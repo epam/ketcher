@@ -17,6 +17,7 @@ import {
 import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
+import { PasteTool } from 'application/editor/tools/Paste';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   type BaseTool,
@@ -103,7 +104,7 @@ import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import type { ToolName } from 'application/editor/tools/types';
+import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import {
   getEmptyMonomersLibraryJson,
@@ -2138,6 +2139,20 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
+  public previewStructure(entities: DrawingEntitiesManager) {
+    if (!entities.hasDrawingEntities) {
+      return;
+    }
+    this.events.selectTool.dispatch([ToolName.paste, entities]);
+  }
+
+  public cancelPaste() {
+    this.mode.cancelPaste();
+    if (this.tool instanceof PasteTool) {
+      this.tool.cancel();
+    }
+  }
+
   private onCreateBond(payload: {
     firstMonomer: BaseMonomer;
     secondMonomer: BaseMonomer;
@@ -2214,6 +2229,7 @@ export class CoreEditor {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);
+    this.cancelPaste();
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     this.undoLatestSnakeLayout();
@@ -2245,6 +2261,7 @@ export class CoreEditor {
   }
 
   public setMode(mode: BaseMode) {
+    this.cancelPaste();
     this.mode = mode;
   }
 
@@ -2385,6 +2402,8 @@ export class CoreEditor {
   }
 
   public onSelectHistory(name: HistoryOperationType) {
+    this.mode.cancelPaste();
+    this.tool?.cancel?.();
     const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
       history.undo();
@@ -2398,15 +2417,17 @@ export class CoreEditor {
   }
 
   public selectTool(name: ToolName, options?) {
+    this.mode?.cancelPaste();
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 
     this.clearTransientViews();
-    this.tool = new ToolConstructor(this, options);
 
     if (isBaseTool(oldTool)) {
       oldTool?.destroy();
     }
+    this.tool = undefined;
+    this.tool = new ToolConstructor(this, options);
   }
 
   public get isHandToolSelected() {
@@ -2757,6 +2778,8 @@ export class CoreEditor {
       return;
     }
 
+    this.cancelPaste();
+
     // Snake layout is a temporary macro-mode presentation. Follow the same
     // path used when leaving Snake for another macro layout, so its generated
     // positions are not exported to the molecules editor.
@@ -2999,6 +3022,7 @@ export class CoreEditor {
   }
 
   public destroy() {
+    this.mode.cancelPaste();
     if (isBaseTool(this.selectedTool)) {
       this.selectedTool.destroy();
     }

@@ -177,10 +177,12 @@ const addToCanvas = ({
   ketSerializer,
   editor,
   struct,
+  preview = true,
 }: {
   ketSerializer: KetSerializer;
   editor: CoreEditor;
   struct: string;
+  preview?: boolean;
 }): boolean => {
   const isCanvasEmptyBeforeOpenStructure =
     !editor.drawingEntitiesManager.hasDrawingEntities;
@@ -197,6 +199,13 @@ const addToCanvas = ({
   const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
   const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
   const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
+
+  if (isFlexMode && preview) {
+    editor.previewStructure(deserialisedKet.drawingEntitiesManager);
+    return true;
+  }
+
+  editor.cancelPaste();
 
   if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
     positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
@@ -258,6 +267,7 @@ const onOk = async ({
   setIsLoading,
   dispatch,
   t,
+  preview = true,
 }: {
   struct: string;
   formatSelection: string;
@@ -267,6 +277,7 @@ const onOk = async ({
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
   t: TFunction;
+  preview?: boolean;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
@@ -288,7 +299,12 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = addToCanvas({
+        struct,
+        ketSerializer,
+        editor,
+        preview,
+      });
       if (!hasStructure) {
         dispatch(openErrorTooltip('No structure'));
       }
@@ -322,6 +338,7 @@ const onOk = async ({
       struct: ketStruct.struct,
       ketSerializer,
       editor,
+      preview,
     });
     if (!hasStructure) {
       dispatch(openErrorTooltip('No structure'));
@@ -414,6 +431,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
   const openHandler = () => {
     const editor = provideEditorInstance();
+    editor.cancelPaste();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
@@ -430,6 +448,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       setIsLoading,
       dispatch,
       t,
+      preview: false,
     });
   };
 

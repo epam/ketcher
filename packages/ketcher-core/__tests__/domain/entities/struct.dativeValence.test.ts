@@ -181,7 +181,7 @@ describe('Struct dative bond valence', () => {
       );
     });
 
-    it('keeps aromatic atoms with a dative bond on the legacy path', () => {
+    it('falls back to the legacy path when aromatic bonds cannot be kekulized', () => {
       const { struct, ids } = buildStruct(
         [{ label: 'C' }, { label: 'C' }, { label: 'C' }, { label: 'N' }],
         [
@@ -193,6 +193,94 @@ describe('Struct dative bond valence', () => {
       const carbon = struct.atoms.get(ids[0]);
       expect(carbon?.implicitH).toBeCloseTo(0);
       expect(carbon?.badConn).toBe(false);
+    });
+  });
+
+  describe('aromatic atoms with dative bonds (req 1.1)', () => {
+    // Ring atoms are 0..n-1, the dative partner is atom n
+    function buildRing(
+      ringLabels: string[],
+      partner: string,
+      dativeDirection: 'donor' | 'acceptor',
+      ringAtom = 0,
+    ) {
+      const size = ringLabels.length;
+      const ringBonds = ringLabels.map((_label, index) => ({
+        begin: index,
+        end: (index + 1) % size,
+        type: AROMATIC,
+      }));
+      const dativeBond =
+        dativeDirection === 'donor'
+          ? { begin: ringAtom, end: size, type: DATIVE }
+          : { begin: size, end: ringAtom, type: DATIVE };
+      return buildStruct(
+        [...ringLabels.map((label) => ({ label })), { label: partner }],
+        [...ringBonds, dativeBond],
+      );
+    }
+
+    it('gives the pyridine nitrogen donor no hydrogen', () => {
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'C', 'C', 'C', 'C'],
+        'Ni',
+        'donor',
+      );
+      expect(struct.atoms.get(ids[0])?.implicitH).toBe(0);
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('gives the pyrrole nitrogen donor one hydrogen (Example 4)', () => {
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'C', 'C', 'C'],
+        'Ni',
+        'donor',
+      );
+      expect(struct.atoms.get(ids[0])?.implicitH).toBe(1);
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('treats the imidazole nitrogen donor as the pyridine-like nitrogen', () => {
+      // Donor is N3 of imidazole (ring order N1, C2, N3, C4, C5)
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'N', 'C', 'C'],
+        'Ni',
+        'donor',
+        2,
+      );
+      expect(struct.atoms.get(ids[2])?.implicitH).toBe(0);
+      expect(struct.atoms.get(ids[2])?.badConn).toBe(false);
+    });
+
+    it('gives the furan oxygen donor no hydrogen', () => {
+      const { struct, ids } = buildRing(
+        ['O', 'C', 'C', 'C', 'C'],
+        'Ni',
+        'donor',
+      );
+      expect(struct.atoms.get(ids[0])?.implicitH).toBe(0);
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(false);
+    });
+
+    it('underlines a benzene carbon accepting a dative bond', () => {
+      const { struct, ids } = buildRing(
+        ['C', 'C', 'C', 'C', 'C', 'C'],
+        'N',
+        'acceptor',
+      );
+      expect(struct.atoms.get(ids[0])?.badConn).toBe(true);
+    });
+
+    it('keeps aromatic atoms without dative bonds on the legacy path', () => {
+      const { struct, ids } = buildRing(
+        ['N', 'C', 'C', 'C', 'C'],
+        'Ni',
+        'donor',
+      );
+      ids.slice(1, 5).forEach((aid) => {
+        expect(struct.atoms.get(aid)?.implicitH).toBe(1);
+        expect(struct.atoms.get(aid)?.badConn).toBe(false);
+      });
     });
   });
 });

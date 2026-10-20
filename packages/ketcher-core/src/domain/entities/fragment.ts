@@ -25,6 +25,7 @@ export enum StereoFlag {
   Abs = 'ABS',
   And = 'AND',
   Or = 'OR',
+  AbsLowerCase = 'abs',
 }
 
 function calcStereoFlag(
@@ -82,7 +83,7 @@ export class Fragment {
   }
 
   get enhancedStereoFlag() {
-    return this.#enhancedStereoFlag;
+    return this.#enhancedStereoFlag?.toUpperCase();
   }
 
   constructor(

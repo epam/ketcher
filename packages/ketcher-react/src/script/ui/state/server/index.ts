@@ -86,7 +86,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 
   if (checkParams.includes('chiral_flag')) {
     const isAbs = Array.from(struct.frags.values()).some(
-      (fr) => fr?.enhancedStereoFlag?.toUpperCase() === StereoFlag.Abs,
+      (fr) => fr?.enhancedStereoFlag === StereoFlag.AbsLowerCase,
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }

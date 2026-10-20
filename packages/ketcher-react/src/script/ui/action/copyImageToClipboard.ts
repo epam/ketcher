@@ -41,10 +41,7 @@ async function copyImageToClipboard(): Promise<void> {
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     };
 
-    const image = await ketcher.generateImage(
-      structStr,
-      generateImageOptions,
-    );
+    const image = await ketcher.generateImage(structStr, generateImageOptions);
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);

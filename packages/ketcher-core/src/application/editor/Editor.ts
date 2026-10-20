@@ -2791,6 +2791,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
+    this.micromoleculesEditor.selection(null);
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );

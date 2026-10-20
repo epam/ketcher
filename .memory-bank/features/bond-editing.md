@@ -40,7 +40,7 @@ Drawing a bond creates any missing endpoint atoms and keeps hydrogen counts cons
 #### Scenario: Flipping or retyping a bond with dative atoms
 
 - **WHEN** the user flips a dative bond or changes a bond's type
-- **THEN** implicit hydrogens are recalculated at both endpoints, and at every other dative atom in the same aromatic ring system
+- **THEN** implicit hydrogens are recalculated at both endpoints, and at every other dative atom in the same aromatic system (atoms joined by aromatic bonds), even when that system cannot be assigned a Kekulé structure
 
 ## Guarantees
 

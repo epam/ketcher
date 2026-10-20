@@ -45,6 +45,23 @@ function* getVisibleBonds(
   }
 }
 
+/** Covalent order of a bond that is not aromatic, or null for aromatic and query bonds */
+function getNonAromaticBondOrder(bond: Bond, atom: Atom): number | null {
+  switch (bond.type) {
+    case Bond.PATTERN.TYPE.SINGLE:
+    case Bond.PATTERN.TYPE.DOUBLE:
+    case Bond.PATTERN.TYPE.TRIPLE:
+      return bond.type;
+    case Bond.PATTERN.TYPE.HAPTIC:
+      return isAllowedNonAttachmentGroupHapticBondMetal(atom) ? 0 : 1;
+    case Bond.PATTERN.TYPE.DATIVE:
+    case Bond.PATTERN.TYPE.HYDROGEN:
+      return 0;
+    default:
+      return null;
+  }
+}
+
 export function countDativeBonds(
   struct: Struct,
   atomId: number,
@@ -82,28 +99,8 @@ export function calcCovalentBondOrderLowerBound(
     atom,
     includeAtomsInCollapsedSgroups,
   )) {
-    switch (bond.type) {
-      case Bond.PATTERN.TYPE.SINGLE:
-      case Bond.PATTERN.TYPE.DOUBLE:
-      case Bond.PATTERN.TYPE.TRIPLE:
-        bondOrderSum += bond.type;
-        break;
-      case Bond.PATTERN.TYPE.HAPTIC:
-        if (!isAllowedNonAttachmentGroupHapticBondMetal(atom)) {
-          bondOrderSum += 1;
-        }
-        break;
-      case Bond.PATTERN.TYPE.DATIVE:
-      case Bond.PATTERN.TYPE.HYDROGEN:
-        break;
-      case Bond.PATTERN.TYPE.AROMATIC:
-      case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-      case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
-      case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
-      case Bond.PATTERN.TYPE.ANY:
-        bondOrderSum += 1;
-        break;
-    }
+    // Aromatic and query bonds contribute at least one
+    bondOrderSum += getNonAromaticBondOrder(bond, atom) ?? 1;
   }
   return bondOrderSum;
 }
@@ -111,48 +108,53 @@ export function calcCovalentBondOrderLowerBound(
 /** Covalent bond order sum of an aromatic atom in the Kekulé structure, or null */
 export function calcKekuleBondOrderSum(
   struct: Struct,
-  aid: number,
+  atomId: number,
   includeAtomsInCollapsedSgroups: boolean,
   kekulizationCache: KekulizationCache,
 ): number | null {
-  let kekulization = kekulizationCache.get(aid);
+  let kekulization = kekulizationCache.get(atomId);
   if (!kekulization) {
-    const atoms = collectAromaticSystem(
+    const systemAtomIds = collectAromaticSystemAtomIds(
       struct,
-      aid,
+      atomId,
+      includeAtomsInCollapsedSgroups,
+    );
+    const atoms = buildKekuleAtoms(
+      struct,
+      systemAtomIds,
       includeAtomsInCollapsedSgroups,
     );
     const systemKekulization = {
       atoms,
       doubleBondAtoms: atoms ? findKekuleDoubleBondAtoms(atoms) : null,
     };
-    (atoms ? [...atoms.keys()] : [aid]).forEach((atomId) =>
-      kekulizationCache.set(atomId, systemKekulization),
+    systemAtomIds.forEach((systemAtomId) =>
+      kekulizationCache.set(systemAtomId, systemKekulization),
     );
     kekulization = systemKekulization;
   }
 
-  const kekuleAtom = kekulization.atoms?.get(aid);
+  const kekuleAtom = kekulization.atoms?.get(atomId);
   if (!kekuleAtom || !kekulization.doubleBondAtoms) {
     return null;
   }
   return (
     kekuleAtom.externalBondOrderSum +
     kekuleAtom.aromaticNeighbors.length +
-    (kekulization.doubleBondAtoms.has(aid) ? 1 : 0)
+    (kekulization.doubleBondAtoms.has(atomId) ? 1 : 0)
   );
 }
 
-/** Atoms whose dative valence must be recalculated after the atoms in aids changed */
+/** Atoms whose dative valence must be recalculated after the atoms in atomIds changed */
 export function collectDativeAtomsToRecalculate(
   struct: Struct,
-  aids: Array<number>,
+  atomIds: Array<number>,
   includeAtomsInCollapsedSgroups: boolean,
 ): Set<number> {
-  const result = new Set(aids);
-  const seedIds = new Set(aids);
-  aids.forEach((aid) => {
-    const atom = struct.atoms.get(aid);
+  const result = new Set(atomIds);
+  const seedIds = new Set(atomIds);
+  atomIds.forEach((atomId) => {
+    const atom = struct.atoms.get(atomId);
     if (!atom) {
       return;
     }
@@ -170,46 +172,73 @@ export function collectDativeAtomsToRecalculate(
     if (walkedAtomIds.has(seedId)) {
       return;
     }
-    const system = collectAromaticSystem(
+    const systemAtomIds = collectAromaticSystemAtomIds(
       struct,
       seedId,
       includeAtomsInCollapsedSgroups,
     );
-    if (!system || system.size < 2) {
+    if (systemAtomIds.size < 2) {
       return;
     }
-    system.forEach((_kekuleAtom, atomId) => {
-      walkedAtomIds.add(atomId);
-      const atom = struct.atoms.get(atomId);
+    systemAtomIds.forEach((systemAtomId) => {
+      walkedAtomIds.add(systemAtomId);
+      const atom = struct.atoms.get(systemAtomId);
       if (!atom) {
         return;
       }
       const { donorCount, acceptorCount } = countDativeBonds(
         struct,
-        atomId,
+        systemAtomId,
         atom,
         includeAtomsInCollapsedSgroups,
       );
       if (donorCount + acceptorCount > 0) {
-        result.add(atomId);
+        result.add(systemAtomId);
       }
     });
   });
   return result;
 }
 
-/** Atoms connected to aid through aromatic bonds, or null if one is not supported */
-function collectAromaticSystem(
+/** Atoms connected to atomId through aromatic bonds, atomId included */
+function collectAromaticSystemAtomIds(
   struct: Struct,
-  aid: number,
+  atomId: number,
   includeAtomsInCollapsedSgroups: boolean,
-): Map<number, KekuleAtom> | null {
-  const system = new Map<number, KekuleAtom>();
-  const queue = [aid];
-  const visited = new Set([aid]);
+): Set<number> {
+  const systemAtomIds = new Set([atomId]);
+  const queue = [atomId];
 
   for (let i = 0; i < queue.length; i++) {
-    const atomId = queue[i];
+    const atom = struct.atoms.get(queue[i]);
+    if (!atom) {
+      continue;
+    }
+    for (const { bond, otherAtomId } of getVisibleBonds(
+      struct,
+      atom,
+      includeAtomsInCollapsedSgroups,
+    )) {
+      if (
+        bond.type === Bond.PATTERN.TYPE.AROMATIC &&
+        !systemAtomIds.has(otherAtomId)
+      ) {
+        systemAtomIds.add(otherAtomId);
+        queue.push(otherAtomId);
+      }
+    }
+  }
+  return systemAtomIds;
+}
+
+/** Kekulé inputs of every atom in an aromatic system, or null if one is not supported */
+function buildKekuleAtoms(
+  struct: Struct,
+  systemAtomIds: Set<number>,
+  includeAtomsInCollapsedSgroups: boolean,
+): Map<number, KekuleAtom> | null {
+  const kekuleAtoms = new Map<number, KekuleAtom>();
+  for (const atomId of systemAtomIds) {
     const atom = struct.atoms.get(atomId);
     if (!atom || atom.isQuery() || atom.attachmentPoints) {
       return null;
@@ -224,39 +253,25 @@ function collectAromaticSystem(
       atom,
       includeAtomsInCollapsedSgroups,
     )) {
-      switch (bond.type) {
-        case Bond.PATTERN.TYPE.AROMATIC:
-          aromaticNeighbors.push(otherAtomId);
-          if (!visited.has(otherAtomId)) {
-            visited.add(otherAtomId);
-            queue.push(otherAtomId);
-          }
-          break;
-        case Bond.PATTERN.TYPE.SINGLE:
-        case Bond.PATTERN.TYPE.DOUBLE:
-        case Bond.PATTERN.TYPE.TRIPLE:
-          externalBondOrderSum += bond.type;
-          break;
-        case Bond.PATTERN.TYPE.DATIVE:
-          if (bond.begin === atomId) {
-            donorCount++;
-          } else {
-            acceptorCount++;
-          }
-          break;
-        case Bond.PATTERN.TYPE.HYDROGEN:
-          break;
-        case Bond.PATTERN.TYPE.HAPTIC:
-          if (!isAllowedNonAttachmentGroupHapticBondMetal(atom)) {
-            externalBondOrderSum += 1;
-          }
-          break;
-        default:
-          return null;
+      if (bond.type === Bond.PATTERN.TYPE.AROMATIC) {
+        aromaticNeighbors.push(otherAtomId);
+        continue;
+      }
+      const bondOrder = getNonAromaticBondOrder(bond, atom);
+      if (bondOrder === null) {
+        return null;
+      }
+      externalBondOrderSum += bondOrder;
+      if (bond.type === Bond.PATTERN.TYPE.DATIVE) {
+        if (bond.begin === atomId) {
+          donorCount++;
+        } else {
+          acceptorCount++;
+        }
       }
     }
 
-    system.set(atomId, {
+    kekuleAtoms.set(atomId, {
       label: atom.label,
       charge: atom.charge ?? 0,
       radicalCount: radicalElectrons(atom.radical),
@@ -266,5 +281,5 @@ function collectAromaticSystem(
       preferDoubleBond: donorCount > acceptorCount,
     });
   }
-  return system;
+  return kekuleAtoms;
 }

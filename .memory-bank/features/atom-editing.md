@@ -50,7 +50,7 @@ Placing or replacing an atom keeps implicit hydrogen counts and valence consiste
 #### Scenario: Dative limits exceeded
 
 - **WHEN** an atom has more donor bonds or more acceptor bonds than its valence electron pairs and empty orbitals allow
-- **THEN** the atom is underlined in red; the underline comes only from these donor/acceptor limits, not from covalent over-valence alone
+- **THEN** the atom is underlined in red; for an atom without an explicit valence, the underline comes only from these donor/acceptor limits, not from covalent over-valence alone (atoms with an explicit valence are covered by their own scenario below)
 
 #### Scenario: Donor and acceptor on the same atom cancel
 
@@ -64,13 +64,13 @@ Placing or replacing an atom keeps implicit hydrogen counts and valence consiste
 
 #### Scenario: Dative bond on an aromatic atom without a Kekulé structure
 
-- **WHEN** an aromatic atom has a dative bond but its ring system cannot be assigned a Kekulé structure (for example, it contains query atoms or elements outside the main-group s/p set)
+- **WHEN** an aromatic atom has a dative bond but its ring system cannot be assigned a Kekulé structure (for example, it contains query atoms or query bonds, or elements outside the main-group s/p set)
 - **THEN** its implicit hydrogens follow the usual aromatic rules, and it is underlined only if the limits are exceeded even when each aromatic bond counts as one
 
 #### Scenario: Atom with explicit valence and dative bonds
 
 - **WHEN** an atom has an explicit valence and a dative bond
-- **THEN** its implicit hydrogens still follow the explicit valence, and exceeding the donor/acceptor limits also underlines it
+- **THEN** its implicit hydrogens still follow the explicit valence, and it is underlined when it exceeds the donor/acceptor limits or when its explicit valence is below its covalent bond count
 
 #### Scenario: User-set implicit hydrogen count
 

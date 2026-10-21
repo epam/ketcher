@@ -83,7 +83,7 @@ export class Fragment {
   }
 
   get enhancedStereoFlag() {
-    return this.#enhancedStereoFlag?.toUpperCase();
+    return this.#enhancedStereoFlag;
   }
 
   constructor(

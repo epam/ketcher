@@ -45,7 +45,9 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
       ...getAttachmentPointNames(this.assignedAttachmentPoints),
       ...(this._assignedAttachmentPoints
         ? []
-        : (connectionAttachmentPoints?.keys() ?? [])),
+        : connectionAttachmentPoints
+          ? getAttachmentPointNames(connectionAttachmentPoints)
+          : []),
     ]);
     this.attachmentPointName =
       this._attachmentPointName ??

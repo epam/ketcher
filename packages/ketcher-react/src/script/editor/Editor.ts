@@ -1815,7 +1815,7 @@ class Editor implements KetcherEditor {
           new Set(
             Array.from(
               assignedAttachmentPoints.values(),
-              ([, leavingAtomId]) => leavingAtomId,
+              ({ leavingAtomId }) => leavingAtomId,
             ),
           ),
         )
@@ -3818,7 +3818,7 @@ class Editor implements KetcherEditor {
                 this.monomerCreationState;
               const assignedAtomIds = new Set<number>();
               assignedAttachmentPoints.forEach(
-                ([attachmentAtomId, leavingAtomId]) => {
+                ({ attachmentAtomId, leavingAtomId }) => {
                   assignedAtomIds.add(attachmentAtomId);
                   assignedAtomIds.add(leavingAtomId);
                 },

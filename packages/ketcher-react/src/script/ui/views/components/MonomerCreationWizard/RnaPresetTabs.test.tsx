@@ -95,7 +95,7 @@ const createMockStore = (
     bonds?: number[];
   },
   monomerCreationState?: {
-    assignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+    assignedAttachmentPoints?: AssignedAttachmentPoints;
   },
 ) => {
   const resolvedSelection = {
@@ -104,7 +104,7 @@ const createMockStore = (
     ...selection,
   };
   const resolvedMonomerCreationState = {
-    assignedAttachmentPoints: new Map<AttachmentPointName, [number, number]>(),
+    assignedAttachmentPoints: new Map() as AssignedAttachmentPoints,
     ...monomerCreationState,
   };
 

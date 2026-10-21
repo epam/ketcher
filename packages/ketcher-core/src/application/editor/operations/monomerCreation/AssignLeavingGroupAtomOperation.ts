@@ -57,7 +57,9 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
         Array.from(
           new Set([
             ...getAttachmentPointNames(assignedAttachmentPoints),
-            ...(connectionAttachmentPoints?.keys() ?? []),
+            ...(connectionAttachmentPoints
+              ? getAttachmentPointNames(connectionAttachmentPoints)
+              : []),
           ]),
         ),
       );

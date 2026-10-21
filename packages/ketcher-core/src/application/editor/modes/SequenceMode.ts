@@ -34,7 +34,9 @@ import {
   ReinitializeModeOperation,
   RestoreSequenceCaretPositionOperation,
 } from 'application/editor/operations/modes';
-import { assert } from 'utilities';
+import { assert, KetcherLogger, PLAIN_TEXT_MIME_TYPE } from 'utilities';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import { ketcherProvider } from 'application/ketcherProvider';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
@@ -181,6 +183,68 @@ export class SequenceMode extends BaseMode {
 
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
+  }
+
+  protected async writeToClipboard(
+    serializedKet: string,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): Promise<void> {
+    try {
+      const ketMimeType = `web ${ChemicalMimeType.KET}`;
+      const sequence = this.getSequenceForClipboard(
+        drawingEntitiesManager,
+        serializedKet,
+      );
+
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
+          [PLAIN_TEXT_MIME_TYPE]: sequence.then(
+            (sequenceString) =>
+              new Blob([sequenceString ?? serializedKet], {
+                type: PLAIN_TEXT_MIME_TYPE,
+              }),
+          ),
+        }),
+      ]);
+    } catch (error) {
+      KetcherLogger.info(
+        'Cannot write multiple formats to the clipboard, falling back to KET only',
+        error,
+      );
+
+      try {
+        await navigator.clipboard.writeText(serializedKet);
+      } catch (writeError) {
+        KetcherLogger.error('SequenceMode.ts::writeToClipboard', writeError);
+      }
+    }
+  }
+
+  private async getSequenceForClipboard(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    serializedKet: string,
+  ): Promise<string | undefined> {
+    if (
+      drawingEntitiesManager.monomers.size === 0 ||
+      !drawingEntitiesManager.validateIfApplicableForFasta()
+    ) {
+      return undefined;
+    }
+
+    try {
+      const editor = provideEditorInstance();
+      const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+      const result = await indigo.convert(serializedKet, {
+        outputFormat: ChemicalMimeType.SEQUENCE,
+      });
+
+      return result.struct;
+    } catch (error) {
+      KetcherLogger.error('SequenceMode.ts::getSequenceForClipboard', error);
+
+      return undefined;
+    }
   }
 
   public get isEditMode() {
@@ -369,9 +433,12 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
     if (SequenceRenderer.caretPosition === -1) {
-      SequenceRenderer.setCaretPositionByNode(
-        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
-      );
+      const lastTwoStrandedNode =
+        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+
+      if (lastTwoStrandedNode) {
+        SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
+      }
     }
   }
 
@@ -1064,9 +1131,14 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      const selectionStartTwoStrandedNode = selectionRange[0].node;
-      const selectionEndTwoStrandedNode =
-        selectionRange[selectionRange.length - 1].node;
+      const selectionStartTwoStrandedNode = selectionRange[0]?.node;
+      const selectionEndTwoStrandedNode = selectionRange.at(-1)?.node;
+
+      if (!selectionStartTwoStrandedNode || !selectionEndTwoStrandedNode) {
+        throw new Error(
+          'Unable to process invalid selection range: missing boundary node',
+        );
+      }
       const selectionStartNode = getNodeFromTwoStrandedNode(
         selectionStartTwoStrandedNode,
         strandType,
@@ -1813,7 +1885,7 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.length > 0 &&
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
-              const lastNode = selectionRange[selectionRange.length - 1]?.node;
+              const lastNode = selectionRange.at(-1)?.node;
               const prevInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
                 : null;

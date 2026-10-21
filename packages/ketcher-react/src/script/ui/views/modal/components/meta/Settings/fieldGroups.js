@@ -52,6 +52,8 @@ const fieldGroups = {
   'ignore-stereochemistry-errors': 'Validation & Calculation',
   'mass-skip-error-on-pseudoatoms': 'Validation & Calculation',
   'valence-mode': 'Validation & Calculation',
+  'aromatize-skip-superatoms': 'Validation & Calculation',
+  'dearomatize-on-load': 'Validation & Calculation',
   // Debugging
   'smart-layout': 'Debugging',
   showAtomIds: 'Debugging',

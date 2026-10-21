@@ -32,7 +32,8 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { potentialAttachmentPoints } = this.monomerCreationState;
+    const { potentialAttachmentPoints, connectionAttachmentPoints } =
+      this.monomerCreationState;
     this.assignedAttachmentPoints =
       this._assignedAttachmentPoints ??
       this.monomerCreationState.assignedAttachmentPoints;
@@ -40,11 +41,15 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     this.attachmentPointId =
       this._attachmentPointId ??
       getNextAttachmentPointId(this.monomerCreationState);
+    const occupiedAttachmentPointNames = new Set([
+      ...getAttachmentPointNames(this.assignedAttachmentPoints),
+      ...(this._assignedAttachmentPoints
+        ? []
+        : (connectionAttachmentPoints?.keys() ?? [])),
+    ]);
     this.attachmentPointName =
       this._attachmentPointName ??
-      getNextFreeAttachmentPoint(
-        getAttachmentPointNames(this.assignedAttachmentPoints),
-      );
+      getNextFreeAttachmentPoint(Array.from(occupiedAttachmentPointNames));
 
     this.assignedAttachmentPoints.set(this.attachmentPointId, {
       name: this.attachmentPointName,

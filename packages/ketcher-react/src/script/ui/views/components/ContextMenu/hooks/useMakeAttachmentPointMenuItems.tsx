@@ -31,8 +31,11 @@ const useMakeAttachmentPointMenuItems = ({
 
   assert(editor.monomerCreationState);
 
-  const { assignedAttachmentPoints, potentialAttachmentPoints } =
-    editor.monomerCreationState;
+  const {
+    assignedAttachmentPoints,
+    potentialAttachmentPoints,
+    connectionAttachmentPoints,
+  } = editor.monomerCreationState;
 
   const isAtomInAssignedAttachmentPoint = Array.from(
     assignedAttachmentPoints.values(),
@@ -54,7 +57,11 @@ const useMakeAttachmentPointMenuItems = ({
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
 
-  const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
+  const occupiedAttachmentPointNames = new Set([
+    ...assignedAttachmentPoints.keys(),
+    ...(connectionAttachmentPoints?.keys() ?? []),
+  ]);
+  const attachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 

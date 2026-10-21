@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct } from 'ketcher-core';
+import type { Editor, Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
 import type { ToolbarState } from './toolbar/types';
 
@@ -62,3 +62,7 @@ export interface StoreState {
   options: OptionsState;
   toolbar: ToolbarState;
 }
+
+export type CurrentAppState = Pick<StoreState, 'options'> & {
+  editor: Editor | null;
+};

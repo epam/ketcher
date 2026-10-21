@@ -9,6 +9,7 @@
  ***************************************************************************/
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
 import {
@@ -41,6 +42,7 @@ const DEFAULT_FILTER: PresetPhosphateFilter = {
 };
 
 export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const currentFilter = useAppSelector(selectPresetPhosphateFilter);
   const [draftFilter, setDraftFilter] =
@@ -103,7 +105,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
       data-testid="preset-phosphate-filter-popup"
       onClick={(event) => event.stopPropagation()}
     >
-      <FilterPopupTitle>Filter</FilterPopupTitle>
+      <FilterPopupTitle>{t('monomerLibrary.filterTitle')}</FilterPopupTitle>
       <FilterPopupOption>
         <StyledCheckboxInput
           type="checkbox"
@@ -111,7 +113,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('fivePrime')}
           data-testid="preset-filter-5-phosphate"
         />
-        <span /> 5&apos;-phosphate
+        <span /> {t('monomerLibrary.fivePrimePhosphate')}
       </FilterPopupOption>
       <FilterPopupOption>
         <StyledCheckboxInput
@@ -120,7 +122,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('threePrime')}
           data-testid="preset-filter-3-phosphate"
         />
-        <span /> 3&apos;-phosphate
+        <span /> {t('monomerLibrary.threePrimePhosphate')}
       </FilterPopupOption>
       <FilterPopupOption>
         <StyledCheckboxInput
@@ -129,18 +131,18 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('noPhosphate')}
           data-testid="preset-filter-no-phosphate"
         />
-        <span /> No phosphate group
+        <span /> {t('monomerLibrary.noPhosphateGroup')}
       </FilterPopupOption>
       <FilterPopupSeparator />
       <FilterPopupActions>
         <FilterPopupResetButton
           styleType="secondary"
-          label="Reset all"
+          label={t('monomerLibrary.resetAll')}
           clickHandler={handleResetAll}
           data-testid="preset-filter-reset"
         />
         <FilterPopupActionButton
-          label="Set"
+          label={t('monomerLibrary.setFilter')}
           clickHandler={handleSet}
           data-testid="preset-filter-set"
         />

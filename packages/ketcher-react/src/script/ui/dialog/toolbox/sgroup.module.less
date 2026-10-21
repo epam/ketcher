@@ -44,30 +44,11 @@
     padding: 0;
   }
 
-  fieldset[class='sdata'] {
-    fieldset {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 24px;
-      width: 100%;
-
-      & label {
-        display: flex;
-        flex-direction: row;
-        line-height: 16px;
-
-        & > span {
-          margin-right: 3px !important;
-        }
-      }
-    }
-  }
-
   form {
     margin: 12px 12px 4px;
 
     label {
-      text-align: left;
+      text-align: start;
       font-size: 12px;
 
       & > span > div {
@@ -79,11 +60,11 @@
           display: flex;
           flex-direction: row;
           align-items: center;
-          margin-left: 4px !important;
+          margin-inline-start: 4px !important;
         }
 
         span {
-          margin-right: 4px !important;
+          margin-inline-end: 4px !important;
         }
       }
     }
@@ -115,6 +96,25 @@
         background-color: @color-background-primary;
         width: 4px;
         border-radius: 2px;
+      }
+    }
+  }
+
+  fieldset[class='sdata'] {
+    fieldset {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+      width: 100%;
+
+      & label {
+        display: flex;
+        flex-direction: row;
+        line-height: 16px;
+
+        & > span {
+          margin-inline-end: 3px !important;
+        }
       }
     }
   }

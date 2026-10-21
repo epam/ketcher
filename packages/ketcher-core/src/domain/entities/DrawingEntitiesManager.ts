@@ -158,13 +158,13 @@ const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const UNSPLIT_NUCLEOTIDE_MONOMERS_AMOUNT = 3;
 
-const SENSE_NATURAL_ANALOGUES: string[] = [
+const SENSE_NATURAL_ANALOGUES = new Set<string>([
   RnaDnaNaturalAnaloguesEnum.ADENINE,
   RnaDnaNaturalAnaloguesEnum.CYTOSINE,
   RnaDnaNaturalAnaloguesEnum.GUANINE,
   RnaDnaNaturalAnaloguesEnum.THYMINE,
   RnaDnaNaturalAnaloguesEnum.URACIL,
-];
+]);
 
 function isUnsplitNucleotideNode(
   node: SubChainNode,
@@ -3782,18 +3782,33 @@ export class DrawingEntitiesManager {
     node: SubChainNode,
     isDnaAntisense: boolean,
   ) {
+    // A base already bonded to something besides its sugar cannot pair with
+    // an antisense base (requirement 1.2 of #5678)
     if (node instanceof Nucleotide || node instanceof Nucleoside) {
+      const { rnaBase } = node;
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1
+      ) {
+        return undefined;
+      }
+
       return DrawingEntitiesManager.getAntisenseBaseLabel(
-        node.rnaBase,
+        rnaBase,
         isDnaAntisense,
       );
     }
 
     if (isUnsplitNucleotideNode(node)) {
+      if (node.monomer.hydrogenBonds.length > 0) {
+        return undefined;
+      }
+
       const naturalAnalogCode =
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 
-      return SENSE_NATURAL_ANALOGUES.includes(naturalAnalogCode)
+      return SENSE_NATURAL_ANALOGUES.has(naturalAnalogCode)
         ? DrawingEntitiesManager.getAntisenseBaseLabel(
             naturalAnalogCode,
             isDnaAntisense,
@@ -4418,6 +4433,7 @@ export class DrawingEntitiesManager {
     entitiesToReturn: Array<typeof Atom | typeof Bond> = [Atom, Bond],
   ) {
     const connectedMoleculeMonomers: Array<Atom | Bond> = [];
+    const entitiesToReturnSet = new Set(entitiesToReturn);
     const queue = [startEntity];
     const visited = new Set<number>();
 
@@ -4430,12 +4446,12 @@ export class DrawingEntitiesManager {
 
       if (current instanceof Bond) {
         queue.push(current.firstAtom, current.secondAtom);
-        if (entitiesToReturn.includes(Bond)) {
+        if (entitiesToReturnSet.has(Bond)) {
           connectedMoleculeMonomers.push(current);
         }
       } else if (current instanceof Atom) {
         queue.push(...current.bonds);
-        if (entitiesToReturn.includes(Atom)) {
+        if (entitiesToReturnSet.has(Atom)) {
           connectedMoleculeMonomers.push(current);
         }
       }

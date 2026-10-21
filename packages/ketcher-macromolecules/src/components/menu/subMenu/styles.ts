@@ -26,7 +26,7 @@ export const StyledDropdownIcon = styled(Icon, {
   position: absolute;
   height: 7px;
   width: 7px;
-  right: 3px;
+  inset-inline-end: 3px;
   bottom: 3px;
   cursor: pointer;
 

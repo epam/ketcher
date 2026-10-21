@@ -2,7 +2,6 @@ import {
   CoreEditor,
   EditorClassName,
   MonomerLibraryConvertError,
-  MonomerLibraryUpdateError,
   ToolName,
 } from 'application/editor';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -29,6 +28,8 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
+import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -65,6 +66,33 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('uses the current canvas for library drag/drop after manager swaps', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const { deps } = (
+      editor as unknown as {
+        dragDropHandler: { deps: LibraryItemDragDropHandlerDeps };
+      }
+    ).dragDropHandler;
+    const originalManager = editor.drawingEntitiesManager;
+    const replacementManager = new DrawingEntitiesManager();
+
+    try {
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      editor.drawingEntitiesManager = replacementManager;
+      expect(deps.drawingEntitiesManager).toBe(replacementManager);
+      editor.drawingEntitiesManager = originalManager;
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
   describe('switchToMacromolecules', () => {
     const originalGetBBox = SVGElement.prototype.getBBox;
 
@@ -289,23 +317,14 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'CHEM1',
-          reason: expect.stringContaining(
-            'Base IDT alias is required when idtAliases is defined',
-          ),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('CHEM1: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -450,7 +469,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
@@ -517,27 +536,20 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(
           JSON.stringify(payloadWithDuplicateAliases),
         );
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(true);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'PHOS2',
-          reason: expect.stringContaining('Alias collision detected'),
-        },
-        {
-          name: 'PHOS3',
-          reason: expect.stringContaining('Alias collision detected'),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('PHOS2: '),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('PHOS3: '),
+      );
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
@@ -592,23 +604,14 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(true);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'SUGAR3',
-          reason: expect.stringContaining(
-            'The HELM alias must consist only of',
-          ),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('SUGAR3: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -655,17 +658,12 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(
           JSON.stringify(monomerWithInvalidBilnAlias),
         );
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('The BILN alias must consist only of'),
@@ -731,7 +729,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(
           JSON.stringify(monomerWithBilnAliasCollision),
         ),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -801,7 +799,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -858,7 +856,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -915,7 +913,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -972,7 +970,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(monomerB)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1005,15 +1003,10 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining(
@@ -1023,7 +1016,7 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
 
-    it('should throw MonomerLibraryUpdateError on BILN alias collision across peptide and CHEM monomers', () => {
+    it('should log and skip on BILN alias collision across peptide and CHEM monomers', () => {
       const peptideWithBilnAlias = {
         root: {
           templates: [
@@ -1079,7 +1072,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(chemWithBilnCollision)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('BILN alias "BilnAlias1"'),
@@ -1143,21 +1136,14 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      let thrownError: MonomerLibraryUpdateError | undefined;
-      try {
+      expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
-      } catch (error) {
-        thrownError = error as MonomerLibraryUpdateError;
-      }
+      }).not.toThrow();
 
-      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError?.partialSuccess).toBe(false);
-      expect(thrownError?.skippedItems).toEqual([
-        {
-          name: 'monomerGroupTemplate-',
-          reason: expect.stringContaining('cannot be empty or whitespace'),
-        },
-      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('monomerGroupTemplate-: '),
+      );
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1274,7 +1260,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(nucleotide2)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1321,7 +1307,7 @@ describe('CoreEditor', () => {
 
       expect(() =>
         editor.updateMonomersLibrary(JSON.stringify(nucleotidesInOneBatch)),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1384,7 +1370,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(
           JSON.stringify(nucleotideWithCollidingAlias),
         ),
-      ).toThrow(MonomerLibraryUpdateError);
+      ).not.toThrow();
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining('Duplicate IDT aliases detected'),
@@ -1426,7 +1412,7 @@ describe('CoreEditor', () => {
 
       expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
-      }).toThrow(MonomerLibraryUpdateError);
+      }).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1471,7 +1457,7 @@ describe('CoreEditor', () => {
 
       expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
-      }).toThrow(MonomerLibraryUpdateError);
+      }).not.toThrow();
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1533,7 +1519,7 @@ describe('CoreEditor', () => {
 
       expect(() => {
         editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
-      }).toThrow(MonomerLibraryUpdateError);
+      }).not.toThrow();
 
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(

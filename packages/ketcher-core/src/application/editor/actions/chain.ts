@@ -41,10 +41,10 @@ export function fromChain(
   let action = new Action();
 
   const frid =
-    atomId !== null
-      ? (atomGetAttr(restruct, atomId, 'fragment') as number)
-      : ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
-          .frid as number);
+    atomId === null
+      ? ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
+          .frid as number)
+      : (atomGetAttr(restruct, atomId, 'fragment') as number);
 
   const chainItems: { atoms: number[]; bonds: number[] } = {
     atoms: [],

@@ -30,6 +30,7 @@ import {
   type CleanData,
   type CleanResult,
   type ConvertData,
+  type ConvertContext,
   type ConvertResult,
   type DearomatizeData,
   type DearomatizeResult,
@@ -80,23 +81,6 @@ function pollDeferred<T>(
 
 function parametrizeUrl(url: string, params: Record<string, string>) {
   return url.replace(/:(\w+)/g, (_, val) => params[val]);
-}
-
-/**
- * Returns true when a serialized struct string contains macromolecular content.
- * Used to decide whether the full monomer library must be sent to the server
- * alongside the struct.
- *
- * Checks:
- * - KET format: monomerTemplate key prefix or monomer node type field
- * - HELM format: leading segment identifier (PEPTIDE/RNA/CHEM/BLOB)
- */
-function structHasMacromolecularContent(struct: string): boolean {
-  return (
-    struct.includes('"monomerTemplate-') ||
-    /"type"\s*:\s*"monomer"/.test(struct) ||
-    /^(?:PEPTIDE|RNA|CHEM|BLOB)\d*\{/.test(struct.trim())
-  );
 }
 
 function request<T = unknown>(
@@ -297,14 +281,11 @@ export class RemoteStructService implements StructService {
   convert(
     data: ConvertData,
     options?: StructServiceOptions,
+    context?: ConvertContext,
   ): Promise<ConvertResult> {
-    // Include the monomer library only when the struct contains macromolecular
-    // content (monomers, polymer bonds, monomer templates). For pure small-molecule
-    // structures the full library is a large unnecessary payload (~500 KB+) that
-    // causes noticeable latency on every save/convert operation.
-    const monomerLibrary = structHasMacromolecularContent(data.struct)
-      ? JSON.stringify(provideEditorInstance()?.monomersLibraryParsedJson)
-      : undefined;
+    const monomerLibrary = context?.skipMonomerLibraryTransfer
+      ? undefined
+      : JSON.stringify(provideEditorInstance()?.monomersLibraryParsedJson);
     const expandedOptions = {
       monomerLibrary,
       ...this.getStandardServerOptions(options),

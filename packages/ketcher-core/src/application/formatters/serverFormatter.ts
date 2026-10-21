@@ -76,6 +76,11 @@ export class ServerFormatter implements StructFormatter {
           output_format: formatProperties.mime,
         },
         { ...this.#options, ...formatProperties.options },
+        this.#format === SupportedFormat.molV3000 && drawingEntitiesManager
+          ? {
+              skipMonomerLibraryTransfer: !drawingEntitiesManager.hasMonomers,
+            }
+          : undefined,
       );
 
       return convertResult.struct;

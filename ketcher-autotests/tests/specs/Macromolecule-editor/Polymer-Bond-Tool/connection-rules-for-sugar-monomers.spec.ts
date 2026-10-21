@@ -8,6 +8,7 @@ import {
 } from '@utils';
 import {
   getMonomerLocator,
+  moveMonomerToPosition,
   AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
@@ -197,9 +198,7 @@ test.describe('Connection rules for sugars: ', () => {
       monomerType: leftMonomer.monomerType,
     }).first();
 
-    await leftMonomerLocator.hover({ force: true });
-
-    await dragMouseTo(page, 500, 370);
+    await moveMonomerToPosition(page, leftMonomerLocator, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -212,9 +211,8 @@ test.describe('Connection rules for sugars: ', () => {
         ? tmpMonomerLocator.nth(1)
         : tmpMonomerLocator.first();
 
-    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(page, 600, 375);
+    await moveMonomerToPosition(page, rightMonomerLocator, 600, 375);
     await moveMouseAway(page);
 
     return {

@@ -35,6 +35,9 @@ jest.mock('d3', () => {
         selectAll() {
           return this;
         },
+        selectChildren() {
+          return this;
+        },
         remove() {
           return this;
         },

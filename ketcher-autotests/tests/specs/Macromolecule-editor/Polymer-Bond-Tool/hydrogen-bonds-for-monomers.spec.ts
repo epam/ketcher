@@ -30,6 +30,7 @@ import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constan
 import {
   AttachmentPoint,
   getMonomerLocator,
+  moveMonomerToPosition,
 } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -146,8 +147,7 @@ async function loadTwoMonomers(
     monomerAlias: leftMonomer.alias,
   }).first();
 
-  await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(page, 500, 370);
+  await moveMonomerToPosition(page, leftMonomerLocator, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -163,9 +163,8 @@ async function loadTwoMonomers(
           monomerAlias: rightMonomer.alias,
         }).first();
 
-  await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-  await dragMouseTo(page, 600, 372);
+  await moveMonomerToPosition(page, rightMonomerLocator, 600, 372);
   await moveMouseAway(page);
 }
 
@@ -180,8 +179,7 @@ async function loadMonomersAndMolecule(
     monomerAlias: leftMonomer.alias,
   }).first();
 
-  await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(page, 500, 370);
+  await moveMonomerToPosition(page, leftMonomerLocator, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMolecule.fileName);

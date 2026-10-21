@@ -264,17 +264,26 @@ export async function pasteFromClipboardByKeyboard(
   options?:
     | {
         delay?: number;
+        commitPreview?: boolean;
       }
     | undefined,
 ) {
+  const { commitPreview = true, ...keyboardOptions } = options ?? {};
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. For ex. - select object on the screen can took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
+    async () =>
+      await page.keyboard.press(`ControlOrMeta+KeyV`, keyboardOptions),
   );
+  const preview = page.getByTestId('paste-preview');
+  if (commitPreview && (await preview.isVisible())) {
+    // The preview ignores pointer events; force clicks its center on the canvas.
+    await preview.click({ force: true });
+    await expect(preview).toHaveCount(0);
+  }
 }
 
 export async function undoByKeyboard(

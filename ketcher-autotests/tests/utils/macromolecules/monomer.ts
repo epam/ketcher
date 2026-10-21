@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { dragMouseTo } from '../clicks';
 import { Monomer, MonomerType, SymbolType } from '../types';
@@ -23,6 +23,43 @@ export async function moveMonomer(
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
   await dragMouseTo(page, x, y);
+}
+
+export async function moveMonomerToPosition(
+  page: Page,
+  monomer: Locator,
+  x: number,
+  y: number,
+) {
+  await expect(page.getByTestId('paste-preview')).toHaveCount(0);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
+  const shape = monomer.getByTestId('shape');
+  await shape.click();
+  await shape.hover({ force: true });
+  const box = await shape.boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for monomer shape');
+  }
+  const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  // Mouse events use integer page coordinates; retain the fractional grip offset.
+  const grip = { x: Math.round(center.x), y: Math.round(center.y) };
+  await page.mouse.move(grip.x, grip.y);
+  await dragMouseTo(
+    page,
+    Math.round(x + grip.x - center.x),
+    Math.round(y + grip.y - center.y),
+  );
+  await expect
+    .poll(async () => {
+      const box = await shape.boundingBox();
+      return box
+        ? { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+        : null;
+    })
+    .toEqual({
+      x: expect.closeTo(x, 0),
+      y: expect.closeTo(y, 0),
+    });
 }
 
 export async function moveMonomerOnMicro(

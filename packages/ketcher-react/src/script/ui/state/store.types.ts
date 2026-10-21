@@ -20,6 +20,7 @@ import type { Action, compose } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
 import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 import type { OptionsState } from './options/types';
+import type { ToolbarState } from './toolbar/types';
 
 export type {
   AnalyseRoundName,
@@ -63,6 +64,7 @@ export interface StoreState {
   templates: TemplatesState;
   modal: ModalState;
   options: OptionsState;
+  toolbar: ToolbarState;
 }
 
 export type SetEditor = (editor: Editor) => void;
@@ -99,4 +101,8 @@ export type ReduxDevToolsCompose = (
 
 export type DevToolsGlobal = typeof globalThis & {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+};
+
+export type CurrentAppState = Pick<StoreState, 'options'> & {
+  editor: Editor | null;
 };

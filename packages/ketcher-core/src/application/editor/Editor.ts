@@ -1469,6 +1469,15 @@ export class CoreEditor {
       this.mode.onCopy();
       this.clearSelectionAfterCopy();
     });
+    this.events.cutSelectedStructure.add(() => {
+      this.mode.onCut();
+    });
+    this.events.copySelectedStructureAs.add(
+      (format: 'ket' | 'mol' | 'image') => {
+        this.mode.onCopyAs(format);
+        this.clearSelectionAfterCopy();
+      },
+    );
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
     });
@@ -2990,6 +2999,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

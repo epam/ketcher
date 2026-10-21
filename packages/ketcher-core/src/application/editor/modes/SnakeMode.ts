@@ -1,7 +1,6 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import type { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
-import { Coordinates } from '../shared/coordinates';
 import { provideEditorInstance } from '../editorSingleton';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
@@ -41,8 +40,8 @@ export class SnakeMode extends BaseMode {
   getNewNodePosition() {
     const editor = provideEditorInstance();
 
-    return Coordinates.modelToCanvas(
-      editor.drawingEntitiesManager.bottomRightMonomerPosition,
+    return editor.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+      new Vec2(0, 1),
     );
   }
 

@@ -25,7 +25,6 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { Coordinates } from 'application/editor/shared/coordinates';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 
 type KeyboardEventHandler = {
@@ -356,14 +355,7 @@ export abstract class BaseMode {
   private updateEntitiesPosition(
     drawingEntitiesManager: DrawingEntitiesManager,
   ): void {
-    // Non-monomer entities aren't part of a chain, so paste at the cursor
-    // instead of the mode's chain-append position (e.g. Snake mode's
-    // bottomRightMonomerPosition).
-    const newNodePosition = drawingEntitiesManager.hasMonomers
-      ? this.getNewNodePosition()
-      : Coordinates.canvasToModel(
-          provideEditorInstance().lastCursorPositionOfCanvas,
-        );
+    const newNodePosition = this.getNewNodePosition();
     const bbox = getStructureBbox(drawingEntitiesManager.allEntitiesArray);
     const offset = Vec2.diff(newNodePosition, new Vec2(bbox.left, bbox.top));
 

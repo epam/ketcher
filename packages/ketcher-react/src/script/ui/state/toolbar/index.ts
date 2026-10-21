@@ -59,7 +59,7 @@ function updateVisibleTools(
   );
 }
 
-let resizeListener: (() => void) | null = null;
+let resizeListener: VoidFunction | null = null;
 
 export function initResize() {
   return function (

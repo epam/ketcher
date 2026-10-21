@@ -45,14 +45,14 @@ export const SettingsFields = ({
           <SettingsField
             key={String(fieldName)}
             name={String(fieldName)}
-            label={field.label}
+            labelKey={field.labelKey}
             type={field.type}
             value={settings[fieldName]}
             options={field.options}
             min={field.min}
             max={field.max}
             step={field.step}
-            tooltip={field.tooltip}
+            tooltipKey={field.tooltipKey}
             onChange={(value) => onChange({ [fieldName]: value })}
           />
         );

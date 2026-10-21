@@ -92,6 +92,11 @@ export const Editor = (props: Props) => {
   const skipModeConversion = useRef(false);
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
   const togglePolymerEditor = useCallback((toggleValue: boolean) => {
+    const captureViewport =
+      macromoleculesEditorRef.current?.captureViewportForModeSwitch;
+    if (typeof captureViewport === 'function') {
+      captureViewport.call(macromoleculesEditorRef.current);
+    }
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
   }, []);

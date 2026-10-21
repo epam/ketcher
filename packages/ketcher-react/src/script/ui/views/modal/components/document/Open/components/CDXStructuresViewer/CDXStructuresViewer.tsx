@@ -108,7 +108,12 @@ export const CDXStructuresViewer = ({
         <StructRender
           className={styles.image}
           struct={structure.struct}
-          options={{ ...editorOptions, autoScale: true, needCache: false }}
+          options={{
+            ...editorOptions,
+            autoScale: true,
+            downScale: true,
+            needCache: false,
+          }}
         />
       );
     }

@@ -151,7 +151,7 @@ export class ServerFormatter implements StructFormatter {
           e,
         );
         const details = e instanceof Error ? e.message : String(e);
-        throw Error(`Convert error!\n${details}`, { cause: e });
+        throw new Error(`Convert error!\n${details}`, { cause: e });
       }
 
       const formatError =
@@ -163,7 +163,7 @@ export class ServerFormatter implements StructFormatter {
             }`
           : getPropertiesByFormat(this.#format).name;
 
-      throw Error(`${formatError} is not supported in standalone mode.`, {
+      throw new Error(`${formatError} is not supported in standalone mode.`, {
         cause: e,
       });
     }

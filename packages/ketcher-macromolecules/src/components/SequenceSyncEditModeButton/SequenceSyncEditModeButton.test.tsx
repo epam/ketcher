@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 
@@ -138,6 +138,44 @@ describe('SequenceSyncEditModeButton', () => {
     expect(
       screen.queryByTestId('sync_sequence_edit_mode'),
     ).not.toBeInTheDocument();
+  });
+
+  it('dispatches toggleIsSequenceSyncEditMode exactly once with the toggled value on click', () => {
+    hasAntisenseChains = true;
+    renderComponents();
+
+    const dispatchSpy = jest.spyOn(
+      fakeEditor.events.toggleIsSequenceSyncEditMode,
+      'dispatch',
+    );
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('sync_sequence_edit_mode'));
+    });
+
+    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(false);
+  });
+
+  it('dispatches the current sync mode value when modelChange fires after a toggle', () => {
+    hasAntisenseChains = true;
+    renderComponents();
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('sync_sequence_edit_mode'));
+    });
+
+    const dispatchSpy = jest.spyOn(
+      fakeEditor.events.toggleIsSequenceSyncEditMode,
+      'dispatch',
+    );
+
+    act(() => {
+      fakeEditor.events.modelChange.dispatch();
+    });
+
+    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(false);
   });
 
   it('becomes visible immediately after an antisense chain is created, without any extra mouse/keyboard/hover interaction', () => {

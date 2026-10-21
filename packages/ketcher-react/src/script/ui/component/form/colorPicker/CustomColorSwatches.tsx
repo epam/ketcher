@@ -33,7 +33,7 @@ function CustomColorSwatches({
   onSelectColor,
   isCustomOpen,
   onToggleCustomOpen,
-}: CustomColorSwatchesProps) {
+}: Readonly<CustomColorSwatchesProps>) {
   return (
     <div className={classes.headerGroup}>
       <div className={classes.customHeader}>

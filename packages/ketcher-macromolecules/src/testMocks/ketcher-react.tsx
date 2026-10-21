@@ -1,4 +1,65 @@
 import React from 'react';
+import i18nextInstance from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import macromolecules from '../locales/en/macromolecules.json';
+import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
+
+// Mirrors the subset of ketcher-react's common.json actually referenced
+// from ketcher-macromolecules via the shared i18next instance. This file
+// mocks the whole 'ketcher-react' package (including its i18n module) for
+// ketcher-macromolecules' own test suite, so the real common.json isn't
+// reachable here - keep this in sync if those keys' English text changes.
+const common = {
+  errors: {
+    featureNotAvailableInBrowser:
+      'This feature is not available in your browser',
+  },
+  button: {
+    cancel: 'Cancel',
+    save: 'Save',
+    apply: 'Apply',
+    close: 'Close',
+    yes: 'Yes',
+  },
+  delete: 'Delete',
+};
+
+// Mirrors the subset of ketcher-react's dialogs.json actually referenced
+// from ketcher-macromolecules (the About dialog reuses ketcher-react's
+// existing "meta.about.*" content rather than duplicating it).
+const dialogs = {
+  meta: {
+    about: {
+      ok: 'Ok',
+      version: 'Version {value}',
+      build: 'Build {value}',
+      buildAt: 'Build at',
+      feedback: 'Feedback',
+      epamLifeSciences: 'EPAM Life Sciences',
+      indigoToolkit: 'Indigo Toolkit',
+      standalone: 'Standalone',
+    },
+  },
+};
+
+if (!i18nextInstance.isInitialized) {
+  // Uses i18next's built-in interpolator configured with the same {var}
+  // delimiters as the real app's i18next-icu plugin, instead of the real
+  // ICU plugin itself: i18next-icu pulls in intl-messageformat, which ships
+  // ESM that this package's Jest config can't transform inside
+  // node_modules. Plain variable substitution (no plural/select grammar)
+  // is all any current key needs.
+  i18nextInstance.use(initReactI18next).init({
+    lng: 'en',
+    fallbackLng: 'en',
+    resources: {
+      en: { macromolecules, macromoleculesDialogs, common, dialogs },
+    },
+    interpolation: { escapeValue: false, prefix: '{', suffix: '}' },
+  });
+}
+
+export const i18n = i18nextInstance;
 
 export const Icon = ({
   children,

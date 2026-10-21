@@ -20,8 +20,17 @@ const createSGroupStruct = (expanded: boolean) => {
   const restruct = {
     molecule: struct,
     atoms: new Map(),
+    attachmentGroups: new Map(),
     bonds: new Map(),
     reloops: new Map(),
+    getBondEndpoint(atomId: number) {
+      const atom = struct.atoms.get(atomId);
+      return atom ? { a: atom } : undefined;
+    },
+    render: { options: {} },
+    markAtom: jest.fn(),
+    markAttachmentGroup: jest.fn(),
+    markBond: jest.fn(),
     markItem: jest.fn(),
   } as unknown as ReStruct;
 

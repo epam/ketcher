@@ -15,9 +15,10 @@
  ***************************************************************************/
 
 import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
+import i18n from '../../../i18n/i18n';
 
 export default function copyAs(type) {
-  const state = global.currentState;
+  const state = globalThis.currentState;
   const editor = state.editor;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
@@ -43,21 +44,19 @@ export default function copyAs(type) {
     );
 
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
-      errorHandler(
-        'This feature is not available for Simple objects and Text objects',
-      );
+      errorHandler(i18n.t('toolbar:copy.notAvailableForSimpleObjects'));
       return null;
     }
 
     const structData = serializer.serialize(struct);
 
-    if (window.clipboardData) {
-      window.clipboardData.setData('text', structData);
+    if (globalThis.clipboardData) {
+      globalThis.clipboardData.setData('text', structData);
     } else {
       navigator.clipboard.writeText(structData);
     }
   } catch (e) {
     KetcherLogger.error('copyAs.js::copyAs', e);
-    errorHandler('This feature is not available in your browser');
+    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }

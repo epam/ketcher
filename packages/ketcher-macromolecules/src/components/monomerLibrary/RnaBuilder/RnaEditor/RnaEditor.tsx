@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
@@ -33,6 +34,7 @@ import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 import clsx from 'clsx';
 
 export const RnaEditor = ({ duplicatePreset }) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
@@ -88,7 +90,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
         onClick={expandEditor}
         data-testid="rna-builder-expand-button"
       >
-        RNA Builder
+        {t('monomerLibrary.rnaBuilderHeader')}
         <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
       {activePreset &&

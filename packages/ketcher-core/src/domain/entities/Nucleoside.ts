@@ -66,8 +66,9 @@ export class Nucleoside {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(

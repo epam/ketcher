@@ -14,54 +14,73 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Command } from 'domain/entities/Command';
+import { Command } from 'domain/entities/Command';
 import type { CoreEditor } from './Editor';
 import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
+import { EditorHistoryAction } from './EditorHistoryAction';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
 
 export class EditorHistory {
-  historyStack: Command[] | [] = [];
-  historyPointer = 0;
+  private readonly commands: Command[] = [];
+  private pointer = 0;
   editor!: CoreEditor;
 
-  private static _instance: object | null = null;
+  private static readonly instances = new WeakMap<CoreEditor, EditorHistory>();
 
   constructor(editor: CoreEditor) {
     this.editor = editor;
-    this.historyPointer = 0;
   }
 
   static getInstance(editor: CoreEditor): EditorHistory {
-    const instance = EditorHistory._instance;
-    if (EditorHistory.isInstance(instance)) {
-      return instance;
+    let instance = EditorHistory.instances.get(editor);
+    if (!instance) {
+      instance = new EditorHistory(editor);
+      EditorHistory.instances.set(editor, instance);
     }
-
-    const createdInstance = new EditorHistory(editor);
-    EditorHistory._instance = createdInstance;
-
-    return createdInstance;
+    return instance;
   }
 
-  private static isInstance(value: object | null): value is EditorHistory {
-    return value instanceof EditorHistory;
+  private get moleculesEditor() {
+    return ketcherProvider.getKetcher(this.editor.ketcherId)?.editor;
+  }
+
+  get historyStack() {
+    return this.moleculesEditor?.historyStack ?? this.commands;
+  }
+
+  get historyPointer() {
+    return this.moleculesEditor?.historyPtr ?? this.pointer;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
-    const latestCommand = this.historyStack[this.historyStack.length - 1];
-    if (megreWithLatestHistoryCommand && latestCommand) {
+    const latestCommand = this.previousCommand;
+    if (
+      megreWithLatestHistoryCommand &&
+      latestCommand &&
+      this.historyPointer === this.historyStack.length
+    ) {
       latestCommand.merge(command);
+    } else if (this.moleculesEditor) {
+      this.moleculesEditor.addHistoryAction(
+        new EditorHistoryAction(
+          () => this.performCommand(command, 'undo'),
+          () => this.performCommand(command, 'redo'),
+          command,
+        ),
+      );
     } else {
-      this.historyStack.splice(this.historyPointer, HISTORY_SIZE + 1, command);
-      if (this.historyStack.length > HISTORY_SIZE) {
-        this.historyStack.shift();
+      this.commands.splice(this.pointer, HISTORY_SIZE + 1, command);
+      if (this.commands.length > HISTORY_SIZE) {
+        this.commands.shift();
       }
-      this.historyPointer = this.historyStack.length;
+      this.pointer = this.commands.length;
     }
-    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+    if (!this.moleculesEditor || this.previousCommand !== command) {
+      ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+    }
     // Fire a dedicated model-change signal only when something actually
     // changed, so a no-op command doesn't trigger needless macromolecule
     // properties recalculation.
@@ -74,30 +93,39 @@ export class EditorHistory {
     if (this.historyPointer === 0) {
       return;
     }
+    if (this.moleculesEditor) {
+      this.moleculesEditor.undo();
+      return;
+    }
     ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
     assert(this.editor);
 
-    this.historyPointer--;
-    const lastCommand = this.historyStack[this.historyPointer];
-    lastCommand.invert(this.editor.renderersContainer);
-    const turnOffSelectionCommand =
-      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
-    this.editor?.renderersContainer.update(turnOffSelectionCommand);
-    // Dispatch after the model has been reverted so subscribers observe the
-    // up-to-date structure.
-    this.editor.events.modelChange.dispatch();
+    this.pointer--;
+    this.performCommand(this.commands[this.pointer], 'undo');
   }
 
   redo() {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
+    if (this.moleculesEditor) {
+      this.moleculesEditor.redo();
+      return;
+    }
     ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
     assert(this.editor);
 
-    const lastCommand = this.historyStack[this.historyPointer];
-    lastCommand.execute(this.editor.renderersContainer);
-    this.historyPointer++;
+    const lastCommand = this.commands[this.pointer];
+    this.performCommand(lastCommand, 'redo');
+    this.pointer++;
+  }
+
+  private performCommand(command: Command, operation: HistoryOperationType) {
+    if (operation === 'undo') {
+      command.invert(this.editor.renderersContainer);
+    } else {
+      command.execute(this.editor.renderersContainer);
+    }
     const turnOffSelectionCommand =
       this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
     this.editor?.renderersContainer.update(turnOffSelectionCommand);
@@ -107,10 +135,15 @@ export class EditorHistory {
   }
 
   public get previousCommand() {
-    return this.historyStack[this.historyPointer - 1];
+    const entry = this.historyStack[this.historyPointer - 1];
+    return entry instanceof EditorHistoryAction
+      ? entry.command
+      : entry instanceof Command
+        ? entry
+        : undefined;
   }
 
   destroy() {
-    EditorHistory._instance = null;
+    EditorHistory.instances.delete(this.editor);
   }
 }

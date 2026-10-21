@@ -32,6 +32,7 @@ import { resolveActionTitle } from '../action/resolveActionTitle';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
+import type { VisibleTools } from '../state/toolbar/types';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
@@ -49,16 +50,12 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface VisibleToolsMap {
-  [key: string]: string;
-}
-
 interface SharedActionProps {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
   opened?: string;
-  visibleTools: VisibleToolsMap;
+  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -89,7 +86,7 @@ interface SharedActionProps {
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
   opened?: string;
-  visibleTools: VisibleToolsMap;
+  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -327,7 +324,7 @@ function ActionMenu({
 function toolMargin(
   menuName: string,
   menu: MenuItem[],
-  visibleTools: VisibleToolsMap,
+  visibleTools: VisibleTools,
 ): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way

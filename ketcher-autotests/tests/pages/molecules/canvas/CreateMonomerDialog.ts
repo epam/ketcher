@@ -320,6 +320,7 @@ export const CreateMonomerDialog = (page: Page) => {
     async selectType(option: MonomerType) {
       await locators.typeCombobox.click();
       await page.getByTestId(option).click();
+      await page.getByTestId(option).waitFor({ state: 'detached' });
     },
 
     async setCode(value: string) {

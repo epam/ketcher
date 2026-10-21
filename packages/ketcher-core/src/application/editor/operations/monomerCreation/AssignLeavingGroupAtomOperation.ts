@@ -81,8 +81,11 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const {
+      assignedAttachmentPoints,
+      potentialAttachmentPoints,
+      connectionAttachmentPoints,
+    } = this.monomerCreationState;
 
     let atomPairForLeavingGroup: [number, number] | null = null;
     for (const attachmentPointAtoms of potentialAttachmentPoints.entries()) {
@@ -99,8 +102,12 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
 
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
+    const occupiedAttachmentPointNames = new Set([
+      ...assignedAttachmentPoints.keys(),
+      ...(connectionAttachmentPoints?.keys() ?? []),
+    ]);
     const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
+      Array.from(occupiedAttachmentPointNames),
     );
     this.attachmentPointName = attachmentPointName;
 

@@ -74,7 +74,7 @@ function ketcherCheck(struct, checkParams) {
     struct.atoms.forEach((atom) => atom.badConn && badVal++);
     if (badVal > 0)
       errors.valence = `Structure contains ${badVal} atom${
-        badVal !== 1 ? 's' : ''
+        badVal === 1 ? '' : 's'
       } with bad valence`;
   }
 

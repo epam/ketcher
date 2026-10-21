@@ -46,7 +46,7 @@ export const Preview = () => {
   const isPopupMode = Boolean(ketcherRootRect?.x || ketcherRootRect?.y);
 
   useLayoutEffect(() => {
-    if (!previewRef.current || preview.style) {
+    if (!previewRef.current || preview?.style) {
       return;
     }
 

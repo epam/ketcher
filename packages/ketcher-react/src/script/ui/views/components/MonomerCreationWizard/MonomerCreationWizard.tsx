@@ -69,7 +69,10 @@ import {
   NotificationMessages,
   NotificationTypes,
 } from './MonomerCreationWizard.constants';
-import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
+import {
+  getRnaPresetLeavingGroupWarningMessage,
+  validateMonomerLeavingGroups,
+} from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
@@ -1472,6 +1475,7 @@ const MonomerCreationWizardInternal = ({
 
   const validateRnaPresetWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+    skipLeavingGroupWarning = false,
   ) => {
     let needSaveMonomers = true;
     const componentsToValidate: Array<{
@@ -1768,14 +1772,30 @@ const MonomerCreationWizardInternal = ({
       }
     });
 
+    if (needSaveMonomers && !skipLeavingGroupWarning) {
+      const leavingGroupMessage = getRnaPresetLeavingGroupWarningMessage(
+        editor,
+        sugarAttachmentPoints,
+        phosphateAttachmentPoints,
+      );
+      if (leavingGroupMessage) {
+        needSaveMonomers = false;
+        setLeavingGroupDialogMessage(leavingGroupMessage);
+      }
+    }
+
     return needSaveMonomers;
   };
 
   const validateOnSubmit = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
+    skipLeavingGroupWarning: boolean,
   ) => {
     if (isRnaPresetType) {
-      return validateRnaPresetWizard(assignedAttachmentPointsByMonomer);
+      return validateRnaPresetWizard(
+        assignedAttachmentPointsByMonomer,
+        skipLeavingGroupWarning,
+      );
     } else {
       return validateMonomerWizard(assignedAttachmentPointsByMonomer);
     }
@@ -1807,7 +1827,7 @@ const MonomerCreationWizardInternal = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (skipLeavingGroupWarning = false) => {
     if (isSaving) {
       return;
     }
@@ -1868,6 +1888,7 @@ const MonomerCreationWizardInternal = ({
     // validation
     const needSaveMonomers = validateOnSubmit(
       assignedAttachmentPointsByMonomer,
+      skipLeavingGroupWarning,
     );
 
     // save
@@ -2236,7 +2257,7 @@ const MonomerCreationWizardInternal = ({
           </button>
           <button
             className={styles.buttonSubmit}
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             data-testid="submit-button"
             disabled={isSaving}
           >
@@ -2296,6 +2317,12 @@ const MonomerCreationWizardInternal = ({
               params={{
                 onOk: async () => {
                   setLeavingGroupDialogMessage('');
+
+                  if (isRnaPresetType) {
+                    await handleSubmit(true);
+
+                    return;
+                  }
 
                   wizardState.structure = {
                     atoms: [...editor.render.ctab.molecule.atoms.keys()],

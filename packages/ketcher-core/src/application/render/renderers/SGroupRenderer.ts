@@ -5,8 +5,6 @@ import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
-import { geometricCenter } from 'domain/entities/geometry';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -64,30 +62,6 @@ export class SGroupRenderer extends BaseRenderer {
     return this.sgroupDrawingEntity.sgroup;
   }
 
-  private get isUnconnectedMicromoleculeFragment(): boolean {
-    if (
-      !this.sgroupDrawingEntity.monomer.monomerItem.props
-        .isMicromoleculeFragment ||
-      this.sgroup.getAttachmentPoints().length > 0
-    ) {
-      return false;
-    }
-
-    const sgroupAtomIds = this.getSGroupAtomIds();
-
-    return this.getSGroupAtomRenderers().every(({ atom }) =>
-      atom.bonds.every(
-        (bond) =>
-          !(bond instanceof MonomerToAtomBond) &&
-          [bond.firstAtom, bond.secondAtom].every(
-            (bondAtom) =>
-              bondAtom.monomer === this.sgroupDrawingEntity.monomer &&
-              sgroupAtomIds.has(bondAtom.atomIdInMicroMode),
-          ),
-      ),
-    );
-  }
-
   public get labelTooltipText(): string | null {
     if (this.sgroup.type !== SGroup.TYPES.DAT) {
       return null;
@@ -142,12 +116,6 @@ export class SGroupRenderer extends BaseRenderer {
     this.sgroup.bracketDirection = new Vec2(1, 0);
     this.sgroup.areas = [bracketBox];
 
-    if (this.sgroup.isContracted()) {
-      this.drawContractedSGroupLabel();
-
-      return;
-    }
-
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
       case SGroup.TYPES.MUL:
@@ -179,23 +147,6 @@ export class SGroupRenderer extends BaseRenderer {
     this.drawBrackets(bracketBox, options);
   }
 
-  private drawContractedSGroupLabel(): void {
-    const label = this.sgroup.superatomLabel;
-
-    if (!label) {
-      return;
-    }
-
-    const livePositions = this.getLiveAtomPositions();
-    const position = livePositions
-      ? geometricCenter(livePositions)
-      : this.sgroup.getContractedPosition(this.struct).position;
-
-    this.appendText(Scale.modelToCanvas(position, this.editorSettings), label, {
-      'font-weight': 'bold',
-    });
-  }
-
   private getSGroupAtomIds(): Set<number> {
     return new Set(SGroup.getAtoms(this.struct, this.sgroup));
   }
@@ -220,41 +171,12 @@ export class SGroupRenderer extends BaseRenderer {
     return positions.length > 0 ? positions : null;
   }
 
-  public applyExpandedStateToStructure(
+  public setStructureRenderers(
     atomRenderers: Map<number, AtomRenderer>,
     bondRenderers: Map<number, BondRenderer>,
   ): void {
     this.atomRenderers = atomRenderers;
     this.bondRenderers = bondRenderers;
-
-    if (this.sgroup.isExpanded() || this.isUnconnectedMicromoleculeFragment) {
-      return;
-    }
-
-    const sgroupAtomIds = this.getSGroupAtomIds();
-
-    atomRenderers.forEach((atomRenderer) => {
-      if (
-        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
-        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode)
-      ) {
-        atomRenderer.setVisibility(false);
-      }
-    });
-
-    bondRenderers.forEach((bondRenderer) => {
-      const { firstAtom, secondAtom } = bondRenderer.bond;
-      const isSameMonomer =
-        firstAtom.monomer === this.sgroupDrawingEntity.monomer &&
-        secondAtom.monomer === this.sgroupDrawingEntity.monomer;
-      const isBondInsideSGroup =
-        sgroupAtomIds.has(firstAtom.atomIdInMicroMode) &&
-        sgroupAtomIds.has(secondAtom.atomIdInMicroMode);
-
-      if (isSameMonomer && isBondInsideSGroup) {
-        bondRenderer.setVisibility(false);
-      }
-    });
   }
 
   private drawDataSGroup(): void {

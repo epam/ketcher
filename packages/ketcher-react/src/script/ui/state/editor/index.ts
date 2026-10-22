@@ -154,7 +154,8 @@ export default function initEditor(
           values: elem.values,
           disabledIds: Array.from(rgroups.entries()).reduce<number[]>(
             (acc, [rgid, rg]) => {
-              if (rg.frags.has(elem.fragId as number)) acc.push(rgid);
+              if (elem.fragId !== undefined && rg.frags.has(elem.fragId))
+                acc.push(rgid);
               return acc;
             },
             [],

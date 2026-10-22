@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ElementType } from 'react';
 
 import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
@@ -47,7 +47,7 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
     ref: containerRef as React.RefObject<HTMLDivElement>,
   });
 
-  const Component = modals[modal.name];
+  const Component = modals[modal.name] as ElementType | undefined;
 
   useEffect(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

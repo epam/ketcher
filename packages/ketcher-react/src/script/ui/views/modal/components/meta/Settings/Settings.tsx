@@ -171,6 +171,7 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="showHydrogenLabels"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
             t,
@@ -233,6 +234,7 @@ const SettingsDialog = (props: Props) => {
           name="stereoLabelStyle"
           hint={t('dialogs:meta.settings.stereoLabelStyleTooltip')}
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.stereoLabelStyle,
             t,
@@ -260,6 +262,7 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="colorStereogenicCenters"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
             t,
@@ -316,6 +319,7 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="resetToSelect"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(settingsProps?.resetToSelect, t)}
           data-testid="reset-to-select"
         />
@@ -327,6 +331,7 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="font"
           component={SystemFonts}
+          className={classes.stackedField}
           data-testid="font-selection"
         />
         <Field
@@ -345,6 +350,7 @@ const SettingsDialog = (props: Props) => {
           name="imageResolution"
           hint={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.imageResolution,
             t,
@@ -354,18 +360,21 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="miewMode"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(settingsProps?.miewMode, t)}
           data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(settingsProps?.miewTheme, t)}
           data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel, t)}
           data-testid="label-coloring"
         />

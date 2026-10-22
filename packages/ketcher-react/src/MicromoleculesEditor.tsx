@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import './index.less';
+import * as editorStyles from './index.less';
 
 import init, { type Config } from './script';
 import { type RefObject, useCallback, useEffect, useRef } from 'react';
@@ -29,6 +29,9 @@ import {
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import type { KetcherBuilder } from './script/builders';
+
+// Bind the Less import so it stays in JS but is erased from declarations.
+void editorStyles;
 
 const mediaSizes = {
   smallWidth: 1040,

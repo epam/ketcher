@@ -1,6 +1,7 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  type CoreEditor,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
   type MonomerItemType,
@@ -13,6 +14,18 @@ import {
   getMonomerPropertyVisibility,
   isNaturalAnalogueRequired,
 } from './MonomerCreationWizardFields.utils';
+
+// Uniqueness checks read the default monomers library; without it loaded, a
+// colliding monomer/preset would silently pass validation. Await the load first.
+export async function ensureMonomersLibraryLoadedForSubmit(
+  editor: Pick<
+    CoreEditor,
+    'ensureDefaultMonomersLibraryLoaded' | 'monomersLibraryParsedJson'
+  >,
+) {
+  await editor.ensureDefaultMonomersLibraryLoaded();
+  return editor.monomersLibraryParsedJson;
+}
 
 const COPY_SUFFIX = '_Copy';
 

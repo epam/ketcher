@@ -37,8 +37,9 @@ const waitForLibraryUpdate = async (page: Page, timeout = 20_000) => {
         let resolved = false;
 
         const handler = (sdf?: string) => {
+          if (sdf === undefined) return;
           resolved = true;
-          resolve(sdf ?? '');
+          resolve(sdf);
         };
 
         globalThis.window.ketcher.editor.subscribe('libraryUpdate', handler);

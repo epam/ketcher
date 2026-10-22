@@ -120,7 +120,10 @@ import { DragGhost } from 'components/DragGhost/DragGhost';
 import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
 import { FloatingTools } from 'components/FloatingTools';
 
-import './theme.less';
+import * as themeStyles from './theme.less';
+
+// Keep the runtime stylesheet while excluding its Less import from declarations.
+void themeStyles;
 
 const muiTheme = createTheme(muiOverrides);
 

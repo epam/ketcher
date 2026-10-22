@@ -169,7 +169,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -179,6 +179,7 @@ describe('SequenceMode preset replacement strand awareness (task 2)', () => {
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

@@ -95,7 +95,6 @@ import {
   keyNorm,
   SettingsManager,
 } from 'utilities';
-import monomersDataRaw from './data/monomers.ket';
 import { type HistoryOperationType, EditorHistory } from './EditorHistory';
 import { EditorHistoryAction } from './EditorHistoryAction';
 import { Coordinates } from './shared/coordinates';
@@ -244,6 +243,9 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 // never added here. See Editor.isUserMadeMonomer.
 let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
+const loadDefaultMonomersData = async () =>
+  (await import('./data/monomers.ket')).default;
+
 export class CoreEditor {
   public events: IEditorEvents;
   public ketcherId?: string;
@@ -300,6 +302,13 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private defaultMonomersLibraryReady?: Promise<void>;
+  private defaultMonomersLibraryInitialized = false;
+  private pendingMonomerLibraryUpdates: Array<{
+    data: string;
+    editedMonomerRef?: string;
+    isUserCreated?: boolean;
+  }> = [];
 
   constructor({
     ketcherId,
@@ -324,8 +333,7 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
-    this.setMonomersLibrary(monomersDataRaw);
-    this.events.updateMonomersLibrary.dispatch();
+    this.clearMonomersLibrary();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -427,6 +435,8 @@ export class CoreEditor {
       return;
     }
 
+    await this.ensureDefaultMonomersLibraryLoaded();
+
     try {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
       if (monomersLibraryReplace) {
@@ -463,6 +473,52 @@ export class CoreEditor {
       });
       onError?.(err);
     }
+  }
+
+  /**
+   * The default monomers library is a lazily loaded code-split chunk (dynamic
+   * import()). Readers that use it synchronously (e.g. KET serializer
+   * enrichment) must await this at an async boundary first. Idempotent: the
+   * load runs at most once per editor. A failed load is logged and not retried,
+   * so the library may still be empty after the await.
+   */
+  public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
+    if (!this.defaultMonomersLibraryReady) {
+      this.defaultMonomersLibraryReady =
+        this.initializeDefaultMonomersLibrary();
+    }
+
+    await this.defaultMonomersLibraryReady;
+  }
+
+  private async initializeDefaultMonomersLibrary(): Promise<void> {
+    try {
+      const monomersDataRaw = await loadDefaultMonomersData();
+      // Stored updates applied by setMonomersLibrary are already ordered after
+      // defaults; only direct writes made before this point need replaying.
+      this.defaultMonomersLibraryInitialized = true;
+      this.setMonomersLibrary(monomersDataRaw);
+    } catch (err) {
+      KetcherLogger.error(
+        'Editor::initializeDefaultMonomersLibrary failed:',
+        err,
+      );
+      this.clearMonomersLibrary();
+      this.events.openErrorModal.dispatch({
+        errorMessage: 'Failed to load default monomers library',
+        errorTitle: 'Monomer library load failed',
+      });
+    }
+
+    // Preserve direct caller updates even when the default chunk failed to load.
+    this.defaultMonomersLibraryInitialized = true;
+    const pendingUpdates = this.pendingMonomerLibraryUpdates;
+    this.pendingMonomerLibraryUpdates = [];
+    for (const { data, editedMonomerRef, isUserCreated } of pendingUpdates) {
+      this.updateMonomersLibrary(data, editedMonomerRef, isUserCreated);
+    }
+
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
@@ -528,8 +584,8 @@ export class CoreEditor {
     editedMonomerRef?: string,
     isUserCreated?: boolean,
   ) {
-    // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
-    // in the constructor before any consumer can call `updateMonomersLibrary`.
+    // The constructor initializes an empty library before defaults are loaded,
+    // so synchronous consumers can update it immediately.
     // A `null` value here would indicate a programming error (e.g. calling
     // this method before the editor finished constructing), not a normal
     // runtime case, so we fail loudly instead of silently no-op-ing.
@@ -965,6 +1021,19 @@ export class CoreEditor {
         monomersLibraryParsedJson.root.templates.push(templateRef);
       }
     });
+
+    if (!this.defaultMonomersLibraryInitialized) {
+      // Keep synchronous writes visible immediately, then replay them in order
+      // after deferred defaults (and persisted updates) have been installed.
+      this.pendingMonomerLibraryUpdates.push({
+        data:
+          typeof monomersDataRaw === 'string'
+            ? monomersDataRaw
+            : JSON.stringify(monomersDataRaw),
+        editedMonomerRef,
+        isUserCreated,
+      });
+    }
 
     this.events.updateMonomersLibrary.dispatch();
   }
@@ -2880,6 +2949,16 @@ export class CoreEditor {
     this.micromoleculesEditor?.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
+
+    // The macro canvas's scrollbars are otherwise only redrawn by a
+    // ResizeObserver on the canvas wrapper, which fires when the wrapper's
+    // own size changes (e.g. becoming visible), not when the structures
+    // drawn inside it change. Since the switch to Macromolecules now waits
+    // on the lazily loaded default monomers library before converting and
+    // rendering the struct here, that ResizeObserver firing can no longer be
+    // relied on to happen after this content is drawn. Explicitly refresh
+    // the scrollbars so they reflect the structure that was just rendered.
+    ZoomTool.instance.drawScrollBars();
   }
 
   private captureModeState(): () => void {

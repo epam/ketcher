@@ -277,10 +277,13 @@ export class RemoteStructService implements StructService {
     };
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
+    // Without this, the server gets no monomer library if macromolecules mode was never opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const monomerLibrary = JSON.stringify(
       provideEditorInstance()?.monomersLibraryParsedJson,
     );

@@ -1003,6 +1003,10 @@ class Editor implements KetcherEditor {
       return false;
     }
 
+    if (!provideEditorInstance()) {
+      return false;
+    }
+
     const currentStruct = this.struct();
     const selection = this.selection();
 
@@ -1521,6 +1525,10 @@ class Editor implements KetcherEditor {
     editInstanceInitialValues?: MonomerCreationInitialValues,
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
   ) {
+    if (!provideEditorInstance()) {
+      return;
+    }
+
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {

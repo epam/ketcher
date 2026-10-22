@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { Struct } from 'domain/entities/struct';
 import type { StructFormatter } from './structFormatter.types';
@@ -41,6 +42,9 @@ export class KetFormatter implements StructFormatter {
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {
+    // UI file loads reach this formatter directly, skipping setMolecule's wait.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return this.#ketSerializer.deserialize(content);
   }
 

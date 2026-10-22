@@ -25,10 +25,10 @@ type PreviewAttachmentPointParams = {
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
-    selected: string;
     hover: string;
     body: string;
     variant?: string;
+    autochainPreview: string;
   };
 
   constructor(

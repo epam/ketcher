@@ -1,5 +1,11 @@
 import type { ComponentProps } from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { Subscription } from 'subscription';
 import type { MonomerCreationWizardRequest } from 'ketcher-core';
 import { Editor } from './Editor';
@@ -20,6 +26,7 @@ const mockMacroEditor = {
   switchToMacromolecules: jest.fn(),
   switchToMicromolecules: jest.fn(),
   finishMonomerWizardSession: jest.fn(),
+  ensureDefaultMonomersLibraryLoaded: jest.fn().mockResolvedValue(undefined),
 };
 
 jest.mock('ketcher-core', () => ({
@@ -99,11 +106,28 @@ const initialize = async () => {
   render(<Editor {...({} as ComponentProps<typeof Editor>)} />);
   fireEvent.click(screen.getByText('Init micro'));
   fireEvent.click(await screen.findByTestId('init-macro'));
-  act(() => mockMacroEditor.events.switchToMacromoleculesMode.dispatch());
+  await act(async () =>
+    mockMacroEditor.events.switchToMacromoleculesMode.dispatch(),
+  );
   jest.clearAllMocks();
 };
 
 describe('Editor monomer wizard mode bridge', () => {
+  it('converts when macro mode is requested before the macro editor is ready', async () => {
+    jest.clearAllMocks();
+    render(<Editor {...({} as ComponentProps<typeof Editor>)} />);
+    fireEvent.click(screen.getByText('Init micro'));
+    const initializeMacro = await screen.findByTestId('init-macro');
+
+    fireEvent.click(screen.getAllByTestId('mode-switch')[0]);
+    expect(mockMacroEditor.switchToMacromolecules).not.toHaveBeenCalled();
+    fireEvent.click(initializeMacro);
+
+    await waitFor(() => {
+      expect(mockMacroEditor.switchToMacromolecules).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('switches temporarily and restores only after the completion callback', async () => {
     await initialize();
     const request: MonomerCreationWizardRequest = { mode: 'create' };

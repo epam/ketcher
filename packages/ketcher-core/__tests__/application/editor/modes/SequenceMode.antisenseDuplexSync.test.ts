@@ -165,7 +165,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -175,6 +175,7 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

@@ -1904,7 +1904,7 @@ class Editor implements KetcherEditor {
     const potentialLeavingAtoms =
       this.monomerCreationState.potentialAttachmentPoints.get(atomId);
 
-    let leavingAtomId: number;
+    let leavingAtomId: number | undefined;
     let additionalAction: Action | null = null;
     if (!forceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
       const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
@@ -1927,8 +1927,18 @@ class Editor implements KetcherEditor {
           [999, -1] as [number, number],
         );
 
-      leavingAtomId = minimalAtomicNumberAtomId;
-    } else {
+      // An atom already used in another attachment point (e.g. a former terminal
+      // atom that became an attachment atom) can't be a leaving atom anymore
+      const isAtomInAssignedAttachmentPoint = Array.from(
+        this.monomerCreationState.assignedAttachmentPoints.values(),
+      ).some((atomPair) => atomPair.includes(minimalAtomicNumberAtomId));
+
+      if (!isAtomInAssignedAttachmentPoint) {
+        leavingAtomId = minimalAtomicNumberAtomId;
+      }
+    }
+
+    if (leavingAtomId === undefined) {
       const [bondAdditionAction, , endAtomId, newBondId] = fromBondAddition(
         this.render.ctab,
         { type: Bond.PATTERN.TYPE.SINGLE, stereo: Bond.PATTERN.STEREO.NONE },

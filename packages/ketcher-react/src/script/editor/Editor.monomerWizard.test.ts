@@ -1,10 +1,12 @@
 import {
+  Action,
   Atom,
   AtomLabel,
   AttachmentPointName,
   Bond,
   CoreAtom,
   FunctionalGroup,
+  fromBondAddition,
   KetMonomerClass,
   MacromoleculesConverter,
   MonomerMicromolecule,
@@ -21,6 +23,7 @@ import Editor from './Editor';
 jest.mock('ketcher-core', () => ({
   ...jest.requireActual('ketcher-core'),
   provideEditorInstance: jest.fn(),
+  fromBondAddition: jest.fn(),
 }));
 
 const makeMonomer = () => {
@@ -389,5 +392,89 @@ describe('macro monomer wizard bridge', () => {
     jest.runOnlyPendingTimers();
     expect(finish).toHaveBeenLastCalledWith(false);
     expect(editor.errorHandler).toHaveBeenCalledWith('Merge failed');
+  });
+});
+
+describe('assigning a connection point in the monomer creation wizard', () => {
+  const NEW_LEAVING_ATOM_ID = 99;
+
+  // CCC with an H already added to the left terminal atom (atom 0), as happens
+  // after marking it as a connection point
+  const makeCccStruct = () => {
+    const struct = new Struct();
+    ['C', 'C', 'C', 'H'].forEach((label, index) =>
+      struct.atoms.add(new Atom({ label, pp: new Vec2(index, 0) })),
+    );
+    struct.bonds.add(new Bond({ begin: 0, end: 1, type: 1 }));
+    struct.bonds.add(new Bond({ begin: 1, end: 2, type: 1 }));
+    struct.bonds.add(new Bond({ begin: 0, end: 3, type: 1 }));
+    return struct;
+  };
+
+  const setup = (assignedAttachmentPoints: [number, number][]) => {
+    const editor = createEditor(makeCccStruct());
+    Reflect.set(editor.render.ctab, 'getBondEndpoint', jest.fn());
+    Reflect.set(editor, 'update', jest.fn());
+    const state = {
+      assignedAttachmentPoints: new Map(
+        assignedAttachmentPoints.map((pair, index) => [
+          `R${index + 1}` as AttachmentPointName,
+          pair,
+        ]),
+      ),
+      potentialAttachmentPoints: new Map([[1, new Set([0, 2])]]),
+      problematicAttachmentPoints: new Set(),
+    };
+    Reflect.set(editor.render, 'monomerCreationState', state);
+    (fromBondAddition as jest.Mock).mockReturnValue([
+      new Action(),
+      0,
+      NEW_LEAVING_ATOM_ID,
+      7,
+    ]);
+
+    return { editor, state };
+  };
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('adds a new leaving atom when the candidate is already an attachment atom', () => {
+    const { editor, state } = setup([[0, 3]]);
+
+    editor.assignConnectionPointAtom(1);
+
+    expect(fromBondAddition).toHaveBeenCalledTimes(1);
+    expect((fromBondAddition as jest.Mock).mock.calls[0][2]).toBe(1);
+    expect(Array.from(state.assignedAttachmentPoints.values())).toEqual([
+      [0, 3],
+      [1, NEW_LEAVING_ATOM_ID],
+    ]);
+    expect(state.potentialAttachmentPoints.has(1)).toBe(false);
+  });
+
+  it('reuses an existing terminal atom when no attachment point is assigned yet', () => {
+    const { editor, state } = setup([]);
+
+    editor.assignConnectionPointAtom(1);
+
+    expect(fromBondAddition).not.toHaveBeenCalled();
+    expect(Array.from(state.assignedAttachmentPoints.values())).toEqual([
+      [1, 0],
+    ]);
+    expect(state.potentialAttachmentPoints.has(1)).toBe(false);
+  });
+
+  it('adds a new leaving atom when the candidate is the leaving atom of another attachment point', () => {
+    const { editor, state } = setup([[3, 0]]);
+
+    editor.assignConnectionPointAtom(1);
+
+    expect(fromBondAddition).toHaveBeenCalledTimes(1);
+    expect(Array.from(state.assignedAttachmentPoints.values())).toEqual([
+      [3, 0],
+      [1, NEW_LEAVING_ATOM_ID],
+    ]);
   });
 });

@@ -21,7 +21,6 @@ import {
   type Struct,
   type CheckResult,
   type LayoutResult,
-  StereoFlag,
 } from 'ketcher-core';
 import { appUpdate } from '../options/actions';
 import { setStruct } from '../options';
@@ -86,7 +85,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
 
   if (checkParams.includes('chiral_flag')) {
     const isAbs = Array.from(struct.frags.values()).some(
-      (fr) => fr?.enhancedStereoFlag === StereoFlag.AbsLowerCase,
+      (fr) => (fr?.enhancedStereoFlag as string | undefined) === 'abs',
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }
@@ -218,7 +217,6 @@ function resetStereoFlagsPosition(struct: Struct): void {
   });
 }
 
-// TODO: serverCall function should not be exported
 // TODO: serverCall function should not be exported
 export function serverCall<T>(
   editor: Editor,

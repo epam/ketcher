@@ -25,7 +25,6 @@ export enum StereoFlag {
   Abs = 'ABS',
   And = 'AND',
   Or = 'OR',
-  AbsLowerCase = 'abs',
 }
 
 function calcStereoFlag(

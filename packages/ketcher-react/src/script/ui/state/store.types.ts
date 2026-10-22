@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Editor as CoreEditor, Struct } from 'ketcher-core';
+import type { AutomapMode, Editor as CoreEditor, Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
 import type Editor from 'src/script/editor';
 import type { Api } from 'src/script/api';
@@ -70,22 +70,12 @@ export interface StoreState {
     visibleTools: ToolbarState['visibleTools'] & { select: ToolVariant };
   };
   options: OptionsState;
-  struct?: Struct;
-}
-
-export interface ServerResponse {
-  indigoVersion?: string;
-  imagoVersions?: string[];
-  isAvailable?: boolean;
 }
 
 export interface KetcherCheckErrors {
   chiral_flag?: string;
   valence?: string;
 }
-
-export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
-
 export type AutomapRequest = {
   mode: AutomapMode;
 };

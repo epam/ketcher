@@ -16,7 +16,10 @@
 
 import type { Editor, Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
-import type { ToolbarState } from './toolbar/types';
+import type { ActiveTool, ToolbarState } from './toolbar/types';
+import type { Tools } from '../action';
+import type { ActionStatus } from './action';
+import type { RequestState } from './request/request.types';
 
 export type {
   AnalyseRoundName,
@@ -56,11 +59,17 @@ export interface ModalState {
   };
 }
 
+export type ActionStatusesState = { activeTool: ActiveTool } & {
+  [key in keyof Tools]?: ActionStatus;
+};
+
 export interface StoreState {
   templates: TemplatesState;
   modal: ModalState;
   options: OptionsState;
   toolbar: ToolbarState;
+  actionState: ActionStatusesState | null;
+  requestsStatuses: RequestState;
 }
 
 export type CurrentAppState = Pick<StoreState, 'options'> & {

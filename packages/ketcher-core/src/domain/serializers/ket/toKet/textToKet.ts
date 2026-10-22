@@ -158,7 +158,7 @@ export function textToKet(textNode) {
 
             return part;
           })
-          .filter(Boolean) as KetTextPart[];
+          .filter((part) => part !== null);
 
         return paraObj;
       },

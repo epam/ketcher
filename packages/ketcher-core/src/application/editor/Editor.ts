@@ -2792,10 +2792,18 @@ export class CoreEditor {
       'macroToMicro',
     );
 
+    // Carry the macro zoom over to the molecules canvas so the zoom level is
+    // persisted across the switch. Captured before resetZoom() clears it.
+    const macroZoom = zoomTool.getZoomLevel();
+
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
     this.micromoleculesEditor.render.setMolecule(struct);
+    this.micromoleculesEditor.zoom(macroZoom);
+    // zoom() alone does not notify the toolbar; dispatch so the zoom readout
+    // reflects the carried-over value immediately instead of after a click.
+    this.micromoleculesEditor.event.zoomChanged.dispatch();
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -2837,6 +2845,9 @@ export class CoreEditor {
       return;
     }
     this.micromoleculesEditor?.selection(null);
+    // Carry the molecules zoom over to the macro canvas so the zoom level is
+    // persisted across the switch. Captured before the micro canvas is reset.
+    const microZoom = this.micromoleculesEditor?.zoom();
     const restorePreviousMode = this.captureModeState();
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
@@ -2877,6 +2888,9 @@ export class CoreEditor {
 
     this.micromoleculesEditor?.render.setMolecule(new Struct());
     this.micromoleculesEditor?.zoom(1);
+    if (microZoom) {
+      ZoomTool.instance.zoomTo(microZoom);
+    }
     this._type = EditorType.Macromolecules;
     this.micromoleculesEditor?.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),

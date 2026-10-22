@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -31,12 +30,17 @@ const AppHidden = (props: Props) => {
   const { staticResourcesUrl } = useSettingsContext();
 
   useEffect(() => {
-    if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => onInitTmpls(ref.current, staticResourcesUrl));
-    } else {
+    if (typeof requestIdleCallback !== 'function') {
       onInitTmpls(ref.current, staticResourcesUrl);
+      return undefined;
     }
-  }, []);
+
+    const idleCallbackId = requestIdleCallback(() =>
+      onInitTmpls(ref.current, staticResourcesUrl),
+    );
+
+    return () => cancelIdleCallback(idleCallbackId);
+  }, [onInitTmpls, staticResourcesUrl]);
 
   return <div style={{ display: 'none' }} ref={ref} />;
 };

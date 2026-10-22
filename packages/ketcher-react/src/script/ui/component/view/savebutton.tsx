@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -27,7 +26,7 @@ import { fileSaver } from './saveButton.utils';
 import type { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: any;
+  server?: unknown;
   filename: string;
   data?: Blob | string;
   getData?: () => Blob | string;
@@ -35,7 +34,7 @@ type Props = {
   mode?: string;
   options?: GenerateImageOptions;
   onSave?: () => void;
-  onError?: (err: any) => void;
+  onError?: (err: unknown) => void;
   className?: string;
   title?: string;
   disabled?: boolean;

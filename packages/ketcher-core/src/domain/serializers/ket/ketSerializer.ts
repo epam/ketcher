@@ -131,10 +131,10 @@ type KetMicromoleculeDefinition =
   | KetSimpleObjectNode
   | KetReactionNode
   | KetMoleculeNode
+  | KetTextNode
   | {
       type?:
         | 'rgroup'
-        | 'text'
         | typeof MULTITAIL_ARROW_SERIALIZE_KEY
         | typeof IMAGE_SERIALIZE_KEY;
       stereoFlagPosition?: Point;

@@ -20,7 +20,6 @@ import {
   type Ketcher,
   type Editor as MoleculesEditor,
   type CoreEditor,
-  type MacromoleculesEditorProps,
   ketcherProvider,
   type MonomerCreationWizardRequest,
 } from 'ketcher-core';
@@ -33,6 +32,14 @@ type Props = Omit<EditorProps, 'ketcherId'> &
     disableMacromoleculesEditor?: boolean;
   };
 
+interface MacromoleculesEditorProps {
+  ketcherId: string;
+  togglerComponent?: JSX.Element;
+  isMacromoleculesEditorTurnedOn?: boolean;
+  monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
+  onInit(macromoleculesEditor: CoreEditor): void;
+}
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -49,7 +56,7 @@ type Props = Omit<EditorProps, 'ketcherId'> &
 const MacromoleculesEditorComponent = lazy(
   () => import('ketcher-macromolecules'),
 ) as unknown as React.LazyExoticComponent<
-  React.ComponentType<MacromoleculesEditorProps<JSX.Element>>
+  React.ComponentType<MacromoleculesEditorProps>
 >;
 
 export const Editor = (props: Props) => {

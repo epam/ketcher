@@ -35,7 +35,7 @@ export interface EditorInitState {
     };
     getServerSettings(): Record<string, unknown>;
   };
-  server: unknown;
+  server: Api;
 }
 
 /** Parameter shape for the onRgroupEdit callback. */

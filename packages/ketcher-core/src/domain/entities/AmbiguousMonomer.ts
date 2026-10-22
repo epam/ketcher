@@ -3,7 +3,10 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import {
+  type ResolvedMonomerClass,
+  resolveMonomerClass,
+} from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -73,7 +76,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     this.subtype = variantMonomerItem.subtype;
   }
 
-  public static getMonomerClass(monomers: BaseMonomer[]) {
+  public static getMonomerClass(monomers: BaseMonomer[]): ResolvedMonomerClass {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
     const containDifferentMonomerTypes = monomers.some((monomer) => {

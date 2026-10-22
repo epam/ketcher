@@ -9,7 +9,6 @@ import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
-import { KetcherLogger } from 'utilities';
 import {
   type HighlightPathData,
   createCircleHighlightPath,
@@ -37,15 +36,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     scale?: number,
   ) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
-    // MONOMER_SYMBOLS_IDS covers 6 of the 10 KetMonomerClass members, so this
-    // lookup can miss; fall back to the CHEM symbols, which are always present.
-    const monomerSymbolElementsIdsByClass = MONOMER_SYMBOLS_IDS[monomerClass];
-    const monomerSymbolElementsIds =
-      monomerSymbolElementsIdsByClass ??
-      MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM];
-    if (!monomerSymbolElementsIdsByClass) {
-      KetcherLogger.error(`Missing monomer symbol ids for ${monomerClass}`);
-    }
+    const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
 
     super(
       monomer,

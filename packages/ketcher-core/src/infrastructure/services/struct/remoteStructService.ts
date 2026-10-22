@@ -281,7 +281,7 @@ export class RemoteStructService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
-    // Otherwise the server receives no monomer library.
+    // Without this, the server gets no monomer library if macromolecules mode was never opened.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     const monomerLibrary = JSON.stringify(

@@ -15,12 +15,8 @@ import {
   isNaturalAnalogueRequired,
 } from './MonomerCreationWizardFields.utils';
 
-// Submit-time validation (validateMonomerWizard/validateRnaPresetWizard in
-// MonomerCreationWizard.tsx) checks alias and RNA preset code uniqueness
-// against the default monomers library. A submit that raced the load would
-// check against an empty library, so await the load, then read the library
-// it resolved to. Pulled out so the ordering can be unit-tested without
-// mounting the wizard.
+// Uniqueness checks read the default monomers library; without it loaded, a
+// colliding monomer/preset would silently pass validation. Await the load first.
 export async function ensureMonomersLibraryLoadedForSubmit(
   editor: Pick<
     CoreEditor,

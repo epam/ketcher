@@ -74,6 +74,7 @@ const MacromoleculeMenuItems = (
       : '';
 
   const handleEdit = async (editAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

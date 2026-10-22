@@ -62,6 +62,7 @@ const EditMonomer = (props: Props) => {
   };
 
   const handleEditMonomer = async (editAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {

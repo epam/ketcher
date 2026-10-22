@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +15,9 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type SimpleObjectMode,
+  type Vec2,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
@@ -25,12 +26,22 @@ import {
   SimpleObjectDelete,
 } from 'ketcher-core';
 import type Editor from '../Editor';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import type { Tool } from './Tool';
+
+interface SimpleObjectDragContext {
+  p0: Vec2;
+  previous?: Vec2;
+  ci?: ClosestItemWithMap<Vec2, 'simpleObjects'>;
+  isNew?: boolean;
+  action?: Action;
+  itemId?: number;
+}
 
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx?: SimpleObjectDragContext;
 
   constructor(editor: Editor, mode: SimpleObjectMode) {
     this.mode = mode;
@@ -48,7 +59,7 @@ class SimpleObjectTool implements Tool {
     if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
-      this.dragCtx.ci = ci;
+      this.dragCtx.ci = ci as ClosestItemWithMap<Vec2, 'simpleObjects'>;
     } else {
       this.dragCtx.isNew = true;
       this.editor.selection(null);

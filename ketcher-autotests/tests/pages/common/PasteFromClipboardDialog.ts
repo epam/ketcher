@@ -9,6 +9,7 @@ import {
   waitForLoadAndRender,
 } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
+import { commitPastePreviewInFlexMode } from '@utils/macromolecules/pastePreview';
 
 type PasteFromClipboardDialogLocators = {
   addToCanvasButton: Locator;
@@ -84,10 +85,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
         await waitForLoadAndRender(page, async () => {
           await PasteFromClipboardDialog(page).addToCanvasButton.click();
         });
-        const preview = page.getByTestId('paste-preview');
-        if (commitPreview && (await preview.isVisible())) {
-          await clickInTheMiddleOfTheCanvas(page);
-          await expect(preview).toHaveCount(0);
+        if (commitPreview) {
+          await commitPastePreviewInFlexMode(page, () =>
+            clickInTheMiddleOfTheCanvas(page),
+          );
         }
       }
     },

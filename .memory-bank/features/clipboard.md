@@ -42,6 +42,7 @@ Copy/cut serializes the selection to the clipboard; paste deserializes clipboard
 - **THEN** a ghost appears at the active zoom, with its visual center under the mouse cursor
 - **AND** mouse movement moves the ghost without changing the canvas contents or undo history
 - **AND** clicking the canvas adds the structure at the previewed position as one undoable step
+- **AND** the added structure stays selected, and the selection tool becomes active
 - **AND** pressing Escape discards the ghost without adding a structure
 
 ## Guarantees

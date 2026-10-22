@@ -52,6 +52,7 @@ type StoredViewData = {
 
 export class TransientDrawingView {
   private readonly views: Map<string, StoredViewData> = new Map();
+  private structurePreview?: SVGGElement;
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
@@ -210,6 +211,7 @@ export class TransientDrawingView {
   }
 
   public showStructurePreview(preview: SVGGElement) {
+    this.structurePreview = preview;
     this.addView('StructurePreviewView', {
       show: (layer, element: SVGGElement) => {
         layer.node()?.appendChild(element);
@@ -219,7 +221,13 @@ export class TransientDrawingView {
     });
   }
 
-  public hideStructurePreview() {
+  public hideStructurePreview(preview?: SVGGElement) {
+    // A replaced paste tool is destroyed after its successor is created,
+    // so it must not remove a preview it no longer owns.
+    if (preview && preview !== this.structurePreview) {
+      return;
+    }
+    this.structurePreview = undefined;
     this.removeView('StructurePreviewView');
   }
 

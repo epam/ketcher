@@ -18,6 +18,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { commitPastePreviewInFlexMode } from '@utils/macromolecules/pastePreview';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
 
@@ -278,11 +279,11 @@ export async function pasteFromClipboardByKeyboard(
     async () =>
       await page.keyboard.press(`ControlOrMeta+KeyV`, keyboardOptions),
   );
-  const preview = page.getByTestId('paste-preview');
-  if (commitPreview && (await preview.isVisible())) {
+  if (commitPreview) {
     // The preview ignores pointer events; force clicks its center on the canvas.
-    await preview.click({ force: true });
-    await expect(preview).toHaveCount(0);
+    await commitPastePreviewInFlexMode(page, (preview) =>
+      preview.click({ force: true }),
+    );
   }
 }
 

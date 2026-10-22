@@ -108,4 +108,43 @@ describe('paste lifecycle across editor transitions', () => {
     expect(editor.selectedTool).toBeUndefined();
     expect(canvas.querySelector('[data-testid="paste-preview"]')).toBeNull();
   });
+
+  it('lets the eraser delete the selection made with the selection tool', () => {
+    const addCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(),
+    );
+    editor.renderersContainer.update(addCommand);
+    const [monomer] = [...editor.drawingEntitiesManager.monomers.values()];
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.selectDrawingEntities([monomer]),
+    );
+
+    editor.selectTool(ToolName.erase);
+
+    expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
+  });
+
+  it('keeps the committed structure selected after returning to the selection tool', () => {
+    showPreview();
+
+    editor.selectedTool?.mousedown?.(new MouseEvent('mousedown'));
+
+    expect(editor.selectedTool).not.toBeInstanceOf(PasteTool);
+    const monomers = [...editor.drawingEntitiesManager.monomers.values()];
+    expect(monomers).toHaveLength(1);
+    expect(monomers[0].selected).toBe(true);
+  });
+
+  it('keeps the newer ghost when a preview replaces another preview', () => {
+    showPreview();
+    showPreview();
+
+    expect(
+      canvas.querySelectorAll('[data-testid="paste-preview"]'),
+    ).toHaveLength(1);
+    expect(
+      editor.transientDrawingView['views'].has('StructurePreviewView'),
+    ).toBe(true);
+  });
 });

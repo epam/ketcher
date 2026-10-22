@@ -67,6 +67,9 @@ export class PasteTool implements BaseTool {
     const offset = Coordinates.canvasToModel(this.offset);
     // Live bond renderers must not find monomers inside the preview layer.
     this.destroy();
+    // Switch tools before committing: a new selection tool clears the
+    // selection on creation, and the pasted structure must stay selected.
+    this.editor.events.selectSelectionTool.dispatch();
     this.entities.allEntities.forEach(([, entity]) => {
       this.entities.moveDrawingEntityModelChange(entity, offset);
     });
@@ -81,11 +84,11 @@ export class PasteTool implements BaseTool {
     this.editor.renderersContainer.update(command);
     EditorHistory.getInstance(this.editor).update(command);
     this.editor.calculateAndStoreNextAutochainPosition(mergedDrawingEntities);
-    this.editor.events.selectSelectionTool.dispatch();
   }
 
   destroy() {
-    this.editor.transientDrawingView.hideStructurePreview();
+    const previewElement = this.preview.node() ?? undefined;
+    this.editor.transientDrawingView.hideStructurePreview(previewElement);
     this.editor.transientDrawingView.update();
     this.preview.remove();
   }

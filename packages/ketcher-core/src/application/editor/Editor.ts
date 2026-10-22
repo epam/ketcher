@@ -2423,11 +2423,19 @@ export class CoreEditor {
 
     this.clearTransientViews();
 
-    if (isBaseTool(oldTool)) {
-      oldTool?.destroy();
+    // The new tool must be assigned before the old one is destroyed:
+    // SelectBase.destroy() keeps the selection only when the eraser is next,
+    // so the eraser can delete the selected entities in its constructor.
+    try {
+      this.tool = new ToolConstructor(this, options);
+    } catch (error) {
+      this.tool = undefined;
+      throw error;
+    } finally {
+      if (isBaseTool(oldTool)) {
+        oldTool.destroy();
+      }
     }
-    this.tool = undefined;
-    this.tool = new ToolConstructor(this, options);
   }
 
   public get isHandToolSelected() {

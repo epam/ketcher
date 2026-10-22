@@ -119,6 +119,7 @@ export interface Editor {
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
+    zoomChanged: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
     sdataEdit: PipelineSubscription;

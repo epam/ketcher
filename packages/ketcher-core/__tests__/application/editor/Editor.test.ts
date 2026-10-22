@@ -12,7 +12,9 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
-import { Vec2 } from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
+import ZoomTool from 'application/editor/tools/Zoom';
+import { EditorType } from 'application/editor/editor.types';
 import {
   coreEditorTheme,
   peptideMonomerItem,
@@ -138,6 +140,69 @@ describe('CoreEditor', () => {
 
       expect(editor.canvasOffset).toBe(bounds);
       expect(EditorHistory.getInstance(editor).historyPointer).toBe(0);
+      editor.destroy();
+    });
+
+    it('carries the molecules canvas zoom over to the macro zoom tool', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+
+      const microEditor = {
+        selection: jest.fn(),
+        zoom: jest.fn(() => 2),
+        struct: jest.fn(() => new Struct()),
+        render: { setMolecule: jest.fn(), options: { microModeScale: null } },
+        addHistoryAction: jest.fn(),
+        macromoleculeConvertionError: undefined,
+      };
+      (
+        editor as unknown as { micromoleculesEditor: unknown }
+      ).micromoleculesEditor = microEditor;
+
+      const zoomToSpy = jest.spyOn(ZoomTool.instance, 'zoomTo');
+
+      editor.switchToMacromolecules();
+
+      expect(microEditor.zoom).toHaveBeenCalledWith();
+      expect(zoomToSpy).toHaveBeenCalledWith(2);
+      editor.destroy();
+    });
+  });
+
+  describe('switchToMicromolecules', () => {
+    it('carries the macro canvas zoom over to the molecules editor', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+
+      const zoomChangedDispatch = jest.fn();
+      const microEditor = {
+        zoom: jest.fn(),
+        struct: jest.fn(() => new Struct()),
+        render: { setMolecule: jest.fn(), options: { microModeScale: null } },
+        addHistoryAction: jest.fn(),
+        event: { zoomChanged: { dispatch: zoomChangedDispatch } },
+        macromoleculeConvertionError: undefined,
+      };
+      (
+        editor as unknown as { micromoleculesEditor: unknown }
+      ).micromoleculesEditor = microEditor;
+      (editor as unknown as { _type: EditorType })._type =
+        EditorType.Macromolecules;
+
+      jest.spyOn(ZoomTool.instance, 'getZoomLevel').mockReturnValue(2);
+
+      editor.switchToMicromolecules();
+
+      expect(microEditor.zoom).toHaveBeenCalledWith(2);
+      expect(zoomChangedDispatch).toHaveBeenCalled();
       editor.destroy();
     });
   });

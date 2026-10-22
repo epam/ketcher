@@ -222,6 +222,14 @@ export const Editor = (props: Props) => {
     }
   }, [isMacromoleculesEditorEnabled, macromoleculesEditor]);
 
+  /*
+   * This effect is synchronization with the DOM, not event handling.
+   * The imperative editors must switch only after React has committed the
+   * visibility change of their wrappers (display: none -> visible).
+   * Moving this logic into togglePolymerEditor was attempted, but it renders
+   * into a still-hidden container (zero-size SVG bounding boxes, focus fails),
+   * which broke the e2e test that expands monomers in micromolecules mode.
+   */
   useEffect(() => {
     if (
       !isMacromoleculesEditorEnabled ||

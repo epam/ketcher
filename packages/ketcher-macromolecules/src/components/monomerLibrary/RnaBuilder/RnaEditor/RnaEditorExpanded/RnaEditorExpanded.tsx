@@ -814,12 +814,13 @@ export const RnaEditorExpanded = ({
           placeholder={t('monomerLibrary.nameYourStructure')}
           data-testid="name-your-structure-editbox"
           disabled={isSequenceEditInRNABuilderMode}
+          onClick={selectGroup(RnaBuilderPresetsItem.Presets)}
           onChange={onChangeName}
         />
       ) : (
         <NameContainer
           selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
-          onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
+          onClick={selectGroup(RnaBuilderPresetsItem.Presets)}
         >
           {isEditMode ? (
             <NameInput

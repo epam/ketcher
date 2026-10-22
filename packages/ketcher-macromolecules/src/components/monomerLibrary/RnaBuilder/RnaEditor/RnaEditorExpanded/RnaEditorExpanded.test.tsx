@@ -16,6 +16,7 @@ import { configureAppStore } from 'state';
 import {
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
+  RnaBuilderPresetsItem,
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
 import { UpdateSequenceInRNABuilder } from 'components/modal/UpdateSequenceInRNABuilder/UpdateSequenceInRNABuilder';
@@ -214,6 +215,42 @@ describe('Test Rna Editor Expanded component', () => {
     expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
+
+  it.each([true, false])(
+    'selects the preset root when compact view is %s',
+    (isCompactView) => {
+      useIsCompactViewMock.mockReturnValue(isCompactView);
+      const store = configureAppStore({
+        rnaBuilder: {
+          activePreset: {
+            name: 'Preset',
+            nameInList: 'Preset',
+          },
+          activeRnaBuilderItem: MonomerGroups.SUGARS,
+          groupItemValidations: {
+            [MonomerGroups.BASES]: [],
+            [MonomerGroups.SUGARS]: [],
+            [MonomerGroups.PHOSPHATES]: [],
+          },
+          isEditMode: true,
+        },
+      });
+
+      render(
+        <ThemeProvider theme={testTheme}>
+          <StoreProvider store={store}>
+            <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+          </StoreProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.click(screen.getByTestId('name-your-structure-editbox'));
+
+      expect(store.getState().rnaBuilder.activeRnaBuilderItem).toBe(
+        RnaBuilderPresetsItem.Presets,
+      );
+    },
+  );
 
   it('shows "Not selected" for an empty phosphate slot in sequence edit mode', () => {
     useIsCompactViewMock.mockReturnValue(false);

@@ -98,7 +98,7 @@ export default function initEditor(
         shouldResetToSelect(
           activeTool,
           resetOption,
-          toolAction?.opts as string | undefined,
+          typeof toolAction?.opts === 'string' ? toolAction.opts : undefined,
         ) ||
         force === true
       )

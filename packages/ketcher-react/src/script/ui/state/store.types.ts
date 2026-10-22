@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct } from 'ketcher-core';
+import type { AutomapMode, Editor as CoreEditor, Struct } from 'ketcher-core';
 import type { OptionsState } from './options/types';
+import type Editor from 'src/script/editor';
+import type { Api } from 'src/script/api';
+import type { ToolVariant } from '../action';
+import type { ThunkAction } from 'redux-thunk';
+import type { Action } from 'redux';
+import type { ToolbarState } from './toolbar/types';
 
 export type {
   AnalyseRoundName,
@@ -56,7 +62,42 @@ export interface ModalState {
 }
 
 export interface StoreState {
+  editor: Editor;
+  server: Api;
   templates: TemplatesState;
   modal: ModalState;
+  toolbar: ToolbarState & {
+    visibleTools: ToolbarState['visibleTools'] & { select: ToolVariant };
+  };
   options: OptionsState;
 }
+
+export interface KetcherCheckErrors {
+  chiral_flag?: string;
+  valence?: string;
+}
+export type AutomapRequest = {
+  mode: AutomapMode;
+};
+
+export type ServerTransformMethod =
+  | 'layout'
+  | 'clean'
+  | 'aromatize'
+  | 'dearomatize'
+  | 'calculateCip'
+  | 'toggleExplicitHydrogens'
+  | 'automap'
+  | 'check'
+  | 'calculate';
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  StoreState,
+  unknown,
+  Action<string>
+>;
+
+export type CurrentAppState = Pick<StoreState, 'options'> & {
+  editor: CoreEditor | null;
+};

@@ -151,6 +151,14 @@ export const Save = ({
           throw new Error(t('save.sequenceTypeRecognitionError'));
         }
       }
+      // FASTA cannot represent a mix of RNA and DNA (both collapse to the same
+      // letter codes). IDT can, so this check is intentionally FASTA-only.
+      if (
+        fileFormat === 'fasta' &&
+        editor.drawingEntitiesManager.hasRnaAndDnaMix()
+      ) {
+        throw new Error(t('save.sequenceTypeRecognitionError'));
+      }
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
       // to ensure correct format version is used during conversion

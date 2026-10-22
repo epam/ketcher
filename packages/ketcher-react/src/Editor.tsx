@@ -73,7 +73,6 @@ export const Editor = (props: Props) => {
   useTranslation();
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
-  const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
   const initializedKetcherRef = useRef<Ketcher | null>(null);
@@ -87,6 +86,11 @@ export const Editor = (props: Props) => {
     macromoleculesEditor: CoreEditor;
     isMacromoleculesEditorTurnedOn: boolean;
   } | null>(null);
+  // Refs (not state) so both init callbacks always see the latest instances,
+  // regardless of which render they were created in.
+  const ketcherRef = useRef<Ketcher | undefined>(undefined);
+  const moleculesEditorRef = useRef<MoleculesEditor | undefined>(undefined);
+  const macromoleculesEditorRef = useRef<CoreEditor | undefined>(undefined);
 
   const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
   const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
@@ -212,6 +216,7 @@ export const Editor = (props: Props) => {
       // Preserve the structure before the child's passive cleanup destroys its
       // imperative editor. Drop that instance before it can be enabled again.
       macromoleculesEditor.switchToMicromolecules();
+      macromoleculesEditorRef.current = undefined;
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setMacromoleculesEditor(undefined);
     }
@@ -311,45 +316,44 @@ export const Editor = (props: Props) => {
     togglePolymerEditor,
   ]);
 
-  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-  useEffect(() => {
+  // Called from both init callbacks. The editors initialize asynchronously in
+  // no guaranteed order, so onInit fires on whichever call finds both ready
+  // (or only the molecules editor, if macromolecules is disabled).
+  const notifyInitIfReady = () => {
+    const ketcher = ketcherRef.current;
     if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || disableMacromoleculesEditor)
+      !ketcher ||
+      !moleculesEditorRef.current ||
+      !(macromoleculesEditorRef.current || disableMacromoleculesEditor)
     ) {
-      // After analysis, we identified potential risks in removing either check:
-      // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
-      // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
-      // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
-      if (
-        onInit &&
-        ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-        initializedKetcherRef.current !== ketcher
-      ) {
-        initializedKetcherRef.current = ketcher;
-        onInit?.(ketcher);
-      }
+      return;
     }
 
-    // Note: We intentionally don't reset initializedKetcherRef in cleanup
-    // to avoid duplicate calls when deps change
-  }, [
-    ketcher,
-    moleculesEditor,
-    macromoleculesEditor,
-    onInit,
-    disableMacromoleculesEditor,
-  ]);
-  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
+    // After analysis, we identified potential risks in removing either check:
+    // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
+    // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
+    // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
+    if (
+      onInit &&
+      ketcherProvider.getIndexById(ketcher.id) !== -1 &&
+      initializedKetcherRef.current !== ketcher
+    ) {
+      initializedKetcherRef.current = ketcher;
+      onInit?.(ketcher);
+    }
+  };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
-    setKetcher(ketcher);
+    ketcherRef.current = ketcher;
+    moleculesEditorRef.current = ketcher.editor;
     setMoleculesEditor(ketcher.editor);
+    notifyInitIfReady();
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
+    macromoleculesEditorRef.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
+    notifyInitIfReady();
   };
 
   return (

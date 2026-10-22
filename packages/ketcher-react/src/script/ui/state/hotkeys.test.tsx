@@ -4,8 +4,8 @@ import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react';
-import type { StructService } from 'ketcher-core';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import type { Api } from 'src/script/api';
 import BondTool from '../../editor/tool/bond';
 import type Editor from '../../editor/Editor';
 
@@ -97,7 +97,7 @@ describe('Hot keys', () => {
 });
 
 function renderWithMockStore(component) {
-  const store = createStore({}, {} as StructService, () => null);
+  const store = createStore({}, {} as Api, () => null);
   store.dispatch(initKeydownListener(document));
   store.dispatch({
     type: 'INIT',

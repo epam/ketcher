@@ -188,7 +188,7 @@ function sanitizeForDevTools(value: unknown): unknown {
 
 export default function (
   options: StoreOptions,
-  server: ServerState | undefined,
+  server: ServerState,
   setEditor: SetEditor,
 ): AppStore {
   const { buttons = {}, customButtons, ...restOptions } = options;
@@ -203,7 +203,7 @@ export default function (
       buttons,
       customButtons,
     }),
-    server: server || Promise.reject(new Error('Standalone mode!')),
+    server,
     templates: initTmplsState,
     notifications: initNotificationsState,
   };

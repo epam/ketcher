@@ -24,7 +24,9 @@ type StateProps = Pick<BaseProps, 'formState'> & {
   isMonomerCreationWizardActive?: boolean;
 };
 
-type State = Pick<StoreState, 'modal'> & Pick<CurrentAppState, 'editor'>;
+type State = Pick<StoreState, 'modal'> & {
+  editor: Editor | null;
+};
 
 const mapStateToProps = (state: State): StateProps => ({
   formState: state.modal.form,

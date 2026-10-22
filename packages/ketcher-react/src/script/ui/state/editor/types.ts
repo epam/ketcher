@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import type Editor from '../../../editor/Editor';
+import type { Api } from '../../../api';
 import type { ToolVariant, UiActionAction } from '../../action/action.types';
 
 /** The slice of Redux store state accessed by initEditor. */

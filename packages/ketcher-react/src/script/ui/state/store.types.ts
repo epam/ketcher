@@ -65,6 +65,7 @@ export interface StoreState {
   modal: ModalState;
   options: OptionsState;
   toolbar: ToolbarState;
+  editor: Editor | null;
 }
 
 export type SetEditor = (editor: Editor) => void;

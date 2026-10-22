@@ -1,5 +1,4 @@
 /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -25,6 +24,7 @@ import {
   useLayoutEffect,
 } from 'react';
 import type { Struct } from 'ketcher-core';
+import type { IStructRenderProps } from 'components';
 import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
 import TemplateItem from './TemplateItem';
@@ -48,7 +48,7 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;
   titleRows?: 1 | 2;
-  renderOptions?: any;
+  renderOptions?: IStructRenderProps['options'];
 }
 
 // Render all tiles immediately to keep accordion height stable,

@@ -2139,11 +2139,17 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
-  public previewStructure(entities: DrawingEntitiesManager) {
+  public previewStructure(
+    entities: DrawingEntitiesManager,
+    selectAddedEntities = true,
+  ) {
     if (!entities.hasDrawingEntities) {
       return;
     }
-    this.events.selectTool.dispatch([ToolName.paste, entities]);
+    this.events.selectTool.dispatch([
+      ToolName.paste,
+      { entities, selectAddedEntities },
+    ]);
   }
 
   public cancelPaste() {

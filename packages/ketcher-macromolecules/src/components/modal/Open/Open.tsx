@@ -201,7 +201,7 @@ const addToCanvas = ({
   const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode && preview) {
-    editor.previewStructure(deserialisedKet.drawingEntitiesManager);
+    editor.previewStructure(deserialisedKet.drawingEntitiesManager, false);
     return true;
   }
 

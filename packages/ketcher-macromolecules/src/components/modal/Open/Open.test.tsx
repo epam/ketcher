@@ -104,6 +104,54 @@ describe('Open component', () => {
     }
   });
 
+  it('previews Add to Canvas without automatically selecting the imported structure', async () => {
+    const editor = mockDeep<CoreEditor>();
+    const deserialized =
+      mockDeep<
+        NonNullable<ReturnType<KetSerializer['deserializeToDrawingEntities']>>
+      >();
+    Object.defineProperty(
+      deserialized.drawingEntitiesManager,
+      'hasDrawingEntities',
+      { value: true },
+    );
+    Object.defineProperty(editor.mode, 'modeName', {
+      value: 'flex-layout-mode',
+    });
+    const provider = jest
+      .spyOn(ketcherCore, 'provideEditorInstance')
+      .mockReturnValue(editor);
+    const deserialize = jest
+      .spyOn(KetSerializer.prototype, 'deserializeToDrawingEntities')
+      .mockReturnValue(deserialized);
+    const onClose = jest.fn();
+
+    try {
+      render(
+        withThemeAndStoreProvider(
+          <Open isModalOpen={true} onClose={onClose} />,
+        ),
+      );
+      fireEvent.click(screen.getByText('Paste from clipboard'));
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: '{"root":{"nodes":[]}}' },
+      });
+      fireEvent.click(screen.getByTestId('add-to-canvas-button'));
+      await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+      expect(editor.previewStructure).toHaveBeenCalledWith(
+        deserialized.drawingEntitiesManager,
+        false,
+      );
+      expect(
+        deserialized.drawingEntitiesManager.mergeInto,
+      ).not.toHaveBeenCalled();
+    } finally {
+      provider.mockRestore();
+      deserialize.mockRestore();
+    }
+  });
+
   it('paste from clipboard', () => {
     const mockProps = {
       isModalOpen: true,

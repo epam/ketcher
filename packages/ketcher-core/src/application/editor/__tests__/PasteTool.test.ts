@@ -69,7 +69,7 @@ describe('flex paste placement', () => {
   });
 
   it('centers the visual bounds at the cursor without changing the live model or zoom', () => {
-    new PasteTool(editor, entities);
+    new PasteTool(editor, { entities });
 
     expect(
       canvas
@@ -89,7 +89,7 @@ describe('flex paste placement', () => {
   });
 
   it('moves the ghost and preserves its contents across transient redraws', () => {
-    const tool = new PasteTool(editor, entities);
+    const tool = new PasteTool(editor, { entities });
     const preview = canvas.querySelector('[data-testid="paste-preview"]');
     preview?.appendChild(
       document.createElementNS('http://www.w3.org/2000/svg', 'path'),
@@ -106,7 +106,7 @@ describe('flex paste placement', () => {
 
   it('discards the preview without creating history when the tool is destroyed', () => {
     const merge = jest.spyOn(entities, 'mergeInto');
-    const tool = new PasteTool(editor, entities);
+    const tool = new PasteTool(editor, { entities });
     tool.destroy();
     editor.transientDrawingView.update();
 
@@ -134,7 +134,7 @@ describe('flex paste placement', () => {
     jest
       .spyOn(editor.drawingEntitiesManager, 'selectDrawingEntities')
       .mockReturnValue(new Command());
-    const tool = new PasteTool(editor, entities);
+    const tool = new PasteTool(editor, { entities });
     editor.lastCursorPositionOfCanvas = new Vec2(600, 400);
     jest
       .spyOn(editor.events.selectSelectionTool, 'dispatch')
@@ -163,13 +163,13 @@ describe('flex paste placement', () => {
     jest.mocked(RenderersManager).mockImplementationOnce(() => {
       throw new Error('Render failed');
     });
-    expect(() => new PasteTool(editor, entities)).toThrow('Render failed');
+    expect(() => new PasteTool(editor, { entities })).toThrow('Render failed');
     expect(canvas.querySelector('[data-testid="paste-preview"]')).toBeNull();
     expect(history.update).not.toHaveBeenCalled();
   });
 
   it('returns to the selection tool when cancelled by a history action', () => {
-    const tool = new PasteTool(editor, entities);
+    const tool = new PasteTool(editor, { entities });
     jest
       .spyOn(editor.events.selectSelectionTool, 'dispatch')
       .mockImplementation(() => tool.destroy());

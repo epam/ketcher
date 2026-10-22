@@ -51,10 +51,12 @@ describe('paste lifecycle across editor transitions', () => {
     }
   });
 
-  const showPreview = () => {
+  const showPreview = (selectAddedEntities = true, monomerCount = 1) => {
     const entities = new DrawingEntitiesManager();
-    entities.addMonomer(peptideMonomerItem, new Vec2());
-    editor.previewStructure(entities);
+    for (let index = 0; index < monomerCount; index++) {
+      entities.addMonomer(peptideMonomerItem, new Vec2(index * 2, 0));
+    }
+    editor.previewStructure(entities, selectAddedEntities);
     expect(editor.selectedTool).toBeInstanceOf(PasteTool);
     expect(
       canvas.querySelector('[data-testid="paste-preview"]'),
@@ -147,4 +149,36 @@ describe('paste lifecycle across editor transitions', () => {
       editor.transientDrawingView['views'].has('StructurePreviewView'),
     ).toBe(true);
   });
+
+  it.each([1, 2])(
+    'leaves %i imported monomers unselected without a rotation overlay or eraser deletion',
+    (monomerCount) => {
+      showPreview(false, monomerCount);
+      const history = EditorHistory.getInstance(editor);
+      const pointer = history.historyPointer;
+      const showRotation = jest.spyOn(
+        editor.transientDrawingView,
+        'showRotation',
+      );
+
+      editor.selectedTool?.mousedown?.(new MouseEvent('mousedown'));
+
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(monomerCount);
+      expect(editor.drawingEntitiesManager.selectedEntities).toHaveLength(0);
+      expect(canvas.querySelector('[data-testid="paste-preview"]')).toBeNull();
+      expect(showRotation).not.toHaveBeenCalled();
+      expect(history.historyPointer).toBe(pointer + 1);
+
+      editor.selectTool(ToolName.erase);
+
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(monomerCount);
+      expect(history.historyPointer).toBe(pointer + 1);
+
+      history.undo();
+      expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
+      history.redo();
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(monomerCount);
+      expect(editor.drawingEntitiesManager.selectedEntities).toHaveLength(0);
+    },
+  );
 });

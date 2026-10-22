@@ -74,10 +74,6 @@ const MacromoleculeMenuItems = (
       : '';
 
   const handleEdit = async (editAllInstances = false) => {
-    // The default monomers library is a code-split chunk loaded via dynamic
-    // import(), so make sure it has resolved before reading it below - this
-    // menu is reachable from molecules mode, without macromolecules mode ever
-    // being opened.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

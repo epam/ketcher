@@ -322,12 +322,9 @@ describe('getEditAllInstancesInitialValues', () => {
 });
 
 describe('ensureMonomersLibraryLoadedForSubmit', () => {
-  // Regression/guard test for #10326: submit-time validation reads the
-  // default monomers library for symbol/HELM/BILN alias uniqueness and RNA
-  // preset code uniqueness, but that library is a code-split chunk loaded
-  // via dynamic import(). This guards the ordering without mounting
-  // MonomerCreationWizard itself (see
-  // this function's own comment in MonomerCreationWizard.utils.ts).
+  // Regression/guard test for #10326: submit-time validation must await the
+  // default monomers library before reading it. Guards the ordering without
+  // mounting MonomerCreationWizard itself.
   it('awaits the default monomers library before reading it', async () => {
     const order: string[] = [];
     let resolveDefaultLoad!: () => void;

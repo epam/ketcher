@@ -475,6 +475,12 @@ export class CoreEditor {
     }
   }
 
+  /**
+   * The default monomers library is a lazily loaded code-split chunk (dynamic
+   * import()). Readers that use it synchronously (e.g. KET serializer
+   * enrichment) must await this at an async boundary first. Idempotent: the
+   * load runs at most once per editor.
+   */
   public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
     if (!this.defaultMonomersLibraryReady) {
       this.defaultMonomersLibraryReady =

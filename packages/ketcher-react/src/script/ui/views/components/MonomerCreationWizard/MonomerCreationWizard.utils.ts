@@ -16,16 +16,11 @@ import {
 } from './MonomerCreationWizardFields.utils';
 
 // Submit-time validation (validateMonomerWizard/validateRnaPresetWizard in
-// MonomerCreationWizard.tsx) reads the default monomers library for
-// symbol/HELM/BILN alias uniqueness and RNA preset code uniqueness. That
-// library is a code-split chunk loaded via dynamic import(), so a submit
-// that races the load would run those checks against an empty library and
-// silently let a colliding
-// monomer/preset through. This guard - await the load, then read the
-// library it resolved to - closes that window; the underlying promise is
-// memoized, so once the library is loaded this is a no-op that doesn't
-// delay submission. Pulled out as its own function so the ordering can be
-// unit-tested without mounting the wizard's 2000+ line component.
+// MonomerCreationWizard.tsx) checks alias and RNA preset code uniqueness
+// against the default monomers library. A submit that raced the load would
+// check against an empty library, so await the load, then read the library
+// it resolved to. Pulled out so the ordering can be unit-tested without
+// mounting the wizard.
 export async function ensureMonomersLibraryLoadedForSubmit(
   editor: Pick<
     CoreEditor,

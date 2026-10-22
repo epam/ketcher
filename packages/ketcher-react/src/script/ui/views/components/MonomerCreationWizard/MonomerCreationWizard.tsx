@@ -1015,10 +1015,8 @@ const MonomerCreationWizardInternal = ({
   );
 
   useEffect(() => {
-    // The wizard validates against the monomer library (HELM/BILN alias
-    // uniqueness, amino-acid modification types), which is a code-split chunk
-    // loaded via dynamic import(). Start the load as the wizard opens so those
-    // checks are not silently skipped against an empty library.
+    // Start the load as the wizard opens so validation does not run against an
+    // empty library.
     void provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
   }, []);
 

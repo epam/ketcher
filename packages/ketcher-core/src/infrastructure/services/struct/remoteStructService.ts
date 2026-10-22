@@ -281,10 +281,7 @@ export class RemoteStructService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
-    // The default monomers library is a code-split chunk loaded via dynamic
-    // import(), so make sure it has resolved before reading it - otherwise the
-    // server receives no monomer library when this runs before macromolecules
-    // mode is ever opened.
+    // Otherwise the server receives no monomer library.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     const monomerLibrary = JSON.stringify(

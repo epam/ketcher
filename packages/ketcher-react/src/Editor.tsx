@@ -291,11 +291,7 @@ export const Editor = (props: Props) => {
 
     moleculesEditor.closeMonomerCreationWizard?.();
 
-    // The default monomers library is a code-split chunk loaded via dynamic
-    // import(), so it may not be resolved yet. switchToMacromolecules converts
-    // the struct into drawing entities and needs the library present, so wait
-    // for it before switching. ensureDefaultMonomersLibraryLoaded is
-    // idempotent, so only the first switch actually loads it.
+    // switchToMacromolecules needs the library to convert the struct.
     let cancelled = false;
 
     macromoleculesEditor.ensureDefaultMonomersLibraryLoaded().then(() => {

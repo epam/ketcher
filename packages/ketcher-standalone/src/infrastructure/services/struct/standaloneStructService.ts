@@ -395,10 +395,7 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const timeout = options?.['request-timeout'] as number | undefined;
 
-    // The default monomers library is a code-split chunk loaded via dynamic
-    // import(), so make sure it has resolved before reading it - otherwise the
-    // worker receives no monomer library when this runs before macromolecules
-    // mode is ever opened.
+    // Otherwise the worker receives no monomer library.
     await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return new Promise((resolve, reject) => {

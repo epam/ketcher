@@ -53,10 +53,11 @@ declare module 'ketcher-react' {
 
   export interface SettingsPanelProps {
     title: string;
-    headerControls?: React.ReactNode;
+    footerLeft?: React.ReactNode;
     groups?: SettingsGroup[];
     children?: React.ReactNode;
     boundsElement?: HTMLElement | null;
+    innerBoundsElement?: HTMLElement | null;
     isApplyDisabled?: boolean;
     onApply: () => void;
     onCancel: () => void;
@@ -65,6 +66,14 @@ declare module 'ketcher-react' {
   }
   export const SettingsPanel: React.ComponentType<SettingsPanelProps>;
 
+  export interface ManageSettingsMenuProps {
+    onResetToDefault: () => void;
+    onResetToACS: () => void;
+    onSave: () => void;
+    onLoad: () => void;
+  }
+  export const ManageSettingsMenu: React.ComponentType<ManageSettingsMenuProps>;
+
   export interface SettingsAccordionProps {
     groups: SettingsGroup[];
     defaultExpandedGroups?: string[];
@@ -72,7 +81,39 @@ declare module 'ketcher-react' {
   }
   export const SettingsAccordion: React.ComponentType<SettingsAccordionProps>;
 
-  export type SettingsFieldLayout = 'toggle' | 'measure' | 'select' | 'color';
+  export type SettingsFieldLayout =
+    'toggle' | 'measure' | 'measure-stacked' | 'select' | 'color';
+
+  export interface PanelRect {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
+
+  export interface PanelBounds {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  }
+
+  export function useSettingsPanelDrag(params: {
+    panelRef: import('react').RefObject<HTMLElement | null>;
+    boundsElement?: HTMLElement | null;
+    innerBoundsElement?: HTMLElement | null;
+    gutter?: number;
+  }): {
+    rect: PanelRect | null;
+    setRect: (rect: PanelRect | null) => void;
+    isDragging: boolean;
+    startDrag: (event: import('react').PointerEvent) => void;
+    startResizeTop: (event: import('react').PointerEvent) => void;
+    startResizeBottom: (event: import('react').PointerEvent) => void;
+    clamp: (bounds?: PanelBounds) => void;
+    getBounds: () => PanelBounds | null;
+    setPreferredHeight: (height: number) => void;
+  };
 
   export interface SettingsFieldRowProps {
     label: string;

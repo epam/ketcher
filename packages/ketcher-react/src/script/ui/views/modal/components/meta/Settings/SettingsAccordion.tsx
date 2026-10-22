@@ -34,7 +34,7 @@ export interface SettingsAccordionProps {
 
 const SettingsAccordion = ({
   groups,
-  defaultExpandedGroups = ['atoms'],
+  defaultExpandedGroups = ['general'],
   className,
 }: SettingsAccordionProps) => {
   const [expandedGroups, setExpandedGroups] = useState<string[]>(
@@ -62,13 +62,13 @@ const SettingsAccordion = ({
               aria-expanded={isExpanded}
               data-testid={`${label}-accordion`}
             >
-              <span className={classes.sectionLabel}>{label}</span>
               <Icon
                 name="chevron"
                 className={clsx(classes.chevron, {
                   [classes.chevronExpanded]: isExpanded,
                 })}
               />
+              <span className={classes.sectionLabel}>{label}</span>
             </button>
             {isExpanded && (
               <div className={classes.sectionContent}>{content}</div>

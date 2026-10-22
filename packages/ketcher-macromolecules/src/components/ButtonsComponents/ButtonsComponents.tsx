@@ -19,6 +19,12 @@ export function ButtonsComponents() {
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
+          iconName="settings"
+          title={t('buttons.settings')}
+          onClick={() => dispatch(openModal('settings'))}
+          testId="settings-button"
+        />
+        <IconButton
           iconName="help"
           title={t('buttons.help')}
           onClick={() => {
@@ -29,12 +35,6 @@ export function ButtonsComponents() {
             );
           }}
           testId="help-button"
-        />
-        <IconButton
-          iconName="settings"
-          title={t('buttons.settings')}
-          onClick={() => dispatch(openModal('settings'))}
-          testId="settings-button"
         />
         <IconButton
           iconName="about"

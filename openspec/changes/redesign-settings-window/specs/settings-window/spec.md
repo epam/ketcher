@@ -99,11 +99,11 @@ The user SHALL be able to move the Settings window by dragging its title row. Th
 - **THEN** no structure on the canvas is selected, moved or altered
 
 ### Requirement: Settings are presented as a collapsible group accordion
-The Settings window SHALL present all settings in named collapsible groups in the order: Atoms, Bonds, Stereochemistry, Reactions & Components, General Editing & Display, Validation & Calculation, Debugging. The Atoms group SHALL be expanded when the window opens; all others SHALL be collapsed. More than one group MAY be expanded at a time.
+The Settings window SHALL present all settings in named collapsible groups in the order: General Editing & Display, Atoms, Bonds, Stereochemistry, Reactions & Components, Validation & Calculation, Debugging. The General Editing & Display group SHALL be expanded when the window opens; all others SHALL be collapsed. More than one group MAY be expanded at a time.
 
 #### Scenario: Group order and initial state
 - **WHEN** the user opens the Settings window
-- **THEN** the seven groups are listed in the specified order with Atoms expanded and all other groups collapsed
+- **THEN** the seven groups are listed in the specified order with General Editing & Display expanded and all other groups collapsed
 
 #### Scenario: Expanding a second group keeps the first expanded
 - **WHEN** the user expands the Bonds group while Atoms is expanded

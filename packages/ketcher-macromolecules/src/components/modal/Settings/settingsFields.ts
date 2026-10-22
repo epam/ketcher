@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import type { SettingsFormValue } from 'ketcher-core';
+import type { SettingsFieldLayout } from 'ketcher-react';
 
 export type SettingFieldValue = boolean | number | string;
 
@@ -48,6 +49,8 @@ export interface SettingsFieldDescriptor {
   step?: number;
   /** Description rendered as static text beneath the control */
   hintKey?: string;
+  /** Override the default layout derived from `control`; e.g. 'measure-stacked' */
+  layout?: SettingsFieldLayout;
 }
 
 export interface SettingsFieldGroupDescriptor {
@@ -99,6 +102,117 @@ const FONT_OPTIONS = [
  * (JSON-schema form vs. plain values from SettingsService).
  */
 export const SETTINGS_FIELD_GROUPS: SettingsFieldGroupDescriptor[] = [
+  {
+    id: 'general',
+    titleKey: 'dialogs:meta.settings.generalTab',
+    fields: [
+      {
+        name: 'resetToSelect',
+        labelKey: 'settings:fields.resetToSelect.title',
+        control: 'select',
+        options: [
+          { value: true, labelKey: 'settings:fields.resetToSelect.enumOn' },
+          {
+            value: 'paste',
+            labelKey: 'settings:fields.resetToSelect.enumAfterPaste',
+          },
+          { value: false, labelKey: 'settings:fields.resetToSelect.enumOff' },
+        ],
+      },
+      {
+        name: 'rotationStep',
+        labelKey: 'settings:fields.rotationStep.title',
+        control: 'number',
+        min: 1,
+        max: 90,
+        step: 1,
+        hintKey: 'dialogs:meta.settings.rotationStepTooltip',
+        layout: 'measure-stacked',
+      },
+      {
+        name: 'font',
+        labelKey: 'settings:fields.font.title',
+        control: 'select',
+        options: FONT_OPTIONS,
+      },
+      {
+        name: 'fontsz',
+        labelKey: 'settings:fields.fontsz.title',
+        control: 'number',
+        unitName: 'fontszUnit',
+        min: 1,
+        max: 96,
+        step: 1,
+        layout: 'measure-stacked',
+      },
+      {
+        name: 'fontszsub',
+        labelKey: 'settings:fields.fontszsub.title',
+        control: 'number',
+        unitName: 'fontszsubUnit',
+        min: 1,
+        max: 96,
+        step: 1,
+        layout: 'measure-stacked',
+      },
+      {
+        name: 'imageResolution',
+        labelKey: 'settings:fields.imageResolution.title',
+        control: 'select',
+        hintKey: 'dialogs:meta.settings.imageResolutionTooltip',
+        options: [
+          { value: '72', labelKey: 'settings:fields.imageResolution.enumLow' },
+          {
+            value: '600',
+            labelKey: 'settings:fields.imageResolution.enumHigh',
+          },
+        ],
+      },
+      // The 3D Viewer group is gone; its three fields close out this group.
+      {
+        name: 'miewMode',
+        labelKey: 'settings:fields.miewMode.title',
+        control: 'select',
+        options: [
+          { value: 'LN', labelKey: 'settings:fields.miewMode.enumLines' },
+          {
+            value: 'BS',
+            labelKey: 'settings:fields.miewMode.enumBallsAndSticks',
+          },
+          { value: 'LC', labelKey: 'settings:fields.miewMode.enumLicorice' },
+        ],
+      },
+      {
+        name: 'miewTheme',
+        labelKey: 'settings:fields.miewTheme.title',
+        control: 'select',
+        options: [
+          { value: 'light', labelKey: 'settings:fields.miewTheme.enumLight' },
+          { value: 'dark', labelKey: 'settings:fields.miewTheme.enumDark' },
+        ],
+      },
+      {
+        name: 'miewAtomLabel',
+        labelKey: 'settings:fields.miewAtomLabel.title',
+        control: 'select',
+        options: [
+          { value: 'no', labelKey: 'settings:fields.miewAtomLabel.enumNo' },
+          {
+            value: 'bright',
+            labelKey: 'settings:fields.miewAtomLabel.enumBright',
+          },
+          {
+            value: 'blackAndWhite',
+            labelKey: 'settings:fields.miewAtomLabel.enumBlackAndWhite',
+          },
+          {
+            value: 'black',
+            labelKey: 'settings:fields.miewAtomLabel.enumBlack',
+          },
+        ],
+      },
+    ],
+  },
   {
     id: 'atoms',
     titleKey: 'dialogs:meta.settings.atomsTab',
@@ -308,6 +422,7 @@ export const SETTINGS_FIELD_GROUPS: SettingsFieldGroupDescriptor[] = [
         max: 1000,
         step: 0.1,
         hintKey: 'dialogs:meta.settings.reactionComponentMarginSizeTooltip',
+        layout: 'measure-stacked',
       },
       {
         name: 'gross-formula-add-rsites',
@@ -318,114 +433,6 @@ export const SETTINGS_FIELD_GROUPS: SettingsFieldGroupDescriptor[] = [
         name: 'gross-formula-add-isotopes',
         labelKey: 'settings:fields.gross-formula-add-isotopes.title',
         control: 'checkbox',
-      },
-    ],
-  },
-  {
-    id: 'general',
-    titleKey: 'dialogs:meta.settings.generalTab',
-    fields: [
-      {
-        name: 'resetToSelect',
-        labelKey: 'settings:fields.resetToSelect.title',
-        control: 'select',
-        options: [
-          { value: true, labelKey: 'settings:fields.resetToSelect.enumOn' },
-          {
-            value: 'paste',
-            labelKey: 'settings:fields.resetToSelect.enumAfterPaste',
-          },
-          { value: false, labelKey: 'settings:fields.resetToSelect.enumOff' },
-        ],
-      },
-      {
-        name: 'rotationStep',
-        labelKey: 'settings:fields.rotationStep.title',
-        control: 'number',
-        min: 1,
-        max: 90,
-        step: 1,
-        hintKey: 'dialogs:meta.settings.rotationStepTooltip',
-      },
-      {
-        name: 'font',
-        labelKey: 'settings:fields.font.title',
-        control: 'select',
-        options: FONT_OPTIONS,
-      },
-      {
-        name: 'fontsz',
-        labelKey: 'settings:fields.fontsz.title',
-        control: 'number',
-        unitName: 'fontszUnit',
-        min: 1,
-        max: 96,
-        step: 1,
-      },
-      {
-        name: 'fontszsub',
-        labelKey: 'settings:fields.fontszsub.title',
-        control: 'number',
-        unitName: 'fontszsubUnit',
-        min: 1,
-        max: 96,
-        step: 1,
-      },
-      {
-        name: 'imageResolution',
-        labelKey: 'settings:fields.imageResolution.title',
-        control: 'select',
-        hintKey: 'dialogs:meta.settings.imageResolutionTooltip',
-        options: [
-          { value: '72', labelKey: 'settings:fields.imageResolution.enumLow' },
-          {
-            value: '600',
-            labelKey: 'settings:fields.imageResolution.enumHigh',
-          },
-        ],
-      },
-      // The 3D Viewer group is gone; its three fields close out this group.
-      {
-        name: 'miewMode',
-        labelKey: 'settings:fields.miewMode.title',
-        control: 'select',
-        options: [
-          { value: 'LN', labelKey: 'settings:fields.miewMode.enumLines' },
-          {
-            value: 'BS',
-            labelKey: 'settings:fields.miewMode.enumBallsAndSticks',
-          },
-          { value: 'LC', labelKey: 'settings:fields.miewMode.enumLicorice' },
-        ],
-      },
-      {
-        name: 'miewTheme',
-        labelKey: 'settings:fields.miewTheme.title',
-        control: 'select',
-        options: [
-          { value: 'light', labelKey: 'settings:fields.miewTheme.enumLight' },
-          { value: 'dark', labelKey: 'settings:fields.miewTheme.enumDark' },
-        ],
-      },
-      {
-        name: 'miewAtomLabel',
-        labelKey: 'settings:fields.miewAtomLabel.title',
-        control: 'select',
-        options: [
-          { value: 'no', labelKey: 'settings:fields.miewAtomLabel.enumNo' },
-          {
-            value: 'bright',
-            labelKey: 'settings:fields.miewAtomLabel.enumBright',
-          },
-          {
-            value: 'blackAndWhite',
-            labelKey: 'settings:fields.miewAtomLabel.enumBlackAndWhite',
-          },
-          {
-            value: 'black',
-            labelKey: 'settings:fields.miewAtomLabel.enumBlack',
-          },
-        ],
       },
     ],
   },

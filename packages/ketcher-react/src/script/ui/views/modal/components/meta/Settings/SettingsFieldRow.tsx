@@ -19,12 +19,14 @@ import clsx from 'clsx';
 import classes from './SettingsPanel.module.less';
 
 /**
- * - `toggle`  — label left, switch right
- * - `measure` — label left, number input + unit dropdown right
- * - `select`  — label above a full-width dropdown
- * - `color`   — label left, colour swatch dropdown right
+ * - `toggle`         — label left, switch right
+ * - `measure`        — label left, number input + unit dropdown right
+ * - `measure-stacked`— label above, number input + unit dropdown below (compact width)
+ * - `select`         — label above a full-width dropdown
+ * - `color`          — label left, colour swatch dropdown right
  */
-export type SettingsFieldLayout = 'toggle' | 'measure' | 'select' | 'color';
+export type SettingsFieldLayout =
+  'toggle' | 'measure' | 'measure-stacked' | 'select' | 'color';
 
 export interface SettingsFieldRowProps {
   label: string;
@@ -44,7 +46,9 @@ const SettingsFieldRow = ({
   className,
   testId,
 }: SettingsFieldRowProps) => {
-  const isStacked = layout === 'select';
+  const isStackedRow = layout === 'select' || layout === 'measure-stacked';
+  // 'select' forces full-width controls; 'measure-stacked' keeps compact control width
+  const isFullWidthControl = layout === 'select';
 
   return (
     <div
@@ -53,12 +57,18 @@ const SettingsFieldRow = ({
       data-layout={layout}
     >
       <div
-        className={isStacked ? classes.fieldRowStacked : classes.fieldRowInline}
+        className={
+          isStackedRow ? classes.fieldRowStacked : classes.fieldRowInline
+        }
       >
         <span className={classes.fieldLabel}>{label}</span>
         <div
           className={
-            isStacked ? classes.fieldControlStacked : classes.fieldControl
+            isFullWidthControl
+              ? classes.fieldControlStacked
+              : layout === 'measure-stacked'
+                ? classes.fieldControlMeasureStacked
+                : classes.fieldControl
           }
         >
           {children}

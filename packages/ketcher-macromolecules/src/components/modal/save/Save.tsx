@@ -230,6 +230,7 @@ export const Save = ({
       isOpen={isModalOpen}
       onClose={onClose}
       testId="save-structure-dialog"
+      isDraggable
     >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">

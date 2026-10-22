@@ -23,18 +23,21 @@ import SettingsAccordion, { type SettingsGroup } from './SettingsAccordion';
 import { useSettingsPanelDrag } from './useSettingsPanelDrag';
 
 export const SETTINGS_PANEL_WIDTH = 340;
-export const SETTINGS_PANEL_GUTTER = 8;
+export const SETTINGS_PANEL_GUTTER = 20;
 
 export interface SettingsPanelProps {
   title: string;
-  /** Icon controls rendered in the title row, left of the close button */
-  headerControls?: ReactNode;
+  /** Content rendered on the left side of the footer */
+  footerLeft?: ReactNode;
   /** Groups to render through `SettingsAccordion`. Ignored when `children` is given. */
   groups?: SettingsGroup[];
   /** Body content. Takes precedence over `groups` so consumers can wrap it in a form. */
   children?: ReactNode;
-  /** The panel rect is always clamped inside this element's box */
+  /** The panel rect is clamped to this element's right and bottom edges. */
   boundsElement?: HTMLElement | null;
+  /** When provided, the left and top edges of the drag bounds are taken from
+   *  this element instead of `boundsElement`. */
+  innerBoundsElement?: HTMLElement | null;
   isApplyDisabled?: boolean;
   onApply: () => void;
   onCancel: () => void;
@@ -44,10 +47,11 @@ export interface SettingsPanelProps {
 
 const SettingsPanel = ({
   title,
-  headerControls,
+  footerLeft,
   groups,
   children,
   boundsElement,
+  innerBoundsElement,
   isApplyDisabled,
   onApply,
   onCancel,
@@ -56,9 +60,19 @@ const SettingsPanel = ({
 }: SettingsPanelProps) => {
   const { t } = useTranslation('common');
   const panelRef = useRef<HTMLDivElement>(null);
-  const { rect, setRect, startDrag, getBounds } = useSettingsPanelDrag({
+  const {
+    rect,
+    setRect,
+    startDrag,
+    startResizeTop,
+    startResizeBottom,
+    getBounds,
+    setPreferredHeight,
+  } = useSettingsPanelDrag({
     panelRef,
     boundsElement,
+    innerBoundsElement,
+    gutter: SETTINGS_PANEL_GUTTER,
   });
 
   // Anchor to the right of the bounds element on open. The panel mounts on open and
@@ -70,16 +84,18 @@ const SettingsPanel = ({
 
     const width = panel.offsetWidth || SETTINGS_PANEL_WIDTH;
     const maxHeight = bounds.bottom - bounds.top - 2 * SETTINGS_PANEL_GUTTER;
+    const naturalHeight = panel.scrollHeight;
 
+    setPreferredHeight(naturalHeight);
     setRect({
       left: bounds.right - SETTINGS_PANEL_GUTTER - width,
       top: bounds.top + SETTINGS_PANEL_GUTTER,
       width,
-      height: Math.min(panel.scrollHeight, maxHeight),
+      height: Math.min(naturalHeight, maxHeight),
     });
     // The default rect is computed once per open; later moves come from the drag hook.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [boundsElement]);
+  }, [boundsElement, innerBoundsElement]);
 
   return (
     <div
@@ -93,19 +109,16 @@ const SettingsPanel = ({
       data-testid="settings-panel"
     >
       <div
+        className={classes.resizeHandle}
+        onPointerDown={startResizeTop}
+        data-testid="settings-panel-resize-top"
+      />
+      <div
         className={classes.header}
         onPointerDown={startDrag}
         data-testid="settings-panel-header"
       >
         <span className={classes.title}>{title}</span>
-        {headerControls && (
-          <div
-            className={classes.headerControls}
-            onPointerDown={(event) => event.stopPropagation()}
-          >
-            {headerControls}
-          </div>
-        )}
         <button
           type="button"
           className={classes.closeButton}
@@ -123,24 +136,32 @@ const SettingsPanel = ({
       </div>
 
       <div className={classes.footer}>
-        <button
-          type="button"
-          className={classes.cancelButton}
-          onClick={onCancel}
-          data-testid="settings-panel-cancel"
-        >
-          {t('button.cancel')}
-        </button>
-        <button
-          type="button"
-          className={classes.applyButton}
-          onClick={onApply}
-          disabled={isApplyDisabled}
-          data-testid="settings-panel-apply"
-        >
-          {t('button.apply')}
-        </button>
+        <div>{footerLeft}</div>
+        <div className={classes.footerRight}>
+          <button
+            type="button"
+            className={classes.cancelButton}
+            onClick={onCancel}
+            data-testid="settings-panel-cancel"
+          >
+            {t('button.cancel')}
+          </button>
+          <button
+            type="button"
+            className={classes.applyButton}
+            onClick={onApply}
+            disabled={isApplyDisabled}
+            data-testid="settings-panel-apply"
+          >
+            {t('button.apply')}
+          </button>
+        </div>
       </div>
+      <div
+        className={classes.resizeHandle}
+        onPointerDown={startResizeBottom}
+        data-testid="settings-panel-resize-bottom"
+      />
     </div>
   );
 };

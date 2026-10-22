@@ -18,10 +18,11 @@
 @import '../../../../../../../style/mixins.less';
 
 // Mockup tokens local to the settings panel
-@settings-panel-width: 340px;
+@settings-panel-width: 320px;
 @settings-panel-radius: 4px;
-@settings-panel-shadow: 0 2px 5px @color-select-box-shadow;
+@settings-panel-shadow: 0px 6px 10px 0px #67688426;
 @settings-section-header-bg: #f3f5f7;
+@settings-header-bottom-border: #CAD3DD;
 @settings-control-border: #7c7c7f;
 @settings-toggle-on: @color-primary-green;
 @settings-toggle-off: @color-primary-light;
@@ -51,6 +52,29 @@
   }
 }
 
+.resizeHandle {
+  flex-shrink: 0;
+  height: 6px;
+  cursor: ns-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::after {
+    content: '';
+    width: 32px;
+    height: 3px;
+    border-radius: 2px;
+    background-color: @settings-control-border;
+    opacity: 0;
+    transition: opacity 150ms ease-in-out;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
 .header {
   flex-shrink: 0;
   display: flex;
@@ -59,6 +83,7 @@
   gap: @settings-gutter;
   padding: 10px 12px;
   background-color: @color-background-primary;
+  border-bottom: 1px solid @settings-header-bottom-border;
   cursor: move;
   user-select: none;
   touch-action: none;
@@ -111,11 +136,16 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  gap: @settings-gutter;
   padding: 10px 12px;
   background-color: @color-background-primary;
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: row;
+  gap: @settings-gutter;
 }
 
 .cancelButton {
@@ -132,6 +162,85 @@
   font-weight: 400;
   text-transform: none;
   cursor: pointer;
+}
+
+//
+// Manage Settings dropdown
+//
+
+.manageSettingsMenu {
+  position: relative;
+}
+
+.manageSettingsButton {
+  .button-secondary();
+
+  font-weight: 400;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.manageSettingsDropdown {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: @color-background-primary;
+  border-radius: @settings-panel-radius;
+  box-shadow: @settings-panel-shadow;
+  min-width: 160px;
+  z-index: 1;
+  overflow: visible;
+  padding: 4px 0;
+}
+
+.menuItem {
+  .reset-button();
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: @font-size-regular;
+  color: @color-text-primary;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: start;
+
+  &:hover {
+    background-color: @settings-section-header-bg;
+  }
+}
+
+.menuItemWithSubmenu {
+  position: relative;
+  width: 100%;
+}
+
+.menuItemChevron {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin-inline-start: 8px;
+  color: @color-icon-active;
+  transform: rotate(-90deg);
+}
+
+.submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: @color-background-primary;
+  border-radius: @settings-panel-radius;
+  box-shadow: @settings-panel-shadow;
+  min-width: 100px;
+  padding: 4px 0;
 }
 
 //
@@ -154,14 +263,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  gap: @settings-gutter;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 12px;
+  padding: 10px 14px;
   background-color: @settings-section-header-bg;
   border-bottom: 1px solid @color-background-primary;
   font: inherit;
-  font-size: @font-size-regular;
+  font-size: @font-size-header;
   line-height: @line-height-regular;
   font-weight: 400;
   text-transform: none;
@@ -180,7 +289,6 @@
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  margin-inline-start: @settings-gutter;
   color: @color-icon-active;
   transform: rotate(0deg);
   transition: transform 200ms ease-in-out;
@@ -194,7 +302,7 @@
   display: flex;
   flex-direction: column;
   gap: @settings-row-gap;
-  padding: 12px;
+  padding: 16px;
   background-color: @color-background-primary;
 }
 
@@ -211,13 +319,13 @@
   input[type='number'],
   select {
     box-sizing: border-box;
-    height: 24px;
+    height: 32px;
     padding: 0 8px;
     border: 1px solid @settings-control-border;
     border-radius: @settings-panel-radius;
     background-color: @color-background-primary;
     font-family: @Inter;
-    font-size: @font-size-regular;
+    font-size: @font-size-input;
     color: @color-text-primary;
     outline: none;
 
@@ -232,11 +340,11 @@
   }
 
   input[type='number'] {
-    width: 58px;
+    width: 80px;
   }
 
   select {
-    min-width: 58px;
+    min-width: 80px;
     padding-inline-end: 24px;
     appearance: none;
     cursor: pointer;
@@ -246,26 +354,27 @@
     background-size: 16px;
   }
 
-  // Switch: 38 x 20 track, check glyph on the thumb when on
+  // Switch: 42 x 22 track, thumb grows and slides on check
   input[type='checkbox'] {
     position: relative;
     flex-shrink: 0;
-    width: 38px;
-    height: 20px;
+    width: 42px;
+    height: 22px;
     margin: 0;
     appearance: none;
-    border-radius: 10px;
-    background-color: @settings-toggle-off;
+    border-radius: 11px;
+    border: 1px solid @settings-control-border;
+    background-color: @color-slider-body-background;
     cursor: pointer;
-    transition: background-color 200ms ease-in-out;
+    transition: background-color 200ms ease-in-out, border-color 200ms ease-in-out;
 
     &::before {
       content: '';
       position: absolute;
-      top: 2px;
-      inset-inline-start: 2px;
-      width: 16px;
-      height: 16px;
+      bottom: 5px;
+      inset-inline-start: 5px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background-color: @color-background-primary;
       background-repeat: no-repeat;
@@ -276,11 +385,19 @@
     }
 
     &:checked {
+      border-color: @settings-toggle-on;
       background-color: @settings-toggle-on;
 
       &::before {
+        width: 14px;
+        height: 14px;
+        bottom: 3px;
+        background-color: @color-background-primary;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 12px;
+        background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
         transform: translateX(18px);
-        background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       }
     }
 
@@ -294,9 +411,9 @@
   input[type='color'] {
     box-sizing: border-box;
     flex-shrink: 0;
-    width: 48px;
-    height: 24px;
-    padding: 3px 20px 3px 3px;
+    width: 80px;
+    height: 32px;
+    padding: 6px 24px 6px 6px;
     border: 1px solid @settings-control-border;
     border-radius: @settings-panel-radius;
     background-color: @color-background-primary;
@@ -350,6 +467,30 @@
   flex-direction: row;
   align-items: center;
   gap: 4px;
+
+  input,
+  select,
+  > div {
+    border-radius: @settings-panel-radius;
+  }
+}
+
+// Stacked measure fields: label above, controls start at the left edge (compact width)
+.fieldControlMeasureStacked {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+
+  input[type='number'] {
+    width: 120px;
+  }
+
+  select {
+    width: 120px;
+    min-width: 120px;
+  }
 
   input,
   select,

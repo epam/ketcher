@@ -58,4 +58,14 @@
       content: none;
     }
   }
+
+  // Draggable dialogs keep the dimming backdrop but switch off flex centering so
+  // the absolutely-positioned dialog can place itself freely within the overlay.
+  &.draggableModal {
+    display: block;
+
+    &::after {
+      content: none;
+    }
+  }
 }

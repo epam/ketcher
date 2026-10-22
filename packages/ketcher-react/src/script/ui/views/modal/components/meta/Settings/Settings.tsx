@@ -26,11 +26,10 @@ import { useTranslation } from 'react-i18next';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input';
-import OpenButton from '../../../../../component/view/openbutton';
-import { SaveButton } from '../../../../../component/view/savebutton';
 import Select from '../../../../../component/form/Select';
 import SettingsAccordion from './SettingsAccordion';
 import SettingsPanel from './SettingsPanel';
+import ManageSettingsMenu from './ManageSettingsMenu';
 import { type StructService, KetcherLogger } from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
@@ -38,17 +37,14 @@ import appClasses from '../../../../../App/App.module.less';
 import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { saveSettings } from '../../../../../state/options';
-import settingsSchema, {
-  getDefaultOptions,
-} from '../../../../../data/schema/options-schema';
-import { isEqual } from 'lodash';
-import { Icon } from 'components';
+import settingsSchema from '../../../../../data/schema/options-schema';
 import {
   ACS_STYLE_DEFAULT_SETTINGS,
   KETCHER_ROOT_NODE_CSS_SELECTOR,
 } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
 import i18n from 'src/i18n/i18n';
+import { saveAs } from 'file-saver';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;
@@ -74,82 +70,13 @@ interface SettingsCallProps extends BaseCallProps {
 type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
   Pick<BaseCallProps, 'onOk'>;
 
-const defaultSettings = getDefaultOptions();
-
-const HeaderControls = ({
-  server,
-  onOpenFile,
-  onReset,
-  onACSStyle,
-  formState,
-  initState,
-}) => {
-  const { t } = useTranslation('dialogs');
-  const getIsResetDisabled = () => {
-    if (formState.result.init) return isEqual(defaultSettings, initState);
-    else return isEqual(defaultSettings, formState.result);
-  };
-
-  return (
-    <>
-      <button
-        className={classes.acsStyleButton}
-        key="acsstylebutton"
-        onClick={onACSStyle}
-        title={t('meta.settings.setAcsSettings')}
-        data-testid="acs-style-button"
-      >
-        {t('meta.settings.setAcsSettings')}
-      </button>
-      <OpenButton
-        title={t('meta.settings.openFromFile')}
-        key="settings"
-        server={server}
-        onLoad={onOpenFile}
-        className={classes.button}
-        data-testid="open-settings-from-file-button"
-      >
-        <Icon name="open-1" />
-      </OpenButton>
-      <SaveButton
-        title={t('meta.settings.saveToFile')}
-        key="ketcher-settings"
-        data={JSON.stringify(formState.result)}
-        filename="ketcher-settings"
-        className={classes.button}
-        testId="save-settings-to-file-button"
-      >
-        <Icon name="save-1" />
-      </SaveButton>
-      <button
-        title={t('meta.settings.reset')}
-        key="settings-button"
-        onClick={onReset}
-        className={classes.button}
-        data-testid="reset-settings-button"
-        disabled={getIsResetDisabled()}
-      >
-        <Icon name="reset" />
-      </button>
-    </>
-  );
-};
-
 type Props = SettingsProps & SettingsCallProps;
 
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs', 'settings']);
-  const {
-    initState,
-    formState,
-    server,
-    onOpenFile,
-    onReset,
-    appOpts,
-    ...prop
-  } = props;
+  const { initState, formState, onOpenFile, onReset, appOpts, ...prop } = props;
 
   // The panel is clamped inside the canvas area, so it never covers a toolbar.
   // The canvas is mounted long before any dialog can open, so it is resolved once
@@ -297,6 +224,7 @@ const SettingsDialog = (props: Props) => {
           component={MeasureInput}
           labelPos={false}
           extraName="reactionComponentMarginSizeUnit"
+          className={classes.stackedMeasureInput}
         />
         <fieldset disabled={!appOpts.server}>
           <Field
@@ -327,6 +255,7 @@ const SettingsDialog = (props: Props) => {
           name="rotationStep"
           hint={t('dialogs:meta.settings.rotationStepTooltip')}
           data-testid="rotation-step"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="font"
@@ -339,12 +268,14 @@ const SettingsDialog = (props: Props) => {
           component={MeasureInput}
           labelPos={false}
           extraName="fontszUnit"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="fontszsub"
           component={MeasureInput}
           labelPos={false}
           extraName="fontszsubUnit"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="imageResolution"
@@ -448,12 +379,36 @@ const SettingsDialog = (props: Props) => {
     });
   };
 
+  const handleSave = () => {
+    const blob = new Blob([JSON.stringify(formState.result)], {
+      type: 'application/json',
+    });
+    saveAs(blob, 'ketcher-settings.json');
+  };
+
+  const handleLoad = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result;
+        if (typeof content === 'string') onOpenFile(content);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
+
   const tabs = [
+    generalTab,
     atomsTab,
     bondsTab,
     stereoTab,
     reactionsTab,
-    generalTab,
     validationTab,
     debuggingTab,
   ];
@@ -474,14 +429,12 @@ const SettingsDialog = (props: Props) => {
       onApply={handleApply}
       onCancel={prop.onCancel}
       onClose={prop.onCancel}
-      headerControls={
-        <HeaderControls
-          server={server}
-          onOpenFile={onOpenFile}
-          onReset={onReset}
-          onACSStyle={onACSStyle}
-          formState={formState}
-          initState={initState}
+      footerLeft={
+        <ManageSettingsMenu
+          onResetToDefault={onReset}
+          onResetToACS={onACSStyle}
+          onSave={handleSave}
+          onLoad={handleLoad}
         />
       }
     >

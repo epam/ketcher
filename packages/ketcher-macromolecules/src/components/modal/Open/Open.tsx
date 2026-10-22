@@ -490,6 +490,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"
+      isDraggable
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>

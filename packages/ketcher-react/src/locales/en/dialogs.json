@@ -102,7 +102,13 @@
       "showAtomIdsTooltip": "Internal atom index numbers, for troubleshooting structure files",
       "showBondIdsTooltip": "Internal bond index numbers, for troubleshooting structure files",
       "showHalfBondIdsTooltip": "Internal directional bond-half index numbers, rarely needed outside debugging",
-      "showLoopIdsTooltip": "Internal ring (loop) index numbers, for troubleshooting structure files"
+      "showLoopIdsTooltip": "Internal ring (loop) index numbers, for troubleshooting structure files",
+      "manageSettings": "Manage Settings",
+      "resetTo": "Reset to ...",
+      "resetToDefault": "Default",
+      "resetToACS": "ACS",
+      "saveSettings": "Save Settings",
+      "loadSettings": "Load Settings"
     },
     "about": {
       "ok": "Ok",

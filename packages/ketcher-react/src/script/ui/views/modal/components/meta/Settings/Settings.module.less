@@ -52,6 +52,34 @@
   cursor: pointer;
 }
 
+// MeasureInput fields where the label should sit above the controls.
+// Placed before .accordion to satisfy no-descending-specificity — its selectors
+// have lower specificity than the .accordion .stackedField rules that follow.
+.stackedMeasureInput {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 4px;
+
+  // 8px gap between the value input and the unit dropdown (lower specificity — before > div > div)
+  > div {
+    gap: 8px;
+  }
+
+  // 120px width for value input and unit dropdown; reset the inline-layout left margin
+  input,
+  > div > div {
+    width: 120px !important;
+    margin-inline-start: 0 !important;
+  }
+
+  // Neutralise the right-alignment the label rule sets on the second flex child
+  // (needed when .stackedMeasureInput is applied to a plain <label> wrapper)
+  > :nth-child(2) {
+    justify-content: flex-start !important;
+  }
+}
+
 .accordion {
   fieldset {
     border: none;
@@ -82,7 +110,7 @@
     line-height: @line-height-regular;
     margin-bottom: 0;
     color: @color-text-primary;
-    min-height: 24px;
+    min-height: 32px;
 
     input[type='checkbox'] {
       top: 0;
@@ -109,16 +137,9 @@
     }
   }
 
-  // Measure rows: also zero out the inner wrapper's margin (higher specificity,
-  // placed after the label rules to satisfy no-descending-specificity)
-  fieldset > div > div:first-child {
-    margin-bottom: 0;
-  }
-
-  // Typed values and dropdown text use the panel's 12px, as in macro mode
   input[type='text'],
   [role='combobox'] {
-    font-size: @font-size-regular;
+    font-size: @font-size-input;
   }
 
   // The colour picker hugs the right edge of the row instead of a 120px box
@@ -129,7 +150,8 @@
 
   // Single-value inputs share the width of the value box in measure rows
   label:not(.stackedField) input[type='text'] {
-    width: 58px;
+    width: 80px;
+    height: 32px;
   }
 
   // Dropdown fields: the label sits above a full-width control, as in macro mode
@@ -152,8 +174,13 @@
     }
 
     [role='combobox'] {
-      font-size: @font-size-regular;
+      font-size: @font-size-input;
     }
+  }
+
+  // Higher specificity than .stackedField rules above — must come after them
+  fieldset > div > div:first-child {
+    margin-bottom: 0;
   }
 
   // Switch thumb carries a check glyph while on, as in macro mode
@@ -161,7 +188,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 12px;
-    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
 
   fieldset[disabled] {

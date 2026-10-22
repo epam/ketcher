@@ -24,19 +24,15 @@ import {
   normalizeSettingsForForm,
   SettingsFormValue,
 } from 'ketcher-core';
-import { Icon, SettingsPanel } from 'ketcher-react';
+import { ManageSettingsMenu, SettingsPanel } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
-import { MACROMOLECULES_MAIN_AREA_TEST_ID } from 'components/Layout/Layout';
+import { useLayoutBounds } from 'components/Layout/Layout';
 import { SettingsFieldControl } from './SettingsFieldControl';
 import {
   SETTINGS_FIELD_GROUPS,
   type SettingFieldValue,
 } from './settingsFields';
-import {
-  CanvasCaptureLayer,
-  HeaderIconButton,
-  HeaderTextButton,
-} from './Settings.styles';
+import { CanvasCaptureLayer } from './Settings.styles';
 
 /**
  * Thin adapter between the shared presentational panel from ketcher-react and
@@ -55,13 +51,7 @@ export const SettingsPanelAdapter = ({
     useState<SettingsFormValue | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // The panel is clamped inside the canvas area and portalled into it, so it can
-  // never cover the top toolbar, the left menu or the monomer library.
-  const [boundsElement] = useState<HTMLElement | null>(() =>
-    document.querySelector<HTMLElement>(
-      `[data-testid="${MACROMOLECULES_MAIN_AREA_TEST_ID}"]`,
-    ),
-  );
+  const { canvasElement, layoutRootElement } = useLayoutBounds();
 
   useEffect(() => {
     if (!settingsService || !isModalOpen) return;
@@ -179,7 +169,7 @@ export const SettingsPanelAdapter = ({
     }
   };
 
-  if (!currentSettings || !boundsElement) {
+  if (!currentSettings || !layoutRootElement) {
     return null;
   }
 
@@ -210,58 +200,36 @@ export const SettingsPanelAdapter = ({
     ),
   }));
 
-  const headerControls = (
+  return (
     <>
-      <HeaderTextButton
-        onClick={handleACSStyle}
-        disabled={isLoading}
-        title={t('dialogs:meta.settings.setAcsSettings')}
-        data-testid="acs-style-button"
-      >
-        {t('dialogs:meta.settings.setAcsSettings')}
-      </HeaderTextButton>
-      <HeaderIconButton
-        onClick={handleImport}
-        disabled={isLoading}
-        title={t('dialogs:meta.settings.openFromFile')}
-        data-testid="open-settings-from-file-button"
-      >
-        <Icon name="open-1" />
-      </HeaderIconButton>
-      <HeaderIconButton
-        onClick={handleExport}
-        disabled={isLoading}
-        title={t('dialogs:meta.settings.saveToFile')}
-        data-testid="save-settings-to-file-button"
-      >
-        <Icon name="save-1" />
-      </HeaderIconButton>
-      <HeaderIconButton
-        onClick={handleReset}
-        disabled={isLoading}
-        title={t('dialogs:meta.settings.reset')}
-        data-testid="reset-settings-button"
-      >
-        <Icon name="reset" />
-      </HeaderIconButton>
+      {/* Intercepts canvas pointer events while settings is open; stays in the
+          canvas area so the monomers library remains interactive */}
+      {canvasElement &&
+        createPortal(
+          <CanvasCaptureLayer data-testid="settings-canvas-capture-layer" />,
+          canvasElement,
+        )}
+      {createPortal(
+        <SettingsPanel
+          title={t('dialogs:meta.settings.headerTitle')}
+          groups={groups}
+          boundsElement={layoutRootElement}
+          innerBoundsElement={canvasElement}
+          isApplyDisabled={isLoading}
+          onApply={handleApply}
+          onCancel={onClose}
+          onClose={onClose}
+          footerLeft={
+            <ManageSettingsMenu
+              onResetToDefault={handleReset}
+              onResetToACS={handleACSStyle}
+              onSave={handleExport}
+              onLoad={handleImport}
+            />
+          }
+        />,
+        layoutRootElement,
+      )}
     </>
-  );
-
-  return createPortal(
-    <>
-      {/* Transparent, so the canvas stays fully visible but cannot be modified */}
-      <CanvasCaptureLayer data-testid="settings-canvas-capture-layer" />
-      <SettingsPanel
-        title={t('dialogs:meta.settings.headerTitle')}
-        headerControls={headerControls}
-        groups={groups}
-        boundsElement={boundsElement}
-        isApplyDisabled={isLoading}
-        onApply={handleApply}
-        onCancel={onClose}
-        onClose={onClose}
-      />
-    </>,
-    boundsElement,
   );
 };

@@ -23,6 +23,9 @@ export {
 } from './SettingsPanel';
 export type { SettingsPanelProps } from './SettingsPanel';
 
+export { default as ManageSettingsMenu } from './ManageSettingsMenu';
+export type { ManageSettingsMenuProps } from './ManageSettingsMenu';
+
 export { default as SettingsAccordion } from './SettingsAccordion';
 export type {
   SettingsAccordionProps,

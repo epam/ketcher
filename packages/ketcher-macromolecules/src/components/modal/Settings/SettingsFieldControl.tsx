@@ -150,7 +150,7 @@ export const SettingsFieldControl = ({
   return (
     <SettingsFieldRow
       label={resolveLabel(labelKey, t)}
-      layout={LAYOUT_BY_CONTROL[control]}
+      layout={field.layout ?? LAYOUT_BY_CONTROL[control]}
       hint={hintKey ? resolveLabel(hintKey, t) : undefined}
       testId={`${testId}-row`}
     >

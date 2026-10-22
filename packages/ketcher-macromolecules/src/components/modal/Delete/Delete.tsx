@@ -65,6 +65,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       title={t('delete.title')}
       onClose={onCloseCallback}
       testId="delete-preset-modal"
+      isDraggable
     >
       <Modal.Content>
         <DeleteTextWrapper data-testid="delete-preset-popup-content">

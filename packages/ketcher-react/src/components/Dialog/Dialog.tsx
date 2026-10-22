@@ -18,9 +18,11 @@ import {
   type FC,
   type PropsWithChildren,
   type ReactElement,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react';
 
 import clsx from 'clsx';
@@ -29,6 +31,7 @@ import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
+import { useSettingsPanelDrag } from '../../script/ui/views/modal/components/meta/Settings/useSettingsPanelDrag';
 
 interface DialogParamsCallProps {
   onCancel?: () => void;
@@ -92,6 +95,72 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     Cancel: t('button.cancel'),
     Save: t('button.save'),
   };
+
+  // ---------------------------------------------------------------------------
+  // Drag & resize — reuses useSettingsPanelDrag so the behaviour is identical
+  // to the Settings floating panel. Enabled when the dialog is mounted inside a
+  // [data-draggable="true"] overlay (set by Modal.tsx for opted-in dialogs).
+  // parentElement check (not closest) so nested inline dialogs don't inherit it.
+  // ---------------------------------------------------------------------------
+  const [overlayElement, setOverlayElement] = useState<HTMLElement | null>(
+    null,
+  );
+
+  useLayoutEffect(() => {
+    const parent = dialogRef.current?.parentElement;
+    setOverlayElement(parent instanceof HTMLElement ? parent : null);
+  }, []);
+
+  const isDraggable = overlayElement?.dataset?.draggable === 'true';
+
+  const {
+    rect,
+    setRect,
+    startDrag,
+    startResizeTop,
+    startResizeBottom,
+    getBounds,
+    setPreferredHeight,
+  } = useSettingsPanelDrag({
+    panelRef: dialogRef,
+    boundsElement: isDraggable ? overlayElement : null,
+    gutter: 0,
+  });
+
+  // Centre the dialog inside the overlay on first show. Fires when overlayElement
+  // is detected (once per mount).
+  useLayoutEffect(() => {
+    if (!isDraggable) return;
+    const dialog = dialogRef.current;
+    const bounds = getBounds();
+    if (!dialog || !bounds) return;
+
+    const width = dialog.offsetWidth;
+    const naturalHeight = dialog.scrollHeight;
+    const height = Math.min(naturalHeight, bounds.bottom - bounds.top);
+
+    setPreferredHeight(naturalHeight);
+    setRect({
+      left: bounds.left + (bounds.right - bounds.left - width) / 2,
+      top: bounds.top + (bounds.bottom - bounds.top - height) / 2,
+      width,
+      height,
+    });
+    // Only re-run when the overlay element reference changes (i.e., on mount).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [overlayElement]);
+
+  // Wrap startDrag to skip interactive elements inside the header.
+  const handleHeaderPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (
+        (e.target as Element).closest('button,input,select,a,[role="button"]')
+      )
+        return;
+      startDrag(e);
+    },
+    [startDrag],
+  );
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
@@ -183,10 +252,34 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       data-testid={'info-modal-window'}
       tabIndex={-1}
       className={clsx(styles.dialog, className, params?.className)}
+      style={
+        isDraggable
+          ? rect
+            ? {
+                position: 'absolute',
+                left: rect.left,
+                top: rect.top,
+                height: rect.height,
+              }
+            : { visibility: 'hidden' }
+          : undefined
+      }
       {...rest}
     >
+      {isDraggable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeTop}
+          data-testid="dialog-resize-top"
+        />
+      )}
       <header
-        className={clsx(styles.header, withDivider && styles.withDivider)}
+        className={clsx(
+          styles.header,
+          withDivider && styles.withDivider,
+          isDraggable && styles.draggableHeader,
+        )}
+        onPointerDown={isDraggable ? handleHeaderPointerDown : undefined}
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
@@ -233,6 +326,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
               ),
             )}
         </footer>
+      )}
+      {isDraggable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeBottom}
+          data-testid="dialog-resize-bottom"
+        />
       )}
     </dialog>
   );

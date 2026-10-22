@@ -9,6 +9,7 @@ import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
 import type { AtomList } from 'domain/entities/atomList';
+import { calcCoreAtomDativeValence } from 'domain/helpers/coreAtomDativeValence';
 
 export enum AtomRadical {
   None,
@@ -123,6 +124,11 @@ export class Atom extends DrawingEntity {
   }
 
   public get hasBadValence() {
+    const dativeValence = calcCoreAtomDativeValence(this);
+    if (dativeValence) {
+      return dativeValence.hasBadConnection;
+    }
+
     const { hydrogenAmount } = this.calculateValence();
     return hydrogenAmount < 0;
   }
@@ -209,6 +215,14 @@ export class Atom extends DrawingEntity {
   }
 
   calculateValence() {
+    const dativeValence = calcCoreAtomDativeValence(this);
+    if (dativeValence) {
+      return {
+        valence: dativeValence.valence,
+        hydrogenAmount: dativeValence.implicitH,
+      };
+    }
+
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
       const hydrogenAmount = valence - this.valenceWithoutHydrogen;

@@ -50,12 +50,7 @@ describe('showPreview', () => {
       const state = editorReducer(initial(), showPreview(preview));
       const result = editorReducer(state, showPreview(undefined));
       expect(result).not.toBe(state);
-      expect(result.preview).toEqual(closedPreview);
-      expect(Object.keys(result.preview).sort()).toEqual([
-        'monomer',
-        'style',
-        'type',
-      ]);
+      expect(result.preview).toBeUndefined();
     },
   );
 
@@ -83,7 +78,7 @@ describe('showPreview', () => {
     };
     const result = editorReducer(state, showPreview(undefined));
     expect(result).not.toBe(state);
-    expect(result.preview).toEqual(closedPreview);
+    expect(result.preview).toBeUndefined();
   });
 
   it('preserves identity on repeated closes after the first close', () => {

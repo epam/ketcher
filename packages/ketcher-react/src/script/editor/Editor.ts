@@ -17,6 +17,7 @@
 
 import {
   type Editor as KetcherEditor,
+  type EditorSubscriber,
   type FloatingToolsParams,
   type IKetAttachmentPoint,
   type IKetTemplateConnection,
@@ -27,6 +28,7 @@ import {
   type Pool,
   type ReStruct,
   type RenderOptions,
+  type ViewBox,
   type SGroupAttachmentPoint,
   type RnaPresetComponentKey,
   type ComponentStructureUpdateData,
@@ -116,6 +118,7 @@ import type {
   ToolEventHandlerName,
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
+import { createMonomerCreationWizardZoomCalculator } from './utils/monomerCreationWizardZoom';
 import { isNumber } from 'lodash';
 import paperjs from 'paper';
 import {
@@ -130,6 +133,7 @@ const HISTORY_SIZE = 32; // put me to options
 
 const structObjects: Array<keyof typeof ReStruct.maps> = [
   'atoms',
+  'attachmentGroups',
   'bonds',
   'frags',
   'sgroups',
@@ -147,6 +151,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
 
 const highlightTargets = [
   'atoms',
+  'attachmentGroups',
   'bonds',
   'rxnArrows',
   'rxnPluses',
@@ -195,6 +200,7 @@ function selectStereoFlagsIfNecessary(
 
 export interface Selection {
   atoms?: Array<number>;
+  attachmentGroups?: Array<number>;
   bonds?: Array<number>;
   frags?: Array<number>;
   sgroups?: Array<number>;
@@ -260,6 +266,8 @@ class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: Action | null;
   render: Render;
+  private readonly getMonomerCreationWizardZoom =
+    createMonomerCreationWizardZoomCalculator();
   _selection: Selection | null;
   _tool: Tool | null;
   historyStack: Action[];
@@ -585,7 +593,14 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom;
   }
 
-  centerStruct() {
+  /**
+   * Moves the structure so that its center is in the center of the view.
+   *
+   * @param viewportElement optional element that covers the part of the
+   * canvas the structure should be centered in (e.g. the area left free by
+   * the monomer creation wizard's panels). The whole canvas is used if omitted.
+   */
+  centerStruct(viewportElement?: HTMLElement) {
     const structure = this.render.ctab;
 
     /*
@@ -600,12 +615,8 @@ class Editor implements KetcherEditor {
     }
 
     const structCenter = getStructCenter(structure);
-    const viewBoxCenter = new Vec2(
-      this.render.viewBox.minX + this.render.viewBox.width / 2,
-      this.render.viewBox.minY + this.render.viewBox.height / 2,
-    );
     const viewBoxCenterInProto = Scale.canvasToModel(
-      viewBoxCenter,
+      this.getViewportCenterInCanvas(viewportElement),
       this.render.options,
     );
     const shiftVector = viewBoxCenterInProto.sub(structCenter);
@@ -614,6 +625,64 @@ class Editor implements KetcherEditor {
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
+  }
+
+  private getViewportCenterInCanvas(viewportElement?: HTMLElement): Vec2 {
+    const { viewBox, options } = this.render;
+
+    if (!viewportElement) {
+      return new Vec2(
+        viewBox.minX + viewBox.width / 2,
+        viewBox.minY + viewBox.height / 2,
+      );
+    }
+
+    const clientAreaRect = this.render.clientArea.getBoundingClientRect();
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const viewportLeft = viewportRect.left - clientAreaRect.left;
+    const viewportTop = viewportRect.top - clientAreaRect.top;
+
+    return new Vec2(
+      viewBox.minX + (viewportLeft + viewportRect.width / 2) / options.zoom,
+      viewBox.minY + (viewportTop + viewportRect.height / 2) / options.zoom,
+    );
+  }
+
+  /**
+   * Zooms and centers the structure loaded into the monomer creation wizard
+   * so that it fits the area left free by the wizard's panels.
+   *
+   * @param viewportElement the element that covers the available viewport
+   */
+  public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
+    if (this.render.ctab.molecule.atoms.size === 0) {
+      return;
+    }
+
+    // Remember the view only once per wizard session, the wizard may fit
+    // the structure several times (e.g. on resize)
+    if (!this.viewBeforeMonomerCreationWizard) {
+      this.viewBeforeMonomerCreationWizard = {
+        zoom: this.render.options.zoom,
+        viewBox: { ...this.render.viewBox },
+      };
+    }
+
+    const viewportRect = viewportElement.getBoundingClientRect();
+    const newZoom = this.getMonomerCreationWizardZoom({
+      structBoundingBox: this.render.ctab.molecule.getCoordBoundingBox(),
+      microModeScale: this.render.options.microModeScale,
+      viewportWidth: viewportRect.width,
+      viewportHeight: viewportRect.height,
+      currentZoom: this.render.options.zoom,
+    });
+
+    if (newZoom !== this.render.options.zoom) {
+      this.zoom(newZoom);
+      this.event.zoomChanged.dispatch();
+    }
+
+    this.centerStruct(viewportElement);
   }
 
   public centerViewportAccordingToStruct(struct: Struct = this.struct()) {
@@ -1122,11 +1191,16 @@ class Editor implements KetcherEditor {
   private originalSelection: Selection = {};
   private originalHistoryStack: Action[] = [];
   private originalHistoryPointer = 0;
+  // Zoom and view box of the canvas before the monomer creation wizard zoomed
+  // into the structure, restored when the wizard is discarded
+  private viewBeforeMonomerCreationWizard: {
+    zoom: number;
+    viewBox: ViewBox;
+  } | null = null;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
-  private changeEventSubscriber: {
-    handler: ((action?: unknown) => void) | ((data: ChangeEventData[]) => void);
-  } | null = null;
+  private changeEventSubscriber: EditorSubscriber<ChangeEventData[]> | null =
+    null;
 
   private onMonomerWizardFinish?: (savedCanvas: boolean) => void;
 
@@ -1905,14 +1979,28 @@ class Editor implements KetcherEditor {
 
     if (restoreOriginalStruct) {
       this.struct(this.originalStruct, false);
+      this.restoreViewBeforeMonomerCreationWizard();
     }
 
+    this.viewBeforeMonomerCreationWizard = null;
     this.monomerCreationState = null;
 
     this.tool('select');
     if (notifySession) {
       this.completeMonomerWizardSession(false);
     }
+  }
+
+  private restoreViewBeforeMonomerCreationWizard() {
+    const savedView = this.viewBeforeMonomerCreationWizard;
+
+    if (!savedView) {
+      return;
+    }
+
+    this.zoom(savedView.zoom);
+    this.render.setViewBox(savedView.viewBox);
+    this.event.zoomChanged.dispatch();
   }
 
   saveNewMonomer(data: SaveNewMonomerData) {
@@ -3461,8 +3549,12 @@ class Editor implements KetcherEditor {
       return;
     }
 
-    const handleChangeEvent = (data: ChangeEventData[]) => {
-      if (!this.isMonomerCreationWizardActive || data.length === 0) {
+    const handleChangeEvent = (data: ChangeEventData[] = []) => {
+      if (!this.isMonomerCreationWizardActive) {
+        return;
+      }
+
+      if (data.length === 0) {
         return;
       }
 
@@ -4016,23 +4108,18 @@ class Editor implements KetcherEditor {
     this.historyPtr = 0;
   }
 
-  subscribe(
+  subscribe<T = unknown>(
     eventName: string,
-    handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void),
-  ) {
-    const subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    } = {
+    handler: (data?: T) => void,
+  ): EditorSubscriber<T> {
+    const subscriber: EditorSubscriber<T> = {
       handler,
     };
 
     switch (eventName) {
       case 'change': {
         const subscribeFuncWrapper = (action: unknown) => {
-          customOnChangeHandler(
-            action as unknown,
-            handler as (data?: unknown) => void,
-          );
+          customOnChangeHandler(action as unknown, handler);
         };
         subscriber.handler = subscribeFuncWrapper;
         ketcherProvider
@@ -4055,11 +4142,9 @@ class Editor implements KetcherEditor {
     return subscriber;
   }
 
-  unsubscribe(
+  unsubscribe<T = unknown>(
     eventName: string,
-    subscriber: {
-      handler: ((data?: unknown) => void) | ((data: ChangeEventData[]) => void);
-    },
+    subscriber: EditorSubscriber<T>,
   ): void {
     switch (eventName) {
       case 'change': {
@@ -4116,14 +4201,28 @@ class Editor implements KetcherEditor {
       res.bonds.forEach((bid) => {
         const bond = struct.bonds.get(bid);
         if (bond) {
-          res.atoms = res.atoms ?? [];
-          if (res.atoms.indexOf(bond.begin) < 0) {
-            res.atoms.push(bond.begin);
-          }
-
-          if (res.atoms.indexOf(bond.end) < 0) {
-            res.atoms.push(bond.end);
-          }
+          [bond.begin, bond.end].forEach((endpointId) => {
+            if (struct.attachmentGroups.has(endpointId)) {
+              res.attachmentGroups = res.attachmentGroups ?? [];
+              if (!res.attachmentGroups.includes(endpointId)) {
+                res.attachmentGroups.push(endpointId);
+              }
+              res.atoms = res.atoms ?? [];
+              const selectedAtoms = res.atoms;
+              struct.attachmentGroups
+                .get(endpointId)
+                ?.atomIds.forEach((atomId) => {
+                  if (!selectedAtoms.includes(atomId)) {
+                    selectedAtoms.push(atomId);
+                  }
+                });
+            } else {
+              res.atoms = res.atoms ?? [];
+              if (!res.atoms.includes(endpointId)) {
+                res.atoms.push(endpointId);
+              }
+            }
+          });
         }
       });
     }
@@ -4135,8 +4234,12 @@ class Editor implements KetcherEditor {
           res.bonds &&
           res.atoms &&
           res.bonds.indexOf(bid) < 0 &&
-          res.atoms.indexOf(bond.begin) >= 0 &&
-          res.atoms.indexOf(bond.end) >= 0
+          (struct.attachmentGroups.has(bond.begin)
+            ? res.attachmentGroups?.includes(bond.begin)
+            : res.atoms.includes(bond.begin)) &&
+          (struct.attachmentGroups.has(bond.end)
+            ? res.attachmentGroups?.includes(bond.end)
+            : res.atoms.includes(bond.end))
         ) {
           res.bonds.push(bid);
         }
@@ -4164,6 +4267,8 @@ class Editor implements KetcherEditor {
       new Pile(selection.images),
       new Pile(selection[MULTITAIL_ARROW_KEY]),
       bondIdMap,
+      false,
+      new Pile(selection.attachmentGroups),
     );
 
     // Copy by its own as Struct.clone doesn't support

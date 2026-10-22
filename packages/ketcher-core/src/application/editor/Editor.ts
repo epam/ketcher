@@ -2900,8 +2900,8 @@ export class CoreEditor {
   }
 
   public destroy() {
-    if (this.tool instanceof SelectBase) {
-      this.tool.destroy();
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
     }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();

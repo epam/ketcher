@@ -412,7 +412,6 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-// Type assertion needed due to @types/react version mismatch with react-redux
 const connector = connect(mapStateToProps, mapDispatchToProps);
 const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
   withTranslation(['dialogs'])(Attach),

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { ElementType } from 'react';
 import { About, Settings } from '../views/modal/components/meta';
 import {
   Analyse,
@@ -45,6 +44,7 @@ import TemplatesDialog from './template/TemplateDialog';
 import Text from '../views/modal/components/Text';
 import { Confirm } from '../views/modal/components/Confirm';
 import InfoModal from '../views/modal/components/InfoModal';
+import type { ElementType } from 'react';
 
 const dialogs: Record<string, ElementType> = {
   open: Open,

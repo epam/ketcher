@@ -17,8 +17,9 @@
 import type { Dispatch } from 'redux';
 import type { Struct } from 'ketcher-core';
 import type Editor from '../../editor/Editor';
+import type { StoreState } from '../state/store.types';
 
-type ToolVariant =
+export type ToolVariant =
   | 'any-atom'
   | 'about'
   | 'analyse'
@@ -29,6 +30,7 @@ type ToolVariant =
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
@@ -120,22 +122,13 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-export type ActionStateOptions = {
+type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
     functionalGroups?: unknown;
   };
   buttons?: Record<string, { hidden?: boolean }>;
-};
-
-type ActionThunkState = {
-  editor: ActionStateEditor;
-  toolbar: {
-    visibleTools: {
-      select: ToolVariant;
-    };
-  };
 };
 
 // Specific action option types
@@ -148,7 +141,8 @@ type ActionObj = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
-  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
+  prop?: Record<string, unknown>;
+  thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
@@ -191,4 +185,10 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction, AtomActionOpts };
+export type {
+  ActionStateOptions,
+  Tools,
+  UiAction,
+  UiActionAction,
+  AtomActionOpts,
+};

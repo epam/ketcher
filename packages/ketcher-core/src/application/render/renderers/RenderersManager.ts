@@ -431,7 +431,7 @@ export class RenderersManager {
   // redraw connected atoms labels as their connections numbers can be updated after bond is added
   private syncAndRedrawBondAtomLabels(bond: Bond, isAddAction = false) {
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+      if (bondAtom.bonds.includes(bond)) return;
 
       if (isAddAction) {
         bondAtom.addBond(bond);

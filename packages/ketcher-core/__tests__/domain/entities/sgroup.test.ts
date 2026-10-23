@@ -5,7 +5,11 @@ import { mock } from 'jest-mock-extended';
 import type { Render } from 'src';
 import type { Atom } from 'domain/entities/atom';
 import { Box2Abs } from 'domain/entities/box2Abs';
-import type { Bond } from 'domain/entities/bond';
+import type {
+  Bond,
+  StructAtomsAndBondsAccess,
+  StructBondEndpointAccess,
+} from 'domain/entities/bond';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
@@ -106,7 +110,7 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds },
+        { bonds } as StructAtomsAndBondsAccess & StructBondEndpointAccess,
         { 0: [existingBondId], 1: [existingBondId + 1] },
         atomSet,
         bb,
@@ -126,7 +130,7 @@ describe('sgroup non-null assertion replacements', () => {
 
     expect(() =>
       SGroup.getBracketParameters(
-        { bonds },
+        { bonds } as StructAtomsAndBondsAccess & StructBondEndpointAccess,
         { 0: [existingBondId + 1], 1: [existingBondId] },
         atomSet,
         bb,
@@ -144,7 +148,12 @@ describe('sgroup non-null assertion replacements', () => {
     const bonds = new Pool<Bond>();
 
     expect(() =>
-      SGroup.getBracketParameters({ bonds }, { 0: [1, 2] }, atomSet, bb),
+      SGroup.getBracketParameters(
+        { bonds } as StructAtomsAndBondsAccess & StructBondEndpointAccess,
+        { 0: [1, 2] },
+        atomSet,
+        bb,
+      ),
     ).toThrow('SGroup.getBracketParameters: cross-bond 1 is not found');
   });
 

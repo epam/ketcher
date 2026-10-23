@@ -15,6 +15,7 @@
  ***************************************************************************/
 import {
   type GenerateImageOptions,
+  type StructService,
   KetcherLogger,
   ketcherProvider,
 } from 'ketcher-core';

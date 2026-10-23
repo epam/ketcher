@@ -49,6 +49,64 @@ describe('show selection', () => {
   });
 });
 
+describe('atom, bond, and CIP label rendering order', () => {
+  const options = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
+
+  it('renders atom labels and bonds before positioning CIP labels', () => {
+    const struct = new Struct();
+    const firstAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const firstAtom = restruct.atoms.get(firstAtomId)!;
+    const secondAtom = restruct.atoms.get(secondAtomId)!;
+    const calls: string[] = [];
+
+    jest.spyOn(firstAtom, 'show').mockImplementation(() => {
+      calls.push('first atom');
+    });
+    jest.spyOn(secondAtom, 'show').mockImplementation(() => {
+      calls.push('second atom');
+    });
+    jest.spyOn(restruct, 'showBonds').mockImplementation(() => {
+      calls.push('bonds');
+    });
+    jest.spyOn(firstAtom, 'showCIPLabel').mockImplementation(() => {
+      calls.push('first CIP');
+    });
+    jest.spyOn(secondAtom, 'showCIPLabel').mockImplementation(() => {
+      calls.push('second CIP');
+    });
+
+    const internalRestruct = restruct as unknown as {
+      atomsChanged: Map<number, 1>;
+      showAtoms: () => void;
+      showCIPLabels: () => void;
+    };
+    internalRestruct.atomsChanged.set(firstAtomId, 1);
+    internalRestruct.atomsChanged.set(secondAtomId, 1);
+    internalRestruct.showAtoms();
+    restruct.showBonds();
+    internalRestruct.showCIPLabels();
+
+    expect(calls).toEqual([
+      'first atom',
+      'second atom',
+      'bonds',
+      'first CIP',
+      'second CIP',
+    ]);
+  });
+});
+
 describe('CIP label background on selection toggle', () => {
   const option = {
     microModeScale: 20,

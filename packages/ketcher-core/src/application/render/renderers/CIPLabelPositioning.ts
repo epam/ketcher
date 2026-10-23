@@ -1,4 +1,4 @@
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export const CIP_LABEL_COLLISION_PADDING = 2;
 export const CIP_LABEL_PLACEMENT_ANGLE_STEPS = 24;

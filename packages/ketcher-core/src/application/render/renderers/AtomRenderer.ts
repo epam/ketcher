@@ -777,8 +777,13 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
+    const cipTextBBox = this.cipTextElementBBox;
+    const cipLabelBBox = this.cipLabelElementBBox;
     const preferredDirection = this.bisectLargestSector();
-    const preferredDistance = this.getCIPLabelDistance(preferredDirection);
+    const preferredDistance = this.getCIPLabelDistance(
+      preferredDirection,
+      cipTextBBox,
+    );
     const directionCandidates = Array.from(
       { length: CIP_LABEL_PLACEMENT_ANGLE_STEPS },
       (_, index) => {
@@ -788,7 +793,7 @@ export class AtomRenderer extends BaseRenderer {
 
         return {
           direction,
-          distance: this.getCIPLabelDistance(direction),
+          distance: this.getCIPLabelDistance(direction, cipTextBBox),
           deviation: this.getDirectionDeviation(direction, preferredDirection),
         };
       },
@@ -799,10 +804,7 @@ export class AtomRenderer extends BaseRenderer {
       CIP_LABEL_MAX_EXTRA_DISTANCE;
     const collisionSearchRadius =
       maxPlacementDistance +
-      Math.hypot(
-        this.cipLabelElementBBox.width / 2,
-        this.cipLabelElementBBox.height / 2,
-      ) +
+      Math.hypot(cipLabelBBox.width / 2, cipLabelBBox.height / 2) +
       CIP_LABEL_COLLISION_PADDING;
     const bondSegments = this.getBondSegments(
       this.scaledPosition,
@@ -829,8 +831,8 @@ export class AtomRenderer extends BaseRenderer {
           if (
             doesCIPLabelOverlapBond(
               labelCenter,
-              this.cipLabelElementBBox!.width,
-              this.cipLabelElementBBox!.height,
+              cipLabelBBox.width,
+              cipLabelBBox.height,
               bondSegments,
             )
           ) {
@@ -852,10 +854,8 @@ export class AtomRenderer extends BaseRenderer {
 
     const cipPosition = this.scaledPosition.add(
       new Vec2(
-        shiftVector.x -
-          (this.cipLabelElementBBox.x + this.cipLabelElementBBox.width / 2),
-        shiftVector.y -
-          (this.cipLabelElementBBox.y + this.cipLabelElementBBox.height / 2),
+        shiftVector.x - (cipLabelBBox.x + cipLabelBBox.width / 2),
+        shiftVector.y - (cipLabelBBox.y + cipLabelBBox.height / 2),
       ),
     );
 
@@ -865,10 +865,10 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
-  private getCIPLabelDistance(direction: Vec2): number {
+  private getCIPLabelDistance(direction: Vec2, cipTextBBox: SVGRect): number {
     let projectedDistance = this.getProjectedLabelDistance(
-      this.cipTextElementBBox!.width,
-      this.cipTextElementBBox!.height,
+      cipTextBBox.width,
+      cipTextBBox.height,
       direction,
     );
 
@@ -884,8 +884,8 @@ export class AtomRenderer extends BaseRenderer {
         direction,
       );
       const cipProjectionRadius = this.getLabelProjectionRadius(
-        this.cipTextElementBBox!.width,
-        this.cipTextElementBBox!.height,
+        cipTextBBox.width,
+        cipTextBBox.height,
         direction,
       );
 

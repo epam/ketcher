@@ -35,6 +35,8 @@ A preset bundles a **Sugar + Base + Phosphate** with a phosphate position ('left
 - **Placement:** The drawing-entities manager positions the three monomers, determines the 5′/3′ phosphate from attachment points, and creates the monomer-add operations plus inter-monomer bonds. A dedicated preset tool drives placement on the canvas, while sequence mode has its own path for inserting a preset from the library.
 - **State:** The RNA-builder store slice tracks the active preset, default and custom presets, group validations, and a phosphate filter (5′/3′/no-phosphate, persisted). Custom presets are cached in localStorage, and a hook seeds default + custom presets on mount.
 
+In sequence modification, groups labeled `[multiple]` use four copies of their monomer-class icon in a 2×2 grid. `GroupIcon` renders this consistently for the compact and wide RNA-builder layouts; single and empty groups keep their original icons.
+
 ## Library UI panel
 
 The panel lives in the macromolecules package and is composed of:

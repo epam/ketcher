@@ -26,6 +26,7 @@ import { groupNameToRnaEditorItemLabelKey } from './utils';
 import { useAppSelector } from 'hooks';
 import { selectIsEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
+import { MULTIPLE_MONOMERS_LABEL } from '../helpers/sequenceEdit';
 import { PropsWithChildren } from 'react';
 
 export const GroupBlockWide = ({
@@ -50,7 +51,12 @@ export const GroupBlockWide = ({
       data-testid={testid}
     >
       <>
-        <GroupIcon name={iconName} selected={selected} empty={empty} />
+        <GroupIcon
+          name={iconName}
+          selected={selected}
+          empty={empty}
+          multiple={monomerName === MULTIPLE_MONOMERS_LABEL}
+        />
         <TextContainer>
           <GroupName selected={selected}>
             {t(groupNameToRnaEditorItemLabelKey[groupName])}

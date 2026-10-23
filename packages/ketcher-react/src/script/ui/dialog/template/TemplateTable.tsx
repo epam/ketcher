@@ -22,7 +22,6 @@ import {
   useRef,
   useTransition,
   useLayoutEffect,
-  useMemo,
 } from 'react';
 import type { Struct } from 'ketcher-core';
 import clsx from 'clsx';
@@ -150,13 +149,10 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls
   // This eliminates forced reflows during rendering batches
-  const optimizedRenderOptions = useMemo(
-    () => ({
-      ...renderOptions,
-      ...(containerSize && { wrapperDimensions: containerSize }),
-    }),
-    [renderOptions, containerSize],
-  );
+  const optimizedRenderOptions = {
+    ...renderOptions,
+    ...(containerSize && { wrapperDimensions: containerSize }),
+  };
 
   return (
     <div

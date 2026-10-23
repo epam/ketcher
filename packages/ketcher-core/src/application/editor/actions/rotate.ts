@@ -224,7 +224,17 @@ function fromStructureFlip(
   const struct = reStruct.molecule;
   const action = new Action();
 
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
+
+  const collapsedMonomerAtomIds = new Set<number>();
+  sGroups.forEach((sg) => {
+    if (sg instanceof MonomerMicromolecule && !sg.isExpanded()) {
+      sg.atoms.forEach((aid) => collapsedMonomerAtomIds.add(aid));
+    }
+  });
+
   selection?.atoms?.forEach((atomId) => {
+    if (collapsedMonomerAtomIds.has(atomId)) return;
     const atom = struct.atoms.get(atomId);
     if (!atom) {
       return;
@@ -234,7 +244,6 @@ function fromStructureFlip(
     action.addOp(new AtomMove(atomId, difference));
   });
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
       return;
@@ -242,7 +251,7 @@ function fromStructureFlip(
     const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
     action.addOp(new SGroupDataMove(sGroup.id, difference));
 
-    if (sGroup instanceof MonomerMicromolecule) {
+    if (sGroup instanceof MonomerMicromolecule && sGroup.isExpanded()) {
       action.addOp(
         new FlipMonomerOperation({
           id: sGroup.id,
@@ -269,7 +278,17 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.atoms) {
+    const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
+
+    const collapsedMonomerAtomIds = new Set<number>();
+    sgroups.forEach((sg) => {
+      if (sg instanceof MonomerMicromolecule && !sg.isExpanded()) {
+        sg.atoms.forEach((aid) => collapsedMonomerAtomIds.add(aid));
+      }
+    });
+
     selection.atoms.forEach((aid) => {
+      if (collapsedMonomerAtomIds.has(aid)) return;
       const atom = struct.atoms.get(aid);
       if (!atom) return;
 
@@ -277,8 +296,6 @@ export function fromRotate(restruct, selection, center, angle: number) {
     });
 
     if (!selection.sgroupData) {
-      const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
-
       sgroups.forEach((sg) => {
         if (!sg.pp) {
           return;

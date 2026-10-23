@@ -295,7 +295,7 @@ class RotateTool implements Tool {
         );
         const monomerRotateAction = new Action();
         sGroups.forEach((sGroup) => {
-          if (sGroup instanceof MonomerMicromolecule) {
+          if (sGroup instanceof MonomerMicromolecule && sGroup.isExpanded()) {
             const angleInRadians = (dragCtx.angle * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({

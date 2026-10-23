@@ -94,7 +94,7 @@
   font-size: @font-size-regular;
   line-height: @line-height-regular;
   overflow: auto;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   .scrollbar();
 }
@@ -110,12 +110,8 @@
 }
 
 .draggableHeader {
-  cursor: grab;
+  cursor: move;
   user-select: none;
-
-  &:active {
-    cursor: grabbing;
-  }
 }
 
 .withMargin {

@@ -79,6 +79,9 @@ const DRAGGABLE_DIALOGS = new Set([
   'info-modal',
 ]);
 
+// No dialog rendered through this file is resizable — only the Settings panel
+// (which uses SettingsPanel.tsx directly) keeps resize handles.
+
 function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({

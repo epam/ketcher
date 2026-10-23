@@ -39,6 +39,14 @@ interface ModalProps {
   hideHeaderBorder?: boolean;
   /** Enable drag-to-move and resize-from-border behaviour (same logic as Settings panel). */
   isDraggable?: boolean;
+  /** When false, resize handles are hidden and the dialog keeps its natural CSS height. */
+  isResizable?: boolean;
+  /**
+   * When this value changes while the dialog is open, the dialog re-centres and
+   * resizes to match its new natural content size. Use it when the dialog
+   * content switches between states with different heights.
+   */
+  repositionKey?: string | number;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -113,6 +121,8 @@ export const Modal = ({
   testId,
   hideHeaderBorder,
   isDraggable = false,
+  isResizable = true,
+  repositionKey,
 }: ModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const theme = useTheme();
@@ -143,6 +153,21 @@ export const Modal = ({
 
   // Centre the paper within the container on first open.
   const hasInitializedRef = useRef(false);
+  const [repositionTrigger, setRepositionTrigger] = useState(0);
+  // The key that was current when the dialog was last positioned.
+  const lastInitKeyRef = useRef<string | number | undefined>(repositionKey);
+
+  // When repositionKey changes mid-open, reset rect so Paper returns to its
+  // natural CSS height before we re-measure.  The increment of repositionTrigger
+  // defers the measurement to the next commit (after rect==null is painted).
+  useLayoutEffect(() => {
+    if (!isDraggable || !isOpen || lastInitKeyRef.current === repositionKey)
+      return;
+    lastInitKeyRef.current = repositionKey;
+    hasInitializedRef.current = false;
+    setRect(null);
+    setRepositionTrigger((n) => n + 1);
+  }, [isDraggable, isOpen, repositionKey, setRect]);
 
   // MUI Dialog only mounts the Paper when open=true, so we must include isOpen
   // in the deps — the effect fires on mount when the Paper doesn't exist yet.
@@ -173,14 +198,24 @@ export const Modal = ({
       width,
       height,
     });
-  }, [isDraggable, isOpen, getBounds, setPreferredHeight, setRect]);
+  }, [
+    isDraggable,
+    isOpen,
+    repositionTrigger,
+    getBounds,
+    setPreferredHeight,
+    setRect,
+  ]);
 
   // Reset positioning when the dialog is closed so a fresh open re-centres it.
+  // Also syncs lastInitKeyRef so a reopen after a state-switch doesn't trigger
+  // an extra repositionKey-change cycle.
   useLayoutEffect(() => {
     if (!isOpen) {
       hasInitializedRef.current = false;
+      lastInitKeyRef.current = repositionKey;
     }
-  }, [isOpen]);
+  }, [isOpen, repositionKey]);
 
   const handleHeaderPointerDown = useCallback(
     (e: React.PointerEvent<HTMLElement>) => {
@@ -209,6 +244,12 @@ export const Modal = ({
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
+        // MUI Paper has margin: 32px by default. When absolutely positioned,
+        // CSS `top` places the margin edge at that value, so offsetTop returns
+        // top + 32. startDrag uses offsetTop as its baseline, which then causes
+        // a 32 px jump on the first move as the margin is effectively applied
+        // twice. Zero it out for draggable dialogs.
+        ...(isDraggable && { margin: 0 }),
         ...(showExpandButton && {
           margin: 'auto',
           width: expanded ? '100%' : modalWidth,
@@ -224,7 +265,7 @@ export const Modal = ({
             position: 'absolute' as const,
             left: rect.left,
             top: rect.top,
-            height: rect.height,
+            ...(isResizable && { height: rect.height }),
           }),
       },
     }),
@@ -236,6 +277,7 @@ export const Modal = ({
       expanded,
       modalWidth,
       isDraggable,
+      isResizable,
       rect,
       setPaperRef,
     ],
@@ -279,15 +321,18 @@ export const Modal = ({
         padding: '24px',
         // Remove flex centering from the MUI container so the absolutely-
         // positioned Paper can place itself freely within the dialog root.
-        ...(isDraggable && {
-          '& .MuiDialog-container': {
-            alignItems: 'flex-start',
-            justifyContent: 'flex-start',
-          },
-        }),
+        // Guard with `rect` so the switch happens in the same commit as
+        // `position: absolute` on the Paper — no top-left flash on open.
+        ...(isDraggable &&
+          rect && {
+            '& .MuiDialog-container': {
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start',
+            },
+          }),
       }}
     >
-      {isDraggable && (
+      {isDraggable && isResizable && (
         <div
           className={styles.resizeHandle}
           onPointerDown={startResizeTop}
@@ -334,7 +379,7 @@ export const Modal = ({
       {subcomponents.Content}
 
       {subcomponents.Footer}
-      {isDraggable && (
+      {isDraggable && isResizable && (
         <div
           className={styles.resizeHandle}
           onPointerDown={startResizeBottom}

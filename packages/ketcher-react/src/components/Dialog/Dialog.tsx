@@ -112,6 +112,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   }, []);
 
   const isDraggable = overlayElement?.dataset?.draggable === 'true';
+  const isResizable = overlayElement?.dataset?.resizable === 'true';
 
   const {
     rect,
@@ -259,14 +260,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                 position: 'absolute',
                 left: rect.left,
                 top: rect.top,
-                height: rect.height,
+                ...(isResizable && { height: rect.height }),
               }
             : { visibility: 'hidden' }
           : undefined
       }
       {...rest}
     >
-      {isDraggable && (
+      {isDraggable && isResizable && (
         <div
           className={styles.resizeHandle}
           onPointerDown={startResizeTop}
@@ -327,7 +328,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-      {isDraggable && (
+      {isDraggable && isResizable && (
         <div
           className={styles.resizeHandle}
           onPointerDown={startResizeBottom}

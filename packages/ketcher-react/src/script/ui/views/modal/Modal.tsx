@@ -75,7 +75,6 @@ const DRAGGABLE_DIALOGS = new Set([
   'save',
   'sgroup',
   'text',
-  'confirm',
   'info-modal',
 ]);
 

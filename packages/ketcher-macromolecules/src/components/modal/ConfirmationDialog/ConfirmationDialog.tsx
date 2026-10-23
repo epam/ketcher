@@ -23,7 +23,6 @@ export const ConfirmationDialog = ({
       title={title ?? t('confirmationDialog.defaultTitle')}
       onClose={onClose}
       testId="confirmation-dialog"
-      isDraggable
     >
       <Modal.Content>
         <ConfirmationText data-testid="confirmation-text">

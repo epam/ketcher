@@ -41,6 +41,10 @@ export class RxnArrow extends DrawingEntity {
     );
   }
 
+  public override get position(): Vec2 {
+    return this.startPosition;
+  }
+
   public setRenderer(renderer: RxnArrowRenderer): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;

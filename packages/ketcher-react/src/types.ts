@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { IconName, SvgComponent } from '../types';
-import { iconNameToIcon } from './iconNameToIcon';
+import type { Serializer, Struct } from 'ketcher-core';
 
-export const getIconByName = (name: IconName): SvgComponent =>
-  iconNameToIcon[name];
+/**
+ * Supported serialization format types for structure copying.
+ */
+export type SerializationType = 'mol' | 'ket';
+
+/**
+ * Serializer for a Struct type.
+ */
+export type StructSerializer = Serializer<Struct>;

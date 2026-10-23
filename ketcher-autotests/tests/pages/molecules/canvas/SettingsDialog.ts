@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,

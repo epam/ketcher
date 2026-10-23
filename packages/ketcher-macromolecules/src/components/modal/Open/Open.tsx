@@ -293,8 +293,13 @@ const onOk = async ({
         dispatch(openErrorTooltip('No structure'));
       }
       onCloseCallback();
-    } catch {
-      showParsingError(t('open.fileParsingError'));
+    } catch (error) {
+      const missingTemplateError =
+        error instanceof Error &&
+        error.message.startsWith('File doesn\'t contain definition for "');
+      showParsingError(
+        missingTemplateError ? error.message : t('open.fileParsingError'),
+      );
     }
     return;
   } else if (

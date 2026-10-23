@@ -68,6 +68,7 @@ function createKeyDownHandler(callback: () => void) {
 export interface TemplateItemProps {
   tmpl: Template;
   index: number;
+  nameOccurrenceIndex?: number;
   isSelected: boolean;
   shouldRenderPreview: boolean;
   renderOptions?: IStructRenderProps['options'];
@@ -80,6 +81,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
   ({
     tmpl,
     index,
+    nameOccurrenceIndex,
     isSelected,
     shouldRenderPreview,
     renderOptions,
@@ -91,7 +93,11 @@ const TemplateItem: FC<TemplateItemProps> = memo(
       <div className={clsx(classes.td, { [classes.selected]: isSelected })}>
         <button
           type="button"
-          data-testid={tmpl.struct.name}
+          data-testid={
+            nameOccurrenceIndex !== undefined
+              ? `${tmpl.struct.name}_${nameOccurrenceIndex}`
+              : tmpl.struct.name
+          }
           className={classes.selectButton}
           title={greekify(getTemplateTitle(tmpl, index))}
           onClick={() => onSelect(tmpl)}
@@ -160,6 +166,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
       prevProps.isSelected === nextProps.isSelected &&
       prevProps.shouldRenderPreview === nextProps.shouldRenderPreview &&
       prevProps.tmpl === nextProps.tmpl &&
+      prevProps.nameOccurrenceIndex === nextProps.nameOccurrenceIndex &&
       prevProps.renderOptions === nextProps.renderOptions &&
       prevProps.onSelect === nextProps.onSelect &&
       prevProps.onDelete === nextProps.onDelete &&

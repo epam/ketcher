@@ -48,7 +48,7 @@ import { generateCommonProperties } from './utils';
 import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
-import { openInfoModalWithCustomMessage } from '../shared';
+import { onAction, openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
 import type { AppDispatch } from '../hooks';
 import type { EditorInitState, RGroupEditParams } from './types';
@@ -291,6 +291,8 @@ export default function initEditor(
     },
     onApiSettings: (payload: Record<string, unknown>) =>
       dispatch(saveSettings(payload, ketcherId)),
+    onDropImage: (struct: Struct) =>
+      dispatch(onAction({ tool: 'paste', opts: struct })),
 
     onUpdateFloatingTools: memoizedDebounce((payload: FloatingToolsParams) => {
       dispatch(updateFloatingTools(payload));

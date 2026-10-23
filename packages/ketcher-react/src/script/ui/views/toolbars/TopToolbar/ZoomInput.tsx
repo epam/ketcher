@@ -23,6 +23,7 @@ import {
   useCallback,
 } from 'react';
 import styled from '@emotion/styled';
+import { isTouchDevice } from '../../../../../utils';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
@@ -105,11 +106,13 @@ export const ZoomInput = ({
     [onZoomSubmit, inputRef, shortcuts],
   );
 
-  // Focus on input field upon mounting
+  // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    inputEl?.focus();
-    inputEl?.select();
+    if (!isTouchDevice) {
+      inputEl?.focus();
+      inputEl?.select();
+    }
   }, [inputRef]);
 
   return (
@@ -118,6 +121,7 @@ export const ZoomInput = ({
       data-testid="zoom-value"
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
+      inputMode="numeric"
     />
   );
 };

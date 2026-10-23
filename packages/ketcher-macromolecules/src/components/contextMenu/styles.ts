@@ -41,4 +41,17 @@ export const StyledMenu = styled(Menu)`
     line-height: ${({ theme }) => theme.ketcher.font.size.regular};
     margin-inline-start: -3px;
   }
+  .context_menu-delete-item {
+    margin-top: 9px;
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: -5px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background-color: var(--contexify-separator-color);
+    }
+  }
 `;

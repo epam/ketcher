@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -43,7 +42,7 @@ export interface Template {
 }
 
 interface TemplateTableProps {
-  templates: Array<Template>;
+  templates: ReadonlyArray<Template>;
   selected: Template | null;
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
@@ -56,6 +55,10 @@ interface TemplateTableProps {
 // then progressively mount heavy SVG previews with low-priority updates.
 const INITIAL_PREVIEW_COUNT = 4;
 const PREVIEW_BATCH_SIZE = 4;
+const PREVIEW_IDLE_TIMEOUT_MS = 100;
+
+const getInitialPreviewCount = (templateCount: number) =>
+  Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
@@ -70,7 +73,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
   const [prevTemplates, setPrevTemplates] = useState(templates);
   const [previewRenderedCount, setPreviewRenderedCount] = useState(() =>
-    Math.min(INITIAL_PREVIEW_COUNT, templates.length),
+    getInitialPreviewCount(templates.length),
   );
   const [, startTransition] = useTransition();
   const [containerSize, setContainerSize] = useState<{
@@ -81,7 +84,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
   if (templates !== prevTemplates) {
     setPrevTemplates(templates);
-    setPreviewRenderedCount(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+    setPreviewRenderedCount(getInitialPreviewCount(templates.length));
   }
 
   // Calculate container size once to avoid getBoundingClientRect() calls during rendering
@@ -91,19 +94,24 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const calculateSize = () => {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setContainerSize({ width: rect.width, height: rect.height });
-      }
+    const updateContainerSize = (width: number, height: number) => {
+      setContainerSize((previousSize) => {
+        if (previousSize?.width === width && previousSize.height === height) {
+          return previousSize;
+        }
+
+        return { width, height };
+      });
     };
 
-    // Calculate on mount
-    calculateSize();
+    const container = containerRef.current;
+    const initialRect = container.getBoundingClientRect();
+    updateContainerSize(initialRect.width, initialRect.height);
 
-    // Recalculate on resize
-    const resizeObserver = new ResizeObserver(calculateSize);
-    resizeObserver.observe(containerRef.current);
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      updateContainerSize(entry.contentRect.width, entry.contentRect.height);
+    });
+    resizeObserver.observe(container);
 
     return () => resizeObserver.disconnect();
   }, []);
@@ -113,7 +121,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    // Use idle/frame scheduling for progressive preview hydration.
     const requestIdle = window.requestIdleCallback;
     if (typeof requestIdle === 'function') {
       const callback = requestIdle(
@@ -124,21 +131,21 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             );
           });
         },
-        { timeout: 500 },
+        { timeout: PREVIEW_IDLE_TIMEOUT_MS },
       );
       return () => {
-        if (callback) window.cancelIdleCallback?.(callback);
+        window.cancelIdleCallback?.(callback);
       };
-    } else {
-      const frameId = window.requestAnimationFrame(() => {
-        startTransition(() => {
-          setPreviewRenderedCount((prev) =>
-            Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
-          );
-        });
-      });
-      return () => window.cancelAnimationFrame(frameId);
     }
+
+    const frameId = window.requestAnimationFrame(() => {
+      startTransition(() => {
+        setPreviewRenderedCount((prev) =>
+          Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+        );
+      });
+    });
+    return () => window.cancelAnimationFrame(frameId);
   }, [previewRenderedCount, templates.length, startTransition]);
 
   // For each template, compute how many times its name appears in this group array

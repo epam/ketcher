@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Dialog, StructEditor } from '../../views/components';
-import { Component } from 'react';
+import { Component, type ComponentType } from 'react';
 import { isEmpty } from 'lodash';
 import {
   initAttach,
@@ -412,9 +412,12 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-// Type assertion needed due to @types/react version mismatch with react-redux
 const connector = connect(mapStateToProps, mapDispatchToProps);
-export default connector(withTranslation(['dialogs'])(Attach) as never);
+const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
+  withTranslation(['dialogs'])(Attach),
+);
+
+export default ConnectedAttach;
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

@@ -260,8 +260,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     });
 
     this.editor.event.tooltip.add((data) => {
-      const message = data ? data.message : undefined;
-
+      const message = data ? data.message : '';
       this.setState({
         tooltip: message,
       });

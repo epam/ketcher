@@ -70,8 +70,6 @@ const DRAGGABLE_DIALOGS = new Set([
   'enhancedStereo',
   'labelEdit',
   'rgroupLogic',
-  'removeFG',
-  'editMonomer',
   'save',
   'sgroup',
   'text',

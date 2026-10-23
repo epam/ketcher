@@ -46,6 +46,10 @@ type SubMenuProps = {
   subMenuId?: string;
 };
 
+type MenuItemElement = React.ReactElement<
+  React.ComponentProps<typeof MenuItem>
+>;
+
 const SubMenu = ({
   children,
   vertical = false,
@@ -83,11 +87,9 @@ const SubMenu = ({
     }
   };
 
-  const subComponents = React.Children.map(
-    children as JSX.Element[],
-    (child) => {
-      return child.type === MenuItem ? child : null;
-    },
+  const subComponents = React.Children.toArray(children).filter(
+    (child): child is MenuItemElement =>
+      React.isValidElement(child) && child.type === MenuItem,
   );
 
   const options = subComponents

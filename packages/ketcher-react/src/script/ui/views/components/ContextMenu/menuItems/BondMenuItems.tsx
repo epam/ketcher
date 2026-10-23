@@ -1,5 +1,6 @@
 import { type FC, useMemo } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -10,8 +11,8 @@ import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import {
-  formatTitle,
-  getNonQueryBondNames,
+  getBondTypeName,
+  getBondNamesForContextMenu,
   isBondBetweenMonomers,
   queryBondNames,
 } from '../utils';
@@ -24,13 +25,14 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider } from 'ketcher-core';
+import { isHapticBondWithAttachmentGroup, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
-const nonQueryBondNames = getNonQueryBondNames(tools);
+const bondNamesForContextMenu = getBondNamesForContextMenu(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
+  const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const [handleEdit] = useBondEdit();
   const [handleTypeChange, disabled] = useBondTypeChange();
@@ -38,12 +40,17 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
-  const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+  const struct = editor.struct();
+  const selectedBondIds = props.propsFromTrigger?.bondIds ?? [];
   const isDisabled = disabled({
     props: props.propsFromTrigger,
   } as Params);
+  const hasAttachmentGroupHapticBond = selectedBondIds.some((bondId) =>
+    isHapticBondWithAttachmentGroup(struct, struct.bonds.get(bondId)),
+  );
+  const isDisabledForAttachmentGroup = isDisabled;
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
-  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
   const bond = useMemo(() => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
@@ -89,17 +96,17 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
-        disabled={isDisabled}
+        disabled={isDisabledForAttachmentGroup}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
           {props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected bonds...'
-            : 'Edit...'}
+            ? t('components:contextMenu.editSelectedBondsEllipsis')
+            : t('components:contextMenu.editEllipsis')}
         </span>
       </Item>
       <MenuSeparator />
-      {bondNamesWithoutEmptyValue.map((name) => {
+      {bondNamesForContextMenu.map((name) => {
         const iconName = getIconName(name);
         const classNames = styles.sameGroup;
 
@@ -111,10 +118,10 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             id={name}
             onClick={handleTypeChange}
             key={name}
-            disabled={isDisabled}
+            disabled={isDisabledForAttachmentGroup}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
-            <span>{formatTitle(tools[name].title ?? '')}</span>
+            <span>{getBondTypeName(tools[name], t)}</span>
           </Item>
         );
       })}
@@ -123,9 +130,9 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       <Submenu
         {...props}
         data-testid="Query bonds-option"
-        label="Query bonds"
+        label={t('components:contextMenu.queryBondsMenu')}
         className={styles.subMenu}
-        disabled={disabledForMonomerCreation}
+        disabled={disabledForMonomerCreation || isDisabledForAttachmentGroup}
       >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
@@ -136,10 +143,10 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
               id={name}
               onClick={handleTypeChange}
               key={name}
-              disabled={isDisabled}
+              disabled={isDisabledForAttachmentGroup}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title ?? '')}</span>
+              <span>{getBondTypeName(tools[name], t)}</span>
             </Item>
           );
         })}
@@ -150,9 +157,9 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           {...props}
           data-testid="Change direction-option"
           onClick={changeDirection}
-          disabled={bondBetweenMonomers}
+          disabled={bondBetweenMonomers || hasAttachmentGroupHapticBond}
         >
-          Change direction
+          {t('components:contextMenu.changeDirection')}
         </Item>
       )}
       <Item
@@ -162,7 +169,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         onClick={handleSGroupAttach}
         disabled={disabledForMonomerCreation || bondBetweenMonomers}
       >
-        Attach S-Group...
+        {t('components:contextMenu.attachSGroupEllipsis')}
       </Item>
       <HighlightMenu
         onHighlight={highlightBondWithColor}
@@ -175,12 +182,12 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         disabled={sGroupEditDisabled}
         onClick={handleSGroupEdit}
       >
-        Edit S-Group...
+        {t('components:contextMenu.editSGroupEllipsis')}
       </Item>
       <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>Delete</span>
+        <span className={styles.contextMenuText}>{t('common:delete')}</span>
       </Item>
     </>
   );

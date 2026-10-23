@@ -12,7 +12,7 @@ import type {
   ReactionArrowClosestItem,
 } from '../arrow/arrow.types';
 
-export type SelectMode = 'lasso' | 'fragment' | 'rectangle';
+export type SelectMode = 'lasso' | 'structure' | 'rectangle';
 
 type MergeItems = ReturnType<typeof getItemsToFuse>;
 

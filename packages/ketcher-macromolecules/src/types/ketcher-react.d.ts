@@ -1,8 +1,11 @@
 declare module 'ketcher-react' {
   import type * as React from 'react';
+  import type { i18n as I18nInstance } from 'i18next';
 
   export type IconName = string;
   export type PresetPosition = string;
+
+  export const i18n: I18nInstance;
 
   export const Icon: React.ComponentType<Record<string, unknown>>;
   export const IconButton: React.ComponentType<Record<string, unknown>>;
@@ -27,6 +30,7 @@ declare module 'ketcher-react' {
   export const ArrowScroll: React.ComponentType<Record<string, unknown>>;
   export const EditorClassName: string;
   export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR: string;
+  export const isTouchDevice: boolean;
   export const getFullscreenElement: () => HTMLElement | null;
   export const calculateBondPreviewPosition: (
     bond: unknown,

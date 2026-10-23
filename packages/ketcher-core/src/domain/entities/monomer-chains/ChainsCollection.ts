@@ -347,7 +347,13 @@ export class ChainsCollection {
   }
 
   public get lastNode() {
-    return this.chains[0].lastSubChain.lastNode;
+    const lastNode = this.chains[0]?.lastSubChain?.lastNode;
+
+    if (!lastNode) {
+      throw new Error('Cannot get the last node of an empty chains collection');
+    }
+
+    return lastNode;
   }
 
   public get length() {
@@ -530,9 +536,7 @@ export class ChainsCollection {
               ) ?? {};
             if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
               const curChainIdx =
-                reorderedSenseForSequentialAntisenseChains.findIndex(
-                  (v) => v === chain,
-                );
+                reorderedSenseForSequentialAntisenseChains.indexOf(chain);
               let last = anotherSenseChain;
               for (
                 let i = curChainIdx;

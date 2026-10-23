@@ -51,6 +51,11 @@ export default [
     ],
   },
   {
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+  {
     ...js.configs.recommended,
     files: ['**/*.{js,cjs,mjs,jsx,ts,tsx}'],
   },
@@ -74,6 +79,7 @@ export default [
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        ClipboardItem: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         JSX: 'readonly',
@@ -252,15 +258,7 @@ export default [
           allowElseIf: true,
         },
       ],
-      'no-magic-numbers': [
-        'warn',
-        {
-          ignore: [0, 1],
-          ignoreArrayIndexes: true,
-          ignoreDefaultValues: true,
-          ignoreClassFieldInitialValues: true,
-        },
-      ],
+      'no-magic-numbers': 'off',
       'no-nested-ternary': 'error',
       'prefer-template': 'error',
       'max-len': ['error', 180],

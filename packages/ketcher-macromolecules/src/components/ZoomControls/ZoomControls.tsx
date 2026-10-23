@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
 import { useState, useRef, useCallback, useEffect, RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { ZoomInput } from 'components/ZoomControls/ZoomInput';
 import { ZoomTool } from 'ketcher-core';
@@ -40,6 +38,7 @@ import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 
 export const ZoomControls = () => {
+  const { t } = useTranslation('macromolecules');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
   const [containerElement, setContainerElement] =
@@ -130,26 +129,26 @@ export const ZoomControls = () => {
           />
           <ZoomControlButton
             data-testid="zoom-out"
-            title="Zoom Out"
+            title={t('zoom.zoomOutTitle')}
             onClick={onZoomOut}
           >
-            <span>Zoom out</span>
+            <span>{t('zoom.zoomOutLabel')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-minus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             data-testid="zoom-in"
-            title="Zoom In"
+            title={t('zoom.zoomInTitle')}
             onClick={onZoomIn}
           >
-            <span>Zoom in</span>
+            <span>{t('zoom.zoomInLabel')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-plus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
             data-testid="zoom-default"
-            title="Zoom 100%"
+            title={t('zoom.zoomReset')}
             onClick={onZoomReset}
           >
-            <span>Zoom 100%</span>
+            <span>{t('zoom.zoomReset')}</span>
             <ShortcutLabel>{hotkeysShortcuts['zoom-reset']}</ShortcutLabel>
           </ZoomControlButton>
         </DropDownContent>

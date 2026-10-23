@@ -29,10 +29,7 @@ export class EquilibriumFilledHalfBowArrowRenderer {
         `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-    );
-
-    // bottom arrow
-    pathParts.push(
+      // bottom arrow
       `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x + arrowHeadLength)},${toFixed(

@@ -78,7 +78,9 @@ test(
         Will require to update screens after fix
         */
     test.setTimeout(240000);
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
 
     for (const fileWithPairs of fileNames) {
       await openFileAndAddToCanvasAsNewProjectMacro(page, fileWithPairs);
@@ -115,7 +117,7 @@ test('2. Validate preview tooltip positions in relation to the center of the bon
             2. Take screenshot of the canvas to compare it with example
         */
 
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Structure);
 
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,

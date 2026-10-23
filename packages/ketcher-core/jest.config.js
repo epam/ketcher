@@ -1,4 +1,5 @@
 module.exports = {
+  cache: false,
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
@@ -12,7 +13,7 @@ module.exports = {
         },
       },
     ],
-    '\\.ket': '<rootDir>/textFileTransformer.js',
+    '\\.ket': '<rootDir>/textFileTransformer.ts',
   },
   moduleNameMapper: {
     '^application(.*)$': '<rootDir>/src/application/$1',

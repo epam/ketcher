@@ -38,7 +38,7 @@ export const PresetMonomerLabel = styled.div`
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   line-height: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 600;
-  padding-right: 2px;
+  padding-inline-end: 2px;
 `;
 
 export const PresetMonomerName = styled.div`
@@ -61,7 +61,7 @@ export const PresetName = styled.p`
 export const PresetIcon = styled(Icon)`
   height: 14px;
   width: 14px;
-  margin-right: 4px;
+  margin-inline-end: 4px;
   color: ${({ theme }) => theme.ketcher.color.icon.grey};
   stroke: ${({ theme }) => theme.ketcher.color.icon.grey};
 `;
@@ -79,5 +79,5 @@ export const PhosphatePositionIcon = styled(Icon)`
 export const PhosphatePositionIconWrapper = styled.span`
   display: inline-flex;
   align-items: center;
-  margin-left: 6px;
+  margin-inline-start: 6px;
 `;

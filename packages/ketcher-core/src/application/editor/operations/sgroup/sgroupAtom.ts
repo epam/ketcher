@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -48,7 +47,7 @@ class SGroupAtomAdd extends BaseOperation {
     assert(atom, `OpSGroupAtomAdd: Atom ${aid} not found`);
     assert(sgroup, `OpSGroupAtomAdd: S-Group ${sgid} not found`);
 
-    if (sgroup.atoms.indexOf(aid) >= 0) {
+    if (sgroup.atoms.includes(aid)) {
       return;
     }
 

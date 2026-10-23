@@ -55,7 +55,6 @@ export function prepareStructForKet(struct: Struct) {
         pos: item.pos,
         height: item.height,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -64,7 +63,6 @@ export function prepareStructForKet(struct: Struct) {
       type: 'plus',
       center: item.pp,
       data: {},
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -76,7 +74,6 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -89,7 +86,6 @@ export function prepareStructForKet(struct: Struct) {
         position: item.position,
         pos: item.pos,
       },
-      selected: item.getInitiallySelected(),
     });
   });
 
@@ -149,9 +145,11 @@ function addMolecules(
     fragments.forEach((fragmentId) => {
       atomSet = atomSet.union(struct.getFragmentIds(fragmentId));
     });
+    const sourceAtomIdMap = new Map<number, number>();
     ketNodes.push({
       type: 'molecule',
-      fragment: struct.clone(atomSet),
+      fragment: struct.clone(atomSet, null, false, sourceAtomIdMap),
+      sourceAtomIdMap,
       center: getFragmentCenter(struct, atomSet),
     });
   });
@@ -193,9 +191,11 @@ function generateSGroupFragmentsMap(
     });
 
     if (!hasAtomInSGroup) {
+      const sourceAtomIdMap = new Map<number, number>();
       ketNodes.push({
         type: 'molecule',
-        fragment: struct.clone(atomsInFragment),
+        fragment: struct.clone(atomsInFragment, null, false, sourceAtomIdMap),
+        sourceAtomIdMap,
         center: getFragmentCenter(struct, atomsInFragment),
       });
     }

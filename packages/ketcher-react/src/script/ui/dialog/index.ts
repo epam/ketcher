@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -45,8 +44,9 @@ import TemplatesDialog from './template/TemplateDialog';
 import Text from '../views/modal/components/Text';
 import { Confirm } from '../views/modal/components/Confirm';
 import InfoModal from '../views/modal/components/InfoModal';
+import type { ElementType } from 'react';
 
-export default {
+const dialogs: Record<string, ElementType> = {
   open: Open,
   analyse: Analyse,
   recognize: Recognize,
@@ -73,4 +73,6 @@ export default {
   text: Text,
   confirm: Confirm,
   'info-modal': InfoModal,
-} as any;
+};
+
+export default dialogs;

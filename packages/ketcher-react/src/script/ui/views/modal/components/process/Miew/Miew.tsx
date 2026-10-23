@@ -26,6 +26,7 @@ import {
 } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   type Struct,
@@ -131,12 +132,12 @@ function createMiewOptions(userOpts) {
   return options;
 }
 /* ---------------- */
-const CHANGING_WARNING =
-  'Stereocenters can be changed after the strong 3D rotation';
-
-const FooterContent = () => (
-  <div className={classes.warning}>{CHANGING_WARNING}</div>
-);
+const FooterContent = () => {
+  const { t } = useTranslation('dialogs');
+  return (
+    <div className={classes.warning}>{t('process.miew.changingWarning')}</div>
+  );
+};
 
 const MiewDialog = ({
   miewOpts,
@@ -147,6 +148,7 @@ const MiewDialog = ({
   miewTheme = 'light',
   ...prop
 }: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const miewRef = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
@@ -193,9 +195,7 @@ const MiewDialog = ({
         'Failed to export structure from 3D viewer',
       );
       dispatch(
-        showSnackbarNotification(
-          'Failed to export structure from 3D viewer. Please try again.',
-        ),
+        showSnackbarNotification(t('dialogs:process.miew.exportFailedError')),
       );
       return;
     }
@@ -220,9 +220,7 @@ const MiewDialog = ({
         e,
       );
       dispatch(
-        showSnackbarNotification(
-          'Failed to process 3D structure. The structure may be corrupted.',
-        ),
+        showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
       );
       return;
     }
@@ -239,7 +237,7 @@ const MiewDialog = ({
           );
           dispatch(
             showSnackbarNotification(
-              'Failed to merge 3D coordinates with the original structure.',
+              t('dialogs:process.miew.mergeCoordinatesFailedError'),
             ),
           );
           return;
@@ -265,7 +263,7 @@ const MiewDialog = ({
         );
         dispatch(
           showSnackbarNotification(
-            'Failed to merge 3D coordinates with the original structure.',
+            t('dialogs:process.miew.mergeCoordinatesFailedError'),
           ),
         );
         return;
@@ -282,15 +280,15 @@ const MiewDialog = ({
       );
       dispatch(
         showSnackbarNotification(
-          'Failed to preserve metadata while applying 3D structure.',
+          t('dialogs:process.miew.mergeMetaFailedError'),
         ),
       );
     }
-  }, [dispatch, server, serverSettings, struct]);
+  }, [dispatch, server, serverSettings, struct, t]);
 
   return (
     <Dialog
-      title="Miew"
+      title={t('dialogs:process.miew.dialogTitle')}
       needMargin={false}
       params={prop}
       buttons={[
@@ -302,7 +300,7 @@ const MiewDialog = ({
           disabled={isDisabled}
           data-testid="miew-modal-button"
         >
-          Apply
+          {t('common:button.apply')}
         </button>,
       ]}
       footerContent={<FooterContent />}

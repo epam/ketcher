@@ -8,8 +8,8 @@ export const hotkeysShortcuts =
   generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
 
 export const getIntegerFromString = (zoomInput: string | undefined): number => {
-  const zoomNumber = parseInt(zoomInput ?? '');
-  if (isNaN(zoomNumber)) {
+  const zoomNumber = Number.parseInt(zoomInput ?? '');
+  if (Number.isNaN(zoomNumber)) {
     return 0;
   }
   return zoomNumber;

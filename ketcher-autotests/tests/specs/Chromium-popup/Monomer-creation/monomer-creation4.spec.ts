@@ -355,11 +355,6 @@ test(`8. Check that potential AA is every atom that is connected to a potential 
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
 
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
-
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   for (const targetAtom of await targetAtoms.all()) {
     expect(
@@ -554,12 +549,12 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
     AttachmentPoint.R1,
   ).first();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.EditConnectionPoint,
     ),
   ).toBeTruthy();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.RemoveAssignment,
     ),
   ).toBeTruthy();

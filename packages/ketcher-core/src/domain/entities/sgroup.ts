@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Atom } from './atom';
-import type { Bond } from './bond';
+import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
@@ -92,7 +92,6 @@ interface SGroupData {
 
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
-type StructBondsAccess = Pick<Struct, 'bonds'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type RenderableSGroupAtom =
   | Atom
@@ -319,9 +318,11 @@ export class SGroup {
     validateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId, leaveAtomId }) =>
+      ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
         attachmentPoint.atomId === atomId &&
-        attachmentPoint.leaveAtomId === leaveAtomId,
+        attachmentPoint.leaveAtomId === leaveAtomId &&
+        attachmentPoint.attachmentId === attachmentId &&
+        attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
     if (isAttachmentPointAlreadyExist && validateUniqueness) {
@@ -473,9 +474,7 @@ export class SGroup {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
       this.isSaltOrSolvent(sgroup.data.name),
     );
-    return onlySaltsOrSolvents.some(({ atoms }) =>
-      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId),
-    );
+    return onlySaltsOrSolvents.some(({ atoms }) => atoms.includes(atomId));
   }
 
   static isBondInSaltOrSolvent(
@@ -563,7 +562,7 @@ export class SGroup {
   }
 
   static getCrossBonds(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess,
     parentAtomSet: Pile<number>,
   ): { [key: number]: Array<number> } {
     const crossBonds: { [key: number]: Array<number> } = {};
@@ -643,7 +642,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess & StructBondEndpointAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,
@@ -716,7 +715,7 @@ export class SGroup {
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0));
+          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
         }
       })();
     }
@@ -791,7 +790,7 @@ export class SGroup {
     });
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
+      throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
@@ -869,7 +868,7 @@ export class SGroup {
     for (const atomId of atoms) {
       const atom = mol.atoms.get(atomId);
       assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
-      c = c.addScaled(atom.pp, 1.0 / atoms.length);
+      c = c.addScaled(atom.pp, 1 / atoms.length);
     }
     return c;
   }

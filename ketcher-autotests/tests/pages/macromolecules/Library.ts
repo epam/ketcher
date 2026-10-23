@@ -231,34 +231,42 @@ export const Library = (page: Page) => {
     },
 
     getMonomerHELMAlias(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute('data-helm');
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.helm ?? null,
+      );
     },
 
     getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute('data-axolabs');
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.axolabs ?? null,
+      );
     },
 
     getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute('data-idtalias-base');
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.idtaliasBase ?? null,
+      );
     },
 
     getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute(
-        'data-idtalias-modifications-endpoint5',
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.idtaliasModificationsEndpoint5 ?? null,
       );
     },
     getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute(
-        'data-idtalias-modifications-endpoint3',
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.idtaliasModificationsEndpoint3 ?? null,
       );
     },
     getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute(
-        'data-idtalias-modifications-internal',
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.idtaliasModificationsInternal ?? null,
       );
     },
     getMonomerModificationTypes(monomer: Monomer | PresetType) {
-      return getElement(monomer.testId).getAttribute('data-modificationtype');
+      return getElement(monomer.testId).evaluate(
+        (element) => element.dataset.modificationtype ?? null,
+      );
     },
 
     async isMonomerExist(

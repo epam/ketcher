@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,12 +15,13 @@
  ***************************************************************************/
 
 import type { BaseProps } from '../../../modal.types';
+import type { StoreState } from '../../../../../state/store.types';
 import RgroupLogic from './RgroupLogic';
 import { connect } from 'react-redux';
 
 type StateProps = Pick<BaseProps, 'formState'>;
 
-const mapStateToProps = (state: any): StateProps => ({
+const mapStateToProps = (state: Pick<StoreState, 'modal'>): StateProps => ({
   formState: state.modal.form,
 });
 

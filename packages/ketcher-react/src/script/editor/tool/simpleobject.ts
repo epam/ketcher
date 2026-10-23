@@ -17,7 +17,7 @@
 import {
   type Action,
   type SimpleObjectMode,
-  type Vec2,
+  Vec2,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
@@ -38,6 +38,15 @@ interface SimpleObjectDragContext {
   itemId?: number;
 }
 
+function isSimpleObjectClosestItem(
+  item: ClosestItemWithMap | null,
+): item is ClosestItemWithMap<Vec2, 'simpleObjects'> {
+  return (
+    item?.map === 'simpleObjects' &&
+    (item.ref == null || item.ref instanceof Vec2)
+  );
+}
+
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
   private readonly editor: Editor;
@@ -56,10 +65,10 @@ class SimpleObjectTool implements Tool {
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
-    if (ci?.map === 'simpleObjects') {
+    if (isSimpleObjectClosestItem(ci)) {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
-      this.dragCtx.ci = ci as ClosestItemWithMap<Vec2, 'simpleObjects'>;
+      this.dragCtx.ci = ci;
     } else {
       this.dragCtx.isNew = true;
       this.editor.selection(null);

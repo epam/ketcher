@@ -34,6 +34,7 @@ Stereo descriptors are derived from the drawn structure and stay consistent with
 
 - CIP assignment follows the CIP priority rules as implemented by the underlying engine (Indigo).
 - Enhanced-stereochemistry grouping (Absolute/AND/OR) is preserved in formats that support it.
+- Saving a monomer from part of a molecule preserves the stereo flags of the remaining molecule; redoing the save restores those flags too.
 
 ## Limitations
 

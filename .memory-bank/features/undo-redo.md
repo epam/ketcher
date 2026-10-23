@@ -29,6 +29,15 @@ Every user action that changes the canvas is recorded as one atomic history entr
 - **WHEN** the user undoes one or more actions and then performs a new edit
 - **THEN** the previously undone actions can no longer be redone
 
+#### Scenario: Undo monomer creation
+
+- **WHEN** the user creates a monomer from a molecule, assigns a leaving group, submits the wizard, and presses Undo
+- **THEN** the original molecule and its coordinates are restored in one step
+- **AND** Redo restores the created monomer
+- **AND** edits made before opening the wizard remain undoable
+- This also applies when only part of a molecule is converted; bonds to the rest of the molecule are preserved.
+- Unselected attachment groups and their haptic bonds remain intact after saving, undoing, and redoing monomer creation.
+
 #### Scenario: History depth limit
 
 - **WHEN** the user performs more than 32 undoable actions

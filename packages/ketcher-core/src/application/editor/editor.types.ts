@@ -85,6 +85,7 @@ export interface Editor {
     needToCenterStruct?: boolean,
     x?: number,
     y?: number,
+    ignoreHistory?: boolean,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
   subscribe: <T = unknown>(
@@ -101,7 +102,7 @@ export interface Editor {
   historyStack: Action[];
   historyPtr: number;
   addHistoryAction: (action: Action) => void;
-  clear: () => void;
+  clear: (ignoreHistory?: boolean) => void;
   clearHistory: () => void;
   options(): RenderOptions;
   options(value: EditorOptions): void;

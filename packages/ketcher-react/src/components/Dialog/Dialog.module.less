@@ -94,8 +94,24 @@
   font-size: @font-size-regular;
   line-height: @line-height-regular;
   overflow: auto;
-  height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   .scrollbar();
+}
+
+.resizeHandle {
+  height: 6px;
+  flex-shrink: 0;
+  cursor: ns-resize;
+
+  &:hover {
+    background-color: @color-grey-3;
+  }
+}
+
+.draggableHeader {
+  cursor: move;
+  user-select: none;
 }
 
 .withMargin {

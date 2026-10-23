@@ -106,6 +106,8 @@ export interface FieldProps {
   className?: string;
   extraName?: string;
   tooltip?: string;
+  /** Description rendered as static text beneath the control, instead of a hover tooltip */
+  hint?: string;
   extraLabel?: string;
   schema?: SchemaProperty | unknown[];
   extraSchema?: SchemaProperty;
@@ -337,8 +339,10 @@ function Field(props: Readonly<FieldProps>) {
     labelPos,
     className,
     extraLabel,
+    hint,
     ...rest
   } = props;
+  const { t } = useTranslation();
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -378,16 +382,35 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
+  // A hint replaces the hover tooltip: the description is always readable as static
+  // text under the control, so the field keeps its own layout and grows downwards.
+  const withHint = (field: React.ReactNode) =>
+    hint ? (
+      <div className={classes.fieldWithHint}>
+        {field}
+        <span
+          className={classes.fieldHint}
+          data-testid={
+            props['data-testid'] ? `${props['data-testid']}-hint` : undefined
+          }
+        >
+          {resolveTranslatableText(hint, t)}
+        </span>
+      </div>
+    ) : (
+      field
+    );
+
   if (labelPos === false) {
     if (Component) {
-      return formField;
+      return withHint(formField);
     }
 
     const isSelectableControl =
       rest.type === 'radio' || rest.type === 'checkbox';
     const showError = Boolean(dataError) && !isSelectableControl;
 
-    return (
+    return withHint(
       <>
         <span className={clsx({ [classes.dataError]: showError }, className)}>
           <span
@@ -412,10 +435,10 @@ function Field(props: Readonly<FieldProps>) {
             onClose={handlePopoverClose}
           />
         )}
-      </>
+      </>,
     );
   }
-  return (
+  return withHint(
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       title={rest.title ?? desc.title}
@@ -441,7 +464,7 @@ function Field(props: Readonly<FieldProps>) {
         />
       )}
       {extraLabel && <Label className={classes.extraLabel}>{extraLabel}</Label>}
-    </Label>
+    </Label>,
   );
 }
 

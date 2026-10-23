@@ -44,6 +44,87 @@ declare module 'ketcher-react' {
   };
   export const PresetPosition: string;
 
+  // Shared Settings window, mounted here over SettingsService
+  export interface SettingsGroup {
+    key: string;
+    label: string;
+    content: React.ReactNode;
+  }
+
+  export interface SettingsPanelProps {
+    title: string;
+    footerLeft?: React.ReactNode;
+    groups?: SettingsGroup[];
+    children?: React.ReactNode;
+    boundsElement?: HTMLElement | null;
+    innerBoundsElement?: HTMLElement | null;
+    isApplyDisabled?: boolean;
+    onApply: () => void;
+    onCancel: () => void;
+    onClose: () => void;
+    className?: string;
+  }
+  export const SettingsPanel: React.ComponentType<SettingsPanelProps>;
+
+  export interface ManageSettingsMenuProps {
+    onResetToDefault: () => void;
+    onResetToACS: () => void;
+    onSave: () => void;
+    onLoad: () => void;
+  }
+  export const ManageSettingsMenu: React.ComponentType<ManageSettingsMenuProps>;
+
+  export interface SettingsAccordionProps {
+    groups: SettingsGroup[];
+    defaultExpandedGroups?: string[];
+    className?: string;
+  }
+  export const SettingsAccordion: React.ComponentType<SettingsAccordionProps>;
+
+  export type SettingsFieldLayout =
+    'toggle' | 'measure' | 'measure-stacked' | 'select' | 'color';
+
+  export interface PanelRect {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
+
+  export interface PanelBounds {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+  }
+
+  export function useSettingsPanelDrag(params: {
+    panelRef: import('react').RefObject<HTMLElement | null>;
+    boundsElement?: HTMLElement | null;
+    innerBoundsElement?: HTMLElement | null;
+    gutter?: number;
+  }): {
+    rect: PanelRect | null;
+    setRect: (rect: PanelRect | null) => void;
+    isDragging: boolean;
+    startDrag: (event: import('react').PointerEvent) => void;
+    startResizeTop: (event: import('react').PointerEvent) => void;
+    startResizeBottom: (event: import('react').PointerEvent) => void;
+    clamp: (bounds?: PanelBounds) => void;
+    getBounds: () => PanelBounds | null;
+    setPreferredHeight: (height: number) => void;
+  };
+
+  export interface SettingsFieldRowProps {
+    label: string;
+    layout: SettingsFieldLayout;
+    hint?: string;
+    children: React.ReactNode;
+    className?: string;
+    testId?: string;
+  }
+  export const SettingsFieldRow: React.ComponentType<SettingsFieldRowProps>;
+
   export function usePortalStyle(...args: unknown[]): [React.CSSProperties];
   export function calculateAmbiguousMonomerPreviewTop(
     monomer: unknown,

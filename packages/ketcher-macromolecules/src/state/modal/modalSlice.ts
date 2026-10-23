@@ -112,6 +112,12 @@ export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
 export const selectModalIsOpen = (state: RootState): boolean =>
   state.modal.isOpen;
+/**
+ * The Settings window is non-modal — it draws no backdrop — so the application
+ * chrome has to opt into being disabled while it is open.
+ */
+export const selectIsSettingsPanelOpen = (state: RootState): boolean =>
+  state.modal.isOpen && state.modal.name === 'settings';
 export const selectAdditionalProps = (
   state: RootState,
 ): AdditionalModalProps | null => state.modal.additionalProps;

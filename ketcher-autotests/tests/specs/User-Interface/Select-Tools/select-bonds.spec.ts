@@ -9,6 +9,7 @@ import {
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Bonds plus atoms selection ', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,6 +34,13 @@ test.describe('Bonds plus atoms selection ', () => {
       await page.keyboard.down('Shift');
       await getBondLocator(page, { bondId: 0 }).click({ force: true });
       await getAtomLocator(page, { atomId: 0 }).click();
+      const atom1Box = await getAtomLocator(page, { atomId: 1 }).boundingBox();
+      if (atom1Box) {
+        await RotationTool(page).moveRotationCenterHandleTo({
+          x: atom1Box.x - 150,
+          y: atom1Box.y - 150,
+        });
+      }
       await getAtomLocator(page, { atomId: 1 }).click();
       await takeEditorScreenshot(page);
     });

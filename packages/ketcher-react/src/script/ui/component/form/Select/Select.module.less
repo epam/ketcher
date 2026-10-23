@@ -17,7 +17,6 @@
 @import '../../../../../style/variables';
 @import '../../../../../style/mixins.less';
 
-// stylelint-disable selector-pseudo-class-no-unknown
 // stylelint-disable no-descending-specificity
 .dropdownList {
   :global(.MuiPaper-root) {
@@ -35,8 +34,8 @@
     cursor: default;
 
     &:hover {
-      padding-left: 6px;
-      border-left: 2px solid #167782;
+      padding-inline-start: 6px;
+      border-inline-start: 2px solid #167782;
       background-color: @color-select-background;
     }
   }
@@ -58,7 +57,6 @@
 
     &::-webkit-scrollbar-thumb {
       border-radius: 2px;
-      -webkit-border-radius: 2px;
     }
 
     :global(.Mui-selected) {
@@ -71,9 +69,10 @@
     margin: 4px 8px;
   }
 }
+
 .usedOption {
   &:global(.MuiMenuItem-root) {
-    color: rgba(51, 51, 51, 0.6);
+    color: rgb(51 51 51 / 60%);
   }
 }
 
@@ -92,7 +91,7 @@
     font-family: @Inter;
     font-size: @font-size-input;
     padding: 0 8px;
-    padding-right: 24px !important;
+    padding-inline-end: 24px !important;
     cursor: default;
     box-sizing: border-box;
     line-height: 22px;

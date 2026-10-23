@@ -62,7 +62,7 @@ export const ZoomInput = ({
     el.select();
   };
 
-  // Focus on input field upon mounting
+  // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
     if (!isTouchDevice) {

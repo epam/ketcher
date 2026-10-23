@@ -19,12 +19,12 @@ import {
   type Vec2,
   CoordinateTransformation,
   fromImageResize,
-  fromItemsFuse,
   fromMultipleMove,
   fromSimpleObjectResizing,
   fromTextDeletion,
   fromTextUpdating,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   getHoverToFuse,
   getItemsToFuse,
   IMAGE_KEY,
@@ -33,6 +33,7 @@ import {
   isControlKey,
   SGroup,
   vectorUtils,
+  isHapticBondWithAttachmentGroup,
 } from 'ketcher-core';
 
 import LassoHelper from '../helper/lasso';
@@ -44,6 +45,7 @@ import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
+import { isHydrogenBondBetweenMonomers } from '../../../ui/views/components/ContextMenu/utils';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
 import type { HoverTarget, Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';
@@ -59,7 +61,10 @@ import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
 import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getFragSelection,
+  getAttachmentGroupSelection,
+  canOpenAtomProperties,
   getNewSelectedItems,
+  getMovableAtomIdsForBond,
   getSelectedAtoms,
   getSelectedBonds,
   isItemSelected,
@@ -110,7 +115,7 @@ class SelectTool implements Tool {
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.#mode === 'fragment',
+      this.#mode === 'structure',
     );
   }
 
@@ -181,7 +186,10 @@ class SelectTool implements Tool {
       atomLongtapEvent(this, rnd);
     }
 
-    let sel = closestToSel(ci);
+    let sel =
+      ci.map === 'attachmentGroups'
+        ? getAttachmentGroupSelection(molecule, ci.id)
+        : closestToSel(ci);
     const sgroups = ctab.sgroups.get(ci.id);
     const selection = this.editor.selection();
     if (ci.map === 'frags') {
@@ -211,9 +219,9 @@ class SelectTool implements Tool {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(
-        isItemSelected(selection, ci, ctab) ? selection : sel,
-      );
+      const shouldPreserveCurrentSelection =
+        ci.map !== 'attachmentGroups' && isItemSelected(selection, ci, ctab);
+      this.editor.selection(shouldPreserveCurrentSelection ? selection : sel);
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -324,6 +332,13 @@ class SelectTool implements Tool {
       }
 
       const expSel = editor.explicitSelected();
+      if (selectionDragCtx.item.map === 'bonds') {
+        expSel.atoms = getMovableAtomIdsForBond(
+          restruct.molecule,
+          selectionDragCtx.item.id,
+          expSel.atoms ?? [],
+        );
+      }
       selectionDragCtx.action = fromMultipleMove(
         restruct,
         expSel,
@@ -355,6 +370,7 @@ class SelectTool implements Tool {
         );
         const item = editor.findItem(event, maps, null);
         let hoverTarget: HoverTarget | null = item;
+        let cursorTarget: ClosestItemWithMap | null = item;
 
         if (item?.map === 'frags') {
           if (this.lastHoveredFragmentId !== item.id) {
@@ -365,13 +381,31 @@ class SelectTool implements Tool {
         } else {
           this.lastHoveredFragmentId = undefined;
           this.lastHoveredFragmentTarget = null;
+
+          if (item?.map === 'bonds') {
+            const molecule = editor.struct();
+            const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+              molecule,
+              molecule.bonds.get(item.id),
+              CoordinateTransformation.pageToModel(event, editor.render),
+            );
+
+            if (attachmentGroupId !== null) {
+              cursorTarget = {
+                map: 'attachmentGroups',
+                id: attachmentGroupId,
+                dist: item.dist,
+              };
+              hoverTarget = cursorTarget;
+            }
+          }
         }
 
         editor.hover(hoverTarget, null, event);
         handleMovingPosibilityCursor(
-          item,
+          hoverTarget,
           this.editor.render.paper.canvas,
-          getItemCursor(this.editor.render, item),
+          getItemCursor(this.editor.render, cursorTarget),
         );
       }
     }
@@ -391,6 +425,11 @@ class SelectTool implements Tool {
     const struct = editor.render.ctab;
     const molecule = struct.molecule;
     const dragCtx = this.dragCtx;
+    const clickedAttachmentGroupId =
+      isSelectionMoveDragContext(dragCtx) &&
+      dragCtx.item.map === 'attachmentGroups'
+        ? dragCtx.item.id
+        : null;
 
     // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
@@ -400,24 +439,22 @@ class SelectTool implements Tool {
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     /* ignore salts and solvents */
-    const possibleSaltOrSolvent = struct.sgroups.get(
-      selectedSgroups[selectedSgroups.length - 1],
-    );
+    const lastSelectedSgroupId = selectedSgroups.at(-1);
+    const possibleSaltOrSolvent =
+      lastSelectedSgroupId === undefined
+        ? undefined
+        : struct.sgroups.get(lastSelectedSgroupId);
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
       possibleSaltOrSolvent?.item?.data?.name ?? '',
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
-    if (
-      dragCtx &&
+    const isMergePrevented =
+      Boolean(dragCtx) &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups))
-    ) {
-      preventSaltAndSolventsMerge(struct, dragCtx, editor);
-      this.dragCtx = null;
-    }
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups));
     /* end */
     if (isArrowDragContext(dragCtx)) {
       if (CommonArrowTool.isDragContextReaction(dragCtx)) {
@@ -436,7 +473,13 @@ class SelectTool implements Tool {
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {
-      if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
+      if (isMergePrevented) {
+        // No merge, but the move still has to be committed to history.
+        if (dragCtx.mergeItems) {
+          editor.selection(null);
+        }
+        dropAndMerge(editor, null, dragCtx.action, dragCtx.copyAction);
+      } else if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
           dragCtx.mergeItems,
@@ -453,6 +496,20 @@ class SelectTool implements Tool {
     });
 
     this.editor.rotateController.rerender();
+
+    if (clickedAttachmentGroupId !== null) {
+      const itemUnderCursor = editor.findItem(
+        event,
+        getMapsForClosestItem(false),
+        null,
+      );
+      if (
+        itemUnderCursor?.map === 'attachmentGroups' &&
+        itemUnderCursor.id === clickedAttachmentGroupId
+      ) {
+        editor.hover(itemUnderCursor, null, event);
+      }
+    }
   }
 
   dblclick(event: PointerEvent) {
@@ -535,6 +592,10 @@ class SelectTool implements Tool {
     const selection = this.editor.selection();
 
     if (ci.map === 'atoms') {
+      if (!canOpenAtomProperties(molecule, ci.id)) {
+        return true;
+      }
+
       const atoms = getSelectedAtoms(selection, molecule);
       const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
       updateSelectedAtoms({
@@ -543,7 +604,16 @@ class SelectTool implements Tool {
         changeAtomPromise,
       });
     } else if (ci.map === 'bonds') {
+      const clickedBond = molecule.bonds.get(ci.id);
+      if (isHapticBondWithAttachmentGroup(molecule, clickedBond)) {
+        return true;
+      }
+
       const bonds = getSelectedBonds(selection, molecule);
+      if (bonds.some((bond) => isHydrogenBondBetweenMonomers(bond, molecule))) {
+        return true;
+      }
+
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
         bonds: selection?.bonds ?? [],
@@ -733,24 +803,6 @@ function getHoverTarget(
     id: item.id,
     items: fragSelection,
   };
-}
-
-function preventSaltAndSolventsMerge(
-  struct: ReStruct,
-  dragCtx: Pick<NonNullable<DragContext>, 'action' | 'mergeItems'>,
-  editor: Editor,
-) {
-  const action = dragCtx.action
-    ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
-    : fromItemsFuse(struct, null);
-  editor.hover(null);
-  if (dragCtx.mergeItems) {
-    editor.selection(null);
-  }
-  editor.update(action);
-  editor.event.message.dispatch({
-    info: false,
-  });
 }
 
 function getMapsForClosestItem(selectFragment: boolean) {

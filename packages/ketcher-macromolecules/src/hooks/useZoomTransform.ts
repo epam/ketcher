@@ -1,16 +1,17 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { ZoomTransform } from 'd3';
-import { ZoomTool } from 'ketcher-core';
+import { selectEditor } from 'state/common';
+import { useAppSelector } from './stateHooks';
 
 export const useZoomTransform = () => {
+  const editor = useAppSelector(selectEditor);
+  const zoomTool = editor?.zoomTool;
   const [transform, setTransform] = useState<ZoomTransform>(
     new ZoomTransform(1, 0, 0),
   );
 
   useEffect(() => {
-    const zoom = ZoomTool.instance;
-    if (!zoom) {
+    if (!zoomTool) {
       return;
     }
 
@@ -24,13 +25,12 @@ export const useZoomTransform = () => {
       });
     };
 
-    zoom.subscribeOnZoomEvent(zoomEventHandler);
+    zoomTool.subscribeOnZoomEvent(zoomEventHandler);
 
     return () => {
-      zoom.unsubscribeOnZoomEvent(zoomEventHandler);
+      zoomTool.unsubscribeOnZoomEvent(zoomEventHandler);
     };
-    // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
-  }, [ZoomTool.instance]);
+  }, [zoomTool]);
 
   return transform;
 };

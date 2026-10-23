@@ -12,7 +12,7 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   // The cliparea is a hidden textarea used to capture copy/paste events,
   // so hotkeys must still fire when it is focused.
-  if (target.hasAttribute('data-cliparea')) return false;
+  if (target.dataset.cliparea !== undefined) return false;
   return (
     target.nodeName === 'INPUT' ||
     target.nodeName === 'TEXTAREA' ||
@@ -34,16 +34,15 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function guardForMacromoleculesEditor<T extends (...args: any[]) => any>(
-  handler: T,
-): T {
-  return ((...args: Parameters<T>) => {
+export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
+  handler: (...args: TArgs) => TResult,
+): (...args: TArgs) => TResult | undefined {
+  return (...args: TArgs) => {
     if (window.isPolymerEditorTurnedOn) {
       return handler(...args);
     }
     return undefined;
-  }) as unknown as T;
+  };
 }
 
 /**
@@ -60,16 +59,15 @@ export function guardForMacromoleculesEditor<T extends (...args: any[]) => any>(
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function guardForMicromoleculesEditor<T extends (...args: any[]) => any>(
-  handler: T,
-): T {
-  return ((...args: Parameters<T>) => {
+export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
+  handler: (...args: TArgs) => TResult,
+): (...args: TArgs) => TResult | undefined {
+  return (...args: TArgs) => {
     if (!window.isPolymerEditorTurnedOn) {
       return handler(...args);
     }
     return undefined;
-  }) as unknown as T;
+  };
 }
 
 // Copy/cut listeners are registered outside the editor's own input element

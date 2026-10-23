@@ -26,10 +26,12 @@ import {
   DeepPartial,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
-import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { PresetPosition } from 'ketcher-react';
-import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import {
+  isMacroSelectionTool,
+  SELECT_SUBMENU_ID,
+} from 'components/menu/constants';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -53,12 +55,12 @@ interface AppMeta {
 interface EditorState {
   ketcherId: string;
   isReady: boolean | null;
-  activeTool: string;
+  activeTool: string | null;
   editor: CoreEditor | undefined;
   monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
-  preview: EditorStatePreview;
+  preview: EditorStatePreview | undefined;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
   isDragging: boolean;
@@ -80,11 +82,7 @@ const initialState: EditorState = {
   monomerLibraryLoadError: null,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
-  preview: {
-    type: PreviewType.Monomer,
-    monomer: undefined,
-    style: {},
-  },
+  preview: undefined,
   position: undefined,
   isContextMenuActive: false,
   isDragging: false,
@@ -125,8 +123,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
     ) => {
       state.monomerLibraryLoadError = action.payload;
     },
-    selectTool: (state, action: PayloadAction<string>) => {
+    selectTool: (state, action: PayloadAction<string | null>) => {
       state.activeTool = action.payload;
+
+      if (isMacroSelectionTool(action.payload)) {
+        state.selectedMenuGroupItems[SELECT_SUBMENU_ID] = action.payload;
+      }
     },
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
@@ -146,7 +148,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.monomerLibraryLoadError = null;
 
       const editor = new CoreEditor({
-        ketcherId: action.payload.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         renderersContainer: new RenderersManager({
@@ -172,13 +173,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
-      state.preview = castDraft(
-        action.payload ?? {
-          type: PreviewType.Monomer,
-          monomer: undefined,
-          style: {},
-        },
-      );
+      state.preview = action.payload ? castDraft(action.payload) : undefined;
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
@@ -232,15 +227,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setIndigoVersion: (state, action: PayloadAction<string>) => {
       state.app.indigoVersion = action.payload;
     },
-    setSelectedMenuGroupItem: (
-      state,
-      action: PayloadAction<{ groupName: string; activeItemName: string }>,
-    ) => {
-      state.selectedMenuGroupItems = {
-        ...state.selectedMenuGroupItems,
-        [action.payload.groupName]: action.payload.activeItemName,
-      };
-    },
   },
 });
 
@@ -266,11 +252,11 @@ export const {
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
   setIndigoVersion,
-  setSelectedMenuGroupItem,
 } = editorSlice.actions;
 
-export const selectShowPreview = (state: RootState): EditorStatePreview =>
-  state.editor.preview;
+export const selectShowPreview = (
+  state: RootState,
+): EditorStatePreview | undefined => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
 export const selectEditorPosition = (

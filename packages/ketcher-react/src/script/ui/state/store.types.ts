@@ -14,7 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct } from 'ketcher-core';
+import type { AutomapMode, Struct } from 'ketcher-core';
+import type { Action, compose } from 'redux';
+import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
+import type { CustomButton } from '../../builders/ketcher/CustomButtons';
+import type { OptionsState } from './options/types';
+import type Editor from 'src/script/editor';
+import type { Api } from 'src/script/api';
+import type { ToolVariant } from '../action';
+import type { ThunkAction } from 'redux-thunk';
+import type { ToolbarState } from './toolbar/types';
+
+export type {
+  AnalyseRoundName,
+  AnalyseState,
+  AnalyseValues,
+  OptionsState,
+} from './options/types';
 
 // TODO: This is a partial type definition of the Redux store.
 // The actual store structure is more complex and should be expanded
@@ -47,29 +63,78 @@ export interface ModalState {
   };
 }
 
-export interface AnalyseValues {
-  gross?: string;
-  'molecular-weight'?: number;
-  'monoisotopic-mass'?: number;
-  'mass-composition'?: string;
-  [key: string]: string | number | undefined;
-}
-
-export interface AnalyseState {
-  values: AnalyseValues | null;
-  loading: boolean;
-  roundWeight: number;
-  roundMass: number;
-  roundElAnalysis: number;
-}
-
-export interface OptionsState {
-  analyse: AnalyseState;
-  settings: Record<string, unknown>;
-}
-
 export interface StoreState {
+  editor: Editor;
+  server: Api;
   templates: TemplatesState;
   modal: ModalState;
+  toolbar: ToolbarState & {
+    visibleTools: ToolbarState['visibleTools'] & { select: ToolVariant };
+  };
   options: OptionsState;
 }
+
+export type SetEditor = (editor: Editor) => void;
+
+export type ServerState = Api;
+
+export interface StoreOptions {
+  buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
+  [key: string]: unknown;
+}
+
+export interface InitAction extends Action<'INIT'> {
+  editor: Editor;
+  server?: Api;
+  [key: string]: unknown;
+}
+
+export interface SetServerAction extends Action<'SET_SERVER'> {
+  server?: Api;
+}
+
+export type DevToolsSanitizer = (value: unknown) => unknown;
+
+export interface ReduxDevToolsOptions {
+  stateSanitizer?: DevToolsSanitizer;
+  actionSanitizer?: DevToolsSanitizer;
+}
+
+export type ReduxDevToolsCompose = (
+  options?: ReduxDevToolsOptions,
+) => typeof compose;
+
+export type DevToolsGlobal = typeof globalThis & {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+};
+
+export interface KetcherCheckErrors {
+  chiral_flag?: string;
+  valence?: string;
+}
+export type AutomapRequest = {
+  mode: AutomapMode;
+};
+
+export type ServerTransformMethod =
+  | 'layout'
+  | 'clean'
+  | 'aromatize'
+  | 'dearomatize'
+  | 'calculateCip'
+  | 'toggleExplicitHydrogens'
+  | 'automap'
+  | 'check'
+  | 'calculate';
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  StoreState,
+  unknown,
+  Action<string>
+>;
+
+export type CurrentAppState = Pick<StoreState, 'options'> & {
+  editor: Editor | null;
+};

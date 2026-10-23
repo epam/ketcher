@@ -28,7 +28,6 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
 } from 'ketcher-core';
 
@@ -830,8 +829,6 @@ class SGroupTool implements Tool {
               newSg.attrs,
             ).mergeWith(fromSgroupDeletion(restruct, id));
 
-            action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct));
-
             editor.update(action);
             editor.selection(selection);
             return;
@@ -1004,11 +1001,10 @@ function countOfSelectedComponents(
   restruct: ReStruct,
   atoms: Array<number>,
 ): number {
-  const atomSet = new Pile(atoms);
+  const atomSet = new Pile<number>(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(
-    (acc: number, component) =>
-      acc + (atomSet.isSuperset(component as Pile) ? 1 : 0),
+    (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );
 }

@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core';
+import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -152,14 +152,61 @@ describe('Rotate controller', () => {
     expect(controller.center.y).toBe(3);
   });
 
+  it('rotates a fully selected structure with an attachment group', () => {
+    const struct = new Struct();
+    const firstGroupAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondGroupAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const externalAtomId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(0.5, 1) }),
+    );
+    const attachmentGroupId = struct.addAttachmentGroup(
+      new AttachmentGroup({
+        atomIds: [firstGroupAtomId, secondGroupAtomId],
+      }),
+    );
+    const hapticBondId = struct.bonds.add(
+      new Bond({
+        begin: attachmentGroupId,
+        end: externalAtomId,
+        type: Bond.PATTERN.TYPE.HAPTIC,
+      }),
+    );
+    const selection = {
+      attachmentGroups: [attachmentGroupId],
+      atoms: [firstGroupAtomId, secondGroupAtomId, externalAtomId],
+      bonds: [hapticBondId],
+    };
+    const selectionCenter = new Vec2(0.5, 0.5);
+    const rotateTool = new RotateTool(
+      {
+        selection: () => selection,
+        render: {
+          ctab: {
+            molecule: struct,
+            getSelectionBoxCenter: () => selectionCenter,
+          },
+        },
+      } as any,
+      undefined,
+    );
+
+    expect(rotateTool.getCenter()).toBe(selectionCenter);
+    expect(() =>
+      rotateTool.mousedownHandle(new Vec2(0.5, -1), selectionCenter),
+    ).not.toThrow();
+  });
+
   it('adds test id to rotation center handle hitbox', () => {
-    const setAttribute = jest.fn();
     const cross = {
       attr: jest.fn().mockReturnThis(),
     };
     const circle = {
       attr: jest.fn().mockReturnThis(),
-      node: { setAttribute },
+      node: { dataset: {} as DOMStringMap },
     };
     const crossSet = {
       push: jest.fn(),
@@ -185,10 +232,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.drawCross();
 
-    expect(setAttribute).toHaveBeenCalledWith(
-      'data-testid',
-      'rotation-center-handle',
-    );
+    expect(circle.node.dataset.testid).toBe('rotation-center-handle');
     expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
   });
 

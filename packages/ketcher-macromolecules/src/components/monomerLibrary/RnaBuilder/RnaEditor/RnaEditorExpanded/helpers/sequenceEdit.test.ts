@@ -2,7 +2,11 @@ import {
   generateSequenceSelectionName,
   generateSequenceSelectionGroupNames,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/sequenceEdit';
-import { Entities, LabeledNodesWithPositionInSequence } from 'ketcher-core';
+import {
+  Entities,
+  LabeledNodesWithPositionInSequence,
+  STRAND_TYPE,
+} from 'ketcher-core';
 
 describe('generateSequenceSelectionName', () => {
   it('returns the properly formatted string when a nucleotide is passed', () => {
@@ -14,7 +18,7 @@ describe('generateSequenceSelectionName', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionName(labeledNucleotides)).toBe('R(A)P');
@@ -35,7 +39,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -54,7 +58,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleotide,
@@ -63,7 +67,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -82,7 +86,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleotide,
@@ -91,7 +95,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -110,14 +114,14 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         isNucleosideConnectedAndSelectedWithPhosphate: true,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Phosphate,
         phosphateLabel: 'P',
         nodeIndexOverall: 2,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -134,7 +138,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
       {
         type: Entities.Nucleoside,
@@ -143,13 +147,96 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 2,
         isNucleosideConnectedAndSelectedWithPhosphate: false,
         hasR1Connection: true,
-        hasAntisense: false,
+        strandType: STRAND_TYPE.SENSE,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
       Sugars: 'R',
       Bases: 'A',
       Phosphates: '[multiple]',
+    });
+  });
+
+  it('returns [disabled] for differing bases when a selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isInSelectedAntisensePair: true,
+      },
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'C',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 1,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isInSelectedAntisensePair: true,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: '[disabled]',
+      Phosphates: 'P',
+    });
+  });
+
+  it('keeps the single base symbol when a selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isInSelectedAntisensePair: true,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: 'A',
+      Phosphates: 'P',
+    });
+  });
+
+  it('still returns [multiple] when no selected antisense pair is present', () => {
+    const labeledNucleotides: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isInSelectedAntisensePair: false,
+      },
+      {
+        type: Entities.Nucleotide,
+        sugarLabel: 'R',
+        baseLabel: 'C',
+        phosphateLabel: 'P',
+        nodeIndexOverall: 1,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isInSelectedAntisensePair: false,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
+      Sugars: 'R',
+      Bases: '[multiple]',
+      Phosphates: 'P',
     });
   });
 });

@@ -284,14 +284,29 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
-        this.showNewSequenceButton(
-          chainIndex,
-          Math.max(
-            chain.lastRow.sequenceViewModelItems.length,
-            sequenceViewModel.chains[chainIndex + 1]?.firstRow
-              ?.sequenceViewModelItems.length ?? 0,
-          ),
-        );
+        const nextChain = sequenceViewModel.chains[chainIndex + 1];
+
+        // Extract actual Chain objects with type safety
+        const currentChain = chain.firstNode?.chain;
+        const nextChainObj = nextChain?.firstNode?.chain;
+
+        // Check if chains are connected via side-chain bonds
+        // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
+        const hasSideChainConnection =
+          currentChain &&
+          nextChainObj &&
+          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+
+        // Show PLUS button only if there are no side-chain connections between chains
+        if (!hasSideChainConnection) {
+          this.showNewSequenceButton(
+            chainIndex,
+            Math.max(
+              chain.lastRow.sequenceViewModelItems.length,
+              nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
+            ),
+          );
+        }
       }
     });
 
@@ -820,7 +835,7 @@ export class SequenceRenderer {
   public static get isCurrentCaretAtLastInFullRow(): boolean {
     const currentNode = this.currentEdittingNode;
     const currentRow = this.currentChainRow;
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1);
 
     return (
       Boolean(currentNode) &&
@@ -838,8 +853,7 @@ export class SequenceRenderer {
     }
 
     if (this.isCurrentCaretAtLastInFullRow) {
-      const lastNodeInRow =
-        this.currentChainRow[this.currentChainRow.length - 1];
+      const lastNodeInRow = this.currentChainRow.at(-1);
 
       if (!lastNodeInRow) {
         return;
@@ -875,8 +889,7 @@ export class SequenceRenderer {
       this.moveCaretBack();
 
       if (this.isCurrentCaretAtLastInFullRow) {
-        const lastNodeInRow =
-          this.currentChainRow[this.currentChainRow.length - 1];
+        const lastNodeInRow = this.currentChainRow.at(-1);
 
         if (!lastNodeInRow) {
           return;
@@ -916,7 +929,7 @@ export class SequenceRenderer {
 
     const currentRow = this.currentChainRow;
     const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
-    const lastNodeInRow = currentRow[currentRow.length - 1];
+    const lastNodeInRow = currentRow.at(-1);
 
     if (!lastNodeInRow) {
       return;
@@ -995,15 +1008,13 @@ export class SequenceRenderer {
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
-    const subChainBeforeLast = chain.subChains[chain.subChains.length - 2];
-
-    return subChainBeforeLast.nodes[subChainBeforeLast.nodes.length - 1];
+    const subChainBeforeLast = chain.subChains.at(-2);
+    return subChainBeforeLast?.nodes.at(-1);
   }
 
   public static getLastNode(chain: Chain) {
-    const lastSubChain = chain.subChains[chain.subChains.length - 1];
-
-    return lastSubChain.nodes[lastSubChain.nodes.length - 1];
+    const lastSubChain = chain.subChains.at(-1);
+    return lastSubChain?.nodes.at(-1);
   }
 
   public static get nextNode() {
@@ -1421,6 +1432,49 @@ export class SequenceRenderer {
     });
 
     return rendererToReturn;
+  }
+
+  /**
+   * Checks if two chains have at least one side-chain connection between them.
+   *
+   * @param chain1 - First chain to check
+   * @param chain2 - Second chain to check
+   * @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
+   *
+   * @example
+   * // Two chains connected by R3-R3 bond
+   * const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
+   * // Returns: true
+   *
+   * @remarks
+   * - Returns false if either chain is empty or undefined
+   * - Uses Set for O(1) lookup performance
+   * - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
+   */
+  private static hasSideChainConnectionBetweenChains(
+    chain1: Chain,
+    chain2: Chain,
+  ): boolean {
+    // Defensive programming - handle null/undefined/empty chains
+    if (!chain1?.monomers?.length || !chain2?.monomers?.length) {
+      return false;
+    }
+
+    const chain2Monomers = new Set(chain2.monomers);
+
+    for (const monomer of chain1.monomers) {
+      const sideConnections = monomer.sideConnections;
+      if (!sideConnections?.length) continue; // Skip if no connections
+
+      for (const sideConnection of sideConnections) {
+        const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
+        if (anotherMonomer && chain2Monomers.has(anotherMonomer)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   public static showNewSequenceButton(indexOfRowBefore: number, width = 0) {

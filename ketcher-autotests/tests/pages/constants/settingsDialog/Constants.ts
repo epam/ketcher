@@ -1,12 +1,12 @@
-/* eslint-disable prettier/prettier */
 export enum SettingsSection {
-  General = 'General-accordion',
+  General = 'General Editing & Display-accordion',
   Stereochemistry = 'Stereochemistry-accordion',
   Atoms = 'Atoms-accordion',
   Bonds = 'Bonds-accordion',
-  Server = 'Server-accordion',
+  Reactions = 'Reactions & Components-accordion',
+  Validation = 'Validation & Calculation-accordion',
   ThreeDViewer = '3D Viewer-accordion',
-  OptionsForDebugging = 'Options for Debugging-accordion',
+  Debugging = 'Debugging-accordion',
 }
 
 export enum GeneralSetting {
@@ -17,8 +17,8 @@ export enum GeneralSetting {
   Font = 'font-selection-input-span',
   FontSize = 'Font size-value-input',
   FontSizeUnits = 'Font size-measure-input',
-  SubFontSize = 'Sub font size-value-input',
-  SubFontSizeUnits = 'Sub font size-measure-input',
+  SubFontSize = 'Subscript/Superscript font size-value-input',
+  SubFontSizeUnits = 'Subscript/Superscript font size-measure-input',
   ReactionComponentMarginSize = 'Reaction component margin size-value-input',
   ReactionComponentMarginSizeUnits = 'Reaction component margin size-measure-input',
   ImageResolution = 'image-resolution-input-span',
@@ -65,6 +65,8 @@ export enum ServerSetting {
   IgnorePseudoatomsAtMass = 'mass-skip-error-on-pseudoatoms-input-span',
   AddRsitesAtMassCalculation = 'gross-formula-add-rsites-input-span',
   AddIsotopesAtMassCalculation = 'gross-formula-add-isotopes-input-span',
+  SkipSuperatomsAtAromatization = 'aromatize-skip-superatoms-input-span',
+  DearomatizeOnFileLoad = 'dearomatize-on-load-input-span',
 }
 
 export enum ThreeDViewerSetting {
@@ -88,9 +90,9 @@ export enum MeasurementUnit {
 }
 
 export enum ResetToSelectToolOption {
-  On = 'on-option',
-  AfterPaste = 'After Paste-option',
-  Off = 'off-option',
+  On = 'Auto-Select On-option',
+  AfterPaste = 'Auto-Select After Paste-option',
+  Off = 'Manual Select-option',
 }
 
 export enum FontOption {
@@ -208,6 +210,8 @@ export const switcherOptions: AllSettingsOptions[] = [
   ServerSetting.IgnorePseudoatomsAtMass,
   ServerSetting.AddRsitesAtMassCalculation,
   ServerSetting.AddIsotopesAtMassCalculation,
+  ServerSetting.SkipSuperatomsAtAromatization,
+  ServerSetting.DearomatizeOnFileLoad,
   OptionsForDebuggingSetting.ShowAtomIds,
   OptionsForDebuggingSetting.ShowBondsIds,
   OptionsForDebuggingSetting.ShowHalfBondsIds,

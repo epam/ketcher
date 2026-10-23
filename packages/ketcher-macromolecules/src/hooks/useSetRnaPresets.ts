@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import { selectEditor } from 'state/common';
@@ -30,15 +28,19 @@ function useSetRnaPresets() {
     if (!editor) return;
 
     const monomersLibrary = editor.monomersLibrary;
-    const defaultPresetsTemplates = defaultRnaPresets.length
-      ? defaultRnaPresets
-      : editor.defaultRnaPresetsLibraryItems;
+    const defaultPresetsTemplates = (
+      defaultRnaPresets.length
+        ? defaultRnaPresets
+        : editor.defaultRnaPresetsLibraryItems
+    ).filter((preset) => !preset.hidden);
     const defaultPresets: IRnaPreset[] = [
       ...getPresets(monomersLibrary, defaultPresetsTemplates, true),
     ];
     let customLabeledPresets = getCachedCustomRnaPresets();
     let customPresets: IRnaPreset[] = [];
-    const presetsDefaultNames = defaultPresets.map((preset) => preset.name);
+    const presetsDefaultNames = new Set(
+      defaultPresets.map((preset) => preset.name),
+    );
 
     if (customLabeledPresets) {
       // If preset with the same name already exists:
@@ -47,7 +49,7 @@ function useSetRnaPresets() {
         let i = 0;
         let presetUniqName = customLabeledPreset.name;
 
-        while (presetsDefaultNames.includes(presetUniqName)) {
+        while (presetsDefaultNames.has(presetUniqName)) {
           i++;
           presetUniqName = `${customLabeledPreset.name}${'_Copy'.repeat(i)}`;
         }
@@ -78,7 +80,7 @@ function useSetRnaPresets() {
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [editor, defaultRnaPresets]);
+  }, [editor, defaultRnaPresets, dispatch]);
 }
 
 export default useSetRnaPresets;

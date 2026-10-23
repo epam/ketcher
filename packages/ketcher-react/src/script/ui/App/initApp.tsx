@@ -20,14 +20,14 @@ import {
   ErrorsContext,
   SettingsContext,
 } from './../../../contexts';
-import type { StructService } from 'ketcher-core';
+import type { Api } from 'src/script/api';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
 import type { Root } from 'react-dom/client';
 import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
-import { initResize } from '../state/toolbar';
+import { initResize, removeResizeListener } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
@@ -37,17 +37,14 @@ function initApp(
   appRoot: Root,
   staticResourcesUrl: string,
   options: any,
-  server: StructService,
-  resolve: (args: {
-    editor: any;
-    setServer: (server: StructService) => void;
-  }) => void,
+  server: Api,
+  resolve: (args: { editor: any; setServer: (server: Api) => void }) => void,
   togglerComponent?: JSX.Element,
 ) {
   // hack to return server setter to Editor.tsx
   // because it does not have access to store
 
-  let getServerSetter: () => (structService: StructService) => void;
+  let getServerSetter: () => (structService: Api) => void;
 
   const setEditor = (editor) => {
     const setServer = getServerSetter();
@@ -56,7 +53,7 @@ function initApp(
   const store = createStore(options, server, setEditor);
 
   getServerSetter = () => {
-    return (structService: StructService) => {
+    return (structService: Api) => {
       store.dispatch(setServer(structService));
     };
   };
@@ -85,6 +82,7 @@ function initApp(
   return () => {
     store.dispatch(removeKeydownListener(element));
     store.dispatch(removeMouseListeners(element));
+    removeResizeListener();
   };
 }
 

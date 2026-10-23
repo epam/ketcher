@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 class RestoreIfThen extends BaseOperation {
   readonly rgid_new: number;

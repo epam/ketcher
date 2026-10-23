@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { StructureCheckSetting } from '@tests/pages/constants/structureCheck/Constants';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/index';
@@ -20,6 +19,7 @@ type StructureCheckDialogLocators = {
   checkButton: Locator;
   cancelButton: Locator;
   applyButton: Locator;
+  idsExplanation: Locator;
 };
 
 export const StructureCheckDialog = (page: Page) => {
@@ -44,6 +44,7 @@ export const StructureCheckDialog = (page: Page) => {
     checkButton: page.getByTestId('Check'),
     applyButton: page.getByTestId('Apply'),
     cancelButton: page.getByTestId('Cancel'),
+    idsExplanation: page.getByTestId('check-structure-id-explanation'),
   };
 
   return {

@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AtomAttributes, Pile, Point, Vec2 } from 'domain/entities';
-import { ReAtom, ReStruct } from '../../../render';
+import {
+  type AtomAttributes,
+  type Point,
+  Atom,
+  Pile,
+  Vec2,
+} from 'domain/entities';
+import { type ReStruct, ReAtom } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
@@ -26,9 +32,8 @@ type Data = {
   pos: Point | null;
 };
 
-class AtomAdd extends BaseOperation {
+class AtomAdd extends BaseOperation<Data> {
   data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
     super(OperationType.ATOM_ADD);
@@ -42,17 +47,17 @@ class AtomAdd extends BaseOperation {
 
     const pp: Partial<AtomAttributes> & { label: string } = {
       label: '',
-      ...(atom ?? {}),
+      ...atom,
     };
     pp.label = pp.label || 'C';
 
     let aid: number;
-    if (typeof this.data.aid !== 'number') {
-      aid = struct.atoms.add(new Atom(pp));
-      this.data.aid = aid;
-    } else {
+    if (typeof this.data.aid === 'number') {
       aid = this.data.aid;
       struct.atoms.set(aid, new Atom(pp));
+    } else {
+      aid = struct.atoms.add(new Atom(pp));
+      this.data.aid = aid;
     }
 
     // notifyAtomAdded
@@ -76,12 +81,6 @@ class AtomAdd extends BaseOperation {
         );
       }
     }
-  }
-
-  invert() {
-    const inverted = new AtomAdd.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

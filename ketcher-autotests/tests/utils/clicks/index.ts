@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { MouseButton } from './types';
 import {
@@ -53,31 +51,11 @@ export async function clickAfterItemsToMergeInitialization(
   });
 }
 
-export async function clickInTheMiddleOfTheScreen(
-  page: Page,
-  button: MouseButton = 'left',
-  options: { waitForMergeInitialization: boolean } = {
-    waitForMergeInitialization: false,
-  },
-) {
-  const { x, y } = await getCachedBodyCenter(page);
-
-  if (options.waitForMergeInitialization) {
-    await waitForRender(page, async () => {
-      await clickAfterItemsToMergeInitialization(page, x, y, button);
-    });
-  } else {
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y, { button });
-    });
-  }
-}
-
 export async function clickOnCanvas(
   page: Page,
   x: number,
   y: number,
-  options: {
+  options?: {
     /**
      * Defaults to `left`.
      */
@@ -97,8 +75,14 @@ export async function clickOnCanvas(
      *      * Time to wait canvas event for for waitForRenderTimeOut.
      */
     from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
-  } = { from: 'canvasTopLeft' },
+  },
 ) {
+  const {
+    from = 'canvasTopLeft',
+    waitForRenderTimeOut,
+    ...clickOptions
+  } = options ?? {};
+
   await waitForRender(
     page,
     async () => {
@@ -106,10 +90,7 @@ export async function clickOnCanvas(
         page: Page,
         canvas: Locator,
         fromCenter:
-          | 'pageTopLeft'
-          | 'pageCenter'
-          | 'canvasTopLeft'
-          | 'canvasCenter',
+          'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter',
       ) => {
         switch (fromCenter) {
           case 'pageTopLeft':
@@ -135,15 +116,15 @@ export async function clickOnCanvas(
       const relativeAxisCenter = await getRelativeAxisCenter(
         page,
         await getVisibleCanvas(page),
-        options.from ?? 'canvasTopLeft',
+        from,
       );
       await page.mouse.click(
         relativeAxisCenter.x + x,
         relativeAxisCenter.y + y,
-        options,
+        clickOptions,
       );
     },
-    options?.waitForRenderTimeOut,
+    waitForRenderTimeOut,
   );
 }
 
@@ -166,14 +147,14 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
 export async function clickInTheMiddleOfTheCanvas(
   page: Page,
   button: MouseButton = 'left',
-  options: {
+  options?: {
     waitForMergeInitialization?: boolean;
     waitForRenderTimeOut?: number;
-  } = {},
+  },
 ) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
 
-  if (options.waitForMergeInitialization) {
+  if (options?.waitForMergeInitialization) {
     const canvas = await getVisibleCanvas(page);
     const box = await canvas.boundingBox();
     if (!box) {
@@ -198,7 +179,7 @@ export async function clickInTheMiddleOfTheCanvas(
 
   await clickOnCanvas(page, x, y, {
     button,
-    waitForRenderTimeOut: options.waitForRenderTimeOut,
+    waitForRenderTimeOut: options?.waitForRenderTimeOut,
   });
 }
 

@@ -1,5 +1,5 @@
 declare module 'ketcher-macromolecules' {
-  import * as React from 'react';
+  import type * as React from 'react';
   interface MacromoleculesEditorProps {
     ketcherId: string;
     togglerComponent?: JSX.Element;

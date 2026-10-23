@@ -650,7 +650,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -856,6 +857,7 @@
         "fullName": "N-Methyl-Phenylalanine",
         "alias": "meF",
         "aliasHELM": "meF",
+        "aliasBILN": "meF",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 import { BaseOperation } from './BaseOperation';
-import { StructProperty } from 'domain/entities/struct';
+import type { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
 
 class FragmentDelete extends BaseOperation {

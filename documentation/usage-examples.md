@@ -34,6 +34,24 @@ function App() {
 }
 ```
 
+### Accessing Ketcher embedded via IFrame
+
+The standalone application initializes asynchronously inside an `IFrame`. The `load` event
+does not guarantee that `window.ketcher` has been assigned. Listen for the `init` message
+posted by Ketcher after initialization:
+
+```javascript
+const iframeEl = document.getElementById('ifKetcher');
+
+window.addEventListener('message', (event) => {
+  if (event.source !== iframeEl.contentWindow) return;
+  if (event.data?.eventType === 'init') {
+    const ketcher = iframeEl.contentWindow.ketcher;
+    // ketcher is now initialized
+  }
+});
+```
+
 ### How to use react component library
 
 Review [link](packages/ketcher-react/README.md) for details.
@@ -343,4 +361,3 @@ document.getElementById('zoom-out').addEventListener('click', () => {
 ```
 
 ---
-

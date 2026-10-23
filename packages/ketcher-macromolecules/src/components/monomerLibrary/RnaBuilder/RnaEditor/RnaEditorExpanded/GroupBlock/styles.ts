@@ -17,7 +17,9 @@
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 
-export const GroupBlockContainer = styled.div<{
+export const GroupBlockContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'isEditMode',
+})<{
   selected?: boolean;
   isEditMode?: boolean;
 }>((props) => {
@@ -33,7 +35,7 @@ export const GroupBlockContainer = styled.div<{
   return {
     height: '40px',
     position: 'relative',
-    marginLeft: isEditMode ? '30px' : '28.5px',
+    marginInlineStart: isEditMode ? '30px' : '28.5px',
     display: 'flex',
     alignItems: 'center',
     border: isEditMode ? 'none' : `1.5px solid ${theme.ketcher.outline.color}`,
@@ -55,9 +57,9 @@ export const GroupBlockContainer = styled.div<{
       ':after': {
         content: '""',
         position: 'absolute',
-        right: '100%',
+        insetInlineEnd: '100%',
         bottom: 'calc(50% - 1px)',
-        borderLeft: theme.ketcher.outline.medium,
+        borderInlineStart: theme.ketcher.outline.medium,
         borderBottom: theme.ketcher.outline.medium,
         height: '2px',
         width: '17px',
@@ -68,11 +70,11 @@ export const GroupBlockContainer = styled.div<{
       ':after': {
         content: '""',
         position: 'absolute',
-        right: '100%',
+        insetInlineEnd: '100%',
         bottom: 'calc(50% - 1px)',
-        borderLeft: theme.ketcher.outline.medium,
+        borderInlineStart: theme.ketcher.outline.medium,
         borderBottom: theme.ketcher.outline.medium,
-        borderRadius: '0 0 0 4px',
+        borderEndStartRadius: '4px',
         height: '130px',
         width: '17px',
       },
@@ -85,7 +87,9 @@ export const TextContainer = styled.div`
   flex-direction: column;
 `;
 
-export const GroupName = styled.span<{ selected?: boolean }>`
+export const GroupName = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'selected',
+})<{ selected?: boolean }>`
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ selected, theme }) =>
     selected
@@ -94,7 +98,9 @@ export const GroupName = styled.span<{ selected?: boolean }>`
   opacity: ${({ selected }) => (selected ? 0.4 : 1)};
 `;
 
-export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>`
+export const MonomerName = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+})<{ selected?: boolean; empty: boolean }>`
   margin-top: 1px;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   color: ${({ selected, empty, theme }) => {
@@ -120,7 +126,9 @@ export const GroupIconContainer = styled.div`
   justify-content: center;
 `;
 
-export const GroupIcon = styled(Icon)<{
+export const GroupIcon = styled(Icon, {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+})<{
   selected?: boolean;
   empty?: boolean;
 }>`
@@ -141,7 +149,9 @@ export const GroupIcon = styled(Icon)<{
       : theme.ketcher.color.icon.grey};
 `;
 
-export const CompactGroupBlockContainer = styled.div<{
+export const CompactGroupBlockContainer = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'isEditMode',
+})<{
   selected?: boolean;
   isEditMode?: boolean;
 }>`
@@ -167,13 +177,15 @@ export const CompactGroupBlockContainer = styled.div<{
 export const CompactGroupConnection = styled.div`
   position: absolute;
   top: -35%;
-  left: 50%;
+  inset-inline-start: 50%;
   height: 15px;
   width: 2px;
   background-color: ${({ theme }) => theme.ketcher.outline.color};
 `;
 
-export const CompactGroupText = styled.p<{
+export const CompactGroupText = styled('p', {
+  shouldForwardProp: (prop) => prop !== 'selected' && prop !== 'empty',
+})<{
   selected?: boolean;
   empty?: boolean;
 }>`

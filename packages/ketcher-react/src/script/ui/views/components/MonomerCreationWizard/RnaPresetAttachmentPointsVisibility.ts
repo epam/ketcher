@@ -1,12 +1,12 @@
 import {
+  type RnaPresetComponentKey,
+  type Struct,
   AttachmentPointName,
-  RnaPresetComponentKey,
-  Struct,
 } from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
-  PhosphatePosition,
+  type PhosphatePosition,
   getRequiredAttachmentPointsForPhosphatePosition,
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
@@ -208,10 +208,22 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   const occupiedAttachmentPoints = new Set<AttachmentPointName>();
 
   assignedAttachmentPoints.forEach(
-    ([attachmentAtomId], attachmentPointName) => {
+    ([attachmentAtomId, leavingAtomId], attachmentPointName) => {
       const componentKey = atomToComponentMap.get(attachmentAtomId);
 
       if (!componentKey) {
+        return;
+      }
+
+      // A genuine external attachment point keeps its leaving group within the
+      // same component. Such an AP must stay visible on the preset tab even when
+      // its attachment atom also forms an inter-component connection bond (e.g. a
+      // phosphate atom that both connects to the sugar and carries its own
+      // external leaving group). Only APs whose leaving atom is not part of the
+      // component represent the internal connection and should be hidden.
+      const leavingAtomComponentKey = atomToComponentMap.get(leavingAtomId);
+
+      if (leavingAtomComponentKey === componentKey) {
         return;
       }
 

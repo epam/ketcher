@@ -1,4 +1,7 @@
-import { MultitailArrowReferencePosition, ReStruct } from 'application/render';
+import type {
+  MultitailArrowReferencePosition,
+  ReStruct,
+} from 'application/render';
 import {
   MultitailArrowDelete,
   MultitailArrowUpsert,
@@ -8,7 +11,7 @@ import {
   MultitailArrowResizeTailHead,
   MultitailArrowMoveHeadTail,
 } from '../operations/multitailArrow';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { MultitailArrow } from 'domain/entities/multitailArrow';
 import { Action } from './action';
 

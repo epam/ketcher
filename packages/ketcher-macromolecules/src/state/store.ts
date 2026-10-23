@@ -18,6 +18,7 @@ import { configureStore, Store } from '@reduxjs/toolkit';
 import { editorReducer } from 'state/common';
 import { libraryReducer } from 'state/library';
 import { modalReducer } from 'state/modal';
+import { toastMiddleware } from 'state/modal/toastMiddleware';
 import { rnaBuilderReducer } from 'state/rna-builder';
 
 export function configureAppStore(preloadedState = {}) {
@@ -32,7 +33,7 @@ export function configureAppStore(preloadedState = {}) {
       getDefaultMiddleware({
         // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
         serializableCheck: false,
-      }),
+      }).concat(toastMiddleware),
     preloadedState,
   });
 

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
+import { useTranslation } from 'react-i18next';
 
 import { Dialog } from '../../../../components';
 import IfThenSelect from './components';
@@ -34,15 +35,16 @@ interface RgroupLogicProps extends BaseProps {
 type Props = RgroupLogicProps & BaseCallProps;
 
 const RgroupLogic = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { formState, label, rgroupLabels, ...rest } = props;
   return (
     <Dialog
-      title="R-Group Logic Condition"
+      title={t('dialogs:toolbox.rgroupLogic.dialogTitle')}
       className={classes.rgroupLogic}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >

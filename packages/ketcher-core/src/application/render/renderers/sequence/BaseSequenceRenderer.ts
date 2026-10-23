@@ -1,5 +1,5 @@
 import { BaseRenderer } from 'application/render/renderers/internal';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class BaseSequenceRenderer extends BaseRenderer {

@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -43,10 +40,23 @@ async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await CommonTopLeftToolbar(page).saveFile();
   const textareaText = await SaveStructureDialog(page).getTextAreaValue();
   const expectedSentence = '$RXN';
-  wantedResult
-    ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
-    : expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  if (wantedResult) {
+    expect(textareaText?.startsWith(expectedSentence)).toBeTruthy();
+  } else {
+    expect(textareaText?.startsWith(expectedSentence)).toBeFalsy();
+  }
   await SaveStructureDialog(page).cancel();
+}
+
+async function drawOpenAngleReactionArrow(page: Page) {
+  await CommonLeftToolbar(page).erase();
+  await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+
+  // Use center-relative coordinates to keep arrow creation stable
+  // across different window/canvas positions.
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  await page.mouse.move(x - 300, y + 120);
+  await dragMouseTo(page, x + 300, y - 120);
 }
 
 let page: Page;
@@ -344,10 +354,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 900, 100);
+    await drawOpenAngleReactionArrow(page);
 
     await verifyFileExport(
       page,
@@ -373,10 +380,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 900, 100);
+    await drawOpenAngleReactionArrow(page);
 
     await verifyFileExport(
       page,
@@ -402,10 +406,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 700, 100);
+    await drawOpenAngleReactionArrow(page);
 
     await verifyFileExport(
       page,
@@ -431,10 +432,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 900, 100);
+    await drawOpenAngleReactionArrow(page);
     await verifyFileExport(
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
@@ -459,10 +457,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 900, 100);
+    await drawOpenAngleReactionArrow(page);
 
     await verifyFileExport(
       page,
@@ -488,10 +483,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
-    await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await page.mouse.move(100, 500);
-    await dragMouseTo(page, 900, 100);
+    await drawOpenAngleReactionArrow(page);
 
     await verifyFileExport(
       page,

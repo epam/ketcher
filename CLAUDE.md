@@ -1,177 +1,115 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (`claude.ai/code`) when working with code in this repository.
+This file provides guidance to AI assistants (Claude, Copilot, Cursor, etc.) when working with this repository.
 
 ## What is Ketcher
+
 Ketcher is an open-source **chemical structure editor** built with TypeScript and React. It renders molecules, reactions, macromolecules, and monomers using a custom MVC architecture over SVG.
 
-## Ketcher Test Conventions
-- Imports should come from aliases defined in `ketcher-autotests/tsconfig.json`: `@fixtures`, `@utils`, and `@tests/...`. Do not use deep relative imports.
-- The default test entrypoint is `import { Page, test, expect } from '@fixtures';`. `@fixtures` already merges molecules, flex, snake, and sequence canvas fixtures.
-- Generated autotests must reuse existing page objects from `ketcher-autotests/tests/pages` and helpers from `ketcher-autotests/tests/utils` whenever possible.
-- If a required page object or helper does not exist, create a reusable file under `ketcher-autotests/tests/pages/...` or `ketcher-autotests/tests/utils/...`.
-- Do not inline long selector chains or duplicate behavior in the spec.
+## Git rules
 
-### Test structure
-- Prefer one `test.describe()` block per file.
-- Prefer `let page: Page;` at file scope plus `test.beforeAll(async ({ initMoleculesCanvas | initFlexCanvas | initSnakeCanvas | initSequenceCanvas }) => { page = await ...(); })`.
-- Close the browser page in `test.afterAll(async ({ closePage }) => { await closePage(); })`.
-- Use `initMoleculesCanvas` for micro-mode tests, `initFlexCanvas` for macro flex tests, `initSnakeCanvas` for snake mode, and `initSequenceCanvas` for sequence mode.
-- Do not call `waitForPageInit(page)` in tests that already use `init*Canvas` fixtures. Those fixtures create the page, open the app, and apply the canvas mode setup for you.
-- Use direct `page` fixture plus `waitForPageInit(page)` mainly for API tests and low-level cases that should not use the canvas presets.
-- If most of test cases happens on exact canvas (Molecules, Macromolecules-Flex mode, Macromolecules-Snake mode or Macromolecules-Sequesnce mode) than following fixtures have to be used in test.beforAll block :
-  - for starting from Molecules: initMoleculesCanvas
-  - for starting from Macromolecules-Flex mode: initFlexCanvas
-  - for starting from Macromolecules-Snake mode: initSnakeCanvas
-  - for starting from Macromolecules-Sequence mode: initSequenceCanvas
-    - Example:
-```ts
-  test.beforeAll(async ({ initFlexCanvas }) => {
-    page = await initFlexCanvas();
-  });
+- **Never commit autonomously.** If a commit seems warranted, ask the user first and commit only after explicit approval. Staging (`git add`) is fine without asking.
 
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
+---
+
+## Memory Bank
+
+The `.memory-bank/` directory at the repo root is the **canonical knowledge base** for this project. Read it before starting any non-trivial task.
+
+### When to read it
+
+- Before implementing a feature, fixing a bug, or refactoring code
+- Before writing tests
+- Before proposing or designing a change
+- Whenever you are unsure about architecture, domain terms, or invariants
+
+### Structure and file formats
+
 ```
-- If some test changes canvas during execution than test.afterEach block have to be added with fixture that returns canvas back to default canvas defined in test.beforeAll block:
-  - for switching to Molecules: MoleculesCanvas
-  - for switching to Macromolecules-Flex mode: FlexCanvas
-  - for switching to Macromolecules-Snake mode: SnakeCanvas
-  - for switching to Macromolecules-Sequence mode: SequenceCanvas
-    - Example:
-```ts
-  test.beforeAll(async ({ initSequenceCanvas }) => {
-    page = await initSequenceCanvas();
-  });
-
-  test.afterEach(async ({ SequenceCanvas: _ }) => {});
-
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
-```
-- If some test need to be executed on exact canvas different from default one (that is defined at test.beforeAll block) than folloing fixures have to be passed to test as parameter:
-  - for running test on Molecules: MoleculesCanvas
-  - for running test on Macromolecules-Flex mode: FlexCanvas
-  - for running test on Macromolecules-Snake mode: SnakeCanvas
-  - for running test on Macromolecules-Sequence mode: SequenceCanvas
-    - Example:
-```ts
-  test('Case 1 — Small molecule positioning rule is not respected when connected to multiple monomers in different chains', async ({
-    FlexCanvas: _,
-  }) => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/8245
-     * Bug: https://github.com/epam/ketcher/issues/7560
-     * Version: 3.13.0
-     * Description:
-     * Small molecule (SM) connected to several monomers from different chains
-     * should follow rule: its position in Snake mode must be aligned
-     * below the first monomer in the chain.
-     *
-     * Scenario:
-     * 1. Go to Macro → Flex mode
-     * 2. Load file: SM-that-has-two-or-more-connections-to-different-monomers.zip
-     * 3. Switch to Snake mode
-     * 4. Check SM positioning relative to first connected monomer
-     *
-     * Expected Result:
-     * According to requirement 4.2:
-     * - When SM has several connections to monomers in different chains,
-     *   the connection to the monomer that appears earlier in the Snake chain
-     *   must be prioritized.
-     * - SM must be placed directly below that monomer.
-     */
-    await openFileAndAddToCanvasMacro(
-      page,
-      'KET/Chromium-popup/Bugs/ketcher-3.13.0-bugs/SM-that-has-two-or-more-connections-to-different-monomers.ket',
-    );
-
-    // switch to Snake mode
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-
-    // zoom out to show whole structure
-    await CommonTopRightToolbar(page).setZoomInputValue('45');
-
-    // SM expected to appear below the earlier chain monomer — we verify visually
-    // target ID may vary depending on import, but SM is usually last monomer
-    await takeEditorScreenshot(page);
-  });
+.memory-bank/
+├── architecture.md     # How the system is organized: packages, subsystems, data flow
+├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions, etc.
+├── glossary.md         # Term definitions used in code and product
+├── invariants.md       # Rules that must never be broken (architectural + domain)
+├── testing/            # Test strategy + E2E planning
+│   ├── testing.md      # Testing strategy: unit (Jest), integration, E2E (Playwright)
+│   └── e2e-test-plan-template.md  # How to write a plan before creating new E2E test specs
+│
+├── features/           # Current observable behavior of each product feature
+│   ├── README.md       # Index + format convention
+│   └── <feature>.md    # Problem / User interaction / Expected behavior / Guarantees / Limitations
+│
+├── modules/            # Deep-dive documentation for each subsystem
+│   ├── README.md       # Index + format convention
+│   └── <module>.md     # Responsibility / Public interfaces / Dependencies / Dependents / Constraints
+│
+├── adr/                # Architecture Decision Records
+│   ├── README.md       # Format convention
+│   └── YYYY-MM-DD-<title>.md  # Decision / Context / Alternatives / Rationale / Consequences
+│
+└── specs/              # Feature specifications tied to changes
+    ├── active/         # Specs for changes currently in progress
+    │   └── <change-name>/   # proposal.md, requirements.md, design.md, tasks.md
+    └── archived/       # Completed specs (read-only historical records)
+        └── <change-name>/
 ```
 
-### Canvas and mode setup
-- Use `CommonTopRightToolbar(page).turnOnMacromoleculesEditor()` and `turnOnMicromoleculesEditor()` instead of raw mode-switcher clicks.
-- Use `MacromoleculesTopToolbar(page)` for layout and polymer switching. Existing helpers include `selectLayoutModeTool(LayoutMode.Flex | Snake | Sequence)`, `rna()`, `dna()`, and `peptides()`.
-- For reload/state-persistence tests, prefer existing helpers such as `pageReload(page)`, `pageReloadMicro(page)`, and `clearLocalStorage(page)` from `@utils/common/helpers`.
+### File format details
 
-### Preferred interaction helpers
-- For loading structures, prefer helpers from `@utils` such as `openFileAndAddToCanvasAsNewProject`, `openFileAndAddToCanvasAsNewProjectMacro`, `pasteFromClipboardAndAddToCanvas`, and `pasteFromClipboardAndAddToMacromoleculesCanvas`.
-- For canvas selection and keyboard operations, prefer `selectAllStructuresOnCanvas`, `copyToClipboardByKeyboard`, `pasteFromClipboardByKeyboard`, `undoByKeyboard`, and related helpers.
-- For locating rendered objects, prefer repo helpers such as `getAtomLocator(...)`, `getMonomerLocator(...)`, `getAbbreviationLocator(...)`, and existing page objects.
-- For dialogs, toolbars, context menus, and library interactions, use page objects under `tests/pages/...` rather than ad hoc locators.
-- Use direct `page.evaluate(...)` only for Ketcher API calls, localStorage checks, or browser APIs that are not already wrapped by helpers.
+| File                       | Purpose                      | Key sections                                                                                |
+| -------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `architecture.md`          | System overview              | Package structure, subsystems, data flow                                                    |
+| `domain.md`                | Domain model concepts        | Entities, relationships, constraints                                                        |
+| `glossary.md`              | Shared vocabulary            | Term, Definition, Used In                                                                   |
+| `invariants.md`            | Non-negotiable rules         | Labeled D1/A1/etc., what must never break                                                   |
+| `testing/testing.md`       | Test strategy                | Levels, locations, how to run                                                               |
+| `testing/e2e-test-plan-template.md` | E2E test plan guide | Structure + lessons for planning a new batch of Playwright specs before writing them         |
+| `features/<name>.md`       | Product behavior             | Problem, User interaction, Expected behavior (WHEN/THEN scenarios), Guarantees, Limitations |
+| `modules/<name>.md`        | Subsystem docs               | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints      |
+| `adr/<date>-<title>.md`    | Architectural decisions      | Decision, Context, Alternatives considered, Rationale, Consequences                         |
+| `specs/active/<change>/`   | In-progress change artifacts | proposal.md, requirements.md, design.md, tasks.md                                           |
+| `specs/archived/<change>/` | Historical records           | Same structure, read-only                                                                   |
 
-### Assertions and snapshots
-- Use standard Playwright assertions for state and text: `toBeVisible`, `toContainText`, `toHaveAttribute`, `toBeTruthy`, `toEqual`, and similar.
-- Use screenshot helpers from `@utils` when the expected result is visual: `takeElementScreenshot`, `takeEditorScreenshot`, `takeTopToolbarScreenshot`, `takePageScreenshot`, and related helpers.
-- Prefer state assertions over screenshots when the behavior can be checked reliably through DOM state, attributes, text, or API output.
-- When using screenshots in macro mode, existing helpers already handle common details like padding, masking, hidden preview popups, and hidden scrollbars.
+### How to update the memory bank
 
-### Naming and comment block
-- Each `test()` title must be a plain English sentence that starts with the serial number from the checklist item, for example `Case 1 - ...` or `1. ...`, matching the local style of the target file.
-- Every generated autotest must include a comment block above the test body with:
-  - AUTOTEST_REQUEST_URL - link to the Autotest Request issue
-  - description
-  - scenario steps
-  - milestone version
-    - Example:
-```ts
-import { Page, test, expect } from '@fixtures';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
-import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectAllStructuresOnCanvas } from '@utils';
+Update the memory bank **whenever product behavior or architecture changes**. The right time is:
 
-let page: Page;
+- **During implementation** — if you discover something wrong or missing, fix it immediately
+- **After completing a change** — extract lasting knowledge before archiving
 
-test.describe('Autotests: generated example', () => {
-  test.beforeAll(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-  });
+What goes where:
 
-  test.afterAll(async ({ closePage }) => {
-    await closePage();
-  });
+- New or changed feature behavior → `features/<name>.md` (create if new)
+- Architectural changes → `architecture.md` and/or a new `adr/YYYY-MM-DD-<title>.md`
+- New subsystem → `modules/<name>.md`
+- New terms → `glossary.md`
+- New non-negotiable rules → `invariants.md`
+- Reusable E2E testing/planning lessons → `testing/testing.md` (how-to) or `testing/e2e-test-plan-template.md` (planning process)
+- Completed change specs → move from `specs/active/` to `specs/archived/`
 
-  test('Case 1 - Copy action stays enabled for selected microstructure after switching to Macro mode', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/9999
-     * Description: Copy action stays enabled for selected microstructure after switching to Macro mode
-     * Scenario:
-     * 1. Draw a benzene ring in Molecules mode
-     * 2. Switch to Macro mode
-     * 3. Select the structure on the canvas
-     * 4. Verify that Copy is enabled in the context menu
-     *
-     * Version 3.12.0
-     */
-    await drawBenzeneRing(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectAllStructuresOnCanvas(page);
+Do **not** put implementation details (function names, file paths, variable names) into `features/` or `domain.md`. Those belong in `modules/` or code comments.
 
-    const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await expect(
-      ContextMenu(page, targetAtom).isOptionEnabled(MonomerOption.Copy),
-    ).resolves.toBeTruthy();
-  });
-});
-```
+---
 
-### What to avoid
-- Do not introduce new libraries.
-- Do not duplicate selectors that already exist in page objects or utils.
-- Do not hardcode sleeps when an existing wait helper or UI state check can be used.
-- Do not create new helpers for one-off behavior unless the behavior is genuinely reusable across tests.
+## OpenSpec
+
+This project uses [OpenSpec](https://openspec.dev) for spec-driven development. The `openspec/` directory contains changes (proposals, specs, design, tasks) and main specs.
+
+OpenSpec changes go through: **propose → implement → archive**
+
+- Run `/opsx:propose` to start a new change
+- Run `/opsx:apply` to implement tasks
+- Run `/opsx:archive` to archive a completed change
+
+When archiving a change, also update the memory bank as described above.
+
+
+### Additional rules for opsx:apply
+- Only update the memory bank when archiving a change. Do not update it for proposals or specs in progress.
+- When completeing tasks then mark them as done one by one to not lose track of what has been done and what is left to do. Do not mark all tasks as done at once at the end.
+- Before starting writing e2e playwrite tests always ask to proceed, to ensure that context is not overloaded.
+- Before writing e2e playwrite tests read the testing strategy doc (`.memory-bank/testing/testing.md`) to understand the test strategy and existing test coverage.
+- When a task means a new spec file or folder of E2E tests, first draft an E2E test plan following `.memory-bank/testing/e2e-test-plan-template.md` and present it for approval before writing spec code.
+
+### Additional rules for opsx:archive
+- When updating any of the memory bank files, use the format described in the "File format details" section above.

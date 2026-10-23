@@ -1,4 +1,4 @@
-import {
+import type {
   ArrowMoveTool,
   CommonArrowDragContext,
   ReactionArrowClosestItem,
@@ -7,8 +7,8 @@ import {
   CoordinateTransformation,
   fromArrowResizing,
   fromMultipleMove,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 import { ArrowTool } from './arrowTool';
 
 export class ReactionArrowMoveTool

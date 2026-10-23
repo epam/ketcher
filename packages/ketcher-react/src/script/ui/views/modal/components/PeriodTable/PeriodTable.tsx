@@ -16,18 +16,19 @@
 
 import { AtomInfo, ElementsTable, TypeChoice } from './components';
 import { fromElement, toElement } from '../../../../data/convert/structconv';
-import { PeriodTableResult, PeriodTableType } from './types';
+import type { PeriodTableResult, PeriodTableType } from './types';
 
-import { Component, FC } from 'react';
+import { type FC, Component } from 'react';
 import { Dialog } from '../../../components';
-import { Editor, Element, Elements } from 'ketcher-core';
+import { type Editor, type Element, Elements } from 'ketcher-core';
 import { addAtoms } from '../../../../state/toolbar';
 import classes from './PeriodTable.module.less';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
+import i18n from 'src/i18n/i18n';
 
 interface TableOwnProps {
   type?: PeriodTableType;
@@ -96,7 +97,7 @@ class Table extends Component<TableProps, TableState> {
   headerContent = () => (
     <div className={classes.dialogHeader}>
       <Icon name="period-table" />
-      <span>Periodic Table</span>
+      <span>{i18n.t('dialogs:periodTable.headerTitle')}</span>
     </div>
   );
 
@@ -169,7 +170,7 @@ class Table extends Component<TableProps, TableState> {
         params={dialogParams}
         result={this.result}
         buttons={['Cancel', 'OK']}
-        buttonsNameMap={{ OK: 'Add' }}
+        buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
           !this.props.isNestedModal ? (

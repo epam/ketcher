@@ -470,7 +470,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -691,6 +692,7 @@
         "fullName": "N-Methyl-Tyrosine",
         "alias": "meY",
         "aliasHELM": "meY",
+        "aliasBILN": "meY",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

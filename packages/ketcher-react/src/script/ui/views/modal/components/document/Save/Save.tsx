@@ -16,10 +16,16 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter';
 
-import React, { Component, createRef, RefObject } from 'react';
+import { type ContextType, type RefObject, Component, createRef } from 'react';
 import { createSelector } from 'reselect';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
+  type Struct,
+  type StructService,
+  type OutputFormatType,
+  type StructServiceOptions,
+  type GenerateImageOptions,
+  type SupportedFormatProperties,
   FormatterFactory,
   KetSerializer,
   formatProperties,
@@ -29,14 +35,7 @@ import {
   KetcherLogger,
   Atom,
   isClipboardAPIAvailable,
-  legacyCopy,
-  Struct,
-  StructService,
   SupportedFormat,
-  OutputFormatType,
-  StructServiceOptions,
-  GenerateImageOptions,
-  SupportedFormatProperties,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -52,26 +51,30 @@ import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import type { AnyAction } from 'redux';
+import type { StoreState } from 'src/script/ui/state/store.types';
+import type { CheckOption } from 'src/script/ui/state/options/types';
+import i18n from 'src/i18n/i18n';
 
 const saveSchema = {
-  title: 'Save',
+  title: i18n.t('dialogs:document.save.schemaTitle'),
   type: 'object',
   properties: {
     filename: {
-      title: 'File name:',
+      title: i18n.t('dialogs:document.save.filenameLabel'),
       type: 'string',
       maxLength: 128,
       pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
       invalidMessage: (res) => {
-        if (!res) return 'Filename should contain at least one character';
-        if (res.length > 128) return 'Filename is too long';
-        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
+        if (!res) return i18n.t('dialogs:document.save.filenameEmptyError');
+        if (res.length > 128)
+          return i18n.t('dialogs:document.save.filenameTooLongError');
+        return i18n.t('dialogs:document.save.filenameInvalidCharsError');
       },
     },
     format: {
-      title: 'File format:',
+      title: i18n.t('dialogs:document.save.formatLabel'),
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
         (format) => formatProperties[format].name,
@@ -101,7 +104,7 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  handleCopy: (event: React.MouseEvent | React.ClipboardEvent) => void;
+  handleCopy: () => void;
 }
 
 interface FormState {
@@ -115,7 +118,7 @@ interface FormState {
 }
 
 interface CheckState {
-  checkOptions: unknown;
+  checkOptions: CheckOption[];
 }
 
 interface Editor {
@@ -135,13 +138,12 @@ interface SaveDialogProps {
   formState: FormState;
   moleculeErrors?: Record<string, string>;
   checkState: CheckState;
-  bondThickness?: number;
   ignoreChiralFlag: boolean;
   editor: Editor;
-  onCheck: (checkOptions: unknown) => void;
+  onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
-  onOk: (result?: Record<string, unknown> | unknown) => void;
+  onOk: (result?: unknown) => void;
   onCancel: () => void;
 }
 
@@ -161,9 +163,6 @@ interface AppState {
     };
     getServerSettings: () => StructServiceOptions;
     check: CheckState;
-    settings: {
-      bondThickness?: number;
-    };
   };
   server: StructService;
   editor: Editor;
@@ -225,7 +224,7 @@ const PreviewContent = ({
     <IconButton
       onClick={handleCopy}
       iconName="copy"
-      title="Copy to clipboard"
+      title={i18n.t('dialogs:document.save.copyToClipboard')}
       testId="copy-to-clipboard"
     />
   </div>
@@ -233,7 +232,7 @@ const PreviewContent = ({
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
-  declare context: React.ContextType<typeof ErrorsContext>;
+  declare context: ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
@@ -369,7 +368,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).find(
+        Array.from(struct.atoms).some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -383,6 +382,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type,
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
+        struct,
       );
       const getStructFromStringByType = () => {
         if (type === SupportedFormat.ket) {
@@ -431,9 +431,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   getWarnings = (format: SupportedFormat | OutputFormatType): string[] => {
     const { struct, moleculeErrors } = this.props;
     const warnings: string[] = [];
-    const structWarning =
-      'Structure contains errors, please check the data, otherwise you ' +
-      'can lose some properties or the whole structure after saving in this format.';
+    const structWarning = i18n.t(
+      'dialogs:document.save.structureContainsErrorsWarning',
+    );
     if (!this.isImageFormat(format)) {
       const saveWarning = structFormat.couldBeSaved(struct, format);
       const isStructInvalid = this.showStructWarningMessage(format);
@@ -486,19 +486,19 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       warnings.length === 0
         ? [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
           ]
         : [
             {
-              caption: 'Preview',
+              caption: i18n.t('dialogs:document.save.previewTab'),
               component: this.renderSaveFile,
               tabIndex: 0,
             },
             {
-              caption: 'Warnings',
+              caption: i18n.t('dialogs:document.save.warningsTab'),
               component: this.renderWarnings,
               tabIndex: 1,
             },
@@ -517,9 +517,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           <Field name="filename" />
           <Field
             name="format"
-            {...{ onChange: this.changeType }}
+            onChange={(type) => {
+              this.changeType(type as SupportedFormat | OutputFormatType);
+            }}
             options={getSelectOptionsFromSchema(
               this.saveSchema.properties.format,
+              i18n.t,
             )}
             component={Select}
             className="file-format-list"
@@ -528,7 +531,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         </Form>
         <Tabs
           className={classes.tabs}
-          captions={tabs}
           tabIndex={this.state.tabIndex}
           changeTab={this.changeTab}
           tabs={tabs}
@@ -537,24 +539,22 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  handleCopy = (event: React.MouseEvent | React.ClipboardEvent): void => {
+  handleCopy = (): void => {
     const { structStr } = this.state;
 
-    try {
-      if (isClipboardAPIAvailable()) {
-        navigator.clipboard.writeText(structStr || '');
-      } else if ('clipboardData' in event) {
-        legacyCopy(event.clipboardData, {
-          'text/plain': structStr,
-        });
-        event.preventDefault();
-      }
-    } catch (e) {
+    if (!isClipboardAPIAvailable()) {
+      this.props.editor.errorHandler(
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
+      );
+      return;
+    }
+
+    navigator.clipboard.writeText(structStr || '').catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
-        'This feature is not available in your browser',
+        i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
-    }
+    });
   };
 
   renderSaveFile = (): JSX.Element | null => {
@@ -635,7 +635,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         onClick={() => this.props.onTmplSave(this.props.struct)}
         data-testid="save-to-templates-button"
       >
-        Save to Templates
+        {i18n.t('dialogs:document.save.saveToTemplates')}
       </button>,
     ];
 
@@ -647,7 +647,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type="button"
         data-testid="cancel-button"
       >
-        Cancel
+        {i18n.t('common:button.cancel')}
       </button>,
     );
 
@@ -670,7 +670,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           }
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     } else {
@@ -692,7 +692,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           disabled={disableControls || !formState.valid || isCleanStruct}
           className={classes.ok}
         >
-          Save
+          {i18n.t('common:button.save')}
         </SaveButton>,
       );
     }
@@ -703,9 +703,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const DialogComponent = Dialog;
     return (
       <DialogComponent
-        testId="save-structure-dialog"
         className={classes.dialog}
-        title="Save Structure"
+        title={i18n.t('dialogs:document.save.dialogTitle')}
         params={this.props}
         buttons={this.getButtons()}
         needMargin={false}
@@ -733,17 +732,30 @@ const mapStateToProps = (state: AppState) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
-  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
   editor: state.editor,
 });
 
+type SaveDialogDispatchProps = {
+  onCheck: (checkOptions: CheckOption[]) => void;
+  onTmplSave: (struct: Struct) => void;
+  onResetForm: (prevState: FormState) => void;
+};
+
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<AppState, undefined, AnyAction>,
-) => ({
-  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions)),
-  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct)),
-  onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
+  dispatch: ThunkDispatch<StoreState, undefined, AnyAction>,
+): SaveDialogDispatchProps => ({
+  onCheck: (checkOptions: CheckOption[]) => {
+    dispatch(check(checkOptions));
+  },
+
+  onTmplSave: (struct: Struct) => {
+    dispatch(saveUserTmpl(struct));
+  },
+
+  onResetForm: (prevState: FormState) => {
+    dispatch(updateFormState(prevState));
+  },
 });
 
 export default connect(

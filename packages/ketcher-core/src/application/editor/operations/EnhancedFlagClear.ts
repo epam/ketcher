@@ -17,7 +17,7 @@
 import { Vec2 } from 'domain/entities';
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 export class EnhancedFlagClear extends BaseOperation {
   data: {

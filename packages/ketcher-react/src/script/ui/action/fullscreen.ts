@@ -52,12 +52,16 @@ const getIfFullScreen = () => {
 
 const toggleFullscreen = () => {
   const fullscreenElement = getFullscreenElement();
-  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
+  if (getIfFullScreen()) {
+    exitFullscreen();
+  } else {
+    requestFullscreen(fullscreenElement);
+  }
 };
 
 export default {
   fullscreen: {
-    title: 'Fullscreen mode',
+    title: 'toolbar:fullscreen.title',
     enabledInViewOnly: true,
     action: () => toggleFullscreen(),
     hidden: (options) => isHidden(options, 'fullscreen'),

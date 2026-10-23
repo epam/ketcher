@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { openFileAndAddToCanvas, takeElementScreenshot } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -19,7 +17,7 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
@@ -73,6 +71,8 @@ test.describe('Copolymer S-Group type', () => {
 
     await SGroupPropertiesDialog(page).typeDropdown.click();
     await expect(page.getByTestId(TypeOption.Copolymer)).toBeEnabled();
+    await page.keyboard.press('Escape');
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Check that two new drop-down menus added below the type drop-down menu', async () => {
@@ -92,8 +92,8 @@ test.describe('Copolymer S-Group type', () => {
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-    await LeftToolbar(page).sGroup();
 
+    await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });
@@ -129,6 +129,7 @@ test.describe('Copolymer S-Group type', () => {
     await expect(
       SGroupPropertiesDialog(page).repeatPatternDropdown,
     ).toBeVisible();
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
@@ -188,7 +189,9 @@ test.describe('Copolymer S-Group type', () => {
     await expect(page.getByTestId(SubtypeOption.Random)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Block)).toBeVisible();
     await expect(page.getByTestId(SubtypeOption.Alternating)).toBeVisible();
-    await expect(options).toHaveLength(3);
+    expect(options).toHaveLength(4);
+    await page.keyboard.press('Escape');
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Check that Repeat Pattern drop-down menu contain options Head-to-Tail, Head-to-Head and Either/Unknown.', async () => {
@@ -252,7 +255,9 @@ test.describe('Copolymer S-Group type', () => {
     await expect(
       page.getByTestId(RepeatPatternOption.EitherUnknown),
     ).toBeVisible();
-    await expect(options).toHaveLength(3);
+    expect(options).toHaveLength(3);
+    await page.keyboard.press('Escape');
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Verify that after the user chooses the subtype and the repeating pattern, the Apply button become active.', async () => {
@@ -308,6 +313,7 @@ test.describe('Copolymer S-Group type', () => {
     await SGroupPropertiesDialog(page).repeatPatternDropdown.click();
     await page.getByTestId(RepeatPatternOption.HeadToTail).click();
     await expect(SGroupPropertiesDialog(page).applyButton).toBeEnabled();
+    await SGroupPropertiesDialog(page).cancel();
   });
 
   test('Check that when Apply is selected, the selected structure encompassed with large brackets.', async () => {

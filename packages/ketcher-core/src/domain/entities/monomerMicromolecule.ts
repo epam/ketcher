@@ -14,19 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
-import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Struct } from 'domain/entities/struct';
+import { assert } from 'utilities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(type: string, public monomer: BaseMonomer) {
+  constructor(
+    type: string,
+    public monomer: BaseMonomer,
+  ) {
     super(type);
     this.data.absolute = false;
     this.data.attached = false;
+    this.data.expanded = Boolean(monomer.monomerItem.expanded);
   }
 
   public get isMonomer() {
     return true;
+  }
+
+  private ensureMonomerItemMutable(): void {
+    if (Object.isFrozen(this.monomer.monomerItem)) {
+      this.monomer.monomerItem = { ...this.monomer.monomerItem };
+    }
+  }
+
+  public setExpanded(expanded: boolean): void {
+    this.ensureMonomerItemMutable();
+    this.monomer.monomerItem.expanded = expanded;
   }
 
   public override getContractedPosition(struct: Struct) {
@@ -46,7 +61,11 @@ export class MonomerMicromolecule extends SGroup {
     );
     monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
     monomerMicromoleculeClone.atoms = atomIdMap
-      ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
+      ? monomerMicromolecule.atoms.map((elem) => {
+          const mappedAtomId = atomIdMap.get(elem);
+          assert(mappedAtomId !== undefined);
+          return mappedAtomId;
+        })
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;

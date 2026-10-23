@@ -28,8 +28,12 @@ export const Card = styled.div<{
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled, isDragging }) =>
-    disabled ? 'default' : isDragging ? 'grabbing !important' : 'pointer'};
+  cursor: ${({ disabled, isDragging }) => {
+    if (disabled) {
+      return 'default';
+    }
+    return isDragging ? 'grabbing !important' : 'pointer';
+  }};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;
@@ -69,12 +73,27 @@ export const Card = styled.div<{
       opacity: 1;
     }
   }
+  > button.dots {
+    opacity: 0;
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+  }
+  &:hover > button.dots,
+  &:focus-within > button.dots {
+    opacity: 1;
+  }
   &::after {
     content: '';
     display: block;
     position: absolute;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: 8px;
     border-bottom: ${({ isVariantMonomer }) =>
@@ -101,7 +120,7 @@ export const Card = styled.div<{
   > span {
     position: absolute;
     bottom: ${({ selected }) => (selected ? '4px' : '6px')};
-    left: ${({ selected }) => (selected ? '4px' : '6px')};
+    inset-inline-start: ${({ selected }) => (selected ? '4px' : '6px')};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -110,7 +129,7 @@ export const Card = styled.div<{
   > .star {
     color: #cad3dd;
     position: absolute;
-    left: calc(50% - 7px);
+    inset-inline-start: calc(50% - 7px);
     top: 11px;
     font-size: 13px;
     line-height: 13px;
@@ -149,7 +168,7 @@ export const NumberCircle = styled.div<{
   border: 1px solid #cceaee;
   position: absolute;
   bottom: ${({ selected }) => (selected ? '4px' : '6px')};
-  left: ${({ selected }) => (selected ? '18px' : '20px')};
+  inset-inline-start: ${({ selected }) => (selected ? '18px' : '20px')};
   font-size: 12px;
   line-height: 12px;
 `;
@@ -177,5 +196,5 @@ export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
 export const AutochainIconWrapper = styled('div')({
   position: 'absolute',
   top: '12px',
-  left: '4px',
+  insetInlineStart: '4px',
 });

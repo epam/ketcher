@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -35,7 +33,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { INPUT_DELAY } from '@utils/globals';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -175,6 +173,7 @@ test.describe('Plus and Arrows tools ', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/four-structures.mol');
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xOffsetFromCenter1, 0, { from: 'pageCenter' });
+    await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xOffsetFromCenter2, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2';
+import { type Point, Vec2 } from './vec2';
 
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
-import { Struct, StructProperty } from './struct';
+import type { Struct, StructProperty } from './struct';
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -34,11 +34,12 @@ function calcStereoFlag(
   if (!stereoAids || stereoAids.length === 0) return undefined;
   const filteredStereoAtoms = stereoAids
     .map((aid) => struct.atoms.get(aid))
-    .filter((atom) => atom?.stereoLabel);
+    .filter((atom) => Boolean(atom?.stereoLabel));
   if (!filteredStereoAtoms.length) return undefined;
 
-  const atom = filteredStereoAtoms[0]!;
-  const stereoLabel = atom.stereoLabel!; // {string | null} "<abs|and|or>-<group>"
+  const atom = filteredStereoAtoms[0];
+  const stereoLabel = atom?.stereoLabel; // {string} "<abs|and|or>-<group>"
+  if (!stereoLabel) return undefined;
 
   const hasAnotherLabel = filteredStereoAtoms.some(
     (atom) => atom?.stereoLabel !== stereoLabel,
@@ -102,14 +103,16 @@ export class Fragment {
     struct: Struct,
     fragmentId: number,
   ): Vec2 | undefined {
-    const fragment = struct.getFragment(fragmentId);
-    if (!fragment) return undefined;
-    const bb = fragment.getCoordBoundingBox();
+    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
+    if (fragmentAtomIds.size === 0) return undefined;
+    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
     return new Vec2(bb.max.x, bb.min.y - 1);
   }
 
   clone(aidMap: Map<number, number>) {
-    const stereoAtoms = this.#stereoAtoms.map((aid) => aidMap.get(aid)!);
+    const stereoAtoms = this.#stereoAtoms
+      .map((aid) => aidMap.get(aid))
+      .filter((mappedId): mappedId is number => mappedId !== undefined);
     const fr = new Fragment(
       stereoAtoms,
       this.stereoFlagPosition,

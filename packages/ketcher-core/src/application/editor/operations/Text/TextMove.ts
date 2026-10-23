@@ -16,19 +16,20 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
 
 interface TextMoveData {
-  id: any;
-  d: any;
+  id: number;
+  d: Vec2;
   noinvalidate?: boolean;
 }
 
 export class TextMove extends BaseOperation {
   data: TextMoveData;
 
-  constructor(id: any, d: any, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate?: boolean) {
     super(OperationType.TEXT_MOVE);
     this.data = { id, d, noinvalidate };
   }
@@ -68,5 +69,10 @@ export class TextMove extends BaseOperation {
     move.data = this.data;
 
     return move;
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d?.x === 0 && d?.y === 0;
   }
 }

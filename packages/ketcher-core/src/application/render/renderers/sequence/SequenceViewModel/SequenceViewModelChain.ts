@@ -1,4 +1,4 @@
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 export interface ISequenceViewModelRow {
@@ -9,7 +9,13 @@ export class SequenceViewModelChain {
   private readonly rows: ISequenceViewModelRow[] = [];
 
   public get lastRow() {
-    return this.rows[this.rows.length - 1];
+    const lastRow = this.rows.at(-1);
+
+    if (!lastRow) {
+      throw new Error('Cannot get the last row of an empty sequence chain');
+    }
+
+    return lastRow;
   }
 
   public get lastNode() {

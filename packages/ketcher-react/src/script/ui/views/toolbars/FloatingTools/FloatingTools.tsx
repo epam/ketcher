@@ -1,7 +1,7 @@
-import action, { UiActionAction } from '../../../action';
+import action, { type UiActionAction } from '../../../action';
 import {
+  type ActionButtonProps,
   ActionButton,
-  ActionButtonProps,
 } from '../ToolbarGroupItem/ActionButton';
 import { type ToolbarItemVariant } from '../toolbar.types';
 import classes from './FloatingTools.module.less';

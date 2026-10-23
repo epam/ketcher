@@ -1,23 +1,25 @@
-import {
+import type {
   AttachmentPointLabelContextMenuProps,
   MenuItemsProps,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import { useAppContext } from '../../../../../../hooks';
 import {
-  AttachmentPointClickData,
+  type AttachmentPointClickData,
   Coordinates,
   ketcherProvider,
   MonomerCreationAttachmentPointClickEvent,
+  assert,
 } from 'ketcher-core';
-import Editor from '../../../../../editor';
-import assert from 'assert';
+import type Editor from '../../../../../editor';
 
 const AttachmentPointLabelMenuItems = ({
   propsFromTrigger,
 }: MenuItemsProps<AttachmentPointLabelContextMenuProps>) => {
+  const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -63,11 +65,11 @@ const AttachmentPointLabelMenuItems = ({
     <>
       <Item data-testid="edit-connection-point" onClick={handleEditClick}>
         <Icon name="editMenu" className={styles.icon} />
-        Edit connection point
+        {t('attachmentPointEditPopup.title')}
       </Item>
       <Item data-testid="remove-assignment" onClick={handleRemoveClick}>
         <Icon name="deleteMenu" className={styles.icon} />
-        Remove assignment
+        {t('contextMenu.removeAssignment')}
       </Item>
     </>
   );

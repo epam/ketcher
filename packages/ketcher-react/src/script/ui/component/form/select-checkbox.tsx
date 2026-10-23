@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import Input from './Input/Input';
 
 interface BooleanSchema {
@@ -36,9 +36,9 @@ interface SelectCheckboxProps {
   schema: Schema;
   type: string;
   value: number | string | boolean;
-  onChange: (val: number | string | boolean) => void;
+  onChange: (val: unknown) => void;
   component?: ComponentType;
-  children?: React.ReactNode;
+  children?: ReactNode;
   className?: string;
   placeholder?: string;
   isFocused?: boolean;

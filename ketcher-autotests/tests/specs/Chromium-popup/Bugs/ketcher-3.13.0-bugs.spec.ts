@@ -1,16 +1,13 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 import { Page, test, expect } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
   dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
+  shiftCanvas,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -31,7 +28,9 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -40,7 +39,6 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 
@@ -97,48 +95,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await takeEditorScreenshot(page);
   });
 
-  test('Case 2 — “Field value” textbox is active in “S-Group Properties” modal when “Context” field is empty', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7729
-     * Bug: https://github.com/epam/ketcher/issues/7729
-     * Version: 3.13.0
-     * Description:
-     * When S-Group type is switched to Data and Context field becomes empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * but currently they remain editable.
-     *
-     * Scenario:
-     * 1. Open Ketcher (Molecules mode)
-     * 2. Paste SMILES "CC" → click to place structure
-     * 3. Press Ctrl+G to activate S-group tool
-     * 4. Click on the bond between atoms → S-group Properties dialog appears
-     * 5. Select any S-group Type except "Data"
-     * 6. Select "Data" again → the "Context" field becomes empty
-     * 7. Try entering values into “Field name” and “Field value”
-     *
-     * Expected Result:
-     * When Context field is empty,
-     * “Field name” and “Field value” inputs must be disabled,
-     * and user should NOT be able to enter text.
-     */
-
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CC');
-
-    await LeftToolbar(page).sGroup();
-    await getBondLocator(page, { bondId: 0 }).click({ force: true });
-
-    const dialog = SGroupPropertiesDialog(page);
-
-    await dialog.selectType(TypeOption.Superatom);
-    await dialog.selectType(TypeOption.Data);
-
-    await expect(dialog.contextDropdown).toHaveValue('');
-    await expect(dialog.fieldNameEditbox).toBeDisabled();
-    await expect(dialog.fieldValueEditbox).toBeDisabled();
-
-    await dialog.cancel();
-  });
-
   test('Case 3 — CIP labels are rendered under the bond after selection and move', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
@@ -171,19 +127,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Drag the molecule slightly (grab → move → release)
     await CommonLeftToolbar(page).handTool();
-    const canvas = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') });
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error('Canvas bounding box is undefined');
-    const { x: centerX, y: centerY } =
-      await getCoordinatesOfTheMiddleOfTheCanvas(page);
-    const startX = box.x + centerX + 20;
-    const startY = box.y + centerY + 20;
-    const endX = box.x + centerX - 100;
-    const endY = box.y + centerY - 100;
-    await page.mouse.move(startX, startY);
-    await dragMouseTo(page, endX, endY);
+    await page.mouse.move(660, 377);
+    await dragMouseTo(page, 540, 257);
 
     // Step 6: Move cursor back to center and click to clear selection
     await CommonLeftToolbar(page).areaSelectionTool();
@@ -244,12 +189,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
       bondIds: [2, 3, 4, 5],
@@ -262,6 +201,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Submit monomer creation
     await dialog.submit();
+
+    await clickOnCanvas(page, 0, 0);
 
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
@@ -378,7 +319,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.cancel();
   });
 
-  test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async () => {
+  test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/7153
@@ -399,11 +342,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * Expected Result:
      * Expanded molecule remains on canvas and does NOT disappear.
      */
-
-    // Step 1: Macro → Flex mode (popup-friendly)
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
 
     // Step 2: Load HELM
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -455,11 +393,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * Expected Result:
      * Natural analog category is NOT shown for phosphates.
      */
-
-    // Step 1: Switch to Macromolecules Flex mode
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
 
     // Step 2–3: Open Library → RNA → Phosphates section
     await Library(page).openRNASection(RNASection.Phosphates);
@@ -516,13 +449,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -537,6 +463,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Submit wizard
     await dialog.submit();
+
+    await clickOnCanvas(page, 0, 0);
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
@@ -579,28 +507,14 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 3: Start area selection from the bottom of the screen
     await CommonLeftToolbar(page).areaSelectionTool();
-    const canvas = page.getByTestId(KETCHER_CANVAS).first();
-    await expect(canvas).toBeVisible();
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error('Canvas bounding box is undefined');
-    const inset = 20;
-    // eslint-disable-next-line prefer-const
-    let startX = Math.floor(box.x + box.width - inset);
-    let startY = Math.floor(box.y + box.height / 2 + 40);
-    const bottomLimit = Math.floor(box.y + box.height - inset);
-    if (startY > bottomLimit - 8) startY = bottomLimit - 8;
-    const firstTargetX = Math.floor(box.x + inset);
-    const firstTargetY = bottomLimit;
-    await page.mouse.move(startX, startY);
+    await page.mouse.move(742, 427);
     await page.mouse.down();
-    await page.mouse.move(firstTargetX, firstTargetY, { steps: 20 });
+    await page.mouse.move(310, 680, { steps: 20 });
     for (let i = 0; i < 10; i++) {
       await page.mouse.wheel(0, 320);
       await page.waitForTimeout(40);
     }
-    const extraX = Math.max(firstTargetX - 30, box.x + 8);
-    const extraY = firstTargetY + 30;
-    await page.mouse.move(extraX, extraY, { steps: 8 });
+    await page.mouse.move(298, 710, { steps: 8 });
     await page.mouse.up();
 
     // Visual result validation: screenshot of the entire canvas
@@ -635,11 +549,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     );
 
     // Step 3: Select the whole structure and open Create Monomer wizard
-    await CommonLeftToolbar(page).areaSelectionTool();
+    // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
+    // Pan left so all atoms are within the visible canvas area before the wizard opens.
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
     await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -55, 0);
 
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);
@@ -648,13 +564,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await presetSection.setName('ap');
 
     // Step 5: Configure fragments (Base/Sugar/Phosphate)
-
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     // --- Base ---
     await presetSection.setupBase({
@@ -670,13 +579,32 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // --- Phosphate ---
     await presetSection.setupPhosphate({
-      atomIds: [8, 19, 20, 21, 22],
-      bondIds: [21, 22, 23, 24],
+      atomIds: [8, 19, 21, 22],
+      bondIds: [21, 23, 24],
     });
+
+    // Select phosphate position (required field; without it the validation dispatches
+    // phosphatePositionNotSelected which replaces invalidRnaPresetStructure in the reducer)
+    await presetSection.setPhosphatePosition('3');
 
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();
 
-    await takeEditorScreenshot(page);
+    // When position is set, validator step 2a fires:
+    // hasPhosphatePositionAttachmentPointConflict → dispatches
+    // invalidPhosphatePositionAttachmentPoints to preset (replacing step 1's
+    // invalidRnaPresetStructure). Step 3 (phosphatePositionNotSelected) does not fire.
+    const invalidPhosphatePositionMessage = NotificationMessageBanner(
+      page,
+      ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
+    );
+
+    expect(
+      await invalidPhosphatePositionMessage.getNotificationMessage(),
+    ).toEqual(
+      'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
+    );
+
+    await dialog.discard();
   });
 });

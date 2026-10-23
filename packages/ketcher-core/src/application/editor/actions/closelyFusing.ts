@@ -19,6 +19,7 @@ import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
 import utils from '../shared/utils';
+import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {
   let action = new Action();
@@ -103,16 +104,35 @@ export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
  */
 function closestToMerge(struct, closestMap) {
   const mergeMap = {
-    atoms: new Map(closestMap.atoms),
-    bonds: new Map(closestMap.bonds),
-    atomToFunctionalGroup: new Map(closestMap.atomToFunctionalGroup),
+    atoms: new Map<number, number>(closestMap.atoms),
+    bonds: new Map<number, number>(closestMap.bonds),
+    atomToFunctionalGroup: new Map<number, number>(
+      closestMap.atomToFunctionalGroup,
+    ),
   };
 
   closestMap.bonds.forEach((dstId, srcId) => {
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
+    if (!bond || !bondCI) {
+      mergeMap.bonds.delete(srcId);
+      return;
+    }
 
-    if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      mergeMap.bonds.delete(srcId);
+      if (bond) {
+        mergeMap.atoms.delete(bond.begin);
+        mergeMap.atoms.delete(bond.end);
+      }
+      return;
+    }
+
+    const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
+    if (mergeParams?.merged) {
       mergeMap.atoms.delete(bond.begin);
       mergeMap.atoms.delete(bond.end);
     } else {

@@ -16,10 +16,11 @@
 
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { RxnPlus } from 'domain/entities/rxnPlus';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
+import type { KetReactionNode } from '../types';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
-export function rxnToStruct(ketItem: any, struct: Struct): Struct {
+export function rxnToStruct(ketItem: KetReactionNode, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
     const arrow = new RxnArrow(getNodeWithInvertedYCoord(ketItem.data));
     arrow.setInitiallySelected(ketItem.selected);

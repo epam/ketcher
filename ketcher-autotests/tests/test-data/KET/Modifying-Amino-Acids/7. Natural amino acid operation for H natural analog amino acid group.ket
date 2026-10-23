@@ -164,7 +164,8 @@
                     -1.058,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -355,6 +356,7 @@
         "fullName": "Histidine",
         "alias": "H",
         "aliasHELM": "H",
+        "aliasBILN": "H",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -383,6 +385,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "H"
     },

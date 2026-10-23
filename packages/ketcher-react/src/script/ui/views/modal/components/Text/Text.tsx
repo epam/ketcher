@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,16 +16,17 @@
  ***************************************************************************/
 
 import React, { useCallback, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
+  type LexicalEditor,
+  type TextFormatType,
+  type SerializedEditorState,
   $getRoot,
   $getSelection,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_HIGH,
-  LexicalEditor,
-  TextFormatType,
-  SerializedEditorState,
 } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -32,16 +34,17 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
-import { IconName } from 'components';
+import type { IconName } from 'components';
 
 interface TextProps extends DialogParams {
   formState: any;
@@ -121,6 +124,7 @@ const TextEditorInner = (props: {
   params: TextProps;
 }) => {
   const { formState, position, id, params } = props;
+  const { t } = useTranslation(['common', 'dialogs']);
   const [editor] = useLexicalComposerContext();
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const editorRef = React.useRef<LexicalEditor | null>(null);
@@ -186,11 +190,11 @@ const TextEditorInner = (props: {
   return (
     <Dialog
       className={classes.textEditor}
-      title="Text Editor"
+      title={t('dialogs:text.dialogTitle')}
       params={params}
       result={result}
       valid={() => formState.form.valid}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >
@@ -200,7 +204,7 @@ const TextEditorInner = (props: {
         onKeyDown={handleKeyDown}
         role="toolbar"
         tabIndex={0}
-        aria-label="Text formatting toolbar"
+        aria-label={t('dialogs:text.toolbarAriaLabel')}
       >
         {buttons.map((button) => {
           return (
@@ -213,10 +217,10 @@ const TextEditorInner = (props: {
           );
         })}
         <SpecialSymbolsButton editor={editor} />
-        <span>Font Size</span>
+        <span>{t('dialogs:text.fontSizeLabel')}</span>
         <FontControl editor={editor} />
       </div>
-      <span>Text:</span>
+      <span>{t('dialogs:text.textLabel')}</span>
       <RichTextPlugin
         contentEditable={
           <ContentEditable
@@ -226,6 +230,7 @@ const TextEditorInner = (props: {
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
+      <HistoryPlugin />
       <EnterKeyPlugin />
       <EditorRefPlugin editorRef={editorRef} />
       <AutoFocusPlugin />

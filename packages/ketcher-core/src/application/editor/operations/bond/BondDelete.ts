@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
-import { BondAttributes } from 'domain/entities';
+import type { BondAttributes } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
@@ -30,12 +30,6 @@ type Data = {
 
 class BondDelete extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (
-    begin?: number,
-    end?: number,
-    bond?: Partial<BondAttributes>,
-    needInvalidateAtoms?: boolean,
-  ) => BaseOperation;
 
   constructor(bondId?: number) {
     super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);
@@ -52,7 +46,6 @@ class BondDelete extends BaseOperation {
     const { bid } = this.data;
     if (bid === null) return;
 
-    // eslint-disable-line max-statements
     const struct = restruct.molecule;
     if (!this.data.bond) {
       const bondFromStruct = struct.bonds.get(bid);
@@ -73,7 +66,7 @@ class BondDelete extends BaseOperation {
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop);
       }
-    }, restruct);
+    });
     restruct.clearVisel(rebond.visel);
     restruct.bonds.delete(bid);
     restruct.markItemRemoved();
@@ -87,7 +80,7 @@ class BondDelete extends BaseOperation {
         return;
       }
 
-      const atom = struct.atoms.get(halfBond.begin);
+      const atom = struct.getBondEndpoint(halfBond.begin);
       if (!atom) return;
       const pos = atom.neighbors.indexOf(hbid);
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;
@@ -99,12 +92,6 @@ class BondDelete extends BaseOperation {
     if (structBond.hb2 !== undefined) struct.halfBonds.delete(structBond.hb2);
 
     struct.bonds.delete(bid);
-  }
-
-  invert() {
-    const inverted = new BondDelete.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

@@ -1,15 +1,16 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { Struct } from 'domain/entities';
+import type { Struct } from 'domain/entities';
 import {
   FormatterFactory,
   SupportedFormat,
   identifyStructFormat,
 } from './formatters';
-import { Ketcher } from './ketcher';
-import { ChemicalMimeType, StructService } from 'domain/services';
+import type { Ketcher } from './ketcher';
+import type { StructService } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export async function prepareStructToRender(
   structStr: string,
@@ -61,7 +62,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
 ) {
   const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
-  const format = identifyStructFormat(struct);
+  const format = identifyStructFormat(struct, true);
   let ketStruct = struct;
   if (format !== SupportedFormat.ket) {
     ketStruct = (

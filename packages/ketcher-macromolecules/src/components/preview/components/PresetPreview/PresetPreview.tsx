@@ -24,6 +24,7 @@ import {
   PhosphatePositionIconWrapper,
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
 import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
@@ -32,9 +33,7 @@ import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreview
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState } from 'state';
 
-const getIconNameForMonomer = (
-  monomer: MonomerItemType,
-): Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'> => {
+const getIconNameForMonomer = (monomer: MonomerItemType): IconName => {
   switch (monomer.props.MonomerClass) {
     case KetMonomerClass.Sugar:
       return 'sugar';
@@ -54,6 +53,7 @@ interface Props {
 }
 
 const PresetPreview = ({ className }: Props) => {
+  const { t } = useTranslation('macromolecules');
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
   const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
@@ -72,18 +72,25 @@ const PresetPreview = ({ className }: Props) => {
   // Resolve the phosphate-position icon (matches the icon used in the RNA
   // Builder's phosphate position selector). `left` => 5'-end (icon with the
   // colored phosphate on the left), `right` => 3'-end.
-  const phosphatePositionIconName =
-    preview.phosphatePosition === 'left'
-      ? 'preset-left-phosphate'
-      : preview.phosphatePosition === 'right'
-      ? 'preset-right-phosphate'
-      : undefined;
-  const phosphatePositionTooltip =
-    preview.phosphatePosition === 'left'
-      ? "Phosphate on the left (5')"
-      : preview.phosphatePosition === 'right'
-      ? "Phosphate on the right (3')"
-      : undefined;
+  let phosphatePositionIconName: IconName | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionIconName = 'preset-left-phosphate';
+  } else {
+    phosphatePositionIconName =
+      preview.phosphatePosition === 'right'
+        ? 'preset-right-phosphate'
+        : undefined;
+  }
+
+  let phosphatePositionTooltip: string | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionTooltip = t('preview.phosphateOnLeft');
+  } else {
+    phosphatePositionTooltip =
+      preview.phosphatePosition === 'right'
+        ? t('preview.phosphateOnRight')
+        : undefined;
+  }
   const getMonomerNameText = (monomer: MonomerItemType) =>
     `(${monomer.props.Name})`;
 

@@ -1,10 +1,10 @@
 import {
+  type AttachmentPointName,
   AtomLabel,
-  AttachmentPointName,
   getAttachmentPointNumberFromLabel,
 } from 'ketcher-core';
-import { Editor } from '../../../../../editor';
-import { Option } from '../../../../component/form/Select';
+import type { Editor } from '../../../../../editor';
+import type { Option } from '../../../../component/form/Select';
 
 export type AttachmentPointSelectData = {
   nameOptions: Array<Option>;
@@ -126,12 +126,22 @@ export const useAttachmentPointSelectsData = (
   const attachmentPointNameOptionsLength =
     maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
+  const usedNames = new Set(
+    Array.from(assignedAttachmentPoints.keys()).filter(
+      (name) => name !== attachmentPointName,
+    ),
+  );
+
   const nameOptions: Option[] = Array.from({
     length: attachmentPointNameOptionsLength,
-  }).map((_, i) => ({
-    value: `R${i + 1}`,
-    label: `R${i + 1}`,
-  }));
+  }).map((_, i) => {
+    const name = `R${i + 1}`;
+    return {
+      value: name,
+      label: name,
+      markedAsUsed: usedNames.has(name as AttachmentPointName),
+    };
+  });
 
   // Build atom type options for leaving group
   const currentLeavingAtomLabel = leavingAtom.label;

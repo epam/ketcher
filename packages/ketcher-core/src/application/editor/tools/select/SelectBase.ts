@@ -15,30 +15,31 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor/Editor';
+import { HydrogenBond, PolymerBond, BaseMonomer, Vec2 } from 'domain/entities';
+import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
 import {
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment } from 'application/editor/tools/types';
+import type { MonomersAlignment } from 'application/editor/tools/types';
 import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
 
@@ -84,11 +85,8 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
+    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
+    'standby';
 
   protected rotationStartAngle = 0;
   protected rotationCenter: Vec2 | null = null;
@@ -102,6 +100,14 @@ abstract class SelectBase implements BaseTool {
   private readonly selectEntitiesHandler = () => {
     this.updateRotationView();
   };
+
+  /**
+   * Reads renderer data from d3-bound event targets (`target.__data__`).
+   * Returns undefined when an event target has no renderer payload.
+   */
+  private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
+    return (event.target as { __data__?: T } | null)?.__data__;
+  }
 
   constructor(protected readonly editor: CoreEditor) {
     this.destroy();
@@ -167,7 +173,7 @@ abstract class SelectBase implements BaseTool {
       }
 
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      this.mousedownEntity(renderer, event.shiftKey, modKey, event.altKey);
     }
   }
 
@@ -198,11 +204,13 @@ abstract class SelectBase implements BaseTool {
       width: number;
       height: number;
     },
+    startAngle?: number,
   ) {
     return {
       center: Coordinates.modelToCanvas(center),
       boundingBox: this.getCanvasBbox(bbox),
       cursor: this.editor.lastCursorPosition,
+      startAngle,
     };
   }
 
@@ -242,6 +250,7 @@ abstract class SelectBase implements BaseTool {
       const viewParams = this.buildRotationViewParams(
         this.rotationCenter,
         bbox,
+        this.rotationStartAngle,
       );
       this.editor.transientDrawingView.showRotation({
         ...viewParams,
@@ -274,6 +283,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer,
     shiftKey = false,
     modKey = false,
+    altKey = false,
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
@@ -289,9 +299,12 @@ abstract class SelectBase implements BaseTool {
       drawingEntitiesToSelect.push(renderer.drawingEntity);
     }
 
-    if (!shiftKey && !modKey) {
+    const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
+    const isChainSelectionModKey = modKey && isSequenceItem;
+
+    if (!shiftKey && !isChainSelectionModKey && !altKey) {
       this.startMoveIfNeeded(renderer);
-      if (renderer.drawingEntity.selected) {
+      if (renderer.drawingEntity.selected && !isSequenceItem) {
         return;
       }
       modelChanges.merge(
@@ -316,7 +329,7 @@ abstract class SelectBase implements BaseTool {
           drawingEntities,
         );
       modelChanges.merge(selectModelChanges);
-    } else if (renderer instanceof BaseSequenceItemRenderer && modKey) {
+    } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
@@ -335,6 +348,38 @@ abstract class SelectBase implements BaseTool {
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
         ),
+      );
+    } else if (
+      altKey &&
+      this.editor.mode.modeName !== 'sequence-layout-mode' &&
+      renderer.drawingEntity instanceof BaseMonomer
+    ) {
+      // Alt + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to (#4451). Sequence mode keeps its own
+      // Ctrl/Cmd-based gesture above, untouched.
+      this.startMoveIfNeeded(renderer);
+      const connectedMonomers = getAllConnectedMonomersRecursively(
+        renderer.drawingEntity,
+      );
+      connectedMonomers.forEach((connectedMonomer) =>
+        connectedMonomer.turnOnSelection(),
+      );
+      // A bond's `firstMonomer` is fixed at construction, so checking it here
+      // (rather than just `.selected` on both ends) naturally visits each
+      // intra-chain bond exactly once instead of twice.
+      const bondsInsideChain = connectedMonomers.flatMap((connectedMonomer) =>
+        connectedMonomer.bonds.filter(
+          (bond): bond is PolymerBond | HydrogenBond =>
+            (bond instanceof PolymerBond || bond instanceof HydrogenBond) &&
+            bond.firstMonomer === connectedMonomer &&
+            Boolean(bond.secondMonomer?.selected),
+        ),
+      );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities([
+          ...connectedMonomers,
+          ...bondsInsideChain,
+        ]),
       );
     }
 
@@ -358,7 +403,7 @@ abstract class SelectBase implements BaseTool {
 
   protected abstract updateSelectionViewParams(): void;
 
-  protected abstract onSelectionMove(isShiftPressed: boolean);
+  protected abstract onSelectionMove(isShiftPressed: boolean): void;
 
   static calculateAngleSnap(
     monomerPositionPlusCursorDelta: Vec2,
@@ -452,8 +497,8 @@ abstract class SelectBase implements BaseTool {
     threshold: number,
     pointToCheckOnAnotherAxis: number,
     snappingPointOnAnotherAxis: number,
-    thresholdOnAnotherAxis,
-  ) {
+    thresholdOnAnotherAxis: number,
+  ): boolean {
     return (
       pointToCheck < snappingPoint + threshold &&
       pointToCheck > snappingPoint - threshold &&
@@ -470,8 +515,7 @@ abstract class SelectBase implements BaseTool {
     movementDelta: Vec2,
   ) {
     const results: GroupCenterSnapResult[] = [];
-    const selectedEntitiesBbox =
-      DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    const selectedEntitiesBbox = getStructureBbox(selectedEntities);
     const selectedEntitiesCenter = new Vec2(
       selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
       selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
@@ -483,10 +527,7 @@ abstract class SelectBase implements BaseTool {
       for (let j = i + 1; j < connectedMonomers.length; j++) {
         const monomerA = connectedMonomers[i];
         const monomerB = connectedMonomers[j];
-        const pairBbox = DrawingEntitiesManager.getStructureBbox([
-          monomerA,
-          monomerB,
-        ]);
+        const pairBbox = getStructureBbox([monomerA, monomerB]);
         const pairCenter = new Vec2(
           pairBbox.left + pairBbox.width / 2,
           pairBbox.top + pairBbox.height / 2,
@@ -964,7 +1005,7 @@ abstract class SelectBase implements BaseTool {
       return a.connectionLength - b.connectionLength;
     });
 
-    return snappingOptions[0] || emptyResult;
+    return snappingOptions[0] ?? emptyResult;
   }
 
   mousemove(event: MouseEvent) {
@@ -1168,8 +1209,11 @@ abstract class SelectBase implements BaseTool {
     }
   }
 
-  mouseOverDrawingEntity(event) {
-    const renderer = event.target.__data__;
+  mouseOverDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
     const modelChanges =
       this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
         renderer.drawingEntity,
@@ -1177,8 +1221,11 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  mouseLeaveDrawingEntity(event) {
-    const renderer: BaseRenderer = event.target.__data__;
+  mouseLeaveDrawingEntity(event: MouseEvent): void {
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
@@ -1187,13 +1234,18 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverPolymerBond(event) {
+  public mouseOverPolymerBond(event: MouseEvent): void {
     if (event.buttons === 1) {
       return;
     }
 
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
+    if (!renderer) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -1202,10 +1254,12 @@ abstract class SelectBase implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseLeavePolymerBond(event) {
-    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-      event.target.__data__;
-    if (!renderer.polymerBond) {
+  public mouseLeavePolymerBond(event: MouseEvent): void {
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
+    if (!renderer?.polymerBond) {
       return;
     }
 
@@ -1301,6 +1355,7 @@ abstract class SelectBase implements BaseTool {
         const viewParams = this.buildRotationViewParams(
           this.rotationCenter,
           bbox,
+          this.rotationStartAngle,
         );
         this.editor.transientDrawingView.showRotation({
           ...viewParams,

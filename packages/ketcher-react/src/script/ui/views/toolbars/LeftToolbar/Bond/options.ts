@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
-import { ToolbarItem } from '../../toolbar.types';
+import type { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
+import type { ToolbarItem } from '../../toolbar.types';
 import { makeItems } from '../../ToolbarGroupItem/utils';
 
 const bondCommon: ToolbarItem[] = makeItems([
@@ -36,7 +36,11 @@ const bondQuery: ToolbarItem[] = makeItems([
   'bond-singlearomatic',
   'bond-doublearomatic',
 ]);
-const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen']);
+const bondSpecial: ToolbarItem[] = makeItems([
+  'bond-dative',
+  'bond-haptic',
+  'bond-hydrogen',
+]);
 
 const groups = [bondCommon, bondStereo, bondQuery, bondSpecial];
 const groupOptions = groups.flat();

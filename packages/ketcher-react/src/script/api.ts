@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   InfoResult,
   StructService,
   StructServiceOptions,
   StructServiceProvider,
 } from 'ketcher-core';
 
-type Api = StructService & Promise<InfoResult>;
+export type Api = StructService & Promise<InfoResult>;
 
 // todo: remove - ?? should we? it's in use
 function createApi(

@@ -20,8 +20,8 @@ import {
   fromStereoFlagUpdate,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
   private readonly editor: Editor;

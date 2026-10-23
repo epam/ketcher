@@ -1,10 +1,14 @@
-import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
-import { Editor } from 'src/script/editor';
-import assert from 'assert';
+import type {
+  AtomContextMenuProps,
+  MenuItemsProps,
+} from '../contextMenu.types';
+import type { Editor } from 'src/script/editor';
 import { Item } from 'react-contexify';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { assert } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;
@@ -17,6 +21,7 @@ const useMakeAttachmentPointMenuItems = ({
   selectedAtomId,
   editor,
 }: Props) => {
+  const { t } = useTranslation('components');
   const selectedAtomInMonomerCreationWizard =
     selectedAtomId !== undefined && editor.isMonomerCreationWizardActive;
 
@@ -26,8 +31,11 @@ const useMakeAttachmentPointMenuItems = ({
 
   assert(editor.monomerCreationState);
 
-  const { assignedAttachmentPoints, potentialAttachmentPoints } =
-    editor.monomerCreationState;
+  const {
+    assignedAttachmentPoints,
+    potentialAttachmentPoints,
+    connectionAttachmentPoints,
+  } = editor.monomerCreationState;
 
   const isAtomInAssignedAttachmentPoint = Array.from(
     assignedAttachmentPoints.values(),
@@ -54,7 +62,11 @@ const useMakeAttachmentPointMenuItems = ({
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
 
-  const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
+  const occupiedAttachmentPointNames = new Set([
+    ...assignedAttachmentPoints.keys(),
+    ...(connectionAttachmentPoints?.keys() ?? []),
+  ]);
+  const attachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 
@@ -76,7 +88,7 @@ const useMakeAttachmentPointMenuItems = ({
         data-testid="mark-as-leaving-group"
       >
         <Icon name="leavingGroup" className={styles.icon} />
-        Mark as leaving group
+        {t('contextMenu.markAsLeavingGroup')}
       </Item>,
     );
   }
@@ -100,7 +112,7 @@ const useMakeAttachmentPointMenuItems = ({
       key="mark-as-connection-point"
     >
       <Icon name="connectionPoint" className={styles.icon} />
-      Mark as connection point
+      {t('contextMenu.markAsConnectionPoint')}
     </Item>,
   );
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CommonState } from './common.types';
+import type { CommonState } from './common.types';
 
 const initialState: CommonState = {
   cursorPosition: {

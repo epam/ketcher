@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -19,6 +15,7 @@ import {
   clickOnCanvas,
   openFile,
   takeElementScreenshot,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -80,17 +77,19 @@ import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();
@@ -177,7 +176,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 4: Enter key not adds undeletable preset to Preset section', async () => {
+  test('Case 4: Enter key not adds undeletable preset to Preset section', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6870
@@ -189,9 +190,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Select any Preset (U in my case)
      * 4. Press Enter key
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await Library(page).selectMonomer(Preset.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -211,10 +210,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
+    await moveMouseAway(page);
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Case 6: Correct highlight behavior for microstructures when opening a file in Macro Mode', async () => {
+  test('Case 6: Correct highlight behavior for microstructures when opening a file in Macro Mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6409
@@ -225,7 +227,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Verify that the highlight accurately outlines the selected microstructures
      * 3. Ensure no extra floating highlight artifacts appear
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/ketcher - 2025-02-03T145910.386.ket',
@@ -237,7 +238,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 7: Correct numbering in sequence mode when adding Phosphates', async () => {
+  test('Case 7: Correct numbering in sequence mode when adding Phosphates', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6584
@@ -249,9 +252,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Add a Phosphates to the sequence.
      * 4. Observe the numbering of the added component.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAPPPPPAAAAAAAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -264,7 +265,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 8: Modified phosphates not shift away from main structure during expand in Micro Mode', async () => {
+  test('Case 8: Modified phosphates not shift away from main structure during expand in Micro Mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6557
@@ -274,7 +277,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Select all structure
      * 3. Expand it
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/macro-structures.ket',
@@ -314,7 +316,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 10: Export of monomers to SDF v3000 works correct', async () => {
+  test('Case 10: Export of monomers to SDF v3000 works correct', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/5860
@@ -325,7 +329,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Save canvas to SDF v3000
      * 4. Load it back using Add to canvas button (same for Open as New Project)
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/All type of monomers in horisontal chain and large micromolecule in the middle.ket',
@@ -355,10 +358,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Save canvas to Fasta or Sequence file
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).selectMonomer(Peptide.O);
     await Library(page).selectMonomer(Peptide.K);
     await verifyFASTAExport(page, '>Sequence1\nOK');
@@ -388,7 +387,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await PasteFromClipboardDialog(page).closeWindow();
   });
 
-  test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async () => {
+  test('Case 13: System not replaces "Salts and Solvents" molecules with CH4 while loading if no mouse move and some other molecules present on the canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/3878
@@ -397,7 +398,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Go to Micro mode
      * 2. Load from file
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/Source.mol',
@@ -405,7 +405,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 14: When opening a macro file with 50 or more monomers in micro mode, application not freezes', async () => {
+  test('Case 14: When opening a macro file with 50 or more monomers in micro mode, application not freezes', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/3907
@@ -416,20 +418,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Swtch to Macromolecules mode
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/fifty-monomers.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
   });
 
-  test('Case 15: When opening a macro file with 100 or more monomers in micro mode, application not freezes', async () => {
+  test('Case 15: When opening a macro file with 100 or more monomers in micro mode, application not freezes', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/3907
@@ -440,20 +444,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Swtch to Macromolecules mode
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/hundred-monomers.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
   });
 
-  test('Case 16: It is not possible to expand ambiguous monomers on micromolecules canvas', async () => {
+  test('Case 16: It is not possible to expand ambiguous monomers on micromolecules canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/5789
@@ -463,7 +469,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Select all structure
      * 3. Expand it
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
@@ -475,7 +480,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 17: It is not possible to expand unknown nucleotide on micromolecules canvas', async () => {
+  test('Case 17: It is not possible to expand unknown nucleotide on micromolecules canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/5791
@@ -485,7 +492,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Select all structure
      * 3. Expand it
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/17. Unknown nucleotide.ket',
@@ -496,7 +502,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 18: Rotation is correct upon exporting transformed monomer to SVG or PNG', async () => {
+  test('Case 18: Rotation is correct upon exporting transformed monomer to SVG or PNG', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/7062
@@ -508,7 +516,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Export to SVG
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/two-monomers-connected.ket',
@@ -535,10 +542,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -564,6 +567,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await page.keyboard.press('Alt+C');
     await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -581,6 +585,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       title: 'Calculate properties (Alt+C)',
     };
     const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
+      await CalculateVariablesPanel(page).closeWindow();
+    }
     await expect(button).toHaveAttribute(
       'title',
       calculatePropertiesButton.title,
@@ -590,8 +597,11 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'title',
       calculatePropertiesButton.title,
     );
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await button.click();
+    await expect(CalculateVariablesPanel(page).closeButton).toBeVisible();
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
@@ -618,7 +628,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 23: Able to collapse monomer back after flipping and changing mode from Micro to Macro and back', async () => {
+  test('Case 23: Able to collapse monomer back after flipping and changing mode from Micro to Macro and back', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/7024
@@ -630,7 +642,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Go to Macromolecules mode and back to Molecules mode
      * 5. Try to collapse monomer
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheCanvas(page);
@@ -641,6 +652,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await ContextMenu(
@@ -661,10 +673,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the Calculate Properties window.
      * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -679,7 +687,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 25: Rotation work for expanded monomers on Molecules mode', async () => {
+  test('Case 25: Rotation work for expanded monomers on Molecules mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/7007
@@ -689,7 +699,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Expand monomer and rotate it
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await takeEditorScreenshot(page);
@@ -702,7 +711,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Limit size of structures in preview', async () => {
+  test('Case 26: Limit size of structures in preview', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/4212
@@ -712,20 +723,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Add some molecules and structures on canvas in micro mode ( e.g. Benzene ring, molecules )
      * 2. Switch to Macro mode and hover over abbreviations
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/benzene-ring-with-attachment-point.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async () => {
+  test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/7027
@@ -736,14 +749,15 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Hover over leaving group atom(s)
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await page.mouse.move(650, 350);
     await takeEditorScreenshot(page);
   });
 
-  test('Case 29: Layout not changes when switching from micro mode to sequence mode and back', async () => {
+  test('Case 29: Layout not changes when switching from micro mode to sequence mode and back', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/5085
@@ -755,15 +769,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Switch back to Micro mode
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Layout changes when switching from micro mode to sequence mode and back.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page);
@@ -798,7 +810,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 31: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas', async () => {
+  test('Case 31: Saving monomers to SDF v3000 works correct - system not saves every monomer template for every monomer on the canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2772
@@ -808,7 +822,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Save canvas to SDF v3000 and check the result
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Saving monomers to SDF v300o works wrong.ket',
@@ -827,7 +840,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 32: Ketcher not fails to save structure in MOL V3000 format when encountering custom attachment labels like “Ch”', async () => {
+  test('Case 32: Ketcher not fails to save structure in MOL V3000 format when encountering custom attachment labels like “Ch”', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2781
@@ -837,7 +852,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from MOL
      * 3. Save canvas to MOL v3000 and check the result
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V3000/Bugs/DnaBadPairs.mol',
@@ -856,7 +870,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 33: Save a reaction with Multi-Tailed Arrow to Daylight SMARTS format', async () => {
+  test('Case 33: Save a reaction with Multi-Tailed Arrow to Daylight SMARTS format', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2462
@@ -866,7 +882,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Save canvas to Daylight SMARTS format
      * 3. Load it back
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Reaction-with-Multi-Tailed-Arrow.ket',
@@ -884,7 +899,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 34: Export to KET format work. System not throw exception', async () => {
+  test('Case 34: Export to KET format work. System not throw exception', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2858
@@ -894,7 +911,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Save canvas to KET and check the result
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/svg-colored-images-with-elements.ket',
@@ -912,7 +928,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 35: System not reverse reaction order on Calculated Values dialog', async () => {
+  test('Case 35: System not reverse reaction order on Calculated Values dialog', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2859
@@ -923,7 +941,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Press Calculated Values button (or press Alt+c)
      */
 
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -944,7 +961,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     ).toHaveValue('[C 85.6 H 14.4] > [C 85.6 H 14.4]');
   });
 
-  test('Case 36: Copy to clipboard work if Multi-Tailed Arrow present on the canvas', async () => {
+  test('Case 36: Copy to clipboard work if Multi-Tailed Arrow present on the canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2860
@@ -954,7 +973,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Select all object on the canvas (press Ctrl+a) and copy it to clipboard (press Ctrl+c)
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/benzene-ring-and-multitailed-arrow.ket',
@@ -965,7 +983,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 37: Saving of 3:3 reaction to SDF v2000 not causes exception: Convert error! core: <reaction> is not a base molecule', async () => {
+  test('Case 37: Saving of 3:3 reaction to SDF v2000 not causes exception: Convert error! core: <reaction> is not a base molecule', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2805
@@ -975,7 +995,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from KET
      * 3. Save canvas to SDF v2000 and check the result
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'RDF-V2000/rdf-rxn-v2000-reaction-3x3-new.rdf',
@@ -994,7 +1013,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 38: System not shifts text label to the right', async () => {
+  test('Case 38: System not shifts text label to the right', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/1683
@@ -1004,7 +1025,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Open from pptx file
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openPPTXFileAndValidateStructurePreview(
       page,
       'PPTX/Shifted.labels.pptx',
@@ -1012,7 +1032,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 39: Saved Ellipse and Line Shapes in CDXML format are correctly displayed after opening', async () => {
+  test('Case 39: Saved Ellipse and Line Shapes in CDXML format are correctly displayed after opening', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2047
@@ -1024,7 +1046,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 4. Open saved file
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/simple-objects-line-and-shape.ket',
@@ -1053,7 +1074,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1069,14 +1089,16 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 41: Able to export single expanded monomer to SVG Image, system not throws error: array: invalid index 0 (size=0)', async () => {
+  test('Case 41: Able to export single expanded monomer to SVG Image, system not throws error: array: invalid index 0 (size=0)', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2888
@@ -1087,7 +1109,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Expand monomer (and flip Vertically - OPTIONALLY)
      * 4. Save canvas to SVG Image and check the result
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheCanvas(page);
@@ -1096,7 +1117,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await verifySVGExport(page);
   });
 
-  test('Case 42: System not ignores carrige return in text blocks in loaded CDX', async () => {
+  test('Case 42: System not ignores carrige return in text blocks in loaded CDX', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/1679
@@ -1106,7 +1129,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Open from pptx file
      * 3. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openPPTXFileAndValidateStructurePreview(
       page,
       'PPTX/Text.messages.pptx',
@@ -1125,7 +1147,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/sequenses-connected-through-chem.ket',
@@ -1143,7 +1164,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CalculateVariablesPanel(page).peptidesTab.click();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('2.39');
+    ).toEqual('9.87');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
@@ -1177,14 +1198,16 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.53');
+    ).toEqual('2.35');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('0');
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 45: Calculated Values work if reaction arrow overlaps reactant bounding box', async () => {
+  test('Case 45: Calculated Values work if reaction arrow overlaps reactant bounding box', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/Indigo/issues/2897
@@ -1195,7 +1218,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Press Calculated Values button
      */
 
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Calculated Values work if reaction arrow overlaps reactant bounding box.ket',
@@ -1343,7 +1365,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 51: Correct structure for PHE-L-Phenylalanine in template library', async () => {
+  test('Case 51: Correct structure for PHE-L-Phenylalanine in template library', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/4838
@@ -1352,7 +1376,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Open L-aminoacids or D-aminoacids in template library
      * 2. Put selected template to canvas
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.DAminoAcids,
@@ -1368,7 +1391,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 52: Settings for the "attachment point tool" update with changed pixel settings', async () => {
+  test('Case 52: Settings for the "attachment point tool" update with changed pixel settings', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/4189
@@ -1377,7 +1402,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 1. Put benzene ring with attachment point on the canvas
      * 2. Go to Setting->Bonds and change Bond thickness to 5
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/benzene-ring-with-ap.ket',

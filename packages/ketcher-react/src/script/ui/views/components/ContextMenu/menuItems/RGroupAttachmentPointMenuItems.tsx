@@ -1,13 +1,14 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item } from 'react-contexify';
-import {
+import { useTranslation } from 'react-i18next';
+import type {
   MenuItemsProps,
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import useRGroupAttachmentPointRemove from '../hooks/useRGroupAttachmentPointRemove';
 import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
 import { useAppContext } from 'src/hooks/useAppContext';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { ketcherProvider } from 'ketcher-core';
@@ -15,6 +16,7 @@ import { ketcherProvider } from 'ketcher-core';
 const RGroupAttachmentPointMenuItems: FC<
   MenuItemsProps<RGroupAttachmentPointContextMenuProps>
 > = (props) => {
+  const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();
   const handleRemove = useRGroupAttachmentPointRemove();
   const [
@@ -43,11 +45,11 @@ const RGroupAttachmentPointMenuItems: FC<
         hidden={rgroupAttachmentPointHidden}
         onClick={handleEditRGroupAttachmentPoint}
       >
-        Edit...
+        {t('contextMenu.editEllipsis')}
       </Item>
       <HighlightMenu onHighlight={highlight} />
       <Item {...props} onClick={handleRemove}>
-        Remove
+        {t('contextMenu.remove')}
       </Item>
     </>
   );

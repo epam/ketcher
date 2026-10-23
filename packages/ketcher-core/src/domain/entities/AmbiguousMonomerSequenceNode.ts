@@ -1,4 +1,4 @@
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousMonomerSequenceNode {
   constructor(public monomer: AmbiguousMonomer) {}

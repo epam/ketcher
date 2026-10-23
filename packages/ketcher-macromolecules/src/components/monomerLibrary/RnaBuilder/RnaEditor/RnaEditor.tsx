@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
@@ -33,6 +34,7 @@ import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 import clsx from 'clsx';
 
 export const RnaEditor = ({ duplicatePreset }) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
@@ -42,23 +44,33 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+
+  // Activating a preset opens the editor. isEditMode is read to decide whether
+  // it should open, but it is deliberately not a trigger: expandEditor turns
+  // edit mode on while collapsing an unsaved preset, so reacting to that would
+  // immediately re-expand the panel the user just closed.
+  if (activePreset !== prevActivePreset) {
+    setPrevActivePreset(activePreset);
+    if (activePreset && shouldExpand) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
-    if (activePreset) {
-      if (activePreset.name || isEditMode) setExpanded(true);
-      return;
+    if (!activePreset) {
+      dispatch(createNewPreset());
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     }
-
-    dispatch(createNewPreset());
-    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  }, [activePreset, dispatch]);
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);
@@ -78,7 +90,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
         onClick={expandEditor}
         data-testid="rna-builder-expand-button"
       >
-        RNA Builder
+        {t('monomerLibrary.rnaBuilderHeader')}
         <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
       {activePreset &&

@@ -1,6 +1,6 @@
 import { Action } from './action';
 import { SGroupAttachmentPointRemove } from '../operations';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 import { isNumber } from 'lodash';
 
 export function fromSgroupAttachmentPointRemove(

@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { useMemo } from 'react';
-import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { type DropzoneOptions, useDropzone } from 'react-dropzone';
 
 import parentStyles from './OpenOptions.module.less';
 import styles from './FileDrop.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 type FileDropProps = {
   buttonLabel: string;

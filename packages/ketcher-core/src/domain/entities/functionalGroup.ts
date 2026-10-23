@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
-import { Pool } from './pool';
+import type { Pool } from './pool';
 import { SGroup } from './sgroup';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import type { HalfBond } from './halfBond';
 
 const isSaltOrSolvent = (moleculeName: string): boolean => {
@@ -66,7 +66,7 @@ export class FunctionalGroup {
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded;
+    return Boolean(this.#sgroup.data.expanded);
   }
 
   get relatedSGroup(): SGroup {
@@ -231,7 +231,7 @@ export class FunctionalGroup {
   ) {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
-      const atomsInSGroup = sGroup?.atoms;
+      const atomsInSGroup = sGroup?.atoms ?? [];
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,

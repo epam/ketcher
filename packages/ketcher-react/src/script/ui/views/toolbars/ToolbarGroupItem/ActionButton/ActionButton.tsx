@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../action';
+import type { UiAction, UiActionAction } from '../../../../action';
+import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 interface ActionButtonProps {
   name: IconName;
@@ -53,6 +55,7 @@ const ActionButton = (props: Props) => {
     onAction,
     dataTestId,
   } = props;
+  const { t } = useTranslation();
 
   if (status.hidden) {
     return null;
@@ -62,6 +65,7 @@ const ActionButton = (props: Props) => {
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
+  const title = resolveActionTitle(t, action);
 
   const handleClick = () => {
     if (action?.action) {
@@ -74,7 +78,7 @@ const ActionButton = (props: Props) => {
       data-testid={dataTestId ?? name}
       disabled={disabled}
       onClick={handleClick}
-      title={shortcut ? `${action?.title} (${shortcut})` : action?.title}
+      title={shortcut ? `${title} (${shortcut})` : title}
       className={clsx(
         classes.button,
         {

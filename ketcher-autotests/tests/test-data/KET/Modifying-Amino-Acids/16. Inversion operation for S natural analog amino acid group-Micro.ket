@@ -216,7 +216,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -340,6 +341,7 @@
         "fullName": "D-Serine",
         "alias": "dS",
         "aliasHELM": "dS",
+        "aliasBILN": "dS",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

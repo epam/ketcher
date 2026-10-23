@@ -1,9 +1,9 @@
-import { AtomLabel, AttachmentPointName } from 'ketcher-core';
+import type { AtomLabel, AttachmentPointName } from 'ketcher-core';
 import Select from '../../../../../component/form/Select';
-import { AttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
+import type { AttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
 import styles from './AttachmentPointControls.module.less';
 import clsx from 'clsx';
-import { forwardRef, ReactNode } from 'react';
+import { type ReactNode, forwardRef } from 'react';
 
 type Props = {
   data: AttachmentPointSelectData;

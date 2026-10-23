@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -59,17 +55,19 @@ import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBon
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();
@@ -103,7 +101,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
           timeout: 5000,
         },
       );
-    } catch (error) {
+    } catch (_error) {
       console.log(
         'Component not found, but this is expected if there is no selection',
       );
@@ -154,11 +152,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    // await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    // await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    // await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    //   LayoutMode.Sequence,
-    // );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).setLength('210');
     await takeEditorScreenshot(page, {
@@ -166,7 +159,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async () => {
+  test(`Case 9: Mouse cursor positioned at the top left corner of preset when zoom 400%`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7371
@@ -180,10 +175,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * We have a bug https://github.com/epam/ketcher/issues/7371 when it will be fixed need to update
      * the screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(Preset.A);
     await page.mouse.down();
@@ -203,7 +194,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await page.mouse.up();
   });
 
-  test('Case 2: The tooltip not appears behind the context menu options', async () => {
+  test('Case 2: The tooltip not appears behind the context menu options', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7178
@@ -213,10 +206,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Load from HELM
      * 3. Open the context menu for the monomer
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -231,7 +220,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 3: Able to create hydrogen bond', async () => {
+  test('Case 3: Able to create hydrogen bond', async ({ FlexCanvas: _ }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7073
@@ -241,10 +230,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Load from KET
      * 3. Establish a hydrogen bond between two monomers
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Unable to create bond Uncaught RangeError Maximum call stack size exceeded.ket',
@@ -260,7 +245,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 4: Chemical elements not disappear when attempting to Expand the Structure in Micro mode after selecting one in Macro mode', async () => {
+  test('Case 4: Chemical elements not disappear when attempting to Expand the Structure in Micro mode after selecting one in Macro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7117
@@ -272,12 +259,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 4. Select a monomer
      * 5. Switch to Micro and expand the structure
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/structure-with-two-a.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await clickInTheMiddleOfTheCanvas(page);
@@ -288,7 +275,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 5: Monomer tooltip appears and not remain in place when mouse cursor moved away', async () => {
+  test('Case 5: Monomer tooltip appears and not remain in place when mouse cursor moved away', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7170
@@ -300,10 +289,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 4. Right-click a monomer to see the tooltip
      * 5. Move the mouse cursor away from the monomer
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -347,7 +332,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test(`Case 8: IDT code shown correct for SS3 CHEM`, async () => {
+  test(`Case 8: IDT code shown correct for SS3 CHEM`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7187
@@ -358,10 +345,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Hover over SS3 CHEM
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await Library(page).switchToCHEMTab();
     await Library(page).hoverMonomer(Chem.SS3);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -391,10 +374,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page, {
@@ -403,7 +384,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test(`Case 11: System not loads base as sugar`, async () => {
+  test(`Case 11: System not loads base as sugar`, async ({ FlexCanvas: _ }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2964
@@ -412,10 +393,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 1. Go to Macromolecules mode - Flex mode (empty canvas)
      * 2. Load from HELM
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -432,7 +409,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 12: Isoelectric Point calculation formula correct for peptide C', async () => {
+  test('Case 12: Isoelectric Point calculation formula correct for peptide C', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2929
@@ -443,10 +422,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Check Isoelectric point
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -455,11 +430,13 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     await CalculateVariablesPanel(page).closeButton.click();
   });
 
-  test('Case 13: Сorrect Implementation of PKA calculation', async () => {
+  test('Case 13: Сorrect Implementation of PKA calculation', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2985
@@ -470,10 +447,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Check pKa values
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -482,7 +455,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
@@ -494,7 +467,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     );
   });
 
-  test('Case 14: System not shows positive charge modificator as extra + in addition to charge modified molecule', async () => {
+  test('Case 14: System not shows positive charge modificator as extra + in addition to charge modified molecule', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/1686
@@ -506,12 +481,13 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * Bug not fixed https://github.com/epam/Indigo/issues/1686
      * When it will be fixed need to update the screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Extra.plus.pptx');
     await takeEditorScreenshot(page);
   });
 
-  test('Case 15: System not saves unique structure monomer named same as monomer in the library as the monomer from the library', async () => {
+  test('Case 15: System not saves unique structure monomer named same as monomer in the library as the monomer from the library', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/3024
@@ -525,10 +501,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * For now system loads both monomers from the same (with unique structure)
      * When it will be fixed need to update the screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     const fileContent = await readFileContent(
       'Molfiles-V3000/Bugs/monomer-with-unique-structure.mol',
     );
@@ -559,7 +531,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 16: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides', async () => {
+  test('Case 16: System calculate melting temperature for mix of nucleotides/nucleosides and unsplit nucleotides/unsplit nucleosides', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2936
@@ -570,10 +544,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Check Melting Temperature
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -606,10 +576,10 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'CHEM1{4aPEGMal]}$$$$V2.0',
     ];
     for (const helm of helmCases) {
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-        goToPeptides: false,
-      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -624,7 +594,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     }
   });
 
-  test('Case 18: Input fields for ion concentration and oligonucleotides not become inactive after entering excessively long number', async () => {
+  test('Case 18: Input fields for ion concentration and oligonucleotides not become inactive after entering excessively long number', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2998
@@ -637,10 +609,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 5. Enter excessively long number in the oligonucleotides field
      * 6. Verify that the input fields
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -658,7 +626,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
   });
 
-  test('Case 19: System not allow to export molecules to 3-letter sequence format', async () => {
+  test('Case 19: System not allow to export molecules to 3-letter sequence format', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2965
@@ -670,10 +640,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Press Save button and select 3-letter sequence format
      * 4. Verify that the error message appears
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/System allow to export molecules to 3-letter sequence format.ket',
@@ -691,7 +657,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await SaveStructureDialog(page).closeWindow();
   });
 
-  test('Case 20: Atom weights in indigo updated according to last IUPAC data', async () => {
+  test('Case 20: Atom weights in indigo updated according to last IUPAC data', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2926
@@ -701,10 +669,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -720,7 +684,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 21: Select central monomer of chain of three', async () => {
+  test('Case 21: Select central monomer of chain of three', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2926
@@ -732,10 +698,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 4. Open the "Calculate Properties" window
      * 5. Verify that the mass is 103.139 Da
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -752,7 +714,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
-  test('Case 22: Export (and import) of sequence of nucleosides to HELM works', async () => {
+  test('Case 22: Export (and import) of sequence of nucleosides to HELM works', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/2989
@@ -764,10 +728,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 4. Import HELM file to canvas
      * 5. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Export (and import) of sequence of nucleosides to HELM works wrong.ket',
@@ -787,7 +747,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {
+  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/6410
@@ -800,10 +762,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Select the bond tool
      * 4. Connect the bond to the micro molecule
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',

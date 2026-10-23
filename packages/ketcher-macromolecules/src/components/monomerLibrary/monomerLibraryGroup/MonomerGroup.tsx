@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
-import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
-  isAmbiguousMonomerLibraryItem,
+  MonomerItemType,
   MonomerOrAmbiguousType,
+  isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectEditor, showPreview } from 'state/common';
+import {
+  useAppSelector,
+  useDebouncedShowPreview,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
+import { selectEditor } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
-import { PreviewStyle, PreviewType } from 'state';
+import { PreviewType } from 'state';
 import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
@@ -43,81 +46,71 @@ const MonomerGroup = ({
   disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
-    let monomerDisabled = false;
-    if (isAmbiguousMonomerLibraryItem(monomer)) {
-      return false;
+    if (disabled) {
+      return disabled;
     }
 
-    if (disabled) {
-      monomerDisabled = disabled;
-    } else {
-      const monomerValidations =
-        activeGroupItemValidations[`${monomer.props?.MonomerClass}s`];
-      if (monomerValidations?.length > 0 && monomer.props?.MonomerCaps) {
-        for (const monomerValidation of monomerValidations) {
-          if (!(monomerValidation in monomer.props.MonomerCaps)) {
-            monomerDisabled = true;
-          }
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      if (isSequenceEditInRNABuilderMode) {
+        return false;
+      }
+      const groupValidations = groupName
+        ? activeGroupItemValidations[groupName]
+        : undefined;
+      return groupValidations?.includes('DISABLED') ?? false;
+    }
+
+    const monomerItem = monomer as MonomerItemType;
+    const monomerValidations =
+      activeGroupItemValidations[`${monomerItem.props?.MonomerClass}s`];
+    if (monomerValidations?.length > 0 && monomerItem.props?.MonomerCaps) {
+      for (const monomerValidation of monomerValidations) {
+        if (!(monomerValidation in monomerItem.props.MonomerCaps)) {
+          return true;
         }
       }
     }
-    return monomerDisabled;
+
+    return false;
   };
 
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  const handleItemMouseLeave = () => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  };
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: closeLibraryPreview,
+  } = useDebouncedShowPreview();
 
   const handleItemMouseMove = (
     monomer: MonomerOrAmbiguousType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    handleItemMouseLeave();
+    closeLibraryPreview();
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
     }
 
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    let style: PreviewStyle;
-    let previewType: PreviewType;
-    let top: string;
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      top = monomer
-        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
-        : '';
+      const top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-      previewType = PreviewType.AmbiguousMonomer;
-      style = { left, top, transform: 'translate(-50%, 0)' };
+      debouncedShowPreview({
+        type: PreviewType.AmbiguousMonomer,
+        monomer,
+        style: { left, top, transform: 'translate(-50%, 0)' },
+      });
     } else {
-      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
-      style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
-      previewType = PreviewType.Monomer;
+      const top = calculateMonomerPreviewTop(cardCoordinates);
+      debouncedShowPreview({
+        type: PreviewType.Monomer,
+        monomer,
+        style: { right: '-88px', top, transform: 'translate(-50%, 0)' },
+      });
     }
-
-    const previewData = {
-      type: previewType,
-      monomer,
-      style,
-    };
-
-    debouncedShowPreview(previewData);
   };
 
   const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
@@ -149,9 +142,10 @@ const MonomerGroup = ({
               item={monomer}
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
-              onMouseLeave={handleItemMouseLeave}
+              onMouseLeave={closeLibraryPreview}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => selectMonomer(monomer)}
+              onStarClick={closeLibraryPreview}
             />
           );
         })}

@@ -16,7 +16,7 @@
 
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
-import { KetFileImageNode } from 'domain/entities/image';
+import type { KetFileImageNode } from 'domain/entities/image';
 
 export function imageToKet(imageNode: KetFileNode) {
   return {
@@ -24,6 +24,5 @@ export function imageToKet(imageNode: KetFileNode) {
     format: (imageNode as KetFileImageNode).format,
     boundingBox: (imageNode as KetFileImageNode).boundingBox,
     data: imageNode.data,
-    selected: imageNode.selected,
   };
 }

@@ -24,12 +24,14 @@ const dispatchAction = (dispatch, actionName, event) => {
   dispatch(onAction(action[actionName].action(event)));
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
   const onZoomIn = (event) => dispatchAction(dispatch, 'zoom-in', event);
   const onZoomOut = (event) => dispatchAction(dispatch, 'zoom-out', event);
 
   return {
-    ...dispatch(initEditor),
+    ...dispatch((dispatch, getState) =>
+      initEditor(dispatch, getState, ownProps.ketcherId),
+    ),
     onZoomOut,
     onZoomIn,
   };

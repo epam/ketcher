@@ -16,7 +16,11 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { LibraryNameType } from 'src/constants';
-import { IRnaPreset, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
+import {
+  IRnaPreset,
+  isAmbiguousMonomerLibraryItem,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
 
 import { RnaAccordionContainer } from './styles';
 import { useDispatch } from 'react-redux';
@@ -50,16 +54,28 @@ export const RnaElements = ({
   );
 
   const [newPreset, setNewPreset] = useState(activePreset);
+  // The RNA builder is reset through redux, which cannot reach this local copy
+  // of the preset being built. Re-syncing it whenever the active preset or the
+  // edit mode changes keeps a cancelled preset's monomers from constraining the
+  // library the next time a group is expanded (#9690).
+  const [prevBuilderState, setPrevBuilderState] = useState({
+    activePreset,
+    isEditMode,
+  });
+
+  if (
+    prevBuilderState.activePreset !== activePreset ||
+    prevBuilderState.isEditMode !== isEditMode
+  ) {
+    setPrevBuilderState({ activePreset, isEditMode });
+    setNewPreset(activePreset);
+  }
 
   useEffect(() => {
-    dispatch(
-      setActiveRnaBuilderItem(
-        isEditMode && activePreset
-          ? activeRnaBuilderItem
-          : RnaBuilderPresetsItem.Presets,
-      ),
-    );
-  }, [isEditMode]);
+    if (!isEditMode) {
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    }
+  }, [isEditMode, dispatch]);
 
   const groupsData = useGroupsData(libraryName);
 
@@ -70,7 +86,7 @@ export const RnaElements = ({
   }, [dispatch]);
 
   const handleItemSelection = useCallback(
-    (monomer, groupName) => {
+    (monomer: MonomerOrAmbiguousType, groupName) => {
       if (isEditMode) {
         dispatch(setActiveMonomerKey(getMonomerUniqueKey(monomer)));
       }
@@ -85,10 +101,10 @@ export const RnaElements = ({
 
       const monomerClass = isAmbiguousMonomerLibraryItem(monomer)
         ? monomer.monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
-        : monomer.props.MonomerClass.toLowerCase();
+        : monomer.props.MonomerClass?.toLowerCase();
       const currentPreset = {
         ...newPreset,
-        [monomerClass]: monomer,
+        [monomerClass as string]: monomer,
       };
       setNewPreset(currentPreset);
       dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));

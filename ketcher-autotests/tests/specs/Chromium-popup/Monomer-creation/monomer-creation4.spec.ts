@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
@@ -206,7 +203,7 @@ test(`4. Verify that both potential AAs and potential LGAs are marked on hover o
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(page, 600, 260);
+  await dragMouseTo(page, 600, 320);
 
   const atoms = ['N', 'P', 'C', 'S'];
   for (const atom of atoms) {
@@ -357,11 +354,6 @@ test(`8. Check that potential AA is every atom that is connected to a potential 
   await clickOnCanvas(page, 0, 0);
   await selectAllStructuresOnCanvas(page);
   await LeftToolbar(page).createMonomer();
-
-  // to make molecule visible
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(600, 200);
-  await dragMouseTo(page, 500, 250);
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   for (const targetAtom of await targetAtoms.all()) {
@@ -557,12 +549,12 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
     AttachmentPoint.R1,
   ).first();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.EditConnectionPoint,
     ),
   ).toBeTruthy();
   expect(
-    ContextMenu(page, attachmentPointR1).isOptionVisible(
+    await ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.RemoveAssignment,
     ),
   ).toBeTruthy();

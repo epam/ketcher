@@ -1,19 +1,28 @@
-import {
+import type {
   IKetMacromoleculesContent,
   IKetMonomerNode,
   IKetMonomerTemplate,
   IKetAmbiguousMonomerNode,
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct, Vec2 } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import {
+  type Struct,
+  type BaseMonomer,
+  type BaseMonomerConfig,
+  Vec2,
+} from 'domain/entities';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { MonomerItemType } from 'domain/types/monomers';
 import {
   modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
-import { KetSerializer } from 'domain/serializers';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  convertMonomerTemplateToStruct,
+  fillStructRgLabelsByMonomerTemplate,
+  getTemplateAttachmentPoints,
+} from './monomerTemplateUtils';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -30,7 +39,9 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     unresolved: template.unresolved,
     modificationTypes: template.modificationTypes,
     ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
+    ...(template.aliasBILN ? { aliasBILN: template.aliasBILN } : {}),
     ...(template.aliasAxoLabs ? { aliasAxoLabs: template.aliasAxoLabs } : {}),
+    ...(template.aliasBILN ? { aliasBILN: template.aliasBILN } : {}),
     ...(template.hidden ? { hidden: template.hidden } : {}),
   };
 }
@@ -55,7 +66,7 @@ export function monomerToDrawingEntity(
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
-      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
+      attachmentPoints: getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
         expanded,
@@ -68,9 +79,21 @@ export function monomerToDrawingEntity(
   );
 }
 
+export type MonomerFactoryFn = (
+  monomerItem: MonomerItemType,
+) => [
+  new (
+    monomerItem: MonomerItemType,
+    position?: Vec2,
+    config?: BaseMonomerConfig,
+  ) => BaseMonomer,
+  ...unknown[],
+];
+
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
+  monomerFactory: MonomerFactoryFn,
 ) {
   const monomerTemplates = variantMonomerTemplate.options.map((option) => {
     return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
@@ -79,16 +102,12 @@ export function createMonomersForVariantMonomer(
     const monomerItem = {
       label: monomerTemplate.alias,
       expanded: false,
-      struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
+      struct: convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
-      attachmentPoints:
-        KetSerializer.getTemplateAttachmentPoints(monomerTemplate),
+      attachmentPoints: getTemplateAttachmentPoints(monomerTemplate),
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
-    KetSerializer.fillStructRgLabelsByMonomerTemplate(
-      monomerTemplate,
-      monomerItem,
-    );
+    fillStructRgLabelsByMonomerTemplate(monomerTemplate, monomerItem);
 
     return new MonomerConstructor(monomerItem, undefined, {
       generateId: false,
@@ -103,12 +122,17 @@ export function variantMonomerToDrawingEntity(
   node: IKetAmbiguousMonomerNode,
   template: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
+  monomerFactory: MonomerFactoryFn,
 ) {
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),
   );
 
-  const monomers = createMonomersForVariantMonomer(template, parsedFileContent);
+  const monomers = createMonomersForVariantMonomer(
+    template,
+    parsedFileContent,
+    monomerFactory,
+  );
 
   return drawingEntitiesManager.addAmbiguousMonomer(
     {

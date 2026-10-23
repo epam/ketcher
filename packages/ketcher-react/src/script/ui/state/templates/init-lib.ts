@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import {
+  type SdfItem,
   KetcherLogger,
   KetSerializer,
-  SdfItem,
   SdfSerializer,
   SettingsManager,
 } from 'ketcher-core';
@@ -25,7 +25,7 @@ import {
 import { appUpdate } from '../options/actions';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
-import { AnyAction, Dispatch } from 'redux';
+import type { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
 let needReinitializeTemplateLibrary = false;
@@ -59,8 +59,7 @@ const deserializeSdfTemplates = (
     tmpls.map((tmpl) => {
       const pr = prefetchSplit(tmpl);
       if (pr.file)
-        tmpl.props.prerender =
-          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
+        tmpl.props.prerender = cachedFiles.includes(pr.file) ? `#${pr.id}` : '';
 
       return tmpl;
     }),
@@ -121,7 +120,7 @@ function userTmpls(): SdfItem[] {
 export function prefetchStatic(url: string): Promise<string> {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
     if (resp.ok) return resp.text();
-    throw Error('Could not fetch ' + url);
+    throw new Error('Could not fetch ' + url);
   });
 }
 
@@ -143,7 +142,7 @@ function prefetchRender(
   const files = tmpls.reduce((res, tmpl) => {
     const file = prefetchSplit(tmpl).file;
 
-    if (file && res.indexOf(file) === -1) res.push(file);
+    if (file && !res.includes(file)) res.push(file);
 
     return res;
   }, [] as string[]);

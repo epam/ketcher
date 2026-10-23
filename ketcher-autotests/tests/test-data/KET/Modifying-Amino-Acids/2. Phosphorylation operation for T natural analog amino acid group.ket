@@ -186,7 +186,8 @@
                     -0.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -235,7 +236,8 @@
                     -1.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -372,6 +374,7 @@
         "fullName": "O-phospho-L-threonine",
         "alias": "ThrPO3",
         "aliasHELM": "Thr_PO3H2",
+        "aliasBILN": "Thr_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

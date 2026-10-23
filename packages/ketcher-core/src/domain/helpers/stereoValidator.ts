@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from 'domain/entities/bond';
+import type { Bond } from 'domain/entities/bond';
 import type { Neighbor, Struct } from 'domain/entities/struct';
 
 function isCorrectStereoCenter(
@@ -25,7 +25,7 @@ function isCorrectStereoCenter(
 ) {
   const beginAtom = struct.atoms.get(bond.begin);
 
-  let EndAtomNeigh: number | undefined = NaN;
+  let EndAtomNeigh: number | undefined = Number.NaN;
 
   if (endNeighs?.length === 2) {
     EndAtomNeigh =

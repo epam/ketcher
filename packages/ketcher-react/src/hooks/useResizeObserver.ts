@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RefCallback, RefObject, useMemo, useState } from 'react';
+import { type RefCallback, type RefObject, useMemo, useState } from 'react';
 
 import { throttle } from 'lodash';
 import useResizeObserver from 'use-resize-observer/polyfilled';

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { StyledButton } from './styles';
-import { IIconButtonBaseProps } from './types';
+import type { IIconButtonBaseProps } from './types';
 
 export const IconButtonBase = ({
   onClick,

@@ -2,7 +2,7 @@ import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity
 import { Vec2 } from 'domain/entities/vec2';
 import { Pool } from 'domain/entities/pool';
 import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
-import { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
 import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 

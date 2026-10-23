@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable promise/param-names */
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   keyboardPressOnCanvas,
@@ -32,6 +26,7 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -365,7 +360,7 @@ test.describe('Calculate Properties tests', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('10.07');
   });
 
   test('Case 14: Check that Amino acid count displayed as a grid with the appropriate number next to the natural analogue', async () => {
@@ -599,7 +594,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G1', 'T1', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G1', 'T1', 'U-', 'Other-']);
   });
 
   test('Case 22: Check if a natural analogue does not appear within the selection, the appropriate card is grayed out', async () => {
@@ -638,10 +633,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 23: Check Calculation Properties for standard R2-R1 connected monomers with microstructure', async () => {
+  test('Case 23: Check Calculation Properties for standard R2-R1 connected monomers with microstructure', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculation Properties for standard R2-R1 connected monomers with microstructure displayed.
@@ -651,7 +648,6 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r2-r1.ket',
@@ -665,41 +661,43 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('9.01');
+    ).toEqual('5.03');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
     expect(
       await CalculateVariablesPanel(page).getPeptideNaturalAnalogCountList(),
     ).toEqual([
-      'A0',
+      'A-',
       'C1',
-      'D0',
-      'E0',
-      'F0',
-      'G0',
-      'H0',
-      'I0',
-      'K0',
-      'L0',
-      'M0',
-      'N0',
-      'O0',
-      'P0',
-      'Q0',
-      'R0',
-      'S0',
-      'T0',
-      'U0',
-      'V0',
-      'W0',
-      'Y0',
-      'Other0',
+      'D-',
+      'E-',
+      'F-',
+      'G-',
+      'H-',
+      'I-',
+      'K-',
+      'L-',
+      'M-',
+      'N-',
+      'O-',
+      'P-',
+      'Q-',
+      'R-',
+      'S-',
+      'T-',
+      'U-',
+      'V-',
+      'W-',
+      'Y-',
+      'Other-',
     ]);
     await takePageScreenshot(page);
   });
 
-  test('Case 24: Check Calculation Properties for non-standard R3-R1 connected monomers with microstructure', async () => {
+  test('Case 24: Check Calculation Properties for non-standard R3-R1 connected monomers with microstructure', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculation Properties for standard R3-R1 connected monomers with microstructure displayed.
@@ -709,7 +707,6 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-connected-to-microstructure-r3-r1.ket',
@@ -723,36 +720,36 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('5.96');
+    ).toEqual('6.15');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');
     expect(
       await CalculateVariablesPanel(page).getPeptideNaturalAnalogCountList(),
     ).toEqual([
-      'A0',
+      'A-',
       'C1',
-      'D0',
-      'E0',
-      'F0',
-      'G0',
-      'H0',
-      'I0',
-      'K0',
-      'L0',
-      'M0',
-      'N0',
-      'O0',
-      'P0',
-      'Q0',
-      'R0',
-      'S0',
-      'T0',
-      'U0',
-      'V0',
-      'W0',
-      'Y0',
-      'Other0',
+      'D-',
+      'E-',
+      'F-',
+      'G-',
+      'H-',
+      'I-',
+      'K-',
+      'L-',
+      'M-',
+      'N-',
+      'O-',
+      'P-',
+      'Q-',
+      'R-',
+      'S-',
+      'T-',
+      'U-',
+      'V-',
+      'W-',
+      'Y-',
+      'Other-',
     ]);
   });
 
@@ -770,12 +767,10 @@ test.describe('Calculate Properties tests', () => {
       'KET/single-benzene-ring.ket',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C6H6');
     expect(molecularMass).toEqual('78.114');
@@ -797,18 +792,18 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectPartOfMolecules(page, 10);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
   });
 
-  test('Case 27: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence', async () => {
+  test('Case 27: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence.
@@ -818,25 +813,24 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C2H2');
     expect(molecularMass).toEqual('26.038');
   });
 
-  test('Case 28: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence', async () => {
+  test('Case 28: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence.
@@ -846,25 +840,24 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select part of benzene ring
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectPartOfMolecules(page, -80);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H3');
     expect(molecularMass).toEqual('39.057');
   });
 
-  test('Case 29: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence', async () => {
+  test('Case 29: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Сorrect molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence.
@@ -874,25 +867,24 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-peptide.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C9H11NO');
     expect(molecularMass).toEqual('149.193');
   });
 
-  test('Case 30: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence', async () => {
+  test('Case 30: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Сorrect molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence.
@@ -902,25 +894,24 @@ test.describe('Calculate Properties tests', () => {
      * 3. Select all
      * 4. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/benzene-ring-connected-to-rna.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C16H18N5O6P');
     expect(molecularMass).toEqual('407.323');
   });
 
-  test('Case 31: Verify correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene)', async () => {
+  test('Case 31: Verify correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene).
@@ -929,22 +920,21 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(page, 'KET/naphthalene.ket');
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H8');
     expect(molecularMass).toEqual('128.174');
   });
 
-  test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async () => {
+  test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: The molecular formula and molecular mass is correctly calculated for a simple peptide structure.
@@ -953,17 +943,12 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C3H7NO2');
     expect(molecularMass).toEqual('89.094');
@@ -980,12 +965,10 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Preset.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C10H14N5O7P');
     expect(molecularMass).toEqual('347.224');
@@ -1002,18 +985,18 @@ test.describe('Calculate Properties tests', () => {
      */
     await Library(page).selectMonomer(Chem.Test_6_Ch);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C14H28BrClINO2');
     expect(molecularMass).toEqual('484.637');
   });
 
-  test('Case 35: Verify correct molecular mass calculation for complex polymers with connected small molecules', async () => {
+  test('Case 35: Verify correct molecular mass calculation for complex polymers with connected small molecules', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Correct molecular mass calculation for complex polymers with connected small molecules.
@@ -1022,7 +1005,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
@@ -1030,18 +1012,18 @@ test.describe('Calculate Properties tests', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const molecularFormula = await CalculateVariablesPanel(
-      page,
-    ).getMolecularFormula();
-    const molecularMass = await CalculateVariablesPanel(
-      page,
-    ).getMolecularMassValue();
+    const molecularFormula =
+      await CalculateVariablesPanel(page).getMolecularFormula();
+    const molecularMass =
+      await CalculateVariablesPanel(page).getMolecularMassValue();
 
     expect(molecularFormula).toEqual('C33H43N5O10S');
     expect(molecularMass).toEqual('701.792');
   });
 
-  test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async () => {
+  test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Isoelectric point calculation with multiple groups are correct (Leaving group atoms at occupied attachment points are ignored).
@@ -1050,17 +1032,13 @@ test.describe('Calculate Properties tests', () => {
      * 2. Add a structure with multiple groups
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const isoelectricPoint = await CalculateVariablesPanel(
-      page,
-    ).getIsoelectricPointValue();
+    const isoelectricPoint =
+      await CalculateVariablesPanel(page).getIsoelectricPointValue();
 
-    expect(isoelectricPoint).toEqual('5.96');
+    expect(isoelectricPoint).toEqual('6.11');
   });
 
   test('Case 37: Verify correct calculation of melting temperature for a simple double-stranded RNA', async () => {
@@ -1078,9 +1056,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });
@@ -1100,9 +1077,8 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    const meltingTemperature = await CalculateVariablesPanel(
-      page,
-    ).getMeltingTemperatureValue();
+    const meltingTemperature =
+      await CalculateVariablesPanel(page).getMeltingTemperatureValue();
 
     expect(meltingTemperature).toEqual('-12.4');
   });
@@ -1283,7 +1259,7 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other-']);
   });
 
   test('Case 44: Verify correct property calculations for DNA containing modified bases', async () => {
@@ -1309,10 +1285,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other0']);
+    ).toEqual(['A1', 'C1', 'G1', 'T1', 'U1', 'Other-']);
   });
 
-  test('Case 45: Verify property calculations for structures containing both peptide and RNA along with additional microstructures', async () => {
+  test('Case 45: Verify property calculations for structures containing both peptide and RNA along with additional microstructures', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculations for structures containing both peptide and RNA along with additional microstructures.
@@ -1321,7 +1299,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-rna-microstructure-connected.ket',
@@ -1337,10 +1314,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 46: Verify property calculations for structures containing both peptide and DNA along with additional microstructures', async () => {
+  test('Case 46: Verify property calculations for structures containing both peptide and DNA along with additional microstructures', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculations for structures containing both peptide and DNA along with additional microstructures.
@@ -1349,7 +1328,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/peptide-dna-microstructure-connected.ket',
@@ -1363,10 +1341,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 47: Verify calculate properties for Peptides if Phosphate is missing in mixed chain', async () => {
+  test('Case 47: Verify calculate properties for Peptides if Phosphate is missing in mixed chain', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculate properties for Peptides if Phosphate is missing in mixed chain.
@@ -1375,7 +1355,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1390,10 +1369,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 48: Verify calculate properties when two chains are connected via a CHEM', async () => {
+  test('Case 48: Verify calculate properties when two chains are connected via a CHEM', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculate properties when two chains are connected via a CHEM.
@@ -1402,7 +1383,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/sequenses-connected-through-chem.ket',
@@ -1416,10 +1396,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 49: Verify calculate properties when two chains are connected via a microstructure with attachment points', async () => {
+  test('Case 49: Verify calculate properties when two chains are connected via a microstructure with attachment points', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculate properties when two chains are connected via a microstructure with attachment points.
@@ -1428,7 +1410,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Load from file
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-with-attachment-points.ket',
@@ -1442,10 +1423,12 @@ test.describe('Calculate Properties tests', () => {
     );
     expect(
       await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
   });
 
-  test('Case 50: Verify calculate properties when two chains are connected via a microstructure without attachment points', async () => {
+  test('Case 50: Verify calculate properties when two chains are connected via a microstructure without attachment points', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculate properties when two chains are connected via a microstructure without attachment points.
@@ -1456,7 +1439,6 @@ test.describe('Calculate Properties tests', () => {
      * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
      * After fix we need to remove screenshot and uncomment asserts
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/microstructure-without-attachment-points.ket',
@@ -1470,11 +1452,13 @@ test.describe('Calculate Properties tests', () => {
     // );
     // expect(
     //   await CalculateVariablesPanel(page).getNucleotideNaturalAnalogCountList(),
-    // ).toEqual(['A1', 'C0', 'G0', 'T0', 'U0', 'Other0']);
+    // ).toEqual(['A1', 'C-', 'G-', 'T-', 'U-', 'Other-']);
     await takePageScreenshot(page);
   });
 
-  test('Case 51: Check that hydrophobicity graph is displayed after opening Calculate Properties', async () => {
+  test('Case 51: Check that hydrophobicity graph is displayed after opening Calculate Properties', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that hydrophobicity graph is displayed after opening Calculate Properties
@@ -1486,9 +1470,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1502,7 +1483,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 52: Check that graph remains readable for 4 amino acids ', async () => {
+  test('Case 52: Check that graph remains readable for 4 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 4 amino acids
@@ -1514,9 +1497,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1530,7 +1510,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 53: Check that graph remains readable for 44 amino acids ', async () => {
+  test('Case 53: Check that graph remains readable for 44 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 44 amino acids
@@ -1542,9 +1524,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1558,7 +1537,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 54: Check that graph remains readable for 110 amino acids ', async () => {
+  test('Case 54: Check that graph remains readable for 110 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 110 amino acids
@@ -1570,9 +1551,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1586,7 +1564,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 55: Check that graph remains readable for 532 amino acids ', async () => {
+  test('Case 55: Check that graph remains readable for 532 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 532 amino acids
@@ -1598,9 +1578,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1611,9 +1588,10 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page);
     // Dirty hack
     await CalculateVariablesPanel(page).closeWindow();
-    await page.waitForTimeout(1 * 1000);
+    await page.waitForTimeout(1000);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
+    await page.waitForTimeout(2000);
 
     await takeElementScreenshot(
       page,
@@ -1621,10 +1599,12 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 56: Check that graph remains readable for 1240 amino acids ', async () => {
+  test('Case 56: Check that graph remains readable for 1240 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
-     * Description: Check that graph remains readable for 532 amino acids
+     * Description: Check that graph remains readable for 1240 amino acids
      * Scenario:
      * 1. Go to Macro - Flex
      * 2. Load from HELM peptide chain
@@ -1633,9 +1613,7 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+    await pageReload(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1643,7 +1621,8 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await page.waitForTimeout(5000);
+    await waitForCalculateProperties(page);
+    await page.waitForTimeout(6000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,
@@ -1844,7 +1823,9 @@ test.describe('Calculate Properties tests', () => {
     await page.setViewportSize(originalViewport);
   });
 
-  test('Case 62: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect labels like 20, 40, 60, 80, 100 (based on spacing logic)', async () => {
+  test('Case 62: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect labels like 20, 40, 60, 80, 100 (based on spacing logic)', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect
@@ -1859,9 +1840,6 @@ test.describe('Calculate Properties tests', () => {
      * Version 3.5
      */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

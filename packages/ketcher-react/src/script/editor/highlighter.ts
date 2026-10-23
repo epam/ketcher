@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromHighlightCreate, fromHighlightClear, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  fromHighlightCreate,
+  fromHighlightClear,
+} from 'ketcher-core';
 
 import type { Editor } from './Editor';
 
@@ -23,6 +27,7 @@ type HighlightAttributes = {
   bonds: number[];
   rgroupAttachmentPoints: number[];
   color: string;
+  outline?: boolean;
 };
 
 export class Highlighter {
@@ -45,7 +50,7 @@ export class Highlighter {
     const createdHighlights: HighlightAttributes[] = [];
 
     args.forEach((arg) => {
-      const { atoms, bonds, rgroupAttachmentPoints, color } = arg;
+      const { atoms, bonds, rgroupAttachmentPoints, color, outline } = arg;
       if (typeof color !== 'string') {
         return;
       }
@@ -77,6 +82,7 @@ export class Highlighter {
         bonds: validBonds,
         rgroupAttachmentPoints: validRgroupAttachmentPoints,
         color,
+        outline,
       });
     });
     const action = fromHighlightCreate(

@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 export class CalcImplicitH extends BaseOperation {
   readonly atomIds: Array<number>;

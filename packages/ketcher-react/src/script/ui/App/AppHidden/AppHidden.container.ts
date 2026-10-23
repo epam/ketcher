@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppHidden, AppHiddenCallProps } from './AppHidden';
+import { type AppHiddenCallProps, AppHidden } from './AppHidden';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { initTmplLib } from '../../state/templates';
 

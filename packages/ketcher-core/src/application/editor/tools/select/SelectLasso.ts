@@ -15,8 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { CoreEditor } from 'application/editor';
-import { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
+import type { CoreEditor } from 'application/editor';
+import type { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
 import { Vec2 } from 'domain/entities';
 
 export class SelectLasso extends SelectBase {

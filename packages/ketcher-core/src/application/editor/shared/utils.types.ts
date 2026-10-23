@@ -1,4 +1,4 @@
-import { Bond } from 'domain/entities/bond';
+import type { Bond } from 'domain/entities/bond';
 
 export type BondAtoms = Pick<Bond, 'begin' | 'end'>;
 

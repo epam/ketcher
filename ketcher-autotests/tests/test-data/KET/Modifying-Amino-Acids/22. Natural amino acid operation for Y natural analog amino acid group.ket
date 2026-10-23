@@ -470,7 +470,8 @@
                     -1.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -691,6 +692,7 @@
         "fullName": "Tyrosine",
         "alias": "Y",
         "aliasHELM": "Y",
+        "aliasBILN": "Y",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

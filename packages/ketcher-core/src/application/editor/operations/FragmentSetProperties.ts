@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 import { BaseOperation } from './BaseOperation';
-import { StructProperty } from 'domain/entities/struct';
+import type { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
 
 class FragmentSetProperties extends BaseOperation {
-  readonly frid: any;
+  readonly frid: number;
   readonly properties?: Array<StructProperty>;
 
-  constructor(fragmentId: any, properties?: Array<StructProperty>) {
+  constructor(fragmentId: number, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_SET_PROPERTIES);
     this.frid = fragmentId;
     this.properties = properties;

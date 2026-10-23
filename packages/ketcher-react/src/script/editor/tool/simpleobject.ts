@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,15 +16,16 @@
  ***************************************************************************/
 
 import {
+  type SimpleObjectMode,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
-  SimpleObjectMode,
   CoordinateTransformation,
+  SimpleObjectDelete,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
@@ -43,7 +45,7 @@ class SimpleObjectTool implements Tool {
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
-    if (ci && ci.map === 'simpleObjects') {
+    if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;
@@ -93,6 +95,11 @@ class SimpleObjectTool implements Tool {
           );
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
+          if (!(addOperation instanceof SimpleObjectDelete)) {
+            throw new TypeError(
+              'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
+            );
+          }
           this.dragCtx.itemId = addOperation.data.id;
           this.dragCtx.action = action;
           this.editor.update(this.dragCtx.action, true);

@@ -16,16 +16,17 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
 
 export class LoopMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
+    id: number | undefined;
+    d: Vec2 | undefined;
   };
 
-  constructor(id?: any, d?: any) {
+  constructor(id?: number, d?: Vec2) {
     super(OperationType.LOOP_MOVE);
     this.data = { id, d };
   }
@@ -35,6 +36,7 @@ export class LoopMove extends BaseOperation {
     // but we have to somehow move the aromatic ring,
     // which is associated with the loop, rather than with any of the bonds
     const { id, d } = this.data;
+    if (id === undefined || d === undefined) return;
     const reloop = restruct.reloops.get(id);
 
     if (reloop?.visel) {
@@ -48,5 +50,10 @@ export class LoopMove extends BaseOperation {
     const inverted = new LoopMove();
     inverted.data = this.data;
     return inverted;
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d?.x === 0 && d?.y === 0;
   }
 }

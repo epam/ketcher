@@ -17,7 +17,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import FontFaceObserver from 'font-face-observer';
-import Select, { Option } from './Select';
+import Select, { type Option } from './Select';
 
 const commonFonts: string[] = [
   'Arial',

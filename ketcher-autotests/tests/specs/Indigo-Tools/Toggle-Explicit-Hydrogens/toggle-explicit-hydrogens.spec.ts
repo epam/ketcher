@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { test, Page } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
@@ -264,7 +261,7 @@ test.describe('4. Fold/unfold hydrogens for', () => {
     'Simple molecules + Radical.ket',
     // Simple molecules + Radical - https://github.com/epam/Indigo/issues/1556, https://github.com/epam/Indigo/issues/1557
     'Simple molecules + Valences.ket',
-    // Simple molecules + Valences - https://github.com/epam/Indigo/issues/1551
+    // Simple molecules + Valences - https://github.com/epam/Indigo/issues/1551, https://github.com/epam/Indigo/issues/3702
     'Simple Molecules.ket',
   ];
 
@@ -593,7 +590,8 @@ test.describe('12. Fold/unfold hydrogens for', () => {
 
   const fileNames = [
     'All Custom Query Bonds with S-Group - Query component.ket',
-    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625
+    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625,
+    // https://github.com/epam/Indigo/issues/3688
   ];
 
   for (const fileName of fileNames) {

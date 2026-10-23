@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import type { Operation } from 'domain/entities/Operation';
+import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 
 export class RxnArrowAddOperation implements Operation {
   public rxnArrow: RxnArrow;

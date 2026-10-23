@@ -163,7 +163,8 @@
                     -1.058,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -354,6 +355,7 @@
         "fullName": "D-Histidine",
         "alias": "dH",
         "aliasHELM": "dH",
+        "aliasBILN": "dH",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

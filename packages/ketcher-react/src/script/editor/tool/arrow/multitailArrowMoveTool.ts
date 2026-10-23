@@ -1,15 +1,15 @@
-import {
+import type {
   ArrowMoveTool,
   CommonArrowDragContext,
   MultitailArrowClosestItem,
 } from './arrow.types';
 import {
+  type Action,
   CoordinateTransformation,
   MultitailArrowRefName,
   fromMultitailArrowHeadTailMove,
   fromMultitailArrowHeadTailsResize,
   fromMultitailArrowMove,
-  Action,
 } from 'ketcher-core';
 import { ArrowTool } from './arrowTool';
 

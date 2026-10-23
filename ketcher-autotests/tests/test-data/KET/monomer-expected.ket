@@ -132,7 +132,8 @@
         "id": "bAla___beta-Alanine",
         "fullName": "beta-Alanine",
         "alias": "bAla",
-        "aliasHELM": "bAla",
+        "aliasHELM": "Bal",
+        "aliasBILN": "Bal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

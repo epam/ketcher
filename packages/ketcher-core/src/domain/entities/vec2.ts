@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 
 export interface Point {
   x?: number;
@@ -23,10 +22,12 @@ export interface Point {
   z?: number;
 }
 
+type Vec2ConstructorArgs = [Point] | [x?: number, y?: number, z?: number];
+
 // Optimize major GC in case of importing big sequences - only parse float when necessary
 // most of the time it is already a number from atom.clone
 function toNumber(value: number | string): number {
-  return typeof value === 'number' ? value : parseFloat(value);
+  return typeof value === 'number' ? value : Number.parseFloat(value);
 }
 
 export class Vec2 {
@@ -39,24 +40,24 @@ export class Vec2 {
 
   constructor(point: Point);
   constructor(x?: number, y?: number, z?: number);
-  constructor(...args: Array<any>) {
+  constructor(...args: Vec2ConstructorArgs) {
     if (args.length === 0) {
       this.x = 0;
       this.y = 0;
       this.z = 0;
-    } else if (arguments.length === 1) {
-      const point = args[0];
+    } else if (args.length === 1) {
+      const point: Point = typeof args[0] === 'object' ? args[0] : {};
       this.x = toNumber(point.x || 0);
       this.y = toNumber(point.y || 0);
       this.z = toNumber(point.z || 0);
-    } else if (arguments.length === 2) {
+    } else if (args.length === 2) {
       this.x = toNumber(args[0] || 0);
       this.y = toNumber(args[1] || 0);
       this.z = 0;
-    } else if (arguments.length === 3) {
-      this.x = toNumber(args[0]);
-      this.y = toNumber(args[1]);
-      this.z = toNumber(args[2]);
+    } else if (args.length === 3) {
+      this.x = toNumber(args[0] ?? NaN);
+      this.y = toNumber(args[1] ?? NaN);
+      this.z = toNumber(args[2] ?? NaN);
     } else {
       throw new Error('Vec2(): invalid arguments');
     }
@@ -139,7 +140,7 @@ export class Vec2 {
   }
 
   length(): number {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
+    return Math.hypot(this.x, this.y);
   }
 
   equals(v: Vec2): boolean {
@@ -165,7 +166,7 @@ export class Vec2 {
   }
 
   scaled(sInitial: number): Vec2 {
-    const s = isFinite(sInitial) ? sInitial : 1;
+    const s = Number.isFinite(sInitial) ? sInitial : 1;
     return new Vec2(this.x * s, this.y * s, this.z * s);
   }
 

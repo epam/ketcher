@@ -16,7 +16,7 @@
 
 import BaseOperation from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type ShiftMonomerData = {
@@ -62,5 +62,11 @@ export class ShiftMonomerOperation extends BaseOperation {
       id: this.data.id,
       value: this.previousValue,
     });
+  }
+
+  isDummy() {
+    const { value } = this.data;
+    if (value === null) return false;
+    return (value.x ?? 0) === 0 && (value.y ?? 0) === 0;
   }
 }

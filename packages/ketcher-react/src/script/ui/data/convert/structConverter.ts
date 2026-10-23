@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,12 +16,13 @@
  ***************************************************************************/
 
 import {
-  Atom,
+  type Atom,
+  type Struct,
+  type SupportedFormat,
   Bond,
   RxnArrowMode,
   StereoFlag,
-  Struct,
-  SupportedFormat,
+  exceedsMolfileV2000Limit,
   getPropertiesByFormat,
 } from 'ketcher-core';
 
@@ -47,7 +49,7 @@ export function couldBeSaved(
     );
     const bondsHaveUnsupportedProperties = arrayOfBonds.some(
       (bond) =>
-        bond.reactingCenterStatus ||
+        Boolean(bond.reactingCenterStatus) ||
         bond.type === Bond.PATTERN.TYPE.DATIVE ||
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );
@@ -140,6 +142,15 @@ export function couldBeSaved(
     const isVal = struct.atoms.find((_ind, atom) => atom.explicitValence >= 0);
     if (isVal !== null)
       warnings.push(`In ${formatName} valence is not supported`);
+  }
+
+  if (
+    (['mol'] as SupportedFormat[]).includes(format) &&
+    exceedsMolfileV2000Limit(struct)
+  ) {
+    warnings.push(
+      'The structure exceeds the MDL Molfile V2000 limit (999 atoms/bonds) and will be saved in V3000 format.',
+    );
   }
 
   if (

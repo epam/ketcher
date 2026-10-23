@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { MiewDialog } from './canvas/MiewDialog';
@@ -100,16 +99,14 @@ export const IndigoFunctionsToolbar = (page: Page) => {
       );
     },
 
-    async threeDViewer(
-      options: { waitForApplyButtonIsEnabled?: boolean } = {
-        waitForApplyButtonIsEnabled: true,
-      },
-    ) {
+    async threeDViewer({
+      waitForApplyButtonIsEnabled = true,
+    }: { waitForApplyButtonIsEnabled?: boolean } = {}) {
       await waitForSpinnerFinishedWork(
         page,
         async () => await locators.ThreeDViewerButton.click(),
       );
-      if (options.waitForApplyButtonIsEnabled) {
+      if (waitForApplyButtonIsEnabled) {
         await expect(MiewDialog(page).applyButton).toBeEnabled();
       }
     },

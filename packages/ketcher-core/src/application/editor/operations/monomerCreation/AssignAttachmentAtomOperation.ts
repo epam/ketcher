@@ -1,9 +1,9 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MonomerCreationState, ReStruct } from 'application/render';
+import type { MonomerCreationState, ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
-import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
+import { assert } from 'utilities';
+import type { AttachmentPointName } from 'domain/types';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
@@ -27,16 +27,22 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { potentialAttachmentPoints } = this.monomerCreationState;
+    const { potentialAttachmentPoints, connectionAttachmentPoints } =
+      this.monomerCreationState;
     this.assignedAttachmentPoints =
       this._assignedAttachmentPoints ??
       this.monomerCreationState.assignedAttachmentPoints;
 
+    const occupiedAttachmentPointNames = new Set([
+      ...this.assignedAttachmentPoints.keys(),
+      ...(this._assignedAttachmentPoints
+        ? []
+        : (connectionAttachmentPoints?.keys() ?? [])),
+    ]);
+
     this.attachmentPointName =
       this._attachmentPointName ??
-      getNextFreeAttachmentPoint(
-        Array.from(this.assignedAttachmentPoints.keys()),
-      );
+      getNextFreeAttachmentPoint(Array.from(occupiedAttachmentPointNames));
 
     this.assignedAttachmentPoints.set(this.attachmentPointName, [
       this.attachmentAtomId,

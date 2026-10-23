@@ -17,6 +17,7 @@
 import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
@@ -66,6 +67,7 @@ const ButtonContainer = styled.div`
 `;
 
 export const FullscreenButton = (props) => {
+  const { t } = useTranslation('macromolecules');
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen);
 
   useEffect(() => {
@@ -89,13 +91,18 @@ export const FullscreenButton = (props) => {
 
   const toggleFullscreen = () => {
     const fullscreenElement = getFullscreenElement();
-    isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
+    if (isFullScreen()) {
+      exitFullscreen();
+    } else if (fullscreenElement) {
+      requestFullscreen(fullscreenElement);
+    }
   };
   return (
     <ButtonContainer className={props.className}>
       <IconButton
         onClick={toggleFullscreen}
         iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}
+        title={t('buttons.fullscreen')}
         testId="fullscreen-mode-button"
       />
     </ButtonContainer>

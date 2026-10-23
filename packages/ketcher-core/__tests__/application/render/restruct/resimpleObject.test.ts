@@ -1,5 +1,5 @@
 import { ReStruct, Render } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import ReSimpleObject from 'application/render/restruct/resimpleObject';
 import { SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
 

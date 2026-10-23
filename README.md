@@ -21,8 +21,10 @@ specification and R-Logic.
 - :microscope: Zoom in/out, hotkeys, cut/copy/paste
 - :crystal_ball: OCR - ability to recognize structures at pictures (image files) and reproduce them
 - :clipboard: Copy and paste between different chemical editors
+- 🛠️ Settings support (Rendering, Displaying, Debugging)
 - :camera: Use of SVG to achieve best quality in-browser chemical structure rendering
 - :telescope: Built-in 3D viewer [miew-react](https://github.com/epam/miew/tree/master/packages/miew-react)
+- 🌐 Localized UI (English, Simplified Chinese) with a live language switcher in Settings
 
 ### Editor builtin tools:
 
@@ -37,7 +39,6 @@ specification and R-Logic.
 - Easy to use R-Group and S-Group tools (Generic, Multiple group, SRU polymer, peratom, Data S-Group)
 - Reaction Tool (reaction generating, manual and automatic atom-to-atom mapping)
 - Flip/Rotate Tool
-
 
 ## Packages
 
@@ -58,6 +59,18 @@ specification and R-Logic.
 - [Macromolecules](./documentation/macromolecules.md)
 - [Supported formats](./documentation/supported-formats.md)
 - [Usage examples](./documentation/usage-examples.md)
+
+## Localization (i18n)
+
+Ketcher ships as an **English-only build by default**. To enable multiple languages, set
+`KETCHER_MULTI_LANGUAGE_BUILD=true` when building `ketcher-react` or
+`ketcher-macromolecules`. The multi-language build adds a **Settings → General → Language**
+switcher, applies language changes without a reload, and remembers the choice for the next
+visit.
+
+The multi-language build currently supports **English** and **Simplified Chinese (简体中文)**.
+Chemistry vocabulary (element symbols, bond-type names, and file-format codes) remains
+untranslated to stay consistent with chemistry file formats.
 
 ## Contribution
 

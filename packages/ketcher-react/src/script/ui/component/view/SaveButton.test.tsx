@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { SaveButton } from './savebutton';
 
 jest.mock('../../../../hooks', () => {
@@ -50,5 +50,18 @@ describe('SaveButton', () => {
       const btn = screen.getByRole('button');
       expect(btn).toBeDisabled();
     });
+  });
+
+  it('Should get file data only after the button is clicked', () => {
+    const getData = jest.fn(() => '');
+    render(
+      <SaveButton filename="test.sdf" getData={getData}>
+        Save
+      </SaveButton>,
+    );
+
+    expect(getData).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button'));
+    expect(getData).toHaveBeenCalledTimes(1);
   });
 });

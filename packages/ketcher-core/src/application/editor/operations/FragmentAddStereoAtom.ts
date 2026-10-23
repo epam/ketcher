@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 class FragmentAddStereoAtom extends BaseOperation {
   readonly data: { frid: number; aid: number };

@@ -1,6 +1,6 @@
 import {
-  Atom,
-  Editor,
+  type Atom,
+  type Editor,
   fromAtomsAttrs,
   fromRGroupAttachmentPointUpdate,
   KetcherLogger,

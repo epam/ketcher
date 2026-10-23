@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import {
-  ElementFormData,
+  type ElementFormData,
   fromElement,
   toElement,
 } from '../../../../data/convert/structconv';
@@ -24,10 +24,11 @@ import { Dialog } from '../../../components';
 import GenericGroups from './components/GenericGroups';
 import classes from './ExtendedTable.module.less';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { Editor } from 'ketcher-core';
+import type { Dispatch } from 'redux';
+import type { Editor } from 'ketcher-core';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface GenericElement {
   type: 'gen';
@@ -44,8 +45,9 @@ interface TableProps {
 }
 
 const Table = (props: TableProps) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? props.label ?? null : null,
+    props.pseudo ? (props.label ?? null) : null,
   );
 
   const selected = (label: string): boolean => value === label;
@@ -68,13 +70,13 @@ const Table = (props: TableProps) => {
 
   return (
     <Dialog
-      title="Extended Table"
+      title={t('dialogs:extendedTable.dialogTitle')}
       withDivider
       className={classes.extendedTable}
       params={props}
       result={result}
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Add' }}
+      buttonsNameMap={{ OK: t('dialogs:shared.addButton') }}
       needMargin={false}
     >
       <GenericGroups

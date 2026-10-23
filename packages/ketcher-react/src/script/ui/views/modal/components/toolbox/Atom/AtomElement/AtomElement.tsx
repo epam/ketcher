@@ -8,16 +8,18 @@ import { getSelectOptionsFromSchema } from 'src/script/ui/utils';
 import ElementNumber from '../ElementNumber/ElementNumber';
 import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
-import { BaseProps } from '../../../../modal.types';
+import type { BaseProps } from '../../../../modal.types';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
-const AtomElement = ({ formState }: BaseProps) => {
+const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const openNestedDialog = (
     modalName: 'period-table' | 'extended-table',
@@ -94,7 +96,7 @@ const AtomElement = ({ formState }: BaseProps) => {
       <Field
         name="atomType"
         component={Select}
-        options={getSelectOptionsFromSchema(atomProps.atomType)}
+        options={getSelectOptionsFromSchema(atomProps.atomType, t)}
         data-testid="atom"
       />
       {AtomFields[atomType]}

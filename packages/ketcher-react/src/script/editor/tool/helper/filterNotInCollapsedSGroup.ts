@@ -1,4 +1,4 @@
-import { Struct } from 'ketcher-core';
+import type { Struct } from 'ketcher-core';
 
 /**
  * return only such elements ids that not part of collapsed group

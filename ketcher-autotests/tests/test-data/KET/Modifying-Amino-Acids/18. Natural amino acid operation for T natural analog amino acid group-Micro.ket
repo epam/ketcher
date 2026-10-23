@@ -187,7 +187,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -228,7 +229,8 @@
                     0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -328,6 +330,7 @@
         "fullName": "Threonine",
         "alias": "T",
         "aliasHELM": "T",
+        "aliasBILN": "T",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -356,6 +359,9 @@
                     ]
                 }
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "T"
     },

@@ -26,6 +26,10 @@
  *
  * @returns {HTMLElement} The element to be used for fullscreen mode
  */
+export const isTouchDevice =
+  typeof window !== 'undefined' &&
+  ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
 export const getFullscreenElement = (): HTMLElement => {
   const ketcherRoot = document.querySelector(
     '.Ketcher-root, .Ketcher-polymer-editor-root',

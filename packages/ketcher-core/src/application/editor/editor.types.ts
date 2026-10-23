@@ -15,15 +15,38 @@
  ***************************************************************************/
 
 import type { Action } from './actions/action';
-import type { MonomerCreationState, Render } from 'application/render';
+import type {
+  MonomerCreationState,
+  Render,
+  RenderOptions,
+} from 'application/render';
 import type { Struct } from 'domain/entities/struct';
-import { selectionKeys } from './shared/constants';
+import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
+import type {
+  MonomerOrAmbiguousType,
+  AttachmentPointName,
+  MonomerItemType,
+} from 'domain/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
-export type EditorSelection = {
-  [key in typeof selectionKeys[number]]?: number[];
-} & {
+export type MonomerCreationWizardRequest = {
+  mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
+  monomer?: BaseMonomer;
+  libraryItem?: MonomerItemType;
+};
+
+export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
+
+export interface EditMonomerPayload {
+  fgIds: number[];
+  variant: EditMonomerVariant;
+}
+
+export type EditorSelection = Partial<
+  Record<(typeof selectionKeys)[number], number[]>
+> & {
   enhancedFlags?: number[];
 };
 export type FloatingToolsParams = {
@@ -31,9 +54,27 @@ export type FloatingToolsParams = {
   rotateHandlePosition?: { x: number; y: number };
 };
 
+export type EditorOptions = Partial<
+  RenderOptions & {
+    viewOnlyMode: boolean;
+  }
+>;
+
 export enum EditorType {
   Micromolecules = 0,
   Macromolecules = 1,
+}
+
+export type EditorSubscriber<T = unknown> = {
+  handler: (data?: T) => void;
+};
+
+export interface RotateController {
+  isRotating: boolean;
+  rerender: () => void;
+  revert: () => void;
+  clean: () => void;
+  updateFloatingToolsPosition: () => void;
 }
 
 export interface Editor {
@@ -46,16 +87,26 @@ export interface Editor {
     y?: number,
   ) => Struct;
   structToAddFragment: (struct: Struct, x?: number, y?: number) => Struct;
-  subscribe: (eventName: string, handler: (data?: any) => any) => any;
-  unsubscribe: (eventName: string, subscriber: any) => void;
+  subscribe: <T = unknown>(
+    eventName: string,
+    handler: (data?: T) => void,
+  ) => EditorSubscriber<T>;
+  unsubscribe: <T = unknown>(
+    eventName: string,
+    subscriber: EditorSubscriber<T>,
+  ) => void;
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
   undo: () => void;
   redo: () => void;
+  historyStack: Action[];
+  historyPtr: number;
+  addHistoryAction: (action: Action) => void;
   clear: () => void;
   clearHistory: () => void;
-  options: (value?: any) => any;
-  setOptions: (opts: string) => any;
-  zoom: (value?: any) => any;
+  options(): RenderOptions;
+  options(value: EditorOptions): void;
+  setOptions: (opts: string) => void;
+  zoom: (value?: number) => number | undefined;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
@@ -74,6 +125,7 @@ export interface Editor {
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
     removeFG: PipelineSubscription;
+    editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
@@ -84,6 +136,7 @@ export interface Editor {
     apiSettings: PipelineSubscription;
     cursor: Subscription;
     updateFloatingTools: Subscription<FloatingToolsParams>;
+    monomerWizardStateChange: Subscription<boolean>;
   };
   update: (
     action: Action | true,
@@ -91,23 +144,35 @@ export interface Editor {
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
-  // supposed to be RotateController from 'ketcher-react' package
-  rotateController: any;
+  rotateController: RotateController;
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
   focusCliparea: () => void;
   closeMonomerCreationWizard: () => void;
+  openMonomerCreationWizardFromMacro: (
+    request: MonomerCreationWizardRequest,
+    onFinish: (savedCanvas: boolean) => void,
+  ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;
   monomerCreationState: MonomerCreationState;
 }
 
 export type LibraryItemDragState = {
-  item: IRnaPreset;
+  item: IRnaPreset | MonomerOrAmbiguousType;
   position: {
     x: number;
     y: number;
   };
 } | null;
+
+/**
+ * Identifies a specific free attachment point on a monomer.
+ * Used to track drag-over hover targets during library-item drag operations.
+ */
+export type AttachmentPointTarget = {
+  monomer: BaseMonomer;
+  attachmentPointName: AttachmentPointName;
+};

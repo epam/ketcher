@@ -1,14 +1,22 @@
+/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
 import {
-  AtomLabel,
-  AttachmentPointName,
+  type AtomLabel,
+  type AttachmentPointName,
+  type RnaPresetComponentKey,
   KetMonomerClass,
-  RnaPresetComponentKey,
 } from 'ketcher-core';
-import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
+  type ChangeEvent,
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
+import type {
   RnaPresetWizardAction,
   RnaPresetWizardState,
   RnaPresetWizardStatePresetFieldValue,
@@ -25,17 +33,19 @@ import {
   selectionSelector,
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
-import { Editor } from '../../../../editor';
-import inputStyles from '../../../component/form/Input/Input.module.less';
+import type { Editor } from '../../../../editor';
+import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
+  type RnaPresetComponentType,
   MonomerCreationMarkAsComponentAction,
-  RnaPresetComponentType,
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import { useTranslation } from 'react-i18next';
+import i18n from 'src/i18n/i18n';
 import {
+  type PhosphatePosition,
   getLeavingAtomForAttachmentPoint,
-  PhosphatePosition,
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
@@ -43,6 +53,10 @@ import {
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
+import {
+  getRnaPresetComponentKeysToSave,
+  hasRequiredRnaPresetComponents,
+} from './RnaPresetStructureValidation';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -60,18 +74,24 @@ interface IRnaPresetTabsProps {
   ) => void;
 }
 
+// Active component (its tab is open): soft pale-blue shading (#8851 §2.2.2).
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
-const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
-const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
-  base: 'Select all atoms that form the base.',
-  sugar: 'Select all atoms that form the sugar.',
-  phosphate: 'Select all atoms that form the phosphate.',
-};
+// Inactive component (its tab is not open): fluorescent-cyan outline (#8851 §2.2.1).
+const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
+const RNA_COMPONENT_KEYS = [
+  'base',
+  'sugar',
+  'phosphate',
+] as const satisfies readonly RnaPresetComponentKey[];
+const RNA_COMPONENT_HINTS = {
+  base: i18n.t('components:monomerCreationWizard.selectBaseAtoms'),
+  sugar: i18n.t('components:monomerCreationWizard.selectSugarAtoms'),
+  phosphate: i18n.t('components:monomerCreationWizard.selectPhosphateAtoms'),
+} satisfies Record<RnaPresetComponentKey, string>;
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
+  const { t } = useTranslation(['components', 'common']);
   const [selectedTab, setSelectedTab] = useState(0);
-  const [isHighlightEnabled, setIsHighlightEnabled] = useState(true);
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
@@ -86,6 +106,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();
+  // Memoized so the connectivity check does not re-run on every wizard
+  // keystroke / tab switch.
+  const isSelectionContinuous = useMemo(
+    () => isStructureContinuous(struct, structureSelection),
+    [struct, structureSelection],
+  );
 
   const presetAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
     assignedAttachmentPoints,
@@ -151,12 +177,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const applyHighlights = useCallback(
-    (activeTabIndex: number, highlightEnabled: boolean) => {
+    (activeTabIndex: number) => {
       editor.highlights.clear();
-
-      if (!highlightEnabled) {
-        return;
-      }
 
       // Apply highlights for all components based on whether they're active or not
       RNA_COMPONENT_KEYS.forEach((componentKey, index) => {
@@ -175,6 +197,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           bonds: componentState.structure.bonds || [],
           rgroupAttachmentPoints: [],
           color: highlightColor,
+          // Active tab → filled shading; other tabs → stroked outline.
+          outline: !isActiveTab,
         });
       });
     },
@@ -183,13 +207,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
-    applyHighlights(newValue, isHighlightEnabled);
-  };
-
-  const handleHighlightToggle = () => {
-    const newHighlightEnabled = !isHighlightEnabled;
-    setIsHighlightEnabled(newHighlightEnabled);
-    applyHighlights(selectedTab, newHighlightEnabled);
+    applyHighlights(newValue);
   };
 
   const handleFieldChange = (
@@ -246,34 +264,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       return;
     }
 
-    applyHighlights(selectedTab, isHighlightEnabled);
+    applyHighlights(selectedTab);
     editor.selection(null);
-  }, [
-    applyHighlights,
-    currentTabStructure,
-    editor,
-    isHighlightEnabled,
-    selectedTab,
-  ]);
+  }, [applyHighlights, currentTabStructure, editor, selectedTab]);
 
   // Sync connection (readonly) attachment points with the canvas whenever the
-  // active RNA component tab or the wizard state changes.
+  // active RNA component tab or the wizard state changes. All assigned APs
+  // (R-labels) stay visible on every tab so users can see the full attachment-
+  // point picture while editing a single component.
   useEffect(() => {
+    editor.setVisibleAssignedAttachmentPoints(undefined);
+
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
+
     if (!activeComponentKey) {
-      // Preset tab: show only user-assigned APs (the ones not occupied by
-      // default inter-component connections). Connection APs are not rendered
-      // on the Preset tab, so clear them from the canvas as well.
-      editor.setVisibleAssignedAttachmentPoints(undefined);
       editor.setConnectionAttachmentPoints(new Map());
       return;
     }
-
-    // Component tab: restrict visible assigned APs to those belonging to this
-    // component only, so APs from other components are hidden on the canvas.
-    editor.setVisibleAssignedAttachmentPoints(
-      componentAttachmentPoints[activeComponentKey],
-    );
 
     const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
@@ -282,14 +289,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       phosphatePosition as PhosphatePosition | undefined,
     );
     editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [
-    editor,
-    selectedTab,
-    struct,
-    wizardState,
-    phosphatePosition,
-    componentAttachmentPoints,
-  ]);
+  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
 
   useEffect(() => {
     return () => {
@@ -308,7 +308,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
       // Then, switch to the appropriate tab
       setSelectedTab(tabIndex);
-      applyHighlights(selectedTab, isHighlightEnabled);
+      applyHighlights(selectedTab);
     };
 
     window.addEventListener(
@@ -322,21 +322,29 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         handleMarkAsComponent,
       );
     };
-  }, [
-    wizardState,
-    handleClickCreateComponent,
-    applyHighlights,
-    selectedTab,
-    isHighlightEnabled,
-  ]);
+  }, [wizardState, handleClickCreateComponent, applyHighlights, selectedTab]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
   ) => {
-    return Object.values(wizardState.errors).some((errorValue) =>
-      Boolean(errorValue),
-    );
+    return Object.values(wizardState.errors).some(Boolean);
   };
+  // A "missing components" error must colour only the tabs of the components
+  // that are actually missing — not every component tab, and not the Preset
+  // (overview) tab. A valid preset is sugar (mandatory) plus base and/or
+  // phosphate; marking the required components clears the state immediately (#10247).
+  const hasMissingComponentsError =
+    Boolean(wizardState.preset.errors.components) &&
+    !hasRequiredRnaPresetComponents(wizardState);
+  const definedComponentKeys = getRnaPresetComponentKeysToSave(wizardState);
+  const isMissingComponentTab = (componentKey: RnaPresetComponentKey) =>
+    hasMissingComponentsError && !definedComponentKeys.includes(componentKey);
+  // The Preset tab reflects only its own errors (e.g. the Code field), never the
+  // whole-preset "missing components" error.
+  const hasPresetOwnError = Object.entries(wizardState.preset.errors).some(
+    ([errorKey, errorValue]) =>
+      errorKey !== 'components' && Boolean(errorValue),
+  );
 
   return (
     <div>
@@ -348,37 +356,59 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.preset) && styles.errorTab,
+            hasPresetOwnError && styles.errorTab,
           )}
           data-testid="nucleotide-preset-tab"
-          label={<div className={styles.tabLabel}>Preset</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('components:monomerCreationWizard.presetTab')}
+            </div>
+          }
           icon={<Icon name="preset" />}
         />
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.base) && styles.errorTab,
+            (hasErrorInTab(wizardState.base) ||
+              isMissingComponentTab('base')) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-base-tab"
-          label={<div className={styles.tabLabel}>Base</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.base')}
+            </div>
+          }
           icon={<Icon name="base" />}
         />
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.sugar) && styles.errorTab,
+            (hasErrorInTab(wizardState.sugar) ||
+              isMissingComponentTab('sugar')) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-sugar-tab"
-          label={<div className={styles.tabLabel}>Sugar</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.sugar')}
+            </div>
+          }
           icon={<Icon name="sugar" />}
         />
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.phosphate) && styles.errorTab,
+            (hasErrorInTab(wizardState.phosphate) ||
+              isMissingComponentTab('phosphate')) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-phosphate-tab"
-          label={<div className={styles.tabLabel}>Phosphate</div>}
+          label={
+            <div className={styles.tabLabel}>
+              {t('common:monomerType.phosphate')}
+            </div>
+          }
           icon={<Icon name="phosphate" />}
         />
       </Tabs>
@@ -386,7 +416,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         {selectedTab === 0 && (
           <>
             <AttributeField
-              title="Code"
+              title={t('components:monomerCreationWizard.codeFieldLabel')}
               control={
                 <input
                   type="text"
@@ -395,7 +425,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     wizardState.preset.errors.name &&
                       monomerCreationWizardStyles.inputError,
                   )}
-                  placeholder="e.g. Diethylene Glycol"
+                  placeholder={t(
+                    'components:monomerCreationWizard.nameFieldPlaceholder',
+                  )}
                   value={wizardState.preset.name}
                   data-testid="code-input"
                   onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -418,13 +450,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 <p
                   className={monomerCreationWizardStyles.attachmentPointsTitle}
                 >
-                  Attachment points
+                  {t('components:monomerCreationWizard.attachmentPointsTitle')}
                 </p>
                 <span
                   className={
                     monomerCreationWizardStyles.attachmentPointInfoIcon
                   }
-                  title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                  title={t(
+                    'components:monomerCreationWizard.attachmentPointInfoText',
+                  )}
                   data-testid="attachment-point-info-icon"
                 >
                   <Icon name="about" />
@@ -461,10 +495,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                       monomerCreationWizardStyles.buttonSubmit,
                       styles.createComponentButton,
                     )}
-                    disabled={!hasSelectedAtoms}
+                    disabled={!hasSelectedAtoms || !isSelectionContinuous}
                     onClick={() => handleClickCreateComponent(rnaComponentKey)}
                   >
-                    Mark as {rnaComponentKey}
+                    {t('components:monomerCreationWizard.markAsComponent', {
+                      component: rnaComponentKey,
+                    })}
                   </button>
                 </div>
                 <MonomerCreationWizardFields
@@ -478,7 +514,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (
                       <AttributeField
-                        title="Position"
+                        title={t(
+                          'components:monomerCreationWizard.positionFieldLabel',
+                        )}
                         required
                         control={
                           <div
@@ -507,7 +545,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                               <span
                                 className={styles.phosphatePositionButtonLabel}
                               >
-                                5&apos;-left
+                                {t(
+                                  'components:monomerCreationWizard.phosphatePositionLeft',
+                                )}
                               </span>
                             </button>
                             <button
@@ -528,7 +568,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                               <span
                                 className={styles.phosphatePositionButtonLabel}
                               >
-                                3&apos;-right
+                                {t(
+                                  'components:monomerCreationWizard.phosphatePositionRight',
+                                )}
                               </span>
                             </button>
                           </div>
@@ -559,15 +601,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           );
         })}
       </div>
-      <label className={styles.highlightCheckboxWrapper}>
-        <input
-          type="checkbox"
-          checked={isHighlightEnabled}
-          onChange={handleHighlightToggle}
-          className={inputStyles.input}
-        />
-        <span className={inputStyles.checkbox} /> Highlight
-      </label>
     </div>
   );
 };

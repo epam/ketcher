@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }, testInfo) => {
     const type = msg.type();
     const text = msg.text();
 
-    if (type === 'warn') {
+    if (type === 'warning') {
       console.warn(`[browser warn] [${testInfo.title}] ${text}`);
     } else if (type === 'error') {
       console.error(`[browser error] [${testInfo.title}] ${text}`);

@@ -105,7 +105,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -259,6 +260,7 @@
         "fullName": "N-Methyl-Aspartic acid",
         "alias": "meD",
         "aliasHELM": "meD",
+        "aliasBILN": "meD",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import { Box2Abs } from 'domain/entities/box2Abs';
-import { RxnPlus } from 'domain/entities/rxnPlus';
+import type { RxnPlus } from 'domain/entities/rxnPlus';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import type ReStruct from './restruct';
-import { RenderOptions } from '../render.types';
+import type { RenderOptions } from '../render.types';
 
 class ReRxnPlus extends ReObject {
   item: RxnPlus;
@@ -40,9 +40,8 @@ class ReRxnPlus extends ReObject {
   hoverPath(render: Render) {
     const p = Scale.modelToCanvas(this.item.pp, render.options);
     const s = render.options.microModeScale;
-    /* eslint-disable no-mixed-operators */
+
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
-    /* eslint-enable no-mixed-operators */
   }
 
   drawHover(render: Render) {

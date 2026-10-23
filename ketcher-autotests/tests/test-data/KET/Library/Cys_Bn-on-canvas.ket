@@ -49,7 +49,8 @@
                     -1.502,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -262,6 +263,7 @@
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
         "aliasHELM": "Cys_Bn",
+        "aliasBILN": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

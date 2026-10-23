@@ -16,7 +16,7 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 export class FragmentStereoFlag extends BaseOperation {
   readonly frid: number;
@@ -32,7 +32,8 @@ export class FragmentStereoFlag extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
 
-    const fragment = struct.frags.get(this.frid)!;
+    const fragment = struct.frags.get(this.frid);
+    if (!fragment) return;
     fragment.updateStereoFlag(struct);
 
     BaseOperation.invalidateEnhancedFlag(restruct, this.frid);

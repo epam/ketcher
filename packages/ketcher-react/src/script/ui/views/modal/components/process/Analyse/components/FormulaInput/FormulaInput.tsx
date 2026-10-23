@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KeyboardEvent, ReactNode } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import styles from './FormulaInput.module.less';
 
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
@@ -45,9 +45,6 @@ function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
       onKeyDown={onKeyDown}
       contentEditable={contentEditable}
       suppressContentEditableWarning={true}
-      role="textbox"
-      aria-multiline="false"
-      tabIndex={0}
     >
       {content}
     </div>

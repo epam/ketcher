@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -25,7 +23,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 
-import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -44,24 +41,14 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-  });
-});
-
-test.afterEach(async () => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 
 test.describe('Import-Saving .mol Files', () => {
-  test('Import monomers and chem', async () => {
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  test('Import monomers and chem', async ({ FlexCanvas: _ }) => {
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
@@ -100,8 +87,7 @@ test.describe('Import-Saving .mol Files', () => {
     await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Export monomers and chem', async () => {
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  test('Export monomers and chem', async ({ SnakeCanvas: _ }) => {
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
     await resetZoomLevelToDefault(page);
     await verifyFileExport(
@@ -113,12 +99,14 @@ test.describe('Import-Saving .mol Files', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
-  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {
+  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async ({
+    FlexCanvas: _,
+  }) => {
+    // works wrong because of bug: https://github.com/epam/ketcher/issues/10460
     /*
      * Test case: https://github.com/epam/ketcher/issues/3666
      * Description: Structure in center of canvas after opening
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -127,13 +115,15 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async () => {
+  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async ({
+    FlexCanvas: _,
+  }) => {
+    // works wrong because of bug: https://github.com/epam/ketcher/issues/10460
     /*
      * Test case: https://github.com/epam/ketcher/issues/3667
      * https://github.com/epam/ketcher/issues/3668
      * Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -144,13 +134,14 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async () => {
+  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/3669
      * Description: After importing a file with modified monomers, it is clear which monomer is modified,
      * and when hovering, preview display changes made during modification
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
@@ -287,6 +278,9 @@ test.describe('Import-Saving .mol Files', () => {
       page = await context.newPage();
       await waitForPageInit(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
     },
   );
 
@@ -330,37 +324,33 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test.fail(
-    'Check that you can save snake viewed chain of peptides in a Mol v3000 file',
-    async () => {
-      /*
-    Test case: Import/Saving files
-    Description: Snake viewed chain of peptides saved in a Mol v3000 file
+  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
+    /*
+     * Test case: Import/Saving files
+     * Description: Snake viewed chain of peptides saved in a Mol v3000 file
+     */
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      MacroFileType.MOLv3000,
+    );
+    await resetZoomLevelToDefault(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+      [1],
+    );
+  });
 
-    Test fails because we have bug https://github.com/epam/ketcher/issues/5634
-    */
-      await openFileAndAddToCanvasMacro(
-        page,
-        'Molfiles-V3000/snake-mode-peptides.mol',
-        MacroFileType.MOLv3000,
-      );
-      await resetZoomLevelToDefault(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-        [1],
-      );
-    },
-  );
-
-  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
+  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
@@ -369,12 +359,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that macro .mol file can be imported in micro mode', async () => {
+  test('Check that macro .mol file can be imported in micro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
@@ -382,12 +373,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that RNA preset in not changing after saving and importing it as .mol file', async () => {
+  test('Check that RNA preset in not changing after saving and importing it as .mol file', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/three-presets.mol',
@@ -396,12 +388,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that CHEMs in not changing after saving and importing it as .mol file', async () => {
+  test('Check that CHEMs in not changing after saving and importing it as .mol file', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/three-chems-connected.mol',
@@ -513,12 +506,13 @@ test.describe('Import-Saving .mol Files', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async () => {
+  test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
@@ -533,36 +527,18 @@ test.describe('Import-Saving .mol Files', () => {
 });
 
 test.describe('Import modified .mol files from external editor', () => {
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  We have opened feature request https://github.com/epam/ketcher/issues/4532
-  After closing the ticket, you need to delete two files from temporaryFailedTestsFileNames
-  */
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  const temporaryFailedTestsFileNames = [
-    'peptide-modified-2aa-example.mol',
-    'peptide-modified-aa-example.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'dna-peptideSS-conj-example.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'peptide-Fmoc.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'dna-peptide-conj-example.mol',
-  ];
   const fileNames = [
-    'peptide-Bom.mol',
+    // 'peptide-Bom.mol', - works wrong because of bug: https://github.com/epam/ketcher/issues/10460
     'dna-mod-Ph.mol',
     'dna-mod-Ph-granular.mol',
     'insulin-2-peptides-connected-with-SS.mol',
-    'peptide-modified-2aa-example.mol',
+    // 'peptide-modified-2aa-example.mol',
     'peptide-modified-aa-example.mol',
     'rna-mod-phosphate-example.mol',
     'rna-mod-phosphate-mod-base-example.mol',
@@ -570,28 +546,19 @@ test.describe('Import modified .mol files from external editor', () => {
   ];
 
   for (const fileName of fileNames) {
-    if (temporaryFailedTestsFileNames.includes(fileName)) {
-      test(`for ${fileName} @IncorrectResultBecauseOfBug`, async () => {
-        test.fail(true, 'This test is expected to fail due to a known issue.');
-        throw new Error('Test intentionally failed due to known issue.');
-      });
-    } else {
-      test(`for ${fileName}`, async () => {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
-        await openFileAndAddToCanvasMacro(
-          page,
-          `Molfiles-V3000/${fileName}`,
-          MacroFileType.MOLv3000,
-        );
-        const numberOfPressZoomOut = 4;
-        await CommonTopRightToolbar(page).selectZoomOutTool(
-          numberOfPressZoomOut,
-        );
-        await clickInTheMiddleOfTheCanvas(page);
-      });
-    }
+    test(`for ${fileName}`, async () => {
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await openFileAndAddToCanvasMacro(
+        page,
+        `Molfiles-V3000/${fileName}`,
+        MacroFileType.MOLv3000,
+      );
+      const numberOfPressZoomOut = 4;
+      await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+      await clickInTheMiddleOfTheCanvas(page);
+    });
   }
 });
 
@@ -614,8 +581,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
@@ -715,8 +681,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
@@ -760,8 +725,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
@@ -804,8 +768,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,

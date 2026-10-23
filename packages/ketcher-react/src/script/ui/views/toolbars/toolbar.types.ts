@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import type { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -79,6 +79,7 @@ type LeftToolbarItemVariant =
   | 'bond-double'
   | 'bond-triple'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-stereo'
   | 'bond-up'
   | 'bond-down'
@@ -145,22 +146,13 @@ type LeftToolbarItemVariant =
   | typeof IMAGE_KEY;
 
 type BottomToolbarItemVariant =
-  | 'template-common'
-  | 'template-lib'
-  | 'enhanced-stereo'
-  | 'fullscreen';
+  'template-common' | 'template-lib' | 'enhanced-stereo' | 'fullscreen';
 
 type RightToolbarItemVariant =
-  | 'atom'
-  | 'freq-atoms'
-  | 'period-table'
-  | 'extended-table'
-  | 'any-atom';
+  'atom' | 'freq-atoms' | 'period-table' | 'extended-table' | 'any-atom';
 
 type FloatingToolItemVariant =
-  | 'transform-flip-h'
-  | 'transform-flip-v'
-  | 'erase';
+  'transform-flip-h' | 'transform-flip-v' | 'erase';
 
 type ToolbarItemVariant =
   | TopToolbarItemVariant

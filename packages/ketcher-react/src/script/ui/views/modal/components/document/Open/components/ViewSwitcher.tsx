@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react';
-import { AnalyzingFile, AnalyzingFileProps } from './AnalyzingFile';
+import type { FC } from 'react';
+import { type AnalyzingFileProps, AnalyzingFile } from './AnalyzingFile';
 
-import { OpenOptions, OpenOptionsProps } from './OpenOptions';
-import { TextEditor, TextEditorProps } from './TextEditor';
+import { type OpenOptionsProps, OpenOptions } from './OpenOptions';
+import { type TextEditorProps, TextEditor } from './TextEditor';
 import CDXStructuresViewer from './CDXStructuresViewer';
-import { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
+import type { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
 
 type ViewStates = {
   idle: string;

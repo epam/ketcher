@@ -91,7 +91,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -245,6 +246,7 @@
         "fullName": "N-Methyl-Asparagine",
         "alias": "meN",
         "aliasHELM": "meN",
+        "aliasBILN": "meN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

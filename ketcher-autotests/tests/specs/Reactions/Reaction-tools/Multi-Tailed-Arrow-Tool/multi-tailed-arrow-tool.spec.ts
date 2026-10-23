@@ -1,6 +1,3 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -58,7 +55,7 @@ import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDi
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
 
 test.describe('Multi-Tailed Arrow Tool', () => {

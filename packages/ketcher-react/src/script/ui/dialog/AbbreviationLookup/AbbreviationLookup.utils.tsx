@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   AbbreviationGenericOption,
   AbbreviationOption,
 } from './AbbreviationLookup.types';
-import { FilterOptionsState } from '@mui/material';
+import type { FilterOptionsState } from '@mui/material';
 import { MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT } from './AbbreviationLookup.constants';
 
 export const getStringsSimilarity = (

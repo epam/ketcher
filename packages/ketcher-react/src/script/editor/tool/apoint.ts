@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { Atom, FunctionalGroup } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import { Atom, FunctionalGroup, assert } from 'ketcher-core';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { editRGroupAttachmentPoint } from './apoint.utils';
 
 class APointTool implements Tool {
@@ -89,7 +88,7 @@ class APointTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.hover(null);
       const atom = molecule.atoms.get(ci.id);
       assert(atom != null);

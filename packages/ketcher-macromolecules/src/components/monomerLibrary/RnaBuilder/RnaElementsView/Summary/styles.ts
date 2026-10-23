@@ -32,7 +32,9 @@ export const SummaryText = styled.span((props) => ({
   fontSize: props.theme.ketcher.font.size.regular,
 }));
 
-export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
+export const StyledIcon = styled(Icon, {
+  shouldForwardProp: (prop) => prop !== 'expanded',
+})<IStyledIconProps>((props) => ({
   width: '16px',
   height: '16px',
   color: props.theme.ketcher.color.icon.grey,

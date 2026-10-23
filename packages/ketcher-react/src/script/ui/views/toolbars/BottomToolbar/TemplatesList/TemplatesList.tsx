@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { Tools, UiAction, UiActionAction } from '../../../../action';
+import action, {
+  type Tools,
+  type UiAction,
+  type UiActionAction,
+} from '../../../../action';
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton';
 import templates from '../../../../data/templates';
@@ -42,7 +47,7 @@ const TemplatesList = (props: Props) => {
   const { active, disableableButtons, indigoVerification, onAction, status } =
     props;
 
-  const isTemplate = active && active.tool === 'template';
+  const isTemplate = active?.tool === 'template';
 
   const makeAction = (struct, index): UiAction => ({
     shortcut: action[`template-${index}`].shortcut,
@@ -61,7 +66,7 @@ const TemplatesList = (props: Props) => {
               name={iconName}
               action={makeAction(struct, index)}
               onAction={onAction}
-              selected={isTemplate && active && active.opts.struct === struct}
+              selected={isTemplate && active?.opts.struct === struct}
               status={status[`template-${index}`]}
               disableableButtons={disableableButtons}
               indigoVerification={indigoVerification}

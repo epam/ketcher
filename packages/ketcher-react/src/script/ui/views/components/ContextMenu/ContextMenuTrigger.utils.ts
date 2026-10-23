@@ -1,17 +1,126 @@
 import {
+  type ReMultitailArrow,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
-  ReMultitailArrow,
+  type Struct,
+  type Vec2,
 } from 'ketcher-core';
-import Editor, { ClosestItemWithMap } from 'src/script/editor';
+import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
+  type ContextMenuProps,
+  type GetIsItemInSelectionArgs,
   CONTEXT_MENU_ID,
-  ContextMenuProps,
-  GetIsItemInSelectionArgs,
 } from './contextMenu.types';
-import { Selection } from '../../../../editor/Editor';
-import { onlyHasProperty } from './utils';
+import type { Selection } from '../../../../editor/Editor';
+import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
+
+/**
+ * Count how many MonomerMicromolecule SGroups on the canvas share the same
+ * monomer label as the given primary functional group.
+ */
+function computeTotalMonomerCount(
+  editor: Editor,
+  primaryFunctionalGroup: FunctionalGroup | undefined,
+): number {
+  if (!primaryFunctionalGroup) return 0;
+  const primarySGroup = primaryFunctionalGroup.relatedSGroup;
+  if (!(primarySGroup instanceof MonomerMicromolecule)) return 0;
+
+  const targetLabel = primarySGroup.monomer.monomerItem.label;
+  let count = 0;
+  editor.struct().sgroups.forEach((sg) => {
+    if (
+      sg instanceof MonomerMicromolecule &&
+      sg.monomer.monomerItem.label === targetLabel
+    ) {
+      count++;
+    }
+  });
+  return count;
+}
+
+/**
+ * Count how many of the provided functional groups are MonomerMicromolecules
+ * with the same label as the primary functional group.
+ * Used when the user has multiple monomers selected — the count reflects
+ * only the selected instances that will actually be replaced.
+ */
+function computeSelectedMatchingMonomerCount(
+  functionalGroups: FunctionalGroup[],
+  primaryFunctionalGroup: FunctionalGroup | undefined,
+): number {
+  if (!primaryFunctionalGroup) return 0;
+  const primarySGroup = primaryFunctionalGroup.relatedSGroup;
+  if (!(primarySGroup instanceof MonomerMicromolecule)) return 0;
+
+  const targetLabel = primarySGroup.monomer.monomerItem.label;
+  return functionalGroups.filter(
+    (fg) =>
+      fg.relatedSGroup instanceof MonomerMicromolecule &&
+      fg.relatedSGroup.monomer.monomerItem.label === targetLabel,
+  ).length;
+}
+
+/**
+ * Returns true when the selection contains atoms or bonds that do NOT belong
+ * to any monomer functional group (i.e. plain chemical structure elements).
+ */
+function computeHasNonMonomerStructure(
+  editor: Editor,
+  selectedFunctionalGroups: Map<number, FunctionalGroup>,
+): boolean {
+  const struct = editor.struct();
+  // Collect all atom IDs that belong to monomer SGroups in the selection
+  const monomerAtomIds = new Set<number>();
+  selectedFunctionalGroups.forEach((fg) => {
+    if (fg.relatedSGroup instanceof MonomerMicromolecule) {
+      fg.relatedSGroup.atoms.forEach((atomId) => monomerAtomIds.add(atomId));
+    }
+  });
+
+  // Check if the current selection has any atoms not covered by monomer SGroups
+  const selection = editor.selection();
+  if (selection?.atoms?.some((atomId) => !monomerAtomIds.has(atomId))) {
+    return true;
+  }
+
+  // Check if the current selection has any bonds whose endpoints are not all in monomer atoms
+  if (selection?.bonds?.length) {
+    return selection.bonds.some((bondId) => {
+      const bond = struct.bonds.get(bondId);
+      if (!bond) return false;
+      return !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
+    });
+  }
+
+  return false;
+}
+
+export function getAttachmentGroupTargetForBondHalf(
+  struct: Struct,
+  closestItem: ClosestItemWithMap,
+  pointer: Vec2,
+): ClosestItemWithMap | null {
+  if (closestItem.map !== 'bonds') {
+    return null;
+  }
+
+  const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+    struct,
+    struct.bonds.get(closestItem.id),
+    pointer,
+  );
+
+  return attachmentGroupId === null
+    ? null
+    : {
+        ...closestItem,
+        map: 'attachmentGroups',
+        id: attachmentGroupId,
+      };
+}
 
 export const getIsItemInSelection = ({
   item,
@@ -70,6 +179,8 @@ export function getMenuPropsForClosestItem(
         return {
           id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
           functionalGroups: [functionalGroup],
+          totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
+          hasNonMonomerStructure: false,
         };
       } else {
         return {
@@ -101,6 +212,8 @@ export function getMenuPropsForClosestItem(
         return {
           id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
           functionalGroups: [functionalGroup],
+          totalMonomerCount: computeTotalMonomerCount(editor, functionalGroup),
+          hasNonMonomerStructure: false,
         };
       } else {
         return {
@@ -109,6 +222,12 @@ export function getMenuPropsForClosestItem(
         };
       }
     }
+
+    case 'attachmentGroups':
+      return {
+        id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+        attachmentGroupIds: [closestItem.id],
+      };
 
     case 'sgroups':
     case 'functionalGroups': {
@@ -126,6 +245,15 @@ export function getMenuPropsForClosestItem(
                 ? CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId
                 : CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS + ketcherId,
             functionalGroups: [functionalGroup],
+            ...(sGroup instanceof MonomerMicromolecule
+              ? {
+                  totalMonomerCount: computeTotalMonomerCount(
+                    editor,
+                    functionalGroup,
+                  ),
+                  hasNonMonomerStructure: false,
+                }
+              : {}),
           }
         : null;
     }
@@ -163,12 +291,25 @@ export function getMenuPropsForSelection(
   selection: Selection | null,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
   ketcherId: string,
+  editor?: Editor,
 ): ContextMenuProps | null {
   if (!selection) {
     return null;
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
+  const removableAttachmentGroupId = editor
+    ? getRemovableAttachmentGroupId(editor.struct(), selection)
+    : null;
+  const attachmentGroupIds =
+    removableAttachmentGroupId === null
+      ? undefined
+      : [removableAttachmentGroupId];
+  const isAtomOnlySelection = onlyHasProperty(
+    selection,
+    'atoms',
+    IGNORED_MAPS_LIST,
+  );
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
@@ -177,9 +318,24 @@ export function getMenuPropsForSelection(
         (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
       )
     ) {
+      const primaryMonomerFG = functionalGroups.find(
+        (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
+      );
+      const selectedMatchingCount = computeSelectedMatchingMonomerCount(
+        functionalGroups,
+        primaryMonomerFG,
+      );
       return {
         id: CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId,
         functionalGroups,
+        totalMonomerCount: editor
+          ? selectedMatchingCount > 1
+            ? selectedMatchingCount
+            : computeTotalMonomerCount(editor, primaryMonomerFG)
+          : undefined,
+        hasNonMonomerStructure: editor
+          ? computeHasNonMonomerStructure(editor, selectedFunctionalGroups)
+          : undefined,
       };
     }
 
@@ -197,10 +353,16 @@ export function getMenuPropsForSelection(
         IGNORED_MAPS_LIST,
       ),
     };
-  } else if (atoms && !bonds && !rgroupAttachmentPoints) {
+  } else if (
+    atoms &&
+    !bonds &&
+    !rgroupAttachmentPoints &&
+    isAtomOnlySelection
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS + ketcherId,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
@@ -222,6 +384,7 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_SELECTION + ketcherId,
       bondIds: bonds,
       atomIds: atoms,
+      ...(attachmentGroupIds ? { attachmentGroupIds } : {}),
       rgroupAttachmentPoints,
     };
   }

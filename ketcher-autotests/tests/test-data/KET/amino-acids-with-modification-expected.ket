@@ -93,7 +93,8 @@
                     0.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -187,6 +188,7 @@
         "fullName": "D-Alanine",
         "alias": "dA",
         "aliasHELM": "dA",
+        "aliasBILN": "dA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -280,7 +282,8 @@
                     -1.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -409,6 +412,7 @@
         "fullName": "O-phospho-L-serine",
         "alias": "SerPO3",
         "aliasHELM": "Ser_PO3H2",
+        "aliasBILN": "Ser_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -462,7 +466,8 @@
                     -1.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -646,6 +651,7 @@
         "fullName": "Citrulline",
         "alias": "Cit",
         "aliasHELM": "Cit",
+        "aliasBILN": "Cit",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -699,7 +705,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -838,6 +845,7 @@
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
         "aliasHELM": "meC",
+        "aliasBILN": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

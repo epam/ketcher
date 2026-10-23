@@ -128,7 +128,8 @@
                     -0.75,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -282,6 +283,7 @@
         "fullName": "N-Methyl-Methionine",
         "alias": "meM",
         "aliasHELM": "meM",
+        "aliasBILN": "meM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

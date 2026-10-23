@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import {
+  type Atom,
+  type AttachmentPoints,
   AtomList,
-  Atom,
   Bond,
-  AttachmentPoints,
   Elements,
   StereoLabel,
   getAtomType,
@@ -71,10 +71,12 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  /** Fragment ID included in rlabel element payloads fired by the editor. */
+  fragId?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */
-interface SGroupInput {
+export interface SGroupInput {
   type?: string;
   attrs: {
     context: string;
@@ -101,7 +103,7 @@ interface SGroupInput {
 }
 
 /** S-group form data returned by the S-group dialog. */
-interface SGroupFormData {
+export interface SGroupFormData {
   type?: string;
   context?: string;
   fieldName?: string;
@@ -128,9 +130,10 @@ interface SGroupFormData {
 
 export function fromElement(selem: Atom) {
   if (selem.label === 'R#') {
+    const rglabel = typeof selem.rglabel === 'number' ? selem.rglabel : 0;
     return {
       type: 'rlabel',
-      values: fromRlabel(selem.rglabel as unknown as number),
+      values: fromRlabel(rglabel),
       ...selem,
     };
   }
@@ -146,17 +149,22 @@ export function fromElement(selem: Atom) {
 
 export function toElement(elem: ElementFormData) {
   if (elem.type === 'rlabel') {
+    const values = Array.isArray(elem.values)
+      ? elem.values.filter(
+          (value): value is number => typeof value === 'number',
+        )
+      : [];
+
     return {
-      label: elem.values!.length ? 'R#' : 'C',
-      rglabel:
-        elem.values!.length === 0 ? null : toRlabel(elem.values as number[]),
+      label: values.length ? 'R#' : 'C',
+      rglabel: values.length === 0 ? null : toRlabel(values),
     };
   }
   if (elem.type === 'list' || elem.type === 'not-list')
     return toAtomList(elem as { type: 'list' | 'not-list'; values: string[] });
 
-  if (!elem.label && 'ap' in elem) {
-    return { attachmentPoints: toApoint(elem.ap!) };
+  if (!elem.label && elem.ap) {
+    return { attachmentPoints: toApoint(elem.ap) };
   }
   if (elem.atomType === 'list') {
     elem.label = 'L#';
@@ -166,7 +174,8 @@ export function toElement(elem: ElementFormData) {
       ids:
         (elem.atomList as string | null)
           ?.split(',')
-          .map((el: string) => Elements.get(el)!.number) || [],
+          .map((el: string) => Elements.get(el)?.number)
+          .filter((id): id is number => id !== undefined) || [],
     });
     delete elem.notList;
     delete elem.atomType;
@@ -209,13 +218,16 @@ export function toElement(elem: ElementFormData) {
 
 export function fromAtom(satom?: Atom) {
   if (!satom) return null;
-  const alias = satom.alias || '';
+  const alias = satom.alias ?? '';
   const atomType = getAtomType(satom);
   return {
     alias,
     atomType,
     atomList:
-      satom.atomList?.ids.map((i) => Elements.get(i)!.label).join(',') || '',
+      satom.atomList?.ids
+        .map((i) => Elements.get(i)?.label)
+        .filter((label) => label !== undefined)
+        .join(',') ?? '',
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
@@ -284,7 +296,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     } as Partial<Atom>;
   }
   const pch = matchCharge(restAtom.charge as string);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
+  const charge = pch
+    ? Number.parseInt(pch[1] + pch[3] + pch[2])
+    : restAtom.charge;
 
   const conv = {
     ...restAtom,
@@ -292,7 +306,8 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
     charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
-    alias: restAtom.alias || null,
+    // Empty string from cleared form field must become null like undefined (not ?? alone).
+    alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
@@ -309,9 +324,13 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
 }
 
 function fromAtomList(satom: Atom) {
+  const atomList = satom.atomList;
   return {
-    type: satom.atomList!.notList ? 'not-list' : 'list',
-    values: satom.atomList!.ids.map((i) => Elements.get(i)!.label),
+    type: atomList?.notList ? 'not-list' : 'list',
+    values:
+      atomList?.ids
+        .map((i) => Elements.get(i)?.label)
+        .filter((label) => label !== undefined) ?? [],
   };
 }
 
@@ -321,14 +340,21 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values.map((el: string) => Elements.get(el)!.number),
+      ids: atom.values
+        .map((el: string) => Elements.get(el)?.number)
+        .filter((id): id is number => id !== undefined),
     }),
   };
 }
 
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
-  const type = stereoLabel.match(/\D+/g)![0];
+  const typeMatch = stereoLabel.match(/\D+/g);
+  if (!typeMatch?.length) {
+    return { type: stereoLabel, orNumber: 0, andNumber: 0 };
+  }
+
+  const type = typeMatch[0];
   const number = +stereoLabel.replace(type, '');
 
   if (type === StereoLabel.Abs) {
@@ -365,10 +391,10 @@ export function toStereoLabel(stereoLabel: {
 }) {
   switch (stereoLabel.type) {
     case StereoLabel.And:
-      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`;
+      return `${StereoLabel.And}${stereoLabel.andNumber ?? 1}`;
 
     case StereoLabel.Or:
-      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`;
+      return `${StereoLabel.Or}${stereoLabel.orNumber ?? 1}`;
 
     default:
       return stereoLabel.type;
@@ -377,8 +403,8 @@ export function toStereoLabel(stereoLabel: {
 
 function fromApoint(sap: AttachmentPoints | null) {
   return {
-    primary: ((sap || 0) & 1) > 0,
-    secondary: ((sap || 0) & 2) > 0,
+    primary: ((sap ?? 0) & 1) > 0,
+    secondary: ((sap ?? 0) & 2) > 0,
   };
 }
 
@@ -414,7 +440,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : sbond.customQuery!.toString(),
+    customQuery: !isCustomQuery ? '' : (sbond.customQuery?.toString() ?? ''),
   };
 }
 
@@ -486,6 +512,10 @@ const bondCaptionMap: Record<string, { type: number; stereo: number }> = {
     type: Bond.PATTERN.TYPE.DATIVE,
     stereo: Bond.PATTERN.STEREO.NONE,
   },
+  haptic: {
+    type: Bond.PATTERN.TYPE.HAPTIC,
+    stereo: Bond.PATTERN.STEREO.NONE,
+  },
 };
 
 export function toBondType(caption: string) {
@@ -504,7 +534,7 @@ function fromBondType(type: number, stereo: number) {
 }
 
 export function fromSgroup(ssgroup: SGroupInput) {
-  const type = ssgroup.type || 'DAT';
+  const type = ssgroup.type ?? 'DAT';
   const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
   if (absolute === false && attached === false)

@@ -18,13 +18,13 @@ import {
   DefaultMultiTool,
   classes as defaultClasses,
 } from './DefaultMultiTool';
-import {
+import type {
   MultiToolCallProps,
   MultiToolProps,
   MultiToolVariant,
 } from './variants.types';
 
-import { ComponentType } from 'react';
+import type { ComponentType } from 'react';
 import { GroupedMultiTool } from './GroupedMultiTool';
 
 export function chooseMultiTool(

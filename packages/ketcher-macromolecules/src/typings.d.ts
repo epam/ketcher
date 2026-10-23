@@ -1,8 +1,14 @@
 // <reference types="react-scripts" />
-/* eslint-disable no-var, no-use-before-define */
+
 declare module '*.module.less' {
   const classes: { [key: string]: string };
   export default classes;
+}
+
+declare module '*.less';
+
+declare namespace JSX {
+  type Element = React.ReactElement;
 }
 
 declare namespace NodeJS {
@@ -49,6 +55,10 @@ interface Document {
 
 interface Window {
   isPolymerEditorTurnedOn: boolean;
+  ketcher?: {
+    settingsService?: import('ketcher-core').ISettingsService;
+  };
+  _ketcher_isChainLengthRulerDisabled?: boolean;
 }
 
 interface HTMLElement {

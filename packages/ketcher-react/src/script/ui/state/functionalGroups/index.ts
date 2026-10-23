@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,20 +15,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AnyAction } from 'redux';
+import type { AnyAction } from 'redux';
 import { appUpdate } from '../options/actions';
 import {
+  type SdfItem,
+  type Struct,
   FunctionalGroupsProvider,
-  SdfItem,
   SdfSerializer,
-  Struct,
 } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';
 import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip';
 import { MODES } from 'src/constants';
 
-interface FGState {
+export interface FGState {
   lib: [];
   functionalGroupInfo: any;
   mode: string;

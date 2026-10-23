@@ -1,11 +1,11 @@
-import { Tool } from '../Tool';
-import Editor from '../../Editor';
+import type { Tool } from '../Tool';
+import type Editor from '../../Editor';
 import {
+  type RxnArrowMode,
   MULTITAIL_ARROW_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
-  RxnArrowMode,
 } from 'ketcher-core';
-import {
+import type {
   ArrowAddTool,
   ArrowMoveTool,
   CommonArrowDragContext,

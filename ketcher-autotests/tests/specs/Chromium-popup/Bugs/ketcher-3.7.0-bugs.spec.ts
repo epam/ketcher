@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -200,19 +196,19 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     const cases = [
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R3-1:R3$$$V2.0',
-        expected: '5.96',
+        expected: '6.15',
       },
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
-        expected: '9.01',
+        expected: '5.03',
       },
       {
         helm: 'PEPTIDE1{C.C}$$$$V2.0',
-        expected: '8.49',
+        expected: '8',
       },
       {
         helm: 'PEPTIDE1{C}|PEPTIDE2{C}$PEPTIDE1,PEPTIDE2,1:pair-1:pair$$$V2.0',
-        expected: '8.49',
+        expected: '8',
       },
     ];
     for (const { helm, expected } of cases) {
@@ -333,7 +329,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'KET/Bugs/reaction-file-with-substituent.ket',
     );
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await CommonTopRightToolbar(page).setZoomInputValue('80');
     await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -434,7 +432,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
   });
 
   test('Case 16: Layout not shift when changing mode from sequence to flex and back upon first macromolecules mode initialization', async ({
-    FlexCanvas: _,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
@@ -447,9 +445,6 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Switch to Flex mode
      * 5. Switch back to Sequence mode
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

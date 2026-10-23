@@ -44,6 +44,7 @@ const MonomerPreview = ({ className }: Props) => {
   const idtAliases = monomer?.props.idtAliases;
   const axoLabsAlias = monomer?.props.aliasAxoLabs;
   const aliasHelm = monomer?.props.aliasHELM;
+  const aliasBiln = monomer?.props.aliasBILN;
   const modificationTypes = monomer?.props.modificationTypes;
 
   const { preparedAttachmentPointsData, connectedAttachmentPoints } =
@@ -66,7 +67,11 @@ const MonomerPreview = ({ className }: Props) => {
     ? monomer.label
     : monomer.struct?.name || monomer.label;
   const isMonomerPreviewPropertiesVisible =
-    idtAliasesText || axoLabsAlias || aliasHelm || modificationTypes;
+    idtAliasesText ||
+    axoLabsAlias ||
+    aliasHelm ||
+    aliasBiln ||
+    modificationTypes;
 
   return (
     (monomer.struct || isUnresolved) && (
@@ -77,6 +82,7 @@ const MonomerPreview = ({ className }: Props) => {
         data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
+        data-biln={aliasBiln ?? undefined}
         data-modificationtype={getModificationTypeAttribute(modificationTypes)}
       >
         {monomerName.length > 0 && (
@@ -109,6 +115,7 @@ const MonomerPreview = ({ className }: Props) => {
               idtAliasesText={idtAliasesText ?? undefined}
               axoLabsText={axoLabsAlias ?? undefined}
               helmText={aliasHelm ?? undefined}
+              bilnText={aliasBiln ?? undefined}
               modificationTypeText={
                 Array.isArray(modificationTypes)
                   ? modificationTypes.join(', ')

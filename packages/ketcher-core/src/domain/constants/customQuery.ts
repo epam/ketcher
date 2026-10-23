@@ -1,0 +1,1 @@
+export const CUSTOM_QUERY_MAX_LENGTH = 4000;

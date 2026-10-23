@@ -546,7 +546,8 @@
                     0.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -655,6 +656,7 @@
         "fullName": "N-Methyl-Alanine",
         "alias": "meA",
         "aliasHELM": "meA",
+        "aliasBILN": "meA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

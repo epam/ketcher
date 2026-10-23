@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   MonomerPreviewContainer,
   MonomerPreviewList,
@@ -11,23 +12,38 @@ interface MonomerPreviewProps {
   readonly idtAliasesText?: string;
   readonly axoLabsText?: string;
   readonly helmText?: string;
+  readonly bilnText?: string;
   readonly modificationTypeText?: string;
   readonly preset?: boolean;
 }
+
+const stripSquareBrackets = (text: string) => text.replace(/\[|\]/g, '');
 
 export default function MonomerPreviewProperties({
   idtAliasesText,
   axoLabsText,
   helmText,
+  bilnText,
   modificationTypeText,
   preset,
 }: MonomerPreviewProps) {
+  const { t } = useTranslation('macromolecules');
   const rows: RowItem[] = [
     ...(idtAliasesText ? [{ label: 'IDT', text: idtAliasesText }] : []),
     ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),
-    ...(helmText ? [{ label: 'HELM', text: helmText }] : []),
+    ...(helmText
+      ? [{ label: 'HELM', text: stripSquareBrackets(helmText) }]
+      : []),
+    ...(bilnText
+      ? [{ label: 'BILN', text: stripSquareBrackets(bilnText) }]
+      : []),
     ...(modificationTypeText
-      ? [{ label: 'Modification type', text: modificationTypeText }]
+      ? [
+          {
+            label: t('preview.modificationType'),
+            text: modificationTypeText,
+          },
+        ]
       : []),
   ];
 

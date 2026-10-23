@@ -470,7 +470,8 @@
                     -1.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -691,6 +692,7 @@
         "fullName": "D-Tyrosine",
         "alias": "dY",
         "aliasHELM": "dY",
+        "aliasBILN": "dY",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

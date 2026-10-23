@@ -15,6 +15,8 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
@@ -29,6 +31,8 @@ import {
   ModeTypes,
   normalizeError,
   provideEditorInstance,
+  SequenceRenderer,
+  Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -40,7 +44,7 @@ import {
 } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
-import { openErrorModal } from 'state/modal';
+import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -80,8 +84,9 @@ const StyledDropdown = styled(SaveDropdown)({
   '& .MuiSelect-select': {
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px 0 8px',
-    paddingRight: '20px !important', // override MUI styles
+    paddingBlock: 0,
+    paddingInlineStart: '8px',
+    paddingInlineEnd: '20px !important', // override MUI styles
     height: '100%',
   },
 
@@ -96,12 +101,12 @@ const FooterFormatSelector = styled(StyledDropdown)(() => ({
 
 const FooterSequenceSelector = styled(StyledDropdown)({
   width: '76px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterPeptideLettersSelector = styled(StyledDropdown)({
   width: '105px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterButtonContainer = styled('div')({
@@ -129,6 +134,7 @@ const options: Array<Option> = [
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -144,6 +150,29 @@ const peptideLettersFormatOptions: Array<Option> = [
 
 const inputFormats = macromoleculesFilesInputFormats;
 
+const positionStructureOnNextSequenceLine = (
+  drawingEntitiesManager: NonNullable<
+    ReturnType<KetSerializer['deserializeToDrawingEntities']>
+  >['drawingEntitiesManager'],
+) => {
+  // Always place the imported structure at the next chain/line position,
+  // independent of sequence edit mode (where getNewNodePosition() would
+  // return an insertion point inside the current chain instead).
+  const nextChainPosition = SequenceRenderer.getNextChainPosition();
+  const firstEntityPosition =
+    drawingEntitiesManager.allEntities[0]?.[1].position;
+
+  if (!firstEntityPosition) {
+    return;
+  }
+
+  const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
+
+  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
+    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
+  });
+};
+
 const addToCanvas = ({
   ketSerializer,
   editor,
@@ -152,7 +181,7 @@ const addToCanvas = ({
   ketSerializer: KetSerializer;
   editor: CoreEditor;
   struct: string;
-}) => {
+}): boolean => {
   const isCanvasEmptyBeforeOpenStructure =
     !editor.drawingEntitiesManager.hasDrawingEntities;
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
@@ -161,23 +190,30 @@ const addToCanvas = ({
     throw new Error('Error during parsing file');
   }
 
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  if (!deserialisedKet.drawingEntitiesManager.hasDrawingEntities) {
+    return false;
+  }
+
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
+
+  if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
+    positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
+  } else {
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  }
+
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
   const editorHistory = EditorHistory.getInstance(editor);
-  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
-  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
-  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode) {
-    if (editor.drawingEntitiesManager.hasAntisenseChains) {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
-      );
-      modelChanges.setUndoOperationsByPriority();
-    }
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
@@ -208,6 +244,8 @@ const addToCanvas = ({
   editor.calculateAndStoreNextAutochainPosition(
     deserialisedKet.drawingEntitiesManager,
   );
+
+  return true;
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -219,6 +257,7 @@ const onOk = async ({
   onCloseCallback,
   setIsLoading,
   dispatch,
+  t,
 }: {
   struct: string;
   formatSelection: string;
@@ -227,6 +266,7 @@ const onOk = async ({
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
+  t: TFunction;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
@@ -236,22 +276,25 @@ const onOk = async ({
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
-    const errorMessage = 'Convert error! ' + stringError;
+  const showParsingError = (stringError: string) => {
+    const errorMessage = t('open.convertError', { error: stringError });
     dispatch(
       openErrorModal({
         errorMessage,
-        errorTitle: isSeq || isFasta ? 'Unsupported symbols' : '',
+        errorTitle: isSeq || isFasta ? t('open.unsupportedSymbols') : '',
       }),
     );
   };
 
   if (isKet) {
     try {
-      addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      if (!hasStructure) {
+        dispatch(openErrorTooltip('No structure'));
+      }
       onCloseCallback();
-    } catch (e) {
-      showParsingError('Error during file parsing.');
+    } catch {
+      showParsingError(t('open.fileParsingError'));
     }
     return;
   } else if (
@@ -275,7 +318,14 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    const hasStructure = addToCanvas({
+      struct: ketStruct.struct,
+      ketSerializer,
+      editor,
+    });
+    if (!hasStructure) {
+      dispatch(openErrorTooltip('No structure'));
+    }
     onCloseCallback();
   } catch (error) {
     const stringError = normalizeError(error).message;
@@ -286,9 +336,10 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -303,18 +354,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [additionalSelection, setAdditionalSelection] = useState(RNA);
   const [peptideLettersFormatSelection, setPeptideLettersFormatSelection] =
     useState(ONE_LETTER);
-
-  useEffect(() => {
-    const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
-
-    if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
-      const id = option?.id ? option.id : SEQ;
-      setFormatSelection(id);
-    }
-  }, [fileName]);
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
@@ -340,13 +379,23 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent) => {
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');
 
-    setFileName(files[0].name);
+    const fileName = files[0].name;
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension = splittedFilenameByDot.at(-1);
+
+    setFileName(fileName);
+    if (fileExtension) {
+      const option = options.find((el) => el.id === fileExtension);
+      const id = option?.id ? option.id : SEQ;
+      setFormatSelection(id);
+    }
+
     opener?.chosenOpener(files[0]).then(onLoad, onError);
   };
 
@@ -359,6 +408,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -379,6 +429,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -416,7 +467,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="openButton"
           disabled={!structStr.trim()}
           clickHandler={openHandler}
-          label="Open as New"
+          label={t('open.openAsNew')}
           styleType="secondary"
           data-testid="open-as-new-button"
         />
@@ -424,8 +475,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="copyButton"
           disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('open.addToCanvas')}
+          title={t('open.addToCanvasTooltip')}
           data-testid="add-to-canvas-button"
         />
       </FooterButtonContainer>
@@ -435,7 +486,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   return (
     <OpenModal
       isOpen={isModalOpen}
-      title="Open Structure"
+      title={t('open.title')}
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"

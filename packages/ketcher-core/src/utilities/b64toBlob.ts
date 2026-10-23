@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 export function b64toBlob(
   b64Data: string,
   contentType = '',
   sliceSize = 512,
 ): Blob {
   const byteCharacters: string = window.atob(b64Data);
-  const byteArrays: Array<Uint8Array> = [];
+  const byteArrays: Uint8Array[] = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice: string = byteCharacters.slice(offset, offset + sliceSize);
@@ -18,6 +19,6 @@ export function b64toBlob(
     byteArrays.push(byteArray);
   }
 
-  const blob: Blob = new Blob(byteArrays, { type: contentType });
+  const blob: Blob = new Blob(byteArrays as BlobPart[], { type: contentType });
   return blob;
 }

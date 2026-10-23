@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
+import { type ReStruct, ReEnhancedFlag, ReFrag } from '../../render';
 
 import { BaseOperation } from './BaseOperation';
-import { Fragment, StructProperty } from 'domain/entities';
+import { type StructProperty, Fragment } from 'domain/entities';
 import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {
@@ -27,7 +27,7 @@ class FragmentAdd extends BaseOperation {
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
-    this.frid = typeof fragmentId === 'undefined' ? null : fragmentId;
+    this.frid = fragmentId === undefined ? null : fragmentId;
     if (properties) {
       this.properties = properties;
     }

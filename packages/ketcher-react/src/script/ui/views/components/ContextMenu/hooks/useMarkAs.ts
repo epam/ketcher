@@ -1,14 +1,15 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
-import {
+import type Editor from 'src/script/editor';
+import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
+import type {
   SelectionContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 import {
+  type RnaPresetComponentType,
   MonomerCreationMarkAsComponentAction,
-  RnaPresetComponentType,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.constants';
 
 type Params = ItemEventParams<SelectionContextMenuProps>;
@@ -48,7 +49,7 @@ const useMarkAs = () => {
     }
 
     // Check if selection is continuous
-    const isContinuous = Editor.isStructureContinuous(struct, selection);
+    const isContinuous = isStructureContinuous(struct, selection);
     return !isContinuous;
   }, [ketcherId]);
 

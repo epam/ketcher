@@ -16,26 +16,10 @@
 
 import styled from '@emotion/styled';
 
-export const Container = styled.div`
-  padding: 16px;
-  max-height: 600px;
-  overflow-y: auto;
-`;
-
-export const HeaderContent = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-`;
-
-export const HeaderTitle = styled.span`
-  padding-inline-end: 4px;
-`;
-
-export const HeaderButton = styled.button`
+export const HeaderIconButton = styled.button`
   background-color: transparent;
   border: none;
-  color: #167782;
+  color: ${({ theme }) => theme.ketcher.color.icon.active};
   padding: 0;
   font-size: 0;
   cursor: pointer;
@@ -44,78 +28,46 @@ export const HeaderButton = styled.button`
   justify-content: center;
 
   &:hover {
-    color: #005662;
+    color: ${({ theme }) => theme.ketcher.color.icon.hover};
   }
 
   &:disabled {
-    color: #cad3dd;
+    color: ${({ theme }) => theme.ketcher.color.icon.disabled};
     cursor: not-allowed;
   }
+`;
 
-  input[type='file'] {
-    display: none;
+/** Set ACS Settings sits in the title row next to the icon controls */
+export const HeaderTextButton = styled.button`
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+  border: 1px solid ${({ theme }) => theme.ketcher.color.text.secondary};
+  border-radius: 4px;
+  color: ${({ theme }) => theme.ketcher.color.text.secondary};
+  height: 20px;
+  padding: 0 6px;
+  font-size: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.ketcher.color.text.primary};
+    color: ${({ theme }) => theme.ketcher.color.text.primary};
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 `;
 
-export const FooterLeft = styled.div`
-  display: flex;
-  gap: 8px;
-  flex: 1;
-`;
-
-export const FooterRight = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-inline-start: auto;
-`;
-
-export const FieldsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 8px 0;
-`;
-
-export const FieldLabelContent = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 168px;
-  margin-right: 8px;
-
-  svg {
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-  }
-`;
-
-export const FieldWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-size: 12px;
-  line-height: 14px;
-  margin-bottom: 12px;
-  color: #333333;
-  height: 24px;
-
-  label {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-  }
-
-  label > span:first-of-type {
-    width: 168px;
-    margin-inline-end: 8px;
-  }
-
-  label > input,
-  label > select,
-  label > div {
-    width: 120px;
-    margin-inline-end: auto;
-  }
+/**
+ * Covers the canvas area while the Settings window is open. It is fully
+ * transparent, so the structure stays visible, but it swallows every pointer
+ * event so the canvas cannot be modified.
+ */
+export const CanvasCaptureLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
 `;

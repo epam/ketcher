@@ -41,6 +41,12 @@ type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
 
+/**
+ * Dialogs that must not dim or center over the application. The overlay element is
+ * still rendered so it keeps swallowing pointer input to the canvas and the toolbars.
+ */
+const NON_MODAL_DIALOGS = new Set(['settings']);
+
 function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -62,7 +68,9 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
 
   return (
     <div
-      className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
+      className={clsx(classes.modalOverlay, selectClasses.selectContainer, {
+        [classes.nonModal]: NON_MODAL_DIALOGS.has(modal.name),
+      })}
       ref={containerRef}
       data-testid={`${modal.name}-dialog`}
     >

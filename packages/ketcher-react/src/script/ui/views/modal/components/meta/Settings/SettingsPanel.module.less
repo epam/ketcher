@@ -47,8 +47,17 @@
   input[type='text'],
   input[type='number'],
   select {
-    border: 1px solid @settings-control-border;
+    height: 32px !important;
+    border: 1px solid @settings-control-border !important;
     border-radius: @settings-panel-radius;
+  }
+
+  // MUI Select used for unit dropdowns in molecules mode
+  :global(.MuiOutlinedInput-root .MuiSelect-select) {
+    height: 32px !important;
+    min-height: 32px !important;
+    line-height: 30px;
+    border-color: @settings-control-border !important;
   }
 }
 

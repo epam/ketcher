@@ -121,16 +121,20 @@ export class RenderStruct {
         structureSizeInPixels.x,
         structureSizeInPixels.y,
       );
-      const svgSize = isStructureLessThanWrapper
-        ? Math.min(
-            structureRectangleSize,
-            wrapperElementBoundingRect.width,
-            wrapperElementBoundingRect.height,
-          )
-        : undefined;
+      const svgSize =
+        isStructureLessThanWrapper && structureRectangleSize > 0
+          ? Math.min(
+              structureRectangleSize,
+              wrapperElementBoundingRect.width,
+              wrapperElementBoundingRect.height,
+            )
+          : undefined;
+
+      const isZeroSizedStructure = structureRectangleSize === 0;
       const extendedOptions: Partial<RenderOptions> = {
         autoScale: true,
         ...renderOptions,
+        ...(isZeroSizedStructure ? { rescaleAmount: 1 } : {}),
       };
 
       if (window.isPolymerEditorTurnedOn) {

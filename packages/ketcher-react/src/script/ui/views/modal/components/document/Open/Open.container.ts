@@ -24,6 +24,12 @@ import { changeImage } from '../../../../../state/options';
 
 type StateProps = OpenProps;
 
+type OpenResult = {
+  structStr: string;
+  fragment: boolean;
+  'input-format'?: string;
+};
+
 type DispatchProps = {
   onOk: BaseCallProps['onOk'];
   onImageUpload: (file: File) => void;
@@ -38,12 +44,13 @@ const mapStateToProps = (state): StateProps => ({
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
-    if (result.fragment) exec('copy');
+    const openResult = result as OpenResult;
+    if (openResult.fragment) exec('copy');
     dispatch(
-      load(result.structStr, {
+      load(openResult.structStr, {
         badHeaderRecover: true,
-        fragment: result.fragment,
-        'input-format': result['input-format'],
+        fragment: openResult.fragment,
+        'input-format': openResult['input-format'],
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)

@@ -14,13 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { AutomapMode, Editor as CoreEditor, Struct } from 'ketcher-core';
+import type { AutomapMode, Struct } from 'ketcher-core';
+import type { Action, compose } from 'redux';
+import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
+import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 import type { OptionsState } from './options/types';
 import type Editor from 'src/script/editor';
 import type { Api } from 'src/script/api';
 import type { ToolVariant } from '../action';
 import type { ThunkAction } from 'redux-thunk';
-import type { Action } from 'redux';
 import type { ToolbarState } from './toolbar/types';
 
 export type {
@@ -72,6 +74,41 @@ export interface StoreState {
   options: OptionsState;
 }
 
+export type SetEditor = (editor: Editor) => void;
+
+export type ServerState = Api;
+
+export interface StoreOptions {
+  buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
+  [key: string]: unknown;
+}
+
+export interface InitAction extends Action<'INIT'> {
+  editor: Editor;
+  server?: Api;
+  [key: string]: unknown;
+}
+
+export interface SetServerAction extends Action<'SET_SERVER'> {
+  server?: Api;
+}
+
+export type DevToolsSanitizer = (value: unknown) => unknown;
+
+export interface ReduxDevToolsOptions {
+  stateSanitizer?: DevToolsSanitizer;
+  actionSanitizer?: DevToolsSanitizer;
+}
+
+export type ReduxDevToolsCompose = (
+  options?: ReduxDevToolsOptions,
+) => typeof compose;
+
+export type DevToolsGlobal = typeof globalThis & {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+};
+
 export interface KetcherCheckErrors {
   chiral_flag?: string;
   valence?: string;
@@ -99,5 +136,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 export type CurrentAppState = Pick<StoreState, 'options'> & {
-  editor: CoreEditor | null;
+  editor: Editor | null;
 };

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/static-components */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import type { IIconProps } from './types';
-import { getIconByName } from './utils/getIconByName';
+import type { IIconProps, SvgComponent } from './types';
+import { iconNameToIcon } from './utils/iconNameToIcon';
 
 const Icon = ({
   name,
@@ -27,7 +26,7 @@ const Icon = ({
   onDoubleClick,
   dataTestId,
 }: IIconProps) => {
-  const Component = getIconByName(name);
+  const Component: SvgComponent = iconNameToIcon[name];
 
   return (
     <Component

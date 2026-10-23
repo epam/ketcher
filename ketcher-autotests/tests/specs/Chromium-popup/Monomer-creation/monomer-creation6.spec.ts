@@ -757,8 +757,6 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   const presetSection = NucleotidePresetSection(page);
 
   await LeftToolbar(page).createMonomer();
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await dialog.selectType(MonomerType.NucleotidePreset);
 

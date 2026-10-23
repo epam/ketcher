@@ -22,6 +22,14 @@ import {
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 import { isGenericAtom } from 'domain/helpers';
+import {
+  CIP_LABEL_COLLISION_PADDING,
+  CIP_LABEL_MAX_EXTRA_DISTANCE,
+  CIP_LABEL_PLACEMENT_ANGLE_STEPS,
+  CIP_LABEL_PLACEMENT_DISTANCE_STEP,
+  doesCIPLabelOverlapBond,
+  type BondSegment,
+} from './CIPLabelPositioning';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
@@ -769,10 +777,98 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const direction = this.bisectLargestSector();
+    const preferredDirection = this.bisectLargestSector();
+    const preferredDistance = this.getCIPLabelDistance(preferredDirection);
+    const directionCandidates = Array.from(
+      { length: CIP_LABEL_PLACEMENT_ANGLE_STEPS },
+      (_, index) => {
+        const direction = preferredDirection.rotate(
+          (index * 2 * Math.PI) / CIP_LABEL_PLACEMENT_ANGLE_STEPS,
+        );
+
+        return {
+          direction,
+          distance: this.getCIPLabelDistance(direction),
+          deviation: this.getDirectionDeviation(direction, preferredDirection),
+        };
+      },
+    ).sort((first, second) => first.deviation - second.deviation);
+
+    const maxPlacementDistance =
+      Math.max(...directionCandidates.map(({ distance }) => distance)) +
+      CIP_LABEL_MAX_EXTRA_DISTANCE;
+    const collisionSearchRadius =
+      maxPlacementDistance +
+      Math.hypot(
+        this.cipLabelElementBBox.width / 2,
+        this.cipLabelElementBBox.height / 2,
+      ) +
+      CIP_LABEL_COLLISION_PADDING;
+    const bondSegments = this.getBondSegments(
+      this.scaledPosition,
+      collisionSearchRadius,
+    );
+
+    let bestPlacement = {
+      direction: preferredDirection,
+      distance: preferredDistance,
+      score: Infinity,
+    };
+
+    directionCandidates.forEach(
+      ({ direction, distance: baseDistance, deviation }) => {
+        for (
+          let extraDistance = 0;
+          extraDistance <= CIP_LABEL_MAX_EXTRA_DISTANCE;
+          extraDistance += CIP_LABEL_PLACEMENT_DISTANCE_STEP
+        ) {
+          const distance = baseDistance + extraDistance;
+          const labelCenter = this.scaledPosition.add(
+            direction.scaled(distance),
+          );
+          if (
+            doesCIPLabelOverlapBond(
+              labelCenter,
+              this.cipLabelElementBBox!.width,
+              this.cipLabelElementBBox!.height,
+              bondSegments,
+            )
+          ) {
+            continue;
+          }
+
+          // Prefer the shortest clear placement, with a slight preference for
+          // keeping the label close to the largest available angular sector.
+          const score = distance + deviation * 2;
+          if (score < bestPlacement.score) {
+            bestPlacement = { direction, distance, score };
+          }
+          break;
+        }
+      },
+    );
+
+    const shiftVector = bestPlacement.direction.scaled(bestPlacement.distance);
+
+    const cipPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x -
+          (this.cipLabelElementBBox.x + this.cipLabelElementBBox.width / 2),
+        shiftVector.y -
+          (this.cipLabelElementBBox.y + this.cipLabelElementBBox.height / 2),
+      ),
+    );
+
+    this.cipLabelElement?.attr(
+      'transform',
+      `translate(${cipPosition.x}, ${cipPosition.y})`,
+    );
+  }
+
+  private getCIPLabelDistance(direction: Vec2): number {
     let projectedDistance = this.getProjectedLabelDistance(
-      this.cipTextElementBBox.width,
-      this.cipTextElementBBox.height,
+      this.cipTextElementBBox!.width,
+      this.cipTextElementBBox!.height,
       direction,
     );
 
@@ -788,8 +884,8 @@ export class AtomRenderer extends BaseRenderer {
         direction,
       );
       const cipProjectionRadius = this.getLabelProjectionRadius(
-        this.cipTextElementBBox.width,
-        this.cipTextElementBBox.height,
+        this.cipTextElementBBox!.width,
+        this.cipTextElementBBox!.height,
         direction,
       );
 
@@ -802,21 +898,44 @@ export class AtomRenderer extends BaseRenderer {
       );
     }
 
-    const shiftVector = direction.scaled(projectedDistance);
+    return projectedDistance;
+  }
 
-    const cipPosition = this.scaledPosition.add(
-      new Vec2(
-        shiftVector.x -
-          (this.cipLabelElementBBox.x + this.cipLabelElementBBox.width / 2),
-        shiftVector.y -
-          (this.cipLabelElementBBox.y + this.cipLabelElementBBox.height / 2),
-      ),
-    );
+  private getBondSegments(center: Vec2, searchRadius: number): BondSegment[] {
+    const viewModel = provideEditorInstance().viewModel;
+    const seenBondIds = new Set<number>();
+    const segments: BondSegment[] = [];
+    const minX = center.x - searchRadius;
+    const maxX = center.x + searchRadius;
+    const minY = center.y - searchRadius;
+    const maxY = center.y + searchRadius;
 
-    this.cipLabelElement?.attr(
-      'transform',
-      `translate(${cipPosition.x}, ${cipPosition.y})`,
-    );
+    viewModel.halfEdges.forEach((halfEdge) => {
+      if (seenBondIds.has(halfEdge.bond.id)) return;
+      seenBondIds.add(halfEdge.bond.id);
+
+      const start = Coordinates.modelToCanvas(halfEdge.firstAtom.position);
+      const end = Coordinates.modelToCanvas(halfEdge.secondAtom.position);
+      if (
+        Math.max(start.x, end.x) < minX ||
+        Math.min(start.x, end.x) > maxX ||
+        Math.max(start.y, end.y) < minY ||
+        Math.min(start.y, end.y) > maxY
+      ) {
+        return;
+      }
+
+      segments.push({
+        start,
+        end,
+      });
+    });
+
+    return segments;
+  }
+
+  private getDirectionDeviation(first: Vec2, second: Vec2): number {
+    return Math.acos(Math.min(1, Math.max(-1, Vec2.dot(first, second))));
   }
 
   private bisectLargestSector(): Vec2 {

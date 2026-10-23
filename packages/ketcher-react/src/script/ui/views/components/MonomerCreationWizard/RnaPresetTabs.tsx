@@ -50,6 +50,7 @@ import {
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointAtomIdsForComponent,
+  getConnectionAttachmentPointAtomIdsForPreset,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
@@ -278,7 +279,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
 
     if (!activeComponentKey) {
-      editor.setConnectionAttachmentPoints(new Map());
+      editor.setConnectionAttachmentPoints(
+        getConnectionAttachmentPointAtomIdsForPreset(
+          wizardState,
+          struct,
+          phosphatePosition as PhosphatePosition | undefined,
+        ),
+      );
       return;
     }
 

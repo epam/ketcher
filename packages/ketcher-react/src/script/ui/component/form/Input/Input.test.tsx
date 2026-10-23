@@ -95,24 +95,6 @@ describe('Input component should be rendered correctly', () => {
     expect(callbackRef).toHaveBeenCalledWith(expect.any(HTMLInputElement));
   });
 
-  it('should not throw when focusing via ref on unmounted component', () => {
-    const inputProps = {
-      name: 'test',
-      value: 'test value',
-      onChange: jest.fn(),
-    };
-
-    const ref = React.createRef<HTMLInputElement>();
-    const { unmount } = render(<Input {...inputProps} ref={ref} />);
-
-    unmount();
-
-    // Should not throw when calling focus on unmounted component
-    expect(() => {
-      ref.current?.focus();
-    }).not.toThrow();
-  });
-
   it('should focus when isFocused prop is provided', () => {
     const inputProps = {
       name: 'test',

@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable react-hooks/immutability */
 
-import React, {
-  type ComponentType,
-  PureComponent,
-  useCallback,
-  forwardRef,
-} from 'react';
+import React, { type ComponentType, PureComponent } from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
@@ -35,18 +29,10 @@ type InputComponentProps = {
   onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
   selected?: (testVal: unknown, value: unknown) => boolean;
   multiple?: boolean;
-  /**
-   * @deprecated Use ref instead.
-   */
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
   className?: string;
   type?: string;
-  /**
-   * If true, the input will automatically receive focus when mounted
-   */
-  autoFocus?: boolean;
-  checked?: boolean;
   [key: string]: unknown;
 };
 
@@ -55,112 +41,43 @@ type Props = {
   component?: ComponentType<InputComponentProps>;
   children?: React.ReactNode;
   className?: string;
-  type?: React.HTMLInputTypeAttribute;
+  type?: string;
   value?: unknown;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onChange: (val: unknown) => void;
   placeholder?: string;
-  /**
-   * @deprecated Use autoFocus instead. This prop no longer triggers focus and will be removed in a future version.
-   */
   isFocused?: boolean;
-  /**
-   * @deprecated Use ref instead.
-   */
   innerRef?: React.Ref<HTMLInputElement>;
   schema?: InputSchema;
   multiple?: boolean;
-  /**
-   * If true, the input will automatically receive focus when mounted
-   */
-  autoFocus?: boolean;
-  checked?: boolean;
-  [key: string]: unknown;
 };
 
-export const GenericInput = forwardRef<HTMLInputElement, Props>(
-  function GenericInput(props, ref) {
-    const {
-      schema: _schema,
-      value,
-      onChange,
-      innerRef,
-      type = 'text',
-      isFocused,
-      autoFocus,
-      checked,
-      className,
-      ...otherProps
-    } = props as Props & {
-      type?: React.HTMLInputTypeAttribute;
-      onChange?: React.ChangeEventHandler<HTMLInputElement>;
-      checked?: boolean;
-      className?: string;
-    };
+export function GenericInput({
+  schema: _schema,
+  value,
+  onChange,
+  innerRef,
+  type = 'text',
+  isFocused = false,
+  ...props
+}) {
+  return (
+    <>
+      <input
+        type={type}
+        value={value ?? ''}
+        onChange={onChange}
+        className={clsx(classes.input, classes.genericInput)}
+        ref={innerRef}
+        autoFocus={isFocused}
+        {...props}
+      />
+      {type === 'checkbox' && <span className={classes.checkbox} />}
+      {type === 'radio' && <span className={classes.radioButton} />}
+    </>
+  );
+}
 
-    const inputRef = React.useRef<HTMLInputElement | null>(null);
-
-    React.useEffect(() => {
-      if (isFocused && inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, [isFocused]);
-
-    const mergedRef = useCallback(
-      // Note: This callback gets a new identity when ref or innerRef change.
-      // If callers pass inline callback refs, React will detach/reattach on each render.
-      (node: HTMLInputElement | null) => {
-        inputRef.current = node;
-
-        if (typeof ref === 'function') {
-          ref(node);
-        } else if (ref) {
-          (ref as React.MutableRefObject<HTMLInputElement | null>).current =
-            node;
-        }
-
-        if (innerRef) {
-          if (typeof innerRef === 'function') {
-            innerRef(node);
-          } else {
-            (
-              innerRef as React.MutableRefObject<HTMLInputElement | null>
-            ).current = node;
-          }
-        }
-      },
-      [ref, innerRef],
-    );
-
-    return (
-      <>
-        <input
-          type={type}
-          value={value != null ? String(value) : ''}
-          onChange={onChange}
-          className={clsx(classes.input, classes.genericInput, className)}
-          ref={mergedRef}
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus={autoFocus}
-          {...(checked !== undefined ? { checked } : {})}
-          {...otherProps}
-        />
-        {type === 'checkbox' && <span className={classes.checkbox} />}
-        {type === 'radio' && <span className={classes.radioButton} />}
-      </>
-    );
-  },
-);
-(
-  GenericInput as unknown as {
-    val: (
-      ev: React.ChangeEvent<HTMLInputElement>,
-      schema?: SchemaProperty,
-    ) => string | number;
-  }
-).val = function (
-  ev: React.ChangeEvent<HTMLInputElement>,
-  schema?: SchemaProperty,
-): string | number {
+GenericInput.val = function (ev, schema) {
   const input = ev.target;
   const isInteger = schema?.type === 'integer';
   const isFloat = schema?.type === 'number';
@@ -303,6 +220,9 @@ FieldSet.val = function (ev, schema) {
     return undefined;
   }
 
+  // Hm.. looks like premature optimization
+  //      should we inline this?
+
   const fieldset = input?.parentNode?.parentNode?.parentNode;
   const inputCollection = fieldset?.querySelectorAll('input');
   let result;
@@ -364,6 +284,7 @@ function enumSchema(schema, cbOrIndex) {
 function inputCtrl(component, schema, onChange) {
   let props = {};
   if (schema) {
+    // TODO: infer maxLength, min, max, step, etc
     if (schema.type === 'number' || schema.type === 'integer')
       props = { type: 'text' };
   }
@@ -412,6 +333,7 @@ function ctrlMap(component, props: Props) {
   }
 
   if (!Array.isArray(schema)) {
+    // schema is SchemaProperty here
     if ((!schema.enum && !schema.items) || schema.type === 'string') {
       return inputCtrl(component, schema, onChange);
     }
@@ -421,6 +343,7 @@ function ctrlMap(component, props: Props) {
     return singleSelectCtrl(component, schema, onChange);
   }
 
+  // schema is an array
   if (multiple) {
     return multipleSelectCtrl(component, schema, onChange);
   }
@@ -431,6 +354,7 @@ function componentMap(props: Props) {
   const { schema, type, multiple } = props;
 
   if (!Array.isArray(schema)) {
+    // schema is SchemaProperty | undefined here
     if (schema?.type === 'boolean' && schema?.description === 'slider') {
       return Slider;
     }
@@ -442,12 +366,14 @@ function componentMap(props: Props) {
       return type === 'textarea' ? TextArea : GenericInput;
     }
 
+    // schema has enum or items (SchemaProperty with options)
     if (multiple || schema.type === 'array') {
       return type === 'checkbox' ? FieldSet : Select;
     }
     return type === 'radio' ? FieldSet : Select;
   }
 
+  // schema is an array
   if (multiple) {
     return type === 'checkbox' ? FieldSet : Select;
   }
@@ -462,22 +388,12 @@ type AnyComponentWithRefProps = {
   onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
   selected?: (testVal: unknown, value: unknown) => boolean;
   multiple?: boolean;
-  /**
-   * @deprecated Use ref instead.
-   */
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
   className?: string;
   type?: string;
   placeholder?: string;
-  /**
-   * @deprecated Use autoFocus instead. This prop no longer triggers focus and will be removed in a future version.
-   */
   isFocused?: boolean;
-  /**
-   * If true, the input will automatically receive focus when mounted
-   */
-  autoFocus?: boolean;
   checked?: boolean;
   'data-testid'?: string;
 };
@@ -526,8 +442,8 @@ class Input extends PureComponent<
   }
 }
 
-export default React.forwardRef<HTMLInputElement, Omit<Props, 'innerRef'>>(
-  (props, ref) => {
+export default React.forwardRef(
+  (props: Props, ref: React.Ref<HTMLInputElement>) => {
     return <Input innerRef={ref} {...props} />;
   },
 );

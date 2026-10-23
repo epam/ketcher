@@ -26,7 +26,7 @@ import { fileSaver } from './saveButton.utils';
 import type { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: unknown;
+  server?: StructService | null;
   filename: string;
   data?: Blob | string;
   getData?: () => Blob | string;

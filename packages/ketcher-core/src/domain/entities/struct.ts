@@ -18,6 +18,7 @@ import { assert } from 'utilities';
 import { Atom, radicalElectrons } from './atom';
 import type { AttachmentGroup } from './attachmentGroup';
 import type { EditorSelection } from 'application/editor/editor.types';
+import { calcDativeValence } from './atomDativeValence';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -48,6 +49,14 @@ import {
 } from 'application/editor/shared/utils';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
+import {
+  calcCovalentBondOrderLowerBound,
+  calcKekuleBondOrderSum,
+  collectDativeAtomsToRecalculate,
+  countDativeBonds,
+  type DativeBondCounts,
+  type KekulizationCache,
+} from 'domain/helpers/dativeValence';
 
 export type Neighbor = {
   aid: number;
@@ -1433,7 +1442,11 @@ export class Struct {
     };
   }
 
-  calcImplicitHydrogen(aid: number, includeAtomsInCollapsedSgroups = false) {
+  calcImplicitHydrogen(
+    aid: number,
+    includeAtomsInCollapsedSgroups = false,
+    kekulizationCache: KekulizationCache = new Map(),
+  ) {
     if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
       return;
     }
@@ -1445,24 +1458,68 @@ export class Struct {
       atom,
       includeAtomsInCollapsedSgroups,
     );
-    let correctConn = conn;
+    // calcConn counts the dative and hydrogen neighbours of an aromatic atom, the legacy path must not
+    const legacyConn = isAromatic
+      ? conn - this.countDativeAndHydrogenNeighbors(atom)
+      : conn;
+    let correctConn = legacyConn;
     atom.badConn = false;
+
+    const dativeCounts = countDativeBonds(
+      this,
+      aid,
+      atom,
+      includeAtomsInCollapsedSgroups,
+    );
+    const hasDativeCheck =
+      dativeCounts.donorCount + dativeCounts.acceptorCount > 0 &&
+      !atom.isQuery() &&
+      !atom.attachmentPoints;
+    let dativeBadConn = false;
+
+    if (hasDativeCheck) {
+      if (atom.explicitValence < 0) {
+        const exactBondOrderSum = isAromatic
+          ? calcKekuleBondOrderSum(
+              this,
+              aid,
+              includeAtomsInCollapsedSgroups,
+              kekulizationCache,
+            )
+          : conn;
+        if (
+          exactBondOrderSum !== null &&
+          exactBondOrderSum >= 0 &&
+          this.calcDativeImplicitHydrogen(atom, exactBondOrderSum, dativeCounts)
+        ) {
+          return;
+        }
+      }
+
+      // Without an exact bond order sum, only a failure on the lower bound is flagged
+      dativeBadConn = this.hasDativeCapacityLowerBoundError(
+        atom,
+        dativeCounts,
+        includeAtomsInCollapsedSgroups,
+      );
+      atom.badConn = dativeBadConn;
+    }
 
     if (isAromatic) {
       if (atom.label === 'C' && charge === 0) {
-        if (conn === 3) {
+        if (legacyConn === 3) {
           atom.implicitH = -radicalElectrons(atom.radical);
           return;
         }
-        if (conn === 2) {
+        if (legacyConn === 2) {
           atom.implicitH = 1 - radicalElectrons(atom.radical);
           return;
         }
       } else if (
         (atom.label === 'O' && charge === 0) ||
-        (atom.label === 'N' && charge === 0 && conn === 3) ||
-        (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3) ||
+        (atom.label === 'N' && charge === 0 && legacyConn === 3) ||
+        (atom.label === 'N' && charge === 1 && legacyConn === 3) ||
+        (atom.label === 'S' && charge === 0 && legacyConn === 3) ||
         !atom.implicitH
       ) {
         atom.implicitH = 0;
@@ -1488,7 +1545,72 @@ export class Struct {
       }
     } else {
       atom.calcValence(correctConn);
+      if (hasDativeCheck) {
+        atom.badConn = dativeBadConn;
+      }
     }
+  }
+
+  private countDativeAndHydrogenNeighbors(atom: Atom): number {
+    return atom.neighbors.filter((neighborId) => {
+      const hb = this.halfBonds.get(neighborId);
+      assert(hb, `HalfBond ${neighborId} not found`);
+      const bond = this.bonds.get(hb.bid);
+      assert(bond, `Bond ${hb.bid} not found`);
+      return (
+        bond.type === Bond.PATTERN.TYPE.DATIVE ||
+        bond.type === Bond.PATTERN.TYPE.HYDROGEN
+      );
+    }).length;
+  }
+
+  private calcDativeImplicitHydrogen(
+    atom: Atom,
+    bondOrderSum: number,
+    { donorCount, acceptorCount }: DativeBondCounts,
+  ): boolean {
+    if (donorCount + acceptorCount === 0) {
+      return false;
+    }
+
+    const result = calcDativeValence({
+      label: atom.label,
+      charge: atom.charge ?? 0,
+      radicalCount: radicalElectrons(atom.radical),
+      bondOrderSum: bondOrderSum + (atom.implicitHCount ?? 0),
+      donorCount,
+      acceptorCount,
+    });
+    if (!result) {
+      return false;
+    }
+
+    atom.implicitH = atom.implicitHCount ?? result.implicitHydrogenCount;
+    atom.badConn = result.hasValenceError;
+    atom.valence =
+      bondOrderSum + radicalElectrons(atom.radical) + atom.implicitH;
+    return true;
+  }
+
+  private hasDativeCapacityLowerBoundError(
+    atom: Atom,
+    { donorCount, acceptorCount }: DativeBondCounts,
+    includeAtomsInCollapsedSgroups: boolean,
+  ): boolean {
+    const result = calcDativeValence({
+      label: atom.label,
+      charge: atom.charge ?? 0,
+      radicalCount: radicalElectrons(atom.radical),
+      bondOrderSum:
+        calcCovalentBondOrderLowerBound(
+          this,
+          atom,
+          includeAtomsInCollapsedSgroups,
+        ) + (atom.implicitHCount ?? 0),
+      donorCount,
+      acceptorCount,
+    });
+    return result?.hasValenceError ?? false;
   }
 
   setImplicitHydrogen(
@@ -1503,14 +1625,27 @@ export class Struct {
       }
     });
 
+    const kekulizationCache: KekulizationCache = new Map();
     if (!list) {
       this.atoms.forEach((_atom, aid) => {
-        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
+        this.calcImplicitHydrogen(
+          aid,
+          includeAtomsInCollapsedSgroups,
+          kekulizationCache,
+        );
       });
     } else {
-      list.forEach((aid) => {
+      collectDativeAtomsToRecalculate(
+        this,
+        list,
+        includeAtomsInCollapsedSgroups,
+      ).forEach((aid) => {
         if (this.atoms.get(aid)) {
-          this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
+          this.calcImplicitHydrogen(
+            aid,
+            includeAtomsInCollapsedSgroups,
+            kekulizationCache,
+          );
         }
       });
     }

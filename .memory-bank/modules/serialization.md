@@ -27,7 +27,7 @@ The **central** serializer — the only one that handles **both** micro `Struct`
 
 ### MOL
 
-A mol serializer on ketcher side handles **only V2000**. **V3000** is handled by Indigo.
+A mol serializer on ketcher side handles **only V2000**. **V3000** is handled by Indigo. Repeated `M  CHG`, `M  RAD`, `M  ISO`, `M  RBC`, `M  UNS`, and `M  APO` lines merge into one set of values per property; when two entries name the same atom, the later one wins.
 
 ### SDF
 

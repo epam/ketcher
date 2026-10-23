@@ -2,10 +2,11 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
+  assert,
   type AtomLabel,
   type AttachmentPointClickData,
+  type AttachmentPointId,
   type AttachmentPointName,
-  assert,
 } from 'ketcher-core';
 import AttachmentPointControls from '../MonomerCreationWizard/components/AttachmentPointControls/AttachmentPointControls';
 import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/useAttachmentPointSelectsData';
@@ -18,11 +19,11 @@ import type { Editor } from '../../../../editor';
 type Props = {
   data: AttachmentPointClickData;
   onNameChange: (
-    currentName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newName: AttachmentPointName,
   ) => void;
   onLeavingAtomChange: (
-    apName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
   onClose: VoidFunction;
@@ -84,7 +85,7 @@ const AttachmentPointEditPopup = ({
     };
   }, [onClose]);
 
-  const { attachmentPointName } = data;
+  const { attachmentPointId, attachmentPointName } = data;
 
   useLayoutEffect(() => {
     const popup = popupRef.current;
@@ -94,7 +95,7 @@ const AttachmentPointEditPopup = ({
     const updatePosition = () => {
       const atomPair =
         editor.monomerCreationState?.assignedAttachmentPoints.get(
-          attachmentPointName,
+          attachmentPointId,
         );
       const parent = popup.offsetParent;
       if (!atomPair || !(parent instanceof HTMLElement)) return;
@@ -102,8 +103,9 @@ const AttachmentPointEditPopup = ({
       // Include both atoms and the R-label, including its interaction target.
       // DOM bounds already account for the micro canvas viewBox and zoom.
       const selector = [
-        ...atomPair.map((id) => `[data-atom-id="${id}"]`),
-        `[data-attachment-point-alias="${attachmentPointName}"]`,
+        `[data-atom-id="${atomPair.attachmentAtomId}"]`,
+        `[data-atom-id="${atomPair.leavingAtomId}"]`,
+        `[data-attachment-point-id="${attachmentPointId}"]`,
       ].join(',');
       const bounds = Array.from(canvas.querySelectorAll(selector)).map(
         (element) => element.getBoundingClientRect(),
@@ -172,16 +174,13 @@ const AttachmentPointEditPopup = ({
       window.removeEventListener('scroll', schedulePositionUpdate, true);
       window.removeEventListener('resize', schedulePositionUpdate);
     };
-  }, [editor, attachmentPointName]);
+  }, [editor, attachmentPointId]);
 
   assert(editor.monomerCreationState);
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const selectsData = useAttachmentPointSelectsData(
-    editor,
-    attachmentPointName,
-  );
+  const selectsData = useAttachmentPointSelectsData(editor, attachmentPointId);
 
   if (!selectsData) {
     return null;
@@ -189,24 +188,24 @@ const AttachmentPointEditPopup = ({
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== attachmentPointName) {
-      onNameChange(attachmentPointName, newName);
+      onNameChange(attachmentPointId, newName);
     }
     onClose();
   };
 
   const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
-    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointName);
+    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointId);
 
     assert(currentAtomPair);
 
-    const leavingAtomId = currentAtomPair[1];
+    const { leavingAtomId } = currentAtomPair;
     const leavingAtom = editor.struct().atoms.get(leavingAtomId);
     assert(leavingAtom);
 
     const currentLeavingAtomLabel = leavingAtom.label;
 
     if (newLeavingAtomLabel !== currentLeavingAtomLabel) {
-      onLeavingAtomChange(attachmentPointName, newLeavingAtomLabel);
+      onLeavingAtomChange(attachmentPointId, newLeavingAtomLabel);
     }
     onClose();
   };

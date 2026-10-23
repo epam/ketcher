@@ -106,14 +106,25 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       if (editor.isMonomerCreationWizardActive) {
         const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
-          const attachmentPointName = (
-            rLabelElement as HTMLElement | SVGElement
-          ).dataset.attachmentPointAlias;
-          if (attachmentPointName) {
+          const attachmentPointName = rLabelElement.getAttribute(
+            'data-attachment-point-alias',
+          );
+          const attachmentPointId = rLabelElement.getAttribute(
+            'data-attachment-point-id',
+          );
+          const parsedAttachmentPointId =
+            attachmentPointId === null ? null : Number(attachmentPointId);
+
+          if (
+            attachmentPointName &&
+            parsedAttachmentPointId !== null &&
+            !Number.isNaN(parsedAttachmentPointId)
+          ) {
             show({
               id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
               event,
               props: {
+                attachmentPointId: parsedAttachmentPointId,
                 attachmentPointName,
                 ketcherId,
               },

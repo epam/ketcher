@@ -1,9 +1,23 @@
 import { AssignAttachmentAtomOperation } from 'application/editor/operations/monomerCreation/AssignAttachmentAtomOperation';
 import { AssignLeavingGroupAtomOperation } from 'application/editor/operations/monomerCreation/AssignLeavingGroupAtomOperation';
-import type { MonomerCreationState, ReStruct } from 'application/render';
+import type {
+  AssignedAttachmentPoints,
+  MonomerCreationState,
+  ReStruct,
+} from 'application/render';
 import { AttachmentPointName } from 'domain/types';
 
-type AttachmentPoints = Map<AttachmentPointName, [number, number]>;
+type AttachmentPoints = AssignedAttachmentPoints;
+
+const createAttachmentPoints = (
+  entries: Array<[number, AttachmentPointName, [number, number]]>,
+): AttachmentPoints =>
+  new Map(
+    entries.map(([id, name, [attachmentAtomId, leavingAtomId]]) => [
+      id,
+      { name, attachmentAtomId, leavingAtomId },
+    ]),
+  );
 
 const createState = (
   assignedAttachmentPoints: AttachmentPoints,
@@ -39,45 +53,51 @@ describe('attachment point name assignment in monomer creation', () => {
 
       createOperation(state).execute(restruct);
 
-      expect([...state.assignedAttachmentPoints.keys()]).toEqual([
-        AttachmentPointName.R1,
-      ]);
+      expect(
+        [...state.assignedAttachmentPoints.values()].map(({ name }) => name),
+      ).toEqual([AttachmentPointName.R1]);
     });
 
     it('skips names taken by connection points between preset components', () => {
       const state = createState(
         new Map(),
-        new Map([[AttachmentPointName.R1, [1, 2]]]),
+        createAttachmentPoints([[0, AttachmentPointName.R1, [1, 2]]]),
       );
 
       createOperation(state).execute(restruct);
 
-      expect([...state.assignedAttachmentPoints.keys()]).toEqual([
-        AttachmentPointName.R2,
-      ]);
+      expect(
+        [...state.assignedAttachmentPoints.values()].map(({ name }) => name),
+      ).toEqual([AttachmentPointName.R2]);
     });
 
     it('skips both assigned and connection point names', () => {
       const state = createState(
-        new Map([[AttachmentPointName.R1, [3, 4]]]),
-        new Map([
-          [AttachmentPointName.R2, [1, 2]],
-          [AttachmentPointName.R3, [5, 6]],
+        createAttachmentPoints([[0, AttachmentPointName.R1, [3, 4]]]),
+        createAttachmentPoints([
+          [0, AttachmentPointName.R2, [1, 2]],
+          [1, AttachmentPointName.R3, [5, 6]],
         ]),
       );
 
       createOperation(state).execute(restruct);
 
       expect(
-        state.assignedAttachmentPoints.get(AttachmentPointName.R4),
-      ).toEqual([10, 11]);
+        [...state.assignedAttachmentPoints.values()].find(
+          ({ name }) => name === AttachmentPointName.R4,
+        ),
+      ).toEqual({
+        name: AttachmentPointName.R4,
+        attachmentAtomId: 10,
+        leavingAtomId: 11,
+      });
     });
   });
 
   it('keeps explicitly passed attachment point name', () => {
     const state = createState(
       new Map(),
-      new Map([[AttachmentPointName.R1, [1, 2]]]),
+      createAttachmentPoints([[0, AttachmentPointName.R1, [1, 2]]]),
     );
 
     new AssignAttachmentAtomOperation(

@@ -66,10 +66,17 @@ Selection is reversible and non-destructive; manipulation acts only on the curre
 - **WHEN** the user selects _Fragment Selection_ in the micromolecules editor and reloads the page
 - **THEN** _Fragment Selection_ remains active and retains its part-of-molecule selection behavior
 
+#### Scenario: Auto-scrolling while dragging a selection near the canvas edge
+
+- **WHEN** the user drags a selection and the cursor moves within 15 px of any edge of the canvas wrapper (in any layout mode: sequence, flex, or snake)
+- **THEN** the canvas scrolls continuously in that direction at a constant speed until the cursor moves away from the edge or the mouse button is released
+- **AND** scrolling is synchronized with the browser repaint cycle for smooth, jank-free movement
+
 ## Guarantees
 
 - Deleting a bond does not delete its atoms unless they become disconnected fragments per the tool's rules; each manipulation is one atomic undo entry.
 - Selection state is purely a view concern and never alters the chemical model.
+- Auto-scroll during selection drag is active in all macromolecules layout modes (sequence, flex, snake); it is disabled for the Lasso selection tool.
 
 ## Limitations
 

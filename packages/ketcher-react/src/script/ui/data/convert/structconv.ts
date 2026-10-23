@@ -71,10 +71,12 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  /** Fragment ID included in rlabel element payloads fired by the editor. */
+  fragId?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */
-interface SGroupInput {
+export interface SGroupInput {
   type?: string;
   attrs: {
     context: string;
@@ -101,7 +103,7 @@ interface SGroupInput {
 }
 
 /** S-group form data returned by the S-group dialog. */
-interface SGroupFormData {
+export interface SGroupFormData {
   type?: string;
   context?: string;
   fieldName?: string;
@@ -294,7 +296,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     } as Partial<Atom>;
   }
   const pch = matchCharge(restAtom.charge as string);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
+  const charge = pch
+    ? Number.parseInt(pch[1] + pch[3] + pch[2])
+    : restAtom.charge;
 
   const conv = {
     ...restAtom,
@@ -506,6 +510,10 @@ const bondCaptionMap: Record<string, { type: number; stereo: number }> = {
   },
   dative: {
     type: Bond.PATTERN.TYPE.DATIVE,
+    stereo: Bond.PATTERN.STEREO.NONE,
+  },
+  haptic: {
+    type: Bond.PATTERN.TYPE.HAPTIC,
     stereo: Bond.PATTERN.STEREO.NONE,
   },
 };

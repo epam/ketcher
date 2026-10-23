@@ -51,7 +51,7 @@ export type { ModalState, ModalDialogProps };
 export function openDialog(
   dispatch: Dispatch,
   dialogName: string,
-  props?: Record<string, unknown>,
+  props?: object | null,
 ): Promise<unknown> {
   return new Promise((resolve, reject) => {
     dispatch({
@@ -90,7 +90,7 @@ function modalReducer(
       if (state?.parentModal) {
         const restoredProp = {
           ...state.parentModal.prop,
-          ...(state.parentModal.form?.result ?? {}),
+          ...state.parentModal.form?.result,
           isRestoredModal: true,
         } as ModalDialogProps;
         return { ...state.parentModal, prop: restoredProp };

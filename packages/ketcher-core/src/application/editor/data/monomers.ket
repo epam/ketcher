@@ -2500,6 +2500,48 @@
         "$ref": "monomerGroupTemplate-R(G)"
       },
       {
+        "$ref": "monomerGroupTemplate-dR(A)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-dR(C)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-dR(G)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-dR(T)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-mR(A)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-mR(C)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-mR(G)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-mR(U)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-MOE(C)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-lna(A)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-lna(C)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-lna(G)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-lna(T)P"
+      },
+      {
+        "$ref": "monomerGroupTemplate-mR(5meC)P"
+      },
+      {
         "$ref": "monomerTemplate-AmdA___2, 6-Diaminopurine"
       },
       {
@@ -215519,6 +215561,272 @@
       },
       {
         "$ref": "monomerTemplate-G___Guanine"
+      }
+    ]
+  },
+  "monomerGroupTemplate-dR(A)P": {
+    "type": "monomerGroupTemplate",
+    "id": "dR(A)P",
+    "name": "dR(A)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "dA",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-dR___Deoxy-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-A___Adenine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-dR(C)P": {
+    "type": "monomerGroupTemplate",
+    "id": "dR(C)P",
+    "name": "dR(C)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "dC",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-dR___Deoxy-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-C___Cytosine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-dR(G)P": {
+    "type": "monomerGroupTemplate",
+    "id": "dR(G)P",
+    "name": "dR(G)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "dG",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-dR___Deoxy-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-G___Guanine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-dR(T)P": {
+    "type": "monomerGroupTemplate",
+    "id": "dR(T)P",
+    "name": "dR(T)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "dT",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-dR___Deoxy-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-T___Thymine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-mR(A)P": {
+    "type": "monomerGroupTemplate",
+    "id": "mR(A)P",
+    "name": "mR(A)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "a",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-mR___2'-O-Methyl-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-A___Adenine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-mR(C)P": {
+    "type": "monomerGroupTemplate",
+    "id": "mR(C)P",
+    "name": "mR(C)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "c",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-mR___2'-O-Methyl-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-C___Cytosine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-mR(G)P": {
+    "type": "monomerGroupTemplate",
+    "id": "mR(G)P",
+    "name": "mR(G)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "g",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-mR___2'-O-Methyl-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-G___Guanine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-mR(U)P": {
+    "type": "monomerGroupTemplate",
+    "id": "mR(U)P",
+    "name": "mR(U)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "u",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-mR___2'-O-Methyl-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-U___Uracil"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-MOE(C)P": {
+    "type": "monomerGroupTemplate",
+    "id": "MOE(C)P",
+    "name": "MOE(C)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "Cm",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-MOE___2'-O-Methoxyethyl ribose"
+      },
+      {
+        "$ref": "monomerTemplate-C___Cytosine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-lna(A)P": {
+    "type": "monomerGroupTemplate",
+    "id": "lna(A)P",
+    "name": "lna(A)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "Ab",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-lna___LNA (2,4-BNA)"
+      },
+      {
+        "$ref": "monomerTemplate-A___Adenine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-lna(C)P": {
+    "type": "monomerGroupTemplate",
+    "id": "lna(C)P",
+    "name": "lna(C)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "Cb",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-lna___LNA (2,4-BNA)"
+      },
+      {
+        "$ref": "monomerTemplate-C___Cytosine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-lna(G)P": {
+    "type": "monomerGroupTemplate",
+    "id": "lna(G)P",
+    "name": "lna(G)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "Gb",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-lna___LNA (2,4-BNA)"
+      },
+      {
+        "$ref": "monomerTemplate-G___Guanine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-lna(T)P": {
+    "type": "monomerGroupTemplate",
+    "id": "lna(T)P",
+    "name": "lna(T)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "Tb",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-lna___LNA (2,4-BNA)"
+      },
+      {
+        "$ref": "monomerTemplate-T___Thymine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
+      }
+    ]
+  },
+  "monomerGroupTemplate-mR(5meC)P": {
+    "type": "monomerGroupTemplate",
+    "id": "mR(5meC)P",
+    "name": "mR(5meC)P",
+    "class": "RNA",
+    "hidden": true,
+    "aliasAxoLabs": "(5Mc)",
+    "templates": [
+      {
+        "$ref": "monomerTemplate-mR___2'-O-Methyl-Ribose"
+      },
+      {
+        "$ref": "monomerTemplate-5meC___5-methylcytosine"
+      },
+      {
+        "$ref": "monomerTemplate-P___Phosphate"
       }
     ]
   },

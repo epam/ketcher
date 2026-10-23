@@ -28,6 +28,7 @@ import type { Dispatch } from 'redux';
 import type { Editor } from 'ketcher-core';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface GenericElement {
   type: 'gen';
@@ -44,6 +45,7 @@ interface TableProps {
 }
 
 const Table = (props: TableProps) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const [value, setValue] = useState<string | null>(
     props.pseudo ? (props.label ?? null) : null,
   );
@@ -68,13 +70,13 @@ const Table = (props: TableProps) => {
 
   return (
     <Dialog
-      title="Extended Table"
+      title={t('dialogs:extendedTable.dialogTitle')}
       withDivider
       className={classes.extendedTable}
       params={props}
       result={result}
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Add' }}
+      buttonsNameMap={{ OK: t('dialogs:shared.addButton') }}
       needMargin={false}
     >
       <GenericGroups

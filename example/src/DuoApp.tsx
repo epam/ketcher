@@ -46,11 +46,11 @@ const DuoApp = () => {
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider1}
             onInit={(ketcher: Ketcher) => {
-              window.ketcher = ketcher;
+              globalThis.window.ketcher = ketcher;
               safePostMessage({
                 eventType: 'init',
               });
-              window.scrollTo(0, 0);
+              globalThis.scrollTo(0, 0);
             }}
           />
           {hasError && (
@@ -80,11 +80,11 @@ const DuoApp = () => {
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider2}
             onInit={(ketcher: Ketcher) => {
-              window.ketcher = ketcher;
+              globalThis.window.ketcher = ketcher;
               safePostMessage({
                 eventType: 'init',
               });
-              window.scrollTo(0, 0);
+              globalThis.scrollTo(0, 0);
             }}
           />
           {hasError && (

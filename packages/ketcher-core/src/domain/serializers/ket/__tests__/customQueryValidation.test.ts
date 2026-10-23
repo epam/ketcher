@@ -19,6 +19,24 @@ const baseBondSource = (customQuery: string) => ({
   customQuery,
 });
 
+function makeStructWithAtomCustomQuery(customQuery: string): Struct {
+  const struct = new Struct();
+  const atom = new Atom({ label: 'C', queryProperties: { customQuery } });
+  struct.atoms.add(atom);
+  return struct;
+}
+
+function makeStructWithBondCustomQuery(customQuery: string): Struct {
+  const struct = new Struct();
+  const a1 = new Atom({ label: 'C' });
+  const a2 = new Atom({ label: 'C' });
+  const id1 = struct.atoms.add(a1);
+  const id2 = struct.atoms.add(a2);
+  const bond = new Bond({ type: 1, begin: id1, end: id2, customQuery });
+  struct.bonds.add(bond);
+  return struct;
+}
+
 describe('customQuery length validation', () => {
   describe('atomToStruct (load from .ket)', () => {
     it('throws when atom customQuery exceeds limit', () => {
@@ -69,24 +87,6 @@ describe('customQuery length validation', () => {
   });
 
   describe('moleculeToKet (save to .ket)', () => {
-    function makeStructWithAtomCustomQuery(customQuery: string): Struct {
-      const struct = new Struct();
-      const atom = new Atom({ label: 'C', queryProperties: { customQuery } });
-      struct.atoms.add(atom);
-      return struct;
-    }
-
-    function makeStructWithBondCustomQuery(customQuery: string): Struct {
-      const struct = new Struct();
-      const a1 = new Atom({ label: 'C' });
-      const a2 = new Atom({ label: 'C' });
-      const id1 = struct.atoms.add(a1);
-      const id2 = struct.atoms.add(a2);
-      const bond = new Bond({ type: 1, begin: id1, end: id2, customQuery });
-      struct.bonds.add(bond);
-      return struct;
-    }
-
     it('throws when serializing atom with customQuery exceeding limit', () => {
       const struct = makeStructWithAtomCustomQuery('A'.repeat(OVER_LIMIT));
       expect(() => moleculeToKet(struct)).toThrow(

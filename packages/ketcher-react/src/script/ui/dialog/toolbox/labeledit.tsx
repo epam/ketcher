@@ -20,6 +20,7 @@ import { Dialog } from 'components';
 import { Elements } from 'ketcher-core';
 import { capitalize } from 'lodash/fp';
 import { connect } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema';
 import styles from './labelEdit.module.less';
 
@@ -97,17 +98,18 @@ function LabelEdit(props: Readonly<LabelEditProps>) {
   const init = { label: props.letter ?? serialize(props) };
   const { formState, ...prop } = props;
   const { result, valid } = formState;
+  const { t } = useTranslation(['common', 'dialogs']);
 
   return (
     <Dialog
-      title="Label Edit"
+      title={t('dialogs:toolbox.labelEditDialog.dialogTitle')}
       valid={() => valid}
       withDivider={true}
       needMargin={false}
       result={() => deserialize(result.label)}
       className={styles.labelEdit}
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       focusable={false}
       params={prop}
     >

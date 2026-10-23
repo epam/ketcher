@@ -75,7 +75,8 @@ const RightToolbar = (props: Props) => {
       ref={ref}
     >
       <div ref={scrollContainerRef} className={classes.buttons}>
-        <div ref={startRef}>
+        <div>
+          <div ref={startRef} className={classes.scrollStart} />
           <Group
             className={clsx(
               classes.atomsList,

@@ -66,7 +66,7 @@ class BondDelete extends BaseOperation {
       if (halfBond && halfBond.loop >= 0) {
         restruct.loopRemove(halfBond.loop);
       }
-    }, restruct);
+    });
     restruct.clearVisel(rebond.visel);
     restruct.bonds.delete(bid);
     restruct.markItemRemoved();
@@ -80,7 +80,7 @@ class BondDelete extends BaseOperation {
         return;
       }
 
-      const atom = struct.atoms.get(halfBond.begin);
+      const atom = struct.getBondEndpoint(halfBond.begin);
       if (!atom) return;
       const pos = atom.neighbors.indexOf(hbid);
       const prev = (pos + atom.neighbors.length - 1) % atom.neighbors.length;

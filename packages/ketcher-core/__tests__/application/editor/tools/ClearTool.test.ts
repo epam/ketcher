@@ -67,6 +67,9 @@ jest.mock('d3', () => {
     }),
     zoom() {
       return {
+        extent() {
+          return this;
+        },
         scaleExtent() {
           return this;
         },

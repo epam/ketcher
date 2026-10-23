@@ -382,12 +382,17 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'formic acid' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
-      force: true,
-    });
+    await expect
+      .poll(() =>
+        page.evaluate(() => window.ketcher.editor.selection()?.atoms?.length),
+      )
+      .toBe(4);
+    // The rotation-center handle overlaps carbon; drag an unobstructed atom.
+    await getAtomLocator(page, { atomLabel: 'O' }).first().hover();
     await page.keyboard.down('ControlOrMeta');
     await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
+    await expect(getAtomLocator(page, {})).toHaveCount(8);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });

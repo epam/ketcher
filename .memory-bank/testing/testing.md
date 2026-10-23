@@ -350,6 +350,8 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Async / Timing
 
+For context-menu hotkey regressions, wait for the menu to become hidden before sending the key. The menu item retains focus during its feedback animation, so sending the key before closure can miss focus-loss bugs. Use a visibility assertion rather than a fixed delay or a canvas click.
+
 1. **When it is needed wrap canvas-mutating actions in `waitForRender`** or use the higher-level utility functions that already do this. Never use raw `page.waitForTimeout` as a substitute.
 2. **Use `waitForSpinnerFinishedWork`** whenever the action triggers a loading spinner (file open, save, structure check).
 3. **Use `waitFor({ state: 'visible' })`** or `waitFor({ state: 'detached' })` to assert element presence/absence. Avoid polling with `waitForTimeout`.

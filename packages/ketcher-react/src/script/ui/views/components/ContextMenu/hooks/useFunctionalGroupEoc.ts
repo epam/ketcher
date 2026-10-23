@@ -35,6 +35,7 @@ const useFunctionalGroupEoc = () => {
 
       editor.update(action);
       editor.rotateController.rerender();
+      editor.focusCliparea();
       highlightFG(dispatch, { group: null, id: null });
     },
     [dispatch, ketcherId],

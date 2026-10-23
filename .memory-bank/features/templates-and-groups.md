@@ -41,6 +41,12 @@ Inserting a template or group produces a well-formed structure; abbreviated grou
 - **WHEN** the user applies an incompatible tool to an atom inside a functional group
 - **THEN** Ketcher blocks the edit and offers to _Remove the Abbreviation_
 
+#### Scenario: Hotkeys after abbreviation actions
+
+- **WHEN** the user expands, contracts, or removes a functional-group or salt/solvent abbreviation, or closes _Edit Abbreviation_ with _Cancel_ or _Remove Abbreviation_
+- **THEN** editor hotkeys work immediately without clicking the canvas or selecting a tool
+- **AND** undo restores the previous structure; cancelling the dialog leaves the preceding edit available to undo
+
 #### Scenario: Creating a Markush R-Group member
 
 - **WHEN** the user assigns a fragment to an R-Group label and defines its attachment point(s)

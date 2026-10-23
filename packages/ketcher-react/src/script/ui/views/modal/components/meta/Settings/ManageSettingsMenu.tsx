@@ -71,7 +71,11 @@ const ManageSettingsMenu = ({
             onMouseEnter={() => setIsResetSubmenuOpen(true)}
             onMouseLeave={() => setIsResetSubmenuOpen(false)}
           >
-            <button type="button" className={classes.menuItem}>
+            <button
+              type="button"
+              className={classes.menuItem}
+              data-testid="reset-to-submenu-trigger"
+            >
               <span>{t('meta.settings.resetTo')}</span>
               <Icon name="chevron" className={classes.menuItemChevron} />
             </button>

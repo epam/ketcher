@@ -129,6 +129,62 @@ export interface KetPlusNode {
 
 export type KetReactionNode = KetArrowNode | KetPlusNode;
 
+export interface KetTextFont {
+  family?: string;
+  size?: number;
+}
+
+export type KetTextIndent =
+  number | { first_line?: number; left?: number; right?: number };
+
+export interface KetTextStyleOverrides {
+  font?: KetTextFont;
+  color?: string;
+  bold?: boolean;
+  italic?: boolean;
+  superscript?: boolean;
+  subscript?: boolean;
+}
+
+export interface KetTextPart extends KetTextStyleOverrides {
+  text: string;
+}
+
+export interface KetTextParagraph extends KetTextStyleOverrides {
+  alignment?: string;
+  indent?: KetTextIndent;
+  parts: KetTextPart[];
+}
+
+export interface KetTextV2Node extends KetTextStyleOverrides {
+  type: 'text';
+  boundingBox: {
+    x: number;
+    y: number;
+    z?: number;
+    width: number;
+    height: number;
+  };
+  alignment?: string;
+  indent?: KetTextIndent;
+  paragraphs: KetTextParagraph[];
+  selected?: boolean;
+}
+
+export interface KetTextData {
+  content: string;
+  position: Point;
+  pos: Point[];
+}
+
+export interface KetLegacyTextNode {
+  type: 'text';
+  data: KetTextData;
+  selected?: boolean;
+}
+
+export type KetTextNode = KetTextV2Node | KetLegacyTextNode;
+
 export interface KetFragment {
   atoms?: KetAtomNode[];
   bonds?: KetBondNode[];

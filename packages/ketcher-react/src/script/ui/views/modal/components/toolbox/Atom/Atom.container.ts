@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,17 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { Editor } from 'ketcher-core';
 import Atom from './Atom';
 import type { BaseProps } from '../../../modal.types';
+import type { StoreState } from '../../../../../state/store.types';
 import { connect } from 'react-redux';
 
 type StateProps = Pick<BaseProps, 'formState'> & {
   isMonomerCreationWizardActive?: boolean;
 };
 
-const mapStateToProps = (state: any): StateProps => ({
+type State = Pick<StoreState, 'modal'> & {
+  editor: Editor | null;
+};
+
+const mapStateToProps = (state: State): StateProps => ({
   formState: state.modal.form,
-  isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
+  isMonomerCreationWizardActive: state.editor?.isMonomerCreationWizardActive,
 });
 
 const AtomContainer = connect(mapStateToProps)(Atom);

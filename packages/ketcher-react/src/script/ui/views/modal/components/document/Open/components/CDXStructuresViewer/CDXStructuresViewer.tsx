@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
@@ -52,67 +51,50 @@ export const CDXStructuresViewer = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
-  const selectedIndexRef = useRef(selectedIndex);
-  useEffect(() => {
-    selectedIndexRef.current = selectedIndex;
-  }, [selectedIndex]);
-  const itemsMapRef = useRef(itemsMap);
-  useEffect(() => {
-    itemsMapRef.current = itemsMap;
-  }, [itemsMap]);
 
-  const notifyInputHandler = (structItem?: item) => {
-    if (!structItem || structItem.error) {
+  useEffect(() => {
+    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
       inputHandler('');
     } else {
-      inputHandler(structItem.base64struct);
+      inputHandler(itemsMap[selectedIndex].base64struct);
     }
-  };
+  }, [inputHandler, itemsMap, selectedIndex]);
 
-  const getImage = (str: string, index: number) => {
-    parseStruct(str, server)
-      .then((struct) => {
-        const newItem = { base64struct: str, struct };
-        setItemsMap((state) => ({
-          ...state,
-          [index]: newItem,
-        }));
-        if (selectedIndexRef.current === index) {
-          notifyInputHandler(newItem);
-        }
-      })
-      .catch((error) => {
-        const newItem = { base64struct: str, error: error.message || error };
-        setItemsMap((state) => ({
-          ...state,
-          [index]: newItem,
-        }));
-        if (selectedIndexRef.current === index) {
-          notifyInputHandler(newItem);
-        }
-      });
-  };
-
-  // Loads the structure for the currently selected index whenever a new
-  // structList is provided (e.g. a new file is opened). Selection-driven
-  // loading is handled directly in the selection click handler.
-  useEffect(() => {
-    const currentIndex = selectedIndexRef.current;
-    if (structList[currentIndex] && !itemsMapRef.current[currentIndex]) {
-      getImage(structList[currentIndex], currentIndex);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [structList]);
+  const getImage = useCallback(
+    (str, index) => {
+      parseStruct(str, server)
+        .then((struct) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, struct },
+          }));
+        })
+        .catch((error) => {
+          setItemsMap((state) => ({
+            ...state,
+            [index]: { base64struct: str, error: error.message || error },
+          }));
+        });
+    },
+    [server],
+  );
 
   const handleSelectStructure = (index: number) => {
     setSelectedIndex(index);
-    const existingItem = itemsMap[index];
-    if (structList[index] && !existingItem) {
+    if (index !== selectedIndex && structList[index] && !itemsMap[index]) {
       getImage(structList[index], index);
-    } else {
-      notifyInputHandler(existingItem);
     }
   };
+
+  const loadFirstStructure = useCallback(() => {
+    if (structList[0]) {
+      getImage(structList[0], 0);
+    }
+  }, [getImage, structList]);
+
+  useEffect(() => {
+    loadFirstStructure();
+  }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
     if (loading) {

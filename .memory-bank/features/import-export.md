@@ -26,6 +26,14 @@ Import parses recognized formats into an editable structure; export serializes t
 - **WHEN** the user pastes structure text in molecules mode
 - **THEN** the format is recognized automatically without the user selecting it
 
+#### Scenario: Add to Canvas in macromolecules flex mode
+
+- **WHEN** the user chooses _Add to Canvas_ in flex mode
+- **THEN** the imported structure appears as a ghost at the active zoom, centered under the mouse cursor
+- **AND** mouse movement repositions the ghost; clicking adds it at that position, while Escape cancels without changing the canvas
+- **AND** the added structure is not automatically selected, unlike a clipboard paste
+- **AND** _Open as New_ still replaces the canvas directly; snake and sequence modes still add structures directly
+
 #### Scenario: Explicit format selection in macromolecules mode
 
 - **WHEN** the user pastes content in macromolecules mode
@@ -46,6 +54,7 @@ Import parses recognized formats into an editable structure; export serializes t
 - **Molecules mode** supports: KET, MDL Molfile V2000/V3000, SDF V2000/V3000, RDF V2000/V3000, Daylight SMILES, Extended SMILES, CML, InChI / InChI AuxInfo / InChIKey, SVG, PNG, CDXML, Base64 CDX, and CDX.
 - **Macromolecules mode** supports: KET, MDL Molfile V3000, Sequence (1- and 3-letter), FASTA, IDT, AxoLabs, SVG, HELM, and BILN.
 - Round-trip fidelity is preserved to the extent the target format allows; lossy conversions are surfaced as warnings.
+- Replacing the document discards any pending paste ghost before changing or rendering the canvas.
 
 ## Limitations
 

@@ -18,6 +18,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { commitPastePreviewInFlexMode } from '@utils/macromolecules/pastePreview';
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
 
@@ -264,17 +265,26 @@ export async function pasteFromClipboardByKeyboard(
   options?:
     | {
         delay?: number;
+        commitPreview?: boolean;
       }
     | undefined,
 ) {
+  const { commitPreview = true, ...keyboardOptions } = options ?? {};
   // Dirty hack for old tests - operation below waits while system finishes all canvas operations
   // before proceeding next. For ex. - select object on the screen can took time
   await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.keyboard.press(`ControlOrMeta+KeyV`, options),
+    async () =>
+      await page.keyboard.press(`ControlOrMeta+KeyV`, keyboardOptions),
   );
+  if (commitPreview) {
+    // The preview ignores pointer events; force clicks its center on the canvas.
+    await commitPastePreviewInFlexMode(page, (preview) =>
+      preview.click({ force: true }),
+    );
+  }
 }
 
 export async function undoByKeyboard(

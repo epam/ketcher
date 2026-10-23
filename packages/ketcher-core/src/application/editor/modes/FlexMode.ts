@@ -42,19 +42,11 @@ export class FlexMode extends BaseMode {
     const command = new Command();
     const editor = provideEditorInstance();
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    command.merge(editor.drawingEntitiesManager.recalculateAntisenseChains());
     command.merge(
       editor.drawingEntitiesManager.selectDrawingEntities(
         mergedDrawingEntities.allEntitiesArray,
       ),
-    );
-
-    if (!editor.drawingEntitiesManager.hasAntisenseChains) {
-      return command;
-    }
-
-    command.merge(
-      editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
     );
 
     command.setUndoOperationsByPriority();

@@ -192,6 +192,12 @@ test('some test', async ({ page }) => {
 
 ### Canvas Fixtures (what they do)
 
+Flex-mode import and clipboard helpers must finish placement before tests interact with imported structures. `PasteFromClipboardDialog.addToCanvas()` confirms the structure preview at the canvas center by default; `pasteFromClipboardByKeyboard()` confirms it at its current position. Both accept `commitPreview: false` for tests that exercise the ghost itself. In Flex mode they wait for the preview to appear, because it can be created asynchronously after a clipboard read or format conversion; checking visibility only once leaves the ghost to be committed by the test's next click. Neither adds a placement click in Snake, Sequence, molecules mode, or when no structure preview appears. Do not use the Add to Canvas button alone to prepare a committed Flex structure.
+
+The preview contains monomer and atom elements too, so finding a matching SVG element does not prove that import has been committed. Wait for the preview to be removed before dragging, bonding, exporting, or asserting undo/redo. Visual baselines may also depend on the old import placement; inspect differences rather than increasing snapshot tolerances.
+
+For deterministic placement in Flex, use `moveMonomerToPosition(page, monomer, x, y)`. It grips the center of the monomer's `shape`, not the surrounding group whose bounds include labels and hover decorations. Coordinates are absolute page pixels and specify the center of the body bounding box. The helper rejects pending previews and verifies the final center within half a CSS pixel (browser mouse-coordinate rounding). It is intended for free placement, not snapping or dragging a connected chain to an approximate position; the existing `moveMonomer` gesture helper remains unchanged for those interactions.
+
 | Fixture           | `beforeEach` setup                                                                   | `afterEach` teardown                                                   |
 | ----------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
 | `MoleculesCanvas` | Switch to micro editor, clear canvas, reset zoom, reset settings, clear localStorage | —                                                                      |

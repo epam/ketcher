@@ -36,17 +36,28 @@ Copy/cut serializes the selection to the clipboard; paste deserializes clipboard
 - **WHEN** the user pastes recognizable chemical text from the system clipboard
 - **THEN** the corresponding structure is parsed and added to the canvas
 
+#### Scenario: Positioning a pasted structure in flex mode
+
+- **WHEN** the user pastes in macromolecules flex mode
+- **THEN** a ghost appears at the active zoom, with its visual center under the mouse cursor
+- **AND** mouse movement moves the ghost without changing the canvas contents or undo history
+- **AND** clicking the canvas adds the structure at the previewed position as one undoable step
+- **AND** the added structure stays selected, and the selection tool becomes active
+- **AND** pressing Escape discards the ghost without adding a structure
+
 ## Guarantees
 
 - Pasted structures are independent copies; editing them does not affect the original.
 - Paste is a single atomic entry in the undo history (see [undo-redo](./undo-redo.md)).
 - Copy never mutates the canvas; cut mutates it exactly once.
+- Escape, tool changes, layout changes, and document replacement cancel pending paste work. Late clipboard or conversion results cannot restore a cancelled ghost.
 
 ## Limitations
 
 - Some browsers (Chrome, Firefox) require `Ctrl+V` for pasting via the system clipboard.
 - Cross-mode paste (molecules ↔ macromolecules) is routed through structure conversion and may be constrained by what the target mode can represent (see [macromolecules](./macromolecules.md)).
 - Image copy produces a raster/vector image, not an editable structure.
+- Snake and sequence modes retain direct paste placement without a ghost.
 
 ## Related
 

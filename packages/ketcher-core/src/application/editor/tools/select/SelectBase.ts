@@ -42,6 +42,7 @@ import {
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import { DrawingEntityMoveOperation } from 'application/editor/operations/drawingEntity';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -70,6 +71,11 @@ type GroupCenterSnapResult = {
   showGroupCenterSnapping: true;
 };
 
+type SortedPolymerBondsCache = Map<
+  BaseMonomer,
+  Array<PolymerBond | HydrogenBond>
+>;
+
 function isGroupCenterSnapResult(
   result: SnapResult | EmptySnapResult | GroupCenterSnapResult,
 ): result is GroupCenterSnapResult {
@@ -84,6 +90,12 @@ abstract class SelectBase implements BaseTool {
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
+  private dragFrameId: number | undefined;
+  private readonly pendingDragOperations = new Map<
+    DrawingEntity,
+    DrawingEntityMoveOperation
+  >();
+  private pendingDragOverlay?: () => void;
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
@@ -617,11 +629,24 @@ abstract class SelectBase implements BaseTool {
     return Math.abs(distanceBetweenMonomers - distance) < 0.0001;
   }
 
+  private static getSortedPolymerBonds(
+    monomer: BaseMonomer,
+    cache?: SortedPolymerBondsCache,
+  ) {
+    const cachedBonds = cache?.get(monomer);
+    if (cachedBonds) return cachedBonds;
+
+    const bonds = monomer.polymerBondsSortedByLength;
+    cache?.set(monomer, bonds);
+    return bonds;
+  }
+
   static getNextMonomers(
     currentMonomer: BaseMonomer,
     visitedMonomers: Set<number>,
+    cache?: SortedPolymerBondsCache,
   ) {
-    return currentMonomer.polymerBondsSortedByLength
+    return SelectBase.getSortedPolymerBonds(currentMonomer, cache)
       .map((bond) => bond.getAnotherMonomer(currentMonomer))
       .filter((monomer) => monomer && !visitedMonomers.has(monomer.id));
   }
@@ -631,6 +656,7 @@ abstract class SelectBase implements BaseTool {
     initialState: BaseMonomer[],
     alignment: MonomersAlignment,
     distance: number,
+    cache?: SortedPolymerBondsCache,
   ) {
     const visitedMonomers = new Set(initialState.map((monomer) => monomer.id));
     const remainingAlignedMonomers: BaseMonomer[] = [];
@@ -639,6 +665,7 @@ abstract class SelectBase implements BaseTool {
       const nextMonomers = SelectBase.getNextMonomers(
         currentMonomer,
         visitedMonomers,
+        cache,
       );
       for (const nextMonomer of nextMonomers) {
         if (!nextMonomer) {
@@ -669,11 +696,14 @@ abstract class SelectBase implements BaseTool {
     cursorPosition: Vec2,
     initialMonomer: BaseMonomer,
     connectedMonomer: BaseMonomer,
+    cache?: SortedPolymerBondsCache,
   ) {
-    const bondToMonomerForAlignment =
-      connectedMonomer.polymerBondsSortedByLength.find(
-        (bond) => bond.getAnotherMonomer(connectedMonomer) !== initialMonomer,
-      );
+    const bondToMonomerForAlignment = SelectBase.getSortedPolymerBonds(
+      connectedMonomer,
+      cache,
+    ).find(
+      (bond) => bond.getAnotherMonomer(connectedMonomer) !== initialMonomer,
+    );
     if (!bondToMonomerForAlignment) {
       return { distanceSnapPosition: null };
     }
@@ -736,6 +766,7 @@ abstract class SelectBase implements BaseTool {
       alignedMonomers,
       alignment,
       snapDistance,
+      cache,
     );
 
     return {
@@ -752,6 +783,7 @@ abstract class SelectBase implements BaseTool {
     firstConnectedMonomer: BaseMonomer,
     secondConnectedMonomer: BaseMonomer,
     alignment: MonomersAlignment,
+    cache?: SortedPolymerBondsCache,
   ) {
     const isHorizontal = alignment === 'horizontal';
     const primaryAxis: 'x' | 'y' = isHorizontal ? 'x' : 'y';
@@ -803,6 +835,7 @@ abstract class SelectBase implements BaseTool {
         alignedMonomers,
         alignment,
         snapDistance,
+        cache,
       );
     const additionalAlignedMonomersFromOtherSide =
       SelectBase.findRemainingAlignedMonomers(
@@ -810,6 +843,7 @@ abstract class SelectBase implements BaseTool {
         alignedMonomers,
         alignment,
         snapDistance,
+        cache,
       );
 
     return {
@@ -828,13 +862,18 @@ abstract class SelectBase implements BaseTool {
     cursorPosition: Vec2,
     initialMonomer: BaseMonomer,
     connectedMonomer: BaseMonomer,
+    cache?: SortedPolymerBondsCache,
   ) {
-    const secondShortestBond = initialMonomer.polymerBondsSortedByLength[1];
+    const secondShortestBond = SelectBase.getSortedPolymerBonds(
+      initialMonomer,
+      cache,
+    )[1];
     if (!secondShortestBond) {
       return SelectBase.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
+        cache,
       );
     }
 
@@ -845,6 +884,7 @@ abstract class SelectBase implements BaseTool {
         cursorPosition,
         initialMonomer,
         connectedMonomer,
+        cache,
       );
     }
 
@@ -858,6 +898,7 @@ abstract class SelectBase implements BaseTool {
         cursorPosition,
         initialMonomer,
         connectedMonomer,
+        cache,
       );
     }
 
@@ -867,6 +908,7 @@ abstract class SelectBase implements BaseTool {
       connectedMonomer,
       secondConnectedMonomer,
       alignment,
+      cache,
     );
   }
 
@@ -887,6 +929,10 @@ abstract class SelectBase implements BaseTool {
     if (modKeyPressed || externalConnectionsToSelection.length === 0) {
       return emptyResult;
     }
+
+    // Positions stay unchanged while evaluating candidates. Keep the getter's
+    // ordering, and discard these results before the next snapping invocation.
+    const sortedPolymerBondsCache: SortedPolymerBondsCache = new Map();
 
     const snappingOptions: Array<
       SnapResult | EmptySnapResult | GroupCenterSnapResult
@@ -912,6 +958,7 @@ abstract class SelectBase implements BaseTool {
           selectedMonomer.position,
           selectedMonomer,
           connectedMonomer,
+          sortedPolymerBondsCache,
         );
 
         const { angleSnapPosition, snappedAngleRad } =
@@ -1078,14 +1125,32 @@ abstract class SelectBase implements BaseTool {
     const snapResult = this.tryToSnap(event, movementDelta);
     const { snapPosition } = snapResult;
 
-    this.editor.transientDrawingView.clear();
-
     if (snapPosition) {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
           snapPosition,
         ),
       );
+    } else {
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          movementDelta,
+        ),
+      );
+    }
+
+    // Only movement operations have separate model and visual phases.
+    for (const operation of modelChanges.operations) {
+      if (!(operation instanceof DrawingEntityMoveOperation)) {
+        throw new Error('Unexpected operation in drag movement command');
+      }
+      operation.execute();
+      this.pendingDragOperations.set(operation.drawingEntity, operation);
+    }
+
+    this.pendingDragOverlay = () => {
+      this.editor.transientDrawingView.clear();
+      if (!snapPosition) return;
 
       if (isGroupCenterSnapResult(snapResult)) {
         this.editor.transientDrawingView.showGroupCenterSnap({
@@ -1123,24 +1188,37 @@ abstract class SelectBase implements BaseTool {
           });
         }
       }
-    } else {
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          movementDelta,
-        ),
-      );
-    }
+    };
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
 
-    requestAnimationFrame(() => {
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
-      this.editor.transientDrawingView.update();
-    });
+    if (this.dragFrameId === undefined) {
+      this.dragFrameId = requestAnimationFrame(() => {
+        this.dragFrameId = undefined;
+        this.flushPendingDragRender();
+      });
+    }
+  }
+
+  public flushPendingDragRender() {
+    if (this.dragFrameId !== undefined) {
+      cancelAnimationFrame(this.dragFrameId);
+      this.dragFrameId = undefined;
+    }
+    if (!this.pendingDragOverlay) return;
+
+    const operations = [...this.pendingDragOperations.values()];
+    const showOverlay = this.pendingDragOverlay;
+    this.pendingDragOperations.clear();
+    this.pendingDragOverlay = undefined;
+    this.editor.renderersContainer.renderAppliedDragMovement(operations);
+    this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    showOverlay();
+    this.editor.transientDrawingView.update();
   }
 
   mouseup(event: MouseEvent) {
+    this.flushPendingDragRender();
     const renderer = event.target?.__data__;
     const history = EditorHistory.getInstance(this.editor);
 
@@ -1399,6 +1477,8 @@ abstract class SelectBase implements BaseTool {
   }
 
   destroy() {
+    this.flushPendingDragRender();
+    this.editor.transientDrawingView.clear();
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
@@ -1414,7 +1494,9 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
+    this.flushPendingDragRender();
     this.mode = 'standby';
+    this.firstMonomerPositionBeforeMove = undefined;
     this.editor.transientDrawingView.clear();
   }
 }

@@ -5,6 +5,7 @@ import type { D3SvgElementSelection } from 'application/render/types';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';
+import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
@@ -12,18 +13,28 @@ const BUTTON_OFFSET_FROM_CANVAS = 20;
 const BUTTON_Y_OFFSET_FROM_SENSE_ROW = 12;
 const BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW = 30;
 const RECT_MAX_WIDTH = 620;
+const BUTTON_SIZE = 48;
+const STRIPE_X_OFFSET = 16;
+const SEQUENCE_ITEM_WIDTH = 16;
+// Matches the top of the sequence item background
+const SEQUENCE_ITEM_TOP_OFFSET = -16;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
   private readonly canvas: D3SvgElementSelection<SVGGElement, void>;
   private rootElement?: D3SvgElementSelection<SVGGElement, void>;
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
+  private hoverAreaElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   constructor(private readonly indexOfRowBefore: number) {
     this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
-  public show() {
+  // parentElement is the element of the sequence (chain) the button belongs to.
+  // The button is shown while this element (sequence rows or the gap below) is hovered.
+  public show(
+    parentElement: D3SvgElementSelection<SVGGElement, void> = this.canvas,
+  ) {
     const editor = provideEditorInstance();
     const chain =
       sequenceRendererStore.sequenceViewModel.chains[this.indexOfRowBefore];
@@ -35,32 +46,34 @@ export class NewSequenceButton {
       return;
     }
 
-    this.rootElement = this.canvas
+    const buttonY =
+      lastNodeRendererInChain.scaledMonomerPositionForSequence.y +
+      (chain.hasAntisense
+        ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
+        : BUTTON_Y_OFFSET_FROM_SENSE_ROW);
+
+    this.hoverAreaElement = this.appendHoverAreaElement(
+      parentElement,
+      chain,
+      buttonY,
+    );
+
+    this.rootElement = parentElement
       .append('g')
       .data([this])
       .attr('class', 'dynamic-element')
-      .attr(
-        'transform',
-        `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${
-          lastNodeRendererInChain.scaledMonomerPositionForSequence.y +
-          (chain.hasAntisense
-            ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
-            : BUTTON_Y_OFFSET_FROM_SENSE_ROW)
-        })`,
-      )
+      .attr('transform', `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${buttonY})`)
       .attr('cursor', 'pointer') as never as D3SvgElementSelection<
       SVGGElement,
       void
     >;
-
-    this.rootElement.append('title').text('Add sequence here');
 
     this.rootElement.attr('opacity', '0');
     this.rootElement.append('title').text('Add sequence here');
 
     this.rootElement
       .append('rect')
-      .attr('x', '16')
+      .attr('x', STRIPE_X_OFFSET)
       .attr('y', '22')
       .attr('width', '0')
       .attr('height', '4')
@@ -73,8 +86,8 @@ export class NewSequenceButton {
       .append('foreignObject')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('height', '48')
-      .attr('width', '48')
+      .attr('height', BUTTON_SIZE)
+      .attr('width', BUTTON_SIZE)
       .attr('data-testid', 'NewSequencePlusButton');
 
     this.buttonElement = this.bodyElement
@@ -102,21 +115,20 @@ export class NewSequenceButton {
 
     NewSequenceButton.appendPlusIcon(this.buttonElement);
 
-    this.rootElement
-      .on('mouseover', () => {
-        this.appendHover();
-        this.rootElement?.attr('opacity', '1');
-      })
-      .on('mouseout', () => {
-        this.removeHover();
-        this.rootElement?.attr('opacity', '0');
-      })
-      .on('click', (event: MouseEvent) => {
-        event.stopPropagation();
-        editor.events.startNewSequence.dispatch({
-          indexOfRowBefore: this.indexOfRowBefore,
-        });
+    this.bodyElement
+      .on('mouseenter', () => this.appendHover())
+      .on('mouseleave', () => this.removeHover());
+
+    parentElement
+      .on('mouseenter', () => this.rootElement?.attr('opacity', '1'))
+      .on('mouseleave', () => this.rootElement?.attr('opacity', '0'));
+
+    this.rootElement.on('click', (event: MouseEvent) => {
+      event.stopPropagation();
+      editor.events.startNewSequence.dispatch({
+        indexOfRowBefore: this.indexOfRowBefore,
       });
+    });
   }
 
   public static appendPlusIcon(
@@ -138,8 +150,54 @@ export class NewSequenceButton {
     this.buttonElement?.style('color', HOVER_COLOR);
   }
 
-  protected appendHoverAreaElement(): void {
-    // intentional no-op: this renderer type does not require a hover area element
+  // Invisible area behind the sequence items covering the whole sequence and the
+  // gap down to the button, so moving the cursor from the sequence to the button
+  // does not leave the parent element and the button stays visible
+  protected appendHoverAreaElement(
+    parentElement: D3SvgElementSelection<SVGGElement, void>,
+    chain: SequenceViewModelChain,
+    buttonY: number,
+  ): D3SvgElementSelection<SVGRectElement, void> | undefined {
+    const firstRowRenderers = chain.firstRow.sequenceViewModelItems
+      .flatMap((item) => [
+        item.senseNode?.renderer,
+        item.antisenseNode?.renderer,
+      ])
+      .filter(
+        (renderer): renderer is BaseSequenceItemRenderer =>
+          renderer instanceof BaseSequenceItemRenderer,
+      );
+
+    if (!firstRowRenderers.length) {
+      return undefined;
+    }
+
+    const top =
+      Math.min(
+        ...firstRowRenderers.map(
+          (renderer) => renderer.scaledMonomerPositionForSequence.y,
+        ),
+      ) + SEQUENCE_ITEM_TOP_OFFSET;
+    const right =
+      Math.max(
+        ...firstRowRenderers.map(
+          (renderer) => renderer.scaledMonomerPositionForSequence.x,
+        ),
+      ) + SEQUENCE_ITEM_WIDTH;
+
+    return parentElement
+      .insert('rect', ':first-child')
+      .attr('class', 'dynamic-element')
+      .attr('data-testid', 'NewSequenceHoverArea')
+      .attr('x', BUTTON_OFFSET_FROM_CANVAS)
+      .attr('y', top)
+      .attr('width', Math.max(right - BUTTON_OFFSET_FROM_CANVAS, BUTTON_SIZE))
+      .attr('height', buttonY + BUTTON_SIZE - top)
+      .attr('fill', 'transparent')
+      .attr('pointer-events', 'all') as never as D3SvgElementSelection<
+      SVGRectElement,
+      void
+    >;
   }
 
   drawSelection(): void {
@@ -155,6 +213,8 @@ export class NewSequenceButton {
   }
 
   public remove() {
+    this.hoverAreaElement?.remove();
+    this.hoverAreaElement = undefined;
     this.rootElement?.remove();
     this.rootElement = undefined;
   }
@@ -166,5 +226,12 @@ export class NewSequenceButton {
       RECT_MAX_WIDTH,
     );
     rectElement?.attr('width', computedWidthPx);
+
+    // The stripe may be wider than the sequence, e.g. when the next sequence is longer
+    const hoverAreaWidth = Number(this.hoverAreaElement?.attr('width') ?? 0);
+    this.hoverAreaElement?.attr(
+      'width',
+      Math.max(hoverAreaWidth, STRIPE_X_OFFSET + computedWidthPx),
+    );
   }
 }

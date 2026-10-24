@@ -21,6 +21,7 @@ import type {
   RenderOptions,
 } from 'application/render';
 import type { Struct } from 'domain/entities/struct';
+import type { AtomAttributes } from 'domain/entities/atom';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
@@ -30,12 +31,28 @@ import type {
   MonomerItemType,
 } from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { LayoutMode } from 'application/editor/modes/types';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 
 export type MonomerCreationWizardRequest = {
   mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
   monomer?: BaseMonomer;
   libraryItem?: MonomerItemType;
 };
+
+export type CreateBondViaModalPayload = {
+  firstMonomer: BaseMonomer;
+  secondMonomer: BaseMonomer;
+  firstSelectedAttachmentPoint: AttachmentPointName;
+  secondSelectedAttachmentPoint: AttachmentPointName;
+  polymerBond?: PolymerBond;
+  isReconnection?: boolean;
+  initialFirstMonomerAttachmentPoint?: AttachmentPointName;
+  initialSecondMonomerAttachmentPoint?: AttachmentPointName;
+};
+
+export type SelectLayoutModePayload =
+  LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 
@@ -115,7 +132,10 @@ export interface Editor {
   event: {
     message: Subscription;
     tooltip: Subscription;
-    elementEdit: PipelineSubscription;
+    elementEdit: PipelineSubscription<
+      unknown,
+      Promise<Partial<AtomAttributes>>
+    >;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;

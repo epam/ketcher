@@ -29,7 +29,7 @@ export async function editRGroupAttachmentPoint(
         fromRGroupAttachmentPointUpdate(
           editor.render.ctab,
           atomId,
-          currentAttachmentPoints,
+          currentAttachmentPoints ?? null,
         );
       const action = actionFromAtomsAttrs.mergeWith(
         actionFromRGroupAttachmentPointUpdate,

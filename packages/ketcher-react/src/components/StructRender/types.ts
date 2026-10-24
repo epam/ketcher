@@ -16,13 +16,15 @@
 
 import type { Struct, RenderOptions } from 'ketcher-core';
 
-interface CasheOptions {
+export interface StructRenderOptions extends Partial<RenderOptions> {
   cachePrefix?: string;
   needCache?: boolean;
+  wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
 }
+
 export interface IStructRenderProps {
   struct: Struct;
-  options?: (RenderOptions & CasheOptions) | CasheOptions;
+  options?: StructRenderOptions;
   className?: string;
   update?: boolean;
   fullsize?: boolean;

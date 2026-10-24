@@ -582,11 +582,32 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   const atomsSet = new Set(atoms);
   const outsideConnections: Array<readonly [number, number]> = [];
   atoms.forEach((atomId) => {
-    (struct.atomGetNeighbors(atomId) ?? []).forEach(({ aid }) => {
+    (struct.atomGetNeighbors(atomId) ?? []).forEach(({ aid, bid }) => {
       if (!atomsSet.has(aid)) {
-        outsideConnections.push([atomId, aid] as const);
+        const bond = struct.bonds.get(bid);
+        if (bond?.type !== Bond.PATTERN.TYPE.HYDROGEN) {
+          outsideConnections.push([atomId, aid] as const);
+        }
       }
     });
+  });
+
+  // Delete hydrogen bonds connected to this group.
+  // Hydrogen bonds always connect atoms from two different monomer S-groups.
+  // Iterating over this group's atoms is enough to find all hydrogen bonds
+  // attached to it. If both endpoint groups are being removed in the same
+  // batch, the bond may be targeted twice — the second BondDelete is a no-op.
+  const hydrogenBondsToDelete: number[] = [];
+  struct.bonds.forEach((bond, bondId) => {
+    if (
+      bond.type === Bond.PATTERN.TYPE.HYDROGEN &&
+      (atomsSet.has(bond.begin) || atomsSet.has(bond.end))
+    ) {
+      hydrogenBondsToDelete.push(bondId);
+    }
+  });
+  hydrogenBondsToDelete.forEach((bondId) => {
+    action.addOp(new BondDelete(bondId));
   });
 
   if (sG?.type === 'SRU') {
@@ -647,13 +668,19 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
       if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
         const apNumber = attachmentPoint.attachmentPointNumber;
+        // Check whether a real (non-hydrogen) bond occupies this
+        // attachment point.  Hydrogen bonds are visual-only indicators
+        // and must not count as "occupied" — otherwise the leaving atom
+        // would be incorrectly deleted.
         const isOccupied = Array.from(struct.bonds.values()).some(
           ({
+            type: bondType,
             begin: bondBegin,
             end: bondEnd,
             beginSuperatomAttachmentPointNumber,
             endSuperatomAttachmentPointNumber,
           }: BondAttributes) => {
+            if (bondType === Bond.PATTERN.TYPE.HYDROGEN) return false;
             const isAttached =
               bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
             if (!isAttached) return false;

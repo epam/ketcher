@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -17,6 +16,7 @@
 
 import {
   type Atom,
+  type RxnArrow,
   type Struct,
   type SupportedFormat,
   Bond,
@@ -61,7 +61,7 @@ export function couldBeSaved(
   }
 
   if (format === 'smiles') {
-    const arrayOfAtoms: Array<any> = Array.from(struct.atoms.values());
+    const arrayOfAtoms: Array<Atom> = Array.from(struct.atoms.values());
     const hasGenerics = arrayOfAtoms.some((atom) => atom.pseudo);
     if (hasGenerics) {
       warnings.push(
@@ -72,7 +72,9 @@ export function couldBeSaved(
 
   if (format !== 'ket') {
     if (hasRxnArrow) {
-      const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values());
+      const arrayOfArrows: Array<RxnArrow> = Array.from(
+        struct.rxnArrows.values(),
+      );
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode;
       if (
         ![RxnArrowMode.OpenAngle, RxnArrowMode.Retrosynthetic].includes(

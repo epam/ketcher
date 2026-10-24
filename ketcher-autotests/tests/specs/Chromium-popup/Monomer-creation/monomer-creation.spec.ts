@@ -90,6 +90,17 @@ test.afterAll(async ({ closePage }) => {
 });
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
+test('Create a monomer stays enabled after a mode round trip (#12252)', async () => {
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  const createMonomerButton = LeftToolbar(page).createMonomerButton;
+  await expect(createMonomerButton).toBeEnabled();
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+
+  await expect(createMonomerButton).toBeEnabled();
+});
+
 test('1. Check that a monomer creation wizard button added to the sidebar', async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7657

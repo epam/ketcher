@@ -69,6 +69,7 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 - A **static** sequence orchestrator builds a sequence view model, shows nodes, shows bonds, and attaches delegated events. It manages the caret, two-stranded (sense/antisense) rows, and "new sequence" buttons.
 - A factory maps each sequence node to a concrete sequence-item renderer (nucleotide, nucleoside, peptide, CHEM, phosphate, empty, backbone, ambiguous, …).
 - A base sequence-item renderer draws one monospaced symbol plus background, counter, caret, and spacer.
+- Counter metadata (eligible chain length and presence of hydrogen-bonded partners) is cached per domain chain within each sequence view model. Structural edits rebuild the view model and invalidate this metadata; caret movement reuses it.
 
 ### Transient overlays
 

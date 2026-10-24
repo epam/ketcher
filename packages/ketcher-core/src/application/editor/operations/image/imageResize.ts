@@ -28,12 +28,18 @@ const moveBottomPositions = new Set<ImageReferenceName>([
   'bottomRightPosition',
 ]);
 
+interface ImageBounds {
+  topLeftPosition: Vec2;
+  bottomRightPosition: Vec2;
+}
+
 export class ImageResize extends BaseOperation {
-  private previousPosition: Vec2 | null = null;
+  private previousBounds: ImageBounds | null = null;
   constructor(
     private readonly id: number,
     private readonly position: Vec2,
     private readonly referencePositionName: ImageReferenceName,
+    private readonly bounds?: ImageBounds,
   ) {
     super(OperationType.IMAGE_RESIZE);
   }
@@ -46,22 +52,33 @@ export class ImageResize extends BaseOperation {
       return;
     }
     const referencePositions = item.getReferencePositions();
-    this.previousPosition = referencePositions[this.referencePositionName];
-    const diff = Vec2.diff(this.position, this.previousPosition);
-    const topLeftPosition = new Vec2(referencePositions.topLeftPosition);
+    this.previousBounds = {
+      topLeftPosition: new Vec2(referencePositions.topLeftPosition),
+      bottomRightPosition: new Vec2(referencePositions.bottomRightPosition),
+    };
+    const diff = Vec2.diff(
+      this.position,
+      referencePositions[this.referencePositionName],
+    );
+    const topLeftPosition = new Vec2(
+      this.bounds?.topLeftPosition ?? referencePositions.topLeftPosition,
+    );
     const bottomRightPosition = new Vec2(
-      referencePositions.bottomRightPosition,
+      this.bounds?.bottomRightPosition ??
+        referencePositions.bottomRightPosition,
     );
 
-    if (moveTopPositions.has(this.referencePositionName)) {
-      topLeftPosition.add_(new Vec2(0, diff.y));
-    } else if (moveBottomPositions.has(this.referencePositionName)) {
-      bottomRightPosition.add_(new Vec2(0, diff.y));
-    }
-    if (moveLeftPositions.has(this.referencePositionName)) {
-      topLeftPosition.add_(new Vec2(diff.x, 0));
-    } else if (moveRightPositions.has(this.referencePositionName)) {
-      bottomRightPosition.add_(new Vec2(diff.x, 0));
+    if (!this.bounds) {
+      if (moveTopPositions.has(this.referencePositionName)) {
+        topLeftPosition.add_(new Vec2(0, diff.y));
+      } else if (moveBottomPositions.has(this.referencePositionName)) {
+        bottomRightPosition.add_(new Vec2(0, diff.y));
+      }
+      if (moveLeftPositions.has(this.referencePositionName)) {
+        topLeftPosition.add_(new Vec2(diff.x, 0));
+      } else if (moveRightPositions.has(this.referencePositionName)) {
+        bottomRightPosition.add_(new Vec2(diff.x, 0));
+      }
     }
 
     item.resize(topLeftPosition, bottomRightPosition);
@@ -71,10 +88,10 @@ export class ImageResize extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    // `previousPosition` is only null before `execute` has run. `invert` is
+    // `previousBounds` is only null before `execute` has run. `invert` is
     // only ever called on an operation that has already been executed, so
     // reaching this with a null value indicates a programming error.
-    if (!this.previousPosition) {
+    if (!this.previousBounds) {
       throw new Error(
         'ImageResize: cannot invert an operation that has not been executed yet',
       );
@@ -82,8 +99,9 @@ export class ImageResize extends BaseOperation {
 
     return new ImageResize(
       this.id,
-      this.previousPosition,
+      this.previousBounds.topLeftPosition,
       this.referencePositionName,
+      this.previousBounds,
     );
   }
 
@@ -91,6 +109,16 @@ export class ImageResize extends BaseOperation {
     if (!restruct) return false;
     const item = restruct.molecule.images.get(this.id);
     if (!item) return false;
+    if (this.bounds) {
+      const { topLeftPosition, bottomRightPosition } =
+        item.getReferencePositions();
+      return (
+        this.bounds.topLeftPosition.x === topLeftPosition.x &&
+        this.bounds.topLeftPosition.y === topLeftPosition.y &&
+        this.bounds.bottomRightPosition.x === bottomRightPosition.x &&
+        this.bounds.bottomRightPosition.y === bottomRightPosition.y
+      );
+    }
     const currentPosition =
       item.getReferencePositions()[this.referencePositionName];
     return (

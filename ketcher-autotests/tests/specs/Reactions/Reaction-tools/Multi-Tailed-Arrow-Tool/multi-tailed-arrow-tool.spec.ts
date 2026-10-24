@@ -1,10 +1,12 @@
 import { test, expect, Page } from '@fixtures';
+import type { KetFileImageNode, KetFileMultitailArrowNode } from 'ketcher-core';
 import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   dragMouseTo,
+  getKet,
   moveMouseAway,
   openFile,
   openFileAndAddToCanvas,
@@ -3215,30 +3217,101 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         arrowId: 3,
       }),
     );
+    const readGeometry = async () => {
+      const ket: {
+        root: {
+          nodes: Array<{
+            type?: string;
+            boundingBox: KetFileImageNode['boundingBox'];
+            data: KetFileMultitailArrowNode;
+          }>;
+        };
+      } = JSON.parse(await getKet(page));
+      return {
+        images: ket.root.nodes
+          .filter((node) => node.type === 'image')
+          .map((node) => node.boundingBox),
+        arrows: ket.root.nodes
+          .filter((node) => node.type === 'multi-tailed-arrow')
+          .map((node) => node.data),
+      };
+    };
+    const initial = await readGeometry();
+    expect(initial.images).toHaveLength(2);
+    expect(initial.arrows).toHaveLength(3);
+    const states = [initial];
+    const expectTailChange = async (arrowIndex: number, axis: 'x' | 'y') => {
+      const before = states[states.length - 1];
+      const after = await readGeometry();
+      expect(after.images).toEqual(initial.images);
+      expect(after.arrows.filter((_, index) => index !== arrowIndex)).toEqual(
+        before.arrows.filter((_, index) => index !== arrowIndex),
+      );
+      const beforeArrow = before.arrows[arrowIndex];
+      const afterArrow = after.arrows[arrowIndex];
+      expect(afterArrow.head).toEqual(beforeArrow.head);
+      expect(afterArrow.tails.pos).toHaveLength(beforeArrow.tails.pos.length);
+      const tailIndex = beforeArrow.tails.pos.length - 1;
+      const beforeTail = beforeArrow.tails.pos[tailIndex];
+      const afterTail = afterArrow.tails.pos[tailIndex];
+      expect(afterTail[axis]).not.toBe(beforeTail[axis]);
+      const unchangedAxis = axis === 'x' ? 'y' : 'x';
+      expect(afterTail[unchangedAxis]).toBe(beforeTail[unchangedAxis]);
+      states.push(after);
+    };
+
     await takeEditorScreenshot(page);
-    await mediumTailedArrow.bottomTailMoveHandler.hover({ force: true });
+    const moveHandle =
+      await mediumTailedArrow.bottomTailMoveHandler.boundingBox();
+    const resizeHandle =
+      await mediumTailedArrow.bottomTailResizeHandler.boundingBox();
+    if (!moveHandle || !resizeHandle) {
+      throw new Error('Expected medium-arrow bottom-tail handles');
+    }
+    // The move handle overlaps an image resize handle. Grab the middle of
+    // the tail line between its two handles instead.
+    await page.mouse.move(
+      (moveHandle.x +
+        moveHandle.width / 2 +
+        resizeHandle.x +
+        resizeHandle.width / 2) /
+        2,
+      (moveHandle.y +
+        moveHandle.height / 2 +
+        resizeHandle.y +
+        resizeHandle.height / 2) /
+        2,
+    );
     await dragMouseTo(page, 500, 200);
+    await expectTailChange(1, 'y');
     await mediumTailedArrow.bottomTailResizeHandler.hover({ force: true });
     await dragMouseTo(page, 700, 100);
+    await expectTailChange(1, 'x');
 
     await largeTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 500, 200);
+    await expectTailChange(2, 'y');
     await largeTailedArrow.bottomTailResizeHandler.hover({ force: true });
     await dragMouseTo(page, 700, 100);
+    await expectTailChange(2, 'x');
 
     await smallTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 500, 200);
+    await expectTailChange(0, 'y');
     await smallTailedArrow.bottomTailResizeHandler.hover({ force: true });
     await dragMouseTo(page, 400, 300);
+    await expectTailChange(0, 'x');
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
       await CommonTopLeftToolbar(page).undo();
+      expect(await readGeometry()).toEqual(states[5 - i]);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
       await CommonTopLeftToolbar(page).redo();
+      expect(await readGeometry()).toEqual(states[i + 1]);
     }
     await takeEditorScreenshot(page);
   });

@@ -511,7 +511,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      {currentState === MODAL_STATES.textEditor && !isAnalyzingFile ? (
+      {!isAnalyzingFile && currentState === MODAL_STATES.textEditor ? (
         <Modal.Footer withborder="true">{renderFooter()}</Modal.Footer>
       ) : (
         <></>

@@ -770,7 +770,7 @@ export class MacromoleculesConverter {
       const atomIdInMicromolecules = atomsMap?.get(moleculeAtomId);
       const monomer = sgroupToMonomer.get(monomerSgroup);
 
-      if (!isNumber(atomIdInMicromolecules) || !monomer) {
+      if (!monomer || !isNumber(atomIdInMicromolecules)) {
         return;
       }
 
@@ -852,10 +852,10 @@ export class MacromoleculesConverter {
       }
       if (
         endAtomSgroup !== beginAtomSgroup &&
-        isNumber(beginAtomAttachmentPointNumber) &&
-        isNumber(endAtomAttachmentPointNumber) &&
         beginAtomSgroup &&
         endAtomSgroup &&
+        isNumber(beginAtomAttachmentPointNumber) &&
+        isNumber(endAtomAttachmentPointNumber) &&
         (beginAtomSgroup instanceof MonomerMicromolecule ||
           beginAtomSgroup.isSuperatomWithoutLabel) &&
         (endAtomSgroup instanceof MonomerMicromolecule ||

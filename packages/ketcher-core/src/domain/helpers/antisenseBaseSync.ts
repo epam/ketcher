@@ -222,8 +222,8 @@ export function resolveMirroredBaseTarget(params: {
 
   if (
     !partner ||
-    partner.selected ||
     !editedBaseEligible ||
+    partner.selected ||
     !isBaseEligibleForDuplexSync(partner)
   ) {
     return undefined;

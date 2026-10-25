@@ -276,7 +276,7 @@ export class ZoomTool implements BaseTool {
 
     // Calculate X offset
     let xOffsetValue: number;
-    if (isNumber(xOffset) && !isOffsetInPercents) {
+    if (!isOffsetInPercents && isNumber(xOffset)) {
       xOffsetValue = xOffset;
     } else {
       const xOffsetOrDefault = isNumber(xOffset)
@@ -287,7 +287,7 @@ export class ZoomTool implements BaseTool {
 
     // Calculate Y offset
     let yOffsetValue: number;
-    if (isNumber(yOffset) && !isOffsetInPercents) {
+    if (!isOffsetInPercents && isNumber(yOffset)) {
       yOffsetValue = yOffset;
     } else {
       const yOffsetOrDefault = isNumber(yOffset)

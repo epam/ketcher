@@ -620,8 +620,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const savingStruct =
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      !isLoading &&
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 

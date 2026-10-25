@@ -532,10 +532,10 @@ function parseCTabV2000(
   bonds.forEach((bond) => {
     const beginAtom = ctab.atoms.get(bond.begin);
     if (beginAtom) {
-      if (bond.stereo && isAbs) {
+      if (isAbs && bond.stereo) {
         beginAtom.stereoLabel = StereoLabel.Abs;
       }
-      if (bond.stereo && isAnd) {
+      if (isAnd && bond.stereo) {
         beginAtom.stereoLabel = `${StereoLabel.And}1`;
       }
     }

@@ -307,7 +307,7 @@ class PolymerBond implements BaseTool {
       renderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer.monomer;
 
@@ -443,7 +443,7 @@ class PolymerBond implements BaseTool {
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && renderer?.monomer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer && renderer?.monomer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer?.monomer;
 

@@ -210,8 +210,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
         </div>
         <div className={classes.output}>
           {structStr &&
-            // in Edge 38: instanceof Promise always `false`
-            (structStr instanceof Promise || typeof structStr !== 'string' ? (
+            (typeof structStr !== 'string' ? (
               <div className={classes.messageContainer}>
                 <LoadingCircles />
               </div>

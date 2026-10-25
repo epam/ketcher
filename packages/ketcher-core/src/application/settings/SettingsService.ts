@@ -322,8 +322,8 @@ export class SettingsService implements ISettingsService {
         if (
           sourceValue &&
           typeof sourceValue === 'object' &&
-          !Array.isArray(sourceValue) &&
           targetValue &&
+          !Array.isArray(sourceValue) &&
           typeof targetValue === 'object' &&
           !Array.isArray(targetValue)
         ) {

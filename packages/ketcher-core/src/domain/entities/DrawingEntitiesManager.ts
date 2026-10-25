@@ -641,7 +641,7 @@ export class DrawingEntitiesManager {
   }
 
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
-    if (drawingEntity.monomerItem.props.isMicromoleculeFragment && offset) {
+    if (offset && drawingEntity.monomerItem.props.isMicromoleculeFragment) {
       drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
         atom.pp.add_(offset);
       });
@@ -1020,7 +1020,7 @@ export class DrawingEntitiesManager {
       monomer.forEachBond((bond) => {
         // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
         // This check helps to avoid operations duplication
-        if (bond.selected && !force) return;
+        if (!force && bond.selected) return;
 
         if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
           // We need to remove connected bond when doing a group selection even if it is not selected

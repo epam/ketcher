@@ -761,7 +761,7 @@ class SGroupTool implements Tool {
     const sg = id !== null ? struct.sgroups.get(id) : null;
 
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
-    if (sg?.isMonomer && id !== null) {
+    if (id !== null && sg?.isMonomer) {
       editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
       return Promise.resolve();
     }
@@ -857,7 +857,7 @@ function createQueryComponentSGroup(
   sg: SGroup | null | undefined,
 ) {
   const struct = editor.render.ctab.molecule;
-  if (!selection.atoms && sg) {
+  if (sg && !selection.atoms) {
     if (!sg.atoms) {
       editor.errorHandler?.('Cannot convert to a query component');
       return;
@@ -922,7 +922,7 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
     (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
-  if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected) {
+  if (allBondsSelected && singleComponentSelected(restruct, selection.atoms)) {
     return SgContexts.Fragment;
   }
 

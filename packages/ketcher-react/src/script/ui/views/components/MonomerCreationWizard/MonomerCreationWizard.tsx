@@ -1104,7 +1104,7 @@ const MonomerCreationWizardInternal = ({
     setModificationTypes([]);
     setPhosphatePosition(undefined);
     editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
-    if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
+    if (type !== newType && (type === 'rnaPreset' || newType === 'rnaPreset')) {
       wizardStateDispatch({
         type: 'ResetWizard',
       });
@@ -1244,9 +1244,9 @@ const MonomerCreationWizardInternal = ({
   // resolves to an empty set — is always synced to the editor.
   const problematicAtomIds = useMemo(() => {
     if (
-      !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
-      !hasActiveRnaPresetAtomValidationErrors
+      !hasActiveRnaPresetAtomValidationErrors ||
+      !editor?.render?.monomerCreationState
     ) {
       return null;
     }
@@ -1595,8 +1595,8 @@ const MonomerCreationWizardInternal = ({
     }
 
     if (
-      rnaPresetWizardState.phosphate.structure?.atoms?.length &&
-      !phosphatePosition
+      !phosphatePosition &&
+      rnaPresetWizardState.phosphate.structure?.atoms?.length
     ) {
       needSaveMonomers = false;
       rnaPresetWizardStateDispatch({

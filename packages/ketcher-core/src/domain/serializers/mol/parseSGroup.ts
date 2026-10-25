@@ -131,7 +131,7 @@ function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {
-  if (!sgroup.data.absolute && mol) {
+  if (mol && !sgroup.data.absolute) {
     if (!sgroup.pp) {
       throw new Error('SGroup pp is not set');
     }

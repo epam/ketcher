@@ -164,7 +164,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 'copy',
                 (evt: Event) => {
                   const clipboardEvent = evt as ClipboardEvent;
-                  if (clipboardEvent.clipboardData && data) {
+                  if (data && clipboardEvent.clipboardData) {
                     legacyCopy(clipboardEvent.clipboardData, data);
                   }
                   evt.preventDefault();

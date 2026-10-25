@@ -83,7 +83,7 @@ function setupEditor(
     }
   }
 
-  if (oldProps.options && optionsChanged) {
+  if (optionsChanged && oldProps.options) {
     editor.options(options);
     editor.setServerSettings(props.serverSettings);
   } else if (props.serverSettings !== oldProps.serverSettings) {
@@ -104,7 +104,7 @@ function setupEditor(
     }
   });
 
-  if (struct !== oldProps.struct || optionsChanged) {
+  if (optionsChanged || struct !== oldProps.struct) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }
@@ -287,7 +287,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
             clientX <= right &&
             clientY >= top &&
             clientX <= bottom;
-          if (!this.state.enableCursor && handShouldBeShown) {
+          if (handShouldBeShown && !this.state.enableCursor) {
             this.setState({
               enableCursor: true,
             });

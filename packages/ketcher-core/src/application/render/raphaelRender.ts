@@ -95,6 +95,12 @@ export type MonomerCreationState = {
 } | null;
 
 export class Render {
+  private userOpts: Partial<RenderOptions>;
+  private oldCb: Box2Abs | null = null;
+  private scrollbar: ScrollbarContainer;
+  private resizeObserver: ResizeObserver | null = null;
+  private _monomerCreationState: MonomerCreationState = null;
+
   public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
@@ -105,11 +111,20 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
-  private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationState: MonomerCreationState = null;
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.sz = this.getCanvasSizeVector();
+      this.resizeViewBox();
+    });
+
+    this.resizeObserver.observe(this.paper.canvas);
+  };
+
+  unobserveCanvasResize = () => {
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+  };
 
   constructor(
     clientArea: HTMLElement,
@@ -143,27 +158,34 @@ export class Render {
     });
   }
 
-  observeCanvasResize = () => {
-    this.resizeObserver = new ResizeObserver(() => {
-      this.sz = this.getCanvasSizeVector();
-      this.resizeViewBox();
-    });
+  private getCanvasSizeVector() {
+    return this.userOpts.width
+      ? new Vec2(this.userOpts.width, this.userOpts.height)
+      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  }
 
-    this.resizeObserver.observe(this.paper.canvas);
-  };
+  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
+    const fixedPoint = new Vec2(
+      this.viewBox.minX + this.viewBox.width / 2,
+      this.viewBox.minY + this.viewBox.height / 2,
+    );
+    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
+    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
+    return [viewBoxX, viewBoxY];
+  }
 
-  unobserveCanvasResize = () => {
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-  };
-
-  /**
-   * The options this render was asked for, without the values defaultOptions
-   * derives from them. This is the right base for building a render with
-   * changed options: the derived values get recomputed instead of carried over.
-   */
-  get userOptions(): Partial<RenderOptions> {
-    return this.userOpts;
+  private zoomOnMouse(
+    event: WheelEvent,
+    zoomedWidth: number,
+    zoomedHeight: number,
+  ) {
+    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
+    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
+    const heightRatio =
+      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
+    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
+    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
+    return [viewBoxX, viewBoxY];
   }
 
   updateOptions(opts: string) {
@@ -214,10 +236,13 @@ export class Render {
     this.options.zoom = zoom;
   }
 
-  private getCanvasSizeVector() {
-    return this.userOpts.width
-      ? new Vec2(this.userOpts.width, this.userOpts.height)
-      : new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
   }
 
   resizeViewBox() {
@@ -229,30 +254,6 @@ export class Render {
       width: newWidth,
       height: newHeight,
     }));
-  }
-
-  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
-    const fixedPoint = new Vec2(
-      this.viewBox.minX + this.viewBox.width / 2,
-      this.viewBox.minY + this.viewBox.height / 2,
-    );
-    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
-    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
-    return [viewBoxX, viewBoxY];
-  }
-
-  private zoomOnMouse(
-    event: WheelEvent,
-    zoomedWidth: number,
-    zoomedHeight: number,
-  ) {
-    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
-    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
-    const heightRatio =
-      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
-    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
-    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
-    return [viewBoxX, viewBoxY];
   }
 
   /**

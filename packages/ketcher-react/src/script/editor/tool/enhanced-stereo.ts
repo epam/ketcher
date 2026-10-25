@@ -24,32 +24,6 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class EnhancedStereoTool implements Tool {
-  private readonly editor: Editor;
-  private readonly stereoAtoms: Array<number>;
-  isNotActiveTool: true;
-
-  constructor(editor) {
-    const selection = editor.selection();
-    this.editor = editor;
-    this.isNotActiveTool = true;
-
-    this.stereoAtoms = findStereoAtoms(
-      editor.struct(),
-      selection
-        ? selection.atoms || []
-        : Array.from(editor.struct().atoms.keys()),
-    );
-
-    if (this.stereoAtoms.length === 0) {
-      return;
-    }
-
-    EnhancedStereoTool.changeAtomsStereoAction(
-      this.editor,
-      this.stereoAtoms,
-    ).then((action) => action && editor.update(action));
-  }
-
   static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
     const struct = editor.struct();
     const restruct = editor.render.ctab;
@@ -93,6 +67,33 @@ class EnhancedStereoTool implements Tool {
       return action;
     });
   }
+
+  private readonly editor: Editor;
+  private readonly stereoAtoms: Array<number>;
+  isNotActiveTool: true;
+
+  constructor(editor) {
+    const selection = editor.selection();
+    this.editor = editor;
+    this.isNotActiveTool = true;
+
+    this.stereoAtoms = findStereoAtoms(
+      editor.struct(),
+      selection
+        ? selection.atoms || []
+        : Array.from(editor.struct().atoms.keys()),
+    );
+
+    if (this.stereoAtoms.length === 0) {
+      return;
+    }
+
+    EnhancedStereoTool.changeAtomsStereoAction(
+      this.editor,
+      this.stereoAtoms,
+    ).then((action) => action && editor.update(action));
+  }
+
 }
 
 export default EnhancedStereoTool;

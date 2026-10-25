@@ -1,12 +1,13 @@
 export class FixedPrecisionCoordinates {
   static readonly MULTIPLIER = 10 ** 5;
-  public readonly value: number;
 
   static fromFloatingPrecision(value: number) {
     return new FixedPrecisionCoordinates(
       Math.round(value * FixedPrecisionCoordinates.MULTIPLIER),
     );
   }
+
+  public readonly value: number;
 
   constructor(value: number | FixedPrecisionCoordinates) {
     this.value =

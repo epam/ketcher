@@ -72,18 +72,20 @@ function calcStereoFlag(
 }
 
 export class Fragment {
+  static getDefaultStereoFlagPosition(
+    struct: Struct,
+    fragmentId: number,
+  ): Vec2 | undefined {
+    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
+    if (fragmentAtomIds.size === 0) return undefined;
+    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
+    return new Vec2(bb.max.x, bb.min.y - 1);
+  }
+
   #enhancedStereoFlag?: StereoFlag;
+  #stereoAtoms: Array<number>;
   stereoFlagPosition?: Vec2;
   properties?: Array<StructProperty>;
-  #stereoAtoms: Array<number>;
-
-  get stereoAtoms(): Array<number> {
-    return [...this.#stereoAtoms];
-  }
-
-  get enhancedStereoFlag() {
-    return this.#enhancedStereoFlag;
-  }
 
   constructor(
     stereoAtoms: Array<number> = [],
@@ -99,14 +101,12 @@ export class Fragment {
     this.#stereoAtoms = stereoAtoms;
   }
 
-  static getDefaultStereoFlagPosition(
-    struct: Struct,
-    fragmentId: number,
-  ): Vec2 | undefined {
-    const fragmentAtomIds = struct.getFragmentIds(fragmentId);
-    if (fragmentAtomIds.size === 0) return undefined;
-    const bb = struct.getCoordBoundingBox(fragmentAtomIds);
-    return new Vec2(bb.max.x, bb.min.y - 1);
+  get stereoAtoms(): Array<number> {
+    return [...this.#stereoAtoms];
+  }
+
+  get enhancedStereoFlag() {
+    return this.#enhancedStereoFlag;
   }
 
   clone(aidMap: Map<number, number>) {

@@ -32,11 +32,12 @@ import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/Mole
 
 export class SnakeLayoutModel {
   private readonly nodes: ITwoStrandedSnakeLayoutNode[] = [];
-  public chains: SnakeLayoutModelChain[] = [];
   private readonly monomerToTwoStrandedSnakeLayoutNode: Map<
     BaseMonomer,
     ITwoStrandedSnakeLayoutNode
   > = new Map();
+
+  public chains: SnakeLayoutModelChain[] = [];
 
   constructor(
     chainsCollection: ChainsCollection,

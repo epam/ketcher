@@ -26,6 +26,55 @@ export abstract class DrawingEntity {
     }
   }
 
+  private isPointInPolygon(r: Vec2[], p: Vec2) {
+    const lastPoint = r.at(-1);
+
+    if (!lastPoint) {
+      return false;
+    }
+
+    const d = new Vec2(0, 1);
+    const n = d.rotate(Math.PI / 2);
+    let v0 = Vec2.diff(lastPoint, p);
+    let n0 = Vec2.dot(n, v0);
+    let d0 = Vec2.dot(d, v0);
+    let w0 = new Vec2(0, 0);
+    let counter = 0;
+    const eps = 1e-5;
+    let flag1: boolean;
+    let flag0 = false;
+
+    for (const point of r) {
+      const v1 = Vec2.diff(point, p);
+      const w1 = Vec2.diff(v1, v0);
+      const n1 = Vec2.dot(n, v1);
+      const d1 = Vec2.dot(d, v1);
+      flag1 = false;
+      if (n1 * n0 < 0) {
+        if (d1 * d0 > -eps) {
+          if (d0 > -eps) flag1 = true;
+        } else if (
+          (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
+          0
+        ) {
+          flag1 = true;
+        }
+      }
+      if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
+        flag1 = false;
+      }
+      if (flag1) {
+        counter++;
+      }
+      v0 = v1;
+      n0 = n1;
+      d0 = d1;
+      w0 = w1;
+      flag0 = flag1;
+    }
+    return counter % 2 !== 0;
+  }
+
   moveRelative(position: Vec2) {
     this._position.x += position.x;
     this._position.y += position.y;
@@ -120,55 +169,6 @@ export abstract class DrawingEntity {
     }
 
     return prevSelectedValue !== this.selected;
-  }
-
-  private isPointInPolygon(r: Vec2[], p: Vec2) {
-    const lastPoint = r.at(-1);
-
-    if (!lastPoint) {
-      return false;
-    }
-
-    const d = new Vec2(0, 1);
-    const n = d.rotate(Math.PI / 2);
-    let v0 = Vec2.diff(lastPoint, p);
-    let n0 = Vec2.dot(n, v0);
-    let d0 = Vec2.dot(d, v0);
-    let w0 = new Vec2(0, 0);
-    let counter = 0;
-    const eps = 1e-5;
-    let flag1: boolean;
-    let flag0 = false;
-
-    for (const point of r) {
-      const v1 = Vec2.diff(point, p);
-      const w1 = Vec2.diff(v1, v0);
-      const n1 = Vec2.dot(n, v1);
-      const d1 = Vec2.dot(d, v1);
-      flag1 = false;
-      if (n1 * n0 < 0) {
-        if (d1 * d0 > -eps) {
-          if (d0 > -eps) flag1 = true;
-        } else if (
-          (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
-          0
-        ) {
-          flag1 = true;
-        }
-      }
-      if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
-        flag1 = false;
-      }
-      if (flag1) {
-        counter++;
-      }
-      v0 = v1;
-      n0 = n1;
-      d0 = d1;
-      w0 = w1;
-      flag0 = flag1;
-    }
-    return counter % 2 !== 0;
   }
 
   public setBaseRenderer(renderer: BaseRenderer) {

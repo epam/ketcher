@@ -20,6 +20,13 @@ export class MultitailArrowAddTool implements ArrowAddTool {
     return this.render.ctab;
   }
 
+  private getArrowWithMinimalSizeEnd(start: Vec2): Vec2 {
+    return new Vec2(
+      start.x + MultitailArrowAddTool.MIN_WIDTH,
+      start.y + MultitailArrowAddTool.MIN_HEIGHT,
+    );
+  }
+
   mousedown() {
     // should be empty
   }
@@ -36,10 +43,4 @@ export class MultitailArrowAddTool implements ArrowAddTool {
     this.editor.update(fromMultitailArrowCreation(this.reStruct, start, end));
   }
 
-  private getArrowWithMinimalSizeEnd(start: Vec2): Vec2 {
-    return new Vec2(
-      start.x + MultitailArrowAddTool.MIN_WIDTH,
-      start.y + MultitailArrowAddTool.MIN_HEIGHT,
-    );
-  }
 }

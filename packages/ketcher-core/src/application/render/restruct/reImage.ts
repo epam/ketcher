@@ -25,22 +25,22 @@ interface ClosestReferencePosition {
 }
 
 export class ReImage extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private selectionPointsSet: RaphaelSet;
   private selectionHitTargetsSet: RaphaelSet;
+
+  constructor(public image: Image) {
+    super(IMAGE_KEY);
+  }
 
   private setSelectionPointsVisibility(visible: boolean) {
     this.selectionPointsSet?.attr({
       opacity: visible ? 1 : 0,
       'pointer-events': visible ? 'all' : 'none',
     });
-  }
-
-  static isSelectable(): boolean {
-    return true;
-  }
-
-  constructor(public image: Image) {
-    super(IMAGE_KEY);
   }
 
   private getScaledPointWithOffset(

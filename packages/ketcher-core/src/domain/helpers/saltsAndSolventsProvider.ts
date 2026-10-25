@@ -17,16 +17,18 @@ import type { Struct } from '../entities';
 
 export class SaltsAndSolventsProvider {
   private static instance: SaltsAndSolventsProvider;
-  saltsAndSolventsList: Struct[];
-  constructor() {
-    this.saltsAndSolventsList = [];
-  }
 
   public static getInstance(): SaltsAndSolventsProvider {
     if (!SaltsAndSolventsProvider.instance) {
       SaltsAndSolventsProvider.instance = new SaltsAndSolventsProvider();
     }
     return SaltsAndSolventsProvider.instance;
+  }
+
+  saltsAndSolventsList: Struct[];
+
+  constructor() {
+    this.saltsAndSolventsList = [];
   }
 
   public getSaltsAndSolventsList() {

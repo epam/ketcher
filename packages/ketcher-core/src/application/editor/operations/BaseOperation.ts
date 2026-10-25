@@ -25,47 +25,12 @@ type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationTypeValue = ValueOf<typeof OperationType>;
 
 class BaseOperation<D = unknown> {
+  static InverseConstructor: new (...args: never[]) => BaseOperation;
+
   private _inverted: BaseOperation | undefined;
   type: OperationTypeValue;
   priority: number;
   data!: D;
-
-  static InverseConstructor: new (...args: never[]) => BaseOperation;
-
-  constructor(type: OperationTypeValue, priority = 0) {
-    this.type = type;
-    this.priority = priority;
-  }
-
-  execute(_restruct: ReStruct): void {
-    throw new Error('Operation.execute() is not implemented');
-  }
-
-  /** Returns inverted of this */
-  perform(restruct: ReStruct): ReturnType<this['invert']> {
-    this.execute(restruct);
-    if (!this._inverted) {
-      this._inverted = this.invert();
-      this._inverted._inverted = this;
-    }
-    return this._inverted as ReturnType<this['invert']>;
-  }
-
-  invert(): BaseOperation {
-    const InverseConstructor = (this.constructor as typeof BaseOperation)
-      .InverseConstructor;
-    if (!InverseConstructor) {
-      KetcherLogger.error('Operation.invert() is not implemented');
-      return this;
-    }
-    const inverted = new InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
-  }
-
-  isDummy(_restruct: ReStruct): boolean {
-    return false;
-  }
 
   protected static invalidateAtom(
     restruct: ReStruct,
@@ -186,6 +151,41 @@ class BaseOperation<D = unknown> {
     fragmentId: number,
   ) {
     BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
+  }
+
+  constructor(type: OperationTypeValue, priority = 0) {
+    this.type = type;
+    this.priority = priority;
+  }
+
+  execute(_restruct: ReStruct): void {
+    throw new Error('Operation.execute() is not implemented');
+  }
+
+  /** Returns inverted of this */
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
+    this.execute(restruct);
+    if (!this._inverted) {
+      this._inverted = this.invert();
+      this._inverted._inverted = this;
+    }
+    return this._inverted as ReturnType<this['invert']>;
+  }
+
+  invert(): BaseOperation {
+    const InverseConstructor = (this.constructor as typeof BaseOperation)
+      .InverseConstructor;
+    if (!InverseConstructor) {
+      KetcherLogger.error('Operation.invert() is not implemented');
+      return this;
+    }
+    const inverted = new InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
+  }
+
+  isDummy(_restruct: ReStruct): boolean {
+    return false;
   }
 }
 

@@ -295,6 +295,13 @@ export class ViewModel {
     };
   }
 
+  private clearState() {
+    this.halfEdges.clear();
+    this.loops.clear();
+    this.atomsToHalfEdges.clear();
+    this.bondsToHalfEdges.clear();
+  }
+
   /*
    * Finds the largest angular gap between consecutive bonds around an atom by sorting bond angles,
    * calculating angular differences between adjacent bonds (including wraparound from last to first),
@@ -331,13 +338,6 @@ export class ViewModel {
     }
 
     return { neighborAngle, largestAngle };
-  }
-
-  private clearState() {
-    this.halfEdges.clear();
-    this.loops.clear();
-    this.atomsToHalfEdges.clear();
-    this.bondsToHalfEdges.clear();
   }
 
   public initialize(bonds: Bond[]) {

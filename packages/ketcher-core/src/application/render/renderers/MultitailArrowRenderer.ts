@@ -23,15 +23,6 @@ export class MultitailArrowRenderer extends BaseRenderer {
     this.arrow.setRenderer(this);
   }
 
-  public override get selectionPoints() {
-    return this.getReferencePositionsArray();
-  }
-
-  getReferencePositionsArray(): Array<Vec2> {
-    const { tails, ...positions } = this.getReferencePositions();
-    return Object.values(positions).concat(Array.from(tails.values()));
-  }
-
   private getReferencePositions(): ReturnType<
     MultitailArrow['getReferencePositions']
   > {
@@ -161,6 +152,15 @@ export class MultitailArrowRenderer extends BaseRenderer {
     builder.addLine(start);
 
     return builder.build();
+  }
+
+  public override get selectionPoints() {
+    return this.getReferencePositionsArray();
+  }
+
+  getReferencePositionsArray(): Array<Vec2> {
+    const { tails, ...positions } = this.getReferencePositions();
+    return Object.values(positions).concat(Array.from(tails.values()));
   }
 
   public show() {

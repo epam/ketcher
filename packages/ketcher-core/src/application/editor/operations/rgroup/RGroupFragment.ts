@@ -37,17 +37,6 @@ export class RGroupFragment extends BaseOperation {
     this.frid = fragmentId;
   }
 
-  execute(restruct: ReStruct) {
-    const struct = restruct.molecule;
-    this.rgid_old =
-      this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);
-
-    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null;
-
-    this.removeOld(struct, restruct);
-    this.setNew(struct, restruct);
-  }
-
   private removeOld(struct: Struct, restruct: ReStruct) {
     if (!this.rg_old || this.rgid_old === null) {
       return;
@@ -83,6 +72,17 @@ export class RGroupFragment extends BaseOperation {
     }
 
     rgNew.frags.add(this.frid);
+  }
+
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule;
+    this.rgid_old =
+      this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);
+
+    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null;
+
+    this.removeOld(struct, restruct);
+    this.setNew(struct, restruct);
   }
 
   invert() {

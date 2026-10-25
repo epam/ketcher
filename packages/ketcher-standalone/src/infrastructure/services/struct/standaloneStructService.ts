@@ -296,10 +296,6 @@ class IndigoService implements StructService {
     };
   }
 
-  public addKetcherId(ketcherId: string) {
-    this.ketcherId = ketcherId;
-  }
-
   private getStandardServerOptions(options?: StructServiceOptions) {
     if (!options) {
       return this.defaultOptions;
@@ -317,6 +313,10 @@ class IndigoService implements StructService {
 
   private callIndigoLoadedCallback() {
     window.dispatchEvent(new Event(STRUCT_SERVICE_INITIALIZED_EVENT));
+  }
+
+  public addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
   }
 
   async getInChIKey(struct: string): Promise<string> {

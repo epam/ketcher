@@ -148,9 +148,9 @@ type FormValidationError = ValidationError & {
 };
 
 class Form extends Component<FormProps> {
-  schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
+  schema: ReturnType<typeof propSchema>;
 
   constructor(props: FormProps) {
     super(props);

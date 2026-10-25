@@ -2,8 +2,8 @@ import { DrawingEntity } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 
 export abstract class BaseBond extends DrawingEntity {
-  public endPosition: Vec2 = new Vec2();
   private _isOverlappedByMonomer = false;
+  public endPosition: Vec2 = new Vec2();
 
   abstract get firstEndEntity(): DrawingEntity;
   abstract get secondEndEntity(): DrawingEntity | undefined;

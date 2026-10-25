@@ -82,6 +82,7 @@ export class SequenceRenderer {
   private static newSequenceButtons: NewSequenceButton[] = [];
   private static readonly sequenceBondRenderers =
     new Set<SequenceBondRenderer>();
+  private static isCaretAfterRowEndValue = false;
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -485,7 +486,6 @@ export class SequenceRenderer {
     this.sequenceBondRenderers.add(bondRenderer);
   }
 
-  private static isCaretAfterRowEndValue = false;
 
   public static get isCaretAfterRowEnd() {
     return this.isCaretAfterRowEndValue;

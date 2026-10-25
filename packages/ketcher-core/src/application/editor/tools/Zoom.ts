@@ -42,19 +42,31 @@ const AUTO_SCROLL_OFFSET_X = 10;
 const AUTO_SCROLL_OFFSET_Y = 10;
 
 export class ZoomTool implements BaseTool {
-  public canvas: D3SvgElementSelection<SVGGElement, void>;
-  public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+  private static _instance: ZoomTool;
+
+  public static get instance() {
+    return ZoomTool._instance;
+  }
+
+  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+    return ZoomTool._instance;
+  }
+
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
   private rememberedZoomTransform: ZoomTransform | null = null;
   private resizeObserver: ResizeObserver | null = null;
-  drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
   private scrollBars!: {
     horizontal: ScrollBar;
     vertical: ScrollBar;
   };
+
+  public canvas: D3SvgElementSelection<SVGGElement, void>;
+  public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+  drawingEntitiesManager: DrawingEntitiesManager;
 
   COLOR = '#a5afb9';
   MIN_LENGTH = 40;
@@ -66,16 +78,6 @@ export class ZoomTool implements BaseTool {
   MINZOOMSCALE = 0.2;
   MAXZOOMSCALE = 4;
 
-  private static _instance: ZoomTool;
-  public static get instance() {
-    return ZoomTool._instance;
-  }
-
-  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
-    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
-  }
-
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
     this.canvasWrapper = select(canvasSelector);
     this.canvas = select(drawnStructuresSelector);
@@ -85,6 +87,10 @@ export class ZoomTool implements BaseTool {
     this.drawingEntitiesManager = drawingEntitiesManager;
 
     this.initActions();
+  }
+
+  private get zoomStep() {
+    return 0.1;
   }
 
   initActions() {
@@ -384,10 +390,6 @@ export class ZoomTool implements BaseTool {
         bar: this.scrollBars?.vertical?.bar,
       },
     };
-  }
-
-  private get zoomStep() {
-    return 0.1;
   }
 
   public zoomIn(zoomStep = this.zoomStep) {

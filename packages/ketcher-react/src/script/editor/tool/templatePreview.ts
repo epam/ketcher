@@ -188,18 +188,6 @@ class TemplatePreview {
     }
   }
 
-  public hideConnectedPreview() {
-    if (this.connectedPreviewAction) {
-      this.connectedPreviewAction.perform(this.restruct);
-      this.connectedPreviewAction = null;
-      this.editor.render.update();
-    }
-    if (this.connectedPreviewTimeout) {
-      clearTimeout(this.connectedPreviewTimeout);
-      this.connectedPreviewTimeout = null;
-    }
-  }
-
   private showConnectedPreview(event: MouseEvent, ci: ClosestItemType) {
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
@@ -245,6 +233,18 @@ class TemplatePreview {
 
       this.editor.update(action, true);
       this.connectedPreviewAction = action;
+    }
+  }
+
+  public hideConnectedPreview() {
+    if (this.connectedPreviewAction) {
+      this.connectedPreviewAction.perform(this.restruct);
+      this.connectedPreviewAction = null;
+      this.editor.render.update();
+    }
+    if (this.connectedPreviewTimeout) {
+      clearTimeout(this.connectedPreviewTimeout);
+      this.connectedPreviewTimeout = null;
     }
   }
 }

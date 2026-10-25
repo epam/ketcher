@@ -56,23 +56,6 @@ export class RxnArrowRenderer extends BaseRenderer {
     };
   }
 
-  public getArrowParams() {
-    const { startPosition, endPosition } = this.scaledPosition;
-
-    const length = Math.hypot(
-      endPosition.x - startPosition.x,
-      endPosition.y - startPosition.y,
-    );
-    const angle = Vec2.radiansToDegrees(
-      Vec2.oxAngleForVector(
-        new Vec2(startPosition.x, startPosition.y),
-        new Vec2(endPosition.x, endPosition.y),
-      ),
-    );
-
-    return { length, angle };
-  }
-
   private generateArrowPath() {
     const { length, angle } = this.getArrowParams();
     const startPosition = new Vec2(0, 0);
@@ -221,7 +204,24 @@ export class RxnArrowRenderer extends BaseRenderer {
 
   private getSelectionContour(startPosition?: Vec2): string {
     const macroModeScale = provideEditorSettings().macroModeScale;
-    const { length, angle } = this.getArrowParams();
+    const { length, angle     }
+
+    public getArrowParams() {
+      const { startPosition, endPosition } = this.scaledPosition;
+
+      const length = Math.hypot(
+        endPosition.x - startPosition.x,
+        endPosition.y - startPosition.y,
+      );
+      const angle = Vec2.radiansToDegrees(
+        Vec2.oxAngleForVector(
+          new Vec2(startPosition.x, startPosition.y),
+          new Vec2(endPosition.x, endPosition.y),
+        ),
+      );
+
+      return { length, angle };
+    } = this.getArrowParams();
     const height = (this.arrow.height ?? 0) * macroModeScale;
     const start = startPosition ?? new Vec2(0, 0);
     const endX = start.x + length;

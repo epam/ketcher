@@ -4,13 +4,6 @@ import type { D3SvgElementSelection } from 'application/render/types';
 export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
   readonly #NO_ANALOGUE_SYMBOL = '@';
 
-  get symbolToDisplay(): string {
-    return (
-      this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode ||
-      this.#NO_ANALOGUE_SYMBOL
-    );
-  }
-
   private drawLine() {
     const TEXT_COLOR = '#333333';
     this.rootElement
@@ -19,6 +12,13 @@ export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
       .attr('stroke', TEXT_COLOR)
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', '1.7px');
+  }
+
+  get symbolToDisplay(): string {
+    return (
+      this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode ||
+      this.#NO_ANALOGUE_SYMBOL
+    );
   }
 
   protected drawModification() {

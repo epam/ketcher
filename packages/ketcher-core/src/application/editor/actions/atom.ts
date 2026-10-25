@@ -19,7 +19,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RGroup } from 'domain/entities/rgroup';
 import {
   AtomAdd,
-  AtomAttr,
+  AtomAttribute,
   CalcImplicitH,
   FragmentAdd,
   FragmentAddStereoAtom,
@@ -27,7 +27,11 @@ import {
   FragmentDeleteStereoAtom,
   SGroupAtomAdd,
 } from '../operations';
-import { type AtomAttributeName, atomGetAttr, atomGetSGroups } from './utils';
+import {
+  type AtomAttributeName,
+  atomGetAttribute,
+  atomGetSGroups,
+} from './utilities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { fromBondStereoUpdate } from './bondStereo';
 
@@ -46,19 +50,19 @@ export function fromAtomAddition(
   atom?: Partial<AtomAttributes>,
   fragmentId: number | null = null,
 ) {
-  const atomAttrs: Partial<AtomAttributes> = { ...atom };
+  const atomAttributes: Partial<AtomAttributes> = { ...atom };
   const action = new Action();
 
   if (fragmentId === null) {
     const fragmentAdd = new FragmentAdd();
     action.addOp(fragmentAdd.perform(restruct));
     assert(fragmentAdd.frid !== null, 'Fragment was not added');
-    atomAttrs.fragment = fragmentAdd.frid;
+    atomAttributes.fragment = fragmentAdd.frid;
   } else {
-    atomAttrs.fragment = fragmentId;
+    atomAttributes.fragment = fragmentId;
   }
 
-  const atomAdd = new AtomAdd(atomAttrs, pos ?? undefined);
+  const atomAdd = new AtomAdd(atomAttributes, pos ?? undefined);
   action.addOp(atomAdd.perform(restruct));
   const { aid } = atomAdd.data;
   assert(aid !== null, 'Atom was not added');
@@ -67,25 +71,25 @@ export function fromAtomAddition(
   return action;
 }
 
-export function fromAtomsAttrs(
+export function fromAtomsAttributes(
   restruct: ReStruct,
   ids: Array<number> | number,
-  attrs: Partial<AtomAttributes> | null | undefined,
+  attributes: Partial<AtomAttributes> | null | undefined,
   reset: boolean | null,
 ) {
   const action = new Action();
   const aids = Array.isArray(ids) ? ids : [ids];
-  const atomAttrs = attrs ?? {};
+  const atomAttributes = attributes ?? {};
   // Object.keys is typed as string[]; Atom.attrlist is keyed by atom attribute names
-  const attrNames = Object.keys(Atom.attrlist) as AtomAttributeName[];
+  const attributeNames = Object.keys(Atom.attrlist) as AtomAttributeName[];
 
   aids.forEach((atomId) => {
     const atom = restruct.molecule.atoms.get(atomId);
     assert(atom != null);
 
     const resultingLabel =
-      'label' in atomAttrs
-        ? atomAttrs.label
+      'label' in atomAttributes
+        ? atomAttributes.label
         : reset
           ? Atom.attrGetDefault('label')
           : atom.label;
@@ -102,34 +106,38 @@ export function fromAtomsAttrs(
       }
     }
 
-    attrNames.forEach((key) => {
-      if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
-      if (!(key in atomAttrs) && !reset) return;
+    attributeNames.forEach((key) => {
+      if (key === 'attachmentPoints' && !(key in atomAttributes)) return;
+      if (!(key in atomAttributes) && !reset) return;
 
       const value =
-        key in atomAttrs ? atomAttrs[key] : Atom.attrGetDefault(key);
+        key in atomAttributes ? atomAttributes[key] : Atom.attrGetDefault(key);
 
       switch (key) {
         case 'stereoLabel':
         case 'stereoParity':
-          if (key in atomAttrs && value) {
-            action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
+          if (key in atomAttributes && value) {
+            action.addOp(
+              new AtomAttribute(atomId, key, value).perform(restruct),
+            );
           }
           break;
         default:
-          action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
+          action.addOp(new AtomAttribute(atomId, key, value).perform(restruct));
           break;
       }
     });
 
     if (
       !reset &&
-      'label' in atomAttrs &&
-      atomAttrs.label !== null &&
-      atomAttrs.label !== 'L#' &&
-      !('atomList' in atomAttrs)
+      'label' in atomAttributes &&
+      atomAttributes.label !== null &&
+      atomAttributes.label !== 'L#' &&
+      !('atomList' in atomAttributes)
     ) {
-      action.addOp(new AtomAttr(atomId, 'atomList', null).perform(restruct));
+      action.addOp(
+        new AtomAttribute(atomId, 'atomList', null).perform(restruct),
+      );
     }
 
     action.addOp(new CalcImplicitH([atomId]).perform(restruct));
@@ -143,7 +151,7 @@ export function fromAtomsAttrs(
     // property to this atom to specify the number of hydrogens on it.
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(
-        new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(
+        new AtomAttribute(atomId, 'implicitHCount', atom.implicitH).perform(
           restruct,
         ),
       );
@@ -153,9 +161,9 @@ export function fromAtomsAttrs(
   return action;
 }
 
-export { fromStereoAtomAttrs } from './bondStereo';
+export { fromStereoAtomAttributes } from './bondStereo';
 
-export function fromAtomsFragmentAttr(
+export function fromAtomsFragmentAttribute(
   restruct: ReStruct,
   aids: number[] | Pile<number>,
   newfrid: number,
@@ -172,7 +180,7 @@ export function fromAtomsFragmentAttr(
       return;
     }
 
-    action.addOp(new AtomAttr(aid, 'fragment', newfrid));
+    action.addOp(new AtomAttribute(aid, 'fragment', newfrid));
 
     if (atom.stereoLabel !== null) {
       action.addOp(new FragmentAddStereoAtom(newfrid, aid));
@@ -186,12 +194,12 @@ export function fromAtomsFragmentAttr(
 export function mergeFragmentsIfNeeded(
   action: Action,
   restruct: ReStruct,
-  srcId: number,
-  dstId: number,
+  sourceId: number,
+  destinationId: number,
 ) {
-  const frid = atomGetAttr(restruct, srcId, 'fragment');
-  const frid2 = atomGetAttr(restruct, dstId, 'fragment');
-  assert(isNumber(frid), `Fragment of atom ${srcId} was not found`);
+  const frid = atomGetAttribute(restruct, sourceId, 'fragment');
+  const frid2 = atomGetAttribute(restruct, destinationId, 'fragment');
+  assert(isNumber(frid), `Fragment of atom ${sourceId} was not found`);
 
   const struct = restruct.molecule;
 
@@ -209,13 +217,13 @@ export function mergeFragmentsIfNeeded(
     struct.atoms.forEach((atom, aid) => {
       if (atom.fragment === frid2) atomsToNewFrag.push(aid);
     });
-    const moveAtomsAction = fromAtomsFragmentAttr(
+    const moveAtomsAction = fromAtomsFragmentAttribute(
       restruct,
       atomsToNewFrag,
       frid,
     );
 
-    mergeSgroups(action, restruct, fridAtoms, dstId);
+    mergeSgroups(action, restruct, fridAtoms, destinationId);
     action.addOp(new FragmentDelete(frid2).perform(restruct));
     action.mergeWith(moveAtomsAction);
   }
@@ -226,10 +234,10 @@ export function mergeFragmentsIfNeeded(
 export function mergeSgroups(
   action: Action,
   restruct: ReStruct,
-  srcAtoms: number[] | Pile<number>,
-  dstAtom: number,
+  sourceAtoms: number[] | Pile<number>,
+  destinationAtom: number,
 ) {
-  const sgroups = atomGetSGroups(restruct, dstAtom);
+  const sgroups = atomGetSGroups(restruct, destinationAtom);
 
   sgroups.forEach((sid) => {
     const sgroup = restruct.molecule.sgroups.get(sid);
@@ -243,8 +251,8 @@ export function mergeSgroups(
     }
     // `without` operates on arrays only. A Pile reaching here yields no atoms,
     // which is the existing behaviour of the fragment merge path.
-    const srcAtomList = Array.isArray(srcAtoms) ? srcAtoms : [];
-    const atomsToSgroup = without(sgroup.atoms, srcAtomList);
+    const sourceAtomList = Array.isArray(sourceAtoms) ? sourceAtoms : [];
+    const atomsToSgroup = without(sgroup.atoms, sourceAtomList);
     atomsToSgroup.forEach((aid) =>
       action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct)),
     );

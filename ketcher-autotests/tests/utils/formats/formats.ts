@@ -4,7 +4,7 @@ import {
   MolfileFormat,
   Struct,
   SupportedModes,
-  UpdateMonomersLibraryParams,
+  UpdateMonomersLibraryParameters,
 } from 'ketcher-core';
 
 export enum MolFileFormat {
@@ -191,7 +191,7 @@ export async function setMolecule(
 export async function updateMonomersLibrary(
   page: Page,
   rawMonomersData: string | JSON,
-  params?: UpdateMonomersLibraryParams,
+  params?: UpdateMonomersLibraryParameters,
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
@@ -215,7 +215,7 @@ export async function updateMonomersLibrary(
 export async function replaceMonomersLibrary(
   page: Page,
   rawMonomersData: string | JSON,
-  params?: UpdateMonomersLibraryParams,
+  params?: UpdateMonomersLibraryParameters,
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>

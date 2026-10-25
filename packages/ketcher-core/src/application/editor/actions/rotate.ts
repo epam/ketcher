@@ -16,7 +16,7 @@
 
 import {
   AtomMove,
-  BondAttr,
+  BondAttribute,
   EnhancedFlagMove,
   EnhancedFlagClear,
   RxnArrowMove,
@@ -31,12 +31,12 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { ReStruct } from 'application/render';
-import { getRelSGroupsBySelection, structSelection } from './utils';
+import { getRelatedSGroupsBySelection, structSelection } from './utilities';
 import { Action } from './action';
 import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
-import type { FlipDirection } from '../shared/utils.types';
-import { flipPointByCenter, rotateDelta } from '../shared/utils';
+import type { FlipDirection } from '../shared/utilities.types';
+import { flipPointByCenter, rotateDelta } from '../shared/utilities';
 
 export function fromFlip(
   reStruct: ReStruct,
@@ -205,12 +205,14 @@ export const flipBonds = (
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN));
+      action.addOp(
+        new BondAttribute(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN),
+      );
       return;
     }
 
     if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
+      action.addOp(new BondAttribute(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
     }
   });
 };
@@ -234,7 +236,7 @@ function fromStructureFlip(
     action.addOp(new AtomMove(atomId, difference));
   });
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
+  const sGroups = getRelatedSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
       return;
@@ -277,7 +279,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
     });
 
     if (!selection.sgroupData) {
-      const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
+      const sgroups = getRelatedSGroupsBySelection(struct, selection.atoms);
 
       sgroups.forEach((sg) => {
         if (!sg.pp) {

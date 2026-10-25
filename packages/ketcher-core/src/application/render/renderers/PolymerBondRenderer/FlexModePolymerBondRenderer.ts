@@ -171,12 +171,12 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addCornerBasedOnDirection(
-    prevPoint: Vec2,
+    previousPoint: Vec2,
     cornerPoint: Vec2,
     nextPoint: Vec2,
   ) {
-    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
-      if (prevPoint.x < cornerPoint.x) {
+    if (previousPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (previousPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
           this.path = this.path.concat(generateCornerFromLeftToBottom());
         } else {
@@ -187,8 +187,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.path = this.path.concat(generateCornerFromRightToTop());
       }
-    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
-      if (prevPoint.y < cornerPoint.y) {
+    } else if (
+      previousPoint.y !== cornerPoint.y &&
+      cornerPoint.x !== nextPoint.x
+    ) {
+      if (previousPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
           this.path = this.path.concat(generateCornerFromTopToRight());
         } else {

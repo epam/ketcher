@@ -1,4 +1,4 @@
-import * as utils from 'application/editor/actions/utils';
+import * as utils from 'application/editor/actions/utilities';
 
 import {
   type Action,
@@ -91,8 +91,8 @@ describe.skip('Bond Addition', () => {
     fromBondAddition(reStruct, singleBond, 3, { label: 'C' });
     expect(spy).toHaveBeenCalled();
   });
-  test('function `atomGetAttr` will be called', () => {
-    const spy = jest.spyOn(utils, 'atomGetAttr');
+  test('function `atomGetAttribute` will be called', () => {
+    const spy = jest.spyOn(utils, 'atomGetAttribute');
     fromBondAddition(reStruct, singleBond, 5, 1);
     expect(spy).toHaveBeenCalled();
   });

@@ -294,9 +294,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.hover();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.hover();
     },
 
     /** Click on the arrow button on the monomer card */
@@ -306,9 +306,9 @@ export const Library = (page: Page) => {
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
-      await btn.waitFor({ state: 'visible' });
-      await btn.click();
+      const button = this.getMonomerAutochainButton(monomer);
+      await button.waitFor({ state: 'visible' });
+      await button.click();
     },
 
     async dragMonomerOnCanvas(

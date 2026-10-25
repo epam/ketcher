@@ -17,8 +17,8 @@
 import {
   fromAttachmentGroupDeletion,
   fromOneBondDeletion,
-  fromAtomsAttrs,
-  fromBondsAttrs,
+  fromAtomsAttributes,
+  fromBondsAttributes,
 } from 'application/editor/actions';
 import { fromAtomMerge } from 'application/editor/actions/atomMerge';
 import { Render, ReStruct } from 'application/render';
@@ -162,7 +162,7 @@ describe('haptic bond editing rules', () => {
       Bond.PATTERN.TYPE.SINGLE,
     );
 
-    const action = fromBondsAttrs(reStruct, bondId, {
+    const action = fromBondsAttributes(reStruct, bondId, {
       type: Bond.PATTERN.TYPE.HAPTIC,
     });
 
@@ -177,7 +177,7 @@ describe('haptic bond editing rules', () => {
       Bond.PATTERN.TYPE.SINGLE,
     );
 
-    fromBondsAttrs(reStruct, bondId, {
+    fromBondsAttributes(reStruct, bondId, {
       type: Bond.PATTERN.TYPE.HAPTIC,
     });
 
@@ -204,7 +204,7 @@ describe('haptic bond editing rules', () => {
     );
     const reStruct = createReStruct(struct);
 
-    fromBondsAttrs(reStruct, bondId, {
+    fromBondsAttributes(reStruct, bondId, {
       type: Bond.PATTERN.TYPE.HAPTIC,
     });
 
@@ -229,7 +229,7 @@ describe('haptic bond editing rules', () => {
     );
     const reStruct = createReStruct(struct);
 
-    const action = fromBondsAttrs(reStruct, bondId, {
+    const action = fromBondsAttributes(reStruct, bondId, {
       type: Bond.PATTERN.TYPE.SINGLE,
     });
 
@@ -244,7 +244,12 @@ describe('haptic bond editing rules', () => {
       Bond.PATTERN.TYPE.HAPTIC,
     );
 
-    const action = fromAtomsAttrs(reStruct, firstAtomId, { label: 'N' }, false);
+    const action = fromAtomsAttributes(
+      reStruct,
+      firstAtomId,
+      { label: 'N' },
+      false,
+    );
 
     expect(struct.atoms.get(firstAtomId)?.label).toBe('Fe');
     expect(action.isDummy()).toBe(true);
@@ -257,7 +262,7 @@ describe('haptic bond editing rules', () => {
       Bond.PATTERN.TYPE.HAPTIC,
     );
 
-    fromAtomsAttrs(reStruct, secondAtomId, { label: 'N' }, false);
+    fromAtomsAttributes(reStruct, secondAtomId, { label: 'N' }, false);
 
     expect(struct.atoms.get(secondAtomId)?.label).toBe('N');
   });
@@ -269,7 +274,7 @@ describe('haptic bond editing rules', () => {
       Bond.PATTERN.TYPE.HAPTIC,
     );
 
-    fromAtomsAttrs(reStruct, secondAtomId, { label: 'Au' }, false);
+    fromAtomsAttributes(reStruct, secondAtomId, { label: 'Au' }, false);
 
     expect(struct.atoms.get(secondAtomId)?.label).toBe('C');
   });
@@ -292,7 +297,7 @@ describe('haptic bond editing rules', () => {
     );
     const reStruct = createReStruct(struct);
 
-    fromAtomsAttrs(reStruct, atomId, { label: 'N' }, false);
+    fromAtomsAttributes(reStruct, atomId, { label: 'N' }, false);
 
     expect(struct.atoms.get(atomId)?.label).toBe('N');
   });

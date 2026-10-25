@@ -18,7 +18,7 @@
 import {
   Action,
   Scale,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   CoordinateTransformation,
 } from 'ketcher-core';
 import type Editor from '../Editor';
@@ -115,14 +115,19 @@ class ReactionMapTool implements Tool {
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
-                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
+                  fromAtomsAttributes(rnd.ctab, aid, { aam: 0 }, null),
                 );
             });
           }
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
+              fromAtomsAttributes(
+                rnd.ctab,
+                closestItem.id,
+                { aam: aam1 },
+                null,
+              ),
             );
           } else {
             let aam = 0;
@@ -130,7 +135,7 @@ class ReactionMapTool implements Tool {
               aam = Math.max(aam, atom.aam || 0);
             });
             action.mergeWith(
-              fromAtomsAttrs(
+              fromAtomsAttributes(
                 rnd.ctab,
                 this.dragCtx.item.id,
                 { aam: aam + 1 },
@@ -140,7 +145,7 @@ class ReactionMapTool implements Tool {
             if (closestItem.id !== this.dragCtx.item.id) {
               // single-atom self-map: source and target are the same atom -> only one op, so undo can revert it (#2174)
               action.mergeWith(
-                fromAtomsAttrs(
+                fromAtomsAttributes(
                   rnd.ctab,
                   closestItem.id,
                   { aam: aam + 1 },

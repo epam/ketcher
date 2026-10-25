@@ -29,9 +29,9 @@ import {
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
-  vectorUtils,
-  BondAttr,
-  AtomAttr,
+  vectorUtilities,
+  BondAttribute,
+  AtomAttribute,
   MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
@@ -105,7 +105,7 @@ class TemplateTool implements Tool {
       molecule: frag,
       xy0: xy0Center,
       angle0: templateAtom
-        ? vectorUtils.calcAngle(templateAtom.pp, xy0Center)
+        ? vectorUtilities.calcAngle(templateAtom.pp, xy0Center)
         : 0,
     };
 
@@ -374,13 +374,13 @@ class TemplateTool implements Tool {
     }
 
     // calc angle
-    let angle = vectorUtils.calcAngle(targetPos, eventPosition);
+    let angle = vectorUtilities.calcAngle(targetPos, eventPosition);
 
     if (!event.ctrlKey) {
-      angle = vectorUtils.fracAngle(angle, null);
+      angle = vectorUtilities.fracAngle(angle, null);
     }
 
-    const degrees = vectorUtils.degrees(angle);
+    const degrees = vectorUtilities.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
     // check if anything changed since last time
@@ -580,11 +580,11 @@ class TemplateTool implements Tool {
       }
     }
     for (const id of restruct.molecule.bonds.keys()) {
-      new BondAttr(id, 'isPreview', false).perform(restruct);
+      new BondAttribute(id, 'isPreview', false).perform(restruct);
     }
 
     for (const id of restruct.molecule.atoms.keys()) {
-      new AtomAttr(id, 'isPreview', false).perform(restruct);
+      new AtomAttribute(id, 'isPreview', false).perform(restruct);
     }
     const completeAction = dragCtx.action;
     if (completeAction && !completeAction.isDummy(restruct)) {

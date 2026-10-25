@@ -15,12 +15,15 @@ const PanelHeader = styled(Typography)`
   margin-top: 20px;
 `;
 
-interface ControlsCardProps {
+interface ControlsCardProperties {
   cardName: string;
   children: ReactNode;
 }
 
-export const ControlsCard = ({ cardName, children }: ControlsCardProps) => {
+export const ControlsCard = ({
+  cardName,
+  children,
+}: ControlsCardProperties) => {
   return (
     <ControlsBox>
       <>

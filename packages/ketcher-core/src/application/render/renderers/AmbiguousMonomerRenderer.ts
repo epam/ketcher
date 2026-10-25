@@ -15,7 +15,7 @@ import {
   createDiamondHighlightPath,
 } from 'application/render/renderers/monomerHighlightShapes';
 
-type PreviewAttachmentPointParams = {
+type PreviewAttachmentPointParameters = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
   usage: UsageInMacromolecule;
   selectedAttachmentPoint: string | null | undefined;
@@ -167,30 +167,30 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   private appendPreviewAttachmentPoint(
-    params: PreviewAttachmentPointParams,
+    parameters: PreviewAttachmentPointParameters,
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ) {
     const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
-      params;
-    const attachmentPointParams = this.prepareAttachmentPointsParams(
+      parameters;
+    const attachmentPointParameters = this.prepareAttachmentPointsParams(
       attachmentPointName,
       customAngle,
     );
 
     return new PreviewAttachmentPoint({
-      ...attachmentPointParams,
+      ...attachmentPointParameters,
       connected:
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
-      canvas: params.canvas,
+      canvas: parameters.canvas,
       applyZoomForPositionCalculation: false,
     });
   }
 
-  public showExternal(params: PreviewAttachmentPointParams) {
-    this.rootElement = this.appendRootElement(params.canvas);
+  public showExternal(parameters: PreviewAttachmentPointParameters) {
+    this.rootElement = this.appendRootElement(parameters.canvas);
     this.bodyElement = this.appendBody(this.rootElement);
     this.bodyElement?.attr('data-testid', 'shape');
     this.drawModification();
@@ -199,7 +199,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     this.drawAttachmentPoints(
       (attachmentPointName: AttachmentPointName, customAngle?: number) =>
         this.appendPreviewAttachmentPoint(
-          params,
+          parameters,
           attachmentPointName,
           customAngle,
         ),

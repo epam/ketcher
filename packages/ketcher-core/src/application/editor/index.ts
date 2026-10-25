@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from './shared/utils';
+import utilities from './shared/utilities';
 
-export const vectorUtils = {
-  fracAngle: utils.fracAngle,
-  calcAngle: utils.calcAngle,
-  degrees: utils.degrees,
-  calcNewAtomPos: utils.calcNewAtomPos,
+export const vectorUtilities = {
+  fracAngle: utilities.fracAngle,
+  calcAngle: utilities.calcAngle,
+  degrees: utilities.degrees,
+  calcNewAtomPos: utilities.calcNewAtomPos,
 };
 
 export * from './operations';
@@ -39,5 +39,5 @@ export * from './editorSettings';
 export * from './tools';
 export * from './MacromoleculesConverter';
 export * from './tools/types';
-export type { FlipDirection } from './shared/utils.types';
+export type { FlipDirection } from './shared/utilities.types';
 export type { LibraryItemDragState } from './editor.types';

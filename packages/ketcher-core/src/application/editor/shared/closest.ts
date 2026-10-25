@@ -30,37 +30,40 @@ const SELECTION_DISTANCE_COEFFICIENT = 0.4;
  * @param restruct - The render structure containing visible atoms
  * @param pos - The position to search from
  * @param skip - Optional atom to skip (for excluding selection items)
- * @param minDist - Optional minimum distance threshold; will use default if not provided
+ * @param minDistribution - Optional minimum distance threshold; will use default if not provided
  * @returns Object with atom ID and distance, or null if no atom found within threshold
  */
 function findClosestAtom(
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkipItem | null,
-  minDist: number | null,
+  minDistribution: number | null,
 ): ClosestAtom | null {
   let closestAtom: number | null = null;
-  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+  const maxMinDistribution = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip && skip.map === 'atoms' ? skip.id : null;
 
-  let effectiveMinDist = minDist || maxMinDist;
-  effectiveMinDist = Math.min(effectiveMinDist, maxMinDist);
+  let effectiveMinDistribution = minDistribution || maxMinDistribution;
+  effectiveMinDistribution = Math.min(
+    effectiveMinDistribution,
+    maxMinDistribution,
+  );
 
   restruct.visibleAtoms.forEach((atom, aid) => {
     if (aid === skipId) return;
 
-    const dist = Vec2.dist(pos, atom.a.pp);
+    const distribution = Vec2.dist(pos, atom.a.pp);
 
-    if (dist < effectiveMinDist) {
+    if (distribution < effectiveMinDistribution) {
       closestAtom = aid;
-      effectiveMinDist = dist;
+      effectiveMinDistribution = distribution;
     }
   });
 
   if (closestAtom !== null) {
     return {
       id: closestAtom,
-      dist: effectiveMinDist,
+      dist: effectiveMinDistribution,
     };
   }
 

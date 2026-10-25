@@ -1886,14 +1886,14 @@ export class SequenceMode extends BaseMode {
             selectionsBeforeDeletion.every((selectionRange) => {
               const firstNode = selectionRange[0]?.node;
               const lastNode = selectionRange.at(-1)?.node;
-              const prevInSameChain = firstNode
+              const previousInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
                 : null;
               const nextInSameChain = lastNode
                 ? SequenceRenderer.getNextNodeInSameChain(lastNode)
                 : null;
               return (
-                !prevInSameChain &&
+                !previousInSameChain &&
                 (!nextInSameChain ||
                   nextInSameChain.senseNode instanceof EmptySequenceNode)
               );
@@ -1950,28 +1950,29 @@ export class SequenceMode extends BaseMode {
             senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
-          const prevAntisense =
+          const previousSense = previousTwoStrandedNodeInSameChain?.senseNode;
+          const previousAntisense =
             previousTwoStrandedNodeInSameChain?.antisenseNode;
-          const currSense = currentTwoStrandedNode?.senseNode;
-          const currAntisense = currentTwoStrandedNode?.antisenseNode;
+          const currentSense = currentTwoStrandedNode?.senseNode;
+          const currentAntisense = currentTwoStrandedNode?.antisenseNode;
 
-          const prevHasRealSenseAndAntisense =
-            !!prevSense &&
-            !(prevSense instanceof EmptySequenceNode) &&
-            !!prevAntisense;
+          const previousHasRealSenseAndAntisense =
+            !!previousSense &&
+            !(previousSense instanceof EmptySequenceNode) &&
+            !!previousAntisense;
 
-          const currHasAntisenseWithNonEmptyContent =
-            !!currAntisense &&
-            (!(currSense instanceof EmptySequenceNode) ||
-              !(currAntisense instanceof EmptySequenceNode));
+          const currentHasAntisenseWithNonEmptyContent =
+            !!currentAntisense &&
+            (!(currentSense instanceof EmptySequenceNode) ||
+              !(currentAntisense instanceof EmptySequenceNode));
 
           const shouldEditAntisenseInSyncMode =
-            prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
+            previousHasRealSenseAndAntisense ||
+            currentHasAntisenseWithNonEmptyContent;
 
           const shouldEditAntisenseInAsyncMode =
-            !(prevAntisense instanceof EmptySequenceNode) ||
-            !(currAntisense instanceof EmptySequenceNode);
+            !(previousAntisense instanceof EmptySequenceNode) ||
+            !(currentAntisense instanceof EmptySequenceNode);
 
           if (
             this.needToEditAntisense &&
@@ -2324,8 +2325,8 @@ export class SequenceMode extends BaseMode {
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
-      (acc, monomer) => {
-        return acc.concat(
+      (accumulator, monomer) => {
+        return accumulator.concat(
           monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
@@ -3008,8 +3009,8 @@ export class SequenceMode extends BaseMode {
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
-      (acc, monomer) => {
-        return acc.concat(
+      (accumulator, monomer) => {
+        return accumulator.concat(
           monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,

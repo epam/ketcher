@@ -28,7 +28,7 @@ type Data = {
   needInvalidateBond?: boolean;
 };
 
-export class BondAttr extends BaseOperation {
+export class BondAttribute extends BaseOperation {
   data: Data | null;
   data2: Data | null;
 
@@ -83,7 +83,7 @@ export class BondAttr extends BaseOperation {
   }
 
   invert() {
-    const inverted = new BondAttr();
+    const inverted = new BondAttribute();
     inverted.data = this.data2;
     inverted.data2 = this.data;
     return inverted;

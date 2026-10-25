@@ -13,7 +13,7 @@ import { StereoLabel } from 'domain/entities/atom';
 import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
-import util from '../util';
+import utility from '../util';
 import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
@@ -958,7 +958,7 @@ export class AtomRenderer extends BaseRenderer {
       ).translate(this.scaledPosition);
       forwardShift = Math.max(
         forwardShift,
-        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+        utility.shiftRayBox(this.scaledPosition, direction, absoluteBox),
       );
     });
 
@@ -969,7 +969,7 @@ export class AtomRenderer extends BaseRenderer {
       height,
     };
 
-    const backwardShift = util.shiftRayBox(
+    const backwardShift = utility.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
       Box2Abs.fromRelBox(stereoLabelBox),

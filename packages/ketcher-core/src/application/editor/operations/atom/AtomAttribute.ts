@@ -24,7 +24,7 @@ type Data = {
   value?: unknown;
 };
 
-export class AtomAttr extends BaseOperation {
+export class AtomAttribute extends BaseOperation {
   data: Data | null;
   data2: Data | null;
 
@@ -55,7 +55,7 @@ export class AtomAttr extends BaseOperation {
   }
 
   invert() {
-    const inverted = new AtomAttr();
+    const inverted = new AtomAttribute();
     inverted.data = this.data2;
     inverted.data2 = this.data;
     return inverted;

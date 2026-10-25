@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, assert, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import {
+  Atom,
+  assert,
+  fromAtomsAttributes,
+  FunctionalGroup,
+} from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
@@ -92,7 +97,7 @@ class ChargeTool implements Tool {
       if (atom && this.isChargeableAtom(atom)) {
         this.editor.hover(ci);
         this.editor.update(
-          fromAtomsAttrs(
+          fromAtomsAttributes(
             rnd.ctab,
             ci.id,
             {

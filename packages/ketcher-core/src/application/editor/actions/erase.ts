@@ -17,7 +17,7 @@
 import {
   AtomDelete,
   AttachmentGroupDelete,
-  AttachmentGroupAttr,
+  AttachmentGroupAttribute,
   BondDelete,
   CalcImplicitH,
   ImageDelete,
@@ -34,7 +34,7 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
 import { assert } from 'utilities';
-import { atomGetDegree, formatSelection } from './utils';
+import { atomGetDegree, formatSelection } from './utilities';
 import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
@@ -164,7 +164,9 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     if (remainingAtomIds.length < 2) {
       selection.attachmentGroups.push(id);
     } else {
-      action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
+      action.addOp(
+        new AttachmentGroupAttribute(id, 'atomIds', remainingAtomIds),
+      );
     }
   });
   selection.attachmentGroups = Array.from(new Set(selection.attachmentGroups));
@@ -274,14 +276,14 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     .mergeWith(actionRemoveBonds)
     .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
-  const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
+  const rgForRemove = frids.reduce<Array<number>>((accumulator, frid) => {
     const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
     if (isNumber(rgid)) {
-      acc.push(rgid);
+      accumulator.push(rgid);
     }
 
-    return acc;
+    return accumulator;
   }, []);
 
   while (frids.length > 0) {

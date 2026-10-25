@@ -1,6 +1,6 @@
 import type { Vec2 } from 'domain/entities/vec2';
 
-export default class BracketParams {
+export default class BracketParameters {
   center: Vec2;
   bracketAngleDirection: Vec2;
   bracketDirection: Vec2;

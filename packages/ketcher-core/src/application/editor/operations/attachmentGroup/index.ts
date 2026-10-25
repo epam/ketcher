@@ -5,4 +5,4 @@ AttachmentGroupAdd.InverseConstructor = AttachmentGroupDelete;
 AttachmentGroupDelete.InverseConstructor = AttachmentGroupAdd;
 
 export { AttachmentGroupAdd, AttachmentGroupDelete };
-export * from './AttachmentGroupAttr';
+export * from './AttachmentGroupAttribute';

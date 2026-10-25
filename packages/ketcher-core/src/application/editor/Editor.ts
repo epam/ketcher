@@ -3,7 +3,7 @@ import { type Editor, EditorType } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   editorEvents,
-  hotkeysConfiguration,
+  hotkeysConfig,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -170,7 +170,7 @@ const debouncedTurnOffScrollAnimation = debounce(
 
 type CoreEditorTheme = DeepPartial<{ ketcher: EditorTheme }>;
 
-interface ICoreEditorConstructorParams {
+interface ICoreEditorConstructorParameters {
   ketcherId?: string;
   theme: CoreEditorTheme;
   canvas: SVGSVGElement;
@@ -178,7 +178,7 @@ interface ICoreEditorConstructorParams {
   mode?: BaseMode;
 }
 
-interface ModifyAminoAcidsHandlerParams {
+interface ModifyAminoAcidsHandlerParameters {
   monomers: BaseMonomer[];
   modificationType: string;
 }
@@ -242,7 +242,7 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 // a source tag, which are always from the wizard). API-added monomers —
 // via ketcher.updateMonomersLibrary or ketcher.replaceMonomersLibrary — are
 // never added here. See Editor.isUserMadeMonomer.
-let persistentUserCreatedMonomerRefs: Set<string> = new Set();
+let persistentUserCreatedMonomerReferences: Set<string> = new Set();
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -307,7 +307,7 @@ export class CoreEditor {
     canvas,
     renderersContainer,
     mode,
-  }: ICoreEditorConstructorParams) {
+  }: ICoreEditorConstructorParameters) {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
 
     this._type = EditorType.Micromolecules;
@@ -419,7 +419,7 @@ export class CoreEditor {
   public async initializeMonomersLibraryFromKetcher(
     monomersLibraryUpdate?: string | JSON,
     monomersLibraryReplace?: string | JSON,
-    onError?: (err: unknown) => void,
+    onError?: (error: unknown) => void,
   ): Promise<void> {
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
@@ -437,23 +437,23 @@ export class CoreEditor {
           monomersLibraryUpdateData,
         );
       this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-    } catch (err) {
+    } catch (error) {
       KetcherLogger.error(
         'Editor::initializeMonomersLibraryFromKetcher failed:',
-        err,
+        error,
       );
 
       let errorMessage: string;
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        errorMessage = err;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       } else {
         errorMessage = 'Failed to load monomers library';
       }
 
       const errorTitle =
-        err instanceof MonomerLibraryConvertError
+        error instanceof MonomerLibraryConvertError
           ? 'Monomer library conversion failed'
           : 'Monomer library update failed';
 
@@ -461,7 +461,7 @@ export class CoreEditor {
         errorMessage,
         errorTitle,
       });
-      onError?.(err);
+      onError?.(error);
     }
   }
 
@@ -485,21 +485,21 @@ export class CoreEditor {
       const parsedUpdate = JSON.parse(update);
 
       if (parsedUpdate.removedMonomerRef) {
-        const ref = parsedUpdate.removedMonomerRef;
+        const reference = parsedUpdate.removedMonomerRef;
         const monomer = this._monomersLibrary.find(
           (item) =>
             !isAmbiguousMonomerLibraryItem(item) &&
-            getMonomerTemplateRefFromMonomerItem(item) === ref,
+            getMonomerTemplateRefFromMonomerItem(item) === reference,
         );
         if (monomer) {
           this.removeMonomerFromLibrary(monomer, false);
         } else if (
-          this._monomersLibraryParsedJson?.[ref]?.type ===
+          this._monomersLibraryParsedJson?.[reference]?.type ===
           KetTemplateType.MONOMER_GROUP_TEMPLATE
         ) {
           // `removedMonomerRef` is reused for preset removal (see
           // `removePresetFromLibrary`) since both are persisted the same way.
-          this.removePresetFromLibrary(ref, false);
+          this.removePresetFromLibrary(reference, false);
         }
       } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
@@ -525,7 +525,7 @@ export class CoreEditor {
    */
   public updateMonomersLibrary(
     monomersDataRaw: string | JSON,
-    editedMonomerRef?: string,
+    editedMonomerReference?: string,
     isUserCreated?: boolean,
   ) {
     // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
@@ -546,12 +546,12 @@ export class CoreEditor {
     } = parseMonomersLibrary(monomersDataRaw);
     const isEditedMonomer = (monomer: MonomerItemType) =>
       !isAmbiguousMonomerLibraryItem(monomer) &&
-      getMonomerTemplateRefFromMonomerItem(monomer) === editedMonomerRef;
-    const editedMonomer = editedMonomerRef
+      getMonomerTemplateRefFromMonomerItem(monomer) === editedMonomerReference;
+    const editedMonomer = editedMonomerReference
       ? this._monomersLibrary.find(isEditedMonomer)
       : undefined;
     if (
-      editedMonomerRef &&
+      editedMonomerReference &&
       (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
     ) {
       throw new Error(
@@ -712,7 +712,7 @@ export class CoreEditor {
 
       const conflictingMonomer = this._monomersLibrary.find((monomer) => {
         if (
-          editedMonomerRef
+          editedMonomerReference
             ? isEditedMonomer(monomer)
             : areSameMonomers(monomer, newMonomer)
         ) {
@@ -723,10 +723,10 @@ export class CoreEditor {
           getIdtModificationAliases(monomer);
 
         return (
-          (Boolean(editedMonomerRef) &&
+          (Boolean(editedMonomerReference) &&
             !hasOriginalSymbol &&
             areSameMonomers(monomer, newMonomer)) ||
-          (Boolean(editedMonomerRef) &&
+          (Boolean(editedMonomerReference) &&
             monomer.props?.MonomerClass === newMonomer.props.MonomerClass &&
             ((!hasOriginalSymbol &&
               monomer.props.aliasHELM === newMonomer.props.MonomerName) ||
@@ -810,39 +810,42 @@ export class CoreEditor {
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
-        editedMonomerRef
+        editedMonomerReference
           ? isEditedMonomer(monomer)
           : areSameMonomers(monomer, newMonomer),
       );
 
-      const newMonomerTemplateRef =
+      const newMonomerTemplateReference =
         getMonomerTemplateRefFromMonomerItem(newMonomer);
 
       if (existingMonomerIndex === -1) {
         this._monomersLibrary.push(newMonomer);
 
         monomersLibraryParsedJson.root.templates.push(
-          getKetRef(newMonomerTemplateRef),
+          getKetRef(newMonomerTemplateReference),
         );
-        monomersLibraryParsedJson[newMonomerTemplateRef] =
-          newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+        monomersLibraryParsedJson[newMonomerTemplateReference] =
+          newMonomersLibraryChunkParsedJson[newMonomerTemplateReference];
         if (isUserCreated) {
-          persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
+          persistentUserCreatedMonomerReferences.add(
+            newMonomerTemplateReference,
+          );
         }
       } else {
-        const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
-          this._monomersLibrary[existingMonomerIndex],
-        );
-
-        const existingMonomerRefIndex =
-          monomersLibraryParsedJson.root.templates.findIndex(
-            (template) => template.$ref === existingMonomerTemplateRef,
+        const existingMonomerTemplateReference =
+          getMonomerTemplateRefFromMonomerItem(
+            this._monomersLibrary[existingMonomerIndex],
           );
-        if (existingMonomerRefIndex === -1) {
+
+        const existingMonomerReferenceIndex =
+          monomersLibraryParsedJson.root.templates.findIndex(
+            (template) => template.$ref === existingMonomerTemplateReference,
+          );
+        if (existingMonomerReferenceIndex === -1) {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
           KetcherLogger.error(
             'Editor::updateMonomersLibrary: A ref is missing for a monomer in library',
-            existingMonomerTemplateRef,
+            existingMonomerTemplateReference,
           );
         } else {
           const existingMonomer = this._monomersLibrary[existingMonomerIndex];
@@ -852,8 +855,8 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
 
-          monomersLibraryParsedJson[existingMonomerTemplateRef] = {
-            ...newMonomersLibraryChunkParsedJson[newMonomerTemplateRef],
+          monomersLibraryParsedJson[existingMonomerTemplateReference] = {
+            ...newMonomersLibraryChunkParsedJson[newMonomerTemplateReference],
             id: existingMonomerId,
           };
         }
@@ -861,110 +864,114 @@ export class CoreEditor {
     });
 
     // handle monomer group templates
-    newMonomersLibraryChunkParsedJson.root.templates.forEach((templateRef) => {
-      const templateDefinition =
-        newMonomersLibraryChunkParsedJson[templateRef.$ref];
+    newMonomersLibraryChunkParsedJson.root.templates.forEach(
+      (templateReference) => {
+        const templateDefinition =
+          newMonomersLibraryChunkParsedJson[templateReference.$ref];
 
-      if (templateDefinition.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE) {
-        return;
-      }
-
-      if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
-        reportValidationError(
-          templateRef.$ref,
-          `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
-        );
-        return;
-      }
-
-      const monomerNameValidationResult = validateMonomerName(
-        templateDefinition.name,
-      );
-
-      if (!monomerNameValidationResult.isValid) {
-        switch (monomerNameValidationResult.error) {
-          case MonomerNameValidationErrorType.Empty:
-            reportValidationError(
-              templateRef.$ref,
-              `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
-            );
-            return;
-          case MonomerNameValidationErrorType.TooLong: {
-            const truncatedTemplateName = `${templateDefinition.name.slice(
-              0,
-              MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-            )}...`;
-            KetcherLogger.error(
-              `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
-            );
-            return;
-          }
-          case MonomerNameValidationErrorType.InvalidCharacters:
-            KetcherLogger.error(
-              `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
-            );
-            return;
+        if (
+          templateDefinition.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          return;
         }
-      }
 
-      const newTemplateIdtAliases = getIdtAliasesList(
-        templateDefinition.idtAliases,
-      );
-
-      if (newTemplateIdtAliases.length > 0) {
-        const conflictingMonomer = this._monomersLibrary.find((monomer) =>
-          getIdtModificationAliases(monomer).some((alias) =>
-            newTemplateIdtAliases.includes(alias),
-          ),
-        );
-
-        const conflictingTemplateRef =
-          monomersLibraryParsedJson.root.templates.find(
-            (existingTemplateRef) => {
-              if (existingTemplateRef.$ref === templateRef.$ref) {
-                return false;
-              }
-
-              const existingTemplate =
-                monomersLibraryParsedJson[existingTemplateRef.$ref];
-
-              if (
-                (existingTemplate as IKetMonomerGroupTemplate)?.type !==
-                KetTemplateType.MONOMER_GROUP_TEMPLATE
-              ) {
-                return false;
-              }
-
-              return getIdtAliasesList(
-                (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
-              ).some((alias) => newTemplateIdtAliases.includes(alias));
-            },
-          );
-
-        if (conflictingMonomer || conflictingTemplateRef) {
-          const detail = formatIdtAliasDetails(
-            templateDefinition.idtAliases,
-          ).join(', ');
+        if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
           reportValidationError(
-            templateDefinition.name,
-            `Duplicate IDT aliases detected${
-              detail ? ` (${detail})` : ''
-            }. IDT aliases for 5', 3', internal and base positions must be unique.`,
+            templateReference.$ref,
+            `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
           );
           return;
         }
-      }
 
-      monomersLibraryParsedJson[templateRef.$ref] = templateDefinition;
-      if (
-        !monomersLibraryParsedJson.root.templates.find(
-          (existingTemplateRef) =>
-            existingTemplateRef.$ref === templateRef.$ref,
-        )
-      ) {
-        monomersLibraryParsedJson.root.templates.push(templateRef);
-      }
-    });
+        const monomerNameValidationResult = validateMonomerName(
+          templateDefinition.name,
+        );
+
+        if (!monomerNameValidationResult.isValid) {
+          switch (monomerNameValidationResult.error) {
+            case MonomerNameValidationErrorType.Empty:
+              reportValidationError(
+                templateReference.$ref,
+                `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
+              );
+              return;
+            case MonomerNameValidationErrorType.TooLong: {
+              const truncatedTemplateName = `${templateDefinition.name.slice(
+                0,
+                MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+              )}...`;
+              KetcherLogger.error(
+                `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateReference.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+              );
+              return;
+            }
+            case MonomerNameValidationErrorType.InvalidCharacters:
+              KetcherLogger.error(
+                `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateReference.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
+              );
+              return;
+          }
+        }
+
+        const newTemplateIdtAliases = getIdtAliasesList(
+          templateDefinition.idtAliases,
+        );
+
+        if (newTemplateIdtAliases.length > 0) {
+          const conflictingMonomer = this._monomersLibrary.find((monomer) =>
+            getIdtModificationAliases(monomer).some((alias) =>
+              newTemplateIdtAliases.includes(alias),
+            ),
+          );
+
+          const conflictingTemplateReference =
+            monomersLibraryParsedJson.root.templates.find(
+              (existingTemplateReference) => {
+                if (existingTemplateReference.$ref === templateReference.$ref) {
+                  return false;
+                }
+
+                const existingTemplate =
+                  monomersLibraryParsedJson[existingTemplateReference.$ref];
+
+                if (
+                  (existingTemplate as IKetMonomerGroupTemplate)?.type !==
+                  KetTemplateType.MONOMER_GROUP_TEMPLATE
+                ) {
+                  return false;
+                }
+
+                return getIdtAliasesList(
+                  (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
+                ).some((alias) => newTemplateIdtAliases.includes(alias));
+              },
+            );
+
+          if (conflictingMonomer || conflictingTemplateReference) {
+            const detail = formatIdtAliasDetails(
+              templateDefinition.idtAliases,
+            ).join(', ');
+            reportValidationError(
+              templateDefinition.name,
+              `Duplicate IDT aliases detected${
+                detail ? ` (${detail})` : ''
+              }. IDT aliases for 5', 3', internal and base positions must be unique.`,
+            );
+            return;
+          }
+        }
+
+        monomersLibraryParsedJson[templateReference.$ref] = templateDefinition;
+        if (
+          !monomersLibraryParsedJson.root.templates.find(
+            (existingTemplateReference) =>
+              existingTemplateReference.$ref === templateReference.$ref,
+          )
+        ) {
+          monomersLibraryParsedJson.root.templates.push(templateReference);
+        }
+      },
+    );
 
     this.events.updateMonomersLibrary.dispatch();
   }
@@ -978,7 +985,7 @@ export class CoreEditor {
   }
 
   public isMonomerReferencedInLibrary(monomer: MonomerItemType) {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const reference = getMonomerTemplateRefFromMonomerItem(monomer);
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
@@ -987,8 +994,8 @@ export class CoreEditor {
           'options' in template &&
           template.options.some(
             ({ templateId }) =>
-              templateId === ref ||
-              setMonomerTemplatePrefix(templateId) === ref,
+              templateId === reference ||
+              setMonomerTemplatePrefix(templateId) === reference,
           )
         );
       }) ?? false
@@ -1005,7 +1012,7 @@ export class CoreEditor {
   public getReferencingPresets(
     monomer: MonomerItemType,
   ): IKetMonomerGroupTemplate[] {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const reference = getMonomerTemplateRefFromMonomerItem(monomer);
     const parsedJson = this._monomersLibraryParsedJson;
     if (!parsedJson) return [];
     const presets: IKetMonomerGroupTemplate[] = [];
@@ -1013,7 +1020,7 @@ export class CoreEditor {
       const template = parsedJson[$ref];
       if (
         template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-        template.templates.some((component) => component.$ref === ref)
+        template.templates.some((component) => component.$ref === reference)
       ) {
         presets.push(template);
       }
@@ -1029,8 +1036,8 @@ export class CoreEditor {
    * user-made and cannot be deleted by the user.
    */
   public isUserMadeMonomer(monomer: MonomerItemType): boolean {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
-    return persistentUserCreatedMonomerRefs.has(ref);
+    const reference = getMonomerTemplateRefFromMonomerItem(monomer);
+    return persistentUserCreatedMonomerReferences.has(reference);
   }
 
   /**
@@ -1039,12 +1046,12 @@ export class CoreEditor {
    * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
    */
   public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const reference = getMonomerTemplateRefFromMonomerItem(monomer);
     return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
       const placedMonomerItem = placedMonomer.monomerItem;
       return (
         !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
-        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === reference
       );
     });
   }
@@ -1058,22 +1065,22 @@ export class CoreEditor {
         'A monomer used in an ambiguous monomer cannot be deleted.',
       );
     }
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const reference = getMonomerTemplateRefFromMonomerItem(monomer);
     const index = this._monomersLibrary.findIndex(
       (item) =>
         !isAmbiguousMonomerLibraryItem(item) &&
-        getMonomerTemplateRefFromMonomerItem(item) === ref,
+        getMonomerTemplateRefFromMonomerItem(item) === reference,
     );
     if (index === -1 || !this._monomersLibraryParsedJson) return;
     this._monomersLibrary.splice(index, 1);
     this._monomersLibraryParsedJson.root.templates =
       this._monomersLibraryParsedJson.root.templates.filter(
-        ({ $ref }) => $ref !== ref,
+        ({ $ref }) => $ref !== reference,
       );
-    delete this._monomersLibraryParsedJson[ref];
+    delete this._monomersLibraryParsedJson[reference];
     if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
       SettingsManager.addMonomerLibraryUpdate(
-        JSON.stringify({ removedMonomerRef: ref }),
+        JSON.stringify({ removedMonomerRef: reference }),
       );
     }
     this.events.updateMonomersLibrary.dispatch();
@@ -1084,16 +1091,19 @@ export class CoreEditor {
    * mirroring `removeMonomerFromLibrary`'s splice/filter/delete/persist/dispatch
    * shape. Does not touch the preset's component monomers.
    */
-  public removePresetFromLibrary(presetRef: string, shouldPersist = true) {
+  public removePresetFromLibrary(
+    presetReference: string,
+    shouldPersist = true,
+  ) {
     if (!this._monomersLibraryParsedJson) return;
     this._monomersLibraryParsedJson.root.templates =
       this._monomersLibraryParsedJson.root.templates.filter(
-        ({ $ref }) => $ref !== presetRef,
+        ({ $ref }) => $ref !== presetReference,
       );
-    delete this._monomersLibraryParsedJson[presetRef];
+    delete this._monomersLibraryParsedJson[presetReference];
     if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
       SettingsManager.addMonomerLibraryUpdate(
-        JSON.stringify({ removedMonomerRef: presetRef }),
+        JSON.stringify({ removedMonomerRef: presetReference }),
       );
     }
     this.events.updateMonomersLibrary.dispatch();
@@ -1146,12 +1156,12 @@ export class CoreEditor {
     }
 
     return monomersLibraryJson.root.templates
-      .filter((templateRef) => {
-        const template = monomersLibraryJson[templateRef.$ref];
+      .filter((templateReference) => {
+        const template = monomersLibraryJson[templateReference.$ref];
 
         if (!template) {
           KetcherLogger.error(
-            `There is a ref for rna preset template ${templateRef.$ref}, but template definition is not found`,
+            `There is a ref for rna preset template ${templateReference.$ref}, but template definition is not found`,
           );
 
           return false;
@@ -1163,7 +1173,7 @@ export class CoreEditor {
         );
       })
       .map(
-        (templateRef) => monomersLibraryJson[templateRef.$ref],
+        (templateReference) => monomersLibraryJson[templateReference.$ref],
       ) as IKetMonomerGroupTemplate[];
   }
 
@@ -1185,7 +1195,7 @@ export class CoreEditor {
   private handleHotKeyEvents(event: KeyboardEvent) {
     if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
-    const keySettings = hotkeysConfiguration;
+    const keySettings = hotkeysConfig;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
@@ -1372,7 +1382,7 @@ export class CoreEditor {
           typeof document.elementsFromPoint === 'function' &&
           document
             .elementsFromPoint(event.clientX, event.clientY)
-            .some((el) => el.__data__?.drawingEntity?.selected)
+            .some((element) => element.__data__?.drawingEntity?.selected)
         ) {
           this.events.rightClickSelectedMonomers.dispatch([
             event,
@@ -1500,7 +1510,7 @@ export class CoreEditor {
       this.clearTransientViews();
     });
     this.events.modifyAminoAcids.add(
-      ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
+      ({ monomers, modificationType }: ModifyAminoAcidsHandlerParameters) => {
         this.onModifyAminoAcids(monomers, modificationType);
       },
     );
@@ -2235,7 +2245,7 @@ export class CoreEditor {
         return (
           operation instanceof SelectLayoutModeOperation &&
           operation.mode === 'snake-layout-mode' &&
-          operation.prevMode !== 'snake-layout-mode'
+          operation.previousMode !== 'snake-layout-mode'
         );
       });
 

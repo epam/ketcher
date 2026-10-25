@@ -18,11 +18,11 @@ export class EllipticalArcFilledBowArrowRenderer {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
-    const arrowHeadAttr = ARROW_HEAD_ATTR * macroModeScale;
+    const arrowHeadAttribute = ARROW_HEAD_ATTR * macroModeScale;
     const direction = height >= 0 ? 1 : -1;
     const length = direction * arrowHeadLength;
     const width = direction * arrowHeadWidth;
-    const attr = direction * arrowHeadAttr;
+    const attribute = direction * arrowHeadAttribute;
     const endX = start.x + arrowLength;
     const path =
       `M${toFixed(start.x)},${toFixed(start.y)}` +
@@ -30,8 +30,8 @@ export class EllipticalArcFilledBowArrowRenderer {
         direction > 0 ? 1 : 0
       },${toFixed(endX)},${toFixed(start.y)}` +
       `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
-      `l${toFixed(width)},${toFixed(attr)}` +
-      `l${toFixed(width)},${toFixed(-attr)}` +
+      `l${toFixed(width)},${toFixed(attribute)}` +
+      `l${toFixed(width)},${toFixed(-attribute)}` +
       `l${toFixed(-width)},${length}`;
 
     const transformedPath = svgPath(path)

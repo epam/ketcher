@@ -1,10 +1,10 @@
-import { test as utils } from '../utilsFixtures';
+import { test as utilities } from '../utilitiesFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { mergeTests, Page } from '@playwright/test';
 import { NotificationBannerOnMacro } from '@tests/pages/macromolecules/canvas/NotificationBannerOnMacro';
 
-export const test = mergeTests(utils, pageObjects).extend<
+export const test = mergeTests(utilities, pageObjects).extend<
   { SnakeCanvas: void },
   { initSnakeCanvas: () => Promise<Page> }
 >({

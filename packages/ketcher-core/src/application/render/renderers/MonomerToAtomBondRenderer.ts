@@ -6,7 +6,7 @@ import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import util from '../util';
+import utility from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
@@ -100,7 +100,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       const rayDirection = bondDirection.negated();
 
       // Calculate the shift needed to avoid overlap with the combined visual bounding box
-      const shift = util.shiftRayBox(
+      const shift = utility.shiftRayBox(
         new Vec2(0, 0),
         rayDirection,
         combinedVisualBBox,

@@ -13,11 +13,11 @@ export enum BlobTypes {
   svg = 'image/svg+xml',
 }
 export type SupportedImageFormats = keyof typeof BlobTypes;
-export type ExportImageParams = {
+export type ExportImageParameters = {
   margin?: number;
 };
 
-export type UpdateMonomersLibraryParams = {
+export type UpdateMonomersLibraryParameters = {
   format: 'ket' | 'sdf';
   shouldPersist?: boolean;
   needDispatchLibraryUpdateEvent?: boolean;

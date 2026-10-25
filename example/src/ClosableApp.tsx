@@ -4,7 +4,7 @@ import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
 
-import { getStructServiceProvider } from './utils';
+import { getStructServiceProvider } from './utilities';
 import {
   getHiddenButtonsConfig,
   isMacromoleculesEditorDisabled,

@@ -635,16 +635,16 @@ export class RenderersManager {
           .attr('fill', 'none');
       } else {
         // For non-convex loops, draw a dashed polygon
-        const pathStr = this.calculateDashedPolygonPath(loop);
+        const pathString = this.calculateDashedPolygonPath(loop);
 
-        if (!pathStr) {
+        if (!pathString) {
           return;
         }
 
         canvas
           .append('path')
           .attr('class', 'aromatic-circle')
-          .attr('d', pathStr)
+          .attr('d', pathString)
           .attr('stroke', '#000')
           .attr('stroke-width', 1)
           .attr('stroke-dasharray', '2,2')
@@ -655,7 +655,7 @@ export class RenderersManager {
 
   private calculateDashedPolygonPath(loop: Loop) {
     const editorSettings = provideEditorSettings();
-    let pathStr = '';
+    let pathString = '';
 
     // Calculate the polygon path similar to reloop.js
     loop.halfEdges.forEach((halfEdge, k) => {
@@ -667,7 +667,7 @@ export class RenderersManager {
         Vec2.dot(halfEdge.direction, nextHalfEdge.direction),
       );
       const halfAngle = (Math.PI - angle) / 2;
-      const dir = nextHalfEdge.direction.rotate(halfAngle);
+      const direction = nextHalfEdge.direction.rotate(halfAngle);
 
       const pi = Scale.modelToCanvas(
         nextHalfEdge.firstAtom.position,
@@ -682,13 +682,13 @@ export class RenderersManager {
 
       const bondSpace = 6; // Default bond space
       const offset = bondSpace / sin;
-      const qi = pi.addScaled(dir, -offset);
+      const qi = pi.addScaled(direction, -offset);
 
-      pathStr += k === 0 ? `M ${qi.x} ${qi.y}` : ` L ${qi.x} ${qi.y}`;
+      pathString += k === 0 ? `M ${qi.x} ${qi.y}` : ` L ${qi.x} ${qi.y}`;
     });
 
-    pathStr += ' Z';
-    return pathStr;
+    pathString += ' Z';
+    return pathString;
   }
 
   private calculateLoopCenterAndRadius(loop: Loop) {
@@ -718,8 +718,8 @@ export class RenderersManager {
         editorSettings,
       );
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-      const dist = Vec2.dot(Vec2.diff(apos, center), n);
-      radius = radius < 0 ? dist : Math.min(radius, dist);
+      const distribution = Vec2.dot(Vec2.diff(apos, center), n);
+      radius = radius < 0 ? distribution : Math.min(radius, distribution);
     });
     radius *= 0.7; // Scale down the radius
 

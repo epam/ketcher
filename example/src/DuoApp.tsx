@@ -2,7 +2,7 @@ import 'ketcher-react/dist/index.css';
 import { StrictMode, useEffect, useState } from 'react';
 import { Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
-import { getStructServiceProvider } from './utils';
+import { getStructServiceProvider } from './utilities';
 import {
   getHiddenButtonsConfig,
   isMacromoleculesEditorDisabled,

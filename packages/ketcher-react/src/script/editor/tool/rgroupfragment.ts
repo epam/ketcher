@@ -16,7 +16,7 @@
 
 import {
   RGroup,
-  fromRGroupAttrs,
+  fromRGroupAttributes,
   fromRGroupFragment,
   fromUpdateIfThen,
   FunctionalGroup,
@@ -141,7 +141,7 @@ class RGroupFragmentTool implements Tool {
             fromUpdateIfThen(struct, newRg.label, rgidOld),
           );
         } else {
-          action = fromRGroupAttrs(struct, ci.id, newRg);
+          action = fromRGroupAttributes(struct, ci.id, newRg);
         }
 
         editor.update(action);

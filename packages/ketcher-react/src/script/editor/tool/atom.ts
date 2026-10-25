@@ -22,12 +22,12 @@ import {
   FunctionalGroup,
   SGroup,
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromFragmentDeletion,
   fromSgroupDeletion,
   ElementColor,
-  vectorUtils,
+  vectorUtilities,
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
@@ -89,7 +89,9 @@ class AtomTool implements Tool {
               selectAtomId,
             ),
         );
-        action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
+        action.mergeWith(
+          fromAtomsAttributes(struct, updatedAtoms, atomProps, true),
+        );
         editor.update(action);
         editor.selection(null);
         this.editor.hoverIcon.hide();
@@ -217,14 +219,14 @@ class AtomTool implements Tool {
       return;
     }
 
-    let angle = vectorUtils.calcAngle(
+    let angle = vectorUtilities.calcAngle(
       atom.pp,
       CoordinateTransformation.pageToModel(event, rnd),
     );
-    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
-    const degrees = vectorUtils.degrees(angle);
+    if (!event.ctrlKey) angle = vectorUtilities.fracAngle(angle, null);
+    const degrees = vectorUtilities.degrees(angle);
     editor.event.message.dispatch({ info: degrees + 'º' });
-    const newAtomPos = vectorUtils.calcNewAtomPos(
+    const newAtomPos = vectorUtilities.calcNewAtomPos(
       atom.pp,
       CoordinateTransformation.pageToModel(event, rnd),
       event.ctrlKey,
@@ -302,7 +304,12 @@ class AtomTool implements Tool {
               }),
             );
             action.mergeWith(
-              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true),
+              fromAtomsAttributes(
+                reStruct,
+                sGroupPositionAtomId,
+                atomProps,
+                true,
+              ),
             );
           }
         } else if (ci.map === 'atoms') {
@@ -322,7 +329,9 @@ class AtomTool implements Tool {
               true,
             ) === null
           ) {
-            action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
+            action.mergeWith(
+              fromAtomsAttributes(reStruct, atomId, atomProps, true),
+            );
           }
         }
       }
@@ -367,7 +376,7 @@ export function atomLongtapEvent(tool, render) {
     Promise.resolve(res)
       .then((newatom) => {
         const action = atomid
-          ? fromAtomsAttrs(render.ctab, atomid, newatom, null)
+          ? fromAtomsAttributes(render.ctab, atomid, newatom, null)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })

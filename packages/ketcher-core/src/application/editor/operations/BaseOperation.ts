@@ -30,7 +30,7 @@ class BaseOperation<D = unknown> {
   priority: number;
   data!: D;
 
-  static InverseConstructor: new (...args: never[]) => BaseOperation;
+  static InverseConstructor: new (...arguments_: never[]) => BaseOperation;
 
   constructor(type: OperationTypeValue, priority = 0) {
     this.type = type;

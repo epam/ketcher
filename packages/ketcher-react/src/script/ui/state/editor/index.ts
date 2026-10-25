@@ -35,7 +35,7 @@ import {
   type Atom,
   type Bond,
   type EditMonomerPayload,
-  type FloatingToolsParams,
+  type FloatingToolsParameters,
   type Struct,
 } from 'ketcher-core';
 import acts from '../../action';
@@ -292,9 +292,11 @@ export default function initEditor(
     onApiSettings: (payload: Record<string, unknown>) =>
       dispatch(saveSettings(payload, ketcherId)),
 
-    onUpdateFloatingTools: memoizedDebounce((payload: FloatingToolsParams) => {
-      dispatch(updateFloatingTools(payload));
-    }),
+    onUpdateFloatingTools: memoizedDebounce(
+      (payload: FloatingToolsParameters) => {
+        dispatch(updateFloatingTools(payload));
+      },
+    ),
 
     onZoomIn: updateAction,
     onZoomOut: updateAction,

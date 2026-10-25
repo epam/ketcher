@@ -242,8 +242,8 @@ export class HighlightUpdate extends BaseOperation {
       highlight.color === this.newData.color &&
       highlight.atoms.length === this.newData.atoms.length &&
       highlight.bonds.length === this.newData.bonds.length &&
-      highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
-      highlight.bonds.every((id, i) => this.newData.bonds[i] === id)
+      highlight.atoms.every((id, index) => this.newData.atoms[index] === id) &&
+      highlight.bonds.every((id, index) => this.newData.bonds[index] === id)
     );
   }
 }

@@ -43,7 +43,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import {
   horizontalFlipByKeyboard,
   verticalFlipByKeyboard,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utilities';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 

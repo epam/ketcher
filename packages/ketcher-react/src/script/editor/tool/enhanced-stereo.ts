@@ -16,7 +16,7 @@
 
 import {
   findStereoAtoms,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromStereoFlagUpdate,
 } from 'ketcher-core';
 
@@ -80,7 +80,7 @@ class EnhancedStereoTool implements Tool {
           }
           return acc;
         },
-        fromAtomsAttrs(
+        fromAtomsAttributes(
           restruct,
           stereoAtoms,
           {

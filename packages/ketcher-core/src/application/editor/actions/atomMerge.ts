@@ -115,10 +115,10 @@ export function fromAtomMerge(
     } else {
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
-      Object.keys(attrs).forEach((key) => {
+      for (const key of Object.keys(attrs)) {
         const attrKey = key as keyof typeof attrs;
         action.addOp(new BondAttr(mergeBondId, attrKey, attrs[attrKey]));
-      });
+      }
     }
 
     action.addOp(new BondDelete(nei.bid));
@@ -133,11 +133,11 @@ export function fromAtomMerge(
     attrs.label = 'C';
   }
 
-  Object.keys(attrs).forEach((key) => {
+  for (const key of Object.keys(attrs)) {
     if (key !== 'stereoLabel' && key !== 'stereoParity') {
       action.addOp(new AtomAttr(dstId, key, attrs[key]));
     }
-  });
+  }
 
   updateAttachmentGroupsAfterAtomMerge(action, restruct, srcId, dstId);
 

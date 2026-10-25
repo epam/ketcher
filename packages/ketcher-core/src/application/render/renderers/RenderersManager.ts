@@ -438,8 +438,8 @@ export class RenderersManager {
     this.bonds.set(bond.id, bondRenderer);
 
     // redraw connected atoms labels as their connections numbers can be updated after bond is added
-    [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      if (bondAtom.bonds.includes(bond)) return;
+    for (const bondAtom of [bond.firstAtom, bond.secondAtom]) {
+      if (bondAtom.bonds.includes(bond)) continue;
 
       bondAtom.addBond(bond);
       this.atoms.forEach((atom) => {
@@ -447,7 +447,7 @@ export class RenderersManager {
 
         atom.redrawLabel();
       });
-    });
+    }
 
     bondRenderer.show();
 
@@ -460,9 +460,8 @@ export class RenderersManager {
         ...firstAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
         ...secondAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
       ];
-      monomerToAtomBonds.forEach((monomerToAtomBond) =>
-        monomerToAtomBond.renderer?.move(),
-      );
+      for (const monomerToAtomBond of monomerToAtomBonds) monomerToAtomBond.renderer?.move()
+      ;
 
       if (
         firstAtom === bond.secondAtom ||

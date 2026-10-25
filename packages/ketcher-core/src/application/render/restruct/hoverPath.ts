@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-undef */
+ 
 import paperjs from 'paper';
 import type { Element as RaphaelElement } from 'raphael';
 

@@ -278,11 +278,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       }
     });
 
-    unrenderedAtPoints.forEach((item) => {
+    for (const item of unrenderedAtPoints) {
       const customAngle = this.freeSectorsList.shift();
       const attachmentPoint = appendFnToUse(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
-    });
+    }
   }
 
   protected prepareAttachmentPointsParams(

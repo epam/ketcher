@@ -146,7 +146,7 @@ function splitSelectionsIntoStrandRuns(
 ): StrandRun[] {
   const runs: StrandRun[] = [];
 
-  [STRAND_TYPE.SENSE, STRAND_TYPE.ANTISENSE].forEach((strandType) => {
+  for (const strandType of [STRAND_TYPE.SENSE, STRAND_TYPE.ANTISENSE]) {
     selections.forEach((selectionRange) => {
       let currentRun: TwoStrandedNodeSelection[] | undefined;
 
@@ -166,7 +166,7 @@ function splitSelectionsIntoStrandRuns(
         currentRun.push(nodeSelection);
       });
     });
-  });
+  }
 
   return runs;
 }
@@ -2269,18 +2269,18 @@ export class SequenceMode extends BaseMode {
     const sideConnectionsData: PreservedSideChainConnection[] = [];
 
     allMonomers.forEach((monomer) => {
-      Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
+      for (const [key, bond] of Object.entries(monomer.attachmentPointsToBonds)) {
         if (
           !bond ||
           bond instanceof MonomerToAtomBond ||
           !bond.isSideChainConnection
         ) {
-          return;
+          continue;
         }
 
         const secondMonomer = bond.getAnotherMonomer(monomer);
         if (!secondMonomer?.attachmentPointsToBonds) {
-          return;
+          continue;
         }
 
         const secondMonomerBondData = Object.entries(
@@ -2288,7 +2288,7 @@ export class SequenceMode extends BaseMode {
         ).find(([, value]) => value === bond);
 
         if (!secondMonomerBondData) {
-          return;
+          continue;
         }
 
         const [secondMonomerAttachmentPointName] = secondMonomerBondData;
@@ -2300,7 +2300,7 @@ export class SequenceMode extends BaseMode {
           secondMonomerAttachmentPointName:
             secondMonomerAttachmentPointName as AttachmentPointName,
         });
-      });
+      }
     });
 
     return sideConnectionsData;
@@ -2472,8 +2472,7 @@ export class SequenceMode extends BaseMode {
 
     // Each run is one strand, and both strands of a both-selected position
     // are visited (sense runs first), so every selected monomer is replaced.
-    splitSelectionsIntoStrandRuns(selections).forEach(
-      ({ strandType, selectionRange }) => {
+    for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(selections)) {
         const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
         // Iteration must follow chain order, not display order, so that the
         // "previous replaced node" carried from one iteration to the next is
@@ -2547,8 +2546,8 @@ export class SequenceMode extends BaseMode {
             }
           }
         });
-      },
-    );
+      }
+    
 
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -3139,8 +3138,7 @@ export class SequenceMode extends BaseMode {
 
     // Each run is one strand, and both strands of a both-selected position
     // are visited (sense runs first), so every selected monomer is replaced.
-    splitSelectionsIntoStrandRuns(selections).forEach(
-      ({ strandType, selectionRange }) => {
+    for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(selections)) {
         const isAntisense = strandType === STRAND_TYPE.ANTISENSE;
         // Iteration follows chain order, not display order, so the
         // "previous replaced node" carried across iterations really is the
@@ -3215,8 +3213,8 @@ export class SequenceMode extends BaseMode {
             }
           }
         });
-      },
-    );
+      }
+    
 
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);

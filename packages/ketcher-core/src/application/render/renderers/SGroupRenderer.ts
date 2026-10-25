@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+ 
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
@@ -487,9 +487,9 @@ export class SGroupRenderer extends BaseRenderer {
     }
 
     if (attributes) {
-      Object.entries(attributes).forEach(([attribute, value]) => {
+      for (const [attribute, value] of Object.entries(attributes)) {
         textElement?.attr(attribute, value);
-      });
+      }
     }
 
     return textElement as D3SvgElementSelection<SVGTextElement, void>;
@@ -621,13 +621,13 @@ export class SGroupRenderer extends BaseRenderer {
 
     let combinedPath: paper.PathItem | undefined;
 
-    hoverPaths.forEach((path) => {
+    for (const path of hoverPaths) {
       if (!path.closed) {
         path.closePath();
       }
 
       combinedPath = combinedPath ? combinedPath.unite(path) : path;
-    });
+    }
 
     return combinedPath?.pathData;
   }

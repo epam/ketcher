@@ -446,7 +446,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     const attachmentPointDictionary = {};
     const attachmentPointsList: AttachmentPointName[] = [];
 
-    attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
+    for (const [attachmentPointIndex, attachmentPoint] of attachmentPoints.entries()) {
       const attachmentPointNumber = attachmentPointIndex + 1;
       let calculatedAttachmentPointNumber: number;
       if (attachmentPoint.type) {
@@ -470,7 +470,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         attachmentPoint.label ?? `R${calculatedAttachmentPointNumber}`;
       attachmentPointDictionary[calculatedLabel] = null;
       attachmentPointsList.push(calculatedLabel as AttachmentPointName);
-    });
+    }
     return { attachmentPointDictionary, attachmentPointsList };
   }
 

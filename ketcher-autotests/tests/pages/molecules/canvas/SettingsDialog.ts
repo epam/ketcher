@@ -1,4 +1,4 @@
-/* eslint-disable no-redeclare */
+ 
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,
@@ -400,29 +400,22 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
   if (cachedMap) return cachedMap;
   const map = new Map<string, SettingsSection>();
 
-  Object.values(GeneralSetting).forEach((val) =>
-    map.set(val, SettingsSection.General),
-  );
-  Object.values(StereochemistrySetting).forEach((val) =>
-    map.set(val, SettingsSection.Stereochemistry),
-  );
-  Object.values(AtomsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Atoms),
-  );
-  Object.values(BondsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Bonds),
-  );
+  for (const val of Object.values(GeneralSetting)) map.set(val, SettingsSection.General)
+  ;
+  for (const val of Object.values(StereochemistrySetting)) map.set(val, SettingsSection.Stereochemistry)
+  ;
+  for (const val of Object.values(AtomsSetting)) map.set(val, SettingsSection.Atoms)
+  ;
+  for (const val of Object.values(BondsSetting)) map.set(val, SettingsSection.Bonds)
+  ;
   // ServerSetting fields are now split across the Reactions & Components,
   // Validation & Calculation, and Debugging sections; see SECTION_OVERRIDES.
-  Object.values(ServerSetting).forEach((val) =>
-    map.set(val, SettingsSection.Validation),
-  );
-  Object.values(ThreeDViewerSetting).forEach((val) =>
-    map.set(val, SettingsSection.ThreeDViewer),
-  );
-  Object.values(OptionsForDebuggingSetting).forEach((val) =>
-    map.set(val, SettingsSection.Debugging),
-  );
+  for (const val of Object.values(ServerSetting)) map.set(val, SettingsSection.Validation)
+  ;
+  for (const val of Object.values(ThreeDViewerSetting)) map.set(val, SettingsSection.ThreeDViewer)
+  ;
+  for (const val of Object.values(OptionsForDebuggingSetting)) map.set(val, SettingsSection.Debugging)
+  ;
 
   SECTION_OVERRIDES.forEach((section, val) => map.set(val, section));
 

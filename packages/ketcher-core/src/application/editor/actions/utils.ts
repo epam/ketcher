@@ -340,14 +340,14 @@ export function getRelSGroupsBySelection(
 ) {
   const sgroups = new Set<SGroup>();
 
-  selectedAtoms.forEach((atom) => {
+  for (const atom of selectedAtoms) {
     struct.atoms.get(atom)?.sgs.forEach((sgid) => {
       const sgroup = struct.sgroups.get(sgid);
       if (sgroup && !sgroup.data.attached && !sgroup.data.absolute) {
         sgroups.add(sgroup);
       }
     });
-  });
+  }
 
   return sgroups;
 }

@@ -146,9 +146,9 @@ export function normalizeSettingsForForm(
   }
 
   if (options.removeCoreOnlyFields) {
-    CORE_ONLY_SETTING_FIELDS.forEach((field) => {
+    for (const field of CORE_ONLY_SETTING_FIELDS) {
       delete transformed[field];
-    });
+    }
   }
 
   return transformed as SettingsFormValue;

@@ -339,7 +339,7 @@ abstract class SelectBase implements BaseTool {
           }
         })
         .flat();
-      drawingEntities.forEach((entity) => entity.turnOnSelection());
+      for (const entity of drawingEntities) entity.turnOnSelection();
       const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );

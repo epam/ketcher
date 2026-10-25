@@ -89,7 +89,7 @@ export class ReplacementHighlightView extends TransientView {
 
     let combinedPath: UnitedPaperPath | undefined;
 
-    pathsData.forEach((pathData) => {
+    for (const pathData of pathsData) {
       const path = new paperjs.CompoundPath(pathData);
 
       if (!path.closed) {
@@ -98,14 +98,14 @@ export class ReplacementHighlightView extends TransientView {
 
       if (!combinedPath) {
         combinedPath = path;
-        return;
+        continue;
       }
 
       const unitedPath = combinedPath.unite(path);
       combinedPath.remove();
       path.remove();
       combinedPath = unitedPath;
-    });
+    }
 
     return combinedPath?.pathData;
   }

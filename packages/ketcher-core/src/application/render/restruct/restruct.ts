@@ -391,9 +391,9 @@ class ReStruct {
   }
 
   clearMarks(): void {
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       this[map + 'Changed'] = new Map();
-    });
+    }
 
     this.structChanged = false;
   }
@@ -438,9 +438,9 @@ class ReStruct {
   }
 
   eachItem(func) {
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       this[map].forEach(func);
-    });
+    }
   }
 
   /**
@@ -489,15 +489,15 @@ class ReStruct {
 
   private getAllElementsAsSelectionMap(): SelectionMap {
     const selection: SelectionMap = {};
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       selection[map] = Array.from(this[map].keys());
-    });
+    }
     return selection;
   }
 
   private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
     let boundingBox: Box2Abs | null = null;
-    Object.keys(ReStruct.maps).forEach((elementKey) => {
+    for (const elementKey of Object.keys(ReStruct.maps)) {
       selection[elementKey]?.forEach((elementId) => {
         const element = this[elementKey].get(elementId);
         if (element) {
@@ -509,7 +509,7 @@ class ReStruct {
           }
         }
       });
-    });
+    }
     return boundingBox;
   }
 
@@ -572,7 +572,7 @@ class ReStruct {
     }
 
     // check items to update
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       const mapChanged = this[map + 'Changed'];
       if (force) {
         this[map].forEach((_item, id) => mapChanged.set(id, 1));
@@ -582,7 +582,7 @@ class ReStruct {
           if (!this[map].has(id)) mapChanged.delete(id);
         });
       }
-    });
+    }
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
       if (
@@ -614,7 +614,7 @@ class ReStruct {
       this.molecule.frags.delete(fid);
     });
 
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
@@ -623,7 +623,7 @@ class ReStruct {
         }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
-    });
+    }
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel);
@@ -722,7 +722,7 @@ class ReStruct {
 
       const parent = plates[0].node.parentNode as Element | null;
       if (!parent) {
-        plates.forEach((plate) => plate.remove());
+        for (const plate of plates) plate.remove();
         return;
       }
 
@@ -734,16 +734,16 @@ class ReStruct {
       const group = document.createElementNS(namespace, 'g');
       group.setAttribute('filter', `url(#${filterId})`);
       group.setAttribute('pointer-events', 'none');
-      plates.forEach((plate) => {
+      for (const plate of plates) {
         plate.node.setAttribute('fill', highlight.color);
         plate.node.setAttribute('stroke', 'none');
         group.appendChild(plate.node);
-      });
+      }
       parent.appendChild(group);
 
       this.highlightOutlinePaths.push({
         remove: () => {
-          plates.forEach((plate) => plate.remove());
+          for (const plate of plates) plate.remove();
           group.remove();
         },
       });
@@ -913,7 +913,7 @@ class ReStruct {
   getRGroupAttachmentPointsVBoxByAtomIds(atomsIds: number[]): Box2Abs | null {
     let allAtomAttachmentPointsVBox: Box2Abs | null = null;
 
-    atomsIds.forEach((atomId) => {
+    for (const atomId of atomsIds) {
       const attachmentPointIds =
         this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
 
@@ -939,7 +939,7 @@ class ReStruct {
         allAtomAttachmentPointsVBox =
           allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
       }
-    });
+    }
 
     return allAtomAttachmentPointsVBox;
   }
@@ -1023,7 +1023,7 @@ class ReStruct {
   setSelection(selection?) {
     const atoms: { selected: boolean; sgroup: number }[] = [];
 
-    Object.keys(ReStruct.maps).forEach((map) => {
+    for (const map of Object.keys(ReStruct.maps)) {
       const [mapValues] = this[map].values(); // hack to include ReSGroup, figure out better solution
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
@@ -1064,7 +1064,7 @@ class ReStruct {
           this.showItemSelection(item, selected);
         });
       }
-    });
+    }
   }
 
   showItemSelection(item, selected) {

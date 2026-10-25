@@ -33,11 +33,11 @@ export function fromAttachmentGroupDeletion(
     if (fragmentId !== undefined) {
       fragmentIds.add(fragmentId);
     }
-    [bond.begin, bond.end].forEach((endpointId) => {
+    for (const endpointId of [bond.begin, bond.end]) {
       if (restruct.molecule.atoms.has(endpointId)) {
         atomIds.add(endpointId);
       }
-    });
+    }
     action.addOp(new BondDelete(bondId));
   });
   action.addOp(new AttachmentGroupDelete(attachmentGroupId));

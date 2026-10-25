@@ -269,9 +269,9 @@ export class RxnArrowRenderer extends BaseRenderer {
         path?.attr('data-arrow-id', String(this.arrow.arrowId));
       }
 
-      Object.entries(attrs).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(attrs)) {
         path?.attr(key, value);
-      });
+      }
     });
 
     this.appendHoverAreaElement();

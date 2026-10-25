@@ -60,10 +60,10 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
         bondlist.push(bid);
         // add all adjacent loops
         // those that are not completely inside the structure will get redrawn anyway
-        ['hb1', 'hb2'].forEach((hb) => {
+        for (const hb of ['hb1', 'hb2']) {
           const loop = struct.halfBonds.get(bond.b[hb]).loop;
           if (loop >= 0) loops.add(loop);
-        });
+        }
         return;
       }
 
@@ -75,9 +75,9 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       if (atomSet.has(bond.b.end)) atomsToInvalidate.add(bond.b.end);
     });
 
-    bondlist.forEach((bond) => {
+    for (const bond of bondlist) {
       action.addOp(new BondMove(bond, d));
-    });
+    }
 
     loops.forEach((loopId) => {
       const loop = restruct.reloops.get(loopId);

@@ -32,11 +32,11 @@ class RestoreDescriptorsPosition extends BaseOperation {
     const struct = restruct.molecule;
     const sgroups: SGroup[] = Array.from(struct.sgroups.values());
 
-    sgroups.forEach((sgroup) => {
+    for (const sgroup of sgroups) {
       sgroup.pp = this.history[sgroup.id];
       struct.sgroups.set(sgroup.id, sgroup);
       BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1);
-    });
+    }
   }
 
   invert() {

@@ -573,9 +573,9 @@ export class MacromoleculesConverter {
       }
 
       const partialSgroup = new SGroup(sgroup.type);
-      Object.keys(sgroup.data).forEach((field) => {
+      for (const field of Object.keys(sgroup.data)) {
         partialSgroup.data[field] = sgroup.data[field];
-      });
+      }
       partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : null;
 
       const partialSgroupId = fragmentStruct.sgroups.add(partialSgroup);

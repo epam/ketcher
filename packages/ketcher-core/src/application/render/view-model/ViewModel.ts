@@ -78,9 +78,9 @@ export class ViewModel {
   }
 
   private initHalfEdges(bonds: Bond[]) {
-    bonds.forEach((bond) => {
+    for (const bond of bonds) {
       this.initHalfEdge(bond);
-    });
+    }
   }
 
   private setHalfEdgesAngle(halfEdge: HalfEdge, nextHalfEdge: HalfEdge) {

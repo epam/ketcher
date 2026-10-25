@@ -164,9 +164,7 @@ export class ReImage extends ReObject {
     const visibleHandleReferencePositions =
       this.getSelectionReferencePositions(renderOptions);
 
-    (
-      Object.keys(visibleHandleReferencePositions) as ImageReferenceName[]
-    ).forEach((key) => {
+    for (const key of (Object.keys(visibleHandleReferencePositions) as ImageReferenceName[])) {
       const visiblePosition = visibleHandleReferencePositions[key];
       const element = paper
         .circle(visiblePosition.x, visiblePosition.y, scale)
@@ -198,7 +196,7 @@ export class ReImage extends ReObject {
 
       this.selectionPointsSet.push(element);
       this.selectionHitTargetsSet.push(hitTarget);
-    });
+    }
     this.setSelectionPointsVisibility(false);
     reStruct.addReObjectPath(
       LayerMap.indices,

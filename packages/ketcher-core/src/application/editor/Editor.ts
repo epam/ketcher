@@ -2267,7 +2267,7 @@ export class CoreEditor {
 
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
-    Object.entries(grouped).forEach(([analogue, typesSet]) => {
+    for (const [analogue, typesSet] of Object.entries(grouped)) {
       const types = Array.from(typesSet).sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
@@ -2279,7 +2279,7 @@ export class CoreEditor {
         return aTitle.localeCompare(bTitle);
       });
       result[analogue] = types;
-    });
+    }
 
     return result;
   }
@@ -2297,8 +2297,7 @@ export class CoreEditor {
     );
     const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
 
-    [...aminoAcidsToModify.entries()].forEach(
-      ([aminoAcidToModify, modifiedMonomerItem]) => {
+    for (const [aminoAcidToModify, modifiedMonomerItem] of [...aminoAcidsToModify.entries()]) {
         aminoAcidToModify.covalentBonds.forEach((polymerBond) => {
           const attachmentPoint =
             aminoAcidToModify.getAttachmentPointByBond(polymerBond);
@@ -2316,8 +2315,8 @@ export class CoreEditor {
             bondsToDelete.add(polymerBond);
           }
         });
-      },
-    );
+      }
+    
 
     const modificationFunction = () => {
       aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
@@ -2687,11 +2686,11 @@ export class CoreEditor {
     const command = new Command();
     let replacedAnyMonomer = false;
 
-    monomers.forEach((monomer) => {
+    for (const monomer of monomers) {
       const monomerItem = monomer.monomerItem;
 
       if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-        return;
+        continue;
       }
 
       const { props, label } = monomerItem;
@@ -2700,7 +2699,7 @@ export class CoreEditor {
         props.MonomerClass !== monomerClass ||
         (props.MonomerCode ?? label) !== symbol
       ) {
-        return;
+        continue;
       }
 
       command.merge(
@@ -2708,7 +2707,7 @@ export class CoreEditor {
           .command,
       );
       replacedAnyMonomer = true;
-    });
+    }
 
     if (!replacedAnyMonomer) {
       return;

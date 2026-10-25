@@ -526,7 +526,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    paths.forEach(({ d, attrs }) => {
+    for (const { d, attrs } of paths) {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
@@ -534,10 +534,10 @@ export class BondRenderer extends BaseRenderer {
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round');
 
-      Object.entries(attrs).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(attrs)) {
         path?.attr(key, value);
-      });
-    });
+      }
+    }
 
     const combinedPath = paths.reduce((acc, { d }) => {
       return acc + d;

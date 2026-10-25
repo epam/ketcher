@@ -1026,13 +1026,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
     );
 
-    Array.from(allSideConnectionBondsBodyElements).forEach(
-      (bondBodyElement) => {
+    for (const bondBodyElement of Array.from(allSideConnectionBondsBodyElements)) {
         const renderer =
           bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
         bondBodyElement.setAttribute('stroke', getColor(renderer));
-      },
-    );
+      }
+    
   }
 
   public appendHover(): void {

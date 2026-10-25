@@ -86,11 +86,12 @@ export class FormatterFactory {
       (isLoading && Boolean(structServiceOptions['dearomatize-on-load']));
 
     switch (format) {
-      case SupportedFormat.ket:
+      case SupportedFormat.ket: {
         formatter = new KetFormatter(new KetSerializer());
         break;
+      }
 
-      case SupportedFormat.mol:
+      case SupportedFormat.mol: {
         if (shouldDelegateToIndigo) {
           formatter = new ServerFormatter(
             this.#structService,
@@ -113,6 +114,7 @@ export class FormatterFactory {
           );
         }
         break;
+      }
 
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
@@ -128,13 +130,14 @@ export class FormatterFactory {
       case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
       case SupportedFormat.rxn:
-      default:
+      default: {
         formatter = new ServerFormatter(
           this.#structService,
           new KetSerializer(),
           format,
           structServiceOptions,
         );
+      }
     }
 
     return formatter;

@@ -133,18 +133,21 @@ export const getIsItemInSelection = ({
   }
 
   switch (item.map) {
-    case 'sgroups':
+    case 'sgroups': {
       return selectedSGroupsIds.has(item.id);
+    }
 
-    case 'functionalGroups':
+    case 'functionalGroups': {
       return Array.from(selectedFunctionalGroups.keys()).includes(item.id);
+    }
 
-    default:
+    default: {
       return (
         item.map in selection &&
         Array.isArray(selection[item.map]) &&
         selection[item.map].includes(item.id)
       );
+    }
   }
 };
 
@@ -223,11 +226,12 @@ export function getMenuPropsForClosestItem(
       }
     }
 
-    case 'attachmentGroups':
+    case 'attachmentGroups': {
       return {
         id: CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
         attachmentGroupIds: [closestItem.id],
       };
+    }
 
     case 'sgroups':
     case 'functionalGroups': {
@@ -280,8 +284,9 @@ export function getMenuPropsForClosestItem(
       };
     }
 
-    default:
+    default: {
       return null;
+    }
   }
 }
 

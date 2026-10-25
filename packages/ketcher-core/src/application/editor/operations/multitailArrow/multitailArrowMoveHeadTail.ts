@@ -21,21 +21,25 @@ export class MultitailArrowMoveHeadTail extends BaseOperation {
       return;
     }
     switch (this.name) {
-      case MultitailArrowRefName.HEAD:
+      case MultitailArrowRefName.HEAD: {
         this.offset = multitailArrow.moveHead(this.offset);
         break;
-      case MultitailArrowRefName.TOP_TAIL:
+      }
+      case MultitailArrowRefName.TOP_TAIL: {
         this.offset = multitailArrow.moveTail(this.offset, this.name);
         break;
-      case MultitailArrowRefName.BOTTOM_TAIL:
+      }
+      case MultitailArrowRefName.BOTTOM_TAIL: {
         this.offset = multitailArrow.moveTail(this.offset, this.name);
         break;
-      default:
+      }
+      default: {
         this.offset = multitailArrow.moveTail(
           this.offset,
           this.tailId as number,
           this.normalize,
         );
+      }
     }
     BaseOperation.invalidateItem(reStruct, MULTITAIL_ARROW_KEY, this.id, 1);
   }

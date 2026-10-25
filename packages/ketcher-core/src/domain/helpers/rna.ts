@@ -68,11 +68,14 @@ export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
 
 export function getSugarBySequenceType(sequenceType: SequenceType) {
   switch (sequenceType) {
-    case SequenceType.DNA:
+    case SequenceType.DNA: {
       return RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
-    case SequenceType.RNA:
+    }
+    case SequenceType.RNA: {
       return RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
-    default:
+    }
+    default: {
       return undefined;
+    }
   }
 }

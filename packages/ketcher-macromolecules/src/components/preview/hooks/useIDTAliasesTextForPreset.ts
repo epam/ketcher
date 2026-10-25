@@ -41,12 +41,15 @@ const useIDTAliasesTextForPreset = ({
           }
           return `${endpoint5}, ${internal}`;
         }
-        case PresetPosition.ChainStart:
+        case PresetPosition.ChainStart: {
           return endpoint5;
-        case PresetPosition.ChainMiddle:
+        }
+        case PresetPosition.ChainMiddle: {
           return internal;
-        case PresetPosition.ChainEnd:
+        }
+        case PresetPosition.ChainEnd: {
           return endpoint3;
+        }
       }
     }
 

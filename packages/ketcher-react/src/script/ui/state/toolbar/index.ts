@@ -118,12 +118,15 @@ export default function (
         ? { ...state, opened: null }
         : { ...state, opened: data.menuName };
     }
-    case 'UPDATE':
+    case 'UPDATE': {
       return { ...state, opened: null };
-    case 'MODAL_OPEN':
+    }
+    case 'MODAL_OPEN': {
       return { ...state, opened: null };
-    default:
+    }
+    default: {
       return state;
+    }
   }
 }
 /* ------- */

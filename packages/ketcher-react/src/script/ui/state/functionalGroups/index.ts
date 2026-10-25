@@ -43,14 +43,17 @@ const initialState: FGState = {
 const functionalGroupsReducer = (state = initialState, action: AnyAction) => {
   const { type, payload } = action;
   switch (type) {
-    case 'FG_INIT':
+    case 'FG_INIT': {
       return { ...state, ...payload };
+    }
 
-    case 'FG_HIGHLIGHT':
+    case 'FG_HIGHLIGHT': {
       return { ...state, functionalGroupInfo: payload };
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 };
 

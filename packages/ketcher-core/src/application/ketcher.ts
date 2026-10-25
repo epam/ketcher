@@ -786,13 +786,15 @@ export class Ketcher {
     let meta: string;
 
     switch (outputFormat) {
-      case 'svg':
+      case 'svg': {
         meta = 'image/svg+xml';
         break;
+      }
 
       case 'png':
-      default:
+      default: {
         meta = 'image/png';
+      }
     }
     const serverSettings = this.editor.serverSettings;
 

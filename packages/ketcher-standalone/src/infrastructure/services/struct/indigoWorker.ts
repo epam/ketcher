@@ -291,7 +291,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       break;
     }
 
-    default:
+    default: {
       throw new Error('Unsupported enum type');
+    }
   }
 };

@@ -824,9 +824,9 @@ function getBondPath(
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;
   switch (bond.b.type) {
-    case Bond.PATTERN.TYPE.SINGLE:
+    case Bond.PATTERN.TYPE.SINGLE: {
       switch (bond.b.stereo) {
-        case Bond.PATTERN.STEREO.UP:
+        case Bond.PATTERN.STEREO.UP: {
           findIncomingUpBonds(hb1.bid, bond, restruct);
           if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
             path = getBondSingleStereoBoldPath(
@@ -847,7 +847,8 @@ function getBondPath(
               isSnapping,
             );
           break;
-        case Bond.PATTERN.STEREO.DOWN:
+        }
+        case Bond.PATTERN.STEREO.DOWN: {
           path = getBondSingleDownPath(
             render,
             hb1,
@@ -857,7 +858,8 @@ function getBondPath(
             isSnapping,
           );
           break;
-        case Bond.PATTERN.STEREO.EITHER:
+        }
+        case Bond.PATTERN.STEREO.EITHER: {
           path = getBondSingleEitherPath(
             render,
             hb1,
@@ -867,7 +869,8 @@ function getBondPath(
             isSnapping,
           );
           break;
-        default:
+        }
+        default: {
           path = draw.bondSingle(
             render.paper,
             hb1,
@@ -877,9 +880,11 @@ function getBondPath(
             getStereoBondColor(render.options, bond, struct),
           );
           break;
+        }
       }
       break;
-    case Bond.PATTERN.TYPE.DOUBLE:
+    }
+    case Bond.PATTERN.TYPE.DOUBLE: {
       findIncomingUpBonds(hb1.bid, bond, restruct);
       if (
         bond.b.stereo === Bond.PATTERN.STEREO.NONE &&
@@ -908,7 +913,8 @@ function getBondPath(
           isSnapping,
         );
       break;
-    case Bond.PATTERN.TYPE.TRIPLE:
+    }
+    case Bond.PATTERN.TYPE.TRIPLE: {
       path = draw.bondTriple(
         render.paper,
         hb1,
@@ -917,6 +923,7 @@ function getBondPath(
         isSnapping,
       );
       break;
+    }
     case Bond.PATTERN.TYPE.AROMATIC: {
       const inAromaticLoop =
         (hb1.loop >= 0 && struct.loops.get(hb1.loop)?.aromatic) ||
@@ -934,7 +941,7 @@ function getBondPath(
           );
       break;
     }
-    case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
+    case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE: {
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = getSingleOrDoublePath(
         render,
@@ -943,7 +950,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
+    }
+    case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC: {
       path = getBondAromaticPath(
         render,
         hb1,
@@ -954,7 +962,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+    }
+    case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC: {
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = getBondAromaticPath(
         render,
@@ -966,7 +975,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.ANY:
+    }
+    case Bond.PATTERN.TYPE.ANY: {
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = draw.bondAny(
         render.paper,
@@ -976,7 +986,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.HYDROGEN:
+    }
+    case Bond.PATTERN.TYPE.HYDROGEN: {
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(
         render.paper,
@@ -986,7 +997,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.DATIVE:
+    }
+    case Bond.PATTERN.TYPE.DATIVE: {
       path = draw.bondDative(
         render.paper,
         hb1,
@@ -995,7 +1007,8 @@ function getBondPath(
         isSnapping,
       );
       break;
-    case Bond.PATTERN.TYPE.HAPTIC:
+    }
+    case Bond.PATTERN.TYPE.HAPTIC: {
       path = draw.bondHaptic(
         render.paper,
         hb1,
@@ -1004,8 +1017,10 @@ function getBondPath(
         isSnapping,
       );
       break;
-    default:
+    }
+    default: {
       throw new Error('Bond type ' + bond.b.type + ' not supported');
+    }
   }
   if (path) {
     const { previewOpacity } = render.options;
@@ -1515,7 +1530,8 @@ function getReactingCenterPath(
   const tiltTan = 0.2; // tangent of the tilt angle
 
   switch (bond.b.reactingCenterStatus) {
-    case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+    case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: {
+      // X
       p.push(
         c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz),
         c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz),
@@ -1523,7 +1539,9 @@ function getReactingCenterPath(
         c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz),
       );
       break;
-    case Bond.PATTERN.REACTING_CENTER.CENTER: // #
+    }
+    case Bond.PATTERN.REACTING_CENTER.CENTER: {
+      // #
       p.push(
         c
           .addScaled(n, acrossSz)
@@ -1547,8 +1565,9 @@ function getReactingCenterPath(
         c.addScaled(d, -alongSz).addScaled(n, -acrossInt),
       );
       break;
+    }
     // case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
-    case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
+    case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: {
       p.push(
         c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
         c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
@@ -1556,10 +1575,12 @@ function getReactingCenterPath(
         c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
       );
       break;
-    case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
+    }
+    case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED: {
       p.push(c.addScaled(n, acrossSz), c.addScaled(n, -acrossSz));
       break;
-    case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
+    }
+    case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: {
       p.push(
         c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
         c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
@@ -1569,8 +1590,10 @@ function getReactingCenterPath(
         c.addScaled(n, -acrossSz),
       );
       break;
-    default:
+    }
+    default: {
       return null;
+    }
   }
   return draw.reactingCenter(render.paper, p, render.options);
 }

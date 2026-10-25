@@ -119,9 +119,10 @@ export const NucleotidePresetSection = (page: Page) => {
 
     async openAliasesSection(tab: NucleotidePresetTab) {
       switch (tab) {
-        case NucleotidePresetTab.Preset:
+        case NucleotidePresetTab.Preset: {
           throw new Error('Preset tab does not have Aliases section');
-        case NucleotidePresetTab.Base:
+        }
+        case NucleotidePresetTab.Base: {
           if (
             (await locators.baseTab.aliasesSection.getAttribute(
               'aria-expanded',
@@ -130,7 +131,8 @@ export const NucleotidePresetSection = (page: Page) => {
             await locators.baseTab.aliasesSection.click();
           }
           break;
-        case NucleotidePresetTab.Sugar:
+        }
+        case NucleotidePresetTab.Sugar: {
           if (
             (await locators.sugarTab.aliasesSection.getAttribute(
               'aria-expanded',
@@ -139,7 +141,8 @@ export const NucleotidePresetSection = (page: Page) => {
             await locators.sugarTab.aliasesSection.click();
           }
           break;
-        case NucleotidePresetTab.Phosphate:
+        }
+        case NucleotidePresetTab.Phosphate: {
           if (
             (await locators.phosphateTab.aliasesSection.getAttribute(
               'aria-expanded',
@@ -148,6 +151,7 @@ export const NucleotidePresetSection = (page: Page) => {
             await locators.phosphateTab.aliasesSection.click();
           }
           break;
+        }
       }
     },
 

@@ -126,8 +126,9 @@ class ReSGroup extends ReObject {
         }
         case 'queryComponent':
         case 'GEN':
-        default:
+        default: {
           break;
+        }
       }
 
       // DAT S-Groups do not have brackets

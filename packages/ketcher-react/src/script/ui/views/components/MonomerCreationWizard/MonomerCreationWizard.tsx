@@ -216,14 +216,18 @@ const initialRnaPresetWizardState: RnaPresetWizardState = {
 
 const getComponentSuffix = (componentType: KetMonomerClass): string => {
   switch (componentType) {
-    case KetMonomerClass.Base:
+    case KetMonomerClass.Base: {
       return 'B';
-    case KetMonomerClass.Sugar:
+    }
+    case KetMonomerClass.Sugar: {
       return 'S';
-    case KetMonomerClass.Phosphate:
+    }
+    case KetMonomerClass.Phosphate: {
       return 'P';
-    default:
+    }
+    default: {
       return '';
+    }
   }
 };
 
@@ -320,8 +324,9 @@ const wizardReducer = (
       };
     }
 
-    default:
+    default: {
       return state;
+    }
   }
 };
 

@@ -276,15 +276,17 @@ export abstract class BaseMode {
       this._pasteIsInProgress = true;
 
       const clipboardData = await navigator.clipboard.read();
-      this.pasteFromClipboard(clipboardData).finally(() => {
-        this._pasteIsInProgress = false;
+      void (async () => {
+        try {
+          await this.pasteFromClipboard(clipboardData);
+        } finally {
+          this._pasteIsInProgress = false;
 
-        if (!isCanvasEmptyBeforePaste) {
-          return;
+          if (isCanvasEmptyBeforePaste) {
+            editor.zoomToStructuresIfNeeded();
+          }
         }
-
-        editor.zoomToStructuresIfNeeded();
-      });
+      })();
     } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, [
         PLAIN_TEXT_MIME_TYPE,

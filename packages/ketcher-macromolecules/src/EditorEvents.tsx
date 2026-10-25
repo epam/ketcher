@@ -386,7 +386,7 @@ export const EditorEvents = () => {
 
     const guardedHandleClosePreview =
       guardForMacromoleculesEditor(handleClosePreview);
-    window.addEventListener('hidePreview', guardedHandleClosePreview);
+    globalThis.addEventListener('hidePreview', guardedHandleClosePreview);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
@@ -407,7 +407,7 @@ export const EditorEvents = () => {
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 
-      window.removeEventListener('hidePreview', guardedHandleClosePreview);
+      globalThis.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
   }, [
     editor,

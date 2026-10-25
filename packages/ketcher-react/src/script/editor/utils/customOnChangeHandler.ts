@@ -209,7 +209,7 @@ export function customOnChangeHandler(action, handler) {
   const data: ChangeEventData[] = [];
   if (action === undefined) {
     return handler();
-  } else if (window.isPolymerEditorTurnedOn) {
+  } else if (globalThis.isPolymerEditorTurnedOn) {
     return handleMacroChanges(handler);
   } else {
     return handleMicroChanges(action, handler, data);

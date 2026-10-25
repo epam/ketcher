@@ -91,8 +91,8 @@ describe('Settings Integration Tests', () => {
     SettingsService.resetInstance();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     // Clean up window.ketcher
-    if ((window as any).ketcher) {
-      delete (window as any).ketcher;
+    if ((globalThis as any).ketcher) {
+      delete (globalThis as any).ketcher;
     }
   });
 

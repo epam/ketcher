@@ -120,7 +120,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const requestIdle = window.requestIdleCallback;
+    const requestIdle = globalThis.requestIdleCallback;
     if (typeof requestIdle === 'function') {
       const callback = requestIdle(
         () => {
@@ -133,18 +133,18 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
         { timeout: PREVIEW_IDLE_TIMEOUT_MS },
       );
       return () => {
-        window.cancelIdleCallback?.(callback);
+        globalThis.cancelIdleCallback?.(callback);
       };
     }
 
-    const frameId = window.requestAnimationFrame(() => {
+    const frameId = globalThis.requestAnimationFrame(() => {
       startTransition(() => {
         setPreviewRenderedCount((prev) =>
           Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
         );
       });
     });
-    return () => window.cancelAnimationFrame(frameId);
+    return () => globalThis.cancelAnimationFrame(frameId);
   }, [previewRenderedCount, templates.length, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls

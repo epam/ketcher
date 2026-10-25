@@ -18,7 +18,7 @@ export type FileOpener = typeof throughFileReader;
 
 export function fileOpener() {
   return new Promise<FileOpener>((resolve, reject) => {
-    if (global.FileReader) {
+    if (globalThis.FileReader) {
       resolve(throughFileReader);
     } else {
       reject(new Error('Your browser does not support opening files locally'));

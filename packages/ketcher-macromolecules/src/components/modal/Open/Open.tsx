@@ -370,7 +370,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
-    const windowContext = window as unknown as Record<string, unknown>;
+    const windowContext = globalThis as unknown as Record<string, unknown>;
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {

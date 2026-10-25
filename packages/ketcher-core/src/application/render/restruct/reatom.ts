@@ -174,7 +174,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const [attachmentPointName] = attachmentPointEntry;
       hoverElement.hover(
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'highlightAttachmentPointControls',
               {
@@ -184,7 +184,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           );
         },
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'resetHighlightAttachmentPointControls',
               {
@@ -929,7 +929,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'highlightAttachmentPointControls',
                   {
@@ -953,7 +953,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'resetHighlightAttachmentPointControls',
                   {
@@ -1031,7 +1031,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0.15 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'highlightAttachmentPointControls',
                       { detail: apName },
@@ -1042,7 +1042,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apName },

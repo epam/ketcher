@@ -6,7 +6,7 @@ export async function updateMonomersLibrary(
 ): Promise<string | null> {
   return await page.evaluate(async (cmd) => {
     try {
-      await window.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
+      await globalThis.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
       return null;
     } catch (error) {
       if (error instanceof Error) {
@@ -18,7 +18,7 @@ export async function updateMonomersLibrary(
   }, sdfString);
 }
 
-type LogCaptureWindow = typeof window & {
+type LogCaptureWindow = typeof globalThis.window & {
   logging?: { enabled?: boolean; level?: number; showTrace?: boolean };
 };
 
@@ -32,7 +32,7 @@ export async function updateMonomersLibraryAndGetLoggedErrors(
   sdfString: string,
 ): Promise<{ error: string | null; loggedErrors: string }> {
   return await page.evaluate(async (cmd) => {
-    const testWindow = window as LogCaptureWindow;
+    const testWindow = globalThis as LogCaptureWindow;
     const originalLogging = testWindow.logging;
     const originalConsoleError = console.error;
     const loggedErrors: string[] = [];
@@ -44,7 +44,7 @@ export async function updateMonomersLibraryAndGetLoggedErrors(
 
     let error: string | null = null;
     try {
-      await window.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
+      await globalThis.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
     } finally {

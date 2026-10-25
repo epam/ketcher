@@ -74,7 +74,7 @@ class ReFrag extends ReObject {
         bba = bba.extend(ext, ext);
       } else {
         if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render;
+          render = (globalThis as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
           .translate((render.options.offset ?? new Vec2()).negated())

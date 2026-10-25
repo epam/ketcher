@@ -1137,7 +1137,7 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment =
       potentialLeavingAtomForManualAssignment;
 
-    window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
+    globalThis.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
 
     return true;
   }
@@ -3468,7 +3468,7 @@ class Editor implements KetcherEditor {
       atomIds: updatedAtoms,
       bondIds: updatedBonds,
     };
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
         detail: eventData,
       }),
@@ -4429,7 +4429,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     const subs = editor.event[eventName];
 
     target.addEventListener(eventName, (...args) => {
-      if (window.isPolymerEditorTurnedOn) return;
+      if (globalThis.isPolymerEditorTurnedOn) return;
       subs.dispatch(...args);
     });
 

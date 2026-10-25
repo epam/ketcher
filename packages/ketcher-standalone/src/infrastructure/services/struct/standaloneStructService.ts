@@ -312,11 +312,13 @@ class IndigoService implements StructService {
   }
 
   private callIndigoNoRenderLoadedCallback() {
-    window.dispatchEvent(new Event(STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT));
+    globalThis.dispatchEvent(
+      new Event(STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT),
+    );
   }
 
   private callIndigoLoadedCallback() {
-    window.dispatchEvent(new Event(STRUCT_SERVICE_INITIALIZED_EVENT));
+    globalThis.dispatchEvent(new Event(STRUCT_SERVICE_INITIALIZED_EVENT));
   }
 
   async getInChIKey(struct: string): Promise<string> {

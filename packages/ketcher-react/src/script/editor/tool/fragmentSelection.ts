@@ -300,7 +300,7 @@ export default class FragmentSelectionTool implements Tool {
 
   private queueTooltip(message: string) {
     this.clearTooltip();
-    this.tooltipTimeoutId = window.setTimeout(() => {
+    this.tooltipTimeoutId = globalThis.window.setTimeout(() => {
       this.editor.event.tooltip.dispatch({ message });
     }, TOOLTIP_DELAY);
   }

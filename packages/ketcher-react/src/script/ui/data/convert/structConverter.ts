@@ -141,8 +141,10 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    const isVal = struct.atoms.find((_ind, atom) => atom.explicitValence >= 0);
-    if (isVal !== null)
+    const isValue = struct.atoms.find(
+      (_ind, atom) => atom.explicitValence >= 0,
+    );
+    if (isValue !== null)
       warnings.push(`In ${formatName} valence is not supported`);
   }
 

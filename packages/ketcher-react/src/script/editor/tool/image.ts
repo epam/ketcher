@@ -177,10 +177,10 @@ export class ImageTool implements Tool {
         );
       };
 
-      image.onerror = (e) => {
+      image.onerror = (event_) => {
         this.resetElementValue();
         const errorMessage = 'Cannot load image';
-        KetcherLogger.error(`${TAG}:onerror`, errorMessage, e);
+        KetcherLogger.error(`${TAG}:onerror`, errorMessage, event_);
         if (errorHandler) {
           errorHandler(errorMessage);
         }

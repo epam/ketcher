@@ -94,7 +94,7 @@ class RGroupAtomTool implements Tool {
     if (!ci) {
       //  ci.type == 'Canvas'
       this.editor.hover(null);
-      propsDialog(
+      propertiesDialog(
         this.editor,
         null,
         CoordinateTransformation.pageToModel(event, rnd),
@@ -109,45 +109,45 @@ class RGroupAtomTool implements Tool {
         return;
       }
 
-      propsDialog(this.editor, ci.id, null);
+      propertiesDialog(this.editor, ci.id, null);
       return true;
     }
     return true;
   }
 }
 
-function propsDialog(editor, id, pos) {
+function propertiesDialog(editor, id, pos) {
   const struct = editor.render.ctab.molecule;
   const atom = id || id === 0 ? struct.atoms.get(id) : null;
   const rglabel = atom ? atom.rglabel : 0;
   const label = atom ? atom.label : 'R#';
 
-  const res = editor.event.elementEdit.dispatch({
+  const result = editor.event.elementEdit.dispatch({
     label: 'R#',
     rglabel,
     fragId: atom ? atom.fragment : null,
   });
 
-  Promise.resolve(res)
-    .then((elem) => {
+  Promise.resolve(result)
+    .then((element) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = { ...Atom.attrlist, ...elem };
+      element = { ...Atom.attrlist, ...element };
 
-      if (!id && id !== 0 && elem.rglabel) {
-        editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
-      } else if (rglabel !== elem.rglabel) {
-        elem.aam = atom.aam; // WTF??
-        elem.attachmentPoints = atom.attachmentPoints;
+      if (!id && id !== 0 && element.rglabel) {
+        editor.update(fromAtomAddition(editor.render.ctab, pos, element));
+      } else if (rglabel !== element.rglabel) {
+        element.aam = atom.aam; // WTF??
+        element.attachmentPoints = atom.attachmentPoints;
 
-        if (!elem.rglabel && label !== 'R#') {
-          elem.label = label;
+        if (!element.rglabel && label !== 'R#') {
+          element.label = label;
         }
 
-        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
+        editor.update(fromAtomsAttrs(editor.render.ctab, id, element, false));
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('rgroupatom.ts:propertiesDialog', error);
     }); // w/o changes
 }
 

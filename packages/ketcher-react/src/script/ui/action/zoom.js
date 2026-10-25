@@ -40,8 +40,11 @@ export default {
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
     action: (event) => (editor) => {
       const zoom = editor.zoom();
-      const i = findLastIndex((z) => z <= zoom, zoomList);
-      editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i], event);
+      const index = findLastIndex((z) => z <= zoom, zoomList);
+      editor.zoom(
+        zoomList[zoomList[index] === zoom && index > 0 ? index - 1 : index],
+        event,
+      );
       editor.tool()?.mousemove(editor.lastEvent);
     },
     hidden: (options) => isHidden(options, 'zoom-out'),
@@ -53,9 +56,13 @@ export default {
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (event) => (editor) => {
       const zoom = editor.zoom();
-      const i = findIndex((z) => z >= zoom, zoomList);
+      const index = findIndex((z) => z >= zoom, zoomList);
       editor.zoom(
-        zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
+        zoomList[
+          zoomList[index] === zoom && index < zoomList.length - 1
+            ? index + 1
+            : index
+        ],
         event,
       );
       editor.tool()?.mousemove(editor.lastEvent);

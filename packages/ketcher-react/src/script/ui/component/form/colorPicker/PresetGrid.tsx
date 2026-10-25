@@ -19,7 +19,7 @@ import clsx from 'clsx';
 import classes from './ColorPicker.module.less';
 import { presetColors } from './ColorPicker.constants';
 
-interface PresetGridProps {
+interface PresetGridProperties {
   selectedColor: string;
   onSelectColor: (color: string) => void;
 }
@@ -27,7 +27,7 @@ interface PresetGridProps {
 function PresetGrid({
   selectedColor,
   onSelectColor,
-}: Readonly<PresetGridProps>) {
+}: Readonly<PresetGridProperties>) {
   return (
     <div className={classes.presetGrid} data-testid="color-picker-preset-grid">
       {presetColors.map((color) => (

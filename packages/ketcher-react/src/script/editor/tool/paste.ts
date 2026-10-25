@@ -264,17 +264,17 @@ class PasteTool implements Tool {
     }
 
     if (this.dragCtx) {
-      const dragCtx = this.dragCtx;
+      const dragContext = this.dragCtx;
       delete this.dragCtx;
 
-      dragCtx.action = dragCtx.action
-        ? fromItemsFuse(this.restruct, dragCtx.mergeItems).mergeWith(
-            dragCtx.action,
+      dragContext.action = dragContext.action
+        ? fromItemsFuse(this.restruct, dragContext.mergeItems).mergeWith(
+            dragContext.action,
           )
-        : fromItemsFuse(this.restruct, dragCtx.mergeItems);
+        : fromItemsFuse(this.restruct, dragContext.mergeItems);
 
       this.editor.hover(null);
-      this.editor.update(dragCtx.action);
+      this.editor.update(dragContext.action);
       this.editor.event.message.dispatch({ info: false });
     } else {
       // need to delete action first, because editor.update calls this.cancel() and thus action revert 🤦‍♂️

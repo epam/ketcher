@@ -31,14 +31,17 @@ import { initResize, removeResizeListener } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
-  prevKetcherId: string,
+  previousKetcherId: string,
   ketcherId: string,
   element: HTMLDivElement | null,
   appRoot: Root,
   staticResourcesUrl: string,
   options: any,
   server: Api,
-  resolve: (args: { editor: any; setServer: (server: Api) => void }) => void,
+  resolve: (arguments_: {
+    editor: any;
+    setServer: (server: Api) => void;
+  }) => void,
   togglerComponent?: JSX.Element,
 ) {
   // hack to return server setter to Editor.tsx
@@ -69,7 +72,7 @@ function initApp(
           <AppContext.Provider
             value={{
               ketcherId,
-              prevKetcherId,
+              prevKetcherId: previousKetcherId,
             }}
           >
             <App togglerComponent={togglerComponent} />

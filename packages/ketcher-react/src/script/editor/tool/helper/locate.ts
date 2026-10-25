@@ -193,22 +193,22 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   });
 
   const reImages = Array.from(restruct.images.entries()).reduce(
-    (acc: Array<number>, [id, item]): Array<number> => {
+    (accumulator: Array<number>, [id, item]): Array<number> => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => point.isInsidePolygon(polygon));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? accumulator.concat(id) : accumulator;
     },
     [],
   );
 
   const reMultitailArrows = Array.from(
     restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]): Array<number> => {
+  ).reduce((accumulator: Array<number>, [id, item]): Array<number> => {
     const isPointInside = item.multitailArrow
       .getReferencePositionsArray()
       .some((point) => point.isInsidePolygon(polygon));
-    return isPointInside ? acc.concat(id) : acc;
+    return isPointInside ? accumulator.concat(id) : accumulator;
   }, []);
 
   return {
@@ -367,22 +367,22 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   });
 
   const reImages = Array.from(restruct.images.entries()).reduce(
-    (acc: Array<number>, [id, item]) => {
+    (accumulator: Array<number>, [id, item]) => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => isPointInPolygon(r, point));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? accumulator.concat(id) : accumulator;
     },
     [],
   );
 
   const reMultitailArrows = Array.from(
     restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]) => {
+  ).reduce((accumulator: Array<number>, [id, item]) => {
     const isPointInside = item.multitailArrow
       .getReferencePositionsArray()
       .some((point) => isPointInPolygon(r, point));
-    return isPointInside ? acc.concat(id) : acc;
+    return isPointInside ? accumulator.concat(id) : accumulator;
   }, []);
 
   return {

@@ -505,12 +505,12 @@ const optionsSchema: ExtendedSchema = {
 export default optionsSchema;
 
 export function getDefaultOptions(): Record<string, any> {
-  const props = optionsSchema.properties;
-  if (!props) return {};
+  const properties = optionsSchema.properties;
+  if (!properties) return {};
 
-  return Object.keys(props).reduce((res, prop) => {
-    res[prop] = props[prop].default;
-    return res;
+  return Object.keys(properties).reduce((result, property) => {
+    result[property] = properties[property].default;
+    return result;
   }, {});
 }
 
@@ -520,16 +520,16 @@ export function validation(settings): Record<string, string> | null {
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',
   });
-  const errorsProps = new Set(
-    result.errors.map((e) => e.property.replace(/^instance\./, '')),
+  const errorsProperties = new Set(
+    result.errors.map((error) => error.property.replace(/^instance\./, '')),
   );
 
-  return Object.keys(settings).reduce((res, prop) => {
-    if (!optionsSchema.properties) return res;
+  return Object.keys(settings).reduce((result, property) => {
+    if (!optionsSchema.properties) return result;
 
-    if (optionsSchema.properties[prop] && !errorsProps.has(prop))
-      res[prop] = settings[prop];
+    if (optionsSchema.properties[property] && !errorsProperties.has(property))
+      result[property] = settings[property];
 
-    return res;
+    return result;
   }, {});
 }

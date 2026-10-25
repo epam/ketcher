@@ -22,12 +22,12 @@ import { type SchemaProperty } from '../../../../../contexts';
 
 export type InputSchema = SchemaProperty | unknown[];
 
-type InputComponentProps = {
+type InputComponentProperties = {
   schema?: InputSchema;
   value?: unknown;
-  onChange?: (val: unknown) => void;
-  onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
-  selected?: (testVal: unknown, value: unknown) => boolean;
+  onChange?: (value: unknown) => void;
+  onSelect?: (event_: React.SyntheticEvent, values?: unknown[]) => void;
+  selected?: (testValue: unknown, value: unknown) => boolean;
   multiple?: boolean;
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
@@ -36,14 +36,14 @@ type InputComponentProps = {
   [key: string]: unknown;
 };
 
-type Props = {
+type Properties = {
   name?: string;
-  component?: ComponentType<InputComponentProps>;
+  component?: ComponentType<InputComponentProperties>;
   children?: React.ReactNode;
   className?: string;
   type?: string;
   value?: unknown;
-  onChange: (val: unknown) => void;
+  onChange: (value: unknown) => void;
   placeholder?: string;
   isFocused?: boolean;
   innerRef?: React.Ref<HTMLInputElement>;
@@ -58,7 +58,7 @@ export function GenericInput({
   innerRef,
   type = 'text',
   isFocused = false,
-  ...props
+  ...properties
 }) {
   return (
     <>
@@ -69,7 +69,7 @@ export function GenericInput({
         className={clsx(classes.input, classes.genericInput)}
         ref={innerRef}
         autoFocus={isFocused}
-        {...props}
+        {...properties}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}
       {type === 'radio' && <span className={classes.radioButton} />}
@@ -77,8 +77,8 @@ export function GenericInput({
   );
 }
 
-GenericInput.val = function (ev, schema) {
-  const input = ev.target;
+GenericInput.val = function (event_, schema) {
+  const input = event_.target;
   const isInteger = schema?.type === 'integer';
   const isFloat = schema?.type === 'number';
 
@@ -102,7 +102,7 @@ function TextArea({ schema: _schema, value, onChange, innerRef, ...rest }) {
   );
 }
 
-TextArea.val = (ev) => ev.target.value;
+TextArea.val = (event_) => event_.target.value;
 
 function CheckBox({
   schema: _schema,
@@ -127,9 +127,9 @@ function CheckBox({
   );
 }
 
-CheckBox.val = function (ev) {
-  ev.stopPropagation();
-  return !!ev.target.checked;
+CheckBox.val = function (event_) {
+  event_.stopPropagation();
+  return !!event_.target.checked;
 };
 
 function Select({
@@ -148,8 +148,8 @@ function Select({
       multiple={multiple}
       className={clsx(classes.select, className)}
     >
-      {enumSchema(schema, (title, val) => (
-        <option key={val} value={val}>
+      {enumSchema(schema, (title, value_) => (
+        <option key={value_} value={value_}>
           {title}
         </option>
       ))}
@@ -157,15 +157,15 @@ function Select({
   );
 }
 
-Select.val = function (ev, schema) {
-  const select = ev.target as HTMLSelectElement;
+Select.val = function (event_, schema) {
+  const select = event_.target as HTMLSelectElement;
   if (!select.multiple) return enumSchema(schema, select.selectedIndex);
 
   const options = select.options;
 
   return Array.from(options).reduce(
-    (res, o: HTMLOptionElement, i) =>
-      !o.selected ? res : [enumSchema(schema, i), ...res],
+    (result, o: HTMLOptionElement, index) =>
+      !o.selected ? result : [enumSchema(schema, index), ...result],
     [] as HTMLOptionElement[],
   );
 };
@@ -182,21 +182,23 @@ function FieldSet({
 }) {
   return (
     <fieldset>
-      {enumSchema(schema, (title, val) => (
+      {enumSchema(schema, (title, value_) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
             <input
               ref={innerRef}
               type={type}
               defaultChecked={
-                type === 'radio' ? selected(val, checked) : selected(val, value)
+                type === 'radio'
+                  ? selected(value_, checked)
+                  : selected(value_, value)
               }
-              value={typeof val !== 'object' && val}
+              value={typeof value_ !== 'object' && value_}
               className={classes.input}
               {...rest}
               data-testid={
                 rest['data-testid']
-                  ? rest['data-testid'] + '-' + val
+                  ? rest['data-testid'] + '-' + value_
                   : undefined
               }
               onClick={onSelect}
@@ -212,11 +214,11 @@ function FieldSet({
   );
 }
 
-FieldSet.val = function (ev, schema) {
-  const input = ev.target as HTMLInputElement;
+FieldSet.val = function (event_, schema) {
+  const input = event_.target as HTMLInputElement;
 
-  if (ev.target.tagName !== 'INPUT') {
-    ev.stopPropagation();
+  if (event_.target.tagName !== 'INPUT') {
+    event_.stopPropagation();
     return undefined;
   }
 
@@ -229,8 +231,8 @@ FieldSet.val = function (ev, schema) {
 
   if (inputCollection?.length) {
     result = Array.from(inputCollection).reduce(
-      (res, inp: HTMLInputElement, i) =>
-        !inp.checked ? res : [enumSchema(schema, i), ...res],
+      (result, inp: HTMLInputElement, index) =>
+        !inp.checked ? result : [enumSchema(schema, index), ...result],
 
       [] as HTMLInputElement[],
     );
@@ -256,54 +258,54 @@ function Slider({ value, onChange, name, innerRef, ...rest }) {
   );
 }
 
-Slider.val = function (ev) {
-  ev.stopPropagation();
-  return !!ev.target.checked;
+Slider.val = function (event_) {
+  event_.stopPropagation();
+  return !!event_.target.checked;
 };
 
-function enumSchema(schema, cbOrIndex) {
+function enumSchema(schema, callbackOrIndex) {
   const isTypeValue = Array.isArray(schema);
   if (!isTypeValue && schema.items) schema = schema.items;
 
-  if (typeof cbOrIndex === 'function') {
-    return (isTypeValue ? schema : schema.enum).map((item, i) => {
-      const title = isTypeValue ? item.title : schema.enumNames?.[i];
-      return cbOrIndex(
+  if (typeof callbackOrIndex === 'function') {
+    return (isTypeValue ? schema : schema.enum).map((item, index) => {
+      const title = isTypeValue ? item.title : schema.enumNames?.[index];
+      return callbackOrIndex(
         title !== undefined ? title : item,
         item?.value !== undefined ? item.value : item,
       );
     });
   }
 
-  if (!isTypeValue) return schema.enum[cbOrIndex];
+  if (!isTypeValue) return schema.enum[callbackOrIndex];
 
-  const res = schema[cbOrIndex];
-  return res.value !== undefined ? res.value : res;
+  const result = schema[callbackOrIndex];
+  return result.value !== undefined ? result.value : result;
 }
 
 function inputCtrl(component, schema, onChange) {
-  let props = {};
+  let properties = {};
   if (schema) {
     // TODO: infer maxLength, min, max, step, etc
     if (schema.type === 'number' || schema.type === 'integer')
-      props = { type: 'text' };
+      properties = { type: 'text' };
   }
 
   return {
-    onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
-      onChange(val);
+    onChange: (event_) => {
+      const value = !component.val ? event_ : component.val(event_, schema);
+      onChange(value);
     },
-    ...props,
+    ...properties,
   };
 }
 
 function singleSelectCtrl(component, schema, onChange) {
   return {
-    selected: (testVal, value) => value === testVal,
-    onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
-      if (val !== undefined) onChange(val);
+    selected: (testValue, value) => value === testValue,
+    onSelect: (event_) => {
+      const value = !component.val ? event_ : component.val(event_, schema);
+      if (value !== undefined) onChange(value);
     },
   };
 }
@@ -311,22 +313,22 @@ function singleSelectCtrl(component, schema, onChange) {
 function multipleSelectCtrl(component, schema, onChange) {
   return {
     multiple: true,
-    selected: (testVal, values) => values?.indexOf(testVal) >= 0,
-    onSelect: (ev, values) => {
+    selected: (testValue, values) => values?.indexOf(testValue) >= 0,
+    onSelect: (event_, values) => {
       if (component.val) {
-        const val = component.val(ev, schema);
-        if (val !== undefined) onChange(val);
+        const value = component.val(event_, schema);
+        if (value !== undefined) onChange(value);
       } else {
-        const i = values ? values.indexOf(ev) : -1;
-        if (i < 0) onChange(values ? [ev, ...values] : [ev]);
-        else onChange([...values.slice(0, i), ...values.slice(i + 1)]);
+        const index = values ? values.indexOf(event_) : -1;
+        if (index < 0) onChange(values ? [event_, ...values] : [event_]);
+        else onChange([...values.slice(0, index), ...values.slice(index + 1)]);
       }
     },
   };
 }
 
-function ctrlMap(component, props: Props) {
-  const { schema, multiple, onChange } = props;
+function ctrlMap(component, properties: Properties) {
+  const { schema, multiple, onChange } = properties;
 
   if (!schema) {
     return inputCtrl(component, schema, onChange);
@@ -350,8 +352,8 @@ function ctrlMap(component, props: Props) {
   return singleSelectCtrl(component, schema, onChange);
 }
 
-function componentMap(props: Props) {
-  const { schema, type, multiple } = props;
+function componentMap(properties: Properties) {
+  const { schema, type, multiple } = properties;
 
   if (!Array.isArray(schema)) {
     // schema is SchemaProperty | undefined here
@@ -380,13 +382,13 @@ function componentMap(props: Props) {
   return type === 'radio' ? FieldSet : Select;
 }
 
-type AnyComponentWithRefProps = {
-  Component: ComponentType<InputComponentProps>;
+type AnyComponentWithReferenceProperties = {
+  Component: ComponentType<InputComponentProperties>;
   schema?: InputSchema;
   value?: unknown;
-  onChange?: (val: unknown) => void;
-  onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
-  selected?: (testVal: unknown, value: unknown) => boolean;
+  onChange?: (value: unknown) => void;
+  onSelect?: (event_: React.SyntheticEvent, values?: unknown[]) => void;
+  selected?: (testValue: unknown, value: unknown) => boolean;
   multiple?: boolean;
   innerRef?: React.Ref<HTMLInputElement>;
   name?: string;
@@ -398,22 +400,24 @@ type AnyComponentWithRefProps = {
   'data-testid'?: string;
 };
 
-const AnyComponentWithRef = React.forwardRef(
+const AnyComponentWithReference = React.forwardRef(
   (
-    { Component, ...props }: AnyComponentWithRefProps,
-    ref: React.Ref<HTMLInputElement>,
-  ) => <Component {...props} innerRef={ref} />,
+    { Component, ...properties }: AnyComponentWithReferenceProperties,
+    reference: React.Ref<HTMLInputElement>,
+  ) => <Component {...properties} innerRef={reference} />,
 );
 
 class Input extends PureComponent<
-  Props & { innerRef: React.Ref<HTMLInputElement> }
+  Properties & { innerRef: React.Ref<HTMLInputElement> }
 > {
-  component: ComponentType<InputComponentProps>;
+  component: ComponentType<InputComponentProperties>;
 
-  constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
-    super(props);
-    this.component = (props.component ||
-      componentMap(props)) as ComponentType<InputComponentProps>;
+  constructor(
+    properties: Properties & { innerRef: React.Ref<HTMLInputElement> },
+  ) {
+    super(properties);
+    this.component = (properties.component ||
+      componentMap(properties)) as ComponentType<InputComponentProperties>;
   }
 
   render() {
@@ -421,22 +425,22 @@ class Input extends PureComponent<
       children: _children,
       onChange: _onChange,
       innerRef,
-      ...restProps
+      ...restProperties
     } = this.props;
     const ctrl = ctrlMap(this.component, this.props);
     return (
-      <AnyComponentWithRef
+      <AnyComponentWithReference
         Component={this.component}
         ref={innerRef}
         {...ctrl}
-        {...restProps}
+        {...restProperties}
       />
     );
   }
 }
 
 export default React.forwardRef(
-  (props: Props, ref: React.Ref<HTMLInputElement>) => {
-    return <Input innerRef={ref} {...props} />;
+  (properties: Properties, reference: React.Ref<HTMLInputElement>) => {
+    return <Input innerRef={reference} {...properties} />;
   },
 );

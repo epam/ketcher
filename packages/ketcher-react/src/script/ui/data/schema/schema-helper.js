@@ -15,24 +15,24 @@
  ***************************************************************************/
 
 /* schema utils */
-function constant(schema, prop) {
-  const desc = schema.properties[prop];
+function constant(schema, property) {
+  const desc = schema.properties[property];
   return desc.constant || desc.enum[0]; // see https://git.io/v6hyP
 }
 
-export function mapOf(schema, prop) {
+export function mapOf(schema, property) {
   console.assert(schema.oneOf);
-  return schema.oneOf.reduce((res, desc) => {
-    res[constant(desc, prop)] = desc;
-    return res;
+  return schema.oneOf.reduce((result, desc) => {
+    result[constant(desc, property)] = desc;
+    return result;
   }, {});
 }
 
-export function selectListOf(schema, prop) {
-  const desc = schema.properties?.[prop];
+export function selectListOf(schema, property) {
+  const desc = schema.properties?.[property];
   if (desc) {
-    return desc.enum.map((value, i) => {
-      const title = desc.enumNames?.[i];
+    return desc.enum.map((value, index) => {
+      const title = desc.enumNames?.[index];
       return title ? { title, value } : value;
     });
   }
@@ -40,8 +40,8 @@ export function selectListOf(schema, prop) {
     ds.title
       ? {
           title: ds.title,
-          value: constant(ds, prop),
+          value: constant(ds, property),
         }
-      : constant(ds, prop),
+      : constant(ds, property),
   );
 }

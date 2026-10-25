@@ -40,9 +40,9 @@ async function copyImageToClipboard(): Promise<void> {
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
-    const structStr = ketSerializer.serialize(struct);
+    const structString = ketSerializer.serialize(struct);
 
-    const image = await ketcher.generateImage(structStr, {
+    const image = await ketcher.generateImage(structString, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
@@ -50,8 +50,8 @@ async function copyImageToClipboard(): Promise<void> {
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
-  } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
+  } catch (error) {
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', error);
 
     if (errorHandler) {
       errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));

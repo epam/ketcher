@@ -36,7 +36,11 @@ import {
   selectTmpl,
   changeTab,
 } from '../../state/templates';
-import { filterLib, filterFGLib, greekify } from '../../utils';
+import {
+  filterLib as filterLibrary,
+  filterFGLib as filterFGLibrary,
+  greekify,
+} from '../../utils';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -63,8 +67,8 @@ import clsx from 'clsx';
 
 const MemoizedTemplateTable = memo(TemplateTable);
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+function TabPanel(properties) {
+  const { children, value, index, ...other } = properties;
   return (
     <div
       className={classes.tabPanel}
@@ -85,7 +89,7 @@ function a11yProps(index) {
   };
 }
 
-interface TemplateLibProps {
+interface TemplateLibraryProperties {
   filter: string;
   group: string;
   lib: Array<Template>;
@@ -96,19 +100,19 @@ interface TemplateLibProps {
   isMonomerCreationWizardActive?: boolean;
 }
 
-interface TemplateLibCallProps {
+interface TemplateLibraryCallProperties {
   onAttach: (tmpl: Template) => void;
   onCancel: () => void;
   onChangeGroup: (group: string) => void;
   onDelete: (tmpl: Template) => void;
   onFilter: (filter: string) => void;
-  onOk: (res: any) => void;
-  onSelect: (res: any) => void;
+  onOk: (result: any) => void;
+  onSelect: (result: any) => void;
   onTabChange: (tab: number) => void;
   functionalGroups: Template[];
 }
 
-type Props = TemplateLibProps & TemplateLibCallProps;
+type Properties = TemplateLibraryProperties & TemplateLibraryCallProperties;
 
 enum TemplateTabs {
   TemplateLibrary = 0,
@@ -116,10 +120,10 @@ enum TemplateTabs {
   SaltsAndSolvents = 2,
 }
 
-const filterLibSelector = createSelector(
-  (props: Props) => props.lib,
-  (props: Props) => props.filter,
-  filterLib,
+const filterLibrarySelector = createSelector(
+  (properties: Properties) => properties.lib,
+  (properties: Properties) => properties.filter,
+  filterLibrary,
 );
 
 const FUNCTIONAL_GROUPS = 'Functional Groups';
@@ -187,7 +191,7 @@ const FooterContent = ({
 
 const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
 
-export const TemplateDialog: FC<Props> = (props) => {
+export const TemplateDialog: FC<Properties> = (properties) => {
   const {
     filter,
     onFilter,
@@ -195,30 +199,30 @@ export const TemplateDialog: FC<Props> = (props) => {
     onChangeGroup,
     tab,
     functionalGroups,
-    lib: templateLib,
+    lib: templateLibrary,
     saltsAndSolvents,
     onSelect,
     isMonomerCreationWizardActive = false,
     ...rest
-  } = props;
+  } = properties;
 
   const dispatch = useDispatch();
   const { t } = useTranslation('dialogs');
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchInputReference = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    props.group,
+    properties.group,
   ]);
   const filteredSaltsAndSolvents = useSaltsAndSolvents(
     saltsAndSolvents,
     filter,
   );
   const filteredFG = useMemo(
-    () => filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS],
+    () => filterFGLibrary(functionalGroups, filter)[FUNCTIONAL_GROUPS],
     [functionalGroups, filter],
   );
 
-  const filteredTemplateLib = filterLibSelector(props);
+  const filteredTemplateLibrary = filterLibrarySelector(properties);
 
   const activeTab =
     isMonomerCreationWizardActive && tab === TemplateTabs.FunctionalGroupLibrary
@@ -226,15 +230,15 @@ export const TemplateDialog: FC<Props> = (props) => {
       : tab;
 
   useEffect(() => {
-    searchInputRef.current?.focus();
+    searchInputReference.current?.focus();
     onSelect(null);
   }, [activeTab, onSelect]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
-    setExpandedAccordions((prevAccordions) =>
+    setExpandedAccordions((previousAccordions) =>
       isExpanded
-        ? [...prevAccordions, accordion]
-        : prevAccordions.filter(
+        ? [...previousAccordions, accordion]
+        : previousAccordions.filter(
             (expandedAccordion) => expandedAccordion !== accordion,
           ),
     );
@@ -247,18 +251,18 @@ export const TemplateDialog: FC<Props> = (props) => {
   const getData = useCallback(() => {
     const sdfSerializer = new SdfSerializer();
     const serializerMapper = {
-      [TemplateTabs.TemplateLibrary]: templateLib,
+      [TemplateTabs.TemplateLibrary]: templateLibrary,
       [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
       [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
     };
     return sdfSerializer.serialize(serializerMapper[activeTab]);
-  }, [activeTab, templateLib, functionalGroups, saltsAndSolvents]);
+  }, [activeTab, templateLibrary, functionalGroups, saltsAndSolvents]);
 
   const onSaveError = useCallback(
-    (err: unknown) => {
+    (error: unknown) => {
       KetcherLogger.error(
         'TemplateDialog.tsx::TemplateDialog::onSaveError',
-        err,
+        error,
       );
       dispatch(
         showSnackbarNotification(
@@ -280,8 +284,8 @@ export const TemplateDialog: FC<Props> = (props) => {
 
   // Memoize group names to avoid Object.keys call on every render
   const groupNames = useMemo(
-    () => Object.keys(filteredTemplateLib),
-    [filteredTemplateLib],
+    () => Object.keys(filteredTemplateLibrary),
+    [filteredTemplateLibrary],
   );
 
   return (
@@ -302,7 +306,7 @@ export const TemplateDialog: FC<Props> = (props) => {
     >
       <div className={classes.inputContainer}>
         <Input
-          ref={searchInputRef}
+          ref={searchInputReference}
           className={classes.input}
           type="search"
           value={filter}
@@ -366,21 +370,21 @@ export const TemplateDialog: FC<Props> = (props) => {
                         className={classes.groupIcon}
                       />
                       {`${greekify(groupName)} (${
-                        filteredTemplateLib[groupName].length
+                        filteredTemplateLibrary[groupName].length
                       })`}
                     </AccordionSummary>
                     <AccordionDetails>
                       <MemoizedTemplateTable
                         templates={
                           shouldGroupBeRended
-                            ? filteredTemplateLib[groupName]
+                            ? filteredTemplateLibrary[groupName]
                             : EMPTY_TEMPLATES
                         }
                         onSelect={select}
-                        selected={props.selected}
-                        onDelete={props.onDelete}
-                        onAttach={props.onAttach}
-                        renderOptions={props.renderOptions}
+                        selected={properties.selected}
+                        onDelete={properties.onDelete}
+                        onAttach={properties.onAttach}
+                        renderOptions={properties.renderOptions}
                       />
                     </AccordionDetails>
                   </Accordion>
@@ -402,8 +406,8 @@ export const TemplateDialog: FC<Props> = (props) => {
                 titleRows={1}
                 templates={filteredFG}
                 onSelect={select}
-                selected={props.selected}
-                renderOptions={props.renderOptions}
+                selected={properties.selected}
+                renderOptions={properties.renderOptions}
               />
             </div>
           ) : (
@@ -421,8 +425,8 @@ export const TemplateDialog: FC<Props> = (props) => {
                 titleRows={1}
                 templates={filteredSaltsAndSolvents}
                 onSelect={select}
-                selected={props.selected}
-                renderOptions={props.renderOptions}
+                selected={properties.selected}
+                renderOptions={properties.renderOptions}
               />
             </div>
           ) : (
@@ -438,7 +442,7 @@ export const TemplateDialog: FC<Props> = (props) => {
   );
 };
 
-const selectTemplate = (template, props, dispatch) => {
+const selectTemplate = (template, properties, dispatch) => {
   dispatch(selectTmpl(null));
   if (!template) {
     return;
@@ -446,12 +450,12 @@ const selectTemplate = (template, props, dispatch) => {
   dispatch(changeFilter(''));
   dispatch(selectTmpl(template));
   dispatch(onAction({ tool: 'template', opts: template }));
-  props.onOk(template);
+  properties.onOk(template);
 };
 
-const onModalClose = (props, dispatch) => {
+const onModalClose = (properties, dispatch) => {
   dispatch(changeFilter(''));
-  props.onCancel();
+  properties.onCancel();
 };
 
 export default connect(
@@ -462,13 +466,13 @@ export default connect(
     saltsAndSolvents: saltsAndSolventsSelector(store),
     isMonomerCreationWizardActive: store.editor?.isMonomerCreationWizardActive,
   }),
-  (dispatch: Dispatch<any>, props: Props) => ({
+  (dispatch: Dispatch<any>, properties: Properties) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onTabChange: (tab) => dispatch(changeTab(tab)),
-    onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),
+    onSelect: (tmpl) => selectTemplate(tmpl, properties, dispatch),
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
-    onCancel: () => onModalClose(props, dispatch),
+    onCancel: () => onModalClose(properties, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
   }),
 )(TemplateDialog);

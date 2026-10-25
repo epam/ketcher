@@ -27,7 +27,7 @@ import {
   notifyCopyCut,
 } from 'ketcher-core';
 
-const ieCb: DataTransfer | undefined =
+const ieCallback: DataTransfer | undefined =
   typeof window !== 'undefined'
     ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
     : undefined;
@@ -43,23 +43,23 @@ export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
 
 const isUserEditing = (): boolean => {
-  const el = document.activeElement;
-  if (!el) {
+  const element = document.activeElement;
+  if (!element) {
     return false;
   }
 
   // If focused on ClipArea's textarea, treat as not editing a user field
-  if (el.hasAttribute?.('data-cliparea')) {
+  if (element.hasAttribute?.('data-cliparea')) {
     return false;
   }
   // Check for input, textarea, or contenteditable
   return Boolean(
-    el.tagName === 'TEXTAREA' ||
-    (el.tagName === 'INPUT' &&
-      (el as HTMLInputElement).type !== 'button' &&
-      (el as HTMLInputElement).type !== 'submit' &&
-      (el as HTMLInputElement).type !== 'reset') ||
-    (el as HTMLElement).contentEditable === 'true',
+    element.tagName === 'TEXTAREA' ||
+    (element.tagName === 'INPUT' &&
+      (element as HTMLInputElement).type !== 'button' &&
+      (element as HTMLInputElement).type !== 'submit' &&
+      (element as HTMLInputElement).type !== 'reset') ||
+    (element as HTMLElement).contentEditable === 'true',
   );
 };
 
@@ -68,7 +68,7 @@ interface ClipboardData {
   [key: string]: string;
 }
 
-interface ClipAreaProps {
+interface ClipAreaProperties {
   formats: string[];
   focused: () => boolean;
   onCopy: () => Promise<ClipboardData | null | undefined>;
@@ -92,31 +92,31 @@ interface ClipAreaListeners {
   keydown: (event: KeyboardEvent) => void;
 }
 
-class ClipArea extends Component<ClipAreaProps> {
+class ClipArea extends Component<ClipAreaProperties> {
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private target: HTMLElement | null = null;
   private listeners: ClipAreaListeners | null = null;
 
-  constructor(props: ClipAreaProps) {
-    super(props);
+  constructor(properties: ClipAreaProperties) {
+    super(properties);
     this.textAreaRef = createRef<HTMLTextAreaElement | null>();
   }
 
   componentDidMount(): void {
-    const el = this.textAreaRef.current;
-    if (!el) return;
+    const element = this.textAreaRef.current;
+    if (!element) return;
 
     this.target =
-      this.props.target || (el.parentNode as HTMLElement | null) || null;
+      this.props.target || (element.parentNode as HTMLElement | null) || null;
 
     this.listeners = {
       mouseup: (event: MouseEvent) => {
         if (
-          el === event.target ||
+          element === event.target ||
           (!isActiveElement(event.target as HTMLElement) &&
             this.props.focused())
         ) {
-          autoselect(el);
+          autoselect(element);
         }
       },
       mousedown: (event: MouseEvent) => {
@@ -127,7 +127,7 @@ class ClipArea extends Component<ClipAreaProps> {
         if (
           !this.props.focused() ||
           isUserEditing() ||
-          isSelectionOutsideElement(el)
+          isSelectionOutsideElement(element)
         ) {
           return;
         }
@@ -162,12 +162,12 @@ class ClipArea extends Component<ClipAreaProps> {
               // to clipboard data if user did not interact with application.
               addEventListener(
                 'copy',
-                (evt: Event) => {
-                  const clipboardEvent = evt as ClipboardEvent;
+                (event_: Event) => {
+                  const clipboardEvent = event_ as ClipboardEvent;
                   if (clipboardEvent.clipboardData && data) {
                     legacyCopy(clipboardEvent.clipboardData, data);
                   }
-                  evt.preventDefault();
+                  event_.preventDefault();
                 },
                 { once: true },
               );
@@ -182,7 +182,7 @@ class ClipArea extends Component<ClipAreaProps> {
         if (
           !this.props.focused() ||
           isUserEditing() ||
-          isSelectionOutsideElement(el)
+          isSelectionOutsideElement(element)
         ) {
           return;
         }
@@ -294,11 +294,14 @@ class ClipArea extends Component<ClipAreaProps> {
   }
 }
 
-function isActiveElement(el: HTMLElement): boolean {
-  if (el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'button')
+function isActiveElement(element: HTMLElement): boolean {
+  if (
+    element.tagName === 'INPUT' &&
+    (element as HTMLInputElement).type === 'button'
+  )
     return false;
   return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(
-    el.tagName,
+    element.tagName,
   );
 }
 
@@ -325,10 +328,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
     try {
       clipboardItem = new ClipboardItem(clipboardItemData);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.info(
         'cannot create ClipboardItem, falling back to writeText',
-        e,
+        error,
       );
 
       // Fallback for browsers that don't support ClipboardItem constructor or
@@ -341,7 +344,7 @@ async function copy(data: ClipboardData): Promise<void> {
 
         return;
       } else {
-        KetcherLogger.error('cliparea.tsx::copy', e);
+        KetcherLogger.error('cliparea.tsx::copy', error);
       }
     }
 
@@ -360,40 +363,40 @@ async function copy(data: ClipboardData): Promise<void> {
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
-  } catch (e) {
-    KetcherLogger.error('cliparea.tsx::copy', e);
+  } catch (error) {
+    KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
 
 function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
-  if (!clipboardData && ieCb) {
-    ieCb.setData('text', data['text/plain']);
+  if (!clipboardData && ieCallback) {
+    ieCallback.setData('text', data['text/plain']);
   } else {
-    let curFmt: string | null = null;
+    let currentFmt: string | null = null;
     clipboardData.setData('text/plain', data['text/plain']);
     try {
       Object.keys(data).forEach((fmt) => {
-        curFmt = fmt;
+        currentFmt = fmt;
         clipboardData.setData(fmt, data[fmt]);
       });
-    } catch (e) {
-      console.error('cliparea.tsx::legacyCopy', e);
-      console.info(`Could not write exact type ${curFmt}`);
+    } catch (error) {
+      console.error('cliparea.tsx::legacyCopy', error);
+      console.info(`Could not write exact type ${currentFmt}`);
     }
   }
 }
 
-function legacyPaste(cb: DataTransfer, formats: string[]): ClipboardData {
+function legacyPaste(callback: DataTransfer, formats: string[]): ClipboardData {
   let data: ClipboardData = { 'text/plain': '' };
-  if (!cb && ieCb) {
-    data['text/plain'] = ieCb.getData('text');
+  if (!callback && ieCallback) {
+    data['text/plain'] = ieCallback.getData('text');
   } else {
-    data['text/plain'] = cb.getData('text/plain');
-    data = formats.reduce((res, fmt) => {
-      const d = cb.getData(fmt);
-      if (d) res[fmt] = d;
-      return res;
+    data['text/plain'] = callback.getData('text/plain');
+    data = formats.reduce((result, fmt) => {
+      const d = callback.getData(fmt);
+      if (d) result[fmt] = d;
+      return result;
     }, data);
   }
   return data;
@@ -403,8 +406,8 @@ async function pasteByKeydown(
   clipboardData: ClipboardItem[],
 ): Promise<ClipboardData> {
   const data: ClipboardData = { 'text/plain': '' };
-  if (!clipboardData && ieCb) {
-    data['text/plain'] = ieCb.getData('text');
+  if (!clipboardData && ieCallback) {
+    data['text/plain'] = ieCallback.getData('text');
   } else {
     for (const item of clipboardData) {
       const textPlain = await item.getType('text/plain');
@@ -426,10 +429,10 @@ export function exec(action: string): boolean {
       enabled =
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
-        Boolean(ieCb);
-    } catch (e) {
+        Boolean(ieCallback);
+    } catch (error) {
       // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
+      KetcherLogger.error('cliparea.tsx::exec', error);
       enabled = false;
     }
   }

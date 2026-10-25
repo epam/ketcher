@@ -40,7 +40,7 @@ export interface Template {
   };
 }
 
-interface TemplateTableProps {
+interface TemplateTableProperties {
   templates: ReadonlyArray<Template>;
   selected: Template | null;
   onSelect: (tmpl: Template) => void;
@@ -59,7 +59,7 @@ const PREVIEW_IDLE_TIMEOUT_MS = 100;
 const getInitialPreviewCount = (templateCount: number) =>
   Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
-const TemplateTable: FC<TemplateTableProps> = (props) => {
+const TemplateTable: FC<TemplateTableProperties> = (properties) => {
   const {
     templates,
     selected,
@@ -68,9 +68,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     onAttach,
     titleRows = 2,
     renderOptions,
-  } = props;
+  } = properties;
 
-  const [prevTemplates, setPrevTemplates] = useState(templates);
+  const [previousTemplates, setPreviousTemplates] = useState(templates);
   const [previewRenderedCount, setPreviewRenderedCount] = useState(() =>
     getInitialPreviewCount(templates.length),
   );
@@ -79,17 +79,17 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     width: number;
     height: number;
   } | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerReference = useRef<HTMLDivElement>(null);
 
-  if (templates !== prevTemplates) {
-    setPrevTemplates(templates);
+  if (templates !== previousTemplates) {
+    setPreviousTemplates(templates);
     setPreviewRenderedCount(getInitialPreviewCount(templates.length));
   }
 
   // Calculate container size once to avoid getBoundingClientRect() calls during rendering
   // This prevents forced reflows when rendering multiple items in a batch
   useLayoutEffect(() => {
-    if (!containerRef.current) {
+    if (!containerReference.current) {
       return;
     }
 
@@ -103,7 +103,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       });
     };
 
-    const container = containerRef.current;
+    const container = containerReference.current;
     const initialRect = container.getBoundingClientRect();
     updateContainerSize(initialRect.width, initialRect.height);
 
@@ -125,8 +125,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       const callback = requestIdle(
         () => {
           startTransition(() => {
-            setPreviewRenderedCount((prev) =>
-              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+            setPreviewRenderedCount((previous) =>
+              Math.min(previous + PREVIEW_BATCH_SIZE, templates.length),
             );
           });
         },
@@ -139,8 +139,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
 
     const frameId = window.requestAnimationFrame(() => {
       startTransition(() => {
-        setPreviewRenderedCount((prev) =>
-          Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+        setPreviewRenderedCount((previous) =>
+          Math.min(previous + PREVIEW_BATCH_SIZE, templates.length),
         );
       });
     });
@@ -161,15 +161,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
         [classes.twoRowsTitleTable]: titleRows !== 1,
       })}
       data-testid="templates-modal"
-      ref={containerRef}
+      ref={containerReference}
     >
-      {templates.map((tmpl, i) => (
+      {templates.map((tmpl, index) => (
         <TemplateItem
-          key={`${tmpl.struct.name}_${i}`}
+          key={`${tmpl.struct.name}_${index}`}
           tmpl={tmpl}
-          index={i}
+          index={index}
           isSelected={selected?.struct === tmpl.struct}
-          shouldRenderPreview={i < previewRenderedCount}
+          shouldRenderPreview={index < previewRenderedCount}
           renderOptions={optimizedRenderOptions}
           onSelect={onSelect}
           onDelete={onDelete}

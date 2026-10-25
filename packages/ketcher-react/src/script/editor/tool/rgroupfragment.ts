@@ -126,9 +126,9 @@ class RGroupFragmentTool implements Tool {
         : molecule.rgroups.get(ci.id) || {}),
     };
 
-    const res = editor.event.rgroupEdit.dispatch(rg);
+    const response = editor.event.rgroupEdit.dispatch(rg);
 
-    Promise.resolve(res)
+    Promise.resolve(response)
       .then((newRg) => {
         let action;
 
@@ -146,8 +146,11 @@ class RGroupFragmentTool implements Tool {
 
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('rgroupfragment.ts::RGroupFragmentTool::click', e);
+      .catch((error) => {
+        KetcherLogger.error(
+          'rgroupfragment.ts::RGroupFragmentTool::click',
+          error,
+        );
       }); // w/o changes
 
     return true;

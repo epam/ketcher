@@ -257,12 +257,12 @@ class TemplateTool implements Tool {
       sign2: 0,
     };
 
-    const dragCtx = this.dragCtx;
-    const ci = dragCtx.item;
+    const dragContext = this.dragCtx;
+    const ci = dragContext.item;
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      delete dragCtx.item;
+      delete dragContext.item;
       return;
     }
 
@@ -274,8 +274,8 @@ class TemplateTool implements Tool {
       }
 
       // calculate default template flip
-      dragCtx.sign1 = getBondFlipSign(this.struct, bond);
-      dragCtx.sign2 = this.template.sign;
+      dragContext.sign1 = getBondFlipSign(this.struct, bond);
+      dragContext.sign2 = this.template.sign;
     }
   }
 
@@ -308,8 +308,8 @@ class TemplateTool implements Tool {
       event,
       this.editor.render,
     );
-    const dragCtx = this.dragCtx;
-    const ci = dragCtx.item;
+    const dragContext = this.dragCtx;
+    const ci = dragContext.item;
     let targetPos: Vec2 | null | undefined = null;
     /* moving when attached to bond */
     if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
@@ -320,30 +320,30 @@ class TemplateTool implements Tool {
 
       let sign: Sign = getSign(this.struct, bond, eventPosition);
 
-      if (dragCtx.sign1 * this.template.sign > 0) {
+      if (dragContext.sign1 * this.template.sign > 0) {
         sign = -sign as Sign;
       }
 
-      if (sign !== dragCtx.sign2 || !dragCtx.action) {
-        if (dragCtx.action) {
-          dragCtx.action.perform(this.editor.render.ctab);
+      if (sign !== dragContext.sign2 || !dragContext.action) {
+        if (dragContext.action) {
+          dragContext.action.perform(this.editor.render.ctab);
         } // undo previous action
 
-        dragCtx.sign2 = sign;
+        dragContext.sign2 = sign;
         const [action, pasteItems] = fromTemplateOnBondAction(
           this.editor.render.ctab,
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1 * dragCtx.sign2 > 0,
+          dragContext.sign1 * dragContext.sign2 > 0,
           false,
         );
 
-        dragCtx.action = action;
-        this.editor.update(dragCtx.action, true);
+        dragContext.action = action;
+        this.editor.update(dragContext.action, true);
 
-        dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
-        this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
+        dragContext.mergeItems = getItemsToFuse(this.editor, pasteItems);
+        this.editor.hover(getHoverToFuse(dragContext.mergeItems));
       }
       return;
     }
@@ -353,7 +353,7 @@ class TemplateTool implements Tool {
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
-      targetPos = dragCtx.xy0;
+      targetPos = dragContext.xy0;
     } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
       const atomId = getTargetAtomId(this.struct, ci);
 
@@ -386,22 +386,22 @@ class TemplateTool implements Tool {
     // check if anything changed since last time
     if (
       // eslint-disable-next-line no-prototype-builtins
-      dragCtx.hasOwnProperty('angle') &&
-      dragCtx.angle === degrees &&
+      dragContext.hasOwnProperty('angle') &&
+      dragContext.angle === degrees &&
       // eslint-disable-next-line no-prototype-builtins
-      (!dragCtx.hasOwnProperty('extra_bond') ||
-        dragCtx.extra_bond === extraBond)
+      (!dragContext.hasOwnProperty('extra_bond') ||
+        dragContext.extra_bond === extraBond)
     ) {
       return;
     }
 
     // undo previous action
-    if (dragCtx.action) {
-      dragCtx.action.perform(this.editor.render.ctab);
+    if (dragContext.action) {
+      dragContext.action.perform(this.editor.render.ctab);
     }
 
     // create new action
-    dragCtx.angle = degrees;
+    dragContext.angle = degrees;
     let action: Action | null = null;
 
     if (!ci) {
@@ -426,12 +426,12 @@ class TemplateTool implements Tool {
         angle,
         extraBond,
       );
-      dragCtx.extra_bond = extraBond;
+      dragContext.extra_bond = extraBond;
     }
-    dragCtx.action = action;
+    dragContext.action = action;
 
-    if (dragCtx.action) {
-      this.editor.update(dragCtx.action, true);
+    if (dragContext.action) {
+      this.editor.update(dragContext.action, true);
     }
 
     // TODO: refactor after #2195 comes into effect
@@ -440,27 +440,31 @@ class TemplateTool implements Tool {
 
   mouseup(event?: Event) {
     const mouseEvent = event as MouseEvent | undefined;
-    const dragCtx = this.dragCtx;
+    const dragContext = this.dragCtx;
 
-    if (!dragCtx) {
+    if (!dragContext) {
       return;
     }
 
     delete this.dragCtx;
 
     const restruct = this.editor.render.ctab;
-    let ci = dragCtx.item;
+    let ci = dragContext.item;
 
     /* after moving around bond */
-    if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
-      dragCtx.action.perform(restruct); // revert drag action
+    if (
+      dragContext.action &&
+      ci?.map === 'bonds' &&
+      !this.isModeFunctionalGroup
+    ) {
+      dragContext.action.perform(restruct); // revert drag action
 
       let [action, pasteItems] = fromTemplateOnBondAction(
         restruct,
         this.template,
         ci.id,
         this.editor.event,
-        dragCtx.sign1 * dragCtx.sign2 > 0,
+        dragContext.sign1 * dragContext.sign2 > 0,
         true,
       );
 
@@ -495,7 +499,7 @@ class TemplateTool implements Tool {
         addOnCanvasWithoutMerge({
           restruct,
           template: this.template,
-          dragCtx,
+          dragContext,
           editor: this.editor,
           event: mouseEvent,
         });
@@ -525,12 +529,12 @@ class TemplateTool implements Tool {
       ci = { map: 'atoms', id: sGroupPositionAtomId, dist: 0 };
     }
 
-    if (!dragCtx.action) {
+    if (!dragContext.action) {
       if (!ci) {
         addOnCanvasWithoutMerge({
           restruct,
           template: this.template,
-          dragCtx,
+          dragContext,
           editor: this.editor,
           event: mouseEvent,
         });
@@ -542,7 +546,7 @@ class TemplateTool implements Tool {
           addOnCanvasWithoutMerge({
             restruct,
             template: this.template,
-            dragCtx,
+            dragContext,
             editor: this.editor,
             event: mouseEvent,
           });
@@ -561,14 +565,14 @@ class TemplateTool implements Tool {
         if (functionalGroupRemoveAction) {
           action = functionalGroupRemoveAction.mergeWith(action);
         }
-        dragCtx.action = action;
+        dragContext.action = action;
       } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
         let [action, pasteItems] = fromTemplateOnBondAction(
           restruct,
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1 * dragCtx.sign2 > 0,
+          dragContext.sign1 * dragContext.sign2 > 0,
           true,
         );
 
@@ -586,7 +590,7 @@ class TemplateTool implements Tool {
     for (const id of restruct.molecule.atoms.keys()) {
       new AtomAttr(id, 'isPreview', false).perform(restruct);
     }
-    const completeAction = dragCtx.action;
+    const completeAction = dragContext.action;
     if (completeAction && !completeAction.isDummy(restruct)) {
       this.editor.update(completeAction);
     }
@@ -616,20 +620,20 @@ class TemplateTool implements Tool {
 function addOnCanvasWithoutMerge({
   restruct,
   template,
-  dragCtx,
+  dragContext,
   editor,
   event,
 }: {
   restruct: ReStruct;
   template: InternalTemplate;
-  dragCtx: Pick<DragContext, 'xy0'>;
+  dragContext: Pick<DragContext, 'xy0'>;
   editor: Editor;
   event?: MouseEvent;
 }) {
   const [action] = fromTemplateOnCanvas(
     restruct,
     template,
-    dragCtx.xy0,
+    dragContext.xy0,
     0,
     false,
   );

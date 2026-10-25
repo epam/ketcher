@@ -22,26 +22,26 @@ import clsx from 'clsx';
 import { Icon } from 'components';
 import ColorPickerContent from './ColorPickerContent';
 
-interface Props {
+interface Properties {
   value: string;
   name: string;
   onChange: (value: string) => void;
 }
 
-const ColorPicker = (props: Props) => {
-  const { onChange, value } = props;
+const ColorPicker = (properties: Properties) => {
+  const { onChange, value } = properties;
   const [isOpen, setIsOpen] = useState(false);
   const [triggerElement, setTriggerElement] =
     useState<HTMLButtonElement | null>(null);
-  const popoverActionRef = useRef<PopoverActions>(null);
+  const popoverActionReference = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
 
   const handleContentResize = () => {
-    popoverActionRef.current?.updatePosition();
+    popoverActionReference.current?.updatePosition();
   };
 
   const handleToggleOpen = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((previous) => !previous);
   };
 
   const handleApply = (color: string) => {
@@ -57,7 +57,7 @@ const ColorPicker = (props: Props) => {
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
-      onClick={(e) => e.preventDefault()}
+      onClick={(event_) => event_.preventDefault()}
       role="none"
     >
       <button
@@ -74,7 +74,7 @@ const ColorPicker = (props: Props) => {
       >
         <div
           className={classes.colorPickerPreview}
-          data-testid={`${props.name}-color-picker-preview`}
+          data-testid={`${properties.name}-color-picker-preview`}
           style={{ backgroundColor: value }}
         />
         <Icon
@@ -85,7 +85,7 @@ const ColorPicker = (props: Props) => {
 
       <Popover
         id={paletteId}
-        action={popoverActionRef}
+        action={popoverActionReference}
         open={isOpen}
         anchorEl={triggerElement}
         onClose={handleCancel}

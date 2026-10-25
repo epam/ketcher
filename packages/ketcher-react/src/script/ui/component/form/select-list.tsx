@@ -21,7 +21,7 @@ interface Schema {
   enumNames?: string[];
 }
 
-interface SelectListProps extends Omit<
+interface SelectListProperties extends Omit<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   'onSelect' | 'value' | 'onChange' | 'size'
 > {
@@ -42,8 +42,8 @@ function SelectList({
   onSelect,
   splitIndexes,
   classes,
-  ...props
-}: Readonly<SelectListProps>) {
+  ...properties
+}: Readonly<SelectListProperties>) {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const index = event.target.selectedIndex;
     onSelect(schema.enum[index], index);
@@ -51,7 +51,7 @@ function SelectList({
 
   return (
     <select
-      {...props}
+      {...properties}
       size={schema.enum.length}
       value={value}
       onChange={handleChange}

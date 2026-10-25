@@ -40,22 +40,22 @@ function getTemplateTitle(template: Template, index: number): string {
   );
 }
 
-function tmplName(tmpl: Template, i: number): string {
+function tmplName(tmpl: Template, index: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
     return tmpl.props.abbreviation ?? '';
   }
   return (
     tmpl.props.abbreviation ??
     tmpl.struct.name ??
-    `${tmpl.props.group} template ${i + 1}`
+    `${tmpl.props.group} template ${index + 1}`
   );
 }
 
 function createKeyDownHandler(callback: () => void) {
-  return (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
+  return (event_: KeyboardEvent) => {
+    if (event_.key === 'Enter' || event_.key === ' ') {
+      event_.preventDefault();
+      event_.stopPropagation();
       callback();
     }
   };
@@ -65,7 +65,7 @@ function createKeyDownHandler(callback: () => void) {
  * Memoized individual template item component
  * Prevents unnecessary re-renders when parent selection changes
  */
-export interface TemplateItemProps {
+export interface TemplateItemProperties {
   tmpl: Template;
   index: number;
   isSelected: boolean;
@@ -76,7 +76,7 @@ export interface TemplateItemProps {
   onAttach?: (tmpl: Template) => void;
 }
 
-const TemplateItem: FC<TemplateItemProps> = memo(
+const TemplateItem: FC<TemplateItemProperties> = memo(
   ({
     tmpl,
     index,
@@ -128,8 +128,8 @@ const TemplateItem: FC<TemplateItemProps> = memo(
             type="button"
             data-testid="delete-template-button"
             className={clsx(classes.button, classes.deleteButton)}
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={(event_) => {
+              event_.stopPropagation();
               onDelete?.(tmpl);
             }}
             onKeyDown={createKeyDownHandler(() => onDelete?.(tmpl))}
@@ -142,8 +142,8 @@ const TemplateItem: FC<TemplateItemProps> = memo(
             type="button"
             data-testid="edit-template-button"
             className={clsx(classes.button, classes.editButton)}
-            onClick={(e) => {
-              e.stopPropagation();
+            onClick={(event_) => {
+              event_.stopPropagation();
               onAttach?.(tmpl);
             }}
             onKeyDown={createKeyDownHandler(() => onAttach?.(tmpl))}
@@ -155,15 +155,16 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     );
   },
   // Custom comparison: only re-render if these specific props change
-  (prevProps, nextProps) => {
+  (previousProperties, nextProperties) => {
     return (
-      prevProps.isSelected === nextProps.isSelected &&
-      prevProps.shouldRenderPreview === nextProps.shouldRenderPreview &&
-      prevProps.tmpl === nextProps.tmpl &&
-      prevProps.renderOptions === nextProps.renderOptions &&
-      prevProps.onSelect === nextProps.onSelect &&
-      prevProps.onDelete === nextProps.onDelete &&
-      prevProps.onAttach === nextProps.onAttach
+      previousProperties.isSelected === nextProperties.isSelected &&
+      previousProperties.shouldRenderPreview ===
+        nextProperties.shouldRenderPreview &&
+      previousProperties.tmpl === nextProperties.tmpl &&
+      previousProperties.renderOptions === nextProperties.renderOptions &&
+      previousProperties.onSelect === nextProperties.onSelect &&
+      previousProperties.onDelete === nextProperties.onDelete &&
+      previousProperties.onAttach === nextProperties.onAttach
     );
   },
 );

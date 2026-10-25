@@ -173,7 +173,7 @@ const positionStructureOnNextSequenceLine = (
   });
 };
 
-const addToCanvas = ({
+const hasAddedStructureToCanvas = ({
   ketSerializer,
   editor,
   struct,
@@ -288,7 +288,11 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = hasAddedStructureToCanvas({
+        struct,
+        ketSerializer,
+        editor,
+      });
       if (!hasStructure) {
         dispatch(openErrorTooltip('No structure'));
       }
@@ -318,7 +322,7 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    const hasStructure = addToCanvas({
+    const hasStructure = hasAddedStructureToCanvas({
       struct: ketStruct.struct,
       ketSerializer,
       editor,

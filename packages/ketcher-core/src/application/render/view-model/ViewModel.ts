@@ -131,11 +131,11 @@ export class ViewModel {
 
   private partitionLoop(halfEdgesInLoop: HalfEdge[]) {
     const subloops: Array<HalfEdge[]> = [];
-    let continueFlag = true;
+    let shouldContinue = true;
 
-    while (continueFlag) {
+    while (shouldContinue) {
       const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-      continueFlag = false;
+      shouldContinue = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
         const halfEdge = halfEdgesInLoop[l];
@@ -150,12 +150,12 @@ export class ViewModel {
             // remove half-bonds corresponding to the subloop
             halfEdgesInLoop.splice(s, l - s + 1);
           }
-          continueFlag = true;
+          shouldContinue = true;
           break;
         }
         atomToHalfBond[firstAtomId] = l;
       }
-      if (!continueFlag) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
+      if (!shouldContinue) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
     }
     return subloops;
   }

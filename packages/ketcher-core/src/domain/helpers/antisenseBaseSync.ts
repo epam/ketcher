@@ -71,7 +71,7 @@ export function getLibraryItemMonomerClass(
  * A preset is not a library item and has no monomer class of its own; the
  * caller passes `preset.base`, which is an ordinary Base-class item.
  */
-export function itemCarriesBase(item: MonomerOrAmbiguousType): boolean {
+export function hasBase(item: MonomerOrAmbiguousType): boolean {
   const monomerClass = getLibraryItemMonomerClass(item);
 
   return (
@@ -80,6 +80,8 @@ export function itemCarriesBase(item: MonomerOrAmbiguousType): boolean {
     monomerClass === KetMonomerClass.DNA
   );
 }
+
+export { hasBase as itemCarriesBase };
 
 export function getMonomerNaturalAnalogue(
   monomer?: BaseMonomer,

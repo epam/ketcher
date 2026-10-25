@@ -35,17 +35,17 @@ const MemoizedStructRender = memo(StructRender, (prevProps, nextProps) => {
   // Return true if props are equal (skip re-render)
   // Return false if props differ (perform re-render)
 
-  const structsEqual = prevProps.struct === nextProps.struct;
-  const optionsEqual =
+  const areStructsEqual = prevProps.struct === nextProps.struct;
+  const areOptionsEqual =
     JSON.stringify(prevProps.options) === JSON.stringify(nextProps.options);
-  const otherPropsEqual =
+  const areOtherPropsEqual =
     prevProps.className === nextProps.className &&
     prevProps.fullsize === nextProps.fullsize &&
     prevProps.update === nextProps.update &&
     prevProps.testId === nextProps.testId;
 
   // Props are equal, skip re-render
-  if (structsEqual && optionsEqual && otherPropsEqual) {
+  if (areStructsEqual && areOptionsEqual && areOtherPropsEqual) {
     return true;
   }
 

@@ -415,11 +415,10 @@ export const selectSequenceSelection = (
 export const selectSequenceSelectionName = (state: RootState): string =>
   state.rnaBuilder.sequenceSelectionName;
 
-export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
-  state: RootState,
-): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
+export const hasOnlyFirstNucleotidesSelected = (state: RootState): boolean =>
+  state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
 
-export const selectIsBaseModificationBlocked = (state: RootState): boolean =>
+export const isRnaBaseModificationBlocked = (state: RootState): boolean =>
   Boolean(
     state.rnaBuilder.sequenceSelection?.some(
       (labeledNode) => labeledNode.isInSelectedAntisensePair,
@@ -438,13 +437,13 @@ export const selectCurrentMonomerGroup = (
 export const selectActivePresetMonomerGroup = (state: RootState) =>
   state.rnaBuilder.activePresetMonomerGroup;
 
-export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
+export const isRnaPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
     preset.name && preset.sugar && (preset.base || preset.phosphate),
   );
 };
 
-export const selectIsEditMode = (state: RootState): boolean => {
+export const isRnaBuilderEditMode = (state: RootState): boolean => {
   return state.rnaBuilder.isEditMode;
 };
 
@@ -486,7 +485,7 @@ export const selectInvalidPresetNameError = (state: RootState) => {
   return state.rnaBuilder.invalidPresetNameError;
 };
 
-export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
+export const isActiveRnaPresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
   return (
     activePreset &&
@@ -621,19 +620,31 @@ export const selectFilteredPresets = createSelector(
         if (!phosphateFilter) {
           return true;
         }
-        const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
-        const allOn = fivePrime && threePrime && noPhosphate;
-        const allOff = !fivePrime && !threePrime && !noPhosphate;
-        if (allOn || allOff) {
+        const {
+          fivePrime: shouldIncludeFivePrime,
+          threePrime: shouldIncludeThreePrime,
+          noPhosphate: shouldIncludeNoPhosphate,
+        } = phosphateFilter;
+        const isAllOn =
+          shouldIncludeFivePrime &&
+          shouldIncludeThreePrime &&
+          shouldIncludeNoPhosphate;
+        const isAllOff =
+          !shouldIncludeFivePrime &&
+          !shouldIncludeThreePrime &&
+          !shouldIncludeNoPhosphate;
+        if (isAllOn || isAllOff) {
           return true;
         }
         if (!item.phosphate) {
-          return noPhosphate;
+          return shouldIncludeNoPhosphate;
         }
         const position = getRnaPresetPhosphatePosition(
           item as RnaPresetWithOptionalFields,
         );
-        return position === 'left' ? fivePrime : threePrime;
+        return position === 'left'
+          ? shouldIncludeFivePrime
+          : shouldIncludeThreePrime;
       });
   },
 );

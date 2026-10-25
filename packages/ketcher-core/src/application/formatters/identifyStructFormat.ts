@@ -87,12 +87,12 @@ export function identifyStructFormat(
   const clearStr = sanitizedString
     .replace(/\s/g, '')
     .replace(/(\\r)|(\\n)/g, '');
-  const isBase64String =
+  const base64StringPattern =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';
   if (
     clearStr.length % 4 === 0 &&
-    isBase64String.test(clearStr) &&
+    base64StringPattern.test(clearStr) &&
     window.atob(clearStr).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx;

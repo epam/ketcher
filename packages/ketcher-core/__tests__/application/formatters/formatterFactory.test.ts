@@ -1,5 +1,5 @@
 import {
-  exceedsMolfileV2000Limit,
+  exceedsMolfileV2000Limit as isMolfileV2000LimitExceeded,
   MOLFILE_V2000_ATOM_BOND_LIMIT,
 } from 'application/formatters/constants';
 import { FormatterFactory } from 'application/formatters/formatterFactory';
@@ -27,17 +27,17 @@ function createStructServiceMock() {
   };
 }
 
-describe('exceedsMolfileV2000Limit', () => {
+describe('isMolfileV2000LimitExceeded', () => {
   it('returns false at the V2000 limit boundary', () => {
     const struct = createStruct(MOLFILE_V2000_ATOM_BOND_LIMIT);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(false);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(false);
   });
 
   it('returns true when the atom count exceeds the limit', () => {
     const struct = createStruct(MOLFILE_V2000_ATOM_BOND_LIMIT + 1);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(true);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(true);
   });
 
   it('returns true when the bond count exceeds the limit', () => {
@@ -47,7 +47,7 @@ describe('exceedsMolfileV2000Limit', () => {
       .spyOn(struct.bonds, 'size', 'get')
       .mockReturnValue(MOLFILE_V2000_ATOM_BOND_LIMIT + 1);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(true);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(true);
   });
 });
 

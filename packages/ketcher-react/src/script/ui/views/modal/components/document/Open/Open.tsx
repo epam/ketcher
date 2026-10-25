@@ -162,7 +162,7 @@ const Open: FC<Props> = (props) => {
     }, 0);
   };
 
-  const withFooterContent =
+  const hasFooterContent =
     (currentState === MODAL_STATES.textEditor ||
       currentState === MODAL_STATES.presentationViewer) &&
     !isAnalyzingFile;
@@ -181,7 +181,7 @@ const Open: FC<Props> = (props) => {
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
-        withFooterContent ? (
+        hasFooterContent ? (
           <FooterContent
             structStr={structStr}
             openHandler={openHandler}

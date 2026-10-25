@@ -32,21 +32,21 @@ const MacromoleculeMenuItems = (
     props.propsFromTrigger?.hasNonMonomerStructure ?? false;
 
   const sgroup = functionalGroups?.[0]?.relatedSGroup;
-  const multipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
+  const areMultipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
 
   const expandingDisabled =
     functionalGroups?.every((fg) => !canExpandMonomer(fg)) ?? false;
 
-  const expandText = multipleMonomersSelected
+  const expandText = areMultipleMonomersSelected
     ? 'Expand monomers'
     : 'Expand monomer';
-  const collapseText = multipleMonomersSelected
+  const collapseText = areMultipleMonomersSelected
     ? 'Collapse monomers'
     : 'Collapse monomer';
-  const expandLabel = multipleMonomersSelected
+  const expandLabel = areMultipleMonomersSelected
     ? t('components:contextMenu.expandMonomers')
     : t('components:contextMenu.expandMonomer');
-  const collapseLabel = multipleMonomersSelected
+  const collapseLabel = areMultipleMonomersSelected
     ? t('components:contextMenu.collapseMonomers')
     : t('components:contextMenu.collapseMonomer');
 
@@ -58,12 +58,12 @@ const MacromoleculeMenuItems = (
   // "Edit Monomer" is disabled when more than one monomer is in context, or the
   // sgroup is invalid/ambiguous/unresolved.
   const editMonomerDisabled =
-    multipleMonomersSelected || unknownOrAmbiguousMonomer;
+    areMultipleMonomersSelected || unknownOrAmbiguousMonomer;
 
   // "Create Monomer" is visible only when the selection contains multiple
   // monomers, or exactly one monomer plus a non-monomer chemical structure.
   const createMonomerVisible =
-    multipleMonomersSelected ||
+    areMultipleMonomersSelected ||
     ((functionalGroups?.length ?? 0) === 1 && hasNonMonomerStructure);
 
   // Monomer code for "Edit All [code] (n)" label.
@@ -72,11 +72,11 @@ const MacromoleculeMenuItems = (
       ? sgroup.monomer.monomerItem.label
       : '';
 
-  const handleEdit = (editAllInstances = false) => {
+  const handleEdit = (shouldEditAllInstances = false) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 
-    editor.openEditMonomerWizard(sgroupIds, editAllInstances);
+    editor.openEditMonomerWizard(sgroupIds, shouldEditAllInstances);
   };
 
   const handleEditAll = async () => {

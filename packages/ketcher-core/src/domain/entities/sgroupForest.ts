@@ -60,36 +60,36 @@ export class SGroupForest {
 
   getAtomSetRelations(newId: number, atoms: Pile<number>) {
     // find the lowest superset in the hierarchy
-    const isStrictSuperset = new Map<number, boolean>();
-    const isSubset = new Map<number, boolean>();
+    const strictSupersetById = new Map<number, boolean>();
+    const subsetById = new Map<number, boolean>();
 
     this.atomSets.delete(newId);
 
     this.atomSets.forEach((atomSet, id) => {
-      isSubset.set(id, atomSet.isSuperset(atoms));
-      isStrictSuperset.set(
+      subsetById.set(id, atomSet.isSuperset(atoms));
+      strictSupersetById.set(
         id,
         atoms.isSuperset(atomSet) && !atomSet.equals(atoms),
       );
     });
 
     const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
-      if (isSubset.get(sgid) !== true) {
+      if (subsetById.get(sgid) !== true) {
         return false;
       }
       const childs = this.children.get(sgid);
       return (
-        childs?.findIndex((childId) => isSubset.get(childId) === true) === -1
+        childs?.findIndex((childId) => subsetById.get(childId) === true) === -1
       );
     });
 
     const children = Array.from(this.atomSets.keys()).filter((id) => {
       const parentId = this.parent.get(id);
-      if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
+      if (parentId !== undefined && strictSupersetById.get(parentId) === true) {
         return false;
       }
 
-      return isStrictSuperset.get(id) === true;
+      return strictSupersetById.get(id) === true;
     });
 
     return {

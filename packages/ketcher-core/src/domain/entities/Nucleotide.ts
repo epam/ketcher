@@ -40,8 +40,8 @@ export class Nucleotide {
     );
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleotide(sugar),
         'Nucleotide is not valid. Please check nucleotide parts connections.',

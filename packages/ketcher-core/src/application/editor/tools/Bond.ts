@@ -321,15 +321,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );
@@ -452,15 +452,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );
@@ -629,12 +629,12 @@ class PolymerBond implements BaseTool {
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
-    checkForPotentialBonds = true,
+    shouldCheckForPotentialBonds = true,
   ) {
     return shouldInvokeConnectionModal(
       firstMonomer,
       secondMonomer,
-      checkForPotentialBonds,
+      shouldCheckForPotentialBonds,
       this.isHydrogenBond,
     );
   }

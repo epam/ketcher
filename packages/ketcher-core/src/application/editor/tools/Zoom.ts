@@ -182,17 +182,17 @@ export class ZoomTool implements BaseTool {
     });
   }
 
-  drawScrollBars(forceHide = false) {
+  drawScrollBars(shouldForceHide = false) {
     if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
-      this.renderScrollBar(this.scrollBars.vertical, forceHide);
+      this.renderScrollBar(this.scrollBars.horizontal, shouldForceHide);
+      this.renderScrollBar(this.scrollBars.vertical, shouldForceHide);
     }
   }
 
-  renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
+  renderScrollBar(scrollBar: ScrollBar, shouldForceHide = false) {
     const hasOffset = scrollBar.offsetStart < 0 || scrollBar.offsetEnd < 0;
-    if (hasOffset && !forceHide) {
+    if (hasOffset && !shouldForceHide) {
       if (scrollBar.bar) {
         this.updateScrollBarAttrs(scrollBar);
       } else {
@@ -264,11 +264,11 @@ export class ZoomTool implements BaseTool {
 
   public scrollTo(
     position: Vec2,
-    stickToBottom = false,
+    shouldStickToBottom = false,
     xOffset?,
     yOffset?,
     isOffsetInPercents = true,
-    needScrollVertical = true,
+    shouldScrollVertical = true,
   ) {
     const wrapperRect = this.canvasWrapper.node()?.getBoundingClientRect();
     const canvasWrapperHeight = wrapperRect?.height ?? 0;
@@ -304,8 +304,8 @@ export class ZoomTool implements BaseTool {
 
     // Calculate Y position for translateTo
     let yPosition: number;
-    if (needScrollVertical) {
-      const multiplier = stickToBottom ? -1 : 1;
+    if (shouldScrollVertical) {
+      const multiplier = shouldStickToBottom ? -1 : 1;
       yPosition = position.y + this.unzoomValue(offset.y * multiplier);
     } else {
       yPosition = this.unzoomValue(canvasWrapperHeight / 2 - currentY);

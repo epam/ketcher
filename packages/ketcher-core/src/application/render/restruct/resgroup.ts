@@ -268,10 +268,10 @@ class ReSGroup extends ReObject {
     }
   }
 
-  setHover(hover: boolean, render: Render) {
-    super.setHover(hover, render);
+  setHover(isHovered: boolean, render: Render) {
+    super.setHover(isHovered, render);
 
-    if (!hover || this.selected) {
+    if (!isHovered || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
 
       return;
@@ -315,7 +315,7 @@ class ReSGroup extends ReObject {
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
       const path = this.draw(remol, sgroup);
-      const includeInBoundingBox = !(
+      const shouldIncludeInBoundingBox = !(
         sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
       );
       restruct.addReObjectPath(
@@ -323,7 +323,7 @@ class ReSGroup extends ReObject {
         this.visel,
         path,
         null,
-        includeInBoundingBox,
+        shouldIncludeInBoundingBox,
       );
       this.setHover(this.hover, render); // TODO: fix this
     }

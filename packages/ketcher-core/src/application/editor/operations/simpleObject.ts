@@ -36,11 +36,11 @@ export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
   constructor(
     pos: Array<Vec2> = [],
     mode: SimpleObjectMode = SimpleObjectMode.line,
-    toCircle = false,
+    shouldConvertToCircle = false,
     id?: number,
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD);
-    this.data = { pos, mode, toCircle, id };
+    this.data = { pos, mode, toCircle: shouldConvertToCircle, id };
   }
 
   execute(restruct: ReStruct): void {
@@ -139,9 +139,9 @@ interface SimpleObjectMoveData {
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData;
 
-  constructor(id: number, d: Vec2, noinvalidate: boolean) {
+  constructor(id: number, d: Vec2, shouldSkipInvalidation: boolean) {
     super(OperationType.SIMPLE_OBJECT_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct): void {
@@ -225,11 +225,18 @@ export class SimpleObjectResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2,
-    noinvalidate: boolean,
-    toCircle: boolean,
+    shouldSkipInvalidation: boolean,
+    shouldConvertToCircle: boolean,
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE);
-    this.data = { id, d, current, anchor, noinvalidate, toCircle };
+    this.data = {
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate: shouldSkipInvalidation,
+      toCircle: shouldConvertToCircle,
+    };
   }
 
   execute(restruct: ReStruct): void {

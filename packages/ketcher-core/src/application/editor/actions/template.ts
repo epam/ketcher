@@ -119,7 +119,7 @@ export function fromTemplateOnAtom(
   template: EditorTemplate,
   aid: number,
   angle: number | null,
-  extraBond: boolean,
+  hasExtraBond: boolean,
   isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
@@ -141,7 +141,7 @@ export function fromTemplateOnAtom(
 
   let delta: number;
 
-  if (extraBond) {
+  if (hasExtraBond) {
     // create extra bond after click on atom
     const extraRes = extraBondAction(restruct, aid, angle);
     action = extraRes.action;
@@ -265,17 +265,19 @@ export function fromTemplateOnBondAction(
   template: EditorTemplate,
   bid: number,
   events: unknown,
-  flip: boolean,
-  force: boolean,
+  shouldFlip: boolean,
+  shouldForce: boolean,
   isPreview = false,
 ): FromTemplateOnBondResult {
-  if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
+  if (!shouldForce) {
+    return fromTemplateOnBond(restruct, template, bid, shouldFlip);
+  }
 
   const simpleFusing = (
     restruct: ReStruct,
     template: EditorTemplate,
     bid: number,
-  ) => fromTemplateOnBond(restruct, template, bid, flip, isPreview);
+  ) => fromTemplateOnBond(restruct, template, bid, shouldFlip, isPreview);
   return fromAromaticTemplateOnBond(
     restruct,
     template,
@@ -504,7 +506,7 @@ function fromTemplateOnBond(
   restruct: ReStruct,
   template: EditorTemplate,
   bid: number,
-  flip: boolean,
+  shouldFlip: boolean,
   isPreview = false,
 ): [Action, PasteItems] {
   const action = new Action();
@@ -522,7 +524,7 @@ function fromTemplateOnBond(
     return [action, { atoms: [], bonds: [] }];
   }
 
-  const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
+  const tmplBegin = tmpl.atoms.get(shouldFlip ? tmplBond.end : tmplBond.begin);
   if (!tmplBegin) {
     KetcherLogger.error(
       `template.ts::fromTemplateOnBond: template begin atom not found`,
@@ -531,13 +533,13 @@ function fromTemplateOnBond(
   }
 
   const atomsMap = new Map<number, number>([
-    [tmplBond.begin, flip ? bond.end : bond.begin],
-    [tmplBond.end, flip ? bond.begin : bond.end],
+    [tmplBond.begin, shouldFlip ? bond.end : bond.begin],
+    [tmplBond.end, shouldFlip ? bond.begin : bond.end],
   ]);
 
   const bondAtoms = {
-    begin: flip ? tmplBond.end : tmplBond.begin,
-    end: flip ? tmplBond.begin : tmplBond.end,
+    begin: shouldFlip ? tmplBond.end : tmplBond.begin,
+    end: shouldFlip ? tmplBond.begin : tmplBond.end,
   };
   const mergeParams = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
   if (!mergeParams) return [action, { atoms: [], bonds: [] }];

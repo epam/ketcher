@@ -48,10 +48,10 @@ import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
   collapseExpandedSuperatoms,
-  mergeCoordinatesFromResult,
+  didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  needsMetaPreservation,
-  needsStructurePreservation,
+  hasMetaToPreserve,
+  hasStructureToPreserve,
 } from './miewStructMerge';
 
 const Viewer = lazy(() =>
@@ -200,8 +200,8 @@ const MiewDialog = ({
       return;
     }
 
-    const shouldPreserveStructure = needsStructurePreservation(struct);
-    const shouldPreserveMeta = needsMetaPreservation(struct);
+    const shouldPreserveStructure = hasStructureToPreserve(struct);
+    const shouldPreserveMeta = hasMetaToPreserve(struct);
 
     if (!shouldPreserveStructure && !shouldPreserveMeta) {
       dispatch(load(cmlStruct));
@@ -230,7 +230,7 @@ const MiewDialog = ({
         const preserved = struct.clone();
         preserved.enableInitiallySelected();
 
-        if (!mergeCoordinatesFromResult(result, preserved)) {
+        if (!didMergeCoordinatesFromResult(result, preserved)) {
           KetcherLogger.error(
             'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
             'Coordinate merge validation failed',

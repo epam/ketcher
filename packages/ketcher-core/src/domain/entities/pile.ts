@@ -17,9 +17,9 @@
 export class Pile<TValue = unknown> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
-  find(predicate: (item: TValue) => boolean) {
+  find(isMatchingItem: (item: TValue) => boolean) {
     for (const item of this) {
-      if (predicate(item)) return item;
+      if (isMatchingItem(item)) return item;
     }
 
     return null;
@@ -37,8 +37,8 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     return true;
   }
 
-  filter(expression: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(expression));
+  filter(isMatchingItem: (arg: TValue) => boolean): Pile<TValue> {
+    return new Pile(Array.from(this).filter(isMatchingItem));
   }
 
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {
@@ -70,7 +70,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
    * ```
    */
   static unionIntersections<T>(sets: Array<Pile<T>>): Array<Pile<T>> {
-    let unionized = false;
+    let hasUnionizedSets = false;
 
     // Union two of sets
     const setsToReturn = sets.reduce((prevSets, curSet) => {
@@ -79,7 +79,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
       const newSets = prevSets.map((set) => {
         const intersec = set.intersection(curSet);
         if (intersec.size > 0) {
-          unionized = true;
+          hasUnionizedSets = true;
           isCurSetMerged = true;
           return set.union(curSet);
         }
@@ -91,6 +91,8 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     }, new Array<Pile<T>>());
 
     // Recursively union two of sets === union all sets
-    return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;
+    return hasUnionizedSets
+      ? Pile.unionIntersections(setsToReturn)
+      : setsToReturn;
   }
 }

@@ -62,8 +62,8 @@ export const CalculateMacromoleculePropertiesButton = () => {
     useRecalculateMacromoleculeProperties();
 
   const handleClick = async () => {
-    const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-    await recalculateMacromoleculeProperties(skipDataFetch);
+    const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+    await recalculateMacromoleculeProperties(shouldSkipDataFetch);
 
     dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
 

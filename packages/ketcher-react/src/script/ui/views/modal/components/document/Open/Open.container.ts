@@ -18,7 +18,7 @@ import Open, { type OpenProps } from './Open';
 
 import type { BaseCallProps } from '../../../modal.types';
 import { connect } from 'react-redux';
-import { exec } from '../../../../../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';
 import { changeImage } from '../../../../../state/options';
 
@@ -38,7 +38,7 @@ const mapStateToProps = (state): StateProps => ({
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
-    if (result.fragment) exec('copy');
+    if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
       load(result.structStr, {
         badHeaderRecover: true,

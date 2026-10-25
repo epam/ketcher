@@ -50,7 +50,7 @@ const Table = (props: TableProps) => {
     props.pseudo ? (props.label ?? null) : null,
   );
 
-  const selected = (label: string): boolean => value === label;
+  const isSelected = (label: string): boolean => value === label;
 
   const result = (): GenericElement | null => {
     if (!value?.length) {
@@ -80,7 +80,7 @@ const Table = (props: TableProps) => {
       needMargin={false}
     >
       <GenericGroups
-        selected={selected}
+        selected={isSelected}
         onAtomSelect={onAtomSelect}
         onAtomActivate={onAtomActivate}
         disabledQueryElements={props.disabledQueryElements ?? null}

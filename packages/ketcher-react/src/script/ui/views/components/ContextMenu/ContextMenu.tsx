@@ -160,9 +160,9 @@ const ContextMenu: FC = () => {
   };
 
   const trackVisibility = useCallback(
-    (id: string, visible: boolean) => {
+    (id: string, isVisible: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-      if (visible) {
+      if (isVisible) {
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',
@@ -181,7 +181,7 @@ const ContextMenu: FC = () => {
           });
         }
       }
-      editor.contextMenu[id] = visible;
+      editor.contextMenu[id] = isVisible;
     },
     [ketcherId],
   );

@@ -30,7 +30,7 @@ function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
   return clone;
 }
 
-export function needsMetaPreservation(struct: Struct): boolean {
+export function hasMetaToPreserve(struct: Struct): boolean {
   return !!(
     struct.rxnArrows.size ||
     struct.rxnPluses.size ||
@@ -41,11 +41,11 @@ export function needsMetaPreservation(struct: Struct): boolean {
   );
 }
 
-export function needsStructurePreservation(struct: Struct): boolean {
+export function hasStructureToPreserve(struct: Struct): boolean {
   return struct.sgroups.size > 0 || struct.rgroups.size > 0;
 }
 
-export function mergeCoordinatesFromResult(
+export function didMergeCoordinatesFromResult(
   result: Struct,
   original: Struct,
 ): boolean {

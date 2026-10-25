@@ -63,7 +63,7 @@ export function getAttachmentGroupIdsSplitByDeletion(
   return splitIds;
 }
 
-export async function deleteWithAttachmentGroupSplitConfirm(
+export async function didDeleteWithAttachmentGroupSplitConfirm(
   editor: Editor,
   deletion: DeletionSelection,
   applyDeletion: () => Action,
@@ -105,7 +105,7 @@ export function runDeleteWithAttachmentGroupSplitConfirm(
   applyDeletion: () => Action,
   onDeleted?: () => void,
 ): void {
-  void deleteWithAttachmentGroupSplitConfirm(editor, deletion, applyDeletion)
+  void didDeleteWithAttachmentGroupSplitConfirm(editor, deletion, applyDeletion)
     .then((didDelete) => {
       if (didDelete) {
         onDeleted?.();

@@ -41,11 +41,11 @@ export class SnakeLayoutModel {
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }

@@ -110,8 +110,7 @@ export const {
 
 export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
-export const selectModalIsOpen = (state: RootState): boolean =>
-  state.modal.isOpen;
+export const isModalOpened = (state: RootState): boolean => state.modal.isOpen;
 export const selectAdditionalProps = (
   state: RootState,
 ): AdditionalModalProps | null => state.modal.additionalProps;

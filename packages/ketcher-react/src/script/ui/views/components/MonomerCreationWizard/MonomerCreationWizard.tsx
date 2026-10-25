@@ -597,8 +597,8 @@ const autoAssignPropertiesForHiddenMonomer = (
 
 const validateInputs = (
   values: WizardValues,
-  skipUniquenessChecks = false,
-  skipMandatoryCheck = false,
+  shouldSkipUniquenessChecks = false,
+  shouldSkipMandatoryCheck = false,
   originalMonomerItem?: MonomerItemType,
   initialName?: string,
 ) => {
@@ -614,7 +614,7 @@ const validateInputs = (
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
-        !skipMandatoryCheck &&
+        !shouldSkipMandatoryCheck &&
         !optionalFields.has(key) &&
         (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
@@ -640,7 +640,7 @@ const validateInputs = (
       }
 
       if (
-        !skipUniquenessChecks &&
+        !shouldSkipUniquenessChecks &&
         hasMonomerFieldCollision(
           library,
           'symbol',
@@ -681,7 +681,7 @@ const validateInputs = (
       }
 
       if (
-        !skipUniquenessChecks &&
+        !shouldSkipUniquenessChecks &&
         hasMonomerFieldCollision(
           library,
           'aliasHELM',
@@ -710,7 +710,7 @@ const validateInputs = (
       }
 
       if (
-        !skipUniquenessChecks &&
+        !shouldSkipUniquenessChecks &&
         hasMonomerFieldCollision(
           library,
           'aliasBILN',
@@ -1373,7 +1373,7 @@ const MonomerCreationWizardInternal = ({
   const validateMonomerWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
   ) => {
-    let needSaveMonomers = true;
+    let canSaveMonomers = true;
 
     if (!wizardState.structure) {
       KetcherLogger.error('Monomer structure is undefined');
@@ -1460,20 +1460,20 @@ const MonomerCreationWizardInternal = ({
         monomerAssignedAttachmentPoints,
       );
       if (leavingGroupNotifications.size > 0) {
-        needSaveMonomers = false;
+        canSaveMonomers = false;
         const firstMessage = Array.from(leavingGroupNotifications.values())[0]
           .message;
         setLeavingGroupDialogMessage(firstMessage);
       }
     }
 
-    return needSaveMonomers;
+    return canSaveMonomers;
   };
 
   const validateRnaPresetWizard = (
     assignedAttachmentPointsByMonomer: AssignedAttachmentPointsByMonomerType,
   ) => {
-    let needSaveMonomers = true;
+    let canSaveMonomers = true;
     const componentsToValidate: Array<{
       name: Exclude<RnaPresetWizardStateFieldId, 'preset'>;
       wizardState: WizardState;
@@ -1505,7 +1505,7 @@ const MonomerCreationWizardInternal = ({
       );
 
     if (structureIssues.length > 0) {
-      needSaveMonomers = false;
+      canSaveMonomers = false;
       structureIssues.forEach((issueId) => {
         presetNotifications.set(issueId, {
           type: NotificationTypes[issueId],
@@ -1556,7 +1556,7 @@ const MonomerCreationWizardInternal = ({
         phosphateAttachmentPoints,
       )
     ) {
-      needSaveMonomers = false;
+      canSaveMonomers = false;
       presetNotifications.set(
         'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
         {
@@ -1574,7 +1574,7 @@ const MonomerCreationWizardInternal = ({
           .get(rnaPresetWizardState.base)
           ?.get(AttachmentPointName.R1))
     ) {
-      needSaveMonomers = false;
+      canSaveMonomers = false;
       presetNotifications.set(
         'rnaPresetInvalidSugarBaseConnectionAttachmentPoints',
         {
@@ -1598,7 +1598,7 @@ const MonomerCreationWizardInternal = ({
       rnaPresetWizardState.phosphate.structure?.atoms?.length &&
       !phosphatePosition
     ) {
-      needSaveMonomers = false;
+      canSaveMonomers = false;
       rnaPresetWizardStateDispatch({
         type: 'SetErrors',
         errors: {
@@ -1625,7 +1625,7 @@ const MonomerCreationWizardInternal = ({
     // check rna preset code
     const presetCode = rnaPresetWizardState.preset.name?.trim();
     if (!presetCode) {
-      needSaveMonomers = false;
+      canSaveMonomers = false;
       rnaPresetWizardStateDispatch({
         type: 'SetErrors',
         errors: {
@@ -1652,7 +1652,7 @@ const MonomerCreationWizardInternal = ({
       // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
       const presetCodeRegex = /^[a-zA-Z0-9-_*]+$/;
       if (!presetCodeRegex.test(presetCode)) {
-        needSaveMonomers = false;
+        canSaveMonomers = false;
         rnaPresetWizardStateDispatch({
           type: 'SetErrors',
           errors: {
@@ -1679,7 +1679,7 @@ const MonomerCreationWizardInternal = ({
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
         if (coreEditor.checkIfPresetCodeExists(presetCode)) {
-          needSaveMonomers = false;
+          canSaveMonomers = false;
           rnaPresetWizardStateDispatch({
             type: 'SetErrors',
             errors: {
@@ -1740,7 +1740,7 @@ const MonomerCreationWizardInternal = ({
       const { errors: inputsErrors, notifications: inputsNotifications } =
         validateInputs(valuesToSave, true, !hasMandatoryProperties);
       if (Object.keys(inputsErrors).length > 0) {
-        needSaveMonomers = false;
+        canSaveMonomers = false;
         rnaPresetWizardStateDispatch({
           type: 'SetErrors',
           errors: inputsErrors,
@@ -1758,7 +1758,7 @@ const MonomerCreationWizardInternal = ({
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {
-        needSaveMonomers = false;
+        canSaveMonomers = false;
         rnaPresetWizardStateDispatch({
           type: 'SetNotifications',
           notifications: structureNotifications,
@@ -1768,7 +1768,7 @@ const MonomerCreationWizardInternal = ({
       }
     });
 
-    return needSaveMonomers;
+    return canSaveMonomers;
   };
 
   const validateOnSubmit = (
@@ -1866,12 +1866,10 @@ const MonomerCreationWizardInternal = ({
     }
 
     // validation
-    const needSaveMonomers = validateOnSubmit(
-      assignedAttachmentPointsByMonomer,
-    );
+    const canSaveMonomers = validateOnSubmit(assignedAttachmentPointsByMonomer);
 
     // save
-    if (needSaveMonomers) {
+    if (canSaveMonomers) {
       if (isRnaPresetType) {
         // fill attachment points between RNA preset components
         const struct = editor.struct();
@@ -2122,7 +2120,7 @@ const MonomerCreationWizardInternal = ({
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_ROOT_NODE_CSS_SELECTOR,
   );
-  const displayEditDialog =
+  const shouldDisplayEditDialog =
     attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
   const isPresetType = type === 'rnaPreset';
 
@@ -2213,7 +2211,7 @@ const MonomerCreationWizardInternal = ({
           </div>
         </div>
 
-        {displayEditDialog &&
+        {shouldDisplayEditDialog &&
           createPortal(
             <AttachmentPointEditPopup
               data={attachmentPointEditPopupData}

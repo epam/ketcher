@@ -1249,13 +1249,13 @@ function bondDouble(
   a2: Vec2,
   b1: Vec2,
   b2: Vec2,
-  cisTrans: boolean,
+  isCisTrans: boolean,
   options: RenderOptions,
   isSnapping: boolean,
 ) {
   return paper
     .path(
-      cisTrans
+      isCisTrans
         ? 'M{0},{1}L{6},{7}M{4},{5}L{2},{3}'
         : 'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
       toFixed(a1.x),
@@ -1637,14 +1637,14 @@ function dashedPath(point1: Vec2, point2: Vec2, dash: number[]) {
   let t0 = 0;
   const t1 = Vec2.dist(point1, point2);
   const d = Vec2.diff(point2, point1).normalized();
-  let black = true;
+  let isBlack = true;
   let path = '';
   let i = 0;
 
   while (t0 < t1) {
     const len = dash[i % dash.length];
     const t2 = t0 + Math.min(len, t1 - t0);
-    if (black) {
+    if (isBlack) {
       path +=
         'M ' +
         point1.addScaled(d, t0).coordStr() +
@@ -1652,7 +1652,7 @@ function dashedPath(point1: Vec2, point2: Vec2, dash: number[]) {
         point1.addScaled(d, t2).coordStr();
     }
     t0 += len;
-    black = !black;
+    isBlack = !isBlack;
     i++;
   }
   return path;

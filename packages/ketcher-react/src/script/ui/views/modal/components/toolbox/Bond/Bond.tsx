@@ -77,7 +77,7 @@ const Bond = (props: Props) => {
     [isCustomQuery],
   );
   const handleCustomQueryCheckBoxChange = (
-    value: boolean,
+    isCustomQueryEnabled: boolean,
     formState: Record<string, unknown>,
     _: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
@@ -86,8 +86,8 @@ const Bond = (props: Props) => {
       return;
     }
 
-    setIsCustomQuery(value);
-    if (value) {
+    setIsCustomQuery(isCustomQueryEnabled);
+    if (isCustomQueryEnabled) {
       const bondFormState = formState as unknown as BondSettings;
       const { type, topology, center, customQuery } = bondFormState;
       previousSettings.current = {
@@ -98,7 +98,7 @@ const Bond = (props: Props) => {
       };
     }
     updateFormState(
-      value
+      isCustomQueryEnabled
         ? {
             type: '',
             topology: null,

@@ -81,10 +81,10 @@ class Table extends Component<TableProps, TableState> {
   }
 
   changeType = (type: PeriodTableType) => {
-    const prevChoice =
+    const isPreviousListChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
-    const currentChoice = type === 'list' || type === 'not-list';
-    if (prevChoice && currentChoice) {
+    const isCurrentListChoice = type === 'list' || type === 'not-list';
+    if (isPreviousListChoice && isCurrentListChoice) {
       this.setState({ type });
     } else {
       this.setState({

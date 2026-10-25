@@ -2142,18 +2142,26 @@ export class SequenceMode extends BaseMode {
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R1 == undefined;
+      return entity.isAttachmentPointExistAndFree(AttachmentPointName.R1);
     }
 
-    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 == undefined;
+    return Boolean(
+      entity?.firstMonomerInNode?.isAttachmentPointExistAndFree(
+        AttachmentPointName.R1,
+      ),
+    );
   }
 
   private isR2Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R2 == undefined;
+      return entity.isAttachmentPointExistAndFree(AttachmentPointName.R2);
     }
 
-    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 == undefined;
+    return Boolean(
+      entity?.lastMonomerInNode?.isAttachmentPointExistAndFree(
+        AttachmentPointName.R2,
+      ),
+    );
   }
 
   private areR1R2Free(
@@ -2170,10 +2178,8 @@ export class SequenceMode extends BaseMode {
     secondMonomerAttachmentPoint: AttachmentPointName,
   ) {
     return (
-      firstMonomer.attachmentPointsToBonds[firstMonomerAttachmentPoint] ==
-        undefined &&
-      secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ==
-        undefined
+      firstMonomer.isAttachmentPointExistAndFree(firstMonomerAttachmentPoint) &&
+      secondMonomer.isAttachmentPointExistAndFree(secondMonomerAttachmentPoint)
     );
   }
 

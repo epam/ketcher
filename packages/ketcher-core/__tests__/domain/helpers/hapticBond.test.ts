@@ -200,7 +200,7 @@ describe('hapticBond helpers', () => {
         hapticBond,
         new Vec2(1.75, 0),
       ),
-    ).toBeNull();
+    ).toBeUndefined();
     expect(
       getAttachmentGroupIdForHapticBondHalf(
         struct,
@@ -211,7 +211,7 @@ describe('hapticBond helpers', () => {
         }),
         new Vec2(0.25, 0),
       ),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 
   it.each([
@@ -261,7 +261,7 @@ describe('hapticBond helpers', () => {
           atoms: [sourceBond.begin, sourceBond.end],
           bonds: [sourceBondId],
         }),
-      ).toBeNull();
+      ).toBeUndefined();
     },
   );
 

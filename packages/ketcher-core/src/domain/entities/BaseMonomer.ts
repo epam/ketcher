@@ -373,7 +373,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
-    return this.attachmentPointsToBonds[attachmentPointName] !== undefined;
+    return Object.hasOwn(this.attachmentPointsToBonds, attachmentPointName);
   }
 
   public get isPhosphate() {

@@ -393,10 +393,10 @@ describe('SettingsMigration', () => {
       expect(loaded).toEqual({ resetToSelect: false });
     });
 
-    it('should return null when no legacy keys exist', () => {
+    it('should return undefined when no legacy keys exist', () => {
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
     it('should handle invalid JSON gracefully', () => {
@@ -405,7 +405,7 @@ describe('SettingsMigration', () => {
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
       // Should continue to next key
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
     it('should handle localStorage not available', () => {
@@ -418,7 +418,7 @@ describe('SettingsMigration', () => {
 
       const loaded = SettingsMigration.loadFromLegacyStorage();
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
   });
 });

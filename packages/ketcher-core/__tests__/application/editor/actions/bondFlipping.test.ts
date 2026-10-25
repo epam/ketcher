@@ -103,7 +103,7 @@ describe('fromBondFlipping', () => {
     const beginAtom = struct.atoms.get(beginId);
     const endAtom = struct.atoms.get(endId);
 
-    expect(beginAtom?.stereoLabel).toBeNull();
+    expect(beginAtom?.stereoLabel).toBeUndefined();
     expect(beginAtom?.stereoParity).toBe(0);
     expect(endAtom?.stereoLabel).toBe('abs');
     expect(endAtom?.stereoParity).toBe(1);
@@ -121,7 +121,7 @@ describe('fromBondFlipping', () => {
     const beginAtom = struct.atoms.get(beginId);
     const endAtom = struct.atoms.get(endId);
 
-    expect(beginAtom?.stereoLabel).toBeNull();
+    expect(beginAtom?.stereoLabel).toBeUndefined();
     expect(endAtom?.stereoLabel).toBe('&1');
   });
 

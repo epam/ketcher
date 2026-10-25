@@ -97,11 +97,11 @@ const createNucleotide = (isAntisense = false) =>
   );
 
 const mockRenderer = (monomer: BaseMonomer) => {
-  const enumerations: Array<number | null> = [];
+  const enumerations: Array<number | undefined> = [];
   const terminalMarkers: boolean[] = [];
 
   monomer.renderer = {
-    setEnumeration: (enumeration: number | null) => {
+    setEnumeration: (enumeration: number | undefined) => {
       enumerations.push(enumeration);
     },
     redrawEnumeration: (needToDrawTerminalMarker: boolean) => {
@@ -280,7 +280,7 @@ describe('RenderersManager', () => {
     expect(firstRenderer.sugar.enumerations).toEqual([1]);
     expect(secondRenderer.base.enumerations).toEqual([2]);
     expect(secondRenderer.sugar.enumerations).toEqual([2]);
-    expect(resetRenderer.enumerations).toEqual([null]);
+    expect(resetRenderer.enumerations).toEqual([undefined]);
     expect(resetRenderer.terminalMarkers).toEqual([false]);
     expect(thirdRenderer.base.enumerations).toEqual([1]);
     expect(thirdRenderer.sugar.enumerations).toEqual([1]);
@@ -312,7 +312,7 @@ describe('RenderersManager', () => {
 
     expect(firstRenderer.base.terminalMarkers).toEqual([false]);
     expect(secondRenderer.base.terminalMarkers).toEqual([true]);
-    expect(resetRenderer.enumerations).toEqual([null]);
+    expect(resetRenderer.enumerations).toEqual([undefined]);
     expect(resetRenderer.terminalMarkers).toEqual([false]);
     expect(thirdRenderer.base.terminalMarkers).toEqual([false]);
     expect(fourthRenderer.base.terminalMarkers).toEqual([true]);
@@ -603,8 +603,8 @@ describe('RenderersManager', () => {
         );
     });
 
-    expect(firstBaseRenderer.enumerations).toEqual([null]);
-    expect(secondBaseRenderer.enumerations).toEqual([null]);
+    expect(firstBaseRenderer.enumerations).toEqual([undefined]);
+    expect(secondBaseRenderer.enumerations).toEqual([undefined]);
   });
 
   it('resets enumeration for a lone RNA base left in a ChemSubChain after its sugar and phosphate are deleted', () => {
@@ -619,7 +619,7 @@ describe('RenderersManager', () => {
 
     resetSubChainEnumeration(subChain);
 
-    expect(baseRenderer.enumerations).toEqual([1, null]);
+    expect(baseRenderer.enumerations).toEqual([1, undefined]);
     expect(baseRenderer.terminalMarkers).toEqual([false]);
   });
 });

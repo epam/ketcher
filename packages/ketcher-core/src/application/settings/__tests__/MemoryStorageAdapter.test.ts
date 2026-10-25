@@ -32,10 +32,10 @@ describe('MemoryStorageAdapter', () => {
   });
 
   describe('load', () => {
-    it('should return null when key does not exist', async () => {
+    it('should return undefined when key does not exist', async () => {
       const loaded = await adapter.load('non-existent-key');
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
     it('should load settings that were previously saved', async () => {
@@ -106,7 +106,7 @@ describe('MemoryStorageAdapter', () => {
 
       const loaded = await adapter.load('test-key');
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
     it('should not affect other keys', async () => {
@@ -121,8 +121,8 @@ describe('MemoryStorageAdapter', () => {
       const loaded1 = await adapter.load('key1');
       const loaded2 = await adapter.load('key2');
 
-      expect(loaded1).toBeNull();
-      expect(loaded2).not.toBeNull();
+      expect(loaded1).toBeUndefined();
+      expect(loaded2).toBeDefined();
     });
   });
 
@@ -139,8 +139,8 @@ describe('MemoryStorageAdapter', () => {
       const loaded1 = await adapter.load('key1');
       const loaded2 = await adapter.load('key2');
 
-      expect(loaded1).toBeNull();
-      expect(loaded2).toBeNull();
+      expect(loaded1).toBeUndefined();
+      expect(loaded2).toBeUndefined();
     });
 
     it('should allow new saves after clearAll', async () => {
@@ -152,7 +152,7 @@ describe('MemoryStorageAdapter', () => {
 
       const loaded = await adapter.load('key2');
 
-      expect(loaded).not.toBeNull();
+      expect(loaded).toBeDefined();
     });
   });
 

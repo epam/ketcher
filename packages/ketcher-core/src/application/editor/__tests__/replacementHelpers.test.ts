@@ -445,7 +445,7 @@ describe('getPresetPhosphateFromSugar', () => {
 
     expect(getPresetPhosphateFromSugar(sugar, 'right')).toBe(phosphate);
     // Not present on the left side
-    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeNull();
+    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeUndefined();
   });
 
   it('finds a left-side (5′) phosphate via sugar.R1 ↔ phosphate.R2', () => {
@@ -454,7 +454,7 @@ describe('getPresetPhosphateFromSugar', () => {
     connectPhosphate(sugar, phosphate, 'left');
 
     expect(getPresetPhosphateFromSugar(sugar, 'left')).toBe(phosphate);
-    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeNull();
+    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeUndefined();
   });
 
   it('does not mistake a neighbouring nucleotide phosphate on the wrong AP', () => {
@@ -469,17 +469,17 @@ describe('getPresetPhosphateFromSugar', () => {
     sugar.attachmentPointsToBonds.R1 = bond;
     neighbourPhosphate.attachmentPointsToBonds.R1 = bond;
 
-    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeNull();
+    expect(getPresetPhosphateFromSugar(sugar, 'left')).toBeUndefined();
   });
 
-  it('returns null when the neighbour on that side is not a phosphate', () => {
+  it('returns undefined when the neighbour on that side is not a phosphate', () => {
     const sugar = makeSugar();
     const otherSugar = makeSugar();
     const bond = new PolymerBond(sugar, otherSugar);
     sugar.attachmentPointsToBonds.R2 = bond;
     otherSugar.attachmentPointsToBonds.R1 = bond;
 
-    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeNull();
+    expect(getPresetPhosphateFromSugar(sugar, 'right')).toBeUndefined();
   });
 });
 
@@ -531,9 +531,9 @@ describe('getPresetSugarForMonomer', () => {
     ).toBe(sugar);
   });
 
-  it('returns null for a phosphate with no adjacent sugar', () => {
+  it('returns undefined for a phosphate with no adjacent sugar', () => {
     const phosphate = makePhosphate();
-    expect(getPresetSugarForMonomer(phosphate, preset())).toBeNull();
+    expect(getPresetSugarForMonomer(phosphate, preset())).toBeUndefined();
   });
 });
 
@@ -611,15 +611,15 @@ describe('getMatchingPresetComponents', () => {
     expect(components).toHaveLength(2);
   });
 
-  it('returns null when the dragged preset has a base but the canvas has none', () => {
+  it('returns undefined when the dragged preset has a base but the canvas has none', () => {
     const sugar = makeSugar();
     const phosphate = makePhosphate();
     connectPhosphate(sugar, phosphate, 'right');
 
-    expect(getMatchingPresetComponents(sugar, libPreset())).toBeNull();
+    expect(getMatchingPresetComponents(sugar, libPreset())).toBeUndefined();
   });
 
-  it('returns null when the dragged preset has a phosphate but the canvas lacks one on that side', () => {
+  it('returns undefined when the dragged preset has a phosphate but the canvas lacks one on that side', () => {
     const sugar = makeSugar();
     const base = makeRNABase();
     const phosphate = makePhosphate();
@@ -632,7 +632,7 @@ describe('getMatchingPresetComponents', () => {
         sugar,
         libPreset({ phosphatePosition: 'right' }),
       ),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 
   it('excludes a canvas base that the dragged sugar+phosphate preset does not provide', () => {

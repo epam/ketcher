@@ -158,11 +158,14 @@ describe('Drawing Entities Manager', () => {
   it('should create correct polymer bond when second monomer has only R2 point', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const firstPeptide = new Peptide(peptideMonomerItem);
-    firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-    firstPeptide.potentialAttachmentPointsToBonds = { R1: null, R2: null };
+    firstPeptide.attachmentPointsToBonds = { R1: undefined, R2: undefined };
+    firstPeptide.potentialAttachmentPointsToBonds = {
+      R1: undefined,
+      R2: undefined,
+    };
     const secondPeptide = new Peptide(peptideMonomerItem);
-    secondPeptide.attachmentPointsToBonds = { R2: null };
-    secondPeptide.potentialAttachmentPointsToBonds = { R2: null };
+    secondPeptide.attachmentPointsToBonds = { R2: undefined };
+    secondPeptide.potentialAttachmentPointsToBonds = { R2: undefined };
 
     const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       firstPeptide,
@@ -183,11 +186,11 @@ describe('Drawing Entities Manager', () => {
       peptide: {
         potentialAttachmentPointsToBonds: {
           R1: polymerBond,
-          R2: null,
+          R2: undefined,
         },
         attachmentPointsToBonds: {
-          R1: null,
-          R2: null,
+          R1: undefined,
+          R2: undefined,
         },
       },
     });

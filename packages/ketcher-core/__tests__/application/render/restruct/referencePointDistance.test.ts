@@ -21,7 +21,7 @@ describe('reference point distances', () => {
 
       expect(object.getReferencePointDistance(new Vec2(2, 0))).toEqual({
         minDist: Infinity,
-        refPoint: null,
+        refPoint: undefined,
       });
     },
   );

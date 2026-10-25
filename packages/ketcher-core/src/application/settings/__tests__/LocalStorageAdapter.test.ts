@@ -81,21 +81,21 @@ describe('LocalStorageAdapter', () => {
       expect(loaded).toEqual(testSettings);
     });
 
-    it('should return null when key does not exist', async () => {
+    it('should return undefined when key does not exist', async () => {
       const loaded = await adapter.load('non-existent-key');
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
-    it('should return null on invalid JSON', async () => {
+    it('should return undefined on invalid JSON', async () => {
       mockLocalStorage['test-key'] = 'invalid json';
 
       const loaded = await adapter.load('test-key');
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
 
-    it('should return null when localStorage is not available', async () => {
+    it('should return undefined when localStorage is not available', async () => {
       Object.defineProperty(global, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
@@ -106,7 +106,7 @@ describe('LocalStorageAdapter', () => {
       const newAdapter = new LocalStorageAdapter();
       const loaded = await newAdapter.load('test-key');
 
-      expect(loaded).toBeNull();
+      expect(loaded).toBeUndefined();
     });
   });
 

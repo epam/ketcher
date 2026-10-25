@@ -58,7 +58,7 @@ describe('attribute operations isDummy()', () => {
     const operation = new BondAttr(1, 'type', 1, false);
 
     expect(() => operation.execute(restruct)).not.toThrow();
-    expect(operation.data2).toBeNull();
+    expect(operation.data2).toBeUndefined();
   });
 
   it('RGroupAttr does not throw and is not dummy when the r-group is gone', () => {

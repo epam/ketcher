@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable no-undef */
 
- 
 import paperjs from 'paper';
 import type { Element as RaphaelElement } from 'raphael';
 
@@ -74,17 +74,17 @@ export function uniteHoverPaths(
   paperjs.setup(document.createElement('canvas'));
   let combinedPath: paper.PathItem | undefined;
 
-  elements.forEach((element) => {
+  for (const element of elements) {
     const paperPath = paperPathFromSVGElement(element);
     if (!paperPath) {
-      return;
+      continue;
     }
 
     if (!paperPath.closed) {
       paperPath.closePath();
     }
     combinedPath = combinedPath ? combinedPath.unite(paperPath) : paperPath;
-  });
+  }
 
   return combinedPath?.pathData;
 }

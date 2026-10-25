@@ -274,8 +274,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
-    let previousConnection: Connection;
-    let previousCell: Cell;
+    let previousConnection: Connection | undefined;
+    let previousCell: Cell | undefined;
 
     const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
 
@@ -343,7 +343,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     let maxHorizontalOffset = 0;
 
-    cells.forEach((cell: Cell, cellIndex: number): void => {
+    for (const [cellIndex, cell] of cells.entries()) {
       const cellConnection = cell.connections.find(
         (connection: Connection): boolean => {
           return connection.polymerBond === this.polymerBond;
@@ -368,7 +368,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       if (isLastCell) {
         if (isStraightVerticalConnection) {
-          return;
+          continue;
         }
 
         const directionObject =
@@ -409,17 +409,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         pathDAttributeValue +=
           SideChainConnectionBondRendererUtility.generateBend(cos, 0, cos, 1) +
           ' ';
-        return;
+        continue;
       }
 
       // Empty cells.
       if (cell.node === null) {
-        return;
+        continue;
       }
 
       // Other cells.
       if (
         previousConnection &&
+        previousCell &&
         previousConnection.direction !== cellConnection.direction
       ) {
         // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
@@ -444,7 +445,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       }
       previousCell = cell;
       previousConnection = cellConnection;
-    });
+    }
 
     pathDAttributeValue +=
       SVGPathDAttributeUtility.generateAbsoluteLine(
@@ -1026,12 +1027,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
     );
 
-    for (const bondBodyElement of Array.from(allSideConnectionBondsBodyElements)) {
-        const renderer =
-          bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
-        bondBodyElement.setAttribute('stroke', getColor(renderer));
-      }
-    
+    for (const bondBodyElement of Array.from(
+      allSideConnectionBondsBodyElements,
+    )) {
+      const renderer = bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+      bondBodyElement.setAttribute('stroke', getColor(renderer));
+    }
   }
 
   public appendHover(): void {

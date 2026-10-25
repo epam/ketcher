@@ -56,7 +56,7 @@ export class GroupCentersnapView {
         .attr('stroke-width', 0.5)
         .attr('stroke-dasharray', 4);
 
-      monomerPair.forEach((monomer) => {
+      for (const monomer of monomerPair) {
         const monomerPositionInPixels = Coordinates.modelToCanvas(
           monomer.position,
         );
@@ -81,7 +81,7 @@ export class GroupCentersnapView {
           .attr('stroke-width', 0.5)
           .attr('marker-end', 'url(#arrow-marker-arc)')
           .style('opacity', 0.75);
-      });
+      }
     } else {
       const bottomMonomerPosition =
         monomerPair[0].position.y > monomerPair[1].position.y
@@ -101,7 +101,7 @@ export class GroupCentersnapView {
         .attr('stroke-width', 0.5)
         .attr('stroke-dasharray', 4);
 
-      monomerPair.forEach((monomer) => {
+      for (const monomer of monomerPair) {
         const monomerPositionInPixels = Coordinates.modelToCanvas(
           monomer.position,
         );
@@ -126,7 +126,7 @@ export class GroupCentersnapView {
           .attr('stroke-width', 0.5)
           .attr('marker-end', 'url(#arrow-marker-arc)')
           .style('opacity', 0.75);
-      });
+      }
     }
   }
 }

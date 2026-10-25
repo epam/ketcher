@@ -17,7 +17,7 @@
 // Single entry point to Raphaël library
 
 import { Vec2 } from 'domain/entities/vec2';
-import type { RaphaelStatic } from 'raphael';
+import type { Element as RaphaelElement, RaphaelStatic } from 'raphael';
 
 type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 
@@ -51,9 +51,9 @@ if (Raphael) {
   };
 
   Raphael.st.translateAbs = function (x: number, y: number): void {
-    this.forEach((el) => {
+    for (const el of Array.from(this as unknown as ArrayLike<RaphaelElement>)) {
       el.translateAbs(x, y);
-    });
+    }
   };
 }
 

@@ -22,7 +22,6 @@ import { Struct } from 'domain/entities/struct';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
-import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Vec2 } from 'domain/entities/vec2';
 import { assert } from 'utilities';
 import { LayerMap } from './generalEnumTypes';
@@ -134,70 +133,68 @@ class ReStruct {
     this.clearMarks();
     // TODO: eachItem ?
 
-    molecule.atoms.forEach((atom, aid) => {
+    for (const [aid, atom] of molecule.atoms) {
       this.atoms.set(aid, new ReAtom(atom));
-    });
+    }
 
-    molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+    for (const [id, attachmentGroup] of molecule.attachmentGroups) {
       this.attachmentGroups.set(id, new ReAttachmentGroup(attachmentGroup));
-    });
+    }
 
-    molecule.bonds.forEach((bond, bid) => {
+    for (const [bid, bond] of molecule.bonds) {
       this.bonds.set(bid, new ReBond(bond));
-    });
+    }
 
-    molecule.loops.forEach((loop, lid) => {
+    for (const [lid, loop] of molecule.loops) {
       this.reloops.set(lid, new ReLoop(loop));
-    });
+    }
 
-    molecule.rxnPluses.forEach((item, id) => {
+    for (const [id, item] of molecule.rxnPluses) {
       this.rxnPluses.set(id, new ReRxnPlus(item));
-    });
+    }
 
-    molecule.rxnArrows.forEach((item, id) => {
+    for (const [id, item] of molecule.rxnArrows) {
       this.rxnArrows.set(id, new ReRxnArrow(item));
-    });
+    }
 
-    molecule.simpleObjects.forEach((item, id) => {
+    for (const [id, item] of molecule.simpleObjects) {
       this.simpleObjects.set(id, new ReSimpleObject(item));
-    });
+    }
 
-    molecule.texts.forEach((item, id) => {
+    for (const [id, item] of molecule.texts) {
       this.texts.set(id, new ReText(item));
-    });
+    }
 
-    molecule.frags.forEach((item, id) => {
+    for (const [id, item] of molecule.frags) {
       this.frags.set(id, new ReFrag(item));
       if (item) this.enhancedFlags.set(id, new ReEnhancedFlag());
-    });
+    }
 
-    molecule.rgroups.forEach((item, id) => {
+    for (const [id, item] of molecule.rgroups) {
       this.rgroups.set(id, new ReRGroup(item));
-    });
+    }
 
-    molecule.rgroupAttachmentPoints.forEach(
-      (item: RGroupAttachmentPoint, id: number) => {
-        const reAtom = this.atoms.get(item.atomId);
-        assert(reAtom != null);
-        this.rgroupAttachmentPoints.set(
-          id,
-          new ReRGroupAttachmentPoint(item, reAtom),
-        );
-      },
-    );
+    for (const [id, item] of molecule.rgroupAttachmentPoints) {
+      const reAtom = this.atoms.get(item.atomId);
+      assert(reAtom != null);
+      this.rgroupAttachmentPoints.set(
+        id,
+        new ReRGroupAttachmentPoint(item, reAtom),
+      );
+    }
 
-    molecule.sgroups.forEach((item, id) => {
+    for (const [id, item] of molecule.sgroups) {
       this.sgroups.set(id, new ReSGroup(item));
       if (item.type === 'DAT' && !item.data.attached) {
         this.sgroupData.set(id, new ReDataSGroupData(item));
       }
-    });
-    molecule.images.forEach((item, id) => {
+    }
+    for (const [id, item] of molecule.images) {
       this.images.set(id, new ReImage(item));
-    });
-    molecule.multitailArrows.forEach((item, id) => {
+    }
+    for (const [id, item] of molecule.multitailArrows) {
       this.multitailArrows.set(id, new ReMultitailArrow(item));
-    });
+    }
   }
 
   get visibleRGroupAttachmentPoints() {
@@ -255,10 +252,10 @@ class ReStruct {
       const attachmentGroup = this.attachmentGroups.get(aid);
       if (attachmentGroup) {
         list.push(...attachmentGroup.a.atomIds);
-        attachmentGroup.a.neighbors.forEach((neighbor) => {
+        for (const neighbor of attachmentGroup.a.neighbors) {
           const halfBond = this.molecule.halfBonds.get(neighbor);
           if (halfBond) list.push(halfBond.end);
-        });
+        }
         continue;
       }
 
@@ -271,12 +268,12 @@ class ReStruct {
         if (group.a.atomIds.includes(aid)) list.push(groupId);
       });
 
-      atom.a.neighbors.forEach((neighbor) => {
+      for (const neighbor of atom.a.neighbors) {
         const halfBond = this.molecule.halfBonds.get(neighbor);
-        if (!halfBond) return;
+        if (!halfBond) continue;
         const neiId = halfBond.end;
         if (!visitedEndpoints.has(neiId)) list.push(neiId);
-      });
+      }
     }
 
     return ids;
@@ -355,7 +352,7 @@ class ReStruct {
     if (!path || !this.layers[group].node.parentNode) return;
     const paths = Array.isArray(path) ? path : [path];
 
-    paths.forEach((path) => {
+    for (const path of paths) {
       const offset = this.render.options.offset;
       let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
       const ext = pos && bb ? bb.translate(pos.negated()) : null;
@@ -365,7 +362,7 @@ class ReStruct {
       }
       visel.add(path, bb, ext);
       path.insertBefore(this.layers[LayerMap[group]]);
-    });
+    }
   }
 
   moveReObjectOnTopOfLayer(visel: Visel, layerKey: LayerMap) {
@@ -375,9 +372,9 @@ class ReStruct {
       return;
     }
 
-    visel.paths.forEach((path) => {
+    for (const path of visel.paths) {
       path.insertBefore(layer);
-    });
+    }
   }
 
   movePathOnTopOfLayer(path, layerKey: LayerMap) {
@@ -431,15 +428,17 @@ class ReStruct {
   }
 
   clearVisel(visel: Visel): void {
-    visel.paths.forEach((path) => {
+    for (const path of visel.paths) {
       path.remove();
-    });
+    }
     visel.clear();
   }
 
   eachItem(func) {
     for (const map of Object.keys(ReStruct.maps)) {
-      this[map].forEach(func);
+      for (const [id, item] of this[map]) {
+        func(item, id, this[map]);
+      }
     }
   }
 
@@ -498,7 +497,7 @@ class ReStruct {
   private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
     let boundingBox: Box2Abs | null = null;
     for (const elementKey of Object.keys(ReStruct.maps)) {
-      selection[elementKey]?.forEach((elementId) => {
+      for (const elementId of selection[elementKey] ?? []) {
         const element = this[elementKey].get(elementId);
         if (element) {
           const box = element.getVBoxObj(this.render);
@@ -508,7 +507,7 @@ class ReStruct {
               : box.clone();
           }
         }
-      });
+      }
     }
     return boundingBox;
   }
@@ -575,12 +574,12 @@ class ReStruct {
     for (const map of Object.keys(ReStruct.maps)) {
       const mapChanged = this[map + 'Changed'];
       if (force) {
-        this[map].forEach((_item, id) => mapChanged.set(id, 1));
+        for (const id of this[map].keys()) mapChanged.set(id, 1);
       } else {
         // check if some of the items marked are already gone
-        mapChanged.forEach((_value, id) => {
+        for (const id of mapChanged.keys()) {
           if (!this[map].has(id)) mapChanged.delete(id);
-        });
+        }
       }
     }
 
@@ -591,10 +590,10 @@ class ReStruct {
       ) {
         attachmentGroup.recalculatePosition(this.molecule.atoms);
         this.attachmentGroupsChanged.set(id, 1);
-        attachmentGroup.neighbors.forEach((halfBondId) => {
+        for (const halfBondId of attachmentGroup.neighbors) {
           const halfBond = this.molecule.halfBonds.get(halfBondId);
           if (halfBond) this.markBond(halfBond.bid, 1);
-        });
+        }
       }
     });
 
@@ -617,12 +616,12 @@ class ReStruct {
     for (const map of Object.keys(ReStruct.maps)) {
       const mapChanged = this[map + 'Changed'];
 
-      mapChanged.forEach((_value, id) => {
+      for (const id of mapChanged.keys()) {
         if (this[map].has(id) && this[map].get(id).visel) {
           this.clearVisel(this[map].get(id).visel);
         }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
-      });
+      }
     }
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
@@ -690,7 +689,7 @@ class ReStruct {
    * inside). Rebuilt every render since it spans many atoms/bonds.
    */
   showHighlightOutlines(): void {
-    this.highlightOutlinePaths.forEach((entry) => entry.remove());
+    for (const entry of this.highlightOutlinePaths) entry.remove();
     this.highlightOutlinePaths = [];
 
     const namespace = 'http://www.w3.org/2000/svg';
@@ -709,12 +708,12 @@ class ReStruct {
           plates.push(contour);
         }
       };
-      highlight.atoms.forEach((atomId) => {
+      for (const atomId of highlight.atoms) {
         add(this.atoms.get(atomId)?.getSelectionContour(this.render));
-      });
-      highlight.bonds.forEach((bondId) => {
+      }
+      for (const bondId of highlight.bonds) {
         add(this.bonds.get(bondId)?.getSelectionContour(this.render, true));
-      });
+      }
 
       if (plates.length === 0) {
         return;
@@ -808,14 +807,14 @@ class ReStruct {
       this.clearVisel(reloop.visel);
     });
     const ret = this.molecule.findLoops();
-    ret.bondsToMark.forEach((bid) => {
+    for (const bid of ret.bondsToMark) {
       this.markBond(bid, 1);
-    });
-    ret.newLoops.forEach((loopId) => {
+    }
+    for (const loopId of ret.newLoops) {
       const loop = this.molecule.loops.get(loopId);
-      if (loop === undefined) return;
+      if (loop === undefined) continue;
       this.reloops.set(loopId, new ReLoop(loop));
-    });
+    }
   }
 
   showLoops(): void {
@@ -858,14 +857,11 @@ class ReStruct {
   }
 
   showSGroups(): void {
-    this.molecule.sGroupForest
-      .getSGroupsBFS()
-      .reverse()
-      .forEach((id) => {
-        const resgroup = this.sgroups.get(id);
-        if (!resgroup) return;
-        resgroup.show(this);
-      });
+    for (const id of this.molecule.sGroupForest.getSGroupsBFS().reverse()) {
+      const resgroup = this.sgroups.get(id);
+      if (!resgroup) continue;
+      resgroup.show(this);
+    }
   }
 
   showFragments(): void {
@@ -892,13 +888,13 @@ class ReStruct {
     }
     this.clearVisel(reloop.visel);
 
-    reloop.loop.hbs.forEach((hbid) => {
+    for (const hbid of reloop.loop.hbs) {
       const hb = this.molecule.halfBonds.get(hbid);
-      if (!hb) return;
+      if (!hb) continue;
       hb.loop = -1;
       this.markBond(hb.bid, 1);
       this.markAtom(hb.begin, 1);
-    });
+    }
 
     this.reloops.delete(loopId);
     this.molecule.loops.delete(loopId);
@@ -1026,7 +1022,7 @@ class ReStruct {
     for (const map of Object.keys(ReStruct.maps)) {
       const [mapValues] = this[map].values(); // hack to include ReSGroup, figure out better solution
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
-        this[map].forEach((item, id) => {
+        for (const [id, item] of this[map]) {
           if (item instanceof ReAtom) {
             let sgroup;
             for (const sgId of item.a.sgs.values()) {
@@ -1062,7 +1058,7 @@ class ReStruct {
               : (selection?.[map]?.includes(id) ?? false);
 
           this.showItemSelection(item, selected);
-        });
+        }
       }
     }
   }

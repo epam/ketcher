@@ -901,7 +901,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           const labelGroup = render.paper.set();
           labelGroup.push(background, rLabelElement);
 
-          labelGroup.forEach((element: Element) => {
+          for (const element of Array.from(
+            labelGroup as unknown as ArrayLike<Element>,
+          )) {
             element.node?.setAttribute(
               'data-attachment-point-alias',
               attachmentPointName,
@@ -910,7 +912,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               'data-testid',
               'monomer-attachment-point',
             );
-          });
+          }
 
           // Add hover handlers
           labelGroup.hover(
@@ -1030,25 +1032,25 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             hitArea.hover(
               () => {
                 hitArea.attr({ opacity: 0.15 });
-                connectionApNames.forEach((apName) => {
+                for (const apName of connectionApNames) {
                   window.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'highlightAttachmentPointControls',
                       { detail: apName },
                     ),
                   );
-                });
+                }
               },
               () => {
                 hitArea.attr({ opacity: 0 });
-                connectionApNames.forEach((apName) => {
+                for (const apName of connectionApNames) {
                   window.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apName },
                     ),
                   );
-                });
+                }
               },
             );
 
@@ -1398,12 +1400,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     largestAngle: number;
   } {
     let angles: Array<number> = [];
-    this.a.neighbors.forEach((halfBondId) => {
+    for (const halfBondId of this.a.neighbors) {
       const halfBond = struct.halfBonds.get(halfBondId);
       if (halfBond) {
         angles.push(halfBond.ang);
       }
-    });
+    }
     angles = angles.sort((a, b) => a - b);
     const largeAngles: Array<number> = [];
     for (const [index, angle] of angles.entries()) {

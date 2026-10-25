@@ -406,19 +406,19 @@ export class ReMultitailArrow extends ReObject {
   }
 
   showPoints() {
-    this.testSelectionPoints.forEach((point) => {
+    for (const point of this.testSelectionPoints) {
       point.attr({
         opacity: ReMultitailArrow.VISIBLE_SELECTION_POINT_OPACITY,
       });
-    });
+    }
   }
 
   hidePoints() {
-    this.testSelectionPoints.forEach((point) => {
+    for (const point of this.testSelectionPoints) {
       point.attr({
         opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
       });
-    });
+    }
   }
 
   private getClosestArrowPartPosition(

@@ -111,7 +111,7 @@ export class ViewModel {
       atomHalfEdges.sort(
         (halfEdge1, halfEdge2) => halfEdge1.angle - halfEdge2.angle,
       );
-      atomHalfEdges.forEach((halfEdge, halfEdgeIndex) => {
+      for (const [halfEdgeIndex, halfEdge] of atomHalfEdges.entries()) {
         const nextHalfEdge =
           atomHalfEdges[(halfEdgeIndex + 1) % atomHalfEdges.length];
 
@@ -120,12 +120,12 @@ export class ViewModel {
             `Failed to sort HalfEdges for atom ${atom.id}. HalfEdge ${halfEdge.id} has no opposite halfEdge`,
           );
 
-          return;
+          continue;
         }
 
         halfEdge.oppositeHalfEdge.nextHalfEdge = nextHalfEdge;
         this.setHalfEdgesAngle(halfEdge, nextHalfEdge);
-      });
+      }
     });
   }
 
@@ -172,12 +172,12 @@ export class ViewModel {
 
   private loopIsInner(halfEdgesInLoop: HalfEdge[]): boolean {
     let totalAngle = 2 * Math.PI;
-    halfEdgesInLoop.forEach((halfEdge, i, loopArr) => {
-      const nextHalfEdge = loopArr[(i + 1) % loopArr.length];
+    for (const [i, halfEdge] of halfEdgesInLoop.entries()) {
+      const nextHalfEdge = halfEdgesInLoop[(i + 1) % halfEdgesInLoop.length];
       const angle = this.getAngleBetweenHalfEdges(halfEdge, nextHalfEdge);
       totalAngle +=
         nextHalfEdge.oppositeHalfEdge === halfEdge ? Math.PI : angle; // back and forth along the same edge
-    });
+    }
     return Math.abs(totalAngle) < Math.PI;
   }
 
@@ -252,7 +252,7 @@ export class ViewModel {
 
         // loop found
         const subloops = this.partitionLoop(halfEdgesInPotentialLoop);
-        subloops.forEach((halfEdgesInSubLoop) => {
+        for (const halfEdgesInSubLoop of subloops) {
           let loopId: number;
           if (
             this.loopIsInner(halfEdgesInSubLoop) &&
@@ -278,13 +278,13 @@ export class ViewModel {
             loopId = -2;
           }
 
-          halfEdgesInSubLoop.forEach((halfEdge) => {
+          for (const halfEdge of halfEdgesInSubLoop) {
             halfEdge.loopId = loopId;
             bondsToMark.add(halfEdge.bond.id);
-          });
+          }
 
           if (loopId >= 0) newLoops.push(loopId);
-        });
+        }
         break;
       }
     });

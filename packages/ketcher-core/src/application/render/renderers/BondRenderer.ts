@@ -197,25 +197,26 @@ export class BondRenderer extends BaseRenderer {
     const atomPositionInPixels = atom.renderer.scaledPosition;
     let shiftValue = 0;
 
-    atomLabelBBoxes?.forEach((labelSymbolBBox) => {
-      const relativeLabelSymbolBox2Abs = new Box2Abs(
-        labelSymbolBBox.x,
-        labelSymbolBBox.y,
-        labelSymbolBBox.x + labelSymbolBBox.width,
-        labelSymbolBBox.y + labelSymbolBBox.height,
-      );
-      const absoluteLabelSymbolBox2Abs =
-        relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
+    if (atomLabelBBoxes)
+      for (const labelSymbolBBox of atomLabelBBoxes) {
+        const relativeLabelSymbolBox2Abs = new Box2Abs(
+          labelSymbolBBox.x,
+          labelSymbolBBox.y,
+          labelSymbolBBox.x + labelSymbolBBox.width,
+          labelSymbolBBox.y + labelSymbolBBox.height,
+        );
+        const absoluteLabelSymbolBox2Abs =
+          relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
 
-      shiftValue = Math.max(
-        shiftValue,
-        util.shiftRayBox(
-          atomPositionInPixels,
-          halfEdge.direction,
-          absoluteLabelSymbolBox2Abs,
-        ),
-      );
-    });
+        shiftValue = Math.max(
+          shiftValue,
+          util.shiftRayBox(
+            atomPositionInPixels,
+            halfEdge.direction,
+            absoluteLabelSymbolBox2Abs,
+          ),
+        );
+      }
 
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }

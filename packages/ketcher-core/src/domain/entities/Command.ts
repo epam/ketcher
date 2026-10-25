@@ -35,16 +35,15 @@ export class Command {
       operations.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
     }
 
-    operations.forEach((operation) => operation.invert(renderersManagers));
+    for (const operation of operations) operation.invert(renderersManagers);
     renderersManagers.reinitializeViewModel();
     this.invertAfterAllOperations(renderersManagers, operations);
     renderersManagers.runPostRenderMethods();
   }
 
   public execute(renderersManagers: RenderersManager) {
-    this.operations.forEach((operation) =>
-      operation.execute(renderersManagers),
-    );
+    for (const operation of this.operations)
+      operation.execute(renderersManagers);
     renderersManagers.reinitializeViewModel();
     this.executeAfterAllOperations(renderersManagers);
     renderersManagers.runPostRenderMethods();
@@ -54,22 +53,22 @@ export class Command {
     renderersManagers: RenderersManager,
     operations = this.operations,
   ) {
-    operations.forEach((operation) => {
+    for (const operation of operations) {
       if (operation.executeAfterAllOperations) {
         operation.executeAfterAllOperations(renderersManagers);
       }
-    });
+    }
   }
 
   public invertAfterAllOperations(
     renderersManagers: RenderersManager,
     operations = this.operations,
   ) {
-    operations.forEach((operation) => {
+    for (const operation of operations) {
       if (operation.invertAfterAllOperations) {
         operation.invertAfterAllOperations(renderersManagers);
       }
-    });
+    }
   }
 
   public clear() {

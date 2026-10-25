@@ -224,7 +224,7 @@ function fromStructureFlip(
   const struct = reStruct.molecule;
   const action = new Action();
 
-  selection?.atoms?.forEach((atomId) => {
+  for (const atomId of selection?.atoms ?? []) {
     const atom = struct.atoms.get(atomId);
     if (!atom) {
       return;
@@ -232,7 +232,7 @@ function fromStructureFlip(
 
     const difference = flipPointByCenter(atom.pp, center, flipDirection);
     action.addOp(new AtomMove(atomId, difference));
-  });
+  }
 
   const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
@@ -269,12 +269,12 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.atoms) {
-    selection.atoms.forEach((aid) => {
+    for (const aid of selection.atoms) {
       const atom = struct.atoms.get(aid);
-      if (!atom) return;
+      if (!atom) continue;
 
       action.addOp(new AtomMove(aid, rotateDelta(atom.pp, center, angle)));
-    });
+    }
 
     if (!selection.sgroupData) {
       const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
@@ -292,47 +292,47 @@ export function fromRotate(restruct, selection, center, angle: number) {
   }
 
   if (selection.rxnArrows) {
-    selection.rxnArrows.forEach((arrowId) => {
+    for (const arrowId of selection.rxnArrows) {
       action.addOp(new RxnArrowRotate(arrowId, angle, center));
-    });
+    }
   }
 
   if (selection.rxnPluses) {
-    selection.rxnPluses.forEach((pid) => {
+    for (const pid of selection.rxnPluses) {
       const plus = struct.rxnPluses.get(pid);
-      if (!plus) return;
+      if (!plus) continue;
 
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
-    });
+    }
   }
 
   if (selection.texts) {
-    selection.texts.forEach((textId) => {
+    for (const textId of selection.texts) {
       const text = struct.texts.get(textId);
-      if (!text) return;
+      if (!text) continue;
 
       action.addOp(
         new TextMove(textId, rotateDelta(text.position, center, angle)),
       );
-    });
+    }
   }
 
   if (selection.sgroupData) {
-    selection.sgroupData.forEach((did) => {
+    for (const did of selection.sgroupData) {
       const data = struct.sgroups.get(did);
-      if (!data?.pp) return;
+      if (!data?.pp) continue;
 
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),
       );
-    });
+    }
   }
 
   if (selection.enhancedFlags) {
-    selection.enhancedFlags.forEach((flagId) => {
+    for (const flagId of selection.enhancedFlags) {
       const frId = flagId;
       const frag = restruct.molecule.frags.get(frId);
-      if (!frag) return;
+      if (!frag) continue;
 
       action.addOp(
         new EnhancedFlagMove(
@@ -345,7 +345,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
           ),
         ),
       );
-    });
+    }
   }
 
   return action.perform(restruct);

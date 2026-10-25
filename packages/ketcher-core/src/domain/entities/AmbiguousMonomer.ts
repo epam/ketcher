@@ -117,7 +117,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get monomerCaps() {
     let monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
 
-    this.monomers.forEach((monomer) => {
+    for (const monomer of this.monomers) {
       if (monomer.monomerItem.props.MonomerCaps) {
         if (!monomerCaps) {
           monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
@@ -133,7 +133,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
           }
         }
       }
-    });
+    }
 
     return monomerCaps;
   }

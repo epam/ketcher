@@ -93,9 +93,9 @@ export class RenderersManager {
     drawingEntity.baseRenderer.moveSelection();
 
     if (drawingEntity instanceof Atom) {
-      drawingEntity.bonds.forEach((bond) => {
+      for (const bond of drawingEntity.bonds) {
         if (!(bond instanceof Bond)) {
-          return;
+          continue;
         }
 
         bond.renderer?.move();
@@ -103,7 +103,7 @@ export class RenderersManager {
         const connectedAtom =
           bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom;
         connectedAtom.renderer?.move();
-      });
+      }
     }
 
     drawingEntity.baseRenderer.drawSelection();
@@ -220,20 +220,20 @@ export class RenderersManager {
   private recalculatePeptideChainEnumeration(subChain: PeptideSubChain) {
     let currentEnumeration = 1;
 
-    subChain.nodes.forEach((node) => {
+    for (const node of subChain.nodes) {
       const monomerRenderer = node.monomer.renderer;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? currentEnumeration === subChain.length
         : currentEnumeration === 1;
 
       if (!monomerRenderer) {
-        return;
+        continue;
       }
 
       monomerRenderer.setEnumeration(currentEnumeration);
       monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
       currentEnumeration++;
-    });
+    }
   }
 
   private isRnaEnumerationNode(node: RnaSubChain['nodes'][number]) {
@@ -269,19 +269,19 @@ export class RenderersManager {
     const startMonomer = subChain.nodes[0]?.firstMonomerInNode;
 
     if (isChainCyclic && !isValidRnaEnumerationStartMonomer(startMonomer)) {
-      subChain.nodes.forEach((node) => {
-        node.monomers.forEach((monomer) => {
+      for (const node of subChain.nodes) {
+        for (const monomer of node.monomers) {
           monomer.renderer?.setEnumeration(null);
           monomer.renderer?.redrawEnumeration(false);
-        });
-      });
+        }
+      }
       return;
     }
 
     let currentEnumeration = 1;
     let currentSegmentLength = 0;
 
-    subChain.nodes.forEach((node, nodeIndex) => {
+    for (const [nodeIndex, node] of subChain.nodes.entries()) {
       if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
         currentSegmentLength = this.getRnaEnumerationSegmentLength(
           subChain,
@@ -307,23 +307,23 @@ export class RenderersManager {
         node instanceof MonomerSequenceNode ||
         node instanceof LinkerSequenceNode
       ) {
-        node.monomers.forEach((monomer) => {
+        for (const monomer of node.monomers) {
           monomer.renderer?.setEnumeration(null);
           monomer.renderer?.redrawEnumeration(false);
-        });
+        }
         currentEnumeration = 1;
         currentSegmentLength = 0;
       }
-    });
+    }
   }
 
   private resetSubChainEnumeration(subChain: BaseSubChain) {
-    subChain.nodes.forEach((node) => {
-      node.monomers.forEach((monomer) => {
+    for (const node of subChain.nodes) {
+      for (const monomer of node.monomers) {
         monomer.renderer?.setEnumeration(null);
         monomer.renderer?.redrawEnumeration(false);
-      });
-    });
+      }
+    }
   }
 
   private recalculateMonomersEnumeration() {
@@ -332,8 +332,8 @@ export class RenderersManager {
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
 
-    chainsCollection.chains.forEach((chain) => {
-      chain.subChains.forEach((subChain) => {
+    for (const chain of chainsCollection.chains) {
+      for (const subChain of chain.subChains) {
         if (subChain instanceof PeptideSubChain) {
           this.recalculatePeptideChainEnumeration(subChain);
         } else if (
@@ -344,8 +344,8 @@ export class RenderersManager {
         } else {
           this.resetSubChainEnumeration(subChain);
         }
-      });
-    });
+      }
+    }
 
     this.needRecalculateMonomersEnumeration = false;
   }
@@ -460,8 +460,8 @@ export class RenderersManager {
         ...firstAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
         ...secondAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
       ];
-      for (const monomerToAtomBond of monomerToAtomBonds) monomerToAtomBond.renderer?.move()
-      ;
+      for (const monomerToAtomBond of monomerToAtomBonds)
+        monomerToAtomBond.renderer?.move();
 
       if (
         firstAtom === bond.secondAtom ||
@@ -657,7 +657,7 @@ export class RenderersManager {
     let pathStr = '';
 
     // Calculate the polygon path similar to reloop.js
-    loop.halfEdges.forEach((halfEdge, k) => {
+    for (const [k, halfEdge] of loop.halfEdges.entries()) {
       const nextHalfEdge = loop.halfEdges[(k + 1) % loop.halfEdges.length];
 
       // Calculate the angle between consecutive half edges
@@ -684,7 +684,7 @@ export class RenderersManager {
       const qi = pi.addScaled(dir, -offset);
 
       pathStr += k === 0 ? `M ${qi.x} ${qi.y}` : ` L ${qi.x} ${qi.y}`;
-    });
+    }
 
     pathStr += ' Z';
     return pathStr;
@@ -696,18 +696,18 @@ export class RenderersManager {
     let center = new Vec2(0, 0);
 
     // Calculate the center as the average of all atom positions
-    loop.halfEdges.forEach((halfEdge) => {
+    for (const halfEdge of loop.halfEdges) {
       const atomPos = Scale.modelToCanvas(
         halfEdge.firstAtom.position,
         editorSettings,
       );
       center = center.add(atomPos);
-    });
+    }
     center = center.scaled(1 / loop.halfEdges.length);
 
     // Calculate the radius as the minimum distance from center to any bond
     let radius = -1;
-    loop.halfEdges.forEach((halfEdge) => {
+    for (const halfEdge of loop.halfEdges) {
       const apos = Scale.modelToCanvas(
         halfEdge.firstAtom.position,
         editorSettings,
@@ -719,7 +719,7 @@ export class RenderersManager {
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
       const dist = Vec2.dot(Vec2.diff(apos, center), n);
       radius = radius < 0 ? dist : Math.min(radius, dist);
-    });
+    }
     radius *= 0.7; // Scale down the radius
 
     return { center, radius };

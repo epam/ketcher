@@ -198,9 +198,11 @@ export function drawAttachmentGroupMarker(
     marker = drawDefaultMarker(render, center, backgroundColor);
   }
 
-  marker.forEach((element) => {
+  for (const element of Array.from(
+    marker as unknown as ArrayLike<RaphaelElement>,
+  )) {
     element.node?.setAttribute('data-attachment-group-marker-state', state);
-  });
+  }
 
   return marker;
 }
@@ -213,14 +215,14 @@ function drawGroupAtomsHover(
   const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
   const atomIds = new Set(host.a.atomIds);
 
-  host.a.atomIds.forEach((atomId) => {
+  for (const atomId of host.a.atomIds) {
     const atom = render.ctab.atoms.get(atomId);
     const atomPlate = atom?.makeHoverPlate(render, false);
 
     if (atomPlate) {
       hoversToCombine.push(atomPlate);
     }
-  });
+  }
 
   render.ctab.bonds.forEach((rebond) => {
     if (atomIds.has(rebond.b.begin) && atomIds.has(rebond.b.end)) {
@@ -269,8 +271,10 @@ export function drawAttachmentGroupHover(
     markerBackgroundColor,
   );
 
-  marker.forEach((element) => {
+  for (const element of Array.from(
+    marker as unknown as ArrayLike<RaphaelElement>,
+  )) {
     render.ctab.addReObjectPath(LayerMap.data, host.visel, element);
-  });
+  }
   return groupAtomsHover ?? marker;
 }

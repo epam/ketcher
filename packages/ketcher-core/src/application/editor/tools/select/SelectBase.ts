@@ -361,9 +361,8 @@ abstract class SelectBase implements BaseTool {
       const connectedMonomers = getAllConnectedMonomersRecursively(
         renderer.drawingEntity,
       );
-      connectedMonomers.forEach((connectedMonomer) =>
-        connectedMonomer.turnOnSelection(),
-      );
+      for (const connectedMonomer of connectedMonomers)
+        connectedMonomer.turnOnSelection();
       // A bond's `firstMonomer` is fixed at construction, so checking it here
       // (rather than just `.selected` on both ends) naturally visits each
       // intra-chain bond exactly once instead of twice.

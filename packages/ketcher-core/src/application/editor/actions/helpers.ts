@@ -24,7 +24,7 @@ export function getStereoAtomsMap(
   const stereoAtomsMap = new Map();
   const correctAtomIds: Array<number> = [];
 
-  bonds.forEach((bond: Bond | undefined) => {
+  for (const bond of bonds) {
     if (bond) {
       const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
         bond.begin,
@@ -57,7 +57,7 @@ export function getStereoAtomsMap(
         resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.end);
       }
     }
-  });
+  }
 
   // In case the stereo band is flipped, changed or removed, reset both endpoints.
   if (bond) {

@@ -21,11 +21,11 @@ class TimeReporter implements Reporter {
     this.results.sort((a, b) => a.duration - b.duration);
 
     console.log('\nTest Execution Times (sorted):');
-    this.results.forEach((result) => {
+    for (const result of this.results) {
       console.log(
         `${result.title}: ${result.duration / 1000}ms (${result.status})`,
       );
-    });
+    }
   }
 }
 

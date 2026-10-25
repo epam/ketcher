@@ -85,14 +85,14 @@ class BaseOperation<D = unknown> {
 
     const halfBonds = restruct.molecule.halfBonds;
 
-    atom.a.neighbors.forEach((halfBondId) => {
+    for (const halfBondId of atom.a.neighbors) {
       if (!halfBonds.has(halfBondId)) {
-        return;
+        continue;
       }
 
       const halfBond = halfBonds.get(halfBondId);
       if (!halfBond) {
-        return;
+        continue;
       }
 
       restruct.markBond(halfBond.bid, 1);
@@ -105,7 +105,7 @@ class BaseOperation<D = unknown> {
       if (level) {
         BaseOperation.invalidateLoop(restruct, halfBond.bid);
       }
-    });
+    }
 
     if (restruct.attachmentGroups.has(atomId)) return;
 

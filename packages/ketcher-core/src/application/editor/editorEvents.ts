@@ -281,7 +281,7 @@ export const hotkeysConfiguration = {
           editor.drawingEntitiesManager.allEntities.filter(
             ([, entity]) => entity.hovered,
           );
-        hoveredEntities.forEach(([, entity]) => entity.turnOnSelection());
+        for (const [, entity] of hoveredEntities) entity.turnOnSelection();
       }
 
       const hasEntitiesToDelete =

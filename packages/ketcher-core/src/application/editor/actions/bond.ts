@@ -233,10 +233,10 @@ export function fromBondsAttrs(
   const action = new Action();
   const bids = Array.isArray(ids) ? ids : [ids];
 
-  bids.forEach((bid) => {
+  for (const bid of bids) {
     const bond = struct.bonds.get(bid);
     if (!bond) {
-      return;
+      continue;
     }
 
     const resultingType =
@@ -249,7 +249,7 @@ export function fromBondsAttrs(
       typeof resultingType === 'number' &&
       !isBondTypeAllowedForEndpoints(struct, bond, resultingType)
     ) {
-      return;
+      continue;
     }
 
     let shouldRecalculateImplicitH = false;
@@ -280,7 +280,7 @@ export function fromBondsAttrs(
     if (shouldUpdateStereo) {
       action.mergeWith(fromBondStereoUpdate(restruct, bond));
     }
-  });
+  }
 
   return action;
 }
@@ -455,7 +455,7 @@ function addAttachmentPointToSuperatom(
   beginAtomId: number,
   endAtomId: number,
 ) {
-  for (const atomId of (sgroup.item?.atoms as number[])) {
+  for (const atomId of sgroup.item?.atoms as number[]) {
     if (beginAtomId === atomId || endAtomId === atomId) {
       if (
         !(sgroup.item as SGroup)
@@ -477,7 +477,7 @@ export function removeAttachmentPointFromSuperatom(
   action: Action,
   restruct: ReStruct,
 ) {
-  for (const atomId of (sgroup.item?.atoms as number[])) {
+  for (const atomId of sgroup.item?.atoms as number[]) {
     if (beginAtomId === atomId || endAtomId === atomId) {
       const anotherSideAtomId =
         beginAtomId === atomId ? endAtomId : beginAtomId;

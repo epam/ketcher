@@ -164,7 +164,9 @@ export class ReImage extends ReObject {
     const visibleHandleReferencePositions =
       this.getSelectionReferencePositions(renderOptions);
 
-    for (const key of (Object.keys(visibleHandleReferencePositions) as ImageReferenceName[])) {
+    for (const key of Object.keys(
+      visibleHandleReferencePositions,
+    ) as ImageReferenceName[]) {
       const visiblePosition = visibleHandleReferencePositions[key];
       const element = paper
         .circle(visiblePosition.x, visiblePosition.y, scale)

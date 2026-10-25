@@ -213,7 +213,7 @@ class ReText extends ReObject {
       (child) => child.type === 'paragraph',
     );
 
-    paragraphs.forEach((paragraph: SerializedParagraphNode) => {
+    for (const paragraph of paragraphs) {
       const textNodes = paragraph.children.filter(
         (child): child is SerializedTextNode => child.type === 'text',
       );
@@ -235,7 +235,7 @@ class ReText extends ReObject {
         path.translateAbs(0, shiftY);
         row.push(path);
       } else {
-        textNodes.forEach((textNode: SerializedTextNode) => {
+        for (const textNode of textNodes) {
           const styles = this.getStylesFromTextNode(textNode, options);
           const text =
             textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
@@ -255,14 +255,14 @@ class ReText extends ReObject {
           removeFirstLineVerticalShift(path.node);
           row.push(path);
           shiftX += path.getBBox().width;
-        });
+        }
       }
 
       this.paths.push(row);
 
       const { p0, p1 } = this.getRelBox([row]);
       shiftY += Math.abs(Vec2.diff(p0, p1).y);
-    });
+    }
 
     this.item.setPos(this.getReferencePoints());
 

@@ -481,7 +481,7 @@ export class CoreEditor {
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
 
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
-    storedMonomerLibraryUpdates.forEach((update) => {
+    for (const update of storedMonomerLibraryUpdates) {
       const parsedUpdate = JSON.parse(update);
 
       if (parsedUpdate.removedMonomerRef) {
@@ -513,7 +513,7 @@ export class CoreEditor {
           true,
         );
       }
-    });
+    }
     persistentMonomersLibrary = this._monomersLibrary;
     persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
@@ -635,14 +635,14 @@ export class CoreEditor {
     };
 
     // handle monomer templates
-    newMonomersLibraryChunk.forEach((newMonomer) => {
+    for (const newMonomer of newMonomersLibraryChunk) {
       // Validate modificationTypes format (empty/whitespace-only not allowed)
       if (!isValidModificationTypes(newMonomer.props?.modificationTypes)) {
         reportValidationError(
           newMonomer.props.MonomerName,
           `Monomer definition contains invalid modificationTypes value. ${MODIFICATION_TYPES_EMPTY_ERROR_MESSAGE}`,
         );
-        return;
+        continue;
       }
 
       const disallowedModificationTypes = getDisallowedModificationTypes(
@@ -655,7 +655,7 @@ export class CoreEditor {
             ', ',
           )}.`,
         );
-        return;
+        continue;
       }
 
       const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
@@ -672,7 +672,7 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `${HELM_ALIAS_FORMAT_ERROR_MESSAGE}`,
         );
-        return;
+        continue;
       }
       if (
         newMonomer.props?.aliasBILN &&
@@ -682,7 +682,7 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `${BILN_ALIAS_FORMAT_ERROR_MESSAGE}`,
         );
-        return;
+        continue;
       }
 
       if (
@@ -693,7 +693,7 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `${HELM_ALIAS_LENGTH_ERROR_MESSAGE}`,
         );
-        return;
+        continue;
       }
 
       const newMonomerModificationAliases =
@@ -759,7 +759,7 @@ export class CoreEditor {
             formatAliasDetails(newMonomer),
           ),
         );
-        return;
+        continue;
       }
 
       // Validate base IDT alias is present when idtAliases is defined
@@ -768,7 +768,7 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `Base IDT alias is required when idtAliases is defined.`,
         );
-        return;
+        continue;
       }
 
       // Validate that slashes in IDT aliases only appear at first/last position
@@ -790,7 +790,7 @@ export class CoreEditor {
             newMonomer.props.MonomerName,
             `${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`,
           );
-          return;
+          continue;
         }
 
         const tooLongEntries = getTooLongIdtAliasEntries(
@@ -805,7 +805,7 @@ export class CoreEditor {
             newMonomer.props.MonomerName,
             `${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}.`,
           );
-          return;
+          continue;
         }
       }
 
@@ -858,15 +858,16 @@ export class CoreEditor {
           };
         }
       }
-    });
+    }
 
     // handle monomer group templates
-    newMonomersLibraryChunkParsedJson.root.templates.forEach((templateRef) => {
+    for (const templateRef of newMonomersLibraryChunkParsedJson.root
+      .templates) {
       const templateDefinition =
         newMonomersLibraryChunkParsedJson[templateRef.$ref];
 
       if (templateDefinition.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE) {
-        return;
+        continue;
       }
 
       if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
@@ -874,7 +875,7 @@ export class CoreEditor {
           templateRef.$ref,
           `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
         );
-        return;
+        continue;
       }
 
       const monomerNameValidationResult = validateMonomerName(
@@ -964,7 +965,7 @@ export class CoreEditor {
       ) {
         monomersLibraryParsedJson.root.templates.push(templateRef);
       }
-    });
+    }
 
     this.events.updateMonomersLibrary.dispatch();
   }
@@ -1009,7 +1010,7 @@ export class CoreEditor {
     const parsedJson = this._monomersLibraryParsedJson;
     if (!parsedJson) return [];
     const presets: IKetMonomerGroupTemplate[] = [];
-    parsedJson.root.templates.forEach(({ $ref }) => {
+    for (const { $ref } of parsedJson.root.templates) {
       const template = parsedJson[$ref];
       if (
         template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
@@ -1017,7 +1018,7 @@ export class CoreEditor {
       ) {
         presets.push(template);
       }
-    });
+    }
     return presets;
   }
 
@@ -1427,12 +1428,12 @@ export class CoreEditor {
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
     this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
-    renderersEvents.forEach((eventName) => {
+    for (const eventName of renderersEvents) {
       this.events[eventName].add((event) => {
         this.useModeIfNeeded(eventName, event);
         this.useToolIfNeeded(eventName, event);
       });
-    });
+    }
     this.events.editSequence.add(
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
         this.onEditSequence(sequenceItemRenderer),
@@ -2251,7 +2252,7 @@ export class CoreEditor {
   public getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue() {
     const grouped: Record<string, Set<string>> = {};
 
-    this.monomersLibrary.forEach((monomerItem) => {
+    for (const monomerItem of this.monomersLibrary) {
       const naturalAnalogue = monomerItem.props?.MonomerNaturalAnalogCode;
 
       if (monomerItem.props?.modificationTypes) {
@@ -2259,11 +2260,11 @@ export class CoreEditor {
           grouped[naturalAnalogue] = new Set<string>();
         }
 
-        monomerItem.props.modificationTypes.forEach((modificationType) => {
+        for (const modificationType of monomerItem.props.modificationTypes) {
           grouped[naturalAnalogue].add(modificationType);
-        });
+        }
       }
-    });
+    }
 
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
@@ -2297,26 +2298,27 @@ export class CoreEditor {
     );
     const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
 
-    for (const [aminoAcidToModify, modifiedMonomerItem] of [...aminoAcidsToModify.entries()]) {
-        aminoAcidToModify.covalentBonds.forEach((polymerBond) => {
-          const attachmentPoint =
-            aminoAcidToModify.getAttachmentPointByBond(polymerBond);
+    for (const [aminoAcidToModify, modifiedMonomerItem] of [
+      ...aminoAcidsToModify.entries(),
+    ]) {
+      for (const polymerBond of aminoAcidToModify.covalentBonds) {
+        const attachmentPoint =
+          aminoAcidToModify.getAttachmentPointByBond(polymerBond);
 
-          if (!attachmentPoint) {
-            KetcherLogger.error('Attachment point not found for the bond');
+        if (!attachmentPoint) {
+          KetcherLogger.error('Attachment point not found for the bond');
 
-            return;
-          }
+          continue;
+        }
 
-          const modificationHasAttachmentPointForBond =
-            modifiedMonomerItem.props.MonomerCaps?.[attachmentPoint];
+        const modificationHasAttachmentPointForBond =
+          modifiedMonomerItem.props.MonomerCaps?.[attachmentPoint];
 
-          if (!modificationHasAttachmentPointForBond) {
-            bondsToDelete.add(polymerBond);
-          }
-        });
+        if (!modificationHasAttachmentPointForBond) {
+          bondsToDelete.add(polymerBond);
+        }
       }
-    
+    }
 
     const modificationFunction = () => {
       aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
@@ -2414,9 +2416,9 @@ export class CoreEditor {
 
   public unsubscribeEvents() {
     for (const eventName in this.events) {
-      this.events[eventName].handlers.forEach((handler) => {
+      for (const handler of this.events[eventName].handlers) {
         this.events[eventName].remove(handler);
-      });
+      }
       this.events[eventName].handlers = [];
     }
     document.removeEventListener('keydown', this.hotKeyEventHandler);
@@ -2433,9 +2435,9 @@ export class CoreEditor {
     window.removeEventListener('blur', this.handleWindowBlur);
     window.removeEventListener('resize', this.handleWindowResize);
 
-    this.cleanupsForDomEvents.forEach((cleanupFunction) => {
+    for (const cleanupFunction of this.cleanupsForDomEvents) {
       cleanupFunction();
-    });
+    }
   }
 
   get trackedDomEvents() {
@@ -2496,7 +2498,8 @@ export class CoreEditor {
   private domEventSetup() {
     this.canvas.addEventListener('mousedown', blurActiveElement);
 
-    this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
+    for (const { target, eventName, toolEventHandler } of this
+      .trackedDomEvents) {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
       const handler = subs.dispatch.bind(subs);
@@ -2520,7 +2523,7 @@ export class CoreEditor {
 
         return true;
       }, -1);
-    });
+    }
   }
 
   private updateLastCursorPosition(event) {

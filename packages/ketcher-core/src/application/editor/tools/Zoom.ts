@@ -177,9 +177,9 @@ export class ZoomTool implements BaseTool {
   }
 
   dispatchZoomEventHandlers(transform: ZoomTransform) {
-    this.zoomEventHandlers.forEach((zoomEventHandler) => {
+    for (const zoomEventHandler of this.zoomEventHandlers) {
       zoomEventHandler(transform);
-    });
+    }
   }
 
   drawScrollBars(forceHide = false) {

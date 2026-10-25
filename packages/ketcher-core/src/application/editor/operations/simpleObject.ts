@@ -153,7 +153,7 @@ export class SimpleObjectMove extends Base {
       id,
       `Simple object with id ${id} not found`,
     );
-    item.pos.forEach((p) => p.add_(d));
+    for (const p of item.pos) p.add_(d);
     getOrThrow(
       restruct.simpleObjects,
       id,

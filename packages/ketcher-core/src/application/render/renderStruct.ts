@@ -179,7 +179,7 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
       return;
     }
 
-    sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+    for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       const attachmentPointAtom = getOrThrow(
         struct.atoms,
         attachmentPoint.atomId,
@@ -191,6 +191,6 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
           attachmentPoint.atomId,
         );
       struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
-    });
+    }
   });
 }

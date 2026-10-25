@@ -79,7 +79,7 @@ export function fromAtomsAttrs(
   // Object.keys is typed as string[]; Atom.attrlist is keyed by atom attribute names
   const attrNames = Object.keys(Atom.attrlist) as AtomAttributeName[];
 
-  aids.forEach((atomId) => {
+  for (const atomId of aids) {
     const atom = restruct.molecule.atoms.get(atomId);
     assert(atom != null);
 
@@ -98,7 +98,7 @@ export function fromAtomsAttrs(
           resultingLabel,
         )
       ) {
-        return;
+        continue;
       }
     }
 
@@ -148,7 +148,7 @@ export function fromAtomsAttrs(
         ),
       );
     }
-  });
+  }
 
   return action;
 }
@@ -162,14 +162,14 @@ export function fromAtomsFragmentAttr(
 ) {
   const action = new Action();
 
-  aids.forEach((aid) => {
+  for (const aid of aids) {
     const atom = restruct.molecule.atoms.get(aid);
     assert(atom !== undefined, `Atom ${aid} was not found`);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
     const oldfrid = atom.fragment;
 
     if (sgroup instanceof MonomerMicromolecule) {
-      return;
+      continue;
     }
 
     action.addOp(new AtomAttr(aid, 'fragment', newfrid));
@@ -178,7 +178,7 @@ export function fromAtomsFragmentAttr(
       action.addOp(new FragmentAddStereoAtom(newfrid, aid));
       action.addOp(new FragmentDeleteStereoAtom(oldfrid, aid));
     }
-  });
+  }
 
   return action.perform(restruct);
 }
@@ -231,7 +231,7 @@ export function mergeSgroups(
 ) {
   const sgroups = atomGetSGroups(restruct, dstAtom);
 
-  sgroups.forEach((sid) => {
+  for (const sid of sgroups) {
     const sgroup = restruct.molecule.sgroups.get(sid);
     assert(sgroup !== undefined, `S-group ${sid} was not found`);
     // A missing context matches none of the not-expanded ones, so it must not
@@ -239,16 +239,15 @@ export function mergeSgroups(
     const context = sgroup.data.context ?? '';
     const notExpandedContexts = ['Atom', 'Bond', 'Group'];
     if (sgroup.type === 'DAT' && notExpandedContexts.includes(context)) {
-      return;
+      continue;
     }
     // `without` operates on arrays only. A Pile reaching here yields no atoms,
     // which is the existing behaviour of the fragment merge path.
     const srcAtomList = Array.isArray(srcAtoms) ? srcAtoms : [];
     const atomsToSgroup = without(sgroup.atoms, srcAtomList);
-    atomsToSgroup.forEach((aid) =>
-      action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct)),
-    );
-  });
+    for (const aid of atomsToSgroup)
+      action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct));
+  }
 }
 
 export function checkAtomValence(restruct: ReStruct, atomId: number) {

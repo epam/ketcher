@@ -21,18 +21,18 @@ export class ModifyAminoAcidsView {
     const { monomersToModify } = params;
 
     if (editor.mode.modeName === 'sequence-layout-mode') {
-      monomersToModify.forEach((monomer) => {
+      for (const monomer of monomersToModify) {
         const { renderer } = monomer;
 
         if (!(renderer instanceof BaseSequenceItemRenderer)) {
-          return;
+          continue;
         }
 
         const monomerRendererPositionInPixels =
           renderer.scaledMonomerPositionForSequence;
 
         if (!monomerRendererPositionInPixels) {
-          return;
+          continue;
         }
 
         const group = transientLayer
@@ -74,13 +74,13 @@ export class ModifyAminoAcidsView {
             .attr('stroke-linecap', 'round')
             .attr('stroke-width', '1.7px');
         }
-      });
+      }
     } else {
-      monomersToModify.forEach((monomer) => {
+      for (const monomer of monomersToModify) {
         const monomerCenterInPixels = monomer.renderer?.center;
 
         if (!monomerCenterInPixels) {
-          return;
+          continue;
         }
 
         transientLayer
@@ -91,7 +91,7 @@ export class ModifyAminoAcidsView {
           .attr('fill', 'none')
           .attr('stroke', '#0097A8')
           .attr('stroke-width', 1);
-      });
+      }
     }
   }
 }

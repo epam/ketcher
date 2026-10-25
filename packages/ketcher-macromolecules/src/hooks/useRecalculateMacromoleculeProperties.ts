@@ -59,7 +59,8 @@ export const useRecalculateMacromoleculeProperties = () => {
       const areAllMonomersConnectedByCovalentOrHydrogenBonds =
         !firstMonomer ||
         chainsCollection.chains.reduce(
-          (acc: number, chain: Chain) => acc + chain.monomers.length,
+          (accumulator: number, chain: Chain) =>
+            accumulator + chain.monomers.length,
           0,
         ) <=
           getAllConnectedMonomersRecursively(firstMonomer, allowedMonomers)
@@ -111,10 +112,10 @@ export const useRecalculateMacromoleculeProperties = () => {
 
         notifyRequestCompleted();
         dispatch(setMacromoleculesProperties(macromoleculeProperties));
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'Error during parsing macromolecule properties: ',
-          e,
+          error,
         );
 
         dispatch(setMacromoleculesProperties(undefined));

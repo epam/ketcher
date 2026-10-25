@@ -40,14 +40,14 @@ import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProps: any;
+  private readonly atomProperties: any;
   private dragCtx: any;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor, atomProps) {
+  constructor(editor, atomProperties) {
     this.editor = editor;
-    this.atomProps = atomProps;
+    this.atomProperties = atomProperties;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
 
     const editorSelection = editor.selection();
@@ -89,7 +89,9 @@ class AtomTool implements Tool {
               selectAtomId,
             ),
         );
-        action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
+        action.mergeWith(
+          fromAtomsAttrs(struct, updatedAtoms, atomProperties, true),
+        );
         editor.update(action);
         editor.selection(null);
         this.editor.hoverIcon.hide();
@@ -97,8 +99,9 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProps.label;
-      this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000';
+      this.editor.hoverIcon.label = atomProperties.label;
+      this.editor.hoverIcon.fill =
+        ElementColor[atomProperties.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
     }
   }
@@ -158,7 +161,7 @@ class AtomTool implements Tool {
   mousemove(event) {
     const {
       dragCtx,
-      atomProps,
+      atomProperties,
       editor,
       editor: {
         render: rnd,
@@ -238,7 +241,7 @@ class AtomTool implements Tool {
       rnd.ctab,
       this.#bondProps,
       atomId,
-      { ...atomProps },
+      { ...atomProperties },
       undefined,
       newAtomPos,
     )[0];
@@ -249,7 +252,7 @@ class AtomTool implements Tool {
   mouseup(event) {
     const {
       dragCtx,
-      atomProps,
+      atomProperties,
       editor,
       editor: {
         render: rnd,
@@ -276,7 +279,7 @@ class AtomTool implements Tool {
         fromAtomAddition(
           reStruct,
           CoordinateTransformation.pageToModel(event, rnd),
-          atomProps,
+          atomProperties,
         ),
       );
     } else if (dragCtx.item && ci) {
@@ -302,7 +305,12 @@ class AtomTool implements Tool {
               }),
             );
             action.mergeWith(
-              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true),
+              fromAtomsAttrs(
+                reStruct,
+                sGroupPositionAtomId,
+                atomProperties,
+                true,
+              ),
             );
           }
         } else if (ci.map === 'atoms') {
@@ -322,7 +330,9 @@ class AtomTool implements Tool {
               true,
             ) === null
           ) {
-            action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
+            action.mergeWith(
+              fromAtomsAttrs(reStruct, atomId, atomProperties, true),
+            );
           }
         }
       }
@@ -363,16 +373,16 @@ export function atomLongtapEvent(tool, render) {
       return;
     }
     editor.selection(null);
-    const res = editor.event.quickEdit.dispatch(atom);
-    Promise.resolve(res)
+    const result = editor.event.quickEdit.dispatch(atom);
+    Promise.resolve(result)
       .then((newatom) => {
         const action = atomid
           ? fromAtomsAttrs(render.ctab, atomid, newatom, null)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
+      .catch((error) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', error);
       }); // w/o changes
   }, 750);
 

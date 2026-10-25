@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-interface AttachmentPointProps {
+interface AttachmentPointProperties {
   connected: boolean;
   inBond: boolean;
 }
 
-export const AttachmentPoint = styled.div<AttachmentPointProps>(
+export const AttachmentPoint = styled.div<AttachmentPointProperties>(
   ({ connected, inBond, theme }) => ({
     display: 'flex',
     flexDirection: 'column',
@@ -15,11 +15,11 @@ export const AttachmentPoint = styled.div<AttachmentPointProps>(
   }),
 );
 
-interface AttachmentPointNameProps {
+interface AttachmentPointNameProperties {
   connected?: boolean;
 }
 
-export const AttachmentPointName = styled.p<AttachmentPointNameProps>(
+export const AttachmentPointName = styled.p<AttachmentPointNameProperties>(
   ({ theme }) => ({
     margin: 0,
     fontSize: theme.ketcher.font.size.small,
@@ -27,11 +27,11 @@ export const AttachmentPointName = styled.p<AttachmentPointNameProps>(
   }),
 );
 
-interface LeavingGroupProps {
+interface LeavingGroupProperties {
   inBond: boolean;
 }
 
-export const LeavingGroup = styled.p<LeavingGroupProps>(
+export const LeavingGroup = styled.p<LeavingGroupProperties>(
   ({ inBond, theme }) => ({
     margin: 0,
     padding: '4px',

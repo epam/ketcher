@@ -14,7 +14,7 @@ import { scrollbarThin } from 'theming/mixins';
 import { EmptyFunction } from 'helpers/emptyFunction';
 import styles from './Modal.module.less';
 
-interface ModalProps {
+interface ModalProperties {
   children: JSX.Element | Array<JSX.Element>;
   title: React.ReactNode;
   isOpen: boolean;
@@ -67,11 +67,11 @@ const Content = styled(DialogContent)`
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-interface FooterProps {
+interface FooterProperties {
   withborder?: string;
 }
 
-const Footer = styled(DialogActions)<FooterProps>`
+const Footer = styled(DialogActions)<FooterProperties>`
   height: 52px;
   margin: 0;
   padding: 0 12px;
@@ -100,11 +100,11 @@ export const Modal = ({
   setExpanded = EmptyFunction,
   testId,
   hideHeaderBorder,
-}: ModalProps) => {
+}: ModalProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const theme = useTheme();
 
-  const paperProps = useMemo(
+  const paperProperties = useMemo(
     () => ({
       ...(testId ? { testid: testId } : {}),
       'data-testid': testId,
@@ -131,7 +131,7 @@ export const Modal = ({
     ],
   );
 
-  const backdropProps = useMemo(
+  const backdropProperties = useMemo(
     () => ({
       style: {
         background: theme.ketcher.color.background.overlay,
@@ -156,8 +156,8 @@ export const Modal = ({
 
   return (
     <StyledDialog
-      BackdropProps={backdropProps}
-      PaperProps={paperProps}
+      BackdropProps={backdropProperties}
+      PaperProps={paperProperties}
       open={isOpen}
       onClose={onClose}
       container={document.querySelector(

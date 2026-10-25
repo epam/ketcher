@@ -124,7 +124,7 @@ import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProps {
+interface EditorProperties {
   ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
@@ -133,7 +133,7 @@ interface EditorProps {
   onInit?: (editor: CoreEditor) => void;
 }
 
-interface EditorContainerProps extends EditorProps {
+interface EditorContainerProps extends EditorProperties {
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -189,7 +189,7 @@ function Editor({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   onInit,
-}: Readonly<EditorProps>) {
+}: Readonly<EditorProperties>) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltips = useAppSelector(selectErrorTooltips);

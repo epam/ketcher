@@ -17,4 +17,4 @@
 export * from './emptyFunction';
 export * from './getPreset';
 export * from './getConnectedAttachmentPoints';
-export * from './idtAliasUtils';
+export * from './idtAliasUtilities';

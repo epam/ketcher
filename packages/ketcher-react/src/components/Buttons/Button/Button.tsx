@@ -17,7 +17,7 @@ import { StyledButton } from './styles';
 
 export const Button = ({
   children,
-  ...props
+  ...properties
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-  return <StyledButton {...props}>{children}</StyledButton>;
+  return <StyledButton {...properties}>{children}</StyledButton>;
 };

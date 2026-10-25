@@ -36,89 +36,93 @@ const mediaSizes = {
   smallHeight: 600,
 };
 
-export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
+export interface EditorProperties extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
   onSetKetcherId?: (ketcherId: string) => void;
 }
 
-function MicromoleculesEditor(props: Readonly<EditorProps>) {
-  const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
-  const appRootRef = useRef<Root | null>(null);
-  const cleanupRef = useRef<(() => unknown) | null>(null);
-  const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  const ketcherRef = useRef<Ketcher | null>(null);
+function MicromoleculesEditor(properties: Readonly<EditorProperties>) {
+  const initPromiseReference = useRef<ReturnType<typeof init> | null>(null);
+  const appRootReference = useRef<Root | null>(null);
+  const cleanupReference = useRef<(() => unknown) | null>(null);
+  const ketcherBuilderReference = useRef<KetcherBuilder | null>(null);
+  const ketcherReference = useRef<Ketcher | null>(null);
 
-  const setServerRef = useRef<(structService: Api) => void>(() => {});
-  const structServiceProvider = props.structServiceProvider;
+  const setServerReference = useRef<(structService: Api) => void>(() => {});
+  const structServiceProvider = properties.structServiceProvider;
 
-  const rootElRef = useRef<HTMLDivElement>(null);
+  const rootElementReference = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef as RefObject<HTMLDivElement>,
+    ref: rootElementReference as RefObject<HTMLDivElement>,
   });
 
   useEffect(() => {
-    const ketcherId = ketcherRef.current?.id;
+    const ketcherId = ketcherReference.current?.id;
 
     if (!ketcherId) {
       return;
     }
 
-    ketcherBuilderRef.current?.reinitializeApi(
+    ketcherBuilderReference.current?.reinitializeApi(
       ketcherId,
       structServiceProvider,
-      setServerRef.current,
+      setServerReference.current,
     );
   }, [structServiceProvider]);
 
-  // Editor is initialized once on mount with the props of the first render
-  const initialPropsRef = useRef(props);
+  // Editor is initialized once on mount with the properties of the first render
+  const initialPropertiesReference = useRef(properties);
 
   const initKetcher = useCallback(async () => {
-    const initialProps = initialPropsRef.current;
-    appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
+    const initialProperties = initialPropertiesReference.current;
+    appRootReference.current = createRoot(
+      rootElementReference.current as HTMLDivElement,
+    );
 
-    initPromiseRef.current = init({
-      ...initialProps,
-      element: rootElRef.current,
-      appRoot: appRootRef.current,
+    initPromiseReference.current = init({
+      ...initialProperties,
+      element: rootElementReference.current,
+      appRoot: appRootReference.current,
     });
 
-    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
-      cleanupRef.current = cleanup;
-      ketcherBuilderRef.current = builder;
-      ketcherRef.current = ketcher;
-      setServerRef.current = setServer;
-      initialProps.onSetKetcherId?.(ketcher.id);
+    initPromiseReference.current?.then(
+      ({ ketcher, cleanup, builder, setServer }) => {
+        cleanupReference.current = cleanup;
+        ketcherBuilderReference.current = builder;
+        ketcherReference.current = ketcher;
+        setServerReference.current = setServer;
+        initialProperties.onSetKetcherId?.(ketcher.id);
 
-      if (typeof initialProps.onInit === 'function' && ketcher) {
-        initialProps.onInit(ketcher);
-        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
-      }
-    });
+        if (typeof initialProperties.onInit === 'function' && ketcher) {
+          initialProperties.onInit(ketcher);
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
+          window.dispatchEvent(ketcherInitEvent);
+        }
+      },
+    );
   }, []);
 
   useEffect(() => {
-    if (initPromiseRef.current === null) {
+    if (initPromiseReference.current === null) {
       initKetcher();
     } else {
-      initPromiseRef.current?.finally(() => {
+      initPromiseReference.current?.finally(() => {
         initKetcher();
       });
     }
 
     return () => {
-      initPromiseRef.current?.then(() => {
-        cleanupRef.current?.();
-        appRootRef.current?.unmount();
+      initPromiseReference.current?.then(() => {
+        cleanupReference.current?.();
+        appRootReference.current?.unmount();
       });
     };
   }, [initKetcher]);
 
   return (
     <div
-      ref={rootElRef}
+      ref={rootElementReference}
       className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||

@@ -38,8 +38,8 @@ import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 import type {
-  BondActionParams,
-  BondItemRef,
+  BondActionParameters,
+  BondItemReference,
   BondToolDragContext,
 } from './bond.types';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
@@ -51,7 +51,7 @@ import {
 } from './hapticBondTool';
 import closest from '../shared/closest';
 
-type BondEndpointItemRef = BondItemRef & {
+type BondEndpointItemReference = BondItemReference & {
   map: 'atoms' | 'attachmentGroups';
 };
 
@@ -60,23 +60,23 @@ class BondTool implements Tool {
 
   private readonly editor: Editor;
   private readonly atomProps: { label: string };
-  private readonly bondProps: Partial<BondAttributes>;
+  private readonly bondProperties: Partial<BondAttributes>;
   private readonly hapticBond: HapticBondToolHelper;
-  private dragCtx?: BondToolDragContext;
+  private dragContext?: BondToolDragContext;
   private hapticAttachmentGroupTargetId: number | null = null;
   isNotActiveTool: boolean | undefined;
 
   private isBondEndpoint(
-    item?: BondItemRef | null,
-  ): item is BondEndpointItemRef {
+    item?: BondItemReference | null,
+  ): item is BondEndpointItemReference {
     return item?.map === 'atoms' || item?.map === 'attachmentGroups';
   }
 
-  constructor(editor: Editor, bondProps: Partial<BondAttributes>) {
+  constructor(editor: Editor, bondProperties: Partial<BondAttributes>) {
     this.editor = editor;
     this.atomProps = { label: 'C' };
-    this.bondProps = bondProps;
-    this.hapticBond = new HapticBondToolHelper(editor, bondProps);
+    this.bondProperties = bondProperties;
+    this.hapticBond = new HapticBondToolHelper(editor, bondProperties);
     const selection = editor.selection();
     if (selection?.bonds) {
       const struct = editor.render.ctab;
@@ -124,7 +124,7 @@ class BondTool implements Tool {
         return;
       }
 
-      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
+      const action = fromBondsAttrs(struct, selectedBonds, bondProperties);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;
@@ -132,7 +132,7 @@ class BondTool implements Tool {
   }
 
   mousedown(event: PointerEvent) {
-    if (this.dragCtx) return;
+    if (this.dragContext) return;
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
     }
@@ -203,12 +203,12 @@ class BondTool implements Tool {
     this.editor.hover(null);
     this.editor.selection(null);
 
-    const item: BondItemRef | undefined =
+    const item: BondItemReference | undefined =
       attachmentAtomId !== undefined
         ? { map: 'atoms', id: attachmentAtomId }
         : (ci ?? undefined);
 
-    this.dragCtx = {
+    this.dragContext = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
       pageX0: event.clientX,
       pageY0: event.clientY,
@@ -217,7 +217,7 @@ class BondTool implements Tool {
     };
     if (item) {
       // ci.type == 'Canvas' when item is absent
-      this.dragCtx.item = item;
+      this.dragContext.item = item;
     }
     return true;
   }
@@ -226,8 +226,8 @@ class BondTool implements Tool {
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return true;
     }
-    if (this.dragCtx) {
-      if (!this.isDragStartThresholdReached(event, this.dragCtx)) {
+    if (this.dragContext) {
+      if (!this.isDragStartThresholdReached(event, this.dragContext)) {
         return true;
       }
       return this.handleDragMove(event);
@@ -242,66 +242,66 @@ class BondTool implements Tool {
 
   private isDragStartThresholdReached(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    dragContext: BondToolDragContext,
   ) {
-    if (dragCtx.hasStartedDragging) {
+    if (dragContext.hasStartedDragging) {
       return true;
     }
 
-    const dx = event.clientX - dragCtx.pageX0;
-    const dy = event.clientY - dragCtx.pageY0;
+    const dx = event.clientX - dragContext.pageX0;
+    const dy = event.clientY - dragContext.pageY0;
     const distance = Math.hypot(dx, dy);
     if (distance < BondTool.DRAG_START_THRESHOLD_PX) {
       return false;
     }
 
-    dragCtx.hasStartedDragging = true;
+    dragContext.hasStartedDragging = true;
     return true;
   }
 
   private handleDragMove(event: PointerEvent) {
-    if (!this.dragCtx) return undefined;
+    if (!this.dragContext) return undefined;
     const rnd = this.editor.render;
-    const dragCtx = this.dragCtx;
-    const hasItem = 'item' in dragCtx;
+    const dragContext = this.dragContext;
+    const hasItem = 'item' in dragContext;
 
     const pos = CoordinateTransformation.pageToModel(event, rnd);
-    let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+    let angle = vectorUtils.calcAngle(dragContext.xy0, pos);
     if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
 
     const degrees = vectorUtils.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-    if (!hasItem || this.isBondEndpoint(dragCtx.item)) {
-      return this.handleBondDrag(event, dragCtx, hasItem);
+    if (!hasItem || this.isBondEndpoint(dragContext.item)) {
+      return this.handleBondDrag(event, dragContext, hasItem);
     }
     return undefined;
   }
 
   private handleBondDrag(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    dragContext: BondToolDragContext,
     hasItem: boolean,
   ) {
     const rnd = this.editor.render;
     const molecule = rnd.ctab.molecule;
 
-    if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
+    if (dragContext.action) dragContext.action.perform(rnd.ctab);
 
     let beginAtom;
     let endAtom;
     let beginPos;
     let endPos;
 
-    if (hasItem && this.isBondEndpoint(dragCtx.item)) {
-      const item = dragCtx.item;
+    if (hasItem && this.isBondEndpoint(dragContext.item)) {
+      const item = dragContext.item;
       ({ beginAtom, endAtom } = this.resolveAtomDragTarget(
         event,
         item,
         molecule,
       ));
     } else {
-      const result = this.resolveCanvasDragTarget(event, dragCtx, molecule);
+      const result = this.resolveCanvasDragTarget(event, dragContext, molecule);
       ({ beginAtom, endAtom, beginPos } = result);
       if (result.shouldReturn) return;
     }
@@ -314,14 +314,16 @@ class BondTool implements Tool {
       beginPos,
     ));
 
-    const dist =
-      endPos !== undefined ? Vec2.dist(dragCtx.xy0, endPos) : Number.MAX_VALUE;
-    this.applyBondAction(event, dragCtx, rnd, molecule, {
+    const distance =
+      endPos !== undefined
+        ? Vec2.dist(dragContext.xy0, endPos)
+        : Number.MAX_VALUE;
+    this.applyBondAction(event, dragContext, rnd, molecule, {
       beginAtom,
       endAtom,
       beginPos,
       endPos,
-      dist,
+      dist: distance,
     });
 
     return true;
@@ -329,12 +331,12 @@ class BondTool implements Tool {
 
   private resolveAtomDragTarget(
     event: PointerEvent,
-    item: BondItemRef,
+    item: BondItemReference,
     molecule: Struct,
   ) {
     const editor = this.editor;
     const beginAtom = item.id;
-    let endAtom: BondItemRef | null;
+    let endAtom: BondItemReference | null;
 
     if (this.hapticBond.isHapticBondType() && item.map === 'atoms') {
       const pointerPosition = CoordinateTransformation.pageToModel(
@@ -360,7 +362,11 @@ class BondTool implements Tool {
       }
     } else {
       this.updateHapticAttachmentGroupTarget(null);
-      endAtom = editor.findItem(event, ['atoms'], item) as BondItemRef | null;
+      endAtom = editor.findItem(
+        event,
+        ['atoms'],
+        item,
+      ) as BondItemReference | null;
     }
 
     const closestSGroup = editor.findItem(event, ['functionalGroups']);
@@ -397,8 +403,8 @@ class BondTool implements Tool {
   private adjustEndAtomForSGroup(
     sgroup: SGroup,
     beginAtom: number,
-    endAtom: BondItemRef | null,
-  ): BondItemRef | null {
+    endAtom: BondItemReference | null,
+  ): BondItemReference | null {
     const closestAttachmentAtomId = sgroup.getAttachmentAtomId();
 
     if (sgroup.isContracted()) {
@@ -423,25 +429,25 @@ class BondTool implements Tool {
 
   private resolveCanvasDragTarget(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    dragContext: BondToolDragContext,
     molecule: Struct,
   ) {
     const functionalGroups = molecule.functionalGroups;
     const beginAtom = this.atomProps;
-    const beginPos = dragCtx.xy0;
-    let endAtom: BondItemRef | null = this.editor.findItem(event, [
+    const beginPos = dragContext.xy0;
+    let endAtom: BondItemReference | null = this.editor.findItem(event, [
       'atoms',
       'functionalGroups',
-    ]) as BondItemRef | null;
+    ]) as BondItemReference | null;
 
-    if (endAtom?.map === 'atoms' && functionalGroups.size && this.dragCtx) {
+    if (endAtom?.map === 'atoms' && functionalGroups.size && this.dragContext) {
       const fgIds = this.collectFunctionalGroupIdsForAtom(
         functionalGroups,
         endAtom.id,
       );
       if (fgIds.length > 0) {
         dispatchMonomerOrGroupDialog(this.editor, fgIds);
-        this.dragCtx = undefined;
+        this.dragContext = undefined;
         return { beginAtom, endAtom, beginPos, shouldReturn: true };
       }
     } else if (endAtom?.map === 'functionalGroups') {
@@ -470,8 +476,8 @@ class BondTool implements Tool {
 
   private resolveEndAtomFromFunctionalGroup(
     molecule: Struct,
-    endAtom: BondItemRef,
-  ): BondItemRef | null {
+    endAtom: BondItemReference,
+  ): BondItemReference | null {
     const functionalGroup = molecule.functionalGroups.get(endAtom.id);
     if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
       const attachmentAtomId =
@@ -487,7 +493,7 @@ class BondTool implements Tool {
     event: PointerEvent,
     rnd: Render,
     beginAtom: number | AtomAttributes,
-    endAtom: BondItemRef | null,
+    endAtom: BondItemReference | null,
     beginPos: Vec2 | undefined,
   ): { endAtom: number | AtomAttributes; endPos: Vec2 | undefined } {
     let endPos: Vec2 | undefined;
@@ -515,25 +521,31 @@ class BondTool implements Tool {
 
   private rejectBondOperation(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    dragContext: BondToolDragContext,
     failure: BondValidationFailure,
   ) {
-    this.hapticBond.applyValidationFailure(dragCtx, failure);
+    this.hapticBond.applyValidationFailure(dragContext, failure);
     this.restoreBondWhenHoveringOnCanvas(event);
-    if (dragCtx.action) {
-      this.editor.update(dragCtx.action, true);
-      delete dragCtx.action;
+    if (dragContext.action) {
+      this.editor.update(dragContext.action, true);
+      delete dragContext.action;
     }
   }
 
   private applyBondAction(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    dragContext: BondToolDragContext,
     rnd: Render,
     molecule: Struct,
-    bondParams: BondActionParams,
+    bondParameters: BondActionParameters,
   ) {
-    const { beginAtom, endAtom, beginPos, endPos, dist } = bondParams;
+    const {
+      beginAtom,
+      endAtom,
+      beginPos,
+      endPos,
+      dist: distance,
+    } = bondParameters;
     const validationFailure = this.hapticBond.getBondPairValidationFailure(
       molecule,
       beginAtom,
@@ -544,74 +556,76 @@ class BondTool implements Tool {
       const shouldShowInvalidHapticPreview =
         validationFailure === 'haptic' &&
         this.hapticBond.isHapticBondType() &&
-        dragCtx.item?.map === 'atoms';
+        dragContext.item?.map === 'atoms';
 
       if (!shouldShowInvalidHapticPreview) {
-        this.rejectBondOperation(event, dragCtx, validationFailure);
+        this.rejectBondOperation(event, dragContext, validationFailure);
         return;
       }
 
-      this.hapticBond.applyValidationFailure(dragCtx, validationFailure);
+      this.hapticBond.applyValidationFailure(dragContext, validationFailure);
     } else {
-      this.hapticBond.clearValidationFlags(dragCtx);
+      this.hapticBond.clearValidationFlags(dragContext);
     }
 
     // don't rotate the bond if the distance between the start and end point is too small
-    if (dist > 0.3) {
+    if (distance > 0.3) {
       const [existingBondId, bond] = this.getExistingBond(
         molecule,
         beginAtom,
         endAtom,
       );
-      dragCtx.action = fromBondAddition(
+      dragContext.action = fromBondAddition(
         rnd.ctab,
-        this.bondProps,
+        this.bondProperties,
         beginAtom,
         endAtom,
         beginPos,
         endPos,
       )[0];
       if (existingBondId !== null) {
-        dragCtx.existedBond = bond;
-        dragCtx.action.mergeWith(fromOneBondDeletion(rnd.ctab, existingBondId));
+        dragContext.existedBond = bond;
+        dragContext.action.mergeWith(
+          fromOneBondDeletion(rnd.ctab, existingBondId),
+        );
       }
     } else {
-      delete dragCtx.action;
+      delete dragContext.action;
     }
     this.restoreBondWhenHoveringOnCanvas(event);
-    if (dragCtx.action) this.editor.update(dragCtx.action, true);
+    if (dragContext.action) this.editor.update(dragContext.action, true);
   }
 
   mouseup(event: PointerEvent) {
-    if (this.dragCtx) {
-      const dragCtx = this.dragCtx;
+    if (this.dragContext) {
+      const dragContext = this.dragContext;
       const render = this.editor.render;
       const struct = render.ctab.molecule;
       this.updateHapticAttachmentGroupTarget(null);
-      const dragEndFailure = dragCtx.hasStartedDragging
+      const dragEndFailure = dragContext.hasStartedDragging
         ? this.hapticBond.resolveDragEndValidationFailure(
-            dragCtx,
+            dragContext,
             struct,
-            Boolean(dragCtx.item),
+            Boolean(dragContext.item),
           )
         : null;
 
-      if (dragCtx.action && dragEndFailure) {
-        const revertedPreviewAction = dragCtx.action.perform(render.ctab);
-        delete dragCtx.action;
+      if (dragContext.action && dragEndFailure) {
+        const revertedPreviewAction = dragContext.action.perform(render.ctab);
+        delete dragContext.action;
         this.hapticBond.showValidationError(dragEndFailure);
         // The revert removes a temporary endpoint. An incremental update
         // drops its stale `atomsChanged` entry before updating half-bonds.
         this.editor.update(revertedPreviewAction, true);
-      } else if (dragCtx.action) {
+      } else if (dragContext.action) {
         this.restoreBondWhenHoveringOnCanvas(event);
-        this.editor.update(dragCtx.action);
-      } else if (dragCtx.hasStartedDragging) {
+        this.editor.update(dragContext.action);
+      } else if (dragContext.hasStartedDragging) {
         if (dragEndFailure) {
           this.hapticBond.showValidationError(dragEndFailure);
           this.editor.update(true);
         }
-      } else if (!dragCtx.item) {
+      } else if (!dragContext.item) {
         const editorOptions = this.editor.options();
         const QUARTER_OF_BOND_WIDTH = 20;
         const QUARTER_OF_BOND_HEIGHT = 5;
@@ -634,18 +648,20 @@ class BondTool implements Tool {
             event,
             'haptic',
             () => {
-              delete this.dragCtx;
+              delete this.dragContext;
             },
           );
           return true;
         }
 
         const v = new Vec2(1 / 2, 0).rotate(
-          this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
+          this.bondProperties.type === Bond.PATTERN.TYPE.SINGLE
+            ? -Math.PI / 6
+            : 0,
         );
         const bondAddition = fromBondAddition(
           render.ctab,
-          this.bondProps,
+          this.bondProperties,
           { label: 'C' },
           { label: 'C' },
           Vec2.diff(xy, v),
@@ -653,15 +669,15 @@ class BondTool implements Tool {
         );
 
         this.editor.update(bondAddition[0]);
-      } else if (this.isBondEndpoint(dragCtx.item)) {
+      } else if (this.isBondEndpoint(dragContext.item)) {
         // click on atom
         const isAtomSuperatomLeavingGroup =
-          dragCtx.item.map === 'atoms' &&
-          Atom.isSuperatomLeavingGroupAtom(struct, dragCtx.item.id);
+          dragContext.item.map === 'atoms' &&
+          Atom.isSuperatomLeavingGroupAtom(struct, dragContext.item.id);
         if (!isAtomSuperatomLeavingGroup) {
           const atomClickFailure = this.hapticBond.getBondPairValidationFailure(
             struct,
-            dragCtx.item.id,
+            dragContext.item.id,
             { label: 'C' },
           );
           if (atomClickFailure) {
@@ -669,22 +685,27 @@ class BondTool implements Tool {
               event,
               atomClickFailure,
               () => {
-                delete this.dragCtx;
+                delete this.dragContext;
               },
             );
             return true;
           }
 
           this.editor.update(
-            fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
-              label: 'C',
-            })[0],
+            fromBondAddition(
+              render.ctab,
+              this.bondProperties,
+              dragContext.item.id,
+              {
+                label: 'C',
+              },
+            )[0],
           );
-          delete dragCtx.existedBond;
+          delete dragContext.existedBond;
         }
-      } else if (dragCtx.item.map === 'bonds') {
-        const bondProps = { ...this.bondProps };
-        const bond = struct.bonds.get(dragCtx.item.id) as Bond;
+      } else if (dragContext.item.map === 'bonds') {
+        const bondProperties = { ...this.bondProperties };
+        const bond = struct.bonds.get(dragContext.item.id) as Bond;
         const bondClickFailure = this.hapticBond.getBondPairValidationFailure(
           struct,
           bond.begin,
@@ -696,17 +717,22 @@ class BondTool implements Tool {
             event,
             bondClickFailure,
             () => {
-              delete this.dragCtx;
+              delete this.dragContext;
             },
           );
           return true;
         }
 
         this.editor.update(
-          bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),
+          bondChangingAction(
+            render.ctab,
+            dragContext.item.id,
+            bond,
+            bondProperties,
+          ),
         );
       }
-      this.dragCtx = undefined;
+      this.dragContext = undefined;
     }
     this.editor.event.message.dispatch({
       info: false,
@@ -724,30 +750,30 @@ class BondTool implements Tool {
     But we can change our mind, then deleted bond needs to be restored
   */
   restoreBondWhenHoveringOnCanvas(event: PointerEvent) {
-    if (!this.dragCtx) {
+    if (!this.dragContext) {
       return;
     }
-    const dragCtx = this.dragCtx;
-    if (!dragCtx.existedBond) {
+    const dragContext = this.dragContext;
+    if (!dragContext.existedBond) {
       return;
     }
-    const existedBond = dragCtx.existedBond;
+    const existedBond = dragContext.existedBond;
     const isHoveringOverAtom = this.editor.findItem(event, ['atoms']);
     if (!isHoveringOverAtom) {
-      if (!dragCtx.item || !dragCtx.action) {
+      if (!dragContext.item || !dragContext.action) {
         return;
       }
       const { begin, end } = existedBond;
-      const bondEnd = dragCtx.item.id === begin ? end : begin;
-      dragCtx.action.mergeWith(
+      const bondEnd = dragContext.item.id === begin ? end : begin;
+      dragContext.action.mergeWith(
         fromBondAddition(
           this.editor.render.ctab,
           existedBond,
-          dragCtx.item.id,
+          dragContext.item.id,
           bondEnd,
         )[0],
       );
-      delete dragCtx.existedBond;
+      delete dragContext.existedBond;
     }
   }
 

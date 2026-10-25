@@ -41,8 +41,8 @@ export interface FieldState {
   dataError: string | undefined;
   value: unknown;
   extraValue: unknown;
-  onChange: (val: unknown) => void;
-  onExtraChange: (val: unknown) => void;
+  onChange: (value: unknown) => void;
+  onExtraChange: (value: unknown) => void;
 }
 
 export interface FormStateStore {

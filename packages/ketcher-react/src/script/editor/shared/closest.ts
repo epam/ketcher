@@ -39,11 +39,11 @@ import type {
 } from './closest.types';
 
 type ClosestFunctionOptions = RenderOptions & { showStereoFlags?: boolean };
-type FindMapFn = (
+type FindMapFunction = (
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
   options: ClosestFunctionOptions,
 ) => ClosestItem<unknown> | null;
 
@@ -51,7 +51,7 @@ const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
 const SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP = 0.5;
 
-const findMaps: Record<string, FindMapFn> = {
+const findMaps: Record<string, FindMapFunction> = {
   atoms: findClosestAtom,
   attachmentGroups: findClosestAttachmentGroup,
   bonds: findClosestBond,
@@ -71,7 +71,7 @@ const findMaps: Record<string, FindMapFn> = {
 };
 
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
-type RefPoint = Vec2 | null;
+type ReferencePoint = Vec2 | null;
 
 function rectangleContainsPoint(
   startX: number,
@@ -112,57 +112,66 @@ function calculateDistanceToText(
 }
 
 function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let ret: ClosestReturnType = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let returnValue: ClosestReturnType = null;
 
   restruct.texts.forEach((text, id) => {
-    const dist = calculateDistanceToText(
+    const distance = calculateDistanceToText(
       cursorPosition,
       text.getReferencePoints(),
     );
 
-    if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (
+      distance < SELECTION_DISTANCE_COEFFICIENT &&
+      (!returnValue || distance < minDistance)
+    ) {
+      minDistance = distance;
+      returnValue = { id, dist: minDistance };
     }
   });
-  return ret;
+  return returnValue;
 }
 
 function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
-  let ret: ClosestReturnType = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let referencePoint: ReferencePoint = null;
+  let returnValue: ClosestReturnType = null;
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
-    const dist = simpleObject.calcDistance(
+    const distance = simpleObject.calcDistance(
       pos,
       restruct.render.options.microModeScale,
     );
 
-    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
-      minDist = dist.minDist;
-      refPoint = dist.refPoint;
+    if (
+      distance.minDist < 0.3 &&
+      (!returnValue || distance.minDist < minDistance)
+    ) {
+      minDistance = distance.minDist;
+      referencePoint = distance.refPoint;
 
-      ret = { id, dist: minDist, ref: refPoint };
+      returnValue = { id, dist: minDistance, ref: referencePoint };
     }
   });
-  return ret;
+  return returnValue;
 }
 
 function findClosestAtom(
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
 ) {
   let closestAtom: null | number = null;
-  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
+  const maxMinDistance = SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip?.map === 'atoms' ? skip.id : null;
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
 
-  let effectiveMinDist: number = Math.min(minDist ?? maxMinDist, maxMinDist);
+  let effectiveMinDistance: number = Math.min(
+    minDistance ?? maxMinDistance,
+    maxMinDistance,
+  );
 
   restruct.visibleAtoms.forEach((atom, aid) => {
     if (
@@ -180,18 +189,18 @@ function findClosestAtom(
       return;
     }
 
-    const dist = Vec2.dist(pos, atom.a.pp);
+    const distance = Vec2.dist(pos, atom.a.pp);
 
-    if (dist < effectiveMinDist) {
+    if (distance < effectiveMinDistance) {
       closestAtom = aid;
-      effectiveMinDist = dist;
+      effectiveMinDistance = distance;
     }
   });
 
   if (closestAtom !== null) {
     return {
       id: closestAtom,
-      dist: effectiveMinDist,
+      dist: effectiveMinDistance,
     };
   }
 
@@ -202,44 +211,52 @@ function findClosestAttachmentGroup(
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
 ) {
   let closestId: number | null = null;
-  const maxMinDist = SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP;
+  const maxMinDistance = SELECTION_DISTANCE_COEFFICIENT_FOR_ATTACHMENT_GROUP;
   const skipId = skip?.map === 'attachmentGroups' ? skip.id : null;
-  let effectiveMinDist = Math.min(minDist ?? maxMinDist, maxMinDist);
+  let effectiveMinDistance = Math.min(
+    minDistance ?? maxMinDistance,
+    maxMinDistance,
+  );
 
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     if (id === skipId) return;
-    const dist = Vec2.dist(pos, attachmentGroup.a.pp);
+    const distance = Vec2.dist(pos, attachmentGroup.a.pp);
     if (
-      dist < effectiveMinDist ||
-      (minDist !== null && dist === effectiveMinDist)
+      distance < effectiveMinDistance ||
+      (minDistance !== null && distance === effectiveMinDistance)
     ) {
       closestId = id;
-      effectiveMinDist = dist;
+      effectiveMinDistance = distance;
     }
   });
 
-  return closestId === null ? null : { id: closestId, dist: effectiveMinDist };
+  return closestId === null
+    ? null
+    : { id: closestId, dist: effectiveMinDistance };
 }
 
 function findClosestBond(
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
   options: ClosestFunctionOptions,
 ) {
   let closestBond: number | null = null;
   let closestBondCenter: number | null = null;
-  const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
+  const maxMinDistance = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
   const skipId = skip?.map === 'bonds' ? skip.id : null;
 
-  let effectiveMinDist: number = Math.min(minDist ?? maxMinDist, maxMinDist);
+  let effectiveMinDistance: number = Math.min(
+    minDistance ?? maxMinDistance,
+    maxMinDistance,
+  );
 
-  let minCDist = effectiveMinDist;
-  let minFoundCDist = Infinity;
+  let minCDistance = effectiveMinDistance;
+  let minFoundCDistance = Infinity;
 
   restruct.visibleBonds.forEach((bond, bid) => {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
@@ -267,9 +284,9 @@ function findClosestBond(
     const position = Scale.modelToCanvas(pos, options);
     const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints);
 
-    if (isPosInsidePolygon && cdist < minFoundCDist) {
-      minCDist = cdist;
-      minFoundCDist = cdist;
+    if (isPosInsidePolygon && cdist < minFoundCDistance) {
+      minCDistance = cdist;
+      minFoundCDistance = cdist;
       closestBondCenter = bid;
     }
 
@@ -278,18 +295,18 @@ function findClosestBond(
       KetcherLogger.warn(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
       return;
     }
-    const dir = hb.dir;
+    const direction = hb.dir;
     const norm = hb.norm;
 
     const inStripe =
-      Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0;
+      Vec2.dot(pos.sub(p1), direction) * Vec2.dot(pos.sub(p2), direction) < 0;
 
     if (inStripe) {
-      const dist = Math.abs(Vec2.dot(pos.sub(p1), norm));
+      const distance = Math.abs(Vec2.dot(pos.sub(p1), norm));
 
-      if (dist < effectiveMinDist) {
+      if (distance < effectiveMinDistance) {
         closestBond = bid;
-        effectiveMinDist = dist;
+        effectiveMinDistance = distance;
       }
     }
   });
@@ -297,17 +314,18 @@ function findClosestBond(
   if (closestBondCenter !== null) {
     return {
       id: closestBondCenter,
-      dist: minCDist,
+      dist: minCDistance,
     };
   }
 
   if (
     closestBond !== null &&
-    effectiveMinDist > SELECTION_DISTANCE_COEFFICIENT * options.microModeScale
+    effectiveMinDistance >
+      SELECTION_DISTANCE_COEFFICIENT * options.microModeScale
   ) {
     return {
       id: closestBond,
-      dist: effectiveMinDist,
+      dist: effectiveMinDistance,
     };
   }
 
@@ -318,11 +336,11 @@ function findClosestEnhancedFlag(
   restruct: ReStruct,
   pos: Vec2,
   _skip: SkipItem | null,
-  _minDist: number | null,
+  _minDistance: number | null,
   options: ClosestFunctionOptions,
 ) {
-  let minDist;
-  let ret: ClosestReturnType = null;
+  let minDistance;
+  let returnValue: ClosestReturnType = null;
   restruct.enhancedFlags.forEach((_item, id) => {
     const fragment = restruct.molecule.frags.get(id);
 
@@ -333,19 +351,19 @@ function findClosestEnhancedFlag(
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, id);
     if (!p || Math.abs(pos.x - p.x) >= 1) return;
 
-    const dist = Math.abs(pos.y - p.y);
+    const distance = Math.abs(pos.y - p.y);
 
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (distance < 0.3 && (!returnValue || distance < minDistance)) {
+      minDistance = distance;
+      returnValue = { id, dist: minDistance };
     }
   });
-  return ret;
+  return returnValue;
 }
 
 function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let ret: ClosestReturnType = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let returnValue: ClosestReturnType = null;
 
   restruct.sgroupData.forEach((item, id) => {
     if (item.sgroup.type !== 'DAT') throw new Error('Data group expected');
@@ -360,36 +378,36 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
         box.p1.y > pos.y &&
         box.p0.x < pos.x &&
         box.p1.x > pos.x;
-      const xDist = Math.min(
+      const xDistance = Math.min(
         Math.abs(box.p0.x - pos.x),
         Math.abs(box.p1.x - pos.x),
       );
 
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = { id, dist: xDist };
-        minDist = xDist;
+      if (inBox && (returnValue === null || xDistance < minDistance)) {
+        returnValue = { id, dist: xDistance };
+        minDistance = xDistance;
       }
     }
   });
 
-  return ret;
+  return returnValue;
 }
 
 function findClosestFrag(
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
   options: ClosestFunctionOptions,
 ) {
-  minDist = Math.min(
-    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
+  minDistance = Math.min(
+    minDistance ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
   const struct = restruct.molecule;
 
-  const closestAtom = findClosestAtom(restruct, pos, skip, minDist);
+  const closestAtom = findClosestAtom(restruct, pos, skip, minDistance);
 
   if (closestAtom) {
     const atom = getOrThrow(
@@ -403,7 +421,13 @@ function findClosestFrag(
     };
   }
 
-  const closestBond = findClosestBond(restruct, pos, skip, minDist, options);
+  const closestBond = findClosestBond(
+    restruct,
+    pos,
+    skip,
+    minDistance,
+    options,
+  );
 
   if (closestBond) {
     const fragmentId = struct.getBondFragment(closestBond.id);
@@ -424,42 +448,42 @@ function findClosestRGroup(
   restruct: ReStruct,
   pos: Vec2,
   skip: SkipItem | null,
-  minDist: number | null,
+  minDistance: number | null,
 ) {
-  let effectiveMinDist: number = Math.min(
-    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
+  let effectiveMinDistance: number = Math.min(
+    minDistance ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
-  let ret: ClosestReturnType = null;
+  let returnValue: ClosestReturnType = null;
   const skipId = skip?.map === 'rgroups' ? skip.id : null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
     if (rgid !== skipId && rgroup.labelBox?.contains(pos, 0.5)) {
-      const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
+      const distance = Vec2.dist(rgroup.labelBox.centre(), pos);
 
-      if (!ret || dist < effectiveMinDist) {
-        effectiveMinDist = dist;
-        ret = { id: rgid, dist: effectiveMinDist };
+      if (!returnValue || distance < effectiveMinDistance) {
+        effectiveMinDistance = distance;
+        returnValue = { id: rgid, dist: effectiveMinDistance };
       }
     }
   });
 
-  return ret;
+  return returnValue;
 }
 
 /**
  * @param {ReStruct} restruct
  * @param {Vec2} cursorPosition
- * @param {number} minDistToOtherItems
+ * @param {number} minDistanceToOtherItems
  */
 function findClosestRgroupAttachmentPoints(
   restruct: ReStruct,
   cursorPosition: Vec2,
   _skip: SkipItem | null,
-  minDistToOtherItems: number | null,
+  minDistanceToOtherItems: number | null,
 ) {
-  let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
+  let minDistance = minDistanceToOtherItems ?? Number.POSITIVE_INFINITY;
   /** @type {number | undefined} */
   let closestItemId;
 
@@ -469,9 +493,9 @@ function findClosestRgroupAttachmentPoints(
     const isCursorInsideOutline =
       cursorPosition.isInsidePolygon(itemOutlinePoints);
     if (isCursorInsideOutline) {
-      const dist = reItem.getDistanceTo(cursorPosition);
-      if (dist < minDist) {
-        minDist = dist;
+      const distance = reItem.getDistanceTo(cursorPosition);
+      if (distance < minDistance) {
+        minDistance = distance;
         closestItemId = id;
       }
     }
@@ -481,51 +505,54 @@ function findClosestRgroupAttachmentPoints(
     ? null
     : {
         id: closestItemId,
-        dist: minDist,
+        dist: minDistance,
       };
 }
 
 function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
-  let ret: ClosestReturnType = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let referencePoint: ReferencePoint = null;
+  let returnValue: ClosestReturnType = null;
 
   restruct.rxnArrows.forEach((rxnArrow, id) => {
-    const dist = rxnArrow.calcDistance(
+    const distance = rxnArrow.calcDistance(
       pos,
       restruct.render.options.microModeScale,
     );
 
-    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
-      minDist = dist.minDist;
-      refPoint = dist.refPoint;
+    if (
+      distance.minDist < 0.3 &&
+      (!returnValue || distance.minDist < minDistance)
+    ) {
+      minDistance = distance.minDist;
+      referencePoint = distance.refPoint;
 
-      ret = { id, dist: minDist, ref: refPoint };
+      returnValue = { id, dist: minDistance, ref: referencePoint };
     }
   });
-  return ret;
+  return returnValue;
 }
 
 function findClosestRxnPlus(restruct: ReStruct, pos: Vec2) {
-  let minDist = Number.POSITIVE_INFINITY;
-  let ret: ClosestReturnType = null;
+  let minDistance = Number.POSITIVE_INFINITY;
+  let returnValue: ClosestReturnType = null;
 
   restruct.rxnPluses.forEach((plus, id) => {
     const p = plus.item.pp;
-    const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
+    const distance = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
 
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (distance < 0.3 && (!returnValue || distance < minDistance)) {
+      minDistance = distance;
+      returnValue = { id, dist: minDistance };
     }
   });
 
-  return ret;
+  return returnValue;
 }
 
 function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
-  let ret: number | null = null;
-  let minDist = SELECTION_DISTANCE_COEFFICIENT;
+  let returnValue: number | null = null;
+  let minDistance = SELECTION_DISTANCE_COEFFICIENT;
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.isSuperatomWithoutLabel) {
@@ -535,10 +562,10 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
     if (sg.isContracted()) {
       const sGroupPosition = sg.pp;
       if (sGroupPosition) {
-        const dist = Vec2.dist(pos, sGroupPosition);
-        if (dist < minDist) {
-          ret = sgid;
-          minDist = dist;
+        const distance = Vec2.dist(pos, sGroupPosition);
+        if (distance < minDistance) {
+          returnValue = sgid;
+          minDistance = distance;
         }
       }
 
@@ -555,22 +582,22 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         box.p1.y > pg.y &&
         box.p0.x < pg.x &&
         box.p1.x > pg.x;
-      const xDist = Math.min(
+      const xDistance = Math.min(
         Math.abs(box.p0.x - pg.x),
         Math.abs(box.p1.x - pg.x),
       );
 
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = sgid;
-        minDist = xDist;
+      if (inBox && (returnValue === null || xDistance < minDistance)) {
+        returnValue = sgid;
+        minDistance = xDistance;
       }
     });
   });
 
-  if (ret !== null) {
+  if (returnValue !== null) {
     return {
-      id: ret,
-      dist: minDist,
+      id: returnValue,
+      dist: minDistance,
     };
   }
 
@@ -592,11 +619,11 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip: SkipItem | null) {
       const rectangleCenter = new Vec2(centerX, centerY);
       const cursorPosition = new Vec2(x, y);
 
-      const dist = Vec2.dist(rectangleCenter, cursorPosition);
+      const distance = Vec2.dist(rectangleCenter, cursorPosition);
       const sGroupItem = reSGroup.item;
       assert(sGroupItem, `ReSGroup ${reSGroupId} has no item`);
       const { id } = sGroupItem;
-      return { id, dist };
+      return { id, dist: distance };
     }
   }
   return null;
@@ -616,9 +643,9 @@ function findClosestItem(
 
   let priorityItem: ClosestItemWithMap | null = null;
 
-  const closestItem = maps.reduce<ClosestItemWithMap | null>((res, mp) => {
-    const minDist = res?.dist ?? null;
-    const item = findMaps[mp](restruct, pos, skip, minDist, options);
+  const closestItem = maps.reduce<ClosestItemWithMap | null>((result, mp) => {
+    const minDistance = result?.dist ?? null;
+    const item = findMaps[mp](restruct, pos, skip, minDistance, options);
 
     if (item !== null) {
       const enrichedItem: ClosestItemWithMap = {
@@ -629,15 +656,15 @@ function findClosestItem(
       if (mp === 'sgroupData') {
         priorityItem = enrichedItem;
       } else if (
-        res === null ||
-        item.dist < res.dist ||
-        (mp === 'attachmentGroups' && item.dist === res.dist)
+        result === null ||
+        item.dist < result.dist ||
+        (mp === 'attachmentGroups' && item.dist === result.dist)
       ) {
         return enrichedItem;
       }
     }
 
-    return res;
+    return result;
   }, null);
 
   return priorityItem ?? closestItem;
@@ -715,17 +742,23 @@ function findCloseMerge(
       const posMap = (pos as Record<string, Map<number, Vec2>>)[map];
       result[map] = Array.from<number>(posMap.keys()).reduce<
         Map<number, number>
-      >((res, srcId) => {
-        const skip: SkipItem = { map, id: srcId };
-        const srcPos = posMap.get(srcId);
-        if (!srcPos) return res;
-        const item = findMaps[map](restruct, srcPos, skip, null, options);
+      >((result, sourceId) => {
+        const skip: SkipItem = { map, id: sourceId };
+        const sourcePosition = posMap.get(sourceId);
+        if (!sourcePosition) return result;
+        const item = findMaps[map](
+          restruct,
+          sourcePosition,
+          skip,
+          null,
+          options,
+        );
 
         if (item && !selected[map].includes(item.id)) {
-          res.set(srcId, item.id);
+          result.set(sourceId, item.id);
         }
 
-        return res;
+        return result;
       }, new Map());
     }
   });
@@ -787,30 +820,33 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
   return Array.from(reStruct.images.entries()).reduce(
-    (acc: ClosestReturnType<ImageReferencePositionInfo>, [id, item]) => {
+    (
+      accumulator: ClosestReturnType<ImageReferencePositionInfo>,
+      [id, item],
+    ) => {
       const distanceToPoint = item.calculateDistanceToPoint(
         canvasScaledPosition,
         renderOptions,
       );
       if (distanceToPoint <= maxDistance) {
-        if (acc && acc.dist < distanceToPoint) {
-          return acc;
+        if (accumulator && accumulator.dist < distanceToPoint) {
+          return accumulator;
         }
         // We would like to grab items under the images and those items should have higher priority then images
         // So we wanna make sure that those items can be grabbed without pixel-perfect pixel-hunting
-        const dist = Math.max(distanceToPoint, maxDistance / 3);
+        const distance = Math.max(distanceToPoint, maxDistance / 3);
         const closestPosition = item.calculateClosestReferencePosition(
           canvasScaledPosition,
           renderOptions,
         );
-        const includeRef = closestPosition.distance < maxDistance;
+        const includeReference = closestPosition.distance < maxDistance;
         return {
           id,
-          dist: dist / renderOptions.microModeScale,
-          ref: includeRef ? closestPosition.ref : null,
+          dist: distance / renderOptions.microModeScale,
+          ref: includeReference ? closestPosition.ref : null,
         };
       }
-      return acc;
+      return accumulator;
     },
     null,
   );
@@ -826,16 +862,19 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
 
   return Array.from(reStruct.multitailArrows.entries()).reduce(
-    (acc: ClosestReturnType<unknown>, [id, item]) => {
+    (accumulator: ClosestReturnType<unknown>, [id, item]) => {
       const { distance, ref } = item.calculateDistanceToPoint(
         canvasScaledPosition,
         renderOptions,
         maxDistance,
       );
-      if (distance <= maxDistance && (!acc || acc.dist > distance)) {
+      if (
+        distance <= maxDistance &&
+        (!accumulator || accumulator.dist > distance)
+      ) {
         return { id, dist: distance / renderOptions.microModeScale, ref };
       }
-      return acc;
+      return accumulator;
     },
     null,
   );

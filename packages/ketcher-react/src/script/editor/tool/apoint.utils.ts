@@ -19,7 +19,7 @@ export async function editRGroupAttachmentPoint(
     const previousAttachmentPoints = atom?.attachmentPoints;
     const currentAttachmentPoints = newAtom.attachmentPoints;
     if (previousAttachmentPoints !== currentAttachmentPoints) {
-      const actionFromAtomsAttrs = fromAtomsAttrs(
+      const actionFromAtomsAttributes = fromAtomsAttrs(
         editor.render.ctab,
         atomId,
         newAtom,
@@ -31,13 +31,16 @@ export async function editRGroupAttachmentPoint(
           atomId,
           currentAttachmentPoints,
         );
-      const action = actionFromAtomsAttrs.mergeWith(
+      const action = actionFromAtomsAttributes.mergeWith(
         actionFromRGroupAttachmentPointUpdate,
       );
       editor.update(action);
     }
-  } catch (e) {
-    KetcherLogger.error('apoint.utils.ts::editRGroupAttachmentPoint', e);
+  } catch (error) {
+    KetcherLogger.error(
+      'apoint.utilities.ts::editRGroupAttachmentPoint',
+      error,
+    );
     // close modal without any operations
   }
 }

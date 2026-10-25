@@ -16,7 +16,7 @@
 
 import classes from '../Open.module.less';
 
-export type TextEditorProps = {
+export type TextEditorProperties = {
   structStr: string;
   inputHandler: (str: string) => void;
   autoFocus?: boolean;
@@ -28,7 +28,7 @@ export const TextEditor = ({
   inputHandler,
   autoFocus = false,
   testId,
-}: TextEditorProps) => {
+}: TextEditorProperties) => {
   return (
     <textarea
       className={classes.textareaEditor}

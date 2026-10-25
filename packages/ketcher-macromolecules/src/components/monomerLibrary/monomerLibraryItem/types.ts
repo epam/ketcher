@@ -15,13 +15,13 @@
  ***************************************************************************/
 import { MonomerGroups, MonomerOrAmbiguousType } from 'ketcher-core';
 
-export interface IMonomerItemProps {
+export interface IMonomerItemProperties {
   item: MonomerOrAmbiguousType;
   groupName?: MonomerGroups;
   disabled?: boolean;
   isSelected?: boolean;
   onClick?: VoidFunction;
-  onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onMouseMove?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onMouseLeave?: (event_: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onMouseMove?: (event_: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onStarClick?: VoidFunction;
 }

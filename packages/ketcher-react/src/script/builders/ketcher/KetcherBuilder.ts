@@ -133,7 +133,7 @@ class KetcherBuilder {
   }
 
   async appendUiAsync(
-    prevKetcherId: string,
+    previousKetcherId: string,
     ketcherId: string,
     element: HTMLDivElement | null,
     appRoot: Root,
@@ -157,7 +157,7 @@ class KetcherBuilder {
       setServer: (structService: Api) => void;
     }>((resolve) => {
       cleanup = initApp(
-        prevKetcherId,
+        previousKetcherId,
         ketcherId,
         element,
         appRoot,
@@ -227,8 +227,8 @@ class KetcherBuilder {
     ) {
       return ketcher;
     }
-    const params = new URLSearchParams(document.location.search);
-    const initialMol = params.get('moll');
+    const parameters = new URLSearchParams(document.location.search);
+    const initialMol = parameters.get('moll');
     if (initialMol) {
       ketcher.setMolecule(initialMol);
     }

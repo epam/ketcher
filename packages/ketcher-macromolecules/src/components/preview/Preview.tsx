@@ -36,7 +36,7 @@ const PreviewContainer = styled.div`
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
-  const previewRef = useRef<HTMLDivElement>(null);
+  const previewReference = useRef<HTMLDivElement>(null);
   const isPreviewVisible = Boolean(preview?.type);
   const editor = useSelector(selectEditor);
   const ketcherRootRect = editor?.ketcherRootElementBoundingClientRect;
@@ -46,18 +46,18 @@ export const Preview = () => {
   const isPopupMode = Boolean(ketcherRootRect?.x || ketcherRootRect?.y);
 
   useLayoutEffect(() => {
-    if (!previewRef.current || preview?.style) {
+    if (!previewReference.current || preview?.style) {
       return;
     }
 
     if (preview?.type) {
-      previewRef.current.style.top = '';
-      previewRef.current.style.left = '';
+      previewReference.current.style.top = '';
+      previewReference.current.style.left = '';
 
       const PREVIEW_OFFSET = 5;
 
       const previewBoundingClientRect =
-        previewRef.current?.getBoundingClientRect();
+        previewReference.current?.getBoundingClientRect();
       const previewHeight = previewBoundingClientRect?.height || 0;
       const previewWidth = previewBoundingClientRect?.width || 0;
 
@@ -95,11 +95,11 @@ export const Preview = () => {
         previewOffset: PREVIEW_OFFSET,
       });
 
-      previewRef.current.style.top = `${position.top}px`;
-      previewRef.current.style.left = `${position.left}px`;
+      previewReference.current.style.top = `${position.top}px`;
+      previewReference.current.style.left = `${position.left}px`;
     } else {
-      previewRef.current.style.top = '';
-      previewRef.current.style.left = '';
+      previewReference.current.style.top = '';
+      previewReference.current.style.left = '';
     }
   }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
@@ -109,7 +109,7 @@ export const Preview = () => {
 
   return (
     <PreviewContainer
-      ref={previewRef}
+      ref={previewReference}
       style={{
         ...preview?.style,
         pointerEvents: preview.style || !isPopupMode ? 'auto' : 'none',
@@ -126,7 +126,7 @@ export const Preview = () => {
   );
 };
 
-interface CalculatePreviewPositionParams {
+interface CalculatePreviewPositionParameters {
   targetTop: number;
   targetBottom: number;
   targetLeft: number;
@@ -156,7 +156,7 @@ export function calculatePreviewPosition({
   ketcherRootOffsetX,
   ketcherRootOffsetY,
   previewOffset,
-}: CalculatePreviewPositionParams) {
+}: CalculatePreviewPositionParameters) {
   const topPosition = targetTop - previewHeight - previewOffset;
   const bottomPosition = targetBottom + previewOffset;
 

@@ -21,10 +21,10 @@ export const MonomerPreviewContainer = styled.span<{ preset?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.regular};
   font-weight: 500;
   line-height: normal;
-  color: ${(props) => props.theme.ketcher.color.text.lightgrey};
+  color: ${(properties) => properties.theme.ketcher.color.text.lightgrey};
   padding-inline-start: ${({ preset }) => (preset ? '0' : '8px')};
   border-inline-start: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
 `;

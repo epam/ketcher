@@ -93,7 +93,7 @@ export type Option = {
   label: string;
 };
 
-export type DropDownProps = {
+export type DropDownProperties = {
   options: Array<Option>;
   currentSelection: Option['id'];
   selectionHandler: (value: Option['id']) => void;
@@ -113,7 +113,7 @@ export const DropDown = ({
   testId,
   customStylesForExpanded = {},
   disabled = false,
-}: DropDownProps) => {
+}: DropDownProperties) => {
   const [expanded, setExpanded] = useState(false);
 
   const isFullscreen = !!document.fullscreenElement;

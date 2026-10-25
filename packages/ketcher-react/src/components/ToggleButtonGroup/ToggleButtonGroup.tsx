@@ -9,7 +9,7 @@ interface ButtonItem<T> {
   value: T;
 }
 
-interface ToggleButtonGroupProps<T> {
+interface ToggleButtonGroupProperties<T> {
   buttons: ButtonItem<T>[];
   onClick: (value: T) => void;
   defaultValue: T;
@@ -28,7 +28,7 @@ export default function ButtonGroup<T>({
   onClick,
   defaultValue,
   title,
-}: Readonly<ToggleButtonGroupProps<T>>) {
+}: Readonly<ToggleButtonGroupProperties<T>>) {
   const { t } = useTranslation('components');
   const [value, setValue] = useState(defaultValue);
 

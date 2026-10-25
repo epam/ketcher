@@ -20,7 +20,7 @@ interface CasheOptions {
   cachePrefix?: string;
   needCache?: boolean;
 }
-export interface IStructRenderProps {
+export interface IStructRenderProperties {
   struct: Struct;
   options?: (RenderOptions & CasheOptions) | CasheOptions;
   className?: string;

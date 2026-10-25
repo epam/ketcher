@@ -5,7 +5,7 @@ import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
-import { config as loadEnv } from 'dotenv';
+import { config as loadEnvironment } from 'dotenv';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import path from 'node:path';
@@ -25,7 +25,7 @@ import { string } from 'rollup-plugin-string';
 // win). This lets a consumer set KETCHER_MULTI_LANGUAGE_BUILD=true in a
 // local .env instead of exporting it before every build invocation — see
 // packages/ketcher-react/src/locales/README.md for the full flag docs.
-loadEnv({
+loadEnvironment({
   path: path.resolve(
     fileURLToPath(new URL('.', import.meta.url)),
     '../../.env',
@@ -45,7 +45,7 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
-const pkg = JSON.parse(
+const package_ = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
@@ -62,7 +62,7 @@ export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
-  'process.env.VERSION': JSON.stringify(pkg.version),
+  'process.env.VERSION': JSON.stringify(package_.version),
   'process.env.BUILD_DATE': JSON.stringify(
     new Date().toISOString().slice(0, 19),
   ),
@@ -81,7 +81,7 @@ export const valuesToReplace = {
 };
 
 const config = {
-  input: pkg.source,
+  input: package_.source,
   output: [
     {
       dir: 'dist/cjs',
@@ -130,7 +130,7 @@ const config = {
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }],
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+      extensions: extensions.map((extension) => extension.replace(/^\./, '')),
       comments: 'none',
       include: includePattern,
     }),

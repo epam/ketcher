@@ -27,7 +27,7 @@ import useResizeObserver from 'use-resize-observer/polyfilled';
 import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
 
-interface ModalProps extends BaseCallProps {
+interface ModalProperties extends BaseCallProps {
   modal: {
     name: string;
     form: any;
@@ -35,7 +35,7 @@ interface ModalProps extends BaseCallProps {
   };
 }
 
-type Props = ModalProps & BaseCallProps & ModalContainerProps;
+type Props = ModalProperties & BaseCallProps & ModalContainerProps;
 
 type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
@@ -87,5 +87,5 @@ function Modal(props: Props) {
   return <ModalContent modal={modal} {...rest} />;
 }
 
-export type { ModalProps };
+export type { ModalProperties };
 export { Modal };

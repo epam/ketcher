@@ -10,7 +10,7 @@ import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 
 export const RootSizeContext = createContext({ width: 0, height: 0 });
 
-type Props = {
+type Properties = {
   children: ReactNode;
   rootRef: RefObject<HTMLElement> | null;
   isMacromoleculesEditorTurnedOn?: boolean;
@@ -20,7 +20,7 @@ export const RootSizeProvider = ({
   children,
   rootRef,
   isMacromoleculesEditorTurnedOn,
-}: Props) => {
+}: Properties) => {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   const handleResize = useCallback(() => {

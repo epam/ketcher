@@ -104,7 +104,7 @@ describe('BondTool rejected drag preview', () => {
         dragContext: BondToolDragContext,
         failure: BondValidationFailure,
       ) => void;
-      Reflect.set(tool, 'dragCtx', dragContext);
+      Reflect.set(tool, 'dragContext', dragContext);
 
       rejectBondOperation.call(tool, event, dragContext, failure);
 
@@ -179,7 +179,7 @@ describe('BondTool rejected drag preview', () => {
     expect(dragContext.action).toBeDefined();
     expect(dragContext.hapticValidationFailed).toBe(true);
 
-    Reflect.set(tool, 'dragCtx', dragContext);
+    Reflect.set(tool, 'dragContext', dragContext);
     tool.mouseup(event);
 
     expect(struct.bonds.size).toBe(0);

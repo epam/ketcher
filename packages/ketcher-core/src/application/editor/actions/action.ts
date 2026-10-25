@@ -35,7 +35,7 @@ export class Action {
   }
 
   mergeWith(action) {
-    this.operations = this.operations.concat(action.operations);
+    this.operations = [...this.operations, ...action.operations];
     return this;
   }
 

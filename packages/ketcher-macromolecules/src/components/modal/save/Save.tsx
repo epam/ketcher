@@ -130,7 +130,7 @@ export const Save = ({
       }
       if (
         !isHelmCompatible(
-          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          [...editor.drawingEntitiesManager.monomers.values()],
           editor.monomersLibrary,
         )
       ) {

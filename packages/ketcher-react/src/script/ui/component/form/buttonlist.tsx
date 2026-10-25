@@ -42,7 +42,7 @@ function oneOrMore(
   item: string,
 ): string[] {
   if (multiple) return xor(values, [item]);
-  return xor(values, values.concat([item]));
+  return xor(values, [...values, item]);
 }
 
 function ButtonList({

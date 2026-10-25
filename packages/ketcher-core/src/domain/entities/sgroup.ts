@@ -284,7 +284,7 @@ export class SGroup {
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }
 
-    const sgroups = Array.from(struct.sgroups.values());
+    const sgroups = [...struct.sgroups.values()];
     for (const _ of sgroups) {
       if (!descriptorIntersects(sgroups, topLeftPoint)) break;
 

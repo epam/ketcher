@@ -175,7 +175,7 @@ export class Molfile {
 
       const reactants = components.reactants;
       const products = components.products;
-      const all = reactants.concat(products);
+      const all = [...reactants, ...products];
       this.molfile =
         '$RXN\n' +
         molecule.name +
@@ -303,7 +303,7 @@ export class Molfile {
 
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
-    const isAbsFlag = Array.from(molecule.frags.values()).some((fr) =>
+    const isAbsFlag = [...molecule.frags.values()].some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 

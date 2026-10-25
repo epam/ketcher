@@ -242,7 +242,7 @@ class ReStruct {
     aid: Array<number> | number,
     adjacentComponents: Pile<number>,
   ): Pile<number> {
-    const list = Array.isArray(aid) ? Array.from(aid) : [aid];
+    const list = Array.isArray(aid) ? [...aid] : [aid];
     const ids = new Pile<number>();
     const visitedEndpoints = new Set<number>();
 
@@ -285,10 +285,7 @@ class ReStruct {
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
     const adjacentComponents = new Pile<number>();
-    const aidSet = this.getConnectedComponent(
-      Array.from(idSet),
-      adjacentComponents,
-    );
+    const aidSet = this.getConnectedComponent([...idSet], adjacentComponents);
 
     adjacentComponents.delete(compId);
 
@@ -490,7 +487,7 @@ class ReStruct {
   private getAllElementsAsSelectionMap(): SelectionMap {
     const selection: SelectionMap = {};
     Object.keys(ReStruct.maps).forEach((map) => {
-      selection[map] = Array.from(this[map].keys());
+      selection[map] = [...this[map].keys()];
     });
     return selection;
   }

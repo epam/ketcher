@@ -54,8 +54,8 @@ export function getItemsToFuse(editor, items) {
   const struct = editor.render.ctab.molecule;
 
   const mergeItems = items || {
-    atoms: Array.from(struct.atoms.keys()),
-    bonds: Array.from(struct.bonds.keys()),
+    atoms: [...struct.atoms.keys()],
+    bonds: [...struct.bonds.keys()],
   };
 
   return closestToMerge(
@@ -68,13 +68,13 @@ export function getHoverToFuse(items) {
   if (!items) return null;
 
   const hoverItems = {
-    atoms: Array.from(items.atoms.values()),
-    bonds: Array.from(items.bonds.values()),
+    atoms: [...items.atoms.values()],
+    bonds: [...items.bonds.values()],
     ...(items.functionalGroups && {
-      functionalGroups: Array.from(items.functionalGroups.values()),
+      functionalGroups: [...items.functionalGroups.values()],
     }),
     ...(items.atomToFunctionalGroup && {
-      sgroups: Array.from(items.atomToFunctionalGroup.values()),
+      sgroups: [...items.atomToFunctionalGroup.values()],
     }),
   };
 

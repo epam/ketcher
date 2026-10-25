@@ -890,7 +890,7 @@ function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
 
   const atomSet = new Pile(sgAtoms);
 
-  const sgBonds = Array.from(struct.bonds.values()).filter(
+  const sgBonds = [...struct.bonds.values()].filter(
     (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
@@ -1003,7 +1003,7 @@ function countOfSelectedComponents(
 ): number {
   const atomSet = new Pile<number>(atoms);
 
-  return Array.from(restruct.connectedComponents.values()).reduce(
+  return [...restruct.connectedComponents.values()].reduce(
     (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );

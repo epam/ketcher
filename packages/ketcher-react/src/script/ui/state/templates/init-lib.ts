@@ -76,7 +76,7 @@ export default async function initTmplLib(
   const fileName = 'library.sdf';
 
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls());
+    const lib = [...res, ...userTmpls()];
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
     if (needReinitializeTemplateLibrary) {

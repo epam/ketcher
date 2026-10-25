@@ -52,10 +52,9 @@ const EnhancedStereo: FC<Props> = (props) => {
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
-  const stereoLabels: Array<string> = findStereLabels(
-    struct,
-    Array.from(struct.atoms.keys()),
-  );
+  const stereoLabels: Array<string> = findStereLabels(struct, [
+    ...struct.atoms.keys(),
+  ]);
 
   const maxAnd: number = maxOfAnds(stereoLabels);
   const maxOr: number = maxOfOrs(stereoLabels);

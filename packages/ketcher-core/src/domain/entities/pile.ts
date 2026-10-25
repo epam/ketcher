@@ -38,7 +38,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
   }
 
   filter(expression: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(expression));
+    return new Pile([...this].filter(expression));
   }
 
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {

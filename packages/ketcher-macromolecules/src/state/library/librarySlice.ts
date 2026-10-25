@@ -449,7 +449,7 @@ export const selectFilteredMonomers = createSelector(
 
           const matchesIdtBase =
             idtBase?.length === textBetweenSlashes.length &&
-            Array.from(idtBase).every(
+            [...idtBase].every(
               (char, index) => char === textBetweenSlashes[index],
             );
 
@@ -459,7 +459,7 @@ export const selectFilteredMonomers = createSelector(
                 .some(
                   (mod) =>
                     mod.length === textBetweenSlashes.length &&
-                    Array.from(mod).every(
+                    [...mod].every(
                       (char, index) => char === textBetweenSlashes[index],
                     ),
                 )

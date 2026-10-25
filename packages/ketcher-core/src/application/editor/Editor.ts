@@ -2268,7 +2268,7 @@ export class CoreEditor {
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
     Object.entries(grouped).forEach(([analogue, typesSet]) => {
-      const types = Array.from(typesSet).sort((a, b) => {
+      const types = [...typesSet].sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
         const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();

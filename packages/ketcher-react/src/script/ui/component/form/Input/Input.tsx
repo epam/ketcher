@@ -163,7 +163,7 @@ Select.val = function (ev, schema) {
 
   const options = select.options;
 
-  return Array.from(options).reduce(
+  return [...options].reduce(
     (res, o: HTMLOptionElement, i) =>
       !o.selected ? res : [enumSchema(schema, i), ...res],
     [] as HTMLOptionElement[],
@@ -228,7 +228,7 @@ FieldSet.val = function (ev, schema) {
   let result;
 
   if (inputCollection?.length) {
-    result = Array.from(inputCollection).reduce(
+    result = [...inputCollection].reduce(
       (res, inp: HTMLInputElement, i) =>
         !inp.checked ? res : [enumSchema(schema, i), ...res],
 

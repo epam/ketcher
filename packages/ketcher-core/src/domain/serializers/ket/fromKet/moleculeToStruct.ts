@@ -23,7 +23,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
-import { ifDef } from 'utilities';
+import { ifDefined } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { atomToStruct, bondToStruct } from './atomBondToStruct';
@@ -106,16 +106,16 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
 export function rglabelToStruct(source: KetRgLabelNode): Atom {
   const params: AtomAttributes = { label: 'R#' };
   const [x = 0, y = 0, z = 0] = source.location ?? [0, 0, 0];
-  ifDef(params, 'pp', {
+  ifDefined(params, 'pp', {
     x,
     y: -y,
     z,
   });
-  ifDef(params, 'attachmentPoints', source.attachmentPoints);
+  ifDefined(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(
     (source.$refs ?? []).map((el) => parseInt(el.slice(3), 10)),
   );
-  ifDef(params, 'rglabel', rglabel);
+  ifDefined(params, 'rglabel', rglabel);
   const newAtom = new Atom(params);
   newAtom.setInitiallySelected(source.selected);
   return newAtom;
@@ -154,27 +154,27 @@ type KetAttachmentPoint = KetSGroupAttachmentPointNode & {
 export function sgroupToStruct(source: KetSGroupNode): SGroup {
   const sgroupType = source.type ?? 'GEN';
   const sgroup = new SGroup(sgroupType);
-  ifDef(sgroup, 'atoms', source.atoms);
+  ifDefined(sgroup, 'atoms', source.atoms);
   switch (sgroupType) {
     case 'MUL': {
-      ifDef(sgroup.data, 'mul', source.mul);
+      ifDefined(sgroup.data, 'mul', source.mul);
       break;
     }
     case 'SRU': {
-      ifDef(sgroup.data, 'subscript', source.subscript);
-      ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      ifDefined(sgroup.data, 'subscript', source.subscript);
+      ifDefined(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
     case 'COP': {
-      ifDef(sgroup.data, 'subtype', source.subtype);
-      ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      ifDefined(sgroup.data, 'subtype', source.subtype);
+      ifDefined(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
     case 'SUP': {
-      ifDef(sgroup.data, 'name', source.name);
-      ifDef(sgroup.data, 'expanded', source.expanded);
-      ifDef(sgroup.data, 'class', source.class);
-      ifDef(sgroup, 'id', source.id);
+      ifDefined(sgroup.data, 'name', source.name);
+      ifDefined(sgroup.data, 'expanded', source.expanded);
+      ifDefined(sgroup.data, 'class', source.class);
+      ifDefined(sgroup, 'id', source.id);
       source.attachmentPoints?.forEach(
         (sourceAttachmentPoint, sourceAttachmentPointIndex: number) => {
           const { attachmentAtom } = sourceAttachmentPoint;
@@ -195,11 +195,11 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       break;
     }
     case 'DAT': {
-      ifDef(sgroup.data, 'absolute', source.placement);
-      ifDef(sgroup.data, 'attached', source.display);
-      ifDef(sgroup.data, 'context', source.context);
-      ifDef(sgroup.data, 'fieldName', source.fieldName);
-      ifDef(sgroup.data, 'fieldValue', source.fieldData);
+      ifDefined(sgroup.data, 'absolute', source.placement);
+      ifDefined(sgroup.data, 'attached', source.display);
+      ifDefined(sgroup.data, 'context', source.context);
+      ifDefined(sgroup.data, 'fieldName', source.fieldName);
+      ifDefined(sgroup.data, 'fieldValue', source.fieldData);
       break;
     }
     case 'GEN':

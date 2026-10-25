@@ -45,21 +45,21 @@ export const getSvgFromDrawnStructures = (
   // remove #rectangle-selection-area
   wrapper.querySelector('#rectangle-selection-area')?.remove();
   // remove dynamic elements (scrolls, highlighters, attachment points...)
-  wrapper.querySelectorAll('.dynamic-element')?.forEach((el) => el.remove());
+  wrapper.querySelectorAll('.dynamic-element')?.forEach((element) => element.remove());
   // remove transient views (rotation frame and handles around the selection...)
   wrapper
     .querySelectorAll(TRANSIENT_LAYERS_SELECTOR)
-    ?.forEach((el) => el.remove());
+    ?.forEach((element) => element.remove());
   // set default cursor, mostly for sequence mode
   wrapper
     .querySelectorAll('text')
-    ?.forEach((el) => el.setAttribute('cursor', 'default'));
-  wrapper.querySelectorAll('rect')?.forEach((el) => {
-    if (el.getAttribute('cursor') === 'text') el.removeAttribute('cursor');
+    ?.forEach((element) => element.setAttribute('cursor', 'default'));
+  wrapper.querySelectorAll('rect')?.forEach((element) => {
+    if (element.getAttribute('cursor') === 'text') element.removeAttribute('cursor');
   });
   // remove opacity of structures, mostly for sequence "edit in RNA builder" mode
-  wrapper.querySelectorAll('g')?.forEach((el) => {
-    if (el.hasAttribute('opacity')) el.removeAttribute('opacity');
+  wrapper.querySelectorAll('g')?.forEach((element) => {
+    if (element.hasAttribute('opacity')) element.removeAttribute('opacity');
   });
   svgInnerHTML = wrapper.innerHTML;
   // remove "cursor: pointer" style only from elements where it appears standalone,

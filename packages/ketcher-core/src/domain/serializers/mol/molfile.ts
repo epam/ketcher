@@ -23,7 +23,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
-import utils from './utils';
+import utils from ./utilitiess';
 import { assert, KetcherLogger } from 'utilities';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 

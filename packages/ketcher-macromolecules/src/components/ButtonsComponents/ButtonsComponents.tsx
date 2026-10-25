@@ -7,7 +7,7 @@ export function ButtonsComponents() {
   const { t } = useTranslation('macromolecules');
   const [aboutOpen, setAboutOpen] = useState(false);
 
-  const aboutProps = {
+  const aboutProperties = {
     isOpen: aboutOpen,
     onClose: () => setAboutOpen(false),
   };
@@ -34,7 +34,7 @@ export function ButtonsComponents() {
           testId="about-button"
         />
       </div>
-      <About {...aboutProps} />
+      <About {...aboutProperties} />
     </>
   );
 }

@@ -1,29 +1,29 @@
 import { BaseMonomer } from 'ketcher-core';
 import { PolymerBond } from 'ketcher-core/dist/domain/entities/PolymerBond';
 
-export interface MonomerConnectionOnlyProps {
+export interface MonomerConnectionOnlyProperties {
   firstMonomer?: BaseMonomer;
   secondMonomer?: BaseMonomer;
   polymerBond?: PolymerBond;
   isReconnectionDialog?: boolean;
 }
 
-export interface ConfirmationDialogOnlyProps {
+export interface ConfirmationDialogOnlyProperties {
   title?: string;
   confirmationText?: string;
   onConfirm?: () => void;
 }
 
-export interface RequiredModalProps {
+export interface RequiredModalProperties {
   onClose: () => void;
   isModalOpen: boolean;
 }
-export type MonomerConnectionProps = MonomerConnectionOnlyProps &
-  RequiredModalProps;
+export type MonomerConnectionProperties = MonomerConnectionOnlyProperties &
+  RequiredModalProperties;
 
-export type ConfirmationDialogProps = ConfirmationDialogOnlyProps &
-  RequiredModalProps;
+export type ConfirmationDialogProperties = ConfirmationDialogOnlyProperties &
+  RequiredModalProperties;
 
-export type AdditionalModalProps = Partial<
-  MonomerConnectionProps & ConfirmationDialogProps
+export type AdditionalModalProperties = Partial<
+  MonomerConnectionProperties & ConfirmationDialogProperties
 >;

@@ -3,7 +3,7 @@ import babel from '@rollup/plugin-babel';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
-import { config as loadEnv } from 'dotenv';
+import { config as loadEnvironment } from 'dotenv';
 import json from '@rollup/plugin-json';
 import { createRequire } from 'node:module';
 import nodeResolve from '@rollup/plugin-node-resolve';
@@ -19,14 +19,14 @@ import { fileURLToPath } from 'node:url';
 import { string } from 'rollup-plugin-string';
 
 const require = createRequire(import.meta.url);
-const pkg = require('./package.json');
+const package_ = require('./package.json');
 
 // Loads a repo-root .env file, if present, without overriding variables
 // already set in the shell (dotenv's default: existing process.env values
 // win). This lets a consumer set KETCHER_MULTI_LANGUAGE_BUILD=true in a
 // local .env instead of exporting it before every build invocation — see
 // packages/ketcher-react/src/locales/README.md for the full flag docs.
-loadEnv({
+loadEnvironment({
   path: path.resolve(
     fileURLToPath(new URL('.', import.meta.url)),
     '../../.env',
@@ -51,7 +51,7 @@ export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
-  'process.env.VERSION': JSON.stringify(pkg.version),
+  'process.env.VERSION': JSON.stringify(package_.version),
   'process.env.BUILD_DATE': JSON.stringify(
     new Date().toISOString().slice(0, 19),
   ),
@@ -69,16 +69,16 @@ export const valuesToReplace = {
 };
 
 const config = {
-  input: pkg.source,
+  input: package_.source,
   output: [
     {
-      file: pkg.main,
+      file: package_.main,
       exports: 'named',
       format: 'cjs',
       banner: `require('./index.css');`,
     },
     {
-      file: pkg.module,
+      file: package_.module,
       exports: 'named',
       format: 'es',
       banner: `import './index.css';`,

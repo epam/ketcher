@@ -35,7 +35,7 @@ import {
   RnaEditorExpandedContainer,
   StyledButton,
 } from './styles';
-import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
+import { IRnaEditorExpandedProperties } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
 import { useDispatch } from 'react-redux';
 import {
   monomerGroupToPresetGroup,
@@ -107,18 +107,18 @@ type SequenceSelectionGroupNames = {
   [MonomerGroups.PHOSPHATES]: string;
 };
 
-function useLatestRef<T>(value: T) {
-  const ref = useRef(value);
+function useLatestReference<T>(value: T) {
+  const reference = useRef(value);
   useEffect(() => {
-    ref.current = value;
+    reference.current = value;
   }, [value]);
-  return ref;
+  return reference;
 }
 
 export const RnaEditorExpanded = ({
   isEditMode,
   onDuplicate,
-}: IRnaEditorExpandedProps) => {
+}: IRnaEditorExpandedProperties) => {
   const { t } = useTranslation(['macromoleculesDialogs', 'common']);
   const groupsData = [
     {
@@ -149,7 +149,7 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
-  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+  const [previousActivePreset, setPreviousActivePreset] = useState(activePreset);
 
   const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
     RnaPhosphatePosition | undefined
@@ -207,15 +207,15 @@ export const RnaEditorExpanded = ({
 
   // These refs let the sequence update effect respond only to a new monomer
   // selection while still reading the latest guards and selection.
-  const activeMonomerGroupRef = useLatestRef(activeMonomerGroup);
-  const isEditModeRef = useLatestRef(isEditMode);
+  const activeMonomerGroupReference = useLatestReference(activeMonomerGroup);
+  const isEditModeReference = useLatestReference(isEditMode);
   const activePresetGroupItem = activePresetMonomerGroup?.groupItem;
-  const activePresetGroupNameRef = useLatestRef(
+  const activePresetGroupNameReference = useLatestReference(
     activePresetMonomerGroup?.groupName,
   );
 
   const sequenceSelection = useAppSelector(selectSequenceSelection);
-  const sequenceSelectionRef = useLatestRef(sequenceSelection);
+  const sequenceSelectionReference = useLatestReference(sequenceSelection);
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
@@ -272,8 +272,8 @@ export const RnaEditorExpanded = ({
     right: t('monomerLibrary.phosphateDisabledRightTooltip'),
   };
 
-  if (activePreset !== prevActivePreset) {
-    setPrevActivePreset(activePreset);
+  if (activePreset !== previousActivePreset) {
+    setPreviousActivePreset(activePreset);
     setNewPreset(activePreset);
     setSelectedPhosphatePosition(
       activePreset?.connections?.length
@@ -331,8 +331,8 @@ export const RnaEditorExpanded = ({
 
   useEffect(() => {
     if (
-      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets ||
-      !isEditModeRef.current ||
+      activeMonomerGroupReference.current === RnaBuilderPresetsItem.Presets ||
+      !isEditModeReference.current ||
       !isSequenceEditInRNABuilderMode ||
       !activePresetGroupItem
     ) {
@@ -340,9 +340,9 @@ export const RnaEditorExpanded = ({
     }
 
     const monomerType =
-      monomerGroupToPresetGroup[activePresetGroupNameRef.current ?? ''];
+      monomerGroupToPresetGroup[activePresetGroupNameReference.current ?? ''];
     const field = `${monomerType}Label`;
-    const updatedSequenceSelection = sequenceSelectionRef.current.map(
+    const updatedSequenceSelection = sequenceSelectionReference.current.map(
       (node) => {
         // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
         // Do not set 'sugarLabel', 'baseLabel' for Phosphate
@@ -359,7 +359,7 @@ export const RnaEditorExpanded = ({
           ...node,
           [field]: activePresetGroupItem.label,
           rnaBaseMonomerItem:
-            activePresetGroupNameRef.current === 'Bases'
+            activePresetGroupNameReference.current === 'Bases'
               ? activePresetGroupItem
               : node.rnaBaseMonomerItem,
         };
@@ -371,10 +371,10 @@ export const RnaEditorExpanded = ({
     isSequenceEditInRNABuilderMode,
     activePresetGroupItem,
     dispatch,
-    activeMonomerGroupRef,
-    activePresetGroupNameRef,
-    isEditModeRef,
-    sequenceSelectionRef,
+    activeMonomerGroupReference,
+    activePresetGroupNameReference,
+    isEditModeReference,
+    sequenceSelectionReference,
   ]);
 
   const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {

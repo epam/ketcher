@@ -31,7 +31,7 @@ import type { SettingFieldValue } from './fieldGroups';
 const resolveSettingLabel = (key: string, t: TFunction) =>
   key.startsWith('settings.') ? t(key) : key;
 
-interface SettingsFieldProps {
+interface SettingsFieldProperties {
   name: string;
   labelKey: string;
   type: 'checkbox' | 'number' | 'text' | 'select' | 'color';
@@ -55,7 +55,7 @@ export const SettingsField = ({
   max,
   step,
   tooltipKey,
-}: SettingsFieldProps) => {
+}: SettingsFieldProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const label = resolveSettingLabel(labelKey, t);
   const tooltip = tooltipKey ? resolveSettingLabel(tooltipKey, t) : undefined;
@@ -87,7 +87,7 @@ export const SettingsField = ({
             {labelContent}
             <Switch
               checked={Boolean(value)}
-              onChange={(e) => onChange(e.target.checked)}
+              onChange={(event_) => onChange(event_.target.checked)}
               size="small"
               data-testid={`setting-${name}`}
             />
@@ -101,7 +101,7 @@ export const SettingsField = ({
             <input
               type="number"
               value={numberValue ?? ''}
-              onChange={(e) => onChange(Number(e.target.value))}
+              onChange={(event_) => onChange(Number(event_.target.value))}
               min={min}
               max={max}
               step={step ?? 1}
@@ -124,11 +124,11 @@ export const SettingsField = ({
             <FormControl size="small" sx={{ border: 'none' }}>
               <Select
                 value={selectValue}
-                onChange={(e) => {
+                onChange={(event_) => {
                   const option = options?.find(
-                    (opt) => String(opt.value) === e.target.value,
+                    (opt) => String(opt.value) === event_.target.value,
                   );
-                  onChange(option?.value ?? e.target.value);
+                  onChange(option?.value ?? event_.target.value);
                 }}
                 displayEmpty
                 data-testid={`setting-${name}`}
@@ -169,7 +169,7 @@ export const SettingsField = ({
               <input
                 type="color"
                 value={stringValue ?? '#000000'}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(event_) => onChange(event_.target.value)}
                 data-testid={`setting-${name}`}
                 style={{
                   width: '30px',
@@ -183,7 +183,7 @@ export const SettingsField = ({
               <input
                 type="text"
                 value={stringValue ?? '#000000'}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(event_) => onChange(event_.target.value)}
                 style={{
                   width: '85px',
                   fontSize: '12px',
@@ -205,7 +205,7 @@ export const SettingsField = ({
             <input
               type="text"
               value={stringValue ?? ''}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(event_) => onChange(event_.target.value)}
               data-testid={`setting-${name}`}
               style={{
                 fontSize: '12px',

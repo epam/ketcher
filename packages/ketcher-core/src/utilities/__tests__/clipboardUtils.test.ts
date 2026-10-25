@@ -4,7 +4,7 @@ import {
   getStructStringFromClipboardData,
   legacyCopy,
   legacyPaste,
-} from '../clipboardUtils';
+} from '../clipboardUtilities';
 
 describe('clipboardUtils', () => {
   describe('legacyCopy', () => {

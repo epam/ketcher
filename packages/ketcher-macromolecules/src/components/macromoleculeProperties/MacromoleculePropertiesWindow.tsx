@@ -200,8 +200,8 @@ const StyledBasicProperty = styled('div')<{ disabled?: boolean }>(
   }),
 );
 
-const StyledTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
+const StyledTooltip = styled(({ className, ...properties }: TooltipProps) => (
+  <Tooltip {...properties} classes={{ popper: className }} />
 ))(() => ({
   [`& .${tooltipClasses.tooltip}`]: {
     maxWidth: '220px',
@@ -334,7 +334,7 @@ const StyledMonomersCountPanelItemName = styled('div')(() => ({
   fontWeight: '700',
 }));
 
-interface BasicPropertyProps {
+interface BasicPropertyProperties {
   name: string;
   value?: string | number;
   hint?: string | ReactNode;
@@ -346,25 +346,25 @@ interface BasicPropertyProps {
   onChangeValue?: (value: number) => void;
 }
 
-interface MonomersCountPanelProps {
+interface MonomersCountPanelProperties {
   monomerCount?: Record<string, number>;
   isPeptide?: boolean;
 }
 
-const MonomersCountPanel = (props: MonomersCountPanelProps) => {
+const MonomersCountPanel = (properties: MonomersCountPanelProperties) => {
   const { t } = useTranslation('macromolecules');
-  const naturalAnaloguesArray = props.isPeptide
+  const naturalAnaloguesArray = properties.isPeptide
     ? peptideNaturalAnalogues
     : rnaDnaNaturalAnalogues;
   const countsEntries: [string, number | undefined][] =
     naturalAnaloguesArray.map((peptideNaturalAnalogues) => [
       peptideNaturalAnalogues,
-      props.monomerCount?.[peptideNaturalAnalogues],
+      properties.monomerCount?.[peptideNaturalAnalogues],
     ]);
 
   countsEntries.push([
     OTHER_MONOMER_COUNT_NAME,
-    props.monomerCount?.[OTHER_MONOMER_COUNT_NAME],
+    properties.monomerCount?.[OTHER_MONOMER_COUNT_NAME],
   ]);
   countsEntries.sort((a, b) => {
     return a[0] === OTHER_MONOMER_COUNT_NAME ? 1 : a[0].localeCompare(b[0]);
@@ -377,7 +377,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
           <StyledMonomersCountPanelItem
             monomerShortName={monomerShortName}
             data-testid={monomerShortName + '-option'}
-            isPeptide={props.isPeptide}
+            isPeptide={properties.isPeptide}
             disabled={!count}
             key={monomerShortName}
           >
@@ -394,51 +394,51 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
   );
 };
 
-const BasicProperty = (props: BasicPropertyProps) => {
+const BasicProperty = (properties: BasicPropertyProperties) => {
   return (
-    <StyledBasicProperty data-testid={props.testId} disabled={props.disabled}>
+    <StyledBasicProperty data-testid={properties.testId} disabled={properties.disabled}>
       <>
         <BasicPropertyName>
-          {props.name}
-          {props.value !== undefined && ':'}
+          {properties.name}
+          {properties.value !== undefined && ':'}
         </BasicPropertyName>
-        {props.onChangeValue ? (
+        {properties.onChangeValue ? (
           <BasicPropertyInput
-            value={props.value ?? ''}
-            id={`macromolecule-property-${props.name}`}
-            data-testid={`${props.testId}-input`}
+            value={properties.value ?? ''}
+            id={`macromolecule-property-${properties.name}`}
+            data-testid={`${properties.testId}-input`}
             type="number"
             min={0}
             inputClassName={inputClassName}
-            onChange={(value) => props?.onChangeValue?.(Number(value))}
+            onChange={(value) => properties?.onChangeValue?.(Number(value))}
           />
         ) : (
-          <BasicPropertyValue data-testid={props.testId + '-value'}>
-            {props.value}
+          <BasicPropertyValue data-testid={properties.testId + '-value'}>
+            {properties.value}
           </BasicPropertyValue>
         )}
-        {props.hint && (
+        {properties.hint && (
           // TODO suppressed after upgrade to react 19. Need to fix
 
           // @ts-ignore
-          <StyledTooltip title={props.hint}>
+          <StyledTooltip title={properties.hint}>
             <PropertyHintIconWrapper>
               <PropertyHintIcon
                 name="about"
-                dataTestId={props.name + '-info'}
+                dataTestId={properties.name + '-info'}
               />
             </PropertyHintIconWrapper>
           </StyledTooltip>
         )}
-        {props.options && props.selectedOption && props.onChangeOption && (
+        {properties.options && properties.selectedOption && properties.onChangeOption && (
           <BasicPropertyDropdown
-            options={props.options.map((option) => ({
+            options={properties.options.map((option) => ({
               id: option,
               label: option,
             }))}
-            testId={props.testId + '-selector'}
-            currentSelection={props.selectedOption}
-            selectionHandler={props.onChangeOption}
+            testId={properties.testId + '-selector'}
+            currentSelection={properties.selectedOption}
+            selectionHandler={properties.onChangeOption}
           />
         )}
       </>
@@ -459,14 +459,14 @@ const GrossFormulaPart = ({ part }) => {
   );
 };
 
-interface PeptidePropertiesProps {
+interface PeptideProperties_ {
   macromoleculesProperties: SingleChainMacromoleculeProperties;
   isError: boolean;
 }
 
-type DnaRnaPropertiesProps = PeptidePropertiesProps;
+type DnaRnaProperties = PeptideProperties_;
 
-interface HydrophobicityChartProps {
+interface HydrophobicityChartProperties {
   data: number[];
 }
 
@@ -489,9 +489,9 @@ function lttb(xs, ys, threshold) {
   const every = (dataLength - 2) / (threshold - 2);
   let a = 0;
 
-  for (let i = 0; i < threshold - 2; i++) {
-    const rangeStart = Math.floor((i + 1) * every) + 1;
-    const rangeEnd = Math.floor((i + 2) * every) + 1;
+  for (let index = 0; index < threshold - 2; index++) {
+    const rangeStart = Math.floor((index + 1) * every) + 1;
+    const rangeEnd = Math.floor((index + 2) * every) + 1;
 
     // avg point in next bucket
     const avgRangeStart = rangeStart;
@@ -500,28 +500,28 @@ function lttb(xs, ys, threshold) {
     let avgY = 0;
 
     const rangeLength = avgRangeEnd - avgRangeStart;
-    for (let j = avgRangeStart; j < avgRangeEnd; j++) {
-      avgX += xs[j];
-      avgY += ys[j];
+    for (let index = avgRangeStart; index < avgRangeEnd; index++) {
+      avgX += xs[index];
+      avgY += ys[index];
     }
     avgX /= rangeLength;
     avgY /= rangeLength;
 
     // range for this bucket
-    const rangeOffs = Math.floor(i * every) + 1;
-    const rangeTo = Math.floor((i + 1) * every) + 1;
+    const rangeOffs = Math.floor(index * every) + 1;
+    const rangeTo = Math.floor((index + 1) * every) + 1;
 
     let maxArea = -1;
     let nextA = rangeOffs;
 
-    for (let j = rangeOffs; j < rangeTo; j++) {
+    for (let index = rangeOffs; index < rangeTo; index++) {
       // triangle area
       const area = Math.abs(
-        (xs[a] - avgX) * (ys[j] - ys[a]) - (xs[a] - xs[j]) * (avgY - ys[a]),
+        (xs[a] - avgX) * (ys[index] - ys[a]) - (xs[a] - xs[index]) * (avgY - ys[a]),
       );
       if (area > maxArea) {
         maxArea = area;
-        nextA = j;
+        nextA = index;
       }
     }
 
@@ -566,24 +566,24 @@ const roundToMinNiceNumber = (number: number) => {
   return Math.floor(number / 100) * 100;
 };
 
-const HydrophobicityChart = (props: HydrophobicityChartProps) => {
-  const { data: initialData } = props;
+const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
+  const { data: initialData } = properties;
   const data = lttb(
     initialData.map((_item, index) => index + 1),
     initialData,
     100,
   );
   const [containerWidth, setContainerWidth] = useState(0);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgReference = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgReference.current) return;
 
-    const width = svgRef.current.width.baseVal.value;
-    const height = svgRef.current.height.baseVal.value;
+    const width = svgReference.current.width.baseVal.value;
+    const height = svgReference.current.height.baseVal.value;
     const margin = { top: 10, right: 10, bottom: 20, left: 30 };
 
-    d3.select(svgRef.current).selectAll('*').remove();
+    d3.select(svgReference.current).selectAll('*').remove();
 
     const xScale = d3
       .scaleLinear()
@@ -597,11 +597,11 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 
     const line = d3
       .line<number>()
-      .x((_d, i) => xScale(i))
+      .x((_d, index) => xScale(index))
       .y((d) => yScale(d))
       .curve(d3.curveLinear);
 
-    const svgContainer = d3.select(svgRef.current);
+    const svgContainer = d3.select(svgReference.current);
     const maximumNumberOfTicks = getNumberOfTicks(width);
     const distanceBetweenTicksForMaximumNumberOfTicks = roundToMinNiceNumber(
       initialData.length / maximumNumberOfTicks,
@@ -614,8 +614,8 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       let distanceBetweenTicksWithMaximumCoverage = -Infinity;
       let maximumCoverage = -Infinity;
 
-      for (let i = 2; i <= maximumNumberOfTicks; i++) {
-        const numberOfTicks = i;
+      for (let index = 2; index <= maximumNumberOfTicks; index++) {
+        const numberOfTicks = index;
         const distanceBetweenTicks = roundToMinNiceNumber(
           initialData.length / numberOfTicks,
         );
@@ -638,11 +638,11 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 
       tickValues = Array.from(
         { length: numberOfTicksWithMaximumCoverage },
-        (_, i) =>
+        (_, index) =>
           data.xs.findLastIndex(
             (xDataItem) =>
-              xDataItem <= (i + 1) * distanceBetweenTicksWithMaximumCoverage &&
-              xDataItem > i * distanceBetweenTicksWithMaximumCoverage,
+              xDataItem <= (index + 1) * distanceBetweenTicksWithMaximumCoverage &&
+              xDataItem > index * distanceBetweenTicksWithMaximumCoverage,
           ),
       );
       finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
@@ -657,7 +657,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       const xAxis = d3
         .axisBottom(xScale)
         .tickValues(tickValues)
-        .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
+        .tickFormat((_, index) => ((index + 1) * finalDistanceBetweenTicks).toString());
 
       svgContainer
         .append('g')
@@ -717,25 +717,25 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   );
 
   useEffect(() => {
-    if (svgRef.current) {
-      resizeObserver.observe(svgRef.current);
+    if (svgReference.current) {
+      resizeObserver.observe(svgReference.current);
     }
     return () => {
       resizeObserver.disconnect();
     };
-  }, [svgRef, containerWidth]);
+  }, [svgReference, containerWidth]);
 
   return (
     <StyledHydrophobicityChartSvg
       data-testid="Hydrophobicity-Chart"
-      ref={svgRef}
+      ref={svgReference}
     ></StyledHydrophobicityChartSvg>
   );
 };
 
-const PeptideProperties = (props: PeptidePropertiesProps) => {
+const PeptideProperties = (properties: PeptideProperties_) => {
   const { t } = useTranslation('macromolecules');
-  return props.isError ? (
+  return properties.isError ? (
     <TabContentErrorWrapper>
       <TabContentErrorTitle>
         {t('macromoleculeProperties.noDataAvailable')}
@@ -752,8 +752,8 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             name={t('macromoleculeProperties.isoelectricPoint')}
             testId="Isoelectric Point"
             value={
-              isNumber(props.macromoleculesProperties.pKa)
-                ? _round(props.macromoleculesProperties.pKa, 2)
+              isNumber(properties.macromoleculesProperties.pKa)
+                ? _round(properties.macromoleculesProperties.pKa, 2)
                 : NO_DATA_VALUE
             }
             hint={
@@ -768,8 +768,8 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             name={t('macromoleculeProperties.extinctionCoefficient')}
             testId="Extinction Coefficient"
             value={
-              isNumber(props.macromoleculesProperties.extinctionCoefficient)
-                ? _round(props.macromoleculesProperties.extinctionCoefficient)
+              isNumber(properties.macromoleculesProperties.extinctionCoefficient)
+                ? _round(properties.macromoleculesProperties.extinctionCoefficient)
                 : NO_DATA_VALUE
             }
             hint={
@@ -803,13 +803,13 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
         <MonomersCountPanel
-          monomerCount={props.macromoleculesProperties.monomerCount.peptides}
+          monomerCount={properties.macromoleculesProperties.monomerCount.peptides}
           isPeptide
         />
         <HydrophobicityChartWrapper>
-          {props.macromoleculesProperties.hydrophobicity && (
+          {properties.macromoleculesProperties.hydrophobicity && (
             <HydrophobicityChart
-              data={props.macromoleculesProperties.hydrophobicity}
+              data={properties.macromoleculesProperties.hydrophobicity}
             />
           )}
         </HydrophobicityChartWrapper>
@@ -822,7 +822,7 @@ const containOnlyPartOfNumber = (value: number) => {
   return !/[^0.,]/.test(String(value));
 };
 
-const RnaProperties = (props: DnaRnaPropertiesProps) => {
+const RnaProperties = (properties: DnaRnaProperties) => {
   const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const unipositiveIonsMeasurementUnit = useAppSelector(
@@ -852,7 +852,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
     dispatch(setOligonucleotidesValue(value.toString()));
   };
 
-  return props.isError ? (
+  return properties.isError ? (
     <TabContentErrorWrapper>
       <TabContentErrorTitle>
         {t('macromoleculeProperties.noDataAvailable')}
@@ -867,8 +867,8 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
         <BasicProperty
           name={t('macromoleculeProperties.meltingTemp')}
           value={
-            isNumber(props.macromoleculesProperties.Tm)
-              ? _round(props.macromoleculesProperties.Tm, 1)
+            isNumber(properties.macromoleculesProperties.Tm)
+              ? _round(properties.macromoleculesProperties.Tm, 1)
               : NO_DATA_VALUE
           }
           testId="Melting-Temperature"
@@ -888,7 +888,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             testId="Unipositive Ions"
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
-              !isNumber(props.macromoleculesProperties.Tm) &&
+              !isNumber(properties.macromoleculesProperties.Tm) &&
               !containOnlyPartOfNumber(unipositiveIonsValue)
             }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
@@ -901,7 +901,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             testId="Oligonucleotides"
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
-              !isNumber(props.macromoleculesProperties.Tm) &&
+              !isNumber(properties.macromoleculesProperties.Tm) &&
               !containOnlyPartOfNumber(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
@@ -910,7 +910,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
         </BasicPropertiesWrapper>
       </RnaBasicPropertiesWrapper>
       <MonomersCountPanel
-        monomerCount={props.macromoleculesProperties.monomerCount.nucleotides}
+        monomerCount={properties.macromoleculesProperties.monomerCount.nucleotides}
       />
     </TabContentWrapper>
   );

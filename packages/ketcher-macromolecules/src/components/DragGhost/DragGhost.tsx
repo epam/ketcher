@@ -18,9 +18,9 @@ export const DragGhost = () => {
   const [libraryItemDragData, setLibraryItemDragData] =
     useState<LibraryItemDragState>(null);
 
-  const ghostWrapperRef = useRef<HTMLDivElement>(null);
-  const animateRef = useRef<number | null>(null);
-  const canvasBBoxRef = useRef<DOMRect | null>(null);
+  const ghostWrapperReference = useRef<HTMLDivElement>(null);
+  const animateReference = useRef<number | null>(null);
+  const canvasBBoxReference = useRef<DOMRect | null>(null);
 
   const transform = useZoomTransform();
 
@@ -33,7 +33,7 @@ export const DragGhost = () => {
       if (ZoomTool.instance) {
         const canvasWrapper = ZoomTool.instance.canvasWrapper.node();
         if (canvasWrapper) {
-          canvasBBoxRef.current = canvasWrapper.getBoundingClientRect();
+          canvasBBoxReference.current = canvasWrapper.getBoundingClientRect();
         }
       }
 
@@ -51,13 +51,13 @@ export const DragGhost = () => {
   const topOffset = editor?.ketcherRootElementBoundingClientRect?.top || 0;
 
   useLayoutEffect(() => {
-    const element = ghostWrapperRef.current;
+    const element = ghostWrapperReference.current;
     if (!element || !libraryItemDragData) {
       return;
     }
 
     const { x, y } = libraryItemDragData.position;
-    const canvasBBox = canvasBBoxRef.current;
+    const canvasBBox = canvasBBoxReference.current;
     const dragOverCanvas =
       canvasBBox &&
       x + leftOffset >= canvasBBox.left &&
@@ -65,7 +65,7 @@ export const DragGhost = () => {
       y + topOffset >= canvasBBox.top &&
       y + topOffset <= canvasBBox.bottom;
 
-    animateRef.current = requestAnimationFrame(() => {
+    animateReference.current = requestAnimationFrame(() => {
       if (dragOverCanvas) {
         const scale = transform.k;
 
@@ -77,9 +77,9 @@ export const DragGhost = () => {
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+      if (animateReference.current) {
+        cancelAnimationFrame(animateReference.current);
+        animateReference.current = null;
       }
     };
   }, [leftOffset, libraryItemDragData, topOffset, transform.k]);
@@ -91,7 +91,7 @@ export const DragGhost = () => {
   return (
     <div
       className={styles.dragGhost}
-      ref={ghostWrapperRef}
+      ref={ghostWrapperReference}
       data-testid="drag-ghost"
     >
       {isLibraryItemRnaPreset(libraryItemDragData.item) ? (

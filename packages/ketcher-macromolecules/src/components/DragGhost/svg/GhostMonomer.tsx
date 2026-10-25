@@ -7,11 +7,11 @@ import {
 } from 'ketcher-core';
 import { useMemo } from 'react';
 
-type Props = {
+type Properties = {
   monomerItem: MonomerOrAmbiguousType;
 };
 
-export const GhostMonomer = ({ monomerItem }: Props) => {
+export const GhostMonomer = ({ monomerItem }: Properties) => {
   const monomerRenderer = useMemo(() => {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       const monomerInstance = new AmbiguousMonomer(monomerItem);

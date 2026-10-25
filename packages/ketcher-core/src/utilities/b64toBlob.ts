@@ -11,8 +11,8 @@ export function b64toBlob(
     const slice: string = byteCharacters.slice(offset, offset + sliceSize);
     const byteNumbers: Array<number> = new Array(slice.length);
 
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
+    for (let index = 0; index < slice.length; index++) {
+      byteNumbers[index] = slice.charCodeAt(index);
     }
 
     const byteArray: Uint8Array = new Uint8Array(byteNumbers);

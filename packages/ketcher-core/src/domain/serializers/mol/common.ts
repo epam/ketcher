@@ -21,7 +21,7 @@ import type { Atom } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';
 
 import type { Mapping } from './mol.types';
-import utils from './utils';
+import utils from ./utilitiess';
 import v2000 from './v2000';
 
 interface SGroupSavingError extends Error {

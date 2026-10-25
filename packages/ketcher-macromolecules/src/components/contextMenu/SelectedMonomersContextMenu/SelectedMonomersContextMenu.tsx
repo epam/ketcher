@@ -45,15 +45,15 @@ export const SelectedMonomersContextMenu = ({
     selectedMonomers,
     contextMenuEvent,
   );
-  const isCanvasContext = (props?: {
+  const isCanvasContext = (properties?: {
     selectedMonomers?: BaseMonomer[];
     polymerBondRenderer?: unknown;
   }) => {
     const hasSelectedEntities =
       (editor?.drawingEntitiesManager?.selectedEntitiesArr?.length ?? 0) > 0;
     return (
-      !props?.polymerBondRenderer &&
-      (!props?.selectedMonomers || props?.selectedMonomers.length === 0) &&
+      !properties?.polymerBondRenderer &&
+      (!properties?.selectedMonomers || properties?.selectedMonomers.length === 0) &&
       !hasSelectedEntities
     );
   };
@@ -61,8 +61,8 @@ export const SelectedMonomersContextMenu = ({
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
     monomersForAminoAcidModification,
   );
-  const isBondContext = (props?: { polymerBondRenderer?: unknown }) =>
-    !!props?.polymerBondRenderer;
+  const isBondContext = (properties?: { polymerBondRenderer?: unknown }) =>
+    !!properties?.polymerBondRenderer;
 
   const isAntisenseBlockVisible =
     selectedMonomers &&
@@ -80,15 +80,15 @@ export const SelectedMonomersContextMenu = ({
       name: 'copy',
       title: t('contextMenu.copy'),
       icon: <Icon name={'copyMenu' as IconName} />,
-      disabled: ({ props = {} }) =>
-        isBondContext(props) || isCanvasContext(props),
+      disabled: ({ properties = {} }) =>
+        isBondContext(properties) || isCanvasContext(properties),
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: t('contextMenu.paste'),
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: ({ props = {} }) =>
-        !isCanvasContext(props) || !isPasteAvailable,
+      disabled: ({ properties = {} }) =>
+        !isCanvasContext(properties) || !isPasteAvailable,
       separator: true,
     },
     {
@@ -146,7 +146,7 @@ export const SelectedMonomersContextMenu = ({
       name: 'delete',
       title: t('contextMenu.delete'),
       icon: <Icon name={'deleteMenu' as IconName} />,
-      disabled: ({ props = {} }) => isCanvasContext(props),
+      disabled: ({ properties = {} }) => isCanvasContext(properties),
     },
   ];
 

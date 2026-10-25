@@ -19,7 +19,7 @@ import { SettingsField } from './SettingsField';
 import { FIELD_DEFINITIONS, SettingFieldName } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
-interface SettingsFieldsProps {
+interface SettingsFieldsProperties {
   fields: Array<SettingFieldName>;
   settings: SettingsFormValue;
   onChange: (partial: Partial<SettingsFormValue>) => void;
@@ -29,7 +29,7 @@ export const SettingsFields = ({
   fields,
   settings,
   onChange,
-}: SettingsFieldsProps) => {
+}: SettingsFieldsProperties) => {
   return (
     <FieldsContainer>
       {fields.map((fieldName) => {

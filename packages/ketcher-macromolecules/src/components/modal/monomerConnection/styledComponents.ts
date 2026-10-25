@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-interface IStyledAttachmentPointNameProps {
+interface IStyledAttachmentPointNameProperties {
   disabled?: boolean;
 }
 
@@ -12,18 +12,18 @@ export const AttachmentPoint = styled.div({
   marginBottom: '5px',
 });
 
-export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProps>(
-  (props) => ({
+export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProperties>(
+  (properties) => ({
     margin: 0,
     padding: 0,
     textAlign: 'center',
     display: 'block',
-    font: props.theme.ketcher.font.family.inter,
-    fontSize: props.theme.ketcher.font.size.small,
-    fontWeight: props.theme.ketcher.font.weight.regular,
-    color: props.disabled
+    font: properties.theme.ketcher.font.family.inter,
+    fontSize: properties.theme.ketcher.font.size.small,
+    fontWeight: properties.theme.ketcher.font.weight.regular,
+    color: properties.disabled
       ? 'rgba(180, 185, 214, 1)'
-      : props.theme.ketcher.color.text.light,
+      : properties.theme.ketcher.color.text.light,
   }),
 );
 

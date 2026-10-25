@@ -2,7 +2,7 @@ import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import utils from 'domain/serializers/mol/utils';
+import utils from 'src/domain/serializers/mol/utilities';
 
 /** Two-atom fragment whose single bond has the given length. */
 function fragment(bondLength: number): Struct {

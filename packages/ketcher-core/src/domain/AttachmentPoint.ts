@@ -13,7 +13,7 @@ import {
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
-  type AttachmentPointConstructorParams,
+  type AttachmentPointConstructorParameters,
   AttachmentPointName,
   type MouseEventWithAttachmentPoint,
 } from './types';
@@ -66,7 +66,7 @@ export class AttachmentPoint {
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
-    constructorParams: AttachmentPointConstructorParams,
+    constructorParams: AttachmentPointConstructorParameters,
     skipInit?: boolean,
   ) {
     this.rootElement = constructorParams.rootElement;

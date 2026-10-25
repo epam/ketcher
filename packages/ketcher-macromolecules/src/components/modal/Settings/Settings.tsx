@@ -26,7 +26,7 @@ import {
   normalizeSettingsForForm,
   SettingsFormValue,
 } from 'ketcher-core';
-import { RequiredModalProps } from '../modalContainer';
+import { RequiredModalProperties } from '../modalContainer';
 import {
   Container,
   FooterLeft,
@@ -37,7 +37,7 @@ import {
 } from './Settings.styles';
 import { Icon } from 'ketcher-react';
 
-export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
+export const Settings = ({ isModalOpen, onClose }: RequiredModalProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const settingsService = window.ketcher?.settingsService;
 
@@ -68,14 +68,14 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [currentSettings, initialSettings]);
 
   const handleSettingsChange = (partial: Partial<SettingsFormValue>) => {
-    setCurrentSettings((prev) => (prev ? { ...prev, ...partial } : null));
+    setCurrentSettings((previous) => (previous ? { ...previous, ...partial } : null));
   };
 
   const handleGroupToggle = (groupId: string) => {
-    setExpandedGroups((prev) =>
-      prev.includes(groupId)
-        ? prev.filter((id) => id !== groupId)
-        : [...prev, groupId],
+    setExpandedGroups((previous) =>
+      previous.includes(groupId)
+        ? previous.filter((id) => id !== groupId)
+        : [...previous, groupId],
     );
   };
 
@@ -120,8 +120,8 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
     input.type = 'file';
     input.accept = '.json';
 
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
+    input.onchange = async (event_) => {
+      const file = (event_.target as HTMLInputElement).files?.[0];
       if (!file || !settingsService) return;
 
       setIsLoading(true);

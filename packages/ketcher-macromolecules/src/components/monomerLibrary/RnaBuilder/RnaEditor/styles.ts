@@ -27,17 +27,17 @@ export const StyledHeader = styled.button`
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  background-color: ${(props) => props.theme.ketcher.color.background.primary};
-  font-weight: ${(props) => props.theme.ketcher.font.weight.regular};
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  background-color: ${(properties) => properties.theme.ketcher.color.background.primary};
+  font-weight: ${(properties) => properties.theme.ketcher.font.weight.regular};
+  font-size: ${(properties) => properties.theme.ketcher.font.size.regular};
   border: none;
   border-radius: 4px;
   text-transform: none;
   cursor: pointer;
 
   &.styled-header--sequence-edit-mode {
-    background-color: ${(props) =>
-      props.theme.ketcher.color.editMode.sequenceInRNABuilder};
+    background-color: ${(properties) =>
+      properties.theme.ketcher.color.editMode.sequenceInRNABuilder};
   }
 
   &.styled-header--expanded,
@@ -47,9 +47,9 @@ export const StyledHeader = styled.button`
 `;
 
 export const ExpandIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'expanded',
+  shouldForwardProp: (property) => property !== 'expanded',
 })<{ expanded?: boolean }>`
   height: 16px;
   width: 16px;
-  transform: ${(props) => (props.expanded ? 'rotate(180deg)' : 'none')};
+  transform: ${(properties) => (properties.expanded ? 'rotate(180deg)' : 'none')};
 `;

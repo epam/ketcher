@@ -26,7 +26,7 @@ import {
   ChangeIndicator,
 } from './SettingsAccordion.styles';
 
-interface SettingsAccordionProps {
+interface SettingsAccordionProperties {
   settings: SettingsFormValue;
   onChange: (partial: Partial<SettingsFormValue>) => void;
   expandedGroups: string[];
@@ -38,7 +38,7 @@ export const SettingsAccordion = ({
   onChange,
   expandedGroups,
   onGroupToggle,
-}: SettingsAccordionProps) => {
+}: SettingsAccordionProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   // Detect if any field in a group has changed (simplified - could enhance later)
   const hasGroupChanged = (_group) => {

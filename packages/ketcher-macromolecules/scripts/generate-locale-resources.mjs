@@ -21,17 +21,17 @@ import { format, resolveConfig } from 'prettier';
 
 const NAMESPACES = ['macromolecules', 'macromoleculesDialogs'];
 
-const scriptDir = path.dirname(fileURLToPath(import.meta.url));
-const localesDir = path.resolve(scriptDir, '../src/locales');
+const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
+const localesDirectory = path.resolve(scriptDirectory, '../src/locales');
 const outFile = path.resolve(
-  scriptDir,
+  scriptDirectory,
   '../src/i18n/localeResources.generated.ts',
 );
 
 function namespaceFiles(locale) {
   return NAMESPACES.map((ns) => ({
     ns,
-    file: path.join(localesDir, locale, `${ns}.json`),
+    file: path.join(localesDirectory, locale, `${ns}.json`),
   }));
 }
 
@@ -43,13 +43,13 @@ function toIdentifier(locale, ns) {
   return `${ns}_${locale.replace(/[^a-zA-Z0-9]/g, '_')}`;
 }
 
-const allLocales = readdirSync(localesDir, { withFileTypes: true })
+const allLocales = readdirSync(localesDirectory, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
 
 if (!allLocales.includes('en') || !isComplete('en')) {
   throw new Error(
-    `generate-locale-resources: base locale "en" is missing or incomplete in ${localesDir} — every namespace (${NAMESPACES.join(', ')}) must be present.`,
+    `generate-locale-resources: base locale "en" is missing or incomplete in ${localesDirectory} — every namespace (${NAMESPACES.join(', ')}) must be present.`,
   );
 }
 

@@ -11,9 +11,9 @@ import {
   deleteMonomerWithPresets,
   getDeleteConfirmation,
   getReferencingCustomPresets,
-} from './MonomerLibraryContextMenu.utils';
+} from './MonomerLibraryContextMenu.utilities';
 
-type LibraryMenuProps = { libraryItem?: MonomerItemType };
+type LibraryMenuProperties = { libraryItem?: MonomerItemType };
 
 export const MonomerLibraryContextMenu = () => {
   const editor = useAppSelector(selectEditor);
@@ -23,18 +23,18 @@ export const MonomerLibraryContextMenu = () => {
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
   const editingDisabled = ({ props }: { props?: object }) => {
-    const item = (props as LibraryMenuProps | undefined)?.libraryItem;
+    const item = (props as LibraryMenuProperties | undefined)?.libraryItem;
     return (
       !item || Boolean(item.props.unresolved) || item.struct.atoms.size === 0
     );
   };
 
   const isDeleteHidden = ({ props }: { props?: object }) => {
-    const item = (props as LibraryMenuProps | undefined)?.libraryItem;
+    const item = (props as LibraryMenuProperties | undefined)?.libraryItem;
     return !item || !editor || !editor.isUserMadeMonomer(item);
   };
 
-  const handleMenuChange = ({ id, props }: ItemParams<LibraryMenuProps>) => {
+  const handleMenuChange = ({ id, props }: ItemParams<LibraryMenuProperties>) => {
     const libraryItem = props?.libraryItem;
     if (!editor || !libraryItem) {
       return;
@@ -95,7 +95,7 @@ export const MonomerLibraryContextMenu = () => {
               itemClassName: 'context_menu-delete-item',
               hidden: isDeleteHidden,
               disabled: ({ props }) => {
-                const item = (props as LibraryMenuProps | undefined)
+                const item = (props as LibraryMenuProperties | undefined)
                   ?.libraryItem;
                 return (
                   !item || !editor || editor.isMonomerReferencedInLibrary(item)

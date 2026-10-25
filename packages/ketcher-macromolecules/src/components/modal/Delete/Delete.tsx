@@ -27,7 +27,7 @@ import { StyledActionButton } from 'components/modal/Delete/styledComponents';
 import styled from '@emotion/styled';
 import { selectEditor } from 'state/common';
 
-export interface Props {
+export interface Properties {
   onClose: () => void;
   isModalOpen: boolean;
 }
@@ -36,7 +36,7 @@ const DeleteTextWrapper = styled.div`
   padding: 12px;
 `;
 
-const Delete = ({ isModalOpen, onClose }: Props) => {
+const Delete = ({ isModalOpen, onClose }: Properties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const activePresetForContextMenu = useAppSelector(

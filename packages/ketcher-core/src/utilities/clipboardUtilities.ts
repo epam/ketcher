@@ -40,36 +40,36 @@ export function legacyCopy(
     return;
   }
 
-  let curFmt: string | null = null;
+  let currentFmt: string | null = null;
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
     Object.entries(data).forEach(([fmt, value]) => {
-      curFmt = fmt;
+      currentFmt = fmt;
       if (typeof value === 'string') {
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (e) {
-    console.error('clipboardUtils.ts::legacyCopy', e);
-    console.info(`Could not write exact type ${curFmt}`);
+  } catch (error) {
+    console.error('clipboardUtils.ts::legacyCopy', error);
+    console.info(`Could not write exact type ${currentFmt}`);
   }
 }
 
 export function legacyPaste(
-  cb: ClipboardTransferData,
+  callback: ClipboardTransferData,
   formats: ClipboardDataType[],
 ): LegacyClipboardData {
   const data: LegacyClipboardData = { [PLAIN_TEXT_MIME_TYPE]: '' };
 
-  if (!cb) {
+  if (!callback) {
     return data;
   }
 
-  data[PLAIN_TEXT_MIME_TYPE] = cb.getData(PLAIN_TEXT_MIME_TYPE);
-  return formats.reduce<LegacyClipboardData>((res, fmt) => {
-    const d = cb.getData(fmt);
-    if (d) res[fmt] = d;
-    return res;
+  data[PLAIN_TEXT_MIME_TYPE] = callback.getData(PLAIN_TEXT_MIME_TYPE);
+  return formats.reduce<LegacyClipboardData>((result, fmt) => {
+    const d = callback.getData(fmt);
+    if (d) result[fmt] = d;
+    return result;
   }, data);
 }
 
@@ -97,9 +97,9 @@ export async function getStructStringFromClipboardData(
         clipboardDataType === PLAIN_TEXT_MIME_TYPE
           ? clipboardDataType
           : `web ${clipboardDataType}`;
-      const structStr = await safelyGetMimeType(clipboardItem, mimeType);
-      if (structStr) {
-        return structStr.text();
+      const structString = await safelyGetMimeType(clipboardItem, mimeType);
+      if (structString) {
+        return structString.text();
       }
     }
 
@@ -107,9 +107,9 @@ export async function getStructStringFromClipboardData(
   }
 
   for (const clipboardDataType of clipboardDataTypes) {
-    const structStr = data[clipboardDataType];
-    if (structStr) {
-      return structStr;
+    const structString = data[clipboardDataType];
+    if (structString) {
+      return structString;
     }
   }
 
@@ -129,8 +129,8 @@ export async function isPasteContentAvailable(
 
   try {
     const clipboardData = await navigator.clipboard.read();
-    const structStr = await getStructStringFromClipboardData(clipboardData);
-    return structStr?.trim() ? validateContent(structStr) : false;
+    const structString = await getStructStringFromClipboardData(clipboardData);
+    return structString?.trim() ? validateContent(structString) : false;
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

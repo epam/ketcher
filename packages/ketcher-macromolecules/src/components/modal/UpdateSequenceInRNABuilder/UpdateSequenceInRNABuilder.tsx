@@ -27,7 +27,7 @@ import {
 } from 'helpers/countNucleoelents';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
-export interface Props {
+export interface Properties {
   onClose: () => void;
   isModalOpen: boolean;
 }
@@ -36,7 +36,7 @@ const TextWrapper = styled.div`
   padding: 12px;
 `;
 
-const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
+const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Properties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const sequenceSelection = useAppSelector(selectSequenceSelection);

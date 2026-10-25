@@ -34,7 +34,7 @@ import type {
   KetSGroupNode,
 } from './types';
 
-import { ifDef } from 'utilities';
+import { ifDefined } from 'utilities';
 
 function assertCustomQueryLength(customQuery: string, context: string): void {
   if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
@@ -86,7 +86,7 @@ export function moleculeToKet(
 
   const fragment = struct.frags.get(0);
   if (fragment) {
-    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    ifDefined(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
     if (fragment.properties) {
       body.properties = fragment.properties;
     }
@@ -101,7 +101,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
   const result: KetAtomNode = {};
 
   if (source.label !== 'L#') {
-    ifDef(
+    ifDefined(
       result,
       'label',
       source.label === 'R#' && monomer
@@ -111,33 +111,33 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
         : source.label,
     );
     // reaction
-    ifDef(result, 'mapping', source.aam, 0);
+    ifDefined(result, 'mapping', source.aam, 0);
   } else if (source.atomList) {
     result.type = 'atom-list';
-    ifDef(result, 'elements', source.atomList.labelList());
-    ifDef(result, 'notList', source.atomList.notList, false);
+    ifDefined(result, 'elements', source.atomList.labelList());
+    ifDefined(result, 'notList', source.atomList.notList, false);
   }
 
-  ifDef(result, 'alias', source.alias);
+  ifDefined(result, 'alias', source.alias);
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(source.pp.x, source.pp.y, source.pp.z),
   );
-  ifDef(result, 'location', [position.x, position.y, position.z]);
-  ifDef(result, 'charge', source.charge);
-  ifDef(result, 'explicitValence', source.explicitValence, -1);
-  ifDef(result, 'isotope', source.isotope);
-  ifDef(result, 'radical', source.radical, 0);
-  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
-  ifDef(result, 'cip', source.cip, '');
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDefined(result, 'location', [position.x, position.y, position.z]);
+  ifDefined(result, 'charge', source.charge);
+  ifDefined(result, 'explicitValence', source.explicitValence, -1);
+  ifDefined(result, 'isotope', source.isotope);
+  ifDefined(result, 'radical', source.radical, 0);
+  ifDefined(result, 'attachmentPoints', source.attachmentPoints, 0);
+  ifDefined(result, 'cip', source.cip, '');
+  ifDefined(result, 'selected', source.getInitiallySelected());
   // stereo
-  ifDef(result, 'stereoLabel', source.stereoLabel, null);
-  ifDef(result, 'stereoParity', source.stereoParity, 0);
+  ifDefined(result, 'stereoLabel', source.stereoLabel, null);
+  ifDefined(result, 'stereoParity', source.stereoParity, 0);
   // query
-  ifDef(result, 'ringBondCount', source.ringBondCount, 0);
-  ifDef(result, 'substitutionCount', source.substitutionCount, 0);
-  ifDef(result, 'unsaturatedAtom', !!source.unsaturatedAtom, false);
-  ifDef(result, 'hCount', source.hCount, 0);
+  ifDefined(result, 'ringBondCount', source.ringBondCount, 0);
+  ifDefined(result, 'substitutionCount', source.substitutionCount, 0);
+  ifDefined(result, 'unsaturatedAtom', !!source.unsaturatedAtom, false);
+  ifDefined(result, 'hCount', source.hCount, 0);
   // query properties
   if (
     Object.values(source.queryProperties).some((property) => property !== null)
@@ -148,12 +148,12 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
     result.queryProperties = {};
     const queryProperties = result.queryProperties;
     Object.keys(source.queryProperties).forEach((name) => {
-      ifDef(queryProperties, name, source.queryProperties[name]);
+      ifDefined(queryProperties, name, source.queryProperties[name]);
     });
   }
-  ifDef(result, 'invRet', source.invRet, 0);
-  ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
-  ifDef(result, 'implicitHCount', source.implicitHCount);
+  ifDefined(result, 'invRet', source.invRet, 0);
+  ifDefined(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
+  ifDefined(result, 'implicitHCount', source.implicitHCount);
   return result;
 }
 
@@ -164,14 +164,14 @@ function rglabelToKet(source: Atom): KetRgLabelNode {
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(source.pp.x, source.pp.y, source.pp.z),
   );
-  ifDef(result, 'location', [position.x, position.y, position.z]);
-  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
+  ifDefined(result, 'location', [position.x, position.y, position.z]);
+  ifDefined(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel ?? 0).map(
     (rgnumber) => `rg-${rgnumber}`,
   );
-  ifDef(result, '$refs', refsToRGroups);
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDefined(result, '$refs', refsToRGroups);
+  ifDefined(result, 'selected', source.getInitiallySelected());
 
   return result;
 }
@@ -180,34 +180,34 @@ function bondToKet(source: Bond): KetBondNode {
   const result: KetBondNode = {};
   if (source.customQuery) {
     assertCustomQueryLength(source.customQuery, 'Bond');
-    ifDef(result, 'atoms', [source.begin, source.end]);
-    ifDef(result, 'customQuery', source.customQuery);
+    ifDefined(result, 'atoms', [source.begin, source.end]);
+    ifDefined(result, 'customQuery', source.customQuery);
   } else {
-    ifDef(result, 'type', source.type);
-    ifDef(result, 'atoms', [source.begin, source.end]);
-    ifDef(result, 'stereo', source.stereo, 0);
-    ifDef(result, 'topology', source.topology, 0);
-    ifDef(result, 'center', source.reactingCenterStatus, 0);
-    ifDef(result, 'cip', source.cip, '');
+    ifDefined(result, 'type', source.type);
+    ifDefined(result, 'atoms', [source.begin, source.end]);
+    ifDefined(result, 'stereo', source.stereo, 0);
+    ifDefined(result, 'topology', source.topology, 0);
+    ifDefined(result, 'center', source.reactingCenterStatus, 0);
+    ifDefined(result, 'cip', source.cip, '');
   }
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDefined(result, 'selected', source.getInitiallySelected());
   return result;
 }
 
 function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
   const result: KetSGroupNode = {};
 
-  ifDef(result, 'type', source.type);
-  ifDef(result, 'atoms', source.atoms);
+  ifDefined(result, 'type', source.type);
+  ifDefined(result, 'atoms', source.atoms);
 
   switch (source.type) {
     case 'MUL': {
-      ifDef(result, 'mul', source.data.mul || 1);
+      ifDefined(result, 'mul', source.data.mul || 1);
       break;
     }
     case 'SRU': {
-      ifDef(result, 'subscript', source.data.subscript || 'n');
-      ifDef(
+      ifDefined(result, 'subscript', source.data.subscript || 'n');
+      ifDefined(
         result,
         'connectivity',
         source.data.connectivity.toUpperCase() || 'HT',
@@ -215,12 +215,12 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       break;
     }
     case 'COP': {
-      ifDef(
+      ifDefined(
         result,
         'subtype',
         source.data.subtype ? source.data.subtype.toUpperCase() : null,
       );
-      ifDef(
+      ifDefined(
         result,
         'connectivity',
         source.data.connectivity.toUpperCase() || 'HT',
@@ -228,11 +228,11 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       break;
     }
     case 'SUP': {
-      ifDef(result, 'name', source.data.name || '');
-      ifDef(result, 'expanded', source.data.expanded);
-      ifDef(result, 'id', source.id);
-      ifDef(result, 'class', source.data.class);
-      ifDef(
+      ifDefined(result, 'name', source.data.name || '');
+      ifDefined(result, 'expanded', source.data.expanded);
+      ifDefined(result, 'id', source.id);
+      ifDefined(result, 'class', source.data.class);
+      ifDefined(
         result,
         'attachmentPoints',
         source.getAttachmentPoints().map(sgroupAttachmentPointToKet),
@@ -242,12 +242,12 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
     }
     case 'DAT': {
       const data = source.data;
-      ifDef(result, 'placement', data.absolute, true);
-      ifDef(result, 'display', data.attached, false);
-      ifDef(result, 'context', data.context);
-      ifDef(result, 'fieldName', data.fieldName);
-      ifDef(result, 'fieldData', data.fieldValue);
-      ifDef(result, 'bonds', SGroup.getBonds(struct, source));
+      ifDefined(result, 'placement', data.absolute, true);
+      ifDefined(result, 'display', data.attached, false);
+      ifDefined(result, 'context', data.context);
+      ifDefined(result, 'fieldName', data.fieldName);
+      ifDefined(result, 'fieldData', data.fieldValue);
+      ifDefined(result, 'bonds', SGroup.getBonds(struct, source));
       break;
     }
     case 'GEN':
@@ -264,9 +264,9 @@ function sgroupAttachmentPointToKet(
 ): KetSGroupAttachmentPointNode {
   const result: KetSGroupAttachmentPointNode = {};
 
-  ifDef(result, 'attachmentAtom', source.atomId);
-  ifDef(result, 'leavingAtom', source.leaveAtomId);
-  ifDef(
+  ifDefined(result, 'attachmentAtom', source.atomId);
+  ifDefined(result, 'leavingAtom', source.leaveAtomId);
+  ifDefined(
     result,
     'attachmentId',
     isNumber(source.attachmentPointNumber)

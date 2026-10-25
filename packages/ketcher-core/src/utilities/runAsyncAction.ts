@@ -29,11 +29,11 @@ export const runAsyncAction = async <T = unknown>(
 ): Promise<T | undefined> => {
   eventEmitter.emit(KetcherAsyncEvents.LOADING);
   try {
-    const res = await action();
+    const result = await action();
     eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
-    return res;
-  } catch (e) {
-    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', e);
+    return result;
+  } catch (error) {
+    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', error);
     eventEmitter.emit(KetcherAsyncEvents.FAILURE);
     return undefined;
   }

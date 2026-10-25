@@ -31,9 +31,9 @@ export class RemoteStructServiceProvider implements StructServiceProvider {
   constructor(apiPath: string, customHeaders?: Record<string, string>) {
     let currentApiPath = apiPath;
     this.customHeaders = customHeaders;
-    const params = new URLSearchParams(document.location.search);
-    if (params.has('api_path')) {
-      currentApiPath = params.get('api_path') ?? currentApiPath;
+    const parameters = new URLSearchParams(document.location.search);
+    if (parameters.has('api_path')) {
+      currentApiPath = parameters.get('api_path') ?? currentApiPath;
     }
     this.apiPath =
       !currentApiPath || currentApiPath.endsWith('/')

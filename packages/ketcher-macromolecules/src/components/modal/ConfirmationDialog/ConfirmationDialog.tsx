@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ConfirmationDialogProps } from 'components/modal/modalContainer';
+import { ConfirmationDialogProperties } from 'components/modal/modalContainer';
 import { Modal } from 'components/shared/modal';
 import { ActionButton } from 'components/shared/actionButton';
 import { ConfirmationText } from './ConfirmationDialog.styles';
@@ -10,7 +10,7 @@ export const ConfirmationDialog = ({
   onConfirm,
   isModalOpen,
   onClose,
-}: ConfirmationDialogProps) => {
+}: ConfirmationDialogProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const handleConfirm = () => {
     onConfirm?.();

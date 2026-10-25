@@ -20,9 +20,9 @@ import {
   RnaEditorCollapsedContainer,
   TextContainer,
 } from './styles';
-import { IRnaEditorCollapsedProps } from './types';
+import { IRnaEditorCollapsedProperties } from './types';
 
-const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
+const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProperties) => {
   const displayName = name ?? fullName;
 
   if (!displayName) {

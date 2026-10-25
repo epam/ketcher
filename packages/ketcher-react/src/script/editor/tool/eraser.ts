@@ -187,7 +187,11 @@ class EraserTool implements Tool {
       }
     }
 
-    if (selected && functionalGroups.size > 0 && selected.rgroupAttachmentPoints) {
+    if (
+      selected &&
+      functionalGroups.size > 0 &&
+      selected.rgroupAttachmentPoints
+    ) {
       for (const rgroupAttachmentPointId of selected.rgroupAttachmentPoints) {
         const attachedAtomId =
           FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(

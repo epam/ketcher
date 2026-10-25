@@ -88,9 +88,10 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent?.target as
       (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
   )?.__data__;
-  const monomersToEdit = selectedMonomers.length > 0
-    ? selectedMonomers
-    : (clickedRenderer?.node?.monomers ?? []);
+  const monomersToEdit =
+    selectedMonomers.length > 0
+      ? selectedMonomers
+      : (clickedRenderer?.node?.monomers ?? []);
   const monomerCreationMenu = useMonomerCreationMenu(
     editor,
     monomersToEdit,

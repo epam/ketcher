@@ -9,7 +9,7 @@ const safePostMessage = (
   message: Record<string, unknown>,
   fallbackOrigin: string = globalThis.location.origin,
 ): void => {
-  if (globalThis.parent === globalThis) return;
+  if (globalThis.parent === globalThis.window) return;
 
   let parentOrigin = fallbackOrigin;
   try {
@@ -41,7 +41,7 @@ export function EditorComponent() {
         console.error(message);
       }}
       onInit={(ketcher) => {
-        globalThis.ketcher = ketcher;
+        globalThis.window.ketcher = ketcher;
         safePostMessage({
           eventType: 'init',
         });

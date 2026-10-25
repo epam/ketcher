@@ -227,7 +227,7 @@ function fromStructureFlip(
   for (const atomId of selection?.atoms ?? []) {
     const atom = struct.atoms.get(atomId);
     if (!atom) {
-      return;
+      continue;
     }
 
     const difference = flipPointByCenter(atom.pp, center, flipDirection);

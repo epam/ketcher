@@ -159,7 +159,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     const remainingAtomIds = attachmentGroup.atomIds.filter(
       (atomId) => !selection.atoms.includes(atomId),
     );
-    if (remainingAtomIds.length === attachmentGroup.atomIds.length) return;
+    if (remainingAtomIds.length === attachmentGroup.atomIds.length) continue;
 
     if (remainingAtomIds.length < 2) {
       selection.attachmentGroups.push(id);

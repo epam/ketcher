@@ -889,7 +889,7 @@ export class CoreEditor {
               templateRef.$ref,
               `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
             );
-            return;
+            continue;
           case MonomerNameValidationErrorType.TooLong: {
             const truncatedTemplateName = `${templateDefinition.name.slice(
               0,
@@ -898,13 +898,13 @@ export class CoreEditor {
             KetcherLogger.error(
               `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
             );
-            return;
+            continue;
           }
           case MonomerNameValidationErrorType.InvalidCharacters:
             KetcherLogger.error(
               `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
             );
-            return;
+            continue;
         }
       }
 
@@ -952,7 +952,7 @@ export class CoreEditor {
               detail ? ` (${detail})` : ''
             }. IDT aliases for 5', 3', internal and base positions must be unique.`,
           );
-          return;
+          continue;
         }
       }
 

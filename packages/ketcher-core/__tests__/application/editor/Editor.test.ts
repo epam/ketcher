@@ -73,20 +73,22 @@ describe('CoreEditor', () => {
       theme: coreEditorTheme,
       renderersContainer: createRenderersManager(polymerEditorTheme),
     });
-    const { deps } = (
+    const { dependencies } = (
       editor as unknown as {
-        dragDropHandler: { deps: LibraryItemDragDropHandlerDependencies };
+        dragDropHandler: {
+          dependencies: LibraryItemDragDropHandlerDependencies;
+        };
       }
     ).dragDropHandler;
     const originalManager = editor.drawingEntitiesManager;
     const replacementManager = new DrawingEntitiesManager();
 
     try {
-      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      expect(dependencies.drawingEntitiesManager).toBe(originalManager);
       editor.drawingEntitiesManager = replacementManager;
-      expect(deps.drawingEntitiesManager).toBe(replacementManager);
+      expect(dependencies.drawingEntitiesManager).toBe(replacementManager);
       editor.drawingEntitiesManager = originalManager;
-      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      expect(dependencies.drawingEntitiesManager).toBe(originalManager);
     } finally {
       editor.destroy();
       canvas.remove();

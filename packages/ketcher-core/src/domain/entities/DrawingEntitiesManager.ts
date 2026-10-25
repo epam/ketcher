@@ -3813,7 +3813,7 @@ export class DrawingEntitiesManager {
         rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode;
     }
 
-    return DrawingEntitiesManager.antisenseChainBasesMap(isDnaAntisense)[
+    return this.antisenseChainBasesMap(isDnaAntisense)[
       baseLabelKey
     ];
   }
@@ -3834,7 +3834,7 @@ export class DrawingEntitiesManager {
         return undefined;
       }
 
-      return DrawingEntitiesManager.getAntisenseBaseLabel(
+      return this.getAntisenseBaseLabel(
         rnaBase,
         isDnaAntisense,
       );
@@ -3849,7 +3849,7 @@ export class DrawingEntitiesManager {
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 
       return SENSE_NATURAL_ANALOGUES.has(naturalAnalogCode)
-        ? DrawingEntitiesManager.getAntisenseBaseLabel(
+        ? this.getAntisenseBaseLabel(
             naturalAnalogCode,
             isDnaAntisense,
           )
@@ -3864,7 +3864,7 @@ export class DrawingEntitiesManager {
     isDnaAntisense: boolean,
   ) {
     const antisenseBaseLabel =
-      DrawingEntitiesManager.getAntisenseBaseLabelForNode(node, isDnaAntisense);
+      this.getAntisenseBaseLabelForNode(node, isDnaAntisense);
 
     if (!antisenseBaseLabel) {
       return;

@@ -516,7 +516,7 @@ export class SGroup {
   }
 
   static filter(_mol: unknown, sg: SGroup, atomMap: AtomIdRemap): void {
-    sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
+    sg.atoms = this.removeNegative(this.filterAtoms(sg.atoms, atomMap));
   }
 
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
@@ -592,7 +592,7 @@ export class SGroup {
     render?: Render,
   ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = !SGroup.isCOPGroup(sGroup)
+    const PADDING_VECTOR = !this.isCOPGroup(sGroup)
       ? new Vec2(0.2, 0.4)
       : new Vec2(1.2, 1.2);
     const atoms = sGroup.atoms;
@@ -758,7 +758,7 @@ export class SGroup {
   }
 
   static getBonds(mol: StructAtomsAndBondsAccess, sg?: SGroup): number[] {
-    const atoms = SGroup.getAtoms(mol, sg);
+    const atoms = this.getAtoms(mol, sg);
     const bonds: number[] = [];
     mol.bonds.forEach((bond, bid) => {
       if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) {
@@ -909,27 +909,27 @@ export class SGroup {
     if (!sGroup) {
       return false;
     }
-    return sGroup?.type === SGroup.TYPES.SUP;
+    return sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.DAT;
+    return sGroup.type === this.TYPES.DAT;
   }
 
   static isQuerySGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.queryComponent;
+    return sGroup.type === this.TYPES.queryComponent;
   }
 
   static isSRUSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.SRU;
+    return sGroup.type === this.TYPES.SRU;
   }
 
   static isMulSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.MUL;
+    return sGroup.type === this.TYPES.MUL;
   }
 
   static isCOPGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.COP;
+    return sGroup.type === this.TYPES.COP;
   }
 }
 

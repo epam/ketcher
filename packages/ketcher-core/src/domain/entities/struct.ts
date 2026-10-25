@@ -1032,8 +1032,8 @@ export class Struct {
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
-      scale >= Struct.MIN_RESCALE &&
-      scale <= Struct.MAX_RESCALE
+      scale >= this.MIN_RESCALE &&
+      scale <= this.MAX_RESCALE
     );
   }
 

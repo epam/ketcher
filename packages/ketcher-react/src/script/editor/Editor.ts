@@ -901,7 +901,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    return Editor.suitableAttachmentPointStereoTypes.has(bond.stereo);
+    return this.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
   /**
@@ -925,7 +925,7 @@ class Editor implements KetcherEditor {
 
     const potentialAttachmentPoints = new Map<number, Set<number>>();
     struct.bonds.forEach((bond) => {
-      if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
+      if (!this.isBondSuitableForAttachmentPoint(bond)) {
         return;
       }
 
@@ -966,14 +966,14 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
+    const bondToTerminalRGroupAtom = this.getBondByNeighborHalfBondId(
       struct,
       atom.neighbors[0],
     );
 
     return (
       bondToTerminalRGroupAtom !== null &&
-      Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
+      this.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
     );
   }
 
@@ -1168,7 +1168,7 @@ class Editor implements KetcherEditor {
     }
 
     const suitableBonds = nonLeavingAtomBonds.filter((_, bond) =>
-      Editor.isBondSuitableForAttachmentPoint(bond),
+      this.isBondSuitableForAttachmentPoint(bond),
     );
 
     return suitableBonds.size >= 1;

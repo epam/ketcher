@@ -335,15 +335,15 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
   static getAttrHash(atom: Atom) {
     const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in Atom.attrlist) {
+    for (const attr in this.attrlist) {
       if (atom[attr] !== undefined) attrs[attr] = atom[attr];
     }
     return attrs;
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Atom.attrlist) {
-      return Atom.attrlist[attr];
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
     }
   }
 
@@ -353,7 +353,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
   static isInAromatizedRing(struct: Struct, atomId: number): boolean {
     const atom = struct.atoms.get(atomId);
-    if (atom && Atom.isHeteroAtom(atom.label)) {
+    if (atom && this.isHeteroAtom(atom.label)) {
       for (const [_, loop] of struct.loops) {
         const halfBondIds = loop.hbs;
         if (loop.aromatic) {
@@ -954,7 +954,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   ) {
     let sgroup: SGroup | undefined;
 
-    if (Atom.isSGroup(structOrSgroup)) {
+    if (this.isSGroup(structOrSgroup)) {
       sgroup = structOrSgroup;
     } else if (searchBySgroups) {
       sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
@@ -977,7 +977,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      this.getSuperAtomAttachmentPointByLeavingGroup(
         structOrSgroup,
         atomId,
         searchBySgroups,
@@ -991,7 +991,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+      this.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
     );
   }
 
@@ -1007,12 +1007,12 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       : (leavingGroupAtomid as number);
     const atom = struct.atoms.get(atomId);
     const attachmentPoint = isNumber(attachmentAtomId)
-      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(
+      ? this.getSuperAtomAttachmentPointByAttachmentAtom(
           struct,
           atomId,
           searchBySgroups,
         )
-      : Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      : this.getSuperAtomAttachmentPointByLeavingGroup(
           struct,
           atomId,
           searchBySgroups,
@@ -1065,13 +1065,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     const attachmentAtomExternalConnections =
-      Atom.getAttachmentAtomExternalConnections(
+      this.getAttachmentAtomExternalConnections(
         struct,
         undefined,
         atomId,
         searchBySgroups,
       );
-    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+    const attachmentPoint = this.getSuperAtomAttachmentPointByLeavingGroup(
       struct,
       atomId,
     );
@@ -1085,7 +1085,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     return Boolean(
-      Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
+      this.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
       attachmentAtomExternalConnections?.find((_, bond) =>
         bond.begin === attachmentPoint?.atomId
           ? bond.beginSuperatomAttachmentPointNumber ===

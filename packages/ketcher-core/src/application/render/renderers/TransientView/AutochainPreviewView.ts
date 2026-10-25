@@ -101,7 +101,7 @@ export class AutochainPreviewView {
       const scaledSugarPosition = Coordinates.modelToCanvas(sugarPosition);
 
       sizeOfAutochainPreviewToConnect =
-        AutochainPreviewView.showSingleMonomerPreview(
+        this.showSingleMonomerPreview(
           transientLayer,
           monomerOrRnaItem.sugar,
           scaledSugarPosition,
@@ -114,13 +114,13 @@ export class AutochainPreviewView {
         const scaledBasePosition = Coordinates.modelToCanvas(basePosition);
 
         const sizeOfBaseAutochainPreview =
-          AutochainPreviewView.showSingleMonomerPreview(
+          this.showSingleMonomerPreview(
             transientLayer,
             monomerOrRnaItem.base,
             scaledBasePosition,
           );
 
-        AutochainPreviewView.showBondPreview(
+        this.showBondPreview(
           transientLayer,
           scaledSugarPosition.x,
           scaledSugarPosition.y + sizeOfAutochainPreviewToConnect.height / 2,
@@ -137,13 +137,13 @@ export class AutochainPreviewView {
           Coordinates.modelToCanvas(phosphatePosition);
 
         const sizeOfPhosphateAutochainPreview =
-          AutochainPreviewView.showSingleMonomerPreview(
+          this.showSingleMonomerPreview(
             transientLayer,
             monomerOrRnaItem.phosphate,
             scaledPhosphatePosition,
           );
 
-        AutochainPreviewView.showBondPreview(
+        this.showBondPreview(
           transientLayer,
           phosphateOnLeft
             ? scaledPhosphatePosition.x +
@@ -165,7 +165,7 @@ export class AutochainPreviewView {
       }
 
       if (selectedMonomerToConnect) {
-        AutochainPreviewView.showBondPreview(
+        this.showBondPreview(
           transientLayer,
           scaledPosition.x - SnakeLayoutCellWidth,
           scaledPosition.y,
@@ -175,7 +175,7 @@ export class AutochainPreviewView {
       }
     } else {
       sizeOfAutochainPreviewToConnect =
-        AutochainPreviewView.showSingleMonomerPreview(
+        this.showSingleMonomerPreview(
           transientLayer,
           monomerOrRnaItem,
           scaledPosition,
@@ -184,7 +184,7 @@ export class AutochainPreviewView {
     // Non-RNA items draw their incoming autochain bond here. RNA presets draw
     // it in the branch above so 5' presets can connect to the left phosphate.
     if (selectedMonomerToConnect && !isLibraryItemRnaPreset(monomerOrRnaItem)) {
-      AutochainPreviewView.showBondPreview(
+      this.showBondPreview(
         transientLayer,
         scaledPosition.x - SnakeLayoutCellWidth,
         scaledPosition.y,

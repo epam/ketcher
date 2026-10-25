@@ -101,7 +101,7 @@ export class MacromoleculesConverter {
     }
 
     const attachmentPointNumber =
-      MacromoleculesConverter.convertAttachmentPointNameToNumber(
+      this.convertAttachmentPointNameToNumber(
         attachmentPointName,
       );
     const attachmentPointIndex =
@@ -233,7 +233,7 @@ export class MacromoleculesConverter {
         });
 
         monomerMicromolecule.addAttachmentPoints(
-          MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
+          this.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
             monomer,
             atomIdsMap,
           ) || [],
@@ -775,7 +775,7 @@ export class MacromoleculesConverter {
       }
 
       const atomToConnect =
-        MacromoleculesConverter.findAtomByMicromoleculeAtomId(
+        this.findAtomByMicromoleculeAtomId(
           drawingEntitiesManager,
           atomIdInMicromolecules,
           globalAtomIdToMonomerMap.get(moleculeAtomId),

@@ -127,7 +127,7 @@ export class FunctionalGroup {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
     assert(rgroupAttachmentPoint != null);
     const attachedAtom = rgroupAttachmentPoint.atomId;
-    return FunctionalGroup.atomsInFunctionalGroup(
+    return this.atomsInFunctionalGroup(
       molecule.functionalGroups,
       attachedAtom,
     );
@@ -217,7 +217,7 @@ export class FunctionalGroup {
         return false;
       }
 
-      return FunctionalGroup.isContractedFunctionalGroup(
+      return this.isContractedFunctionalGroup(
         'item' in sgroup ? sgroup.item : sgroup,
         functionalGroups,
       );
@@ -232,7 +232,7 @@ export class FunctionalGroup {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
       const atomsInSGroup = sGroup?.atoms ?? [];
-      const isContracted = FunctionalGroup.isContractedFunctionalGroup(
+      const isContracted = this.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,
       );

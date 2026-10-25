@@ -4,7 +4,7 @@ export class FixedPrecisionCoordinates {
 
   static fromFloatingPrecision(value: number) {
     return new FixedPrecisionCoordinates(
-      Math.round(value * FixedPrecisionCoordinates.MULTIPLIER),
+      Math.round(value * this.MULTIPLIER),
     );
   }
 

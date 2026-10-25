@@ -78,11 +78,11 @@ export class SettingsService implements ISettingsService {
   static async getInstance(
     options: SettingsServiceOptions = {},
   ): Promise<SettingsService> {
-    if (!SettingsService.instance) {
+    if (!this.instance) {
       SettingsService.instance = new SettingsService(options);
-      await SettingsService.instance.init();
+      await this.instance.init();
     }
-    return SettingsService.instance;
+    return this.instance;
   }
 
   /**

@@ -111,7 +111,7 @@ export class ReMultitailArrow extends ReObject {
     horizontalDirection: -1 | 1,
   ): void {
     const cubicBezierOffset =
-      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+      horizontalDirection * this.CUBIC_BEZIER_OFFSET;
     const start = lineStart.add(
       new Vec2(offset * horizontalDirection, offset * verticalDirection),
     );

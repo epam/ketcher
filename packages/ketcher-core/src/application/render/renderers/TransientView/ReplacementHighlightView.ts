@@ -123,8 +123,8 @@ export class ReplacementHighlightView extends TransientView {
       return;
     }
 
-    const pathsData = ReplacementHighlightView.collectPathData(monomers);
-    const pathData = ReplacementHighlightView.getUnitedPathData(pathsData);
+    const pathsData = this.collectPathData(monomers);
+    const pathData = this.getUnitedPathData(pathsData);
 
     if (!pathData) {
       return;

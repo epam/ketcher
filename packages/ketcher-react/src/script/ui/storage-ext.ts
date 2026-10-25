@@ -25,8 +25,8 @@ export const storage: IStorage = {
     try {
       const localStorageRef: Storage = globalThis.localStorage;
       return localStorageRef;
-    } catch (e: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::isAvailable', e);
+    } catch (error: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::isAvailable', error);
       return false;
     }
   },
@@ -37,10 +37,10 @@ export const storage: IStorage = {
       if (stored !== null) {
         item = JSON.parse(stored);
       }
-    } catch (e: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::getItem', e);
-      const error = e as Error;
-      console.info('LocalStorage:', error.name);
+    } catch (error: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::getItem', error);
+      const storageError = error as Error;
+      console.info('LocalStorage:', storageError.name);
     }
     return item;
   },
@@ -49,10 +49,10 @@ export const storage: IStorage = {
     try {
       globalThis.localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
-    } catch (e: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::setItem', e);
-      const error = e as Error;
-      console.info('LocalStorage:', error.name);
+    } catch (error: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::setItem', error);
+      const storageError = error as Error;
+      console.info('LocalStorage:', storageError.name);
       isSet = false;
     }
     return isSet;

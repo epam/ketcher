@@ -100,8 +100,8 @@ export function editTmpl(tmpl) {
         () => null,
       )
       .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
+        openDialog(dispatch, 'templates').catch((error) => {
+          KetcherLogger.error('index.ts::editTmpl', error);
         }),
       );
   };
@@ -143,8 +143,8 @@ export function saveUserTmpl(struct) {
         dispatch(initLib(lib));
         updateLocalStore(lib);
       })
-      .catch((e) => {
-        KetcherLogger.error('index.ts::saveUserTmpl', e);
+      .catch((error) => {
+        KetcherLogger.error('index.ts::saveUserTmpl', error);
       });
   };
 }

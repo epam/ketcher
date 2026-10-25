@@ -843,8 +843,8 @@ class SGroupTool implements Tool {
           editor.selection(null);
         }
       })
-      .catch((e) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+      .catch((error) => {
+        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
       });
   }
 }

@@ -541,10 +541,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 
@@ -573,10 +573,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 

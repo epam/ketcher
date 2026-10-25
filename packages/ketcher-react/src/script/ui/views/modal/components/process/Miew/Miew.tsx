@@ -179,8 +179,8 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsInitialized(true);
         })
-        .catch((e) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        .catch((error) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
         });
     },
     [miewOpts, server, struct],
@@ -214,10 +214,10 @@ const MiewDialog = ({
       result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
@@ -256,10 +256,10 @@ const MiewDialog = ({
           }),
         );
         return;
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
-          e,
+          error,
         );
         dispatch(
           showSnackbarNotification(
@@ -273,10 +273,10 @@ const MiewDialog = ({
     try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(

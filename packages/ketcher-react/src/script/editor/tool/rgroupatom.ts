@@ -146,8 +146,8 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', error);
     }); // w/o changes
 }
 

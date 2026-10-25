@@ -31,9 +31,9 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
 
   try {
     return new MolSerializer().deserialize(molV2000StringOrStruct);
-  } catch (e) {
-    KetcherLogger.error('StructRenderer.tsx::normalizeStruct', e);
-    throw new Error('Could not parse Struct', { cause: e });
+  } catch (error) {
+    KetcherLogger.error('StructRenderer.tsx::normalizeStruct', error);
+    throw new Error('Could not parse Struct', { cause: error });
   }
 };
 

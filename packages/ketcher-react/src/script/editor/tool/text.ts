@@ -160,8 +160,8 @@ function propsDialog(
         }
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('text.ts::propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('text.ts::propsDialog', error);
     });
 }
 

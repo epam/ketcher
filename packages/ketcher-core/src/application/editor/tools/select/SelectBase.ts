@@ -266,7 +266,8 @@ abstract class SelectBase implements BaseTool {
     event.preventDefault();
 
     if (
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length > 0
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length >
+      0
     ) {
       return;
     }

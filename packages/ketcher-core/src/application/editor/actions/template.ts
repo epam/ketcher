@@ -294,7 +294,10 @@ function getConnectingBond(
   const isBenzeneTemplate = template.name === benzeneMoleculeName;
   const isCyclopentadieneTemplate =
     template.name === cyclopentadieneMoleculeName;
-  if (template.bonds.size > 0 && (isBenzeneTemplate || isCyclopentadieneTemplate)) {
+  if (
+    template.bonds.size > 0 &&
+    (isBenzeneTemplate || isCyclopentadieneTemplate)
+  ) {
     const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
       struct,
       bondId,

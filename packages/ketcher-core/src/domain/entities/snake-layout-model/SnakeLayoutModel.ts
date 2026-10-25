@@ -295,8 +295,7 @@ export class SnakeLayoutModel {
             currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length > 0
+                  monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
                 );
               },
             );

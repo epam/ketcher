@@ -211,9 +211,10 @@ export function atomForNewBond(
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = getAtomNeighbors(restruct.molecule, id);
 
-  const prevBondId = atomNeighbours.length > 0
-    ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
-    : null;
+  const prevBondId =
+    atomNeighbours.length > 0
+      ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
+      : null;
   const prevBond =
     prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
   let prevBondType = DEFAULT_BOND_TYPE;

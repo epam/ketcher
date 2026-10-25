@@ -16,30 +16,30 @@ import {
   collapseExpandedSuperatoms,
   didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  hasMetaToPreserve,
-  hasStructureToPreserve,
+  shouldPreserveMeta,
+  shouldPreserveStructure,
 } from './miewStructMerge';
 
 describe('miewStructMerge', () => {
-  describe('hasMetaToPreserve', () => {
+  describe('shouldPreserveMeta', () => {
     it('returns false for a plain molecule', () => {
       const struct = new Struct();
       struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
-      expect(hasMetaToPreserve(struct)).toBe(false);
+      expect(shouldPreserveMeta(struct)).toBe(false);
     });
 
     it('returns true when reaction symbols are present', () => {
       const struct = new Struct();
       struct.rxnPluses.add(new RxnPlus({ pp: new Vec2(1, 1) }));
-      expect(hasMetaToPreserve(struct)).toBe(true);
+      expect(shouldPreserveMeta(struct)).toBe(true);
     });
   });
 
-  describe('hasStructureToPreserve', () => {
+  describe('shouldPreserveStructure', () => {
     it('returns false for a plain molecule with no S-groups or R-groups', () => {
       const struct = new Struct();
       struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
-      expect(hasStructureToPreserve(struct)).toBe(false);
+      expect(shouldPreserveStructure(struct)).toBe(false);
     });
 
     it('returns true for a structure with a nucleotide-component SUP S-group', () => {
@@ -47,7 +47,7 @@ describe('miewStructMerge', () => {
       const sgroup = new SGroup('SUP');
       sgroup.data.class = 'SUGAR';
       struct.sgroups.add(sgroup);
-      expect(hasStructureToPreserve(struct)).toBe(true);
+      expect(shouldPreserveStructure(struct)).toBe(true);
     });
 
     it('returns true for a structure with a regular named SUP S-group', () => {
@@ -55,7 +55,7 @@ describe('miewStructMerge', () => {
       const sgroup = new SGroup('SUP');
       sgroup.data.name = 'Boc';
       struct.sgroups.add(sgroup);
-      expect(hasStructureToPreserve(struct)).toBe(true);
+      expect(shouldPreserveStructure(struct)).toBe(true);
     });
   });
 

@@ -98,6 +98,8 @@ export async function didDeleteWithAttachmentGroupSplitConfirm(
   return true;
 }
 
+export { didDeleteWithAttachmentGroupSplitConfirm as deleteWithAttachmentGroupSplitConfirm };
+
 /** Sync call sites: confirm/cancel safely, then optionally run a follow-up. */
 export function runDeleteWithAttachmentGroupSplitConfirm(
   editor: Editor,

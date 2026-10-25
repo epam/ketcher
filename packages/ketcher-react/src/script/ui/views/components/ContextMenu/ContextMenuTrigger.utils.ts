@@ -148,6 +148,8 @@ export const isItemInSelection = ({
   }
 };
 
+export { isItemInSelection as getIsItemInSelection };
+
 export function getMenuPropsForClosestItem(
   editor: Editor,
   closestItem: ClosestItemWithMap,

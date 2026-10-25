@@ -436,4 +436,6 @@ export function canExecuteClipboardCommand(action: string): boolean {
   return isEnabled;
 }
 
+export { canExecuteClipboardCommand as exec };
+
 export default ClipArea;

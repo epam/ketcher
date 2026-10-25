@@ -50,8 +50,8 @@ import {
   collapseExpandedSuperatoms,
   didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  hasMetaToPreserve,
-  hasStructureToPreserve,
+  shouldPreserveMeta as hasMetaToPreserve,
+  shouldPreserveStructure as hasStructureToPreserve,
 } from './miewStructMerge';
 
 const Viewer = lazy(() =>

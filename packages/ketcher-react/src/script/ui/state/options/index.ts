@@ -261,6 +261,8 @@ export function setFragmentRecognition(isFrag: boolean) {
   };
 }
 
+export { setFragmentRecognition as shouldFragment };
+
 /* CHECK */
 export function checkOpts(data: OptionsState['check']) {
   return {

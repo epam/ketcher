@@ -30,7 +30,7 @@ function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
   return clone;
 }
 
-export function hasMetaToPreserve(struct: Struct): boolean {
+export function shouldPreserveMeta(struct: Struct): boolean {
   return !!(
     struct.rxnArrows.size ||
     struct.rxnPluses.size ||
@@ -41,7 +41,7 @@ export function hasMetaToPreserve(struct: Struct): boolean {
   );
 }
 
-export function hasStructureToPreserve(struct: Struct): boolean {
+export function shouldPreserveStructure(struct: Struct): boolean {
   return struct.sgroups.size > 0 || struct.rgroups.size > 0;
 }
 
@@ -92,6 +92,12 @@ export function didMergeCoordinatesFromResult(
 
   return true;
 }
+
+export {
+  shouldPreserveMeta as needsMetaPreservation,
+  shouldPreserveStructure as needsStructurePreservation,
+  didMergeCoordinatesFromResult as mergeCoordinatesFromResult,
+};
 
 function getAtomCentroid(struct: Struct): Vec2 {
   if (struct.atoms.size === 0) {

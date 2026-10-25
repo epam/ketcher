@@ -341,7 +341,7 @@ async function copy(data: ClipboardData): Promise<void> {
 
         return;
       } else {
-        KetcherLogger.error('cliparea.tsx::copy', e);
+        KetcherLogger.error('cliparea.tsx::copy', error);
       }
     }
 

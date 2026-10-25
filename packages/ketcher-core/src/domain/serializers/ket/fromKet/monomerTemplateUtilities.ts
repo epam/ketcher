@@ -69,7 +69,8 @@ export function fillMonomerTemplateStruct(ket): Struct {
 
   Object.keys(nodes).forEach((index) => {
     if (nodes[index].type) parseNode(nodes[index], resultingStruct);
-    else if (nodes[index].$ref) parseNode(ket[nodes[index].$ref], resultingStruct);
+    else if (nodes[index].$ref)
+      parseNode(ket[nodes[index].$ref], resultingStruct);
   });
   resultingStruct.name = ket.header?.moleculeName ?? '';
 

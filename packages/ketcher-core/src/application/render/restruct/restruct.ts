@@ -357,7 +357,9 @@ class ReStruct {
 
     paths.forEach((path) => {
       const offset = this.render.options.offset;
-      let bb = visible ? Box2Abs.fromRelBox(utility.relBox(path.getBBox())) : null;
+      let bb = visible
+        ? Box2Abs.fromRelBox(utility.relBox(path.getBBox()))
+        : null;
       const extension = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);

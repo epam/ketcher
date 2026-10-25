@@ -498,7 +498,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     // and making the bond look detached from the structure (#3508). Never
     // consume more than half the bond, so the two endpoints can't cross.
     if (bondLength) {
-      const maxShift = Math.max(bondLength / 2 - 3 * renderOptions.lineWidth, 0);
+      const maxShift = Math.max(
+        bondLength / 2 - 3 * renderOptions.lineWidth,
+        0,
+      );
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 
@@ -1144,10 +1147,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       let direction = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
       for (const extension of visel.exts) {
-        t = Math.max(t, utility.shiftRayBox(ps, direction, extension.translate(ps)));
+        t = Math.max(
+          t,
+          utility.shiftRayBox(ps, direction, extension.translate(ps)),
+        );
       }
       // estimate the shift backwards to account for the size of the aam/query text box itself
-      t += utility.shiftRayBox(ps, direction.negated(), Box2Abs.fromRelBox(aamBox));
+      t += utility.shiftRayBox(
+        ps,
+        direction.negated(),
+        Box2Abs.fromRelBox(aamBox),
+      );
 
       let perpShift = new Vec2(0, 0);
 
@@ -1859,7 +1869,10 @@ function showHydroIndex(
   return { text, path, rbb };
 }
 
-function showRadical(atom: ReAtom, render: Render): Omit<ElementAttribute, 'text'> {
+function showRadical(
+  atom: ReAtom,
+  render: Render,
+): Omit<ElementAttribute, 'text'> {
   const ps: Vec2 = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const paper = render.paper;
@@ -2500,8 +2513,12 @@ function computeLateralApLabelShift(
     countExtensionOverlaps(
       viselExtensions,
       atomPos,
-      atomPos.x + apDirection.x * proposedAlongDistribution + perpDirection.x * sign * shiftMag,
-      atomPos.y + apDirection.y * proposedAlongDistribution + perpDirection.y * sign * shiftMag,
+      atomPos.x +
+        apDirection.x * proposedAlongDistribution +
+        perpDirection.x * sign * shiftMag,
+      atomPos.y +
+        apDirection.y * proposedAlongDistribution +
+        perpDirection.y * sign * shiftMag,
       boxWidth,
       boxHeight,
     );

@@ -266,7 +266,11 @@ export class SnakeLayoutModel {
         nodesBeforeHydrogenConnectionToBase.length &&
         lastTwoStrandedNodeWithHydrogenBond
       ) {
-        for (let index = 0; index < nodesBeforeHydrogenConnectionToBase.length; index++) {
+        for (
+          let index = 0;
+          index < nodesBeforeHydrogenConnectionToBase.length;
+          index++
+        ) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
             lastTwoStrandedNodeWithHydrogenBond
               ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)

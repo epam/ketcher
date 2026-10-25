@@ -830,9 +830,10 @@ export class CoreEditor {
           persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
         }
       } else {
-        const existingMonomerTemplateRef = getMonomerTemplateReferenceFromMonomerItem(
-          this._monomersLibrary[existingMonomerIndex],
-        );
+        const existingMonomerTemplateRef =
+          getMonomerTemplateReferenceFromMonomerItem(
+            this._monomersLibrary[existingMonomerIndex],
+          );
 
         const existingMonomerRefIndex =
           monomersLibraryParsedJson.root.templates.findIndex(

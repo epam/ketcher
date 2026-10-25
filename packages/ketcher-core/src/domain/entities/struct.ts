@@ -741,13 +741,18 @@ export class Struct {
     let index;
     for (index = 0; index < atom.neighbors.length; ++index) {
       const neighborHb = this.halfBonds.get(atom.neighbors[index]);
-      assert(neighborHb, `Neighbor half-bond ${atom.neighbors[index]} not found`);
+      assert(
+        neighborHb,
+        `Neighbor half-bond ${atom.neighbors[index]} not found`,
+      );
       if (neighborHb.ang > hb.ang) break;
     }
     atom.neighbors.splice(index, 0, hbid);
     const ir = atom.neighbors[(index + 1) % atom.neighbors.length];
     const il =
-      atom.neighbors[(index + atom.neighbors.length - 1) % atom.neighbors.length];
+      atom.neighbors[
+        (index + atom.neighbors.length - 1) % atom.neighbors.length
+      ];
     this.setHbNext(il, hbid);
     this.setHbNext(hbid, ir);
     this.halfBondSetAngle(hbid, il);
@@ -1053,7 +1058,8 @@ export class Struct {
         assert(atomJ, `Atom ${keys[index]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
         distribution = Vec2.dist(atomJ.pp, atomK.pp);
-        if (minDistribution < 0 || minDistribution > distribution) minDistribution = distribution;
+        if (minDistribution < 0 || minDistribution > distribution)
+          minDistribution = distribution;
       }
       totalDistribution += minDistribution;
     }
@@ -1344,7 +1350,10 @@ export class Struct {
 
   loopIsConvex(loop: LoopHalfBondIds): boolean {
     return loop.every((item, k, loopArray) => {
-      const angle = this.halfBondAngle(item, loopArray[(k + 1) % loopArray.length]);
+      const angle = this.halfBondAngle(
+        item,
+        loopArray[(k + 1) % loopArray.length],
+      );
       return angle <= 0;
     });
   }

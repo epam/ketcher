@@ -543,7 +543,8 @@ export class ChainsCollection {
                 index < reorderedSenseForSequentialAntisenseChains.length;
                 index++
               ) {
-                const temporary = reorderedSenseForSequentialAntisenseChains[index];
+                const temporary =
+                  reorderedSenseForSequentialAntisenseChains[index];
                 reorderedSenseForSequentialAntisenseChains[index] = last;
                 last = temporary;
               }

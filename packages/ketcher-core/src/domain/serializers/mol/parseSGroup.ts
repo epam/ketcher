@@ -251,7 +251,9 @@ function applySGroupArrayProperty(
 ): void {
   const sid = utilities.parseDecimalInt(propertyData.slice(1, 4)) - 1;
   const number_ = utilities.parseDecimalInt(propertyData.slice(4, 8));
-  let part = toIntArray(utilities.partitionLineFixed(propertyData.slice(8), 3, true));
+  let part = toIntArray(
+    utilities.partitionLineFixed(propertyData.slice(8), 3, true),
+  );
 
   if (part.length !== number_) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
@@ -276,7 +278,11 @@ function applyDataSGroupQueryOp(sg: SGroup, queryOp: string): void {
 }
 
 function applyDataSGroupDesc(sGroups: SGroupMap, propertyData: string): void {
-  const split = utilities.partitionLine(propertyData, [4, 31, 2, 20, 2, 3], false);
+  const split = utilities.partitionLine(
+    propertyData,
+    [4, 31, 2, 20, 2, 3],
+    false,
+  );
   const id = utilities.parseDecimalInt(split[0]) - 1;
   const fieldName = split[1].trim();
   const fieldType = split[2].trim();
@@ -322,7 +328,10 @@ function applyDataSGroupInfo(sg: SGroup, propertyData: string): void {
   sg.data.daspPos = daspPos;
 }
 
-function applyDataSGroupInfoLine(sGroups: SGroupMap, propertyData: string): void {
+function applyDataSGroupInfoLine(
+  sGroups: SGroupMap,
+  propertyData: string,
+): void {
   const id = utilities.parseDecimalInt(propertyData.substring(0, 4)) - 1;
   const sg = sGroups[id];
   applyDataSGroupInfo(sg, propertyData.substring(5));

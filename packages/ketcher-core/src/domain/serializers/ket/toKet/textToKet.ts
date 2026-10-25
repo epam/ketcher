@@ -138,11 +138,13 @@ export function textToKet(textNode) {
         const paraObject: KetTextParagraph = { parts: [] };
         if (paragraph.alignment !== undefined)
           paraObject.alignment = paragraph.alignment;
-        if (paragraph.indent !== undefined) paraObject.indent = paragraph.indent;
+        if (paragraph.indent !== undefined)
+          paraObject.indent = paragraph.indent;
         if (paragraph.font !== undefined) paraObject.font = paragraph.font;
         if (paragraph.color !== undefined) paraObject.color = paragraph.color;
         if (paragraph.bold !== undefined) paraObject.bold = paragraph.bold;
-        if (paragraph.italic !== undefined) paraObject.italic = paragraph.italic;
+        if (paragraph.italic !== undefined)
+          paraObject.italic = paragraph.italic;
         if (paragraph.superscript !== undefined)
           paraObject.superscript = paragraph.superscript;
         if (paragraph.subscript !== undefined)

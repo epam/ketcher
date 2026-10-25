@@ -72,7 +72,9 @@ export class RxnArrow extends BaseMicromoleculeEntity {
     if (attributes.pos) {
       for (let index = 0; index < attributes.pos.length; index++) {
         const currentP = attributes.pos[index];
-        this.pos[index] = currentP ? new Vec2(attributes.pos[index]) : new Vec2();
+        this.pos[index] = currentP
+          ? new Vec2(attributes.pos[index])
+          : new Vec2();
       }
     }
     this.mode = attributes.mode;

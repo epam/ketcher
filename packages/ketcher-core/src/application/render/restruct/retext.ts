@@ -143,7 +143,8 @@ class ReText extends ReObject {
     }
 
     const rightEdge: number =
-      lastElementOfWidestRow.getBBox().x + lastElementOfWidestRow.getBBox().width;
+      lastElementOfWidestRow.getBBox().x +
+      lastElementOfWidestRow.getBBox().width;
 
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),

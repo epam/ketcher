@@ -36,7 +36,10 @@ import {
 } from './ReplacementHighlightView';
 
 type ViewData<P> = {
-  show: (layer: D3SvgElementSelection<SVGGElement, void>, parameters: P) => void;
+  show: (
+    layer: D3SvgElementSelection<SVGGElement, void>,
+    parameters: P,
+  ) => void;
   params: P;
   onShow?: VoidFunction;
   onHide?: VoidFunction;
@@ -182,7 +185,9 @@ export class TransientDrawingView {
     this.removeView(ModifyAminoAcidsView.viewName);
   }
 
-  public showLineLengthHighlight(parameters: LineLengthHighlightViewParameters) {
+  public showLineLengthHighlight(
+    parameters: LineLengthHighlightViewParameters,
+  ) {
     this.addView(LineLengthHighlightView.viewName, {
       show: LineLengthHighlightView.show,
       params: parameters,
@@ -232,7 +237,9 @@ export class TransientDrawingView {
     this.removeView(RotationView.viewName);
   }
 
-  public showReplacementHighlight(parameters: ReplacementHighlightViewParameters) {
+  public showReplacementHighlight(
+    parameters: ReplacementHighlightViewParameters,
+  ) {
     this.addView(ReplacementHighlightView.viewName, {
       show: ReplacementHighlightView.show,
       params: parameters,

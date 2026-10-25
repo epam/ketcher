@@ -74,7 +74,8 @@ export class Molfile {
   }
 
   parseCTFile(properties: ParseCTFileProperties): Struct {
-    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = properties;
+    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } =
+      properties;
     let returnValue: Struct;
     if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
       returnValue = common.parseRxn(

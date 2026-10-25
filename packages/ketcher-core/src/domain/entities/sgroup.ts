@@ -662,7 +662,12 @@ export class SGroup {
         const bracketHeight = bb.sz().y;
 
         brackets.push(
-          new SGroupBracketParameters(cl, d.negated(), bracketWidth, bracketHeight),
+          new SGroupBracketParameters(
+            cl,
+            d.negated(),
+            bracketWidth,
+            bracketHeight,
+          ),
           new SGroupBracketParameters(cr, d, bracketWidth, bracketHeight),
         );
       })();

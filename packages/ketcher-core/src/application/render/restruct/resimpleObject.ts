@@ -137,7 +137,9 @@ class ReSimpleObject extends ReObject {
     }
 
     const referencePoint: Vec2 | null =
-      distributionReference.minDist <= 8 / s ? distributionReference.refPoint : null;
+      distributionReference.minDist <= 8 / s
+        ? distributionReference.refPoint
+        : null;
     // distance is a smallest between dist to figure and it's reference points
     distribution = Math.min(distributionReference.minDist, distribution);
     return { minDist: distribution, refPoint: referencePoint };
@@ -151,7 +153,8 @@ class ReSimpleObject extends ReObject {
     });
 
     const minDistribution: MinDistanceWithReferencePoint = distribution.reduce(
-      (accumulator, current) => (accumulator.minDist < current.minDist ? accumulator : current),
+      (accumulator, current) =>
+        accumulator.minDist < current.minDist ? accumulator : current,
       { minDist: Infinity, refPoint: null },
     );
 
@@ -183,7 +186,9 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((index) => referencePoints.push(new Vec2(index.x, index.y, 0)));
+        this.item.pos.forEach((index) =>
+          referencePoints.push(new Vec2(index.x, index.y, 0)),
+        );
         break;
       }
 
@@ -223,7 +228,9 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((index) => referencePoints.push(new Vec2(index.x, index.y, 0)));
+        this.item.pos.forEach((index) =>
+          referencePoints.push(new Vec2(index.x, index.y, 0)),
+        );
         break;
       }
 

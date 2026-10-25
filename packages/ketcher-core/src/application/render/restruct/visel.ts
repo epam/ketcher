@@ -39,7 +39,11 @@ class Visel {
     this.exts = [];
   }
 
-  add(path: RaphaelPath, bb?: Box2Abs | null, extension?: Box2Abs | null): void {
+  add(
+    path: RaphaelPath,
+    bb?: Box2Abs | null,
+    extension?: Box2Abs | null,
+  ): void {
     this.paths.push(path);
     if (bb) {
       this.boxes.push(bb);

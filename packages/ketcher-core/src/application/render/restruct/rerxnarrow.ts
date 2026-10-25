@@ -81,7 +81,9 @@ class ReRxnArrow extends ReObject {
     }
 
     const referencePoint: Vec2 | null =
-      distributionReference.minDist <= 8 / s ? distributionReference.refPoint : null;
+      distributionReference.minDist <= 8 / s
+        ? distributionReference.refPoint
+        : null;
     // distance is a smallest between dist to figure and it's reference points
     distribution = Math.min(distributionReference.minDist, distribution);
     return { minDist: distribution, refPoint: referencePoint };
@@ -95,7 +97,8 @@ class ReRxnArrow extends ReObject {
     });
 
     const minDistribution: MinDistanceWithReferencePoint = distribution.reduce(
-      (accumulator, current) => (accumulator.minDist < current.minDist ? accumulator : current),
+      (accumulator, current) =>
+        accumulator.minDist < current.minDist ? accumulator : current,
       { minDist: Infinity, refPoint: null },
     );
 
@@ -203,7 +206,12 @@ class ReRxnArrow extends ReObject {
     return path;
   }
 
-  getArrowParams(x1: number, y1: number, x2: number, y2: number): ArrowParameters {
+  getArrowParams(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+  ): ArrowParameters {
     const length = Math.hypot(x2 - x1, y2 - y1);
     const angle = Raphael.angle(x1, y1, x2, y2) - 180;
 

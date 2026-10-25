@@ -164,7 +164,11 @@ export class SequenceViewModel {
           nodesBeforeHydrogenConnectionToBase.push(node);
           lastTwoStrandedNodeWithHydrogenBond =
             this.nodes[twoStrandedSnakeLayoutNodeIndex];
-          for (let index = 0; index < nodesBeforeHydrogenConnectionToBase.length; index++) {
+          for (
+            let index = 0;
+            index < nodesBeforeHydrogenConnectionToBase.length;
+            index++
+          ) {
             // need to get rid of this repeated index lookup to reduce complexity
             twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
               ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
@@ -236,7 +240,11 @@ export class SequenceViewModel {
         nodesBeforeHydrogenConnectionToBase.length &&
         lastTwoStrandedNodeWithHydrogenBond
       ) {
-        for (let index = 0; index < nodesBeforeHydrogenConnectionToBase.length; index++) {
+        for (
+          let index = 0;
+          index < nodesBeforeHydrogenConnectionToBase.length;
+          index++
+        ) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
             lastTwoStrandedNodeWithHydrogenBond
               ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
@@ -422,7 +430,11 @@ export class SequenceViewModel {
 
     // Insert from the highest index down so the remaining indices stay valid.
     for (let index = nodesToInsert.length - 1; index >= 0; index--) {
-      this.nodes.splice(nodesToInsert[index].index, 0, nodesToInsert[index].node);
+      this.nodes.splice(
+        nodesToInsert[index].index,
+        0,
+        nodesToInsert[index].node,
+      );
     }
   }
 
@@ -507,7 +519,10 @@ export class SequenceViewModel {
   }
 
   public get length() {
-    return this.chains.reduce((accumulator, chain) => accumulator + chain.length, 0);
+    return this.chains.reduce(
+      (accumulator, chain) => accumulator + chain.length,
+      0,
+    );
   }
 
   public get hasOnlyOneNewChain() {

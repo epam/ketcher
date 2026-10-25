@@ -295,7 +295,10 @@ export class SequenceRenderer {
         const hasSideChainConnection =
           currentChain &&
           nextChainObject &&
-          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObject);
+          this.hasSideChainConnectionBetweenChains(
+            currentChain,
+            nextChainObject,
+          );
 
         // Show PLUS button only if there are no side-chain connections between chains
         if (!hasSideChainConnection) {

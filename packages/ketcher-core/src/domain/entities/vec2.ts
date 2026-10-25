@@ -46,7 +46,8 @@ export class Vec2 {
       this.y = 0;
       this.z = 0;
     } else if (arguments_.length === 1) {
-      const point: Point = typeof arguments_[0] === 'object' ? arguments_[0] : {};
+      const point: Point =
+        typeof arguments_[0] === 'object' ? arguments_[0] : {};
       this.x = toNumber(point.x || 0);
       this.y = toNumber(point.y || 0);
       this.z = toNumber(point.z || 0);
@@ -108,7 +109,10 @@ export class Vec2 {
   static lc(...arguments_: Array<Vec2 | number>): Vec2 {
     let v = new Vec2();
     for (let index = 0; index < arguments.length / 2; ++index) {
-      v = v.addScaled(arguments_[2 * index] as Vec2, arguments_[2 * index + 1] as number);
+      v = v.addScaled(
+        arguments_[2 * index] as Vec2,
+        arguments_[2 * index + 1] as number,
+      );
     }
     return v;
   }
@@ -268,7 +272,11 @@ export class Vec2 {
     const { x, y } = this;
     let inside = false;
 
-    for (let index = 0, index_ = points.length - 1; index < points.length; index_ = index++) {
+    for (
+      let index = 0, index_ = points.length - 1;
+      index < points.length;
+      index_ = index++
+    ) {
       const xi = points[index].x || 0;
       const yi = points[index].y || 0;
       const xj = points[index_].x || 0;

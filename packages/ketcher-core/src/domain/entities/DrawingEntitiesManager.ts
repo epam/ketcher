@@ -1741,7 +1741,9 @@ export class DrawingEntitiesManager {
         if (connectionTemplate) {
           const isEndpoint1 =
             connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateReferenceFromMonomerItem(previousMonomer.monomerItem);
+            getMonomerTemplateReferenceFromMonomerItem(
+              previousMonomer.monomerItem,
+            );
           attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
             : connectionTemplate.endpoint2.attachmentPointId;
@@ -1864,7 +1866,9 @@ export class DrawingEntitiesManager {
         if (connectionTemplate) {
           const isEndpoint1 =
             connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateReferenceFromMonomerItem(previousMonomer.monomerItem);
+            getMonomerTemplateReferenceFromMonomerItem(
+              previousMonomer.monomerItem,
+            );
           attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
             : connectionTemplate.endpoint2.attachmentPointId;

@@ -469,7 +469,16 @@ class ReBond extends ReObject {
     let ipath: ReturnType<typeof getIdsPath>;
     const bondIndexOff = options.subFontSize * 0.6;
     if (options.showBondIds) {
-      ipath = getIdsPath(bid, paper, hb1, hb2, bondIndexOff, 0.5, 0.5, hb1.norm);
+      ipath = getIdsPath(
+        bid,
+        paper,
+        hb1,
+        hb2,
+        bondIndexOff,
+        0.5,
+        0.5,
+        hb1.norm,
+      );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
     if (options.showHalfBondIds) {
@@ -1268,7 +1277,11 @@ function getBondSingleDownPath(
 
   const intervalAdjusted = hashSpacingInPx * options.lineWidth;
 
-  const finalLines = calculateLines(length_, options.lineWidth, intervalAdjusted);
+  const finalLines = calculateLines(
+    length_,
+    options.lineWidth,
+    intervalAdjusted,
+  );
 
   const step = length_ / (finalLines - 1);
   return draw.bondSingleDown(
@@ -1300,7 +1313,9 @@ function getBondSingleEitherPath(
   const interval = 0.6 * options.lineWidth;
   const nlines =
     Math.max(
-      Math.floor((length_ - options.lineWidth) / (options.lineWidth + interval)),
+      Math.floor(
+        (length_ - options.lineWidth) / (options.lineWidth + interval),
+      ),
       0,
     ) + 2;
   const step = length_ / (nlines - 0.5);

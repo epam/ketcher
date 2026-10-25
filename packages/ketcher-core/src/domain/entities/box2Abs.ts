@@ -49,7 +49,11 @@ export class Box2Abs {
     if (arguments_.length === 1 && arguments_[0] instanceof Vec2) {
       this.p0 = arguments_[0];
       this.p1 = arguments_[0];
-    } else if (arguments_.length === 1 && 'min' in arguments_[0] && 'max' in arguments_[0]) {
+    } else if (
+      arguments_.length === 1 &&
+      'min' in arguments_[0] &&
+      'max' in arguments_[0]
+    ) {
       const boxArgument = arguments_[0] as AbsoluteBox;
       this.p0 = boxArgument.min;
       this.p1 = boxArgument.max;

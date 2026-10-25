@@ -346,7 +346,8 @@ function makeAtomBondLines(
   const lines: string[] = [];
   for (let index = 0; index < Math.floor((ids.length + 14) / 15); ++index) {
     const rem = Math.min(ids.length - 15 * index, 15);
-    let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utilities.paddedNum(rem, 2);
+    let salLine =
+      'M  ' + prefix + ' ' + idstr + ' ' + utilities.paddedNum(rem, 2);
     for (let index_ = 0; index_ < rem; ++index_) {
       salLine += ' ' + utilities.paddedNum(map[ids[index * 15 + index_]], 3);
     }

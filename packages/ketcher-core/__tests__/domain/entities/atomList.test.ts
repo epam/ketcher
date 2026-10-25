@@ -1,7 +1,9 @@
 import { type AtomListParameters, AtomList } from 'domain/entities/atomList';
 
 const ids = [66, 44, 12, 88];
-const createParams = (overrides?: Partial<AtomListParameters>): AtomListParameters => {
+const createParams = (
+  overrides?: Partial<AtomListParameters>,
+): AtomListParameters => {
   const { ids: overrideIds, ...restOverrides } = overrides ?? {};
 
   return {

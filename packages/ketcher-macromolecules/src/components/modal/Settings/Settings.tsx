@@ -68,7 +68,9 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProperties) => {
   }, [currentSettings, initialSettings]);
 
   const handleSettingsChange = (partial: Partial<SettingsFormValue>) => {
-    setCurrentSettings((previous) => (previous ? { ...previous, ...partial } : null));
+    setCurrentSettings((previous) =>
+      previous ? { ...previous, ...partial } : null,
+    );
   };
 
   const handleGroupToggle = (groupId: string) => {

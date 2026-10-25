@@ -46,7 +46,8 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const shouldExpand = Boolean(activePreset?.name) || isEditMode;
   const [expanded, setExpanded] = useState(shouldExpand);
-  const [previousActivePreset, setPreviousActivePreset] = useState(activePreset);
+  const [previousActivePreset, setPreviousActivePreset] =
+    useState(activePreset);
 
   // Activating a preset opens the editor. isEditMode is read to decide whether
   // it should open, but it is deliberately not a trigger: expandEditor turns

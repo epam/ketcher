@@ -149,7 +149,8 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPreset] = useState(activePreset);
-  const [previousActivePreset, setPreviousActivePreset] = useState(activePreset);
+  const [previousActivePreset, setPreviousActivePreset] =
+    useState(activePreset);
 
   const [selectedPhosphatePosition, setSelectedPhosphatePosition] = useState<
     RnaPhosphatePosition | undefined

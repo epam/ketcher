@@ -104,7 +104,9 @@ export const ButtonsContainer = styled.div({
   gap: '8px',
 });
 
-export const StyledButton = styled(Button)<{ primary?: boolean }>((properties) => {
+export const StyledButton = styled(Button)<{ primary?: boolean }>((
+  properties,
+) => {
   return {
     width: '100%',
     whiteSpace: 'nowrap',
@@ -123,25 +125,29 @@ export const StyledButton = styled(Button)<{ primary?: boolean }>((properties) =
   };
 });
 
-export const NameContainer = styled.div<{ selected?: boolean }>((properties) => ({
-  position: 'relative',
-  borderRadius: properties.theme.ketcher.border.radius.regular,
-  backgroundColor: properties.theme.ketcher.color.background.primary,
-  boxShadow: properties.theme.ketcher.shadow.regular,
-  cursor: 'pointer',
-  overflow: 'hidden',
-  padding: '0 6px 6px 6px',
-  display: 'flex',
-  alignItems: 'flex-end',
-  height: '48px',
-  outline: properties.selected
-    ? properties.theme.ketcher.outline.selected.medium
-    : 'none',
+export const NameContainer = styled.div<{ selected?: boolean }>(
+  (properties) => ({
+    position: 'relative',
+    borderRadius: properties.theme.ketcher.border.radius.regular,
+    backgroundColor: properties.theme.ketcher.color.background.primary,
+    boxShadow: properties.theme.ketcher.shadow.regular,
+    cursor: 'pointer',
+    overflow: 'hidden',
+    padding: '0 6px 6px 6px',
+    display: 'flex',
+    alignItems: 'flex-end',
+    height: '48px',
+    outline: properties.selected
+      ? properties.theme.ketcher.outline.selected.medium
+      : 'none',
 
-  ':hover': {
-    outline: properties.selected ? undefined : properties.theme.ketcher.outline.small,
-  },
-}));
+    ':hover': {
+      outline: properties.selected
+        ? undefined
+        : properties.theme.ketcher.outline.small,
+    },
+  }),
+);
 
 export const NameLine = styled.span<{ selected?: boolean }>((properties) => ({
   position: 'absolute',

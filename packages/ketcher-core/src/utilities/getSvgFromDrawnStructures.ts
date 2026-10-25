@@ -45,7 +45,9 @@ export const getSvgFromDrawnStructures = (
   // remove #rectangle-selection-area
   wrapper.querySelector('#rectangle-selection-area')?.remove();
   // remove dynamic elements (scrolls, highlighters, attachment points...)
-  wrapper.querySelectorAll('.dynamic-element')?.forEach((element) => element.remove());
+  wrapper
+    .querySelectorAll('.dynamic-element')
+    ?.forEach((element) => element.remove());
   // remove transient views (rotation frame and handles around the selection...)
   wrapper
     .querySelectorAll(TRANSIENT_LAYERS_SELECTOR)
@@ -55,7 +57,8 @@ export const getSvgFromDrawnStructures = (
     .querySelectorAll('text')
     ?.forEach((element) => element.setAttribute('cursor', 'default'));
   wrapper.querySelectorAll('rect')?.forEach((element) => {
-    if (element.getAttribute('cursor') === 'text') element.removeAttribute('cursor');
+    if (element.getAttribute('cursor') === 'text')
+      element.removeAttribute('cursor');
   });
   // remove opacity of structures, mostly for sequence "edit in RNA builder" mode
   wrapper.querySelectorAll('g')?.forEach((element) => {

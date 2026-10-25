@@ -55,7 +55,8 @@ function parseAtomLine(atomLine: string): Atom {
 
     // obsolete
     massDifference: utilities.parseDecimalInt(atomSplit[5]),
-    charge: utilities.fmtInfo.chargeMap[utilities.parseDecimalInt(atomSplit[6])],
+    charge:
+      utilities.fmtInfo.chargeMap[utilities.parseDecimalInt(atomSplit[6])],
 
     // query
     hCount: utilities.parseDecimalInt(atomSplit[8]),
@@ -81,11 +82,16 @@ function parseBondLine(bondLine: string): Bond {
   const parameters = {
     begin: utilities.parseDecimalInt(bondSplit[0]) - 1,
     end: utilities.parseDecimalInt(bondSplit[1]) - 1,
-    type: utilities.fmtInfo.bondTypeMap[utilities.parseDecimalInt(bondSplit[2])],
-    stereo: utilities.fmtInfo.bondStereoMap[utilities.parseDecimalInt(bondSplit[3])],
+    type: utilities.fmtInfo.bondTypeMap[
+      utilities.parseDecimalInt(bondSplit[2])
+    ],
+    stereo:
+      utilities.fmtInfo.bondStereoMap[utilities.parseDecimalInt(bondSplit[3])],
     xxx: bondSplit[4],
     topology:
-      utilities.fmtInfo.bondTopologyMap[utilities.parseDecimalInt(bondSplit[5])],
+      utilities.fmtInfo.bondTopologyMap[
+        utilities.parseDecimalInt(bondSplit[5])
+      ],
     reactingCenterStatus: utilities.parseDecimalInt(bondSplit[6]),
   };
 
@@ -512,7 +518,8 @@ function parseCTabV2000(
   const atomCount = utilities.parseDecimalInt(countsSplit[0]);
   const bondCount = utilities.parseDecimalInt(countsSplit[1]);
   const atomListCount = utilities.parseDecimalInt(countsSplit[2]);
-  const isAbs = utilities.parseDecimalInt(countsSplit[4]) === 1 || ignoreChiralFlag;
+  const isAbs =
+    utilities.parseDecimalInt(countsSplit[4]) === 1 || ignoreChiralFlag;
   const isAnd =
     utilities.parseDecimalInt(countsSplit[4]) === 0 && !ignoreChiralFlag;
   const stextLinesCount = utilities.parseDecimalInt(countsSplit[5]);

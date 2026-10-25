@@ -2,7 +2,7 @@ import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import utils from 'src/domain/serializers/mol/utilities';
+import utils from 'domain/serializers/mol/utilities';
 
 /** Two-atom fragment whose single bond has the given length. */
 function fragment(bondLength: number): Struct {
@@ -50,9 +50,9 @@ describe('rxnMerge - reaction-merge rescale path', () => {
 });
 
 describe('mol serializer utils', () => {
-  describe('paddedNum', () => {
+  describe('paddedNumber', () => {
     it('formats parsed numeric strings', () => {
-      expect(utils.paddedNum('3.14', 6, 2)).toBe('  3.14');
+      expect(utils.paddedNumber('3.14', 6, 2)).toBe('  3.14');
     });
   });
 

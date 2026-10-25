@@ -77,7 +77,8 @@ const RnaElementsTabsView = ({
             groupName as MonomerGroups,
           );
           const quantity = [...groups, ...variantMonomers].reduce(
-            (accumulator, group) => accumulator + (group.groupItems.length || 0),
+            (accumulator, group) =>
+              accumulator + (group.groupItems.length || 0),
             0,
           );
           const label = t(groupNameToTabLabelKey[groupName]);

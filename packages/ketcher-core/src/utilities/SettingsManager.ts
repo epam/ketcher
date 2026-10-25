@@ -109,7 +109,10 @@ export class SettingsManager {
 
       return optionsFromLocalStorage;
     } catch (error) {
-      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', error);
+      KetcherLogger.error(
+        'SettingsManager.ts::SettingsManager::getOptions',
+        error,
+      );
       return {} as SavedOptions;
     }
   }

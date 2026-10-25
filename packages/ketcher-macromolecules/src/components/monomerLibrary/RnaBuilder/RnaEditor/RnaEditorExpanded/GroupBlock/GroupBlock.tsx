@@ -20,7 +20,9 @@ import { GroupBlockCompact } from './GroupBlockCompact';
 import { GroupBlockWide } from './GroupBlockWide';
 import { PropsWithChildren } from 'react';
 
-export const GroupBlock = (properties: IGroupBlockProperties & PropsWithChildren) => {
+export const GroupBlock = (
+  properties: IGroupBlockProperties & PropsWithChildren,
+) => {
   const isCompactView = useIsCompactView();
 
   return isCompactView ? (

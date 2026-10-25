@@ -89,7 +89,9 @@ const OpenOptions = ({
       <DropContainer data-testid="open-from-file-button">
         <FileDrop
           onDropAccepted={fileLoadHandler}
-          onDropRejected={(error) => errorHandler(`Unable to accept file(s). ${error}`)}
+          onDropRejected={(error) =>
+            errorHandler(`Unable to accept file(s). ${error}`)
+          }
           buttonLabel={t('open.openFromFile')}
           textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.FILE}
@@ -99,7 +101,9 @@ const OpenOptions = ({
         <FileDrop
           accept="image/*"
           onDropAccepted={fileLoadHandler}
-          onDropRejected={(error) => errorHandler(`Unable to accept file(s). ${error}`)}
+          onDropRejected={(error) =>
+            errorHandler(`Unable to accept file(s). ${error}`)
+          }
           buttonLabel={t('open.openFromImage')}
           textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.IMAGE}

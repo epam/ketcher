@@ -313,7 +313,10 @@ export const SequenceItemContextMenu = ({
           selections?.length
             ? selections
                 .reduce(
-                  (accumulator, selectionRange) => [...accumulator, ...selectionRange],
+                  (accumulator, selectionRange) => [
+                    ...accumulator,
+                    ...selectionRange,
+                  ],
                   [],
                 )
                 .map((nodeSelection) => nodeSelection.twoStrandedNode)

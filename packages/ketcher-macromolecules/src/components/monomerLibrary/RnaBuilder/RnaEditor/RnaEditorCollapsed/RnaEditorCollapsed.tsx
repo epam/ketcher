@@ -22,7 +22,10 @@ import {
 } from './styles';
 import { IRnaEditorCollapsedProperties } from './types';
 
-const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProperties) => {
+const RnaEditorCollapsed = ({
+  name,
+  fullName,
+}: IRnaEditorCollapsedProperties) => {
   const displayName = name ?? fullName;
 
   if (!displayName) {

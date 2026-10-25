@@ -291,7 +291,14 @@ function categorizeMolecules(
     });
   }
 
-  return { bbReact, bbAgent, bbProduction, molReact, molAgent, molProduction };
+  return {
+    bbReact,
+    bbAgent,
+    bbProd: bbProduction,
+    molReact,
+    molAgent,
+    molProd: molProduction,
+  };
 }
 
 /**
@@ -348,16 +355,25 @@ function layoutReactionFragments(
 ): void {
   let xorig = 0;
   for (let index = 0; index < molReact.length; ++index) {
-    xorig += shiftMol(returnValue, molReact[index], bbReact[index], xorig, false) + 2;
+    xorig +=
+      shiftMol(returnValue, molReact[index], bbReact[index], xorig, false) + 2;
   }
   xorig += 2;
   for (let index = 0; index < molAgent.length; ++index) {
-    xorig += shiftMol(returnValue, molAgent[index], bbAgent[index], xorig, true) + 2;
+    xorig +=
+      shiftMol(returnValue, molAgent[index], bbAgent[index], xorig, true) + 2;
   }
   xorig += 2;
 
   for (let index = 0; index < molProduction.length; ++index) {
-    xorig += shiftMol(returnValue, molProduction[index], bbProduction[index], xorig, false) + 2;
+    xorig +=
+      shiftMol(
+        returnValue,
+        molProduction[index],
+        bbProduction[index],
+        xorig,
+        false,
+      ) + 2;
   }
 }
 

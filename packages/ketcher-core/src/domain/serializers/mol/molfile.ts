@@ -23,7 +23,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
-import utils from ./utilitiess';
+import utils from './utilities';
 import { assert, KetcherLogger } from 'utilities';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
@@ -180,9 +180,9 @@ export class Molfile {
         '$RXN\n' +
         molecule.name +
         '\n\n\n' +
-        utils.paddedNum(reactants.length, 3) +
-        utils.paddedNum(products.length, 3) +
-        utils.paddedNum(0, 3) +
+        utils.paddedNumber(reactants.length, 3) +
+        utils.paddedNumber(products.length, 3) +
+        utils.paddedNumber(0, 3) +
         '\n';
       for (const component of all) {
         const saver = new Molfile();
@@ -291,7 +291,7 @@ export class Molfile {
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
     /* saver */
-    this.write(utils.paddedNum(number, width, precision));
+    this.write(utils.paddedNumber(number, width, precision));
   }
 
   writeCTab2000Header() {
@@ -417,11 +417,11 @@ export class Molfile {
         if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
           const line =
             '  1 ' +
-            utils.paddedNum(rgid, 3) +
+            utils.paddedNumber(rgid, 3) +
             ' ' +
-            utils.paddedNum(rg.ifthen, 3) +
+            utils.paddedNumber(rg.ifthen, 3) +
             ' ' +
-            utils.paddedNum(rg.resth ? 1 : 0, 3) +
+            utils.paddedNumber(rg.resth ? 1 : 0, 3) +
             '   ' +
             rg.range;
           rglogicList.push(line);

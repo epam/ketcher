@@ -18,7 +18,8 @@ import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled('div', {
-  shouldForwardProp: (property) => property !== 'selected' && property !== 'isEditMode',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'isEditMode',
 })<{
   selected?: boolean;
   isEditMode?: boolean;
@@ -99,7 +100,8 @@ export const GroupName = styled('span', {
 `;
 
 export const MonomerName = styled('span', {
-  shouldForwardProp: (property) => property !== 'selected' && property !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{ selected?: boolean; empty: boolean }>`
   margin-top: 1px;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
@@ -127,7 +129,8 @@ export const GroupIconContainer = styled.div`
 `;
 
 export const GroupIcon = styled(Icon, {
-  shouldForwardProp: (property) => property !== 'selected' && property !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{
   selected?: boolean;
   empty?: boolean;
@@ -150,7 +153,8 @@ export const GroupIcon = styled(Icon, {
 `;
 
 export const CompactGroupBlockContainer = styled('div', {
-  shouldForwardProp: (property) => property !== 'selected' && property !== 'isEditMode',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'isEditMode',
 })<{
   selected?: boolean;
   isEditMode?: boolean;
@@ -184,7 +188,8 @@ export const CompactGroupConnection = styled.div`
 `;
 
 export const CompactGroupText = styled('p', {
-  shouldForwardProp: (property) => property !== 'selected' && property !== 'empty',
+  shouldForwardProp: (property) =>
+    property !== 'selected' && property !== 'empty',
 })<{
   selected?: boolean;
   empty?: boolean;

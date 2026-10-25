@@ -145,7 +145,10 @@ export interface CalculateData extends WithStruct, WithSelection {
   properties: Array<CalculateProperties>;
 }
 
-export type CalculateResult = Record<CalculateProperties, string | number | boolean>;
+export type CalculateResult = Record<
+  CalculateProperties,
+  string | number | boolean
+>;
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
 

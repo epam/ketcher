@@ -33,7 +33,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
 import type { VisibleTools } from '../state/toolbar/types';
-import { shortcutStr } from 'ketcher-core';
+import { shortcutString } from 'ketcher-core';
 import { Icon } from 'components';
 
 type IconName = ComponentProps<typeof Icon>['name'];
@@ -168,7 +168,7 @@ function ActionButton({
   indigoVerification,
 }: Readonly<ActionButtonProps>) {
   const { t } = useTranslation();
-  const shortcut = action.shortcut && shortcutStr(action.shortcut);
+  const shortcut = action.shortcut && shortcutString(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||

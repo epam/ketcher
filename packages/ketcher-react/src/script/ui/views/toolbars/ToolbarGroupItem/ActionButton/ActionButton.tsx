@@ -20,7 +20,7 @@ import { resolveActionTitle } from '../../../../action/resolveActionTitle';
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { shortcutStr } from 'ketcher-core';
+import { shortcutString } from 'ketcher-core';
 import { type IconName, Icon } from 'components';
 
 interface ActionButtonProps {
@@ -61,7 +61,7 @@ const ActionButton = (props: Props) => {
     return null;
   }
 
-  const shortcut = shortcutStr(action?.shortcut);
+  const shortcut = shortcutString(action?.shortcut);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));

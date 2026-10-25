@@ -12,7 +12,12 @@ type Properties = {
   onDragEnd: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
 };
 
-const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Properties) => {
+const RulerHandle = ({
+  offsetX,
+  onDragStart,
+  onDrag,
+  onDragEnd,
+}: Properties) => {
   const svgReference = useRef<SVGSVGElement>(null);
   const handleReference = useRef<SVGGElement>(null);
 

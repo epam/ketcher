@@ -18,7 +18,10 @@ import styled from '@emotion/styled';
 import { Collapse } from '@mui/material';
 import { Icon } from 'ketcher-react';
 
-import { IStyledDropdownIconProperties, OptionsContainerProperties } from './types';
+import {
+  IStyledDropdownIconProperties,
+  OptionsContainerProperties,
+} from './types';
 
 export const StyledDropdownIcon = styled(Icon, {
   shouldForwardProp: (property) => property !== 'isActive',

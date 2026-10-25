@@ -21,7 +21,7 @@ import type { Atom } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';
 
 import type { Mapping } from './mol.types';
-import utils from ./utilitiess';
+import utils from './utilities';
 import v2000 from './v2000';
 
 interface SGroupSavingError extends Error {
@@ -297,20 +297,20 @@ function saveDatToMolfile(
     'M  SDD ' +
     idstr +
     ' ' +
-    utils.paddedNum(pp.x, 10, 4) +
-    utils.paddedNum(-pp.y, 10, 4) +
+    utils.paddedNumber(pp.x, 10, 4) +
+    utils.paddedNumber(-pp.y, 10, 4) +
     '    ' + // ' eee'
     (data.attached ? 'A' : 'D') + // f
     (data.absolute ? 'A' : 'R') + // g
     (data.showUnits ? 'U' : ' ') + // h
     '   ' + //  i
     (data.nCharnCharsToDisplay >= 0
-      ? utils.paddedNum(data.nCharnCharsToDisplay, 3)
+      ? utils.paddedNumber(data.nCharnCharsToDisplay, 3)
       : 'ALL') + // jjj
     '  1   ' + // 'kkk ll '
     (data.tagChar || ' ') + // m
     '  ' +
-    utils.paddedNum(data.daspPos, 1) + // n
+    utils.paddedNumber(data.daspPos, 1) + // n
     '  '; // oo
   lines.push(sddLine);
   const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
@@ -346,9 +346,10 @@ function makeAtomBondLines(
   const lines: string[] = [];
   for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
     const rem = Math.min(ids.length - 15 * i, 15);
-    let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2);
+    let salLine =
+      'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNumber(rem, 2);
     for (let j = 0; j < rem; ++j) {
-      salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3);
+      salLine += ' ' + utils.paddedNumber(map[ids[i * 15 + j]], 3);
     }
     lines.push(salLine);
   }
@@ -377,10 +378,10 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   for (const bracket of brackets) {
     const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement(0);
     const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement(0);
-    let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3);
+    let line = 'M  SDI ' + idstr + utils.paddedNumber(4, 3);
     const coord = [a0.x, a0.y, a1.x, a1.y];
     for (const coordValue of coord) {
-      line += utils.paddedNum(coordValue, 10, 4);
+      line += utils.paddedNumber(coordValue, 10, 4);
     }
     lines.push(line);
   }

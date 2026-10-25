@@ -53,7 +53,8 @@ export const SelectedMonomersContextMenu = ({
       (editor?.drawingEntitiesManager?.selectedEntitiesArr?.length ?? 0) > 0;
     return (
       !properties?.polymerBondRenderer &&
-      (!properties?.selectedMonomers || properties?.selectedMonomers.length === 0) &&
+      (!properties?.selectedMonomers ||
+        properties?.selectedMonomers.length === 0) &&
       !hasSelectedEntities
     );
   };
@@ -80,14 +81,14 @@ export const SelectedMonomersContextMenu = ({
       name: 'copy',
       title: t('contextMenu.copy'),
       icon: <Icon name={'copyMenu' as IconName} />,
-      disabled: ({ properties = {} }) =>
+      disabled: ({ props: properties = {} }) =>
         isBondContext(properties) || isCanvasContext(properties),
     },
     {
       name: SequenceItemContextMenuNames.paste,
       title: t('contextMenu.paste'),
       icon: <Icon name={'pasteNavBar' as IconName} />,
-      disabled: ({ properties = {} }) =>
+      disabled: ({ props: properties = {} }) =>
         !isCanvasContext(properties) || !isPasteAvailable,
       separator: true,
     },
@@ -146,7 +147,7 @@ export const SelectedMonomersContextMenu = ({
       name: 'delete',
       title: t('contextMenu.delete'),
       icon: <Icon name={'deleteMenu' as IconName} />,
-      disabled: ({ properties = {} }) => isCanvasContext(properties),
+      disabled: ({ props: properties = {} }) => isCanvasContext(properties),
     },
   ];
 

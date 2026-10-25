@@ -162,12 +162,20 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
     }
     case 'SRU': {
       ifDefined(sgroup.data, 'subscript', source.subscript);
-      ifDefined(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      ifDefined(
+        sgroup.data,
+        'connectivity',
+        source.connectivity?.toLowerCase(),
+      );
       break;
     }
     case 'COP': {
       ifDefined(sgroup.data, 'subtype', source.subtype);
-      ifDefined(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
+      ifDefined(
+        sgroup.data,
+        'connectivity',
+        source.connectivity?.toLowerCase(),
+      );
       break;
     }
     case 'SUP': {

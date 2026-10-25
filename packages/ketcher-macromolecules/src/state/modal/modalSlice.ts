@@ -52,7 +52,8 @@ export const modalSlice = createSlice({
     openModal: (
       state,
       action: PayloadAction<
-        ModalName | { name: ModalName; additionalProps: AdditionalModalProperties }
+        | ModalName
+        | { name: ModalName; additionalProps: AdditionalModalProperties }
       >,
     ) => {
       if (typeof action.payload === 'string') {

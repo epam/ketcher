@@ -34,7 +34,10 @@ export const MonomerLibraryContextMenu = () => {
     return !item || !editor || !editor.isUserMadeMonomer(item);
   };
 
-  const handleMenuChange = ({ id, props }: ItemParams<LibraryMenuProperties>) => {
+  const handleMenuChange = ({
+    id,
+    props,
+  }: ItemParams<LibraryMenuProperties>) => {
     const libraryItem = props?.libraryItem;
     if (!editor || !libraryItem) {
       return;

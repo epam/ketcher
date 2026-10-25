@@ -55,14 +55,16 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
                 value = pc.split('\n')[1].trim();
               }
 
-              accumulator[field] = Number.isFinite(value) ? +value : value.toString();
+              accumulator[field] = Number.isFinite(value)
+                ? +value
+                : value.toString();
             }
             return accumulator;
           },
           {} as StructAssociatedData,
         );
 
-        result.push({ struct, properties });
+        result.push({ struct, props: properties });
       }
       m = DelimeterRegex.exec(content);
     }

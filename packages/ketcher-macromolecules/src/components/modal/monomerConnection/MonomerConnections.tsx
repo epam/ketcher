@@ -49,15 +49,17 @@ export const ActionButtonRight = styled(ActionButton)<IStyledButtonProperties>(
   }),
 );
 
-export const ActionButtonAttachmentPoint = styled(ActionButton)((properties) => ({
-  borderRadius: 5,
-  minWidth: '45px !important',
-  padding: '4px',
-  border: `1px solid ${properties.theme.ketcher.color.border.secondary}`,
-  color: properties.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
-  background: properties.disabled ? 'rgba(225, 229, 234)' : '',
-  borderColor: properties.disabled ? 'rgba(225, 229, 234) !important' : '',
-}));
+export const ActionButtonAttachmentPoint = styled(ActionButton)(
+  (properties) => ({
+    borderRadius: 5,
+    minWidth: '45px !important',
+    padding: '4px',
+    border: `1px solid ${properties.theme.ketcher.color.border.secondary}`,
+    color: properties.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+    background: properties.disabled ? 'rgba(225, 229, 234)' : '',
+    borderColor: properties.disabled ? 'rgba(225, 229, 234) !important' : '',
+  }),
+);
 
 const MonomerConnection = ({
   onClose,

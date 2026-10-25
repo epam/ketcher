@@ -41,7 +41,9 @@ const DEFAULT_FILTER: PresetPhosphateFilter = {
   noPhosphate: false,
 };
 
-export const PresetPhosphateFilterPopup: React.FC<Properties> = ({ onClose }) => {
+export const PresetPhosphateFilterPopup: React.FC<Properties> = ({
+  onClose,
+}) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const currentFilter = useAppSelector(selectPresetPhosphateFilter);
@@ -54,7 +56,11 @@ export const PresetPhosphateFilterPopup: React.FC<Properties> = ({ onClose }) =>
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as Node | null;
-      if (popupReference.current && target && popupReference.current.contains(target)) {
+      if (
+        popupReference.current &&
+        target &&
+        popupReference.current.contains(target)
+      ) {
         return;
       }
       // Ignore clicks on the trigger button so its own onClick can toggle the

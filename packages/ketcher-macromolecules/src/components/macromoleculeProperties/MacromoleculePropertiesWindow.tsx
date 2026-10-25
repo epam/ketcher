@@ -396,7 +396,10 @@ const MonomersCountPanel = (properties: MonomersCountPanelProperties) => {
 
 const BasicProperty = (properties: BasicPropertyProperties) => {
   return (
-    <StyledBasicProperty data-testid={properties.testId} disabled={properties.disabled}>
+    <StyledBasicProperty
+      data-testid={properties.testId}
+      disabled={properties.disabled}
+    >
       <>
         <BasicPropertyName>
           {properties.name}
@@ -430,17 +433,19 @@ const BasicProperty = (properties: BasicPropertyProperties) => {
             </PropertyHintIconWrapper>
           </StyledTooltip>
         )}
-        {properties.options && properties.selectedOption && properties.onChangeOption && (
-          <BasicPropertyDropdown
-            options={properties.options.map((option) => ({
-              id: option,
-              label: option,
-            }))}
-            testId={properties.testId + '-selector'}
-            currentSelection={properties.selectedOption}
-            selectionHandler={properties.onChangeOption}
-          />
-        )}
+        {properties.options &&
+          properties.selectedOption &&
+          properties.onChangeOption && (
+            <BasicPropertyDropdown
+              options={properties.options.map((option) => ({
+                id: option,
+                label: option,
+              }))}
+              testId={properties.testId + '-selector'}
+              currentSelection={properties.selectedOption}
+              selectionHandler={properties.onChangeOption}
+            />
+          )}
       </>
     </StyledBasicProperty>
   );
@@ -517,7 +522,8 @@ function lttb(xs, ys, threshold) {
     for (let index = rangeOffs; index < rangeTo; index++) {
       // triangle area
       const area = Math.abs(
-        (xs[a] - avgX) * (ys[index] - ys[a]) - (xs[a] - xs[index]) * (avgY - ys[a]),
+        (xs[a] - avgX) * (ys[index] - ys[a]) -
+          (xs[a] - xs[index]) * (avgY - ys[a]),
       );
       if (area > maxArea) {
         maxArea = area;
@@ -641,7 +647,8 @@ const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
         (_, index) =>
           data.xs.findLastIndex(
             (xDataItem) =>
-              xDataItem <= (index + 1) * distanceBetweenTicksWithMaximumCoverage &&
+              xDataItem <=
+                (index + 1) * distanceBetweenTicksWithMaximumCoverage &&
               xDataItem > index * distanceBetweenTicksWithMaximumCoverage,
           ),
       );
@@ -657,7 +664,9 @@ const HydrophobicityChart = (properties: HydrophobicityChartProperties) => {
       const xAxis = d3
         .axisBottom(xScale)
         .tickValues(tickValues)
-        .tickFormat((_, index) => ((index + 1) * finalDistanceBetweenTicks).toString());
+        .tickFormat((_, index) =>
+          ((index + 1) * finalDistanceBetweenTicks).toString(),
+        );
 
       svgContainer
         .append('g')
@@ -768,8 +777,12 @@ const PeptideProperties = (properties: PeptideProperties_) => {
             name={t('macromoleculeProperties.extinctionCoefficient')}
             testId="Extinction Coefficient"
             value={
-              isNumber(properties.macromoleculesProperties.extinctionCoefficient)
-                ? _round(properties.macromoleculesProperties.extinctionCoefficient)
+              isNumber(
+                properties.macromoleculesProperties.extinctionCoefficient,
+              )
+                ? _round(
+                    properties.macromoleculesProperties.extinctionCoefficient,
+                  )
                 : NO_DATA_VALUE
             }
             hint={
@@ -803,7 +816,9 @@ const PeptideProperties = (properties: PeptideProperties_) => {
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
         <MonomersCountPanel
-          monomerCount={properties.macromoleculesProperties.monomerCount.peptides}
+          monomerCount={
+            properties.macromoleculesProperties.monomerCount.peptides
+          }
           isPeptide
         />
         <HydrophobicityChartWrapper>
@@ -910,7 +925,9 @@ const RnaProperties = (properties: DnaRnaProperties) => {
         </BasicPropertiesWrapper>
       </RnaBasicPropertiesWrapper>
       <MonomersCountPanel
-        monomerCount={properties.macromoleculesProperties.monomerCount.nucleotides}
+        monomerCount={
+          properties.macromoleculesProperties.monomerCount.nucleotides
+        }
       />
     </TabContentWrapper>
   );

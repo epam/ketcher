@@ -21,7 +21,7 @@ import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
-import utils from ./utilitiess';
+import utils from './utilities';
 import { assert } from 'utilities';
 
 function readKeyValuePairs(

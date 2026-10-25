@@ -34,7 +34,10 @@ export function isEditableInputTarget(target: EventTarget | null): boolean {
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMacromoleculesEditor<TArguments extends unknown[], TResult>(
+export function guardForMacromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
   handler: (...arguments_: TArguments) => TResult,
 ): (...arguments_: TArguments) => TResult | undefined {
   return (...arguments_: TArguments) => {
@@ -59,7 +62,10 @@ export function guardForMacromoleculesEditor<TArguments extends unknown[], TResu
  * // cleanup:
  * window.removeEventListener('keydown', handler);
  */
-export function guardForMicromoleculesEditor<TArguments extends unknown[], TResult>(
+export function guardForMicromoleculesEditor<
+  TArguments extends unknown[],
+  TResult,
+>(
   handler: (...arguments_: TArguments) => TResult,
 ): (...arguments_: TArguments) => TResult | undefined {
   return (...arguments_: TArguments) => {

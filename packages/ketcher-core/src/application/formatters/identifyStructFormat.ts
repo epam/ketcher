@@ -36,8 +36,8 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (e) {
-    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
+  } catch (error) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', error);
   }
 
   const isRXN = sanitizedString.includes('$RXN');

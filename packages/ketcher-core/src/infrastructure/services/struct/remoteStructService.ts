@@ -71,7 +71,7 @@ function pollDeferred<T>(
             reject(normalizeError(error));
           }
         },
-        (err) => reject(normalizeError(err)),
+        (error) => reject(normalizeError(error)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);
@@ -261,10 +261,10 @@ export class RemoteStructService implements StructService {
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'remoteStructService.ts::RemoteStructService::info',
-        e,
+        error,
       );
       indigoVersion = '';
       imagoVersions = [];

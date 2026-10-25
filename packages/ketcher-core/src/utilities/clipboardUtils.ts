@@ -49,8 +49,8 @@ export function legacyCopy(
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (e) {
-    console.error('clipboardUtils.ts::legacyCopy', e);
+  } catch (error) {
+    console.error('clipboardUtils.ts::legacyCopy', error);
     console.info(`Could not write exact type ${curFmt}`);
   }
 }

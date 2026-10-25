@@ -134,9 +134,9 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
   const copy = Object.create(null) as HotKeyMap;
 
-  Object.keys(map).forEach((prop) => {
+  for (const prop of Object.keys(map)) {
     copy[normalizeShortcut(prop)] = map[prop];
-  });
+  }
 
   return copy;
 };
@@ -179,18 +179,18 @@ const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
 export const initHotKeys = (actions: HotKeyActions) => {
   const hotKeys: HotKeyMap = {};
 
-  Object.keys(actions).forEach((actName) => {
+  for (const actName of Object.keys(actions)) {
     const act = actions[actName];
-    if (!act.shortcut) return;
+    if (!act.shortcut) continue;
 
     if (Array.isArray(act.shortcut)) {
-      act.shortcut.forEach((key) => {
+      for (const key of act.shortcut) {
         setHotKey(key, actName, hotKeys);
-      });
+      }
     } else {
       setHotKey(act.shortcut, actName, hotKeys);
     }
-  });
+  }
 
   return keyNormBase(hotKeys);
 };

@@ -183,17 +183,17 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
   let nextViaChemBackbone = false;
   let previousViaChemBackbone = false;
 
-  chem.usedAttachmentPointsNamesList.forEach((attachmentPointName) => {
+  for (const attachmentPointName of chem.usedAttachmentPointsNamesList) {
     const bond = chem.attachmentPointsToBonds[attachmentPointName];
 
     if (!(bond instanceof PolymerBond)) {
-      return;
+      continue;
     }
 
     const neighbor = bond.getAnotherMonomer(chem);
 
     if (!neighbor) {
-      return;
+      continue;
     }
 
     const neighborAttachmentPoint = neighbor.getAttachmentPointByBond(bond);
@@ -211,7 +211,7 @@ function getOrientedChemNeighbors(chem: BaseMonomer): {
         previousViaChemBackbone = isChemBackboneR1;
       }
     }
-  });
+  }
 
   return { previous, next };
 }
@@ -583,7 +583,7 @@ export function getAllConnectedMonomersRecursively(
             visitedAtoms.add(currentAtom);
 
             // Check all bonds on this atom
-            currentAtom.bonds.forEach((atomBond) => {
+            for (const atomBond of currentAtom.bonds) {
               if (atomBond instanceof MonomerToAtomBond) {
                 // Found a monomer connection
                 const connectedMonomer = atomBond.monomer;
@@ -611,7 +611,7 @@ export function getAllConnectedMonomersRecursively(
                   atomQueue.push(otherAtom);
                 }
               }
-            });
+            }
           }
         }
       }
@@ -644,9 +644,9 @@ export const getAminoAcidsToModify = (
   >();
   const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
 
-  monomersLibrary.forEach((libraryItem) => {
+  for (const libraryItem of monomersLibrary) {
     if (!libraryItem.props?.modificationTypes?.includes(modificationType)) {
-      return;
+      continue;
     }
     const monomerNaturalAnalogCode = libraryItem.props.MonomerNaturalAnalogCode;
 
@@ -656,9 +656,9 @@ export const getAminoAcidsToModify = (
         libraryItem,
       );
     }
-  });
+  }
 
-  monomers.forEach((monomer) => {
+  for (const monomer of monomers) {
     const monomerNaturalAnalogCode =
       monomer.monomerItem.props.MonomerNaturalAnalogCode;
     const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
@@ -672,7 +672,7 @@ export const getAminoAcidsToModify = (
     ) {
       aminoAcidsToModify.set(monomer, modifiedMonomerItem);
     }
-  });
+  }
 
   return aminoAcidsToModify;
 };
@@ -702,7 +702,7 @@ export const normalizeMonomerAtomsPositions = (
     y2: 9999,
   };
 
-  atoms.forEach((atom) => {
+  for (const atom of atoms) {
     if (atom.location[0] < bbox.x) {
       bbox.x = atom.location[0];
     }
@@ -715,7 +715,7 @@ export const normalizeMonomerAtomsPositions = (
     if (atom.location[1] < bbox.y2) {
       bbox.y2 = atom.location[1];
     }
-  });
+  }
 
   const center = {
     x: (bbox.x2 - bbox.x) / 2,

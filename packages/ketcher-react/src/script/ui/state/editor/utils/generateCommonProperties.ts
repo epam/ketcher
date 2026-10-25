@@ -12,17 +12,17 @@ export function generateCommonProperties(
 ): partialPropertiesOfElement {
   const properties = Object.getOwnPropertyNames(normalizedElement);
   const resultElementAttributes: partialPropertiesOfElement = {};
-  properties.forEach((property) => {
+  for (const property of properties) {
     const uniqueValues = new Set();
-    selectedElements.forEach((element) => {
+    for (const element of selectedElements) {
       uniqueValues.add(element[property]);
-    });
+    }
     const allElementsHaveTheSameValue = uniqueValues.size === 1;
     if (allElementsHaveTheSameValue) {
       resultElementAttributes[property] = normalizedElement[property];
     } else {
       resultElementAttributes[property] = '';
     }
-  });
+  }
   return resultElementAttributes;
 }

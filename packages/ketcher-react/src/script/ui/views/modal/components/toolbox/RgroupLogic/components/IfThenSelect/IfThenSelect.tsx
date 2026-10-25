@@ -34,7 +34,7 @@ const IfThenSelect = (props: Props) => {
     enumNames: [t('toolbox.rgroupLogic.always')],
   };
 
-  rgroupLabels.forEach((rgroupLabel) => {
+  for (const rgroupLabel of rgroupLabels) {
     if (label !== rgroupLabel) {
       desc.enum.push(rgroupLabel);
       desc.enumNames.push(
@@ -44,7 +44,7 @@ const IfThenSelect = (props: Props) => {
         }),
       );
     }
-  });
+  }
 
   return (
     <Field

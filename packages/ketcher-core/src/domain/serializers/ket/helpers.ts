@@ -157,9 +157,9 @@ export const populateStructWithSelection = (
   if (!selection) {
     return populatedStruct;
   }
-  Object.keys(selection).forEach((entity) => {
+  for (const entity of Object.keys(selection)) {
     const selectedEntities = selection[entity];
-    populatedStruct[entity]?.forEach((value, key) => {
+    for (const [key, value] of populatedStruct[entity]?.entries() ?? []) {
       if (typeof value.setInitiallySelected === 'function') {
         if (resetSelection) {
           value.setInitiallySelected(
@@ -169,7 +169,7 @@ export const populateStructWithSelection = (
           value.setInitiallySelected(true);
         }
       }
-    });
-  });
+    }
+  }
   return populatedStruct;
 };

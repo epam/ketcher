@@ -35,9 +35,9 @@ const useMonomerExpansionHandlers = () => {
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
 
-      selectedFunctionalGroups?.forEach((fg) => {
+      for (const fg of selectedFunctionalGroups ?? []) {
         if (!canExpandMonomer(fg)) {
-          return;
+          continue;
         }
 
         action.mergeWith(
@@ -45,7 +45,7 @@ const useMonomerExpansionHandlers = () => {
             expanded: toExpand,
           }),
         );
-      });
+      }
 
       editor.update(action);
       editor.rotateController.rerender();

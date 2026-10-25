@@ -43,58 +43,54 @@ export class CanvasMatrix {
   ): void {
     // set offsets for connections with overlappings
     const currentConnections = new Map<PolymerBond, Set<Connection>>();
-    let iterationMethod: typeof this.matrix.forEach;
+    let cells: Iterable<Cell>;
 
     if (direction === 180) {
-      iterationMethod = this.matrix.forEach.bind(this.matrix);
+      cells = this.matrix;
     } else if (direction === 0) {
-      iterationMethod = this.matrix.forEachRightToLeft.bind(this.matrix);
+      cells = this.matrix.valuesRightToLeft();
     } else {
-      iterationMethod = this.matrix.forEachBottomToTop.bind(this.matrix);
+      cells = this.matrix.valuesBottomToTop();
     }
 
-    iterationMethod((cell) => {
+    for (const cell of cells) {
       const biggestOffsetInCell = cell.connections.reduce(
         (biggestOffset: number, connection: Connection): number => {
           return Math.max(getOffset(connection), biggestOffset);
         },
         0,
       );
-      cell.connections.forEach((connection: Connection): void => {
+      for (const connection of cell.connections) {
         if (connection.direction !== direction || connection.connectedNode) {
-          return;
+          continue;
         }
         if (!currentConnections.has(connection.polymerBond)) {
           const polymerBondConnections = this.polymerBondToConnections.get(
             connection.polymerBond,
           );
-          polymerBondConnections?.forEach(
-            (polymerBondConnection: Connection): void => {
-              increaseOffset(polymerBondConnection, biggestOffsetInCell);
-            },
-          );
+          for (const polymerBondConnection of polymerBondConnections ?? []) {
+            increaseOffset(polymerBondConnection, biggestOffsetInCell);
+          }
           currentConnections.set(
             connection.polymerBond,
             new Set(polymerBondConnections),
           );
         }
-      });
-      cell.connections.forEach((connection: Connection): void => {
+      }
+      for (const connection of cell.connections) {
         if (
           !connection.connectedNode ||
           (connection.direction !== direction &&
             !currentConnections.has(connection.polymerBond))
         ) {
-          return;
+          continue;
         }
         if (currentConnections.has(connection.polymerBond)) {
           currentConnections.delete(connection.polymerBond);
           currentConnections.forEach((connections: Set<Connection>): void => {
-            Array.from(connections.values()).forEach(
-              (currentConnection: Connection): void => {
-                increaseOffset(currentConnection);
-              },
-            );
+            for (const currentConnection of Array.from(connections.values())) {
+              increaseOffset(currentConnection);
+            }
           });
         } else {
           currentConnections.set(
@@ -102,14 +98,14 @@ export class CanvasMatrix {
             new Set(this.polymerBondToConnections.get(connection.polymerBond)),
           );
         }
-      });
+      }
       if (
         (cell.x === 0 && direction !== 90) ||
         (cell.y === 0 && direction === 90)
       ) {
         currentConnections.clear();
       }
-      Array.from(currentConnections.keys()).forEach((polymerBond) => {
+      for (const polymerBond of Array.from(currentConnections.keys())) {
         const polymerBondConnections =
           this.polymerBondToConnections.get(polymerBond);
         if (
@@ -120,15 +116,15 @@ export class CanvasMatrix {
         ) {
           currentConnections.delete(polymerBond);
         }
-      });
-    });
+      }
+    }
   }
 
   private fillRightConnectionsOffset() {
     const direction = 0;
     const handledConnections = new Set<PolymerBond>();
 
-    this.matrix.forEach((cell) => {
+    for (const cell of this.matrix) {
       const biggestOffsetInCell = cell.connections.reduce(
         (biggestOffset: number, connection: Connection): number => {
           return Math.max(connection.xOffset, biggestOffset);
@@ -136,34 +132,32 @@ export class CanvasMatrix {
         0,
       );
 
-      cell.connections.forEach((connection: Connection): void => {
+      for (const connection of cell.connections) {
         if (connection.direction !== direction) {
-          return;
+          continue;
         }
         if (connection.xOffset <= biggestOffsetInCell) {
           const polymerBondConnections = this.polymerBondToConnections.get(
             connection.polymerBond,
           );
-          polymerBondConnections?.forEach(
-            (polymerBondConnection: Connection): void => {
-              polymerBondConnection.xOffset = biggestOffsetInCell;
-            },
-          );
+          for (const polymerBondConnection of polymerBondConnections ?? []) {
+            polymerBondConnection.xOffset = biggestOffsetInCell;
+          }
           handledConnections.add(connection.polymerBond);
         }
-      });
-    });
+      }
+    }
 
     handledConnections.forEach((polymerBond) => {
       const polymerBondConnections =
         this.polymerBondToConnections.get(polymerBond);
-      polymerBondConnections?.forEach((polymerBondConnection) => {
+      for (const polymerBondConnection of polymerBondConnections ?? []) {
         if (polymerBondConnection.direction !== direction) {
-          return;
+          continue;
         }
 
         polymerBondConnection.xOffset++;
-      });
+      }
     });
   }
 
@@ -214,7 +208,7 @@ export class CanvasMatrix {
     const monomerToNode = this.chainsCollection.monomerToNode;
     const handledConnections = new Set<PolymerBond>();
 
-    this.matrix.forEach((cell) => {
+    for (const cell of this.matrix) {
       const monomer = cell.monomer;
 
       monomer?.forEachBond((polymerBond) => {
@@ -333,7 +327,7 @@ export class CanvasMatrix {
           handledConnections.add(polymerBond);
         }
       });
-    });
+    }
 
     this.fillConnectionsOffset(180);
     this.fillRightConnectionsOffset();

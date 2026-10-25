@@ -22,7 +22,7 @@ function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   sGroup: SGroup,
   atomsIdMapping: Map<number, number>,
 ) {
-  sGroup.getAttachmentPoints().forEach((attachmentPoint) => {
+  for (const attachmentPoint of sGroup.getAttachmentPoints()) {
     const atomId = atomsIdMapping.get(attachmentPoint.atomId);
     assert(atomId != null);
     const attachmentPointAtom = struct.atoms.get(atomId);
@@ -31,7 +31,7 @@ function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
     const rgroupAttachmentPoint =
       attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(atomId);
     struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
-  });
+  }
 }
 
 function makeStruct(editor: Editor, sGroup: SGroup) {
@@ -71,7 +71,7 @@ function makeBonds(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  Array.from(existingStruct.bonds).forEach((value) => {
+  for (const value of Array.from(existingStruct.bonds)) {
     const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =
@@ -79,7 +79,7 @@ function makeBonds(
     if (isInsideSGroup) {
       struct.bonds.add(clonedBond);
     }
-  });
+  }
 }
 
 function makeRGroupAttachmentPoints(
@@ -88,28 +88,28 @@ function makeRGroupAttachmentPoints(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  sGroup.atoms.forEach((atomId: number) => {
+  for (const atomId of sGroup.atoms) {
     const rgroupAttachmentPointIds =
       existingStruct.getRGroupAttachmentPointsByAtomId(atomId);
-    rgroupAttachmentPointIds.forEach((id) => {
+    for (const id of rgroupAttachmentPointIds) {
       const rgroupAttachmentPoint =
         existingStruct.rgroupAttachmentPoints.get(id);
       assert(rgroupAttachmentPoint != null);
       struct.rgroupAttachmentPoints.add(
         rgroupAttachmentPoint.clone(atomsIdMapping),
       );
-    });
-  });
+    }
+  }
 }
 
 function makeAtoms(sGroup: SGroup, existingStruct: Struct, struct: Struct) {
   const atomsIdMapping = new Map();
-  sGroup.atoms.forEach((atomId: number) => {
+  for (const atomId of sGroup.atoms) {
     const atom = existingStruct.atoms.get(atomId);
     assert(atom != null);
     const atomIdInTooltip = struct.atoms.add(atom.clone());
     atomsIdMapping.set(atomId, atomIdInTooltip);
-  });
+  }
   return atomsIdMapping;
 }
 

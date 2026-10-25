@@ -48,9 +48,9 @@ export class SGroupForest {
         break;
       }
 
-      children.forEach((id) => {
+      for (const id of children) {
         queue.push(id);
-      });
+      }
 
       order.push(id);
     }
@@ -65,13 +65,13 @@ export class SGroupForest {
 
     this.atomSets.delete(newId);
 
-    this.atomSets.forEach((atomSet, id) => {
+    for (const [id, atomSet] of this.atomSets.entries()) {
       isSubset.set(id, atomSet.isSuperset(atoms));
       isStrictSuperset.set(
         id,
         atoms.isSuperset(atomSet) && !atomSet.equals(atoms),
       );
-    });
+    }
 
     const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
       if (isSubset.get(sgid) !== true) {
@@ -124,9 +124,9 @@ export class SGroupForest {
     }
 
     // TODO: make children Map<int, Pile> instead of Map<int, []>?
-    children.forEach((childId) => {
+    for (const childId of children) {
       this.resetParentLink(childId, id);
-    });
+    }
     this.children.set(
       id,
       children.filter((id) => this.parent.get(id)),
@@ -169,10 +169,10 @@ export class SGroupForest {
     const childs = this.children.get(parentId);
     if (!childs) return;
 
-    this.children.get(id)?.forEach((childId: number) => {
+    for (const childId of this.children.get(id) ?? []) {
       this.parent.set(childId, parentId);
       this.children.get(parentId)?.push(childId);
-    });
+    }
 
     const i = childs.indexOf(id);
     childs.splice(i, 1);

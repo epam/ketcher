@@ -208,9 +208,9 @@ export class SGroup {
   // TODO: should be group-specific
   getAttrs(): Record<string, unknown> {
     const attrs: Record<string, unknown> = {};
-    Object.keys(this.data).forEach((attr) => {
+    for (const attr of Object.keys(this.data)) {
       attrs[attr] = this.data[attr];
-    });
+    }
     return attrs;
   }
 
@@ -252,7 +252,7 @@ export class SGroup {
     if (isAtomContext || isBondContent) {
       const contentBoxes: Box2Abs[] = [];
 
-      this.atoms.forEach((aid) => {
+      for (const aid of this.atoms) {
         const atom = struct.atoms.get(aid);
         assert(atom, `SGroup.calculatePP: atom ${aid} is not found`);
         const pos = new Vec2(atom.pp);
@@ -260,17 +260,17 @@ export class SGroup {
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         const bba = new Box2Abs(pos, pos).extend(ext, ext);
         contentBoxes.push(bba);
-      });
+      }
 
       const contentBB = contentBoxes.reduce<Box2Abs | null>(
         (contentBounds, bba) => {
           let bbb: Box2Abs | null = null;
-          [bba.p0.x, bba.p1.x].forEach((x) => {
-            [bba.p0.y, bba.p1.y].forEach((y) => {
+          for (const x of [bba.p0.x, bba.p1.x]) {
+            for (const y of [bba.p0.y, bba.p1.y]) {
               const v = new Vec2(x, y);
               bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
-            });
-          });
+            }
+          }
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return !contentBounds ? bbb : Box2Abs.union(contentBounds, bbb);
         },
@@ -522,9 +522,9 @@ export class SGroup {
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
     const cp = new SGroup(sgroup.type);
 
-    Object.keys(sgroup.data).forEach((field) => {
+    for (const field of Object.keys(sgroup.data)) {
       cp.data[field] = sgroup.data[field];
-    });
+    }
 
     cp.atoms = sgroup.atoms.map((elem) => {
       const remappedAtomId = aidMap.get(elem);
@@ -566,7 +566,7 @@ export class SGroup {
     parentAtomSet: Pile<number>,
   ): { [key: number]: Array<number> } {
     const crossBonds: { [key: number]: Array<number> } = {};
-    mol.bonds.forEach((bond, bid: number) => {
+    for (const [bid, bond] of mol.bonds.entries()) {
       if (parentAtomSet.has(bond.begin) && !parentAtomSet.has(bond.end)) {
         if (!crossBonds[bond.begin]) {
           crossBonds[bond.begin] = [];
@@ -581,7 +581,7 @@ export class SGroup {
         }
         crossBonds[bond.end].push(bid);
       }
-    });
+    }
     return crossBonds;
   }
 
@@ -607,9 +607,9 @@ export class SGroup {
 
     sGroup.bracketDirection = new Vec2(1, 0);
 
-    atoms.forEach((aid) => {
+    for (const aid of atoms) {
       const atom = getAtom(aid);
-      if (!atom) return;
+      if (!atom) continue;
 
       let structBoundingBox: Box2Abs | null = null;
       if ('getVBoxObj' in atom && atom.getVBoxObj && render) {
@@ -619,13 +619,13 @@ export class SGroup {
         structBoundingBox = new Box2Abs(position, position);
       }
 
-      if (!structBoundingBox) return;
+      if (!structBoundingBox) continue;
 
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
-    });
-    contentBoxes.forEach((bba) => {
+    }
+    for (const bba of contentBoxes) {
       braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
-    });
+    }
     const currentRender = render ?? window.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
@@ -750,9 +750,9 @@ export class SGroup {
     }
 
     const atoms: number[] = [];
-    mol.atoms.forEach((_atom, aid) => {
+    for (const [aid, _atom] of mol.atoms.entries()) {
       atoms.push(aid);
-    });
+    }
 
     return atoms;
   }
@@ -760,11 +760,11 @@ export class SGroup {
   static getBonds(mol: StructAtomsAndBondsAccess, sg?: SGroup): number[] {
     const atoms = SGroup.getAtoms(mol, sg);
     const bonds: number[] = [];
-    mol.bonds.forEach((bond, bid) => {
+    for (const [bid, bond] of mol.bonds.entries()) {
       if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) {
         bonds.push(bid);
       }
-    });
+    }
     return bonds;
   }
 
@@ -775,7 +775,7 @@ export class SGroup {
     const inBonds: number[] = [];
     const xBonds: number[] = [];
 
-    mol.bonds.forEach((bond, bid) => {
+    for (const [bid, bond] of mol.bonds.entries()) {
       if (
         sgroup.parentAtomSet.has(bond.begin) &&
         sgroup.parentAtomSet.has(bond.end)
@@ -787,7 +787,7 @@ export class SGroup {
       ) {
         xBonds.push(bid);
       }
-    });
+    }
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
       throw new Error('Unsupported cross-bonds number');
@@ -818,22 +818,22 @@ export class SGroup {
     const newAtoms: number[] = [];
     for (let j = 0; j < sgroup.data.mul - 1; j++) {
       const amap: Record<number, number> = {};
-      sgroup.atoms.forEach((aid) => {
+      for (const aid of sgroup.atoms) {
         const atom = mol.atoms.get(aid);
         assert(atom, `SGroup.prepareMulForSaving: atom ${aid} is not found`);
         const aid2 = mol.atoms.add(atom.clone());
         newAtoms.push(aid2);
         sgroup.atomSet.add(aid2);
         amap[aid] = aid2;
-      });
-      inBonds.forEach((bid) => {
+      }
+      for (const bid of inBonds) {
         const bond = mol.bonds.get(bid);
         assert(bond, `SGroup.prepareMulForSaving: bond ${bid} is not found`);
         const newBond = bond.clone();
         newBond.begin = amap[newBond.begin];
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
-      });
+      }
       if (crossBond !== null) {
         const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
@@ -853,14 +853,11 @@ export class SGroup {
     }
     sgroup.bonds = xBonds;
 
-    newAtoms.forEach((aid) => {
-      mol.sGroupForest
-        .getPathToRoot(sgroup.id)
-        .reverse()
-        .forEach((sgid) => {
-          mol.atomAddToSGroup(sgid, aid);
-        });
-    });
+    for (const aid of newAtoms) {
+      for (const sgid of mol.sGroupForest.getPathToRoot(sgroup.id).reverse()) {
+        mol.atomAddToSGroup(sgid, aid);
+      }
+    }
   }
 
   static getMassCentre(mol: StructAtomsAccess, atoms: readonly number[]): Vec2 {
@@ -879,13 +876,13 @@ export class SGroup {
   ) => {
     const contractedSGroup: number[] = [];
 
-    sGroups.forEach((sGroupOrReSGroup) => {
+    for (const sGroupOrReSGroup of sGroups.values()) {
       const sGroup =
         'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
-      if (sGroup.isContracted()) {
+      if (sGroup?.isContracted()) {
         contractedSGroup.push(sGroup.id);
       }
-    });
+    }
     return contractedSGroup.some((sg) => atom.sgs.has(sg));
   };
 

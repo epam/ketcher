@@ -85,7 +85,7 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
   const patomsMap = identityMap(sgroup.patoms);
 
   const bondsToRemove: number[] = [];
-  mol.bonds.forEach((bond, bid) => {
+  for (const [bid, bond] of mol.bonds.entries()) {
     const beginIn = bond.begin in atomReductionMap;
     const endIn = bond.end in atomReductionMap;
     const endInPatoms = bond.end in patomsMap;
@@ -98,7 +98,7 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
       bondsToRemove.push(bid);
     } else if (beginIn) bond.begin = atomReductionMap[bond.begin];
     else if (endIn) bond.end = atomReductionMap[bond.end];
-  });
+  }
 
   for (const bondId of bondsToRemove) {
     mol.bonds.delete(bondId);

@@ -25,13 +25,13 @@ const useFunctionalGroupEoc = () => {
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
 
-      selectedFunctionalGroups?.forEach((functionalGroup) => {
+      for (const functionalGroup of selectedFunctionalGroups ?? []) {
         action.mergeWith(
           setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
             expanded: toExpand,
           }),
         );
-      });
+      }
 
       editor.update(action);
       editor.rotateController.rerender();

@@ -115,7 +115,7 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
   let ret: ClosestReturnType = null;
 
-  restruct.texts.forEach((text, id) => {
+  for (const [id, text] of restruct.texts.entries()) {
     const dist = calculateDistanceToText(
       cursorPosition,
       text.getReferencePoints(),
@@ -125,16 +125,16 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
       minDist = dist;
       ret = { id, dist: minDist };
     }
-  });
+  }
   return ret;
 }
 
 function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
+  let refPoint: RefPoint;
   let ret: ClosestReturnType = null;
 
-  restruct.simpleObjects.forEach((simpleObject, id) => {
+  for (const [id, simpleObject] of restruct.simpleObjects.entries()) {
     const dist = simpleObject.calcDistance(
       pos,
       restruct.render.options.microModeScale,
@@ -146,7 +146,7 @@ function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
 
       ret = { id, dist: minDist, ref: refPoint };
     }
-  });
+  }
   return ret;
 }
 
@@ -164,7 +164,7 @@ function findClosestAtom(
 
   let effectiveMinDist: number = Math.min(minDist ?? maxMinDist, maxMinDist);
 
-  restruct.visibleAtoms.forEach((atom, aid) => {
+  for (const [aid, atom] of restruct.visibleAtoms.entries()) {
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
@@ -172,12 +172,12 @@ function findClosestAtom(
         functionalGroups,
       )
     ) {
-      return;
+      continue;
     }
 
     const isSkippedAtom = aid === skipId || atom.a.isPreview;
     if (isSkippedAtom) {
-      return;
+      continue;
     }
 
     const dist = Vec2.dist(pos, atom.a.pp);
@@ -186,7 +186,7 @@ function findClosestAtom(
       closestAtom = aid;
       effectiveMinDist = dist;
     }
-  });
+  }
 
   if (closestAtom !== null) {
     return {
@@ -209,8 +209,11 @@ function findClosestAttachmentGroup(
   const skipId = skip?.map === 'attachmentGroups' ? skip.id : null;
   let effectiveMinDist = Math.min(minDist ?? maxMinDist, maxMinDist);
 
-  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
-    if (id === skipId) return;
+  for (const [
+    id,
+    attachmentGroup,
+  ] of restruct.visibleAttachmentGroups.entries()) {
+    if (id === skipId) continue;
     const dist = Vec2.dist(pos, attachmentGroup.a.pp);
     if (
       dist < effectiveMinDist ||
@@ -219,7 +222,7 @@ function findClosestAttachmentGroup(
       closestId = id;
       effectiveMinDist = dist;
     }
-  });
+  }
 
   return closestId === null ? null : { id: closestId, dist: effectiveMinDist };
 }
@@ -241,10 +244,10 @@ function findClosestBond(
   let minCDist = effectiveMinDist;
   let minFoundCDist = Infinity;
 
-  restruct.visibleBonds.forEach((bond, bid) => {
+  for (const [bid, bond] of restruct.visibleBonds.entries()) {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
     if (isSkippedBond) {
-      return;
+      continue;
     }
 
     const beginAtom = restruct.getBondEndpoint(bond.b.begin);
@@ -254,7 +257,7 @@ function findClosestBond(
       KetcherLogger.warn(
         atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
       );
-      return;
+      continue;
     }
     const p1 = beginAtom.a.pp;
     const p2 = endAtom.a.pp;
@@ -276,7 +279,7 @@ function findClosestBond(
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number);
     if (!hb) {
       KetcherLogger.warn(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
-      return;
+      continue;
     }
     const dir = hb.dir;
     const norm = hb.norm;
@@ -292,7 +295,7 @@ function findClosestBond(
         effectiveMinDist = dist;
       }
     }
-  });
+  }
 
   if (closestBondCenter !== null) {
     return {
@@ -323,15 +326,15 @@ function findClosestEnhancedFlag(
 ) {
   let minDist;
   let ret: ClosestReturnType = null;
-  restruct.enhancedFlags.forEach((_item, id) => {
+  for (const [id, _item] of restruct.enhancedFlags.entries()) {
     const fragment = restruct.molecule.frags.get(id);
 
-    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) return;
+    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) continue;
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, id);
-    if (!p || Math.abs(pos.x - p.x) >= 1) return;
+    if (!p || Math.abs(pos.x - p.x) >= 1) continue;
 
     const dist = Math.abs(pos.y - p.y);
 
@@ -339,7 +342,7 @@ function findClosestEnhancedFlag(
       minDist = dist;
       ret = { id, dist: minDist };
     }
-  });
+  }
   return ret;
 }
 
@@ -347,13 +350,13 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
   let ret: ClosestReturnType = null;
 
-  restruct.sgroupData.forEach((item, id) => {
+  for (const [id, item] of restruct.sgroupData.entries()) {
     if (item.sgroup.type !== 'DAT') throw new Error('Data group expected');
 
     if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const box = item.sgroup.dataArea;
       if (!box) {
-        return;
+        continue;
       }
       const inBox =
         box.p0.y < pos.y &&
@@ -370,7 +373,7 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
         minDist = xDist;
       }
     }
-  });
+  }
 
   return ret;
 }
@@ -434,7 +437,7 @@ function findClosestRGroup(
   let ret: ClosestReturnType = null;
   const skipId = skip?.map === 'rgroups' ? skip.id : null;
 
-  restruct.rgroups.forEach((rgroup, rgid) => {
+  for (const [rgid, rgroup] of restruct.rgroups.entries()) {
     if (rgid !== skipId && rgroup.labelBox?.contains(pos, 0.5)) {
       const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
@@ -443,7 +446,7 @@ function findClosestRGroup(
         ret = { id: rgid, dist: effectiveMinDist };
       }
     }
-  });
+  }
 
   return ret;
 }
@@ -463,7 +466,7 @@ function findClosestRgroupAttachmentPoints(
   /** @type {number | undefined} */
   let closestItemId;
 
-  restruct.visibleRGroupAttachmentPoints.forEach((reItem, id) => {
+  for (const [id, reItem] of restruct.visibleRGroupAttachmentPoints.entries()) {
     // Remove readonly from getOutlinePoints return type
     const itemOutlinePoints = [...reItem.getOutlinePoints()];
     const isCursorInsideOutline =
@@ -475,7 +478,7 @@ function findClosestRgroupAttachmentPoints(
         closestItemId = id;
       }
     }
-  });
+  }
 
   return closestItemId === undefined
     ? null
@@ -487,10 +490,10 @@ function findClosestRgroupAttachmentPoints(
 
 function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
+  let refPoint: RefPoint;
   let ret: ClosestReturnType = null;
 
-  restruct.rxnArrows.forEach((rxnArrow, id) => {
+  for (const [id, rxnArrow] of restruct.rxnArrows.entries()) {
     const dist = rxnArrow.calcDistance(
       pos,
       restruct.render.options.microModeScale,
@@ -502,7 +505,7 @@ function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
 
       ret = { id, dist: minDist, ref: refPoint };
     }
-  });
+  }
   return ret;
 }
 
@@ -510,7 +513,7 @@ function findClosestRxnPlus(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
   let ret: ClosestReturnType = null;
 
-  restruct.rxnPluses.forEach((plus, id) => {
+  for (const [id, plus] of restruct.rxnPluses.entries()) {
     const p = plus.item.pp;
     const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
 
@@ -518,7 +521,7 @@ function findClosestRxnPlus(restruct: ReStruct, pos: Vec2) {
       minDist = dist;
       ret = { id, dist: minDist };
     }
-  });
+  }
 
   return ret;
 }
@@ -527,9 +530,9 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
   let ret: number | null = null;
   let minDist = SELECTION_DISTANCE_COEFFICIENT;
 
-  restruct.molecule.sgroups.forEach((sg, sgid) => {
+  for (const [sgid, sg] of restruct.molecule.sgroups.entries()) {
     if (sg.isSuperatomWithoutLabel) {
-      return;
+      continue;
     }
 
     if (sg.isContracted()) {
@@ -542,14 +545,14 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         }
       }
 
-      return;
+      continue;
     }
 
     const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 
-    sg.areas.forEach((box) => {
+    for (const box of sg.areas) {
       const inBox =
         box.p0.y < pg.y &&
         box.p1.y > pg.y &&
@@ -564,8 +567,8 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         ret = sgid;
         minDist = xDist;
       }
-    });
-  });
+    }
+  }
 
   if (ret !== null) {
     return {
@@ -667,14 +670,14 @@ function findCloseMerge(
 
   const struct = restruct.molecule;
 
-  selected.atoms.forEach((aid) => {
+  for (const aid of selected.atoms) {
     const atom = struct.atoms.get(aid);
-    if (!atom) return;
+    if (!atom) continue;
 
     pos.atoms.set(aid, atom.pp);
-  });
+  }
 
-  selected.bonds.forEach((bid) => {
+  for (const bid of selected.bonds) {
     const bond = struct.bonds.get(bid);
     if (bond) {
       const beginAtom = struct.getBondEndpoint(bond.begin);
@@ -684,22 +687,22 @@ function findCloseMerge(
         KetcherLogger.warn(
           atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
         );
-        return;
+        continue;
       }
       pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
-  });
+  }
 
   const result: MergeResult & { [key: string]: Map<number, number> } = {
     atoms: new Map(),
     atomToFunctionalGroup: new Map(),
   };
 
-  maps.forEach((map) => {
+  for (const map of maps) {
     if (map === 'atoms') {
-      Array.from(pos.atoms.keys()).forEach((atomId) => {
+      for (const atomId of Array.from(pos.atoms.keys())) {
         const atomPosition = pos.atoms.get(atomId);
-        if (!atomPosition) return;
+        if (!atomPosition) continue;
         const merged = mergeAtomToAtom(
           atomId,
           restruct,
@@ -710,7 +713,7 @@ function findCloseMerge(
         if (!merged) {
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
         }
-      });
+      }
     } else {
       const posMap = (pos as Record<string, Map<number, Vec2>>)[map];
       result[map] = Array.from<number>(posMap.keys()).reduce<
@@ -728,7 +731,7 @@ function findCloseMerge(
         return res;
       }, new Map());
     }
-  });
+  }
 
   return result;
 }

@@ -82,9 +82,9 @@ class TemplateTool implements Tool {
     frag.rescale();
 
     const xy0 = new Vec2();
-    frag.atoms.forEach((atom) => {
+    for (const atom of frag.atoms.values()) {
       xy0.add_(atom.pp);
-    });
+    }
 
     const xy0Center = xy0.scaled(1 / (frag.atoms.size || 1));
     // Number() is used instead of parseInt() because tmpl.aid/bid are typed
@@ -188,11 +188,11 @@ class TemplateTool implements Tool {
       clickedClosestItemId,
     );
 
-    this.functionalGroups.forEach((fg, key) => {
+    for (const [key, fg] of this.functionalGroups.entries()) {
       if (fg.relatedSGroupId === relatedGroupId) {
         targetId = key;
       }
-    });
+    }
 
     return targetId;
   }

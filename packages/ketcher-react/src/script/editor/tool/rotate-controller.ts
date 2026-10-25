@@ -142,10 +142,10 @@ class RotateController implements RotateControllerContract {
     const selectedAtomIds = this.editor.selection()?.atoms ?? [];
     const selectedFragmentIdSet = new Set();
 
-    selectedAtomIds.forEach((atomId) => {
+    for (const atomId of selectedAtomIds) {
       const fragmentId = allAtoms.get(atomId)?.fragment;
       selectedFragmentIdSet.add(fragmentId);
-    });
+    }
 
     const nonSelectedAtoms = allAtoms.filter(
       (id) => !selectedAtomIds.includes(id),
@@ -472,7 +472,7 @@ class RotateController implements RotateControllerContract {
       -30,
     ];
     let previousDegree = 0;
-    predefinedDegrees.forEach((currentDegree, currentIndex) => {
+    for (const [currentIndex, currentDegree] of predefinedDegrees.entries()) {
       const isDrawingDegree0 = currentIndex === 0;
       const gap = currentDegree - previousDegree;
       const diff = getDifference(currentDegree, structRotateDegree);
@@ -490,7 +490,7 @@ class RotateController implements RotateControllerContract {
 
       if (radius < 65) {
         previousDegree = currentDegree;
-        return;
+        continue;
       }
 
       textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
@@ -511,7 +511,7 @@ class RotateController implements RotateControllerContract {
 
       this.protractor?.push(degreeText);
       previousDegree = currentDegree;
-    });
+    }
 
     this.protractor.toBack();
   }

@@ -475,14 +475,14 @@ class SGroupTool implements Tool {
       return;
     }
 
-    atomsResult.forEach((id) => {
+    for (const id of atomsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         functionalGroups,
         id,
       );
 
       if (fgId === null) {
-        return;
+        continue;
       }
 
       const sgroupAtoms = SGroup.getAtoms(
@@ -490,7 +490,7 @@ class SGroupTool implements Tool {
         struct.sgroups.get(fgId)?.item,
       );
       newSelected.atoms.push(...sgroupAtoms);
-    });
+    }
   }
 
   private expandBondsToFunctionalGroups(
@@ -504,7 +504,7 @@ class SGroupTool implements Tool {
       return;
     }
 
-    bondsResult.forEach((id) => {
+    for (const id of bondsResult) {
       const fgId = FunctionalGroup.findFunctionalGroupByBond(
         molecule,
         functionalGroups,
@@ -512,7 +512,7 @@ class SGroupTool implements Tool {
       );
 
       if (fgId === null) {
-        return;
+        continue;
       }
 
       const sgroupBonds = SGroup.getBonds(
@@ -520,7 +520,7 @@ class SGroupTool implements Tool {
         struct.sgroups.get(fgId)?.item,
       );
       newSelected.bonds.push(...sgroupBonds);
-    });
+    }
   }
 
   private collectFunctionalGroupIds(

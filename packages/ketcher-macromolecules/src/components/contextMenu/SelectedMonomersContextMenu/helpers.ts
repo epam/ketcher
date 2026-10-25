@@ -203,12 +203,12 @@ export const getModifyAminoAcidsMenuItems = (
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
   const editor = provideEditorInstance();
 
-  selectedMonomers.forEach((selectedMonomer) => {
+  for (const selectedMonomer of selectedMonomers) {
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
 
     if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
-      return;
+      continue;
     }
 
     if (!naturalAnalogueToSelectedMonomers.has(monomerNaturalAnalogCode)) {
@@ -218,32 +218,32 @@ export const getModifyAminoAcidsMenuItems = (
     naturalAnalogueToSelectedMonomers
       .get(monomerNaturalAnalogCode)
       ?.push(selectedMonomer);
-  });
+  }
 
-  editor?.monomersLibrary.forEach((monomerLibraryItem) => {
+  for (const monomerLibraryItem of editor?.monomersLibrary ?? []) {
     const monomersWithSameNaturalAnalogCode =
       naturalAnalogueToSelectedMonomers.get(
         monomerLibraryItem.props?.MonomerNaturalAnalogCode,
       );
 
     if (!monomerLibraryItem.props || !monomersWithSameNaturalAnalogCode) {
-      return;
+      continue;
     }
 
     const modificationTypes = monomerLibraryItem.props.modificationTypes;
 
     if (!modificationTypes) {
-      return;
+      continue;
     }
 
-    modificationTypes.forEach((modificationType) => {
+    for (const modificationType of modificationTypes) {
       // Check if all monomers in this group already have this modification
       if (
         monomersWithSameNaturalAnalogCode.every(
           (monomer) => monomer.label === monomerLibraryItem.label,
         )
       ) {
-        return;
+        continue;
       }
 
       // Check if at least one monomer in this group can be modified
@@ -257,12 +257,12 @@ export const getModifyAminoAcidsMenuItems = (
       // If NO monomer is eligible, disable this modification
       if (!hasAtLeastOneEligibleMonomer) {
         modificationTypesDisabledByAttachmentPoints.add(modificationType);
-        return;
+        continue;
       }
 
       modificationsForSelection.add(modificationType);
-    });
-  });
+    }
+  }
 
   const menuItems = [...modificationsForSelection.values()]
     .filter(

@@ -339,9 +339,9 @@ export const sdataCustomSchema = {
 
 export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
   acc[title] = mapOf(sData[title], 'fieldName');
-  Object.keys(acc[title]).forEach((fieldName) => {
+  for (const fieldName of Object.keys(acc[title])) {
     acc[title][fieldName].properties.context = contextSchema;
-  });
+  }
   return acc;
 }, {});
 

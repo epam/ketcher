@@ -38,11 +38,11 @@ const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
     : (sgroup.atoms as number[]);
   const bonds: number[] = [];
 
-  molecule.bonds.forEach((bond, bid) => {
+  for (const [bid, bond] of molecule.bonds.entries()) {
     if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
       bonds.push(bid);
     }
-  });
+  }
 
   return bonds;
 };
@@ -267,12 +267,12 @@ export class FunctionalGroup {
         expanded = sgroup.functionalGroup.isExpanded;
       }
     } else {
-      functionalGroups.forEach((fg) => {
+      for (const fg of functionalGroups.values()) {
         if (fg.relatedSGroupId === sgroup) {
           isFunctionalGroup = true;
           expanded = fg.isExpanded;
         }
-      });
+      }
     }
     return !expanded && isFunctionalGroup;
   }

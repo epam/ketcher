@@ -43,12 +43,12 @@ export function legacyCopy(
   let curFmt: string | null = null;
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
-    Object.entries(data).forEach(([fmt, value]) => {
+    for (const [fmt, value] of Object.entries(data)) {
       curFmt = fmt;
       if (typeof value === 'string') {
         clipboardData.setData(fmt, value);
       }
-    });
+    }
   } catch (e) {
     console.error('clipboardUtils.ts::legacyCopy', e);
     console.info(`Could not write exact type ${curFmt}`);

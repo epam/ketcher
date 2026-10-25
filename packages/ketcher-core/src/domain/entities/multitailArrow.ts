@@ -229,11 +229,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const tailsLength = spineTopX.sub(
       FixedPrecisionCoordinates.fromFloatingPrecision(tails[0].x),
     );
-    tails.slice(1, -1).forEach((tail) => {
+    for (const tail of tails.slice(1, -1)) {
       tailsYOffset.add(
         FixedPrecisionCoordinates.fromFloatingPrecision(tail.y).sub(spineTopY),
       );
-    });
+    }
 
     return {
       spineTopX,
@@ -276,10 +276,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     tailsYOffset: Pool<number>,
   ) {
     const tailsYOffsetFixedPrecision = tailsYOffset.clone();
-    tailsYOffsetFixedPrecision.forEach((item, key, map) => {
+    for (const [key, item] of tailsYOffsetFixedPrecision.entries()) {
+      const map = tailsYOffsetFixedPrecision;
       const pool = map as unknown as Pool<FixedPrecisionCoordinates>;
       pool.set(key, FixedPrecisionCoordinates.fromFloatingPrecision(item));
-    });
+    }
     return new MultitailArrow(
       FixedPrecisionCoordinates.fromFloatingPrecision(spineTop.x),
       FixedPrecisionCoordinates.fromFloatingPrecision(spineTop.y),
@@ -317,7 +318,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const tailX = spineTopX.sub(tailLength);
     const bottomY = spineTopY.add(height);
     const tails = new Pool<Vec2>();
-    tailsYOffset.forEach((tailYOffset, key) => {
+    for (const [key, tailYOffset] of tailsYOffset.entries()) {
       tails.set(
         key,
         new Vec2(
@@ -325,7 +326,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
           spineTopY.add(tailYOffset).getFloatingPrecision(),
         ),
       );
-    });
+    }
 
     return {
       head: new Vec2(
@@ -375,9 +376,9 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const spineX = referencePositions.topSpine.x;
     const headSpinePosition = new Vec2(spineX, referencePositions.head.y);
     const tails = new Pool<Line>();
-    referencePositions.tails.forEach((tail, key) => {
+    for (const [key, tail] of referencePositions.tails.entries()) {
       tails.set(key, [tail, new Vec2(spineX, tail.y)]);
-    });
+    }
 
     return {
       topTail: [referencePositions.topTail, referencePositions.topSpine],
@@ -485,9 +486,9 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     this.headOffsetY = this.headOffsetY.multiply(scale);
     this.height = this.height.multiply(scale);
     this.tailLength = this.tailLength.multiply(scale);
-    this.tailsYOffset.forEach((item, index) => {
+    for (const [index, item] of this.tailsYOffset.entries()) {
       this.tailsYOffset.set(index, item.multiply(scale));
-    });
+    }
   }
 
   resizeHead(offset: number): number {
@@ -666,9 +667,9 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         this.headOffsetY = this.headOffsetY.sub(realOffset);
         this.height = this.height.sub(realOffset);
         const updatedTails = this.tailsYOffset.clone();
-        updatedTails.forEach((item, key) => {
+        for (const [key, item] of updatedTails.entries()) {
           updatedTails.set(key, item.sub(realOffset));
-        });
+        }
         this.tailsYOffset = updatedTails;
       }
       return realOffset.getFloatingPrecision();

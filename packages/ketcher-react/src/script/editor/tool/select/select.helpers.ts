@@ -22,10 +22,10 @@ function uniqArray(dest, add, reversible: boolean) {
 // TODO: deep-merge?
 export function selMerge(selection, add, reversible: boolean) {
   if (add) {
-    Object.keys(add).forEach((item) => {
+    for (const item of Object.keys(add)) {
       if (!selection[item]) selection[item] = add[item].slice();
       else selection[item] = uniqArray(selection[item], add[item], reversible);
-    });
+    }
   }
   return selection;
 }
@@ -216,11 +216,11 @@ export function getAttachmentGroupSelection(
   const atomIdSet = new Set(atomIds);
   const bondIds: number[] = [];
 
-  molecule.bonds.forEach((bond, bondId) => {
+  for (const [bondId, bond] of molecule.bonds.entries()) {
     if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
       bondIds.push(bondId);
     }
-  });
+  }
 
   return {
     attachmentGroups: [attachmentGroupId],

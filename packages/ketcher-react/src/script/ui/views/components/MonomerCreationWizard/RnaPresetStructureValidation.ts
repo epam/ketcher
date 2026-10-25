@@ -6,18 +6,13 @@ import type {
 } from './MonomerCreationWizard.types';
 
 export type RnaPresetValidationStruct = {
-  atoms: {
-    forEach: (callback: (_value: unknown, atomId: number) => void) => void;
-  };
-  bonds: {
-    forEach: (
-      callback: (
-        bond: Pick<Bond, 'begin' | 'end'> &
-          Partial<Pick<Bond, 'type' | 'stereo'>>,
-        bondId: number,
-      ) => void,
-    ) => void;
-  };
+  atoms: Iterable<[number, unknown]>;
+  bonds: Iterable<
+    [
+      number,
+      Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
+    ]
+  >;
 };
 
 export type RnaPresetStructureValidationIssueId =
@@ -105,7 +100,7 @@ export const findBondBetweenRnaPresetComponents = (
 ) => {
   let bondBetweenComponents: Pick<Bond, 'begin' | 'end'> | undefined;
 
-  wizardStruct.bonds.forEach((bond) => {
+  for (const [, bond] of wizardStruct.bonds) {
     if (
       !bondBetweenComponents &&
       hasBondBetweenComponents(
@@ -116,7 +111,7 @@ export const findBondBetweenRnaPresetComponents = (
     ) {
       bondBetweenComponents = bond;
     }
-  });
+  }
 
   return bondBetweenComponents;
 };
@@ -129,7 +124,7 @@ const countRnaPresetConnectionBonds = (
   let count = 0;
   let hasInvalidBond = false;
 
-  wizardStruct.bonds.forEach((bond) => {
+  for (const [, bond] of wizardStruct.bonds) {
     if (
       hasBondBetweenComponents(
         bond,
@@ -140,7 +135,7 @@ const countRnaPresetConnectionBonds = (
       count += 1;
       hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
     }
-  });
+  }
 
   return { count, hasInvalidBond };
 };
@@ -165,9 +160,9 @@ export const getRnaPresetStructureValidationResult = (
   ];
   const atomComponentCount = new Map<number, number>();
 
-  allComponentAtomIds.forEach((atomId) => {
+  for (const atomId of allComponentAtomIds) {
     atomComponentCount.set(atomId, (atomComponentCount.get(atomId) ?? 0) + 1);
-  });
+  }
 
   const hasAtomsInMultipleComponents = Array.from(
     atomComponentCount.entries(),
@@ -185,12 +180,12 @@ export const getRnaPresetStructureValidationResult = (
   }
 
   let hasAtomsOutsideComponents = false;
-  wizardStruct.atoms.forEach((_, atomId) => {
+  for (const [atomId] of wizardStruct.atoms) {
     if (!atomComponentCount.has(atomId)) {
       hasAtomsOutsideComponents = true;
       problematicAtomIds.add(atomId);
     }
-  });
+  }
 
   if (hasAtomsOutsideComponents) {
     issues.push('rnaPresetAtomsOutsideComponents');

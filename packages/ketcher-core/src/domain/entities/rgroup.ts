@@ -53,7 +53,7 @@ export class RGroup {
 
   clone(fidMap?: Map<number, number> | null): RGroup {
     const ret = new RGroup(this);
-    this.frags.forEach((fid) => {
+    for (const fid of this.frags) {
       if (!fidMap) {
         ret.frags.add(fid);
       } else {
@@ -62,7 +62,7 @@ export class RGroup {
           ret.frags.add(mappedFid);
         }
       }
-    });
+    }
     return ret;
   }
 }

@@ -100,38 +100,34 @@ export class Molfile {
     const toRemove: number[] = [];
     let errors = 0;
 
-    mol.sGroupForest
-      .getSGroupsBFS()
-      .reverse()
-      .forEach((id) => {
-        const sgroup = mol.sgroups.get(id);
-        if (!sgroup) return;
-        let errorIgnore = false;
+    for (const id of mol.sGroupForest.getSGroupsBFS().reverse()) {
+      const sgroup = mol.sgroups.get(id);
+      if (!sgroup) continue;
+      let errorIgnore = false;
 
-        try {
-          common.prepareForSaving[sgroup.type](sgroup, mol);
-        } catch (error: unknown) {
-          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
-          if (!skipErrors || !isErrorWithNumericId(error)) {
-            throw new Error(
-              `Error: ${
-                isErrorWithMessage(error) ? error.message : String(error)
-              }`,
-              { cause: error },
-            );
-          }
-          errorIgnore = true;
+      try {
+        common.prepareForSaving[sgroup.type](sgroup, mol);
+      } catch (error: unknown) {
+        KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
+        if (!skipErrors || !isErrorWithNumericId(error)) {
+          throw new Error(
+            `Error: ${
+              isErrorWithMessage(error) ? error.message : String(error)
+            }`,
+            { cause: error },
+          );
         }
+        errorIgnore = true;
+      }
 
-        if (
-          errorIgnore ||
-          (!preserveIndigoDesc &&
-            /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
-        ) {
-          errors += +errorIgnore;
-          toRemove.push(sgroup.id);
-        }
-      });
+      if (
+        errorIgnore ||
+        (!preserveIndigoDesc && /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
+      ) {
+        errors += +errorIgnore;
+        toRemove.push(sgroup.id);
+      }
+    }
 
     if (errors) {
       throw new Error(
@@ -205,16 +201,16 @@ export class Molfile {
           '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n';
         this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
-        molecule.rgroups.forEach((rg, rgid) => {
+        for (const [rgid, rg] of molecule.rgroups.entries()) {
           this.molfile += '$RGP\n';
           this.writePaddedNumber(rgid, 3);
           this.molfile += '\n';
-          rg.frags.forEach((fid) => {
+          for (const fid of rg.frags) {
             const group = new Molfile().getCTab(molecule.getFragment(fid));
             this.molfile += '$CTAB\n' + group + '$END CTAB\n';
-          });
+          }
           this.molfile += '$END RGP\n';
-        });
+        }
         this.molfile += '$END MOL\n';
 
         return this.molfile;
@@ -332,7 +328,7 @@ export class Molfile {
       id: number;
       value: string;
     }[] = [];
-    molecule.atoms.forEach((atom, id) => {
+    for (const [id, atom] of molecule.atoms.entries()) {
       let label = atom.label;
       if (atom.atomList != null) {
         label = 'L';
@@ -356,14 +352,14 @@ export class Molfile {
       this.writeAtom(atom, label);
 
       this.mapping[id] = i++;
-    });
+    }
 
     this.bondMapping = {};
     i = 1;
-    molecule.bonds.forEach((bond, id) => {
+    for (const [id, bond] of molecule.bonds.entries()) {
       this.bondMapping[id] = i++;
       this.writeBond(bond);
-    });
+    }
 
     while (atomsProps.length > 0) {
       this.writeAtomProps(atomsProps[0]);
@@ -380,7 +376,7 @@ export class Molfile {
     const unsaturatedList: NumberTuple[] = [];
     const substcountList: NumberTuple[] = [];
 
-    molecule.atoms.forEach((atom, id) => {
+    for (const [id, atom] of molecule.atoms.entries()) {
       if (atom.charge !== 0 && atom.charge !== null) {
         chargeList.push([id, atom.charge]);
       }
@@ -410,10 +406,10 @@ export class Molfile {
       if (atom.unsaturatedAtom !== 0) {
         unsaturatedList.push([id, atom.unsaturatedAtom]);
       }
-    });
+    }
 
     if (rgroups) {
-      rgroups.forEach((rg, rgid) => {
+      for (const [rgid, rg] of rgroups.entries()) {
         if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
           const line =
             '  1 ' +
@@ -426,7 +422,7 @@ export class Molfile {
             rg.range;
           rglogicList.push(line);
         }
-      });
+      }
     }
 
     this.writeAtomPropList('M  CHG', chargeList);
@@ -467,10 +463,10 @@ export class Molfile {
     let cnt = 1;
     const sgmapback: Record<number, number> = {};
     const sgorder = molecule.sGroupForest.getSGroupsBFS();
-    sgorder.forEach((id) => {
+    for (const id of sgorder) {
       sgmapback[cnt] = id;
       sgmap[id] = cnt++;
-    });
+    }
     for (const sGroupIdInCTab of Array.from(
       { length: cnt - 1 },
       (_, index) => index + 1,
@@ -540,9 +536,9 @@ export class Molfile {
         this.write(sgroup.data.subscript || 'n');
         this.writeCR();
       }
-      sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+      for (const attachmentPoint of sgroup.getAttachmentPoints()) {
         this.writeSGroupAttachmentPointLine(sGroupIdInCTab, attachmentPoint);
-      });
+      }
 
       this.writeCR(
         common.saveToMolfile[sgroup.type](
@@ -561,10 +557,10 @@ export class Molfile {
     // TODO: write M  LOG
 
     const expandedGroups: number[] = [];
-    molecule.sgroups.forEach((sg) => {
+    for (const sg of molecule.sgroups.values()) {
       if (sg.isExpanded() && !SGroup.isQuerySGroup(sg))
         expandedGroups.push(sg.id + 1);
-    });
+    }
 
     if (expandedGroups.length) {
       const expandedGroupsLine = `M  SDS EXP  ${
@@ -581,26 +577,26 @@ export class Molfile {
       return;
     }
     const mol = this.molecule;
-    mol.sgroups.forEach((sgroup) => {
+    for (const sgroup of mol.sgroups.values()) {
       if (!(sgroup instanceof MonomerMicromolecule) || !sgroup.pp) {
-        return;
+        continue;
       }
 
       const positions = getAtomPositions(sgroup.atoms, mol.atoms);
       if (!positions.length) {
-        return;
+        continue;
       }
 
       const offset = sgroup.pp.sub(geometricCenter(positions));
       if (offset.x === 0 && offset.y === 0) {
-        return;
+        continue;
       }
 
-      sgroup.atoms.forEach((atomId: number) => {
+      for (const atomId of sgroup.atoms) {
         const atom = mol.atoms.get(atomId);
         if (atom) atom.pp = atom.pp.add(offset);
-      });
-    });
+      }
+    }
   }
 
   private writeAtom(atom, atomLabel: string) {
@@ -699,12 +695,12 @@ export class Molfile {
       this.write(propId);
       this.writePaddedNumber(part.length, 3);
 
-      part.forEach((value) => {
+      for (const value of part) {
         this.writeWhiteSpace();
         this.writePaddedNumber(this.mapping[value[0]], 3);
         this.writeWhiteSpace();
         this.writePaddedNumber(value[1], 3);
-      });
+      }
 
       this.writeCR();
     }

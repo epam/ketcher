@@ -30,14 +30,14 @@ function computeTotalMonomerCount(
 
   const targetLabel = primarySGroup.monomer.monomerItem.label;
   let count = 0;
-  editor.struct().sgroups.forEach((sg) => {
+  for (const sg of editor.struct().sgroups.values()) {
     if (
       sg instanceof MonomerMicromolecule &&
       sg.monomer.monomerItem.label === targetLabel
     ) {
       count++;
     }
-  });
+  }
   return count;
 }
 
@@ -76,7 +76,9 @@ function computeHasNonMonomerStructure(
   const monomerAtomIds = new Set<number>();
   selectedFunctionalGroups.forEach((fg) => {
     if (fg.relatedSGroup instanceof MonomerMicromolecule) {
-      fg.relatedSGroup.atoms.forEach((atomId) => monomerAtomIds.add(atomId));
+      for (const atomId of fg.relatedSGroup.atoms) {
+        monomerAtomIds.add(atomId);
+      }
     }
   });
 

@@ -36,7 +36,7 @@ export function updateSelectedAtoms({
       .then((userChangedAtom) => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)
-        atoms.forEach((atomId) => {
+        for (const atomId of atoms) {
           const unchangedAtom = molecule.atoms.get(atomId);
           const atomWithChangedProperties = updateOnlyChangedProperties(
             unchangedAtom,
@@ -45,7 +45,7 @@ export function updateSelectedAtoms({
           action.mergeWith(
             fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false),
           );
-        });
+        }
         editor.update(action);
       })
       .catch((e) => {

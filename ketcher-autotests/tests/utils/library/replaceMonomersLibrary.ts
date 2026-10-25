@@ -1,3 +1,4 @@
+import type { Ketcher } from 'ketcher-core';
 import { Page } from 'playwright/test';
 
 export async function replaceMonomersLibrary(
@@ -6,7 +7,9 @@ export async function replaceMonomersLibrary(
 ): Promise<string | null> {
   return await page.evaluate(async (cmd) => {
     try {
-      await globalThis.ketcher.replaceMonomersLibrary(cmd);
+      await (
+        globalThis as typeof globalThis & { ketcher: Ketcher }
+      ).ketcher.replaceMonomersLibrary(cmd);
       return null;
     } catch (error) {
       if (error instanceof Error) {

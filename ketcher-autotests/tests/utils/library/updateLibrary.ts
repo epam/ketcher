@@ -1,3 +1,4 @@
+import type { Ketcher } from 'ketcher-core';
 import { Page } from 'playwright/test';
 
 export async function updateMonomersLibrary(
@@ -6,7 +7,9 @@ export async function updateMonomersLibrary(
 ): Promise<string | null> {
   return await page.evaluate(async (cmd) => {
     try {
-      await globalThis.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
+      await (
+        globalThis as typeof globalThis & { ketcher: Ketcher }
+      ).ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
       return null;
     } catch (error) {
       if (error instanceof Error) {
@@ -32,7 +35,8 @@ export async function updateMonomersLibraryAndGetLoggedErrors(
   sdfString: string,
 ): Promise<{ error: string | null; loggedErrors: string }> {
   return await page.evaluate(async (cmd) => {
-    const testWindow = globalThis as LogCaptureWindow;
+    const testWindow = globalThis as typeof globalThis &
+      LogCaptureWindow & { ketcher: Ketcher };
     const originalLogging = testWindow.logging;
     const originalConsoleError = console.error;
     const loggedErrors: string[] = [];
@@ -44,7 +48,7 @@ export async function updateMonomersLibraryAndGetLoggedErrors(
 
     let error: string | null = null;
     try {
-      await globalThis.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
+      await testWindow.ketcher.updateMonomersLibrary(cmd, { format: 'sdf' });
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
     } finally {

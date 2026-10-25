@@ -16,8 +16,7 @@ export class SequenceEventDelegationManager {
     new Map();
 
   public static get instance() {
-    this._instance ??=
-      new SequenceEventDelegationManager();
+    this._instance ??= new SequenceEventDelegationManager();
     return this._instance;
   }
 

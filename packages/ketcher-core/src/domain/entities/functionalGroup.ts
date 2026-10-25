@@ -127,10 +127,7 @@ export class FunctionalGroup {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
     assert(rgroupAttachmentPoint != null);
     const attachedAtom = rgroupAttachmentPoint.atomId;
-    return this.atomsInFunctionalGroup(
-      molecule.functionalGroups,
-      attachedAtom,
-    );
+    return this.atomsInFunctionalGroup(molecule.functionalGroups, attachedAtom);
   }
 
   static findFunctionalGroupByAtom(

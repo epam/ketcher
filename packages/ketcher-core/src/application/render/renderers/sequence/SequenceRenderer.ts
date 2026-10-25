@@ -914,9 +914,7 @@ export class SequenceRenderer {
     const currentNodeIndexInRow =
       this.currentChainRow.indexOf(currentEdittingNode);
 
-    this.setCaretPosition(
-      this.caretPosition - currentNodeIndexInRow,
-    );
+    this.setCaretPosition(this.caretPosition - currentNodeIndexInRow);
     this.resetLastUserDefinedCaretPosition();
   }
 
@@ -990,21 +988,15 @@ export class SequenceRenderer {
   }
 
   public static get currentChain() {
-    return this.chainsCollection.chains[
-      this.currentChainIndex
-    ];
+    return this.chainsCollection.chains[this.currentChainIndex];
   }
 
   public static get previousChain() {
-    return this.sequenceViewModel.chains[
-      this.currentChainIndex - 1
-    ];
+    return this.sequenceViewModel.chains[this.currentChainIndex - 1];
   }
 
   public static get nextChain() {
-    return this.chainsCollection.chains[
-      this.currentChainIndex + 1
-    ];
+    return this.chainsCollection.chains[this.currentChainIndex + 1];
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
@@ -1018,15 +1010,11 @@ export class SequenceRenderer {
   }
 
   public static get nextNode() {
-    return this.getNodeByPointer(
-      this.nextCaretPosition,
-    );
+    return this.getNodeByPointer(this.nextCaretPosition);
   }
 
   public static get previousNode() {
-    return this.getNodeByPointer(
-      this.previousCaretPosition,
-    );
+    return this.getNodeByPointer(this.previousCaretPosition);
   }
 
   public static get nextNodeInSameChain() {
@@ -1035,9 +1023,7 @@ export class SequenceRenderer {
     }
 
     const currentNode = this.currentEdittingNode;
-    const nextNodeInSameChain = this.getNodeByPointer(
-      this.nextCaretPosition,
-    );
+    const nextNodeInSameChain = this.getNodeByPointer(this.nextCaretPosition);
 
     return nextNodeInSameChain?.chain === currentNode?.chain
       ? nextNodeInSameChain
@@ -1055,9 +1041,7 @@ export class SequenceRenderer {
   }
 
   private static get nextCaretPosition(): number | undefined {
-    const nodeOnNextPosition = this.getNodeByPointer(
-      this.caretPosition + 1,
-    );
+    const nodeOnNextPosition = this.getNodeByPointer(this.caretPosition + 1);
 
     return nodeOnNextPosition ? this.caretPosition + 1 : undefined;
   }
@@ -1082,10 +1066,11 @@ export class SequenceRenderer {
 
   public static startNewSequence(indexOfRowBefore?: number) {
     const editor = provideEditorInstance();
-    const oldNewSequenceChainIndex =
-      this.sequenceViewModel.chains.findIndex((chain) => {
+    const oldNewSequenceChainIndex = this.sequenceViewModel.chains.findIndex(
+      (chain) => {
         return chain.isNewSequenceChain;
-      });
+      },
+    );
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -1183,10 +1168,7 @@ export class SequenceRenderer {
         return;
       }
 
-      modelChanges = this.getShiftArrowChanges(
-        editor,
-        currentEdittingNode,
-      );
+      modelChanges = this.getShiftArrowChanges(editor, currentEdittingNode);
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
       const previousNodeInSameChain = this.previousNodeInSameChain;
@@ -1197,8 +1179,7 @@ export class SequenceRenderer {
           previousNodeInSameChain,
         );
       } else if (this.previousChain.lastNode) {
-        const previousChainLastEmptyNode =
-          this.previousChain.lastNode;
+        const previousChainLastEmptyNode = this.previousChain.lastNode;
 
         if (previousChainLastEmptyNode.senseNode) {
           const result =
@@ -1489,10 +1470,7 @@ export class SequenceRenderer {
   }
 
   public static get isCaretAtChainEnd() {
-    return (
-      this.currentEdittingNode?.senseNode instanceof
-      EmptySequenceNode
-    );
+    return this.currentEdittingNode?.senseNode instanceof EmptySequenceNode;
   }
 
   private static clearBondRenderers() {

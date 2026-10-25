@@ -81,8 +81,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return (
-      distance >=
-      this.MIN_TAIL_DISTANCE.multiply(2).getFloatingPrecision()
+      distance >= this.MIN_TAIL_DISTANCE.multiply(2).getFloatingPrecision()
     );
   }
 
@@ -174,17 +173,14 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     }
 
     const firstTailX = tailsFixedPrecision[0].x;
-    if (
-      firstTailX.value > spineStartX.sub(this.KET_MIN_DISTANCE).value
-    ) {
+    if (firstTailX.value > spineStartX.sub(this.KET_MIN_DISTANCE).value) {
       return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
     const result = tailsFixedPrecision.every((tail, index, allTails) => {
       if (
         index > 0 &&
-        allTails[index - 1].y.value <
-          tail.y.add(this.KET_MIN_DISTANCE).value
+        allTails[index - 1].y.value < tail.y.add(this.KET_MIN_DISTANCE).value
       ) {
         return false;
       }

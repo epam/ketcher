@@ -3,9 +3,7 @@ export class FixedPrecisionCoordinates {
   public readonly value: number;
 
   static fromFloatingPrecision(value: number) {
-    return new FixedPrecisionCoordinates(
-      Math.round(value * this.MULTIPLIER),
-    );
+    return new FixedPrecisionCoordinates(Math.round(value * this.MULTIPLIER));
   }
 
   constructor(value: number | FixedPrecisionCoordinates) {

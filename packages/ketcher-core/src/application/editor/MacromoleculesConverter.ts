@@ -101,9 +101,7 @@ export class MacromoleculesConverter {
     }
 
     const attachmentPointNumber =
-      this.convertAttachmentPointNameToNumber(
-        attachmentPointName,
-      );
+      this.convertAttachmentPointNameToNumber(attachmentPointName);
     const attachmentPointIndex =
       attachmentPointName === 'hydrogen'
         ? 0
@@ -774,12 +772,11 @@ export class MacromoleculesConverter {
         return;
       }
 
-      const atomToConnect =
-        this.findAtomByMicromoleculeAtomId(
-          drawingEntitiesManager,
-          atomIdInMicromolecules,
-          globalAtomIdToMonomerMap.get(moleculeAtomId),
-        );
+      const atomToConnect = this.findAtomByMicromoleculeAtomId(
+        drawingEntitiesManager,
+        atomIdInMicromolecules,
+        globalAtomIdToMonomerMap.get(moleculeAtomId),
+      );
       const attachmentPointNumber =
         bond.beginSuperatomAttachmentPointNumber ??
         bond.endSuperatomAttachmentPointNumber;

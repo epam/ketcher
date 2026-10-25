@@ -8,11 +8,11 @@ import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';
 import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
 import { useTranslation } from 'react-i18next';
-import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.utils';
+import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.utilities';
 
 export { isNaturalAnalogueRequired };
 
-interface ChipGridSelectProps {
+interface ChipGridSelectProperties {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
   value: string;
   onChange: (value: string) => void;
@@ -59,7 +59,7 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
-const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
+const NaturalAnaloguePicker: FC<ChipGridSelectProperties> = ({
   monomerType,
   value,
   onChange,
@@ -95,7 +95,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
     [options, t],
   );
 
-  const menuProps: Partial<MenuProps> = useMemo(
+  const menuProperties: Partial<MenuProps> = useMemo(
     () => ({
       className: styles.dropdownMenu,
       PaperProps: {
@@ -119,7 +119,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       onChange={handleChange}
       displayEmpty
       renderValue={renderValue}
-      MenuProps={menuProps}
+      MenuProps={menuProperties}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
       disabled={disabled}

@@ -9,7 +9,7 @@ import {
   SettingsManager,
 } from 'ketcher-core';
 import type { FinishNewMonomersCreationData } from '../../../../editor/Editor';
-import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
+import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utilities';
 
 export const saveLibraryMonomer = async (
   ketcher: Ketcher,
@@ -17,13 +17,16 @@ export const saveLibraryMonomer = async (
   original?: MonomerItemType,
 ) => {
   const editor = provideEditorInstance();
-  const editedRef = original
+  const editedReference = original
     ? getMonomerTemplateRefFromMonomerItem(original)
     : undefined;
-  const editedTemplate = editedRef
-    ? editor.monomersLibraryParsedJson?.[editedRef]
+  const editedTemplate = editedReference
+    ? editor.monomersLibraryParsedJson?.[editedReference]
     : undefined;
-  if (editedRef && editedTemplate?.type !== KetTemplateType.MONOMER_TEMPLATE) {
+  if (
+    editedReference &&
+    editedTemplate?.type !== KetTemplateType.MONOMER_TEMPLATE
+  ) {
     throw new Error('The original monomer is no longer available for editing.');
   }
   const editedMonomerTemplate = editedTemplate as
@@ -44,7 +47,7 @@ export const saveLibraryMonomer = async (
   const originalMonomerTemplate = supersedesOriginal
     ? editedMonomerTemplate
     : undefined;
-  const originalRef = supersedesOriginal ? editedRef : undefined;
+  const originalReference = supersedesOriginal ? editedReference : undefined;
 
   const template = {
     ...originalMonomerTemplate,
@@ -60,21 +63,21 @@ export const saveLibraryMonomer = async (
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
   }
-  const ref = originalRef ?? data.monomerRef;
+  const reference = originalReference ?? data.monomerRef;
   const ket = JSON.stringify({
-    root: { templates: [{ $ref: ref }] },
-    [ref]: template,
+    root: { templates: [{ $ref: reference }] },
+    [reference]: template,
   });
   const sdf = await ketcher.ensureMonomersLibraryDataInSdfFormat(ket, {
     format: 'ket',
   });
   if (
-    !originalRef &&
+    !originalReference &&
     editor.checkIfMonomerSymbolClassPairExists(template.alias, template.class)
   ) {
     throw new Error('A monomer with this code already exists.');
   }
-  editor.updateMonomersLibrary(ket, originalRef, true);
+  editor.updateMonomersLibrary(ket, originalReference, true);
 
   /*
    * Submitting after "Edit" replaces every instance of that monomer on the
@@ -88,7 +91,7 @@ export const saveLibraryMonomer = async (
     const savedMonomerItem = editor.monomersLibrary.find(
       (item) =>
         !isAmbiguousMonomerLibraryItem(item) &&
-        getMonomerTemplateRefFromMonomerItem(item) === ref,
+        getMonomerTemplateRefFromMonomerItem(item) === reference,
     );
 
     if (savedMonomerItem) {
@@ -102,8 +105,8 @@ export const saveLibraryMonomer = async (
 
   if (SettingsManager.persistMonomerLibraryUpdates) {
     SettingsManager.addMonomerLibraryUpdate(
-      originalRef
-        ? JSON.stringify({ data: ket, editedMonomerRef: originalRef })
+      originalReference
+        ? JSON.stringify({ data: ket, editedMonomerRef: originalReference })
         : ket,
     );
   }

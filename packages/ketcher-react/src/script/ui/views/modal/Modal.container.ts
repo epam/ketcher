@@ -14,20 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ModalProps, Modal } from './Modal';
+import { type ModalProperties, Modal } from './Modal';
 
-import type { BaseCallProps, ModalContainerProps } from './modal.types';
+import type {
+  BaseCallProperties,
+  ModalContainerProperties,
+} from './modal.types';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { omit } from 'lodash/fp';
 
-type StateProps = Pick<ModalProps, 'modal'>;
+type StateProperties = Pick<ModalProperties, 'modal'>;
 
-const mapStateToProps = (state): StateProps => ({
+const mapStateToProperties = (state): StateProperties => ({
   modal: state.modal,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
+const mapDispatchToProperties = (dispatch: Dispatch): BaseCallProperties => ({
   onOk: (_result) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
@@ -36,32 +39,34 @@ const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
   },
 });
 
-const mergeProps = (
-  stateProps: StateProps,
-  dispatchProps: BaseCallProps,
-  ownProps: ModalContainerProps,
-): ModalProps => {
-  const prop = stateProps.modal?.prop;
-  const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
+const mergeProperties = (
+  stateProperties: StateProperties,
+  dispatchProperties: BaseCallProperties,
+  ownProperties: ModalContainerProperties,
+): ModalProperties => {
+  const property = stateProperties.modal?.prop;
+  const initProperties = property
+    ? omit(['onResult', 'onCancel'], property)
+    : {};
   return {
-    modal: stateProps.modal,
-    ...initProps,
+    modal: stateProperties.modal,
+    ...initProperties,
     onOk: (result) => {
-      prop?.onResult?.(result);
-      dispatchProps.onOk(result);
+      property?.onResult?.(result);
+      dispatchProperties.onOk(result);
     },
     onCancel: () => {
-      prop?.onCancel?.();
-      dispatchProps.onCancel();
+      property?.onCancel?.();
+      dispatchProperties.onCancel();
     },
-    ...ownProps,
+    ...ownProperties,
   };
 };
 
 const ModalContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  mergeProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
+  mergeProperties,
 )(Modal);
 
 export default ModalContainer;

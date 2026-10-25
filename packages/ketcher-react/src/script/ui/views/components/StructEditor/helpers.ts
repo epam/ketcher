@@ -17,16 +17,16 @@ export const calculateMiddleCoordsForRect = (
     y: rectCoords[0][Y_COORD_INDEX],
   };
 
-  for (let i = 1; i < rectCoords.length; i++) {
+  for (let index = 1; index < rectCoords.length; index++) {
     if (!previousPoint.x || !previousPoint.y) {
       return [];
     }
 
-    const middleX = (previousPoint.x + rectCoords[i][X_COORD_INDEX]) / 2;
-    const middleY = (previousPoint.y + rectCoords[i][Y_COORD_INDEX]) / 2;
+    const middleX = (previousPoint.x + rectCoords[index][X_COORD_INDEX]) / 2;
+    const middleY = (previousPoint.y + rectCoords[index][Y_COORD_INDEX]) / 2;
     middleCoordForRectangleSides.push({ x: middleX, y: middleY });
-    previousPoint.x = rectCoords[i][X_COORD_INDEX];
-    previousPoint.y = rectCoords[i][Y_COORD_INDEX];
+    previousPoint.x = rectCoords[index][X_COORD_INDEX];
+    previousPoint.y = rectCoords[index][Y_COORD_INDEX];
   }
 
   return middleCoordForRectangleSides;

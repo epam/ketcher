@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
@@ -23,7 +23,7 @@ import Select from '../../../../../component/form/Select/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import i18n from 'src/i18n/i18n';
 
-type Props = BaseProps & BaseCallProps;
+type Props = BaseProperties & BaseCallProperties;
 
 export const automapSchema = {
   title: i18n.t('dialogs:toolbox.automap.dialogTitle'),

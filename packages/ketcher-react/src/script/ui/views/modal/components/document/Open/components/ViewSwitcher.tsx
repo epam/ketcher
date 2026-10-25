@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import type { FC } from 'react';
-import { type AnalyzingFileProps, AnalyzingFile } from './AnalyzingFile';
+import { type AnalyzingFileProperties, AnalyzingFile } from './AnalyzingFile';
 
-import { type OpenOptionsProps, OpenOptions } from './OpenOptions';
-import { type TextEditorProps, TextEditor } from './TextEditor';
+import { type OpenOptionsProperties, OpenOptions } from './OpenOptions';
+import { type TextEditorProperties, TextEditor } from './TextEditor';
 import CDXStructuresViewer from './CDXStructuresViewer';
-import type { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
+import type { CDXStructuresViewerProperties } from './CDXStructuresViewer/CDXStructuresViewer';
 
 type ViewStates = {
   idle: string;
@@ -29,26 +29,28 @@ type ViewStates = {
   presentationViewer: string;
 };
 
-type SwitchProps = {
+type SwitchProperties = {
   currentState: string;
   states: ViewStates;
   isAnalyzingFile: boolean;
-} & OpenOptionsProps &
-  TextEditorProps &
-  AnalyzingFileProps &
-  CDXStructuresViewerProps;
+} & OpenOptionsProperties &
+  TextEditorProperties &
+  AnalyzingFileProperties &
+  CDXStructuresViewerProperties;
 
-export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
-  if (props.isAnalyzingFile) {
-    return <AnalyzingFile fileName={props.fileName} />;
+export const ViewSwitcher: FC<SwitchProperties> = (
+  properties: SwitchProperties,
+) => {
+  if (properties.isAnalyzingFile) {
+    return <AnalyzingFile fileName={properties.fileName} />;
   } else {
-    switch (props.currentState) {
-      case props.states.idle:
-        return <OpenOptions {...props} />;
-      case props.states.textEditor:
-        return <TextEditor {...props} testId="open-structure-textarea" />;
-      case props.states.presentationViewer:
-        return <CDXStructuresViewer {...props} />;
+    switch (properties.currentState) {
+      case properties.states.idle:
+        return <OpenOptions {...properties} />;
+      case properties.states.textEditor:
+        return <TextEditor {...properties} testId="open-structure-textarea" />;
+      case properties.states.presentationViewer:
+        return <CDXStructuresViewer {...properties} />;
       default:
         return null;
     }

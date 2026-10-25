@@ -12,7 +12,7 @@ import type {
   BondsContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
-import { getEditableBondIds } from '../utils';
+import { getEditableBondIds } from '../utilities';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 

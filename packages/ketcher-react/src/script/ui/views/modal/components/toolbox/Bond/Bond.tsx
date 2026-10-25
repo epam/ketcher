@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, {
   CustomQueryField,
   Field,
@@ -31,7 +31,7 @@ import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
-import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utilities';
 
 interface BondSettings {
   type: string;
@@ -39,10 +39,10 @@ interface BondSettings {
   center: number | null;
   customQuery: string;
 }
-interface BondProps extends BaseProps, BondSettings {}
+interface BondProps extends BaseProperties, BondSettings {}
 
 type Props = BondProps &
-  BaseCallProps & {
+  BaseCallProperties & {
     isMonomerCreationWizardActive?: boolean;
   };
 

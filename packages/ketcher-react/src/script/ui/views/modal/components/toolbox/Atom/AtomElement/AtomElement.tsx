@@ -10,26 +10,29 @@ import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
-import type { BaseProps } from '../../../../modal.types';
+import type { BaseProperties } from '../../../../modal.types';
 import { capitalize } from 'lodash';
-const atomProps = atomSchema.properties;
+const atomProperties = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
-const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
+const AtomElement = ({ formState }: Pick<BaseProperties, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const openNestedDialog = (
     modalName: 'period-table' | 'extended-table',
-    props: object,
+    properties: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
+    openDialog(dispatch, modalName, {
+      ...properties,
+      isNestedModal: true,
+    }).then(
       (result) => {
-        const el = result as { values?: string[]; label: string };
-        onChange(el.values?.join(',') || el.label);
+        const element = result as { values?: string[]; label: string };
+        onChange(element.values?.join(',') || element.label);
       },
       () => null, // onCancel handler
     );
@@ -96,7 +99,7 @@ const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
       <Field
         name="atomType"
         component={Select}
-        options={getSelectOptionsFromSchema(atomProps.atomType, t)}
+        options={getSelectOptionsFromSchema(atomProperties.atomType, t)}
         data-testid="atom"
       />
       {AtomFields[atomType]}

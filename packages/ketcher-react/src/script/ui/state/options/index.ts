@@ -262,7 +262,7 @@ export function shouldFragment(isFrag: boolean) {
 }
 
 /* CHECK */
-export function checkOpts(data: OptionsState['check']) {
+export function checkOptions(data: OptionsState['check']) {
   return {
     type: 'SAVE_CHECK_OPTS',
     data,

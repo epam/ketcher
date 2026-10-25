@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
@@ -47,7 +47,7 @@ import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
 import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 
-interface SettingsProps extends BaseProps {
+interface SettingsProperties extends BaseProperties {
   ketcherId: string;
   initState: any;
   appOpts: {
@@ -62,14 +62,14 @@ interface SettingsProps extends BaseProps {
   server: StructService;
 }
 
-interface SettingsCallProps extends BaseCallProps {
+interface SettingsCallProperties extends BaseCallProperties {
   onOpenFile: (any) => void;
   onReset: () => void;
   onACSStyle: (result) => void;
 }
 
-type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
-  Pick<BaseCallProps, 'onOk'>;
+type SettingsOwnProperties = Pick<SettingsProperties, 'ketcherId'> &
+  Pick<BaseCallProperties, 'onOk'>;
 
 const defaultSettings = getDefaultOptions();
 
@@ -123,11 +123,11 @@ const HeaderContent = ({
   );
 };
 
-type Props = SettingsProps & SettingsCallProps;
+type Properties = SettingsProperties & SettingsCallProperties;
 
-const settingsProps = settingsSchema.properties;
+const settingsProperties = settingsSchema.properties;
 
-const SettingsDialog = (props: Props) => {
+const SettingsDialog = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs', 'settings']);
   const {
     initState,
@@ -136,8 +136,8 @@ const SettingsDialog = (props: Props) => {
     onOpenFile,
     onReset,
     appOpts,
-    ...prop
-  } = props;
+    ...property
+  } = properties;
 
   const changedGroups = useMemo(() => {
     const changed = new Set<string>();
@@ -166,7 +166,7 @@ const SettingsDialog = (props: Props) => {
           name="showHydrogenLabels"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.showHydrogenLabels,
+            settingsProperties?.showHydrogenLabels,
             t,
           )}
           data-testid="show-hydrogen-labels"
@@ -228,7 +228,7 @@ const SettingsDialog = (props: Props) => {
           tooltip={t('dialogs:meta.settings.stereoLabelStyleTooltip')}
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.stereoLabelStyle,
+            settingsProperties?.stereoLabelStyle,
             t,
           )}
           data-testid="stereo-label-style"
@@ -255,7 +255,7 @@ const SettingsDialog = (props: Props) => {
           name="colorStereogenicCenters"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.colorStereogenicCenters,
+            settingsProperties?.colorStereogenicCenters,
             t,
           )}
           data-testid="color-stereogenic-centers"
@@ -324,7 +324,10 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="resetToSelect"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect, t)}
+          options={getSelectOptionsFromSchema(
+            settingsProperties?.resetToSelect,
+            t,
+          )}
           data-testid="reset-to-select"
         />
         <Field
@@ -354,7 +357,7 @@ const SettingsDialog = (props: Props) => {
           tooltip={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.imageResolution,
+            settingsProperties?.imageResolution,
             t,
           )}
           data-testid="image-resolution"
@@ -370,19 +373,22 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="miewMode"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewMode, t)}
+          options={getSelectOptionsFromSchema(settingsProperties?.miewMode, t)}
           data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewTheme, t)}
+          options={getSelectOptionsFromSchema(settingsProperties?.miewTheme, t)}
           data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel, t)}
+          options={getSelectOptionsFromSchema(
+            settingsProperties?.miewAtomLabel,
+            t,
+          )}
           data-testid="label-coloring"
         />
       </fieldset>
@@ -414,7 +420,7 @@ const SettingsDialog = (props: Props) => {
             name="valence-mode"
             component={Select}
             options={getSelectOptionsFromSchema(
-              settingsProps?.['valence-mode'],
+              settingsProperties?.['valence-mode'],
               t,
             )}
             data-testid="valence-mode"
@@ -469,7 +475,7 @@ const SettingsDialog = (props: Props) => {
   };
 
   const onACSStyle = () => {
-    prop.onACSStyle({
+    property.onACSStyle({
       ...formState.result,
       ...ACS_STYLE_DEFAULT_SETTINGS,
     });
@@ -502,7 +508,7 @@ const SettingsDialog = (props: Props) => {
       className={classes.settings}
       result={() => [formState.result, initState]}
       valid={() => formState.valid}
-      params={prop}
+      params={property}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={[ACSStyleButton, 'Cancel', 'OK']}
       withDivider
@@ -528,28 +534,31 @@ const SettingsDialog = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProperties = (state) => ({
   server: state.options.app.server ? state.server : null,
   appOpts: state.options.app,
   initState: state.options.settings,
   formState: state.modal.form,
 });
 
-const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
-  onOpenFile: (newOpts) => {
+const mapDispatchToProperties = (
+  dispatch,
+  ownProperties: SettingsOwnProperties,
+) => ({
+  onOpenFile: (newOptions) => {
     try {
-      dispatch(updateFormState({ result: JSON.parse(newOpts) }));
-    } catch (e) {
-      KetcherLogger.error('Settings.tsx::mapDispatchToProps', e);
+      dispatch(updateFormState({ result: JSON.parse(newOptions) }));
+    } catch (error) {
+      KetcherLogger.error('Settings.tsx::mapDispatchToProps', error);
       console.info('Bad file');
     }
   },
   onReset: () => dispatch(setDefaultSettings()),
-  onOk: (res) => {
-    const [result, initState] = res;
+  onOk: (resource) => {
+    const [result, initState] = resource;
 
-    dispatch(saveSettings(result, ownProps.ketcherId));
-    ownProps.onOk(result);
+    dispatch(saveSettings(result, ownProperties.ketcherId));
+    ownProperties.onOk(result);
 
     const showNotification =
       initState.reactionComponentMarginSize !==
@@ -573,6 +582,9 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
   },
 });
 
-const Settings = connect(mapStateToProps, mapDispatchToProps)(SettingsDialog);
+const Settings = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(SettingsDialog);
 
 export default Settings;

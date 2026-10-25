@@ -41,15 +41,15 @@ const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1);
 export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
   const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false);
   const [currentFontSize, setCurrentFontSize] = useState(DEFAULT_FONT_SIZE);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperReference = useRef<HTMLDivElement>(null);
   const onClickOutsideCloseDrowndown = (): void =>
     setIsShowingFontSizeMenu(false);
 
-  useClickOutside(wrapperRef, onClickOutsideCloseDrowndown);
+  useClickOutside(wrapperReference, onClickOutsideCloseDrowndown);
 
   const setFontSize = useCallback(
-    (e: MouseEvent, value: string) => {
-      e.preventDefault();
+    (event: MouseEvent, value: string) => {
+      event.preventDefault();
       setCurrentFontSize(value);
       editor.update(() => {
         const selection = $getSelection();
@@ -85,7 +85,7 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
           key={fontSize}
           type="button"
           className={classes.fontSizeOption}
-          onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
+          onMouseDown={(event) => setFontSize(event, `${fontSize}px`)}
           data-testid={`${fontSize}-option`}
         >
           {fontSize}
@@ -95,12 +95,12 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
   );
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperReference}>
       <button
         data-testid="font-size-button"
         className={classes.fontBtn}
-        onMouseDown={(e) => {
-          e.preventDefault();
+        onMouseDown={(event) => {
+          event.preventDefault();
           setIsShowingFontSizeMenu(!isShowingFontSizeMenu);
         }}
       >

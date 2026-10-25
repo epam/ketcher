@@ -35,10 +35,10 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
-import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
+import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utilities';
 import { useTranslation } from 'react-i18next';
 
-interface IMonomerCreationWizardFieldsProps {
+interface IMonomerCreationWizardFieldsProperties {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
   readonlyAttachmentPoints?: Array<{
@@ -62,7 +62,7 @@ interface ModificationTypeItem {
 }
 
 const MonomerCreationWizardFields = (
-  props: IMonomerCreationWizardFieldsProps,
+  properties: IMonomerCreationWizardFieldsProperties,
 ) => {
   const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();
@@ -77,13 +77,13 @@ const MonomerCreationWizardFields = (
     onFieldChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
-  } = props;
+  } = properties;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >(() => initialModificationTypes.map((value, id) => ({ id, value })));
-  const modificationTypeIdRef = useRef(initialModificationTypes.length);
+  const modificationTypeIdReference = useRef(initialModificationTypes.length);
 
   useEffect(() => {
     editor?.setMonomerCreationSelectedType?.(values.type);
@@ -104,7 +104,7 @@ const MonomerCreationWizardFields = (
         ? modificationTypes
         : [
             ...modificationTypes,
-            { id: modificationTypeIdRef.current++, value: '' },
+            { id: modificationTypeIdReference.current++, value: '' },
           ];
 
     setModificationTypes(newModificationTypes);
@@ -196,7 +196,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && displayNaturalAnalogue && (
+        {properties.showNaturalAnalogue !== false && displayNaturalAnalogue && (
           <AttributeField
             title={t(
               'components:monomerCreationWizard.naturalAnalogueFieldLabel',
@@ -295,7 +295,7 @@ const MonomerCreationWizardFields = (
                 )}
               </AccordionSummary>
               <AccordionDetails>
-                {modificationTypes.map((modificationType, idx) => (
+                {modificationTypes.map((modificationType, index) => (
                   <div
                     className={styles.modificationTypeRow}
                     key={modificationType.id}
@@ -311,7 +311,7 @@ const MonomerCreationWizardFields = (
                       onChange={(value) =>
                         handleModificationTypeChange(modificationType.id, value)
                       }
-                      testId={`modification-type-dropdown-${idx}`}
+                      testId={`modification-type-dropdown-${index}`}
                     />
 
                     <IconButton
@@ -323,7 +323,7 @@ const MonomerCreationWizardFields = (
                       onClick={() =>
                         deleteModificationType(modificationType.id)
                       }
-                      testId={`delete-modification-type-button-${idx}`}
+                      testId={`delete-modification-type-button-${index}`}
                     />
                   </div>
                 ))}
@@ -379,9 +379,9 @@ const MonomerCreationWizardFields = (
                         onFieldChange('aliasHELM', newValue)
                       }
                       data-testid="helm-alias-input"
-                      renderInput={(params) => (
+                      renderInput={(parameters) => (
                         <TextField
-                          {...params}
+                          {...parameters}
                           variant="standard"
                           className={clsx(
                             styles.inputField,
@@ -406,9 +406,9 @@ const MonomerCreationWizardFields = (
                         onFieldChange('aliasBILN', newValue)
                       }
                       data-testid="biln-alias-input"
-                      renderInput={(params) => (
+                      renderInput={(parameters) => (
                         <TextField
-                          {...params}
+                          {...parameters}
                           variant="standard"
                           className={clsx(
                             styles.inputField,

@@ -35,7 +35,7 @@ interface CursorPosition {
   y: number;
 }
 
-interface InfoPanelProps {
+interface InfoPanelProperties {
   render: Render;
   className?: string;
 }
@@ -71,8 +71,8 @@ function getPanelPosition(
   return { x: adjustedX, y: adjustedY };
 }
 
-const InfoTooltip: FC<InfoPanelProps> = (props) => {
-  const { render, className } = props;
+const InfoTooltip: FC<InfoPanelProperties> = (properties) => {
+  const { render, className } = properties;
   const [tooltip, setTooltip] = useState<null | string>(null);
   const [position, setPosition] = useState<
     CursorPosition | { x: null; y: null }

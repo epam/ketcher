@@ -32,7 +32,7 @@ import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors'
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 import clsx from 'clsx';
-import { getEditableAtomIds } from '../utils';
+import { getEditableAtomIds } from '../utilities';
 import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
 const {

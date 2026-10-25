@@ -17,7 +17,10 @@
 
 import { useEffect, useRef } from 'react';
 
-import type { BaseCallProps, ModalContainerProps } from './modal.types';
+import type {
+  BaseCallProperties,
+  ModalContainerProperties,
+} from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
@@ -27,7 +30,7 @@ import useResizeObserver from 'use-resize-observer/polyfilled';
 import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
 
-interface ModalProps extends BaseCallProps {
+interface ModalProperties extends BaseCallProperties {
   modal: {
     name: string;
     form: any;
@@ -35,16 +38,18 @@ interface ModalProps extends BaseCallProps {
   };
 }
 
-type Props = ModalProps & BaseCallProps & ModalContainerProps;
+type Properties = ModalProperties &
+  BaseCallProperties &
+  ModalContainerProperties;
 
-type ModalContentProps = Omit<Props, 'modal'> & {
-  modal: NonNullable<Props['modal']>;
+type ModalContentProperties = Omit<Properties, 'modal'> & {
+  modal: NonNullable<Properties['modal']>;
 };
 
-function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProperties) {
+  const containerReference = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: containerRef as React.RefObject<HTMLDivElement>,
+    ref: containerReference as React.RefObject<HTMLDivElement>,
   });
 
   const Component = modals[modal.name];
@@ -63,7 +68,7 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   return (
     <div
       className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
-      ref={containerRef}
+      ref={containerReference}
       data-testid={`${modal.name}-dialog`}
     >
       <Component
@@ -79,13 +84,13 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   );
 }
 
-function Modal(props: Props) {
-  const { modal, ...rest } = props;
+function Modal(properties: Properties) {
+  const { modal, ...rest } = properties;
 
   if (!modal) return null;
 
   return <ModalContent modal={modal} {...rest} />;
 }
 
-export type { ModalProps };
+export type { ModalProperties };
 export { Modal };

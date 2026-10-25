@@ -126,7 +126,7 @@ import {
   getEditInstanceInitialValues,
   getLibraryEditInitialValues,
   isSameMonomerType,
-} from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utils';
+} from '../ui/views/components/MonomerCreationWizard/MonomerCreationWizard.utilities';
 
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options

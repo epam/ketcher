@@ -60,7 +60,7 @@ const Viewer = lazy(() =>
   })),
 );
 
-type MiewDialogProps = {
+type MiewDialogProperties = {
   miewOpts: any;
   server: StructService;
   struct: Struct;
@@ -68,11 +68,11 @@ type MiewDialogProps = {
   onOk: (result: any) => void;
   miewTheme: 'dark' | 'light';
 };
-type MiewDialogCallProps = {
+type MiewDialogCallProperties = {
   dispatch: ThunkDispatch<unknown, undefined, AnyAction>;
   serverSettings: Record<string, unknown>;
 };
-type Props = MiewDialogProps & MiewDialogCallProps;
+type Properties = MiewDialogProperties & MiewDialogCallProperties;
 
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
@@ -94,8 +94,8 @@ const MIEW_TX_TYPES = {
   },
 };
 
-const TXoptions = (userOpts) => {
-  const type = userOpts.miewAtomLabel;
+const TXoptions = (userOptions) => {
+  const type = userOptions.miewAtomLabel;
   if (MIEW_TX_TYPES[type] === null) return null;
   return {
     colorer: MIEW_TX_TYPES[type].colorer,
@@ -103,7 +103,7 @@ const TXoptions = (userOpts) => {
     mode: [
       'TX',
       {
-        bg: MIEW_TX_TYPES[type].bg || BACKGROUND_COLOR[userOpts.miewTheme],
+        bg: MIEW_TX_TYPES[type].bg || BACKGROUND_COLOR[userOptions.miewTheme],
         showBg: true,
         template: '{{elem}}',
       },
@@ -111,22 +111,22 @@ const TXoptions = (userOpts) => {
   };
 };
 
-function createMiewOptions(userOpts) {
+function createMiewOptions(userOptions) {
   const options = {
     settings: {
-      bg: { color: Number(BACKGROUND_COLOR[userOpts.miewTheme]) },
+      bg: { color: Number(BACKGROUND_COLOR[userOptions.miewTheme]) },
       autoPreset: false,
       editing: true,
       inversePanning: true,
     },
     reps: [
       {
-        mode: userOpts.miewMode,
+        mode: userOptions.miewMode,
       },
     ],
   };
 
-  const textMode = TXoptions(userOpts);
+  const textMode = TXoptions(userOptions);
   if (textMode) options.reps.push(textMode);
 
   return options;
@@ -146,10 +146,10 @@ const MiewDialog = ({
   dispatch,
   serverSettings,
   miewTheme = 'light',
-  ...prop
-}: Props) => {
+  ...property
+}: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
-  const miewRef = useRef<MiewAsType>(undefined);
+  const miewReference = useRef<MiewAsType>(undefined);
   const [isInitialized, setIsInitialized] = useState(false);
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
@@ -165,29 +165,29 @@ const MiewDialog = ({
 
   const onMiewInit = useCallback(
     (miew: MiewAsType) => {
-      miewRef.current = miew;
+      miewReference.current = miew;
       const factory = new FormatterFactory(server);
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
       service
         .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
+        .then((resource) =>
+          miew.load(resource, { sourceType: 'immediate', fileType: 'cml' }),
         )
         .then(() => {
           miew.setOptions(miewOpts);
           setIsInitialized(true);
         })
-        .catch((e) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        .catch((error) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
         });
     },
     [miewOpts, server, struct],
   );
 
   const exportCML = useCallback(async () => {
-    const cmlStruct = miewRef.current?.exportCML();
+    const cmlStruct = miewReference.current?.exportCML();
 
     if (!cmlStruct) {
       KetcherLogger.error(
@@ -214,10 +214,10 @@ const MiewDialog = ({
       result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
@@ -256,10 +256,10 @@ const MiewDialog = ({
           }),
         );
         return;
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
-          e,
+          error,
         );
         dispatch(
           showSnackbarNotification(
@@ -273,10 +273,10 @@ const MiewDialog = ({
     try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(
@@ -290,7 +290,7 @@ const MiewDialog = ({
     <Dialog
       title={t('dialogs:process.miew.dialogTitle')}
       needMargin={false}
-      params={prop}
+      params={property}
       buttons={[
         'Cancel',
         <button
@@ -332,7 +332,7 @@ const miewOptionsSelector = createSelector([getOptionsSettings], (settings) =>
   createMiewOptions(pick(MIEW_OPTIONS, settings)),
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProperties = (state) => ({
   miewOpts: miewOptionsSelector(state),
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
@@ -340,10 +340,10 @@ const mapStateToProps = (state) => ({
   serverSettings: state.options.getServerSettings(),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProperties = (dispatch) => ({
   dispatch,
 });
 
-const Miew = connect(mapStateToProps, mapDispatchToProps)(MiewDialog);
+const Miew = connect(mapStateToProperties, mapDispatchToProperties)(MiewDialog);
 
 export default Miew;

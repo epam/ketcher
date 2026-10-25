@@ -4,7 +4,7 @@ import {
   getOtherLibraryMonomers,
   hasMonomerFieldCollision,
   isValidMonomerName,
-} from './MonomerCreationWizardFields.utils';
+} from './MonomerCreationWizardFields.utilities';
 
 describe('getMonomerPropertyVisibility', () => {
   it.each`

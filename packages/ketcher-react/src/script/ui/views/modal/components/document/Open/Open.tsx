@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
@@ -26,16 +26,16 @@ import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
-interface OpenProps {
+interface OpenProperties {
   server: any;
-  errorHandler: (err: string) => void;
+  errorHandler: (error: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
 }
 
-type Props = OpenProps &
-  Pick<BaseProps, 'className'> &
-  BaseCallProps & { onImageUpload: (file: File) => void };
+type Properties = OpenProperties &
+  Pick<BaseProperties, 'className'> &
+  BaseCallProperties & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
@@ -84,7 +84,7 @@ const FooterContent = ({
   );
 };
 
-const Open: FC<Props> = (props) => {
+const Open: FC<Properties> = (properties) => {
   const {
     server,
     onImageUpload,
@@ -92,9 +92,9 @@ const Open: FC<Props> = (props) => {
     isAnalyzingFile,
     isRecognizeDisabled,
     ...rest
-  } = props;
+  } = properties;
 
-  const [structStr, setStructStr] = useState<string>('');
+  const [structString, setStructString] = useState<string>('');
   const [structList, setStructList] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>('');
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
@@ -120,11 +120,11 @@ const Open: FC<Props> = (props) => {
         if (!fileContent.structures.length && files[0].size > 0) {
           errorHandler(t('dialogs:document.open.passwordProtectedError'));
         }
-        setStructStr('');
+        setStructString('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);
       } else {
-        setStructStr(fileContent);
+        setStructString(fileContent);
         setCurrentState(MODAL_STATES.textEditor);
       }
       setIsLoading(false);
@@ -151,13 +151,13 @@ const Open: FC<Props> = (props) => {
 
   const copyHandler = () => {
     const format = getFormatMimeTypeByFileName(fileName);
-    onOk({ structStr, fragment: true, 'input-format': format });
+    onOk({ structStr: structString, fragment: true, 'input-format': format });
   };
 
   const openHandler = () => {
     setIsLoading(true);
     setTimeout(() => {
-      onOk({ structStr, fragment: false });
+      onOk({ structStr: structString, fragment: false });
       setIsLoading(false);
     }, 0);
   };
@@ -183,7 +183,7 @@ const Open: FC<Props> = (props) => {
       footerContent={
         withFooterContent ? (
           <FooterContent
-            structStr={structStr}
+            structStr={structString}
             openHandler={openHandler}
             copyHandler={copyHandler}
             onCancel={rest.onCancel}
@@ -204,8 +204,8 @@ const Open: FC<Props> = (props) => {
         imageLoadHandler={onImageLoad}
         errorHandler={errorHandler}
         isRecognizeDisabled={isRecognizeDisabled}
-        structStr={structStr}
-        inputHandler={setStructStr}
+        structStr={structString}
+        inputHandler={setStructString}
         autoFocus
         structList={structList}
       />
@@ -218,5 +218,5 @@ const Open: FC<Props> = (props) => {
   );
 };
 
-export type { OpenProps };
+export type { OpenProperties };
 export default Open;

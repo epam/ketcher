@@ -121,7 +121,7 @@ export interface ClosestItem {
 
 export interface GetIsItemInSelectionArgs {
   item: ClosestItem | null;
-  selection: Selection | null;
+  selection: Selection | null | undefined;
   selectedFunctionalGroups: Map<number, FunctionalGroup>;
   selectedSGroupsIds: Set<number>;
 }

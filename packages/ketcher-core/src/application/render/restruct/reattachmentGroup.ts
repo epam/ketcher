@@ -30,7 +30,8 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   private shouldShowMarker(render: Render) {
     const id = render.ctab.molecule.attachmentGroups.keyOf(this.a);
     return (
-      id !== null && !isAttachmentGroupWithHapticBond(render.ctab.molecule, id)
+      id != undefined &&
+      !isAttachmentGroupWithHapticBond(render.ctab.molecule, id)
     );
   }
 
@@ -55,7 +56,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     );
   }
 
-  getVBoxObj(render: Render): Box2Abs | null {
+  getVBoxObj(render: Render): Box2Abs | null | undefined {
     if (this.visel.boundingBox) {
       return super.getVBoxObj(render);
     }
@@ -77,13 +78,13 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
 
     this.selected = selected;
     const id = restruct.molecule.attachmentGroups.keyOf(this.a);
-    if (id !== null) {
+    if (id != undefined) {
       restruct.markAttachmentGroup(id, 0);
     }
   }
 
   makeSelectionPlate() {
-    return null;
+    return undefined;
   }
 
   private redrawHover(render: Render, drawOutline = true) {
@@ -95,7 +96,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     }
 
     this.hovering?.remove();
-    this.hovering = null;
+    this.hovering = undefined;
     this.visel.paths = this.visel.paths.filter(
       (path) => !previousHoverPaths.has(path),
     );

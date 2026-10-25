@@ -29,8 +29,8 @@ type Data = {
 };
 
 export class BondAttr extends BaseOperation {
-  data: Data | null;
-  data2: Data | null;
+  data: Data | null | undefined;
+  data2: Data | null | undefined;
 
   constructor(
     bondId?: number,
@@ -42,8 +42,8 @@ export class BondAttr extends BaseOperation {
     this.data =
       bondId !== undefined && attribute !== undefined
         ? { bid: bondId, attribute, value, needInvalidateBond }
-        : null;
-    this.data2 = null;
+        : undefined;
+    this.data2 = undefined;
   }
 
   execute(restruct: ReStruct) {

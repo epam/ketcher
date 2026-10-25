@@ -21,8 +21,8 @@ import { isAtomPartOfAttachmentGroup, Scale } from 'domain/helpers';
 import type { Vec2 } from 'domain/entities';
 
 type Data = {
-  aid: number | null;
-  d: Vec2 | null;
+  aid: number | null | undefined;
+  d: Vec2 | null | undefined;
   noinvalidate: boolean;
 };
 
@@ -32,8 +32,8 @@ export class AtomMove extends BaseOperation {
   constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
     this.data = {
-      aid: atomId ?? null,
-      d: d ?? null,
+      aid: atomId ?? undefined,
+      d: d ?? undefined,
       noinvalidate: noinvalidate ?? false,
     };
   }
@@ -41,7 +41,7 @@ export class AtomMove extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
     const { aid, d } = this.data;
-    if (aid === null || !d) return;
+    if (aid == undefined || !d) return;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
     atom.pp.add_(d);

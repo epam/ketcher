@@ -45,16 +45,19 @@ type ClosestAtom = {
   id: number;
   dist: number;
 };
-type ClosestSkip = {
-  map: 'atoms';
-  id: number;
-} | null;
+type ClosestSkip =
+  | {
+      map: 'atoms';
+      id: number;
+    }
+  | null
+  | undefined;
 type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
   skip: ClosestSkip,
   minDist: number,
-) => ClosestAtom | null;
+) => ClosestAtom | undefined;
 type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
@@ -86,8 +89,8 @@ function getAtomNeighbors(struct: Struct, atomId: number) {
   return neighbors;
 }
 
-function getBondAngle(struct: Struct, bondId: number | null) {
-  if (bondId === null) {
+function getBondAngle(struct: Struct, bondId: number | null | undefined) {
+  if (bondId == undefined) {
     throwLoggedError('Previous bond is required');
   }
 
@@ -113,7 +116,7 @@ export function atomGetAttr(
   name: AtomAttributeName,
 ) {
   const atom = restruct.molecule.atoms.get(aid);
-  if (!atom) return null;
+  if (!atom) return undefined;
   return atom[name];
 }
 
@@ -149,7 +152,7 @@ export function findStereoAtoms(
 
   return atomIds.filter((atomId: number) => {
     const atom = struct.atoms.get(atomId);
-    if (atom?.stereoLabel !== null) {
+    if (atom?.stereoLabel != undefined) {
       return true;
     }
     const connectedBonds = Atom.getConnectedBondIds(struct, atomId);
@@ -213,9 +216,11 @@ export function atomForNewBond(
 
   const prevBondId = atomNeighbours.length
     ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
-    : null;
+    : undefined;
   const prevBond =
-    prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
+    prevBondId == undefined
+      ? undefined
+      : restruct.molecule.bonds.get(prevBondId);
   let prevBondType = DEFAULT_BOND_TYPE;
   if (prevBond) {
     prevBondType = prevBond.type;
@@ -328,8 +333,8 @@ export function atomForNewBond(
     v = getHapticBondEndPosition(pos, v);
   }
 
-  const closestAtom = findClosestAtom(restruct, v, null, 0.1);
-  const a = closestAtom === null ? { label: 'C' } : closestAtom.id;
+  const closestAtom = findClosestAtom(restruct, v, undefined, 0.1);
+  const a = closestAtom == undefined ? { label: 'C' } : closestAtom.id;
 
   return { atom: a, pos: v };
 }

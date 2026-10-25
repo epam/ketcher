@@ -44,7 +44,7 @@ import { RotationView } from 'application/render/renderers/TransientView/Rotatio
 import { Atom } from 'domain/entities/CoreAtom';
 
 type EmptySnapResult = {
-  snapPosition: null;
+  snapPosition: undefined;
   connectionLength: number;
 };
 
@@ -89,12 +89,12 @@ abstract class SelectBase implements BaseTool {
     'standby';
 
   protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
+  protected rotationCenter: Vec2 | null | undefined = undefined;
   protected currentRotationAngle = 0;
   protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
   protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
   protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  protected userRotationCenter: Vec2 | null | undefined = undefined;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
@@ -419,7 +419,7 @@ abstract class SelectBase implements BaseTool {
     const snapRest = Math.abs(angleInDegrees % snapAngle);
     const leftBorder = snapAngle / 3;
     const rightBorder = (2 * snapAngle) / 3;
-    let snappedAngle: number | null = null;
+    let snappedAngle: number | null | undefined = undefined;
 
     if (snapRest < leftBorder) {
       snappedAngle = angleInDegrees - snapRest;
@@ -427,8 +427,8 @@ abstract class SelectBase implements BaseTool {
       snappedAngle = angleInDegrees + snapAngle - snapRest;
     }
 
-    if (snappedAngle === null) {
-      return { angleSnapPosition: null };
+    if (snappedAngle == undefined) {
+      return { angleSnapPosition: undefined };
     }
 
     const snappedAngleRad = (snappedAngle * Math.PI) / 180;
@@ -445,7 +445,7 @@ abstract class SelectBase implements BaseTool {
 
     if (!isAngleSnapped) {
       return {
-        angleSnapPosition: null,
+        angleSnapPosition: undefined,
       };
     }
 
@@ -468,7 +468,7 @@ abstract class SelectBase implements BaseTool {
       Math.abs(currentDistance - StandardBondLength) < HalfMonomerSize;
 
     if (!isBondLengthSnapped) {
-      return { bondLengthSnapPosition: null };
+      return { bondLengthSnapPosition: undefined };
     }
 
     const editor = provideEditorInstance();
@@ -581,7 +581,7 @@ abstract class SelectBase implements BaseTool {
   static determineAlignment(
     firstPosition: Vec2,
     secondPosition: Vec2,
-  ): MonomersAlignment | null {
+  ): MonomersAlignment | null | undefined {
     const verticalDiff = Math.abs(firstPosition.y - secondPosition.y);
     const horizontalDiff = Math.abs(firstPosition.x - secondPosition.x);
 
@@ -591,7 +591,7 @@ abstract class SelectBase implements BaseTool {
       return 'vertical';
     }
 
-    return null;
+    return undefined;
   }
 
   static checkMonomersAlignment(
@@ -675,13 +675,13 @@ abstract class SelectBase implements BaseTool {
         (bond) => bond.getAnotherMonomer(connectedMonomer) !== initialMonomer,
       );
     if (!bondToMonomerForAlignment) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const monomerForAlignment =
       bondToMonomerForAlignment.getAnotherMonomer(connectedMonomer);
     if (!monomerForAlignment) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const alignment = SelectBase.determineAlignment(
@@ -689,7 +689,7 @@ abstract class SelectBase implements BaseTool {
       monomerForAlignment.center,
     );
     if (!alignment) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const isHorizontal = alignment === 'horizontal';
@@ -701,7 +701,7 @@ abstract class SelectBase implements BaseTool {
         cursorPosition[secondaryAxis] - connectedMonomer.center[secondaryAxis],
       ) >= MonomerSize
     ) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const snapDistance = Math.abs(
@@ -714,7 +714,7 @@ abstract class SelectBase implements BaseTool {
     if (
       Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
     ) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const sign = Math.sign(
@@ -766,7 +766,7 @@ abstract class SelectBase implements BaseTool {
         secondConnectedMonomer.center[secondaryAxis],
     );
     if (firstDelta >= MonomerSize || secondDelta >= MonomerSize) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const distanceToMonomerForSnapping = Math.abs(
@@ -780,7 +780,7 @@ abstract class SelectBase implements BaseTool {
     if (
       Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
     ) {
-      return { distanceSnapPosition: null };
+      return { distanceSnapPosition: undefined };
     }
 
     const midPoint =
@@ -873,7 +873,7 @@ abstract class SelectBase implements BaseTool {
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
     let snapPosition: Vec2 | undefined;
     const emptyResult: EmptySnapResult = {
-      snapPosition: null,
+      snapPosition: undefined,
       connectionLength: Infinity,
     };
 
@@ -1375,8 +1375,8 @@ abstract class SelectBase implements BaseTool {
       Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
     ) {
       this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
+      this.rotationCenter = undefined;
+      this.userRotationCenter = undefined;
       this.currentRotationAngle = 0;
       this.rotationStartPositions.clear();
       this.updateRotationView();
@@ -1391,8 +1391,8 @@ abstract class SelectBase implements BaseTool {
     history.update(modelChanges);
 
     this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
+    this.rotationCenter = undefined;
+    this.userRotationCenter = undefined;
     this.currentRotationAngle = 0;
     this.rotationStartPositions.clear();
     this.updateRotationView();

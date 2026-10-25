@@ -91,9 +91,9 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
 }
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
-    pos1: null | { x: number; y: number };
-    pos2: null | { x: number; y: number };
-  } = { pos1: null, pos2: null };
+    pos1: null | { x: number; y: number } | undefined;
+    pos2: null | { x: number; y: number } | undefined;
+  } = { pos1: undefined, pos2: undefined };
   const oPos2 = { x: bPoint.x - aPoint.x, y: bPoint.y - aPoint.y };
   const c =
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
@@ -119,11 +119,11 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
     obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   }
-  if (obj.pos1 !== null) {
+  if (obj.pos1 != undefined) {
     obj.pos1.x += aPoint.x;
     obj.pos1.y += aPoint.y;
   }
-  if (obj.pos2 !== null) {
+  if (obj.pos2 != undefined) {
     obj.pos2.x += aPoint.x;
     obj.pos2.y += aPoint.y;
   }
@@ -191,7 +191,13 @@ function drawCIPLabel({
 
   path.push(cipValuePath.path.toFront());
 
-  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
+  restruct.addReObjectPath(
+    LayerMap.additionalInfo,
+    visel,
+    path,
+    undefined,
+    true,
+  );
 
   return cipValuePath;
 }

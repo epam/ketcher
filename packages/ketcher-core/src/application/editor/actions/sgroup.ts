@@ -140,7 +140,7 @@ export function setExpandSGroup(
   const struct = restruct.molecule;
 
   const sgroup = struct.sgroups.get(sgid);
-  assert(sgroup != null);
+  assert(sgroup != undefined);
   const atoms = SGroup.getAtoms(struct, sgroup);
 
   atoms.forEach((aid) => {
@@ -162,7 +162,7 @@ export function setExpandMonomerSGroup(
   const struct = restruct.molecule;
 
   const sGroup = struct.sgroups.get(sgid);
-  assert(sGroup != null);
+  assert(sGroup != undefined);
 
   if (attrs.expanded === sGroup.isExpanded()) {
     return action;
@@ -238,10 +238,10 @@ export function setExpandMonomerSGroup(
       );
 
       const hasCurrentStereo =
-        currentMonomerStereo !== null &&
+        currentMonomerStereo != undefined &&
         currentMonomerStereo !== Bond.PATTERN.STEREO.NONE;
       const hasOtherStereo =
-        otherMonomerStereo !== null &&
+        otherMonomerStereo != undefined &&
         otherMonomerStereo !== Bond.PATTERN.STEREO.NONE;
       const currentMonomerStereoValue =
         currentMonomerStereo ?? Bond.PATTERN.STEREO.NONE;
@@ -687,12 +687,12 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
           );
           action.addOp(new AtomDelete(leaveAtomId));
         } else if (isExpanded) {
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', undefined));
         } else {
           const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
           const newLabel = monomerCaps?.[apLabel] || 'H';
           action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', undefined));
         }
       }
     });

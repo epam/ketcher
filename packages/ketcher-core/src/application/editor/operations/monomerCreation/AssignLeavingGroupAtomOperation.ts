@@ -68,7 +68,8 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
 }
 
 export class AssignLeavingGroupAtomOperation extends BaseOperation {
-  private attachmentPointName: AttachmentPointName | null = null;
+  private attachmentPointName: AttachmentPointName | null | undefined =
+    undefined;
   private potentialLeavingAtoms: Set<number> = new Set();
 
   constructor(
@@ -87,7 +88,8 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
       connectionAttachmentPoints,
     } = this.monomerCreationState;
 
-    let atomPairForLeavingGroup: [number, number] | null = null;
+    let atomPairForLeavingGroup: [number, number] | null | undefined =
+      undefined;
     for (const attachmentPointAtoms of potentialAttachmentPoints.entries()) {
       const [attachmentAtomId, leavingAtomIds] = attachmentPointAtoms;
       if (leavingAtomIds.has(this.atomId)) {
@@ -125,7 +127,7 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   }
 
   invert() {
-    assert(this.attachmentPointName !== null);
+    assert(this.attachmentPointName != undefined);
 
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,

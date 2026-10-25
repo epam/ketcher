@@ -370,10 +370,12 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
           fragment?.stereoAtoms.includes(oldBeginId) ?? false;
 
         if (isOldBeginStereoAtom) {
-          const stereoLabel = oldBeginAtom?.stereoLabel ?? null;
+          const stereoLabel = oldBeginAtom?.stereoLabel ?? undefined;
           const stereoParity = oldBeginAtom?.stereoParity ?? 0;
           action.addOp(
-            new AtomAttr(oldBeginId, 'stereoLabel', null).perform(restruct),
+            new AtomAttr(oldBeginId, 'stereoLabel', undefined).perform(
+              restruct,
+            ),
           );
           action.addOp(
             new AtomAttr(oldBeginId, 'stereoParity', 0).perform(restruct),
@@ -436,7 +438,7 @@ export function bondChangingAction(
   const loop =
     bondProps.type !== undefined && plainBondTypes.includes(bondProps.type)
       ? plainBondTypes
-      : null;
+      : undefined;
   if (
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&

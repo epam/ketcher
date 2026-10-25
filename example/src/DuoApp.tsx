@@ -15,14 +15,16 @@ const DuoApp = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [structServiceProvider1, setStructServiceProvider1] =
-    useState<StructServiceProvider | null>(null);
+  const [structServiceProvider1, setStructServiceProvider1] = useState<
+    StructServiceProvider | undefined
+  >(undefined);
   useEffect(() => {
     getStructServiceProvider().then(setStructServiceProvider1);
   }, []);
 
-  const [structServiceProvider2, setStructServiceProvider2] =
-    useState<StructServiceProvider | null>(null);
+  const [structServiceProvider2, setStructServiceProvider2] = useState<
+    StructServiceProvider | undefined
+  >(undefined);
   useEffect(() => {
     getStructServiceProvider().then(setStructServiceProvider2);
   }, []);

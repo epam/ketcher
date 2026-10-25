@@ -21,8 +21,8 @@ import { Scale } from 'domain/helpers';
 import type { Vec2 } from 'domain/entities';
 
 type Data = {
-  bid: number | null;
-  d: Vec2 | null;
+  bid: number | null | undefined;
+  d: Vec2 | null | undefined;
 };
 
 export class BondMove extends BaseOperation {
@@ -30,12 +30,12 @@ export class BondMove extends BaseOperation {
 
   constructor(bondId?: number, d?: Vec2) {
     super(OperationType.BOND_MOVE, OperationPriority.BOND_MOVE);
-    this.data = { bid: bondId ?? null, d: d ?? null };
+    this.data = { bid: bondId ?? undefined, d: d ?? undefined };
   }
 
   execute(restruct: ReStruct) {
     const { bid, d } = this.data;
-    if (bid === null || !d) return;
+    if (bid == undefined || !d) return;
     const bond = restruct.bonds.get(bid);
     if (!bond) return;
 

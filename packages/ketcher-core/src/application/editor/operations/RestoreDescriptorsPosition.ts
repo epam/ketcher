@@ -20,10 +20,10 @@ import type { ReStruct } from '../../render';
 import type { SGroup, Vec2 } from 'domain/entities';
 
 class RestoreDescriptorsPosition extends BaseOperation {
-  readonly history: Record<number, Vec2 | null>;
+  readonly history: Record<number, Vec2 | undefined>;
   static InverseConstructor: new () => BaseOperation;
 
-  constructor(history: Record<number, Vec2 | null>) {
+  constructor(history: Record<number, Vec2 | undefined>) {
     super(OperationType.RESTORE_DESCRIPTORS_POSITION);
     this.history = history;
   }

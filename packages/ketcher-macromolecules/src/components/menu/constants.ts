@@ -9,7 +9,7 @@ export const MACRO_SELECTION_TOOL_OPTIONS = {
 export type MacroSelectionTool = keyof typeof MACRO_SELECTION_TOOL_OPTIONS;
 
 export const isMacroSelectionTool = (
-  toolName: string | null,
+  toolName: string | undefined,
 ): toolName is MacroSelectionTool =>
-  toolName !== null &&
+  toolName !== undefined &&
   Object.prototype.hasOwnProperty.call(MACRO_SELECTION_TOOL_OPTIONS, toolName);

@@ -68,7 +68,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     children,
     title,
     params,
-    result = () => null,
+    result = () => undefined,
     valid = () => !!result(),
     buttons = ['OK'],
     headerContent,
@@ -104,7 +104,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${CLIP_AREA_BASE_CLASS}`,
     );
 
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
     if (focusable && dialogElement) {
       timeoutId = setTimeout(() => {
         dialogElement.focus();
@@ -114,7 +114,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return () => {
       // Cancel the pending focus-on-open timeout so it cannot fire after
       // unmount and focus a detached element.
-      if (timeoutId !== null) {
+      if (timeoutId != undefined) {
         clearTimeout(timeoutId);
       }
       // Defer focus restoration so the browser can first move focus to

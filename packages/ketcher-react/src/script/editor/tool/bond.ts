@@ -152,7 +152,7 @@ class BondTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      if (atomId !== null) atomResult.push(atomId);
+      if (atomId != undefined) atomResult.push(atomId);
     }
     if (ci && functionalGroups.size && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
@@ -160,7 +160,7 @@ class BondTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      if (bondId !== null) bondResult.push(bondId);
+      if (bondId != undefined) bondResult.push(bondId);
     }
     if (atomResult.length > 0) {
       for (const id of atomResult) {
@@ -459,7 +459,7 @@ class BondTool implements Tool {
       functionalGroups,
       atomId,
     );
-    if (atomInFg === null) return [];
+    if (atomInFg == undefined) return [];
 
     const fgId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,

@@ -141,9 +141,9 @@ export const Modal = ({
     [theme.ketcher.color.background.overlay],
   );
 
-  const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
-    Content: null,
-    Footer: null,
+  const subcomponents: Record<ModalSubcomponent, JSX.Element | undefined> = {
+    Content: undefined,
+    Footer: undefined,
   };
 
   React.Children.forEach(children, (child) => {

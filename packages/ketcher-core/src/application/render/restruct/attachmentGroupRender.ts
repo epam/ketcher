@@ -233,7 +233,7 @@ function drawGroupAtomsHover(
   });
 
   const combinedPathData = uniteHoverPaths(hoversToCombine);
-  if (!combinedPathData) return null;
+  if (!combinedPathData) return undefined;
 
   const hoverPath = render.paper.path(combinedPathData).attr({
     ...render.options.hoverStyle,

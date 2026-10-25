@@ -44,11 +44,11 @@ const AUTO_SCROLL_OFFSET_Y = 10;
 export class ZoomTool implements BaseTool {
   public canvas: D3SvgElementSelection<SVGGElement, void>;
   public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
-  private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
+  private zoom!: ZoomBehavior<SVGSVGElement, void> | null | undefined;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
-  private rememberedZoomTransform: ZoomTransform | null = null;
-  private resizeObserver: ResizeObserver | null = null;
+  private rememberedZoomTransform: ZoomTransform | null | undefined = undefined;
+  private resizeObserver: ResizeObserver | null | undefined = undefined;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
   private scrollBars!: {
@@ -141,13 +141,13 @@ export class ZoomTool implements BaseTool {
   }
 
   public forgetRememberedZoomTransform() {
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
   }
 
   public restoreRememberedZoomTransform() {
     const transform = this.rememberedZoomTransform;
 
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
 
     if (transform) {
       this.zoom?.transform(this.canvasWrapper, transform);
@@ -422,7 +422,7 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
-    this.rememberedZoomTransform = null;
+    this.rememberedZoomTransform = undefined;
 
     const canvasWrapperNode = this.canvasWrapper.node();
 
@@ -476,8 +476,8 @@ export class ZoomTool implements BaseTool {
     this.scrollBars?.horizontal?.bar?.remove();
     this.scrollBars?.vertical?.bar?.remove();
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.zoom = null;
+    this.resizeObserver = undefined;
+    this.zoom = undefined;
     this.zoomEventHandlers = [];
   }
 

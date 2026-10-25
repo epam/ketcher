@@ -26,16 +26,16 @@ class Visel {
   public type: string;
   public paths: RaphaelPath[];
   public boxes: Box2Abs[];
-  public boundingBox: Box2Abs | null;
-  public oldBoundingBox: Box2Abs | null;
+  public boundingBox: Box2Abs | null | undefined;
+  public oldBoundingBox: Box2Abs | null | undefined;
   public exts: Box2Abs[];
 
   constructor(type: string) {
     this.type = type;
     this.paths = [];
     this.boxes = [];
-    this.boundingBox = null;
-    this.oldBoundingBox = null;
+    this.boundingBox = undefined;
+    this.oldBoundingBox = undefined;
     this.exts = [];
   }
 
@@ -44,7 +44,9 @@ class Visel {
     if (bb) {
       this.boxes.push(bb);
       this.boundingBox =
-        this.boundingBox === null ? bb : Box2Abs.union(this.boundingBox, bb);
+        this.boundingBox == undefined
+          ? bb
+          : Box2Abs.union(this.boundingBox, bb);
     }
     if (ext) {
       this.exts.push(ext);
@@ -55,10 +57,10 @@ class Visel {
     this.paths = [];
     this.boxes = [];
     this.exts = [];
-    if (this.boundingBox !== null) {
+    if (this.boundingBox != undefined) {
       this.oldBoundingBox = this.boundingBox.clone();
     }
-    this.boundingBox = null;
+    this.boundingBox = undefined;
   }
 
   translate(vector: Vec2): void;
@@ -74,7 +76,7 @@ class Visel {
         path.translateAbs(x, y);
       }
       this.boxes = this.boxes.map((box) => box.translate(delta));
-      if (this.boundingBox !== null) {
+      if (this.boundingBox != undefined) {
         this.boundingBox = this.boundingBox.translate(delta);
       }
     }
@@ -91,7 +93,7 @@ class Visel {
         undefined,
       ),
     );
-    if (this.boundingBox !== null) {
+    if (this.boundingBox != undefined) {
       this.boundingBox = this.boundingBox.transform(
         (point) => point.rotateAroundOrigin(degree, center),
         undefined,

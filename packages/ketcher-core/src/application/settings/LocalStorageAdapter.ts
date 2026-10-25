@@ -9,18 +9,18 @@ import { KetcherLogger } from 'utilities';
 export class LocalStorageAdapter implements ISettingsStorage {
   /**
    * Load settings from localStorage
-   * Returns null if not found or on error
+   * Returns undefined if not found or on error
    */
-  async load(key: string): Promise<Partial<Settings> | null> {
+  async load(key: string): Promise<Partial<Settings> | undefined> {
     if (!this.isAvailable()) {
       KetcherLogger.warn('localStorage is not available');
-      return null;
+      return undefined;
     }
 
     try {
       const item = localStorage.getItem(key);
       if (!item) {
-        return null;
+        return undefined;
       }
       return JSON.parse(item);
     } catch (error) {
@@ -28,7 +28,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
         `Failed to load settings from localStorage (key: ${key}):`,
         error,
       );
-      return null;
+      return undefined;
     }
   }
 

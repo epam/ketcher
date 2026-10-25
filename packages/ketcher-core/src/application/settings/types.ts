@@ -117,7 +117,7 @@ export interface ValidationResult {
  * Storage abstraction interface
  */
 export interface ISettingsStorage {
-  load(key: string): Promise<Partial<Settings> | null>;
+  load(key: string): Promise<Partial<Settings> | undefined>;
   save(key: string, settings: Settings): Promise<void>;
   clear(key: string): Promise<void>;
   isAvailable(): boolean;

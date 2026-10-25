@@ -18,8 +18,9 @@ const PopupApp = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [structServiceProvider, setStructServiceProvider] =
-    useState<StructServiceProvider | null>(null);
+  const [structServiceProvider, setStructServiceProvider] = useState<
+    StructServiceProvider | undefined
+  >(undefined);
   useEffect(() => {
     getStructServiceProvider().then(setStructServiceProvider);
   }, []);

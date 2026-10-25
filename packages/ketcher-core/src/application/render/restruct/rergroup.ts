@@ -30,12 +30,12 @@ const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
 
 class ReRGroup extends ReObject {
-  public labelBox: Box2Abs | null;
+  public labelBox: Box2Abs | null | undefined;
   public item: RGroup;
 
   constructor(rgroup: RGroup) {
     super('rgroup');
-    this.labelBox = null;
+    this.labelBox = undefined;
     this.item = rgroup;
   }
 
@@ -65,8 +65,8 @@ class ReRGroup extends ReObject {
     return ret;
   }
 
-  calcBBox(render: Render): Box2Abs | null {
-    let rGroupBoundingBox: Box2Abs | null = null;
+  calcBBox(render: Render): Box2Abs | null | undefined {
+    let rGroupBoundingBox: Box2Abs | null | undefined = undefined;
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       const fragBox = frag?.calcBBox(render.ctab, fid, render);
@@ -163,12 +163,12 @@ class ReRGroup extends ReObject {
   _draw(render: Render, _rgid: number, attrs: Record<string, unknown>) {
     const vbox = this.getVBoxObj(render);
     if (!vbox) {
-      return null;
+      return undefined;
     }
     const bb = vbox.extend(BORDER_EXT, BORDER_EXT);
 
     if (!bb) {
-      return null;
+      return undefined;
     }
 
     const p0 = Scale.modelToCanvas(bb.p0, render.options);
@@ -185,7 +185,7 @@ class ReRGroup extends ReObject {
       console.error(
         'Abnormal situation, fragment does not belong to the render',
       );
-      return null;
+      return undefined;
     }
 
     const ret = this._draw(render, rgid, render.options.hoverStyle);
@@ -206,7 +206,7 @@ class ReRGroup extends ReObject {
         LayerMap.data,
         this.visel,
         data.shift(),
-        null,
+        undefined,
         true,
       );
     }
@@ -247,7 +247,7 @@ function rGroupdrawBrackets(
   set.push(leftBracket, rightBracket);
 }
 
-function rLogicToString(id: number | null, rLogic: RGroup): string {
+function rLogicToString(id: number | null | undefined, rLogic: RGroup): string {
   const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
 
   const rangeExists =

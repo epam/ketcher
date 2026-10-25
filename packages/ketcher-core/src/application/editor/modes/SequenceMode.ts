@@ -1888,10 +1888,10 @@ export class SequenceMode extends BaseMode {
               const lastNode = selectionRange.at(-1)?.node;
               const prevInSameChain = firstNode
                 ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
-                : null;
+                : undefined;
               const nextInSameChain = lastNode
                 ? SequenceRenderer.getNextNodeInSameChain(lastNode)
-                : null;
+                : undefined;
               return (
                 !prevInSameChain &&
                 (!nextInSameChain ||
@@ -1920,7 +1920,7 @@ export class SequenceMode extends BaseMode {
           const insertAsStandaloneChain =
             isWholeChainSelected && !previousTwoStrandedNodeInSameChain;
           let senseNodeToConnect = insertAsStandaloneChain
-            ? null
+            ? undefined
             : currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
@@ -1990,7 +1990,7 @@ export class SequenceMode extends BaseMode {
                     enteredSymbol,
                     isDnaEnteringMode,
                   ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode ?? null,
+              previousTwoStrandedNodeInSameChain?.antisenseNode ?? undefined,
               insertAsStandaloneChain
                 ? undefined
                 : currentTwoStrandedNode?.antisenseNode,
@@ -2142,18 +2142,18 @@ export class SequenceMode extends BaseMode {
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R1 === null;
+      return entity.attachmentPointsToBonds.R1 == undefined;
     }
 
-    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 == undefined;
   }
 
   private isR2Free(entity?: SequenceNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R2 === null;
+      return entity.attachmentPointsToBonds.R2 == undefined;
     }
 
-    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 === null;
+    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 == undefined;
   }
 
   private areR1R2Free(
@@ -2170,10 +2170,10 @@ export class SequenceMode extends BaseMode {
     secondMonomerAttachmentPoint: AttachmentPointName,
   ) {
     return (
-      firstMonomer.attachmentPointsToBonds[firstMonomerAttachmentPoint] ===
-        null &&
-      secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ===
-        null
+      firstMonomer.attachmentPointsToBonds[firstMonomerAttachmentPoint] ==
+        undefined &&
+      secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ==
+        undefined
     );
   }
 
@@ -2263,7 +2263,7 @@ export class SequenceMode extends BaseMode {
     );
 
     if (!hasAnySideConnection) {
-      return null;
+      return undefined;
     }
 
     const sideConnectionsData: PreservedSideChainConnection[] = [];
@@ -2361,7 +2361,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newMonomerSequenceNode,
-        nextNodeInStrand ?? null,
+        nextNodeInStrand ?? undefined,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -2622,12 +2622,12 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
     sideChainConnections?: boolean,
-  ): AttachmentPointName | null {
+  ): AttachmentPointName | null | undefined {
     const newMonomerAttachmentPoints = monomerItem.attachmentPoints
       ? BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
           monomerItem.attachmentPoints,
         )
-      : null;
+      : undefined;
 
     for (const { strandType, selectionRange } of splitSelectionsIntoStrandRuns(
       selections,
@@ -2686,7 +2686,7 @@ export class SequenceMode extends BaseMode {
       }
     }
 
-    return null;
+    return undefined;
   }
 
   private presetHasNeededAttachmentPoints(preset) {
@@ -2746,7 +2746,8 @@ export class SequenceMode extends BaseMode {
       currentTwoStrandedNode?.senseNode instanceof EmptySequenceNode
     );
 
-    let missingAttachmentPoint: AttachmentPointName | null = null;
+    let missingAttachmentPoint: AttachmentPointName | null | undefined =
+      undefined;
 
     const previousMonomerHasR2 = Boolean(
       previousTwoStrandedNodeInSameChain?.senseNode?.lastMonomerInNode.hasAttachmentPoint(
@@ -2892,8 +2893,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? (currentTwoStrandedNode?.antisenseNode ?? null)
-        : (currentTwoStrandedNode?.senseNode ?? null);
+        ? (currentTwoStrandedNode?.antisenseNode ?? undefined)
+        : (currentTwoStrandedNode?.senseNode ?? undefined);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -2949,7 +2950,8 @@ export class SequenceMode extends BaseMode {
       position,
     ) as Sugar;
 
-    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null = null;
+    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null | undefined =
+      undefined;
     if (rnaBase) {
       rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
         rnaBase,
@@ -2957,7 +2959,7 @@ export class SequenceMode extends BaseMode {
       ) as RNABase;
     }
 
-    let phosphateMonomer: Phosphate | null = null;
+    let phosphateMonomer: Phosphate | null | undefined = undefined;
     if (phosphate) {
       phosphateMonomer = editor.drawingEntitiesManager.createMonomer(
         phosphate,
@@ -3049,7 +3051,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPresetNode,
-        nextNodeInStrand ?? null,
+        nextNodeInStrand ?? undefined,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
@@ -3272,8 +3274,8 @@ export class SequenceMode extends BaseMode {
       const previousTwoStrandedNodeInSameChain =
         SequenceRenderer.previousNodeInSameChain;
       const nextNodeToConnect = this.isAntisenseEditMode
-        ? (currentTwoStrandedNode?.antisenseNode ?? null)
-        : (currentTwoStrandedNode?.senseNode ?? null);
+        ? (currentTwoStrandedNode?.antisenseNode ?? undefined)
+        : (currentTwoStrandedNode?.senseNode ?? undefined);
       const previousNodeToConnect = this.isAntisenseEditMode
         ? previousTwoStrandedNodeInSameChain?.antisenseNode
         : previousTwoStrandedNodeInSameChain?.senseNode;
@@ -3441,7 +3443,7 @@ export class SequenceMode extends BaseMode {
             new Chain().addNode(chainsCollectionOrNode),
           );
     const currentNode =
-      nextNodeToConnect === null
+      nextNodeToConnect == undefined
         ? undefined
         : (nextNodeToConnect ??
           SequenceRenderer.currentEdittingNode?.senseNode);

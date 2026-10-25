@@ -19,8 +19,9 @@ const App = () => {
   const [isVisisible, setIsVisisible] = useState(false);
   const [molecule, setMolecule] = useState('');
 
-  const [structServiceProvider, setStructServiceProvider] =
-    useState<StructServiceProvider | null>(null);
+  const [structServiceProvider, setStructServiceProvider] = useState<
+    StructServiceProvider | undefined
+  >(undefined);
   useEffect(() => {
     getStructServiceProvider().then(setStructServiceProvider);
   }, []);

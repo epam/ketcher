@@ -189,7 +189,7 @@ export class CanvasMatrix {
           this.matrix.set(
             rowNumber,
             columnNumber,
-            new Cell(null, [], columnNumber, rowNumber),
+            new Cell(undefined, [], columnNumber, rowNumber),
           );
 
           continue;
@@ -272,7 +272,7 @@ export class CanvasMatrix {
               nextCellX,
             ) as Cell;
             connection = new Connection(
-              null,
+              undefined,
               xDirection,
               isVertical,
               polymerBond,
@@ -294,7 +294,7 @@ export class CanvasMatrix {
               nextCellX,
             ) as Cell;
             connection = new Connection(
-              null,
+              undefined,
               yDirection,
               isVertical,
               polymerBond,

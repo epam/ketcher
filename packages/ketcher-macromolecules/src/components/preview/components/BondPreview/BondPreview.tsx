@@ -43,7 +43,7 @@ const BondPreview = ({ className }: Props) => {
   });
 
   if (!firstMonomer || !secondMonomer) {
-    return null;
+    return undefined;
   }
 
   return (

@@ -108,7 +108,7 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
     atomMap[a] = -1;
   }
   sgroup.atoms = sgroup.patoms;
-  sgroup.patoms = null;
+  sgroup.patoms = undefined;
 }
 
 function postLoadSru(sgroup: SGroup): void {

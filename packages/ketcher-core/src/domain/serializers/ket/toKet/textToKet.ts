@@ -151,14 +151,15 @@ export function textToKet(textNode) {
         // Build parts array from text children
         paraObj.parts = (paragraph.children || [])
           .map((child: LexicalTextChild) => {
-            if (child.type !== 'text' || child.text === undefined) return null;
+            if (child.type !== 'text' || child.text === undefined)
+              return undefined;
 
             const part: KetTextPart = { text: child.text };
             applyFontStyleOverrides(part, child);
 
             return part;
           })
-          .filter((part) => part !== null);
+          .filter((part) => part != undefined);
 
         return paraObj;
       },

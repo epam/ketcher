@@ -74,5 +74,5 @@ export const RNAContextMenu = () => {
         ></ContextMenu>,
         ketcherEditorRootElement,
       )
-    : null;
+    : undefined;
 };

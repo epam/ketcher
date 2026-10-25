@@ -236,7 +236,7 @@ function Editor({
     );
 
     return () => {
-      dispatch(destroyEditor(null));
+      dispatch(destroyEditor(undefined));
     };
   }, [dispatch]);
 

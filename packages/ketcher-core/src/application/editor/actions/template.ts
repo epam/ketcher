@@ -71,7 +71,7 @@ function extraBondAction(
   const frid = atomGetAttr(restruct, aid, 'fragment') as number;
   let additionalAtom: number | null;
 
-  if (angle === null) {
+  if (angle == undefined) {
     const middleAtom = atomForNewBond(restruct, aid);
     const actionRes = fromBondAddition(
       restruct,
@@ -232,7 +232,7 @@ export function fromTemplateOnAtom(
       newsgid,
       attachmentPoints,
       atom.pp,
-      sg.type === 'SUP' ? sg.isExpanded() : null,
+      sg.type === 'SUP' ? sg.isExpanded() : undefined,
       sg.data.name,
     );
     sgAction.operations.reverse();
@@ -303,7 +303,7 @@ function getConnectingBond(
       beginBondIds.length === 1 && endBondIds.length === 1;
 
     if (!isOnlyTwoConnectingBonds) {
-      return null;
+      return undefined;
     }
     const beginBond = struct.bonds.get(beginBondIds[0]);
     const endBond = struct.bonds.get(endBondIds[0]);
@@ -320,7 +320,7 @@ function getConnectingBond(
       return Bond.getCyclopentadieneFusingBondType(bond, beginBond, endBond);
     }
   }
-  return null;
+  return undefined;
 }
 
 function placeTemplateAtoms(
@@ -364,9 +364,9 @@ function placeTemplateAtoms(
       .rotate(angle)
       .scaled(scale)
       .add(bondBeginAtom.pp);
-    const mergeA = closest.atom(restruct, v, null, 0.1);
+    const mergeA = closest.atom(restruct, v, undefined, 0.1);
 
-    if (mergeA === null) {
+    if (mergeA == undefined) {
       const operation = new AtomAdd(attrs, v).perform(restruct) as AtomAdd;
       action.addOp(operation);
       atomsMap.set(id, operation.data.aid as number);
@@ -396,12 +396,12 @@ function placeTemplateBonds(
   bond: Bond,
   bid: number,
   atomsMap: Map<number, number>,
-  fusingBondType: number | null,
+  fusingBondType: number | null | undefined,
   isPreview: boolean,
   action: Action,
   pasteItems: PasteItems,
 ) {
-  const isFusingBenzeneBySpecialRules = fusingBondType !== null;
+  const isFusingBenzeneBySpecialRules = fusingBondType != undefined;
 
   tmpl.bonds.forEach((tBond, tBondIndex) => {
     const beginAtomId = atomsMap.get(tBond.begin);
@@ -415,7 +415,7 @@ function placeTemplateBonds(
 
     const existId = struct.findBondId(beginAtomId, endAtomId);
     let previewBondId: number | null;
-    if (existId === null) {
+    if (existId == undefined) {
       const operation = new BondAdd(beginAtomId, endAtomId, tBond).perform(
         restruct,
       ) as BondAdd;

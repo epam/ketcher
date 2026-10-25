@@ -153,7 +153,7 @@ export const EditorEvents = () => {
     }
 
     return () => {
-      dispatch(selectTool(null));
+      dispatch(selectTool(undefined));
       editor?.events.selectTool.remove(selectToolHandler);
       editor?.events.error.remove(handleError);
       editor?.events.openErrorModal.remove(handleOpenErrorModal);

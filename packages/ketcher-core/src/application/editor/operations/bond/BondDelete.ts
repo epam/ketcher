@@ -21,10 +21,10 @@ import type { BondAttributes } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
-  bond: Partial<BondAttributes> | null;
-  begin: number | null;
-  end: number | null;
-  bid: number | null;
+  bond: Partial<BondAttributes> | null | undefined;
+  begin: number | null | undefined;
+  end: number | null | undefined;
+  bid: number | null | undefined;
   needInvalidateAtoms?: boolean;
 };
 
@@ -34,17 +34,17 @@ class BondDelete extends BaseOperation {
   constructor(bondId?: number) {
     super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);
     this.data = {
-      bid: bondId ?? null,
-      bond: null,
-      begin: null,
-      end: null,
+      bid: bondId ?? undefined,
+      bond: undefined,
+      begin: undefined,
+      end: undefined,
       needInvalidateAtoms: true,
     };
   }
 
   execute(restruct: ReStruct) {
     const { bid } = this.data;
-    if (bid === null) return;
+    if (bid == undefined) return;
 
     const struct = restruct.molecule;
     if (!this.data.bond) {

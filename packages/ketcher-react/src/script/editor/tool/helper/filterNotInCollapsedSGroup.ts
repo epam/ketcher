@@ -28,8 +28,11 @@ export function filterNotInContractedSGroup(
   };
 }
 
-function isNotCollapsedSGroup(groupId: number | null, struct: Struct): boolean {
-  if (groupId === null) {
+function isNotCollapsedSGroup(
+  groupId: number | null | undefined,
+  struct: Struct,
+): boolean {
+  if (groupId == undefined) {
     return true;
   }
   const sGroup = struct.sgroups.get(groupId);

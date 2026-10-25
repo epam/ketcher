@@ -56,7 +56,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
       arrowId: this.data.arrowId,
     });
 
-    if (this.data.id == null) {
+    if (this.data.id == undefined) {
       const index = struct.addRxnArrow(item);
       this.data.id = index;
       this.data.arrowId = item.arrowId;
@@ -65,7 +65,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
     }
 
     const itemId = this.data.id;
-    if (itemId == null) {
+    if (itemId == undefined) {
       KetcherLogger.error(
         'RxnArrowAdd.execute(): rxnArrow id was not assigned',
       );
@@ -86,7 +86,7 @@ class RxnArrowAdd extends Base<RxnArrowAddData> {
 
   invert(): RxnArrowDelete {
     const itemId = this.data.id;
-    if (itemId == null) {
+    if (itemId == undefined) {
       KetcherLogger.error('RxnArrowAdd.invert(): rxnArrow id was not assigned');
       return new RxnArrowDelete();
     }
@@ -116,7 +116,7 @@ class RxnArrowDelete extends Base<RxnArrowDeleteData> {
   execute(restruct: Restruct): void {
     KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
     const itemId = this.data.id;
-    if (itemId == null) {
+    if (itemId == undefined) {
       KetcherLogger.error(
         'RxnArrowDelete.execute(): rxnArrow id is not assigned',
       );

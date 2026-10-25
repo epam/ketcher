@@ -19,18 +19,18 @@ import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
 interface ModalState {
-  name: string | null;
+  name: string | undefined;
   isOpen: boolean;
-  additionalProps: AdditionalModalProps | null;
+  additionalProps: AdditionalModalProps | undefined;
   errorTooltips: string[];
   errorModalText: string;
   errorModalTitle: string;
 }
 
 const initialState: ModalState = {
-  name: null,
+  name: undefined,
   isOpen: false,
-  additionalProps: null,
+  additionalProps: undefined,
   errorTooltips: [],
   errorModalText: '',
   errorModalTitle: '',
@@ -65,9 +65,9 @@ export const modalSlice = createSlice({
       state.isOpen = true;
     },
     closeModal: (state) => {
-      state.name = null;
+      state.name = undefined;
       state.isOpen = false;
-      state.additionalProps = null;
+      state.additionalProps = undefined;
     },
     openErrorTooltip: (state, action: PayloadAction<string>) => {
       if (!state.errorTooltips.includes(action.payload)) {

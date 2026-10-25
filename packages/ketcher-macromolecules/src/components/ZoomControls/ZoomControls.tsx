@@ -41,8 +41,9 @@ export const ZoomControls = () => {
   const { t } = useTranslation('macromolecules');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
-  const [containerElement, setContainerElement] =
-    useState<HTMLDivElement | null>(null);
+  const [containerElement, setContainerElement] = useState<
+    HTMLDivElement | undefined
+  >(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const editor = useAppSelector(selectEditor);
@@ -105,7 +106,9 @@ export const ZoomControls = () => {
   };
 
   return (
-    <ElementAndDropdown ref={setContainerElement}>
+    <ElementAndDropdown
+      ref={(element) => setContainerElement(element ?? undefined)}
+    >
       <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">{currentZoom}%</ZoomLabel>
         <Icon name="chevron" />

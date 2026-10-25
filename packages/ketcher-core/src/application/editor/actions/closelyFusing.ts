@@ -65,7 +65,7 @@ export function getItemsToFuse(editor, items) {
 }
 
 export function getHoverToFuse(items) {
-  if (!items) return null;
+  if (!items) return undefined;
 
   const hoverItems = {
     atoms: Array.from(items.atoms.values()),
@@ -145,7 +145,7 @@ function closestToMerge(struct, closestMap) {
     mergeMap.bonds.size === 0 &&
     mergeMap.atomToFunctionalGroup.size === 0
   ) {
-    return null;
+    return undefined;
   }
 
   return mergeMap;

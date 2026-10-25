@@ -63,6 +63,8 @@ export interface FormContextValue {
   stateStore: FormStateStore;
 }
 
-const formContext = React.createContext<FormContextValue | null>(null);
+const formContext = React.createContext<FormContextValue | undefined>(
+  undefined,
+);
 
 export default formContext;

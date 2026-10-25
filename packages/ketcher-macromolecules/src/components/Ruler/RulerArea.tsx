@@ -30,7 +30,7 @@ const getVisibleEdges = (
 ) => {
   const visibleWidth = canvasContainer?.clientWidth || fallbackWidth;
   if (!visibleWidth) {
-    return null;
+    return undefined;
   }
 
   const left = canvasContainer?.scrollLeft || 0;
@@ -250,7 +250,7 @@ export const RulerArea = () => {
   );
 
   if (layoutMode === 'flex-layout-mode') {
-    return null;
+    return undefined;
   }
 
   // Temporary solution to disable autozoom for the macro editor in e2e tests
@@ -278,5 +278,5 @@ export const RulerArea = () => {
 
       <RulerScale transform={transform} layoutMode={layoutMode} />
     </div>
-  ) : null;
+  ) : undefined;
 };

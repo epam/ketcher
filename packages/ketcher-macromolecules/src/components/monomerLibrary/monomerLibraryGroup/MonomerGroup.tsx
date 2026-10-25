@@ -127,7 +127,7 @@ const MonomerGroup = ({
 
   // Don't render the group if there are no items
   if (!items || items.length === 0) {
-    return null;
+    return undefined;
   }
 
   return (

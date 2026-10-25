@@ -233,8 +233,8 @@ const getHelmAliasUniquenessScope = (
 };
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
-let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
-  null;
+let persistentMonomersLibraryParsedJson:
+  IKetMacromoleculesContent | null | undefined = undefined;
 // Template refs of monomers explicitly created via the Monomer Creation Wizard.
 // Only refs in this set are eligible for deletion by the user.
 // Populated by updateMonomersLibrary(…, …, isUserCreated=true) and replayed
@@ -255,7 +255,8 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
+  private _monomersLibraryParsedJson:
+    IKetMacromoleculesContent | null | undefined = undefined;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public ketcherRootElement: HTMLDivElement | null;
@@ -591,26 +592,26 @@ export class CoreEditor {
 
     const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases): string[] =>
       [
-        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : null,
+        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : undefined,
         idtAliases?.modifications?.endpoint3
           ? `IDT 3' alias "${idtAliases.modifications.endpoint3}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.endpoint5
           ? `IDT 5' alias "${idtAliases.modifications.endpoint5}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.internal
           ? `IDT internal alias "${idtAliases.modifications.internal}"`
-          : null,
+          : undefined,
       ].filter(Boolean) as string[];
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
-          : null,
+          : undefined,
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
-          : null,
+          : undefined,
         ...formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
         .filter(Boolean)
@@ -1178,7 +1179,7 @@ export class CoreEditor {
   public cancelLibraryItemDrag() {
     if (this.dragDropHandler.isDragging) {
       this.libraryItemDragCancelled = true;
-      this.events.setLibraryItemDragState.dispatch(null);
+      this.events.setLibraryItemDragState.dispatch(undefined);
     }
   }
 
@@ -2800,7 +2801,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
-    this.micromoleculesEditor.selection(null);
+    this.micromoleculesEditor.selection(undefined);
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2836,7 +2837,7 @@ export class CoreEditor {
     if (this._type === EditorType.Macromolecules) {
       return;
     }
-    this.micromoleculesEditor?.selection(null);
+    this.micromoleculesEditor?.selection(undefined);
     const restorePreviousMode = this.captureModeState();
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
@@ -2941,7 +2942,7 @@ export class CoreEditor {
       this.micromoleculesEditor?.render?.options?.microModeScale;
     const macroModeScale = provideEditorSettings().macroModeScale;
 
-    if (microModeScale == null || microModeScale === macroModeScale) {
+    if (microModeScale == undefined || microModeScale === macroModeScale) {
       return 1;
     }
 

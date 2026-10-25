@@ -85,12 +85,12 @@ const MonomerConnection = ({
   }
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(
+    useState<string | undefined>(
       initialConnection.firstAttachmentPoint ||
         getDefaultAttachmentPoint(firstMonomer),
     );
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(
+    useState<string | undefined>(
       initialConnection.secondAttachmentPoint ||
         getDefaultAttachmentPoint(secondMonomer),
     );
@@ -216,7 +216,7 @@ const MonomerConnection = ({
 
 interface AttachmentPointSelectionPanelProps {
   monomer: BaseMonomer;
-  selectedAttachmentPoint: string | null;
+  selectedAttachmentPoint: string | undefined;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
   expanded?: boolean;
   position: 'left' | 'right';
@@ -233,20 +233,20 @@ function AttachmentPointSelectionPanel({
     () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );
 
-  const getLeavingGroup = (attachmentPoint): string | null => {
+  const getLeavingGroup = (attachmentPoint): string | undefined => {
     const MonomerCaps = monomer.monomerCaps;
     const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
     if (!MonomerCaps) {
-      return isAmbiguousMonomer ? null : 'H';
+      return isAmbiguousMonomer ? undefined : 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup ?? null;
+    return leavingGroup ?? undefined;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
     const selectedBond = selectedAttachmentPoint
       ? monomer.attachmentPointsToBonds[selectedAttachmentPoint]
-      : null;
+      : undefined;
     if (selectedAttachmentPoint && selectedBond) {
       monomer.removeBond(selectedBond);
     }
@@ -302,14 +302,14 @@ function AttachmentPointSelectionPanel({
   );
 }
 
-function getDefaultAttachmentPoint(monomer: BaseMonomer): string | null {
+function getDefaultAttachmentPoint(monomer: BaseMonomer): string | undefined {
   if (monomer.chosenFirstAttachmentPointForBond)
     return monomer.chosenFirstAttachmentPointForBond;
   if (monomer.chosenSecondAttachmentPointForBond)
     return monomer.chosenSecondAttachmentPointForBond;
   const possibleAttachmentPoints = Object.entries(
     monomer.attachmentPointsToBonds,
-  ).filter(([_, bond]) => bond == null);
+  ).filter(([_, bond]) => bond == undefined);
 
   if (possibleAttachmentPoints.length === 1) {
     const [attachmentPointName] = possibleAttachmentPoints[0];
@@ -317,7 +317,7 @@ function getDefaultAttachmentPoint(monomer: BaseMonomer): string | null {
     return attachmentPointName;
   }
 
-  return null;
+  return undefined;
 }
 
 export { MonomerConnection };

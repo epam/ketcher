@@ -38,7 +38,7 @@ export class Sugar extends BaseMonomer {
   private static getValidPoint(
     self: BaseMonomer,
     otherMonomer: BaseMonomer,
-    potentialPointOnOther: string | null,
+    potentialPointOnOther: string | null | undefined,
   ) {
     // If we chose specific start AP on this monomer, return it
     if (self.chosenFirstAttachmentPointForBond) {

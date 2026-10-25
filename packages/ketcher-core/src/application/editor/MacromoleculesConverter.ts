@@ -184,7 +184,14 @@ export class MacromoleculesConverter {
 
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         const atomIdMap = new Map<number, number>();
-        monomerStruct.mergeInto(struct, null, null, false, false, atomIdMap);
+        monomerStruct.mergeInto(
+          struct,
+          undefined,
+          undefined,
+          false,
+          false,
+          atomIdMap,
+        );
         monomerToAtomIdMap.set(monomer, atomIdMap);
       } else {
         const atomIdsMap = new Map<number, number>();
@@ -576,7 +583,7 @@ export class MacromoleculesConverter {
       Object.keys(sgroup.data).forEach((field) => {
         partialSgroup.data[field] = sgroup.data[field];
       });
-      partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : null;
+      partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : undefined;
 
       const partialSgroupId = fragmentStruct.sgroups.add(partialSgroup);
       partialSgroup.id = partialSgroupId;

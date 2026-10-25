@@ -52,7 +52,7 @@ export function prepareStructForHapticKetSerialization(struct: Struct) {
   });
 
   const structForKet = struct.clone(
-    null,
+    undefined,
     bondIds,
     false,
     originalToKetStructAtomIdMap,
@@ -113,7 +113,7 @@ export function buildAttachmentGroupsForKet(
     }
 
     const molecule = fileContent[moleculeId];
-    if (typeof molecule !== 'object' || molecule === null) {
+    if (typeof molecule !== 'object' || molecule == undefined) {
       return;
     }
 

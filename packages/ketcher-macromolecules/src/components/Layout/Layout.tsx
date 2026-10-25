@@ -173,19 +173,19 @@ const Top = (
             isLeftRight
           />
         </StyledArrowScrollWrapper>
-      ) : null}
+      ) : undefined}
     </div>
   );
 };
 
 export const Layout = ({ children }: LayoutProps) => {
-  const subcomponents: Record<LayoutSection, JSX.Element | null> = {
-    Left: null,
-    Main: null,
-    Right: null,
-    Top: null,
-    Bottom: null,
-    InsideRoot: null,
+  const subcomponents: Record<LayoutSection, JSX.Element | undefined> = {
+    Left: undefined,
+    Main: undefined,
+    Right: undefined,
+    Top: undefined,
+    Bottom: undefined,
+    InsideRoot: undefined,
   };
   React.Children.forEach(children, (child) => {
     if (child.type === Left) {

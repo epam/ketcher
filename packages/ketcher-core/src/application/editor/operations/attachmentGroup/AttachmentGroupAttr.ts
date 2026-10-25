@@ -10,8 +10,8 @@ type Data = {
 };
 
 export class AttachmentGroupAttr extends BaseOperation {
-  data: Data | null;
-  data2: Data | null = null;
+  data: Data | null | undefined;
+  data2: Data | null | undefined = undefined;
 
   constructor(id?: number, attribute?: keyof AttachmentGroup, value?: unknown) {
     super(

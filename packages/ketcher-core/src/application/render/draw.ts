@@ -1343,7 +1343,7 @@ function bondAromatic(
     .path(paths[1])
     .attr(options.lineattr)
     .attr(isSnapping ? options.bondSnappingStyle : {});
-  if (bondShift !== undefined && bondShift !== null) {
+  if (bondShift !== undefined && bondShift != undefined) {
     (bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' });
   }
 
@@ -1527,7 +1527,7 @@ function radicalBullet(
   return paper
     .circle(toFixed(point1.x), toFixed(point1.y), options.lineWidth)
     .attr({
-      stroke: null,
+      stroke: undefined,
       fill: '#000',
     });
 }
@@ -1664,7 +1664,7 @@ function aromaticBondPaths(
   b2: Vec2,
   b3: Vec2,
   mask: number,
-  dash: number[] | null,
+  dash: number[] | null | undefined,
 ) {
   const l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2);
   const l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3);

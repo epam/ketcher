@@ -105,7 +105,7 @@ export class Ketcher {
   logging: LogSettings;
   structService: StructService;
   readonly #formatterFactory: FormatterFactory;
-  #editor: Editor | null = null;
+  #editor: Editor | null | undefined = undefined;
   _indigo: Indigo;
   readonly #eventBus: EventEmitter;
   readonly #settingsService?: ISettingsService;
@@ -142,8 +142,8 @@ export class Ketcher {
     formatterFactory: FormatterFactory,
     settingsService?: ISettingsService,
   ) {
-    assert(structService != null);
-    assert(formatterFactory != null);
+    assert(structService != undefined);
+    assert(formatterFactory != undefined);
     this._id = uniqueId();
     this.changeEvent = new Subscription();
     this.libraryUpdateEvent = new Subscription();
@@ -584,7 +584,7 @@ export class Ketcher {
         if (!preserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
         }
-        if (x == null && y == null && !preserveCanvasPosition) {
+        if (x == undefined && y == undefined && !preserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }

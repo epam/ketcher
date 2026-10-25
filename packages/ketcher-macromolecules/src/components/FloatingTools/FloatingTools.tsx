@@ -174,7 +174,7 @@ export const FloatingTools = () => {
   };
 
   if (!visible) {
-    return null;
+    return undefined;
   }
 
   return (

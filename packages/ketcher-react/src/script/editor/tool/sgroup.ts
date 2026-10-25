@@ -114,7 +114,7 @@ class SGroupTool implements Tool {
           }
 
           const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
+            atomId != undefined ? struct.atoms.get(atomId)?.a : undefined;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -144,7 +144,7 @@ class SGroupTool implements Tool {
             }
           }
 
-          if (atomFromStruct && atomId !== null) {
+          if (atomFromStruct && atomId != undefined) {
             atomsResult.push(atomId);
           }
         }
@@ -160,7 +160,7 @@ class SGroupTool implements Tool {
             id,
           );
 
-          if (fgId !== null && !result.includes(fgId)) {
+          if (fgId != undefined && !result.includes(fgId)) {
             result.push(fgId);
           }
         }
@@ -172,7 +172,7 @@ class SGroupTool implements Tool {
         return;
       }
 
-      SGroupTool.sgroupDialog(this.editor, id);
+      SGroupTool.sgroupDialog(this.editor, id ?? null);
       this.isNotActiveTool = true;
     }
   }
@@ -193,11 +193,11 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const atomFromStruct =
-        atomId !== null ? struct.atoms.get(atomId)?.a : null;
+        atomId != undefined ? struct.atoms.get(atomId)?.a : undefined;
 
       if (
         atomFromStruct &&
-        atomId !== null &&
+        atomId != undefined &&
         !(
           FunctionalGroup.isAtomInContractedFunctionalGroup(
             atomFromStruct,
@@ -217,11 +217,11 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const bondFromStruct =
-        bondId !== null ? struct.bonds.get(bondId)?.b : null;
+        bondId != undefined ? struct.bonds.get(bondId)?.b : undefined;
 
       if (
         bondFromStruct &&
-        bondId !== null &&
+        bondId != undefined &&
         !(
           FunctionalGroup.isBondInContractedFunctionalGroup(
             bondFromStruct,
@@ -250,7 +250,7 @@ class SGroupTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }
@@ -266,7 +266,7 @@ class SGroupTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }
@@ -307,7 +307,7 @@ class SGroupTool implements Tool {
   }
 
   private processSelectedAtoms(
-    selected: Selection | null,
+    selected: Selection | null | undefined,
     functionalGroups: Pool<FunctionalGroup>,
     struct: ReStruct,
     molecule: Struct,
@@ -407,7 +407,7 @@ class SGroupTool implements Tool {
   }
 
   private processSelectedBonds(
-    selected: Selection | null,
+    selected: Selection | null | undefined,
     functionalGroups: Pool<FunctionalGroup>,
     molecule: Struct,
     struct: ReStruct,
@@ -426,7 +426,7 @@ class SGroupTool implements Tool {
         bond,
       );
 
-      if (bondId === null) {
+      if (bondId == undefined) {
         extraBonds = true;
         continue;
       }
@@ -481,7 +481,7 @@ class SGroupTool implements Tool {
         id,
       );
 
-      if (fgId === null) {
+      if (fgId == undefined) {
         return;
       }
 
@@ -511,7 +511,7 @@ class SGroupTool implements Tool {
         id,
       );
 
-      if (fgId === null) {
+      if (fgId == undefined) {
         return;
       }
 
@@ -566,7 +566,7 @@ class SGroupTool implements Tool {
         functionalGroups,
         id,
       );
-      if (fgId !== null && !result.includes(fgId)) {
+      if (fgId != undefined && !result.includes(fgId)) {
         result.push(fgId);
       }
     }
@@ -588,7 +588,7 @@ class SGroupTool implements Tool {
         functionalGroups,
         id,
       );
-      if (fgId !== null && !result.includes(fgId)) {
+      if (fgId != undefined && !result.includes(fgId)) {
         result.push(fgId);
       }
     }

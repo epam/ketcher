@@ -71,7 +71,7 @@ const findMaps: Record<string, FindMapFn> = {
 };
 
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
-type RefPoint = Vec2 | null;
+type RefPoint = Vec2 | undefined;
 
 function rectangleContainsPoint(
   startX: number,
@@ -131,7 +131,7 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
 
 function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
+  let refPoint: RefPoint = undefined;
   let ret: ClosestReturnType = null;
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
@@ -487,7 +487,7 @@ function findClosestRgroupAttachmentPoints(
 
 function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
-  let refPoint: RefPoint = null;
+  let refPoint: RefPoint = undefined;
   let ret: ClosestReturnType = null;
 
   restruct.rxnArrows.forEach((rxnArrow, id) => {

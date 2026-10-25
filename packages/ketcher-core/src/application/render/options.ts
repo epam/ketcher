@@ -40,7 +40,7 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
   const defaultOptions: Partial<RenderOptions> = {
     'dearomatize-on-load': false,
     ignoreChiralFlag: false,
-    disableQueryElements: null,
+    disableQueryElements: undefined,
     // flags for debugging
     showAtomIds: false,
     showBondIds: false,

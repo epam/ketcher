@@ -52,10 +52,10 @@ export const AttachmentPointsDialog = (page: Page) => {
       await this.window.waitFor({ state: 'visible' });
       const leftAttachmentPointButton = buttons.leftMonomer
         ? LeftMonomerAttachmentPointButton[buttons.leftMonomer]
-        : null;
+        : undefined;
       const rightAttachmentPointButton = buttons.rightMonomer
         ? RightMonomerAttachmentPointButton[buttons.rightMonomer]
-        : null;
+        : undefined;
 
       if (
         leftAttachmentPointButton &&

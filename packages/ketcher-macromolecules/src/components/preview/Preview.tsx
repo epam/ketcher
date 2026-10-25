@@ -104,7 +104,7 @@ export const Preview = () => {
   }, [editor?.ketcherRootElementBoundingClientRect, isPreviewVisible, preview]);
 
   if (!preview) {
-    return null;
+    return undefined;
   }
 
   return (

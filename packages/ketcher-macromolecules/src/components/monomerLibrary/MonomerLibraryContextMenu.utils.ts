@@ -91,5 +91,5 @@ export const getDeleteConfirmation = (
   }
   if (isOnCanvas) return DELETE_CONFIRMATION.onCanvas;
   if (hasReferencingPresets) return DELETE_CONFIRMATION.inPreset;
-  return null;
+  return undefined;
 };

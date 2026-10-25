@@ -113,7 +113,7 @@ export function getAttachmentGroupTargetForBondHalf(
     pointer,
   );
 
-  return attachmentGroupId === null
+  return attachmentGroupId == undefined
     ? null
     : {
         ...closestItem,
@@ -288,7 +288,7 @@ export function getMenuPropsForClosestItem(
 const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
 export function getMenuPropsForSelection(
-  selection: Selection | null,
+  selection: Selection | null | undefined,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
   ketcherId: string,
   editor?: Editor,

@@ -29,7 +29,7 @@ const moveBottomPositions = new Set<ImageReferenceName>([
 ]);
 
 export class ImageResize extends BaseOperation {
-  private previousPosition: Vec2 | null = null;
+  private previousPosition: Vec2 | null | undefined = undefined;
   constructor(
     private readonly id: number,
     private readonly position: Vec2,

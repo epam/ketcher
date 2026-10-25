@@ -30,7 +30,7 @@ export class EmptySequenceNode {
   }
 
   public get monomerItem() {
-    return { props: { MonomerNaturalAnalogCode: null } };
+    return { props: { MonomerNaturalAnalogCode: undefined } };
   }
 
   public get monomers(): BaseMonomer[] {

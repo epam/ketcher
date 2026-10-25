@@ -40,20 +40,20 @@ import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
 import type { CustomButton } from './CustomButtons';
 
 class KetcherBuilder {
-  private structService: Api | null;
-  private serviceMode: ServiceMode | null;
-  private formatterFactory: FormatterFactory | null;
-  private settingsService: ISettingsService | null;
-  private storageAdapter: ISettingsStorage | null;
-  private initialSettings: DeepPartial<Settings> | null;
+  private structService: Api | undefined;
+  private serviceMode: ServiceMode | undefined;
+  private formatterFactory: FormatterFactory | undefined;
+  private settingsService: ISettingsService | undefined;
+  private storageAdapter: ISettingsStorage | undefined;
+  private initialSettings: DeepPartial<Settings> | undefined;
 
   constructor() {
-    this.structService = null;
-    this.serviceMode = null;
-    this.formatterFactory = null;
-    this.settingsService = null;
-    this.storageAdapter = null;
-    this.initialSettings = null;
+    this.structService = undefined;
+    this.serviceMode = undefined;
+    this.formatterFactory = undefined;
+    this.settingsService = undefined;
+    this.storageAdapter = undefined;
+    this.initialSettings = undefined;
   }
 
   /**
@@ -143,14 +143,14 @@ class KetcherBuilder {
     togglerComponent?: JSX.Element,
     customButtons?: Array<CustomButton>,
   ): Promise<{
-    cleanup: ReturnType<typeof initApp> | null;
+    cleanup: ReturnType<typeof initApp> | undefined;
     setServer: (structService: Api) => void;
   }> {
     const { structService } = this;
     if (!structService) {
       throw new Error('You should append Api before initializing UI');
     }
-    let cleanup: ReturnType<typeof initApp> | null = null;
+    let cleanup: ReturnType<typeof initApp> | undefined = undefined;
 
     const { editor, setServer } = await new Promise<{
       editor: Editor;
@@ -164,7 +164,7 @@ class KetcherBuilder {
         staticResourcesUrl,
         {
           buttons: buttons ?? {},
-          errorHandler: errorHandler ?? null,
+          errorHandler: errorHandler ?? undefined,
           version: process.env.VERSION ?? '',
           buildDate: process.env.BUILD_DATE ?? '',
           buildNumber: process.env.BUILD_NUMBER ?? '',

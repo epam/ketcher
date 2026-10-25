@@ -89,7 +89,7 @@ export class Struct {
   isReaction: boolean;
   rxnArrows: Pool<RxnArrow>;
   rxnPluses: Pool<RxnPlus>;
-  frags: Pool<Fragment | null>;
+  frags: Pool<Fragment | undefined>;
   rgroups: Pool<RGroup>;
   rgroupAttachmentPoints: Pool<RGroupAttachmentPoint>;
   name: string;
@@ -116,7 +116,7 @@ export class Struct {
     this.isReaction = false;
     this.rxnArrows = new Pool<RxnArrow>();
     this.rxnPluses = new Pool<RxnPlus>();
-    this.frags = new Pool<Fragment>();
+    this.frags = new Pool<Fragment | undefined>();
     this.rgroups = new Pool<RGroup>();
     this.rgroupAttachmentPoints = new Pool<RGroupAttachmentPoint>();
     this.name = '';
@@ -293,7 +293,7 @@ export class Struct {
   }
 
   getFragment(fid: number | number[], aidMap?: Map<number, number>): Struct {
-    return this.clone(this.getFragmentIds(fid), null, true, aidMap);
+    return this.clone(this.getFragmentIds(fid), undefined, true, aidMap);
   }
 
   getFragmentOnly(
@@ -315,7 +315,7 @@ export class Struct {
     });
     return this.clone(
       atomSet,
-      null,
+      undefined,
       true,
       aidMap,
       new Pile(),
@@ -323,7 +323,7 @@ export class Struct {
       rgroupAttachmentPointSet,
       new Pile(),
       new Pile(),
-      null,
+      undefined,
       false,
       attachmentGroupSet,
     );
@@ -348,7 +348,7 @@ export class Struct {
     const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
     const requestedAttachmentGroups =
       attachmentGroupSet ??
-      (atomSet == null
+      (atomSet == undefined
         ? new Pile<number>(this.attachmentGroups.keys())
         : new Pile<number>());
     const attachmentGroups = requestedAttachmentGroups.filter((id) =>
@@ -387,7 +387,7 @@ export class Struct {
 
     const fidMap = new Map();
     this.frags.forEach((_frag, fid) => {
-      if (fidMask.has(fid)) fidMap.set(fid, cp.frags.add(null));
+      if (fidMask.has(fid)) fidMap.set(fid, cp.frags.add(undefined));
     });
 
     const rgroupsIds: Array<number> = [];
@@ -628,11 +628,11 @@ export class Struct {
       assert(a1, `Bond endpoint ${bond.begin} not found`);
       assert(a2, `Bond endpoint ${bond.end} not found`);
       assert(
-        bond.hb1 !== null && bond.hb1 !== undefined,
+        bond.hb1 != undefined && bond.hb1 !== undefined,
         'bond.hb1 not initialized',
       );
       assert(
-        bond.hb2 !== null && bond.hb2 !== undefined,
+        bond.hb2 != undefined && bond.hb2 !== undefined,
         'bond.hb2 not initialized',
       );
       a1.neighbors.push(bond.hb1);
@@ -896,7 +896,7 @@ export class Struct {
   }
 
   getCoordBoundingBox(atomSet?: Pile<number>): CoordBoundingBox {
-    let bb: CoordBoundingBox | null = null;
+    let bb: CoordBoundingBox | null | undefined = undefined;
     function extend(pp: Vec2 | Vec2[]) {
       const points = Array.isArray(pp) ? pp : [pp];
       if (points.length === 0) {
@@ -944,7 +944,7 @@ export class Struct {
   }
 
   getCoordBoundingBoxObj(): CoordBoundingBox {
-    let bb: CoordBoundingBox | null = null;
+    let bb: CoordBoundingBox | null | undefined = undefined;
     function extend(pp: Vec2) {
       if (!bb) {
         bb = {
@@ -1211,7 +1211,7 @@ export class Struct {
         return;
       }
 
-      item.pp = item.pp?.scaled(scale) ?? null;
+      item.pp = item.pp?.scaled(scale) ?? undefined;
     });
 
     this.texts.forEach((item) => {
@@ -1243,7 +1243,7 @@ export class Struct {
         return;
       }
 
-      item.pp = item.pp?.scaled(scale) ?? null;
+      item.pp = item.pp?.scaled(scale) ?? undefined;
     });
   }
 
@@ -1524,7 +1524,7 @@ export class Struct {
 
     this.atoms.forEach((atom, id) => {
       if (this?.atomGetNeighbors(id)?.length === 0) {
-        atom.stereoLabel = null;
+        atom.stereoLabel = undefined;
         atom.stereoParity = 0;
       } else {
         const stereoProp = stereAtomsMap.get(id);
@@ -1551,7 +1551,7 @@ export class Struct {
     /* saver */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
-    let arrowPos: number | null = null;
+    let arrowPos: number | null | undefined = undefined;
 
     this.rxnArrows.forEach((item) => {
       // there's just one arrow
@@ -1562,7 +1562,7 @@ export class Struct {
       barriers.push(item.pp.x);
     });
 
-    if (arrowPos !== null) barriers.push(arrowPos);
+    if (arrowPos != undefined) barriers.push(arrowPos);
 
     barriers.sort((a, b) => a - b);
 
@@ -1631,20 +1631,20 @@ export class Struct {
     });
   }
 
-  getGroupIdFromAtomId(atomId: number): number | null {
+  getGroupIdFromAtomId(atomId: number): number | null | undefined {
     const firstSgroupId = [...(this.atoms.get(atomId)?.sgs.values() ?? [])][0];
 
-    return isNumber(firstSgroupId) ? firstSgroupId : null;
+    return isNumber(firstSgroupId) ? firstSgroupId : undefined;
   }
 
-  getGroupIdFromAtomIdBySgroups(atomId: number): number | null {
+  getGroupIdFromAtomIdBySgroups(atomId: number): number | null | undefined {
     // Search by sgroups is more expensive, but allows to find
     // functional groups for atoms which are not exist in struct already.
     // F.e. if atom already deleted and it needs to find its functional group
     for (const [groupId, sgroup] of Array.from(this.sgroups)) {
       if (sgroup.atoms.includes(atomId)) return groupId;
     }
-    return null;
+    return undefined;
   }
 
   getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
@@ -1668,9 +1668,9 @@ export class Struct {
 
   // TODO: simplify if bonds ids ever appear in sgroup
   // ! deprecate
-  getGroupIdFromBondId(bondId: number): number | null {
+  getGroupIdFromBondId(bondId: number): number | null | undefined {
     const bond = this.bonds.get(bondId);
-    if (!bond) return null;
+    if (!bond) return undefined;
     for (const [groupId, sgroup] of Array.from(this.sgroups)) {
       if (
         sgroup.atoms.includes(bond.begin) ||
@@ -1679,7 +1679,7 @@ export class Struct {
         return groupId;
       }
     }
-    return null;
+    return undefined;
   }
 
   getGroupFromBondId(atomId: number): SGroup | undefined {
@@ -1722,7 +1722,7 @@ export class Struct {
    *                       - atoms in contracted functional groups
    *                       + functional groups's attachment atoms
    */
-  getSelectedVisibleAtoms(selection: EditorSelection | null) {
+  getSelectedVisibleAtoms(selection: EditorSelection | null | undefined) {
     return (
       selection?.atoms?.filter((atomId) => {
         const atom = this.atoms.get(atomId);
@@ -1951,10 +1951,10 @@ export class Struct {
             );
 
           const firstMonomerHasStereoBondOnAttachmentPoint =
-            firstMonomerAttachmentPointBondStereo !== null &&
+            firstMonomerAttachmentPointBondStereo != undefined &&
             firstMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
           const secondMonomerHasStereoBondOnAttachmentPoint =
-            secondMonomerAttachmentPointBondStereo !== null &&
+            secondMonomerAttachmentPointBondStereo != undefined &&
             secondMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
 
           if (

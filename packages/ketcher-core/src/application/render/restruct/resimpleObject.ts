@@ -31,7 +31,7 @@ import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
 interface MinDistanceWithReferencePoint {
   minDist: number;
-  refPoint: Vec2 | null;
+  refPoint: Vec2 | undefined;
 }
 interface StyledPath {
   path: Element;
@@ -136,8 +136,8 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const refPoint: Vec2 | null =
-      distRef.minDist <= 8 / s ? distRef.refPoint : null;
+    const refPoint: Vec2 | null | undefined =
+      distRef.minDist <= 8 / s ? distRef.refPoint : undefined;
     // distance is a smallest between dist to figure and it's reference points
     dist = Math.min(distRef.minDist, dist);
     return { minDist: dist, refPoint };
@@ -150,10 +150,11 @@ class ReSimpleObject extends ReObject {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => (acc.minDist < current.minDist ? acc : current),
-      { minDist: Infinity, refPoint: null },
-    );
+    const minDist: MinDistanceWithReferencePoint =
+      dist.reduce<MinDistanceWithReferencePoint>(
+        (acc, current) => (acc.minDist < current.minDist ? acc : current),
+        { minDist: Infinity, refPoint: undefined },
+      );
 
     return minDist;
   }
@@ -453,7 +454,7 @@ class ReSimpleObject extends ReObject {
     const path = generatePath(this.item.mode, render.paper, [pos[0], pos[1]]);
 
     const offset = options.offset;
-    if (offset != null) path.translateAbs(offset.x, offset.y);
+    if (offset != undefined) path.translateAbs(offset.x, offset.y);
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }

@@ -24,7 +24,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
     const struct = restruct.molecule;
     const sgroup = struct.sgroups.get(this.data.sGroupId);
 
-    assert(sgroup != null);
+    assert(sgroup != undefined);
 
     const attachmentPoint = this.data.attachmentPoint;
 

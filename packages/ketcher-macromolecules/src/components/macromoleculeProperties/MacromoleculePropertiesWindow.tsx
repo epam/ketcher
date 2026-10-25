@@ -1189,5 +1189,5 @@ export const MacromoleculePropertiesWindow = () => {
         />
       </TabsWrapper>
     </StyledWrapper>
-  ) : null;
+  ) : undefined;
 };

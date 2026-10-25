@@ -9,7 +9,7 @@ export type ConnectionDirectionOfLastCell = {
 
 export class Connection {
   constructor(
-    public readonly connectedNode: SubChainNode | null,
+    public readonly connectedNode: SubChainNode | null | undefined,
     public readonly direction:
       ConnectionDirectionInDegrees | ConnectionDirectionOfLastCell,
     public readonly isVertical: boolean,

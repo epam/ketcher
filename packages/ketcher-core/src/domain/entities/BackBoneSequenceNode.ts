@@ -33,7 +33,7 @@ export class BackBoneSequenceNode {
   }
 
   public get monomerItem() {
-    return { props: { MonomerNaturalAnalogCode: null } };
+    return { props: { MonomerNaturalAnalogCode: undefined } };
   }
 
   public get monomers(): BaseMonomer[] {

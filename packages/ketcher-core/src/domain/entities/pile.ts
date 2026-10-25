@@ -22,7 +22,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
       if (predicate(item)) return item;
     }
 
-    return null;
+    return undefined;
   }
 
   equals(setB: Pile<TValue>): boolean {

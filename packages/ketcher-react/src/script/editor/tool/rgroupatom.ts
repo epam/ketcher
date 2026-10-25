@@ -69,7 +69,7 @@ class RGroupAtomTool implements Tool {
       if (isAtomSuperatomLeavingGroup) {
         return;
       }
-      if (atomId !== null) {
+      if (atomId != undefined) {
         atomResult.push(atomId);
       }
     }
@@ -81,7 +81,7 @@ class RGroupAtomTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }

@@ -13,26 +13,26 @@ import { getAttachmentPointLabel } from './attachmentPointCalculations';
 export function getAttachmentPointStereoBond(
   sGroup: SGroup,
   sGroupAttachmentPoint: SGroupAttachmentPoint,
-): number | null {
+): number | null | undefined {
   if (!sGroup.isMonomer) {
-    return null;
+    return undefined;
   }
 
   const monomer = (sGroup as MonomerMicromolecule).monomer;
   if (!monomer?.monomerItem) {
-    return null;
+    return undefined;
   }
 
   const monomerStruct = monomer.monomerItem.struct;
   const monomerAttachmentPoints = monomer.monomerItem.attachmentPoints;
 
   if (!monomerStruct || !monomerAttachmentPoints) {
-    return null;
+    return undefined;
   }
 
   const attachmentPointNumber = sGroupAttachmentPoint.attachmentPointNumber;
   if (!attachmentPointNumber) {
-    return null;
+    return undefined;
   }
 
   const attachmentPointLabel = getAttachmentPointLabel(attachmentPointNumber);
@@ -44,12 +44,12 @@ export function getAttachmentPointStereoBond(
     attachmentPointIndex === -1 ||
     attachmentPointIndex >= monomerAttachmentPoints.length
   ) {
-    return null;
+    return undefined;
   }
 
   const monomerAttachmentPoint = monomerAttachmentPoints[attachmentPointIndex];
   if (!monomerAttachmentPoint) {
-    return null;
+    return undefined;
   }
 
   const monomerAttachmentAtomId = monomerAttachmentPoint.attachmentAtom;
@@ -60,7 +60,7 @@ export function getAttachmentPointStereoBond(
     !monomerLeavingGroupAtoms ||
     monomerLeavingGroupAtoms.length === 0
   ) {
-    return null;
+    return undefined;
   }
 
   for (const internalLeavingAtomId of monomerLeavingGroupAtoms) {
@@ -69,7 +69,7 @@ export function getAttachmentPointStereoBond(
       monomerAttachmentAtomId,
     );
 
-    if (bondId === null) {
+    if (bondId == undefined) {
       continue;
     }
 
@@ -91,5 +91,5 @@ export function getAttachmentPointStereoBond(
     }
   }
 
-  return null;
+  return undefined;
 }

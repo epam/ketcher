@@ -95,7 +95,9 @@ export interface Editor {
     eventName: string,
     subscriber: EditorSubscriber<T>,
   ) => void;
-  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
+  selection: (
+    arg?: EditorSelection | 'all' | null,
+  ) => EditorSelection | null | undefined;
   undo: () => void;
   redo: () => void;
   historyStack: Action[];
@@ -111,7 +113,7 @@ export interface Editor {
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
   zoomAccordingContent: (struct: Struct) => void;
-  errorHandler: ((message: string) => void) | null;
+  errorHandler: ((message: string) => void) | null | undefined;
   event: {
     message: Subscription;
     tooltip: Subscription;
@@ -160,13 +162,15 @@ export interface Editor {
   monomerCreationState: MonomerCreationState;
 }
 
-export type LibraryItemDragState = {
-  item: IRnaPreset | MonomerOrAmbiguousType;
-  position: {
-    x: number;
-    y: number;
-  };
-} | null;
+export type LibraryItemDragState =
+  | {
+      item: IRnaPreset | MonomerOrAmbiguousType;
+      position: {
+        x: number;
+        y: number;
+      };
+    }
+  | undefined;
 
 /**
  * Identifies a specific free attachment point on a monomer.

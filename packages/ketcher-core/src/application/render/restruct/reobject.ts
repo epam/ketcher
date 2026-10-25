@@ -26,9 +26,9 @@ import { IMAGE_KEY } from 'domain/constants';
 class ReObject {
   public visel: Visel;
   public hover = false;
-  public hovering: RaphaelSet | Element | null = null;
+  public hovering: RaphaelSet | Element | null = undefined;
   public selected = false;
-  public selectionPlate: RaphaelSet | Element | null = null;
+  public selectionPlate: RaphaelSet | Element | null = undefined;
 
   constructor(viselType: string) {
     this.visel = new Visel(viselType);
@@ -49,9 +49,9 @@ class ReObject {
     }
   }
 
-  getVBoxObj(render: Render): Box2Abs | null {
+  getVBoxObj(render: Render): Box2Abs | null | undefined {
     let vbox = this.visel.boundingBox;
-    if (vbox === null) return null;
+    if (vbox == undefined) return undefined;
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }
@@ -62,7 +62,7 @@ class ReObject {
     // TODO render should be field
     const { options } = render;
     if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null;
+      let noredraw = 'hovering' in this && this.hovering != undefined;
       if (noredraw) {
         if (this.hovering.type === 'set') {
           if (!this.hovering[0]) return;

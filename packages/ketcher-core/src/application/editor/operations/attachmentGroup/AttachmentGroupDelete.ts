@@ -4,8 +4,8 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
-  id: number | null;
-  attachmentGroup: AttachmentGroup | null;
+  id: number | null | undefined;
+  attachmentGroup: AttachmentGroup | null | undefined;
 };
 
 export class AttachmentGroupDelete extends BaseOperation<Data> {
@@ -16,12 +16,12 @@ export class AttachmentGroupDelete extends BaseOperation<Data> {
       OperationType.ATTACHMENT_GROUP_DELETE,
       OperationPriority.ATTACHMENT_GROUP_DELETE,
     );
-    this.data = { id: id ?? null, attachmentGroup: null };
+    this.data = { id: id ?? undefined, attachmentGroup: undefined };
   }
 
   execute(restruct: ReStruct) {
     const { id } = this.data;
-    if (id === null) return;
+    if (id == undefined) return;
 
     const attachmentGroup = restruct.molecule.attachmentGroups.get(id);
     if (!attachmentGroup) return;

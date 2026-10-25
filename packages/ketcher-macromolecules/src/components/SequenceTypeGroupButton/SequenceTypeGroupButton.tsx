@@ -157,5 +157,5 @@ export const SequenceTypeGroupButton = () => {
         </SequenceTypeButton>
       </ButtonGroup>
     </Box>
-  ) : null;
+  ) : undefined;
 };

@@ -58,7 +58,7 @@ const DEFAULT_STORAGE_KEY = 'ketcher-opts';
  * TODO: Remove this singleton and implement proper multi-instance support
  */
 export class SettingsService implements ISettingsService {
-  private static instance: SettingsService | null = null;
+  private static instance: SettingsService | null | undefined = undefined;
 
   private settings: Settings;
   private readonly storage: ISettingsStorage;
@@ -92,7 +92,7 @@ export class SettingsService implements ISettingsService {
    * Use with caution as this will affect all code using SettingsService.getInstance().
    */
   static resetInstance(): void {
-    SettingsService.instance = null;
+    SettingsService.instance = undefined;
   }
 
   /**
@@ -256,7 +256,7 @@ export class SettingsService implements ISettingsService {
    */
   exportSettings(): string {
     this.assertInitialized();
-    return JSON.stringify(this.settings, null, 2);
+    return JSON.stringify(this.settings, undefined, 2);
   }
 
   /**

@@ -15,9 +15,9 @@ export const validateMultitailArrows = (json: KetFileRootContent): boolean => {
       const result = MultitailArrow.validateKetNode(
         node.data as KetFileMultitailArrowNode,
       );
-      if (result !== null) {
+      if (result != undefined) {
         console.info(result);
-        return null;
+        return undefined;
       }
     }
     return true;

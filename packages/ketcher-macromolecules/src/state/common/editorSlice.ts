@@ -54,10 +54,10 @@ interface AppMeta {
 
 interface EditorState {
   ketcherId: string;
-  isReady: boolean | null;
-  activeTool: string | null;
+  isReady: boolean | undefined;
+  activeTool: string | undefined;
   editor: CoreEditor | undefined;
-  monomerLibraryLoadError: string | null;
+  monomerLibraryLoadError: string | undefined;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
   preview: EditorStatePreview | undefined;
@@ -76,10 +76,10 @@ interface EditorState {
 
 const initialState: EditorState = {
   ketcherId: '',
-  isReady: null,
+  isReady: undefined,
   activeTool: 'select',
   editor: undefined,
-  monomerLibraryLoadError: null,
+  monomerLibraryLoadError: undefined,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
   preview: undefined,
@@ -119,11 +119,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     setMonomerLibraryLoadError: (
       state,
-      action: PayloadAction<string | null>,
+      action: PayloadAction<string | undefined>,
     ) => {
       state.monomerLibraryLoadError = action.payload;
     },
-    selectTool: (state, action: PayloadAction<string | null>) => {
+    selectTool: (state, action: PayloadAction<string | undefined>) => {
       state.activeTool = action.payload;
 
       if (isMacroSelectionTool(action.payload)) {
@@ -145,7 +145,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
         onLibraryError?: (err: unknown) => void;
       }>,
     ) => {
-      state.monomerLibraryLoadError = null;
+      state.monomerLibraryLoadError = undefined;
 
       const editor = new CoreEditor({
         theme: action.payload.theme,

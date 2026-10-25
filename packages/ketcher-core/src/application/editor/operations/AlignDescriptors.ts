@@ -20,9 +20,9 @@ import type { ReStruct } from '../../render';
 import { type SGroup, Vec2 } from 'domain/entities';
 
 class AlignDescriptors extends BaseOperation {
-  readonly history: Record<number, Vec2 | null>;
+  readonly history: Record<number, Vec2 | undefined>;
   static InverseConstructor: new (
-    history: Record<number, Vec2 | null>,
+    history: Record<number, Vec2 | undefined>,
   ) => BaseOperation;
 
   constructor() {
@@ -42,7 +42,7 @@ class AlignDescriptors extends BaseOperation {
     );
 
     sgroups.forEach((sgroup) => {
-      this.history[sgroup.id] = sgroup.pp ? new Vec2(sgroup.pp) : null;
+      this.history[sgroup.id] = sgroup.pp ? new Vec2(sgroup.pp) : undefined;
       alignPoint = alignPoint.add(new Vec2(0, 0.5));
       sgroup.pp = alignPoint;
       struct.sgroups.set(sgroup.id, sgroup);

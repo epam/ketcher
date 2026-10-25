@@ -30,13 +30,13 @@ type Data<K extends RGroupAttributeKey = RGroupAttributeKey> = {
 export class RGroupAttr<
   K extends RGroupAttributeKey = RGroupAttributeKey,
 > extends BaseOperation {
-  data: Data<K> | null;
-  data2: Data<K> | null;
+  data: Data<K> | null | undefined;
+  data2: Data<K> | null | undefined;
 
   constructor(rgroupId?: number, attribute?: K, value?: RGroup[K]) {
     super(OperationType.R_GROUP_ATTR);
     this.data = { rgid: rgroupId, attribute, value };
-    this.data2 = null;
+    this.data2 = undefined;
   }
 
   execute(restruct: ReStruct) {

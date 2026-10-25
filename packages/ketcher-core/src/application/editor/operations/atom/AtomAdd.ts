@@ -27,9 +27,9 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 
 type Data = {
-  aid: number | null;
-  atom: Partial<AtomAttributes> | null;
-  pos: Point | null;
+  aid: number | null | undefined;
+  atom: Partial<AtomAttributes> | null | undefined;
+  pos: Point | null | undefined;
 };
 
 class AtomAdd extends BaseOperation<Data> {
@@ -37,7 +37,11 @@ class AtomAdd extends BaseOperation<Data> {
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
     super(OperationType.ATOM_ADD);
-    this.data = { atom: atom ?? null, pos: pos ?? null, aid: null };
+    this.data = {
+      atom: atom ?? undefined,
+      pos: pos ?? undefined,
+      aid: undefined,
+    };
   }
 
   execute(restruct: ReStruct) {

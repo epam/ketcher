@@ -231,8 +231,8 @@ export function fromAtom(satom?: Atom) {
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
-    charge: satom.charge === null ? '' : satom.charge.toString(),
-    isotope: satom.isotope === null ? '' : satom.isotope.toString(),
+    charge: satom.charge == undefined ? '' : satom.charge.toString(),
+    isotope: satom.isotope == undefined ? '' : satom.isotope.toString(),
     explicitValence: satom.explicitValence,
     radical: satom.radical,
     invRet: satom.invRet,
@@ -401,7 +401,7 @@ export function toStereoLabel(stereoLabel: {
   }
 }
 
-function fromApoint(sap: AttachmentPoints | null) {
+function fromApoint(sap: AttachmentPoints | null | undefined) {
   return {
     primary: ((sap ?? 0) & 1) > 0,
     secondary: ((sap ?? 0) & 2) > 0,

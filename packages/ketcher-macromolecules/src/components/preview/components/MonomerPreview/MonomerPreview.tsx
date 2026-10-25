@@ -59,7 +59,7 @@ const MonomerPreview = ({ className }: Props) => {
   });
 
   if (!monomer) {
-    return null;
+    return undefined;
   }
 
   const isUnresolved = monomer.props.unresolved;

@@ -68,7 +68,7 @@ function useSetRnaPresets() {
     }
 
     dispatch(loadMonomerLibrary(monomersLibrary));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
+    dispatch(setFavoriteMonomersFromLocalStorage(undefined));
 
     dispatch(setDefaultPresets(defaultPresets));
     if (customLabeledPresets) {

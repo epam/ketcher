@@ -98,11 +98,13 @@ export class AngleSnapView extends TransientView {
         // It is done deliberately so the arrowhead will be attached at the right arc end
         startAngle: startAngle + diff,
         endAngle: startAngle,
-      })?.slice(0, -1) ?? null;
+      })?.slice(0, -1) ?? undefined;
 
-    transientLayer
-      .append('path')
-      .attr('d', arcPath)
+    const path = transientLayer.append('path');
+    if (arcPath !== undefined) {
+      path.attr('d', arcPath);
+    }
+    path
       .attr(
         'transform',
         `translate(${connectedPositionInPixels.x}, ${connectedPositionInPixels.y})`,

@@ -122,7 +122,7 @@ function buildTextSegments(
 
   // Group consecutive characters with identical styles into segments
   const segments: TextSegment[] = [];
-  let currentSegment: TextSegment | null = null;
+  let currentSegment: TextSegment | null | undefined = undefined;
 
   for (let i = 0; i < text.length; i++) {
     const charStyle = charStyles[i];

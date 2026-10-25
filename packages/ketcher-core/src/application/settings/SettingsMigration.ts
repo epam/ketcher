@@ -90,7 +90,7 @@ export class SettingsMigration {
    * Attempt to load from legacy storage keys
    * Tries both 'ketcher-opts' and 'ketcher_editor_saved_settings'
    */
-  static loadFromLegacyStorage(): DeepPartial<Settings> | null {
+  static loadFromLegacyStorage(): DeepPartial<Settings> | undefined {
     const keys = ['ketcher-opts', 'ketcher_editor_saved_settings'];
 
     for (const key of keys) {
@@ -109,6 +109,6 @@ export class SettingsMigration {
       }
     }
 
-    return null;
+    return undefined;
   }
 }

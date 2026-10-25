@@ -45,7 +45,7 @@ interface FmtInfo {
   atomListHeaderPartition: number[];
   atomListHeaderLength: number;
   atomListHeaderItemLength: number;
-  chargeMap: (number | null)[];
+  chargeMap: (number | undefined)[];
   valenceMap: (number | undefined)[];
   implicitHydrogenMap: (number | undefined)[];
   v30atomPropMap: Record<string, string>;
@@ -180,7 +180,7 @@ const fmtInfo: FmtInfo = {
   atomListHeaderPartition: [3, 1, 1, 4, 1, 1],
   atomListHeaderLength: 11, // = atomListHeaderPartition.reduce(function(a,b) { return a + b; }, 0)
   atomListHeaderItemLength: 4,
-  chargeMap: [null, +3, +2, +1, null, -1, -2, -3],
+  chargeMap: [undefined, +3, +2, +1, undefined, -1, -2, -3],
   valenceMap: [undefined, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0],
   implicitHydrogenMap: [undefined, 0, 1, 2, 3, 4],
   v30atomPropMap: {
@@ -403,8 +403,8 @@ function addPlusSigns(ret: Struct, boundingBoxes: BoundingBox[]): void {
  */
 function aggregateBoundingBoxes(
   boundingBoxes: BoundingBox[],
-): BoundingBox | null {
-  if (boundingBoxes.length === 0) return null;
+): BoundingBox | undefined {
+  if (boundingBoxes.length === 0) return undefined;
 
   const bbAll: BoundingBox = {
     max: new Vec2(boundingBoxes[0].max),
@@ -426,8 +426,8 @@ function aggregateBoundingBoxes(
  * @returns Reaction arrow instance
  */
 function createReactionArrow(
-  bb1: BoundingBox | null,
-  bb2: BoundingBox | null,
+  bb1: BoundingBox | undefined,
+  bb2: BoundingBox | undefined,
 ): RxnArrow {
   const defaultArrowLength = 2;
   const defaultOffset = 3;
@@ -439,12 +439,12 @@ function createReactionArrow(
     });
   }
 
-  let v1: Vec2 | null = bb1
+  let v1: Vec2 | undefined = bb1
     ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2)
-    : null;
-  let v2: Vec2 | null = bb2
+    : undefined;
+  let v2: Vec2 | undefined = bb2
     ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2)
-    : null;
+    : undefined;
 
   if (!v1 && v2) {
     v1 = new Vec2(v2.x - defaultOffset, v2.y);
@@ -534,7 +534,7 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
   /* reader */
   const ret = new Struct();
 
-  scaffold.mergeInto(ret, null, null, false, true);
+  scaffold.mergeInto(ret, undefined, undefined, false, true);
 
   Object.keys(rgroups).forEach((id: string) => {
     const rgid = Number.parseInt(id, 10);

@@ -62,9 +62,9 @@ export class SGroupRenderer extends BaseRenderer {
     return this.sgroupDrawingEntity.sgroup;
   }
 
-  public get labelTooltipText(): string | null {
+  public get labelTooltipText(): string | null | undefined {
     if (this.sgroup.type !== SGroup.TYPES.DAT) {
-      return null;
+      return undefined;
     }
 
     return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
@@ -211,7 +211,7 @@ export class SGroupRenderer extends BaseRenderer {
   private drawDataSGroup(): void {
     this.sgroup.bracketBox = this.calculateBracketBox();
 
-    if (this.sgroup.pp === null) {
+    if (this.sgroup.pp == undefined) {
       this.sgroup.calculatePP(this.struct);
     }
 
@@ -247,7 +247,7 @@ export class SGroupRenderer extends BaseRenderer {
     }
   }
 
-  private calculateBracketBox(): Box2Abs | null {
+  private calculateBracketBox(): Box2Abs | null | undefined {
     const contentBoxes: Box2Abs[] = [];
 
     SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
@@ -262,13 +262,13 @@ export class SGroupRenderer extends BaseRenderer {
       );
     });
 
-    const bracketBox = contentBoxes.reduce<Box2Abs | null>(
+    const bracketBox = contentBoxes.reduce<Box2Abs | undefined>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),
-      null,
+      undefined,
     );
 
     if (!bracketBox) {
-      return null;
+      return undefined;
     }
 
     const paddingVector = SGroup.isCOPGroup(this.sgroup)
@@ -601,10 +601,10 @@ export class SGroupRenderer extends BaseRenderer {
 
   private getBondHoverPath(
     bondRenderer: BondRenderer,
-  ): paper.CompoundPath | null {
+  ): paper.CompoundPath | null | undefined {
     const pathData = bondRenderer.getHoverContourPath();
 
-    return pathData ? new paperjs.CompoundPath(pathData) : null;
+    return pathData ? new paperjs.CompoundPath(pathData) : undefined;
   }
 
   private getCombinedStructureHoverPathData(): string | undefined {
@@ -616,7 +616,7 @@ export class SGroupRenderer extends BaseRenderer {
       ),
       ...this.getSGroupBondRenderers()
         .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
-        .filter((path): path is paper.CompoundPath => path !== null),
+        .filter((path): path is paper.CompoundPath => path != undefined),
     ];
 
     let combinedPath: paper.PathItem | undefined;

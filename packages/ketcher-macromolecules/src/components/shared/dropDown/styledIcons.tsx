@@ -43,7 +43,7 @@ const ChevronIcon = ({ className }) => (
 
 const CheckMarkIcon = ({ isSelected }: { isSelected: boolean }) => {
   if (!isSelected) {
-    return null;
+    return undefined;
   }
 
   return <CheckMarkStyled name="check" />;

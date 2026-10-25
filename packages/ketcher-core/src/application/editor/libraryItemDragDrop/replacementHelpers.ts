@@ -42,7 +42,7 @@ export type BondRecord = {
    * For polymer bonds: the AP name on the *other* monomer that the bond
    * connects to. Used when re-establishing bonds on the replacement monomer.
    */
-  otherAttachmentPointName: AttachmentPointName | null;
+  otherAttachmentPointName: AttachmentPointName | null | undefined;
 };
 
 export type BondReestablishmentPlan = {
@@ -107,24 +107,25 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
     const bond = monomer.attachmentPointsToBonds[apName];
     if (!bond) continue;
 
-    let otherEntity: BaseMonomer | null = null;
-    let otherAttachmentPoint: AttachmentPointName | null = null;
+    let otherEntity: BaseMonomer | null | undefined = undefined;
+    let otherAttachmentPoint: AttachmentPointName | null | undefined =
+      undefined;
 
     if (bond instanceof PolymerBond) {
       otherEntity =
         bond.firstMonomer === monomer
-          ? (bond.secondMonomer ?? null)
+          ? (bond.secondMonomer ?? undefined)
           : bond.firstMonomer;
       otherAttachmentPoint =
         bond.firstMonomer === monomer
-          ? (bond.secondMonomerAttachmentPoint ?? null)
-          : (bond.firstMonomerAttachmentPoint ?? null);
+          ? (bond.secondMonomerAttachmentPoint ?? undefined)
+          : (bond.firstMonomerAttachmentPoint ?? undefined);
     } else if (bond instanceof MonomerToAtomBond) {
       // MonomerToAtomBond connects a monomer to an atom; we treat the atom
       // side as the "other entity" placeholder — but MonomerToAtomBond
       // doesn't have a monomer on the other end, so we skip re-routing it
       // through the generic AP matching. These bonds are handled separately.
-      otherEntity = null;
+      otherEntity = undefined;
     }
 
     if (otherEntity) {
@@ -148,7 +149,7 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
         attachmentPointName: 'hydrogen' as AttachmentPointName,
         bond: hydrogenBond,
         otherEntity: otherMonomer,
-        otherAttachmentPointName: null,
+        otherAttachmentPointName: undefined,
       });
     }
   }
@@ -279,7 +280,7 @@ function filterExternalBonds(
 export function getPresetPhosphateFromSugar(
   sugar: BaseMonomer,
   position: 'left' | 'right',
-): BaseMonomer | null {
+): BaseMonomer | null | undefined {
   const sugarAP = position === 'left' ? 'R1' : 'R2';
   const phosphateAP = position === 'left' ? 'R2' : 'R1';
 
@@ -295,7 +296,7 @@ export function getPresetPhosphateFromSugar(
     }
   }
 
-  return null;
+  return undefined;
 }
 
 /**
@@ -311,13 +312,13 @@ export function getPresetPhosphateFromSugar(
 export function getPresetSugarForMonomer(
   monomer: BaseMonomer,
   libraryPreset: PresetGeometry,
-): BaseMonomer | null {
+): BaseMonomer | null | undefined {
   if (isSugarOrAmbiguousSugar(monomer)) {
     return monomer;
   }
 
   if (isRnaBaseOrAmbiguousRnaBase(monomer)) {
-    return getSugarFromRnaBase(monomer) ?? null;
+    return getSugarFromRnaBase(monomer) ?? undefined;
   }
 
   if (isPhosphateOrAmbiguousPhosphate(monomer)) {
@@ -344,7 +345,7 @@ export function getPresetSugarForMonomer(
     }
   }
 
-  return null;
+  return undefined;
 }
 
 /**
@@ -365,21 +366,21 @@ export function getPresetSugarForMonomer(
 export function getMatchingPresetComponents(
   sugar: BaseMonomer,
   libraryPreset: PresetGeometry,
-): BaseMonomer[] | null {
-  if (!isSugarOrAmbiguousSugar(sugar)) return null;
+): BaseMonomer[] | null | undefined {
+  if (!isSugarOrAmbiguousSugar(sugar)) return undefined;
 
   const components: BaseMonomer[] = [sugar];
 
   if (libraryPreset.base) {
     const base = getRnaBaseFromSugar(sugar);
-    if (!base) return null;
+    if (!base) return undefined;
     components.push(base);
   }
 
   if (libraryPreset.phosphate) {
     const position = libraryPreset.phosphatePosition ?? 'right';
     const phosphate = getPresetPhosphateFromSugar(sugar, position);
-    if (!phosphate) return null;
+    if (!phosphate) return undefined;
     components.push(phosphate);
   }
 
@@ -394,11 +395,11 @@ export type PresetComponentRole = 'sugar' | 'base' | 'phosphate';
  */
 export function getPresetComponentRole(
   monomer: BaseMonomer,
-): PresetComponentRole | null {
+): PresetComponentRole | null | undefined {
   if (isSugarOrAmbiguousSugar(monomer)) return 'sugar';
   if (isRnaBaseOrAmbiguousRnaBase(monomer)) return 'base';
   if (isPhosphateOrAmbiguousPhosphate(monomer)) return 'phosphate';
-  return null;
+  return undefined;
 }
 
 const HYDROGEN = 'hydrogen' as AttachmentPointName;

@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ interface ParseCTFileProps {
 }
 
 function isErrorWithNumericId(error: unknown): error is { id: number } {
-  if (typeof error !== 'object' || error === null) {
+  if (typeof error !== 'object' || error == undefined) {
     return false;
   }
 
@@ -48,7 +48,7 @@ function isErrorWithNumericId(error: unknown): error is { id: number } {
 }
 
 function isErrorWithMessage(error: unknown): error is { message: string } {
-  if (typeof error !== 'object' || error === null) {
+  if (typeof error !== 'object' || error == undefined) {
     return false;
   }
 
@@ -58,15 +58,15 @@ function isErrorWithMessage(error: unknown): error is { message: string } {
 }
 
 export class Molfile {
-  molecule: Struct | null;
-  molfile: string | null;
+  molecule: Struct | null | undefined;
+  molfile: string | null | undefined;
   reaction: boolean;
   mapping: Mapping;
   bondMapping: Mapping;
 
   constructor() {
-    this.molecule = null;
-    this.molfile = null;
+    this.molecule = undefined;
+    this.molfile = undefined;
 
     this.reaction = false;
     this.mapping = {};
@@ -186,7 +186,7 @@ export class Molfile {
         '\n';
       for (const component of all) {
         const saver = new Molfile();
-        const submol = molecule.clone(component, null, true);
+        const submol = molecule.clone(component, undefined, true);
         const molfile = saver.saveMolecule(submol, false, true);
         this.molfile += '$MOL\n' + molfile;
       }
@@ -297,7 +297,7 @@ export class Molfile {
   writeCTab2000Header() {
     /* saver */
     const molecule = this.molecule;
-    assert(molecule !== null, 'molecule is not defined');
+    assert(molecule != undefined, 'molecule is not defined');
     this.writePaddedNumber(molecule.atoms.size, 3);
     this.writePaddedNumber(molecule.bonds.size, 3);
 
@@ -334,7 +334,7 @@ export class Molfile {
     }[] = [];
     molecule.atoms.forEach((atom, id) => {
       let label = atom.label;
-      if (atom.atomList != null) {
+      if (atom.atomList != undefined) {
         label = 'L';
         atomsIds.push(id);
       } else if (atom.pseudo) {
@@ -381,16 +381,16 @@ export class Molfile {
     const substcountList: NumberTuple[] = [];
 
     molecule.atoms.forEach((atom, id) => {
-      if (atom.charge !== 0 && atom.charge !== null) {
+      if (atom.charge !== 0 && atom.charge != undefined) {
         chargeList.push([id, atom.charge]);
       }
-      if (atom.isotope !== 0 && atom.isotope !== null) {
+      if (atom.isotope !== 0 && atom.isotope != undefined) {
         isotopeList.push([id, atom.isotope]);
       }
       if (atom.radical !== 0) {
         radicalList.push([id, atom.radical]);
       }
-      if (atom.rglabel != null && atom.label === 'R#') {
+      if (atom.rglabel != undefined && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
           if (atom.rglabel & (1 << rgi)) {
@@ -398,7 +398,7 @@ export class Molfile {
           }
         }
       }
-      if (atom.attachmentPoints != null) {
+      if (atom.attachmentPoints != undefined) {
         aplabelList.push([id, atom.attachmentPoints]);
       }
       if (atom.ringBondCount !== 0) {

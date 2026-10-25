@@ -51,7 +51,7 @@ export class FunctionalGroup {
   readonly #sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
-    assert(sgroup != null);
+    assert(sgroup != undefined);
 
     this.#sgroup = sgroup;
     sgroup.setFunctionalGroup(this);
@@ -91,9 +91,9 @@ export class FunctionalGroup {
     functionalGroups,
     atom,
     isNeedCheckForGroups = false,
-  ): number | null {
+  ): number | null | undefined {
     if (functionalGroups.size === 0) {
-      return null;
+      return undefined;
     }
     for (const fg of functionalGroups.values()) {
       const isFunctionalGroup = isNeedCheckForGroups
@@ -102,22 +102,22 @@ export class FunctionalGroup {
       if (isFunctionalGroup && fg.relatedSGroup.atoms.includes(atom))
         return atom;
     }
-    return null;
+    return undefined;
   }
 
   static bondsInFunctionalGroup(
     molecule,
     functionalGroups,
     bond,
-  ): number | null {
+  ): number | null | undefined {
     if (functionalGroups.size === 0) {
-      return null;
+      return undefined;
     }
     for (const fg of functionalGroups.values()) {
       const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
       if (bonds.includes(bond)) return bond;
     }
-    return null;
+    return undefined;
   }
 
   static isRGroupAttachmentPointInsideFunctionalGroup(
@@ -125,7 +125,7 @@ export class FunctionalGroup {
     id: number,
   ) {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
-    assert(rgroupAttachmentPoint != null);
+    assert(rgroupAttachmentPoint != undefined);
     const attachedAtom = rgroupAttachmentPoint.atomId;
     return FunctionalGroup.atomsInFunctionalGroup(
       molecule.functionalGroups,
@@ -148,7 +148,7 @@ export class FunctionalGroup {
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
     isFunctionalGroupReturned?: boolean,
-  ): number | FunctionalGroup | null {
+  ): number | FunctionalGroup | null | undefined {
     for (const fg of functionalGroups.values()) {
       if (
         !fg.relatedSGroup.isSuperatomWithoutLabel &&
@@ -156,7 +156,7 @@ export class FunctionalGroup {
       )
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
     }
-    return null;
+    return undefined;
   }
 
   static findFunctionalGroupByBond(
@@ -177,18 +177,18 @@ export class FunctionalGroup {
     functionalGroups: Pool<FunctionalGroup>,
     bondId: number | null,
     isFunctionalGroupReturned?: boolean,
-  ): FunctionalGroup | number | null {
+  ): FunctionalGroup | number | null | undefined {
     for (const fg of functionalGroups.values()) {
       const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
       if (
-        bondId !== null &&
+        bondId != undefined &&
         !fg.relatedSGroup.isSuperatomWithoutLabel &&
         bonds.includes(bondId)
       ) {
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
       }
     }
-    return null;
+    return undefined;
   }
 
   static findFunctionalGroupBySGroup(
@@ -198,7 +198,7 @@ export class FunctionalGroup {
     const key = functionalGroups.find(
       (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id,
     );
-    return key !== null ? functionalGroups.get(key) : undefined;
+    return key != undefined ? functionalGroups.get(key) : undefined;
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
@@ -249,7 +249,7 @@ export class FunctionalGroup {
     struct: Struct,
   ) {
     const bond = struct.bonds.get(halfBond.bid);
-    assert(bond != null);
+    assert(bond != undefined);
     return this.isBondInContractedFunctionalGroup(
       bond,
       struct.sgroups,

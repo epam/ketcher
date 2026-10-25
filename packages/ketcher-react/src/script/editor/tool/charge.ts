@@ -65,7 +65,7 @@ class ChargeTool implements Tool {
         return;
       }
 
-      if (atomId !== null) {
+      if (atomId != undefined) {
         atomResult.push(atomId);
       }
     }
@@ -77,7 +77,7 @@ class ChargeTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }

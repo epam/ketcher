@@ -98,8 +98,8 @@ export class Bond extends BaseMicromoleculeEntity {
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
     reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
-    cip: null,
-    customQuery: null,
+    cip: undefined,
+    customQuery: undefined,
   };
 
   begin: number;
@@ -107,9 +107,9 @@ export class Bond extends BaseMicromoleculeEntity {
   readonly type: number;
   readonly xxx: string;
   stereo: number;
-  readonly topology: number | null;
-  readonly reactingCenterStatus: number | null;
-  customQuery: string | null;
+  readonly topology: number | null | undefined;
+  readonly reactingCenterStatus: number | null | undefined;
+  customQuery: string | null | undefined;
   len: number;
   sb: number;
   sa: number;
@@ -132,9 +132,9 @@ export class Bond extends BaseMicromoleculeEntity {
     this.xxx = attributes.xxx ?? '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
-    this.customQuery = null;
+    this.customQuery = undefined;
     this.reactingCenterStatus = 0;
-    this.cip = attributes.cip ?? null;
+    this.cip = attributes.cip ?? undefined;
     this.len = 0;
     this.sb = 0;
     this.sa = 0;
@@ -150,8 +150,8 @@ export class Bond extends BaseMicromoleculeEntity {
     if (attributes.customQuery) {
       this.customQuery = attributes.customQuery;
       this.type = Bond.PATTERN.TYPE.ANY;
-      this.reactingCenterStatus = null;
-      this.topology = null;
+      this.reactingCenterStatus = undefined;
+      this.topology = undefined;
     }
 
     if (attributes.reactingCenterStatus) {
@@ -222,7 +222,7 @@ export class Bond extends BaseMicromoleculeEntity {
     bond: Bond,
     bondBegin: Bond,
     bondEnd: Bond,
-  ): number | null {
+  ): number | null | undefined {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
       Bond.getFusingConditions(bond, bondBegin, bondEnd);
@@ -232,14 +232,14 @@ export class Bond extends BaseMicromoleculeEntity {
     } else if (isFusingToSingleBond) {
       return SINGLE;
     }
-    return null;
+    return undefined;
   }
 
   static getCyclopentadieneFusingBondType(
     bond: Bond,
     bondBegin: Bond,
     bondEnd: Bond,
-  ): number | null {
+  ): number | null | undefined {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const {
       isFusingToSingleBond,
@@ -257,7 +257,7 @@ export class Bond extends BaseMicromoleculeEntity {
     ) {
       return SINGLE;
     }
-    return null;
+    return undefined;
   }
 
   static getCyclopentadieneDoubleBondIndexes(
@@ -298,7 +298,7 @@ export class Bond extends BaseMicromoleculeEntity {
       TYPES.AROMATIC,
     ];
     return (
-      this.customQuery !== null ||
+      this.customQuery != undefined ||
       QUERY_BOND_TYPES.includes(this.type) ||
       (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
     );

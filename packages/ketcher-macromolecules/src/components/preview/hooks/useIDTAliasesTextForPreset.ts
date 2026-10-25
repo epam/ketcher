@@ -16,7 +16,7 @@ const useIDTAliasesTextForPreset = ({
 }: Props) => {
   return useMemo(() => {
     if (!presetName || !idtAliases) {
-      return null;
+      return undefined;
     }
 
     if (presetName.includes('MOE')) {

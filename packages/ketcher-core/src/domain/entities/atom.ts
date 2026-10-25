@@ -148,48 +148,48 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
   // TODO: rename
   static readonly attrlist = {
-    alias: null,
+    alias: undefined,
     label: 'C',
-    isotope: null,
+    isotope: undefined,
     radical: 0,
-    cip: null,
-    charge: null,
+    cip: undefined,
+    charge: undefined,
     explicitValence: -1,
     ringBondCount: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
     hCount: 0,
     queryProperties: {
-      aromaticity: null,
-      ringMembership: null,
-      ringSize: null,
-      connectivity: null,
-      chirality: null,
-      customQuery: null,
+      aromaticity: undefined,
+      ringMembership: undefined,
+      ringSize: undefined,
+      connectivity: undefined,
+      chirality: undefined,
+      customQuery: undefined,
     },
-    atomList: null,
+    atomList: undefined,
     invRet: 0,
     exactChangeFlag: 0,
-    rglabel: null,
-    attachmentPoints: null,
+    rglabel: undefined,
+    attachmentPoints: undefined,
     aam: 0,
     isPreview: false,
     // enhanced stereo
-    stereoLabel: null,
+    stereoLabel: undefined,
     stereoParity: 0,
-    implicitHCount: null,
+    implicitHCount: undefined,
   };
 
   label: string;
   fragment: number;
-  atomList: AtomList | null;
-  attachmentPoints: AttachmentPoints | null;
-  isotope: number | null;
+  atomList: AtomList | null | undefined;
+  attachmentPoints: AttachmentPoints | null | undefined;
+  isotope: number | null | undefined;
   isPreview: boolean;
   hCount: number;
   radical: number;
-  cip: AtomCIP | null;
-  charge: number | null;
+  cip: AtomCIP | null | undefined;
+  charge: number | null | undefined;
   explicitValence: number;
   ringBondCount: number;
   queryProperties: AtomQueryProperties;
@@ -197,13 +197,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   substitutionCount: number;
   valence: number;
   implicitH: number;
-  implicitHCount: number | null;
+  implicitHCount: number | null | undefined;
   pp: Vec2;
   neighbors: Array<number>;
   sgs: Pile<number>;
   badConn: boolean;
-  alias: string | null;
-  rglabel: number | null;
+  alias: string | null | undefined;
+  rglabel: number | null | undefined;
   aam: number;
   invRet: number;
   exactChangeFlag: number;
@@ -232,7 +232,10 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       attributes.attachmentPoints,
       Atom.attrlist.attachmentPoints,
     );
-    this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null);
+    this.implicitHCount = getValueOrDefault(
+      attributes.implicitHCount,
+      undefined,
+    );
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence,
@@ -294,7 +297,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
     this.atomList = attributes.atomList
       ? new AtomList(attributes.atomList)
-      : null;
+      : undefined;
     this.neighbors = []; // set of half-bonds having this atom as their origin
     this.badConn = false;
 
@@ -312,7 +315,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   get isRGroupAttachmentPointEditDisabled() {
-    return this.label === 'R#' && this.rglabel !== null;
+    return this.label === 'R#' && this.rglabel != undefined;
   }
 
   /**
@@ -400,7 +403,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       isAnyHalogen ||
       isAnyGroup ||
       this.hCount !== 0 ||
-      this.atomList !== null ||
+      this.atomList != undefined ||
       Object.values(queryProperties).some(
         (value) => Boolean(value) || value === 0,
       ),
@@ -414,9 +417,9 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   isPlainCarbon(): boolean {
     return (
       this.label === 'C' &&
-      this.isotope === null &&
+      this.isotope == undefined &&
       this.radical === 0 &&
-      this.charge === null &&
+      this.charge == undefined &&
       this.explicitValence < 0 &&
       this.ringBondCount === 0 &&
       this.substitutionCount === 0 &&
@@ -435,7 +438,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     return !!(
       this.invRet ||
       this.exactChangeFlag ||
-      this.attachmentPoints !== null ||
+      this.attachmentPoints != undefined ||
       this.aam
     );
   }
@@ -476,7 +479,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   private calculateValenceResult(
     groupno: number | undefined,
     context: ValenceContext,
-  ): ValenceComputationResult | null {
+  ): ValenceComputationResult | null | undefined {
     if (groupno === undefined) {
       return this.calculateUndefinedGroupValence(context);
     }
@@ -511,7 +514,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     connectionCount,
     radicalCount,
     absCharge,
-  }: ValenceContext): ValenceComputationResult | null {
+  }: ValenceContext): ValenceComputationResult | null | undefined {
     if (label === 'D' || label === 'T') {
       return {
         valence: 1,
@@ -519,7 +522,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       };
     }
     this.implicitH = 0;
-    return null;
+    return undefined;
   }
 
   private calculateGroup1Valence({
@@ -867,7 +870,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (this.implicitHCount !== null) {
+    if (this.implicitHCount != undefined) {
       return this.implicitHCount;
     }
     return hydrogenCount;
@@ -1092,7 +1095,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
             attachmentPoint?.attachmentPointNumber
           : bond.endSuperatomAttachmentPointNumber ===
             attachmentPoint?.attachmentPointNumber,
-      ) !== null,
+      ) != undefined,
     );
   }
 

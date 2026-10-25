@@ -114,7 +114,7 @@ class ReSGroup extends ReObject {
           const superatomClass = sgroup.data.class as
             SUPERATOM_CLASS | undefined;
           SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
-          SGroupdrawBracketsOptions.upperIndexText = null;
+          SGroupdrawBracketsOptions.upperIndexText = undefined;
           SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
           SGroupdrawBracketsOptions.superatomClass = superatomClass;
           // An expanded monomer shows its structure, so it needs no label
@@ -322,7 +322,7 @@ class ReSGroup extends ReObject {
         LayerMap.data,
         this.visel,
         path,
-        null,
+        undefined,
         includeInBoundingBox,
       );
       this.setHover(this.hover, render); // TODO: fix this
@@ -514,7 +514,7 @@ function showValue(
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
-  if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
+  if (sgroup.pp == undefined) sgroup.calculatePP(restruct.molecule);
 
   return sgroup.data.attached
     ? drawAttachedDat(restruct, sgroup)
@@ -558,7 +558,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
     if (atom) {
       const p = Scale.modelToCanvas(atom.a.pp, options);
       const bb = atom.visel.boundingBox;
-      if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
+      if (bb != undefined) p.x = Math.max(p.x, bb.p1.x);
       p.x += options.lineWidth; // shift a bit to the right
       const nameI = showValue(paper, p, sgroup, options);
       const boxI = util.relBox(nameI.getBBox());

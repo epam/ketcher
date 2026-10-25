@@ -22,7 +22,7 @@ function hasResetInitiallySelected(
   value: unknown,
 ): value is WithResetInitiallySelected {
   return (
-    value !== null &&
+    value != undefined &&
     typeof value === 'object' &&
     'resetInitiallySelected' in value &&
     typeof (value as WithResetInitiallySelected).resetInitiallySelected ===
@@ -47,20 +47,22 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
     this.nextId = Math.max(this.nextId, id + 1);
   }
 
-  keyOf(item: TValue): number | null {
+  keyOf(item: TValue): number | null | undefined {
     for (const [key, value] of this.entries()) {
       if (value === item) return key;
     }
 
-    return null;
+    return undefined;
   }
 
-  find(predicate: (key: number, value: TValue) => boolean): number | null {
+  find(
+    predicate: (key: number, value: TValue) => boolean,
+  ): number | null | undefined {
     for (const [key, value] of this.entries()) {
       if (predicate(key, value)) return key;
     }
 
-    return null;
+    return undefined;
   }
 
   filter(predicate: (key: number, value: TValue) => boolean): Pool<TValue> {

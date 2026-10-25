@@ -12,7 +12,7 @@ type Props = {
 
 const AttachmentPoints = ({ preparedAttachmentPointsData }: Props) => {
   if (!preparedAttachmentPointsData.length) {
-    return null;
+    return undefined;
   }
 
   return (

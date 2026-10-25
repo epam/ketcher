@@ -82,7 +82,7 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
           }
         }
 
-        editor.events.setLibraryItemDragState.dispatch(null);
+        editor.events.setLibraryItemDragState.dispatch(undefined);
         editor.isLibraryItemDragCancelled = false;
         document.body.style.cursor = '';
         dispatch(setIsDragging(false));

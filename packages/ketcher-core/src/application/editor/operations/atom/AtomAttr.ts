@@ -25,13 +25,13 @@ type Data = {
 };
 
 export class AtomAttr extends BaseOperation {
-  data: Data | null;
-  data2: Data | null;
+  data: Data | null | undefined;
+  data2: Data | null | undefined;
 
   constructor(atomId?: number, attribute?: string, value?: unknown) {
     super(OperationType.ATOM_ATTR, OperationPriority.ATOM_ATTR);
     this.data = { aid: atomId, attribute, value };
-    this.data2 = null;
+    this.data2 = undefined;
   }
 
   execute(restruct: ReStruct) {

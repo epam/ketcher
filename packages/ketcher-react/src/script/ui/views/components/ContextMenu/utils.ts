@@ -213,7 +213,7 @@ export function areSelectedBondsAttachedToSelectedAtoms(
 
 export function isAttachmentGroupCreationSelectionValid(
   struct: Struct,
-  selection: Selection | null,
+  selection: Selection | null | undefined,
 ): boolean {
   if (!selection?.atoms || selection.atoms.length < 2) {
     return false;
@@ -249,7 +249,7 @@ export function isAttachmentGroupCreationSelectionValid(
 
 export function getRemovableAttachmentGroupId(
   struct: Struct,
-  selection: Selection | null,
+  selection: Selection | null | undefined,
 ): number | null {
   if (!selection) {
     return null;

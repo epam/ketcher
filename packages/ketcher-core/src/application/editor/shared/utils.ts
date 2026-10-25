@@ -65,7 +65,7 @@ function mergeBondsParams(
   const end2 = struct2.atoms.get(bond2.end);
 
   if (!begin1 || !begin2 || !end1 || !end2) {
-    return null;
+    return undefined;
   }
 
   const angle = calcAngle(begin1.pp, end1.pp) - calcAngle(begin2.pp, end2.pp);

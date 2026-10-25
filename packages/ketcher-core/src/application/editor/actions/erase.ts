@@ -72,7 +72,7 @@ function fromBondDeletion(
   }
 
   const bond = restruct.molecule.bonds.get(bid);
-  assert(bond != null);
+  assert(bond != undefined);
   const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
@@ -128,7 +128,7 @@ export function fromOneBondDeletion(restruct, id) {
 }
 
 export function fromFragmentDeletion(restruct, rawSelection) {
-  assert(rawSelection != null);
+  assert(rawSelection != undefined);
 
   let action = new Action();
   const atomsToRemove: Array<number> = [];

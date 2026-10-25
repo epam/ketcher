@@ -109,13 +109,13 @@ export function fromPaste(
 
     if (
       fragmentId !== undefined &&
-      fragmentId !== null &&
+      fragmentId != undefined &&
       !fridMap.has(fragmentId) &&
       !isMacromoleculeAtom
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 
-      if (fragment === undefined || fragment === null) {
+      if (fragment === undefined || fragment == undefined) {
         const errorMessage = `Fragment not found for pasted atom fragment ${fragmentId}`;
 
         KetcherLogger.error(`paste.ts::fromPaste: ${errorMessage}`);
@@ -123,10 +123,10 @@ export function fromPaste(
       }
 
       const fragmentAdd = action.addOp(
-        new FragmentAdd(null, fragment.properties).perform(restruct),
+        new FragmentAdd(undefined, fragment.properties).perform(restruct),
       ) as FragmentAdd;
 
-      if (fragmentAdd.frid === null) {
+      if (fragmentAdd.frid == undefined) {
         const errorMessage =
           'FragmentAdd did not create a fragment ID during paste';
 
@@ -174,7 +174,7 @@ export function fromPaste(
     action.addOp(operation);
 
     const pastedId = operation.data.id;
-    if (pastedId === null) return;
+    if (pastedId == undefined) return;
     aidMap.set(id, pastedId);
     pasteItems.attachmentGroups.push(pastedId);
     items.attachmentGroups.push(pastedId);
@@ -264,8 +264,8 @@ export function fromPaste(
       sg.data,
       newsgid,
       attachmentPoints,
-      sg.pp ? sg.pp.add(offset) : null,
-      sg.type === 'SUP' ? sg.isExpanded() : null,
+      sg.pp ? sg.pp.add(offset) : undefined,
+      sg.type === 'SUP' ? sg.isExpanded() : undefined,
       sg.data.name,
       sg,
     );
@@ -289,7 +289,7 @@ export function fromPaste(
     ).perform(restruct);
     action.addOp(operation);
     const rxnArrowId = operation.data.id;
-    if (rxnArrowId != null) {
+    if (rxnArrowId != undefined) {
       items.rxnArrows.push(rxnArrowId);
     }
   });
@@ -297,7 +297,7 @@ export function fromPaste(
   pstruct.rxnPluses.forEach((plus) => {
     const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
     action.addOp(operation);
-    if (operation.data.plid !== null) {
+    if (operation.data.plid != undefined) {
       items.rxnPluses.push(operation.data.plid);
     }
   });

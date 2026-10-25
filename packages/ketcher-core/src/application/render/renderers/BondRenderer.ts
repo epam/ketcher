@@ -55,13 +55,13 @@ export class BondRenderer extends BaseRenderer {
     bond.setRenderer(this);
   }
 
-  public get labelTooltipText(): string | null {
+  public get labelTooltipText(): string | null | undefined {
     const struct = this.bond.firstAtom.monomer.monomerItem.struct;
     if (!struct) {
-      return null;
+      return undefined;
     }
 
-    let tooltipText: string | null = null;
+    let tooltipText: string | null | undefined = undefined;
     struct.sgroups.forEach((sgroup) => {
       if (
         tooltipText ||
@@ -332,11 +332,19 @@ export class BondRenderer extends BaseRenderer {
     // Add topology and reacting center attributes from molecule struct if available
     const bondFromStruct = this.getBondFromMoleculeStruct();
     if (bondFromStruct) {
-      rootElement.attr('data-topology', bondFromStruct.topology);
-      rootElement.attr(
-        'data-reacting-center',
-        bondFromStruct.reactingCenterStatus,
-      );
+      if (bondFromStruct.topology == undefined) {
+        rootElement.node()?.removeAttribute('data-topology');
+      } else {
+        rootElement.attr('data-topology', bondFromStruct.topology);
+      }
+      if (bondFromStruct.reactingCenterStatus == undefined) {
+        rootElement.node()?.removeAttribute('data-reacting-center');
+      } else {
+        rootElement.attr(
+          'data-reacting-center',
+          bondFromStruct.reactingCenterStatus,
+        );
+      }
     }
 
     rootElement.attr(
@@ -667,11 +675,11 @@ export class BondRenderer extends BaseRenderer {
         const firstLoop =
           firstHalfEdge && firstHalfEdge.loopId >= 0
             ? viewModel.loops.get(firstHalfEdge.loopId)
-            : null;
+            : undefined;
         const secondLoop =
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
-            : null;
+            : undefined;
         const inConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
@@ -740,7 +748,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let mark: string | null = null;
+    let mark: string | null | undefined = undefined;
 
     if (bondFromStruct.customQuery) {
       mark = bondFromStruct.customQuery;
@@ -834,7 +842,7 @@ export class BondRenderer extends BaseRenderer {
     const reactingCenterStatus = bondFromStruct.reactingCenterStatus;
 
     if (
-      reactingCenterStatus === null ||
+      reactingCenterStatus == undefined ||
       reactingCenterStatus === undefined ||
       reactingCenterStatus === StructBond.PATTERN.REACTING_CENTER.UNMARKED
     ) {

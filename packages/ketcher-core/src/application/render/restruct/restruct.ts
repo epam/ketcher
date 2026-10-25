@@ -178,7 +178,7 @@ class ReStruct {
     molecule.rgroupAttachmentPoints.forEach(
       (item: RGroupAttachmentPoint, id: number) => {
         const reAtom = this.atoms.get(item.atomId);
-        assert(reAtom != null);
+        assert(reAtom != undefined);
         this.rgroupAttachmentPoints.set(
           id,
           new ReRGroupAttachmentPoint(item, reAtom),
@@ -206,7 +206,7 @@ class ReStruct {
     return this.rgroupAttachmentPoints.filter((_id, reItem) => {
       const atomId = reItem.item.atomId;
       const atom = this.molecule.atoms.get(atomId);
-      assert(atom != null);
+      assert(atom != undefined);
       return !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
@@ -349,7 +349,7 @@ class ReStruct {
     group: LayerMap,
     visel: Visel,
     path,
-    pos: Vec2 | null = null,
+    pos: Vec2 | null | undefined = undefined,
     visible = false,
   ): void {
     if (!path || !this.layers[group].node.parentNode) return;
@@ -357,11 +357,13 @@ class ReStruct {
 
     paths.forEach((path) => {
       const offset = this.render.options.offset;
-      let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
-      const ext = pos && bb ? bb.translate(pos.negated()) : null;
-      if (offset !== null) {
+      let bb = visible
+        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+        : undefined;
+      const ext = pos && bb ? bb.translate(pos.negated()) : undefined;
+      if (offset != undefined) {
         path.translateAbs(offset.x, offset.y);
-        bb = bb ? bb.translate(offset) : null;
+        bb = bb ? bb.translate(offset) : undefined;
       }
       visel.add(path, bb, ext);
       path.insertBefore(this.layers[LayerMap[group]]);
@@ -452,7 +454,7 @@ class ReStruct {
    */
 
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
-    let boundingBox: Box2Abs | null = null;
+    let boundingBox: Box2Abs | null | undefined = undefined;
 
     for (const atomId of selection.atoms ?? []) {
       const reAtom = this.atoms.get(atomId);
@@ -460,7 +462,9 @@ class ReStruct {
       const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
-        boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);
+        boundingBox == undefined
+          ? atomBox
+          : Box2Abs.union(boundingBox, atomBox);
     }
     const selectionExceptAtoms = { ...selection };
     delete selectionExceptAtoms.atoms;
@@ -495,8 +499,10 @@ class ReStruct {
     return selection;
   }
 
-  private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
-    let boundingBox: Box2Abs | null = null;
+  private getBoundingBoxForSelection(
+    selection: SelectionMap,
+  ): Box2Abs | null | undefined {
+    let boundingBox: Box2Abs | null | undefined = undefined;
     Object.keys(ReStruct.maps).forEach((elementKey) => {
       selection[elementKey]?.forEach((elementId) => {
         const element = this[elementKey].get(elementId);
@@ -627,8 +633,8 @@ class ReStruct {
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel);
-      sgroup.hovering = null;
-      sgroup.selectionPlate = null;
+      sgroup.hovering = undefined;
+      sgroup.selectionPlate = undefined;
     });
 
     // TODO [RB] need to implement update-on-demand for fragments and r-groups
@@ -872,7 +878,7 @@ class ReStruct {
     this.frags.forEach((frag) => {
       const path = frag.draw(this.render);
       if (path) {
-        this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
+        this.addReObjectPath(LayerMap.data, frag.visel, path, undefined, true);
       }
       // TODO fragment selection & highlighting
     });
@@ -910,25 +916,26 @@ class ReStruct {
     });
   }
 
-  getRGroupAttachmentPointsVBoxByAtomIds(atomsIds: number[]): Box2Abs | null {
-    let allAtomAttachmentPointsVBox: Box2Abs | null = null;
+  getRGroupAttachmentPointsVBoxByAtomIds(
+    atomsIds: number[],
+  ): Box2Abs | null | undefined {
+    let allAtomAttachmentPointsVBox: Box2Abs | undefined = undefined;
 
     atomsIds.forEach((atomId) => {
       const attachmentPointIds =
         this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
 
-      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce(
-        (previousVBox, attachmentPointId) => {
-          const attachmentPoint =
-            this.rgroupAttachmentPoints.get(attachmentPointId);
-          assert(attachmentPoint != null);
-          const currentVBox = attachmentPoint.getVBoxObj(this.render);
-          return previousVBox && currentVBox
-            ? Box2Abs.union(previousVBox, currentVBox)
-            : currentVBox;
-        },
-        null as Box2Abs | null,
-      );
+      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce<
+        Box2Abs | undefined
+      >((previousVBox, attachmentPointId) => {
+        const attachmentPoint =
+          this.rgroupAttachmentPoints.get(attachmentPointId);
+        assert(attachmentPoint != undefined);
+        const currentVBox = attachmentPoint.getVBoxObj(this.render);
+        return previousVBox && currentVBox
+          ? Box2Abs.union(previousVBox, currentVBox)
+          : (currentVBox ?? undefined);
+      }, undefined);
 
       if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
         allAtomAttachmentPointsVBox = Box2Abs.union(
@@ -1176,7 +1183,7 @@ function scaleVisel(visel, s) {
 function isSelectionSvgObjectExists(item) {
   return (
     item &&
-    item.selectionPlate !== null &&
+    item.selectionPlate != undefined &&
     ((!item.selectionPlate?.items && !item.selectionPlate?.removed) ||
       (Array.isArray(item.selectionPlate?.items) &&
         !item.selectionPlate[0]?.removed))

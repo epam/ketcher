@@ -83,7 +83,13 @@ export function fromMultitailArrowHeadTailMove(
 ) {
   const action = new Action();
   action.addOp(
-    new MultitailArrowMoveHeadTail(id, offset, ref.name, ref.tailId, normalize),
+    new MultitailArrowMoveHeadTail(
+      id,
+      offset,
+      ref.name,
+      ref.tailId ?? null,
+      normalize,
+    ),
   );
   return action.perform(reStruct);
 }

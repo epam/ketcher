@@ -537,7 +537,7 @@ class PolymerBond implements BaseTool {
       );
       this.bondRenderer?.remove();
       this.bondRenderer = undefined;
-      monomer.setChosenFirstAttachmentPoint(null);
+      monomer.setChosenFirstAttachmentPoint(undefined);
       return;
     }
 
@@ -547,7 +547,7 @@ class PolymerBond implements BaseTool {
     );
     this.bondRenderer?.remove();
     this.bondRenderer = undefined;
-    monomer.setChosenFirstAttachmentPoint(null);
+    monomer.setChosenFirstAttachmentPoint(undefined);
 
     if (!attachmentPoint) {
       return;

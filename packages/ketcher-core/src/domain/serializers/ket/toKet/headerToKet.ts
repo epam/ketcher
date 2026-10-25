@@ -18,12 +18,12 @@ import type { Struct } from 'domain/entities/struct';
 import type { KetHeader } from 'domain/serializers/ket/types';
 import { ifDef } from 'utilities';
 
-export function headerToKet(struct: Struct): KetHeader | null {
+export function headerToKet(struct: Struct): KetHeader | null | undefined {
   const header: KetHeader = {};
 
   ifDef(header, 'moleculeName', struct.name, '');
-  ifDef(header, 'creatorProgram', null, '');
-  ifDef(header, 'comment', null, '');
+  ifDef(header, 'creatorProgram', undefined, '');
+  ifDef(header, 'comment', undefined, '');
 
-  return Object.keys(header).length !== 0 ? header : null;
+  return Object.keys(header).length !== 0 ? header : undefined;
 }

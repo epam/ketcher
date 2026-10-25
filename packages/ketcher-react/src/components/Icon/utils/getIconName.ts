@@ -17,6 +17,6 @@
 import type { IconName } from '../types';
 import { iconNameToIcon } from './iconNameToIcon';
 
-export const getIconName = (name: string): IconName | null => {
-  return Object.hasOwn(iconNameToIcon, name) ? (name as IconName) : null;
+export const getIconName = (name: string): IconName | undefined => {
+  return Object.hasOwn(iconNameToIcon, name) ? (name as IconName) : undefined;
 };

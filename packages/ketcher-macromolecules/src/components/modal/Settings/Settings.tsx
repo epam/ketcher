@@ -41,10 +41,12 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const settingsService = window.ketcher?.settingsService;
 
-  const [currentSettings, setCurrentSettings] =
-    useState<SettingsFormValue | null>(null);
-  const [initialSettings, setInitialSettings] =
-    useState<SettingsFormValue | null>(null);
+  const [currentSettings, setCurrentSettings] = useState<
+    SettingsFormValue | undefined
+  >(undefined);
+  const [initialSettings, setInitialSettings] = useState<
+    SettingsFormValue | undefined
+  >(undefined);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['general']);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,7 +70,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [currentSettings, initialSettings]);
 
   const handleSettingsChange = (partial: Partial<SettingsFormValue>) => {
-    setCurrentSettings((prev) => (prev ? { ...prev, ...partial } : null));
+    setCurrentSettings((prev) => (prev ? { ...prev, ...partial } : undefined));
   };
 
   const handleGroupToggle = (groupId: string) => {
@@ -166,7 +168,7 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   if (!currentSettings) {
-    return null;
+    return undefined;
   }
 
   const handleACSStyle = async () => {

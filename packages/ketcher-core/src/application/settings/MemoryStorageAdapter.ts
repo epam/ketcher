@@ -11,8 +11,8 @@ export class MemoryStorageAdapter implements ISettingsStorage {
   /**
    * Load settings from memory
    */
-  async load(key: string): Promise<Partial<Settings> | null> {
-    return this.storage.get(key) || null;
+  async load(key: string): Promise<Partial<Settings> | undefined> {
+    return this.storage.get(key) || undefined;
   }
 
   /**

@@ -106,8 +106,8 @@ class ReFrag extends ReObject {
     // TODO abnormal situation, empty fragments must be destroyed by tools
   }
 
-  draw(_render: Render): null {
-    return null;
+  draw(_render: Render): undefined {
+    return undefined;
   }
 
   drawHover(_render: Render): void {

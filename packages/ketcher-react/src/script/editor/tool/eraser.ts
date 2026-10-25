@@ -116,7 +116,8 @@ class EraserTool implements Tool {
           functionalGroups,
           atom,
         );
-        const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
+        const atomFromStruct =
+          atomId != undefined && struct.atoms.get(atomId)?.a;
 
         if (atomFromStruct) {
           for (const sgId of atomFromStruct.sgs.values()) {
@@ -172,7 +173,8 @@ class EraserTool implements Tool {
           functionalGroups,
           bond,
         );
-        const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
+        const bondFromStruct =
+          bondId != undefined && struct.bonds.get(bondId)?.b;
 
         if (
           bondFromStruct &&
@@ -194,7 +196,7 @@ class EraserTool implements Tool {
             molecule,
             rgroupAttachmentPointId,
           );
-        if (attachedAtomId !== null) {
+        if (attachedAtomId != undefined) {
           atomsResult.push(attachedAtomId);
         }
       }
@@ -206,7 +208,7 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        if (fgId !== null && !preResult.includes(fgId)) {
+        if (fgId != undefined && !preResult.includes(fgId)) {
           preResult.push(fgId);
         }
       }
@@ -219,7 +221,7 @@ class EraserTool implements Tool {
           functionalGroups,
           id,
         );
-        if (fgId !== null && !preResult.includes(fgId)) {
+        if (fgId != undefined && !preResult.includes(fgId)) {
           preResult.push(fgId);
         }
       }
@@ -287,7 +289,8 @@ class EraserTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a;
+      const atomFromStruct =
+        atomId != undefined && restruct.atoms.get(atomId)?.a;
 
       if (
         atomFromStruct &&
@@ -305,7 +308,8 @@ class EraserTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b;
+      const bondFromStruct =
+        bondId != undefined && restruct.bonds.get(bondId)?.b;
 
       if (
         bondFromStruct &&
@@ -323,7 +327,7 @@ class EraserTool implements Tool {
           molecule,
           ci.id,
         );
-      if (attachedAtomId !== null) {
+      if (attachedAtomId != undefined) {
         atomResult.push(attachedAtomId);
       }
     }
@@ -335,7 +339,7 @@ class EraserTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }
@@ -347,7 +351,7 @@ class EraserTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }

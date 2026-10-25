@@ -123,18 +123,21 @@ export type ReplacementTarget = {
  * - Replacement detection (center-proximity) — runs before AP proximity checks
  */
 export class LibraryItemDragDropHandler {
-  private dragDropBondTarget: AttachmentPointTarget | null = null;
-  private dragCircleHoverTarget: AttachmentPointTarget | null = null;
+  private dragDropBondTarget: AttachmentPointTarget | null | undefined =
+    undefined;
+  private dragCircleHoverTarget: AttachmentPointTarget | null | undefined =
+    undefined;
   private isDragDropBondModalOpen = false;
-  private dragDropModalContext: DragDropModalContext | null = null;
+  private dragDropModalContext: DragDropModalContext | null | undefined =
+    undefined;
   /** Tracks whether a library-item drag is currently in progress. */
-  private currentDragState: LibraryItemDragState = null;
+  private currentDragState: LibraryItemDragState = undefined;
   /**
    * The current replacement target if the cursor is within
    * DRAG_REPLACE_PROXIMITY_THRESHOLD_PX of a canvas monomer center.
    * Cleared when the cursor moves outside the threshold or the drag ends.
    */
-  private dragReplaceTarget: ReplacementTarget | null = null;
+  private dragReplaceTarget: ReplacementTarget | null | undefined = undefined;
 
   constructor(private readonly deps: LibraryItemDragDropHandlerDeps) {}
 
@@ -222,7 +225,7 @@ export class LibraryItemDragDropHandler {
     renderersContainer.update(command);
 
     this.isDragDropBondModalOpen = false;
-    this.dragDropModalContext = null;
+    this.dragDropModalContext = undefined;
   }
 
   /**
@@ -231,7 +234,7 @@ export class LibraryItemDragDropHandler {
    */
   handleMonomerConnectionCancel(): void {
     this.isDragDropBondModalOpen = false;
-    this.dragDropModalContext = null;
+    this.dragDropModalContext = undefined;
   }
 
   /** Whether a drag-drop connection modal is currently open. */
@@ -241,7 +244,7 @@ export class LibraryItemDragDropHandler {
 
   /** Whether a library item is currently being dragged. */
   get isDragging(): boolean {
-    return this.currentDragState !== null;
+    return this.currentDragState != undefined;
   }
 
   // ---------------------------------------------------------------------------
@@ -296,7 +299,7 @@ export class LibraryItemDragDropHandler {
         const { updatedTarget: clearedBondTarget } =
           this.updateAttachmentPointTarget(
             this.dragDropBondTarget,
-            null,
+            undefined,
             this.setMonomerDragTargetAP.bind(this),
           );
         this.dragDropBondTarget = clearedBondTarget;
@@ -304,7 +307,7 @@ export class LibraryItemDragDropHandler {
         const { updatedTarget: clearedCircleHover } =
           this.updateAttachmentPointTarget(
             this.dragCircleHoverTarget,
-            null,
+            undefined,
             this.setMonomerDragCircleHoverAP.bind(this),
           );
         this.dragCircleHoverTarget = clearedCircleHover;
@@ -380,7 +383,7 @@ export class LibraryItemDragDropHandler {
     const { updatedTarget: clearedCircleHoverTarget } =
       this.updateAttachmentPointTarget(
         this.dragCircleHoverTarget,
-        null,
+        undefined,
         this.setMonomerDragCircleHoverAP.bind(this),
       );
     this.dragCircleHoverTarget = clearedCircleHoverTarget;
@@ -390,7 +393,7 @@ export class LibraryItemDragDropHandler {
       hasTargetChanged: hasBondTargetChanged,
     } = this.updateAttachmentPointTarget(
       this.dragDropBondTarget,
-      null,
+      undefined,
       this.setMonomerDragTargetAP.bind(this),
     );
     this.dragDropBondTarget = clearedBondTarget;
@@ -418,9 +421,9 @@ export class LibraryItemDragDropHandler {
   private findReplacementTarget(position: {
     x: number;
     y: number;
-  }): BaseMonomer | null {
+  }): BaseMonomer | null | undefined {
     const rootOffset = this.deps.getKetcherRootRect();
-    if (!rootOffset) return null;
+    if (!rootOffset) return undefined;
 
     const canvasOffset = this.deps.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
@@ -431,7 +434,7 @@ export class LibraryItemDragDropHandler {
       new Vec2(cursorSVGX, cursorSVGY),
     );
 
-    let nearest: BaseMonomer | null = null;
+    let nearest: BaseMonomer | null | undefined = undefined;
     let minDist = DRAG_REPLACE_PROXIMITY_THRESHOLD_PX;
 
     for (const [, monomer] of this.deps.drawingEntitiesManager.monomers) {
@@ -540,7 +543,7 @@ export class LibraryItemDragDropHandler {
   private clearReplacementTarget(): void {
     if (this.dragReplaceTarget) {
       this.clearReplacementVisualState();
-      this.dragReplaceTarget = null;
+      this.dragReplaceTarget = undefined;
     }
   }
 
@@ -611,7 +614,7 @@ export class LibraryItemDragDropHandler {
       if (droppedMonomer?.hasFreeAttachmentPoint) {
         targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
         const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
-        targetMonomer.setPotentialSecondAttachmentPoint(null);
+        targetMonomer.setPotentialSecondAttachmentPoint(undefined);
 
         if (sourceAP) {
           modelChanges.merge(
@@ -679,9 +682,9 @@ export class LibraryItemDragDropHandler {
 
       this.setMonomerDragCircleHoverAP(
         this.dragCircleHoverTarget.monomer,
-        null,
+        undefined,
       );
-      this.dragCircleHoverTarget = null;
+      this.dragCircleHoverTarget = undefined;
     }
 
     modelChanges.merge(
@@ -820,9 +823,9 @@ export class LibraryItemDragDropHandler {
    */
   private getTemplateAttachmentPointNames(
     item?: MonomerItemType,
-  ): Set<AttachmentPointName> | null {
+  ): Set<AttachmentPointName> | null | undefined {
     if (!item?.attachmentPoints || item.attachmentPoints.length === 0) {
-      return null;
+      return undefined;
     }
     const { attachmentPointsList } =
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
@@ -923,7 +926,7 @@ export class LibraryItemDragDropHandler {
     replaceTarget: ReplacementTarget,
     getModeName: () => string,
     drawingEntitiesManager: DrawingEntitiesManager,
-  ): Command | null {
+  ): Command | null | undefined {
     if (
       replaceTarget.kind === 'same-geometry-preset' &&
       replaceTarget.presetSugar &&
@@ -1002,7 +1005,7 @@ export class LibraryItemDragDropHandler {
       return finalCommand;
     }
 
-    return null;
+    return undefined;
   }
 
   // ---------------------------------------------------------------------------
@@ -1015,7 +1018,7 @@ export class LibraryItemDragDropHandler {
    */
   private setMonomerDragTargetAP(
     monomer: BaseMonomer,
-    apName: AttachmentPointName | null,
+    apName: AttachmentPointName | null | undefined,
   ): void {
     const renderer = monomer.renderer;
     if (renderer instanceof BaseMonomerRenderer) {
@@ -1025,7 +1028,7 @@ export class LibraryItemDragDropHandler {
 
   private setMonomerDragCircleHoverAP(
     monomer: BaseMonomer,
-    apName: AttachmentPointName | null,
+    apName: AttachmentPointName | null | undefined,
   ): void {
     const renderer = monomer.renderer;
     if (renderer instanceof BaseMonomerRenderer) {
@@ -1084,9 +1087,9 @@ export class LibraryItemDragDropHandler {
   private findNearestFreeAttachmentPointForDrag(
     position: { x: number; y: number },
     threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
-  ): AttachmentPointTarget | null {
+  ): AttachmentPointTarget | null | undefined {
     const rootOffset = this.deps.getKetcherRootRect();
-    if (!rootOffset) return null;
+    if (!rootOffset) return undefined;
 
     const canvasOffset = this.deps.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
@@ -1097,7 +1100,7 @@ export class LibraryItemDragDropHandler {
       new Vec2(cursorSVGX, cursorSVGY),
     );
 
-    let nearest: AttachmentPointTarget | null = null;
+    let nearest: AttachmentPointTarget | null | undefined = undefined;
     let minDist = threshold;
 
     for (const [, monomer] of this.deps.drawingEntitiesManager.monomers) {
@@ -1144,14 +1147,14 @@ export class LibraryItemDragDropHandler {
    * `previousTarget` unchanged so callers can detect a no-op.
    */
   private updateAttachmentPointTarget(
-    previousTarget: AttachmentPointTarget | null,
-    nextTarget: AttachmentPointTarget | null,
+    previousTarget: AttachmentPointTarget | null | undefined,
+    nextTarget: AttachmentPointTarget | null | undefined,
     applyRendererFlag: (
       monomer: BaseMonomer,
-      apName: AttachmentPointName | null,
+      apName: AttachmentPointName | null | undefined,
     ) => void,
   ): {
-    updatedTarget: AttachmentPointTarget | null;
+    updatedTarget: AttachmentPointTarget | null | undefined;
     hasTargetChanged: boolean;
   } {
     const hasTargetChanged =
@@ -1163,7 +1166,7 @@ export class LibraryItemDragDropHandler {
     }
 
     if (previousTarget) {
-      applyRendererFlag(previousTarget.monomer, null);
+      applyRendererFlag(previousTarget.monomer, undefined);
     }
     if (nextTarget) {
       applyRendererFlag(nextTarget.monomer, nextTarget.attachmentPointName);

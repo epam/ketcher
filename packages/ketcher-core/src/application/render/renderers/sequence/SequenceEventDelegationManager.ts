@@ -10,8 +10,10 @@ type ElementType = 'text' | 'background' | 'spacer';
  * so we don't have to add handlers to each sequence item individually.
  */
 export class SequenceEventDelegationManager {
-  private static _instance: SequenceEventDelegationManager | null = null;
-  private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
+  private static _instance: SequenceEventDelegationManager | undefined =
+    undefined;
+  private canvas: D3SvgElementSelection<SVGGElement, void> | undefined =
+    undefined;
   private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
     new Map();
 
@@ -46,7 +48,7 @@ export class SequenceEventDelegationManager {
     });
 
     this.boundHandlers.clear();
-    this.canvas = null;
+    this.canvas = undefined;
   }
 
   private attachHandler(
@@ -59,26 +61,28 @@ export class SequenceEventDelegationManager {
 
   private findSequenceItemRenderer(
     target: EventTarget | null,
-  ): { renderer: BaseSequenceItemRenderer; elementType: ElementType } | null {
-    if (!target || !(target instanceof SVGElement)) return null;
+  ):
+    | { renderer: BaseSequenceItemRenderer; elementType: ElementType }
+    | undefined {
+    if (!target || !(target instanceof SVGElement)) return undefined;
 
     const sequenceItemElement = target.closest('.sequence-item') as SVGGElement;
 
-    if (!sequenceItemElement) return null;
+    if (!sequenceItemElement) return undefined;
 
     const renderer = select<SVGGElement, BaseSequenceItemRenderer>(
       sequenceItemElement,
     ).datum();
 
-    if (!renderer) return null;
+    if (!renderer) return undefined;
 
     const elementType = this.getElementType(target);
-    if (!elementType) return null;
+    if (!elementType) return undefined;
 
     return { renderer, elementType };
   }
 
-  private getElementType(target: SVGElement): ElementType | null {
+  private getElementType(target: SVGElement): ElementType | undefined {
     const dataType = target.dataset.elementType;
     if (
       dataType === 'text' ||
@@ -99,7 +103,7 @@ export class SequenceEventDelegationManager {
       return target.dataset.elementType as ElementType;
     }
 
-    return null;
+    return undefined;
   }
 
   private handleMouseOver(event: MouseEvent): void {

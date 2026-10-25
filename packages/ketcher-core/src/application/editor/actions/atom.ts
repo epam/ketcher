@@ -44,15 +44,15 @@ export function fromAtomAddition(
   restruct: ReStruct,
   pos: Point | null,
   atom?: Partial<AtomAttributes>,
-  fragmentId: number | null = null,
+  fragmentId: number | null | undefined = undefined,
 ) {
   const atomAttrs: Partial<AtomAttributes> = { ...atom };
   const action = new Action();
 
-  if (fragmentId === null) {
+  if (fragmentId == undefined) {
     const fragmentAdd = new FragmentAdd();
     action.addOp(fragmentAdd.perform(restruct));
-    assert(fragmentAdd.frid !== null, 'Fragment was not added');
+    assert(fragmentAdd.frid != undefined, 'Fragment was not added');
     atomAttrs.fragment = fragmentAdd.frid;
   } else {
     atomAttrs.fragment = fragmentId;
@@ -61,7 +61,7 @@ export function fromAtomAddition(
   const atomAdd = new AtomAdd(atomAttrs, pos ?? undefined);
   action.addOp(atomAdd.perform(restruct));
   const { aid } = atomAdd.data;
-  assert(aid !== null, 'Atom was not added');
+  assert(aid != undefined, 'Atom was not added');
   action.addOp(new CalcImplicitH([aid]).perform(restruct));
 
   return action;
@@ -71,7 +71,7 @@ export function fromAtomsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: Partial<AtomAttributes> | null | undefined,
-  reset: boolean | null,
+  reset: boolean | null | undefined,
 ) {
   const action = new Action();
   const aids = Array.isArray(ids) ? ids : [ids];
@@ -81,7 +81,7 @@ export function fromAtomsAttrs(
 
   aids.forEach((atomId) => {
     const atom = restruct.molecule.atoms.get(atomId);
-    assert(atom != null);
+    assert(atom != undefined);
 
     const resultingLabel =
       'label' in atomAttrs
@@ -125,11 +125,13 @@ export function fromAtomsAttrs(
     if (
       !reset &&
       'label' in atomAttrs &&
-      atomAttrs.label !== null &&
+      atomAttrs.label != undefined &&
       atomAttrs.label !== 'L#' &&
       !('atomList' in atomAttrs)
     ) {
-      action.addOp(new AtomAttr(atomId, 'atomList', null).perform(restruct));
+      action.addOp(
+        new AtomAttr(atomId, 'atomList', undefined).perform(restruct),
+      );
     }
 
     action.addOp(new CalcImplicitH([atomId]).perform(restruct));
@@ -174,7 +176,7 @@ export function fromAtomsFragmentAttr(
 
     action.addOp(new AtomAttr(aid, 'fragment', newfrid));
 
-    if (atom.stereoLabel !== null) {
+    if (atom.stereoLabel != undefined) {
       action.addOp(new FragmentAddStereoAtom(newfrid, aid));
       action.addOp(new FragmentDeleteStereoAtom(oldfrid, aid));
     }
@@ -199,7 +201,7 @@ export function mergeFragmentsIfNeeded(
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
     if (rgid !== undefined) {
       action
-        .mergeWith(fromRGroupFragment(restruct, null, frid2))
+        .mergeWith(fromRGroupFragment(restruct, undefined, frid2))
         .mergeWith(fromUpdateIfThen(restruct, 0, rgid));
     }
 

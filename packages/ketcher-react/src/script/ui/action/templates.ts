@@ -26,8 +26,8 @@ type ToolWithMode = Tool & {
 
 const templateStructs = templates as Struct[];
 
-const isToolWithMode = (tool: Tool | null): tool is ToolWithMode =>
-  typeof tool === 'object' && tool !== null && 'mode' in tool;
+const isToolWithMode = (tool: Tool | null | undefined): tool is ToolWithMode =>
+  typeof tool === 'object' && tool != undefined && 'mode' in tool;
 
 const templateLib: Record<string, UiAction> = {
   'template-lib': {

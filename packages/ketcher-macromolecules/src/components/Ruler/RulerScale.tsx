@@ -17,7 +17,9 @@ type Props = {
 };
 
 const RulerScale = ({ transform, layoutMode }: Props) => {
-  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | undefined>(
+    undefined,
+  );
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const getDynamicPositions = (
@@ -158,7 +160,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
   return (
     <svg
       className={styles.rulerScale}
-      ref={setSvgElement}
+      ref={(element) => setSvgElement(element ?? undefined)}
       data-testid="ruler-scale"
     >
       {svgChildren}

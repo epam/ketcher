@@ -74,7 +74,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
       );
 
-      if (sGroupId !== null) {
+      if (sGroupId != undefined) {
         selectedSGroupsIds.add(sGroupId);
       }
     });

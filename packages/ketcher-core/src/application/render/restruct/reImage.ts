@@ -21,7 +21,7 @@ const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
 
 interface ClosestReferencePosition {
   distance: number;
-  ref: ImageReferencePositionInfo | null;
+  ref: ImageReferencePositionInfo | undefined;
 }
 
 export class ReImage extends ReObject {
@@ -343,7 +343,7 @@ export class ReImage extends ReObject {
         }
       },
       {
-        ref: null,
+        ref: undefined,
         distance: Number.POSITIVE_INFINITY,
       } as ClosestReferencePosition,
     );

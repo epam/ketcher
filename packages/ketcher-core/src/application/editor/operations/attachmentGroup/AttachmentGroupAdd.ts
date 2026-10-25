@@ -7,8 +7,9 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 
 type Data = {
-  id: number | null;
-  attachmentGroup: AttachmentGroupAttributes | AttachmentGroup | null;
+  id: number | null | undefined;
+  attachmentGroup:
+    AttachmentGroupAttributes | AttachmentGroup | null | undefined;
 };
 
 export class AttachmentGroupAdd extends BaseOperation<Data> {
@@ -16,7 +17,10 @@ export class AttachmentGroupAdd extends BaseOperation<Data> {
 
   constructor(attachmentGroup?: AttachmentGroupAttributes) {
     super(OperationType.ATTACHMENT_GROUP_ADD);
-    this.data = { id: null, attachmentGroup: attachmentGroup ?? null };
+    this.data = {
+      id: undefined,
+      attachmentGroup: attachmentGroup ?? undefined,
+    };
   }
 
   execute(restruct: ReStruct) {
@@ -30,10 +34,10 @@ export class AttachmentGroupAdd extends BaseOperation<Data> {
     entity.recalculatePosition(restruct.molecule.atoms);
 
     const id =
-      this.data.id === null
+      this.data.id == undefined
         ? restruct.molecule.addAttachmentGroup(entity)
         : this.data.id;
-    if (this.data.id !== null) {
+    if (this.data.id != undefined) {
       restruct.molecule.setAttachmentGroup(id, entity);
     }
     this.data.id = id;

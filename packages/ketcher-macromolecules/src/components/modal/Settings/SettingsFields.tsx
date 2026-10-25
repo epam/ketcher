@@ -38,7 +38,7 @@ export const SettingsFields = ({
           KetcherLogger.warn(
             `Field definition not found: ${String(fieldName)}`,
           );
-          return null;
+          return undefined;
         }
 
         return (

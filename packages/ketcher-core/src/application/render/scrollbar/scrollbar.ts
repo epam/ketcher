@@ -3,9 +3,9 @@ import type { ViewBox } from '../render.types';
 import type { RaphaelElement, RaphaelRectAttr } from './types';
 
 export abstract class Scrollbar {
-  protected bar: RaphaelElement | null = null;
+  protected bar: RaphaelElement | null | undefined = undefined;
   protected render: Render;
-  protected viewBoxBeforeDrag: ViewBox | null = null;
+  protected viewBoxBeforeDrag: ViewBox | null | undefined = undefined;
 
   protected MIN_LENGTH = 40;
   protected RADIUS = 2;
@@ -37,10 +37,10 @@ export abstract class Scrollbar {
     return this.bar.attr(attr);
   }
 
-  protected hide(): null {
+  protected hide(): undefined {
     this.bar?.undrag();
     this.bar?.remove();
-    return null;
+    return undefined;
   }
 
   protected draw(): RaphaelElement {

@@ -278,7 +278,7 @@ class ReBond extends ReObject {
   getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
     const selectionPoints = this.getSelectionPoints(render, isHighlight);
-    if (!selectionPoints.length) return null;
+    if (!selectionPoints.length) return undefined;
     const [
       startPadTop,
       startTop,
@@ -307,11 +307,11 @@ class ReBond extends ReObject {
     const restruct = render.ctab;
     const options = render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
-      return null;
+      return undefined;
     }
 
     const rect = this.getSelectionContour(render, false);
-    if (!rect) return null;
+    if (!rect) return undefined;
 
     return rect.attr(
       drawOutline
@@ -326,11 +326,11 @@ class ReBond extends ReObject {
     options: RenderOptions,
   ) {
     if (this.isPlateShouldBeHidden(restruct, options)) {
-      return null;
+      return undefined;
     }
 
     const rect = this.getSelectionContour(restruct.render, false);
-    if (!rect) return null;
+    if (!rect) return undefined;
 
     return rect.attr(options.selectionStyle);
   }
@@ -378,11 +378,11 @@ class ReBond extends ReObject {
   ) {
     const options = restruct.render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
-      return null;
+      return undefined;
     }
 
     const rect = this.getSelectionContour(restruct.render, true);
-    if (!rect) return null;
+    if (!rect) return undefined;
     return rect.attr(highlightStyle);
   }
 
@@ -418,8 +418,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : null;
-    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : null;
+    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : undefined;
+    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : undefined;
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
@@ -433,11 +433,11 @@ class ReBond extends ReObject {
       LayerMap.bondSkeleton,
       this.visel,
       this.path,
-      null,
+      undefined,
       true,
     );
     const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
-      path: null,
+      path: undefined,
     };
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
@@ -446,12 +446,12 @@ class ReBond extends ReObject {
         LayerMap.data,
         this.visel,
         reactingCenter.path,
-        null,
+        undefined,
         true,
       );
     }
     const topology: { path: Element | null; rbb?: RelativeBox } = {
-      path: null,
+      path: undefined,
     };
     topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
@@ -460,7 +460,7 @@ class ReBond extends ReObject {
         LayerMap.data,
         this.visel,
         topology.path,
-        null,
+        undefined,
         true,
       );
     }
@@ -619,7 +619,7 @@ class ReBond extends ReObject {
     const atom2 = render.ctab.molecule.getBondEndpoint(this.b.end);
 
     if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
-      return null;
+      return undefined;
     }
 
     const contourBorderRadius = 10;
@@ -1038,7 +1038,7 @@ function getBondSingleUpPath(
     if (renderedDir.length() < DEGENERATE_LENGTH) {
       // Both the stored normal and the rendered direction are degenerate —
       // the bond has zero length; skip drawing to avoid a zero-width wedge.
-      return null;
+      return undefined;
     }
     n = renderedDir.normalized().rotateSC(1, 0);
   }
@@ -1416,7 +1416,7 @@ function getBondAromaticPath(
 ) {
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
   let mask = 0;
-  let dash: number[] | null = null;
+  let dash: number[] | null | undefined = undefined;
   const options = render.options;
   const bondShift = bond.doubleBondShift;
 
@@ -1449,7 +1449,7 @@ function getAromaticBondPaths(
   shiftB: boolean,
   bondSpace: number,
   mask: number,
-  dash: number[] | null,
+  dash: number[] | null | undefined,
 ) {
   const a = hb1.p;
   const b = hb2.p;
@@ -1570,7 +1570,7 @@ function getReactingCenterPath(
       );
       break;
     default:
-      return null;
+      return undefined;
   }
   return draw.reactingCenter(render.paper, p, render.options);
 }
@@ -1583,7 +1583,7 @@ function getBondMark(
 ) {
   const options = render.options;
   let mark: string;
-  let tooltip: string | null = null;
+  let tooltip: string | null | undefined = undefined;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
     if (bond.b.customQuery.length > 8) {
@@ -1595,7 +1595,7 @@ function getBondMark(
   } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) {
     mark = 'chn';
   } else {
-    return null;
+    return undefined;
   }
 
   const a = hb1.p;

@@ -600,7 +600,7 @@ export const RnaEditorExpanded = ({
             {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
             {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
           </div>
-        ) : null}
+        ) : undefined}
       </div>
     );
   };
@@ -862,7 +862,7 @@ export const RnaEditorExpanded = ({
             >
               {isPhosphateGroup
                 ? renderPhosphatePositionSelector(phosphatePosition)
-                : null}
+                : undefined}
             </GroupBlock>
           );
         })}

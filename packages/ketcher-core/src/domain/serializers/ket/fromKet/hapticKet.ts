@@ -35,7 +35,7 @@ function getAttachmentGroupKey(moleculeId: string, attachmentGroupId: string) {
 function getKetMolecule(ket: HapticKet, moleculeId: string) {
   const molecule = ket[moleculeId];
 
-  return typeof molecule === 'object' && molecule !== null
+  return typeof molecule === 'object' && molecule != undefined
     ? (molecule as KetMolecule)
     : undefined;
 }
@@ -59,7 +59,14 @@ export function parseMoleculeNode(
   }
 
   const atomIdMap = new Map<number, number>();
-  currentStruct.mergeInto(resultingStruct, null, null, false, false, atomIdMap);
+  currentStruct.mergeInto(
+    resultingStruct,
+    undefined,
+    undefined,
+    false,
+    false,
+    atomIdMap,
+  );
   moleculeAtomIdMaps.set(moleculeId, atomIdMap);
 }
 
@@ -81,22 +88,22 @@ function resolveHapticConnectionEndpoint(
   moleculeAtomIdMaps: Map<string, Map<number, number>>,
   attachmentGroupEntityIdMap: Map<string, number>,
   struct: Struct,
-): HapticConnectionEndpoint | null {
+): HapticConnectionEndpoint | null | undefined {
   const moleculeId = endpoint.moleculeId;
   if (!moleculeId) {
-    return null;
+    return undefined;
   }
 
   const atomIdMap = moleculeAtomIdMaps.get(moleculeId);
   if (!atomIdMap) {
-    return null;
+    return undefined;
   }
 
   if (endpoint.atomId !== undefined) {
     const atomId = atomIdMap.get(Number(endpoint.atomId));
 
     return atomId === undefined
-      ? null
+      ? undefined
       : {
           type: 'atom',
           moleculeId,
@@ -115,7 +122,7 @@ function resolveHapticConnectionEndpoint(
         : struct.attachmentGroups.get(attachmentGroupEntityId)?.atomIds;
 
     if (attachmentGroupEntityId === undefined || !atomIds?.length) {
-      return null;
+      return undefined;
     }
 
     return {
@@ -127,7 +134,7 @@ function resolveHapticConnectionEndpoint(
     };
   }
 
-  return null;
+  return undefined;
 }
 
 export function addAttachmentGroupsToStruct(

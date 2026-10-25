@@ -461,7 +461,7 @@ class RotateTool implements Tool {
   }
 
   private partitionNeighborsBySelection(
-    selection: Selection | null,
+    selection: Selection | null | undefined,
     atom: Atom,
   ) {
     const rotatableHalfBondIds: number[] = [];

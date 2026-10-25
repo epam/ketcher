@@ -112,7 +112,7 @@ const Icon = ({ name, className }: IconPropsType) => {
   const Component = iconMap[name];
 
   if (!Component) {
-    return null;
+    return undefined;
   }
 
   const fallbackColor = theme.ketcher.color.icon.active;

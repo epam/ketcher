@@ -21,13 +21,13 @@ import { type StructProperty, Fragment } from 'domain/entities';
 import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {
-  frid: number | null;
+  frid: number | null | undefined;
   readonly properties?: Array<StructProperty>;
   static InverseConstructor: new (fragmentId: number) => BaseOperation;
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
-    this.frid = fragmentId === undefined ? null : fragmentId;
+    this.frid = fragmentId === undefined ? undefined : fragmentId;
     if (properties) {
       this.properties = properties;
     }
@@ -35,9 +35,9 @@ class FragmentAdd extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const frag = new Fragment([], null, this.properties);
+    const frag = new Fragment([], undefined, this.properties);
 
-    if (this.frid === null) {
+    if (this.frid == undefined) {
       this.frid = struct.frags.add(frag);
     } else {
       struct.frags.set(this.frid, frag);

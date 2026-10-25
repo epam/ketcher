@@ -44,15 +44,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmentPoint: AttachmentPointName | null = null;
-  private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
-  private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | null | undefined =
+    undefined;
+  private _dragTargetAttachmentPoint: AttachmentPointName | null | undefined =
+    undefined;
+  private _dragCircleHoverAttachmentPoint:
+    AttachmentPointName | null | undefined = undefined;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
 
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public enumeration: number | null = null;
+  public enumeration: number | null | undefined = undefined;
 
   private terminalIndicatorElement?: D3SvgElementSelection<
     SVGTextElement,
@@ -168,7 +171,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -179,7 +182,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public updateAttachmentPoints(): void {
-    this.hoveredAttachmentPoint = null;
+    this.hoveredAttachmentPoint = undefined;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -231,7 +234,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
 
     const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
-    const hasDragTarget = this._dragTargetAttachmentPoint !== null;
+    const hasDragTarget = this._dragTargetAttachmentPoint != undefined;
 
     // draw used attachment points (hidden when a drag target is active)
     if (!hasDragTarget) {
@@ -352,13 +355,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public setDragTargetAttachmentPoint(
-    attachmentPointName: AttachmentPointName | null,
+    attachmentPointName: AttachmentPointName | null | undefined,
   ): void {
     this._dragTargetAttachmentPoint = attachmentPointName;
   }
 
   public setDragCircleHoverAttachmentPoint(
-    attachmentPointName: AttachmentPointName | null,
+    attachmentPointName: AttachmentPointName | null | undefined,
   ): void {
     this._dragCircleHoverAttachmentPoint = attachmentPointName;
   }
@@ -582,7 +585,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     y: number;
   } | void;
 
-  public setEnumeration(enumeration: number | null) {
+  public setEnumeration(enumeration: number | null | undefined) {
     this.enumeration = enumeration;
   }
 
@@ -601,7 +604,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('pointer-events', 'none')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
-      .text(this.enumeration);
+      .text(this.enumeration ?? '');
 
     this.raiseAttachmentPoints();
   }
@@ -611,7 +614,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     if (!this.enumerationElement) return;
 
-    this.enumerationElement.text(this.enumeration);
+    this.enumerationElement.text(this.enumeration ?? '');
   }
 
   public redrawChainTerminalIndicator(needToDraw: boolean) {

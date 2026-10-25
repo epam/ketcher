@@ -255,7 +255,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomRightMonomerPosition(): Vec2 {
-    let position: Vec2 | null = null;
+    let position: Vec2 | null | undefined = undefined;
 
     this.monomers.forEach((monomer) => {
       if (
@@ -930,15 +930,15 @@ export class DrawingEntitiesManager {
   public getSelectedEntitiesBoundingBox() {
     const selectedEntities = this.selectedEntitiesArr;
     if (selectedEntities.length === 0) {
-      return null;
+      return undefined;
     }
     return getStructureBbox(selectedEntities);
   }
 
-  public getSelectedEntitiesCenter(): Vec2 | null {
+  public getSelectedEntitiesCenter(): Vec2 | null | undefined {
     const bbox = this.getSelectedEntitiesBoundingBox();
     if (!bbox) {
-      return null;
+      return undefined;
     }
     return new Vec2(bbox.left + bbox.width / 2, bbox.top + bbox.height / 2);
   }
@@ -1367,8 +1367,8 @@ export class DrawingEntitiesManager {
 
     polymerBond.firstMonomer.removePotentialBonds(true);
     polymerBond.secondMonomer.removePotentialBonds(true);
-    polymerBond.firstMonomer.setChosenFirstAttachmentPoint(null);
-    polymerBond.secondMonomer?.setChosenSecondAttachmentPoint(null);
+    polymerBond.firstMonomer.setChosenFirstAttachmentPoint(undefined);
+    polymerBond.secondMonomer?.setChosenSecondAttachmentPoint(undefined);
     polymerBond.moveToLinkedEntities();
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
@@ -1557,7 +1557,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();
-    monomer.setPotentialSecondAttachmentPoint(null);
+    monomer.setPotentialSecondAttachmentPoint(undefined);
     monomer.removePotentialBonds();
     const operation = new MonomerHoverOperation(monomer, true);
     command.addOperation(operation);
@@ -4727,7 +4727,7 @@ export class DrawingEntitiesManager {
         // Hydrogen bonds don't go through named APs; skip AP-based re-establishment
         continue;
       }
-      if (record.otherAttachmentPointName === null) continue;
+      if (record.otherAttachmentPointName == undefined) continue;
 
       command.merge(
         this.createPolymerBond(
@@ -4855,7 +4855,7 @@ export class DrawingEntitiesManager {
       if (record.attachmentPointName === ('hydrogen' as AttachmentPointName)) {
         continue;
       }
-      if (record.otherAttachmentPointName === null) continue;
+      if (record.otherAttachmentPointName == undefined) continue;
 
       // Find the new component that plays the same structural role as the
       // original component that owned this bond.

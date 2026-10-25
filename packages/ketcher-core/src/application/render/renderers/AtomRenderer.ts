@@ -334,9 +334,9 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /** When the label is truncated, this holds the full text for use as a tooltip. */
-  public get labelTooltipText(): string | null {
+  public get labelTooltipText(): string | null | undefined {
     const text = this.labelText;
-    return text.length > MAX_LABEL_LENGTH ? text : null;
+    return text.length > MAX_LABEL_LENGTH ? text : undefined;
   }
 
   private get isAtomTerminal() {

@@ -55,7 +55,7 @@ export class RxnArrowResize extends Base {
     const current = this.data.current;
     const item = struct.rxnArrows.get(id);
     const reItem = restruct.rxnArrows.get(id);
-    assert(item != null && reItem != null);
+    assert(item != undefined && reItem != undefined);
     const anchor = this.data.anchor;
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0();

@@ -390,7 +390,7 @@ class SelectTool implements Tool {
               CoordinateTransformation.pageToModel(event, editor.render),
             );
 
-            if (attachmentGroupId !== null) {
+            if (attachmentGroupId != undefined) {
               cursorTarget = {
                 map: 'attachmentGroups',
                 id: attachmentGroupId,
@@ -531,9 +531,10 @@ class SelectTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
+      const atomFromStruct = atomId != undefined && struct.atoms.get(atomId)?.a;
       if (
         atomFromStruct &&
+        atomId != undefined &&
         !FunctionalGroup.isAtomInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           atomFromStruct,
@@ -549,9 +550,10 @@ class SelectTool implements Tool {
         functionalGroups,
         ci.id,
       );
-      const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
+      const bondFromStruct = bondId != undefined && struct.bonds.get(bondId)?.b;
       if (
         bondFromStruct &&
+        bondId != undefined &&
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
@@ -567,7 +569,7 @@ class SelectTool implements Tool {
           functionalGroups,
           id,
         );
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }

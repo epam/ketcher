@@ -126,7 +126,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   static validateKetNode(
     ketFileData: KetFileMultitailArrowNode,
-  ): string | null {
+  ): string | null | undefined {
     const { head, spine, tails } = ketFileData;
     const [spineStart, spineEnd] = spine.pos;
     const spineStartX = FixedPrecisionCoordinates.fromFloatingPrecision(
@@ -196,7 +196,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       );
     });
 
-    return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
+    return !result ? MultitailValidationErrors.INCORRECT_TAILS : undefined;
   }
 
   static getConstructorParamsFromKetNode(
@@ -538,7 +538,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   normalizeTailPosition(
     proposedPosition: FixedPrecisionCoordinates,
     tailId: number,
-  ): FixedPrecisionCoordinates | null {
+  ): FixedPrecisionCoordinates | null | undefined {
     const proposedPositionFloatingPrecision =
       proposedPosition.getFloatingPrecision();
     const getDistanceToTailDistance = (tailDistance: TailDistance): number =>
@@ -557,7 +557,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const tailMinDistance = tailDistances.at(0);
 
     if (!tailMinDistance) {
-      return null;
+      return undefined;
     }
 
     const positionCenter = FixedPrecisionCoordinates.fromFloatingPrecision(
@@ -633,7 +633,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       );
       if (normalize) {
         const result = this.normalizeTailPosition(updatedHeight, second);
-        if (result === null) {
+        if (result == undefined) {
           return originalValue.getFloatingPrecision();
         }
         updatedHeight = result;

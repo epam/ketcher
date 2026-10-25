@@ -31,7 +31,7 @@ export const IconButtonBase = ({
   const combinedTitle = shortcut ? `${title} (${shortcut})` : title;
 
   if (isHidden) {
-    return null;
+    return undefined;
   }
 
   return (

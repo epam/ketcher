@@ -22,18 +22,22 @@ import { RGroup } from 'domain/entities/rgroup';
 import type { Struct } from 'domain/entities/struct';
 
 export class RGroupFragment extends BaseOperation {
-  readonly rgid_new: number | null;
+  readonly rgid_new: number | null | undefined;
   readonly rg_new: RGroup | null | undefined;
-  rgid_old: number | null;
+  rgid_old: number | null | undefined;
   rg_old: RGroup | null | undefined;
   readonly frid: number;
 
-  constructor(rgroupId: number | null, fragmentId: number, rg?: RGroup | null) {
+  constructor(
+    rgroupId: number | null | undefined,
+    fragmentId: number,
+    rg?: RGroup | null,
+  ) {
     super(OperationType.R_GROUP_FRAGMENT);
     this.rgid_new = rgroupId;
     this.rg_new = rg;
-    this.rgid_old = null;
-    this.rg_old = null;
+    this.rgid_old = undefined;
+    this.rg_old = undefined;
     this.frid = fragmentId;
   }
 
@@ -42,14 +46,14 @@ export class RGroupFragment extends BaseOperation {
     this.rgid_old =
       this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);
 
-    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null;
+    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : undefined;
 
     this.removeOld(struct, restruct);
     this.setNew(struct, restruct);
   }
 
   private removeOld(struct: Struct, restruct: ReStruct) {
-    if (!this.rg_old || this.rgid_old === null) {
+    if (!this.rg_old || this.rgid_old == undefined) {
       return;
     }
 

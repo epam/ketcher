@@ -181,5 +181,5 @@ export const SequenceSyncEditModeButton = () => {
         />
       </svg>
     </StyledButton>
-  ) : null;
+  ) : undefined;
 };

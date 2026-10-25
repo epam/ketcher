@@ -68,31 +68,36 @@ export type RnaComponentAtoms = Map<
   { atoms: number[]; bonds: number[] }
 >;
 
-export type MonomerCreationState = {
-  // R-label mapping to [attachment atom id, leaving atom id]
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
-  // Optional restriction: when set to a subset of assignedAttachmentPoints,
-  // only those are drawn on canvas. When undefined, all assigned attachment
-  // points are displayed.
-  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
-  // Attachment atom id to a set of connected leaving atom ids
-  potentialAttachmentPoints: Map<number, Set<number>>;
-  problematicAttachmentPoints: Set<AttachmentPointName>;
-  problematicAtoms?: Set<number>;
-  clickedAttachmentPoint?: AttachmentPointName | null;
-  selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
-  hasDefaultAttachmentPoints?: boolean;
-  // RNA preset component atoms and bonds
-  rnaComponentAtoms?: RnaComponentAtoms;
-  isRnaPresetMode?: boolean;
-  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
-  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
-  editInstanceInitialValues?: MonomerCreationInitialValues;
-  attachmentAtomIdsWithExternalBonds?: Map<
-    AttachmentPointName,
-    [number, number]
-  >;
-} | null;
+export type MonomerCreationState =
+  | {
+      // R-label mapping to [attachment atom id, leaving atom id]
+      assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+      // Optional restriction: when set to a subset of assignedAttachmentPoints,
+      // only those are drawn on canvas. When undefined, all assigned attachment
+      // points are displayed.
+      visibleAssignedAttachmentPoints?: Map<
+        AttachmentPointName,
+        [number, number]
+      >;
+      // Attachment atom id to a set of connected leaving atom ids
+      potentialAttachmentPoints: Map<number, Set<number>>;
+      problematicAttachmentPoints: Set<AttachmentPointName>;
+      problematicAtoms?: Set<number>;
+      clickedAttachmentPoint?: AttachmentPointName | null;
+      selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
+      hasDefaultAttachmentPoints?: boolean;
+      // RNA preset component atoms and bonds
+      rnaComponentAtoms?: RnaComponentAtoms;
+      isRnaPresetMode?: boolean;
+      // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+      connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+      editInstanceInitialValues?: MonomerCreationInitialValues;
+      attachmentAtomIdsWithExternalBonds?: Map<
+        AttachmentPointName,
+        [number, number]
+      >;
+    }
+  | undefined;
 
 export class Render {
   public skipRaphaelInitialization = false;
@@ -103,13 +108,13 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
-  public combinedHover: Visel | null = null;
+  public combinedHover: Visel | null | undefined = undefined;
   public viewBox!: ViewBox;
   private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
+  private oldCb: Box2Abs | null | undefined = undefined;
   private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
-  private _monomerCreationState: MonomerCreationState = null;
+  private resizeObserver: ResizeObserver | null | undefined = undefined;
+  private _monomerCreationState: MonomerCreationState = undefined;
 
   constructor(
     clientArea: HTMLElement,
@@ -154,7 +159,7 @@ export class Render {
 
   unobserveCanvasResize = () => {
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
+    this.resizeObserver = undefined;
   };
 
   /**
@@ -288,7 +293,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
+  update(force = false, viewSz: Vec2 | null | undefined = undefined) {
     viewSz =
       viewSz ??
       new Vec2(

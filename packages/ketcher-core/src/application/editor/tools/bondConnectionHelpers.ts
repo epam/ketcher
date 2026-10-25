@@ -70,8 +70,8 @@ export function shouldInvokeConnectionModal(
 
   // No Modal: Both monomers have APs selected
   if (
-    firstMonomer.chosenFirstAttachmentPointForBond !== null &&
-    secondMonomer.chosenSecondAttachmentPointForBond !== null
+    firstMonomer.chosenFirstAttachmentPointForBond != undefined &&
+    secondMonomer.chosenSecondAttachmentPointForBond != undefined
   ) {
     return false;
   }
@@ -211,7 +211,7 @@ export function findPresetMonomerForBonding(
       ? AttachmentPointName.R2
       : targetAP === AttachmentPointName.R2
         ? AttachmentPointName.R1
-        : null;
+        : undefined;
 
   if (oppositeAP) {
     const match = addedMonomers.find((m) =>

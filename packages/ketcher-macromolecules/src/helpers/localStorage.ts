@@ -9,7 +9,7 @@ class LocalStorageWrapper {
     const item: string | null = this.localStorage.getItem(key);
 
     if (!item) {
-      return null;
+      return undefined;
     }
 
     return JSON.parse(item);

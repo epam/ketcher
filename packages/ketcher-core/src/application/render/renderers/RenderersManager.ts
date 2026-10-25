@@ -271,7 +271,7 @@ export class RenderersManager {
     if (isChainCyclic && !isValidRnaEnumerationStartMonomer(startMonomer)) {
       subChain.nodes.forEach((node) => {
         node.monomers.forEach((monomer) => {
-          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.setEnumeration(undefined);
           monomer.renderer?.redrawEnumeration(false);
         });
       });
@@ -308,7 +308,7 @@ export class RenderersManager {
         node instanceof LinkerSequenceNode
       ) {
         node.monomers.forEach((monomer) => {
-          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.setEnumeration(undefined);
           monomer.renderer?.redrawEnumeration(false);
         });
         currentEnumeration = 1;
@@ -320,7 +320,7 @@ export class RenderersManager {
   private resetSubChainEnumeration(subChain: BaseSubChain) {
     subChain.nodes.forEach((node) => {
       node.monomers.forEach((monomer) => {
-        monomer.renderer?.setEnumeration(null);
+        monomer.renderer?.setEnumeration(undefined);
         monomer.renderer?.redrawEnumeration(false);
       });
     });

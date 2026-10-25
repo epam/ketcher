@@ -44,7 +44,8 @@ export class AttachmentPoint {
   };
 
   protected rootElement: D3SvgElementSelection<SVGGElement, void>;
-  protected attachmentPoint: D3SvgElementSelection<SVGGElement, this> | null;
+  protected attachmentPoint:
+    D3SvgElementSelection<SVGGElement, this> | null | undefined;
   public monomer: BaseMonomer;
   protected bodyWidth: number;
   protected bodyHeight: number;
@@ -87,7 +88,7 @@ export class AttachmentPoint {
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
     this.editorEvents = editorEvents;
-    this.attachmentPoint = null;
+    this.attachmentPoint = undefined;
 
     if (!skipInit) {
       this.appendAttachmentPoint();

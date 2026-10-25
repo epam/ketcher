@@ -40,7 +40,7 @@ export function legacyCopy(
     return;
   }
 
-  let curFmt: string | null = null;
+  let curFmt: string | null | undefined = undefined;
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] || '');
   try {
     Object.entries(data).forEach(([fmt, value]) => {

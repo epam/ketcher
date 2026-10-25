@@ -21,10 +21,10 @@ import { type BondAttributes, Bond } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
-  bond: Partial<BondAttributes> | null;
-  begin: number | null;
-  end: number | null;
-  bid: number | null;
+  bond: Partial<BondAttributes> | null | undefined;
+  begin: number | null | undefined;
+  end: number | null | undefined;
+  bid: number | null | undefined;
   needInvalidateAtoms?: boolean;
 };
 
@@ -39,10 +39,10 @@ class BondAdd extends BaseOperation {
   ) {
     super(OperationType.BOND_ADD, OperationPriority.BOND_ADD);
     this.data = {
-      bond: bond ?? null,
-      begin: begin ?? null,
-      end: end ?? null,
-      bid: null,
+      bond: bond ?? undefined,
+      begin: begin ?? undefined,
+      end: end ?? undefined,
+      bid: undefined,
       needInvalidateAtoms,
     };
   }

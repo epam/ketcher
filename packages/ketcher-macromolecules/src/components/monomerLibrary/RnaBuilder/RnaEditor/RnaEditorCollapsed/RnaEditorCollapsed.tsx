@@ -26,7 +26,7 @@ const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
   const displayName = name ?? fullName;
 
   if (!displayName) {
-    return null;
+    return undefined;
   }
 
   const title = fullName ?? displayName;

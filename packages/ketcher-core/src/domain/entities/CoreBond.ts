@@ -37,7 +37,7 @@ export class Bond extends DrawingEntity {
     public bondIdInMicroMode: number,
     public type: BondType = BondType.Single,
     public stereo: BondStereo = BondStereo.None,
-    public cip: BondCIP | null = null,
+    public cip: BondCIP | null | undefined = undefined,
   ) {
     super(firstAtom.position);
     this.endPosition = secondAtom.position;

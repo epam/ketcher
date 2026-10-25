@@ -7,7 +7,7 @@ import {
 } from 'state/rna-builder';
 
 const resetRnaBuilderCommon = (dispatch: Dispatch<AnyAction>) => {
-  dispatch(setActivePresetMonomerGroup(null));
+  dispatch(setActivePresetMonomerGroup(undefined));
   dispatch(setIsEditMode(false));
 };
 

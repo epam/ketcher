@@ -80,7 +80,7 @@ class ChainTool implements Tool {
         ci.id,
       );
 
-      if (atomId !== null) {
+      if (atomId != undefined) {
         atomResult.push(atomId);
       }
     }
@@ -92,7 +92,7 @@ class ChainTool implements Tool {
         ci.id,
       );
 
-      if (bondId !== null) {
+      if (bondId != undefined) {
         bondResult.push(bondId);
       }
     }
@@ -104,7 +104,7 @@ class ChainTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }
@@ -120,7 +120,7 @@ class ChainTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }
@@ -242,7 +242,7 @@ class ChainTool implements Tool {
         atom,
       );
 
-      if (atomId !== null) {
+      if (atomId != undefined) {
         atomResult.push(atomId);
       }
     }
@@ -254,7 +254,7 @@ class ChainTool implements Tool {
           id,
         );
 
-        if (fgId !== null && !result.includes(fgId)) {
+        if (fgId != undefined && !result.includes(fgId)) {
           result.push(fgId);
         }
       }

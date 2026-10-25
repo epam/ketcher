@@ -28,12 +28,12 @@ export enum MultitailArrowRefName {
 export interface MultitailArrowReferencePosition {
   name: MultitailArrowRefName;
   isLine: boolean;
-  tailId: number | null;
+  tailId: number | undefined;
 }
 
 export interface MultitailArrowClosestReferencePosition {
   distance: number;
-  ref: MultitailArrowReferencePosition | null;
+  ref: MultitailArrowReferencePosition | undefined;
 }
 
 export class ReMultitailArrow extends ReObject {
@@ -52,13 +52,13 @@ export class ReMultitailArrow extends ReObject {
     return true;
   }
 
-  static getTailIdFromRefName(name: string): number | null {
+  static getTailIdFromRefName(name: string): number | undefined {
     if (name.startsWith(MultitailArrowRefName.TAILS)) {
       return Number.parseInt(
         name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
       );
     }
-    return null;
+    return undefined;
   }
 
   constructor(public multitailArrow: MultitailArrow) {
@@ -260,7 +260,7 @@ export class ReMultitailArrow extends ReObject {
     );
     const selectionPointSet = paper.set();
     const selectionPoints: TestSelectionPoint[] = [];
-    let spineMoveSelectionPoint: TestSelectionPoint | null = null;
+    let spineMoveSelectionPoint: TestSelectionPoint | null = undefined;
     const points: Record<string, Vec2> = {
       'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
@@ -399,7 +399,7 @@ export class ReMultitailArrow extends ReObject {
       LayerMap.data,
       this.visel,
       [path, header],
-      null,
+      undefined,
       true,
     );
     this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);
@@ -438,7 +438,7 @@ export class ReMultitailArrow extends ReObject {
     entities: Array<[string, Vec2 | Line]>,
     isLine: boolean,
   ): MultitailArrowClosestReferencePosition {
-    return entities.reduce(
+    return entities.reduce<MultitailArrowClosestReferencePosition>(
       (acc, [name, value]) => {
         const distance = isLine
           ? point.calculateDistanceToLine(value as Line)
@@ -469,13 +469,13 @@ export class ReMultitailArrow extends ReObject {
                       isLine,
                       tailId,
                     }
-                  : null,
+                  : undefined,
             }
           : acc;
       },
       {
         distance: Number.POSITIVE_INFINITY,
-        ref: null,
+        ref: undefined,
       } as MultitailArrowClosestReferencePosition,
     );
   }

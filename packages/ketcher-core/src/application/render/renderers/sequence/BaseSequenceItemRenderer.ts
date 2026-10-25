@@ -491,14 +491,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // returns subchain with node
   private get subChainWithNode() {
-    if (!this.isSubChainNode(this.node)) return null;
+    if (!this.isSubChainNode(this.node)) return undefined;
 
     const subChain = this.chain.subChains.find((subChain) => {
       if (!this.isSubChainNode(this.node)) return false;
       return subChain.nodes.includes(this.node);
     });
 
-    if (!subChain) return null;
+    if (!subChain) return undefined;
     return subChain;
   }
 
@@ -815,7 +815,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public get enumeration() {
-    return null;
+    return undefined;
   }
 
   public redrawChainBeginning() {

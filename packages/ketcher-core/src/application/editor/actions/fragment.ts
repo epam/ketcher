@@ -157,7 +157,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   return action.perform(restruct);
 }
 
-export function fromStereoFlagUpdate(restruct, frid, flag = null) {
+export function fromStereoFlagUpdate(restruct, frid, flag = undefined) {
   const action = new Action();
 
   if (!flag) {
@@ -165,7 +165,7 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
     const frag = restruct.molecule.frags.get(frid);
     if (frag) {
       frag.stereoAtoms.forEach((aid) => {
-        if (struct.atoms.get(aid).stereoLabel === null) {
+        if (struct.atoms.get(aid).stereoLabel == undefined) {
           action.addOp(new FragmentDeleteStereoAtom(frid, aid));
         }
       });

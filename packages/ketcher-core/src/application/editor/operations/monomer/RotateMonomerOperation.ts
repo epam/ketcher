@@ -21,11 +21,11 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type RotateMonomerData = {
   id: number;
-  value: number | null;
+  value: number | null | undefined;
 };
 
 export class RotateMonomerOperation extends BaseOperation {
-  private previousValue: number | null = null;
+  private previousValue: number | null | undefined = undefined;
 
   constructor(public readonly data: RotateMonomerData) {
     super(OperationType.ROTATE_MONOMER);
@@ -41,7 +41,7 @@ export class RotateMonomerOperation extends BaseOperation {
       (monomerSGroup.monomer.monomerItem.transformation ||= {});
     this.previousValue = monomerTransformation.rotate ?? 0;
 
-    if (this.data.value === null) {
+    if (this.data.value == undefined) {
       delete monomerTransformation.rotate;
       return;
     }
@@ -59,7 +59,8 @@ export class RotateMonomerOperation extends BaseOperation {
     // would accumulate an incorrect angle.
     return new RotateMonomerOperation({
       id: this.data.id,
-      value: this.data.value === null ? this.previousValue : -this.data.value,
+      value:
+        this.data.value == undefined ? this.previousValue : -this.data.value,
     });
   }
 

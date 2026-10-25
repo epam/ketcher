@@ -268,7 +268,7 @@ export const SequenceItemContextMenu = ({
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));
         dispatch(setActivePreset({}));
-        dispatch(setActiveRnaBuilderItem(null));
+        dispatch(setActiveRnaBuilderItem(undefined));
         if (
           menuProps?.selectedSequenceLabeledNodes?.length &&
           menuProps?.title
@@ -450,5 +450,5 @@ export const SequenceItemContextMenu = ({
         ></ContextMenu>,
         ketcherEditorRootElement,
       )
-    : null;
+    : undefined;
 };

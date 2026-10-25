@@ -21,9 +21,9 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
-  aid: number | null;
-  atom: Partial<AtomAttributes> | null;
-  pos: Point | null;
+  aid: number | null | undefined;
+  atom: Partial<AtomAttributes> | null | undefined;
+  pos: Point | null | undefined;
 };
 
 class AtomDelete extends BaseOperation {
@@ -31,12 +31,12 @@ class AtomDelete extends BaseOperation {
 
   constructor(atomId?: number) {
     super(OperationType.ATOM_DELETE, OperationPriority.ATOM_DELETE);
-    this.data = { aid: atomId ?? null, atom: null, pos: null };
+    this.data = { aid: atomId ?? undefined, atom: undefined, pos: undefined };
   }
 
   execute(restruct: ReStruct) {
     const { aid } = this.data;
-    if (aid === null) return;
+    if (aid == undefined) return;
 
     const struct = restruct.molecule;
     if (!this.data.atom) {

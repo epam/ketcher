@@ -41,14 +41,14 @@ export interface ClosestSkipItem {
  * @param pos - The position to search from
  * @param skip - Optional atom to skip during the search
  * @param minDist - Optional minimum distance threshold
- * @returns The closest atom with its distance, or null if none found
+ * @returns The closest atom with its distance, or undefined if none found
  */
 export type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
-  skip: ClosestSkipItem | null,
+  skip: ClosestSkipItem | null | undefined,
   minDist: number | null,
-) => ClosestAtom | null;
+) => ClosestAtom | undefined;
 
 /**
  * Default export interface for the closest module.

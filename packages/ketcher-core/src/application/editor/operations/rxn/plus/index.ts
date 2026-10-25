@@ -25,8 +25,8 @@ import { OperationType } from '../../OperationType';
 // todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
-  plid: number | null;
-  pos: Vec2 | null;
+  plid: number | null | undefined;
+  pos: Vec2 | null | undefined;
 };
 
 class RxnPlusAdd extends BaseOperation<Data> {
@@ -34,7 +34,7 @@ class RxnPlusAdd extends BaseOperation<Data> {
 
   constructor(pos?: Vec2) {
     super(OperationType.RXN_PLUS_ADD);
-    this.data = { plid: null, pos: pos ?? null };
+    this.data = { plid: undefined, pos: pos ?? undefined };
   }
 
   execute(restruct: ReStruct) {
@@ -72,12 +72,12 @@ class RxnPlusDelete extends BaseOperation {
 
   constructor(plid?: number) {
     super(OperationType.RXN_PLUS_DELETE);
-    this.data = { plid: plid ?? null, pos: null };
+    this.data = { plid: plid ?? undefined, pos: undefined };
   }
 
   execute(restruct: ReStruct) {
     const { plid } = this.data;
-    if (plid === null) return;
+    if (plid == undefined) return;
 
     const struct = restruct.molecule;
     if (!this.data.pos) {

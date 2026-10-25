@@ -21,14 +21,18 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type ShiftMonomerData = {
   id: number;
-  value: Partial<{
-    x: number;
-    y: number;
-  }> | null;
+  value:
+    | Partial<{
+        x: number;
+        y: number;
+      }>
+    | null
+    | undefined;
 };
 
 export class ShiftMonomerOperation extends BaseOperation {
-  private previousValue: Partial<{ x: number; y: number }> | null = null;
+  private previousValue: Partial<{ x: number; y: number }> | null | undefined =
+    undefined;
 
   constructor(public readonly data: ShiftMonomerData) {
     super(OperationType.SHIFT_MONOMER);
@@ -42,9 +46,9 @@ export class ShiftMonomerOperation extends BaseOperation {
 
     const monomerTransformation =
       (monomerSGroup.monomer.monomerItem.transformation ||= {});
-    this.previousValue = monomerTransformation.shift ?? null;
+    this.previousValue = monomerTransformation.shift ?? undefined;
 
-    if (this.data.value === null) {
+    if (this.data.value == undefined) {
       delete monomerTransformation.shift;
       return;
     }
@@ -66,7 +70,7 @@ export class ShiftMonomerOperation extends BaseOperation {
 
   isDummy() {
     const { value } = this.data;
-    if (value === null) return false;
+    if (value == undefined) return false;
     return (value.x ?? 0) === 0 && (value.y ?? 0) === 0;
   }
 }

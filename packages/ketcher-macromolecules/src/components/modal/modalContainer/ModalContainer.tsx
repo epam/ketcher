@@ -33,7 +33,7 @@ export const ModalContainer = () => {
     dispatch(closeModal());
   }, [dispatch]);
 
-  if (!modalName) return null;
+  if (!modalName) return undefined;
 
   const Component = modalComponentList[modalName];
 

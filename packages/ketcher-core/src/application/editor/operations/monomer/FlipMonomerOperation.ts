@@ -22,12 +22,12 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type FlipMonomerData = {
   id: number;
-  value: FlipDirection | null;
+  value: FlipDirection | null | undefined;
   rotate?: number;
 };
 
 export class FlipMonomerOperation extends BaseOperation {
-  private previousValue: FlipDirection | null = null;
+  private previousValue: FlipDirection | null | undefined = undefined;
   private previousRotate: number | undefined;
 
   constructor(public readonly data: FlipMonomerData) {
@@ -42,10 +42,10 @@ export class FlipMonomerOperation extends BaseOperation {
 
     const monomerTransformation =
       (monomerSGroup.monomer.monomerItem.transformation ||= {});
-    this.previousValue = monomerTransformation.flip ?? null;
+    this.previousValue = monomerTransformation.flip ?? undefined;
     this.previousRotate = monomerTransformation.rotate;
 
-    if (this.data.value === null) {
+    if (this.data.value == undefined) {
       delete monomerTransformation.flip;
       return;
     }

@@ -27,7 +27,7 @@ import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
-  #path: Element | null = null;
+  #path: Element | null = undefined;
 
   constructor() {
     super('enhancedFlag');
@@ -51,7 +51,7 @@ class ReEnhancedFlag extends ReObject {
 
   drawHover(render: Render): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
-    if (!this.#path?.attrs) return null;
+    if (!this.#path?.attrs) return undefined;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
@@ -63,7 +63,7 @@ class ReEnhancedFlag extends ReObject {
     options: RenderOptions,
   ): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
-    if (!this.#path?.attrs) return null;
+    if (!this.#path?.attrs) return undefined;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
@@ -111,7 +111,7 @@ class ReEnhancedFlag extends ReObject {
       LayerMap.data,
       this.visel,
       this.#path,
-      null,
+      undefined,
       true,
     );
   }

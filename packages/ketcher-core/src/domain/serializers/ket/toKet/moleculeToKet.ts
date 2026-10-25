@@ -86,7 +86,7 @@ export function moleculeToKet(
 
   const fragment = struct.frags.get(0);
   if (fragment) {
-    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, undefined);
     if (fragment.properties) {
       body.properties = fragment.properties;
     }
@@ -131,7 +131,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
   ifDef(result, 'cip', source.cip, '');
   ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
-  ifDef(result, 'stereoLabel', source.stereoLabel, null);
+  ifDef(result, 'stereoLabel', source.stereoLabel, undefined);
   ifDef(result, 'stereoParity', source.stereoParity, 0);
   // query
   ifDef(result, 'ringBondCount', source.ringBondCount, 0);
@@ -140,7 +140,9 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
   ifDef(result, 'hCount', source.hCount, 0);
   // query properties
   if (
-    Object.values(source.queryProperties).some((property) => property !== null)
+    Object.values(source.queryProperties).some(
+      (property) => property != undefined,
+    )
   ) {
     if (typeof source.queryProperties.customQuery === 'string') {
       assertCustomQueryLength(source.queryProperties.customQuery, 'Atom');
@@ -218,7 +220,7 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       ifDef(
         result,
         'subtype',
-        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+        source.data.subtype ? source.data.subtype.toUpperCase() : undefined,
       );
       ifDef(
         result,

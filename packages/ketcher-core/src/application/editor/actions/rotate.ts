@@ -40,7 +40,7 @@ import { flipPointByCenter, rotateDelta } from '../shared/utils';
 
 export function fromFlip(
   reStruct: ReStruct,
-  selection: EditorSelection | null,
+  selection: EditorSelection | null | undefined,
   flipDirection: FlipDirection,
   center: Vec2,
 ) {
@@ -217,7 +217,7 @@ export const flipBonds = (
 
 function fromStructureFlip(
   reStruct: ReStruct,
-  selection: EditorSelection | null,
+  selection: EditorSelection | null | undefined,
   flipDirection: FlipDirection,
   center: Vec2,
 ) {

@@ -115,9 +115,9 @@ export function getAttachmentGroupIdForHapticBondHalf(
   struct: Struct,
   bond: Pick<Bond, 'type' | 'begin' | 'end'> | null | undefined,
   pointer: Vec2,
-): number | null {
+): number | null | undefined {
   if (!isHapticBondWithAttachmentGroup(struct, bond) || !bond) {
-    return null;
+    return undefined;
   }
 
   const attachmentGroupId = isAttachmentGroupId(struct, bond.begin)
@@ -128,13 +128,13 @@ export function getAttachmentGroupIdForHapticBondHalf(
   const otherAtom = struct.getBondEndpoint(otherAtomId);
 
   if (!attachmentGroup || !otherAtom) {
-    return null;
+    return undefined;
   }
 
   return Vec2.dist(pointer, attachmentGroup.pp) <=
     Vec2.dist(pointer, otherAtom.pp)
     ? attachmentGroupId
-    : null;
+    : undefined;
 }
 
 export function isAttachmentGroupWithHapticBond(

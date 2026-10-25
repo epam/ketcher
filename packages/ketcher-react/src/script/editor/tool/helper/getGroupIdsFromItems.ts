@@ -16,12 +16,12 @@ function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
       })
       .forEach((atomId) => {
         const groupId = struct.getGroupIdFromAtomId(atomId);
-        if (groupId !== null) groupsIds.add(groupId);
+        if (groupId != undefined) groupsIds.add(groupId);
       });
   }
   items?.bonds?.forEach((bondId) => {
     const groupId = struct.getGroupIdFromBondId(bondId);
-    if (groupId !== null) groupsIds.add(groupId);
+    if (groupId != undefined) groupsIds.add(groupId);
   });
 
   return Array.from(groupsIds);

@@ -11,7 +11,7 @@ function resetStereoAtomIfNotCorrect(
   if (!correctAtomIds.includes(atomId)) {
     stereoAtomsMap.set(atomId, {
       stereoParity: Atom.PATTERN.STEREO_PARITY.NONE,
-      stereoLabel: null,
+      stereoLabel: undefined,
     });
   }
 }
@@ -43,8 +43,8 @@ export function getStereoAtomsMap(
       ) {
         const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel;
         if (
-          stereoLabel == null ||
-          stereoAtomsMap.get(bond.begin)?.stereoLabel == null
+          stereoLabel == undefined ||
+          stereoAtomsMap.get(bond.begin)?.stereoLabel == undefined
         ) {
           stereoAtomsMap.set(bond.begin, {
             stereoParity: getStereoParity(bond.stereo),
@@ -68,8 +68,8 @@ export function getStereoAtomsMap(
   return stereoAtomsMap;
 }
 
-function getStereoParity(stereo: number): number | null {
-  let newAtomParity: number | null = null;
+function getStereoParity(stereo: number): number | null | undefined {
+  let newAtomParity: number | null | undefined = undefined;
   switch (stereo) {
     case Bond.PATTERN.STEREO.UP:
       newAtomParity = Atom.PATTERN.STEREO_PARITY.ODD;

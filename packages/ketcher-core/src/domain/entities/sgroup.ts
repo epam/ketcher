@@ -97,7 +97,7 @@ type RenderableSGroupAtom =
   | Atom
   | {
       pp?: Vec2;
-      getVBoxObj?: (render: Render) => Box2Abs | null;
+      getVBoxObj?: (render: Render) => Box2Abs | null | undefined;
     };
 
 export class SGroup {
@@ -124,7 +124,7 @@ export class SGroup {
   type: string;
   id: number;
   label: number;
-  bracketBox: Box2Abs | null;
+  bracketBox: Box2Abs | null | undefined;
   bracketDirection: Vec2;
   areas: Box2Abs[];
   hover: boolean;
@@ -134,14 +134,14 @@ export class SGroup {
   atoms: number[];
   atomSet: Pile<number>;
   parentAtomSet: Pile<number>;
-  patoms: number[] | null;
+  patoms: number[] | null | undefined;
   allAtoms: boolean;
   bonds: number[];
   xBonds: number[];
   neiAtoms: number[];
-  pp: Vec2 | null;
+  pp: Vec2 | null | undefined;
   data: SGroupData;
-  dataArea: Box2Abs | null;
+  dataArea: Box2Abs | null | undefined;
   functionalGroup: FunctionalGroup | undefined;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
@@ -149,14 +149,14 @@ export class SGroup {
     this.type = type;
     this.id = -1;
     this.label = -1;
-    this.bracketBox = null;
+    this.bracketBox = undefined;
     this.bracketDirection = new Vec2(1, 0);
     this.areas = [];
 
     this.hover = false;
-    this.hovering = null;
+    this.hovering = undefined;
     this.selected = false;
-    this.selectionPlate = null;
+    this.selectionPlate = undefined;
 
     this.atoms = [];
     this.atomSet = new Pile<number>();
@@ -167,8 +167,8 @@ export class SGroup {
     this.xBonds = [];
     this.neiAtoms = [];
     this.attachmentPoints = [];
-    this.pp = null;
-    this.dataArea = null;
+    this.pp = undefined;
+    this.dataArea = undefined;
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
@@ -262,9 +262,9 @@ export class SGroup {
         contentBoxes.push(bba);
       });
 
-      const contentBB = contentBoxes.reduce<Box2Abs | null>(
+      const contentBB = contentBoxes.reduce<Box2Abs | undefined>(
         (contentBounds, bba) => {
-          let bbb: Box2Abs | null = null;
+          let bbb: Box2Abs | null | undefined = undefined;
           [bba.p0.x, bba.p1.x].forEach((x) => {
             [bba.p0.y, bba.p1.y].forEach((y) => {
               const v = new Vec2(x, y);
@@ -274,7 +274,7 @@ export class SGroup {
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
           return !contentBounds ? bbb : Box2Abs.union(contentBounds, bbb);
         },
-        null,
+        undefined,
       );
 
       assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
@@ -453,8 +453,8 @@ export class SGroup {
     return '';
   }
 
-  static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp || !sgroup.bracketBox) return null;
+  static getOffset(sgroup: SGroup): null | Vec2 | undefined {
+    if (!sgroup?.pp || !sgroup.bracketBox) return undefined;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
@@ -536,7 +536,7 @@ export class SGroup {
     });
     cp.pp = sgroup.pp;
     cp.bracketBox = sgroup.bracketBox;
-    cp.patoms = null;
+    cp.patoms = undefined;
     cp.allAtoms = sgroup.allAtoms;
     cp.data.expanded = sgroup.data.expanded;
     cp.addAttachmentPoints(sgroup.cloneAttachmentPoints(aidMap));
@@ -596,7 +596,7 @@ export class SGroup {
       ? new Vec2(0.2, 0.4)
       : new Vec2(1.2, 1.2);
     const atoms = sGroup.atoms;
-    let braketBox: Box2Abs | null = null;
+    let braketBox: Box2Abs | null | undefined = undefined;
     const contentBoxes: Box2Abs[] = [];
     const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
       if (remol && render) {
@@ -611,7 +611,7 @@ export class SGroup {
       const atom = getAtom(aid);
       if (!atom) return;
 
-      let structBoundingBox: Box2Abs | null = null;
+      let structBoundingBox: Box2Abs | null | undefined = undefined;
       if ('getVBoxObj' in atom && atom.getVBoxObj && render) {
         structBoundingBox = atom.getVBoxObj(render);
       } else if (atom.pp) {
@@ -629,7 +629,8 @@ export class SGroup {
     const currentRender = render ?? window.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ??
+      undefined;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -795,7 +796,7 @@ export class SGroup {
 
     let xAtom1 = -1;
     let xAtom2 = -1;
-    let crossBond: Bond | null = null;
+    let crossBond: Bond | null | undefined = undefined;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       assert(
@@ -834,7 +835,7 @@ export class SGroup {
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
       });
-      if (crossBond !== null) {
+      if (crossBond != undefined) {
         const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
         newCrossBond.end = amap[xAtom1];

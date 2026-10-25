@@ -128,7 +128,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return true;
   }
 
-  getVBoxObj(render: Render): Box2Abs | null {
+  getVBoxObj(render: Render): Box2Abs | null | undefined {
     if (this.visel.boundingBox) {
       return ReObject.prototype.getVBoxObj.call(this, render);
     }
@@ -157,7 +157,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     const atomId = render.ctab.molecule.atoms.keyOf(this.a);
-    if (atomId === null) {
+    if (atomId == undefined) {
       return;
     }
 
@@ -209,7 +209,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       render.monomerCreationState;
     const atomId = render.ctab.molecule.atoms.keyOf(this.a);
 
-    if (atomId === null) {
+    if (atomId == undefined) {
       return;
     }
 
@@ -303,7 +303,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   // to the union of only the atom's own label boxes rather than the full
   // visel bounding box (which also includes the aam/stereo/query
   // annotation).
-  private getLabelVBoxObj(render: Render): Box2Abs | null {
+  private getLabelVBoxObj(render: Render): Box2Abs | null | undefined {
     const labelBoxes = this.visel.boxes.slice(0, this.labelBoxCount);
     if (labelBoxes.length === 0) {
       return this.getVBoxObj(render);
@@ -354,7 +354,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const hasLabel =
       (this.a.pseudo?.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0) ||
-      this.a.atomList !== null;
+      this.a.atomList != undefined;
 
     return hasLabel
       ? this.getLabeledSelectionContour(render, highlightPadding)
@@ -384,7 +384,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const atom = this.a;
     const { render } = restruct;
     if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
+      return undefined;
     }
 
     return this.getSelectionContour(render, highlightPadding).attr(style);
@@ -394,7 +394,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const atom = this.a;
     const { options } = render;
     if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
+      return undefined;
     }
 
     return this.getSelectionContour(render).attr(
@@ -410,7 +410,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const { options } = render;
 
     if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
+      return undefined;
     }
     return this.getSelectionContour(render).attr(options.selectionStyle);
   }
@@ -441,13 +441,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
     const MIN_BOND_LENGTH = 24;
     const isBondLengthTooShort = bondLength <= MIN_BOND_LENGTH;
-    const hasCharge = this.a.charge !== null && this.a.charge !== 0;
+    const hasCharge = this.a.charge != undefined && this.a.charge !== 0;
     return showCharge && isBondLengthTooShort && hasCharge;
   }
 
   private getRatio(
     renderOptions: RenderOptions,
-    bondLen: number | null,
+    bondLen: number | null | undefined,
   ): number {
     const DEFAULT_BOND_LENGTH = 40;
     const DEFAULT_SUB_FONT_SIZE = 13;
@@ -476,7 +476,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     renderOptions: RenderOptions,
     direction: Vec2,
     _atomPosition?: Vec2,
-    bondLen: number | null = null,
+    bondLen: number | null | undefined = undefined,
   ): Vec2 {
     const atomPosition = Scale.modelToCanvas(
       _atomPosition ?? this.a.pp,
@@ -591,7 +591,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     let implh = 0;
     let isHydrogen = false;
     let label: ElemAttr | undefined;
-    let index: ElemAttr | null = null;
+    let index: ElemAttr | null | undefined = undefined;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -634,7 +634,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     if (this.showLabel) {
-      let hydroIndex: ElemAttr | null = null;
+      let hydroIndex: ElemAttr | null | undefined = undefined;
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin);
         rightMargin += hydroIndex.rbb.width + delta;
@@ -657,7 +657,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           true,
         );
       }
-      if (this.a.isotope !== null) {
+      if (this.a.isotope != undefined) {
         const isotope = showIsotope(this, render, leftMargin);
         leftMargin -= isotope.rbb.width + delta;
         restruct.addReObjectPath(
@@ -676,7 +676,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         (options.usageInMacromolecule === undefined && !sgroup);
       // can not use Atom.isSuperatomLeavingGroupAtom here, because in preview model there is no sgroups
       const isLeavingGroupAtom =
-        this.a.rglabel !== null && this.a.rglabel !== 0;
+        this.a.rglabel != undefined && this.a.rglabel !== 0;
 
       const shouldHideHydrogenInPreview = isPreviewMode && isLeavingGroupAtom;
 
@@ -703,7 +703,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           ps,
           true,
         );
-        if (hydroIndex != null) {
+        if (hydroIndex != undefined) {
           restruct.addReObjectPath(
             LayerMap.data,
             this.visel,
@@ -714,7 +714,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         }
       }
       if (this.a.charge === 0) {
-        this.a.charge = null;
+        this.a.charge = undefined;
       }
       if (this.a.charge && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
@@ -775,7 +775,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
 
-      if (aid !== null) {
+      if (aid != undefined) {
         const [attachmentAtoms, leavingGroups] = Array.from(
           assignedAttachmentPoints.values(),
         ).reduce(
@@ -1531,10 +1531,10 @@ function isLabelVisible(
   const attachmentGroupId =
     atom.a instanceof AttachmentGroup
       ? restruct.molecule.attachmentGroups.keyOf(atom.a)
-      : null;
+      : undefined;
 
   if (
-    attachmentGroupId !== null &&
+    attachmentGroupId != undefined &&
     isAttachmentGroupWithHapticBond(restruct.molecule, attachmentGroupId)
   ) {
     return false;
@@ -1563,12 +1563,12 @@ function isLabelVisible(
     options.carbonExplicitly ||
     options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
-    atom.a.isotope !== null ||
+    atom.a.isotope != undefined ||
     atom.a.radical !== 0 ||
-    atom.a.charge !== null ||
+    atom.a.charge != undefined ||
     atom.a.explicitValence >= 0 ||
-    atom.a.atomList !== null ||
-    atom.a.rglabel !== null ||
+    atom.a.atomList != undefined ||
+    atom.a.rglabel != undefined ||
     (atom.a.badConn && options.showValenceWarnings) ||
     atom.a.label.toLowerCase() !== 'c';
 
@@ -1689,7 +1689,7 @@ function buildLabel(
 
   let text = getLabelText(atom.a, atomId, sgroup, options) || 'R#';
 
-  let tooltip: string | null = null;
+  let tooltip: string | null | undefined = undefined;
 
   if (text === atom.a.label) {
     const element = Elements.get(text);
@@ -1759,7 +1759,7 @@ function buildLabel(
   let rightMargin = (rbb.width / 2) * Math.min(options.zoom, 1);
   let leftMargin = (-rbb.width / 2) * Math.min(options.zoom, 1);
 
-  if (atom.a.atomList !== null) {
+  if (atom.a.atomList != undefined) {
     const xShift =
       ((atom.hydrogenOnTheLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
     pathAndRBoxTranslate(path, rbb, xShift, 0);
@@ -1793,7 +1793,7 @@ function getLabelText(
     }
   }
 
-  if (atom.atomList !== null) return atom.atomList.label();
+  if (atom.atomList != undefined) return atom.atomList.label();
 
   if (atom.pseudo) return atom.pseudo;
 
@@ -1801,7 +1801,7 @@ function getLabelText(
 
   if (
     atom.label &&
-    atom.rglabel !== null &&
+    atom.rglabel != undefined &&
     sgroup instanceof MonomerMicromolecule
   ) {
     const isExpandMode = options?.usageInMacromolecule === undefined && sgroup;
@@ -1811,7 +1811,7 @@ function getLabelText(
     }
   }
 
-  if (atom.label && atom.rglabel !== null) {
+  if (atom.label && atom.rglabel != undefined) {
     let text = '';
     const rglabelNum = atom.rglabel as unknown as number;
     for (let rgi = 0; rgi < 32; rgi++) {
@@ -1936,7 +1936,7 @@ function showCharge(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   let text = '';
-  if (atom.a.charge !== null) {
+  if (atom.a.charge != undefined) {
     const absCharge = Math.abs(atom.a.charge);
     if (absCharge !== 1) text = absCharge.toString();
     if (atom.a.charge < 0) text += '\u2013';
@@ -1996,17 +1996,17 @@ function showHydrogen(
   render: Render,
   implh: number,
   data: {
-    hydroIndex: ElemAttr | null;
+    hydroIndex: ElemAttr | null | undefined;
     rightMargin: number;
     leftMargin: number;
   },
 ): {
   hydrogen: ElemAttr;
-  hydroIndex: ElemAttr | null;
+  hydroIndex: ElemAttr | null | undefined;
   rightMargin: number;
   leftMargin: number;
 } {
-  let hydroIndex: ElemAttr | null = data.hydroIndex;
+  let hydroIndex: ElemAttr | null | undefined = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
@@ -2055,7 +2055,7 @@ function showHydrogen(
     }
   }
   if (hydrogenLeft) {
-    if (hydroIndex != null) {
+    if (hydroIndex != undefined) {
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
@@ -2239,7 +2239,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'aromaticity',
     getValue: (atom) =>
-      atom.queryProperties?.aromaticity ?? atom.aromaticity ?? null,
+      atom.queryProperties?.aromaticity ?? atom.aromaticity ?? undefined,
     format: (value) => (value === 'aromatic' ? 'a' : 'A'),
   },
   {
@@ -2291,24 +2291,25 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'ringMembership',
     getValue: (atom) =>
-      atom.queryProperties?.ringMembership ?? atom.ringMembership ?? null,
+      atom.queryProperties?.ringMembership ?? atom.ringMembership ?? undefined,
     format: (value) => `R${value}`,
   },
   {
     propertyName: 'ringSize',
-    getValue: (atom) => atom.queryProperties?.ringSize ?? atom.ringSize ?? null,
+    getValue: (atom) =>
+      atom.queryProperties?.ringSize ?? atom.ringSize ?? undefined,
     format: (value) => `r${value}`,
   },
   {
     propertyName: 'connectivity',
     getValue: (atom) =>
-      atom.queryProperties?.connectivity ?? atom.connectivity ?? null,
+      atom.queryProperties?.connectivity ?? atom.connectivity ?? undefined,
     format: (value) => `X${value}`,
   },
   {
     propertyName: 'chirality',
     getValue: (atom) =>
-      atom.queryProperties?.chirality ?? atom.chirality ?? null,
+      atom.queryProperties?.chirality ?? atom.chirality ?? undefined,
     format: (value) => (value === 'clockwise' ? '@@' : '@'),
   },
 ];
@@ -2335,7 +2336,7 @@ export function checkIsSmartPropertiesExist(atom: Atom) {
     'customQuery',
   ];
   return (
-    atom.implicitHCount !== null ||
+    atom.implicitHCount != undefined ||
     smartsSpecificProperties.some((name) => {
       const value = atom.queryProperties?.[name];
       return Boolean(value) || value === 0;
@@ -2362,7 +2363,7 @@ export function getAtomCustomQuery(
     }
 
     const value = getValue(atom);
-    if (value === null || value === undefined) {
+    if (value == undefined || value === undefined) {
       continue;
     }
 

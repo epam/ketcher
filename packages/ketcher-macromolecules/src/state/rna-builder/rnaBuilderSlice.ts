@@ -84,14 +84,16 @@ const readPersistedPresetPhosphateFilter = (): PresetPhosphateFilter => {
 };
 
 interface IRnaBuilderState {
-  activePreset: IRnaPreset | null;
+  activePreset: IRnaPreset | undefined;
   sequenceSelection: LabeledNodesWithPositionInSequence[] | undefined;
   sequenceSelectionName: string | undefined;
   isSequenceFirstsOnlyNucleoelementsSelected: boolean | undefined;
-  activePresetMonomerGroup: {
-    groupName: MonomerGroups;
-    groupItem: MonomerOrAmbiguousType;
-  } | null;
+  activePresetMonomerGroup:
+    | {
+        groupName: MonomerGroups;
+        groupItem: MonomerOrAmbiguousType;
+      }
+    | undefined;
   groupItemValidations: {
     [MonomerGroups.BASES]: string[];
     [MonomerGroups.SUGARS]: string[];
@@ -99,22 +101,22 @@ interface IRnaBuilderState {
   };
   presetsDefault: IRnaPreset[];
   presetsCustom: IRnaPreset[];
-  activeRnaBuilderItem?: RnaBuilderItem | null;
-  activeMonomerKey: string | null;
+  activeRnaBuilderItem?: RnaBuilderItem | undefined;
+  activeMonomerKey: string | undefined;
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
   invalidPresetNameError: string;
-  activePresetForContextMenu: IRnaPreset | null;
+  activePresetForContextMenu: IRnaPreset | undefined;
   presetPhosphateFilter: PresetPhosphateFilter;
 }
 
 const initialState: IRnaBuilderState = {
-  activePreset: null,
+  activePreset: undefined,
   sequenceSelection: undefined,
   sequenceSelectionName: undefined,
   isSequenceFirstsOnlyNucleoelementsSelected: undefined,
-  activePresetMonomerGroup: null,
+  activePresetMonomerGroup: undefined,
   groupItemValidations: {
     [MonomerGroups.BASES]: [],
     [MonomerGroups.SUGARS]: [],
@@ -122,13 +124,13 @@ const initialState: IRnaBuilderState = {
   },
   presetsDefault: [],
   presetsCustom: [],
-  activeRnaBuilderItem: null,
-  activeMonomerKey: null,
+  activeRnaBuilderItem: undefined,
+  activeMonomerKey: undefined,
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
   invalidPresetNameError: '',
-  activePresetForContextMenu: null,
+  activePresetForContextMenu: undefined,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
 export const monomerGroupToPresetGroup = {
@@ -195,7 +197,7 @@ export const rnaBuilderSlice = createSlice({
     },
     setActiveRnaBuilderItem: (
       state,
-      action: PayloadAction<RnaBuilderItem | null>,
+      action: PayloadAction<RnaBuilderItem | undefined>,
     ) => {
       state.activeRnaBuilderItem = action.payload;
     },
@@ -227,15 +229,18 @@ export const rnaBuilderSlice = createSlice({
     },
     setActivePresetMonomerGroup: (
       state,
-      action: PayloadAction<{
-        groupName: MonomerGroups;
-        groupItem: MonomerOrAmbiguousType;
-      } | null>,
+      action: PayloadAction<
+        | {
+            groupName: MonomerGroups;
+            groupItem: MonomerOrAmbiguousType;
+          }
+        | undefined
+      >,
     ) => {
       state.activePresetMonomerGroup = action.payload
         ? // use castDraft to bypass the Immer draft type checking, allowing us to assign a possibly non-draft value to the state. This is necessary because the groupItem can be either a MonomerItemType or an AmbiguousMonomerType, and Immer's type checking can be too strict in this case.
           castDraft(action.payload)
-        : null;
+        : undefined;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -273,7 +278,7 @@ export const rnaBuilderSlice = createSlice({
       state.presetsCustom.splice(presetIndexInList, 1);
 
       if (preset.nameInList) {
-        state.activePreset = null;
+        state.activePreset = undefined;
       }
     },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {

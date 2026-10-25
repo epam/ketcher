@@ -54,7 +54,7 @@ class APointTool implements Tool {
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,

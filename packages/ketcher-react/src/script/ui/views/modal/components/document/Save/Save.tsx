@@ -597,7 +597,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const warnings = this.getWarnings(format);
 
-    return warnings.length ? (
+    return warnings.length > 0 ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer} key={warning}>
@@ -626,7 +626,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         : structStr;
 
     const isMoleculeContain =
-      this.props.struct.atoms.size && this.props.struct.bonds.size;
+      this.props.struct.atoms.size > 0 && this.props.struct.bonds.size > 0;
     const buttons = [
       <button
         key="save-tmpl"

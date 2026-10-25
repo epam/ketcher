@@ -97,7 +97,7 @@ class BondTool implements Tool {
         return;
       }
 
-      if (functionalGroups.size) {
+      if (functionalGroups.size > 0) {
         const fgIds = new Set<number>();
         for (const bondId of selectedBonds) {
           const fgId = FunctionalGroup.findFunctionalGroupByBond(
@@ -109,7 +109,7 @@ class BondTool implements Tool {
             fgIds.add(fgId);
           }
         }
-        if (fgIds.size) {
+        if (fgIds.size > 0) {
           dispatchMonomerOrGroupDialog(this.editor, [...fgIds]);
           this.isNotActiveTool = true;
           return;
@@ -147,14 +147,14 @@ class BondTool implements Tool {
     const atomResult: Array<number> = [];
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
       );
       if (atomId !== null) atomResult.push(atomId);
     }
-    if (ci && functionalGroups.size && ci.map === 'bonds') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -172,7 +172,7 @@ class BondTool implements Tool {
           result.push(fgId);
         }
       }
-      if (result.length) {
+      if (result.length > 0) {
         dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
@@ -187,7 +187,7 @@ class BondTool implements Tool {
           result.push(fgId);
         }
       }
-      if (result.length) {
+      if (result.length > 0) {
         dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
@@ -434,7 +434,7 @@ class BondTool implements Tool {
       'functionalGroups',
     ]) as BondItemRef | null;
 
-    if (endAtom?.map === 'atoms' && functionalGroups.size && this.dragCtx) {
+    if (endAtom?.map === 'atoms' && functionalGroups.size > 0 && this.dragCtx) {
       const fgIds = this.collectFunctionalGroupIdsForAtom(
         functionalGroups,
         endAtom.id,

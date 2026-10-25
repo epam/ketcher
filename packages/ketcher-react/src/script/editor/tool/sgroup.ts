@@ -102,7 +102,7 @@ class SGroupTool implements Tool {
         isEqual(sgroup.atoms, selectedAtoms),
       );
 
-      if (selectedAtoms && functionalGroups.size) {
+      if (selectedAtoms && functionalGroups.size > 0) {
         for (const atom of selectedAtoms) {
           const atomId = FunctionalGroup.atomsInFunctionalGroup(
             functionalGroups,
@@ -166,7 +166,7 @@ class SGroupTool implements Tool {
         }
       }
 
-      if (result.length) {
+      if (result.length > 0) {
         this.editor.selection(null);
         dispatchMonomerOrGroupDialog(this.editor, result);
         return;
@@ -187,7 +187,7 @@ class SGroupTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci?.map === 'atoms' && functionalGroups.size) {
+    if (ci?.map === 'atoms' && functionalGroups.size > 0) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -210,7 +210,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'bonds' && functionalGroups.size) {
+    if (ci?.map === 'bonds' && functionalGroups.size > 0) {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -234,7 +234,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    if (ci?.map === 'functionalGroups' && functionalGroups.size) {
+    if (ci?.map === 'functionalGroups' && functionalGroups.size > 0) {
       const sgroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sgroup?.item)) {
@@ -316,7 +316,7 @@ class SGroupTool implements Tool {
     const atomsResult: Array<number> = [];
     let extraAtoms = false;
 
-    if (!selected || !functionalGroups.size || !selected.atoms) {
+    if (!selected || functionalGroups.size === 0 || !selected.atoms) {
       return { atomsResult, extraAtoms };
     }
 
@@ -415,7 +415,7 @@ class SGroupTool implements Tool {
     const bondsResult: Array<number> = [];
     let extraBonds = false;
 
-    if (!selected || !functionalGroups.size || !selected.bonds) {
+    if (!selected || functionalGroups.size === 0 || !selected.bonds) {
       return { bondsResult, extraBonds };
     }
 
@@ -471,7 +471,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!atomsResult.length) {
+    if (atomsResult.length === 0) {
       return;
     }
 
@@ -500,7 +500,7 @@ class SGroupTool implements Tool {
     struct: ReStruct,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
-    if (!bondsResult.length) {
+    if (bondsResult.length === 0) {
       return;
     }
 

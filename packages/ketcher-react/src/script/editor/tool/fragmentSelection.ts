@@ -246,7 +246,7 @@ export default class FragmentSelectionTool implements Tool {
     this.preview = preview;
     this.editor.hover(null, this);
 
-    if (!preview.atoms.length && !preview.bonds.length) {
+    if (preview.atoms.length === 0 && preview.bonds.length === 0) {
       return;
     }
 
@@ -429,7 +429,7 @@ export default class FragmentSelectionTool implements Tool {
       component.bonds?.forEach((bondId) => componentBonds.add(bondId));
     });
 
-    if (componentAtoms.size) {
+    if (componentAtoms.size > 0) {
       for (const [bondId, bond] of struct.bonds.entries()) {
         const beginComponent = componentAtoms.has(bond.begin);
         const endComponent = componentAtoms.has(bond.end);

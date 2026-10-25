@@ -202,7 +202,7 @@ export class Ketcher {
       }
     }
 
-    if (!Object.keys(result).length) {
+    if (Object.keys(result).length === 0) {
       throw new Error('Allowed options are not provided');
     }
 

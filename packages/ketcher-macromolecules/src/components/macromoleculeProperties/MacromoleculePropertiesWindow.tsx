@@ -653,7 +653,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       finalDistanceBetweenTicks = 1;
     }
 
-    if (data.xs.length) {
+    if (data.xs.length > 0) {
       const xAxis = d3
         .axisBottom(xScale)
         .tickValues(tickValues)
@@ -694,7 +694,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       })
       .call((g) => g.selectAll('text').attr('font-size', '8px'));
 
-    if (data.ys.length) {
+    if (data.ys.length > 0) {
       svgContainer
         .append('path')
         .datum(data.ys)

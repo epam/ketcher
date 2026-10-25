@@ -993,7 +993,7 @@ export class SequenceMode extends BaseMode {
         secondNodeToConnect instanceof Nucleoside ||
         (secondNodeToConnect instanceof MonomerSequenceNode &&
           secondNodeToConnect.monomer instanceof Phosphate &&
-          secondNodeToConnect.monomer.hydrogenBonds.length))
+          secondNodeToConnect.monomer.hydrogenBonds.length > 0))
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
@@ -1461,7 +1461,7 @@ export class SequenceMode extends BaseMode {
       const modelChanges = new Command();
       let nodesToDelete: TwoStrandedNodesSelection;
 
-      if (selections.length) {
+      if (selections.length > 0) {
         nodesToDelete = selections;
 
         const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
@@ -3646,7 +3646,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(
@@ -3677,7 +3677,7 @@ export class SequenceMode extends BaseMode {
     const history = EditorHistory.getInstance(editor);
     const selections = SequenceRenderer.selections;
 
-    if (selections.length) {
+    if (selections.length > 0) {
       selections.forEach((selectionRange) => {
         selectionRange.forEach((nodeSelection) => {
           modelChanges.merge(

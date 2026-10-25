@@ -233,7 +233,7 @@ export class SequenceViewModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
+        nodesBeforeHydrogenConnectionToBase.length > 0 &&
         lastTwoStrandedNodeWithHydrogenBond
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
@@ -266,7 +266,7 @@ export class SequenceViewModel {
               (monomer) => {
                 return (
                   monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer.hydrogenBonds.length > 0
                 );
               },
             );

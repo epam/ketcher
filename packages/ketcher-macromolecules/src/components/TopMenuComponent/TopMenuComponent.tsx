@@ -73,7 +73,7 @@ export function TopMenuComponent() {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
       setSelectedEntities(selectedEntities);
       if (
-        selectedEntities.length &&
+        selectedEntities.length > 0 &&
         !isAntisenseCreationDisabled(selectedEntities)
       ) {
         setNeedOpenByMenuItemClick(false);

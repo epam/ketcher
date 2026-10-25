@@ -6,7 +6,7 @@ type Items = {
 };
 
 function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
-  if (!struct.sgroups.size) return [];
+  if (struct.sgroups.size === 0) return [];
 
   const groupsIds = new Set<number>();
   if (items?.atoms) {

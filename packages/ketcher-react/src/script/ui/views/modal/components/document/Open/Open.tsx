@@ -117,7 +117,7 @@ const Open: FC<Props> = (props) => {
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
-        if (!fileContent.structures.length && files[0].size > 0) {
+        if (fileContent.structures.length === 0 && files[0].size > 0) {
           errorHandler(t('dialogs:document.open.passwordProtectedError'));
         }
         setStructStr('');

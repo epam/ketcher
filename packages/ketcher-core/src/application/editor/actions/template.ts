@@ -244,7 +244,7 @@ export function fromTemplateOnAtom(
   action.operations.reverse();
 
   action.addOp(new CalcImplicitH([...pasteItems.atoms, aid]).perform(restruct));
-  if (pasteItems.bonds.length) {
+  if (pasteItems.bonds.length > 0) {
     const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
     if (!firstPastedBond) {
       KetcherLogger.error(
@@ -294,7 +294,7 @@ function getConnectingBond(
   const isBenzeneTemplate = template.name === benzeneMoleculeName;
   const isCyclopentadieneTemplate =
     template.name === cyclopentadieneMoleculeName;
-  if (template.bonds.size && (isBenzeneTemplate || isCyclopentadieneTemplate)) {
+  if (template.bonds.size > 0 && (isBenzeneTemplate || isCyclopentadieneTemplate)) {
     const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
       struct,
       bondId,
@@ -480,7 +480,7 @@ function applyTemplatePostProcessing(
   pasteItems: PasteItems,
   action: Action,
 ) {
-  if (pasteItems.atoms.length) {
+  if (pasteItems.atoms.length > 0) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
         restruct,
@@ -488,7 +488,7 @@ function applyTemplatePostProcessing(
     );
   }
 
-  if (pasteItems.bonds.length) {
+  if (pasteItems.bonds.length > 0) {
     const firstPastedBond = restruct.molecule.bonds.get(pasteItems.bonds[0]);
     if (!firstPastedBond) {
       KetcherLogger.error(

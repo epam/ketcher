@@ -156,7 +156,7 @@ export function toElement(elem: ElementFormData) {
       : [];
 
     return {
-      label: values.length ? 'R#' : 'C',
+      label: values.length > 0 ? 'R#' : 'C',
       rglabel: values.length === 0 ? null : toRlabel(values),
     };
   }
@@ -350,7 +350,7 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
   const typeMatch = stereoLabel.match(/\D+/g);
-  if (!typeMatch?.length) {
+  if ((typeMatch?.length ?? 0) === 0) {
     return { type: stereoLabel, orNumber: 0, andNumber: 0 };
   }
 

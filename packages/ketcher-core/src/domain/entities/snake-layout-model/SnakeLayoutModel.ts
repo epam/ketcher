@@ -263,7 +263,7 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
+        nodesBeforeHydrogenConnectionToBase.length > 0 &&
         lastTwoStrandedNodeWithHydrogenBond
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
@@ -296,7 +296,7 @@ export class SnakeLayoutModel {
               (monomer) => {
                 return (
                   monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer.hydrogenBonds.length > 0
                 );
               },
             );
@@ -535,7 +535,7 @@ export class SnakeLayoutModel {
         });
 
         // Fill the rest of the last row with empty nodes
-        if (currentRowToHandle.snakeLayoutModelItems.length) {
+        if (currentRowToHandle.snakeLayoutModelItems.length > 0) {
           for (
             let i = currentRowToHandle.snakeLayoutModelItems.length;
             i < lineLength;

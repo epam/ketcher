@@ -62,7 +62,7 @@ class AttachTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -73,7 +73,7 @@ class AttachTool implements Tool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'bonds') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,

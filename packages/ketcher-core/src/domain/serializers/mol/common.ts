@@ -105,7 +105,7 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
       xBonds.push(bid);
     }
   });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
+  if (xBonds.length > 0 && xBonds.length !== 2) {
     const error = new Error(
       'Unsupported cross-bonds number',
     ) as SGroupSavingError;

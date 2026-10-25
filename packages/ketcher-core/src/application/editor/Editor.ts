@@ -467,7 +467,7 @@ export class CoreEditor {
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
-      persistentMonomersLibrary.length !== 0 &&
+      persistentMonomersLibrary.length > 0 &&
       persistentMonomersLibraryParsedJson !== undefined
     ) {
       this._monomersLibrary = persistentMonomersLibrary;

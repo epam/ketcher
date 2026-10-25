@@ -1163,7 +1163,7 @@ class Editor implements KetcherEditor {
         nonLeavingAtoms.has(bond.begin) && nonLeavingAtoms.has(bond.end),
     );
 
-    if (nonLeavingAtomBonds.size < 1) {
+    if (nonLeavingAtomBonds.size === 0) {
       return false;
     }
 
@@ -1171,7 +1171,7 @@ class Editor implements KetcherEditor {
       Editor.isBondSuitableForAttachmentPoint(bond),
     );
 
-    return suitableBonds.size >= 1;
+    return suitableBonds.size > 0;
   }
 
   static isStructureImpure(struct: Struct) {
@@ -1272,7 +1272,7 @@ class Editor implements KetcherEditor {
           atomIds.add(atomId);
         });
       }
-      if (!atomIds.size) {
+      if (atomIds.size === 0) {
         throw new Error('Select a structure to create or edit a monomer.');
       }
       const bonds = Array.from(struct.bonds.entries())
@@ -3911,14 +3911,14 @@ class Editor implements KetcherEditor {
           res[key] = resolvedCi[key].slice();
       });
 
-      if (Object.keys(res).length !== 0) {
+      if (Object.keys(res).length > 0) {
         this._selection = res;
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
         this.explicitSelected().atoms ?? [],
       );
-      if (stereoFlags.length !== 0) {
+      if (stereoFlags.length > 0) {
         if (this._selection?.enhancedFlags) {
           this._selection.enhancedFlags = Array.from(
             new Set([...this._selection.enhancedFlags, ...stereoFlags]),

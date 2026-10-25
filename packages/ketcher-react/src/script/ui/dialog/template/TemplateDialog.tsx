@@ -339,7 +339,7 @@ export const TemplateDialog: FC<Props> = (props) => {
       <div className={classes.tabsContent}>
         <TabPanel value={activeTab} index={TemplateTabs.TemplateLibrary}>
           <div>
-            {groupNames.length ? (
+            {groupNames.length > 0 ? (
               groupNames.map((groupName) => {
                 const shouldGroupBeRended =
                   expandedAccordions.includes(groupName);

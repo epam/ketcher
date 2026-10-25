@@ -153,7 +153,7 @@ export function load(struct: string | Struct, options?) {
         parsedStruct.rescale(); // TODO: move out parsing?
       }
 
-      if (editor.struct().atoms.size) {
+      if (editor.struct().atoms.size > 0) {
         // NB: reset id
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {

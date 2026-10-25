@@ -1612,10 +1612,7 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-    path.node.childNodes[0].setAttribute(
-      'data-tooltip',
-      util.escapeHtml(tooltip),
-    );
+    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
   }
 
   return path;

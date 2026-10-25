@@ -1132,10 +1132,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
         if (color !== undefined) {
-          aamPath.node.childNodes[0].setAttribute('fill', color);
+          aamPath.node.firstChild.setAttribute('fill', color);
         }
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
-        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
+        aamPath.node.firstChild.setAttribute('fill-opacity', opacity);
       }
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
@@ -1660,7 +1660,7 @@ function getOnlyQueryAttributesCustomQuery(atom: Atom) {
 
 function addTooltip(node: SVGElement, text: string) {
   const tooltip = text.split(/(?<=[;,])/).join(' ');
-  (node.childNodes[0] as SVGElement).setAttribute(
+  (node.firstChild as SVGElement).setAttribute(
     'data-tooltip',
     util.escapeHtml(tooltip),
   );

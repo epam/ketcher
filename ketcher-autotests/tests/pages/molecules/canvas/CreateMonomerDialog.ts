@@ -296,7 +296,7 @@ export const CreateMonomerDialog = (page: Page) => {
   const deleteModificationTypeButtonEnum =
     deleteModificationTypeMap(modificationSection);
 
-  return {
+  const pageObject = {
     ...locators,
 
     nucleotidePresetSection,
@@ -398,7 +398,7 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async addModificationType() {
-      await this.expandModificationSection();
+      await pageObject.expandModificationSection();
       await modificationSection.addModificationTypeButton.click();
     },
 
@@ -406,10 +406,10 @@ export const CreateMonomerDialog = (page: Page) => {
       dropdown: ModificationTypeDropdown;
       type: ModificationType;
     }) {
-      await this.expandModificationSection();
+      await pageObject.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
       while ((await dropdown.isVisible()) === false) {
-        await this.addModificationType();
+        await pageObject.addModificationType();
       }
       await dropdown.click();
       const option = page.getByTestId(options.type);
@@ -431,9 +431,9 @@ export const CreateMonomerDialog = (page: Page) => {
     ) {
       for (const option of options) {
         if ('type' in option) {
-          await this.selectModificationType(option);
+          await pageObject.selectModificationType(option);
         } else {
-          await this.setModificationType(option);
+          await pageObject.setModificationType(option);
         }
       }
     },
@@ -442,10 +442,10 @@ export const CreateMonomerDialog = (page: Page) => {
       dropdown: ModificationTypeDropdown;
       customModification: string;
     }) {
-      await this.expandModificationSection();
+      await pageObject.expandModificationSection();
       const dropdown = modificationTypeDropdownByEnum[options.dropdown];
       while ((await dropdown.isVisible()) === false) {
-        await this.addModificationType();
+        await pageObject.addModificationType();
       }
       await dropdown.click();
       await page.keyboard.type(options.customModification);
@@ -453,13 +453,13 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async deleteModificationType(dropdown: ModificationTypeDropdown) {
-      await this.expandModificationSection();
+      await pageObject.expandModificationSection();
       const deleteButton = deleteModificationTypeButtonEnum[dropdown];
       await deleteButton.click();
     },
 
     async clearHELMAlias() {
-      await this.expandAliasesSection();
+      await pageObject.expandAliasesSection();
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
       await helmAliasEditbox.click();
       const clearButton = aliasesSection.helmAliasEditboxClearButton;
@@ -467,19 +467,19 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async setHELMAlias(helmAlias: string) {
-      await this.expandAliasesSection();
-      await this.clearHELMAlias();
+      await pageObject.expandAliasesSection();
+      await pageObject.clearHELMAlias();
       const helmAliasEditbox = aliasesSection.helmAliasEditbox;
       await helmAliasEditbox.click();
       await page.keyboard.type(helmAlias);
       // to avoid helm alias lost on submit due to async validation
-      await this.collapseAliasesSection();
-      await this.expandAliasesSection();
+      await pageObject.collapseAliasesSection();
+      await pageObject.expandAliasesSection();
       await page.waitForTimeout(0.3 * 1000);
     },
 
     async clearBILNAlias() {
-      await this.expandAliasesSection();
+      await pageObject.expandAliasesSection();
       const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
       await bilnAliasEditbox.click();
       const clearButton = aliasesSection.bilnAliasEditboxClearButton;
@@ -487,14 +487,14 @@ export const CreateMonomerDialog = (page: Page) => {
     },
 
     async setBILNAlias(bilnAlias: string) {
-      await this.expandAliasesSection();
-      await this.clearBILNAlias();
+      await pageObject.expandAliasesSection();
+      await pageObject.clearBILNAlias();
       const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
       await bilnAliasEditbox.click();
       await page.keyboard.type(bilnAlias);
       // to avoid alias lost on submit due to async validation
-      await this.collapseAliasesSection();
-      await this.expandAliasesSection();
+      await pageObject.collapseAliasesSection();
+      await pageObject.expandAliasesSection();
       await page.waitForTimeout(0.3 * 1000);
     },
 
@@ -517,6 +517,8 @@ export const CreateMonomerDialog = (page: Page) => {
       await locators.discardButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export async function createMonomer(

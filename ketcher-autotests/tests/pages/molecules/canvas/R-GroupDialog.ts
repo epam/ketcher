@@ -17,7 +17,7 @@ export const RGroupDialog = (page: Page) => {
     cancelButton: page.getByTestId('Cancel'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async close() {
@@ -43,9 +43,9 @@ export const RGroupDialog = (page: Page) => {
         rGroups = [rGroups];
       }
       for (const rGroup of rGroups) {
-        await this.setRGroup(rGroup);
+        await pageObject.setRGroup(rGroup);
       }
-      await this.apply();
+      await pageObject.apply();
     },
 
     async unsetRGroupLabels(rGroups: RGroup | RGroup[]) {
@@ -53,9 +53,9 @@ export const RGroupDialog = (page: Page) => {
         rGroups = [rGroups];
       }
       for (const rGroup of rGroups) {
-        await this.unsetRGroup(rGroup);
+        await pageObject.unsetRGroup(rGroup);
       }
-      await this.apply();
+      await pageObject.apply();
     },
 
     async changeRGroupLabels(changes: {
@@ -69,22 +69,22 @@ export const RGroupDialog = (page: Page) => {
         changes.unsetGroups = [changes.unsetGroups];
       }
       for (const setGroup of changes.setGroups) {
-        await this.setRGroup(setGroup);
+        await pageObject.setRGroup(setGroup);
       }
       for (const unsetGroup of changes.unsetGroups) {
-        await this.unsetRGroup(unsetGroup);
+        await pageObject.unsetRGroup(unsetGroup);
       }
-      await this.apply();
+      await pageObject.apply();
     },
 
     async setRGroupFragment(rGroup: RGroup) {
-      await this.setRGroup(rGroup);
-      await this.apply();
+      await pageObject.setRGroup(rGroup);
+      await pageObject.apply();
     },
 
     async unsetRGroupFragment(rGroup: RGroup) {
-      await this.unsetRGroup(rGroup);
-      await this.apply();
+      await pageObject.unsetRGroup(rGroup);
+      await pageObject.apply();
     },
 
     async cancel() {
@@ -97,6 +97,8 @@ export const RGroupDialog = (page: Page) => {
       });
     },
   };
+
+  return pageObject;
 };
 
 export type RGroupDialogType = ReturnType<typeof RGroupDialog>;

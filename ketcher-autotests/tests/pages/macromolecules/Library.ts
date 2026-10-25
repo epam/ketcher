@@ -81,7 +81,7 @@ export const Library = (page: Page) => {
 
   const rnaBuilder = RNABuilder(page);
 
-  return {
+  const pageObject = {
     ...locators,
 
     rnaBuilder,
@@ -104,7 +104,7 @@ export const Library = (page: Page) => {
       if (
         (await locators.favoritesTab.getAttribute('aria-selected')) !== 'true'
       ) {
-        await this.openTab(LibraryTab.Favorites);
+        await pageObject.openTab(LibraryTab.Favorites);
       }
     },
 
@@ -112,19 +112,19 @@ export const Library = (page: Page) => {
       if (
         (await locators.peptidesTab.getAttribute('aria-selected')) !== 'true'
       ) {
-        await this.openTab(LibraryTab.Peptides);
+        await pageObject.openTab(LibraryTab.Peptides);
       }
     },
 
     async switchToRNATab() {
       if ((await locators.rnaTab.getAttribute('aria-selected')) !== 'true') {
-        await this.openTab(LibraryTab.RNA);
+        await pageObject.openTab(LibraryTab.RNA);
       }
     },
 
     async switchToCHEMTab() {
       if ((await locators.chemTab.getAttribute('aria-selected')) !== 'true') {
-        await this.openTab(LibraryTab.CHEM);
+        await pageObject.openTab(LibraryTab.CHEM);
       }
     },
 
@@ -147,7 +147,7 @@ export const Library = (page: Page) => {
     },
 
     async openTab(libraryTab: LibraryTab) {
-      if (!(await this.isTabOpened(libraryTab))) {
+      if (!(await pageObject.isTabOpened(libraryTab))) {
         await expect(getElement(libraryTab)).toBeInViewport();
         await getElement(libraryTab).click();
       }
@@ -158,8 +158,8 @@ export const Library = (page: Page) => {
     },
 
     async openRNASection(rnaSection: RNASection) {
-      await this.openTab(LibraryTab.RNA);
-      if (!(await this.isRNASectionOpened(rnaSection))) {
+      await pageObject.openTab(LibraryTab.RNA);
+      if (!(await pageObject.isRNASectionOpened(rnaSection))) {
         await expect(getElement(rnaSection)).toBeInViewport();
         await getElement(rnaSection).click();
       }
@@ -176,12 +176,12 @@ export const Library = (page: Page) => {
      */
     async goToMonomerLibraryLocation(monomer: Monomer | PresetType) {
       const { libraryTab, rnaSection } =
-        await this.getMonomerLibraryLocation(monomer);
+        await pageObject.getMonomerLibraryLocation(monomer);
 
-      await this.openTab(libraryTab);
+      await pageObject.openTab(libraryTab);
 
       if (rnaSection) {
-        await this.openRNASection(rnaSection);
+        await pageObject.openRNASection(rnaSection);
       }
     },
 
@@ -194,9 +194,9 @@ export const Library = (page: Page) => {
       selectOnFavoritesTab = false,
     ) {
       if (selectOnFavoritesTab) {
-        await this.openTab(LibraryTab.Favorites);
+        await pageObject.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLibraryLocation(monomer);
+        await pageObject.goToMonomerLibraryLocation(monomer);
       }
 
       const monomerCard = getElement(monomer.testId);
@@ -218,9 +218,9 @@ export const Library = (page: Page) => {
       selectOnFavoritesTab = false,
     ) {
       if (selectOnFavoritesTab) {
-        await this.openTab(LibraryTab.Favorites);
+        await pageObject.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLibraryLocation(monomer);
+        await pageObject.goToMonomerLibraryLocation(monomer);
       }
 
       await getElement(monomer.testId).hover();
@@ -274,9 +274,9 @@ export const Library = (page: Page) => {
       selectOnFavoritesTab = false,
     ): Promise<boolean> {
       if (selectOnFavoritesTab) {
-        await this.openTab(LibraryTab.Favorites);
+        await pageObject.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLibraryLocation(monomer);
+        await pageObject.goToMonomerLibraryLocation(monomer);
       }
 
       return await getElement(monomer.testId).isVisible();
@@ -289,24 +289,24 @@ export const Library = (page: Page) => {
 
     /** Hover over the arrow button on the monomer card */
     async hoverMonomerAutochain(monomer: Monomer) {
-      await this.goToMonomerLibraryLocation(monomer);
+      await pageObject.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
+      const btn = pageObject.getMonomerAutochainButton(monomer);
       await btn.waitFor({ state: 'visible' });
       await btn.hover();
     },
 
     /** Click on the arrow button on the monomer card */
     async clickMonomerAutochain(monomer: Monomer | PresetType) {
-      await this.goToMonomerLibraryLocation(monomer);
+      await pageObject.goToMonomerLibraryLocation(monomer);
 
       const card = page.getByTestId(monomer.testId);
       await card.hover();
 
-      const btn = this.getMonomerAutochainButton(monomer);
+      const btn = pageObject.getMonomerAutochainButton(monomer);
       await btn.waitFor({ state: 'visible' });
       await btn.click();
     },
@@ -332,7 +332,7 @@ export const Library = (page: Page) => {
         y = y + centerOfCanvas.y;
       }
 
-      await this.hoverMonomer(monomer, selectOnFavoritesTab);
+      await pageObject.hoverMonomer(monomer, selectOnFavoritesTab);
       await page.mouse.down();
       await page.mouse.move(x, y);
       await waitForRender(page, async () => {
@@ -344,7 +344,7 @@ export const Library = (page: Page) => {
      * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
      */
     async selectCustomPreset(presetTestId: string) {
-      await this.goToMonomerLibraryLocation(Preset.A);
+      await pageObject.goToMonomerLibraryLocation(Preset.A);
 
       const presetCard = getElement(presetTestId);
       const presetCardBbox = await presetCard.boundingBox();
@@ -363,7 +363,7 @@ export const Library = (page: Page) => {
           `Given monomer with alias ${preset.alias} is not a Preset`,
         );
       } else {
-        await this.goToMonomerLibraryLocation(Preset.A);
+        await pageObject.goToMonomerLibraryLocation(Preset.A);
         await ContextMenu(page, getElement(preset.testId)).open();
       }
     },
@@ -373,7 +373,7 @@ export const Library = (page: Page) => {
      * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
      */
     async addMonomerToFavorites(monomer: Monomer | PresetType) {
-      await this.goToMonomerLibraryLocation(monomer);
+      await pageObject.goToMonomerLibraryLocation(monomer);
 
       const favoritesStar = page
         .getByTestId(monomer.testId)
@@ -395,9 +395,9 @@ export const Library = (page: Page) => {
       removeFromFavoritesTab = true,
     ) {
       if (removeFromFavoritesTab) {
-        await this.openTab(LibraryTab.Favorites);
+        await pageObject.openTab(LibraryTab.Favorites);
       } else {
-        await this.goToMonomerLibraryLocation(monomer);
+        await pageObject.goToMonomerLibraryLocation(monomer);
       }
 
       const favoritesStar = page
@@ -419,7 +419,7 @@ export const Library = (page: Page) => {
      */
     async selectMonomers(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
-        await this.selectMonomer(monomer);
+        await pageObject.selectMonomer(monomer);
       }
     },
 
@@ -431,7 +431,7 @@ export const Library = (page: Page) => {
     async addMonomersToFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
         await moveMouseAway(page);
-        await this.addMonomerToFavorites(monomer);
+        await pageObject.addMonomerToFavorites(monomer);
       }
     },
 
@@ -440,15 +440,17 @@ export const Library = (page: Page) => {
      */
     async removeMonomersFromFavorites(monomers: Array<Monomer>) {
       for (const monomer of monomers) {
-        await this.removeMonomerFromFavorites(monomer);
+        await pageObject.removeMonomerFromFavorites(monomer);
       }
     },
 
     async newPreset() {
-      await this.openRNASection(RNASection.Presets);
+      await pageObject.openRNASection(RNASection.Presets);
       await presetsSection.newPresetsButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type LibraryLocatorsType = ReturnType<typeof Library>;

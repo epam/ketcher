@@ -45,7 +45,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     arrowScrollRightButton: page.getByTestId('arrow-scroll-right-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async createAntisenseStrand() {
@@ -86,7 +86,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
     async selectAntisenseStrand(
       antisenseStrandType: AntisenseStrandType = AntisenseStrandType.RNA,
     ) {
-      await this.expandCreateAntisenseStrandDropdown();
+      await pageObject.expandCreateAntisenseStrandDropdown();
       await waitForRender(page, async () => {
         await page.getByTestId(antisenseStrandType).first().click();
       });
@@ -153,7 +153,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       const switchLayoutModeDropdown = page.getByTestId('multi-tool-dropdown');
       const layoutModeButton = page.getByTestId(layoutMode).first();
       if (!(await layoutModeButton.isVisible())) {
-        await this.expandSwitchLayoutModeDropdown();
+        await pageObject.expandSwitchLayoutModeDropdown();
         await layoutModeButton.click();
         await switchLayoutModeDropdown.waitFor({
           state: 'hidden',
@@ -181,6 +181,8 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       return locators.arrowScrollRightButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type MacromoleculesTopToolbarType = ReturnType<

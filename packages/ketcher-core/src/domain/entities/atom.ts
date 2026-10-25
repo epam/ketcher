@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -300,10 +299,10 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
-      get: function () {
+      get: () => {
         return getPseudo(this.label);
       },
-      set: function (value) {
+      set: (value) => {
         if (isCorrectPseudo(value)) {
           this.label = value;
         }

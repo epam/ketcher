@@ -88,11 +88,11 @@ export const NucleotidePresetSection = (page: Page) => {
     ),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async setPhosphatePosition(position: '3' | '5') {
-      await this.openTab(NucleotidePresetTab.Phosphate);
+      await pageObject.openTab(NucleotidePresetTab.Phosphate);
       await page.getByTestId(`phosphate-position-${position}-button`).click();
     },
 
@@ -103,7 +103,7 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async openTab(tab: NucleotidePresetTab) {
-      if (!(await this.isTabOpened(tab))) {
+      if (!(await pageObject.isTabOpened(tab))) {
         const tabButton = page.getByTestId(tab);
         await tabButton.click();
         await tabButton.evaluate(
@@ -152,12 +152,12 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async setName(value: string) {
-      await this.openTab(NucleotidePresetTab.Preset);
+      await pageObject.openTab(NucleotidePresetTab.Preset);
       await locators.presetTab.nameEditbox.fill(value);
     },
 
     async markAsBase() {
-      await this.openTab(NucleotidePresetTab.Base);
+      await pageObject.openTab(NucleotidePresetTab.Base);
       await locators.baseTab.maskAsBaseButton.click();
       await page.waitForSelector(
         '[data-testid="Mark-as-base-button"][disabled]',
@@ -165,7 +165,7 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async markAsSugar() {
-      await this.openTab(NucleotidePresetTab.Sugar);
+      await pageObject.openTab(NucleotidePresetTab.Sugar);
       await locators.sugarTab.maskAsSugarButton.click();
       await page.waitForSelector(
         '[data-testid="Mark-as-sugar-button"][disabled]',
@@ -173,7 +173,7 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async markAsPhosphate() {
-      await this.openTab(NucleotidePresetTab.Phosphate);
+      await pageObject.openTab(NucleotidePresetTab.Phosphate);
       await locators.phosphateTab.maskAsPhosphateButton.click();
       await page.waitForSelector(
         '[data-testid="Mark-as-phosphate-button"][disabled]',
@@ -188,12 +188,12 @@ export const NucleotidePresetSection = (page: Page) => {
       naturalAnalogue?: NucleotideNaturalAnalogue;
       HELMAlias?: string;
     }) {
-      await this.openTab(NucleotidePresetTab.Base);
+      await pageObject.openTab(NucleotidePresetTab.Base);
       await selectAtomAndBonds(page, {
         atomIds: options.atomIds,
         bondIds: options.bondIds,
       });
-      await this.markAsBase();
+      await pageObject.markAsBase();
 
       if (options.code) {
         await locators.baseTab.codeEditbox.fill(options.code);
@@ -206,7 +206,7 @@ export const NucleotidePresetSection = (page: Page) => {
         await page.getByTestId(options.naturalAnalogue).click();
       }
       if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Base);
+        await pageObject.openAliasesSection(NucleotidePresetTab.Base);
         await locators.baseTab.aliasesSection.helmAliasEditbox.click();
         await page.keyboard.type(options.HELMAlias);
       }
@@ -219,12 +219,12 @@ export const NucleotidePresetSection = (page: Page) => {
       name?: string;
       HELMAlias?: string;
     }) {
-      await this.openTab(NucleotidePresetTab.Sugar);
+      await pageObject.openTab(NucleotidePresetTab.Sugar);
       await selectAtomAndBonds(page, {
         atomIds: options.atomIds,
         bondIds: options.bondIds,
       });
-      await this.markAsSugar();
+      await pageObject.markAsSugar();
 
       if (options.code) {
         await locators.sugarTab.codeEditbox.fill(options.code);
@@ -233,7 +233,7 @@ export const NucleotidePresetSection = (page: Page) => {
         await locators.sugarTab.nameEditbox.fill(options.name);
       }
       if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Sugar);
+        await pageObject.openAliasesSection(NucleotidePresetTab.Sugar);
         await locators.sugarTab.aliasesSection.helmAliasEditbox.click();
         await page.keyboard.type(options.HELMAlias);
       }
@@ -246,12 +246,12 @@ export const NucleotidePresetSection = (page: Page) => {
       name?: string;
       HELMAlias?: string;
     }) {
-      await this.openTab(NucleotidePresetTab.Phosphate);
+      await pageObject.openTab(NucleotidePresetTab.Phosphate);
       await selectAtomAndBonds(page, {
         atomIds: options.atomIds,
         bondIds: options.bondIds,
       });
-      await this.markAsPhosphate();
+      await pageObject.markAsPhosphate();
 
       if (options.code) {
         await locators.phosphateTab.codeEditbox.fill(options.code);
@@ -260,10 +260,12 @@ export const NucleotidePresetSection = (page: Page) => {
         await locators.phosphateTab.nameEditbox.fill(options.name);
       }
       if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Phosphate);
+        await pageObject.openAliasesSection(NucleotidePresetTab.Phosphate);
         await locators.phosphateTab.aliasesSection.helmAliasEditbox.click();
         await page.keyboard.type(options.HELMAlias);
       }
     },
   };
+
+  return pageObject;
 };

@@ -98,13 +98,13 @@ describe('useSettings', () => {
   });
 
   describe('initialization', () => {
-    it('should return null settings when service is unavailable', () => {
+    it('should return undefined settings when service is unavailable', () => {
       const store = createMockStore();
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
       });
 
-      expect(result.current.settings).toBeNull();
+      expect(result.current.settings).toBeUndefined();
     });
 
     it('should load settings from service on mount', () => {

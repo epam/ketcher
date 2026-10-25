@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { filterFGLib } from '../../utils';
+import { filterFGLibrary } from '../../utils';
 import type { Template } from './TemplateTable';
 
 const SALTS_AND_SOLVENTS = 'Salts and Solvents';
@@ -10,7 +10,7 @@ export default function useSaltsAndSolvents(
   filter: string,
 ) {
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
-  const hasBatchedRef = useRef(false);
+  const hasBatchedReference = useRef(false);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
     saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
@@ -37,12 +37,12 @@ export default function useSaltsAndSolvents(
   useEffect(() => {
     clearTimeout(timerId.current as unknown as number);
     const filteredSaS =
-      filterFGLib(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS] ?? [];
-    if (hasBatchedRef.current) {
+      filterFGLibrary(saltsAndSolvents, filter)[SALTS_AND_SOLVENTS] ?? [];
+    if (hasBatchedReference.current) {
       setFilteredSaltsAndSolvents(filteredSaS);
       return;
     }
-    hasBatchedRef.current = true;
+    hasBatchedReference.current = true;
     setFilteredSaltsAndSolvents([]);
     addToSaSWithBatches(filteredSaS);
   }, [saltsAndSolvents, filter, addToSaSWithBatches]);

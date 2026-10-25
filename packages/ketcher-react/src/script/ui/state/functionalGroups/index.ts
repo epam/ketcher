@@ -54,9 +54,9 @@ const functionalGroupsReducer = (state = initialState, action: AnyAction) => {
   }
 };
 
-export const initFGroups = (lib: SdfItem[]) => ({
+export const initFGroups = (library: SdfItem[]) => ({
   type: 'FG_INIT',
-  payload: { lib },
+  payload: { lib: library },
 });
 const highlightFGroup = (group: any) => ({
   type: 'FG_HIGHLIGHT',
@@ -79,7 +79,7 @@ export function initFGTemplates() {
     const sdfSerializer = new SdfSerializer();
     const templates = sdfSerializer.deserialize(templatesRawData);
     const functionalGroups = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
+      (accumulator: Struct[], { struct }) => [...accumulator, struct],
       [],
     );
     provider.setFunctionalGroupsList(functionalGroups);

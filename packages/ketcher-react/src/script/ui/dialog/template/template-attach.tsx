@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { withTranslation, type WithTranslation } from 'react-i18next';
 import type { Dispatch } from 'redux';
 import type { StoreState } from '../../state/store.types';
-import { storage } from '../../storage-ext';
+import { storage } from '../../storage-extension';
 import Form, { type FormState, Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
 import styled from '@emotion/styled';
@@ -56,14 +56,14 @@ interface NormalizedTemplate {
   props: AttachPoints;
 }
 
-interface AttachOwnProps {
+interface AttachOwnProperties {
   tmpl: TemplateItem;
   ketcherId: string;
   onCancel: () => void;
   onOk: (result: unknown) => void;
 }
 
-interface AttachStateProps {
+interface AttachStateProperties {
   name: string;
   atomid: number;
   bondid: number;
@@ -72,15 +72,15 @@ interface AttachStateProps {
   globalSettings: Record<string, unknown>;
 }
 
-interface AttachDispatchProps {
+interface AttachDispatchProperties {
   onInit: (name: string, ap: AttachPoints) => void;
   onAttachEdit: (ap: AttachPoints) => void;
   onNameEdit: (name: string) => void;
 }
 
-type AttachProps = AttachOwnProps &
-  AttachStateProps &
-  AttachDispatchProps &
+type AttachProperties = AttachOwnProperties &
+  AttachStateProperties &
+  AttachDispatchProperties &
   WithTranslation;
 
 // @TODO When theming is implemented, use theme wherever possible
@@ -246,14 +246,14 @@ const editorStyles = {
   hoverStyleSimpleObject: { 'stroke-opacity': 0.3 },
 };
 
-class Attach extends Component<AttachProps> {
+class Attach extends Component<AttachProperties> {
   mode: 'save' | 'edit';
   tmpl: NormalizedTemplate;
   oldKetcherEditor: Editor;
 
-  constructor(props: AttachProps) {
-    super(props);
-    const { onInit, ...rest } = props;
+  constructor(properties: AttachProperties) {
+    super(properties);
+    const { onInit, ...rest } = properties;
     this.mode = isEmpty(rest.tmpl.props) ? 'save' : 'edit';
     this.tmpl = initTmpl(rest.tmpl);
     onInit(this.tmpl.struct.name, this.tmpl.props);
@@ -291,7 +291,7 @@ class Attach extends Component<AttachProps> {
   }
 
   render() {
-    const { name, onNameEdit, onAttachEdit, t, ...prop } = this.props;
+    const { name, onNameEdit, onAttachEdit, t, ...property } = this.props;
     const struct = this.tmpl.struct;
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
@@ -315,7 +315,7 @@ class Attach extends Component<AttachProps> {
         title={dialogTitle}
         result={this.onResult}
         valid={() => this.props.formState.valid && Boolean(name)}
-        params={prop}
+        params={property}
         buttons={[]}
         needMargin={false}
       >
@@ -399,21 +399,23 @@ class Attach extends Component<AttachProps> {
   }
 }
 
-const mapStateToProps = (store: StoreState): AttachStateProps => ({
+const mapStateToProperties = (store: StoreState): AttachStateProperties => ({
   ...store.templates.attach,
   templateLib: store.templates.lib,
   formState: store.modal.form,
   globalSettings: store.options.settings,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
+const mapDispatchToProperties = (
+  dispatch: Dispatch,
+): AttachDispatchProperties => ({
   onInit: (name: string, ap: AttachPoints) => dispatch(initAttach(name, ap)),
   onAttachEdit: (ap: AttachPoints) => dispatch(setAttachPoints(ap)),
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
+const connector = connect(mapStateToProperties, mapDispatchToProperties);
+const ConnectedAttach: ComponentType<AttachOwnProperties> = connector(
   withTranslation(['dialogs'])(Attach),
 );
 

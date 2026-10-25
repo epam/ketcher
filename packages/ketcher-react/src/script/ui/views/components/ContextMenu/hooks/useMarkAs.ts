@@ -3,8 +3,8 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 import type {
-  SelectionContextMenuProps,
-  ItemEventParams,
+  SelectionContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 import {
@@ -12,13 +12,13 @@ import {
   MonomerCreationMarkAsComponentAction,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.constants';
 
-type Params = ItemEventParams<SelectionContextMenuProps>;
+type Parameters_ = ItemEventParameters<SelectionContextMenuProperties>;
 
 const useMarkAs = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    (componentType: RnaPresetComponentType) => (_params: Params) => {
+    (componentType: RnaPresetComponentType) => (_parameters: Parameters_) => {
       window.dispatchEvent(
         new CustomEvent<RnaPresetComponentType>(
           MonomerCreationMarkAsComponentAction,

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
@@ -28,7 +28,7 @@ import {
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-interface EditMonomerDialogProps extends BaseProps {
+interface EditMonomerDialogProps extends BaseProperties {
   fgIds: number[];
   variant: EditMonomerVariant;
 }

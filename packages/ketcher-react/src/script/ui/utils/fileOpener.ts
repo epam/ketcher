@@ -49,9 +49,11 @@ export function fileOpener(server?: unknown): Promise<OpenerFunction> {
       try {
         const fso = new ActiveXObject('Scripting.FileSystemObject');
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
-      } catch (e) {
+      } catch (error) {
         reject(
-          e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
+          error instanceof Error
+            ? error
+            : new Error('Failed to open file via ActiveX'),
         );
       }
     } else if (isThenable(server)) {
@@ -69,9 +71,9 @@ export function fileOpener(server?: unknown): Promise<OpenerFunction> {
 function arrayBufferToBase64(buffer: ArrayLike<number>): string {
   let binary = '';
   const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
+  const length_ = bytes.byteLength;
+  for (let index = 0; index < length_; index++) {
+    binary += String.fromCharCode(bytes[index]);
   }
   return btoa(binary);
 }

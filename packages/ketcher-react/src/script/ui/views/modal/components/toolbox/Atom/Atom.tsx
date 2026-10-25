@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 
 import Form, {
   Field,
@@ -47,7 +47,7 @@ import {
 } from './helper';
 import AtomElement from './AtomElement/AtomElement';
 
-interface AtomProps extends BaseCallProps, BaseProps {
+interface AtomProps extends BaseCallProps, BaseProperties {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;

@@ -18,7 +18,7 @@ import Form, { SelectOneOf } from '../../component/form/form/form';
 import { connect } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
-import { Dialog, type DialogParams } from '../../views/components';
+import { Dialog, type DialogParameters } from '../../views/components';
 import SDataFieldset from './SDataFieldset';
 import classes from './sgroup.module.less';
 import SGroupFieldset from './SGroupFieldset';
@@ -39,17 +39,17 @@ interface SgroupFormState {
   result: SgroupFormResult;
 }
 
-interface SgroupOwnProps extends DialogParams {
+interface SgroupOwnProperties extends DialogParameters {
   type?: string;
   selectedSruCount?: number;
   [key: string]: unknown;
 }
 
-interface SgroupProps extends SgroupOwnProps {
+interface SgroupProperties extends SgroupOwnProperties {
   formState: SgroupFormState;
 }
 
-function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
+function Sgroup({ formState, ...properties }: Readonly<SgroupProperties>) {
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
@@ -80,11 +80,11 @@ function Sgroup({ formState, ...props }: Readonly<SgroupProps>) {
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       withDivider={true}
-      params={props}
+      params={properties}
     >
       <Form
         schema={schemes[type]}
-        init={props}
+        init={properties}
         result={formState.result}
         errors={formState.errors as Record<string, string>}
         serialize={serialize as Record<string, string> | undefined}

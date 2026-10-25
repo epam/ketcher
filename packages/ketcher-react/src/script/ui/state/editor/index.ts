@@ -51,7 +51,7 @@ import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
 import type { AppDispatch } from '../hooks';
-import type { EditorInitState, RGroupEditParams } from './types';
+import type { EditorInitState, RGroupEditParameters } from './types';
 import type { InfoPanelData } from '../../../editor/utils/functionalGroupsTooltip';
 import type Editor from '../../../editor/Editor';
 
@@ -135,55 +135,58 @@ export default function initEditor(
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
           isMultipleAtoms: true,
-        }).then((res) => toElement(res as ElementFormData));
+        }).then((resource) => toElement(resource as ElementFormData));
       }
       const fromResult = fromElement(selem);
       if (!fromResult) return;
-      const elem = fromResult as ElementFormData;
+      const element = fromResult as ElementFormData;
       let dlg: Promise<unknown>;
-      if (Elements.get(elem.label ?? '')) {
-        dlg = openDialog(dispatch, 'atomProps', elem);
-      } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
-        dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
-          ap: res,
-        }));
-      } else if (elem.type === 'rlabel') {
+      if (Elements.get(element.label ?? '')) {
+        dlg = openDialog(dispatch, 'atomProps', element);
+      } else if (Object.keys(element).length === 1 && 'ap' in element) {
+        dlg = openDialog(dispatch, 'attachmentPoints', element.ap).then(
+          (resource) => ({
+            ap: resource,
+          }),
+        );
+      } else if (element.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
-        const params = {
+        const parameters = {
           type: 'atom',
-          values: elem.values,
+          values: element.values,
           disabledIds: Array.from(rgroups.entries()).reduce<number[]>(
-            (acc, [rgid, rg]) => {
-              if (elem.fragId !== undefined && rg.frags.has(elem.fragId))
-                acc.push(rgid);
-              return acc;
+            (accumulator, [rgid, rg]) => {
+              if (element.fragId !== undefined && rg.frags.has(element.fragId))
+                accumulator.push(rgid);
+              return accumulator;
             },
             [],
           ),
         };
-        dlg = openDialog(dispatch, 'rgroup', params).then((res) => ({
-          values: (res as { values: unknown[] }).values,
+        dlg = openDialog(dispatch, 'rgroup', parameters).then((resource) => ({
+          values: (resource as { values: unknown[] }).values,
           type: 'rlabel',
         }));
       } else {
         // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
-          elem.pseudo ? 'extended-table' : 'period-table',
-          { ...elem, pseudo: elem.pseudo },
+          element.pseudo ? 'extended-table' : 'period-table',
+          { ...element, pseudo: element.pseudo },
         );
       }
-      return dlg.then((res) => toElement(res as ElementFormData));
+      return dlg.then((resource) => toElement(resource as ElementFormData));
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: (params: { stereoLabel: string | null }) =>
+    onEnhancedStereoEdit: (parameters: { stereoLabel: string | null }) =>
       sleep(0).then(() => {
-        const init = fromStereoLabel(params.stereoLabel);
+        const init = fromStereoLabel(parameters.stereoLabel);
         return openDialog(dispatch, 'enhancedStereo', {
           init,
         }).then(
-          (res) => toStereoLabel(res as ReturnType<typeof fromStereoLabel>),
+          (resource) =>
+            toStereoLabel(resource as ReturnType<typeof fromStereoLabel>),
           () => null,
         );
       }),
@@ -195,9 +198,9 @@ export default function initEditor(
         dispatch,
         'bondProps',
         fromBond(bondsAttributes as unknown as Bond),
-      ).then((res) => toBond(res as ReturnType<typeof fromBond>));
+      ).then((resource) => toBond(resource as ReturnType<typeof fromBond>));
     },
-    onRgroupEdit: (rgroup: RGroupEditParams) => {
+    onRgroupEdit: (rgroup: RGroupEditParameters) => {
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
@@ -211,23 +214,23 @@ export default function initEditor(
       }
 
       const disabledIds = Array.from(struct.atoms.values()).reduce<unknown[]>(
-        (acc, atom) => {
+        (accumulator, atom) => {
           if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
-            return acc.concat(
+            return accumulator.concat(
               (fromElement(atom) as { values?: (string | number)[] })?.values ??
                 [],
             );
-          return acc;
+          return accumulator;
         },
         [],
       );
-      const params = {
+      const parameters = {
         type: 'fragment',
         values: [rgroup.label],
         disabledIds,
       };
-      return openDialog(dispatch, 'rgroup', params).then((res) => ({
-        label: (res as { values: unknown[] }).values[0],
+      return openDialog(dispatch, 'rgroup', parameters).then((resource) => ({
+        label: (resource as { values: unknown[] }).values[0],
       }));
     },
     onSgroupEdit: (sgroup: SGroupInput) =>
@@ -238,42 +241,42 @@ export default function initEditor(
             selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
-        .then((res) => toSgroup(res as SGroupFormData)),
+        .then((resource) => toSgroup(resource as SGroupFormData)),
     onRemoveFG: (result: Record<string, unknown>) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),
     onEditMonomer: (payload: EditMonomerPayload) =>
       sleep(0).then(() => openDialog(dispatch, 'editMonomer', payload)),
-    onMessage: (msg: { error?: unknown }) => {
-      if (msg.error) {
+    onMessage: (message: { error?: unknown }) => {
+      if (message.error) {
         // TODO: add error handler call
       }
     },
     onAromatizeStruct: (struct: Struct) => {
       const state = getState();
-      const serverOpts = state.options.getServerSettings();
+      const serverOptions = state.options.getServerSettings();
       return serverCall(
         state.editor,
         state.server,
         'aromatize',
-        serverOpts,
+        serverOptions,
         struct,
-      ).catch((e: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      ).catch((error: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       });
     },
     onDearomatizeStruct: (struct: Struct) => {
       const state = getState();
-      const serverOpts = state.options.getServerSettings();
+      const serverOptions = state.options.getServerSettings();
       return serverCall(
         state.editor,
         state.server,
         'dearomatize',
-        serverOpts,
+        serverOptions,
         struct,
-      ).catch((e: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      ).catch((error: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       });
     },
     onMouseDown: () => {

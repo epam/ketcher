@@ -3,23 +3,23 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  AttachmentGroupContextMenuProps,
-  AtomContextMenuProps,
-  ItemEventParams,
-  SelectionContextMenuProps,
+  AttachmentGroupContextMenuProperties,
+  AtomContextMenuProperties,
+  ItemEventParameters,
+  SelectionContextMenuProperties,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<
-  | AttachmentGroupContextMenuProps
-  | AtomContextMenuProps
-  | SelectionContextMenuProps
+type Parameters_ = ItemEventParameters<
+  | AttachmentGroupContextMenuProperties
+  | AtomContextMenuProperties
+  | SelectionContextMenuProperties
 >;
 
 const useAttachmentGroupDelete = () => {
   const { ketcherId } = useAppContext();
 
   return useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const attachmentGroupId = props?.attachmentGroupIds?.[0];
 

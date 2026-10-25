@@ -1,6 +1,6 @@
 import type {
-  MacromoleculeContextMenuProps,
-  MenuItemsProps,
+  MacromoleculeContextMenuProperties,
+  MenuItemsProperties,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
@@ -19,17 +19,17 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 
 const MacromoleculeMenuItems = (
-  props: MenuItemsProps<MacromoleculeContextMenuProps>,
+  properties: MenuItemsProperties<MacromoleculeContextMenuProperties>,
 ) => {
   const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const [action, hidden] = useMonomerExpansionHandlers();
   const removeGroupingHandler = useRemoveGrouping();
 
-  const functionalGroups = props.propsFromTrigger?.functionalGroups;
-  const totalMonomerCount = props.propsFromTrigger?.totalMonomerCount ?? 0;
+  const functionalGroups = properties.propsFromTrigger?.functionalGroups;
+  const totalMonomerCount = properties.propsFromTrigger?.totalMonomerCount ?? 0;
   const hasNonMonomerStructure =
-    props.propsFromTrigger?.hasNonMonomerStructure ?? false;
+    properties.propsFromTrigger?.hasNonMonomerStructure ?? false;
 
   const sgroup = functionalGroups?.[0]?.relatedSGroup;
   const multipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
@@ -133,24 +133,24 @@ const MacromoleculeMenuItems = (
     <>
       {/* Group 1: Expand / Collapse + Remove Grouping */}
       <Item
-        {...props}
+        {...properties}
         data-testid={`${expandText}-option`}
-        hidden={(params) => hidden(params, true)}
-        onClick={(params) => action(params, true)}
+        hidden={(parameters) => hidden(parameters, true)}
+        onClick={(parameters) => action(parameters, true)}
         disabled={expandingDisabled}
       >
         {expandLabel}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid={`${collapseText}-option`}
-        hidden={(params) => hidden(params, false)}
-        onClick={(params) => action(params, false)}
+        hidden={(parameters) => hidden(parameters, false)}
+        onClick={(parameters) => action(parameters, false)}
       >
         {collapseLabel}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid="Remove Grouping-option"
         onClick={removeGroupingHandler}
         disabled={unknownOrAmbiguousMonomer}
@@ -169,7 +169,7 @@ const MacromoleculeMenuItems = (
       {createMonomerVisible && (
         <>
           <Item
-            {...props}
+            {...properties}
             data-testid="Create Monomer-option"
             onClick={() => handleEdit()}
           >
@@ -181,7 +181,7 @@ const MacromoleculeMenuItems = (
 
       {/* Group 3: Edit Monomer / Edit All */}
       <Item
-        {...props}
+        {...properties}
         data-testid="Edit Monomer-option"
         onClick={() => handleEdit()}
         disabled={editMonomerDisabled}
@@ -194,7 +194,7 @@ const MacromoleculeMenuItems = (
         {t('components:contextMenu.editMonomer')}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid="Edit All-option"
         onClick={handleEditAll}
         onMouseEnter={() => setEditAllHover(true)}
@@ -216,7 +216,7 @@ const MacromoleculeMenuItems = (
 
       {/* Group 4: Delete */}
       <Item
-        {...props}
+        {...properties}
         data-testid="Delete Monomer-option"
         onClick={handleDelete}
       >

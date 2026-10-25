@@ -25,21 +25,21 @@ import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import {
-  type ContextMenuProps,
+  type ContextMenuProperties,
   ContextMenuTriggerType,
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
 import {
   getAttachmentGroupTargetForBondHalf,
   getIsItemInSelection,
-  getMenuPropsForClosestItem,
-  getMenuPropsForSelection,
-} from './ContextMenuTrigger.utils';
+  getMenuPropertiesForClosestItem,
+  getMenuPropertiesForSelection,
+} from './ContextMenuTrigger.utilities';
 import TemplateTool from 'src/script/editor/tool/template';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { ketcherId } = useAppContext();
-  const { show } = useContextMenu<ContextMenuProps>();
+  const { show } = useContextMenu<ContextMenuProperties>();
 
   const getSelectedGroupsInfo = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
@@ -136,7 +136,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
 
-      let showProps: ContextMenuProps | null = null;
+      let showProperties: ContextMenuProperties | null = null;
       let triggerType: ContextMenuTriggerType;
 
       if (!closestItem) {
@@ -187,7 +187,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
 
         case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(
+          showProperties = getMenuPropertiesForClosestItem(
             editor,
             closestItem,
             ketcherId,
@@ -196,7 +196,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
 
         case ContextMenuTriggerType.Selection: {
-          showProps = getMenuPropsForSelection(
+          showProperties = getMenuPropertiesForSelection(
             selection,
             selectedFunctionalGroups,
             ketcherId,
@@ -206,11 +206,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      if (showProps) {
+      if (showProperties) {
         show({
-          id: showProps.id,
+          id: showProperties.id,
           event,
-          props: { ...showProps, ketcherId },
+          props: { ...showProperties, ketcherId },
         });
       }
     },

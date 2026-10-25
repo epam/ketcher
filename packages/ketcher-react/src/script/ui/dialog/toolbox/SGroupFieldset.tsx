@@ -22,20 +22,20 @@ import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from '../../utils';
 import classes from './sgroup.module.less';
-import type { BaseProps } from '../../views/modal/modal.types';
+import type { BaseProperties } from '../../views/modal/modal.types';
 
-type PropMappingValue = {
+type PropertyMappingValue = {
   maxLength?: number;
   type?: string;
 };
 
-enum SGroupPropType {
+enum SGroupPropertyType {
   Connectivity = 'connectivity',
   Class = 'class',
   Subtype = 'subtype',
 }
 
-const propMapping: Record<string, PropMappingValue> = {
+const propertyMapping: Record<string, PropertyMappingValue> = {
   name: { maxLength: 15 },
   fieldName: { maxLength: 30 },
   fieldValue: { type: 'textarea' },
@@ -44,36 +44,38 @@ const propMapping: Record<string, PropMappingValue> = {
 
 const content = (type: string, t: TFunction): JSX.Element[] =>
   Object.keys(schemes[type].properties)
-    .filter((prop) => prop !== 'type')
-    .map((prop) => {
+    .filter((property) => property !== 'type')
+    .map((property) => {
       if (
-        prop === SGroupPropType.Connectivity ||
-        prop === SGroupPropType.Class ||
-        prop === SGroupPropType.Subtype
+        property === SGroupPropertyType.Connectivity ||
+        property === SGroupPropertyType.Class ||
+        property === SGroupPropertyType.Subtype
       ) {
         return (
           <Field
-            name={prop}
-            key={`${type}-${prop}`}
+            name={property}
+            key={`${type}-${property}`}
             component={Select}
             options={getSelectOptionsFromSchema(
-              schemes[type].properties[prop],
+              schemes[type].properties[property],
               t,
             )}
-            data-testid={prop}
+            data-testid={property}
           />
         );
       }
 
-      const props = propMapping[prop] || {};
-      return <Field name={prop} key={`${type}-${prop}`} {...props} />;
+      const properties = propertyMapping[property] || {};
+      return (
+        <Field name={property} key={`${type}-${property}`} {...properties} />
+      );
     });
 
-interface SGroupFieldsetProps {
-  formState: BaseProps['formState'];
+interface SGroupFieldsetProperties {
+  formState: BaseProperties['formState'];
 }
 
-function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {
+function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProperties>) {
   const { result } = formState;
   const { t } = useTranslation();
 

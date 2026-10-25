@@ -33,22 +33,22 @@ interface EnhancedStereoResult {
 
 type EnhancedStereoFormState = FormState<EnhancedStereoResult>;
 
-interface EnhancedStereoProps {
+interface EnhancedStereoProperties {
   className: string;
   init: EnhancedStereoResult & { init?: true };
   formState: EnhancedStereoFormState;
   struct: Struct;
 }
 
-interface EnhancedStereoCallProps {
+interface EnhancedStereoCallProperties {
   onCancel: () => void;
-  onOk: (res: unknown) => void;
+  onOk: (resource: unknown) => void;
 }
 
-type Props = EnhancedStereoProps & EnhancedStereoCallProps;
+type Properties = EnhancedStereoProperties & EnhancedStereoCallProperties;
 
-const EnhancedStereo: FC<Props> = (props) => {
-  const { struct, formState, init, ...rest } = props;
+const EnhancedStereo: FC<Properties> = (properties) => {
+  const { struct, formState, init, ...rest } = properties;
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
@@ -208,4 +208,4 @@ const ConnectedEnhancedStereo = connect((state: State) => ({
   struct: state.editor.struct(),
 }))(EnhancedStereo);
 
-export default ConnectedEnhancedStereo as unknown as ComponentType<EnhancedStereoCallProps>;
+export default ConnectedEnhancedStereo as unknown as ComponentType<EnhancedStereoCallProperties>;

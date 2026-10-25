@@ -15,13 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 
-interface RemoveFGProps extends BaseProps {
+interface RemoveFGProps extends BaseProperties {
   fgIds: any;
 }
 

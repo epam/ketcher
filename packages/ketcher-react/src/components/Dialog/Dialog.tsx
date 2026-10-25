@@ -35,14 +35,14 @@ interface DialogParamsCallProps {
   onOk?: (result: unknown) => void;
 }
 
-export interface DialogParams extends DialogParamsCallProps {
+export interface DialogParameters extends DialogParamsCallProps {
   className?: string;
   isNestedModal?: boolean;
 }
 
 interface DialogProps {
   title?: string;
-  params?: DialogParams;
+  params?: DialogParameters;
   buttons?: Array<string | ReactElement>;
   className?: string;
   needMargin?: boolean;

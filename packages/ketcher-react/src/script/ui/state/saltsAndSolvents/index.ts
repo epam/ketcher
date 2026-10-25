@@ -44,9 +44,9 @@ const saltsAndSolventsReducer = (state = initialState, action: AnyAction) => {
   return state;
 };
 
-export const initSaltsAndSolvents = (lib: SdfItem[]) => ({
+export const initSaltsAndSolvents = (library: SdfItem[]) => ({
   type: 'SALTS_AND_SOLVENTS_INIT',
-  payload: { lib },
+  payload: { lib: library },
 });
 
 export function initSaltsAndSolventsTemplates() {
@@ -56,10 +56,10 @@ export function initSaltsAndSolventsTemplates() {
     const sdfSerializer = new SdfSerializer();
     const templates = sdfSerializer.deserialize(templatesRawData);
     const saltsAndSolvents = templates.reduce(
-      (acc: Struct[], { struct, props }) => {
+      (accumulator: Struct[], { struct, props }) => {
         struct.abbreviation = String(props.abbreviation);
-        acc.push(struct);
-        return acc;
+        accumulator.push(struct);
+        return accumulator;
       },
       [],
     );

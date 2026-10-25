@@ -37,7 +37,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParameters } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
@@ -46,7 +46,7 @@ import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import type { IconName } from 'components';
 
-interface TextProps extends DialogParams {
+interface TextProps extends DialogParameters {
   formState: any;
   id?: any;
   content: string;

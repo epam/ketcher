@@ -46,11 +46,14 @@ type TemplateGroups = Record<string, Template[]>;
  */
 type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 
-export function greekify(str: string): string {
-  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
+export function greekify(string_: string): string {
+  return string_.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
 }
 
-export function filterLib(lib: Template[], filter: string): TemplateGroups {
+export function filterLibrary(
+  library: Template[],
+  filter: string,
+): TemplateGroups {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   return flow(
@@ -62,15 +65,18 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
         (!!item.props.abbreviation &&
           re.test(greekify(item.props.abbreviation))),
     ),
-    reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
-      return res;
+    reduce((resource: TemplateGroups, item: Template) => {
+      if (!resource[item.props.group]) resource[item.props.group] = [item];
+      else resource[item.props.group].push(item);
+      return resource;
     }, {} as TemplateGroups),
-  )(lib);
+  )(library);
 }
 
-export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
+export function filterFGLibrary(
+  library: Template[],
+  filter: string,
+): TemplateGroups {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   const searchFunction = (item: Template) => {
@@ -83,12 +89,12 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   };
   return flow(
     _filter((item: Template) => !trimmedFilter || searchFunction(item)),
-    reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
-      return res;
+    reduce((resource: TemplateGroups, item: Template) => {
+      if (!resource[item.props.group]) resource[item.props.group] = [item];
+      else resource[item.props.group].push(item);
+      return resource;
     }, {} as TemplateGroups),
-  )(lib);
+  )(library);
 }
 
 /**
@@ -126,28 +132,33 @@ export const getSelectOptionsFromSchema = (
 
 /**
  * Creates a function, which is not called if the current argument is the same as the last one
- * @param func function to be debounced
+ * @param function_ function to be debounced
  * @param delay delay in ms
  * @param skipArguments indexes in arguments array to skip for comparison
  * @returns debounced function, which is not called with previous argument
  */
-export function memoizedDebounce<TArgs extends unknown[]>(
-  func: (...args: TArgs) => unknown,
+export function memoizedDebounce<TArguments extends unknown[]>(
+  function_: (...arguments_: TArguments) => unknown,
   delay = 0,
   skipArguments: number[] = [],
 ) {
-  let lastArgs: TArgs | undefined;
-  const debouncedFunction = _.debounce(func, delay);
-  const getArgumentsToCompare = (args: TArgs | undefined): unknown[] =>
-    args?.filter((_value, index) => !skipArguments.includes(index)) ?? [];
-  return (...args: TArgs): void => {
-    const lastArgsToCompare = getArgumentsToCompare(lastArgs);
-    const argsToCompare = getArgumentsToCompare(args);
-    if (lastArgs && _.isEqual(argsToCompare, lastArgsToCompare)) {
+  let lastArguments: TArguments | undefined;
+  const debouncedFunction = _.debounce(function_, delay);
+  const getArgumentsToCompare = (
+    arguments_: TArguments | undefined,
+  ): unknown[] =>
+    arguments_?.filter((_value, index) => !skipArguments.includes(index)) ?? [];
+  return (...arguments_: TArguments): void => {
+    const lastArgumentsToCompare = getArgumentsToCompare(lastArguments);
+    const argumentsToCompare = getArgumentsToCompare(arguments_);
+    if (
+      lastArguments &&
+      _.isEqual(argumentsToCompare, lastArgumentsToCompare)
+    ) {
       return;
     }
-    lastArgs = args;
-    debouncedFunction(...args);
+    lastArguments = arguments_;
+    debouncedFunction(...arguments_);
   };
 }
 

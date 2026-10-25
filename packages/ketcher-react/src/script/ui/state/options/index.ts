@@ -30,8 +30,8 @@ import {
 } from 'ketcher-core';
 import { pick } from 'lodash/fp';
 import type { Dispatch, UnknownAction } from 'redux';
-import { storage } from '../../storage-ext';
-import { reinitializeTemplateLibrary } from '../templates/init-lib';
+import { storage } from '../../storage-extension';
+import { reinitializeTemplateLibrary } from '../templates/init-library';
 import { APP_OPTIONS_ACTION, OPTIONS_UPDATE_ACTION } from './actions';
 import type {
   AnalyseRoundName,
@@ -230,10 +230,10 @@ const recognizeActions: readonly RecognizeActionType[] = [
   'IS_FRAGMENT_RECOGNIZE',
 ];
 
-export function setStruct(str: string | Promise<unknown> | null) {
+export function setStruct(string_: string | Promise<unknown> | null) {
   return {
     type: 'SET_RECOGNIZE_STRUCT',
-    data: { structStr: str },
+    data: { structStr: string_ },
   };
 }
 
@@ -262,7 +262,7 @@ export function shouldFragment(isFrag: boolean) {
 }
 
 /* CHECK */
-export function checkOpts(data: OptionsState['check']) {
+export function checkOptions(data: OptionsState['check']) {
   return {
     type: 'SAVE_CHECK_OPTS',
     data,

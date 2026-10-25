@@ -3,24 +3,24 @@ import { Item } from 'react-contexify';
 import styles from '../ContextMenu.module.less';
 import useAttachmentGroupDelete from '../hooks/useAttachmentGroupDelete';
 import type {
-  AttachmentGroupContextMenuProps,
-  AtomContextMenuProps,
-  MenuItemsProps,
-  SelectionContextMenuProps,
+  AttachmentGroupContextMenuProperties,
+  AtomContextMenuProperties,
+  MenuItemsProperties,
+  SelectionContextMenuProperties,
 } from '../contextMenu.types';
 
 const AttachmentGroupMenuItems: FC<
-  MenuItemsProps<
-    | AttachmentGroupContextMenuProps
-    | AtomContextMenuProps
-    | SelectionContextMenuProps
+  MenuItemsProperties<
+    | AttachmentGroupContextMenuProperties
+    | AtomContextMenuProperties
+    | SelectionContextMenuProperties
   >
-> = (props) => {
+> = (properties) => {
   const handleDelete = useAttachmentGroupDelete();
 
   return (
     <Item
-      {...props}
+      {...properties}
       data-testid="Remove Attachment Group-option"
       onClick={handleDelete}
     >

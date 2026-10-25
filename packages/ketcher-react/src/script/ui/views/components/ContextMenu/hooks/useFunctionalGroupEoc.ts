@@ -5,11 +5,11 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
 import type {
-  FunctionalGroupsContextMenuProps,
-  ItemEventParams,
+  FunctionalGroupsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
+type Parameters_ = ItemEventParameters<FunctionalGroupsContextMenuProperties>;
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract
@@ -19,7 +19,7 @@ const useFunctionalGroupEoc = () => {
   const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: Params, toExpand: boolean) => {
+    ({ props }: Parameters_, toExpand: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
@@ -40,7 +40,7 @@ const useFunctionalGroupEoc = () => {
     [dispatch, ketcherId],
   );
 
-  const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
+  const hidden = useCallback(({ props }: Parameters_, toExpand: boolean) => {
     // If trying to contract (toExpand is false), hide the option if any functional group has no name
     if (!toExpand) {
       const hasEmptyName = props?.functionalGroups?.some(

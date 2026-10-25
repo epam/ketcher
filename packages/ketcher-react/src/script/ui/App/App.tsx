@@ -39,7 +39,7 @@ import {
   useSettings,
 } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
-import { initLib } from '../state/templates/init-lib';
+import { initLibrary } from '../state/templates/init-library';
 import { ketcherProvider } from 'ketcher-core';
 import { useAppDispatch } from '../state/hooks';
 import { selectSnackbarNotificationText } from '../state/notifications';
@@ -85,7 +85,7 @@ const App = (props: Props) => {
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
-      dispatch(initLib([]));
+      dispatch(initLibrary([]));
       dispatch(initSaltsAndSolvents([]));
       dispatch(initFGroups([]));
       // App component is unmounted after editor components (MicromoleculeEditor.tsx and ketcher-react/src/Editor.tsx)

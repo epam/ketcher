@@ -4,19 +4,19 @@ import type Editor from 'src/script/editor';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { mapBondIdsToBonds } from 'src/script/editor/tool/select';
 import type {
-  BondsContextMenuProps,
-  ItemEventParams,
+  BondsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { getEditableBondIds, noOperation } from '../utils';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
 
 const useBondEdit = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: Params) => {
+    async ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const bondIds = getEditableBondIds(editor.struct(), props?.bondIds ?? []);
       if (bondIds.length === 0) return;
@@ -26,8 +26,8 @@ const useBondEdit = () => {
         const bonds = mapBondIdsToBonds(bondIds, molecule);
         const changeBondPromise = await editor.event.bondEdit.dispatch(bonds);
         updateSelectedBonds({ bonds: bondIds, changeBondPromise, editor });
-      } catch (e) {
-        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', e);
+      } catch (error) {
+        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', error);
         noOperation();
       }
     },
@@ -35,7 +35,7 @@ const useBondEdit = () => {
   );
 
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       return (
         getEditableBondIds(editor.struct(), props?.bondIds ?? []).length === 0

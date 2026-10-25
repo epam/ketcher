@@ -24,10 +24,10 @@ import { Separator, type SeparatorProps } from 'react-contexify';
  * avoid this by stopping propagation themselves; this wrapper does the
  * same for separators.
  */
-const MenuSeparator: FC<SeparatorProps> = (props) => (
+const MenuSeparator: FC<SeparatorProps> = (properties) => (
   // eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- purely stops click propagation for a decorative divider, not a keyboard-operable control
   <div onClick={(event) => event.stopPropagation()}>
-    <Separator {...props} />
+    <Separator {...properties} />
   </div>
 );
 

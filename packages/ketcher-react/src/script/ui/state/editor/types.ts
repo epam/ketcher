@@ -39,7 +39,7 @@ export interface EditorInitState {
 }
 
 /** Parameter shape for the onRgroupEdit callback. */
-export interface RGroupEditParams {
+export interface RGroupEditParameters {
   fragId?: number;
   label: number | null;
   range?: string;

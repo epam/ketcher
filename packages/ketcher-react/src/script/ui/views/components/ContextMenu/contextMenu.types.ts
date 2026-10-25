@@ -14,7 +14,7 @@ export enum CONTEXT_MENU_ID {
   FOR_ATTACHMENT_POINT_LABEL = 'context-menu-for-attachment-point-label',
 }
 
-interface BaseContextMenuProps {
+interface BaseContextMenuProperties {
   id: string;
 }
 
@@ -22,48 +22,48 @@ interface WithExtraItems {
   extraItemsSelected?: boolean;
 }
 
-export interface BondsContextMenuProps
-  extends BaseContextMenuProps, WithExtraItems {
+export interface BondsContextMenuProperties
+  extends BaseContextMenuProperties, WithExtraItems {
   id: string;
   bondIds: Array<number>;
 }
 
-export interface AtomContextMenuProps
-  extends BaseContextMenuProps, WithExtraItems {
+export interface AtomContextMenuProperties
+  extends BaseContextMenuProperties, WithExtraItems {
   id: string;
   atomIds: Array<number>;
   attachmentGroupIds?: Array<number>;
 }
 
-export interface AttachmentGroupContextMenuProps extends BaseContextMenuProps {
+export interface AttachmentGroupContextMenuProperties extends BaseContextMenuProperties {
   id: string;
   attachmentGroupIds: Array<number>;
 }
 
-export interface RGroupAttachmentPointContextMenuProps
-  extends BaseContextMenuProps, WithExtraItems {
+export interface RGroupAttachmentPointContextMenuProperties
+  extends BaseContextMenuProperties, WithExtraItems {
   id: string;
   rgroupAttachmentPoints: Array<number>;
-  atomIds?: AtomContextMenuProps['atomIds'];
+  atomIds?: AtomContextMenuProperties['atomIds'];
 }
-export interface SelectionContextMenuProps
+export interface SelectionContextMenuProperties
   extends
-    BaseContextMenuProps,
-    Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
-    Partial<Pick<AtomContextMenuProps, 'atomIds'>>,
+    BaseContextMenuProperties,
+    Partial<Pick<BondsContextMenuProperties, 'bondIds'>>,
+    Partial<Pick<AtomContextMenuProperties, 'atomIds'>>,
     Partial<
-      Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
+      Pick<RGroupAttachmentPointContextMenuProperties, 'rgroupAttachmentPoints'>
     > {
   id: string;
   attachmentGroupIds?: Array<number>;
 }
 
-export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
+export interface FunctionalGroupsContextMenuProperties extends BaseContextMenuProperties {
   id: string;
   functionalGroups: FunctionalGroup[];
 }
 
-export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
+export interface MacromoleculeContextMenuProperties extends BaseContextMenuProperties {
   id: string;
   functionalGroups: FunctionalGroup[];
   /** Total count of monomers on canvas with the same code as the primary monomer */
@@ -72,35 +72,36 @@ export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   hasNonMonomerStructure?: boolean;
 }
 
-export interface MultitailArrowContextMenuProps {
+export interface MultitailArrowContextMenuProperties {
   id: string;
   itemId: number;
   tailId: number | null;
 }
 
-export interface AttachmentPointLabelContextMenuProps extends BaseContextMenuProps {
+export interface AttachmentPointLabelContextMenuProperties extends BaseContextMenuProperties {
   id: string;
   attachmentPointName: AttachmentPointName;
 }
 
-export type ContextMenuProps =
-  | BondsContextMenuProps
-  | AtomContextMenuProps
-  | AttachmentGroupContextMenuProps
-  | SelectionContextMenuProps
-  | FunctionalGroupsContextMenuProps
-  | RGroupAttachmentPointContextMenuProps
-  | MultitailArrowContextMenuProps
-  | MacromoleculeContextMenuProps
-  | AttachmentPointLabelContextMenuProps;
+export type ContextMenuProperties =
+  | BondsContextMenuProperties
+  | AtomContextMenuProperties
+  | AttachmentGroupContextMenuProperties
+  | SelectionContextMenuProperties
+  | FunctionalGroupsContextMenuProperties
+  | RGroupAttachmentPointContextMenuProperties
+  | MultitailArrowContextMenuProperties
+  | MacromoleculeContextMenuProperties
+  | AttachmentPointLabelContextMenuProperties;
 
-export interface MenuItemsProps<T extends ContextMenuProps> {
+export interface MenuItemsProperties<T extends ContextMenuProperties> {
   triggerEvent?: TriggerEvent;
   propsFromTrigger?: T;
 }
 
-export type ItemEventParams<T extends ContextMenuProps = ContextMenuProps> =
-  PredicateParams<T, unknown>;
+export type ItemEventParameters<
+  T extends ContextMenuProperties = ContextMenuProperties,
+> = PredicateParams<T, unknown>;
 
 export type ContextMenuInfo = {
   [id in CONTEXT_MENU_ID]?: boolean;
@@ -119,7 +120,7 @@ export interface ClosestItem {
   map: string /* should be enum something like keys of findMaps from packages/ketcher-react/src/script/editor/shared/closest.ts */;
 }
 
-export interface GetIsItemInSelectionArgs {
+export interface GetIsItemInSelectionArguments {
   item: ClosestItem | null;
   selection: Selection | null;
   selectedFunctionalGroups: Map<number, FunctionalGroup>;

@@ -34,7 +34,7 @@ interface SDataFieldsetFormState {
   result: SdataFormResult;
 }
 
-interface SDataFieldsetProps {
+interface SDataFieldsetProperties {
   formState: SDataFieldsetFormState;
 }
 
@@ -49,25 +49,28 @@ const content = (
 ) =>
   Object.keys(schema.properties)
     .filter(
-      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName',
+      (property) =>
+        property !== 'type' &&
+        property !== 'context' &&
+        property !== 'fieldName',
     )
-    .map((prop) => {
-      if (prop === 'radiobuttons') {
+    .map((property) => {
+      if (property === 'radiobuttons') {
         return (
           <Field
-            name={prop}
+            name={property}
             checked={checked}
             type="radio"
-            key={`${context}-${fieldName}-${prop}-radio`}
+            key={`${context}-${fieldName}-${property}-radio`}
             labelPos={false}
             disabled={isContextEmpty}
           />
         );
-      } else if (prop === 'fieldValue') {
+      } else if (property === 'fieldValue') {
         return (
           <Field
-            name={prop}
-            key={`${context}-${fieldName}-${prop}-select`}
+            name={property}
+            key={`${context}-${fieldName}-${property}-select`}
             placeholder={t('dialogs:toolbox.sdata.fieldValuePlaceholder')}
             disabled={isContextEmpty}
           />
@@ -75,16 +78,16 @@ const content = (
       } else {
         return (
           <Field
-            name={prop}
+            name={property}
             type="textarea"
-            key={`${context}-${fieldName}-${prop}-select`}
+            key={`${context}-${fieldName}-${property}-select`}
             disabled={isContextEmpty}
           />
         );
       }
     });
 
-function SDataFieldset({ formState }: Readonly<SDataFieldsetProps>) {
+function SDataFieldset({ formState }: Readonly<SDataFieldsetProperties>) {
   const { result } = formState;
   const { t } = useTranslation();
   const formSchema = sdataCustomSchema;

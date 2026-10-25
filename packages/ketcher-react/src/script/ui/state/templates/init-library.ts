@@ -23,7 +23,7 @@ import {
 } from 'ketcher-core';
 
 import { appUpdate } from '../options/actions';
-import { storage } from '../../storage-ext';
+import { storage } from '../../storage-extension';
 import templatesRawData from '../../../../templates/library.sdf';
 import type { AnyAction, Dispatch } from 'redux';
 
@@ -35,16 +35,16 @@ interface TemplateLibrary {
   data: { lib: SdfItem[] };
 }
 
-export function initLib(lib: SdfItem[]): TemplateLibrary {
+export function initLibrary(library: SdfItem[]): TemplateLibrary {
   return {
     type: 'TMPL_INIT',
-    data: { lib },
+    data: { lib: library },
   };
 }
 
 const deserializeSdfTemplates = (
   baseUrl: string,
-  cacheEl: Element,
+  cacheElement: Element,
   _fileName: string,
 ): Promise<SdfItem[]> => {
   const options = {
@@ -53,7 +53,7 @@ const deserializeSdfTemplates = (
 
   const sdfSerializer = new SdfSerializer(options);
   const tmpls = sdfSerializer.deserialize(templatesRawData);
-  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl);
+  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheElement);
 
   return prefetch.then((cachedFiles) =>
     tmpls.map((tmpl) => {
@@ -66,24 +66,26 @@ const deserializeSdfTemplates = (
   );
 };
 
-export default async function initTmplLib(
+export default async function initTmplLibrary(
   dispatch: Dispatch<AnyAction>,
   baseUrl: string,
-  cacheEl: Element,
+  cacheElement: Element,
 ): Promise<void> {
-  cachedInitData = [dispatch, baseUrl, cacheEl];
+  cachedInitData = [dispatch, baseUrl, cacheElement];
 
   const fileName = 'library.sdf';
 
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls());
-    dispatch(initLib(lib));
-    dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
-    if (needReinitializeTemplateLibrary) {
-      reinitializeTemplateLibrary();
-      needReinitializeTemplateLibrary = false;
-    }
-  });
+  return deserializeSdfTemplates(baseUrl, cacheElement, fileName).then(
+    (resource) => {
+      const library = resource.concat(userTmpls());
+      dispatch(initLibrary(library));
+      dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
+      if (needReinitializeTemplateLibrary) {
+        reinitializeTemplateLibrary();
+        needReinitializeTemplateLibrary = false;
+      }
+    },
+  );
 }
 
 export function reinitializeTemplateLibrary(): void {
@@ -92,14 +94,14 @@ export function reinitializeTemplateLibrary(): void {
     return;
   }
 
-  initTmplLib(...cachedInitData);
+  initTmplLibrary(...cachedInitData);
 }
 
 function userTmpls(): SdfItem[] {
-  const userLib = storage.getItem('ketcher-tmpls');
-  if (!Array.isArray(userLib) || userLib.length === 0) return [];
+  const userLibrary = storage.getItem('ketcher-tmpls');
+  if (!Array.isArray(userLibrary) || userLibrary.length === 0) return [];
   const ketSerializer = new KetSerializer();
-  return userLib
+  return userLibrary
     .map((tmpl) => {
       try {
         if (tmpl.props === '') tmpl.props = {};
@@ -109,8 +111,8 @@ function userTmpls(): SdfItem[] {
           struct: ketSerializer.deserialize(tmpl.struct),
           props: tmpl.props,
         };
-      } catch (e) {
-        KetcherLogger.error('init-lib.ts::userTmpls', e);
+      } catch (error) {
+        KetcherLogger.error('init-library.ts::userTmpls', error);
         return null;
       }
     })
@@ -126,39 +128,39 @@ export function prefetchStatic(url: string): Promise<string> {
 
 function prefetchSplit(tmpl: SdfItem) {
   const pr = tmpl.props.prerender;
-  const res = pr && `${pr}`.split('#', 2);
+  const resource = pr && `${pr}`.split('#', 2);
 
   return {
-    file: pr && res[0],
-    id: pr && res[1],
+    file: pr && resource[0],
+    id: pr && resource[1],
   };
 }
 
 function prefetchRender(
   tmpls: SdfItem[],
   baseUrl: string,
-  cacheEl: Element,
+  cacheElement: Element,
 ): Promise<string[]> {
-  const files = tmpls.reduce((res, tmpl) => {
+  const files = tmpls.reduce((resource, tmpl) => {
     const file = prefetchSplit(tmpl).file;
 
-    if (file && !res.includes(file)) res.push(file);
+    if (file && !resource.includes(file)) resource.push(file);
 
-    return res;
+    return resource;
   }, [] as string[]);
   const fetch = Promise.all(
-    files.map((fn) =>
-      prefetchStatic(baseUrl + fn).catch((e) => {
-        KetcherLogger.error('init-lib.ts::prefetchRender', e);
+    files.map((function_) =>
+      prefetchStatic(baseUrl + function_).catch((error) => {
+        KetcherLogger.error('init-library.ts::prefetchRender', error);
       }),
     ),
   );
 
   return fetch.then((svgs) => {
     svgs.forEach((svgContent) => {
-      if (svgContent) cacheEl.innerHTML += svgContent;
+      if (svgContent) cacheElement.innerHTML += svgContent;
     });
 
-    return files.filter((_, i) => !!svgs[i]);
+    return files.filter((_, index) => !!svgs[index]);
   });
 }

@@ -223,8 +223,8 @@ function getNextBondTypeAction(hoveredItem, group, render) {
   if (!bond) return null;
 
   const currentIndex = group.findIndex((actName) => {
-    const opts = actions[actName]?.action?.opts;
-    return opts?.type === bond.type && opts?.stereo === bond.stereo;
+    const options = actions[actName]?.action?.opts;
+    return options?.type === bond.type && options?.stereo === bond.stereo;
   });
 
   return getNextAction(group[(currentIndex + 1) % group.length]);
@@ -347,8 +347,8 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   }
 }
 
-function getCurrentAction(prevActName) {
-  return actions[prevActName]?.action;
+function getCurrentAction(previousActName) {
+  return actions[previousActName]?.action;
 }
 
 function getHoveredItem(
@@ -378,8 +378,8 @@ function getHoveredItem(
 function checkGroupOnTool(group, actionTool) {
   let index = group.indexOf(actionTool.tool);
 
-  group.forEach((actName, i) => {
-    if (isEqual(actions[actName].action, actionTool)) index = i;
+  group.forEach((actName, index_) => {
+    if (isEqual(actions[actName].action, actionTool)) index = index_;
   });
 
   return index;
@@ -394,8 +394,8 @@ export function initClipboard(dispatch, getState) {
   );
 
   const debAction = debounce(0, (action) => dispatch(onAction(action)));
-  const loadStruct = debounce(0, (structStr, opts) =>
-    dispatch(load(structStr, opts)),
+  const loadStruct = debounce(0, (structString, options) =>
+    dispatch(load(structString, options)),
   );
 
   return {
@@ -453,36 +453,36 @@ export function initClipboard(dispatch, getState) {
         state.editor.ketcherId,
       );
       const result = await runAsyncAction(async () => {
-        const structStr = await getStructStringFromClipboardData(data);
-        if (structStr || !rxnTextPlain.test(data['text/plain'])) {
-          const opts = isSmarts
+        const structString = await getStructStringFromClipboardData(data);
+        if (structString || !rxnTextPlain.test(data['text/plain'])) {
+          const options = isSmarts
             ? {
                 fragment: true,
                 isPaste: true,
                 'input-format': ChemicalMimeType.DaylightSmarts,
               }
             : { fragment: true, isPaste: true };
-          await dispatch(load(structStr, opts));
+          await dispatch(load(structString, options));
         }
       }, ketcherInstance.eventBus);
       return result;
     },
     onLegacyPaste(data, isSmarts: boolean) {
-      const structStr =
+      const structString =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
         data[ChemicalMimeType.Rxn] ||
         data['text/plain'];
 
-      if (structStr || !rxnTextPlain.test(data['text/plain'])) {
+      if (structString || !rxnTextPlain.test(data['text/plain'])) {
         if (isSmarts) {
-          loadStruct(structStr, {
+          loadStruct(structString, {
             fragment: true,
             isPaste: true,
             'input-format': ChemicalMimeType.DaylightSmarts,
           });
         } else {
-          loadStruct(structStr, { fragment: true, isPaste: true });
+          loadStruct(structString, { fragment: true, isPaste: true });
         }
       }
     },
@@ -515,7 +515,7 @@ async function clipData(editor: Editor) {
     return null;
   }
 
-  const res = {};
+  const resource = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
@@ -531,20 +531,20 @@ async function clipData(editor: Editor) {
       SupportedFormat.molAuto,
     );
 
-    res[ChemicalMimeType.KET] = ket;
+    resource[ChemicalMimeType.KET] = ket;
 
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
 
-    res['text/plain'] = data;
-    res[type] = data;
+    resource['text/plain'] = data;
+    resource[type] = data;
 
-    return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+    return resource;
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 
@@ -556,27 +556,27 @@ function legacyClipData(editor: Editor) {
     return null;
   }
 
-  const res = {};
+  const resource = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
   const molSerializer = new MolSerializer();
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
-    res[ChemicalMimeType.KET] = ket;
+    resource[ChemicalMimeType.KET] = ket;
 
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
     const data = molSerializer.serialize(struct);
-    res['text/plain'] = data;
-    res[type] = data;
+    resource['text/plain'] = data;
+    resource[type] = data;
 
-    return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+    return resource;
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 

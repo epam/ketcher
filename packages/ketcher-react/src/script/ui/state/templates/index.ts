@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { initLib } from './init-lib';
+import { initLibrary } from './init-library';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
 import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
-import { storage } from '../../storage-ext';
+import { storage } from '../../storage-extension';
 
-export { default as initTmplLib } from './init-lib';
+export { default as initTmplLib } from './init-library';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -100,8 +100,8 @@ export function editTmpl(tmpl) {
         () => null,
       )
       .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
+        openDialog(dispatch, 'templates').catch((error) => {
+          KetcherLogger.error('index.ts::editTmpl', error);
         }),
       );
   };
@@ -118,9 +118,9 @@ export function deleteUserTmpl(tmpl) {
 
 export function deleteTmpl(tmpl) {
   return (dispatch, getState) => {
-    const lib = getState().templates.lib.filter((value) => value !== tmpl);
+    const library = getState().templates.lib.filter((value) => value !== tmpl);
     dispatch(deleteUserTmpl(tmpl));
-    updateLocalStore(lib);
+    updateLocalStore(library);
   };
 }
 
@@ -139,26 +139,26 @@ export function saveUserTmpl(struct) {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
-        const lib = getState().templates.lib.concat(tmpl);
-        dispatch(initLib(lib));
-        updateLocalStore(lib);
+        const library = getState().templates.lib.concat(tmpl);
+        dispatch(initLibrary(library));
+        updateLocalStore(library);
       })
-      .catch((e) => {
-        KetcherLogger.error('index.ts::saveUserTmpl', e);
+      .catch((error) => {
+        KetcherLogger.error('index.ts::saveUserTmpl', error);
       });
   };
 }
 
-function updateLocalStore(lib) {
+function updateLocalStore(library) {
   const ketSerializer = new KetSerializer();
-  const userLib = lib
+  const userLibrary = library
     .filter((item) => item.props.group === 'User Templates')
     .map((item) => ({
       struct: ketSerializer.serialize(item.struct),
       props: { ...(omit(['group'], item.props) || {}) },
     }));
 
-  storage.setItem('ketcher-tmpls', userLib);
+  storage.setItem('ketcher-tmpls', userLibrary);
 }
 
 /* REDUCER */
@@ -204,8 +204,10 @@ function templatesReducer(state = initTmplsState, action) {
 
   if (action.type === 'TMPL_DELETE') {
     const currentState = { ...state };
-    const lib = currentState.lib.filter((value) => value !== action.data.tmpl);
-    return { ...currentState, lib };
+    const library = currentState.lib.filter(
+      (value) => value !== action.data.tmpl,
+    );
+    return { ...currentState, lib: library };
   }
 
   return state;

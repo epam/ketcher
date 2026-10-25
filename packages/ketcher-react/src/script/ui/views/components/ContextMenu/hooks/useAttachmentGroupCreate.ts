@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  AtomContextMenuProps,
-  ItemEventParams,
+  AtomContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { fromAttachmentGroupAddition, ketcherProvider } from 'ketcher-core';
 import { isAttachmentGroupCreationSelectionValid } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
+type Parameters_ = ItemEventParameters<AtomContextMenuProperties>;
 
 export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP =
   'Selection must contain only continuous atoms without extra elements or bonds';
@@ -17,7 +17,7 @@ const useAttachmentGroupCreate = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: Params) => {
+    async ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const atomIds = props?.atomIds ?? [];
 

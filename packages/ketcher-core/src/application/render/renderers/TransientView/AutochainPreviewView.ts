@@ -10,7 +10,7 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { KetcherLogger } from 'utilities';
 import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
 
-export type AutochainPreviewViewParams = {
+export type AutochainPreviewViewParameters = {
   monomerOrRnaItem: MonomerItemType | IRnaPreset;
   position: Vec2;
   selectedMonomerToConnect?: BaseMonomer;
@@ -76,9 +76,9 @@ export class AutochainPreviewView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: AutochainPreviewViewParams,
+    parameters: AutochainPreviewViewParameters,
   ) {
-    const { monomerOrRnaItem, position, selectedMonomerToConnect } = params;
+    const { monomerOrRnaItem, position, selectedMonomerToConnect } = parameters;
     const scaledPosition = Coordinates.modelToCanvas(position);
     let sizeOfAutochainPreviewToConnect: { width: number; height: number };
 

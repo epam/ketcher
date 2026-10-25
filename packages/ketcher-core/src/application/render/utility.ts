@@ -27,7 +27,7 @@ import type Visel from './restruct/visel';
 import type { RelativeBox, RenderOptions } from './render.types';
 import { UsageInMacromolecule } from './render.constants';
 
-function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
+function relatedBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
     x: box.x,
     y: box.y,
@@ -64,11 +64,11 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   let pid = -1;
   let nid = -1;
 
-  for (let i = 0; i < 4; ++i) {
-    if (rc[i] > 0) {
-      if (pid < 0 || rd[pid] < rd[i]) pid = i;
-    } else if (nid < 0 || rd[nid] < rd[i]) {
-      nid = i;
+  for (let index = 0; index < 4; ++index) {
+    if (rc[index] > 0) {
+      if (pid < 0 || rd[pid] < rd[index]) pid = index;
+    } else if (nid < 0 || rd[nid] < rd[index]) {
+      nid = index;
     }
   }
 
@@ -90,7 +90,7 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   );
 }
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
-  const obj: {
+  const object: {
     pos1: null | { x: number; y: number };
     pos2: null | { x: number; y: number };
   } = { pos1: null, pos2: null };
@@ -101,33 +101,33 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
   if (oPos2.x !== 0) {
     const b = -2 * oPos2.y * c;
-    const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
-    const D = b * b - 4 * a * e;
+    const equationTerm = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
+    const D = b * b - 4 * a * equationTerm;
     if (D > 0) {
-      obj.pos1 = { x: 0, y: 0 };
-      obj.pos2 = { x: 0, y: 0 };
-      obj.pos1.y = (-b + Math.sqrt(D)) / (2 * a);
-      obj.pos2.y = (-b - Math.sqrt(D)) / (2 * a);
-      obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x;
-      obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x;
+      object.pos1 = { x: 0, y: 0 };
+      object.pos2 = { x: 0, y: 0 };
+      object.pos1.y = (-b + Math.sqrt(D)) / (2 * a);
+      object.pos2.y = (-b - Math.sqrt(D)) / (2 * a);
+      object.pos1.x = (c - object.pos1.y * oPos2.y) / oPos2.x;
+      object.pos2.x = (c - object.pos2.y * oPos2.y) / oPos2.x;
     }
   } else {
-    obj.pos1 = { x: 0, y: 0 };
-    obj.pos2 = { x: 0, y: 0 };
-    obj.pos1.y = c / oPos2.y;
-    obj.pos2.y = c / oPos2.y;
-    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    object.pos1 = { x: 0, y: 0 };
+    object.pos2 = { x: 0, y: 0 };
+    object.pos1.y = c / oPos2.y;
+    object.pos2.y = c / oPos2.y;
+    object.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    object.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   }
-  if (obj.pos1 !== null) {
-    obj.pos1.x += aPoint.x;
-    obj.pos1.y += aPoint.y;
+  if (object.pos1 !== null) {
+    object.pos1.x += aPoint.x;
+    object.pos1.y += aPoint.y;
   }
-  if (obj.pos2 !== null) {
-    obj.pos2.x += aPoint.x;
-    obj.pos2.y += aPoint.y;
+  if (object.pos2 !== null) {
+    object.pos2.x += aPoint.x;
+    object.pos2.y += aPoint.y;
   }
-  return obj;
+  return object;
 }
 
 function getCIPValuePath({
@@ -184,7 +184,7 @@ function drawCIPLabel({
   });
 
   if (atomOrBond instanceof Atom) {
-    const box = relBox(cipValuePath.path.getBBox());
+    const box = relatedBox(cipValuePath.path.getBBox());
 
     cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
   }
@@ -211,8 +211,8 @@ function updateHalfBondCoordinates(
   return [hb1, hb2];
 }
 
-function escapeHtml(str) {
-  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function escapeHtml(string_) {
+  return string_.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function useLabelStyles(
@@ -262,8 +262,8 @@ function useLabelStyles(
   return { color, fill, stroke };
 }
 
-const util = {
-  relBox,
+const utility = {
+  relBox: relatedBox,
   shiftRayBox,
   calcCoordinates,
   drawCIPLabel,
@@ -272,4 +272,4 @@ const util = {
   useLabelStyles,
 };
 
-export default util;
+export default utility;

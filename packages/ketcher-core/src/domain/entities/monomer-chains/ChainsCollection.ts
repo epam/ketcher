@@ -361,7 +361,7 @@ export class ChainsCollection {
   }
 
   public forEachNode(
-    forEachCallback: (params: {
+    forEachCallback: (parameters: {
       chainIndex: number;
       subChainIndex: number;
       nodeIndex: number;
@@ -433,16 +433,16 @@ export class ChainsCollection {
       return [chain];
     } else {
       return complimentaryChainsWithData.reduce(
-        (acc, { complimentaryChain }) => {
+        (accumulator, { complimentaryChain }) => {
           if (
             complimentaryChain === startChain ||
             complimentaryChain === previousChain
           ) {
-            return acc;
+            return accumulator;
           }
 
           return [
-            ...acc,
+            ...accumulator,
             ...this.findCycledComplimentaryChains(
               complimentaryChain,
               startChain,
@@ -522,12 +522,12 @@ export class ChainsCollection {
           return;
         }
 
-        let isFindCur = false;
+        let isFindCurrent = false;
         antisenseChain.forEachNode(({ node: aNode }) => {
           if (aNode === antisenseNode) {
-            isFindCur = true;
+            isFindCurrent = true;
           }
-          if (!isFindCur) {
+          if (!isFindCurrent) {
             const { complimentaryChain: anotherSenseChain } =
               this.getComplimentaryChainIfNucleotide(
                 aNode,
@@ -535,17 +535,17 @@ export class ChainsCollection {
                 monomerToNode,
               ) ?? {};
             if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
-              const curChainIdx =
+              const currentChainIndex =
                 reorderedSenseForSequentialAntisenseChains.indexOf(chain);
               let last = anotherSenseChain;
               for (
-                let i = curChainIdx;
-                i < reorderedSenseForSequentialAntisenseChains.length;
-                i++
+                let index = currentChainIndex;
+                index < reorderedSenseForSequentialAntisenseChains.length;
+                index++
               ) {
-                const tmp = reorderedSenseForSequentialAntisenseChains[i];
-                reorderedSenseForSequentialAntisenseChains[i] = last;
-                last = tmp;
+                const temporary = reorderedSenseForSequentialAntisenseChains[index];
+                reorderedSenseForSequentialAntisenseChains[index] = last;
+                last = temporary;
               }
               handledChain.add(anotherSenseChain);
             }
@@ -572,7 +572,7 @@ export class ChainsCollection {
       this.findCycledComplimentaryChains(c, c),
     );
 
-    const res: GrouppedChain[] = [{ group: 0, chain: c }];
+    const result: GrouppedChain[] = [{ group: 0, chain: c }];
     const handledChains = new Set<Chain>([c]);
     const monomerToChain = this.monomerToChain;
     const monomerToNode = this.monomerToNode;
@@ -605,11 +605,11 @@ export class ChainsCollection {
         let hasIntersection = false;
 
         for (
-          let i = firstComplimentaryNodeIndex;
-          i < complimentaryChainNodes.length;
-          i++
+          let index = firstComplimentaryNodeIndex;
+          index < complimentaryChainNodes.length;
+          index++
         ) {
-          const potentialNextComplimentaryNode = complimentaryChainNodes[i];
+          const potentialNextComplimentaryNode = complimentaryChainNodes[index];
           const {
             complimentaryNode: nextComplimentaryNode,
             complimentaryChain: nextComplimentaryNodeChain,
@@ -637,13 +637,13 @@ export class ChainsCollection {
           return;
         }
 
-        const el = { chain: complimentaryChain, group: Number(!group) };
-        chains.push(el);
-        res.push(el);
+        const element = { chain: complimentaryChain, group: Number(!group) };
+        chains.push(element);
+        result.push(element);
       });
     }
 
-    return res;
+    return result;
   }
 
   public getComplimentaryChainsWithData(

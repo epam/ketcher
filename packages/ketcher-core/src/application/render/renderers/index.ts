@@ -13,6 +13,6 @@ export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 export { SGroupRenderer } from './SGroupRenderer';
 export { RenderersManager } from './RenderersManager';
-export { getRenderedStructuresBbox } from './utils';
+export { getRenderedStructuresBbox } from './utilities';
 export { StereoFlagRenderer } from './StereoFlagRenderer';
 export * from './sequence';

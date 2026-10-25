@@ -39,10 +39,10 @@ export function rgroupToStruct(ketItem: KetItem): Struct {
 }
 
 export function rgroupLogicToStruct(rglogic: KetRGroupLogic): RGroup {
-  const params: RGroupAttributes = {};
-  ifDef(params, 'range', rglogic.range);
-  ifDef(params, 'resth', rglogic.resth);
-  ifDef(params, 'ifthen', rglogic.ifthen);
+  const parameters: RGroupAttributes = {};
+  ifDef(parameters, 'range', rglogic.range);
+  ifDef(parameters, 'resth', rglogic.resth);
+  ifDef(parameters, 'ifthen', rglogic.ifthen);
 
-  return new RGroup(params);
+  return new RGroup(parameters);
 }

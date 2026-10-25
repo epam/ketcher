@@ -64,7 +64,7 @@ export abstract class DrawingEntity {
     shiftKey = false,
   ) {
     assert(this.baseRenderer);
-    const prevSelectedValue = this.selected;
+    const previousSelectedValue = this.selected;
     const selectionPoints = this.baseRenderer.selectionPoints || [
       Coordinates.modelToCanvas(this.center),
     ];
@@ -89,7 +89,7 @@ export abstract class DrawingEntity {
       this.turnOffSelection();
     }
 
-    return prevSelectedValue !== this.selected;
+    return previousSelectedValue !== this.selected;
   }
 
   public selectIfLocatedInPolygon(
@@ -98,7 +98,7 @@ export abstract class DrawingEntity {
     shiftKey = false,
   ) {
     assert(this.baseRenderer);
-    const prevSelectedValue = this.selected;
+    const previousSelectedValue = this.selected;
     const selectionPoints = this.baseRenderer.selectionPoints || [
       Coordinates.modelToCanvas(this.center),
     ];
@@ -119,7 +119,7 @@ export abstract class DrawingEntity {
       this.turnOffSelection();
     }
 
-    return prevSelectedValue !== this.selected;
+    return previousSelectedValue !== this.selected;
   }
 
   private isPointInPolygon(r: Vec2[], p: Vec2) {

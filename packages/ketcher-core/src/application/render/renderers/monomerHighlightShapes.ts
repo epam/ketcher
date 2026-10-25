@@ -191,10 +191,10 @@ const expandPolygon = (points: Point[], offset: number): Point[] => {
     const next = points[(index + 1) % n];
     const dx = next.x - point.x;
     const dy = next.y - point.y;
-    const len = Math.hypot(dx, dy);
+    const length_ = Math.hypot(dx, dy);
     // Outward normal for CW polygon in SVG (y-down): (+dy, -dx) / len
-    const nx = dy / len;
-    const ny = -dx / len;
+    const nx = dy / length_;
+    const ny = -dx / length_;
 
     return {
       x1: point.x + offset * nx,
@@ -206,23 +206,23 @@ const expandPolygon = (points: Point[], offset: number): Point[] => {
 
   // New vertices = intersections of consecutive shifted edges.
   return shiftedEdges.map((edge, index) => {
-    const prev = shiftedEdges[(index - 1 + n) % n];
+    const previous = shiftedEdges[(index - 1 + n) % n];
     const denom =
-      (prev.x1 - prev.x2) * (edge.y1 - edge.y2) -
-      (prev.y1 - prev.y2) * (edge.x1 - edge.x2);
+      (previous.x1 - previous.x2) * (edge.y1 - edge.y2) -
+      (previous.y1 - previous.y2) * (edge.x1 - edge.x2);
 
     if (Math.abs(denom) < 1e-10) {
-      return { x: (prev.x2 + edge.x1) / 2, y: (prev.y2 + edge.y1) / 2 };
+      return { x: (previous.x2 + edge.x1) / 2, y: (previous.y2 + edge.y1) / 2 };
     }
 
     const t =
-      ((prev.x1 - edge.x1) * (edge.y1 - edge.y2) -
-        (prev.y1 - edge.y1) * (edge.x1 - edge.x2)) /
+      ((previous.x1 - edge.x1) * (edge.y1 - edge.y2) -
+        (previous.y1 - edge.y1) * (edge.x1 - edge.x2)) /
       denom;
 
     return {
-      x: prev.x1 + t * (prev.x2 - prev.x1),
-      y: prev.y1 + t * (prev.y2 - prev.y1),
+      x: previous.x1 + t * (previous.x2 - previous.x1),
+      y: previous.y1 + t * (previous.y2 - previous.y1),
     };
   });
 };

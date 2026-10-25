@@ -32,7 +32,7 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
 }
 
 export function atomToStruct(source) {
-  const params: Partial<AtomAttributes> = {};
+  const parameters: Partial<AtomAttributes> = {};
 
   const queryAttribute: Array<keyof AtomQueryProperties> = [
     'aromaticity',
@@ -43,40 +43,40 @@ export function atomToStruct(source) {
     'customQuery',
   ];
   if (source.type === 'atom-list') {
-    params.label = 'L#';
+    parameters.label = 'L#';
     const ids = source.elements
-      .map((el) => Elements.get(el)?.number)
+      .map((element) => Elements.get(element)?.number)
       .filter(Boolean) as number[];
-    ifDef(params, 'atomList', {
+    ifDef(parameters, 'atomList', {
       ids,
       notList: source.notList,
     });
   } else {
-    ifDef(params, 'label', source.label);
+    ifDef(parameters, 'label', source.label);
     // reaction
-    ifDef(params, 'aam', source.mapping);
+    ifDef(parameters, 'aam', source.mapping);
   }
-  ifDef(params, 'alias', source.alias);
-  ifDef(params, 'pp', {
+  ifDef(parameters, 'alias', source.alias);
+  ifDef(parameters, 'pp', {
     x: source.location[0],
     y: -source.location[1],
     z: source.location[2] || 0,
   });
-  ifDef(params, 'charge', source.charge);
-  ifDef(params, 'explicitValence', source.explicitValence);
-  ifDef(params, 'isotope', source.isotope);
-  ifDef(params, 'radical', source.radical);
-  ifDef(params, 'cip', source.cip);
-  ifDef(params, 'attachmentPoints', source.attachmentPoints);
+  ifDef(parameters, 'charge', source.charge);
+  ifDef(parameters, 'explicitValence', source.explicitValence);
+  ifDef(parameters, 'isotope', source.isotope);
+  ifDef(parameters, 'radical', source.radical);
+  ifDef(parameters, 'cip', source.cip);
+  ifDef(parameters, 'attachmentPoints', source.attachmentPoints);
   // stereo
-  ifDef(params, 'stereoLabel', source.stereoLabel);
-  ifDef(params, 'stereoParity', source.stereoParity);
-  ifDef(params, 'weight', source.weight);
+  ifDef(parameters, 'stereoLabel', source.stereoLabel);
+  ifDef(parameters, 'stereoParity', source.stereoParity);
+  ifDef(parameters, 'weight', source.weight);
   // query
-  ifDef(params, 'ringBondCount', source.ringBondCount);
-  ifDef(params, 'substitutionCount', source.substitutionCount);
-  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
-  ifDef(params, 'hCount', source.hCount);
+  ifDef(parameters, 'ringBondCount', source.ringBondCount);
+  ifDef(parameters, 'substitutionCount', source.substitutionCount);
+  ifDef(parameters, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
+  ifDef(parameters, 'hCount', source.hCount);
   if (
     source.queryProperties &&
     Object.values(source.queryProperties).some((property) => property !== null)
@@ -84,8 +84,8 @@ export function atomToStruct(source) {
     if (typeof source.queryProperties.customQuery === 'string') {
       assertCustomQueryLength(source.queryProperties.customQuery, 'Atom');
     }
-    params.queryProperties = {};
-    const queryProperties = params.queryProperties;
+    parameters.queryProperties = {};
+    const queryProperties = parameters.queryProperties;
     queryAttribute.forEach((attributeName) => {
       ifDef(
         queryProperties,
@@ -96,17 +96,17 @@ export function atomToStruct(source) {
   }
 
   // An atom with a custom query is always rendered as an "Any atom" (label "A").
-  if (params.queryProperties?.customQuery) {
-    params.label = 'A';
+  if (parameters.queryProperties?.customQuery) {
+    parameters.label = 'A';
   }
 
   // reaction
-  ifDef(params, 'invRet', source.invRet);
-  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
+  ifDef(parameters, 'invRet', source.invRet);
+  ifDef(parameters, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
-  ifDef(params, 'implicitHCount', source.implicitHCount);
+  ifDef(parameters, 'implicitHCount', source.implicitHCount);
 
-  const newAtom = new Atom(params as AtomAttributes);
+  const newAtom = new Atom(parameters as AtomAttributes);
   newAtom.setInitiallySelected(source.selected);
   return newAtom;
 }
@@ -127,22 +127,22 @@ export function atomToStruct(source) {
  * @returns newly created Bond
  */
 export function bondToStruct(source, atomOffset = 0) {
-  const params: Partial<BondAttributes> = {};
+  const parameters: Partial<BondAttributes> = {};
 
-  ifDef(params, 'type', source.type);
-  ifDef(params, 'topology', source.topology);
-  ifDef(params, 'reactingCenterStatus', source.center);
-  ifDef(params, 'stereo', source.stereo);
-  ifDef(params, 'cip', source.cip);
+  ifDef(parameters, 'type', source.type);
+  ifDef(parameters, 'topology', source.topology);
+  ifDef(parameters, 'reactingCenterStatus', source.center);
+  ifDef(parameters, 'stereo', source.stereo);
+  ifDef(parameters, 'cip', source.cip);
   if (typeof source.customQuery === 'string') {
     assertCustomQueryLength(source.customQuery, 'Bond');
   }
-  ifDef(params, 'customQuery', source.customQuery);
-  ifDef(params, 'begin', source.atoms[0] + atomOffset);
-  ifDef(params, 'end', source.atoms[1] + atomOffset);
-  ifDef(params, 'initiallySelected', source.selected);
+  ifDef(parameters, 'customQuery', source.customQuery);
+  ifDef(parameters, 'begin', source.atoms[0] + atomOffset);
+  ifDef(parameters, 'end', source.atoms[1] + atomOffset);
+  ifDef(parameters, 'initiallySelected', source.selected);
 
-  const newBond = new Bond(params as BondAttributes);
+  const newBond = new Bond(parameters as BondAttributes);
   newBond.setInitiallySelected(source.selected);
   return newBond;
 }

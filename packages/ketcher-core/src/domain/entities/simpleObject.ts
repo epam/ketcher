@@ -41,9 +41,9 @@ export class SimpleObject extends BaseMicromoleculeEntity {
     this.pos = [];
 
     if (attributes?.pos) {
-      for (let i = 0; i < attributes.pos.length; i++) {
-        const currentP = attributes.pos[i];
-        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2();
+      for (let index = 0; index < attributes.pos.length; index++) {
+        const currentP = attributes.pos[index];
+        this.pos[index] = currentP ? new Vec2(attributes.pos[index]) : new Vec2();
       }
     }
 

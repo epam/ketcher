@@ -25,7 +25,7 @@ import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../utility';
 import { toFixed } from 'utilities';
 import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
@@ -58,12 +58,12 @@ class ReSimpleObject extends ReObject {
   calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {
     const point: Vec2 = new Vec2(p.x, p.y);
 
-    const distRef: MinDistanceWithReferencePoint =
+    const distributionReference: MinDistanceWithReferencePoint =
       this.getReferencePointDistance(p);
     const item = this.item;
     const mode = item.mode;
     const pos = item.pos;
-    let dist: number;
+    let distribution: number;
 
     switch (mode) {
       case SimpleObjectMode.ellipse: {
@@ -73,7 +73,7 @@ class ReSimpleObject extends ReObject {
         const center = Vec2.sum(pos[0], new Vec2(rx, ry));
         const pointToCenter = Vec2.diff(point, center);
         if (rx !== 0 && ry !== 0) {
-          dist = Math.abs(
+          distribution = Math.abs(
             1 -
               (pointToCenter.x * pointToCenter.x) / (rx * rx) -
               (pointToCenter.y * pointToCenter.y) / (ry * ry),
@@ -81,7 +81,7 @@ class ReSimpleObject extends ReObject {
         } else {
           // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
           // in such case distance need to be calculated as a distance between line and current point
-          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
+          distribution = point.calculateDistanceToLine([pos[0], pos[1]]);
         }
         break;
       }
@@ -123,11 +123,11 @@ class ReSimpleObject extends ReObject {
             distances.push(point.x - topX, bottomX - point.x);
           }
         }
-        dist = Math.min(...distances);
+        distribution = Math.min(...distances);
         break;
       }
       case SimpleObjectMode.line: {
-        dist = point.calculateDistanceToLine([pos[0], pos[1]]);
+        distribution = point.calculateDistanceToLine([pos[0], pos[1]]);
         break;
       }
 
@@ -136,30 +136,30 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const refPoint: Vec2 | null =
-      distRef.minDist <= 8 / s ? distRef.refPoint : null;
+    const referencePoint: Vec2 | null =
+      distributionReference.minDist <= 8 / s ? distributionReference.refPoint : null;
     // distance is a smallest between dist to figure and it's reference points
-    dist = Math.min(distRef.minDist, dist);
-    return { minDist: dist, refPoint };
+    distribution = Math.min(distributionReference.minDist, distribution);
+    return { minDist: distribution, refPoint: referencePoint };
   }
 
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
-    const dist: Array<MinDistanceWithReferencePoint> = [];
-    const refPoints = this.getReferencePoints();
-    refPoints.forEach((rp) => {
-      dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
+    const distribution: Array<MinDistanceWithReferencePoint> = [];
+    const referencePoints = this.getReferencePoints();
+    referencePoints.forEach((rp) => {
+      distribution.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
     });
 
-    const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) => (acc.minDist < current.minDist ? acc : current),
+    const minDistribution: MinDistanceWithReferencePoint = distribution.reduce(
+      (accumulator, current) => (accumulator.minDist < current.minDist ? accumulator : current),
       { minDist: Infinity, refPoint: null },
     );
 
-    return minDist;
+    return minDistribution;
   }
 
   getReferencePoints(): Array<Vec2> {
-    const refPoints: Array<Vec2> = [];
+    const referencePoints: Array<Vec2> = [];
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse:
       case SimpleObjectMode.rectangle: {
@@ -170,7 +170,7 @@ class ReSimpleObject extends ReObject {
         const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
         const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
 
-        refPoints.push(
+        referencePoints.push(
           new Vec2(p0.x + 0.5 * w, p0.y),
           new Vec2(p0.x + w, p0.y + 0.5 * h),
           new Vec2(p0.x + 0.5 * w, p0.y + h),
@@ -183,7 +183,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        this.item.pos.forEach((index) => referencePoints.push(new Vec2(index.x, index.y, 0)));
         break;
       }
 
@@ -191,11 +191,11 @@ class ReSimpleObject extends ReObject {
         throw new Error('Unsupported shape type');
       }
     }
-    return refPoints;
+    return referencePoints;
   }
 
   getReferencePointsOnObject(): Array<Vec2> {
-    const refPoints: Array<Vec2> = [];
+    const referencePoints: Array<Vec2> = [];
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse:
       case SimpleObjectMode.rectangle: {
@@ -206,14 +206,14 @@ class ReSimpleObject extends ReObject {
         const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
         const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
 
-        refPoints.push(
+        referencePoints.push(
           new Vec2(p0.x + 0.5 * w, p0.y),
           new Vec2(p0.x + w, p0.y + 0.5 * h),
           new Vec2(p0.x + 0.5 * w, p0.y + h),
           new Vec2(p0.x, p0.y + 0.5 * h),
         );
         if (this.item.mode === SimpleObjectMode.rectangle) {
-          refPoints.push(
+          referencePoints.push(
             p0,
             new Vec2(p0.x, p0.y + h),
             new Vec2(p0.x + w, p0.y + h),
@@ -223,7 +223,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        this.item.pos.forEach((index) => referencePoints.push(new Vec2(index.x, index.y, 0)));
         break;
       }
 
@@ -231,7 +231,7 @@ class ReSimpleObject extends ReObject {
         throw new Error('Unsupported shape type');
       }
     }
-    return refPoints;
+    return referencePoints;
   }
 
   getBorderHoverPath(path: Element, render: Render) {
@@ -411,7 +411,7 @@ class ReSimpleObject extends ReObject {
       return Scale.modelToCanvas(p, restruct.render.options) || new Vec2();
     });
 
-    const refPoints = this.getReferencePoints();
+    const referencePoints = this.getReferencePoints();
     const scaleFactor = restruct.render.options.microModeScale;
     this.selectionSet = restruct.render.paper.set();
     this.selectionPointsSet = restruct.render.paper.set();
@@ -420,7 +420,7 @@ class ReSimpleObject extends ReObject {
         styles.selectionStyleSimpleObject,
       ),
     );
-    refPoints.forEach((rp) => {
+    referencePoints.forEach((rp) => {
       const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       this.selectionPointsSet.push(
         restruct.render.paper
@@ -455,7 +455,7 @@ class ReSimpleObject extends ReObject {
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);
 
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
+    this.visel.add(path, Box2Abs.fromRelBox(utility.relBox(path.getBBox())));
   }
 }
 

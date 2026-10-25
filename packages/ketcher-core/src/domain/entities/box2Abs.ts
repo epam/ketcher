@@ -39,27 +39,27 @@ export class Box2Abs {
   constructor(p0: Vec2, p1: Vec2);
   constructor(x0: number, y0: number, x1: number, y1: number);
   constructor(
-    ...args:
+    ...arguments_:
       | []
       | [Vec2]
       | [Vec2, Vec2]
       | [number, number, number, number]
       | [AbsoluteBox]
   ) {
-    if (args.length === 1 && args[0] instanceof Vec2) {
-      this.p0 = args[0];
-      this.p1 = args[0];
-    } else if (args.length === 1 && 'min' in args[0] && 'max' in args[0]) {
-      const boxArg = args[0] as AbsoluteBox;
-      this.p0 = boxArg.min;
-      this.p1 = boxArg.max;
-    } else if (args.length === 2) {
-      this.p0 = args[0];
-      this.p1 = args[1];
-    } else if (args.length === 4) {
-      this.p0 = new Vec2(args[0], args[1]);
-      this.p1 = new Vec2(args[2], args[3]);
-    } else if (args.length === 0) {
+    if (arguments_.length === 1 && arguments_[0] instanceof Vec2) {
+      this.p0 = arguments_[0];
+      this.p1 = arguments_[0];
+    } else if (arguments_.length === 1 && 'min' in arguments_[0] && 'max' in arguments_[0]) {
+      const boxArgument = arguments_[0] as AbsoluteBox;
+      this.p0 = boxArgument.min;
+      this.p1 = boxArgument.max;
+    } else if (arguments_.length === 2) {
+      this.p0 = arguments_[0];
+      this.p1 = arguments_[1];
+    } else if (arguments_.length === 4) {
+      this.p0 = new Vec2(arguments_[0], arguments_[1]);
+      this.p1 = new Vec2(arguments_[2], arguments_[3]);
+    } else if (arguments_.length === 0) {
       this.p0 = new Vec2();
       this.p1 = new Vec2();
     } else {
@@ -88,14 +88,14 @@ export class Box2Abs {
     return new Box2Abs(this.p0.min(p), this.p1.max(p));
   }
 
-  contains(p: Vec2, ext = 0): boolean {
+  contains(p: Vec2, extension = 0): boolean {
     assert(p != null);
 
     return (
-      p.x >= this.p0.x - ext &&
-      p.x <= this.p1.x + ext &&
-      p.y >= this.p0.y - ext &&
-      p.y <= this.p1.y + ext
+      p.x >= this.p0.x - extension &&
+      p.x <= this.p1.x + extension &&
+      p.y >= this.p0.y - extension &&
+      p.y <= this.p1.y + extension
     );
   }
 
@@ -126,12 +126,12 @@ export class Box2Abs {
     return size.x === 0 && size.y === 0;
   }
 
-  static fromRelBox(relBox: RelativeBox): Box2Abs {
+  static fromRelBox(relatedBox: RelativeBox): Box2Abs {
     return new Box2Abs(
-      relBox.x,
-      relBox.y,
-      relBox.x + relBox.width,
-      relBox.y + relBox.height,
+      relatedBox.x,
+      relatedBox.y,
+      relatedBox.x + relatedBox.width,
+      relatedBox.y + relatedBox.height,
     );
   }
 
@@ -143,9 +143,9 @@ export class Box2Abs {
     const dc = (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
     const dd = (a.x - d.x) * (b.y - d.y) - (a.y - d.y) * (b.x - d.x);
     const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
-    const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
+    const database = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
 
-    if (dc === 0 && dd === 0 && da === 0 && db === 0) {
+    if (dc === 0 && dd === 0 && da === 0 && database === 0) {
       // Check for collinearity and overlapping cases
       return (
         Box2Abs.#isPointOnSegment(a, b, c) ||
@@ -153,7 +153,7 @@ export class Box2Abs {
         Box2Abs.#isPointOnSegment(c, d, a) ||
         Box2Abs.#isPointOnSegment(c, d, b)
       );
-    } else return dc * dd < 0 && da * db < 0;
+    } else return dc * dd < 0 && da * database < 0;
   }
 
   // Helper function to check if a point is on a line segment

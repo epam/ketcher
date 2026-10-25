@@ -19,7 +19,7 @@ import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { TransientView } from './TransientView';
 
-export type RotationViewParams = {
+export type RotationViewParameters = {
   center: Vec2;
   boundingBox: {
     left: number;
@@ -142,7 +142,7 @@ export class RotationView extends TransientView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: RotationViewParams,
+    parameters: RotationViewParameters,
   ) {
     const {
       center,
@@ -150,8 +150,8 @@ export class RotationView extends TransientView {
       rotationAngle = 0,
       isRotating = false,
       cursor,
-      startAngle: startAngleParam,
-    } = params;
+      startAngle: startAngleParameter,
+    } = parameters;
 
     if (!isRotating || !RotationView.wasRotating) {
       RotationView.lastSnappingRadius = undefined;
@@ -370,7 +370,7 @@ export class RotationView extends TransientView {
         // Use the click direction from the rotation tool so the 0° label,
         // dashed handle line, and handle stay aligned even after the rotation
         // center has been moved.
-        const startAngle = startAngleParam ?? -Math.PI / 2;
+        const startAngle = startAngleParameter ?? -Math.PI / 2;
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const predefinedDegrees = [
           0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60,

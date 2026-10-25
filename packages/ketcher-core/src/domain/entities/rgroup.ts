@@ -52,17 +52,17 @@ export class RGroup {
   }
 
   clone(fidMap?: Map<number, number> | null): RGroup {
-    const ret = new RGroup(this);
+    const returnValue = new RGroup(this);
     this.frags.forEach((fid) => {
       if (!fidMap) {
-        ret.frags.add(fid);
+        returnValue.frags.add(fid);
       } else {
         const mappedFid = fidMap.get(fid);
         if (mappedFid !== undefined) {
-          ret.frags.add(mappedFid);
+          returnValue.frags.add(mappedFid);
         }
       }
     });
-    return ret;
+    return returnValue;
   }
 }

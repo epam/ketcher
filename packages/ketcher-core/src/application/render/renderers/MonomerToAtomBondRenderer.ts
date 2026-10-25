@@ -6,7 +6,7 @@ import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import util from '../util';
+import util from '../utility';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:

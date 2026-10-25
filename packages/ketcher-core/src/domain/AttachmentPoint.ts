@@ -13,7 +13,7 @@ import {
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
-  type AttachmentPointConstructorParams,
+  type AttachmentPointConstructorParameters,
   AttachmentPointName,
   type MouseEventWithAttachmentPoint,
 } from './types';
@@ -66,26 +66,26 @@ export class AttachmentPoint {
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
-    constructorParams: AttachmentPointConstructorParams,
+    constructorParameters: AttachmentPointConstructorParameters,
     skipInit?: boolean,
   ) {
-    this.rootElement = constructorParams.rootElement;
-    this.monomer = constructorParams.monomer;
-    this.bodyWidth = constructorParams.bodyWidth;
-    this.bodyHeight = constructorParams.bodyHeight;
+    this.rootElement = constructorParameters.rootElement;
+    this.monomer = constructorParameters.monomer;
+    this.bodyWidth = constructorParameters.bodyWidth;
+    this.bodyHeight = constructorParameters.bodyHeight;
     this.canvasOffset =
-      constructorParams.canvas.node()?.getBoundingClientRect() ||
+      constructorParameters.canvas.node()?.getBoundingClientRect() ||
       new DOMRect(0, 0, 0, 0);
-    this.attachmentPointName = constructorParams.attachmentPointName;
+    this.attachmentPointName = constructorParameters.attachmentPointName;
     this.centerOfMonomer =
-      constructorParams.monomer.renderer?.center ?? new Vec2(0, 0, 0);
-    this.isSnake = constructorParams.isSnake;
-    this.isUsed = constructorParams.isUsed;
-    this.isDragTarget = constructorParams.isDragTarget ?? false;
-    this.isDragCircleHover = constructorParams.isDragCircleHover ?? false;
-    this.initialAngle = constructorParams.angle;
+      constructorParameters.monomer.renderer?.center ?? new Vec2(0, 0, 0);
+    this.isSnake = constructorParameters.isSnake;
+    this.isUsed = constructorParameters.isUsed;
+    this.isDragTarget = constructorParameters.isDragTarget ?? false;
+    this.isDragCircleHover = constructorParameters.isDragCircleHover ?? false;
+    this.initialAngle = constructorParameters.angle;
     this.applyZoomForPositionCalculation =
-      constructorParams.applyZoomForPositionCalculation;
+      constructorParameters.applyZoomForPositionCalculation;
     this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 

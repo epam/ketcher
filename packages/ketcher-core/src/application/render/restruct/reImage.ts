@@ -327,10 +327,10 @@ export class ReImage extends ReObject {
       this.getSelectionReferencePositions(renderOptions),
     ) as Array<[ImageReferenceName, Vec2]>;
     return entries.reduce(
-      (acc, [key, position]) => {
+      (accumulator, [key, position]) => {
         const offset = Vec2.diff(position, point);
         const distance = offset.length();
-        if (distance < acc.distance) {
+        if (distance < accumulator.distance) {
           return {
             distance,
             ref: {
@@ -339,7 +339,7 @@ export class ReImage extends ReObject {
             },
           };
         } else {
-          return acc;
+          return accumulator;
         }
       },
       {

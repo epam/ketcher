@@ -41,14 +41,14 @@ export class MolSerializer implements Serializer<Struct> {
     const molfile = new Molfile();
     const lines = content?.split(/\r\n|[\n\r]/g);
 
-    const parseCTFileParams = {
+    const parseCTFileParameters = {
       molfileLines: lines,
       shouldReactionRelayout: this.options.reactionRelayout,
       ignoreChiralFlag: this.options.ignoreChiralFlag,
     };
 
     try {
-      return molfile.parseCTFile(parseCTFileParams);
+      return molfile.parseCTFile(parseCTFileParameters);
     } catch (error) {
       KetcherLogger.error('molSerializer::MolSerializer::deserialize', error);
       if (this.options.badHeaderRecover) {
@@ -56,7 +56,7 @@ export class MolSerializer implements Serializer<Struct> {
           // check whether there's an extra empty line on top
           // this often happens when molfile text is pasted into the dialog window
           return molfile.parseCTFile({
-            ...parseCTFileParams,
+            ...parseCTFileParameters,
             molfileLines: lines.slice(1),
           });
         } catch (extraLineError) {
@@ -69,7 +69,7 @@ export class MolSerializer implements Serializer<Struct> {
           // check for a missing first line
           // this sometimes happens when pasting
           return molfile.parseCTFile({
-            ...parseCTFileParams,
+            ...parseCTFileParameters,
             molfileLines: [''].concat(lines),
           });
         } catch (missingFirstLineError) {

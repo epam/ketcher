@@ -356,8 +356,8 @@ export class SettingsService implements ISettingsService {
   /**
    * Deep freeze object to make it immutable
    */
-  private freeze<T>(obj: T): T {
-    return globalThis.structuredClone(obj);
+  private freeze<T>(object: T): T {
+    return globalThis.structuredClone(object);
   }
 
   /**

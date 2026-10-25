@@ -17,7 +17,7 @@ type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
 const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
 const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
-export enum MultitailArrowRefName {
+export enum MultitailArrowReferenceName {
   HEAD = 'head',
   TAILS = 'tails',
   TOP_TAIL = 'topTail',
@@ -26,7 +26,7 @@ export enum MultitailArrowRefName {
 }
 
 export interface MultitailArrowReferencePosition {
-  name: MultitailArrowRefName;
+  name: MultitailArrowReferenceName;
   isLine: boolean;
   tailId: number | null;
 }
@@ -53,9 +53,9 @@ export class ReMultitailArrow extends ReObject {
   }
 
   static getTailIdFromRefName(name: string): number | null {
-    if (name.startsWith(MultitailArrowRefName.TAILS)) {
+    if (name.startsWith(MultitailArrowReferenceName.TAILS)) {
       return Number.parseInt(
-        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
+        name.replace(`${MultitailArrowReferenceName.TAILS}-`, ''),
       );
     }
     return null;
@@ -282,8 +282,8 @@ export class ReMultitailArrow extends ReObject {
         OFFSET,
       ),
       ...Array.from(tails.entries()).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
+        (accumulator, [key, value]) => ({
+          ...accumulator,
           ...this.getSelectionPointsFromReferencePoint(
             value,
             topSpine,
@@ -439,39 +439,39 @@ export class ReMultitailArrow extends ReObject {
     isLine: boolean,
   ): MultitailArrowClosestReferencePosition {
     return entities.reduce(
-      (acc, [name, value]) => {
+      (accumulator, [name, value]) => {
         const distance = isLine
           ? point.calculateDistanceToLine(value as Line)
           : Vec2.dist(point, value as Vec2);
         const tailId = ReMultitailArrow.getTailIdFromRefName(name);
-        let refName: MultitailArrowRefName;
+        let referenceName: MultitailArrowReferenceName;
         if (typeof tailId === 'number') {
-          refName = MultitailArrowRefName.TAILS;
+          referenceName = MultitailArrowReferenceName.TAILS;
         } else if (
           [
-            MultitailArrowRefName.HEAD,
-            MultitailArrowRefName.BOTTOM_TAIL,
-            MultitailArrowRefName.TOP_TAIL,
-          ].includes(name as MultitailArrowRefName)
+            MultitailArrowReferenceName.HEAD,
+            MultitailArrowReferenceName.BOTTOM_TAIL,
+            MultitailArrowReferenceName.TOP_TAIL,
+          ].includes(name as MultitailArrowReferenceName)
         ) {
-          refName = name as MultitailArrowRefName;
+          referenceName = name as MultitailArrowReferenceName;
         } else {
-          refName = MultitailArrowRefName.SPINE;
+          referenceName = MultitailArrowReferenceName.SPINE;
         }
 
-        return distance < acc.distance
+        return distance < accumulator.distance
           ? {
               distance,
               ref:
-                refName !== MultitailArrowRefName.SPINE
+                referenceName !== MultitailArrowReferenceName.SPINE
                   ? {
-                      name: refName,
+                      name: referenceName,
                       isLine,
                       tailId,
                     }
                   : null,
             }
-          : acc;
+          : accumulator;
       },
       {
         distance: Number.POSITIVE_INFINITY,

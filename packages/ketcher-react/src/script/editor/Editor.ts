@@ -85,7 +85,7 @@ import {
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
   AssignAttachmentAtomOperation,
-  getKetRef,
+  getKetReference,
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
   MonomerCreationComponentStructureUpdateEvent,
@@ -2609,7 +2609,7 @@ class Editor implements KetcherEditor {
 
       const libraryItem = {
         root: {
-          templates: [getKetRef(templateRef)],
+          templates: [getKetReference(templateRef)],
         },
         [templateRef]: {
           type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
@@ -2618,14 +2618,14 @@ class Editor implements KetcherEditor {
           id: templateId,
           templates: [
             ...monomersData.map((monomerData) => {
-              return getKetRef(monomerData.monomerRef);
+              return getKetReference(monomerData.monomerRef);
             }),
           ],
           connections: rnaPresetConnections,
         },
       };
 
-      ket.root.templates.push(getKetRef(templateRef));
+      ket.root.templates.push(getKetReference(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {

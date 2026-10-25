@@ -37,7 +37,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     return true;
   }
 
-  filter(expression: (arg: TValue) => boolean): Pile<TValue> {
+  filter(expression: (argument: TValue) => boolean): Pile<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
@@ -73,20 +73,20 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     let unionized = false;
 
     // Union two of sets
-    const setsToReturn = sets.reduce((prevSets, curSet) => {
-      let isCurSetMerged = false;
+    const setsToReturn = sets.reduce((previousSets, currentSet) => {
+      let isCurrentSetMerged = false;
 
-      const newSets = prevSets.map((set) => {
-        const intersec = set.intersection(curSet);
+      const newSets = previousSets.map((set) => {
+        const intersec = set.intersection(currentSet);
         if (intersec.size > 0) {
           unionized = true;
-          isCurSetMerged = true;
-          return set.union(curSet);
+          isCurrentSetMerged = true;
+          return set.union(currentSet);
         }
         return set;
       });
 
-      if (!isCurSetMerged) newSets.push(curSet);
+      if (!isCurrentSetMerged) newSets.push(currentSet);
       return newSets;
     }, new Array<Pile<T>>());
 

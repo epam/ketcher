@@ -22,7 +22,7 @@ import { flatten } from 'lodash/fp';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { removeFirstLineVerticalShift } from './retext.utils';
+import { removeFirstLineVerticalShift } from './retext.utilities';
 import { Scale } from 'domain/helpers';
 import type { Element, RaphaelBaseElement, RaphaelPaper } from 'raphael';
 import type { Render } from '../raphaelRender';
@@ -94,16 +94,16 @@ class ReText extends ReObject {
     const width = Math.abs(Vec2.diff(p0, p1).x) / SCALE;
     const height = Math.abs(Vec2.diff(p0, p1).y) / SCALE;
 
-    const refPoints: Array<Vec2> = [];
+    const referencePoints: Array<Vec2> = [];
 
-    refPoints.push(
+    referencePoints.push(
       this.item.position,
       new Vec2(p.x, p.y + height),
       new Vec2(p.x + width, p.y + height),
       new Vec2(p.x + width, p.y),
     );
 
-    return refPoints;
+    return referencePoints;
   }
 
   getVBoxObj(): Box2Abs {
@@ -120,8 +120,8 @@ class ReText extends ReObject {
   }
 
   getRelBox(paths: Array<Array<RaphaelBaseElement>>): { p0: Vec2; p1: Vec2 } {
-    const firstElOfFirstRow: RaphaelBaseElement = paths[0][0];
-    const leftEdge = firstElOfFirstRow.getBBox().x;
+    const firstElementOfFirstRow: RaphaelBaseElement = paths[0][0];
+    const leftEdge = firstElementOfFirstRow.getBBox().x;
 
     const firstRow: Array<RaphaelBaseElement> = paths[0];
     const topEdge: number = Math.min(
@@ -135,15 +135,15 @@ class ReText extends ReObject {
           : widestRow,
       paths[0],
     );
-    const lastElOfWidestRow = widestRow.at(-1);
+    const lastElementOfWidestRow = widestRow.at(-1);
     const lastRow = paths.at(-1);
 
-    if (!lastElOfWidestRow || !lastRow) {
+    if (!lastElementOfWidestRow || !lastRow) {
       throw new Error('Cannot get the bounds of empty selection paths');
     }
 
     const rightEdge: number =
-      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
+      lastElementOfWidestRow.getBBox().x + lastElementOfWidestRow.getBBox().width;
 
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
@@ -164,9 +164,9 @@ class ReText extends ReObject {
 
   drawHover(render: Render): Element | null {
     if (!this.paths.length) return null;
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   makeSelectionPlate(

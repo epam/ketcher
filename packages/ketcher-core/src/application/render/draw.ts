@@ -22,7 +22,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { getOptionsWithConvertedUnits } from './options';
 import Raphael from './raphael-ext';
 import svgPath from 'svgpath';
-import util from './util';
+import util from './utility';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { toFixed } from 'utilities';
 import { PathBuilder } from './pathBuilder';

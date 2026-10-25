@@ -24,7 +24,7 @@ import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
-import util from '../util';
+import utility from '../utility';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
@@ -44,25 +44,25 @@ class ReRGroup extends ReObject {
   }
 
   getAtoms(render: Render): number[] {
-    let ret: number[] = [];
+    let returnValue: number[] = [];
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-        ret = ret.concat(frag.fragGetAtoms(render.ctab, fid));
+        returnValue = returnValue.concat(frag.fragGetAtoms(render.ctab, fid));
       }
     });
-    return ret;
+    return returnValue;
   }
 
   getBonds(render: Render): number[] {
-    let ret: number[] = [];
+    let returnValue: number[] = [];
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-        ret = ret.concat(frag.fragGetBonds(render.ctab, fid));
+        returnValue = returnValue.concat(frag.fragGetBonds(render.ctab, fid));
       }
     });
-    return ret;
+    return returnValue;
   }
 
   calcBBox(render: Render): Box2Abs | null {
@@ -106,14 +106,14 @@ class ReRGroup extends ReObject {
       bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
-    const ret: { data: unknown[] } = { data: [] };
+    const returnValue: { data: unknown[] } = { data: [] };
     const p0 = Scale.modelToCanvas(bb.p0, options);
     const p1 = Scale.modelToCanvas(bb.p1, options);
     const brackets = render.paper.set();
 
     rGroupdrawBrackets(brackets, render, bb);
 
-    ret.data.push(brackets);
+    returnValue.data.push(brackets);
     const key = render.ctab.rgroups.keyOf(this);
     const labelSet = render.paper.set();
     const label = render.paper
@@ -124,7 +124,7 @@ class ReRGroup extends ReObject {
         fill: 'black',
       });
 
-    const labelBox = util.relBox(label.getBBox());
+    const labelBox = utility.relBox(label.getBBox());
     label.translateAbs(-labelBox.width / 2 - options.lineWidth, 0);
 
     labelSet.push(label);
@@ -141,26 +141,26 @@ class ReRGroup extends ReObject {
       const logicPath = render.paper
         .text(p0.x, (p0.y + p1.y) / 2, logicItem)
         .attr(logicStyle);
-      const logicBox = util.relBox(logicPath.getBBox());
+      const logicBox = utility.relBox(logicPath.getBBox());
       shift += logicBox.height / 2;
       logicPath.translateAbs(
         -logicBox.width / 2 - 6 * options.lineWidth,
         shift,
       );
       shift += logicBox.height / 2 + options.lineWidth / 2;
-      ret.data.push(logicPath);
+      returnValue.data.push(logicPath);
       labelSet.push(logicPath);
     }
 
-    ret.data.push(label);
+    returnValue.data.push(label);
     this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(
       Scale.canvasToModel,
       render.options,
     );
-    return ret;
+    return returnValue;
   }
 
-  _draw(render: Render, _rgid: number, attrs: Record<string, unknown>) {
+  _draw(render: Render, _rgid: number, attributes: Record<string, unknown>) {
     const vbox = this.getVBoxObj(render);
     if (!vbox) {
       return null;
@@ -175,7 +175,7 @@ class ReRGroup extends ReObject {
     const p1 = Scale.modelToCanvas(bb.p1, render.options);
     return render.paper
       .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
-      .attr(attrs);
+      .attr(attributes);
   }
 
   drawHover(render: Render) {
@@ -188,14 +188,14 @@ class ReRGroup extends ReObject {
       return null;
     }
 
-    const ret = this._draw(render, rgid, render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    const returnValue = this._draw(render, rgid, render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
 
     this.item.frags.forEach((_fnum, fid) => {
       render.ctab.frags.get(fid)?.drawHover(render);
     });
 
-    return ret;
+    return returnValue;
   }
 
   show(restruct: ReStruct, _id: number, options: RenderOptions): void {
@@ -214,7 +214,7 @@ class ReRGroup extends ReObject {
 }
 
 function rGroupdrawBrackets(
-  set: { push: (...args: unknown[]) => void },
+  set: { push: (...arguments_: unknown[]) => void },
   render: Render,
   bb: Box2Abs,
   d?: Vec2,

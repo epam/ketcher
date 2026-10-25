@@ -39,15 +39,15 @@ class Visel {
     this.exts = [];
   }
 
-  add(path: RaphaelPath, bb?: Box2Abs | null, ext?: Box2Abs | null): void {
+  add(path: RaphaelPath, bb?: Box2Abs | null, extension?: Box2Abs | null): void {
     this.paths.push(path);
     if (bb) {
       this.boxes.push(bb);
       this.boundingBox =
         this.boundingBox === null ? bb : Box2Abs.union(this.boundingBox, bb);
     }
-    if (ext) {
-      this.exts.push(ext);
+    if (extension) {
+      this.exts.push(extension);
     }
   }
 
@@ -63,12 +63,12 @@ class Visel {
 
   translate(vector: Vec2): void;
   translate(x: number, y: number): void;
-  translate(...args: [Vec2] | [number, number]): void {
-    if (args.length === 1) {
-      const vector = args[0];
+  translate(...arguments_: [Vec2] | [number, number]): void {
+    if (arguments_.length === 1) {
+      const vector = arguments_[0];
       this.translate(vector.x, vector.y);
     } else {
-      const [x, y] = args;
+      const [x, y] = arguments_;
       const delta = new Vec2(x, y);
       for (const path of this.paths) {
         path.translateAbs(x, y);

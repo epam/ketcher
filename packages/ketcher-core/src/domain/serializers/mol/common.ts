@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ import type { Atom } from 'domain/entities/atom';
 import type { Struct } from 'domain/entities/struct';
 
 import type { Mapping } from './mol.types';
-import utils from './utils';
+import utilities from './utils';
 import v2000 from './v2000';
 
 interface SGroupSavingError extends Error {
@@ -52,7 +52,7 @@ function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
 function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   const countsSplit = partitionLine(
     ctabLines[0],
-    utils.fmtInfo.countsLinePartition,
+    utilities.fmtInfo.countsLinePartition,
   );
   const version = countsSplit[11].trim();
   ctabLines = ctabLines.slice(1);
@@ -297,25 +297,25 @@ function saveDatToMolfile(
     'M  SDD ' +
     idstr +
     ' ' +
-    utils.paddedNum(pp.x, 10, 4) +
-    utils.paddedNum(-pp.y, 10, 4) +
+    utilities.paddedNum(pp.x, 10, 4) +
+    utilities.paddedNum(-pp.y, 10, 4) +
     '    ' + // ' eee'
     (data.attached ? 'A' : 'D') + // f
     (data.absolute ? 'A' : 'R') + // g
     (data.showUnits ? 'U' : ' ') + // h
     '   ' + //  i
     (data.nCharnCharsToDisplay >= 0
-      ? utils.paddedNum(data.nCharnCharsToDisplay, 3)
+      ? utilities.paddedNum(data.nCharnCharsToDisplay, 3)
       : 'ALL') + // jjj
     '  1   ' + // 'kkk ll '
     (data.tagChar || ' ') + // m
     '  ' +
-    utils.paddedNum(data.daspPos, 1) + // n
+    utilities.paddedNum(data.daspPos, 1) + // n
     '  '; // oo
   lines.push(sddLine);
-  const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
+  const value = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
   const charsPerLine = 69;
-  val.split('\n').forEach((chars) => {
+  value.split('\n').forEach((chars) => {
     while (chars.length > charsPerLine) {
       lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
       chars = chars.slice(charsPerLine);
@@ -344,11 +344,11 @@ function makeAtomBondLines(
 ): string[] {
   if (!ids) return [];
   const lines: string[] = [];
-  for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
-    const rem = Math.min(ids.length - 15 * i, 15);
-    let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2);
-    for (let j = 0; j < rem; ++j) {
-      salLine += ' ' + utils.paddedNum(map[ids[i * 15 + j]], 3);
+  for (let index = 0; index < Math.floor((ids.length + 14) / 15); ++index) {
+    const rem = Math.min(ids.length - 15 * index, 15);
+    let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utilities.paddedNum(rem, 2);
+    for (let index_ = 0; index_ < rem; ++index_) {
+      salLine += ' ' + utilities.paddedNum(map[ids[index * 15 + index_]], 3);
     }
     lines.push(salLine);
   }
@@ -377,10 +377,10 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
   for (const bracket of brackets) {
     const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement(0);
     const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement(0);
-    let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3);
+    let line = 'M  SDI ' + idstr + utilities.paddedNum(4, 3);
     const coord = [a0.x, a0.y, a1.x, a1.y];
     for (const coordValue of coord) {
-      line += utils.paddedNum(coordValue, 10, 4);
+      line += utilities.paddedNum(coordValue, 10, 4);
     }
     lines.push(line);
   }
@@ -391,22 +391,22 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
 // nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
 // http://www.unicode.org/reports/tr18/#Line_Boundaries
 const nlRe = /\r\n|[\n\r]/g;
-function normalizeNewlines(str: string): string {
-  return str.replace(nlRe, '\n');
+function normalizeNewlines(string_: string): string {
+  return string_.replace(nlRe, '\n');
 }
 
 function partitionLine(
-  str: string,
+  string_: string,
   parts: number[],
   withspace?: boolean,
 ): string[] {
-  const res: string[] = [];
-  for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
+  const result: string[] = [];
+  for (let index = 0, shift = 0; index < parts.length; ++index) {
+    result.push(string_.slice(shift, shift + parts[index]));
     if (withspace) shift++;
-    shift += parts[i];
+    shift += parts[index];
   }
-  return res;
+  return result;
 }
 
 export default {

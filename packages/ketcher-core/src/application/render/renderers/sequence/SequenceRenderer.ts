@@ -288,14 +288,14 @@ export class SequenceRenderer {
 
         // Extract actual Chain objects with type safety
         const currentChain = chain.firstNode?.chain;
-        const nextChainObj = nextChain?.firstNode?.chain;
+        const nextChainObject = nextChain?.firstNode?.chain;
 
         // Check if chains are connected via side-chain bonds
         // If two sequences have at least one sidechain connection, the "plus" button between them should be absent
         const hasSideChainConnection =
           currentChain &&
-          nextChainObj &&
-          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObj);
+          nextChainObject &&
+          this.hasSideChainConnectionBetweenChains(currentChain, nextChainObject);
 
         // Show PLUS button only if there are no side-chain connections between chains
         if (!hasSideChainConnection) {
@@ -551,7 +551,7 @@ export class SequenceRenderer {
   }
 
   public static forEachNode(
-    forEachCallback: (params: {
+    forEachCallback: (parameters: {
       chainIndex: number;
       chain: SequenceViewModelChain;
       nodeIndex: number;

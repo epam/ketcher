@@ -158,8 +158,8 @@ export class SGroupForest {
     try {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
-    } catch (e) {
-      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
+    } catch (error) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', error);
       console.info('error: sgid is not in the forest');
     }
 
@@ -174,8 +174,8 @@ export class SGroupForest {
       this.children.get(parentId)?.push(childId);
     });
 
-    const i = childs.indexOf(id);
-    childs.splice(i, 1);
+    const index = childs.indexOf(id);
+    childs.splice(index, 1);
 
     this.children.delete(id);
     this.parent.delete(id);
@@ -206,9 +206,9 @@ export function checkOverlapping(
       return atoms.some((aid) => sgAtoms.includes(aid));
     },
   };
-  const sgroups = atoms.reduce((res, aid) => {
+  const sgroups = atoms.reduce((accumulator, aid) => {
     const atom = struct.atoms.get(aid);
-    return atom ? res.union(atom.sgs) : res;
+    return atom ? accumulator.union(atom.sgs) : accumulator;
   }, new Pile<number>());
 
   return Array.from(sgroups).some(searchFunction[sGroupType]);

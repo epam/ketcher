@@ -638,7 +638,6 @@ class PolymerBond implements BaseTool {
 
     this.editor.renderersContainer.update(modelChanges);
   }
-
 }
 
 export { PolymerBond };

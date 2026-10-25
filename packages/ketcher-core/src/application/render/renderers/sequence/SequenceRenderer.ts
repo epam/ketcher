@@ -486,7 +486,6 @@ export class SequenceRenderer {
     this.sequenceBondRenderers.add(bondRenderer);
   }
 
-
   public static get isCaretAfterRowEnd() {
     return this.isCaretAfterRowEndValue;
   }

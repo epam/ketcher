@@ -332,5 +332,4 @@ export class Vec2 {
   oxAngle(): number {
     return Math.atan2(this.y, this.x);
   }
-
 }

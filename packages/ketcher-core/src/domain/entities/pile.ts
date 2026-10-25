@@ -93,5 +93,4 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     }
     return result;
   }
-
 }

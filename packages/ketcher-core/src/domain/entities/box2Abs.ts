@@ -171,5 +171,4 @@ export class Box2Abs {
     const size = this.sz();
     return size.x === 0 && size.y === 0;
   }
-
 }

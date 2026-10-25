@@ -78,5 +78,4 @@ export class MonomerMicromolecule extends SGroup {
     const sgroupContractedPosition = super.getContractedPosition(struct);
     return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }
-
 }

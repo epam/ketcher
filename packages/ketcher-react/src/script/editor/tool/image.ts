@@ -213,5 +213,4 @@ export class ImageTool implements Tool {
       reader.readAsDataURL(file);
     }
   }
-
 }

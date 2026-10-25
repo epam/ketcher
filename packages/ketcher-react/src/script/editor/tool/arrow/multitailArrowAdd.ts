@@ -42,5 +42,4 @@ export class MultitailArrowAddTool implements ArrowAddTool {
 
     this.editor.update(fromMultitailArrowCreation(this.reStruct, start, end));
   }
-
 }

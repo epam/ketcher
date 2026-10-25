@@ -171,5 +171,4 @@ export class Image extends BaseMicromoleculeEntity {
       selected: this.getInitiallySelected(),
     };
   }
-
 }

@@ -64,9 +64,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     if (this.areMonomersOnSameRow) {
       path = `M ${this.scaledPosition.startPosition.x + 6},
       ${this.mainLineY.mainLineY1 + 5}
-      L ${this.scaledPosition.startPosition.x + 6}, ${
-        this.mainLineY.mainLineY1
-      }
+      L ${this.scaledPosition.startPosition.x + 6}, ${this.mainLineY.mainLineY1}
       L ${this.scaledPosition.endPosition.x + 6}, ${this.mainLineY.mainLineY2}
       L ${this.scaledPosition.endPosition.x + 6}, ${
         this.mainLineY.mainLineY2 + 5

@@ -41,5 +41,4 @@ export class SGroupDrawingEntity extends DrawingEntity {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }
-
 }

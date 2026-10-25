@@ -91,5 +91,4 @@ export class LinkerSequenceNode {
   public get modified() {
     return false;
   }
-
 }

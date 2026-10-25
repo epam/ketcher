@@ -93,7 +93,6 @@ class EnhancedStereoTool implements Tool {
       this.stereoAtoms,
     ).then((action) => action && editor.update(action));
   }
-
 }
 
 export default EnhancedStereoTool;

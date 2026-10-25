@@ -58,5 +58,4 @@ export class ScaleTransformer {
     );
     return zoomValue;
   }
-
 }

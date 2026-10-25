@@ -466,5 +466,4 @@ export class RotationView extends TransientView {
       }
     }
   }
-
 }

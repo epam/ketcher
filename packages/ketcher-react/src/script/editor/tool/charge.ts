@@ -112,7 +112,6 @@ class ChargeTool implements Tool {
     }
     return true;
   }
-
 }
 
 export default ChargeTool;

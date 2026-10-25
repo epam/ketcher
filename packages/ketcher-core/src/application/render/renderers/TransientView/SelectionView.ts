@@ -60,5 +60,4 @@ export class SelectionView {
         .attr('style', 'pointer-events: none');
     }
   }
-
 }

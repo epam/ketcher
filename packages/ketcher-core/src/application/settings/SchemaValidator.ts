@@ -88,5 +88,4 @@ export class SchemaValidator implements ISettingsValidator {
       errors,
     };
   }
-
 }

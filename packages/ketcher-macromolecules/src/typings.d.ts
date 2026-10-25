@@ -70,18 +70,18 @@ interface HTMLElement {
 // Functions available in Jest testing environment, declared in setupTests.tsx
 
 /**
- * Wraps component in provider of Emotion/Mui merged theme
- */
+Wraps component in provider of Emotion/Mui merged theme
+*/
 declare var withThemeProvider: typeof jestHelpers.withThemeProvider;
 
 /**
- * Wraps component in provider of Redux store
- */
+Wraps component in provider of Redux store
+*/
 declare var withStoreProvider: typeof jestHelpers.withStoreProvider;
 
 /**
- * Wraps component in Redux store and Emotion/Mui theme providers
- */
+Wraps component in Redux store and Emotion/Mui theme providers
+*/
 declare var withThemeAndStoreProvider: typeof jestHelpers.withThemeAndStoreProvider;
 
 declare namespace jestHelpers {

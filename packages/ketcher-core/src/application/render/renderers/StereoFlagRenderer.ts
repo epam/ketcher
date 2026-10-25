@@ -231,8 +231,8 @@ export class StereoFlagRenderer extends BaseRenderer {
   }
 
   /**
-   * Movement selection handling is done through move() method for stereo flags.
-   * This empty implementation satisfies the base interface.
-   */
+  Movement selection handling is done through move() method for stereo flags.
+  This empty implementation satisfies the base interface.
+  */
   public moveSelection(): void {}
 }

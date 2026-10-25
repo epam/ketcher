@@ -190,9 +190,9 @@ export function saveSettings(
 }
 
 /**
- * Sync settings from ketcher-core SettingsService to Redux
- * Used for backward compatibility - Redux becomes a passive consumer
- */
+Sync settings from ketcher-core SettingsService to Redux
+Used for backward compatibility - Redux becomes a passive consumer
+*/
 export function syncSettingsFromCore(coreSettings: Partial<Settings>) {
   const normalizedSettings = normalizeSettingsForForm(coreSettings, {
     removeCoreOnlyFields: true,

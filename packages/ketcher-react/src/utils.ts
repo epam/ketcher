@@ -19,17 +19,17 @@ export const isTouchDevice =
   ('ontouchstart' in window || navigator.maxTouchPoints > 0);
 
 /**
- * Determines the appropriate HTML element for fullscreen mode based on the current DOM structure.
- *
- * Priority order:
- * 1. Element with [data-ketcher-fullscreen-container] attribute (explicit user customization)
- * 2. Parent of [data-ketcher-editor] element:
- *    - If parent is #root -> return #root (standalone mode)
- *    - If parent is custom container -> return parent (iframe/embedded mode)
- * 3. Fallback to #root or documentElement
- *
- * @returns {HTMLElement} The element to be used for fullscreen mode
- */
+Determines the appropriate HTML element for fullscreen mode based on the current DOM structure.
+
+Priority order:
+1. Element with [data-ketcher-fullscreen-container] attribute (explicit user customization)
+2. Parent of [data-ketcher-editor] element:
+   - If parent is #root -> return #root (standalone mode)
+   - If parent is custom container -> return parent (iframe/embedded mode)
+3. Fallback to #root or documentElement
+
+@returns {HTMLElement} The element to be used for fullscreen mode
+*/
 export const getFullscreenElement = (): HTMLElement => {
   const ketcherRoot = document.querySelector(
     '.Ketcher-root, .Ketcher-polymer-editor-root',

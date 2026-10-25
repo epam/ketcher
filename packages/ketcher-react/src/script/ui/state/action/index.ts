@@ -124,11 +124,11 @@ function status(
 }
 
 /**
- * Builds the state object with action statuses for all actions
- * @param activeTool - The currently active tool
- * @param params - Additional parameters for status computation
- * @returns State object containing active tool and action statuses
- */
+Builds the state object with action statuses for all actions
+@param activeTool - The currently active tool
+@param params - Additional parameters for status computation
+@returns State object containing active tool and action statuses
+*/
 function buildStateWithStatuses(
   activeTool: UiActionAction | null | undefined,
   params: ActionParams,

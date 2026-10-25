@@ -132,15 +132,15 @@ interface StrandRun {
 }
 
 /**
- * Splits the selection into maximal contiguous runs of positions whose
- * monomer on one strand is selected, every sense run first and then every
- * antisense run. A position with both strands selected appears in one run of
- * each, so replacement and its pre-checks reach every selected monomer while
- * each run stays one strand -- which the replacement loop's chain-order
- * iteration and previous-node seed depend on. Sense runs come first because
- * replacing a node re-bonds its hydrogen-bond partner to the new monomer, and
- * the antisense pass must find the new sense monomer there.
- */
+Splits the selection into maximal contiguous runs of positions whose
+monomer on one strand is selected, every sense run first and then every
+antisense run. A position with both strands selected appears in one run of
+each, so replacement and its pre-checks reach every selected monomer while
+each run stays one strand -- which the replacement loop's chain-order
+iteration and previous-node seed depend on. Sense runs come first because
+replacing a node re-bonds its hydrogen-bond partner to the new monomer, and
+the antisense pass must find the new sense monomer there.
+*/
 function splitSelectionsIntoStrandRuns(
   selections: TwoStrandedNodesSelection,
 ): StrandRun[] {
@@ -2789,22 +2789,22 @@ export class SequenceMode extends BaseMode {
   }
 
   /**
-   * Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
-   * through the library. Refuses, and reports the refusal, when sync
-   * editing is on, the selection holds both strands of at least one
-   * eligible hydrogen-bonded pair, and the clicked item would set a new
-   * base.
-   *
-   * It lives here, called from both library entry points before any
-   * confirmation dialog, rather than inside the replacement loops: a
-   * refusal raised from inside the loop arrives only after the user has
-   * already confirmed a destructive-sounding dialog, and keying it off the
-   * item's monomer class let unsplit nucleotides through, rewriting the
-   * sense base while propagation was suppressed for the very same
-   * both-strands selection.
-   *
-   * Returns true when the caller must stop.
-   */
+  Rule 1.3 of epam/ketcher#6595, for every path that sets a new base
+  through the library. Refuses, and reports the refusal, when sync
+  editing is on, the selection holds both strands of at least one
+  eligible hydrogen-bonded pair, and the clicked item would set a new
+  base.
+
+  It lives here, called from both library entry points before any
+  confirmation dialog, rather than inside the replacement loops: a
+  refusal raised from inside the loop arrives only after the user has
+  already confirmed a destructive-sounding dialog, and keying it off the
+  item's monomer class let unsplit nucleotides through, rewriting the
+  sense base while propagation was suppressed for the very same
+  both-strands selection.
+
+  Returns true when the caller must stop.
+  */
   private refuseIfBaseModificationBlocked(
     selections: TwoStrandedNodesSelection,
     newBaseCarryingItem: MonomerOrAmbiguousType | undefined,

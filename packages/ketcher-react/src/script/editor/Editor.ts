@@ -550,11 +550,11 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Determines whether structure position should be preserved when applying options.
-   * Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
-   * This prevents structures from shifting when enabling/disabling viewOnlyMode.
-   * In all other cases (opening files, changing settings), structures are centered as before.
-   */
+  Determines whether structure position should be preserved when applying options.
+  Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
+  This prevents structures from shifting when enabling/disabling viewOnlyMode.
+  In all other cases (opening files, changing settings), structures are centered as before.
+  */
   private shouldPreserveStructPosition(
     options: Record<string, unknown> | undefined,
     struct: Struct,
@@ -594,12 +594,12 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Moves the structure so that its center is in the center of the view.
-   *
-   * @param viewportElement optional element that covers the part of the
-   * canvas the structure should be centered in (e.g. the area left free by
-   * the monomer creation wizard's panels). The whole canvas is used if omitted.
-   */
+  Moves the structure so that its center is in the center of the view.
+
+  @param viewportElement optional element that covers the part of the
+  canvas the structure should be centered in (e.g. the area left free by
+  the monomer creation wizard's panels). The whole canvas is used if omitted.
+  */
   centerStruct(viewportElement?: HTMLElement) {
     const structure = this.render.ctab;
 
@@ -649,11 +649,11 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Zooms and centers the structure loaded into the monomer creation wizard
-   * so that it fits the area left free by the wizard's panels.
-   *
-   * @param viewportElement the element that covers the available viewport
-   */
+  Zooms and centers the structure loaded into the monomer creation wizard
+  so that it fits the area left free by the wizard's panels.
+
+  @param viewportElement the element that covers the available viewport
+  */
   public fitStructToMonomerCreationViewport(viewportElement: HTMLElement) {
     if (this.render.ctab.molecule.atoms.size === 0) {
       return;
@@ -838,9 +838,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Restricts which assigned attachment points are rendered on the canvas.
-   * Pass undefined to show all assigned attachment points (e.g. on Preset tab).
-   */
+  Restricts which assigned attachment points are rendered on the canvas.
+  Pass undefined to show all assigned attachment points (e.g. on Preset tab).
+  */
   public setVisibleAssignedAttachmentPoints(
     points: Map<AttachmentPointName, [number, number]> | undefined,
   ) {
@@ -870,10 +870,10 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Highlights a specific atom by its ID on the canvas (for use when the
-   * AP name alone is ambiguous, e.g. two components sharing the same AP name).
-   * Pass null to clear the highlight.
-   */
+  Highlights a specific atom by its ID on the canvas (for use when the
+  AP name alone is ambiguous, e.g. two components sharing the same AP name).
+  Pass null to clear the highlight.
+  */
   public highlightAtomById(atomId: number | null) {
     if (atomId === null) {
       this.render.ctab.setSelection(null);
@@ -905,14 +905,14 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Derives the "attachment atom -> candidate leaving atoms" map straight from a
-   * struct: every terminal atom held by a bond that can carry an attachment
-   * point is a leaving group candidate for its only neighbour.
-   *
-   * `isMonomerCreationWizardEnabled` builds the same information from the
-   * canvas selection, but it never runs when an existing monomer is opened for
-   * editing, so that path needs this instead.
-   */
+  Derives the "attachment atom -> candidate leaving atoms" map straight from a
+  struct: every terminal atom held by a bond that can carry an attachment
+  point is a leaving group candidate for its only neighbour.
+
+  `isMonomerCreationWizardEnabled` builds the same information from the
+  canvas selection, but it never runs when an existing monomer is opened for
+  editing, so that path needs this instead.
+  */
   private static collectPotentialAttachmentPoints(
     struct: Struct,
     excludedLeavingAtomIds: Set<number> = new Set(),
@@ -1415,15 +1415,15 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Opens the wizard for monomer sgroups that are already present in the
-   * current struct. `sgroupIds[0]` is the monomer being edited; the rest only
-   * matter for "edit all instances", where they scope the update to the user's
-   * selection.
-   *
-   * Both entry points funnel through here: the "Edit Monomer" dialog in
-   * molecules mode, and the macromolecules context menu (which loads the
-   * converted struct into this editor first).
-   */
+  Opens the wizard for monomer sgroups that are already present in the
+  current struct. `sgroupIds[0]` is the monomer being edited; the rest only
+  matter for "edit all instances", where they scope the update to the user's
+  selection.
+
+  Both entry points funnel through here: the "Edit Monomer" dialog in
+  molecules mode, and the macromolecules context menu (which loads the
+  converted struct into this editor first).
+  */
   openEditMonomerWizard(sgroupIds: number[], editAllInstances = false) {
     const struct = this.struct();
     const primarySgroup = struct.sgroups.get(sgroupIds[0]);
@@ -2899,15 +2899,15 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Deletes macro-canvas bonds (PolymerBond / MonomerToAtomBond) for attachment
-   * points that were in use at wizard-open time but are no longer present in the
-   * new monomer template saved by the wizard.
-   *
-   * "Moved" APs (same name, different atom) do not require macro-canvas bond
-   * changes — the PolymerBond continues to reference the monomer by AP name.
-   * The micromolecule struct bond endpoint is already corrected by
-   * updateBondEndpointByAttachmentPoint.
-   */
+  Deletes macro-canvas bonds (PolymerBond / MonomerToAtomBond) for attachment
+  points that were in use at wizard-open time but are no longer present in the
+  new monomer template saved by the wizard.
+
+  "Moved" APs (same name, different atom) do not require macro-canvas bond
+  changes — the PolymerBond continues to reference the monomer by AP name.
+  The micromolecule struct bond endpoint is already corrected by
+  updateBondEndpointByAttachmentPoint.
+  */
 
   private reconcileExternalBonds(
     attachmentAtomIdsWithExternalBonds: Map<
@@ -2968,9 +2968,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Finds the attachment point name whose attachment atom matches the given
-   * wizard atom id, or undefined when none matches.
-   */
+  Finds the attachment point name whose attachment atom matches the given
+  wizard atom id, or undefined when none matches.
+  */
   private findAttachmentPointForAtom(
     attachmentAtomIdsWithExternalBonds: Map<
       AttachmentPointName,
@@ -2995,9 +2995,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Adds a clone of the bond with the given endpoint re-pointed to the provided
-   * merged-struct atom. No-op when the target atom id is unknown.
-   */
+  Adds a clone of the bond with the given endpoint re-pointed to the provided
+  merged-struct atom. No-op when the target atom id is unknown.
+  */
   private rebindExternalBondEndpoint(
     struct: Struct,
     bond: Bond,
@@ -3352,10 +3352,10 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Auto-assigns atoms to RNA preset components when new bonds are added.
-   * If one atom belongs to a component and the other doesn't belong to any,
-   * the unassigned atom (and the bond) is added to the same component.
-   */
+  Auto-assigns atoms to RNA preset components when new bonds are added.
+  If one atom belongs to a component and the other doesn't belong to any,
+  the unassigned atom (and the bond) is added to the same component.
+  */
   private autoAssignAtomToRnaComponent(bondId: number) {
     const rnaComponentAtoms = this.monomerCreationState?.rnaComponentAtoms;
 
@@ -3476,9 +3476,9 @@ class Editor implements KetcherEditor {
   }
 
   /**
-   * Adds an atom and bond to an RNA preset component and fires an event
-   * so the wizard can update its state.
-   */
+  Adds an atom and bond to an RNA preset component and fires an event
+  so the wizard can update its state.
+  */
   private addAtomsAndBondsToRnaComponent(
     componentKey: RnaPresetComponentKey,
     atomIds: number[],
@@ -4309,9 +4309,9 @@ class Editor implements KetcherEditor {
 }
 
 /**
- * Main button pressed, usually the left button or the un-initialized state
- * See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
- */
+Main button pressed, usually the left button or the un-initialized state
+See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+*/
 function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }

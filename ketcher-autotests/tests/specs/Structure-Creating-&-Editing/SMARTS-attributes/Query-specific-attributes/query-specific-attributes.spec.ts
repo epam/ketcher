@@ -147,9 +147,9 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     page,
   }) => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/1321
-     * Description: saving SMARTS with implicit H count and any other attribute should not cause any error
-     */
+    Test case: https://github.com/epam/Indigo/issues/1321
+    Description: saving SMARTS with implicit H count and any other attribute should not cause any error
+    */
     const expectedSmarts = '[#6](-[#6])(-[c;h5;X2])-[#6]';
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
@@ -179,10 +179,10 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       page,
     }) => {
       /**
-       * Test case: https://github.com/epam/ketcher/issues/3445
-       * Description: attributes should be converted to custom query in correct SMARTS annotation
-       * (D<n> for substitution count and x<n> for ring bond count)
-       */
+      Test case: https://github.com/epam/ketcher/issues/3445
+      Description: attributes should be converted to custom query in correct SMARTS annotation
+      (D<n> for substitution count and x<n> for ring bond count)
+      */
       await AtomPropertiesDialog(page).selectRingBondCount(RingBondCount.Five);
       await AtomPropertiesDialog(page).selectSubstitutionCount(
         SubstitutionCount.Seven,
@@ -195,9 +195,9 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       page,
     }) => {
       /**
-       * Test case: https://github.com/epam/ketcher/issues/3445
-       * Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
-       */
+      Test case: https://github.com/epam/ketcher/issues/3445
+      Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
+      */
       await AtomPropertiesDialog(page).selectRingBondCount(
         RingBondCount.As_Drawn,
       );

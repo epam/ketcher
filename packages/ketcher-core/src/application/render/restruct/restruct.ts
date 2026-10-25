@@ -444,12 +444,12 @@ class ReStruct {
   }
 
   /**
-   * Why?
-   * we can't use just getVBoxObj and the center for atoms
-   * because this will lead incorrect center position for the move atom around it
-   * because of atom's vBox contain text label with is not constant after flip/rotate
-   * and this lead to unstable flip tool work
-   */
+  Why?
+  we can't use just getVBoxObj and the center for atoms
+  because this will lead incorrect center position for the move atom around it
+  because of atom's vBox contain text label with is not constant after flip/rotate
+  and this lead to unstable flip tool work
+  */
 
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
@@ -683,12 +683,12 @@ class ReStruct {
   }
 
   /**
-   * Draws RNA preset components whose tab is not active (#9441) as a single
-   * clean outline. Each "outline" highlight's per-atom/bond selection contours
-   * are merged into one path, and an SVG feMorphology filter turns the filled
-   * union into a single perimeter stroke (so the structure stays visible
-   * inside). Rebuilt every render since it spans many atoms/bonds.
-   */
+  Draws RNA preset components whose tab is not active (#9441) as a single
+  clean outline. Each "outline" highlight's per-atom/bond selection contours
+  are merged into one path, and an SVG feMorphology filter turns the filled
+  union into a single perimeter stroke (so the structure stays visible
+  inside). Rebuilt every render since it spans many atoms/bonds.
+  */
   showHighlightOutlines(): void {
     this.highlightOutlinePaths.forEach((entry) => entry.remove());
     this.highlightOutlinePaths = [];
@@ -1168,11 +1168,11 @@ function scaleVisel(visel, s) {
 }
 
 /**
- * SelectionPlate could be an item then value would be in it
- * or it could be a set of items then removed value need to be check on at least one of items in set
- * @param item
- * @returns {boolean}
- */
+SelectionPlate could be an item then value would be in it
+or it could be a set of items then removed value need to be check on at least one of items in set
+@param item
+@returns {boolean}
+*/
 function isSelectionSvgObjectExists(item) {
   return (
     item &&

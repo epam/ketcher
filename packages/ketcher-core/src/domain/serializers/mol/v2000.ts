@@ -125,8 +125,8 @@ function parseAtomListLine(atomListLine: string): {
 }
 
 /**
- * Handles 'A' property lines (atom alias/pseudo)
- */
+Handles 'A' property lines (atom alias/pseudo)
+*/
 function handleAliasProperty(
   line: string,
   ctabLines: string[],
@@ -151,8 +151,8 @@ function handleAliasProperty(
 }
 
 /**
- * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
- */
+Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
+*/
 function handleSimpleAtomProperty(
   propName: string,
   propertyData: string,
@@ -164,8 +164,8 @@ function handleSimpleAtomProperty(
 }
 
 /**
- * Handles SUB (substitution count) property
- */
+Handles SUB (substitution count) property
+*/
 function handleSubstitutionProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -185,8 +185,8 @@ function handleSubstitutionProperty(
 }
 
 /**
- * Handles RGP (rgroup label) property
- */
+Handles RGP (rgroup label) property
+*/
 function handleRGroupProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -210,8 +210,8 @@ function handleRGroupProperty(
 }
 
 /**
- * Handles LOG (rgroup logic) property
- */
+Handles LOG (rgroup logic) property
+*/
 function handleRGroupLogic(
   propertyData: string,
   rLogic: Record<number, RGroupAttributes>,
@@ -233,8 +233,8 @@ function handleRGroupLogic(
 }
 
 /**
- * Handles ALS (atom list) property
- */
+Handles ALS (atom list) property
+*/
 function handleAtomListProperty(
   propertyData: string,
   props: MPropertyProps,
@@ -264,8 +264,8 @@ function handleAtomListProperty(
 }
 
 /**
- * Handles SMT/SCL (sGroup subscript/class) properties
- */
+Handles SMT/SCL (sGroup subscript/class) properties
+*/
 function handleSGroupDataProperty(
   type: string,
   propertyData: string,
@@ -282,8 +282,8 @@ function handleSGroupDataProperty(
 }
 
 /**
- * Handles SDS (sGroup expanded state) property
- */
+Handles SDS (sGroup expanded state) property
+*/
 function handleSGroupExpandedProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -296,8 +296,8 @@ function handleSGroupExpandedProperty(
 }
 
 /**
- * Handles SAP (sGroup attachment point) property
- */
+Handles SAP (sGroup attachment point) property
+*/
 function handleSGroupAttachmentProperty(
   propertyData: string,
   sGroups: SGroupMap,
@@ -310,8 +310,8 @@ function handleSGroupAttachmentProperty(
 }
 
 /**
- * Processes M-type property line
- */
+Processes M-type property line
+*/
 function processMPropertyLine(
   type: string,
   propertyData: string,
@@ -404,14 +404,14 @@ function processMPropertyLine(
 }
 
 /**
- * @param ctab
- * @param ctabLines
- * @param shift
- * @param end
- * @param sGroups
- * @param rLogic
- * @returns { Pool }
- */
+@param ctab
+@param ctabLines
+@param shift
+@param end
+@param sGroups
+@param rLogic
+@returns { Pool }
+*/
 function parsePropertyLines(
   _ctab: Struct,
   ctabLines: string[],
@@ -451,10 +451,10 @@ function parsePropertyLines(
 }
 
 /**
- * @param atoms { Pool }
- * @param values { Pool }
- * @param propId { string }
- */
+@param atoms { Pool }
+@param values { Pool }
+@param propId { string }
+*/
 function applyAtomProp(
   atoms: Pool<Atom>,
   values: Pool<string | number | AtomList>,
@@ -470,10 +470,10 @@ function applyAtomProp(
 }
 
 /**
- * Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
- * This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
- * @param struct { Struct }
- */
+Creates RGroupAttachmentPoint instances from atoms with attachmentPoints property
+This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
+@param struct { Struct }
+*/
 function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
   struct.atoms.forEach((atom, atomId) => {
     if (!atom.attachmentPoints) {
@@ -721,10 +721,10 @@ function labelsListToIds(labels: string[]): number[] {
 }
 
 /**
- * @param hdr
- * @param lst
- * @returns { Pool }
- */
+@param hdr
+@param lst
+@returns { Pool }
+*/
 function parsePropertyLineAtomList(
   hdr: string[],
   lst: string[],

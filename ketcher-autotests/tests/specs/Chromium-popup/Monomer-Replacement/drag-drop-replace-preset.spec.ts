@@ -68,10 +68,10 @@ async function expectMonomerKeptPosition(locator: Locator, before: Point) {
 }
 
 /**
- * Captures preset C (the right-hand preset of the fixtures) components by
- * their stable monomer IDs and centers, so they can be re-located after a
- * replacement introduces a second identical preset.
- */
+Captures preset C (the right-hand preset of the fixtures) components by
+their stable monomer IDs and centers, so they can be re-located after a
+replacement introduces a second identical preset.
+*/
 async function capturePresetC() {
   const base = getMonomerLocator(page, Base.C);
   const sugar = await extremeMonomer(getMonomerLocator(page, Sugar.R), 'right');

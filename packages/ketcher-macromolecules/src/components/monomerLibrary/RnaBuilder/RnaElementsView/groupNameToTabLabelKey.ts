@@ -18,11 +18,11 @@ import { MonomerGroups } from 'src/constants';
 import { RnaBuilderPresetsItem } from 'state/rna-builder';
 
 /**
- * Values are macromoleculesDialogs translation-key suffixes, not display
- * text - groupName doubles as a Redux state key (setActiveRnaBuilderItem,
- * selectAmbiguousMonomersInCategory, data-testid suffixes), so callers
- * resolve these through t() rather than rendering groupName directly.
- */
+Values are macromoleculesDialogs translation-key suffixes, not display
+text - groupName doubles as a Redux state key (setActiveRnaBuilderItem,
+selectAmbiguousMonomersInCategory, data-testid suffixes), so callers
+resolve these through t() rather than rendering groupName directly.
+*/
 export const groupNameToTabLabelKey = {
   [RnaBuilderPresetsItem.Presets]: 'monomerLibrary.presetsTab',
   [MonomerGroups.SUGARS]: 'monomerLibrary.sugarsTab',

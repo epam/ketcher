@@ -449,10 +449,10 @@ function findClosestRGroup(
 }
 
 /**
- * @param {ReStruct} restruct
- * @param {Vec2} cursorPosition
- * @param {number} minDistToOtherItems
- */
+@param {ReStruct} restruct
+@param {Vec2} cursorPosition
+@param {number} minDistToOtherItems
+*/
 function findClosestRgroupAttachmentPoints(
   restruct: ReStruct,
   cursorPosition: Vec2,
@@ -644,16 +644,16 @@ function findClosestItem(
 }
 
 /**
- * @param restruct { ReStruct }
- * @param selected { object }
- * @param maps { Array<string> }
- * @param options { RenderOption }
- * @return {{
- * 		atoms: Map<number, number>?
- * 		bonds: Map<number, number>?
- *    atomToFunctionalGroup: Map<number, number>?
- * }}
- */
+@param restruct { ReStruct }
+@param selected { object }
+@param maps { Array<string> }
+@param options { RenderOption }
+@return {{
+		atoms: Map<number, number>?
+		bonds: Map<number, number>?
+   atomToFunctionalGroup: Map<number, number>?
+}}
+*/
 function findCloseMerge(
   restruct: ReStruct,
   selected: SelectedItems,
@@ -751,12 +751,12 @@ function mergeAtomToAtom(
 }
 
 /**
- * @param atomId { number }
- * @param restruct { ReStruct }
- * @param atomPosition { Vec2 }
- * @param result { Object } Mutating arguments!!!
- * @return {boolean}
- */
+@param atomId { number }
+@param restruct { ReStruct }
+@param atomPosition { Vec2 }
+@param result { Object } Mutating arguments!!!
+@return {boolean}
+*/
 function mergeAtomToFunctionalGroup(
   atomId: number,
   restruct: ReStruct,

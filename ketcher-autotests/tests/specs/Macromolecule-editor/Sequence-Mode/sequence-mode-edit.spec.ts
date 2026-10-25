@@ -433,17 +433,17 @@ test.describe('Sequence edit mode', () => {
 
   test('Verify activation area of the plus for adding sequences in sequence mode', async () => {
     /**
-     * Test task: https://github.com/epam/ketcher/issues/6948
-     * Description: Verify activation area of the plus for adding sequences in sequence mode
-     * Scenario:
-     *    1. Type few symbols on the canvas to proceed with edit triangle jump
-     *    2. Hover mouse over Plus icon center
-     *    3. Take a screenshot to validate it's appearence
-     *    4. Hover mouse outside Plus icon area but inside 1+1/4 of icons size (horizontally, one pixel inside the border)
-     *    5. Take a screenshot to validate it's appearence
-     *    6. Hover mouse outside Plus icon area but outside 1+1/4 of icons size (horizontally, one pixel outside the border)
-     *    7. Take a screenshot to validate it's absense
-     **/
+    Test task: https://github.com/epam/ketcher/issues/6948
+    Description: Verify activation area of the plus for adding sequences in sequence mode
+    Scenario:
+       1. Type few symbols on the canvas to proceed with edit triangle jump
+       2. Hover mouse over Plus icon center
+       3. Take a screenshot to validate it's appearence
+       4. Hover mouse outside Plus icon area but inside 1+1/4 of icons size (horizontally, one pixel inside the border)
+       5. Take a screenshot to validate it's appearence
+       6. Hover mouse outside Plus icon area but outside 1+1/4 of icons size (horizontally, one pixel outside the border)
+       7. Take a screenshot to validate it's absense
+    */
     await keyboardTypeOnCanvas(page, 'aaa');
     const plusButtonIcon = page
       .getByTestId('NewSequencePlusButtonIcon')

@@ -17,9 +17,9 @@
 import type { Struct } from 'domain/entities/struct';
 
 /**
- * Internal template object used when placing a template on the canvas, atom, or bond.
- * Contains the molecule fragment together with pre-computed attachment geometry.
- */
+Internal template object used when placing a template on the canvas, atom, or bond.
+Contains the molecule fragment together with pre-computed attachment geometry.
+*/
 export interface EditorTemplate {
   molecule: Struct;
   /** Id of the template attachment atom. */

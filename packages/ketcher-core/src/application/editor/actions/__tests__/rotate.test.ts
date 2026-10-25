@@ -7,19 +7,19 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 
 /**
- * Regression tests for https://github.com/epam/ketcher/issues/6170
- *
- * `fromRotate` used to dereference `.pp`/`.position` on pool entries looked
- * up by id from the (possibly stale) editor selection without checking
- * whether the entry still exists in the current Struct. If the selection
- * held on to an id of an item that no longer exists (deleted, replaced,
- * or a race between struct mutation and selection state), this threw:
- * `TypeError: Cannot read properties of undefined (reading 'pp')`.
- *
- * `fromRotate` itself takes untyped params (see the `// eslint-disable-line`
- * on its declaration), so plain duck-typed fixtures are passed directly
- * without needing type casts.
- */
+Regression tests for https://github.com/epam/ketcher/issues/6170
+
+`fromRotate` used to dereference `.pp`/`.position` on pool entries looked
+up by id from the (possibly stale) editor selection without checking
+whether the entry still exists in the current Struct. If the selection
+held on to an id of an item that no longer exists (deleted, replaced,
+or a race between struct mutation and selection state), this threw:
+`TypeError: Cannot read properties of undefined (reading 'pp')`.
+
+`fromRotate` itself takes untyped params (see the `// eslint-disable-line`
+on its declaration), so plain duck-typed fixtures are passed directly
+without needing type casts.
+*/
 describe('fromRotate: stale selection ids', () => {
   const center = new Vec2(0, 0);
   const angle = Math.PI / 4;

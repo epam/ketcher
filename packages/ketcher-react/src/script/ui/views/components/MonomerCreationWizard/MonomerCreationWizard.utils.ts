@@ -227,11 +227,11 @@ export const getEditAllInstancesInitialValues = (
 };
 
 /**
- * Returns true when the given `MonomerMicromolecule` sgroup represents the
- * same monomer type and symbol as `primaryMonomer`.
- *
- * Use this to scope "edit all instances" to the sgroups the user selected.
- */
+Returns true when the given `MonomerMicromolecule` sgroup represents the
+same monomer type and symbol as `primaryMonomer`.
+
+Use this to scope "edit all instances" to the sgroups the user selected.
+*/
 export const isSameMonomerType = (
   sgroup: MonomerMicromolecule,
   primaryMonomer: BaseMonomer,

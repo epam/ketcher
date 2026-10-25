@@ -1435,22 +1435,22 @@ export class SequenceRenderer {
   }
 
   /**
-   * Checks if two chains have at least one side-chain connection between them.
-   *
-   * @param chain1 - First chain to check
-   * @param chain2 - Second chain to check
-   * @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
-   *
-   * @example
-   * // Two chains connected by R3-R3 bond
-   * const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
-   * // Returns: true
-   *
-   * @remarks
-   * - Returns false if either chain is empty or undefined
-   * - Uses Set for O(1) lookup performance
-   * - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
-   */
+  Checks if two chains have at least one side-chain connection between them.
+
+  @param chain1 - First chain to check
+  @param chain2 - Second chain to check
+  @returns true if any monomer in chain1 has a side-chain bond to any monomer in chain2
+
+  @example
+  // Two chains connected by R3-R3 bond
+  const hasConnection = hasSideChainConnectionBetweenChains(chainA, chainB);
+  // Returns: true
+
+  @remarks
+  - Returns false if either chain is empty or undefined
+  - Uses Set for O(1) lookup performance
+  - Only checks connections from chain1 to chain2 (assumes bidirectional bonds)
+  */
   private static hasSideChainConnectionBetweenChains(
     chain1: Chain,
     chain2: Chain,

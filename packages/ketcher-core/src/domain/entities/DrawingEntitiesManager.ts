@@ -1148,9 +1148,9 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Syncs stereo flag selection with their associated monomers.
-   * When a monomer is selected, its stereo flag should also be selected.
-   */
+  Syncs stereo flag selection with their associated monomers.
+  When a monomer is selected, its stereo flag should also be selected.
+  */
   public syncStereoFlagsSelectionWithMonomers(): Command {
     const command = new Command();
 
@@ -3056,18 +3056,18 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Returns true when the canvas contains both RNA and DNA sequences.
-   *
-   * Both monomer types share MonomerType='RNA' in the library, so they cannot
-   * be distinguished via the generic monomerTypes Set used in
-   * validateIfApplicableForFasta(). This check is therefore kept separate so
-   * that formats which CAN represent mixed RNA/DNA (e.g. IDT) do not trigger
-   * a false validation error.
-   *
-   * Detection strategy:
-   *  - Split nucleotides: inspect the Sugar monomer label ('R' = RNA, 'dR' = DNA)
-   *  - Unsplit nucleotides: inspect MonomerClass (KetMonomerClass.RNA vs .DNA)
-   */
+  Returns true when the canvas contains both RNA and DNA sequences.
+
+  Both monomer types share MonomerType='RNA' in the library, so they cannot
+  be distinguished via the generic monomerTypes Set used in
+  validateIfApplicableForFasta(). This check is therefore kept separate so
+  that formats which CAN represent mixed RNA/DNA (e.g. IDT) do not trigger
+  a false validation error.
+
+  Detection strategy:
+   - Split nucleotides: inspect the Sugar monomer label ('R' = RNA, 'dR' = DNA)
+   - Unsplit nucleotides: inspect MonomerClass (KetMonomerClass.RNA vs .DNA)
+  */
   public hasRnaAndDnaMix(): boolean {
     let hasRnaContent = false;
     let hasDnaContent = false;
@@ -4654,10 +4654,10 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Gets the stereo flag associated with a monomer.
-   * Note: Linear search is acceptable here as stereo flags are rare
-   * (typically one per fragment with stereo atoms).
-   */
+  Gets the stereo flag associated with a monomer.
+  Note: Linear search is acceptable here as stereo flags are rare
+  (typically one per fragment with stereo atoms).
+  */
   public getStereoFlagForMonomer(
     monomer: BaseMonomer,
   ): CoreStereoFlag | undefined {
@@ -4674,15 +4674,15 @@ export class DrawingEntitiesManager {
   // ---------------------------------------------------------------------------
 
   /**
-   * Replaces `oldMonomer` with a new monomer created from `newTemplate` at
-   * the same canvas position, re-establishing all compatible polymer bonds.
-   *
-   * The entire operation (delete + add + reconnect) is wrapped in a single
-   * `Command` so undo/redo treats it as one atomic step.
-   *
-   * Returns the command AND the newly added monomer so the caller can
-   * continue to work with it (e.g. for layout adjustments).
-   */
+  Replaces `oldMonomer` with a new monomer created from `newTemplate` at
+  the same canvas position, re-establishing all compatible polymer bonds.
+
+  The entire operation (delete + add + reconnect) is wrapped in a single
+  `Command` so undo/redo treats it as one atomic step.
+
+  Returns the command AND the newly added monomer so the caller can
+  continue to work with it (e.g. for layout adjustments).
+  */
   public replaceMonomer(
     oldMonomer: BaseMonomer,
     newTemplate: MonomerOrAmbiguousType,
@@ -4745,16 +4745,16 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Replaces all components of the RNA preset that contains `oldSugar` with
-   * components from `newPresetTemplate`, placing the sugar at `sugarPosition`.
-   *
-   * All external inter-preset bonds are re-established where compatible.
-   * Internal intra-preset bonds are re-created by `addRnaPreset`.
-   *
-   * The entire operation is a single `Command` for atomic undo/redo.
-   *
-   * Returns the command AND the new sugar monomer.
-   */
+  Replaces all components of the RNA preset that contains `oldSugar` with
+  components from `newPresetTemplate`, placing the sugar at `sugarPosition`.
+
+  All external inter-preset bonds are re-established where compatible.
+  Internal intra-preset bonds are re-created by `addRnaPreset`.
+
+  The entire operation is a single `Command` for atomic undo/redo.
+
+  Returns the command AND the new sugar monomer.
+  */
   public replacePreset(
     oldSugar: BaseMonomer,
     newPresetTemplate: IRnaPreset,
@@ -4890,22 +4890,22 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Computes the canvas positions for the base and phosphate components of a
-   * preset, given the sugar position.
-   *
-   * When the new preset has a left-side (5′) phosphate, `addRnaPreset` will
-   * internally swap the sugar and phosphate Vec2 arguments so that:
-   *   - the value passed as `_phosphatePosition` becomes the actual sugar position
-   *   - the value passed as `_sugarPosition` becomes the actual phosphate position
-   *
-   * To keep the sugar anchored at `sugarPosition` after the swap we must pass
-   * the phosphate offset in the **negative X** direction (to the left).  After
-   * the swap the sugar lands at `sugarPosition` and the phosphate lands at
-   * `sugarPosition − SnakeLayoutCellWidth` — matching the left-phosphate layout.
-   *
-   * For a right-side (3′) phosphate no swap occurs, so the phosphate is placed
-   * at `sugarPosition + SnakeLayoutCellWidth` as before.
-   */
+  Computes the canvas positions for the base and phosphate components of a
+  preset, given the sugar position.
+
+  When the new preset has a left-side (5′) phosphate, `addRnaPreset` will
+  internally swap the sugar and phosphate Vec2 arguments so that:
+    - the value passed as `_phosphatePosition` becomes the actual sugar position
+    - the value passed as `_sugarPosition` becomes the actual phosphate position
+
+  To keep the sugar anchored at `sugarPosition` after the swap we must pass
+  the phosphate offset in the **negative X** direction (to the left).  After
+  the swap the sugar lands at `sugarPosition` and the phosphate lands at
+  `sugarPosition − SnakeLayoutCellWidth` — matching the left-phosphate layout.
+
+  For a right-side (3′) phosphate no swap occurs, so the phosphate is placed
+  at `sugarPosition + SnakeLayoutCellWidth` as before.
+  */
   private computePresetPositions(
     preset: IRnaPreset,
     initialSugarPosition: Vec2,
@@ -4937,13 +4937,13 @@ export class DrawingEntitiesManager {
   }
 
   /**
-   * Given a bond record from the original preset and the arrays of original /
-   * new components, finds the new preset component that should carry the
-   * re-established bond.
-   *
-   * `bondToOriginalComponent` is a snapshot map built BEFORE any deletions
-   * so we don't have to re-collect bonds from already-mutated monomers.
-   */
+  Given a bond record from the original preset and the arrays of original /
+  new components, finds the new preset component that should carry the
+  re-established bond.
+
+  `bondToOriginalComponent` is a snapshot map built BEFORE any deletions
+  so we don't have to re-collect bonds from already-mutated monomers.
+  */
   private findNewPresetComponentForBond(
     record: ReturnType<typeof collectMonomerBonds>[0],
     originalComponents: BaseMonomer[],

@@ -66,10 +66,10 @@ class ReSGroup extends ReObject {
   }
 
   /**
-   * @param remol {ReStruct}
-   * @param sgroup {SGroup}
-   * @returns {*}
-   */
+  @param remol {ReStruct}
+  @param sgroup {SGroup}
+  @returns {*}
+  */
   draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
@@ -605,10 +605,10 @@ function getBracketParameters(bracketBox: Box2Abs, direction: Vec2) {
 }
 
 /**
- * @param sgroup {SGroup}
- * @param render {Render}
- * @returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
- */
+@param sgroup {SGroup}
+@param render {Render}
+@returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
+*/
 function getHighlighPathInfo(
   sgroup: SGroup,
   render: Render,

@@ -29,11 +29,11 @@ export type SettingFieldName = {
 export interface FieldGroup {
   id: string;
   /**
-   * Frozen English literal, NOT a translation key - Playwright's
-   * settingsDialog/Constants.ts hardcodes `${title}-accordion` test ids
-   * (e.g. 'General-accordion'), so this value must never change. Use
-   * `titleKey` for the translated, user-visible group label.
-   */
+  Frozen English literal, NOT a translation key - Playwright's
+  settingsDialog/Constants.ts hardcodes `${title}-accordion` test ids
+  (e.g. 'General-accordion'), so this value must never change. Use
+  `titleKey` for the translated, user-visible group label.
+  */
   title: string;
   titleKey: string;
   fields: Array<SettingFieldName>;

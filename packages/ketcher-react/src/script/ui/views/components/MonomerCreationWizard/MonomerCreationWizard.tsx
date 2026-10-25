@@ -118,10 +118,10 @@ const getInitialWizardState = (
 const initialWizardState: WizardState = getInitialWizardState();
 
 /**
- * Builds initial wizard state seeded with values from an existing monomer
- * being edited. When `initialValues` is undefined returns the default empty
- * wizard state.
- */
+Builds initial wizard state seeded with values from an existing monomer
+being edited. When `initialValues` is undefined returns the default empty
+wizard state.
+*/
 type MonomerCreationWizardInitialState = {
   initialValues?: MonomerCreationInitialValues;
   hasDefaultAttachmentPoints?: boolean;
@@ -552,11 +552,11 @@ const rnaPresetWizardReducer = (
 };
 
 /**
- * Checks if all mandatory properties required for a non-hidden monomer are filled.
- * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
- * @param values - The wizard form values to check
- * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
- */
+Checks if all mandatory properties required for a non-hidden monomer are filled.
+Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+@param values - The wizard form values to check
+@returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+*/
 const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   const { type, symbol, naturalAnalogue } = values;
 
@@ -949,10 +949,10 @@ const MonomerCreationWizardInternal = ({
     '3' | '5' | undefined
   >();
   /**
-   * Stores user-overridden leaving atom labels for connection (readonly)
-   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
-   * where two components share the same AP name (e.g. base R1 / phosphate R1).
-   */
+  Stores user-overridden leaving atom labels for connection (readonly)
+  attachment points, keyed by "<componentKey>:<apName>" to handle cases
+  where two components share the same AP name (e.g. base R1 / phosphate R1).
+  */
   const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
     Map<string, AtomLabel>
   >(new Map());
@@ -2359,12 +2359,12 @@ const MonomerCreationWizardInternal = ({
 };
 
 /**
- * Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
- * The internal component is mounted only while the wizard is active, which
- * lets it receive `monomerCreationState` (including `editInstanceInitialValues`
- * used to prefill the form when editing an existing monomer) as a prop and
- * seed its initial reducer state synchronously on mount.
- */
+Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
+The internal component is mounted only while the wizard is active, which
+lets it receive `monomerCreationState` (including `editInstanceInitialValues`
+used to prefill the form when editing an existing monomer) as a prop and
+seed its initial reducer state synchronously on mount.
+*/
 const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 

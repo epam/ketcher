@@ -201,11 +201,11 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     page,
   }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3459
-     * Description: setting not SMARTS specific attribute and taking screenshot to see if it is displayed as before (e.g. rb<n> for ring bond count),
-     * adding SMARTS specific attribute (connectivity) and taking screenshot to check if all properties in the list are displayed in SMARTS notation
-     * (now ring bond count should be displayed as x<n>)
-     */
+    Test case: https://github.com/epam/ketcher/issues/3459
+    Description: setting not SMARTS specific attribute and taking screenshot to see if it is displayed as before (e.g. rb<n> for ring bond count),
+    adding SMARTS specific attribute (connectivity) and taking screenshot to check if all properties in the list are displayed in SMARTS notation
+    (now ring bond count should be displayed as x<n>)
+    */
     await AtomPropertiesDialog(page).setOptions({
       QuerySpecificProperties: {
         RingBondCount: RingBondCount.Three,

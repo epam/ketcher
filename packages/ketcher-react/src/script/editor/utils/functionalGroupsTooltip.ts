@@ -12,11 +12,11 @@ export type InfoPanelData = {
 };
 
 /**
- * Why?
- * We need somehow display sgroup attachment points (tooltips, preview, templates),
- * But due to current rendering approach for sgroups (ungrouping sgroups)
- * - we have to use RGroup attachment points on atoms for this purposes
- */
+Why?
+We need somehow display sgroup attachment points (tooltips, preview, templates),
+But due to current rendering approach for sgroups (ungrouping sgroups)
+- we have to use RGroup attachment points on atoms for this purposes
+*/
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,

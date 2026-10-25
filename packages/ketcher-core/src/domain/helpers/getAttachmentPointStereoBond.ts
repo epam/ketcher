@@ -5,11 +5,11 @@ import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoin
 import { getAttachmentPointLabel } from './attachmentPointCalculations';
 
 /**
- * Helper function to find stereo bond information for an attachment point
- * by looking at the monomer's internal structure.
- * Returns the stereo value (UP or DOWN) if the bond between LGA and AA has stereo
- * and the narrow end is at the AA (attachment atom), otherwise returns null
- */
+Helper function to find stereo bond information for an attachment point
+by looking at the monomer's internal structure.
+Returns the stereo value (UP or DOWN) if the bond between LGA and AA has stereo
+and the narrow end is at the AA (attachment atom), otherwise returns null
+*/
 export function getAttachmentPointStereoBond(
   sGroup: SGroup,
   sGroupAttachmentPoint: SGroupAttachmentPoint,

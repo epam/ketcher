@@ -17,11 +17,11 @@ test.describe('Add to Canvas - Preserve Existing Elements', () => {
     page,
   }) => {
     /**
-     * Test case: When using "Add to Canvas" to load a structure from a file,
-     * the existing elements should not be moved to the new element position.
-     * The new element should be centered initially, and the user can position it
-     * by moving the mouse.
-     */
+    Test case: When using "Add to Canvas" to load a structure from a file,
+    the existing elements should not be moved to the new element position.
+    The new element should be centered initially, and the user can position it
+    by moving the mouse.
+    */
     // Draw a benzene ring on the canvas
     await drawBenzeneRing(page);
 

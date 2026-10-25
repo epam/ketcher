@@ -1,12 +1,12 @@
 /**
- * Unit tests for replacementHelpers.ts
- *
- * Tests cover:
- *  - presetsHaveSameGeometry (task 3.2)
- *  - collectMonomerBonds (task 4.4)
- *  - computeReestablishableBonds (task 4.4)
- *  - mapPresetBonds (task 4.4)
- */
+Unit tests for replacementHelpers.ts
+
+Tests cover:
+ - presetsHaveSameGeometry (task 3.2)
+ - collectMonomerBonds (task 4.4)
+ - computeReestablishableBonds (task 4.4)
+ - mapPresetBonds (task 4.4)
+*/
 
 import {
   presetsHaveSameGeometry,
@@ -83,8 +83,8 @@ function makePhosphate(): Phosphate {
 }
 
 /**
- * Wires an intra-preset sugar↔base bond (sugar.R3 ↔ base.R1).
- */
+Wires an intra-preset sugar↔base bond (sugar.R3 ↔ base.R1).
+*/
 function connectBase(sugar: Sugar, base: RNABase): void {
   const bond = new PolymerBond(sugar, base);
   sugar.attachmentPointsToBonds.R3 = bond;
@@ -92,10 +92,10 @@ function connectBase(sugar: Sugar, base: RNABase): void {
 }
 
 /**
- * Wires an intra-preset sugar↔phosphate bond on the requested side:
- *  - 'right' (3′): sugar.R2 ↔ phosphate.R1
- *  - 'left'  (5′): sugar.R1 ↔ phosphate.R2
- */
+Wires an intra-preset sugar↔phosphate bond on the requested side:
+ - 'right' (3′): sugar.R2 ↔ phosphate.R1
+ - 'left'  (5′): sugar.R1 ↔ phosphate.R2
+*/
 function connectPhosphate(
   sugar: Sugar,
   phosphate: Phosphate,

@@ -34,8 +34,8 @@ const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
 /**
- * Convert KET v2.0 format to internal format (pos array + Lexical content).
- */
+Convert KET v2.0 format to internal format (pos array + Lexical content).
+*/
 function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
   const { boundingBox, paragraphs } = ketText;
   const { x, y, z, width, height } = boundingBox;
@@ -119,8 +119,8 @@ function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
 }
 
 /**
- * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
- */
+Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
+*/
 function isKetV2Format(ketItem: KetTextNode): ketItem is KetTextV2Node {
   return 'boundingBox' in ketItem && 'paragraphs' in ketItem;
 }

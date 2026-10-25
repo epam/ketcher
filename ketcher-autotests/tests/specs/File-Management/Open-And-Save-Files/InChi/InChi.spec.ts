@@ -34,9 +34,9 @@ test.describe('', () => {
       'InChI String - inserting correct string for multiple structures',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1963
-       * Description: Open multiple structures from InChi string
-       */
+      Test case: EPMLSOPKET-1963
+      Description: Open multiple structures from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1963-inchi.txt');
 
@@ -51,9 +51,9 @@ test.describe('', () => {
       'Chain string with single bonds only',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1967
-       * Description: Open structure with single bonds from InChi string
-       */
+      Test case: EPMLSOPKET-1967
+      Description: Open structure with single bonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1967-inchi.txt');
 
@@ -68,9 +68,9 @@ test.describe('', () => {
       'Chain string that contains some double bonds',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1968
-       * Description: Open structure with some double bonds from InChi string
-       */
+      Test case: EPMLSOPKET-1968
+      Description: Open structure with some double bonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1968-inchi.txt');
 
@@ -85,9 +85,9 @@ test.describe('', () => {
       'String - Chain string that contains some triple bonds',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1969
-       * Description: Open structure with some triple bonds from InChi string
-       */
+      Test case: EPMLSOPKET-1969
+      Description: Open structure with some triple bonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1969-inchi.txt');
 
@@ -102,9 +102,9 @@ test.describe('', () => {
       'InChI String - Cyclic structure with single bonds only',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1970
-       * Description: Open cyclic structure with single bonds from InChi string
-       */
+      Test case: EPMLSOPKET-1970
+      Description: Open cyclic structure with single bonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1970-inchi.txt');
 
@@ -119,9 +119,9 @@ test.describe('', () => {
       'from InChI String - Sugars without stereobonds',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1971
-       * Description: Open sugar without stereobonds from InChi string
-       */
+      Test case: EPMLSOPKET-1971
+      Description: Open sugar without stereobonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1971-inchi.txt');
 
@@ -136,9 +136,9 @@ test.describe('', () => {
       'from InChI String - Structure with stereobonds',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1974
-       * Description: Open structure with stereobonds from InChi string
-       */
+      Test case: EPMLSOPKET-1974
+      Description: Open structure with stereobonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1974-inchi.txt');
 
@@ -153,9 +153,9 @@ test.describe('', () => {
       'from InChI String - Fused structure',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1975
-       * Description: Open structure with fused bonds from InChi string
-       */
+      Test case: EPMLSOPKET-1975
+      Description: Open structure with fused bonds from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1975-inchi.txt');
 
@@ -170,9 +170,9 @@ test.describe('', () => {
       'from InChI String - Spiro structure',
     async () => {
       /**
-       * Test case: EPMLSOPKET-1976
-       * Description: Open spiro structure from InChi string
-       */
+      Test case: EPMLSOPKET-1976
+      Description: Open spiro structure from InChi string
+      */
       // add first structure from clipboard to canvas
       const fileContent = await readFileContent('Txt/1976-inchi.txt');
 
@@ -194,9 +194,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - Save empty InChI File', async () => {
     /**
-     * Test case: EPMLSOPKET-1926
-     * Description: Open and Save file - InChi for emty canvas
-     */
+    Test case: EPMLSOPKET-1926
+    Description: Open and Save file - InChi for emty canvas
+    */
     await verifyFileExport(
       page,
       'InChI/empty-canvas-expected.inchi',
@@ -206,9 +206,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Fused structure', async () => {
     /**
-     * Test case: EPMLSOPKET-1954
-     * Description: Open and Save file - InChI String - Fused structure
-     */
+    Test case: EPMLSOPKET-1954
+    Description: Open and Save file - InChI String - Fused structure
+    */
     await openFileAndAddToCanvas(page, 'KET/InChI-fused-structure.ket');
     await verifyFileExport(
       page,
@@ -224,9 +224,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Chain string with single bonds only', async () => {
     /**
-     * Test case: EPMLSOPKET-1939
-     * Description: Open and Save file - InChI String - Chain string with single bonds only
-     */
+    Test case: EPMLSOPKET-1939
+    Description: Open and Save file - InChI String - Chain string with single bonds only
+    */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await verifyFileExport(
       page,
@@ -242,9 +242,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Chain string that contains some double bonds', async () => {
     /**
-     * Test case: EPMLSOPKET-1940
-     * Description: Open and Save file - InChI String - Chain string that contains some double bonds
-     */
+    Test case: EPMLSOPKET-1940
+    Description: Open and Save file - InChI String - Chain string that contains some double bonds
+    */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/(2E,4E,6E)-nona-2,4,6-triene.mol',
@@ -263,9 +263,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Chain string that contains some triple', async () => {
     /**
-     * Test case: EPMLSOPKET-1941
-     * Description: Open and Save file - InChI String - Chain string that contains some triple
-     */
+    Test case: EPMLSOPKET-1941
+    Description: Open and Save file - InChI String - Chain string that contains some triple
+    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/nona-2,4,6-triyne.mol');
     await verifyFileExport(
       page,
@@ -281,9 +281,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Cyclic structure with single bonds only', async () => {
     /**
-     * Test case: EPMLSOPKET-1951
-     * Description: Open and Save file - InChI String - Cyclic structure with single bonds only
-     */
+    Test case: EPMLSOPKET-1951
+    Description: Open and Save file - InChI String - Cyclic structure with single bonds only
+    */
     await openFileAndAddToCanvas(page, 'KET/cyclic-cyclohexane-structure.ket');
     await verifyFileExport(
       page,
@@ -299,9 +299,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Sugars without stereobonds', async () => {
     /**
-     * Test case: EPMLSOPKET-1952
-     * Description: Open and Save file - InChI String - Sugars without stereobonds
-     */
+    Test case: EPMLSOPKET-1952
+    Description: Open and Save file - InChI String - Sugars without stereobonds
+    */
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/sugar_without_stereo.mol',
@@ -320,9 +320,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Structure with stereobonds', async () => {
     /**
-     * Test case: EPMLSOPKET-1953
-     * Description: Open and Save file - InChI String - Structure with stereobonds
-     */
+    Test case: EPMLSOPKET-1953
+    Description: Open and Save file - InChI String - Structure with stereobonds
+    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/Chiral.mol');
     await verifyFileExport(page, 'InChI/Chiral-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
@@ -334,9 +334,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Spiro structure', async () => {
     /**
-     * Test case: EPMLSOPKET-1955
-     * Description: Open and Save file - InChI String - Spiro structure
-     */
+    Test case: EPMLSOPKET-1955
+    Description: Open and Save file - InChI String - Spiro structure
+    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/spiro.mol');
     await verifyFileExport(page, 'InChI/spiro-expected.inchi', FileType.InChI);
     await openFileAndAddToCanvasAsNewProject(
@@ -348,9 +348,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Chain Stucture', async () => {
     /**
-     * Test case: EPMLSOPKET-1927
-     * Description: Open and Save file - InChi for structure
-     */
+    Test case: EPMLSOPKET-1927
+    Description: Open and Save file - InChi for structure
+    */
     const saveStructureTextarea =
       SaveStructureDialog(page).saveStructureTextarea;
 
@@ -369,9 +369,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Unconnected propane-hexane-benzene structure', async () => {
     /**
-     * Test case: EPMLSOPKET-1928
-     * Description: Open and Save file - InChi string for some structures
-     */
+    Test case: EPMLSOPKET-1928
+    Description: Open and Save file - InChi string for some structures
+    */
     await openFileAndAddToCanvas(page, 'KET/propane-hexane-benzene.ket');
     await verifyFileExport(
       page,
@@ -387,9 +387,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - For reaction', async () => {
     /**
-     * Test case: EPMLSOPKET-1929
-     * Description: Open and Save file - InChi string for reaction
-     */
+    Test case: EPMLSOPKET-1929
+    Description: Open and Save file - InChi string for reaction
+    */
     await openFileAndAddToCanvas(
       page,
       'KET/cyclohexane-connecting-arrow-with-benzene.ket',
@@ -409,9 +409,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChi string - for Sgroup', async () => {
     /**
-     * Test case: EPMLSOPKET-1937
-     * Description: Open and Save file - InChi string for Sgroup
-     */
+    Test case: EPMLSOPKET-1937
+    Description: Open and Save file - InChi string for Sgroup
+    */
     const saveStructureDialog = SaveStructureDialog(page);
 
     await openFileAndAddToCanvas(page, 'KET/chain-with-s-group.ket');
@@ -428,9 +428,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Alias', async () => {
     /**
-     * Test case: EPMLSOPKET-1961
-     * Description: Open and Save file - InChI String - Alias
-     */
+    Test case: EPMLSOPKET-1961
+    Description: Open and Save file - InChI String - Alias
+    */
     await openFileAndAddToCanvas(page, 'KET/chain-with-alias.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).setFileName('Alias');
@@ -444,9 +444,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name', async () => {
     /**
-     * Test case: EPMLSOPKET-1964
-     * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name
-     */
+    Test case: EPMLSOPKET-1964
+    Description: Open and Save file - Generate structure from InChI String - inserting incorrect name
+    */
 
     await pasteFromClipboardAndAddToCanvas(
       page,
@@ -467,9 +467,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String - Pseudoatom', async () => {
     /**
-     * Test case: EPMLSOPKET-1962
-     * Description: Open and Save file - InChI String - Pseudoatom
-     */
+    Test case: EPMLSOPKET-1962
+    Description: Open and Save file - InChI String - Pseudoatom
+    */
     await openFileAndAddToCanvas(page, 'KET/chain-with-generic-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -486,9 +486,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChI String for invalid atom symbol or special symbol', async () => {
     /**
-     * Test case: EPMLSOPKET-1938
-     * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
-     */
+    Test case: EPMLSOPKET-1938
+    Description: Open and Save file - InChI String for invalid atom symbol or special symbol
+    */
     await openFileAndAddToCanvas(page, 'KET/chain-with-generic-group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -505,9 +505,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button', async () => {
     /**
-     * Test case: EPMLSOPKET-1965
-     * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
-     */
+    Test case: EPMLSOPKET-1965
+    Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
+    */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
@@ -522,9 +522,9 @@ test.describe('Open and Save InChI file', () => {
 
   test('Open and Save file - InChi string for Rgroup', async () => {
     /**
-     * Test case: EPMLSOPKET-1930
-     * Description: Open and Save file - InChi string for Rgroup
-     */
+    Test case: EPMLSOPKET-1930
+    Description: Open and Save file - InChi string for Rgroup
+    */
     await openFileAndAddToCanvas(page, 'KET/structure-with-R-Group.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

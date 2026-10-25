@@ -468,10 +468,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   /**
-   * if atom is rendered as Abbreviation: O, NH, ...
-   * In this case we need to shift the bond render start position to free space for Atom,
-   * same for the Attachment point
-   */
+  if atom is rendered as Abbreviation: O, NH, ...
+  In this case we need to shift the bond render start position to free space for Atom,
+  same for the Attachment point
+  */
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
     direction: Vec2,
@@ -2176,11 +2176,11 @@ function getSubstitutionCountAttrText(value: number) {
 type AtomCustomQueryValue = string | number | boolean;
 
 /**
- * Minimum shape required by getAtomCustomQuery.
- * Satisfied by both a full Atom instance (query-specific fields nested
- * under queryProperties) and the flat Redux form state produced by the
- * Atom dialog (those fields hoisted to top level by fromAtom).
- */
+Minimum shape required by getAtomCustomQuery.
+Satisfied by both a full Atom instance (query-specific fields nested
+under queryProperties) and the flat Redux form state produced by the
+Atom dialog (those fields hoisted to top level by fromAtom).
+*/
 type AtomQueryInput = Partial<
   Pick<
     Atom,
@@ -2198,9 +2198,9 @@ type AtomQueryInput = Partial<
 } & Partial<AtomQueryProperties>; // flat query fields (form state path)
 
 /**
- * Maps atom properties and SMARTS/query-specific atom fields to the textual
- * Molfile query attributes rendered by getAtomCustomQuery().
- */
+Maps atom properties and SMARTS/query-specific atom fields to the textual
+Molfile query attributes rendered by getAtomCustomQuery().
+*/
 type AtomCustomQueryPropertyName =
   | 'aromaticity'
   | 'charge'
@@ -2464,10 +2464,10 @@ function countExtOverlaps(
 }
 
 /**
- * Returns the perpendicular shift that moves a property label clear of the AP
- * wave glyph when the label's proposed placement overlaps the nominal AP area
- * (#3268).  Returns Vec2(0,0) when no shift is needed.
- */
+Returns the perpendicular shift that moves a property label clear of the AP
+wave glyph when the label's proposed placement overlaps the nominal AP area
+(#3268).  Returns Vec2(0,0) when no shift is needed.
+*/
 function computeLateralApLabelShift(
   atomPos: Vec2,
   apDir: Vec2,

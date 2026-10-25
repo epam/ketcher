@@ -51,9 +51,9 @@ const IS_SUBSCRIPT = 32;
 const IS_SUPERSCRIPT = 64;
 
 /**
- * Extracts font style overrides from a Lexical text node and applies them
- * to the target KET object (part, paragraph, or root text).
- */
+Extracts font style overrides from a Lexical text node and applies them
+to the target KET object (part, paragraph, or root text).
+*/
 function applyFontStyleOverrides(
   target: KetTextStyleOverrides,
   child: LexicalTextChild,

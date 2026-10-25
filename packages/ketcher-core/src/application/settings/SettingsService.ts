@@ -1,7 +1,7 @@
 /**
- * Settings service implementation
- * Centralized settings management with validation, persistence, and reactive updates
- */
+Settings service implementation
+Centralized settings management with validation, persistence, and reactive updates
+*/
 
 import { EventEmitter } from 'events';
 import type { ISettingsService } from './ISettingsService';
@@ -23,40 +23,40 @@ import { SettingsMigration } from './SettingsMigration';
 import { KetcherLogger } from 'utilities';
 
 /**
- * Default storage key for localStorage
- */
+Default storage key for localStorage
+*/
 const DEFAULT_STORAGE_KEY = 'ketcher-opts';
 
 /**
- * SettingsService implementation
- * Provides centralized, validated, and persistent settings management
- *
- * SINGLETON PATTERN - TEMPORARY WORKAROUND
- *
- * This class implements a singleton pattern to address the following issues:
- *
- * 1. React 18 Strict Mode in development causes components to mount → unmount → remount,
- *    which creates multiple Ketcher instances and multiple SettingsService instances.
- *    The second instance overwrites window.ketcher, causing settings sync issues.
- *
- * 2. Redux state in ketcher-react stores settings separately from SettingsService.
- *    When Settings dialog opens, it reads from Redux state which may be out of sync.
- *    The saveSettings() action uses window.ketcher.settingsService, but if multiple
- *    instances exist, they don't share subscribers or in-memory state.
- *
- * 3. Small molecules and macromolecules modes both access window.ketcher.settingsService,
- *    expecting them to be the same instance for settings to sync properly.
- *
- * WARNING: This singleton pattern prevents creating multiple independent SettingsService
- * instances with separate settings (e.g., for multi-editor scenarios). This should be
- * refactored in the future by:
- * - Fixing React component lifecycle to prevent double initialization
- * - Making Redux state fully synchronized with SettingsService via proper subscription
- * - Or removing Redux state dependency entirely and using SettingsService directly
- * - Supporting multiple SettingsService instances with isolated or shared settings as needed
- *
- * TODO: Remove this singleton and implement proper multi-instance support
- */
+SettingsService implementation
+Provides centralized, validated, and persistent settings management
+
+SINGLETON PATTERN - TEMPORARY WORKAROUND
+
+This class implements a singleton pattern to address the following issues:
+
+1. React 18 Strict Mode in development causes components to mount → unmount → remount,
+   which creates multiple Ketcher instances and multiple SettingsService instances.
+   The second instance overwrites window.ketcher, causing settings sync issues.
+
+2. Redux state in ketcher-react stores settings separately from SettingsService.
+   When Settings dialog opens, it reads from Redux state which may be out of sync.
+   The saveSettings() action uses window.ketcher.settingsService, but if multiple
+   instances exist, they don't share subscribers or in-memory state.
+
+3. Small molecules and macromolecules modes both access window.ketcher.settingsService,
+   expecting them to be the same instance for settings to sync properly.
+
+WARNING: This singleton pattern prevents creating multiple independent SettingsService
+instances with separate settings (e.g., for multi-editor scenarios). This should be
+refactored in the future by:
+- Fixing React component lifecycle to prevent double initialization
+- Making Redux state fully synchronized with SettingsService via proper subscription
+- Or removing Redux state dependency entirely and using SettingsService directly
+- Supporting multiple SettingsService instances with isolated or shared settings as needed
+
+TODO: Remove this singleton and implement proper multi-instance support
+*/
 export class SettingsService implements ISettingsService {
   private static instance: SettingsService | null = null;
 
@@ -69,12 +69,12 @@ export class SettingsService implements ISettingsService {
   private initialized = false;
 
   /**
-   * Get the singleton instance of SettingsService.
-   * Creates a new instance if one doesn't exist.
-   *
-   * @param options - Configuration options (only used when creating the first instance)
-   * @returns The singleton SettingsService instance
-   */
+  Get the singleton instance of SettingsService.
+  Creates a new instance if one doesn't exist.
+
+  @param options - Configuration options (only used when creating the first instance)
+  @returns The singleton SettingsService instance
+  */
   static async getInstance(
     options: SettingsServiceOptions = {},
   ): Promise<SettingsService> {
@@ -86,19 +86,19 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Reset the singleton instance.
-   * This is primarily for testing purposes or when you need to force
-   * recreation of the settings service (e.g., after logout, context switch).
-   * Use with caution as this will affect all code using SettingsService.getInstance().
-   */
+  Reset the singleton instance.
+  This is primarily for testing purposes or when you need to force
+  recreation of the settings service (e.g., after logout, context switch).
+  Use with caution as this will affect all code using SettingsService.getInstance().
+  */
   static resetInstance(): void {
     SettingsService.instance = null;
   }
 
   /**
-   * Private constructor to enforce singleton pattern.
-   * Use SettingsService.getInstance() instead.
-   */
+  Private constructor to enforce singleton pattern.
+  Use SettingsService.getInstance() instead.
+  */
   private constructor(options: SettingsServiceOptions = {}) {
     this.storage = options.storage || new LocalStorageAdapter();
     this.validator = options.validator || new SchemaValidator();
@@ -111,9 +111,9 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Initialize the service
-   * Loads from storage, runs migrations, validates, and persists
-   */
+  Initialize the service
+  Loads from storage, runs migrations, validates, and persists
+  */
   async init(): Promise<void> {
     if (this.initialized) {
       return;
@@ -160,18 +160,18 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Get current settings (immutable)
-   */
+  Get current settings (immutable)
+  */
   getSettings(): Settings {
     this.assertInitialized();
     return this.freeze(this.settings);
   }
 
   /**
-   * Update settings (deep merge, validates, persists, emits event)
-   * Returns updated settings on success
-   * Throws SettingsValidationError if validation fails
-   */
+  Update settings (deep merge, validates, persists, emits event)
+  Returns updated settings on success
+  Throws SettingsValidationError if validation fails
+  */
   async updateSettings(partial: DeepPartial<Settings>): Promise<Settings> {
     this.assertInitialized();
 
@@ -215,8 +215,8 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Reset to default settings
-   */
+  Reset to default settings
+  */
   async resetToDefaults(): Promise<Settings> {
     this.assertInitialized();
     const defaults = getDefaultSettings();
@@ -224,8 +224,8 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Load a preset
-   */
+  Load a preset
+  */
   async loadPreset(name: string): Promise<Settings> {
     this.assertInitialized();
 
@@ -238,30 +238,30 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Get available preset names
-   */
+  Get available preset names
+  */
   getAvailablePresets(): string[] {
     return Object.keys(PRESETS);
   }
 
   /**
-   * Validate settings without applying
-   */
+  Validate settings without applying
+  */
   validateSettings(settings: Partial<Settings>): ValidationResult {
     return this.validator.validate(settings);
   }
 
   /**
-   * Export settings as JSON string
-   */
+  Export settings as JSON string
+  */
   exportSettings(): string {
     this.assertInitialized();
     return JSON.stringify(this.settings, null, 2);
   }
 
   /**
-   * Import settings from JSON string
-   */
+  Import settings from JSON string
+  */
   async importSettings(json: string): Promise<Settings> {
     this.assertInitialized();
 
@@ -279,9 +279,9 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Subscribe to settings changes
-   * Returns unsubscribe function
-   */
+  Subscribe to settings changes
+  Returns unsubscribe function
+  */
   subscribe(listener: SettingsListener): Unsubscribe {
     this.emitter.on('settings:changed', listener);
     return () => {
@@ -290,15 +290,15 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Get the settings schema (for UI generation, documentation)
-   */
+  Get the settings schema (for UI generation, documentation)
+  */
   getSchema(): Record<string, DeepPartial<Settings>> {
     return PRESETS;
   }
 
   /**
-   * Deep merge two objects
-   */
+  Deep merge two objects
+  */
   private deepMerge(
     target: Record<string, unknown>,
     source: Record<string, unknown>,
@@ -343,8 +343,8 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Merge partial settings with defaults
-   */
+  Merge partial settings with defaults
+  */
   private mergeWithDefaults(partial: DeepPartial<Settings>): Settings {
     const defaults = getDefaultSettings();
     return this.deepMerge(
@@ -354,15 +354,15 @@ export class SettingsService implements ISettingsService {
   }
 
   /**
-   * Deep freeze object to make it immutable
-   */
+  Deep freeze object to make it immutable
+  */
   private freeze<T>(obj: T): T {
     return globalThis.structuredClone(obj);
   }
 
   /**
-   * Assert that service is initialized
-   */
+  Assert that service is initialized
+  */
   private assertInitialized(): void {
     if (!this.initialized) {
       throw new Error('SettingsService not initialized. Call init() first.');

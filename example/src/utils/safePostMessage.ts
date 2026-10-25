@@ -1,9 +1,9 @@
 /* eslint-disable no-empty */
 /**
- * Safely sends a postMessage to parent window with proper error handling
- * @param message - The message to send
- * @param fallbackOrigin - Fallback origin if parent origin is not available
- */
+Safely sends a postMessage to parent window with proper error handling
+@param message - The message to send
+@param fallbackOrigin - Fallback origin if parent origin is not available
+*/
 export const safePostMessage = (
   message: Record<string, unknown>,
   fallbackOrigin: string = globalThis.location.origin,

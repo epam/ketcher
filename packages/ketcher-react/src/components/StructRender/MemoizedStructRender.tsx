@@ -18,19 +18,19 @@ import { memo } from 'react';
 import StructRender from './StructRender';
 
 /**
- * Memoized version of StructRender that prevents unnecessary re-renders
- * when parent component re-renders but struct/options haven't changed.
- *
- * Performance improvement:
- * - Prevents redundant Raphael rendering operations
- * - Leverages built-in RenderStruct cache more effectively
- * - Critical for list-based layouts (templates, search results)
- *
- * In TemplateTable with 21 items:
- * - Without memo: All 21 items re-render on any parent state change (selection, hover, etc.)
- * - With memo: Only items whose props changed actually re-render
- * - Expected improvement: 95%+ faster on subsequent interactions after initial load
- */
+Memoized version of StructRender that prevents unnecessary re-renders
+when parent component re-renders but struct/options haven't changed.
+
+Performance improvement:
+- Prevents redundant Raphael rendering operations
+- Leverages built-in RenderStruct cache more effectively
+- Critical for list-based layouts (templates, search results)
+
+In TemplateTable with 21 items:
+- Without memo: All 21 items re-render on any parent state change (selection, hover, etc.)
+- With memo: Only items whose props changed actually re-render
+- Expected improvement: 95%+ faster on subsequent interactions after initial load
+*/
 const MemoizedStructRender = memo(StructRender, (prevProps, nextProps) => {
   // Return true if props are equal (skip re-render)
   // Return false if props differ (perform re-render)

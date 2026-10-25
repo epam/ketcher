@@ -17,9 +17,9 @@ import type { Selection } from '../../../../editor/Editor';
 import { getRemovableAttachmentGroupId, onlyHasProperty } from './utils';
 
 /**
- * Count how many MonomerMicromolecule SGroups on the canvas share the same
- * monomer label as the given primary functional group.
- */
+Count how many MonomerMicromolecule SGroups on the canvas share the same
+monomer label as the given primary functional group.
+*/
 function computeTotalMonomerCount(
   editor: Editor,
   primaryFunctionalGroup: FunctionalGroup | undefined,
@@ -42,11 +42,11 @@ function computeTotalMonomerCount(
 }
 
 /**
- * Count how many of the provided functional groups are MonomerMicromolecules
- * with the same label as the primary functional group.
- * Used when the user has multiple monomers selected — the count reflects
- * only the selected instances that will actually be replaced.
- */
+Count how many of the provided functional groups are MonomerMicromolecules
+with the same label as the primary functional group.
+Used when the user has multiple monomers selected — the count reflects
+only the selected instances that will actually be replaced.
+*/
 function computeSelectedMatchingMonomerCount(
   functionalGroups: FunctionalGroup[],
   primaryFunctionalGroup: FunctionalGroup | undefined,
@@ -64,9 +64,9 @@ function computeSelectedMatchingMonomerCount(
 }
 
 /**
- * Returns true when the selection contains atoms or bonds that do NOT belong
- * to any monomer functional group (i.e. plain chemical structure elements).
- */
+Returns true when the selection contains atoms or bonds that do NOT belong
+to any monomer functional group (i.e. plain chemical structure elements).
+*/
 function computeHasNonMonomerStructure(
   editor: Editor,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,

@@ -122,9 +122,9 @@ export async function openFile(page: Page, filename: string) {
 }
 
 /**
- * Open file and put in center of canvas
- * Should be used to prevent extra delay() calls in test cases
- */
+Open file and put in center of canvas
+Should be used to prevent extra delay() calls in test cases
+*/
 export async function openFileAndAddToCanvas(
   page: Page,
   filename: string,
@@ -331,39 +331,39 @@ async function setupStructureFormatComboboxes(
 }
 
 /**
- *  Usage examples:
- *  1. pasteFromClipboardAndAddToMacromoleculesCanvas(
- *    page,
- *    MacroFileType.KetFormat,
- *    'Some KET content',
- *  );
- *
- *  2. pasteFromClipboardAndAddToMacromoleculesCanvas(
- *    page,
- *    [MacroFileType.FASTA, SequenceMonomerType.DNA],
- *    'Some FASTA content of DNA type',
- *  );
- *  3. pasteFromClipboardAndAddToMacromoleculesCanvas(
- *    page,
- *    [MacroFileType.Sequence, SequenceMonomerType.RNA],
- *    'Some Sequence content of RNA type',
- *  );
- *  4. pasteFromClipboardAndAddToMacromoleculesCanvas(
- *    page,
- *    [MacroFileType.Sequence, [SequenceMonomerType.Peptide, PeptideLetterCodeType.threeLetterCode]],
- *    'Some Sequence content of Peptide type of 3-letter code',
- *  );
- *  5. pasteFromClipboardAndAddToMacromoleculesCanvas(
- *   page,
- *   MacroFileType.HELM,
- *   'Some HELM content of RNA type',
- *  );
- *
- * @param {Page} page - The Playwright page instance where the button is located.
- * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceMonomerType., if SequenceMonomerType.=== Peptide - requre [MacroFileType, [SequenceMonomerType, PeptideLetterCodeType]]
- * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
- * @param {errorExpected}  errorMessageExpected - have to be true if you know if error should occure
- */
+ Usage examples:
+ 1. pasteFromClipboardAndAddToMacromoleculesCanvas(
+   page,
+   MacroFileType.KetFormat,
+   'Some KET content',
+ );
+
+ 2. pasteFromClipboardAndAddToMacromoleculesCanvas(
+   page,
+   [MacroFileType.FASTA, SequenceMonomerType.DNA],
+   'Some FASTA content of DNA type',
+ );
+ 3. pasteFromClipboardAndAddToMacromoleculesCanvas(
+   page,
+   [MacroFileType.Sequence, SequenceMonomerType.RNA],
+   'Some Sequence content of RNA type',
+ );
+ 4. pasteFromClipboardAndAddToMacromoleculesCanvas(
+   page,
+   [MacroFileType.Sequence, [SequenceMonomerType.Peptide, PeptideLetterCodeType.threeLetterCode]],
+   'Some Sequence content of Peptide type of 3-letter code',
+ );
+ 5. pasteFromClipboardAndAddToMacromoleculesCanvas(
+  page,
+  MacroFileType.HELM,
+  'Some HELM content of RNA type',
+ );
+
+@param {Page} page - The Playwright page instance where the button is located.
+@param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceMonomerType., if SequenceMonomerType.=== Peptide - requre [MacroFileType, [SequenceMonomerType, PeptideLetterCodeType]]
+@param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
+@param {errorExpected}  errorMessageExpected - have to be true if you know if error should occure
+*/
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
   structureFormat: StructureFormat,

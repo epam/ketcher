@@ -169,9 +169,9 @@ export type LibraryItemDragState = {
 } | null;
 
 /**
- * Identifies a specific free attachment point on a monomer.
- * Used to track drag-over hover targets during library-item drag operations.
- */
+Identifies a specific free attachment point on a monomer.
+Used to track drag-over hover targets during library-item drag operations.
+*/
 export type AttachmentPointTarget = {
   monomer: BaseMonomer;
   attachmentPointName: AttachmentPointName;

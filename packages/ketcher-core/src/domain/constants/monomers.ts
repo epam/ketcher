@@ -117,10 +117,10 @@ export const HalfMonomerSize = MonomerSize / 2;
 export const StandardBondLength = MonomerSize * 2;
 
 /**
- * Classifies monomer library items by chemical role.  Defined here (domain
- * layer) so that domain entities and helpers can use it without importing from
- * the application/formatters layer, which would create circular dependencies.
- */
+Classifies monomer library items by chemical role.  Defined here (domain
+layer) so that domain entities and helpers can use it without importing from
+the application/formatters layer, which would create circular dependencies.
+*/
 export enum KetMonomerClass {
   AminoAcid = 'AminoAcid',
   Sugar = 'Sugar',

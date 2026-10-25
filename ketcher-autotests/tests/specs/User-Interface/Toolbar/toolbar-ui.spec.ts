@@ -194,10 +194,10 @@ test.describe('Open Ketcher', () => {
 
   test('[Shift+Tab] Switches Selection Mode', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET - 18057
-     * Description:
-     * Shortcut should switch modes of the selection tool (lasso, rectangle, structure selection)
-     */
+    Test case: EPMLSOPKET - 18057
+    Description:
+    Shortcut should switch modes of the selection tool (lasso, rectangle, structure selection)
+    */
 
     const repeats = 2;
 

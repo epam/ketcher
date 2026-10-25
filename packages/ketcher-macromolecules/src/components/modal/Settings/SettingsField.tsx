@@ -22,12 +22,12 @@ import { FieldWrapper, FieldLabelContent } from './Settings.styles';
 import type { SettingFieldValue } from './fieldGroups';
 
 /**
- * `labelKey`/`options[].labelKey` are a mix of real "settings.*" translation
- * keys and plain literal text that must never be translated (unit
- * abbreviations px/pt/cm/inch, font family names) - resolving the literal
- * ones through t() would just log a spurious missing-key warning for text
- * that's supposed to render unchanged in every language.
- */
+`labelKey`/`options[].labelKey` are a mix of real "settings.*" translation
+keys and plain literal text that must never be translated (unit
+abbreviations px/pt/cm/inch, font family names) - resolving the literal
+ones through t() would just log a spurious missing-key warning for text
+that's supposed to render unchanged in every language.
+*/
 const resolveSettingLabel = (key: string, t: TFunction) =>
   key.startsWith('settings.') ? t(key) : key;
 

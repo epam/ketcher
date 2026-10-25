@@ -44,9 +44,9 @@ interface ParsedKet {
 }
 
 /**
- * Helper: find a text node in the exported KET whose paragraphs→parts
- * contain a part matching the given predicate.
- */
+Helper: find a text node in the exported KET whose paragraphs→parts
+contain a part matching the given predicate.
+*/
 function findTextNode(
   textNodes: Array<KetTextNode>,
   partPredicate: (part: KetTextPart) => unknown,
@@ -70,17 +70,17 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     page,
   }) => {
     /**
-     * Fixture exercises every "text" type field from the KET v2
-     * specification at root, paragraph and part levels:
-     *   boundingBox (x, y, width, height)
-     *   alignment (left / center / right) — root & paragraph
-     *   indent (first_line, left, right) — root & paragraph
-     *   font.family, font.size — root, paragraph & part
-     *   color — root, paragraph & part
-     *   bold, italic, subscript, superscript — root, paragraph & part
-     *   paragraphs with per-paragraph overrides
-     *   parts with mixed inline formatting
-     */
+    Fixture exercises every "text" type field from the KET v2
+    specification at root, paragraph and part levels:
+      boundingBox (x, y, width, height)
+      alignment (left / center / right) — root & paragraph
+      indent (first_line, left, right) — root & paragraph
+      font.family, font.size — root, paragraph & part
+      color — root, paragraph & part
+      bold, italic, subscript, superscript — root, paragraph & part
+      paragraphs with per-paragraph overrides
+      parts with mixed inline formatting
+    */
     await openFileAndAddToCanvas(page, KET_V2_TEXT_FILE);
 
     // Part-level styles

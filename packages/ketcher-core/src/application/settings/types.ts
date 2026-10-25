@@ -1,6 +1,6 @@
 /**
- * Settings type definitions for Ketcher
- */
+Settings type definitions for Ketcher
+*/
 
 import type { DeepPartial } from 'types';
 
@@ -9,8 +9,8 @@ export type { DeepPartial } from 'types';
 export type CssLengthUnit = 'px' | 'pt' | 'cm' | 'inch';
 
 /**
- * Complete settings structure in flat format
- */
+Complete settings structure in flat format
+*/
 export interface Settings {
   // Editor settings
   readonly resetToSelect: boolean | 'paste';
@@ -97,8 +97,8 @@ export interface Settings {
 }
 
 /**
- * Validation error details
- */
+Validation error details
+*/
 export interface ValidationError {
   path: string;
   message: string;
@@ -106,16 +106,16 @@ export interface ValidationError {
 }
 
 /**
- * Validation result structure
- */
+Validation result structure
+*/
 export interface ValidationResult {
   valid: boolean;
   errors?: ValidationError[];
 }
 
 /**
- * Storage abstraction interface
- */
+Storage abstraction interface
+*/
 export interface ISettingsStorage {
   load(key: string): Promise<Partial<Settings> | null>;
   save(key: string, settings: Settings): Promise<void>;
@@ -124,16 +124,16 @@ export interface ISettingsStorage {
 }
 
 /**
- * Validator abstraction interface
- */
+Validator abstraction interface
+*/
 export interface ISettingsValidator {
   validate(settings: unknown): ValidationResult;
   validatePartial(partial: unknown): ValidationResult;
 }
 
 /**
- * Options for configuring SettingsService
- */
+Options for configuring SettingsService
+*/
 export interface SettingsServiceOptions {
   storage?: ISettingsStorage;
   validator?: ISettingsValidator;
@@ -144,18 +144,18 @@ export interface SettingsServiceOptions {
 }
 
 /**
- * Settings change listener callback
- */
+Settings change listener callback
+*/
 export type SettingsListener = (settings: Settings) => void;
 
 /**
- * Unsubscribe function returned by subscribe
- */
+Unsubscribe function returned by subscribe
+*/
 export type Unsubscribe = () => void;
 
 /**
- * Custom error for settings validation failures
- */
+Custom error for settings validation failures
+*/
 export class SettingsValidationError extends Error {
   constructor(public readonly errors: ValidationError[]) {
     super(

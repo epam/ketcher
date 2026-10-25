@@ -53,10 +53,10 @@ export type MonomerEntityClass =
   ConcreteMonomerEntityClass | typeof AmbiguousMonomer;
 
 /**
- * Maps a monomer library item (concrete or ambiguous) to the corresponding
- * domain entity class and KetMonomerClass enum value.
- * This is a pure domain helper — it has no renderer imports.
- */
+Maps a monomer library item (concrete or ambiguous) to the corresponding
+domain entity class and KetMonomerClass enum value.
+This is a pure domain helper — it has no renderer imports.
+*/
 export function monomerEntityFactory(
   monomer: MonomerItemType,
 ): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];

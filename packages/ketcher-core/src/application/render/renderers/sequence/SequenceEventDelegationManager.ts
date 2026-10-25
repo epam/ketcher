@@ -6,9 +6,9 @@ import { select } from 'd3';
 type ElementType = 'text' | 'background' | 'spacer';
 
 /**
- * This class handles all mouse events for sequence
- * so we don't have to add handlers to each sequence item individually.
- */
+This class handles all mouse events for sequence
+so we don't have to add handlers to each sequence item individually.
+*/
 export class SequenceEventDelegationManager {
   private static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;

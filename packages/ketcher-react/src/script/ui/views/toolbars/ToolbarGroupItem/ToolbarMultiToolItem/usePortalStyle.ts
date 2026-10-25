@@ -60,6 +60,7 @@ function usePortalStyle([
       (isTop ? 0 : spaceBetween + menuItemRect.width) -
       (isTop ? alignmentOffset : 0);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPortalStyle({ top: `${top}px`, left: `${left}px` });
   }, [reference, isOpen, isTop, rootElementSelector]);
 

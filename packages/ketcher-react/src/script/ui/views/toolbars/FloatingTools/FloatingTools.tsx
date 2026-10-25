@@ -36,7 +36,7 @@ export const FloatingTools: React.FC<Props> = ({
   indigoVerification,
   onAction,
 }) => {
-  if (!visible) return null;
+  if (!visible) return undefined;
 
   return (
     <div

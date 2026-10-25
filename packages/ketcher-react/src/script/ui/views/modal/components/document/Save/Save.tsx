@@ -122,7 +122,7 @@ interface CheckState {
 }
 
 interface Editor {
-  selection: () => { atoms?: number[] } | null;
+  selection: () => { atoms?: number[] } | null | undefined;
   errorHandler: (message: string) => void;
   struct: () => Struct;
   render: {
@@ -132,7 +132,7 @@ interface Editor {
   };
 }
 interface SaveDialogProps {
-  server: StructService | null;
+  server: StructService | null | undefined;
   struct: Struct;
   options: StructServiceOptions;
   formState: FormState;
@@ -557,7 +557,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     });
   };
 
-  renderSaveFile = (): JSX.Element | null => {
+  renderSaveFile = (): JSX.Element | null | undefined => {
     const formState = { ...this.props.formState };
     delete formState.moleculeErrors;
     const { format } = formState.result;
@@ -589,11 +589,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  renderWarnings = (): JSX.Element | null => {
+  renderWarnings = (): JSX.Element | null | undefined => {
     const formState = { ...this.props.formState };
     const { format } = formState.result;
 
-    if (!this.isValidStringFormat(format)) return null;
+    if (!this.isValidStringFormat(format)) return undefined;
 
     const warnings = this.getWarnings(format);
 
@@ -607,7 +607,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           </div>
         ))}
       </div>
-    ) : null;
+    ) : undefined;
   };
 
   getButtons = (): JSX.Element[] => {
@@ -726,7 +726,7 @@ const serverSettingsSelector = createSelector([getOptions], (options) =>
 );
 
 const mapStateToProps = (state: AppState) => ({
-  server: state.options.app.server ? state.server : null,
+  server: state.options.app.server ? state.server : undefined,
   struct: state.editor.struct(),
   options: serverSettingsSelector(state),
   formState: state.modal.form,

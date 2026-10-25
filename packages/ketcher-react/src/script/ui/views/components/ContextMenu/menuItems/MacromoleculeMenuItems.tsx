@@ -110,7 +110,7 @@ const MacromoleculeMenuItems = (
 
     const action = fromFragmentDeletion(molecule, itemsToDelete);
     editor.update(action);
-    editor.selection(null);
+    editor.selection(undefined);
     editor.focusCliparea();
   };
 

@@ -17,7 +17,7 @@
 import { updateCursorPosition } from './common';
 import { throttle } from 'lodash';
 
-type mouseListener = ((event: MouseEvent) => void) | null;
+type mouseListener = ((event: MouseEvent) => void) | null | undefined;
 
 const MOUSE_MOVE_THROTTLE_TIMEOUT = 300;
 
@@ -25,8 +25,8 @@ const handleMouseMove = (dispatch, event: MouseEvent) => {
   dispatch(updateCursorPosition(event.clientX, event.clientY));
 };
 
-let pointerMoveListener: mouseListener = null;
-let mouseDownListener: mouseListener = null;
+let pointerMoveListener: mouseListener = undefined;
+let mouseDownListener: mouseListener = undefined;
 
 export function initMouseListener(element) {
   return function (dispatch, getState) {

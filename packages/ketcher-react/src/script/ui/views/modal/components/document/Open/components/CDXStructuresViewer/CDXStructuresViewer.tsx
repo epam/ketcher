@@ -120,7 +120,7 @@ export const CDXStructuresViewer = ({
         />
       );
     }
-    return null;
+    return undefined;
   };
   const renderStructures = () => {
     if (!structList?.length) {

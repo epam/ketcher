@@ -48,12 +48,12 @@ export interface ElementFormData {
   label?: string;
   ap?: { primary: boolean; secondary: boolean };
   atomType?: string;
-  atomList?: string | AtomList | null;
+  atomList?: string | AtomList | null | undefined;
   notList?: boolean;
-  pseudo?: string | null;
-  customQuery?: string | null;
-  rglabel?: number | null;
-  alias?: string | null;
+  pseudo?: string | null | undefined;
+  customQuery?: string | null | undefined;
+  rglabel?: number | null | undefined;
+  alias?: string | null | undefined;
   charge?: string;
   isotope?: string;
   explicitValence?: number;
@@ -65,12 +65,12 @@ export interface ElementFormData {
   unsaturatedAtom?: boolean | number;
   hCount?: number;
   stereoParity?: number;
-  implicitHCount?: number | null;
-  aromaticity?: string | null;
-  ringMembership?: number | null;
-  ringSize?: number | null;
-  connectivity?: number | null;
-  chirality?: string | null;
+  implicitHCount?: number | null | undefined;
+  aromaticity?: string | null | undefined;
+  ringMembership?: number | null | undefined;
+  ringSize?: number | null | undefined;
+  connectivity?: number | null | undefined;
+  chirality?: string | null | undefined;
   /** Fragment ID included in rlabel element payloads fired by the editor. */
   fragId?: number;
 }
@@ -157,7 +157,7 @@ export function toElement(elem: ElementFormData) {
 
     return {
       label: values.length ? 'R#' : 'C',
-      rglabel: values.length === 0 ? null : toRlabel(values),
+      rglabel: values.length === 0 ? undefined : toRlabel(values),
     };
   }
   if (elem.type === 'list' || elem.type === 'not-list')
@@ -168,11 +168,11 @@ export function toElement(elem: ElementFormData) {
   }
   if (elem.atomType === 'list') {
     elem.label = 'L#';
-    elem.pseudo = null;
+    elem.pseudo = undefined;
     elem.atomList = new AtomList({
       notList: !!elem.notList,
       ids:
-        (elem.atomList as string | null)
+        (elem.atomList as string | null | undefined)
           ?.split(',')
           .map((el: string) => Elements.get(el)?.number)
           .filter((id): id is number => id !== undefined) || [],
@@ -184,7 +184,7 @@ export function toElement(elem: ElementFormData) {
 
   if (elem.atomType === 'pseudo') {
     elem.label = elem.pseudo ?? undefined;
-    elem.atomList = null;
+    elem.atomList = undefined;
     delete elem.notList;
     delete elem.atomType;
     return toAtom(elem);
@@ -195,8 +195,8 @@ export function toElement(elem: ElementFormData) {
     (elem.customQuery && elem.customQuery !== '')
   ) {
     elem.label = capitalize(elem.label ?? '');
-    elem.pseudo = null;
-    elem.atomList = null;
+    elem.pseudo = undefined;
+    elem.atomList = undefined;
     delete elem.notList;
     delete elem.atomType;
     return toAtom(elem);
@@ -217,7 +217,7 @@ export function toElement(elem: ElementFormData) {
 }
 
 export function fromAtom(satom?: Atom) {
-  if (!satom) return null;
+  if (!satom) return undefined;
   const alias = satom.alias ?? '';
   const atomType = getAtomType(satom);
   return {
@@ -231,8 +231,14 @@ export function fromAtom(satom?: Atom) {
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
-    charge: satom.charge === null ? '' : satom.charge.toString(),
-    isotope: satom.isotope === null ? '' : satom.isotope.toString(),
+    charge:
+      satom.charge === null || satom.charge === undefined
+        ? ''
+        : satom.charge.toString(),
+    isotope:
+      satom.isotope === null || satom.isotope === undefined
+        ? ''
+        : satom.isotope.toString(),
     explicitValence: satom.explicitValence,
     radical: satom.radical,
     invRet: satom.invRet,
@@ -249,7 +255,7 @@ export function fromAtom(satom?: Atom) {
     connectivity: satom.queryProperties.connectivity,
     chirality: satom.queryProperties.chirality,
     customQuery:
-      satom.queryProperties.customQuery == null
+      satom.queryProperties.customQuery == undefined
         ? ''
         : satom.queryProperties.customQuery.toString(),
   };
@@ -259,11 +265,11 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
   const {
-    aromaticity = null,
-    ringMembership = null,
-    ringSize = null,
-    connectivity = null,
-    chirality = null,
+    aromaticity = undefined,
+    ringMembership = undefined,
+    ringSize = undefined,
+    connectivity = undefined,
+    chirality = undefined,
     customQuery = '',
     ...restAtom
   } = atom;
@@ -271,24 +277,24 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     return {
       ...restAtom,
       label: 'A',
-      atomList: null,
+      atomList: undefined,
       pseudo: undefined,
-      alias: null,
-      charge: null,
-      isotope: null,
+      alias: undefined,
+      charge: undefined,
+      isotope: undefined,
       explicitValence: -1,
       radical: 0,
       ringBondCount: 0,
       hCount: 0,
       substitutionCount: 0,
       unsaturatedAtom: 0,
-      implicitHCount: null,
+      implicitHCount: undefined,
       queryProperties: {
-        aromaticity: null,
-        ringMembership: null,
-        ringSize: null,
-        connectivity: null,
-        chirality: null,
+        aromaticity: undefined,
+        ringMembership: undefined,
+        ringSize: undefined,
+        connectivity: undefined,
+        chirality: undefined,
         customQuery,
       },
       invRet: 0,
@@ -302,12 +308,12 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
 
   const conv = {
     ...restAtom,
-    isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
+    isotope: restAtom.isotope ? Number(restAtom.isotope) : undefined,
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
-    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
-    // Empty string from cleared form field must become null like undefined (not ?? alone).
-    alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
+    charge: restAtom.charge && charge !== 0 ? Number(charge) : undefined,
+    // Empty string from cleared form field must become undefined (not ?? alone).
+    alias: restAtom.alias === '' ? undefined : (restAtom.alias ?? undefined),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
@@ -316,7 +322,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
       ringSize,
       connectivity,
       chirality,
-      customQuery: customQuery === '' ? null : customQuery,
+      customQuery: customQuery === '' ? undefined : customQuery,
     },
   };
 
@@ -336,7 +342,7 @@ function fromAtomList(satom: Atom) {
 
 function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
   return {
-    pseudo: null,
+    pseudo: undefined,
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
@@ -347,8 +353,10 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
   };
 }
 
-export function fromStereoLabel(stereoLabel: string | null) {
-  if (stereoLabel === null) return { type: null };
+export function fromStereoLabel(stereoLabel: string | null | undefined) {
+  if (stereoLabel === null || stereoLabel === undefined) {
+    return { type: undefined };
+  }
   const typeMatch = stereoLabel.match(/\D+/g);
   if (!typeMatch?.length) {
     return { type: stereoLabel, orNumber: 0, andNumber: 0 };
@@ -381,11 +389,11 @@ export function fromStereoLabel(stereoLabel: string | null) {
     };
   }
 
-  return { type: null };
+  return { type: undefined };
 }
 
 export function toStereoLabel(stereoLabel: {
-  type: string | null;
+  type: string | null | undefined;
   andNumber?: number;
   orNumber?: number;
 }) {
@@ -401,7 +409,7 @@ export function toStereoLabel(stereoLabel: {
   }
 }
 
-function fromApoint(sap: AttachmentPoints | null) {
+function fromApoint(sap: AttachmentPoints | null | undefined) {
   return {
     primary: ((sap ?? 0) & 1) > 0,
     secondary: ((sap ?? 0) & 2) > 0,
@@ -432,10 +440,11 @@ function toRlabel(values: number[]) {
 }
 
 export function fromBond(sbond?: Bond) {
-  if (!sbond) return null;
+  if (!sbond) return undefined;
   const type = sbond.type;
   const stereo = sbond.stereo;
-  const isCustomQuery = sbond.customQuery !== null;
+  const isCustomQuery =
+    sbond.customQuery !== null && sbond.customQuery !== undefined;
   return {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
@@ -445,12 +454,12 @@ export function fromBond(sbond?: Bond) {
 }
 
 export function toBond(bond: ReturnType<typeof fromBond>) {
-  if (!bond) return null;
+  if (!bond) return undefined;
   const isCustomQuery = bond.customQuery !== '';
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    customQuery: !isCustomQuery ? null : bond.customQuery,
+    customQuery: !isCustomQuery ? undefined : bond.customQuery,
     ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }

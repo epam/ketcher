@@ -46,15 +46,15 @@ interface TableProps {
 
 const Table = (props: TableProps) => {
   const { t } = useTranslation(['common', 'dialogs']);
-  const [value, setValue] = useState<string | null>(
-    props.pseudo ? (props.label ?? null) : null,
+  const [value, setValue] = useState<string | null | undefined>(
+    props.pseudo ? (props.label ?? undefined) : undefined,
   );
 
   const selected = (label: string): boolean => value === label;
 
-  const result = (): GenericElement | null => {
+  const result = (): GenericElement | null | undefined => {
     if (!value?.length) {
-      return null;
+      return undefined;
     }
     return { type: 'gen', label: value, pseudo: value };
   };
@@ -83,7 +83,7 @@ const Table = (props: TableProps) => {
         selected={selected}
         onAtomSelect={onAtomSelect}
         onAtomActivate={onAtomActivate}
-        disabledQueryElements={props.disabledQueryElements ?? null}
+        disabledQueryElements={props.disabledQueryElements ?? undefined}
       ></GenericGroups>
     </Dialog>
   );

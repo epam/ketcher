@@ -28,7 +28,7 @@ interface RxnArrowResizeData {
   id: number;
   d: Vec2;
   current: Vec2;
-  anchor: Vec2 | null;
+  anchor: Vec2 | null | undefined;
   noinvalidate: boolean;
 }
 export class RxnArrowResize extends Base {
@@ -39,7 +39,7 @@ export class RxnArrowResize extends Base {
     id: number,
     d: Vec2,
     current: Vec2,
-    anchor: Vec2 | null,
+    anchor: Vec2 | null | undefined,
     noinvalidate: boolean,
     isSnappingEnabled: boolean,
   ) {

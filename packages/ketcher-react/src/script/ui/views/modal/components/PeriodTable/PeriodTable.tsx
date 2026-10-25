@@ -55,7 +55,7 @@ type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
 
 interface TableState {
   type: PeriodTableType;
-  value: string | string[] | null;
+  value: string | string[] | null | undefined;
   current: Element;
   isInfo: boolean;
 }
@@ -65,7 +65,7 @@ class Table extends Component<TableProps, TableState> {
     super(props);
     const heliumElement = Elements.get(2);
 
-    let initialValue: string | string[] | null = null;
+    let initialValue: string | string[] | null | undefined = undefined;
     if (props.values) {
       initialValue = props.values;
     } else if (!props.pseudo && props.label) {
@@ -89,7 +89,7 @@ class Table extends Component<TableProps, TableState> {
     } else {
       this.setState({
         type,
-        value: type === 'atom' || type === 'gen' ? null : [],
+        value: type === 'atom' || type === 'gen' ? undefined : [],
       });
     }
   };
@@ -134,10 +134,10 @@ class Table extends Component<TableProps, TableState> {
   result = (): PeriodTableResult => {
     const { type, value } = this.state;
     if (!value || (Array.isArray(value) && !value.length)) {
-      return null;
+      return undefined;
     }
     if (type === 'atom') {
-      return { label: value as string, pseudo: null };
+      return { label: value as string, pseudo: undefined };
     } else if (type === 'gen') {
       return { type, label: value as string, pseudo: value as string };
     }

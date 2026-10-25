@@ -87,10 +87,10 @@ type FragSelection = { atoms: number[]; bonds: number[] };
 export function getFragSelection(
   ctab: ReStruct,
   fragId: number,
-): FragSelection | null {
+): FragSelection | null | undefined {
   const frag = ctab.frags.get(fragId);
 
-  if (!frag) return null;
+  if (!frag) return undefined;
 
   return {
     atoms: frag.fragGetAtoms(ctab, fragId),
@@ -249,7 +249,7 @@ export function onSelectionStart(
   editor: Editor,
   lassoHelper: LassoHelper,
 ) {
-  if (!event.shiftKey) editor.selection(null);
+  if (!event.shiftKey) editor.selection(undefined);
   if (!lassoHelper.fragment) lassoHelper.begin(event);
 }
 
@@ -291,7 +291,7 @@ export function onSelectionEnd(
       !event.shiftKey &&
       editor.render.clientArea.contains(event.target as Node)
     )
-      editor.selection(null);
+      editor.selection(undefined);
   }
 }
 

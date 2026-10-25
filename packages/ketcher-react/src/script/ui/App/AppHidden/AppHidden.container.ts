@@ -26,6 +26,6 @@ const mapDispatchToProps = (dispatch: Dispatch): AppHiddenCallProps => ({
   },
 });
 
-const AppHiddenContainer = connect(null, mapDispatchToProps)(AppHidden);
+const AppHiddenContainer = connect(undefined, mapDispatchToProps)(AppHidden);
 
 export { AppHiddenContainer };

@@ -43,7 +43,7 @@ import { useTranslation } from 'react-i18next';
 export interface FormOwnProps {
   children: React.ReactNode;
   schema: FormSchema;
-  init?: Record<string, unknown> | null;
+  init?: Record<string, unknown> | null | undefined;
   customValid?: Record<string, (value: string) => boolean | string>;
   serialize?: Record<string, string>;
   deserialize?: Record<string, string>;
@@ -194,7 +194,7 @@ class Form extends Component<FormProps> {
   field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
     const { result, errors } = this.props;
     const value = result[name];
-    const extraValue = extraName ? result[extraName] : null;
+    const extraValue = extraName ? result[extraName] : undefined;
 
     return {
       dataError: errors?.[name],
@@ -230,7 +230,7 @@ class Form extends Component<FormProps> {
   }
 }
 
-export default connect(null, (dispatch) => ({
+export default connect(undefined, (dispatch) => ({
   onUpdate: (
     result: Record<string, unknown>,
     valid: boolean,
@@ -252,7 +252,7 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
 
 function renderLabelContent(
   title: string,
-  tooltip: string | null,
+  tooltip: string | null | undefined,
 ): React.ReactNode {
   if (!title) {
     return '';
@@ -281,7 +281,7 @@ function renderLabelContent(
 
 function renderLabelContentAfter(
   title: string,
-  tooltip: string | null,
+  tooltip: string | null | undefined,
 ): React.ReactNode {
   if (!title) {
     return '';
@@ -316,7 +316,7 @@ function Label({
 }: Readonly<LabelProps>) {
   const { t } = useTranslation();
   const resolvedTitle = resolveTranslatableText(title, t) ?? '';
-  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? undefined;
   return (
     <label {...props}>
       {labelPos !== 'after' &&

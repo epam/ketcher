@@ -31,7 +31,7 @@ import type {
 const initial: ToolbarState = {
   freqAtoms: [],
   currentAtom: 0,
-  opened: null,
+  opened: undefined,
   visibleTools: {
     select: 'select-rectangle',
   },
@@ -40,7 +40,7 @@ const MAX_ATOMS = 7;
 
 function updateVisibleTools(
   visibleTool: VisibleTools,
-  activeTool: VisibleTools | null,
+  activeTool: VisibleTools | null | undefined,
 ): VisibleTools {
   const regExp = /(bond)(-)(common|stereo|query)/;
   const menuHeight = globalThis.innerHeight;
@@ -59,7 +59,7 @@ function updateVisibleTools(
   );
 }
 
-let resizeListener: VoidFunction | null = null;
+let resizeListener: VoidFunction | null | undefined = undefined;
 
 export function initResize() {
   return function (
@@ -79,7 +79,7 @@ export function initResize() {
 export function removeResizeListener(): void {
   if (resizeListener) {
     removeEventListener('resize', resizeListener);
-    resizeListener = null;
+    resizeListener = undefined;
   }
 }
 
@@ -94,10 +94,10 @@ export default function (
       return visibleTool
         ? {
             ...state,
-            opened: null,
+            opened: undefined,
             visibleTools: { ...state.visibleTools, ...visibleTool },
           }
-        : { ...state, opened: null };
+        : { ...state, opened: undefined };
     }
     case 'ADD_ATOMS': {
       const newState = addFreqAtom(
@@ -110,18 +110,18 @@ export default function (
     case 'CLEAR_VISIBLE': {
       const activeTool = toolInMenu(action.data);
       const correctTools = updateVisibleTools(state.visibleTools, activeTool);
-      return { ...state, opened: null, visibleTools: { ...correctTools } };
+      return { ...state, opened: undefined, visibleTools: { ...correctTools } };
     }
     case 'OPENED': {
       const { data } = action;
       return data.isSelected && state.opened
-        ? { ...state, opened: null }
+        ? { ...state, opened: undefined }
         : { ...state, opened: data.menuName };
     }
     case 'UPDATE':
-      return { ...state, opened: null };
+      return { ...state, opened: undefined };
     case 'MODAL_OPEN':
-      return { ...state, opened: null };
+      return { ...state, opened: undefined };
     default:
       return state;
   }
@@ -151,23 +151,23 @@ export function addAtoms(atomLabel: string): AddAtomsAction {
   };
 }
 
-function toolInMenu(action: ActiveTool): VisibleTools | null {
+function toolInMenu(action: ActiveTool): VisibleTools | null | undefined {
   const tool = Object.keys(tools).find((toolName) =>
     isEqual(action, tools[toolName].action),
   );
 
-  const sel = tool ? document.getElementById(tool) : null;
+  const sel = tool ? document.getElementById(tool) : undefined;
   const dropdown = sel && hiddenAncestor(sel);
 
   return sel && dropdown && dropdown.id !== ''
     ? { [dropdown.id]: sel.id }
-    : null;
+    : undefined;
 }
 
 export function hiddenAncestor(
-  el: HTMLElement | null,
+  el: HTMLElement | null | undefined,
   base?: HTMLElement,
-): HTMLElement | null {
+): HTMLElement | null | undefined {
   base = base || document.body;
   let findEl = el;
 
@@ -176,7 +176,7 @@ export function hiddenAncestor(
     globalThis.getComputedStyle(findEl).overflow !== 'hidden' &&
     !findEl.classList.contains('opened')
   ) {
-    if (findEl === base) return null;
+    if (findEl === base) return undefined;
     findEl = findEl.parentElement;
   }
 

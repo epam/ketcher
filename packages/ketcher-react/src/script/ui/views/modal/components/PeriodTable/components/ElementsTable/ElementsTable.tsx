@@ -78,7 +78,7 @@ function rowPartition(elements: Element[]): Row[] {
 }
 
 interface ElementsTableProps {
-  value: string | string[] | null;
+  value: string | string[] | null | undefined;
   currentEvents: (element: Element) => {
     onMouseEnter: () => void;
     onMouseLeave: () => void;

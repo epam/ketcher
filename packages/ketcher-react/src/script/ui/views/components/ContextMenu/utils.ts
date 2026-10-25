@@ -112,7 +112,7 @@ export const isHydrogenBondBetweenMonomers = (
   bond?.type === Bond.PATTERN.TYPE.HYDROGEN &&
   isBondBetweenMonomers(bond, struct);
 
-export const noOperation = () => null;
+export const noOperation = () => undefined;
 
 export function getEditableAtomIds(struct: Struct, atomIds: number[]) {
   return atomIds.filter((atomId) => struct.atoms.has(atomId));
@@ -213,7 +213,7 @@ export function areSelectedBondsAttachedToSelectedAtoms(
 
 export function isAttachmentGroupCreationSelectionValid(
   struct: Struct,
-  selection: Selection | null,
+  selection: Selection | null | undefined,
 ): boolean {
   if (!selection?.atoms || selection.atoms.length < 2) {
     return false;
@@ -249,10 +249,10 @@ export function isAttachmentGroupCreationSelectionValid(
 
 export function getRemovableAttachmentGroupId(
   struct: Struct,
-  selection: Selection | null,
-): number | null {
+  selection: Selection | null | undefined,
+): number | undefined {
   if (!selection) {
-    return null;
+    return undefined;
   }
 
   const hasDisallowedSelectedItems = Object.entries(selection).some(
@@ -262,12 +262,12 @@ export function getRemovableAttachmentGroupId(
       value.length > 0,
   );
   if (hasDisallowedSelectedItems) {
-    return null;
+    return undefined;
   }
 
   const selectedAttachmentGroupIds = selection.attachmentGroups ?? [];
   if (selectedAttachmentGroupIds.length > 1) {
-    return null;
+    return undefined;
   }
 
   const selectedAtomIds = selection.atoms ?? [];
@@ -275,7 +275,7 @@ export function getRemovableAttachmentGroupId(
 
   if (attachmentGroupId === undefined) {
     if (selectedAtomIds.length === 0) {
-      return null;
+      return undefined;
     }
 
     const matchingAttachmentGroupIds: number[] = [];
@@ -286,19 +286,19 @@ export function getRemovableAttachmentGroupId(
     });
 
     if (matchingAttachmentGroupIds.length !== 1) {
-      return null;
+      return undefined;
     }
     attachmentGroupId = matchingAttachmentGroupIds[0];
   }
 
   const attachmentGroup = struct.attachmentGroups.get(attachmentGroupId);
   if (!attachmentGroup) {
-    return null;
+    return undefined;
   }
 
   const attachmentGroupAtomIds = new Set(attachmentGroup.atomIds);
   if (selectedAtomIds.some((atomId) => !attachmentGroupAtomIds.has(atomId))) {
-    return null;
+    return undefined;
   }
 
   const selectedBondsBelongToAttachmentGroup = (selection.bonds ?? []).every(
@@ -312,5 +312,5 @@ export function getRemovableAttachmentGroupId(
     },
   );
 
-  return selectedBondsBelongToAttachmentGroup ? attachmentGroupId : null;
+  return selectedBondsBelongToAttachmentGroup ? attachmentGroupId : undefined;
 }

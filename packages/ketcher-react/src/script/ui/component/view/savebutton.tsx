@@ -27,7 +27,7 @@ import { fileSaver } from './saveButton.utils';
 import type { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: StructService | null;
+  server?: StructService | null | undefined;
   filename: string;
   data?: Blob | string;
   getData?: () => Blob | string;
@@ -45,7 +45,7 @@ type Props = {
 type SaveButtonProps = PropsWithChildren<Props>;
 
 const SaveButton = (props: SaveButtonProps) => {
-  const noop = () => null;
+  const noop = () => undefined;
   const {
     server,
     filename = 'unnamed',

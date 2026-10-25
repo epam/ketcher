@@ -22,7 +22,7 @@ const useAttachmentGroupCreate = () => {
       const atomIds = props?.atomIds ?? [];
 
       editor.update(fromAttachmentGroupAddition(editor.render.ctab, atomIds));
-      editor.selection(null);
+      editor.selection(undefined);
     },
     [ketcherId],
   );

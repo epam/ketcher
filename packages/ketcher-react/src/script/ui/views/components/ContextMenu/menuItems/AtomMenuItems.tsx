@@ -144,7 +144,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       } else {
         return atomGetAttr(ctab, atomId, key as AtomAttributeName);
       }
-    } else return null;
+    } else return undefined;
   };
 
   const updateAtomProperty = (

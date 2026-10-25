@@ -129,11 +129,11 @@ const mapDispatchToProps = (dispatch) => ({
   onToolOpen: () =>
     dispatch({
       type: 'OPENED',
-      data: { menuName: null, isSelected: null },
+      data: { menuName: undefined, isSelected: undefined },
     }),
 });
 
 export const ElementWithDropdown = connect(
-  null,
+  undefined,
   mapDispatchToProps,
 )(MenuItemWithDropdown);

@@ -30,7 +30,7 @@ class RGroupAtomTool implements Tool {
 
   constructor(editor) {
     // TODO: map atoms with labels
-    editor.selection(null);
+    editor.selection(undefined);
     this.editor = editor;
   }
 
@@ -41,10 +41,10 @@ class RGroupAtomTool implements Tool {
     if (ci) {
       const atom = struct.atoms.get(ci.id);
       if (atom?.attachmentPoints === null) {
-        this.editor.hover(ci, null, event);
+        this.editor.hover(ci, undefined, event);
       }
     } else {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
     }
   }
 
@@ -93,23 +93,27 @@ class RGroupAtomTool implements Tool {
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       propsDialog(
         this.editor,
-        null,
+        undefined,
         CoordinateTransformation.pageToModel(event, rnd),
       );
       return true;
     } else if (ci.map === 'atoms') {
       const struct = this.editor.render.ctab.molecule;
       const atom = struct.atoms.get(ci.id);
-      this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
+      this.editor.hover(
+        this.editor.findItem(event, ['atoms']),
+        undefined,
+        event,
+      );
 
       if (atom?.attachmentPoints !== null) {
         return;
       }
 
-      propsDialog(this.editor, ci.id, null);
+      propsDialog(this.editor, ci.id, undefined);
       return true;
     }
     return true;
@@ -118,14 +122,14 @@ class RGroupAtomTool implements Tool {
 
 function propsDialog(editor, id, pos) {
   const struct = editor.render.ctab.molecule;
-  const atom = id || id === 0 ? struct.atoms.get(id) : null;
+  const atom = id || id === 0 ? struct.atoms.get(id) : undefined;
   const rglabel = atom ? atom.rglabel : 0;
   const label = atom ? atom.label : 'R#';
 
   const res = editor.event.elementEdit.dispatch({
     label: 'R#',
     rglabel,
-    fragId: atom ? atom.fragment : null,
+    fragId: atom ? atom.fragment : undefined,
   });
 
   Promise.resolve(res)

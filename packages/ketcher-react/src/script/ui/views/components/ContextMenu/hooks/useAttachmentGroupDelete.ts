@@ -33,7 +33,7 @@ const useAttachmentGroupDelete = () => {
       editor.update(
         fromAttachmentGroupDeletion(editor.render.ctab, attachmentGroupId),
       );
-      editor.selection(null);
+      editor.selection(undefined);
       editor.focusCliparea();
     },
     [ketcherId],

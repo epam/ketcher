@@ -391,7 +391,7 @@ describe('Utils', () => {
           attachmentGroups: [attachmentGroupId],
           atoms: [firstAtomId, unrelatedAtomId],
         }),
-      ).toBeNull();
+      ).toBeUndefined();
     });
 
     it('rejects bonds that do not belong to the Attachment Group', () => {
@@ -412,7 +412,7 @@ describe('Utils', () => {
           atoms: [firstAtomId],
           bonds: [externalBondId],
         }),
-      ).toBeNull();
+      ).toBeUndefined();
     });
 
     it('rejects multiple Attachment Groups and unrelated selected items', () => {
@@ -427,13 +427,13 @@ describe('Utils', () => {
         getRemovableAttachmentGroupId(struct, {
           attachmentGroups: [attachmentGroupId, secondAttachmentGroupId],
         }),
-      ).toBeNull();
+      ).toBeUndefined();
       expect(
         getRemovableAttachmentGroupId(struct, {
           atoms: [firstAtomId],
           rxnArrows: [0],
         }),
-      ).toBeNull();
+      ).toBeUndefined();
     });
   });
 });

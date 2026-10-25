@@ -64,8 +64,8 @@ const FileDrop = ({
   const getClassesString = useMemo((): string => {
     const classes = [
       parentStyles.dropContainer,
-      isDragActive ? styles.isHovered : null,
-      disabled ? styles.isDisabled : null,
+      isDragActive ? styles.isHovered : undefined,
+      disabled ? styles.isDisabled : undefined,
     ];
     return classes.join(' ');
   }, [isDragActive, disabled]);

@@ -27,6 +27,6 @@ describe('couldBeSaved', () => {
       SupportedFormat.mol,
     );
 
-    expect(warnings).toBeNull();
+    expect(warnings).toBeUndefined();
   });
 });

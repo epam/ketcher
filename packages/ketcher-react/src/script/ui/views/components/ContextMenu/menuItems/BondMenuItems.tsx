@@ -56,11 +56,11 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
 
     return bondIds.length > 0
-      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? null)
-      : null;
+      ? (editor.render.ctab.molecule.bonds.get(bondIds[0]) ?? undefined)
+      : undefined;
   }, [props.propsFromTrigger, editor]);
 
-  const bondData = bond ? { type: bond.type, stereo: bond.stereo } : null;
+  const bondData = bond ? { type: bond.type, stereo: bond.stereo } : undefined;
 
   const bondBetweenMonomers = useMemo(
     () => isBondBetweenMonomers(bond, editor.render.ctab.molecule),

@@ -529,7 +529,7 @@ const SettingsDialog = (props: Props) => {
 };
 
 const mapStateToProps = (state) => ({
-  server: state.options.app.server ? state.server : null,
+  server: state.options.app.server ? state.server : undefined,
   appOpts: state.options.app,
   initState: state.options.settings,
   formState: state.modal.form,

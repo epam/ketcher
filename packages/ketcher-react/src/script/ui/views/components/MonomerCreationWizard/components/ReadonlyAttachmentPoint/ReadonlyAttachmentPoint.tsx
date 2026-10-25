@@ -51,9 +51,9 @@ const ReadonlyAttachmentPoint = ({
 
     const mouseLeaveHandler = () => {
       if (atomId !== undefined) {
-        editor.highlightAtomById(null);
+        editor.highlightAtomById(undefined);
       } else {
-        editor.highlightConnectionAttachmentPoint(null);
+        editor.highlightConnectionAttachmentPoint(undefined);
       }
     };
 
@@ -114,7 +114,7 @@ const ReadonlyAttachmentPoint = ({
   return (
     <AttachmentPointControls
       data={selectsData}
-      onNameChange={() => null}
+      onNameChange={() => undefined}
       onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}
       highlight={highlight}

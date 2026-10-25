@@ -39,22 +39,26 @@ function getUniqueCiId(ci: ClosestItemType) {
 class TemplatePreview {
   private readonly editor: Editor;
   private readonly template;
-  private readonly mode: 'fg' | null;
-  private floatingPreviewAction: Action | null;
-  private connectedPreviewAction: Action | null;
-  private connectedPreviewTimeout: ReturnType<typeof setTimeout> | null = null;
-  private lastPreviewId: string | null;
+  private readonly mode: 'fg' | null | undefined;
+  private floatingPreviewAction: Action | null | undefined;
+  private connectedPreviewAction: Action | null | undefined;
+  private connectedPreviewTimeout:
+    ReturnType<typeof setTimeout> | null | undefined = undefined;
+  private lastPreviewId: string | null | undefined;
 
-  private floatingPreview: {
-    atoms: number[];
-    bonds: number[];
-    rxnArrows: number[];
-    rxnPluses: number[];
-    texts: number[];
-    images: number[];
-    simpleObjects: number[];
-    multitailArrows: number[];
-  } | null;
+  private floatingPreview:
+    | {
+        atoms: number[];
+        bonds: number[];
+        rxnArrows: number[];
+        rxnPluses: number[];
+        texts: number[];
+        images: number[];
+        simpleObjects: number[];
+        multitailArrows: number[];
+      }
+    | null
+    | undefined;
 
   private position: Vec2;
   private previousPosition: Vec2;
@@ -63,11 +67,11 @@ class TemplatePreview {
     this.editor = editor;
     this.template = template;
     this.floatingPreviewAction = new Action();
-    this.connectedPreviewAction = null;
-    this.connectedPreviewTimeout = null;
-    this.lastPreviewId = null;
+    this.connectedPreviewAction = undefined;
+    this.connectedPreviewTimeout = undefined;
+    this.lastPreviewId = undefined;
     this.mode = mode;
-    this.floatingPreview = null;
+    this.floatingPreview = undefined;
     this.position = new Vec2();
     this.previousPosition = new Vec2();
   }
@@ -90,7 +94,7 @@ class TemplatePreview {
   }
 
   private getPreviewTarget(event: PointerEvent) {
-    const ci: ClosestItemType | null = this.editor.findItem(event, [
+    const ci: ClosestItemType | null | undefined = this.editor.findItem(event, [
       'atoms',
       'bonds',
     ]);
@@ -98,7 +102,7 @@ class TemplatePreview {
     if (ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false) {
       return ci;
     } else {
-      return null;
+      return undefined;
     }
   }
 
@@ -137,7 +141,7 @@ class TemplatePreview {
       if (!this.floatingPreview) {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
-        this.editor.render.update(false, null);
+        this.editor.render.update(false, undefined);
       } else {
         this.moveFloatingPreview();
       }
@@ -155,7 +159,7 @@ class TemplatePreview {
       },
       dist,
     );
-    this.editor.render.update(false, null);
+    this.editor.render.update(false, undefined);
   }
 
   private getFloatingPreviewFragmentIds(): number[] {
@@ -176,27 +180,27 @@ class TemplatePreview {
       position,
     );
 
-    this.editor.render.update(true, null);
+    this.editor.render.update(true, undefined);
   }
 
   private hideFloatingPreview() {
     if (this.floatingPreviewAction) {
       const action = this.floatingPreviewAction.perform(this.restruct);
       this.editor.update(action, true);
-      this.floatingPreviewAction = null;
-      this.floatingPreview = null;
+      this.floatingPreviewAction = undefined;
+      this.floatingPreview = undefined;
     }
   }
 
   public hideConnectedPreview() {
     if (this.connectedPreviewAction) {
       this.connectedPreviewAction.perform(this.restruct);
-      this.connectedPreviewAction = null;
+      this.connectedPreviewAction = undefined;
       this.editor.render.update();
     }
     if (this.connectedPreviewTimeout) {
       clearTimeout(this.connectedPreviewTimeout);
-      this.connectedPreviewTimeout = null;
+      this.connectedPreviewTimeout = undefined;
     }
   }
 

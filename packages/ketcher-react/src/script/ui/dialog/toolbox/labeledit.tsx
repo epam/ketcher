@@ -26,8 +26,8 @@ import styles from './labelEdit.module.less';
 
 interface AtomLabelData {
   label: string;
-  charge: number | null;
-  isotope: number | null;
+  charge: number | undefined;
+  isotope: number | undefined;
   radical: number;
 }
 
@@ -61,7 +61,8 @@ export function serialize(lc: AtomLabelData): string {
 const LABEL_REGEX = /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i;
 const VALID_GENERIC_LABELS = new Set(['A', 'Q', 'X', 'M']);
 
-const isValidLabel = (value: string): boolean => deserialize(value) !== null;
+const isValidLabel = (value: string): boolean =>
+  deserialize(value) !== undefined;
 
 function parseCharge(chargeStr: string): number {
   let charge = Number.parseInt(chargeStr, 10);
@@ -74,24 +75,26 @@ function parseCharge(chargeStr: string): number {
   return charge;
 }
 
-export function deserialize(value: string): AtomLabelData | null {
+export function deserialize(value: string): AtomLabelData | undefined {
   const match = LABEL_REGEX.exec(value);
   if (!match) {
-    return null;
+    return undefined;
   }
 
   const label = match[2] === '*' ? 'A' : capitalize(match[2]);
-  const isotope: number | null = match[1]
+  const isotope: number | undefined = match[1]
     ? Number.parseInt(match[1], 10)
-    : null;
+    : undefined;
   const radical = match[3] ? ({ ':': 1, '.': 2, '^^': 3 }[match[3]] ?? 0) : 0;
-  const charge: number | null = match[4] ? parseCharge(match[4]) : null;
+  const charge: number | undefined = match[4]
+    ? parseCharge(match[4])
+    : undefined;
 
   if (VALID_GENERIC_LABELS.has(label) || Elements.get(label)) {
     return { label, charge, isotope, radical };
   }
 
-  return null;
+  return undefined;
 }
 
 function LabelEdit(props: Readonly<LabelEditProps>) {

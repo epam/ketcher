@@ -44,7 +44,7 @@ type OpenButtonState = {
 };
 
 class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
-  private btn: HTMLInputElement | null = null;
+  private btn: HTMLInputElement | null | undefined = undefined;
   private isMounted = false;
   private initOpenerRequestId = 0;
 
@@ -82,7 +82,7 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
 
   open(ev: ChangeEvent<HTMLInputElement>) {
     const files = ev.target.files;
-    const noop = () => null;
+    const noop = () => undefined;
     const { onLoad = noop, onError = noop } = this.props;
 
     if (this.state.opener && files?.length) {

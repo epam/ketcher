@@ -20,8 +20,8 @@ import type { Tool } from './Tool';
 
 class HandTool implements Tool {
   private readonly editor: Editor;
-  private begPos: Vec2 | null = null;
-  private endPos: Vec2 | null = null;
+  private begPos: Vec2 | null | undefined = undefined;
+  private endPos: Vec2 | null | undefined = undefined;
 
   constructor(editor) {
     this.editor = editor;
@@ -43,12 +43,12 @@ class HandTool implements Tool {
   mousemove(event) {
     this.editor.event.cursor.dispatch({ status: 'move' });
     this.editor.hover(
-      this.editor.findItem(event, ['atoms', 'bonds'], null),
-      null,
+      this.editor.findItem(event, ['atoms', 'bonds'], undefined),
+      undefined,
       event,
     );
 
-    if (this.begPos == null) {
+    if (this.begPos == undefined) {
       return;
     }
     const { clientX, clientY } = event;
@@ -71,8 +71,8 @@ class HandTool implements Tool {
     if (this.begPos === null) return;
     const rnd = this.editor.render;
     this.endPos = CoordinateTransformation.pageToModel(event, rnd);
-    this.begPos = null;
-    this.endPos = null;
+    this.begPos = undefined;
+    this.endPos = undefined;
     rnd.update(false);
   }
 
@@ -81,8 +81,8 @@ class HandTool implements Tool {
   }
 
   mouseLeaveClientArea() {
-    this.begPos = null;
-    this.endPos = null;
+    this.begPos = undefined;
+    this.endPos = undefined;
     this.editor.event.cursor.dispatch({ status: 'leave' });
   }
 

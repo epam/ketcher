@@ -35,7 +35,7 @@ class SimpleObjectTool implements Tool {
   constructor(editor: Editor, mode: SimpleObjectMode) {
     this.mode = mode;
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousedown(event) {
@@ -46,12 +46,12 @@ class SimpleObjectTool implements Tool {
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
     if (ci?.map === 'simpleObjects') {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;
     } else {
       this.dragCtx.isNew = true;
-      this.editor.selection(null);
+      this.editor.selection(undefined);
     }
   }
 
@@ -112,14 +112,14 @@ class SimpleObjectTool implements Tool {
           this.dragCtx.itemId,
           diff,
           current,
-          null,
+          undefined,
           event.shiftKey,
         );
         this.editor.update(this.dragCtx.action, true);
       }
     } else {
       const items = this.editor.findItem(event, ['simpleObjects']);
-      this.editor.hover(items, null, event);
+      this.editor.hover(items, undefined, event);
     }
   }
 

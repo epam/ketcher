@@ -3,43 +3,63 @@ import { serialize, deserialize } from './labeledit';
 describe('serialize', () => {
   it('should serialize a simple label', () => {
     expect(
-      serialize({ label: 'C', charge: null, isotope: null, radical: 0 }),
+      serialize({
+        label: 'C',
+        charge: undefined,
+        isotope: undefined,
+        radical: 0,
+      }),
     ).toBe('C');
   });
 
   it('should serialize label with positive charge', () => {
     expect(
-      serialize({ label: 'N', charge: 1, isotope: null, radical: 0 }),
+      serialize({ label: 'N', charge: 1, isotope: undefined, radical: 0 }),
     ).toBe('N+');
   });
 
   it('should serialize label with negative charge', () => {
     expect(
-      serialize({ label: 'O', charge: -1, isotope: null, radical: 0 }),
+      serialize({ label: 'O', charge: -1, isotope: undefined, radical: 0 }),
     ).toBe('O-');
   });
 
   it('should serialize label with charge > 1', () => {
     expect(
-      serialize({ label: 'Fe', charge: 3, isotope: null, radical: 0 }),
+      serialize({ label: 'Fe', charge: 3, isotope: undefined, radical: 0 }),
     ).toBe('Fe3+');
   });
 
   it('should serialize label with isotope', () => {
     expect(
-      serialize({ label: 'C', charge: null, isotope: 14, radical: 0 }),
+      serialize({ label: 'C', charge: undefined, isotope: 14, radical: 0 }),
     ).toBe('14C');
   });
 
   it('should serialize label with radical', () => {
     expect(
-      serialize({ label: 'N', charge: null, isotope: null, radical: 1 }),
+      serialize({
+        label: 'N',
+        charge: undefined,
+        isotope: undefined,
+        radical: 1,
+      }),
     ).toBe('N:');
     expect(
-      serialize({ label: 'N', charge: null, isotope: null, radical: 2 }),
+      serialize({
+        label: 'N',
+        charge: undefined,
+        isotope: undefined,
+        radical: 2,
+      }),
     ).toBe('N.');
     expect(
-      serialize({ label: 'N', charge: null, isotope: null, radical: 3 }),
+      serialize({
+        label: 'N',
+        charge: undefined,
+        isotope: undefined,
+        radical: 3,
+      }),
     ).toBe('N^^');
   });
 
@@ -54,8 +74,8 @@ describe('deserialize', () => {
   it('should deserialize a simple label', () => {
     expect(deserialize('C')).toEqual({
       label: 'C',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 0,
     });
   });
@@ -64,7 +84,7 @@ describe('deserialize', () => {
     expect(deserialize('N+')).toEqual({
       label: 'N',
       charge: 1,
-      isotope: null,
+      isotope: undefined,
       radical: 0,
     });
   });
@@ -73,7 +93,7 @@ describe('deserialize', () => {
     expect(deserialize('O-')).toEqual({
       label: 'O',
       charge: -1,
-      isotope: null,
+      isotope: undefined,
       radical: 0,
     });
   });
@@ -82,7 +102,7 @@ describe('deserialize', () => {
     expect(deserialize('Fe3+')).toEqual({
       label: 'Fe',
       charge: 3,
-      isotope: null,
+      isotope: undefined,
       radical: 0,
     });
   });
@@ -90,7 +110,7 @@ describe('deserialize', () => {
   it('should deserialize label with isotope', () => {
     expect(deserialize('14C')).toEqual({
       label: 'C',
-      charge: null,
+      charge: undefined,
       isotope: 14,
       radical: 0,
     });
@@ -99,14 +119,14 @@ describe('deserialize', () => {
   it('should deserialize label with radical', () => {
     expect(deserialize('N:')).toEqual({
       label: 'N',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 1,
     });
     expect(deserialize('N.')).toEqual({
       label: 'N',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 2,
     });
   });
@@ -114,39 +134,39 @@ describe('deserialize', () => {
   it('should deserialize wildcard as A', () => {
     expect(deserialize('*')).toEqual({
       label: 'A',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 0,
     });
   });
 
-  it('should return null for invalid input', () => {
-    expect(deserialize('')).toBeNull();
-    expect(deserialize('123')).toBeNull();
-    expect(deserialize('Zzzz')).toBeNull();
+  it('should return undefined for invalid input', () => {
+    expect(deserialize('')).toBeUndefined();
+    expect(deserialize('123')).toBeUndefined();
+    expect(deserialize('Zzzz')).toBeUndefined();
   });
 
-  it('should return null for unknown element labels', () => {
-    expect(deserialize('Zz')).toBeNull();
+  it('should return undefined for unknown element labels', () => {
+    expect(deserialize('Zz')).toBeUndefined();
   });
 
   it('should deserialize generic labels', () => {
     expect(deserialize('Q')).toEqual({
       label: 'Q',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 0,
     });
     expect(deserialize('X')).toEqual({
       label: 'X',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 0,
     });
     expect(deserialize('M')).toEqual({
       label: 'M',
-      charge: null,
-      isotope: null,
+      charge: undefined,
+      isotope: undefined,
       radical: 0,
     });
   });

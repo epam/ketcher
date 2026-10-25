@@ -31,7 +31,7 @@ export const CustomButtons = ({
   onCustomAction,
 }: CustomButtonsProps) => {
   if (customButtons.length === 0) {
-    return null;
+    return undefined;
   }
 
   if (isCollapsed) {

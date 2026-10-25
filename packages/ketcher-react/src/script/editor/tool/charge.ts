@@ -25,7 +25,7 @@ class ChargeTool implements Tool {
   constructor(editor: Editor, charge: unknown) {
     assert(typeof charge === 'number', 'Charge tool requires a numeric charge');
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
     this.charge = charge;
   }
 
@@ -33,11 +33,11 @@ class ChargeTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    const atom = ci?.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    const atom = ci?.map === 'atoms' ? molecule.atoms.get(ci.id) : undefined;
     if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
-      this.editor.hover(null, null, event);
+      this.editor.hover(undefined, undefined, event);
     }
     return true;
   }
@@ -98,7 +98,7 @@ class ChargeTool implements Tool {
             {
               charge: (atom.charge ?? 0) + this.charge,
             },
-            null,
+            undefined,
           ),
         );
       }

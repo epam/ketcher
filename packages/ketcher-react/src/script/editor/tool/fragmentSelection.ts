@@ -34,21 +34,24 @@ const getFragmentPreviewId = (bondId: number, startAtomId: number) =>
 
 export default class FragmentSelectionTool implements Tool {
   private readonly editor: Editor;
-  private preview: FragmentPreview | null = null;
+  private preview: FragmentPreview | null | undefined = undefined;
   private tooltipTimeoutId?: number;
   private disabledMessage?: string;
-  private bondPreview?: Visel | null;
+  private bondPreview?: Visel | null | undefined;
 
   // drag state to support moving selected entities
-  private dragCtx?: {
-    item?: { map: string; id: number };
-    xy0: Vec2;
-    action?: Action | null;
-    mergeItems?: ReturnType<typeof getItemsToFuse>;
-    copyAction?: Action;
-    stopTapping?: () => void;
-    closestItem?: ClosestItemWithMap | null;
-  } | null;
+  private dragCtx?:
+    | {
+        item?: { map: string; id: number };
+        xy0: Vec2;
+        action?: Action | null | undefined;
+        mergeItems?: ReturnType<typeof getItemsToFuse>;
+        copyAction?: Action;
+        stopTapping?: () => void;
+        closestItem?: ClosestItemWithMap | null | undefined;
+      }
+    | null
+    | undefined;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -78,7 +81,7 @@ export default class FragmentSelectionTool implements Tool {
 
     // No preview: initialize dragging on closest item (atoms/bonds/frags) similar to select.ts
     const map = ['atoms', 'bonds', 'frags'];
-    const ci = this.editor.findItem(event, map, null);
+    const ci = this.editor.findItem(event, map, undefined);
     const currentPosition = CoordinateTransformation.pageToModel(
       event,
       this.editor.render,
@@ -116,7 +119,7 @@ export default class FragmentSelectionTool implements Tool {
         this.dragCtx.action,
         this.dragCtx.copyAction,
       );
-      this.dragCtx = null;
+      this.dragCtx = undefined;
       editor.event.message.dispatch({ info: false });
       editor.rotateController.rerender();
     }
@@ -162,8 +165,8 @@ export default class FragmentSelectionTool implements Tool {
     this.removeBondPreview();
 
     const restruct = this.editor.render.ctab;
-    const bondItem = this.editor.findItem(event, ['bonds'], null);
-    const atomItem = this.editor.findItem(event, ['atoms'], null);
+    const bondItem = this.editor.findItem(event, ['bonds'], undefined);
+    const atomItem = this.editor.findItem(event, ['atoms'], undefined);
     const reBond = bondItem && restruct.bonds.get(bondItem.id);
     const reAtom = atomItem && restruct.atoms.get(atomItem.id);
 
@@ -244,7 +247,7 @@ export default class FragmentSelectionTool implements Tool {
     );
 
     this.preview = preview;
-    this.editor.hover(null, this);
+    this.editor.hover(undefined, this);
 
     if (!preview.atoms.length && !preview.bonds.length) {
       return;
@@ -271,29 +274,29 @@ export default class FragmentSelectionTool implements Tool {
       const action = this.dragCtx.action;
       this.editor.update(action);
     }
-    this.dragCtx = null;
+    this.dragCtx = undefined;
     this.resetPreview();
   }
 
   mouseLeaveClientArea() {
     // cancel drag if active
-    this.dragCtx = null;
+    this.dragCtx = undefined;
     this.resetPreview();
   }
 
   private resetPreview() {
-    this.preview = null;
+    this.preview = undefined;
     this.disabledMessage = undefined;
     this.clearTooltip();
     this.setCursor(false);
-    this.editor.hover(null, this);
+    this.editor.hover(undefined, this);
     this.removeBondPreview();
   }
 
   private setDisabledState(message: string) {
-    this.preview = null;
+    this.preview = undefined;
     this.disabledMessage = message;
-    this.editor.hover(null, this);
+    this.editor.hover(undefined, this);
     this.setCursor(true);
     this.queueTooltip(message);
   }
@@ -334,14 +337,14 @@ export default class FragmentSelectionTool implements Tool {
       for (const [id, currentBond] of struct.bonds.entries()) {
         if (id === bondId) continue;
 
-        let nextAtomId: number | null = null;
+        let nextAtomId: number | null | undefined = undefined;
         if (currentBond.begin === atomId) {
           nextAtomId = currentBond.end;
         } else if (currentBond.end === atomId) {
           nextAtomId = currentBond.begin;
         }
 
-        if (nextAtomId === null || visited.has(nextAtomId)) {
+        if (nextAtomId === undefined || visited.has(nextAtomId)) {
           continue;
         }
 
@@ -363,7 +366,7 @@ export default class FragmentSelectionTool implements Tool {
     blockedBonds: Set<number>,
     componentAtoms: Set<number>,
   ): FragmentPreview {
-    if (startAtomId == null) {
+    if (startAtomId == undefined) {
       return { atoms: [], bonds: [] };
     }
 
@@ -396,14 +399,14 @@ export default class FragmentSelectionTool implements Tool {
 
         if (blockedBonds.has(bondId)) continue;
 
-        let nextAtomId: number | null = null;
+        let nextAtomId: number | null | undefined = undefined;
         if (bond.begin === atomId) {
           nextAtomId = bond.end;
         } else if (bond.end === atomId) {
           nextAtomId = bond.begin;
         }
 
-        if (nextAtomId === null || componentAtoms.has(nextAtomId)) {
+        if (nextAtomId === undefined || componentAtoms.has(nextAtomId)) {
           continue;
         }
 
@@ -446,7 +449,7 @@ export default class FragmentSelectionTool implements Tool {
 
   public cancel() {
     // also reset drag state
-    this.dragCtx = null;
+    this.dragCtx = undefined;
     this.resetPreview();
   }
 }

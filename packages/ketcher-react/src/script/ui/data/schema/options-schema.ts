@@ -514,8 +514,10 @@ export function getDefaultOptions(): Record<string, any> {
   }, {});
 }
 
-export function validation(settings): Record<string, string> | null {
-  if (typeof settings !== 'object' || settings === null) return null;
+export function validation(
+  settings,
+): Record<string, string> | null | undefined {
+  if (typeof settings !== 'object' || settings === null) return undefined;
 
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',

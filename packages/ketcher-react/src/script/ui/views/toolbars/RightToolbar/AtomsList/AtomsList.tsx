@@ -83,7 +83,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label);
         const shortcut = atoms.includes(label)
           ? shortcutStr(atomCuts[label])
-          : null;
+          : undefined;
         const isSelected = isAtom && active?.opts.label === label;
         const id = `atom-${label.toLowerCase()}`;
         return (

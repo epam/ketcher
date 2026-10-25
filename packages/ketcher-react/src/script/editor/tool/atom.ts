@@ -91,7 +91,7 @@ class AtomTool implements Tool {
         );
         action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
         editor.update(action);
-        editor.selection(null);
+        editor.selection(undefined);
         this.editor.hoverIcon.hide();
       }
       this.isNotActiveTool = true;
@@ -116,8 +116,8 @@ class AtomTool implements Tool {
       },
     } = this;
 
-    editor.hover(null);
-    editor.selection(null);
+    editor.hover(undefined);
+    editor.selection(undefined);
 
     const eventMaps = ['atoms', 'functionalGroups'];
     const ci = editor.findItem(event, eventMaps);
@@ -184,7 +184,7 @@ class AtomTool implements Tool {
     ) {
       editor.hoverIcon.show();
       editor.hoverIcon.updatePosition();
-      editor.hover(editor.findItem(event, eventMaps), null, event);
+      editor.hover(editor.findItem(event, eventMaps), undefined, event);
 
       if (dragCtx?.action) {
         const action = dragCtx.action.perform(reStruct);
@@ -221,7 +221,7 @@ class AtomTool implements Tool {
       atom.pp,
       CoordinateTransformation.pageToModel(event, rnd),
     );
-    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, undefined);
     const degrees = vectorUtils.degrees(angle);
     editor.event.message.dispatch({ info: degrees + 'º' });
     const newAtomPos = vectorUtils.calcNewAtomPos(
@@ -333,7 +333,7 @@ class AtomTool implements Tool {
     });
     editor.hover(
       this.editor.findItem(event, ['atoms', 'functionalGroups']),
-      null,
+      undefined,
       event,
     );
 
@@ -358,16 +358,16 @@ export function atomLongtapEvent(tool, render) {
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx;
-    if (fgId != null) {
+    if (fgId != undefined) {
       dispatchMonomerOrGroupDialog(editor, [fgId]);
       return;
     }
-    editor.selection(null);
+    editor.selection(undefined);
     const res = editor.event.quickEdit.dispatch(atom);
     Promise.resolve(res)
       .then((newatom) => {
         const action = atomid
-          ? fromAtomsAttrs(render.ctab, atomid, newatom, null)
+          ? fromAtomsAttrs(render.ctab, atomid, newatom, undefined)
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })

@@ -158,7 +158,7 @@ export function load(struct: string | Struct, options?) {
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
-          const offset = sgroup ? SGroup.getOffset(sgroup) : null;
+          const offset = sgroup ? SGroup.getOffset(sgroup) : undefined;
           SGroup.bracketPos(sg, parsedStruct);
           if (offset) sg.updateOffset(offset);
         });

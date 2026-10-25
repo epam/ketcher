@@ -89,7 +89,7 @@ export default function initEditor(
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const toolAction =
-        typeof activeToolAction !== 'function' ? activeToolAction : null;
+        typeof activeToolAction !== 'function' ? activeToolAction : undefined;
       const activeTool = toolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;
@@ -177,14 +177,16 @@ export default function initEditor(
     },
 
     // TODO: correct
-    onEnhancedStereoEdit: (params: { stereoLabel: string | null }) =>
+    onEnhancedStereoEdit: (params: {
+      stereoLabel: string | null | undefined;
+    }) =>
       sleep(0).then(() => {
         const init = fromStereoLabel(params.stereoLabel);
         return openDialog(dispatch, 'enhancedStereo', {
           init,
         }).then(
           (res) => toStereoLabel(res as ReturnType<typeof fromStereoLabel>),
-          () => null,
+          () => undefined,
         );
       }),
 
@@ -286,7 +288,7 @@ export default function initEditor(
         const { groupStruct, event, sGroup } = payload;
         highlightFG(dispatch, { groupStruct, event, sGroup });
       } else {
-        highlightFG(dispatch, { groupStruct: null, sGroup: null });
+        highlightFG(dispatch, { groupStruct: undefined, sGroup: undefined });
       }
     },
     onApiSettings: (payload: Record<string, unknown>) =>

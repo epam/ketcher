@@ -78,7 +78,7 @@ export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
       track={false}
       min={INPUT_SCALE.MIN}
       max={INPUT_SCALE.MAX}
-      step={null}
+      step={undefined}
       value={scaleTransformer.getSliderValue(zoom)}
       onChange={handleChange}
       marks={sliderMarks}

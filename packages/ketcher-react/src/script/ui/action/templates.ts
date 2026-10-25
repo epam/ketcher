@@ -26,14 +26,14 @@ type ToolWithMode = Tool & {
 
 const templateStructs = templates as Struct[];
 
-const isToolWithMode = (tool: Tool | null): tool is ToolWithMode =>
+const isToolWithMode = (tool: Tool | null | undefined): tool is ToolWithMode =>
   typeof tool === 'object' && tool !== null && 'mode' in tool;
 
 const templateLib: Record<string, UiAction> = {
   'template-lib': {
     shortcut: 'Shift+t',
     title: 'toolbar:templates.structureLibrary',
-    action: { dialog: 'templates', prop: { tab: null } },
+    action: { dialog: 'templates', prop: { tab: undefined } },
     selected: (editor) =>
       isToolWithMode(editor._tool) && editor._tool.mode === 'classic',
     disabled: (_editor, _server, options) => !options.app.templates,

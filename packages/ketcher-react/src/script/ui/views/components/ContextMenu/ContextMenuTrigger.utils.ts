@@ -102,9 +102,9 @@ export function getAttachmentGroupTargetForBondHalf(
   struct: Struct,
   closestItem: ClosestItemWithMap,
   pointer: Vec2,
-): ClosestItemWithMap | null {
+): ClosestItemWithMap | null | undefined {
   if (closestItem.map !== 'bonds') {
-    return null;
+    return undefined;
   }
 
   const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
@@ -114,7 +114,7 @@ export function getAttachmentGroupTargetForBondHalf(
   );
 
   return attachmentGroupId === null
-    ? null
+    ? undefined
     : {
         ...closestItem,
         map: 'attachmentGroups',
@@ -152,7 +152,7 @@ export function getMenuPropsForClosestItem(
   editor: Editor,
   closestItem: ClosestItemWithMap,
   ketcherId: string,
-): ContextMenuProps | null {
+): ContextMenuProps | null | undefined {
   const struct = editor.struct();
 
   switch (closestItem.map) {
@@ -255,7 +255,7 @@ export function getMenuPropsForClosestItem(
                 }
               : {}),
           }
-        : null;
+        : undefined;
     }
 
     case 'rgroupAttachmentPoints': {
@@ -276,33 +276,34 @@ export function getMenuPropsForClosestItem(
       return {
         id: CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW + ketcherId,
         itemId: closestItem.id,
-        tailId: typeof tailId === 'number' ? tailId : null,
+        tailId: typeof tailId === 'number' ? tailId : undefined,
       };
     }
 
     default:
-      return null;
+      return undefined;
   }
 }
 
 const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
 export function getMenuPropsForSelection(
-  selection: Selection | null,
+  selection: Selection | null | undefined,
   selectedFunctionalGroups: Map<number, FunctionalGroup>,
   ketcherId: string,
   editor?: Editor,
-): ContextMenuProps | null {
+): ContextMenuProps | null | undefined {
   if (!selection) {
-    return null;
+    return undefined;
   }
 
   const { bonds, atoms, rgroupAttachmentPoints } = selection;
   const removableAttachmentGroupId = editor
     ? getRemovableAttachmentGroupId(editor.struct(), selection)
-    : null;
+    : undefined;
   const attachmentGroupIds =
-    removableAttachmentGroupId === null
+    removableAttachmentGroupId === null ||
+    removableAttachmentGroupId === undefined
       ? undefined
       : [removableAttachmentGroupId];
   const isAtomOnlySelection = onlyHasProperty(

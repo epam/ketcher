@@ -31,7 +31,7 @@ const useFunctionalGroupRemove = () => {
       });
 
       editor.update(action);
-      highlightFG(dispatch, { group: null, id: null });
+      highlightFG(dispatch, { group: undefined, id: undefined });
     },
     [dispatch, ketcherId],
   );

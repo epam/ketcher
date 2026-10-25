@@ -32,7 +32,7 @@ const AttachmentGroupActionMenuItem: FC<Props> = ({
   }
 
   if (!showCreate) {
-    return null;
+    return undefined;
   }
 
   const isAttachmentGroupCreateDisabled = attachmentGroupCreateDisabled();

@@ -200,7 +200,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
     props;
   const { result = checkState, moleculeErrors } = formState;
   const [isStructureChecking, setIsStructureChecking] = useState(false);
-  const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
+  const [lastCheckDate, setLastCheckDate] = useState<Date | null | undefined>(
+    undefined,
+  );
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
     useState(false);
 

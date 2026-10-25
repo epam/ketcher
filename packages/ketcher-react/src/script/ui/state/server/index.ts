@@ -62,7 +62,7 @@ export function checkServer() {
   };
 }
 
-export function recognize(file: File | null, version: string) {
+export function recognize(file: File | null | undefined, version: string) {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { server, editor } = getState();
     const rec = server.recognize;
@@ -72,7 +72,7 @@ export function recognize(file: File | null, version: string) {
         dispatch(setStruct(res.struct));
       },
       (e) => {
-        dispatch(setStruct(null));
+        dispatch(setStruct(undefined));
         editor?.errorHandler?.(String(e));
       },
     );
@@ -234,15 +234,15 @@ export function serverCall<T>(
   const bidMap = new Map<number, number>();
 
   const currentStruct = (struct || editor.struct()).clone(
-    null,
-    null,
+    undefined,
+    undefined,
     false,
     aidMap,
-    null,
-    null,
-    null,
-    null,
-    null,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
     bidMap,
   );
 

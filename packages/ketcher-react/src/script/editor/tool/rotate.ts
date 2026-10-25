@@ -46,11 +46,14 @@ type SnapInfo = {
   rotatableHalfBondAngle: number;
   absoluteSnapAngles: number[];
   snapAngleToHalfBonds: Map<number, number[]>;
-  snapAngleDrawingProps: {
-    isSnapping: boolean;
-    absoluteAngle: number;
-    relativeAngle: number;
-  } | null;
+  snapAngleDrawingProps:
+    | {
+        isSnapping: boolean;
+        absoluteAngle: number;
+        relativeAngle: number;
+      }
+    | null
+    | undefined;
 };
 
 const SNAP_ANGLES_RELATIVE_TO_FIXED_BOND = [
@@ -68,7 +71,7 @@ class RotateTool implements Tool {
   dragCtx: any;
   isNotActiveTool = true;
   private centerAtomId?: number;
-  private snapInfo: SnapInfo | null = null;
+  private snapInfo: SnapInfo | null | undefined = undefined;
 
   constructor(editor: Editor, flipDirection?: FlipDirection) {
     this.editor = editor;
@@ -106,7 +109,7 @@ class RotateTool implements Tool {
         ...this.snapInfo.snapAngleDrawingProps,
       };
     }
-    return null;
+    return undefined;
   }
 
   mousedownHandle(handleCenter: Vec2, center: Vec2) {
@@ -128,7 +131,7 @@ class RotateTool implements Tool {
     const visibleAtoms = this.struct.getSelectedVisibleAtoms(this.selection);
 
     const attachmentBonds = this.struct.bonds.filter((_bondId, bond) => {
-      assert(this.selection != null);
+      assert(this.selection != undefined);
       return isAttachmentBond(bond, this.selection);
     });
 
@@ -201,7 +204,7 @@ class RotateTool implements Tool {
 
   mousemove = throttle((event) => {
     if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
+      this.editor.hover(undefined, undefined, event);
     } else {
       const dragCtx = this.dragCtx;
 
@@ -215,13 +218,13 @@ class RotateTool implements Tool {
       let rotateAngle = mouseMoveAngle;
       this.reStruct.clearSnappingBonds();
       if (this.snapInfo) {
-        this.snapInfo.snapAngleDrawingProps = null;
+        this.snapInfo.snapAngleDrawingProps = undefined;
       }
       if (!event.ctrlKey) {
         const [isSnapping, rotateAngleWithSnapping] = this.snap(mouseMoveAngle);
         rotateAngle = isSnapping
           ? rotateAngleWithSnapping
-          : vectorUtils.fracAngle(mouseMoveAngle, null);
+          : vectorUtils.fracAngle(mouseMoveAngle, undefined);
       }
 
       const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
@@ -244,7 +247,7 @@ class RotateTool implements Tool {
 
         const expSel = this.editor.explicitSelected();
         dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
-        this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event);
+        this.editor.hover(getHoverToFuse(dragCtx.mergeItems), undefined, event);
 
         this.editor.update(dragCtx.action, true);
       }
@@ -319,7 +322,7 @@ class RotateTool implements Tool {
       this.editor.update(action);
 
       if (dragCtx.mergeItems) {
-        this.editor.selection(null);
+        this.editor.selection(undefined);
       }
 
       this.editor.event.message.dispatch({
@@ -339,14 +342,14 @@ class RotateTool implements Tool {
 
   private initSnapInfo() {
     if (this.centerAtomId === undefined) {
-      this.snapInfo = null;
+      this.snapInfo = undefined;
       return;
     }
 
     const centerAtom = this.struct.atoms.get(this.centerAtomId);
     if (!centerAtom) {
       this.centerAtomId = undefined;
-      this.snapInfo = null;
+      this.snapInfo = undefined;
       return;
     }
     const {
@@ -358,7 +361,7 @@ class RotateTool implements Tool {
 
     // Don't support this case
     if (rotatableHalfBondIds.length > 1) {
-      this.snapInfo = null;
+      this.snapInfo = undefined;
       return;
     }
 
@@ -376,7 +379,7 @@ class RotateTool implements Tool {
       rotatableHalfBondAngle,
       absoluteSnapAngles,
       snapAngleToHalfBonds,
-      snapAngleDrawingProps: null,
+      snapAngleDrawingProps: undefined,
     };
   }
 
@@ -461,7 +464,7 @@ class RotateTool implements Tool {
   }
 
   private partitionNeighborsBySelection(
-    selection: Selection | null,
+    selection: Selection | null | undefined,
     atom: Atom,
   ) {
     const rotatableHalfBondIds: number[] = [];
@@ -471,7 +474,7 @@ class RotateTool implements Tool {
 
     atom.neighbors.forEach((halfBondId) => {
       const halfBond = this.struct.halfBonds.get(halfBondId);
-      assert(halfBond != null);
+      assert(halfBond != undefined);
       const neighborAtomId = halfBond.end;
       if (selection?.atoms?.includes(neighborAtomId)) {
         if (
@@ -510,7 +513,7 @@ class RotateTool implements Tool {
     this.snapInfo.absoluteSnapAngles.some((snapAngle, index) => {
       if (Math.abs(newRotatedHalfBondAngle - snapAngle) <= MAX_SNAP_DELTA) {
         isSnapping = true;
-        assert(this.snapInfo != null);
+        assert(this.snapInfo != undefined);
         rotateAngle = snapAngle - this.snapInfo.rotatableHalfBondAngle;
         this.saveSnappingBonds(snapAngle);
         this.snapInfo.snapAngleDrawingProps = {
@@ -523,7 +526,7 @@ class RotateTool implements Tool {
         Math.abs(newRotatedHalfBondAngle - snapAngle) <
         ANGLE_INDICATOR_VISIBLE_DELTA
       ) {
-        assert(this.snapInfo != null);
+        assert(this.snapInfo != undefined);
         this.snapInfo.snapAngleDrawingProps = {
           isSnapping,
           absoluteAngle: snapAngle,
@@ -542,7 +545,7 @@ class RotateTool implements Tool {
       this.snapInfo?.snapAngleToHalfBonds.get(snapAngle);
     const bondIds = halfBondsToBeHighlighted?.map((halfBond) => {
       const bondId = this.struct.getBondIdByHalfBond(halfBond);
-      assert(bondId != null);
+      assert(bondId != undefined);
       return bondId;
     });
     bondIds?.forEach((bondId) => {

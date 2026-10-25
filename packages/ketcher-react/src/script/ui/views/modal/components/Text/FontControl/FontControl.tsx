@@ -108,7 +108,7 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
       </button>
       {isShowingFontSizeMenu ? (
         <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>
-      ) : null}
+      ) : undefined}
     </div>
   );
 };

@@ -82,7 +82,7 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
 function Modal(props: Props) {
   const { modal, ...rest } = props;
 
-  if (!modal) return null;
+  if (!modal) return undefined;
 
   return <ModalContent modal={modal} {...rest} />;
 }

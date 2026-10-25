@@ -158,7 +158,9 @@ export const ModeControl = ({
 }: ModeProps) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
+  const [btnElement, setBtnElement] = useState<
+    HTMLButtonElement | null | undefined
+  >(undefined);
 
   const handleModeSwitch = (isPolymer: boolean) => {
     toggle(isPolymer);

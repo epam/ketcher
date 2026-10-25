@@ -88,12 +88,12 @@ const editorTheme = {
   },
 };
 
-function EnterKeyPlugin(): null {
+function EnterKeyPlugin(): null | undefined {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     return editor.registerCommand(
       KEY_ENTER_COMMAND,
-      (event: KeyboardEvent | null) => {
+      (event: KeyboardEvent | null | undefined) => {
         if (event) {
           event.stopPropagation();
         }
@@ -102,19 +102,19 @@ function EnterKeyPlugin(): null {
       COMMAND_PRIORITY_HIGH,
     );
   }, [editor]);
-  return null;
+  return undefined;
 }
 
 function EditorRefPlugin({
   editorRef,
 }: {
-  editorRef: React.MutableRefObject<LexicalEditor | null>;
-}): null {
+  editorRef: React.MutableRefObject<LexicalEditor | undefined>;
+}): undefined {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     editorRef.current = editor;
   }, [editor, editorRef]);
-  return null;
+  return undefined;
 }
 
 const TextEditorInner = (props: {
@@ -127,7 +127,7 @@ const TextEditorInner = (props: {
   const { t } = useTranslation(['common', 'dialogs']);
   const [editor] = useLexicalComposerContext();
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
-  const editorRef = React.useRef<LexicalEditor | null>(null);
+  const editorRef = React.useRef<LexicalEditor | undefined>(undefined);
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
@@ -149,7 +149,7 @@ const TextEditorInner = (props: {
 
   const result = useCallback(() => {
     let hasText = false;
-    let serialized: SerializedEditorState | null = null;
+    let serialized: SerializedEditorState | null | undefined = undefined;
     const editorState = editor.getEditorState();
     editorState.read(() => {
       const root = $getRoot();

@@ -265,7 +265,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     }
 
     applyHighlights(selectedTab);
-    editor.selection(null);
+    editor.selection(undefined);
   }, [applyHighlights, currentTabStructure, editor, selectedTab]);
 
   // Sync connection (readonly) attachment points with the canvas whenever the
@@ -576,7 +576,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                           </div>
                         }
                       />
-                    ) : null
+                    ) : undefined
                   }
                   onFieldChange={(
                     fieldId: StringWizardFormFieldId,

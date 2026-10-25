@@ -178,7 +178,7 @@ const Open: FC<Props> = (props) => {
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
       params={rest}
-      result={() => null}
+      result={() => undefined}
       data-testid="openStructureModal"
       footerContent={
         withFooterContent ? (

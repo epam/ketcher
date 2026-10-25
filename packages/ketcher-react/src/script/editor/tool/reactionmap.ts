@@ -31,7 +31,7 @@ class ReactionMapTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousedown(event) {
@@ -40,7 +40,7 @@ class ReactionMapTool implements Tool {
     const closestItem = this.editor.findItem(event, ['atoms']);
 
     if (closestItem?.map === 'atoms') {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.dragCtx = {
         item: closestItem,
         xy0: CoordinateTransformation.pageToModel(event, rnd),
@@ -67,21 +67,21 @@ class ReactionMapTool implements Tool {
           atoms.get(closestItem.id)?.pp,
         );
       } else {
-        editor.hover(null);
+        editor.hover(undefined);
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
           CoordinateTransformation.pageToModel(event, rnd),
         );
       }
     } else {
-      editor.hover(editor.findItem(event, ['atoms']), null, event);
+      editor.hover(editor.findItem(event, ['atoms']), undefined, event);
     }
   }
 
   updateLine(p1, p2) {
     if (this.line) {
       this.line.remove();
-      this.line = null;
+      this.line = undefined;
     }
 
     if (p1 && p2) {
@@ -115,14 +115,19 @@ class ReactionMapTool implements Tool {
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
-                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
+                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, undefined),
                 );
             });
           }
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
+              fromAtomsAttrs(
+                rnd.ctab,
+                closestItem.id,
+                { aam: aam1 },
+                undefined,
+              ),
             );
           } else {
             let aam = 0;
@@ -134,7 +139,7 @@ class ReactionMapTool implements Tool {
                 rnd.ctab,
                 this.dragCtx.item.id,
                 { aam: aam + 1 },
-                null,
+                undefined,
               ),
             );
             if (closestItem.id !== this.dragCtx.item.id) {
@@ -144,7 +149,7 @@ class ReactionMapTool implements Tool {
                   rnd.ctab,
                   closestItem.id,
                   { aam: aam + 1 },
-                  null,
+                  undefined,
                 ),
               );
             }
@@ -152,10 +157,10 @@ class ReactionMapTool implements Tool {
           this.editor.update(action);
         }
       }
-      this.updateLine(null, null);
+      this.updateLine(undefined, undefined);
       this.dragCtx = undefined;
     }
-    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
+    this.editor.hover(this.editor.findItem(event, ['atoms']), undefined, event);
   }
 }
 

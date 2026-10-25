@@ -61,10 +61,10 @@ export {
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;
-  private readonly mode: string | null;
+  private readonly mode: string | null | undefined;
   private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
-  public templatePreview: TemplatePreview | null;
+  public templatePreview: TemplatePreview | null | undefined;
   private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
@@ -73,7 +73,7 @@ class TemplateTool implements Tool {
   constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;
     this.mode = getTemplateMode(tmpl);
-    this.editor.selection(null);
+    this.editor.selection(undefined);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
     const sGroup = tmpl.struct.sgroups.values().next().value as
       SGroup | undefined;
@@ -248,7 +248,7 @@ class TemplateTool implements Tool {
       return;
     }
 
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
@@ -290,7 +290,7 @@ class TemplateTool implements Tool {
       // accessed by the callee, making this cast safe.
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
-        null,
+        undefined,
         event as PointerEvent,
       );
 
@@ -310,7 +310,7 @@ class TemplateTool implements Tool {
     );
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
-    let targetPos: Vec2 | null | undefined = null;
+    let targetPos: Vec2 | null | undefined = undefined;
     /* moving when attached to bond */
     if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
@@ -359,7 +359,7 @@ class TemplateTool implements Tool {
 
       if (atomId !== undefined) {
         const atom = this.struct.atoms.get(atomId);
-        targetPos = atom?.pp ?? null;
+        targetPos = atom?.pp ?? undefined;
 
         if (targetPos) {
           extraBond = this.isModeFunctionalGroup
@@ -377,7 +377,7 @@ class TemplateTool implements Tool {
     let angle = vectorUtils.calcAngle(targetPos, eventPosition);
 
     if (!event.ctrlKey) {
-      angle = vectorUtils.fracAngle(angle, null);
+      angle = vectorUtils.fracAngle(angle, undefined);
     }
 
     const degrees = vectorUtils.degrees(angle);
@@ -402,7 +402,7 @@ class TemplateTool implements Tool {
 
     // create new action
     dragCtx.angle = degrees;
-    let action: Action | null = null;
+    let action: Action | null | undefined = undefined;
 
     if (!ci) {
       const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size;
@@ -592,8 +592,8 @@ class TemplateTool implements Tool {
     }
     if (mouseEvent) {
       this.editor.hover(
-        this.editor.findItem(mouseEvent, null),
-        null,
+        this.editor.findItem(mouseEvent, undefined),
+        undefined,
         mouseEvent as PointerEvent,
       );
     }
@@ -634,16 +634,20 @@ function addOnCanvasWithoutMerge({
     false,
   );
   editor.update(action);
-  editor.selection(null);
+  editor.selection(undefined);
   if (event) {
-    editor.hover(editor.findItem(event, null), null, event as PointerEvent);
+    editor.hover(
+      editor.findItem(event, undefined),
+      undefined,
+      event as PointerEvent,
+    );
   }
   editor.event.message.dispatch({
     info: false,
   });
 }
 
-function getTemplateMode(tmpl: TemplateToolInput): string | null {
+function getTemplateMode(tmpl: TemplateToolInput): string | null | undefined {
   if (tmpl.mode) {
     return tmpl.mode;
   }
@@ -655,7 +659,7 @@ function getTemplateMode(tmpl: TemplateToolInput): string | null {
     return MODES.FG;
   }
 
-  return null;
+  return undefined;
 }
 
 function getTargetAtomId(

@@ -64,7 +64,7 @@ class EraserTool implements Tool {
       IMAGE_KEY,
       MULTITAIL_ARROW_KEY,
     ];
-    this.lassoHelper = new LassoHelper(mode, editor, null);
+    this.lassoHelper = new LassoHelper(mode, editor, undefined);
 
     const selection = editor.selection();
     if (selection) {
@@ -73,7 +73,7 @@ class EraserTool implements Tool {
         editor,
         selection,
         () => fromFragmentDeletion(editor.render.ctab, selection),
-        () => editor.selection(null),
+        () => editor.selection(undefined),
       );
     }
   }
@@ -91,7 +91,11 @@ class EraserTool implements Tool {
     if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
-      this.editor.hover(this.editor.findItem(event, this.maps), null, event);
+      this.editor.hover(
+        this.editor.findItem(event, this.maps),
+        undefined,
+        event,
+      );
     }
   }
 
@@ -237,7 +241,7 @@ class EraserTool implements Tool {
       });
 
       if (result.length > 0) {
-        this.editor.selection(null);
+        this.editor.selection(undefined);
         dispatchMonomerOrGroupDialog(this.editor, result);
         this.lassoHelper.cancel();
       }
@@ -255,7 +259,7 @@ class EraserTool implements Tool {
         this.editor,
         sel,
         () => fromFragmentDeletion(rnd.ctab, sel),
-        () => this.editor.selection(null),
+        () => this.editor.selection(undefined),
       );
     }
   }
@@ -360,14 +364,14 @@ class EraserTool implements Tool {
 
     if (!ci) return; // ci.type == 'Canvas'
 
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     if (ci.map === 'atoms') {
       runDeleteWithAttachmentGroupSplitConfirm(
         this.editor,
         { atoms: [ci.id] },
         () => fromOneAtomDeletion(restruct, ci.id),
-        () => this.editor.selection(null),
+        () => this.editor.selection(undefined),
       );
       return;
     }
@@ -377,7 +381,7 @@ class EraserTool implements Tool {
         this.editor,
         { bonds: [ci.id] },
         () => fromOneBondDeletion(restruct, ci.id),
-        () => this.editor.selection(null),
+        () => this.editor.selection(undefined),
       );
       return;
     }
@@ -428,7 +432,7 @@ class EraserTool implements Tool {
       );
       return;
     }
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mouseleave() {
@@ -440,7 +444,7 @@ class EraserTool implements Tool {
       this.lassoHelper.end();
     }
 
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 }
 

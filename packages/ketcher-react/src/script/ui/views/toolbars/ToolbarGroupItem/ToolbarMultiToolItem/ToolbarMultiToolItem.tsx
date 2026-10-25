@@ -44,7 +44,7 @@ interface ToolbarMultiToolItemProps {
   status: {
     [key in string]?: UiAction;
   };
-  opened: string | null;
+  opened: string | null | undefined;
   disableableButtons: string[];
   indigoVerification: boolean;
   className?: string;
@@ -183,9 +183,9 @@ const ToolbarMultiToolItem = (props: Props) => {
             onAction={onAction}
           />
         </Portal>
-      ) : null}
+      ) : undefined}
     </div>
-  ) : null;
+  ) : undefined;
 };
 
 export type { ToolbarMultiToolItemProps, ToolbarMultiToolItemCallProps };

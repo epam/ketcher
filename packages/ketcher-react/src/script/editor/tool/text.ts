@@ -39,17 +39,17 @@ class TextTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousedown(event) {
     const render = this.editor.render;
     const closestItem = this.editor.findItem(event, ['texts']);
 
-    this.editor.selection(null);
+    this.editor.selection(undefined);
 
     if (closestItem?.map === 'texts') {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.selection({ texts: [closestItem.id] });
       this.dragCtx = {
         xy0: CoordinateTransformation.pageToModel(event, render),
@@ -76,7 +76,11 @@ class TextTool implements Tool {
       this.editor.update(this.dragCtx.action, true);
     } else {
       const item = this.editor.findItem(event, ['texts']);
-      this.editor.hover(this.editor.findItem(event, ['texts']), null, event);
+      this.editor.hover(
+        this.editor.findItem(event, ['texts']),
+        undefined,
+        event,
+      );
 
       handleMovingPosibilityCursor(
         item,
@@ -97,12 +101,12 @@ class TextTool implements Tool {
   click(event) {
     const render = this.editor.render;
     const closestItem = this.editor.findItem(event, ['texts']);
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     if (!closestItem) {
       propsDialog(
         this.editor,
-        null,
+        undefined,
         CoordinateTransformation.pageToModel(event, render),
         [],
       );
@@ -113,7 +117,7 @@ class TextTool implements Tool {
 
   dblclick(event) {
     const closestItem = this.editor.findItem(event, ['texts']);
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     if (closestItem.map === 'texts') {
       propsDialog(
@@ -130,12 +134,13 @@ class TextTool implements Tool {
 
 function propsDialog(
   editor: any,
-  id: number | null,
+  id: number | null | undefined,
   position: Vec2,
   pos: Array<Vec2>,
 ) {
   const struct = editor.render.ctab.molecule;
-  const text: Text | null = id || id === 0 ? struct.texts.get(id) : null;
+  const text: Text | null | undefined =
+    id || id === 0 ? struct.texts.get(id) : undefined;
   const origilContent = text ? text.content : '';
 
   const res = editor.event.elementEdit.dispatch({

@@ -141,7 +141,7 @@ const MonomerCreationWizardFields = (
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
   if (!monomerCreationState) {
-    return null;
+    return undefined;
   }
 
   const {

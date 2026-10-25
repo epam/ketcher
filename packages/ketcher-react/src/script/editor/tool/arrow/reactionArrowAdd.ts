@@ -18,8 +18,8 @@ interface BaseDragContext {
 
 interface InitialDragContext extends BaseDragContext {
   p0: Vec2;
-  action: null;
-  itemId: null;
+  action: null | undefined;
+  itemId: null | undefined;
 }
 
 interface DragContextInProgress extends BaseDragContext {
@@ -33,7 +33,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   static readonly MIN_LENGTH = 0.5;
   static readonly DEFAULT_LENGTH = 1;
 
-  private dragCtx: ReactionArrowDragContext | null = null;
+  private dragCtx: ReactionArrowDragContext | null | undefined = undefined;
 
   constructor(
     private readonly editor: Editor,
@@ -51,8 +51,8 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   mousedown(event: MouseEvent) {
     this.dragCtx = {
       p0: CoordinateTransformation.pageToModel(event, this.render),
-      action: null,
-      itemId: null,
+      action: undefined,
+      itemId: undefined,
     };
   }
 
@@ -74,7 +74,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
         );
       }
       const arrowId = firstOp.data.id;
-      assert(arrowId != null);
+      assert(arrowId != undefined);
       const dragCtx: DragContextInProgress = {
         ...this.dragCtx,
         itemId: arrowId,
@@ -87,7 +87,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     }
 
     const dragCtx = this.dragCtx;
-    assert(dragCtx?.action != null);
+    assert(dragCtx?.action != undefined);
     this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
     dragCtx.action = fromArrowResizing(
@@ -95,7 +95,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       dragCtx.itemId,
       diff,
       current,
-      null,
+      undefined,
       isSnappingEnabled,
     );
     this.editor.update(dragCtx.action, true);
@@ -109,10 +109,13 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     } else {
       this.addNewArrowWithClicking(event);
     }
-    this.dragCtx = null;
+    this.dragCtx = undefined;
   }
 
-  private getArrowWithMinimalLengthEnd(start: Vec2, end: Vec2 | null): Vec2 {
+  private getArrowWithMinimalLengthEnd(
+    start: Vec2,
+    end: Vec2 | null | undefined,
+  ): Vec2 {
     if (!end) {
       return new Vec2(start.x + ReactionArrowAddTool.DEFAULT_LENGTH, start.y);
     }
@@ -132,7 +135,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     dragContext: DragContextInProgress,
   ): DragContextInProgress {
     const item = this.reStruct.molecule.rxnArrows.get(dragContext.itemId);
-    assert(item != null);
+    assert(item != undefined);
     let [p0, p1] = item.pos;
     p1 = this.getArrowWithMinimalLengthEnd(p0, p1);
     this.editor.update(
@@ -150,14 +153,14 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     const p0 = CoordinateTransformation.pageToModel(event, this.render);
 
     if (!ci) {
-      const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];
+      const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, undefined)];
       this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
     }
   }
 
   private updateResizingState(arrowId: number, isResizing: boolean) {
     const reArrow = this.reStruct.rxnArrows.get(arrowId);
-    assert(reArrow != null);
+    assert(reArrow != undefined);
     reArrow.isResizing = isResizing;
   }
 }

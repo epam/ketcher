@@ -31,8 +31,9 @@ interface Props {
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
   const [isOpen, setIsOpen] = useState(false);
-  const [triggerElement, setTriggerElement] =
-    useState<HTMLButtonElement | null>(null);
+  const [triggerElement, setTriggerElement] = useState<
+    HTMLButtonElement | null | undefined
+  >(undefined);
   const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
 

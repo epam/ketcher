@@ -58,7 +58,7 @@ const ActionButton = (props: Props) => {
   const { t } = useTranslation();
 
   if (status.hidden) {
-    return null;
+    return undefined;
   }
 
   const shortcut = shortcutStr(action?.shortcut);

@@ -854,7 +854,9 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
-  public highlightConnectionAttachmentPoint(name: AttachmentPointName | null) {
+  public highlightConnectionAttachmentPoint(
+    name: AttachmentPointName | null | undefined,
+  ) {
     if (!name) {
       this.render.ctab.setSelection(null);
       return;
@@ -874,8 +876,8 @@ class Editor implements KetcherEditor {
    * AP name alone is ambiguous, e.g. two components sharing the same AP name).
    * Pass null to clear the highlight.
    */
-  public highlightAtomById(atomId: number | null) {
-    if (atomId === null) {
+  public highlightAtomById(atomId: number | null | undefined) {
+    if (atomId === null || atomId === undefined) {
       this.render.ctab.setSelection(null);
       return;
     }
@@ -3170,7 +3172,7 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
-  highlightAttachmentPoint(name: AttachmentPointName | null) {
+  highlightAttachmentPoint(name: AttachmentPointName | null | undefined) {
     if (!name) {
       this.render.ctab.setSelection(null);
       return;
@@ -3870,7 +3872,7 @@ class Editor implements KetcherEditor {
     this.monomerCreationState.isRnaPresetMode = isActive;
   }
 
-  selection(ci?: Selection | 'all' | 'descriptors' | null) {
+  selection(ci?: Selection | 'all' | 'descriptors' | null | undefined) {
     if (arguments.length === 0) {
       return this._selection;
     }
@@ -3942,7 +3944,11 @@ class Editor implements KetcherEditor {
     return this._selection;
   }
 
-  hover(ci: HoverTarget | null, newTool?: Tool | null, event?: PointerEvent) {
+  hover(
+    ci: HoverTarget | null | undefined,
+    newTool?: Tool | null | undefined,
+    event?: PointerEvent,
+  ) {
     const tool = newTool ?? this._tool;
 
     const hoverState = (tool as unknown as { ci?: HoverTarget })?.ci;
@@ -4172,7 +4178,7 @@ class Editor implements KetcherEditor {
 
   findItem(
     event: Event | MouseEvent | { clientX: number; clientY: number },
-    maps: Array<string> | null,
+    maps: Array<string> | null | undefined,
     skip: SkipItem | null = null,
   ) {
     const pos = CoordinateTransformation.pageToModel(

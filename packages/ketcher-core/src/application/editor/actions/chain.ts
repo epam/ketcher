@@ -33,7 +33,7 @@ export function fromChain(
   p0: Vec2,
   v: number,
   nSect: number,
-  atomId: number | null,
+  atomId: number | null | undefined,
 ) {
   const dx = Math.cos(Math.PI / 6);
   const dy = Math.sin(Math.PI / 6);
@@ -41,7 +41,7 @@ export function fromChain(
   let action = new Action();
 
   const frid =
-    atomId === null
+    atomId === null || atomId === undefined
       ? ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
           .frid as number)
       : (atomGetAttr(restruct, atomId, 'fragment') as number);

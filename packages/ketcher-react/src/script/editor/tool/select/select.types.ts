@@ -45,7 +45,8 @@ export type ArrowDragContext = CommonArrowDragContext<
 > &
   SharedDragContext;
 
-export type DragContext = SelectionMoveDragContext | ArrowDragContext | null;
+export type DragContext =
+  SelectionMoveDragContext | ArrowDragContext | null | undefined;
 
 export function isSelectionMoveDragContext(
   dragCtx: DragContext,

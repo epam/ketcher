@@ -19,7 +19,7 @@ export type MultitailArrowClosestItem = ClosestItemWithMap<
 
 export interface CommonArrowDragContext<CI> {
   originalPosition: Vec2;
-  action: Action | null;
+  action: Action | null | undefined;
   closestItem: CI;
 }
 
@@ -35,5 +35,5 @@ export interface ArrowMoveTool<CI> {
   mouseup: (
     event: PointerEvent,
     dragContext: CommonArrowDragContext<CI>,
-  ) => Action | null;
+  ) => Action | null | undefined;
 }

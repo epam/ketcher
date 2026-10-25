@@ -1,7 +1,8 @@
 import { MonomerMicromolecule, SGroup, Struct, assert } from 'ketcher-core';
 import type Editor from '../Editor';
 
-let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
+let showTooltipTimer: ReturnType<typeof setTimeout> | null | undefined =
+  undefined;
 
 export const TOOLTIP_DELAY = 300;
 
@@ -24,9 +25,9 @@ function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
 ) {
   sGroup.getAttachmentPoints().forEach((attachmentPoint) => {
     const atomId = atomsIdMapping.get(attachmentPoint.atomId);
-    assert(atomId != null);
+    assert(atomId != undefined);
     const attachmentPointAtom = struct.atoms.get(atomId);
-    assert(attachmentPointAtom != null);
+    assert(attachmentPointAtom != undefined);
     attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
     const rgroupAttachmentPoint =
       attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(atomId);
@@ -94,7 +95,7 @@ function makeRGroupAttachmentPoints(
     rgroupAttachmentPointIds.forEach((id) => {
       const rgroupAttachmentPoint =
         existingStruct.rgroupAttachmentPoints.get(id);
-      assert(rgroupAttachmentPoint != null);
+      assert(rgroupAttachmentPoint != undefined);
       struct.rgroupAttachmentPoints.add(
         rgroupAttachmentPoint.clone(atomsIdMapping),
       );
@@ -106,7 +107,7 @@ function makeAtoms(sGroup: SGroup, existingStruct: Struct, struct: Struct) {
   const atomsIdMapping = new Map();
   sGroup.atoms.forEach((atomId: number) => {
     const atom = existingStruct.atoms.get(atomId);
-    assert(atom != null);
+    assert(atom != undefined);
     const atomIdInTooltip = struct.atoms.add(atom.clone());
     atomsIdMapping.set(atomId, atomIdInTooltip);
   });
@@ -114,14 +115,17 @@ function makeAtoms(sGroup: SGroup, existingStruct: Struct, struct: Struct) {
 }
 
 function hideTooltip(editor: Editor) {
-  editor.event.showInfo.dispatch(null);
+  editor.event.showInfo.dispatch(undefined);
 
   if (showTooltipTimer) {
     clearTimeout(showTooltipTimer);
   }
 }
 
-function showTooltip(editor: Editor, infoPanelData: InfoPanelData | null) {
+function showTooltip(
+  editor: Editor,
+  infoPanelData: InfoPanelData | null | undefined,
+) {
   hideTooltip(editor);
 
   if (
@@ -151,7 +155,7 @@ export function setFunctionalGroupsTooltip({
     return;
   }
 
-  let infoPanelData: null | InfoPanelData = null;
+  let infoPanelData: null | undefined | InfoPanelData = undefined;
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups'];
   const closestCollapsibleStructures = editor.findItem(
     event as Event,

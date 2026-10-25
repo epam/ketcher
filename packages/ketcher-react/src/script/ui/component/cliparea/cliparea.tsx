@@ -94,8 +94,8 @@ interface ClipAreaListeners {
 
 class ClipArea extends Component<ClipAreaProps> {
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  private target: HTMLElement | null = null;
-  private listeners: ClipAreaListeners | null = null;
+  private target: HTMLElement | null | undefined = undefined;
+  private listeners: ClipAreaListeners | null | undefined = undefined;
 
   constructor(props: ClipAreaProps) {
     super(props);
@@ -107,7 +107,9 @@ class ClipArea extends Component<ClipAreaProps> {
     if (!el) return;
 
     this.target =
-      this.props.target || (el.parentNode as HTMLElement | null) || null;
+      this.props.target ||
+      (el.parentNode as HTMLElement | null | undefined) ||
+      undefined;
 
     this.listeners = {
       mouseup: (event: MouseEvent) => {
@@ -370,7 +372,7 @@ function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
   if (!clipboardData && ieCb) {
     ieCb.setData('text', data['text/plain']);
   } else {
-    let curFmt: string | null = null;
+    let curFmt: string | null | undefined = undefined;
     clipboardData.setData('text/plain', data['text/plain']);
     try {
       Object.keys(data).forEach((fmt) => {

@@ -24,7 +24,7 @@ type GenProps = {
   onAtomSelect: (label: string) => void;
   onAtomActivate: (label: string) => void;
   group: GenGroupType;
-  disabledQueryElements: Array<string> | null;
+  disabledQueryElements: Array<string> | null | undefined;
 };
 
 const getLegendClassname = (title: string) => {

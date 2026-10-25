@@ -26,7 +26,7 @@ const useMakeAttachmentPointMenuItems = ({
     selectedAtomId !== undefined && editor.isMonomerCreationWizardActive;
 
   if (!selectedAtomInMonomerCreationWizard) {
-    return null;
+    return undefined;
   }
 
   assert(editor.monomerCreationState);
@@ -116,7 +116,7 @@ const useMakeAttachmentPointMenuItems = ({
     </Item>,
   );
 
-  return menuItems.length > 0 ? menuItems : null;
+  return menuItems.length > 0 ? menuItems : undefined;
 };
 
 export default useMakeAttachmentPointMenuItems;

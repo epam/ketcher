@@ -96,14 +96,14 @@ class SelectTool implements Tool {
   readonly #mode: SelectMode;
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
-  private dragCtx: DragContext = null;
+  private dragCtx: DragContext = undefined;
   private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
   private lastHoveredFragmentId?: number;
-  private lastHoveredFragmentTarget: HoverTarget | null = null;
+  private lastHoveredFragmentTarget: HoverTarget | null | undefined = undefined;
   private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
@@ -132,7 +132,7 @@ class SelectTool implements Tool {
     const map = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.altKey,
     );
-    const ci = this.editor.findItem(event, map, null);
+    const ci = this.editor.findItem(event, map, undefined);
 
     const selected = {
       ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
@@ -218,7 +218,7 @@ class SelectTool implements Tool {
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
-      this.editor.selection(null);
+      this.editor.selection(undefined);
       const shouldPreserveCurrentSelection =
         ci.map !== 'attachmentGroups' && isItemSelected(selection, ci, ctab);
       this.editor.selection(shouldPreserveCurrentSelection ? selection : sel);
@@ -323,7 +323,7 @@ class SelectTool implements Tool {
         selectionDragCtx.item.map === 'functionalGroups' &&
         !selectionDragCtx.action
       ) {
-        editor.event.showInfo.dispatch(null);
+        editor.event.showInfo.dispatch(undefined);
       }
       /* end */
 
@@ -368,9 +368,9 @@ class SelectTool implements Tool {
         const maps = getMapsForClosestItem(
           this.#lassoHelper.fragment || event.altKey,
         );
-        const item = editor.findItem(event, maps, null);
-        let hoverTarget: HoverTarget | null = item;
-        let cursorTarget: ClosestItemWithMap | null = item;
+        const item = editor.findItem(event, maps, undefined);
+        let hoverTarget: HoverTarget | null | undefined = item;
+        let cursorTarget: ClosestItemWithMap | null | undefined = item;
 
         if (item?.map === 'frags') {
           if (this.lastHoveredFragmentId !== item.id) {
@@ -380,7 +380,7 @@ class SelectTool implements Tool {
           hoverTarget = this.lastHoveredFragmentTarget;
         } else {
           this.lastHoveredFragmentId = undefined;
-          this.lastHoveredFragmentTarget = null;
+          this.lastHoveredFragmentTarget = undefined;
 
           if (item?.map === 'bonds') {
             const molecule = editor.struct();
@@ -390,7 +390,7 @@ class SelectTool implements Tool {
               CoordinateTransformation.pageToModel(event, editor.render),
             );
 
-            if (attachmentGroupId !== null) {
+            if (attachmentGroupId !== null && attachmentGroupId !== undefined) {
               cursorTarget = {
                 map: 'attachmentGroups',
                 id: attachmentGroupId,
@@ -401,7 +401,7 @@ class SelectTool implements Tool {
           }
         }
 
-        editor.hover(hoverTarget, null, event);
+        editor.hover(hoverTarget, undefined, event);
         handleMovingPosibilityCursor(
           hoverTarget,
           this.editor.render.paper.canvas,
@@ -429,7 +429,7 @@ class SelectTool implements Tool {
       isSelectionMoveDragContext(dragCtx) &&
       dragCtx.item.map === 'attachmentGroups'
         ? dragCtx.item.id
-        : null;
+        : undefined;
 
     // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
@@ -466,7 +466,7 @@ class SelectTool implements Tool {
         this.editor.update(dragCtx.action);
         this.editor.update(true);
       }
-      this.dragCtx = null;
+      this.dragCtx = undefined;
       editor.event.message.dispatch({ info: false });
       this.editor.rotateController.rerender();
       return;
@@ -476,9 +476,9 @@ class SelectTool implements Tool {
       if (isMergePrevented) {
         // No merge, but the move still has to be committed to history.
         if (dragCtx.mergeItems) {
-          editor.selection(null);
+          editor.selection(undefined);
         }
-        dropAndMerge(editor, null, dragCtx.action, dragCtx.copyAction);
+        dropAndMerge(editor, undefined, dragCtx.action, dragCtx.copyAction);
       } else if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
@@ -490,24 +490,24 @@ class SelectTool implements Tool {
     } else {
       onSelectionEnd(event, this.editor, this.#lassoHelper);
     }
-    this.dragCtx = null;
+    this.dragCtx = undefined;
     editor.event.message.dispatch({
       info: false,
     });
 
     this.editor.rotateController.rerender();
 
-    if (clickedAttachmentGroupId !== null) {
+    if (clickedAttachmentGroupId !== undefined) {
       const itemUnderCursor = editor.findItem(
         event,
         getMapsForClosestItem(false),
-        null,
+        undefined,
       );
       if (
         itemUnderCursor?.map === 'attachmentGroups' &&
         itemUnderCursor.id === clickedAttachmentGroupId
       ) {
-        editor.hover(itemUnderCursor, null, event);
+        editor.hover(itemUnderCursor, undefined, event);
       }
     }
   }
@@ -520,7 +520,7 @@ class SelectTool implements Tool {
     const ci = editor.findItem(
       event,
       ['atoms', 'bonds', 'sgroups', 'functionalGroups', 'sgroupData', 'texts'],
-      null,
+      undefined,
     );
 
     const atomResult: number[] = [];
@@ -659,15 +659,19 @@ class SelectTool implements Tool {
     }
     onSelectionLeave(this.editor, this.#lassoHelper);
 
-    this.dragCtx = null;
+    this.dragCtx = undefined;
     this.lastHoveredFragmentId = undefined;
-    this.lastHoveredFragmentTarget = null;
+    this.lastHoveredFragmentTarget = undefined;
 
-    this.editor.hover(null);
+    this.editor.hover(undefined);
   }
 
   private isDraggingStructureOnSaltOrSolvent(
-    dragCtx: Pick<NonNullable<DragContext>, 'mergeItems'> | null | undefined,
+    dragCtx:
+      | Pick<NonNullable<DragContext>, 'mergeItems'>
+      | null
+      | undefined
+      | undefined,
     sgroups: Map<number, ReSGroup>,
   ) {
     let isDraggingOnSaltOrSolventAtom;
@@ -784,9 +788,9 @@ function isSelected(
 }
 
 function getHoverTarget(
-  item: ClosestItemWithMap | null,
+  item: ClosestItemWithMap | null | undefined,
   editor: Editor,
-): HoverTarget | null {
+): HoverTarget | null | undefined {
   if (item?.map !== 'frags') {
     return item;
   }

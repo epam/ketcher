@@ -34,4 +34,4 @@ export const Tooltip = (props: TooltipProps) =>
     >
       {props.message}
     </div>
-  ) : null;
+  ) : undefined;

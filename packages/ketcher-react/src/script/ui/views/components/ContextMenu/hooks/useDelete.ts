@@ -31,7 +31,7 @@ const useDelete = () => {
         return;
       }
 
-      editor.selection(null);
+      editor.selection(undefined);
       editor.focusCliparea();
     },
     [ketcherId],

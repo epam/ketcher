@@ -17,15 +17,15 @@ const getAtomIdByProps = (
   const editor = ketcher.editor as Editor;
   const restruct = editor.render.ctab;
   const atomId = props?.atomIds?.[0];
-  if (atomId != null) {
+  if (atomId != undefined) {
     return atomId;
   }
 
   const attachmentPointId = props?.rgroupAttachmentPoints?.[0];
-  assert(attachmentPointId != null);
+  assert(attachmentPointId != undefined);
   const attachmentPoint =
     restruct.molecule.rgroupAttachmentPoints.get(attachmentPointId);
-  assert(attachmentPoint != null);
+  assert(attachmentPoint != undefined);
   return attachmentPoint.atomId;
 };
 
@@ -38,7 +38,7 @@ const useRGroupAttachmentPointEdit = () => {
       const restruct = ketcher.editor.render.ctab;
       const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
-      assert(atom != null);
+      assert(atom != undefined);
 
       editRGroupAttachmentPoint(ketcher.editor, atom, atomId);
     },
@@ -51,7 +51,7 @@ const useRGroupAttachmentPointEdit = () => {
       const restruct = ketcher.editor.render.ctab;
       const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
-      assert(atom != null);
+      assert(atom != undefined);
 
       return atom.isRGroupAttachmentPointEditDisabled;
     },

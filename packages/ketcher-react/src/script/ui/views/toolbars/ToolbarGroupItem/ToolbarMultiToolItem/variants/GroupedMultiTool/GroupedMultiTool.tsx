@@ -37,7 +37,7 @@ const GroupedMultiTool = (props: Props) => {
   } = props;
 
   if (!groups) {
-    return null;
+    return undefined;
   }
 
   return (

@@ -355,7 +355,7 @@ describe('SelectTool Attachment Group selection', () => {
 
     tool.mouseup(event);
 
-    expect(hover).toHaveBeenNthCalledWith(1, null);
+    expect(hover).toHaveBeenNthCalledWith(1, undefined);
     expect(hover).toHaveBeenNthCalledWith(
       2,
       {
@@ -363,7 +363,7 @@ describe('SelectTool Attachment Group selection', () => {
         id: attachmentGroupId,
         dist: 0,
       },
-      null,
+      undefined,
       event,
     );
   });

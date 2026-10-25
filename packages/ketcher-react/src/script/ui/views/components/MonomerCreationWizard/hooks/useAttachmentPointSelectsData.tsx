@@ -95,27 +95,27 @@ export const createReadonlyAttachmentPointSelectData = (
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
-): AttachmentPointSelectData | null => {
+): AttachmentPointSelectData | null | undefined => {
   if (!editor.monomerCreationState) {
-    return null;
+    return undefined;
   }
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
   const atomPair = assignedAttachmentPoints.get(attachmentPointName);
   if (!atomPair) {
-    return null;
+    return undefined;
   }
 
   const [attachmentAtomId, leavingAtomId] = atomPair;
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
   if (!attachmentAtom) {
-    return null;
+    return undefined;
   }
 
   const leavingAtom = editor.struct().atoms.get(leavingAtomId);
   if (!leavingAtom) {
-    return null;
+    return undefined;
   }
 
   const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>

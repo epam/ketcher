@@ -95,7 +95,7 @@ export function getAngleFromEvent(
   let angle;
   if (degree && degree > 1) {
     // common case
-    angle = null;
+    angle = undefined;
   } else if (degree === 1) {
     // on chain end
     const atom = restruct.molecule.atoms.get(ci.id);
@@ -110,7 +110,10 @@ export function getAngleFromEvent(
     } else {
       angle = event?.ctrlKey
         ? vectorUtils.calcAngle(nei.pp, atom.pp)
-        : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
+        : vectorUtils.fracAngle(
+            vectorUtils.calcAngle(nei.pp, atom.pp),
+            undefined,
+          );
     }
   } else {
     // on single atom

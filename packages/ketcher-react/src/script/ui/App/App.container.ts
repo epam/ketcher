@@ -28,7 +28,7 @@ const AppContainer = connect<
   AppCallProps,
   { togglerComponent?: JSX.Element }
 >(
-  null,
+  undefined,
   mapDispatchToProps,
 )(App);
 

@@ -47,12 +47,12 @@ const commonFonts: string[] = [
   'Roboto',
 ];
 
-function checkInSystem(): Promise<(string | null)[]> {
+function checkInSystem(): Promise<(string | null | undefined)[]> {
   const availableFontsPromises = commonFonts.map((fontName) => {
     const observer = new FontFaceObserver(fontName);
     return observer.check().then(
       () => fontName,
-      () => null,
+      () => undefined,
     );
   });
 
@@ -65,7 +65,9 @@ interface SystemFontsProps {
 }
 
 function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
-  const [availableFonts, setAvailableFonts] = useState<Option[] | null>(null);
+  const [availableFonts, setAvailableFonts] = useState<
+    Option[] | null | undefined
+  >(undefined);
   const onChangeCallback = useCallback(
     (value: string) => {
       onChange(value);

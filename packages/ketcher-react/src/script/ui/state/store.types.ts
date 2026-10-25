@@ -136,5 +136,5 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 export type CurrentAppState = Pick<StoreState, 'options'> & {
-  editor: Editor | null;
+  editor: Editor | null | undefined;
 };

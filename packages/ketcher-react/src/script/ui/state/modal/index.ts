@@ -27,9 +27,9 @@ interface ModalDialogProps {
 
 interface ModalState {
   name: string;
-  form: ModalFormState | null;
-  prop: ModalDialogProps | null;
-  parentModal: ModalState | null;
+  form: ModalFormState | null | undefined;
+  prop: ModalDialogProps | null | undefined;
+  parentModal: ModalState | null | undefined;
 }
 
 export interface ModalOpenAction {
@@ -51,7 +51,7 @@ export type { ModalState, ModalDialogProps };
 export function openDialog(
   dispatch: Dispatch,
   dialogName: string,
-  props?: object | null,
+  props?: object | null | undefined,
 ): Promise<unknown> {
   return new Promise((resolve, reject) => {
     dispatch({

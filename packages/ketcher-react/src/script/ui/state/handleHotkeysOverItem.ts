@@ -81,7 +81,7 @@ function eraseItem({
     editor,
     item,
     () => fromFragmentDeletion(editor.render.ctab, item),
-    () => editor.hover(null),
+    () => editor.hover(undefined),
   );
 }
 
@@ -306,7 +306,7 @@ function handleSgroupsTool({
   const action = new Action();
   const ctab = editor.render.ctab;
   const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
-  if (sGroup == null) {
+  if (sGroup == undefined) {
     throw new Error(
       `unexpected error, sgroup with id "${hoveredItemId}" is not found`,
     );
@@ -355,7 +355,7 @@ function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
       {
         charge: existingAtom.charge + newAction.opts,
       },
-      null,
+      undefined,
     );
     editor.update(updatedAtom);
   }
@@ -376,7 +376,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
   const atom =
     hoveredItemId || hoveredItemId === 0
       ? struct.atoms.get(hoveredItemId)
-      : null;
+      : undefined;
   const rglabel = atom ? atom.rglabel : 0;
   const label = atom ? atom.label : 'R#';
 
@@ -384,12 +384,12 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
     let element = await editor.event.elementEdit.dispatch({
       label: 'R#',
       rglabel,
-      fragId: atom ? atom.fragment : null,
+      fragId: atom ? atom.fragment : undefined,
     });
     element = { ...Atom.attrlist, ...element };
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
-      editor.update(fromAtomAddition(editor.render.ctab, null, element));
+      editor.update(fromAtomAddition(editor.render.ctab, undefined, element));
     } else if (rglabel !== element.rglabel) {
       if (!element.rglabel && label !== 'R#') {
         element.label = label;
@@ -408,7 +408,7 @@ function getFunctionalGroupIdByItem(
   editor: Editor,
   hoveredItemId: number,
   type: string,
-): number | null {
+): number | null | undefined {
   const molecule = editor.render.ctab.molecule;
   const functionalGroups = molecule.functionalGroups;
 
@@ -427,7 +427,7 @@ async function isChangingFunctionalGroup(
 ) {
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
-  if (fgId !== null) {
+  if (fgId !== null && fgId !== undefined) {
     dispatchMonomerOrGroupDialog(editor, [fgId]);
 
     return false;

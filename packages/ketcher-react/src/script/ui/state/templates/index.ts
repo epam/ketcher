@@ -35,14 +35,14 @@ export function selectTmpl(tmpl) {
 export function changeGroup(group) {
   return {
     type: 'TMPL_CHANGE_GROUP',
-    data: { group, selected: null },
+    data: { group, selected: undefined },
   };
 }
 
 export function changeFilter(filter) {
   return {
     type: 'TMPL_CHANGE_FILTER',
-    data: { filter, selected: null },
+    data: { filter, selected: undefined },
   };
 }
 
@@ -97,7 +97,7 @@ export function editTmpl(tmpl) {
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);
         },
-        () => null,
+        () => undefined,
       )
       .then(() =>
         openDialog(dispatch, 'templates').catch((e) => {
@@ -164,9 +164,9 @@ function updateLocalStore(lib) {
 /* REDUCER */
 export const initTmplsState = {
   lib: [],
-  selected: null,
+  selected: undefined,
   filter: '',
-  group: null,
+  group: undefined,
   attach: {},
   mode: 'classic',
   tab: 0,

@@ -62,7 +62,7 @@ describe('Haptic bond Attachment Group target', () => {
           restruct,
           new Vec2(1 + outsideOffset, 1),
         ),
-      ).toBeNull();
+      ).toBeUndefined();
     },
   );
 });

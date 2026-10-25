@@ -47,7 +47,7 @@ class AttachTool implements Tool {
     ) {
       this.editor.hover(ci);
     } else {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
     }
     return true;
   }

@@ -24,7 +24,7 @@ class APointTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousemove(event) {
@@ -36,12 +36,12 @@ class APointTool implements Tool {
     if (closestItem?.map === 'atoms') {
       const atom = struct.atoms.get(closestItem.id);
       if (atom?.label !== 'R#' && atom?.rglabel === null) {
-        this.editor.hover(closestItem, null, event);
+        this.editor.hover(closestItem, undefined, event);
       }
     } else if (closestItem?.map === 'rgroupAttachmentPoints') {
-      this.editor.hover(closestItem, null, event);
+      this.editor.hover(closestItem, undefined, event);
     } else {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
     }
   }
 
@@ -89,9 +89,9 @@ class APointTool implements Tool {
     }
 
     if (ci?.map === 'atoms') {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       const atom = molecule.atoms.get(ci.id);
-      assert(atom != null);
+      assert(atom != undefined);
 
       if (!atom.isRGroupAttachmentPointEditDisabled) {
         editRGroupAttachmentPoint(editor, atom, ci.id);

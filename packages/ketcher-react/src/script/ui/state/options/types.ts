@@ -15,7 +15,7 @@ export type CheckOption =
   | '3d'
   | 'chiral_flag';
 
-export type RecognizeImageFile = File | FileContent | null;
+export type RecognizeImageFile = File | FileContent | null | undefined;
 
 export type AnalyseRoundName = 'roundWeight' | 'roundMass' | 'roundElAnalysis';
 
@@ -28,7 +28,7 @@ export interface AnalyseValues {
 }
 
 export interface AnalyseState {
-  values: AnalyseValues | null;
+  values: AnalyseValues | null | undefined;
   loading: boolean;
   roundWeight: number | string;
   roundMass: number | string;
@@ -55,9 +55,9 @@ export interface OptionsCheckState {
 
 export interface OptionsRecognizeState {
   file: RecognizeImageFile;
-  structStr: string | Promise<unknown> | null;
+  structStr: string | Promise<unknown> | null | undefined;
   fragment: boolean;
-  version: string | null;
+  version: string | null | undefined;
 }
 
 export interface ServerSettings {

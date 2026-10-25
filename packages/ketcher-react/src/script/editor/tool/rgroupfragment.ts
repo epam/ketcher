@@ -31,14 +31,14 @@ class RGroupFragmentTool implements Tool {
 
   constructor(editor) {
     // TODO: check if it's a fragments already
-    editor.selection(null);
+    editor.selection(undefined);
     this.editor = editor;
   }
 
   mousemove(event) {
     this.editor.hover(
       this.editor.findItem(event, ['frags', 'rgroups']),
-      null,
+      undefined,
       event,
     );
   }
@@ -112,7 +112,7 @@ class RGroupFragmentTool implements Tool {
       return true;
     }
 
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     const label =
       ci.map === 'rgroups'
@@ -154,7 +154,7 @@ class RGroupFragmentTool implements Tool {
   }
 
   cancel() {
-    this.editor.hover(null);
+    this.editor.hover(undefined);
   }
 }
 

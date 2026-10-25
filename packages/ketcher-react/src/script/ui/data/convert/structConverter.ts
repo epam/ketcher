@@ -29,7 +29,7 @@ import {
 export function couldBeSaved(
   struct: Struct,
   format: SupportedFormat,
-): string | null {
+): string | undefined {
   const warnings: Array<string> = [];
   const formatName: string = getPropertiesByFormat(format).name;
 
@@ -195,5 +195,5 @@ export function couldBeSaved(
 
   if (warnings.length !== 0) return warnings.join('\n');
 
-  return null;
+  return undefined;
 }

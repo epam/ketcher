@@ -2,7 +2,7 @@
 // check rollup.config.mjs to see how different build types are handled.
 // This plugin can not result cjs modules.
 
-let _indigoWorker: Worker | null = null;
+let _indigoWorker: Worker | null | undefined = undefined;
 
 export function getIndigoWorker(): Worker {
   _indigoWorker ??= new Worker(

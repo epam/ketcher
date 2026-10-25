@@ -52,7 +52,8 @@ import {
 import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
-let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+let keydownListener: ((event: KeyboardEvent) => void) | null | undefined =
+  undefined;
 const affectedTools = new Set(['paste', 'template']);
 const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
@@ -144,7 +145,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
 }
 
 function handleSlashKey(
-  hoveredItem: Record<string, number> | null,
+  hoveredItem: Record<string, number> | null | undefined,
   editor,
   dispatch,
   event,
@@ -189,7 +190,7 @@ function getNextAction(actName) {
 }
 
 function shouldHandleItemDirectly(
-  hoveredItem: Record<string, number> | null,
+  hoveredItem: Record<string, number> | null | undefined,
   newAction,
 ): hoveredItem is Record<string, number> {
   return Boolean(
@@ -217,10 +218,10 @@ function handleSelectTool(newAction, key: string, index: number) {
 // so re-pressing the key would otherwise always land on the same entry) (#3705).
 function getNextBondTypeAction(hoveredItem, group, render) {
   const hoveredBondId = hoveredItem.bonds;
-  if (hoveredBondId === undefined) return null;
+  if (hoveredBondId === undefined) return undefined;
 
   const bond = render.ctab.bonds.get(hoveredBondId)?.b;
-  if (!bond) return null;
+  if (!bond) return undefined;
 
   const currentIndex = group.findIndex((actName) => {
     const opts = actions[actName]?.action?.opts;
@@ -353,7 +354,7 @@ function getCurrentAction(prevActName) {
 
 function getHoveredItem(
   ctab: Record<string, Map<number, Record<string, unknown>>>,
-): Record<string, number> | null {
+): Record<string, number> | null | undefined {
   const hoveredItem = {};
 
   for (const ctabItem in ctab) {
@@ -372,7 +373,7 @@ function getHoveredItem(
     });
   }
 
-  return Object.keys(hoveredItem).length ? hoveredItem : null;
+  return Object.keys(hoveredItem).length ? hoveredItem : undefined;
 }
 
 function checkGroupOnTool(group, actionTool) {
@@ -408,7 +409,7 @@ export function initClipboard(dispatch, getState) {
       const state = getState();
       const editor = state.editor;
       const data = legacyClipData(editor);
-      editor.selection(null);
+      editor.selection(undefined);
       return data;
     },
     onLegacyCut() {
@@ -416,7 +417,7 @@ export function initClipboard(dispatch, getState) {
       const editor = state.editor;
       const data = legacyClipData(editor);
       if (data) debAction({ tool: 'eraser', opts: 1 });
-      else editor.selection(null);
+      else editor.selection(undefined);
       return data;
     },
     async onCut() {
@@ -429,7 +430,7 @@ export function initClipboard(dispatch, getState) {
 
         const data = await clipData(editor);
         if (data) debAction({ tool: 'eraser', opts: 1 });
-        else editor.selection(null);
+        else editor.selection(undefined);
         return data;
       }, ketcherInstance.eventBus);
       return result;
@@ -442,7 +443,7 @@ export function initClipboard(dispatch, getState) {
       const result = await runAsyncAction(async () => {
         const editor = getState().editor;
         const data = await clipData(editor);
-        editor.selection(null);
+        editor.selection(undefined);
         return data;
       }, ketcherInstance.eventBus);
       return result;
@@ -512,7 +513,7 @@ function isAbleToCopy(editor: Editor): boolean {
 
 async function clipData(editor: Editor) {
   if (!isAbleToCopy(editor)) {
-    return null;
+    return undefined;
   }
 
   const res = {};
@@ -548,12 +549,12 @@ async function clipData(editor: Editor) {
     }
   }
 
-  return null;
+  return undefined;
 }
 
 function legacyClipData(editor: Editor) {
   if (!isAbleToCopy(editor)) {
-    return null;
+    return undefined;
   }
 
   const res = {};
@@ -580,5 +581,5 @@ function legacyClipData(editor: Editor) {
     }
   }
 
-  return null;
+  return undefined;
 }

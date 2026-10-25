@@ -50,7 +50,7 @@ export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
       case props.states.presentationViewer:
         return <CDXStructuresViewer {...props} />;
       default:
-        return null;
+        return undefined;
     }
   }
 };

@@ -25,7 +25,7 @@ const AttachmentPointLabelMenuItems = ({
   const editor = ketcher.editor as Editor;
 
   if (!propsFromTrigger) {
-    return null;
+    return undefined;
   }
 
   const { attachmentPointName } = propsFromTrigger;

@@ -184,7 +184,7 @@ const AttachmentPointEditPopup = ({
   );
 
   if (!selectsData) {
-    return null;
+    return undefined;
   }
 
   const handleNameChange = (newName: AttachmentPointName) => {

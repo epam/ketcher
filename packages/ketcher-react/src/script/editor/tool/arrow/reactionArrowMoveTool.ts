@@ -21,7 +21,7 @@ export class ReactionArrowMoveTool
   ) {
     if (closestItem.map === 'rxnArrows') {
       const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
-      assert(reArrow != null);
+      assert(reArrow != undefined);
       reArrow.isResizing = isResizing;
     }
   }
@@ -32,7 +32,7 @@ export class ReactionArrowMoveTool
         event,
         this.editor.render,
       ),
-      action: null,
+      action: undefined,
       closestItem,
     };
   }

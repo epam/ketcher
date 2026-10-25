@@ -26,7 +26,7 @@ type GenSetProps = {
   onAtomActivate: (label: string) => void;
   className?: string;
   group: string;
-  disabledQueryElements: Array<string> | null;
+  disabledQueryElements: Array<string> | null | undefined;
 };
 
 const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '');

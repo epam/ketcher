@@ -81,7 +81,7 @@ const BACKGROUND_COLOR = {
 };
 
 const MIEW_TX_TYPES = {
-  no: null,
+  no: undefined,
   bright: {
     colorer: 'EL',
   },
@@ -96,7 +96,7 @@ const MIEW_TX_TYPES = {
 
 const TXoptions = (userOpts) => {
   const type = userOpts.miewAtomLabel;
-  if (MIEW_TX_TYPES[type] === null) return null;
+  if (MIEW_TX_TYPES[type] === null) return undefined;
   return {
     colorer: MIEW_TX_TYPES[type].colorer,
     selector: 'not elem C',
@@ -168,7 +168,7 @@ const MiewDialog = ({
       miewRef.current = miew;
       const factory = new FormatterFactory(server);
       const service = factory.create(SupportedFormat.cml);
-      const moleculeOnlyStruct = struct.clone(null, null, true);
+      const moleculeOnlyStruct = struct.clone(undefined, undefined, true);
 
       service
         .getStringFromStructureAsync(moleculeOnlyStruct)
@@ -334,7 +334,7 @@ const miewOptionsSelector = createSelector([getOptionsSettings], (settings) =>
 
 const mapStateToProps = (state) => ({
   miewOpts: miewOptionsSelector(state),
-  server: state.options.app.server ? state.server : null,
+  server: state.options.app.server ? state.server : undefined,
   struct: state.editor.struct(),
   miewTheme: state.options.settings.miewTheme,
   serverSettings: state.options.getServerSettings(),

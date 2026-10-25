@@ -73,12 +73,12 @@ function getPanelPosition(
 
 const InfoTooltip: FC<InfoPanelProps> = (props) => {
   const { render, className } = props;
-  const [tooltip, setTooltip] = useState<null | string>(null);
+  const [tooltip, setTooltip] = useState<null | undefined | string>(undefined);
   const [position, setPosition] = useState<
-    CursorPosition | { x: null; y: null }
+    CursorPosition | { x: null | undefined; y: null | undefined }
   >({
-    x: null,
-    y: null,
+    x: undefined,
+    y: undefined,
   });
 
   useEffect(() => {
@@ -93,10 +93,10 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
       TOOLTIP_DELAY,
     );
     const hideTooltip = () => {
-      setTooltip(null);
+      setTooltip(undefined);
       setPosition({
-        x: null,
-        y: null,
+        x: undefined,
+        y: undefined,
       });
     };
 
@@ -119,7 +119,7 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
   }, []);
 
   if (!tooltip || !position.x || !position.y) {
-    return null;
+    return undefined;
   }
 
   // Get canvas offset from viewport

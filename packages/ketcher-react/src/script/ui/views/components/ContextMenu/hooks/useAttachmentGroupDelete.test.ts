@@ -72,7 +72,7 @@ describe('useAttachmentGroupDelete', () => {
       attachmentGroupId,
     );
     expect(update).toHaveBeenCalledWith('delete-attachment-group-action');
-    expect(selection).toHaveBeenCalledWith(null);
+    expect(selection).toHaveBeenCalledWith(undefined);
     expect(focusCliparea).toHaveBeenCalled();
     expect(struct.atoms.has(firstEndpointId)).toBe(true);
     expect(struct.atoms.has(secondEndpointId)).toBe(true);

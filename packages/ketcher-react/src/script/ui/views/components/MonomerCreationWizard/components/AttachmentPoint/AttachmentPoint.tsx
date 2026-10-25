@@ -43,7 +43,7 @@ const AttachmentPoint = ({
     };
 
     const mouseLeaveHandler = () => {
-      editor.highlightAttachmentPoint(null);
+      editor.highlightAttachmentPoint(undefined);
     };
 
     element.addEventListener('mouseover', mouseOverHandler);
@@ -95,7 +95,7 @@ const AttachmentPoint = ({
   const selectsData = useAttachmentPointSelectsData(editor, name);
 
   if (!selectsData) {
-    return null;
+    return undefined;
   }
 
   const handleNameChange = (newName: AttachmentPointName) => {

@@ -35,7 +35,7 @@ const useFunctionalGroupEoc = () => {
 
       editor.update(action);
       editor.rotateController.rerender();
-      highlightFG(dispatch, { group: null, id: null });
+      highlightFG(dispatch, { group: undefined, id: undefined });
     },
     [dispatch, ketcherId],
   );

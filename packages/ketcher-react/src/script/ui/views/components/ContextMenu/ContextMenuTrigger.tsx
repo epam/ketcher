@@ -123,20 +123,20 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      const foundItem = editor.findItem(event, null);
+      const foundItem = editor.findItem(event, undefined);
       const attachmentGroupTarget = foundItem
         ? getAttachmentGroupTargetForBondHalf(
             editor.struct(),
             foundItem,
             CoordinateTransformation.pageToModel(event, editor.render),
           )
-        : null;
+        : undefined;
       const closestItem = attachmentGroupTarget ?? foundItem;
       const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
 
-      let showProps: ContextMenuProps | null = null;
+      let showProps: ContextMenuProps | null | undefined = undefined;
       let triggerType: ContextMenuTriggerType;
 
       if (!closestItem) {
@@ -144,12 +144,12 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         const isRotationReverted = isLeftMouseButtonPressed;
         if (selection && !isRotationReverted) {
           // if it was a click outside of any item
-          editor.selection(null);
+          editor.selection(undefined);
         }
 
         return;
       } else if (attachmentGroupTarget) {
-        editor.selection(null);
+        editor.selection(undefined);
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (!selection) {
         triggerType = ContextMenuTriggerType.ClosestItem;
@@ -177,7 +177,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       } else {
         // closestItem is outside of selection
-        editor.selection(null);
+        editor.selection(undefined);
         triggerType = ContextMenuTriggerType.ClosestItem;
       }
 

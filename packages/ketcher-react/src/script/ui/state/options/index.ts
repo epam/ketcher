@@ -59,7 +59,7 @@ export const initOptionsState: OptionsState = {
     imagoVersions: [],
   },
   analyse: {
-    values: null,
+    values: undefined,
     loading: false,
     roundWeight: 3,
     roundMass: 3,
@@ -82,10 +82,10 @@ export const initOptionsState: OptionsState = {
     ],
   },
   recognize: {
-    file: null,
-    structStr: null,
+    file: undefined,
+    structStr: undefined,
     fragment: false,
-    version: null,
+    version: undefined,
   },
   settings: readSettings(),
   getSettings() {
@@ -230,14 +230,14 @@ const recognizeActions: readonly RecognizeActionType[] = [
   'IS_FRAGMENT_RECOGNIZE',
 ];
 
-export function setStruct(str: string | Promise<unknown> | null) {
+export function setStruct(str: string | Promise<unknown> | null | undefined) {
   return {
     type: 'SET_RECOGNIZE_STRUCT',
     data: { structStr: str },
   };
 }
 
-export function changeVersion(version: string | null) {
+export function changeVersion(version: string | null | undefined) {
   return {
     type: 'CHANGE_IMAGO_VERSION',
     data: { version },
@@ -249,7 +249,7 @@ export function changeImage(file: RecognizeImageFile) {
     type: 'CHANGE_RECOGNIZE_FILE',
     data: {
       file,
-      structStr: null,
+      structStr: undefined,
     },
   };
 }

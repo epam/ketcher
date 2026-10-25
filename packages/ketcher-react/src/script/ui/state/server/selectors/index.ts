@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export const serverSelector = (state) => {
-  return state.options.app.server ? state.server : null;
+  return state.options.app.server ? state.server : undefined;
 };

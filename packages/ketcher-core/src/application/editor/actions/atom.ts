@@ -42,7 +42,7 @@ import { isAtomLabelAllowedByHapticBonds } from 'domain/helpers/hapticBond';
 
 export function fromAtomAddition(
   restruct: ReStruct,
-  pos: Point | null,
+  pos: Point | null | undefined,
   atom?: Partial<AtomAttributes>,
   fragmentId: number | null = null,
 ) {
@@ -71,7 +71,7 @@ export function fromAtomsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: Partial<AtomAttributes> | null | undefined,
-  reset: boolean | null,
+  reset: boolean | null | undefined,
 ) {
   const action = new Action();
   const aids = Array.isArray(ids) ? ids : [ids];

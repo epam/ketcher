@@ -17,7 +17,7 @@ export const useChangeBondDirection = (props) => {
 
     const action = fromBondFlipping(editor?.render.ctab, bondId);
 
-    editor?.selection(null);
+    editor?.selection(undefined);
     editor.update(action);
   };
 

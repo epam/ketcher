@@ -35,8 +35,8 @@ import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/Con
 
 interface BondSettings {
   type: string;
-  topology: number | null;
-  center: number | null;
+  topology: number | null | undefined;
+  center: number | null | undefined;
   customQuery: string;
 }
 interface BondProps extends BaseProps, BondSettings {}
@@ -101,8 +101,8 @@ const Bond = (props: Props) => {
       value
         ? {
             type: '',
-            topology: null,
-            center: null,
+            topology: undefined,
+            center: undefined,
             customQuery: getBondCustomQuery(
               formState as unknown as BondSettings,
             ),

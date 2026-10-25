@@ -36,7 +36,7 @@ export interface FGState {
 
 const initialState: FGState = {
   lib: [],
-  functionalGroupInfo: null,
+  functionalGroupInfo: undefined,
   mode: MODES.FG,
 };
 

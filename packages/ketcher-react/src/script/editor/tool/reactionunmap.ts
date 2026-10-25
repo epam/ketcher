@@ -23,7 +23,7 @@ class ReactionUnmapTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousemove(event) {
@@ -31,12 +31,12 @@ class ReactionUnmapTool implements Tool {
 
     if (ci?.map === 'atoms') {
       this.editor.hover(
-        this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null,
-        null,
+        this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : undefined,
+        undefined,
         event,
       );
     } else {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
     }
   }
 
@@ -50,13 +50,13 @@ class ReactionUnmapTool implements Tool {
       atoms.forEach((atom, aid) => {
         if (atom.aam === aam) {
           action.mergeWith(
-            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null),
+            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, undefined),
           );
         }
       });
       this.editor.update(action);
     }
-    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
+    this.editor.hover(this.editor.findItem(event, ['atoms']), undefined, event);
   }
 }
 

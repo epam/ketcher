@@ -20,9 +20,9 @@ import { useInView } from 'react-intersection-observer';
 import { useResizeObserver } from '../../../../hooks';
 
 const useVerticalToolbarScroll = () => {
-  const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(
-    null,
-  );
+  const [scrollElement, setScrollElement] = useState<
+    HTMLDivElement | null | undefined
+  >(undefined);
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
   const { ref: scrollStepRef, height: scrollStep } =

@@ -40,7 +40,7 @@ type MergeItems = ReturnType<typeof getItemsToFuse>;
 
 interface ChainDragContext {
   xy0: Vec2;
-  item?: ClosestItemWithMap | null;
+  item?: ClosestItemWithMap | null | undefined;
   stopTapping?: () => void;
   timeout?: ReturnType<typeof setTimeout>;
   action?: Action;
@@ -53,7 +53,7 @@ class ChainTool implements Tool {
 
   constructor(editor: Editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousedown(event: MouseEvent) {
@@ -130,7 +130,7 @@ class ChainTool implements Tool {
       }
     }
 
-    this.editor.hover(null);
+    this.editor.hover(undefined);
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
       item: ci,
@@ -171,7 +171,7 @@ class ChainTool implements Tool {
 
     editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
-      null,
+      undefined,
       event,
     );
     if (dragCtx) {
@@ -179,7 +179,7 @@ class ChainTool implements Tool {
         dragCtx.stopTapping();
       }
 
-      editor.selection(null);
+      editor.selection(undefined);
 
       if (!dragCtx.item || dragCtx.item.map === 'atoms') {
         if (dragCtx.action) {
@@ -204,7 +204,7 @@ class ChainTool implements Tool {
           pos0,
           angle,
           sectCount,
-          dragCtx.item ? dragCtx.item.id : null,
+          dragCtx.item ? dragCtx.item.id : undefined,
         ) as [Action, { atoms: number[]; bonds: number[] }];
 
         editor.event.message.dispatch({
@@ -231,7 +231,7 @@ class ChainTool implements Tool {
     const result: Array<number> = [];
 
     removeInfoLabelFromAtoms(struct);
-    this.editor.render.update(true, null);
+    this.editor.render.update(true, undefined);
 
     if (this.dragCtx?.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;
@@ -285,8 +285,8 @@ class ChainTool implements Tool {
           : fromItemsFuse(struct, dragCtx.mergeItems);
       }
 
-      editor.selection(null);
-      editor.hover(null);
+      editor.selection(undefined);
+      editor.hover(undefined);
 
       if (dragCtx.action) {
         editor.update(dragCtx.action);

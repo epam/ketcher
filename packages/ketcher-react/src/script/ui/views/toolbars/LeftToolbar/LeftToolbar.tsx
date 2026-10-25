@@ -110,7 +110,7 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         }
       })}
     </div>
-  ) : null;
+  ) : undefined;
 };
 
 const LeftToolbar = (props: Props) => {

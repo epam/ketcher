@@ -275,7 +275,7 @@ class Attach extends Component<AttachProps> {
         bondid !== this.tmpl.props.bondid) &&
       name.trim().length
       ? { name, attach: { atomid, bondid } }
-      : null;
+      : undefined;
   }
 
   checkIsValidName(name: string) {
@@ -349,7 +349,7 @@ class Attach extends Component<AttachProps> {
             </EditorContainer>
             {!storage.isAvailable() ? (
               <Warning>{storage.warningMessage}</Warning>
-            ) : null}
+            ) : undefined}
           </LeftColumn>
           <RightColumn>
             <NameInput

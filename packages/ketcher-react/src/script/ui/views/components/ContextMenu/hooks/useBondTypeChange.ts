@@ -20,7 +20,7 @@ const useBondTypeChange = () => {
   const { ketcherId } = useAppContext();
   const handler = useCallback(
     ({ id, props }: Params) => {
-      if (id == null) return;
+      if (id == undefined) return;
       const toolAction = tools[id]?.action;
       if (!toolAction || typeof toolAction === 'function') return;
 
@@ -34,7 +34,7 @@ const useBondTypeChange = () => {
       };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {
-        bondProps.customQuery = null;
+        bondProps.customQuery = undefined;
         bondProps.topology = 0;
         bondProps.reactingCenterStatus = 0;
       }

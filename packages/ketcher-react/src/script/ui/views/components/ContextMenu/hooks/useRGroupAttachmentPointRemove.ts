@@ -31,7 +31,7 @@ const useDelete = () => {
       }, new Action());
 
       editor.update(action);
-      editor.selection(null);
+      editor.selection(undefined);
     },
     [ketcherId],
   );

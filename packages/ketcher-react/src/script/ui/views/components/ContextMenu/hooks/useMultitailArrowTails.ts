@@ -19,7 +19,7 @@ function updateEditor(editor: unknown, action: Action) {
   // returned Editor type does not match real editor
   const typedEditor = editor as Editor;
   typedEditor.update(action);
-  typedEditor.selection(null);
+  typedEditor.selection(undefined);
   typedEditor.focusCliparea();
 }
 

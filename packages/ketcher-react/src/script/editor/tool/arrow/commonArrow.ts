@@ -42,7 +42,8 @@ export class CommonArrowTool extends ArrowTool implements Tool {
         MultitailArrowClosestItem | ReactionArrowClosestItem
       >
     | 'add'
-    | null = null;
+    | null
+    | undefined = undefined;
 
   private readonly addTool: ArrowAddTool;
   private readonly multitailMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
@@ -55,7 +56,7 @@ export class CommonArrowTool extends ArrowTool implements Tool {
     super(editor);
     this.multitailMoveTool = new MultitailArrowMoveTool(this.editor);
     this.reactionMoveTool = new ReactionArrowMoveTool(this.editor);
-    this.editor.selection(null);
+    this.editor.selection(undefined);
     this.addTool =
       mode === MULTITAIL_ARROW_TOOL_NAME
         ? new MultitailArrowAddTool(this.editor)
@@ -74,12 +75,12 @@ export class CommonArrowTool extends ArrowTool implements Tool {
           ? this.multitailMoveTool.mousedown(event, closestItem)
           : this.reactionMoveTool.mousedown(event, closestItem);
 
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.selection({ [closestItem.map]: [closestItem.id] });
     } else {
       this.dragContext = 'add';
       this.addTool.mousedown(event);
-      this.editor.selection(null);
+      this.editor.selection(undefined);
     }
   }
 
@@ -89,7 +90,7 @@ export class CommonArrowTool extends ArrowTool implements Tool {
         'rxnArrows',
         MULTITAIL_ARROW_KEY,
       ]) as ReactionArrowClosestItem | MultitailArrowClosestItem;
-      this.editor.hover(closestItem, null, event);
+      this.editor.hover(closestItem, undefined, event);
       handleMovingPosibilityCursor(
         closestItem,
         this.render.paper.canvas,
@@ -143,7 +144,7 @@ export class CommonArrowTool extends ArrowTool implements Tool {
         this.editor.update(action);
       }
     } finally {
-      this.dragContext = null;
+      this.dragContext = undefined;
     }
   }
 }

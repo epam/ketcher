@@ -833,7 +833,7 @@ class RotateController implements RotateControllerContract {
   private updateSnapAngleIndicator() {
     const snapAngleDrawingProps = this.rotateTool.snapAngleDrawingProps;
     if (
-      snapAngleDrawingProps === null ||
+      snapAngleDrawingProps === undefined ||
       (snapAngleDrawingProps.snapMode === 'multiple-bonds' &&
         snapAngleDrawingProps.isSnapping)
     ) {

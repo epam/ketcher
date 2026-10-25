@@ -36,7 +36,7 @@ interface DragContext {
 export class ImageTool implements Tool {
   static readonly INPUT_ID = 'image-upload';
   private readonly element: HTMLInputElement;
-  private dragCtx: DragContext | null = null;
+  private dragCtx: DragContext | null | undefined = undefined;
 
   constructor(private readonly editor: Editor) {
     this.element = this.getElement();
@@ -47,10 +47,10 @@ export class ImageTool implements Tool {
     const closestItem = this.editor.findItem(event, [
       IMAGE_KEY,
     ]) as ClosestItemWithMap<ImageReferencePositionInfo>;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
 
     if (closestItem) {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.selection({ [IMAGE_KEY]: [closestItem.id] });
       this.dragCtx = {
         center: CoordinateTransformation.pageToModel(event, render),
@@ -62,7 +62,7 @@ export class ImageTool implements Tool {
 
   click(event: MouseEvent) {
     const closestItem = this.editor.findItem(event, [IMAGE_KEY]);
-    this.editor.hover(null);
+    this.editor.hover(undefined);
     if (closestItem) {
       return;
     }
@@ -104,14 +104,14 @@ export class ImageTool implements Tool {
         render.paper.canvas,
         getItemCursor(render, item),
       );
-      this.editor.hover(item, null, event);
+      this.editor.hover(item, undefined, event);
     }
   }
 
   mouseup() {
     if (this.dragCtx) {
       this.editor.update(this.dragCtx.action);
-      this.dragCtx = null;
+      this.dragCtx = undefined;
     }
     return true;
   }

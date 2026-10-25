@@ -18,7 +18,7 @@ export type PeriodTableType = 'atom' | 'gen' | 'list' | 'not-list';
 
 export interface AtomResult {
   label: string;
-  pseudo: string | null;
+  pseudo: string | null | undefined;
 }
 
 export interface GenResult {
@@ -32,4 +32,5 @@ export interface ListResult {
   values: string[];
 }
 
-export type PeriodTableResult = AtomResult | GenResult | ListResult | null;
+export type PeriodTableResult =
+  AtomResult | GenResult | ListResult | null | undefined;

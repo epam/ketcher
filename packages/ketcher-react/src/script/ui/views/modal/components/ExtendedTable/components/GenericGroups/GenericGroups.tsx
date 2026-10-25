@@ -25,7 +25,7 @@ type GenericGroupsProps = {
   selected: (label: string) => boolean;
   onAtomSelect: (label: string) => void;
   onAtomActivate: (label: string) => void;
-  disabledQueryElements: Array<string> | null;
+  disabledQueryElements: Array<string> | null | undefined;
 };
 
 const getGenericsGroupsMap = (tree) => {

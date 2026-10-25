@@ -50,7 +50,7 @@ interface AnalyseItem {
 }
 
 interface AnalyseDialogProps extends DialogParams {
-  values: AnalyseValues | null;
+  values: AnalyseValues | null | undefined;
   round: RoundSettings;
   loading: boolean;
 }
@@ -103,7 +103,7 @@ const analyseItems: AnalyseItem[] = [
 
 function renderInputComponent(
   item: AnalyseItem,
-  values: AnalyseValues | null,
+  values: AnalyseValues | null | undefined,
   loading: boolean,
   round: RoundSettings,
 ): ReactElement {
@@ -206,7 +206,7 @@ function AnalyseDialog({
                   data-testid={item.name + '-select'}
                 />
               </div>
-            ) : null}
+            ) : undefined}
           </li>
         ))}
       </ul>

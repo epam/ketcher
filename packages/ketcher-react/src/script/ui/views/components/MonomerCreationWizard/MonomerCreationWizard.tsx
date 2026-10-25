@@ -922,7 +922,7 @@ const MonomerCreationWizardInternal = ({
   );
 
   const [attachmentPointEditPopupData, setAttachmentPointEditPopupData] =
-    useState<AttachmentPointClickData | null>(null);
+    useState<AttachmentPointClickData | undefined>(undefined);
 
   const {
     values,
@@ -941,8 +941,8 @@ const MonomerCreationWizardInternal = ({
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
   const [pendingType, setPendingType] = useState<
-    KetMonomerClass | string | null
-  >(null);
+    KetMonomerClass | string | undefined
+  >(undefined);
   const [showTypeChangeDialog, setShowTypeChangeDialog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [phosphatePosition, setPhosphatePosition] = useState<
@@ -1176,7 +1176,7 @@ const MonomerCreationWizardInternal = ({
     wizardStateDispatch({ type: 'ResetWizard' });
     rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
     setPhosphatePosition(undefined);
-    setAttachmentPointEditPopupData(null);
+    setAttachmentPointEditPopupData(undefined);
   };
 
   const handlePhosphatePositionChange = useCallback(
@@ -1218,7 +1218,7 @@ const MonomerCreationWizardInternal = ({
   };
 
   const handleAttachmentPointEditPopupClose = () => {
-    setAttachmentPointEditPopupData(null);
+    setAttachmentPointEditPopupData(undefined);
     editor.cleanupCloseAttachmentPointEditPopup();
   };
 
@@ -1248,7 +1248,7 @@ const MonomerCreationWizardInternal = ({
       !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors
     ) {
-      return null;
+      return undefined;
     }
 
     return getRnaPresetStructureValidationResult(
@@ -2123,7 +2123,8 @@ const MonomerCreationWizardInternal = ({
     KETCHER_ROOT_NODE_CSS_SELECTOR,
   );
   const displayEditDialog =
-    attachmentPointEditPopupData !== null && ketcherEditorRootElement !== null;
+    attachmentPointEditPopupData !== undefined &&
+    ketcherEditorRootElement !== null;
   const isPresetType = type === 'rnaPreset';
 
   return (
@@ -2257,14 +2258,14 @@ const MonomerCreationWizardInternal = ({
               valid={() => true}
               params={{
                 onOk: () => {
-                  if (pendingType !== null) {
+                  if (pendingType !== undefined) {
                     applyTypeChange(pendingType);
                   }
-                  setPendingType(null);
+                  setPendingType(undefined);
                   setShowTypeChangeDialog(false);
                 },
                 onCancel: () => {
-                  setPendingType(null);
+                  setPendingType(undefined);
                   setShowTypeChangeDialog(false);
                 },
               }}
@@ -2369,7 +2370,7 @@ const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
   if (!monomerCreationState) {
-    return null;
+    return undefined;
   }
 
   return (

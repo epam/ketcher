@@ -100,7 +100,7 @@ class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
           <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
-        ) : null}
+        ) : undefined}
       </div>
     );
   }

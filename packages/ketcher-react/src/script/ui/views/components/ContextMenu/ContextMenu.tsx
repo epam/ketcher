@@ -306,7 +306,7 @@ const ContextMenu: FC = () => {
         </>,
         ketcherEditorRootElement,
       )
-    : null;
+    : undefined;
 };
 
 export default ContextMenu;

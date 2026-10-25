@@ -111,7 +111,7 @@ function userTmpls(): SdfItem[] {
         };
       } catch (e) {
         KetcherLogger.error('init-lib.ts::userTmpls', e);
-        return null;
+        return undefined;
       }
     })
     .filter((tmpl): tmpl is SdfItem => tmpl !== null);

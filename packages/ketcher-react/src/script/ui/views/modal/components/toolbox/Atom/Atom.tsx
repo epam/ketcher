@@ -243,7 +243,7 @@ const Atom: FC<Props> = (props: Props) => {
       <Form
         schema={atomSchema}
         customValid={customValid}
-        init={isRestoredModal ? null : rest}
+        init={isRestoredModal ? undefined : rest}
         {...formState}
       >
         <div className={classes.accordionWrapper}>

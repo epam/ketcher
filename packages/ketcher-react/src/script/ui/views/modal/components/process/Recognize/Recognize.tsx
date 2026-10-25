@@ -34,8 +34,8 @@ import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import type { AppDispatch } from 'src/script/ui/state/hooks';
 
-type StructStringOrPromise = string | Promise<unknown> | null;
-function isImage(file: File | null): boolean {
+type StructStringOrPromise = string | Promise<unknown> | null | undefined;
+function isImage(file: File | null | undefined): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
@@ -88,14 +88,14 @@ function FooterContent({
 }
 
 interface RecognizeDialogProps {
-  file: File | null;
+  file: File | null | undefined;
   structStr: StructStringOrPromise;
   fragment: boolean;
   version: string;
   imagoVersions: string[];
   onOk: (result: unknown) => void;
   onCancel: () => void;
-  onRecognize: (file: File | null, version: string) => void;
+  onRecognize: (file: File | null | undefined, version: string) => void;
   onImage: (file: RecognizeImageFile) => void;
   onChangeImago: (version: string) => void;
 }
@@ -116,7 +116,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   const result = () =>
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
-      : null;
+      : undefined;
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -128,7 +128,7 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   }, [file, version, onRecognize]);
 
   const clearFile = useCallback(() => {
-    onImage(null);
+    onImage(undefined);
     return true;
   }, [onImage]);
 
@@ -192,7 +192,10 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
               }}
             />
           )}
-          <span className={classes.filename}> {file ? file.name : null} </span>
+          <span className={classes.filename}>
+            {' '}
+            {file ? file.name : undefined}{' '}
+          </span>
           {file && isImage(file) && !canPreviewImage && (
             <div className={classes.messageContainer}>
               <p>
@@ -229,8 +232,8 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
 type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
 
-function url(file: File | null): string | null {
-  if (!file) return null;
+function url(file: File | null | undefined): string | null | undefined {
+  if (!file) return undefined;
   const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
@@ -241,10 +244,10 @@ interface RecognizeState {
       imagoVersions: string[];
     };
     recognize: {
-      file: File | null;
+      file: File | null | undefined;
       structStr: StructStringOrPromise;
       fragment: boolean;
-      version: string | null;
+      version: string | null | undefined;
     };
   };
 }
@@ -260,7 +263,7 @@ const mapStateToProps = (state: RecognizeState) => ({
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
-  onRecognize: (file: File | null, ver: string) =>
+  onRecognize: (file: File | null | undefined, ver: string) =>
     dispatch(recognize(file, ver)),
   onChangeImago: (ver: string) => dispatch(changeVersion(ver)),
   onOk: (result: unknown) => {

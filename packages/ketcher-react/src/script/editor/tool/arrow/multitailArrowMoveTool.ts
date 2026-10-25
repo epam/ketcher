@@ -23,7 +23,7 @@ export class MultitailArrowMoveTool
         event,
         this.editor.render,
       ),
-      action: null,
+      action: undefined,
       closestItem,
     };
   }

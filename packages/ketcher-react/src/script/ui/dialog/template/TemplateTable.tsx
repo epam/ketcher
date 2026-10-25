@@ -42,7 +42,7 @@ export interface Template {
 
 interface TemplateTableProps {
   templates: ReadonlyArray<Template>;
-  selected: Template | null;
+  selected: Template | null | undefined;
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;
@@ -75,10 +75,14 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     getInitialPreviewCount(templates.length),
   );
   const [, startTransition] = useTransition();
-  const [containerSize, setContainerSize] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
+  const [containerSize, setContainerSize] = useState<
+    | {
+        width: number;
+        height: number;
+      }
+    | null
+    | undefined
+  >(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (templates !== prevTemplates) {

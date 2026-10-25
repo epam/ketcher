@@ -37,7 +37,7 @@ export function fromArrowResizing(
   id: number,
   d: Vec2,
   current: Vec2,
-  anchor: Vec2 | null,
+  anchor: Vec2 | null | undefined,
   isSnappingEnabled: boolean,
 ) {
   const action = new Action();

@@ -30,8 +30,8 @@ export const storage: IStorage = {
       return false;
     }
   },
-  getItem(key: string): unknown | null {
-    let item: unknown | null = null;
+  getItem(key: string): unknown | null | undefined {
+    let item: unknown | null | undefined = undefined;
     try {
       const stored = globalThis.localStorage.getItem(key);
       if (stored !== null) {

@@ -63,11 +63,11 @@ class BondTool implements Tool {
   private readonly bondProps: Partial<BondAttributes>;
   private readonly hapticBond: HapticBondToolHelper;
   private dragCtx?: BondToolDragContext;
-  private hapticAttachmentGroupTargetId: number | null = null;
+  private hapticAttachmentGroupTargetId: number | null | undefined = undefined;
   isNotActiveTool: boolean | undefined;
 
   private isBondEndpoint(
-    item?: BondItemRef | null,
+    item?: BondItemRef | null | undefined,
   ): item is BondEndpointItemRef {
     return item?.map === 'atoms' || item?.map === 'attachmentGroups';
   }
@@ -126,7 +126,7 @@ class BondTool implements Tool {
 
       const action = fromBondsAttrs(struct, selectedBonds, bondProps);
       editor.update(action);
-      editor.selection(null);
+      editor.selection(undefined);
       this.isNotActiveTool = true;
     }
   }
@@ -200,8 +200,8 @@ class BondTool implements Tool {
     }
 
     const rnd = this.editor.render;
-    this.editor.hover(null);
-    this.editor.selection(null);
+    this.editor.hover(undefined);
+    this.editor.selection(undefined);
 
     const item: BondItemRef | undefined =
       attachmentAtomId !== undefined
@@ -234,7 +234,7 @@ class BondTool implements Tool {
     }
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
-      null,
+      undefined,
       event,
     );
     return true;
@@ -267,7 +267,7 @@ class BondTool implements Tool {
 
     const pos = CoordinateTransformation.pageToModel(event, rnd);
     let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
-    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, undefined);
 
     const degrees = vectorUtils.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
@@ -334,7 +334,7 @@ class BondTool implements Tool {
   ) {
     const editor = this.editor;
     const beginAtom = item.id;
-    let endAtom: BondItemRef | null;
+    let endAtom: BondItemRef | null | undefined;
 
     if (this.hapticBond.isHapticBondType() && item.map === 'atoms') {
       const pointerPosition = CoordinateTransformation.pageToModel(
@@ -347,25 +347,28 @@ class BondTool implements Tool {
       );
       this.updateHapticAttachmentGroupTarget(attachmentGroupId);
 
-      if (attachmentGroupId !== null) {
+      if (attachmentGroupId !== null && attachmentGroupId !== undefined) {
         endAtom = { map: 'attachmentGroups', id: attachmentGroupId };
       } else {
         const closestAtom = closest.atom(
           editor.render.ctab,
           pointerPosition,
           item,
-          null,
+          undefined,
         );
-        endAtom = closestAtom ? { map: 'atoms', id: closestAtom.id } : null;
+        endAtom = closestAtom
+          ? { map: 'atoms', id: closestAtom.id }
+          : undefined;
       }
     } else {
-      this.updateHapticAttachmentGroupTarget(null);
-      endAtom = editor.findItem(event, ['atoms'], item) as BondItemRef | null;
+      this.updateHapticAttachmentGroupTarget(undefined);
+      endAtom = editor.findItem(event, ['atoms'], item) as
+        BondItemRef | null | undefined;
     }
 
     const closestSGroup = editor.findItem(event, ['functionalGroups']);
     const sgroup =
-      closestSGroup != null
+      closestSGroup != undefined
         ? molecule.sgroups.get(closestSGroup.id)
         : undefined;
 
@@ -376,20 +379,25 @@ class BondTool implements Tool {
     return { beginAtom, endAtom };
   }
 
-  private updateHapticAttachmentGroupTarget(targetId: number | null) {
+  private updateHapticAttachmentGroupTarget(
+    targetId: number | null | undefined,
+  ) {
     if (targetId === this.hapticAttachmentGroupTargetId) {
       return;
     }
 
     const render = this.editor.render;
-    if (this.hapticAttachmentGroupTargetId !== null) {
+    if (
+      this.hapticAttachmentGroupTargetId !== null &&
+      this.hapticAttachmentGroupTargetId !== undefined
+    ) {
       render.ctab.attachmentGroups
         .get(this.hapticAttachmentGroupTargetId)
         ?.setHover(false, render);
     }
 
     this.hapticAttachmentGroupTargetId = targetId;
-    if (targetId !== null) {
+    if (targetId !== null && targetId !== undefined) {
       render.ctab.attachmentGroups.get(targetId)?.setHover(true, render);
     }
   }
@@ -397,8 +405,8 @@ class BondTool implements Tool {
   private adjustEndAtomForSGroup(
     sgroup: SGroup,
     beginAtom: number,
-    endAtom: BondItemRef | null,
-  ): BondItemRef | null {
+    endAtom: BondItemRef | null | undefined,
+  ): BondItemRef | null | undefined {
     const closestAttachmentAtomId = sgroup.getAttachmentAtomId();
 
     if (sgroup.isContracted()) {
@@ -415,7 +423,7 @@ class BondTool implements Tool {
 
     if (endAtom && endAtom.id !== closestAttachmentAtomId) {
       dispatchMonomerOrGroupDialog(this.editor, [sgroup.id]);
-      endAtom = null;
+      endAtom = undefined;
     }
 
     return endAtom;
@@ -429,10 +437,10 @@ class BondTool implements Tool {
     const functionalGroups = molecule.functionalGroups;
     const beginAtom = this.atomProps;
     const beginPos = dragCtx.xy0;
-    let endAtom: BondItemRef | null = this.editor.findItem(event, [
+    let endAtom: BondItemRef | null | undefined = this.editor.findItem(event, [
       'atoms',
       'functionalGroups',
-    ]) as BondItemRef | null;
+    ]) as BondItemRef | null | undefined;
 
     if (endAtom?.map === 'atoms' && functionalGroups.size && this.dragCtx) {
       const fgIds = this.collectFunctionalGroupIdsForAtom(
@@ -471,13 +479,13 @@ class BondTool implements Tool {
   private resolveEndAtomFromFunctionalGroup(
     molecule: Struct,
     endAtom: BondItemRef,
-  ): BondItemRef | null {
+  ): BondItemRef | null | undefined {
     const functionalGroup = molecule.functionalGroups.get(endAtom.id);
     if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
       const attachmentAtomId =
         functionalGroup?.relatedSGroup.getAttachmentAtomId();
       return attachmentAtomId === undefined
-        ? null
+        ? undefined
         : { map: 'atoms', id: attachmentAtomId };
     }
     return endAtom;
@@ -487,7 +495,7 @@ class BondTool implements Tool {
     event: PointerEvent,
     rnd: Render,
     beginAtom: number | AtomAttributes,
-    endAtom: BondItemRef | null,
+    endAtom: BondItemRef | null | undefined,
     beginPos: Vec2 | undefined,
   ): { endAtom: number | AtomAttributes; endPos: Vec2 | undefined } {
     let endPos: Vec2 | undefined;
@@ -571,7 +579,7 @@ class BondTool implements Tool {
         beginPos,
         endPos,
       )[0];
-      if (existingBondId !== null) {
+      if (existingBondId !== undefined) {
         dragCtx.existedBond = bond;
         dragCtx.action.mergeWith(fromOneBondDeletion(rnd.ctab, existingBondId));
       }
@@ -587,14 +595,14 @@ class BondTool implements Tool {
       const dragCtx = this.dragCtx;
       const render = this.editor.render;
       const struct = render.ctab.molecule;
-      this.updateHapticAttachmentGroupTarget(null);
+      this.updateHapticAttachmentGroupTarget(undefined);
       const dragEndFailure = dragCtx.hasStartedDragging
         ? this.hapticBond.resolveDragEndValidationFailure(
             dragCtx,
             struct,
             Boolean(dragCtx.item),
           )
-        : null;
+        : undefined;
 
       if (dragCtx.action && dragEndFailure) {
         const revertedPreviewAction = dragCtx.action.perform(render.ctab);
@@ -713,7 +721,7 @@ class BondTool implements Tool {
     });
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds']),
-      null,
+      undefined,
       event,
     );
     return true;
@@ -757,7 +765,7 @@ class BondTool implements Tool {
     end: number | AtomAttributes,
   ) {
     if (typeof begin !== 'number' || typeof end !== 'number') {
-      return [null, null] as const;
+      return [undefined, undefined] as const;
     }
     for (const [bondId, bond] of struct.bonds.entries()) {
       const alreadyHasBondInOtherDirection =
@@ -767,7 +775,7 @@ class BondTool implements Tool {
         return [bondId, bond] as const;
       }
     }
-    return [null, null] as const;
+    return [undefined, undefined] as const;
   }
 }
 

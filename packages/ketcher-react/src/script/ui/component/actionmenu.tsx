@@ -118,7 +118,7 @@ function isMenuItemWithComponent(
   );
 }
 
-function isMenuOpened(currentNode: HTMLElement | null): boolean {
+function isMenuOpened(currentNode: HTMLElement | null | undefined): boolean {
   const parentNode = hiddenAncestor(currentNode);
   return parentNode?.classList.contains('opened') || false;
 }
@@ -199,8 +199,8 @@ function ActionButton({
 function findActiveMenuItem(
   menuItems: string[],
   status: StatusMap,
-): string | null {
-  let activeMenuItem: string | null = null;
+): string | null | undefined {
+  let activeMenuItem: string | null | undefined = undefined;
   for (const current of menuItems) {
     if (status[current]?.selected) {
       activeMenuItem = current;
@@ -221,10 +221,10 @@ function isOpened(item: MenuItemWithMenu, opened: string | undefined): boolean {
 function renderActiveMenuItem(
   item: MenuItemWithMenu,
   props: SharedActionProps,
-): JSX.Element | null {
+): JSX.Element | null | undefined {
   const menu = item.menu ?? [];
   const { opened, status } = props;
-  let activeMenuItem: string | null = null;
+  let activeMenuItem: string | null | undefined = undefined;
   if (isOpened(item, opened)) {
     if (isLeaf(menu)) {
       // All items are strings, safe to filter
@@ -260,7 +260,7 @@ function renderActiveMenuItem(
       disableableButtons={props.disableableButtons}
       indigoVerification={props.indigoVerification}
     />
-  ) : null;
+  ) : undefined;
 }
 
 function ActionMenu({

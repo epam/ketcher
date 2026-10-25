@@ -19,8 +19,8 @@ type MergeItems = {
 
 export function dropAndMerge(
   editor: Editor,
-  mergeItems?: MergeItems | null,
-  action?: Action | null,
+  mergeItems?: MergeItems | null | undefined,
+  action?: Action | null | undefined,
   copyAction?: Action,
 ): Action {
   const restruct = editor.render.ctab;
@@ -56,8 +56,8 @@ export function dropAndMerge(
     }
   }
 
-  editor.hover(null);
-  if (isMerging) editor.selection(null);
+  editor.hover(undefined);
+  if (isMerging) editor.selection(undefined);
 
   if (dropItemAction?.operations.length > 0) {
     editor.update(dropItemAction, false);

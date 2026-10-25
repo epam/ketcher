@@ -19,7 +19,7 @@ function getPanelPositionRelativeToRect(
   render: Render,
   width: number,
   height: number,
-): Vec2 | null {
+): Vec2 | null | undefined {
   const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width;
   const viewportBottomLimit =
     render?.clientArea?.clientHeight - BAR_PANEL_SIZE - height;
@@ -27,7 +27,7 @@ function getPanelPositionRelativeToRect(
     render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width;
 
   if (!sGroup.hovering) {
-    return null;
+    return undefined;
   }
 
   const hoveringWithAttrs = sGroup.hovering as {
@@ -50,7 +50,7 @@ function getPanelPositionRelativeToRect(
     !middleRightSide?.x ||
     !middleRightSide?.y
   ) {
-    return null;
+    return undefined;
   }
 
   // Default position for panel is in the bottom;
@@ -83,7 +83,7 @@ interface SGroupDataRenderProps {
   clientY: number;
   render: Render;
   sGroup: SGroup;
-  sGroupData: string | null;
+  sGroupData: string | null | undefined;
   className?: string;
 }
 
@@ -123,7 +123,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
     >
       {sGroupData}
     </div>
-  ) : null;
+  ) : undefined;
 };
 
 export default SGroupDataRender;

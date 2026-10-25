@@ -60,7 +60,7 @@ class SGroupTool implements Tool {
 
   constructor(editor: Editor) {
     this.editor = editor;
-    this.lassoHelper = new LassoHelper(1, editor, null);
+    this.lassoHelper = new LassoHelper(1, editor, undefined);
 
     this.checkSelection();
   }
@@ -109,12 +109,12 @@ class SGroupTool implements Tool {
             atom,
           );
 
-          if (atomId == null) {
+          if (atomId == undefined) {
             extraAtoms = true;
           }
 
           const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
+            atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -167,7 +167,7 @@ class SGroupTool implements Tool {
       }
 
       if (result.length) {
-        this.editor.selection(null);
+        this.editor.selection(undefined);
         dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
@@ -193,7 +193,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const atomFromStruct =
-        atomId !== null ? struct.atoms.get(atomId)?.a : null;
+        atomId !== null ? struct.atoms.get(atomId)?.a : undefined;
 
       if (
         atomFromStruct &&
@@ -217,7 +217,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const bondFromStruct =
-        bondId !== null ? struct.bonds.get(bondId)?.b : null;
+        bondId !== null ? struct.bonds.get(bondId)?.b : undefined;
 
       if (
         bondFromStruct &&
@@ -285,7 +285,11 @@ class SGroupTool implements Tool {
     if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
-      this.editor.hover(this.editor.findItem(event, searchMaps), null, event);
+      this.editor.hover(
+        this.editor.findItem(event, searchMaps),
+        undefined,
+        event,
+      );
     }
   }
 
@@ -296,7 +300,7 @@ class SGroupTool implements Tool {
   }
 
   private isContractedFunctionalGroupClicked(
-    ci: ClosestItemWithMap | null,
+    ci: ClosestItemWithMap | null | undefined,
     functionalGroups: Pool<FunctionalGroup>,
   ): boolean {
     return (
@@ -307,7 +311,7 @@ class SGroupTool implements Tool {
   }
 
   private processSelectedAtoms(
-    selected: Selection | null,
+    selected: Selection | null | undefined,
     functionalGroups: Pool<FunctionalGroup>,
     struct: ReStruct,
     molecule: Struct,
@@ -328,7 +332,7 @@ class SGroupTool implements Tool {
         atom,
       );
 
-      if (atomId == null) {
+      if (atomId == undefined) {
         extraAtoms = true;
         continue;
       }
@@ -407,7 +411,7 @@ class SGroupTool implements Tool {
   }
 
   private processSelectedBonds(
-    selected: Selection | null,
+    selected: Selection | null | undefined,
     functionalGroups: Pool<FunctionalGroup>,
     molecule: Struct,
     struct: ReStruct,
@@ -602,7 +606,7 @@ class SGroupTool implements Tool {
 
   private determineSelection(
     event: MouseEvent,
-    ci: ClosestItemWithMap | null,
+    ci: ClosestItemWithMap | null | undefined,
     newSelected: { atoms: Array<number>; bonds: Array<number> },
     molecule: Struct,
   ) {
@@ -635,31 +639,31 @@ class SGroupTool implements Tool {
     };
 
     this.editor.selection(selection);
-    return { id: null, selection };
+    return { id: undefined, selection };
   }
 
   private handleClickSelection(
     event: MouseEvent,
-    ci: ClosestItemWithMap | null,
+    ci: ClosestItemWithMap | null | undefined,
   ) {
     if (!ci) {
-      return { id: null, selection: null };
+      return { id: undefined, selection: undefined };
     }
 
     this.editor.hover(
       this.editor.findItem(event, searchMaps),
-      null,
+      undefined,
       event as PointerEvent,
     );
 
     if (ci.map === 'atoms') {
-      return { id: null, selection: { atoms: [ci.id] } };
+      return { id: undefined, selection: { atoms: [ci.id] } };
     }
 
     if (ci.map === 'bonds') {
       const bond = this.editor.render.ctab.bonds.get(ci.id);
       return {
-        id: null,
+        id: undefined,
         selection: {
           atoms: [bond?.b.begin, bond?.b.end],
           bonds: [ci.id],
@@ -668,10 +672,10 @@ class SGroupTool implements Tool {
     }
 
     if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-      return { id: ci.id, selection: null };
+      return { id: ci.id, selection: undefined };
     }
 
-    return { id: null, selection: null };
+    return { id: undefined, selection: undefined };
   }
 
   private shouldOpenDialog(id, selection): boolean {
@@ -728,7 +732,7 @@ class SGroupTool implements Tool {
     );
 
     if (this.shouldRemoveSingleFunctionalGroup(functionalGroupIds)) {
-      this.editor.selection(null);
+      this.editor.selection(undefined);
       this.lassoHelper.cancel();
       dispatchMonomerOrGroupDialog(this.editor, functionalGroupIds);
       return;
@@ -751,17 +755,18 @@ class SGroupTool implements Tool {
     if (this.lassoHelper.running()) {
       this.lassoHelper.end();
     }
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
-  static sgroupDialog(editor: Editor, id: number | null) {
+  static sgroupDialog(editor: Editor, id: number | null | undefined) {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
-    const sg = id !== null ? struct.sgroups.get(id) : null;
+    const sg =
+      id !== null && id !== undefined ? struct.sgroups.get(id) : undefined;
 
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
-    if (sg?.isMonomer && id !== null) {
+    if (sg?.isMonomer && id !== null && id !== undefined) {
       editor.event.editMonomer.dispatch({ fgIds: [id], variant: 'single' });
       return Promise.resolve();
     }
@@ -840,7 +845,7 @@ class SGroupTool implements Tool {
           if (result) {
             editor.update(result.action);
           }
-          editor.selection(null);
+          editor.selection(undefined);
         }
       })
       .catch((e) => {
@@ -850,7 +855,7 @@ class SGroupTool implements Tool {
 }
 
 function createQueryComponentSGroup(
-  id: number | null,
+  id: number | null | undefined,
   editor: Editor,
   newSg: SGroupDialogResult,
   selection: Selection,
@@ -932,13 +937,16 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
 }
 
 function fromContextType(
-  id: number | null,
+  id: number | null | undefined,
   editor: Editor,
   newSg: SGroupDialogResult,
   currSelection: Selection,
 ) {
   const restruct = editor.render.ctab;
-  const sg = id !== null ? restruct.molecule.sgroups.get(id) : undefined;
+  const sg =
+    id !== null && id !== undefined
+      ? restruct.molecule.sgroups.get(id)
+      : undefined;
   const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
   const context = newSg.attrs.context;
 

@@ -30,7 +30,7 @@ class ReactionPlusTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
   }
 
   mousedown(event) {
@@ -38,7 +38,7 @@ class ReactionPlusTool implements Tool {
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
     if (ci?.map === 'rxnPluses') {
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.selection({ rxnPluses: [ci.id] });
       this.dragCtx = { xy0: CoordinateTransformation.pageToModel(event, rnd) };
     }
@@ -61,7 +61,7 @@ class ReactionPlusTool implements Tool {
       editor.update(this.dragCtx.action, true);
     } else {
       const item = editor.findItem(event, ['rxnPluses']);
-      editor.hover(item, null, event);
+      editor.hover(item, undefined, event);
 
       handleMovingPosibilityCursor(
         item,

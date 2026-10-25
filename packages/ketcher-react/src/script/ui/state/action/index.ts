@@ -26,7 +26,7 @@ import {
 type ActionParams = {
   editor: Editor & {
     struct(): Struct;
-    struct(value: Struct | null): Struct;
+    struct(value: Struct | null | undefined): Struct;
   };
   server: unknown;
   options: {

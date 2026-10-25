@@ -93,17 +93,17 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props;
   const { t } = useTranslation('components');
 
-  const sGroupData = useMemo<string | null>(() => {
+  const sGroupData = useMemo<string | null | undefined>(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
       return `${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`;
     } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
       return t('structEditor.queryComponent');
     }
-    return null;
+    return undefined;
   }, [sGroup, t]);
 
-  const molecule = useMemo<Struct | null>(
-    () => (groupStruct ? groupStruct.clone() : null),
+  const molecule = useMemo<Struct | null | undefined>(
+    () => (groupStruct ? groupStruct.clone() : undefined),
     [groupStruct],
   );
 
@@ -143,7 +143,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     clientX === undefined ||
     clientY === undefined
   ) {
-    return null;
+    return undefined;
   }
 
   const [position, size] = getPanelPosition(clientX, clientY, render, sGroup);
@@ -192,7 +192,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
 export default connect((store: any) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX,
   clientY: functionGroupInfoSelector(store)?.event?.clientY,
-  groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
-  sGroup: functionGroupInfoSelector(store)?.sGroup || null,
+  groupStruct: functionGroupInfoSelector(store)?.groupStruct || undefined,
+  sGroup: functionGroupInfoSelector(store)?.sGroup || undefined,
   render: store.editor?.render?.ctab?.render,
 }))(InfoPanel);

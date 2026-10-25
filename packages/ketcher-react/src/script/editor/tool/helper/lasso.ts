@@ -21,11 +21,17 @@ import type Editor from '../../Editor';
 class LassoHelper {
   mode: number;
   editor: Editor;
-  fragment: boolean | null;
-  points: Vec2[] | null = null;
-  selection: ReturnType<Editor['render']['selectionPolygon']> | null = null;
+  fragment: boolean | null | undefined;
+  points: Vec2[] | null | undefined = undefined;
+  selection:
+    ReturnType<Editor['render']['selectionPolygon']> | null | undefined =
+    undefined;
 
-  constructor(mode: number, editor: Editor, fragment: boolean | null) {
+  constructor(
+    mode: number,
+    editor: Editor,
+    fragment: boolean | null | undefined,
+  ) {
     this.mode = mode;
     this.fragment = fragment;
     this.editor = editor;
@@ -63,7 +69,7 @@ class LassoHelper {
 
   addPoint(event: MouseEvent) {
     if (!this.points) {
-      return null;
+      return undefined;
     }
 
     const rnd = this.editor.render;
@@ -84,7 +90,7 @@ class LassoHelper {
   update() {
     if (this.selection) {
       this.selection.remove();
-      this.selection = null;
+      this.selection = undefined;
     }
 
     if (this.points && this.points.length > 1) {
@@ -101,13 +107,13 @@ class LassoHelper {
 
   end() {
     const ret = this.getSelection();
-    this.points = null;
+    this.points = undefined;
     this.update();
     return ret;
   }
 
   cancel() {
-    this.points = null;
+    this.points = undefined;
     this.update();
   }
 }

@@ -23,7 +23,7 @@ export async function editRGroupAttachmentPoint(
         editor.render.ctab,
         atomId,
         newAtom,
-        null,
+        undefined,
       );
       const actionFromRGroupAttachmentPointUpdate =
         fromRGroupAttachmentPointUpdate(

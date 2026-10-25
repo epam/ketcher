@@ -42,7 +42,9 @@ function ColorSlider({
   const containerRef = useRef<HTMLDivElement>(null);
   // Track container width as state so re-measuring on resize triggers re-render
   const [containerWidth, setContainerWidth] = useState(0);
-  const dragRef = useRef<{ startX: number; startValue: number } | null>(null);
+  const dragRef = useRef<{ startX: number; startValue: number } | undefined>(
+    undefined,
+  );
 
   // Measure once after mount (before paint) and on resize
   useLayoutEffect(() => {
@@ -84,7 +86,7 @@ function ColorSlider({
   };
 
   const handlePointerUp = (e: PointerEvent<SVGSVGElement>) => {
-    dragRef.current = null;
+    dragRef.current = undefined;
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 

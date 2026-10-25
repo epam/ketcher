@@ -31,7 +31,7 @@ const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
         const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);
       },
-      () => null, // onCancel handler
+      () => undefined, // onCancel handler
     );
   };
 

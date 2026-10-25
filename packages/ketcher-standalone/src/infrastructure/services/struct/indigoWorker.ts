@@ -91,7 +91,7 @@ function handle(
 
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   for (const [key, value] of Object.entries(options)) {
-    if (value == null) continue;
+    if (value == undefined) continue;
     indigoOptions.set(key, value.toString());
   }
 }

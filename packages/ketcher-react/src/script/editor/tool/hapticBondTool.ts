@@ -27,11 +27,11 @@ export const HAPTIC_BOND_ATTACHMENT_GROUP_RADIUS_PX = 20;
 export function findHapticBondAttachmentGroupTarget(
   restruct: ReStruct,
   pointerPosition: Vec2,
-): number | null {
+): number | null | undefined {
   const { microModeScale, zoom } = restruct.render.options;
   const radiusInModelCoordinates =
     HAPTIC_BOND_ATTACHMENT_GROUP_RADIUS_PX / (microModeScale * zoom);
-  let closestAttachmentGroupId: number | null = null;
+  let closestAttachmentGroupId: number | null | undefined = undefined;
   let closestDistance = radiusInModelCoordinates;
 
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
@@ -105,7 +105,7 @@ export class HapticBondToolHelper {
     molecule: Struct,
     beginAtomOrProps: AtomValidationInput,
     endAtomOrProps: AtomValidationInput,
-  ): BondValidationFailure | null {
+  ): BondValidationFailure | null | undefined {
     if (
       !this.isHapticBondType() &&
       this.isAttachmentGroupInvolved(molecule, beginAtomOrProps, endAtomOrProps)
@@ -117,7 +117,7 @@ export class HapticBondToolHelper {
       return 'haptic';
     }
 
-    return null;
+    return undefined;
   }
 
   hasInvalidSelectedHapticBonds(molecule: Struct, selectedBonds: number[]) {
@@ -168,7 +168,7 @@ export class HapticBondToolHelper {
     });
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds']),
-      null,
+      undefined,
       event,
     );
   }
@@ -177,7 +177,7 @@ export class HapticBondToolHelper {
     dragFlags: HapticBondDragFlags,
     molecule: Struct,
     hasItem: boolean,
-  ): BondValidationFailure | null {
+  ): BondValidationFailure | null | undefined {
     if (dragFlags.hapticValidationFailed) {
       return 'haptic';
     }
@@ -194,6 +194,6 @@ export class HapticBondToolHelper {
       return 'haptic';
     }
 
-    return null;
+    return undefined;
   }
 }

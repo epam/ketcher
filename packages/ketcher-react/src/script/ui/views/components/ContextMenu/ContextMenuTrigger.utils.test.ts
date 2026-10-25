@@ -160,7 +160,7 @@ describe('getAttachmentGroupTargetForBondHalf', () => {
         { map: 'bonds', id: bondId, dist: 0.1 },
         new Vec2(1.75, 0),
       ),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 
   it('does not reroute regular bonds', () => {
@@ -185,6 +185,6 @@ describe('getAttachmentGroupTargetForBondHalf', () => {
         { map: 'bonds', id: bondId, dist: 0.1 },
         new Vec2(0.25, 0),
       ),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 });

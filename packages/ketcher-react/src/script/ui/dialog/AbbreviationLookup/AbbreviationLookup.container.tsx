@@ -26,7 +26,7 @@ export const AbbreviationLookupContainer = () => {
   const abbreviationOptions = useOptions();
 
   if (!isOpen) {
-    return null;
+    return undefined;
   }
 
   return <AbbreviationLookup options={abbreviationOptions} />;

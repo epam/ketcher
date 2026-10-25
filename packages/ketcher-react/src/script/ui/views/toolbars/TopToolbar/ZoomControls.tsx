@@ -128,7 +128,7 @@ export const ZoomControls = ({
 }: ZoomProps) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -152,11 +152,11 @@ export const ZoomControls = ({
       onZoomSubmit();
     }
     setIsExpanded(false);
-    setAnchorEl(null);
+    setAnchorEl(undefined);
   };
 
   const onExpand = () => {
-    setAnchorEl(containerRef.current);
+    setAnchorEl(containerRef.current ?? undefined);
     setIsExpanded(true);
   };
 

@@ -89,7 +89,7 @@ interface TemplateLibProps {
   filter: string;
   group: string;
   lib: Array<Template>;
-  selected: Template | null;
+  selected: Template | null | undefined;
   tab: number;
   saltsAndSolvents: Template[];
   renderOptions?: any;
@@ -227,7 +227,7 @@ export const TemplateDialog: FC<Props> = (props) => {
 
   useEffect(() => {
     searchInputRef.current?.focus();
-    onSelect(null);
+    onSelect(undefined);
   }, [activeTab, onSelect]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
@@ -439,7 +439,7 @@ export const TemplateDialog: FC<Props> = (props) => {
 };
 
 const selectTemplate = (template, props, dispatch) => {
-  dispatch(selectTmpl(null));
+  dispatch(selectTmpl(undefined));
   if (!template) {
     return;
   }

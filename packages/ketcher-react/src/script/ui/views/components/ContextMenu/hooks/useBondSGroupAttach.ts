@@ -35,7 +35,7 @@ const useBondSGroupAttach = () => {
       };
 
       editor.selection(selection);
-      SGroupTool.sgroupDialog(editor, null);
+      SGroupTool.sgroupDialog(editor, undefined);
     },
     [ketcherId],
   );

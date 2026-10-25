@@ -191,7 +191,7 @@ export function sdataReducer(
   const actionContext = action.data.result.context;
   const actionFieldName = action.data.result.fieldName;
 
-  let newstate: SdataStateWithResult | null = null;
+  let newstate: SdataStateWithResult | null | undefined = undefined;
 
   if (actionContext !== state.result.context)
     newstate = onContextChange(state, action.data.result);

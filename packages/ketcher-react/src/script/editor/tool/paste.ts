@@ -64,7 +64,7 @@ class PasteTool implements Tool {
 
   constructor(editor, struct) {
     this.editor = editor;
-    this.editor.selection(null);
+    this.editor.selection(undefined);
     this.struct = struct;
 
     this.isSingleContractedGroup =
@@ -136,7 +136,7 @@ class PasteTool implements Tool {
     }
 
     // remove action to prevent error when trying to "perform" it again in mousemove
-    this.action = null;
+    this.action = undefined;
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
@@ -145,8 +145,8 @@ class PasteTool implements Tool {
   }
 
   mousemove(event) {
-    this.mergeItems = null;
-    this.editor.hover(null);
+    this.mergeItems = undefined;
+    this.editor.hover(undefined);
     if (isMovePreviewCalculationInProgress) {
       return;
     }
@@ -157,7 +157,7 @@ class PasteTool implements Tool {
 
     if (this.dragCtx) {
       // template-like logic for group-on-group actions
-      let pos0: Vec2 | null | undefined = null;
+      let pos0: Vec2 | null | undefined = undefined;
       const pos1 = CoordinateTransformation.pageToModel(
         event,
         this.editor.render,
@@ -187,7 +187,7 @@ class PasteTool implements Tool {
       let angle = vectorUtils.calcAngle(pos0, pos1);
 
       if (!event.ctrlKey) {
-        angle = vectorUtils.fracAngle(angle, null);
+        angle = vectorUtils.fracAngle(angle, undefined);
       }
 
       const degrees = vectorUtils.degrees(angle);
@@ -273,7 +273,7 @@ class PasteTool implements Tool {
           )
         : fromItemsFuse(this.restruct, dragCtx.mergeItems);
 
-      this.editor.hover(null);
+      this.editor.hover(undefined);
       this.editor.update(dragCtx.action);
       this.editor.event.message.dispatch({ info: false });
     } else {
@@ -289,7 +289,7 @@ class PasteTool implements Tool {
 
   cancel() {
     const rnd = this.editor.render;
-    this.editor.hover(null);
+    this.editor.hover(undefined);
 
     if (this.action) {
       this.action.perform(rnd.ctab); // revert the action

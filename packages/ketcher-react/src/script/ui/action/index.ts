@@ -251,7 +251,7 @@ const config: Record<string, UiAction> = {
     enabledInViewOnly: true,
     shortcut: 'Mod+Shift+a',
     action: (editor) => {
-      editor.selection(null);
+      editor.selection(undefined);
     },
     hidden: (options) => isHidden(options, 'deselect-all'),
   },

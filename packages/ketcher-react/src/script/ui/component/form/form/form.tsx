@@ -358,8 +358,7 @@ function Field(props: Readonly<FieldProps>) {
       name={name}
       schema={desc}
       className={className}
-      onExtraChange={onExtraChange}
-      extraValue={extraValue}
+      {...(extraName && { onExtraChange, extraValue })}
       {...(labelPos === false && { error: dataError })}
       {...(extraName && {
         extraSchema: rest.extraSchema || schema?.properties?.[extraName],

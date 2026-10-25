@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +22,7 @@ import IfThenSelect from './components';
 import classes from './RgroupLogic.module.less';
 import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema';
 
-interface RgroupLogicProps extends BaseProps {
+interface RgroupLogicProperties extends BaseProperties {
   frags: Set<number>;
   ifthen: number;
   label: number;
@@ -32,11 +32,11 @@ interface RgroupLogicProps extends BaseProps {
   name?: string;
 }
 
-type Props = RgroupLogicProps & BaseCallProps;
+type Properties = RgroupLogicProperties & BaseCallProperties;
 
-const RgroupLogic = (props: Props) => {
+const RgroupLogic = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
-  const { formState, label, rgroupLabels, ...rest } = props;
+  const { formState, label, rgroupLabels, ...rest } = properties;
   return (
     <Dialog
       title={t('dialogs:toolbox.rgroupLogic.dialogTitle')}
@@ -64,16 +64,16 @@ const RgroupLogic = (props: Props) => {
 
 function rangeConv(range) {
   // structConv
-  const res = range
+  const result = range
     .replace(/\s*/g, '')
     .replace(/,+/g, ',')
     .replace(/^,/, '')
     .replace(/,$/, '');
 
-  return res
+  return result
     .split(',')
     .every((s) => s.match(/^[>,<=]?\d+$/g) || s.match(/^\d+-\d+$/g));
 }
 
-export type { RgroupLogicProps };
+export type { RgroupLogicProperties };
 export default RgroupLogic;

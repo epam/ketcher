@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface UndoRedoProps {
+interface UndoRedoProperties {
   disabledButtons: string[];
   hiddenButtons: string[];
   shortcuts: { [key in string]: string };
@@ -32,7 +32,7 @@ export const UndoRedo = ({
   disabledButtons,
   hiddenButtons,
   shortcuts,
-}: UndoRedoProps) => {
+}: UndoRedoProperties) => {
   const { t } = useTranslation('toolbar');
 
   return (

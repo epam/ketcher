@@ -53,8 +53,10 @@ export class ScaleTransformer {
   }
 
   private pickNearestFromList(value: number, list) {
-    const nearest = list.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
+    const nearest = list.reduce((previous, current) =>
+      Math.abs(current - value) < Math.abs(previous - value)
+        ? current
+        : previous,
     );
     return nearest;
   }

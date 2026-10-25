@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
-  type ActionButtonCallProps,
-  type ActionButtonProps,
+  type ActionButtonCallProperties,
+  type ActionButtonProperties,
   ActionButton,
 } from '../ActionButton';
 import type {
@@ -36,7 +36,7 @@ import { usePortalStyle } from './usePortalStyle';
 import { getIconName, Icon } from 'components';
 import { SettingsManager } from 'ketcher-core';
 
-interface ToolbarMultiToolItemProps {
+interface ToolbarMultiToolItemProperties {
   id: ToolbarItemVariant;
   options: ToolbarItem[];
   groups?: GroupDescriptor[];
@@ -52,14 +52,15 @@ interface ToolbarMultiToolItemProps {
   dataTestId?: string;
 }
 
-interface ToolbarMultiToolItemCallProps {
+interface ToolbarMultiToolItemCallProperties {
   onAction: (action: UiActionAction) => void;
   onOpen: (menuName: string, isSelected: boolean) => void;
 }
 
-type Props = ToolbarMultiToolItemProps & ToolbarMultiToolItemCallProps;
+type Properties = ToolbarMultiToolItemProperties &
+  ToolbarMultiToolItemCallProperties;
 
-const ToolbarMultiToolItem = (props: Props) => {
+const ToolbarMultiToolItem = (properties: Properties) => {
   const {
     id,
     options,
@@ -74,11 +75,11 @@ const ToolbarMultiToolItem = (props: Props) => {
     onAction,
     onOpen,
     dataTestId,
-  } = props;
+  } = properties;
 
-  const ref = useRef<HTMLDivElement>(null);
+  const reference = useRef<HTMLDivElement>(null);
   const [isOpen] = usePortalOpening([id, opened, options]);
-  const [portalStyle] = usePortalStyle([ref, isOpen]);
+  const [portalStyle] = usePortalStyle([reference, isOpen]);
 
   let selected = false;
   let currentId = id;
@@ -124,8 +125,8 @@ const ToolbarMultiToolItem = (props: Props) => {
     onOpen(id, Boolean(currentStatus?.selected));
   };
 
-  const actionButtonProps: Omit<
-    ActionButtonProps & ActionButtonCallProps,
+  const actionButtonProperties: Omit<
+    ActionButtonProperties & ActionButtonCallProperties,
     'name' | 'status' | 'action'
   > = {
     disableableButtons,
@@ -138,17 +139,17 @@ const ToolbarMultiToolItem = (props: Props) => {
   const isDisabled = currentStatus?.disabled === true;
   return displayMultiToolItem && iconName ? (
     <div
-      ref={ref}
+      ref={reference}
       className={classes.root}
       data-testid={`${id}-drop-down-button`}
       data-is-selected={selected ? 'true' : 'false'}
     >
       <ActionButton
-        {...actionButtonProps}
+        {...actionButtonProperties}
         className={className}
         name={iconName}
         action={action[currentId]}
-        status={currentStatus as ActionButtonProps['status']}
+        status={currentStatus as ActionButtonProperties['status']}
         selected={selected}
         dataTestId={dataTestId ?? iconName}
       />
@@ -188,5 +189,8 @@ const ToolbarMultiToolItem = (props: Props) => {
   ) : null;
 };
 
-export type { ToolbarMultiToolItemProps, ToolbarMultiToolItemCallProps };
+export type {
+  ToolbarMultiToolItemProperties,
+  ToolbarMultiToolItemCallProperties,
+};
 export { ToolbarMultiToolItem };

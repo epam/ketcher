@@ -10,13 +10,13 @@ import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
-import type { BaseProps } from '../../../../modal.types';
+import type { BaseProperties } from '../../../../modal.types';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
-const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
+const AtomElement = ({ formState }: Pick<BaseProperties, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();

@@ -17,8 +17,8 @@
 
 import { type FC, type PropsWithChildren } from 'react';
 import {
-  type ToolbarGroupItemCallProps,
-  type ToolbarGroupItemProps,
+  type ToolbarGroupItemCallProperties,
+  type ToolbarGroupItemProperties,
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 
@@ -36,8 +36,8 @@ const Group: FC<{ className?: string } & PropsWithChildren> = ({
   className,
 }) => <div className={clsx(classes.group, className)}>{children}</div>;
 
-interface RightToolbarProps extends Omit<
-  ToolbarGroupItemProps,
+interface RightToolbarProperties extends Omit<
+  ToolbarGroupItemProperties,
   'id' | 'options'
 > {
   className?: string;
@@ -48,19 +48,19 @@ interface RightToolbarProps extends Omit<
   freqAtoms: any[];
 }
 
-type RightToolbarCallProps = ToolbarGroupItemCallProps;
+type RightToolbarCallProperties = ToolbarGroupItemCallProperties;
 
-type Props = RightToolbarProps & RightToolbarCallProps;
+type Properties = RightToolbarProperties & RightToolbarCallProperties;
 
-const RightToolbar = (props: Props) => {
-  const { className, ...rest } = props;
+const RightToolbar = (properties: Properties) => {
+  const { className, ...rest } = properties;
   const { active, onAction, freqAtoms, status } = rest;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const {
     scrollContainerRef,
-    scrollStepRef,
-    startRef,
-    endRef,
+    scrollStepReference,
+    startReference,
+    endReference,
     startInView,
     endInView,
     isOverflowing,
@@ -76,7 +76,7 @@ const RightToolbar = (props: Props) => {
     >
       <div ref={scrollContainerRef} className={classes.buttons}>
         <div>
-          <div ref={startRef} className={classes.scrollStart} />
+          <div ref={startReference} className={classes.scrollStart} />
           <Group
             className={clsx(
               classes.atomsList,
@@ -113,9 +113,9 @@ const RightToolbar = (props: Props) => {
           </Group>
         </div>
 
-        <div ref={endRef}>
+        <div ref={endReference}>
           <Group className={classes.groupItem}>
-            <div ref={scrollStepRef}>
+            <div ref={scrollStepReference}>
               <ToolbarGroupItem id="any-atom" {...rest} />
               <div className={classes.button}>
                 <ToolbarGroupItem id="extended-table" {...rest} />
@@ -136,5 +136,5 @@ const RightToolbar = (props: Props) => {
   );
 };
 
-export type { RightToolbarProps, RightToolbarCallProps };
+export type { RightToolbarProperties, RightToolbarCallProperties };
 export { RightToolbar };

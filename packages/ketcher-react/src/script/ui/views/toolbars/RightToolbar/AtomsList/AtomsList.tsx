@@ -24,7 +24,7 @@ import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 
-interface AtomsListProps {
+interface AtomsListProperties {
   atoms: string[];
   status: Tools;
   active?: {
@@ -35,14 +35,16 @@ interface AtomsListProps {
   };
 }
 
-interface AtomsListCallProps {
+interface AtomsListCallProperties {
   onAction: (action: UiActionAction) => void;
 }
 
-type Props = AtomsListProps & AtomsListCallProps;
+type Properties = AtomsListProperties & AtomsListCallProperties;
 
-const StyledAtom = styled(Atom)((props: any) => {
-  const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000';
+const StyledAtom = styled(Atom)((properties: any) => {
+  const atomColor = properties?.el?.label
+    ? ElementColor[properties.el.label]
+    : '#000';
   return `
        color: ${atomColor};
        border: 1px solid transparent;
@@ -73,34 +75,36 @@ const StyledAtom = styled(Atom)((props: any) => {
    `;
 });
 
-const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
-  const { atoms, active, status, onAction } = props;
-  const isAtom = active?.tool === 'atom';
+const AtomsList = forwardRef<HTMLDivElement, Properties>(
+  (properties: Properties, reference) => {
+    const { atoms, active, status, onAction } = properties;
+    const isAtom = active?.tool === 'atom';
 
-  return (
-    <div ref={ref}>
-      {atoms.map((label) => {
-        const element = Elements.get(label);
-        const shortcut = atoms.includes(label)
-          ? shortcutStr(atomCuts[label])
-          : null;
-        const isSelected = isAtom && active?.opts.label === label;
-        const id = `atom-${label.toLowerCase()}`;
-        return (
-          <StyledAtom
-            key={label}
-            el={element}
-            shortcut={shortcut}
-            className={isSelected ? 'selected' : ''}
-            selected={isSelected}
-            disabled={status[id]?.disabled}
-            onClick={() => onAction({ tool: 'atom', opts: { label } })}
-          />
-        );
-      })}
-    </div>
-  );
-});
+    return (
+      <div ref={reference}>
+        {atoms.map((label) => {
+          const element = Elements.get(label);
+          const shortcut = atoms.includes(label)
+            ? shortcutStr(atomCuts[label])
+            : null;
+          const isSelected = isAtom && active?.opts.label === label;
+          const id = `atom-${label.toLowerCase()}`;
+          return (
+            <StyledAtom
+              key={label}
+              el={element}
+              shortcut={shortcut}
+              className={isSelected ? 'selected' : ''}
+              selected={isSelected}
+              disabled={status[id]?.disabled}
+              onClick={() => onAction({ tool: 'atom', opts: { label } })}
+            />
+          );
+        })}
+      </div>
+    );
+  },
+);
 
-export type { AtomsListProps, AtomsListCallProps };
+export type { AtomsListProperties, AtomsListCallProperties };
 export { AtomsList };

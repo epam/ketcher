@@ -15,25 +15,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
-type DispatchProps = Pick<BaseCallProps, 'onOk'>;
+type StateProperties = Pick<BaseProperties, 'formState'>;
+type DispatchProperties = Pick<BaseCallProperties, 'onOk'>;
 
-const mapStateToProps = (state: any): StateProps => ({
+const mapStateToProperties = (state: any): StateProperties => ({
   formState: state.modal.form,
 });
 
-const mapDispatchToProps = (dispatch: any, ownProps: any): DispatchProps => ({
+const mapDispatchToProperties = (
+  dispatch: any,
+  ownProperties: any,
+): DispatchProperties => ({
   onOk: (result) => {
     dispatch(automap(result));
-    ownProps.onOk(result);
+    ownProperties.onOk(result);
   },
 });
 
-const AutomapContainer = connect(mapStateToProps, mapDispatchToProps)(Automap);
+const AutomapContainer = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(Automap);
 export default AutomapContainer;

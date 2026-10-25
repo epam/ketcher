@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
@@ -47,7 +47,7 @@ import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
 import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 
-interface SettingsProps extends BaseProps {
+interface SettingsProps extends BaseProperties {
   ketcherId: string;
   initState: any;
   appOpts: {
@@ -62,14 +62,14 @@ interface SettingsProps extends BaseProps {
   server: StructService;
 }
 
-interface SettingsCallProps extends BaseCallProps {
+interface SettingsCallProps extends BaseCallProperties {
   onOpenFile: (any) => void;
   onReset: () => void;
   onACSStyle: (result) => void;
 }
 
 type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
-  Pick<BaseCallProps, 'onOk'>;
+  Pick<BaseCallProperties, 'onOk'>;
 
 const defaultSettings = getDefaultOptions();
 

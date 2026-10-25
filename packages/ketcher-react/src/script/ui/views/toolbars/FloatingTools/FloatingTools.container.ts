@@ -8,11 +8,11 @@ import {
 import { onAction } from '../../../state';
 import {
   FloatingTools,
-  type FloatingToolsCallProps,
-  type FloatingToolsProps,
+  type FloatingToolsCallProperties,
+  type FloatingToolsProperties,
 } from './FloatingTools';
 
-const mapStateToProps = (state: any): FloatingToolsProps => {
+const mapStateToProperties = (state: any): FloatingToolsProperties => {
   return {
     visible: getFloatingToolsVisible(state),
     rotateHandlePosition: getFloatingToolsRotateHandlePosition(state),
@@ -21,13 +21,15 @@ const mapStateToProps = (state: any): FloatingToolsProps => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): FloatingToolsCallProps => ({
+const mapDispatchToProperties = (
+  dispatch: Dispatch,
+): FloatingToolsCallProperties => ({
   onAction: (action) => dispatch(onAction(action)),
 });
 
 const FloatingToolContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(FloatingTools);
 
 export { FloatingToolContainer };

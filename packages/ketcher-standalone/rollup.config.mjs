@@ -73,7 +73,7 @@ const baseConfig = {
       include: includePattern,
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+      extensions: extensions.map((extension) => extension.replace(/^\./, '')),
       include: includePattern,
       comments: 'none',
     }),

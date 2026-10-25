@@ -460,7 +460,9 @@ function findClosestRgroupAttachmentPoints(
   minDistToOtherItems: number | null,
 ) {
   let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
-  /** @type {number | undefined} */
+  /**
+  @type {number | undefined}
+  */
   let closestItemId;
 
   restruct.visibleRGroupAttachmentPoints.forEach((reItem, id) => {

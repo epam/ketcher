@@ -522,7 +522,9 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
-  /** Visel is a shorthand for VISual ELement */
+  /**
+  Visel is a shorthand for VISual ELement
+  */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
   }

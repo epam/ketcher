@@ -274,7 +274,9 @@ export class CoreEditor {
   private libraryItemDragCancelled = false;
 
   public theme: CoreEditorTheme;
-  /** Handles all drag-and-drop attachment-point logic for library items. */
+  /**
+  Handles all drag-and-drop attachment-point logic for library items.
+  */
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;

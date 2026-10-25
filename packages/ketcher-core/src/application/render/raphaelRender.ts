@@ -193,7 +193,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }

@@ -451,7 +451,9 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
-  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
+  /**
+  Apply {@link value}: {@link Struct} if provided to {@link render} and
+  */
   struct(
     value?: Struct,
     needToCenterStruct = true,
@@ -512,7 +514,9 @@ class Editor implements KetcherEditor {
     return result;
   }
 
-  /** Apply options from {@link value} */
+  /**
+  Apply options from {@link value}
+  */
   options(value?: Record<string, unknown>) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -3013,7 +3017,9 @@ class Editor implements KetcherEditor {
     struct.bonds.add(newBond);
   }
 
-  /** Removes the bond from the struct if it is still present. */
+  /**
+  Removes the bond from the struct if it is still present.
+  */
   private deleteBond(struct: Struct, bond: Bond) {
     const bondId = struct.bonds.keyOf(bond);
     if (bondId === null) {

@@ -35,7 +35,9 @@ const greekRe = new RegExp(
   'g',
 );
 
-/** Library items grouped by their `props.group` value. */
+/**
+Library items grouped by their `props.group` value.
+*/
 type TemplateGroups = Record<string, Template[]>;
 
 /**

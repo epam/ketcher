@@ -18,7 +18,9 @@
  * Interface for storage operations with error handling
  */
 export interface IStorage {
-  /** Warning message displayed when using storage in unsupported environments */
+  /**
+  Warning message displayed when using storage in unsupported environments
+  */
   warningMessage: string;
 
   /**

@@ -173,13 +173,17 @@ export function fromTemplateOnAtom(
   const xy0 = tmplAttachAtom.pp;
   const frid = atomGetAttr(restruct, aid, 'fragment');
 
-  /* For merge */
+  /*
+  For merge
+  */
   const pasteItems: { atoms: number[]; bonds: number[] } = {
     // only atoms and bonds now
     atoms: [],
     bonds: [],
   };
-  /* ----- */
+  /*
+  -----
+  */
 
   tmpl.atoms.forEach((a, id) => {
     const attrs = Atom.getAttrHash(a) as Record<string, unknown>;

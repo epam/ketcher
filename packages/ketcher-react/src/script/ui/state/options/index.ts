@@ -155,7 +155,9 @@ export function appUpdate(data: Partial<OptionsState['app']>) {
   };
 }
 
-/* SETTINGS */
+/*
+SETTINGS
+*/
 export function saveSettings(
   newSettings: SettingsFormValue,
   ketcherId?: string,
@@ -211,7 +213,9 @@ export function syncSettingsFromCore(coreSettings: Partial<Settings>) {
   };
 }
 
-/* ANALYZE */
+/*
+ANALYZE
+*/
 export function changeRound(
   roundName: AnalyseRoundName,
   value: number | string,
@@ -222,7 +226,9 @@ export function changeRound(
   };
 }
 
-/* RECOGNIZE */
+/*
+RECOGNIZE
+*/
 const recognizeActions: readonly RecognizeActionType[] = [
   'SET_RECOGNIZE_STRUCT',
   'CHANGE_RECOGNIZE_FILE',
@@ -261,7 +267,9 @@ export function shouldFragment(isFrag: boolean) {
   };
 }
 
-/* CHECK */
+/*
+CHECK
+*/
 export function checkOpts(data: OptionsState['check']) {
   return {
     type: 'SAVE_CHECK_OPTS',
@@ -269,7 +277,9 @@ export function checkOpts(data: OptionsState['check']) {
   };
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 function isOptionsAction<T extends OptionsAction['type']>(
   action: UnknownAction,
   type: T,

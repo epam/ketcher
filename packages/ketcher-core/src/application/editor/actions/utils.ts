@@ -59,7 +59,9 @@ type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
 };
-/** Default bond type used when no previous bond type is available as a reference. */
+/**
+Default bond type used when no previous bond type is available as a reference.
+*/
 const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 const findClosestAtom: FindClosestAtom = closest.atom;
 

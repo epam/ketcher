@@ -350,7 +350,7 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
 export function fromStereoLabel(stereoLabel: string | null) {
   if (stereoLabel === null) return { type: null };
   const typeMatch = stereoLabel.match(/\D+/g);
-  if ((typeMatch?.length ?? 0) === 0) {
+  if (typeMatch === null || typeMatch.length === 0) {
     return { type: stereoLabel, orNumber: 0, andNumber: 0 };
   }
 

@@ -64,12 +64,12 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
           const loop = struct.halfBonds.get(bond.b[hb]).loop;
           if (loop >= 0) loops.add(loop);
         }
-        return;
+        continue;
       }
 
       if (atomSet.has(bond.b.begin)) {
         atomsToInvalidate.add(bond.b.begin);
-        return;
+        continue;
       }
 
       if (atomSet.has(bond.b.end)) atomsToInvalidate.add(bond.b.end);

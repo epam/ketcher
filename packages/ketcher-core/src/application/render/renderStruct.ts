@@ -72,95 +72,97 @@ export class RenderStruct {
     struct: Struct | null,
     options: RenderStructOptions = {},
   ) {
-    if (wrapperElement && struct) {
-      const {
-        cachePrefix = '',
-        needCache = true,
-        wrapperDimensions,
-        ...renderOptions
-      } = options;
-      const cacheKey = `${cachePrefix}${struct.name}`;
+    if (!(wrapperElement && struct)) {
+      return;
+    }
 
-      if (!isEqual(previousOptions, options)) {
-        renderCache.clear();
-        previousOptions = options;
-      }
+    const {
+      cachePrefix = '',
+      needCache = true,
+      wrapperDimensions,
+      ...renderOptions
+    } = options;
+    const cacheKey = `${cachePrefix}${struct.name}`;
 
-      const cachedSvg = renderCache.get(cacheKey);
+    if (!isEqual(previousOptions, options)) {
+      renderCache.clear();
+      previousOptions = options;
+    }
 
-      if (needCache && cachedSvg !== undefined) {
-        wrapperElement.innerHTML = cachedSvg;
-        return;
-      }
+    const cachedSvg = renderCache.get(cacheKey);
 
-      const preparedStruct = this.prepareStruct(struct.clone());
-      preparedStruct.initHalfBonds();
-      preparedStruct.initNeighbors();
-      preparedStruct.setImplicitHydrogen();
-      preparedStruct.markFragments();
-      const structureSize = preparedStruct.getCoordBoundingBox();
-      const structureSizeInPixels = Coordinates.modelToCanvas(
-        new Vec2(
-          structureSize.max.x - structureSize.min.x,
-          structureSize.max.y - structureSize.min.y,
-        ),
-      );
+    if (needCache && cachedSvg !== undefined) {
+      wrapperElement.innerHTML = cachedSvg;
+      return;
+    }
 
-      // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
-      // This is critical for batch rendering scenarios (e.g., template tables)
-      // where getBoundingClientRect() would be called multiple times per frame
-      const wrapperElementBoundingRect = wrapperDimensions || {
-        width: wrapperElement.getBoundingClientRect().width,
-        height: wrapperElement.getBoundingClientRect().height,
-      };
+    const preparedStruct = this.prepareStruct(struct.clone());
+    preparedStruct.initHalfBonds();
+    preparedStruct.initNeighbors();
+    preparedStruct.setImplicitHydrogen();
+    preparedStruct.markFragments();
+    const structureSize = preparedStruct.getCoordBoundingBox();
+    const structureSizeInPixels = Coordinates.modelToCanvas(
+      new Vec2(
+        structureSize.max.x - structureSize.min.x,
+        structureSize.max.y - structureSize.min.y,
+      ),
+    );
 
-      const isStructureLessThanWrapper =
-        structureSizeInPixels.x < wrapperElementBoundingRect.width &&
-        structureSizeInPixels.y < wrapperElementBoundingRect.height;
-      const structureRectangleSize = Math.max(
-        structureSizeInPixels.x,
-        structureSizeInPixels.y,
-      );
-      const svgSize = isStructureLessThanWrapper
-        ? Math.min(
-            structureRectangleSize,
-            wrapperElementBoundingRect.width,
-            wrapperElementBoundingRect.height,
-          )
-        : undefined;
-      const extendedOptions: Partial<RenderOptions> = {
-        autoScale: true,
-        ...renderOptions,
-      };
+    // Use pre-calculated wrapper dimensions if provided to avoid forced reflow
+    // This is critical for batch rendering scenarios (e.g., template tables)
+    // where getBoundingClientRect() would be called multiple times per frame
+    const wrapperElementBoundingRect = wrapperDimensions || {
+      width: wrapperElement.getBoundingClientRect().width,
+      height: wrapperElement.getBoundingClientRect().height,
+    };
 
-      if (window.isPolymerEditorTurnedOn) {
-        extendedOptions.fontsz = 30;
-        extendedOptions.fontszsub = 20;
-        extendedOptions.width = svgSize;
-        extendedOptions.height = svgSize;
-      }
+    const isStructureLessThanWrapper =
+      structureSizeInPixels.x < wrapperElementBoundingRect.width &&
+      structureSizeInPixels.y < wrapperElementBoundingRect.height;
+    const structureRectangleSize = Math.max(
+      structureSizeInPixels.x,
+      structureSizeInPixels.y,
+    );
+    const svgSize = isStructureLessThanWrapper
+      ? Math.min(
+          structureRectangleSize,
+          wrapperElementBoundingRect.width,
+          wrapperElementBoundingRect.height,
+        )
+      : undefined;
+    const extendedOptions: Partial<RenderOptions> = {
+      autoScale: true,
+      ...renderOptions,
+    };
 
-      const rnd = new Render(wrapperElement, extendedOptions);
+    if (window.isPolymerEditorTurnedOn) {
+      extendedOptions.fontsz = 30;
+      extendedOptions.fontszsub = 20;
+      extendedOptions.width = svgSize;
+      extendedOptions.height = svgSize;
+    }
 
-      if (!window.isPolymerEditorTurnedOn) {
-        preparedStruct.rescale();
-      }
+    const rnd = new Render(wrapperElement, extendedOptions);
 
-      rnd.setMolecule(preparedStruct);
+    if (!window.isPolymerEditorTurnedOn) {
+      preparedStruct.rescale();
+    }
 
-      if (window.isPolymerEditorTurnedOn) {
-        // Raphael sets overflow:hidden as an inline style on the SVG element,
-        // which clips bond strokes at the bounding-box edge and makes them
-        // appear thinner than bonds in the interior. Override it so strokes
-        // can paint the few pixels beyond the viewBox that they need.
-        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
-      }
+    rnd.setMolecule(preparedStruct);
 
-      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
+    if (window.isPolymerEditorTurnedOn) {
+      // Raphael sets overflow:hidden as an inline style on the SVG element,
+      // which clips bond strokes at the bounding-box edge and makes them
+      // appear thinner than bonds in the interior. Override it so strokes
+      // can paint the few pixels beyond the viewBox that they need.
+      (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+    }
 
-      if (needCache) {
-        renderCache.set(cacheKey, rnd.clientArea.innerHTML);
-      }
+    this.removeSmallAttachmentPointLabelsInModal(rnd, options);
+
+    if (needCache) {
+      renderCache.set(cacheKey, rnd.clientArea.innerHTML);
     }
   }
 }

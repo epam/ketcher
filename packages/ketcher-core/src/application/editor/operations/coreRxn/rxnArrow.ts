@@ -35,10 +35,12 @@ export class RxnArrowAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.rxnArrow) {
-      this.deleteArrowChangeModel(this.rxnArrow);
-      renderersManager.deleteRxnArrow(this.rxnArrow);
+    if (!this.rxnArrow) {
+      return;
     }
+
+    this.deleteArrowChangeModel(this.rxnArrow);
+    renderersManager.deleteRxnArrow(this.rxnArrow);
   }
 }
 

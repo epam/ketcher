@@ -72,25 +72,27 @@ export function TopMenuComponent() {
   useEffect(() => {
     const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
       setSelectedEntities(selectedEntities);
-      if (
+      if (!(
         selectedEntities.length &&
         !isAntisenseCreationDisabled(selectedEntities)
+      )) {
+        return;
+      }
+
+      setNeedOpenByMenuItemClick(false);
+      if (
+        !hasUnsplitNucleotide(selectedEntities) &&
+        hasOnlyDeoxyriboseSugars(selectedEntities)
       ) {
-        setNeedOpenByMenuItemClick(false);
-        if (
-          !hasUnsplitNucleotide(selectedEntities) &&
-          hasOnlyDeoxyriboseSugars(selectedEntities)
-        ) {
-          setAntisenseActiveOption('antisenseDnaStrand');
-        } else if (
-          !hasUnsplitNucleotide(selectedEntities) &&
-          hasOnlyRiboseSugars(selectedEntities)
-        ) {
-          setAntisenseActiveOption('antisenseRnaStrand');
-        } else {
-          setAntisenseActiveOption('antisenseStrand');
-          setNeedOpenByMenuItemClick(true);
-        }
+        setAntisenseActiveOption('antisenseDnaStrand');
+      } else if (
+        !hasUnsplitNucleotide(selectedEntities) &&
+        hasOnlyRiboseSugars(selectedEntities)
+      ) {
+        setAntisenseActiveOption('antisenseRnaStrand');
+      } else {
+        setAntisenseActiveOption('antisenseStrand');
+        setNeedOpenByMenuItemClick(true);
       }
     };
 

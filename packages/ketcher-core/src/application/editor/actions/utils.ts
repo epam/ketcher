@@ -172,19 +172,21 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
   const selection: EditorSelection = {};
 
   selectionKeys.forEach((entityType) => {
-    if (struct?.[entityType]) {
-      const selected: number[] = [];
-      struct[entityType].forEach((value, key) => {
-        if (
-          typeof value.getInitiallySelected === 'function' &&
-          value.getInitiallySelected()
-        ) {
-          selected.push(key);
-        }
-      });
-      if (selected.length > 0) {
-        selection[entityType] = selected;
+    if (!struct?.[entityType]) {
+      return;
+    }
+
+    const selected: number[] = [];
+    struct[entityType].forEach((value, key) => {
+      if (
+        typeof value.getInitiallySelected === 'function' &&
+        value.getInitiallySelected()
+      ) {
+        selected.push(key);
       }
+    });
+    if (selected.length > 0) {
+      selection[entityType] = selected;
     }
   });
   return selection;

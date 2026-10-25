@@ -48,14 +48,16 @@ class TextTool implements Tool {
 
     this.editor.selection(null);
 
-    if (closestItem?.map === 'texts') {
-      this.editor.hover(null);
-      this.editor.selection({ texts: [closestItem.id] });
-      this.dragCtx = {
-        xy0: CoordinateTransformation.pageToModel(event, render),
-        action: new Action(),
-      };
+    if (!(closestItem?.map === 'texts')) {
+      return;
     }
+
+    this.editor.hover(null);
+    this.editor.selection({ texts: [closestItem.id] });
+    this.dragCtx = {
+      xy0: CoordinateTransformation.pageToModel(event, render),
+      action: new Action(),
+    };
   }
 
   mousemove(event) {

@@ -100,10 +100,12 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
   // measurement and the reposition in the same commit, so the panel is never
   // painted at its pre-measurement position.
   useLayoutEffect(() => {
-    if (wrapperRef.current) {
-      setWrapperHeight(wrapperRef.current.clientHeight);
-      setWrapperWidth(wrapperRef.current.clientWidth);
+    if (!wrapperRef.current) {
+      return;
     }
+
+    setWrapperHeight(wrapperRef.current.clientHeight);
+    setWrapperWidth(wrapperRef.current.clientWidth);
   }, [sGroupData]);
 
   const panelCoordinate = getPanelPositionRelativeToRect(

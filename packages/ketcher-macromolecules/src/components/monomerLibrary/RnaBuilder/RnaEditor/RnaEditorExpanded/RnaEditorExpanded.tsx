@@ -464,14 +464,16 @@ export const RnaEditorExpanded = ({
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isEditMode) {
-      const newPresetName = event.target.value;
-      setNewPreset({
-        ...newPreset,
-        name: newPresetName.trim(),
-        editedName: true,
-      });
+    if (!isEditMode) {
+      return;
     }
+
+    const newPresetName = event.target.value;
+    setNewPreset({
+      ...newPreset,
+      name: newPresetName.trim(),
+      editedName: true,
+    });
   };
 
   const setPhosphatePosition = (position?: RnaPhosphatePosition) => {

@@ -170,31 +170,33 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
 
-    if (attachmentPointEntry && hoverElement) {
-      const [attachmentPointName] = attachmentPointEntry;
-      hoverElement.hover(
-        () => {
-          window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'highlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-        () => {
-          window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'resetHighlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-      );
+    if (!(attachmentPointEntry && hoverElement)) {
+      return;
     }
+
+    const [attachmentPointName] = attachmentPointEntry;
+    hoverElement.hover(
+      () => {
+        window.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            'highlightAttachmentPointControls',
+            {
+              detail: attachmentPointName,
+            },
+          ),
+        );
+      },
+      () => {
+        window.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            'resetHighlightAttachmentPointControls',
+            {
+              detail: attachmentPointName,
+            },
+          ),
+        );
+      },
+    );
   }
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -234,13 +236,15 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       potentialLeavingGroups.some((leavingAtomIds) =>
         leavingAtomIds.has(atomId),
       );
-    if (isPotentialAttachmentPointAtom) {
-      const path = this.makeHighlightePlate(render.ctab, {
-        stroke: '#43B5C0',
-        'stroke-dasharray': '- ',
-      });
-      render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
+    if (!isPotentialAttachmentPointAtom) {
+      return;
     }
+
+    const path = this.makeHighlightePlate(render.ctab, {
+      stroke: '#43B5C0',
+      'stroke-dasharray': '- ',
+    });
+    render.ctab.addReObjectPath(LayerMap.atom, this.visel, path);
   }
 
   setHover(hover: boolean, render: Render, drawOutline = true) {
@@ -290,13 +294,15 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       };
     }
 
-    if (style) {
-      const path = this.makeHighlightePlate(restruct, style, -4);
-
-      restruct.addReObjectPath(LayerMap.atom, this.visel, path);
-
-      return path;
+    if (!style) {
+      return;
     }
+
+    const path = this.makeHighlightePlate(restruct, style, -4);
+
+    restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+
+    return path;
   }
 
   // Same coordinate transform as ReObject.prototype.getVBoxObj, but applied
@@ -1189,10 +1195,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
-      if (hasCurrentHighlight) {
-        highlightColor = highlight.color;
-        highlightOutline = highlight.outline;
+      if (!hasCurrentHighlight) {
+        return;
       }
+
+      highlightColor = highlight.color;
+      highlightOutline = highlight.outline;
     });
 
     // Drawing highlight. Outline highlights (#9441) are drawn as a single

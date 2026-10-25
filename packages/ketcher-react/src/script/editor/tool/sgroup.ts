@@ -84,97 +84,99 @@ class SGroupTool implements Tool {
     this.editor.rotateController.rerender();
     this.editor.update(true);
 
-    if (selection.atoms) {
-      const selectedAtoms = this.editor.selection()?.atoms;
-
-      const sgroups: Pool<SGroup> = molecule.sgroups;
-      const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
-        atoms: [],
-        bonds: [],
-      };
-      let actualSgroupId;
-      let atomsResult: Array<number> = [];
-      let extraAtoms;
-      const functionalGroups = molecule.functionalGroups;
-      const result: Array<number> = [];
-
-      const id = sgroups.find((_, sgroup) =>
-        isEqual(sgroup.atoms, selectedAtoms),
-      );
-
-      if (selectedAtoms && functionalGroups.size) {
-        for (const atom of selectedAtoms) {
-          const atomId = FunctionalGroup.atomsInFunctionalGroup(
-            functionalGroups,
-            atom,
-          );
-
-          if (atomId == null) {
-            extraAtoms = true;
-          }
-
-          const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
-
-          if (atomFromStruct) {
-            for (const sgId of atomFromStruct.sgs.values()) {
-              actualSgroupId = sgId;
-            }
-          }
-
-          if (
-            atomFromStruct &&
-            (FunctionalGroup.isAtomInContractedFunctionalGroup(
-              atomFromStruct,
-              sgroups,
-              functionalGroups,
-            ) ||
-              SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
-          ) {
-            const sgroupAtoms =
-              actualSgroupId !== undefined
-                ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
-                : undefined;
-            const sgroupBonds =
-              actualSgroupId !== undefined &&
-              SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
-            if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
-              newSelected.atoms.push(...sgroupAtoms);
-              newSelected.bonds.push(...sgroupBonds);
-            }
-          }
-
-          if (atomFromStruct && atomId !== null) {
-            atomsResult.push(atomId);
-          }
-        }
-      }
-      if (extraAtoms) {
-        atomsResult = [];
-      }
-
-      if (atomsResult?.length > 0) {
-        for (const id of atomsResult) {
-          const fgId = FunctionalGroup.findFunctionalGroupByAtom(
-            functionalGroups,
-            id,
-          );
-
-          if (fgId !== null && !result.includes(fgId)) {
-            result.push(fgId);
-          }
-        }
-      }
-
-      if (result.length) {
-        this.editor.selection(null);
-        dispatchMonomerOrGroupDialog(this.editor, result);
-        return;
-      }
-
-      SGroupTool.sgroupDialog(this.editor, id);
-      this.isNotActiveTool = true;
+    if (!selection.atoms) {
+      return;
     }
+
+    const selectedAtoms = this.editor.selection()?.atoms;
+
+    const sgroups: Pool<SGroup> = molecule.sgroups;
+    const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
+      atoms: [],
+      bonds: [],
+    };
+    let actualSgroupId;
+    let atomsResult: Array<number> = [];
+    let extraAtoms;
+    const functionalGroups = molecule.functionalGroups;
+    const result: Array<number> = [];
+
+    const id = sgroups.find((_, sgroup) =>
+      isEqual(sgroup.atoms, selectedAtoms),
+    );
+
+    if (selectedAtoms && functionalGroups.size) {
+      for (const atom of selectedAtoms) {
+        const atomId = FunctionalGroup.atomsInFunctionalGroup(
+          functionalGroups,
+          atom,
+        );
+
+        if (atomId == null) {
+          extraAtoms = true;
+        }
+
+        const atomFromStruct =
+          atomId !== null ? struct.atoms.get(atomId)?.a : null;
+
+        if (atomFromStruct) {
+          for (const sgId of atomFromStruct.sgs.values()) {
+            actualSgroupId = sgId;
+          }
+        }
+
+        if (
+          atomFromStruct &&
+          (FunctionalGroup.isAtomInContractedFunctionalGroup(
+            atomFromStruct,
+            sgroups,
+            functionalGroups,
+          ) ||
+            SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
+        ) {
+          const sgroupAtoms =
+            actualSgroupId !== undefined
+              ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
+              : undefined;
+          const sgroupBonds =
+            actualSgroupId !== undefined &&
+            SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
+          if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
+            newSelected.atoms.push(...sgroupAtoms);
+            newSelected.bonds.push(...sgroupBonds);
+          }
+        }
+
+        if (atomFromStruct && atomId !== null) {
+          atomsResult.push(atomId);
+        }
+      }
+    }
+    if (extraAtoms) {
+      atomsResult = [];
+    }
+
+    if (atomsResult?.length > 0) {
+      for (const id of atomsResult) {
+        const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+          functionalGroups,
+          id,
+        );
+
+        if (fgId !== null && !result.includes(fgId)) {
+          result.push(fgId);
+        }
+      }
+    }
+
+    if (result.length) {
+      this.editor.selection(null);
+      dispatchMonomerOrGroupDialog(this.editor, result);
+      return;
+    }
+
+    SGroupTool.sgroupDialog(this.editor, id);
+    this.isNotActiveTool = true;
   }
 
   mousedown(event: MouseEvent) {
@@ -400,10 +402,12 @@ class SGroupTool implements Tool {
       struct.sgroups.get(actualSgroupId)?.item,
     );
 
-    if (atom === sgroupAtoms[0]) {
-      newSelected.atoms.push(...sgroupAtoms);
-      newSelected.bonds.push(...sgroupBonds);
+    if (!(atom === sgroupAtoms[0])) {
+      return;
     }
+
+    newSelected.atoms.push(...sgroupAtoms);
+    newSelected.bonds.push(...sgroupBonds);
   }
 
   private processSelectedBonds(
@@ -741,10 +745,12 @@ class SGroupTool implements Tool {
       molecule,
     );
 
-    if (this.shouldOpenDialog(id, selection)) {
-      this.editor.selection(selection);
-      SGroupTool.sgroupDialog(this.editor, id);
+    if (!this.shouldOpenDialog(id, selection)) {
+      return;
     }
+
+    this.editor.selection(selection);
+    SGroupTool.sgroupDialog(this.editor, id);
   }
 
   cancel() {

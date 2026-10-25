@@ -35,10 +35,12 @@ export class RxnPlusAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.rxnPlus) {
-      this.deleteRxnPlusChangeModel(this.rxnPlus);
-      renderersManager.deleteRxnPlus(this.rxnPlus);
+    if (!this.rxnPlus) {
+      return;
     }
+
+    this.deleteRxnPlusChangeModel(this.rxnPlus);
+    renderersManager.deleteRxnPlus(this.rxnPlus);
   }
 }
 

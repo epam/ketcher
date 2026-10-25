@@ -500,13 +500,15 @@ class ReStruct {
     Object.keys(ReStruct.maps).forEach((elementKey) => {
       selection[elementKey]?.forEach((elementId) => {
         const element = this[elementKey].get(elementId);
-        if (element) {
-          const box = element.getVBoxObj(this.render);
-          if (box) {
-            boundingBox = boundingBox
-              ? Box2Abs.union(boundingBox, box)
-              : box.clone();
-          }
+        if (!element) {
+          return;
+        }
+
+        const box = element.getVBoxObj(this.render);
+        if (box) {
+          boundingBox = boundingBox
+            ? Box2Abs.union(boundingBox, box)
+            : box.clone();
         }
       });
     });
@@ -585,17 +587,19 @@ class ReStruct {
     });
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
-      if (
+      if (!(
         force ||
         attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
-      ) {
-        attachmentGroup.recalculatePosition(this.molecule.atoms);
-        this.attachmentGroupsChanged.set(id, 1);
-        attachmentGroup.neighbors.forEach((halfBondId) => {
-          const halfBond = this.molecule.halfBonds.get(halfBondId);
-          if (halfBond) this.markBond(halfBond.bid, 1);
-        });
+      )) {
+        return;
       }
+
+      attachmentGroup.recalculatePosition(this.molecule.atoms);
+      this.attachmentGroupsChanged.set(id, 1);
+      attachmentGroup.neighbors.forEach((halfBondId) => {
+        const halfBond = this.molecule.halfBonds.get(halfBondId);
+        if (halfBond) this.markBond(halfBond.bid, 1);
+      });
     });
 
     this.atomsChanged.forEach((_value, aid) =>

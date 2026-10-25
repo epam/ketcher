@@ -183,11 +183,13 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(forceHide = false) {
-    if (this.canvas.node() && this.canvasWrapper.node()) {
-      this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
-      this.renderScrollBar(this.scrollBars.vertical, forceHide);
+    if (!(this.canvas.node() && this.canvasWrapper.node())) {
+      return;
     }
+
+    this.initScrollBars();
+    this.renderScrollBar(this.scrollBars.horizontal, forceHide);
+    this.renderScrollBar(this.scrollBars.vertical, forceHide);
   }
 
   renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
@@ -348,14 +350,16 @@ export class ZoomTool implements BaseTool {
   mouseWheeled(event) {
     const isShiftKeydown = event.shiftKey;
     const boxNode = this.canvasWrapper.node();
-    if (boxNode && (event.deltaX || event.deltaY)) {
-      const x = -event.deltaX / this.zoomLevel;
-      const y = -event.deltaY / this.zoomLevel;
-      if (isShiftKeydown) {
-        this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
-      } else {
-        this.zoom?.translateBy(this.canvasWrapper, x, y);
-      }
+    if (!(boxNode && (event.deltaX || event.deltaY))) {
+      return;
+    }
+
+    const x = -event.deltaX / this.zoomLevel;
+    const y = -event.deltaY / this.zoomLevel;
+    if (isShiftKeydown) {
+      this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
+    } else {
+      this.zoom?.translateBy(this.canvasWrapper, x, y);
     }
   }
 
@@ -498,16 +502,18 @@ export class ZoomTool implements BaseTool {
     const OFFSET_FROM_CANVAS_BORDER = 2;
     const canvasWrapperSize = this.canvasWrapperSize;
 
-    if (structureBbox.width < canvasWrapperSize.width / 2) {
-      const scale = canvasWrapperSize.width / 2 / structureBbox.width;
-      this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
-      this.scrollTo(
-        new Vec2(structureBbox.left, structureBbox.top),
-        false,
-        OFFSET_FROM_CANVAS_BORDER,
-        OFFSET_FROM_CANVAS_BORDER,
-      );
+    if (!(structureBbox.width < canvasWrapperSize.width / 2)) {
+      return;
     }
+
+    const scale = canvasWrapperSize.width / 2 / structureBbox.width;
+    this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
+    this.scrollTo(
+      new Vec2(structureBbox.left, structureBbox.top),
+      false,
+      OFFSET_FROM_CANVAS_BORDER,
+      OFFSET_FROM_CANVAS_BORDER,
+    );
   }
 
   public get canvasWrapperHeight() {

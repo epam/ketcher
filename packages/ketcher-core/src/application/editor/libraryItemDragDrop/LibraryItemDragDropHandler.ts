@@ -538,10 +538,12 @@ export class LibraryItemDragDropHandler {
    * Clears the current replacement target visual state and the stored field.
    */
   private clearReplacementTarget(): void {
-    if (this.dragReplaceTarget) {
-      this.clearReplacementVisualState();
-      this.dragReplaceTarget = null;
+    if (!this.dragReplaceTarget) {
+      return;
     }
+
+    this.clearReplacementVisualState();
+    this.dragReplaceTarget = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -729,11 +731,13 @@ export class LibraryItemDragDropHandler {
         drawingEntitiesManager,
       );
 
-      if (command) {
-        const history = EditorHistory.getInstance(getEditor());
-        history.update(command);
-        renderersContainer.update(command);
+      if (!command) {
+        return;
       }
+
+      const history = EditorHistory.getInstance(getEditor());
+      history.update(command);
+      renderersContainer.update(command);
     };
 
     if (lostBonds > 0) {

@@ -566,15 +566,17 @@ class Editor implements KetcherEditor {
 
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
     const isViewOnlyEnabled = this.render.options.viewOnlyMode;
-    if (
+    if (!(
       (!wasViewOnlyEnabled && isViewOnlyEnabled === true) ||
       (wasViewOnlyEnabled && isViewOnlyEnabled === false)
-    ) {
-      // We need to reset the tool to make sure it was recreated
-      this.tool('select');
-      this.event.change.dispatch('force');
-      ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
+    )) {
+      return;
     }
+
+    // We need to reset the tool to make sure it was recreated
+    this.tool('select');
+    this.event.change.dispatch('force');
+    ketcherProvider.getKetcher(this.ketcherId).changeEvent.dispatch('force');
   }
 
   zoom(value?: number, event?: WheelEvent) {
@@ -1342,53 +1344,57 @@ class Editor implements KetcherEditor {
       }
       monomer.monomerItem.attachmentPoints?.forEach((point, index) => {
         if (
-          monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
+          !monomer.isAttachmentPointUsed(monomer.listOfAttachmentPoints[index])
         ) {
-          const template = monomer.monomerItem.struct;
-          const attachmentAtom = template.atoms.get(point.attachmentAtom);
-          if (attachmentAtom?.label === 'R#') {
-            // Legacy templates use a terminal R-group itself as the AP.
-            const bonds = Array.from(template.bonds.values()).filter(
-              (bond) =>
-                bond.begin === point.attachmentAtom ||
-                bond.end === point.attachmentAtom,
-            );
-            if (bonds.length !== 1) {
-              throw new Error(
-                'Cannot expand a non-terminal attachment placeholder.',
-              );
-            }
-            const neighborId =
-              bonds[0].begin === point.attachmentAtom
-                ? bonds[0].end
-                : bonds[0].begin;
-            const placeholderId = atomMap.get(point.attachmentAtom);
-            const attachmentId = atomMap.get(neighborId);
-            assert(isNumber(placeholderId) && isNumber(attachmentId));
-            attachmentPlaceholders.set(placeholderId, attachmentId);
-            leavingAtoms.add(placeholderId);
-          }
-          point.leavingGroup?.atoms.forEach((id) => {
-            const atomId = atomMap.get(id);
-            if (isNumber(atomId)) leavingAtoms.add(atomId);
-          });
+          return;
         }
+
+        const template = monomer.monomerItem.struct;
+        const attachmentAtom = template.atoms.get(point.attachmentAtom);
+        if (attachmentAtom?.label === 'R#') {
+          // Legacy templates use a terminal R-group itself as the AP.
+          const bonds = Array.from(template.bonds.values()).filter(
+            (bond) =>
+              bond.begin === point.attachmentAtom ||
+              bond.end === point.attachmentAtom,
+          );
+          if (bonds.length !== 1) {
+            throw new Error(
+              'Cannot expand a non-terminal attachment placeholder.',
+            );
+          }
+          const neighborId =
+            bonds[0].begin === point.attachmentAtom
+              ? bonds[0].end
+              : bonds[0].begin;
+          const placeholderId = atomMap.get(point.attachmentAtom);
+          const attachmentId = atomMap.get(neighborId);
+          assert(isNumber(placeholderId) && isNumber(attachmentId));
+          attachmentPlaceholders.set(placeholderId, attachmentId);
+          leavingAtoms.add(placeholderId);
+        }
+        point.leavingGroup?.atoms.forEach((id) => {
+          const atomId = atomMap.get(id);
+          if (isNumber(atomId)) leavingAtoms.add(atomId);
+        });
       });
     });
     Array.from(struct.sgroups.entries()).forEach(([id, group]) => {
-      if (
+      if (!(
         group.isMonomer &&
         group.atoms.every((atomId) => selectedAtoms.has(atomId))
-      ) {
-        struct.sGroupDelete(id);
-        Array.from(struct.functionalGroups.entries()).forEach(
-          ([fgId, functionalGroup]) => {
-            if (functionalGroup.relatedSGroupId === id) {
-              struct.functionalGroups.delete(fgId);
-            }
-          },
-        );
+      )) {
+        return;
       }
+
+      struct.sGroupDelete(id);
+      Array.from(struct.functionalGroups.entries()).forEach(
+        ([fgId, functionalGroup]) => {
+          if (functionalGroup.relatedSGroupId === id) {
+            struct.functionalGroups.delete(fgId);
+          }
+        },
+      );
     });
     leavingAtoms.forEach((id) => {
       struct.atoms.delete(id);
@@ -3565,10 +3571,12 @@ class Editor implements KetcherEditor {
   }
 
   private unsubscribeFromChangeEventInMonomerCreationWizard() {
-    if (this.changeEventSubscriber) {
-      this.unsubscribe('change', this.changeEventSubscriber);
-      this.changeEventSubscriber = null;
+    if (!this.changeEventSubscriber) {
+      return;
     }
+
+    this.unsubscribe('change', this.changeEventSubscriber);
+    this.changeEventSubscriber = null;
   }
 
   private collectChangesForMonomerCreationStateInvalidation(
@@ -4333,15 +4341,17 @@ function resetSelectionOnCanvasClick(
 
 function updateLastCursorPosition(editor: Editor, event: Event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
-  if (events.includes(event.type) && event instanceof MouseEvent) {
-    const clientAreaBoundingBox =
-      editor.render.clientArea.getBoundingClientRect();
-
-    editor.lastCursorPosition = {
-      x: event.clientX - clientAreaBoundingBox.x,
-      y: event.clientY - clientAreaBoundingBox.y,
-    };
+  if (!(events.includes(event.type) && event instanceof MouseEvent)) {
+    return;
   }
+
+  const clientAreaBoundingBox =
+    editor.render.clientArea.getBoundingClientRect();
+
+  editor.lastCursorPosition = {
+    x: event.clientX - clientAreaBoundingBox.x,
+    y: event.clientY - clientAreaBoundingBox.y,
+  };
 }
 
 function isContextMenuClosed(contextMenu: ContextMenuInfo) {
@@ -4538,10 +4548,12 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
       const elements: SVGElement[] = [];
 
       hoversToCombine.forEach((item) => {
-        if (item?.node instanceof SVGElement) {
-          elements.push(item.node);
-          item.node.remove();
+        if (!(item?.node instanceof SVGElement)) {
+          return;
         }
+
+        elements.push(item.node);
+        item.node.remove();
       });
 
       for (const element of elements) {

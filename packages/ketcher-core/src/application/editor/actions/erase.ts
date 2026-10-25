@@ -56,18 +56,20 @@ function fromBondDeletion(
 
   if (restruct.sgroups?.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
-      if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
-        const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
-        const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
-
-        removeAttachmentPointFromSuperatom(
-          sgroup,
-          beginAtomConnectedToBond,
-          endAtomConnectedToBond,
-          action,
-          restruct,
-        );
+      if (!(sgroup.item?.type && sgroup.item?.type === 'SUP')) {
+        return;
       }
+
+      const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
+      const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
+
+      removeAttachmentPointFromSuperatom(
+        sgroup,
+        beginAtomConnectedToBond,
+        endAtomConnectedToBond,
+        action,
+        restruct,
+      );
     });
   }
 
@@ -176,21 +178,25 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
-    if (sgroup?.isSuperatomWithoutLabel) {
-      const attachmentPoints = sgroup.getAttachmentPoints();
-      attachmentPoints.forEach((attachmentPoint) => {
-        if (
-          attachmentPoint.atomId === atomId &&
-          isNumber(attachmentPoint.leaveAtomId) &&
-          !selection.atoms.includes(attachmentPoint.leaveAtomId)
-        ) {
-          action.addOp(
-            new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
-          );
-          action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
-        }
-      });
+    if (!sgroup?.isSuperatomWithoutLabel) {
+      return;
     }
+
+    const attachmentPoints = sgroup.getAttachmentPoints();
+    attachmentPoints.forEach((attachmentPoint) => {
+      if (!(
+        attachmentPoint.atomId === atomId &&
+        isNumber(attachmentPoint.leaveAtomId) &&
+        !selection.atoms.includes(attachmentPoint.leaveAtomId)
+      )) {
+        return;
+      }
+
+      action.addOp(
+        new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
+      );
+      action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
+    });
   });
 
   selection.atoms.forEach((aid) => {

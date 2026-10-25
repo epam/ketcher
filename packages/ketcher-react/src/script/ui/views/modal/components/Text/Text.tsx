@@ -133,16 +133,18 @@ const TextEditorInner = (props: {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          const formats = new Set<string>();
-          if (selection.hasFormat('bold')) formats.add(TextCommand.Bold);
-          if (selection.hasFormat('italic')) formats.add(TextCommand.Italic);
-          if (selection.hasFormat('subscript'))
-            formats.add(TextCommand.Subscript);
-          if (selection.hasFormat('superscript'))
-            formats.add(TextCommand.Superscript);
-          setActiveFormats(formats);
+        if (!$isRangeSelection(selection)) {
+          return;
         }
+
+        const formats = new Set<string>();
+        if (selection.hasFormat('bold')) formats.add(TextCommand.Bold);
+        if (selection.hasFormat('italic')) formats.add(TextCommand.Italic);
+        if (selection.hasFormat('subscript'))
+          formats.add(TextCommand.Subscript);
+        if (selection.hasFormat('superscript'))
+          formats.add(TextCommand.Superscript);
+        setActiveFormats(formats);
       });
     });
   }, [editor]);
@@ -181,10 +183,12 @@ const TextEditorInner = (props: {
   }, [editor]);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      setFocusInEditor();
+    if (!(event.key === 'Enter' || event.key === ' ')) {
+      return;
     }
+
+    event.preventDefault();
+    setFocusInEditor();
   };
 
   return (

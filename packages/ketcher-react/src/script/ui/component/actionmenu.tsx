@@ -176,10 +176,12 @@ function ActionButton({
   const title = resolveActionTitle(t, action);
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!status.selected || isMenuOpened(menuRef.current)) {
-      onAction(action.action);
-      event.stopPropagation();
+    if (!(!status.selected || isMenuOpened(menuRef.current))) {
+      return;
     }
+
+    onAction(action.action);
+    event.stopPropagation();
   };
 
   return (
@@ -284,10 +286,12 @@ function ActionMenu({
   const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
   const handleMenuItemKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openHandle(event, props.onOpen);
+    if (!(event.key === 'Enter' || event.key === ' ')) {
+      return;
     }
+
+    event.preventDefault();
+    openHandle(event, props.onOpen);
   };
 
   return (
@@ -341,13 +345,15 @@ function toolMargin(
   if (index === -1) {
     const tools: string[] = [];
     menu.forEach((item) => {
-      if (isMenuItemWithMenu(item)) {
-        // Recursively flatten nested menu items
-        const nestedStrings = item.menu.filter(
-          (nestedItem): nestedItem is string => typeof nestedItem === 'string',
-        );
-        tools.push(...nestedStrings);
+      if (!isMenuItemWithMenu(item)) {
+        return;
       }
+
+      // Recursively flatten nested menu items
+      const nestedStrings = item.menu.filter(
+        (nestedItem): nestedItem is string => typeof nestedItem === 'string',
+      );
+      tools.push(...nestedStrings);
     });
 
     index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`

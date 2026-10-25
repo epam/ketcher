@@ -21,10 +21,12 @@ export function useMacromoleculesHotkeys() {
       if (isEditableTarget) return;
 
       const isQuestionHotkey = e.key === '?' || (e.key === '/' && e.shiftKey);
-      if (isQuestionHotkey && !e.repeat) {
-        e.preventDefault();
-        window.open(helpUrl, '_blank')?.focus?.();
+      if (!(isQuestionHotkey && !e.repeat)) {
+        return;
       }
+
+      e.preventDefault();
+      window.open(helpUrl, '_blank')?.focus?.();
     });
 
     window.addEventListener('keydown', handler);

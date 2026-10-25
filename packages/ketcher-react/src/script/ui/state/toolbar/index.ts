@@ -77,10 +77,12 @@ export function initResize() {
 }
 
 export function removeResizeListener(): void {
-  if (resizeListener) {
-    removeEventListener('resize', resizeListener);
-    resizeListener = null;
+  if (!resizeListener) {
+    return;
   }
+
+  removeEventListener('resize', resizeListener);
+  resizeListener = null;
 }
 
 /* REDUCER */

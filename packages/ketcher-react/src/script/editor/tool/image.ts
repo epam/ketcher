@@ -49,15 +49,17 @@ export class ImageTool implements Tool {
     ]) as ClosestItemWithMap<ImageReferencePositionInfo>;
     this.editor.selection(null);
 
-    if (closestItem) {
-      this.editor.hover(null);
-      this.editor.selection({ [IMAGE_KEY]: [closestItem.id] });
-      this.dragCtx = {
-        center: CoordinateTransformation.pageToModel(event, render),
-        action: new Action(),
-        closestItem,
-      };
+    if (!closestItem) {
+      return;
     }
+
+    this.editor.hover(null);
+    this.editor.selection({ [IMAGE_KEY]: [closestItem.id] });
+    this.dragCtx = {
+      center: CoordinateTransformation.pageToModel(event, render),
+      action: new Action(),
+      closestItem,
+    };
   }
 
   click(event: MouseEvent) {
@@ -120,74 +122,75 @@ export class ImageTool implements Tool {
     const errorHandler = this.editor.errorHandler;
     this.element.onchange = null;
     const file = this.element.files?.[0];
-    if (file) {
-      const image = new Image();
-      const reader = new FileReader();
+    if (!file) {
+      return;
+    }
 
-      if (!file.type || !allowList.exec(file.type)) {
-        const errorMessage = `Unsupported image type`;
-        KetcherLogger.error(`${TAG}:onFileUpload`, errorMessage);
+    const image = new Image();
+    const reader = new FileReader();
+
+    if (!file.type || !allowList.exec(file.type)) {
+      const errorMessage = `Unsupported image type`;
+      KetcherLogger.error(`${TAG}:onFileUpload`, errorMessage);
+      if (errorHandler) {
+        errorHandler(errorMessage);
+      }
+
+      this.resetElementValue();
+      return;
+    }
+
+    reader.addEventListener('load', () => {
+      image.src = reader.result as string;
+    });
+
+    image.onload = () => {
+      this.resetElementValue();
+      const isValidSize =
+        image.width >= MIN_DIMENSION_SIZE && image.height >= MIN_DIMENSION_SIZE;
+      const isValidSizeless =
+        image.width === 0 &&
+        image.height === 0 &&
+        image.src.length >= MIN_SIZELESS_IMAGE_SRC_LENGTH;
+
+      if (!isValidSize && !isValidSizeless) {
+        const errorMessage = 'Image should be at least 16x16 pixels';
+        KetcherLogger.error(`${TAG}:onLoad`, errorMessage);
         if (errorHandler) {
           errorHandler(errorMessage);
         }
-
-        this.resetElementValue();
         return;
       }
 
-      reader.addEventListener('load', () => {
-        image.src = reader.result as string;
-      });
+      const halfSize = isValidSizeless
+        ? new Vec2(MIN_DIMENSION_SIZE, MIN_DIMENSION_SIZE)
+        : new Vec2(image.width / 2, image.height / 2);
 
-      image.onload = () => {
-        this.resetElementValue();
-        const isValidSize =
-          image.width >= MIN_DIMENSION_SIZE &&
-          image.height >= MIN_DIMENSION_SIZE;
-        const isValidSizeless =
-          image.width === 0 &&
-          image.height === 0 &&
-          image.src.length >= MIN_SIZELESS_IMAGE_SRC_LENGTH;
+      const halfSizeScaled = Scale.canvasToModel(
+        halfSize,
+        this.editor.render.options,
+      );
 
-        if (!isValidSize && !isValidSizeless) {
-          const errorMessage = 'Image should be at least 16x16 pixels';
-          KetcherLogger.error(`${TAG}:onLoad`, errorMessage);
-          if (errorHandler) {
-            errorHandler(errorMessage);
-          }
-          return;
-        }
+      this.editor.update(
+        fromImageCreation(
+          this.editor.render.ctab,
+          image.src,
+          clickPosition,
+          halfSizeScaled,
+        ),
+      );
+    };
 
-        const halfSize = isValidSizeless
-          ? new Vec2(MIN_DIMENSION_SIZE, MIN_DIMENSION_SIZE)
-          : new Vec2(image.width / 2, image.height / 2);
+    image.onerror = (e) => {
+      this.resetElementValue();
+      const errorMessage = 'Cannot load image';
+      KetcherLogger.error(`${TAG}:onerror`, errorMessage, e);
+      if (errorHandler) {
+        errorHandler(errorMessage);
+      }
+    };
 
-        const halfSizeScaled = Scale.canvasToModel(
-          halfSize,
-          this.editor.render.options,
-        );
-
-        this.editor.update(
-          fromImageCreation(
-            this.editor.render.ctab,
-            image.src,
-            clickPosition,
-            halfSizeScaled,
-          ),
-        );
-      };
-
-      image.onerror = (e) => {
-        this.resetElementValue();
-        const errorMessage = 'Cannot load image';
-        KetcherLogger.error(`${TAG}:onerror`, errorMessage, e);
-        if (errorHandler) {
-          errorHandler(errorMessage);
-        }
-      };
-
-      reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(file);
   }
 
   private createElement(): HTMLInputElement {

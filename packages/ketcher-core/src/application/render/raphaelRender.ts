@@ -298,49 +298,51 @@ export class Render {
 
     const changes = this.ctab.update(force);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
-      const bb = this.ctab
-        .getVBoxObj()
-        .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset ?? new Vec2());
-
-      if (this.options.downScale) {
-        this.ctab.molecule.rescale();
-      }
-
-      const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (isAutoScale) {
-        const sz1 = bb.sz();
-        const marg = this.options.autoScaleMargin;
-        const mv = new Vec2(marg, marg);
-        const csz = viewSz;
-        if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
-          throw new Error('View box too small for the given margin');
-        }
-        let rescale =
-          this.options.rescaleAmount ??
-          Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-
-        const isForceDownscale = this.options.downScale && rescale < 1;
-        const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
-        if (isBondsLengthFit || isForceDownscale) {
-          rescale = 1;
-        }
-        const sz2 = sz1.add(mv.scaled(2 * rescale));
-        this.paper.setViewBox(
-          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
-          csz.x * rescale,
-          csz.y * rescale,
-        );
-      } else {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      }
-
-      notifyRenderComplete();
+    if (!changes) {
+      return;
     }
+
+    const bb = this.ctab
+      .getVBoxObj()
+      .transform(Scale.modelToCanvas, this.options)
+      .translate(this.options.offset ?? new Vec2());
+
+    if (this.options.downScale) {
+      this.ctab.molecule.rescale();
+    }
+
+    const isAutoScale = this.options.autoScale || this.options.downScale;
+    if (isAutoScale) {
+      const sz1 = bb.sz();
+      const marg = this.options.autoScaleMargin;
+      const mv = new Vec2(marg, marg);
+      const csz = viewSz;
+      if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
+        throw new Error('View box too small for the given margin');
+      }
+      let rescale =
+        this.options.rescaleAmount ??
+        Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
+
+      const isForceDownscale = this.options.downScale && rescale < 1;
+      const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
+      if (isBondsLengthFit || isForceDownscale) {
+        rescale = 1;
+      }
+      const sz2 = sz1.add(mv.scaled(2 * rescale));
+      this.paper.setViewBox(
+        bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
+        bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
+        csz.x * rescale,
+        csz.y * rescale,
+      );
+    } else {
+      if (!this.oldCb) this.oldCb = new Box2Abs();
+      this.scrollbar.update();
+      this.options.offset = this.options.offset ?? new Vec2();
+    }
+
+    notifyRenderComplete();
   }
 
   get monomerCreationState() {

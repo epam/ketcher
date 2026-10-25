@@ -108,11 +108,13 @@ export class SequenceEventDelegationManager {
 
     const { renderer, elementType } = result;
 
-    if (elementType === 'text' || elementType === 'background') {
-      renderer.drawBackgroundElementHover();
-      if (elementType === 'text') {
-        editorEvents.mouseOverSequenceItem.dispatch(event);
-      }
+    if (!(elementType === 'text' || elementType === 'background')) {
+      return;
+    }
+
+    renderer.drawBackgroundElementHover();
+    if (elementType === 'text') {
+      editorEvents.mouseOverSequenceItem.dispatch(event);
     }
   }
 

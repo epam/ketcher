@@ -98,17 +98,19 @@ export function prepareStructForKet(struct: Struct) {
   });
 
   ketNodes.forEach((ketNode) => {
-    if (ketNode.fragment) {
-      const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
-      const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every((atom) => atom !== undefined),
-      );
-      const filteredSGroupsMap = new Pool<SGroup>();
-      filteredSGroups.forEach((sg, index) => {
-        filteredSGroupsMap.set(index, sg);
-      });
-      ketNode.fragment.sgroups = filteredSGroupsMap;
+    if (!ketNode.fragment) {
+      return;
     }
+
+    const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
+    const filteredSGroups = sgroups.filter((sg: SGroup) =>
+      sg.atoms.every((atom) => atom !== undefined),
+    );
+    const filteredSGroupsMap = new Pool<SGroup>();
+    filteredSGroups.forEach((sg, index) => {
+      filteredSGroupsMap.set(index, sg);
+    });
+    ketNode.fragment.sgroups = filteredSGroupsMap;
   });
 
   // TODO: check if this sorting operation is needed
@@ -190,15 +192,17 @@ function generateSGroupFragmentsMap(
       });
     });
 
-    if (!hasAtomInSGroup) {
-      const sourceAtomIdMap = new Map<number, number>();
-      ketNodes.push({
-        type: 'molecule',
-        fragment: struct.clone(atomsInFragment, null, false, sourceAtomIdMap),
-        sourceAtomIdMap,
-        center: getFragmentCenter(struct, atomsInFragment),
-      });
+    if (hasAtomInSGroup) {
+      return;
     }
+
+    const sourceAtomIdMap = new Map<number, number>();
+    ketNodes.push({
+      type: 'molecule',
+      fragment: struct.clone(atomsInFragment, null, false, sourceAtomIdMap),
+      sourceAtomIdMap,
+      center: getFragmentCenter(struct, atomsInFragment),
+    });
   });
 
   return sGroupFragmentsMap;

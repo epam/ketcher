@@ -432,13 +432,15 @@ export class SequenceMode extends BaseMode {
 
     SequenceRenderer.startNewSequence(indexOfRowBefore);
 
-    if (SequenceRenderer.caretPosition === -1) {
-      const lastTwoStrandedNode =
-        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+    if (SequenceRenderer.caretPosition !== -1) {
+      return;
+    }
 
-      if (lastTwoStrandedNode) {
-        SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
-      }
+    const lastTwoStrandedNode =
+      SequenceRenderer.sequenceViewModel.lastTwoStrandedNode;
+
+    if (lastTwoStrandedNode) {
+      SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
     }
   }
 
@@ -729,39 +731,41 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
-      let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
-
-      // Case when user clicks between symbols. In this case renderer stored in eventData
-      // is already destroyed during rerender in mousedownBetweenSequenceItems handler
-      if (!sequenceItemBoundingBox) {
-        sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
-          eventData.node.monomer,
-        )?.rootBoundingClientRect;
-      }
-
-      if (!sequenceItemBoundingBox) {
-        return;
-      }
-
-      const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
-        ? event.clientX >
-          sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
-        : false;
-
-      SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
-
-      if (isRightSideOfSequenceItemClicked) {
-        SequenceRenderer.moveCaretForwardOrToRowEnd();
-      }
-
-      SequenceRenderer.resetLastUserDefinedCaretPosition();
-
-      this.unselectAllEntities();
-      this.selectionStarted = true;
-      this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
-      this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
+    if (!(this.isEditMode && isEventOnSequenceItem && !event.shiftKey)) {
+      return;
     }
+
+    let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
+
+    // Case when user clicks between symbols. In this case renderer stored in eventData
+    // is already destroyed during rerender in mousedownBetweenSequenceItems handler
+    if (!sequenceItemBoundingBox) {
+      sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
+        eventData.node.monomer,
+      )?.rootBoundingClientRect;
+    }
+
+    if (!sequenceItemBoundingBox) {
+      return;
+    }
+
+    const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
+      ? event.clientX >
+        sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
+      : false;
+
+    SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
+
+    if (isRightSideOfSequenceItemClicked) {
+      SequenceRenderer.moveCaretForwardOrToRowEnd();
+    }
+
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+    this.unselectAllEntities();
+    this.selectionStarted = true;
+    this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
+    this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
   }
 
   public mousemove(event: MouseEvent) {
@@ -2529,22 +2533,24 @@ export class SequenceMode extends BaseMode {
             strandType,
           );
 
-          if (editedBase) {
-            const mirroredBaseCommand = createMirroredBaseCommand({
-              drawingEntitiesManager: editor.drawingEntitiesManager,
-              editedBase,
-              previousNaturalAnalogue,
-              newBaseMonomerItem: monomerItem,
-              isSyncEditMode: this.isSyncEditMode,
-              resolveBaseLibraryItem: (label) =>
-                getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
-              partner: partnerBeforeEdit,
-              wasEditedBaseEligible,
-            });
+          if (!editedBase) {
+            return;
+          }
 
-            if (mirroredBaseCommand) {
-              modelChanges.merge(mirroredBaseCommand);
-            }
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: monomerItem,
+            isSyncEditMode: this.isSyncEditMode,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+          });
+
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
           }
         });
       },
@@ -3197,22 +3203,24 @@ export class SequenceMode extends BaseMode {
           // A preset with no base sets no new natural analogue, so there is
           // nothing to mirror; resolveMirroredBaseLabel would refuse it
           // anyway, but skipping here keeps the intent explicit.
-          if (editedBase && preset.base) {
-            const mirroredBaseCommand = createMirroredBaseCommand({
-              drawingEntitiesManager: editor.drawingEntitiesManager,
-              editedBase,
-              previousNaturalAnalogue,
-              newBaseMonomerItem: preset.base,
-              isSyncEditMode: this.isSyncEditMode,
-              resolveBaseLibraryItem: (label) =>
-                getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
-              partner: partnerBeforeEdit,
-              wasEditedBaseEligible,
-            });
+          if (!(editedBase && preset.base)) {
+            return;
+          }
 
-            if (mirroredBaseCommand) {
-              modelChanges.merge(mirroredBaseCommand);
-            }
+          const mirroredBaseCommand = createMirroredBaseCommand({
+            drawingEntitiesManager: editor.drawingEntitiesManager,
+            editedBase,
+            previousNaturalAnalogue,
+            newBaseMonomerItem: preset.base,
+            isSyncEditMode: this.isSyncEditMode,
+            resolveBaseLibraryItem: (label) =>
+              getRnaPartLibraryItem(editor, label, KetMonomerClass.Base),
+            partner: partnerBeforeEdit,
+            wasEditedBaseEligible,
+          });
+
+          if (mirroredBaseCommand) {
+            modelChanges.merge(mirroredBaseCommand);
           }
         });
       },

@@ -52,19 +52,20 @@ export class Chain {
 
   private recalculateNodes() {
     // TODO if node.monomers change somewhere else, we will have incorrect cache
-    if (
-      this.nodesChanged ||
-      this.subChains.some((subChain) => subChain.modified)
-    ) {
-      this.nodesCache = this.subChains.flatMap((subChain) => subChain.nodes);
-      this.monomersCache = this.nodesCache.flatMap((node) => node.monomers);
-      this.bondsCache = this.subChains.flatMap((subChain) => subChain.bonds);
-
-      this.nodesChanged = false;
-      this.subChains.forEach((subChain) => {
-        subChain.modified = false;
-      });
+    if (!(
+      this.nodesChanged || this.subChains.some((subChain) => subChain.modified)
+    )) {
+      return;
     }
+
+    this.nodesCache = this.subChains.flatMap((subChain) => subChain.nodes);
+    this.monomersCache = this.nodesCache.flatMap((node) => node.monomers);
+    this.bondsCache = this.subChains.flatMap((subChain) => subChain.bonds);
+
+    this.nodesChanged = false;
+    this.subChains.forEach((subChain) => {
+      subChain.modified = false;
+    });
   }
 
   private createSubChainIfNeed(monomer) {

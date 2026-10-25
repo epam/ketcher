@@ -54,11 +54,10 @@ import {
   needsStructurePreservation,
 } from './miewStructMerge';
 
-const Viewer = lazy(() =>
-  import('miew-react').then((module) => ({
-    default: module.default as unknown as ComponentType<any>,
-  })),
-);
+const Viewer = lazy(async () => {
+  const module = await import('miew-react');
+  return { default: module.default as unknown as ComponentType<any> };
+});
 
 type MiewDialogProps = {
   miewOpts: any;
@@ -170,18 +169,17 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
-      service
-        .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
-        )
-        .then(() => {
+      void (async () => {
+        try {
+          const res =
+            await service.getStringFromStructureAsync(moleculeOnlyStruct);
+          await miew.load(res, { sourceType: 'immediate', fileType: 'cml' });
           miew.setOptions(miewOpts);
           setIsInitialized(true);
-        })
-        .catch((e) => {
+        } catch (e) {
           KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
-        });
+        }
+      })();
     },
     [miewOpts, server, struct],
   );

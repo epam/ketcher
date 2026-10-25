@@ -84,26 +84,34 @@ export function setTmplName(name) {
 
 export function editTmpl(tmpl) {
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then(
-        (formData) => {
-          const data = formData as {
-            name: string;
-            attach?: Record<string, unknown>;
-          };
-          tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
-          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
+    void (async () => {
+      let formData: unknown;
+      let dialogResolved = false;
+      try {
+        formData = await openDialog(dispatch, 'attach', { tmpl });
+        dialogResolved = true;
+      } catch {
+        // Continue to the template dialog when the attachment dialog is cancelled.
+      }
 
-          if (tmpl.props.group === 'User Templates')
-            updateLocalStore(getState().templates.lib);
-        },
-        () => null,
-      )
-      .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
-        }),
-      );
+      if (dialogResolved) {
+        const data = formData as {
+          name: string;
+          attach?: Record<string, unknown>;
+        };
+        tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
+        tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
+
+        if (tmpl.props.group === 'User Templates')
+          updateLocalStore(getState().templates.lib);
+      }
+
+      try {
+        await openDialog(dispatch, 'templates');
+      } catch (e) {
+        KetcherLogger.error('index.ts::editTmpl', e);
+      }
+    })();
   };
 }
 
@@ -130,8 +138,9 @@ export function saveUserTmpl(struct) {
   const tmpl = { struct: struct.clone(), props: {} };
 
   return (dispatch, getState) => {
-    openDialog(dispatch, 'attach', { tmpl })
-      .then((result) => {
+    void (async () => {
+      try {
+        const result = await openDialog(dispatch, 'attach', { tmpl });
         const { name, attach } = result as {
           name: string;
           attach?: Record<string, unknown>;
@@ -142,10 +151,10 @@ export function saveUserTmpl(struct) {
         const lib = getState().templates.lib.concat(tmpl);
         dispatch(initLib(lib));
         updateLocalStore(lib);
-      })
-      .catch((e) => {
+      } catch (e) {
         KetcherLogger.error('index.ts::saveUserTmpl', e);
-      });
+      }
+    })();
   };
 }
 

@@ -218,7 +218,7 @@ export const Save = ({
       return;
     }
 
-    navigator.clipboard.writeText(struct).catch((e) => {
+    void navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });

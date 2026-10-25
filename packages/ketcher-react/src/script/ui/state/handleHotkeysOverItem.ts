@@ -100,14 +100,15 @@ function handleEraser({
   }
 
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
-    isFunctionalGroupChange(
-      { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
-      itemType,
-    ).then((res) => {
-      if (res) {
+    void (async () => {
+      const isFunctionalGroup = await isFunctionalGroupChange(
+        { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
+        itemType,
+      );
+      if (isFunctionalGroup) {
         eraseItem({ editor, item });
       }
-    });
+    })();
   } else {
     eraseItem({ editor, item });
   }
@@ -167,9 +168,15 @@ function handleAtomPropsDialog({
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
 
     if (!newAction.dialog) return;
+    const dialog = newAction.dialog;
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal ?? undefined)
-      .then((res) => {
+    void (async () => {
+      try {
+        const res = await openDialog(
+          dispatch,
+          dialog,
+          convertedAtomForModal ?? undefined,
+        );
         const updatedAtom = fromAtomsAttrs(
           restruct,
           hoveredItemId,
@@ -178,13 +185,13 @@ function handleAtomPropsDialog({
         );
 
         editor.update(updatedAtom);
-      })
-      .catch((e) => {
+      } catch (e) {
         KetcherLogger.error(
           'handleHotkeysOverItem.ts::handleAtomPropsDialog',
           e,
         );
-      });
+      }
+    })();
   }
 }
 
@@ -199,9 +206,15 @@ function handleBondPropsDialog({
   const convertedBondForModal = fromBond(bondFromStruct?.b);
 
   if (!newAction.dialog) return;
+  const dialog = newAction.dialog;
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal ?? undefined)
-    .then((res) => {
+  void (async () => {
+    try {
+      const res = await openDialog(
+        dispatch,
+        dialog,
+        convertedBondForModal ?? undefined,
+      );
       const convertedBond = toBond(res as ReturnType<typeof fromBond>);
       if (!convertedBond) return;
 
@@ -213,13 +226,13 @@ function handleBondPropsDialog({
       );
 
       editor.update(updatedBond);
-    })
-    .catch((e) => {
+    } catch (e) {
       KetcherLogger.error(
         'handleHoutkeysOverItem.ts::handleBondPropsDialog',
         e,
       );
-    });
+    }
+  })();
 }
 
 function handleTool({
@@ -240,10 +253,11 @@ function handleTool({
         newAction,
         dispatch,
       };
-      isFunctionalGroupChange(props, item).then((result) => {
+      void (async () => {
+        const result = await isFunctionalGroupChange(props, item);
         if (!result && isChangeStructureTool) return;
         toolHandler(props);
-      });
+      })();
     }
   }
 }

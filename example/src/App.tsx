@@ -20,7 +20,9 @@ const App = () => {
   const [structServiceProvider, setStructServiceProvider] =
     useState<StructServiceProvider | null>(null);
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider);
+    void (async () => {
+      setStructServiceProvider(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider) {

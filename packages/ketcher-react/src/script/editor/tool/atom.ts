@@ -364,7 +364,7 @@ export function atomLongtapEvent(tool, render) {
     }
     editor.selection(null);
     const res = editor.event.quickEdit.dispatch(atom);
-    Promise.resolve(res)
+    void Promise.resolve(res)
       .then((newatom) => {
         const action = atomid
           ? fromAtomsAttrs(render.ctab, atomid, newatom, null)

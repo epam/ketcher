@@ -297,11 +297,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   componentDidMount() {
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
-    this.changeType(
-      this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-    ).then(
-      (res) => res instanceof Error && this.setState({ disableControls: true }),
-    );
+    void (async () => {
+      const res = await this.changeType(
+        this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+      );
+      if (res instanceof Error) this.setState({ disableControls: true });
+    })();
   }
 
   isImageFormat = (format: string): format is OutputFormatType => {
@@ -317,7 +318,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return format !== SupportedFormat.mol && Object.keys(errors).length > 0;
   };
 
-  changeType = (
+  changeType = async (
     type: SupportedFormat | OutputFormatType,
   ): Promise<Error | void> => {
     const { struct, server, options, formState, ignoreChiralFlag } = this.props;
@@ -328,7 +329,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         tabIndex: 0,
         isLoading: false,
       });
-      return Promise.resolve();
+      return;
     }
 
     const errorHandler = this.context.errorHandler;
@@ -346,22 +347,23 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
       serverOptions.outputFormat = type;
 
-      return server
-        .generateImageAsBase64(structStr, serverOptions as GenerateImageOptions)
-        .then((base64) => {
-          this.setState({
-            disableControls: false,
-            tabIndex: 0,
-            imageSrc: base64,
-            isLoading: false,
-          });
-        })
-        .catch((e) => {
-          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
-          this.props.onResetForm(formState);
-          return e;
+      try {
+        const base64 = await server.generateImageAsBase64(
+          structStr,
+          serverOptions as GenerateImageOptions,
+        );
+        this.setState({
+          disableControls: false,
+          tabIndex: 0,
+          imageSrc: base64,
+          isLoading: false,
         });
+      } catch (e) {
+        KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
+        errorHandler(e as string);
+        this.props.onResetForm(formState);
+        return e as Error;
+      }
     } else {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
@@ -400,27 +402,25 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         }
         return service.getStringFromStructureAsync(struct);
       };
-      return getStructFromStringByType()
-        .then(
-          (structStr) => {
-            this.setState({
-              tabIndex: 0,
-              structStr,
-            });
-          },
-          (e) => {
-            errorHandler(e.message);
-            this.props.onResetForm(formState);
-            return e;
-          },
-        )
-        .finally(() => {
-          this.setState({
-            disableControls: false,
-            tabIndex: 0,
-            isLoading: false,
-          });
+      let result: Error | void = undefined;
+      try {
+        const structStr = await getStructFromStringByType();
+        this.setState({
+          tabIndex: 0,
+          structStr,
         });
+      } catch (e) {
+        errorHandler((e as Error).message);
+        this.props.onResetForm(formState);
+        result = e as Error;
+      } finally {
+        this.setState({
+          disableControls: false,
+          tabIndex: 0,
+          isLoading: false,
+        });
+      }
+      return result;
     }
   };
 
@@ -549,7 +549,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return;
     }
 
-    navigator.clipboard.writeText(structStr || '').catch((e) => {
+    void navigator.clipboard.writeText(structStr || '').catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
       this.props.editor.errorHandler(
         i18n.t('common:errors.featureNotAvailableInBrowser'),

@@ -128,7 +128,7 @@ class RGroupFragmentTool implements Tool {
 
     const res = editor.event.rgroupEdit.dispatch(rg);
 
-    Promise.resolve(res)
+    void Promise.resolve(res)
       .then((newRg) => {
         let action;
 

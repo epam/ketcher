@@ -84,35 +84,48 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
-      cleanupRef.current = cleanup;
-      ketcherBuilderRef.current = builder;
-      ketcherRef.current = ketcher;
-      setServerRef.current = setServer;
-      initialProps.onSetKetcherId?.(ketcher.id);
+    const initPromise = initPromiseRef.current;
+    if (initPromise) {
+      void (async () => {
+        const { ketcher, cleanup, builder, setServer } = await initPromise;
+        cleanupRef.current = cleanup;
+        ketcherBuilderRef.current = builder;
+        ketcherRef.current = ketcher;
+        setServerRef.current = setServer;
+        initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (typeof initialProps.onInit === 'function' && ketcher) {
-        initialProps.onInit(ketcher);
-        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
-      }
-    });
+        if (typeof initialProps.onInit === 'function' && ketcher) {
+          initialProps.onInit(ketcher);
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
+          window.dispatchEvent(ketcherInitEvent);
+        }
+      })();
+    }
   }, []);
 
   useEffect(() => {
     if (initPromiseRef.current === null) {
       initKetcher();
     } else {
-      initPromiseRef.current?.finally(() => {
-        initKetcher();
-      });
+      const initPromise = initPromiseRef.current;
+      void (async () => {
+        try {
+          await initPromise;
+        } finally {
+          initKetcher();
+        }
+      })();
     }
 
     return () => {
-      initPromiseRef.current?.then(() => {
-        cleanupRef.current?.();
-        appRootRef.current?.unmount();
-      });
+      const initPromise = initPromiseRef.current;
+      if (initPromise) {
+        void (async () => {
+          await initPromise;
+          cleanupRef.current?.();
+          appRootRef.current?.unmount();
+        })();
+      }
     };
   }, [initKetcher]);
 

@@ -108,7 +108,7 @@ const Open: FC<Props> = (props) => {
 
   const onFileLoad = (files) => {
     if ((window as any).isKetcherFullscreenBeforeFilePicker) {
-      document.documentElement.requestFullscreen?.().catch(() => {
+      void document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
       (window as any).isKetcherFullscreenBeforeFilePicker = false;
@@ -135,9 +135,17 @@ const Open: FC<Props> = (props) => {
     };
 
     setFileName(files[0].name);
-    fileOpener(server)
-      .then((chosenOpener) => chosenOpener(files[0]))
-      .then(onLoad, onError);
+    void (async () => {
+      let fileContent;
+      try {
+        const chosenOpener = await fileOpener(server);
+        fileContent = await chosenOpener(files[0]);
+      } catch {
+        onError();
+        return;
+      }
+      onLoad(fileContent);
+    })();
   };
 
   const onImageLoad = (files) => {

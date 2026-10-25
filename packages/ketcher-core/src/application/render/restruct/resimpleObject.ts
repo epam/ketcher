@@ -72,17 +72,16 @@ class ReSimpleObject extends ReObject {
         const ry = rad.y / 2;
         const center = Vec2.sum(pos[0], new Vec2(rx, ry));
         const pointToCenter = Vec2.diff(point, center);
-        if (rx !== 0 && ry !== 0) {
-          dist = Math.abs(
-            1 -
-              (pointToCenter.x * pointToCenter.x) / (rx * rx) -
-              (pointToCenter.y * pointToCenter.y) / (ry * ry),
-          );
-        } else {
-          // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
-          // in such case distance need to be calculated as a distance between line and current point
-          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
-        }
+        // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
+        // in such case distance need to be calculated as a distance between line and current point
+        dist =
+          rx !== 0 && ry !== 0
+            ? Math.abs(
+                1 -
+                  (pointToCenter.x * pointToCenter.x) / (rx * rx) -
+                  (pointToCenter.y * pointToCenter.y) / (ry * ry),
+              )
+            : point.calculateDistanceToLine([pos[0], pos[1]]);
         break;
       }
       case SimpleObjectMode.rectangle: {
@@ -392,10 +391,9 @@ class ReSimpleObject extends ReObject {
 
   drawHover(render: Render): Array<Element> {
     const paths: Array<Element> = this.hoverPath(render).map((enhPath) => {
-      if (!enhPath.stylesApplied) {
-        return enhPath.path.attr(render.options.hoverStyle);
-      }
-      return enhPath.path;
+      return !enhPath.stylesApplied
+        ? enhPath.path.attr(render.options.hoverStyle)
+        : enhPath.path;
     });
 
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths);

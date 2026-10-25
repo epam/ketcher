@@ -167,11 +167,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !selection.rgroupAttachmentPoints &&
           !selection.attachmentGroups
         ) {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
+          triggerType = selection[MULTITAIL_ARROW_KEY]
+            ? ContextMenuTriggerType.ClosestItem
+            : ContextMenuTriggerType.None;
         } else {
           triggerType = ContextMenuTriggerType.Selection;
         }

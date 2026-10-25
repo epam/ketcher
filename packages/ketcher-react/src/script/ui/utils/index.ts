@@ -98,10 +98,7 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
  * silently skip translation by omitting it.
  */
 export function resolveTranslatableText<T>(value: T, t: TFunction): T {
-  if (typeof value !== 'string') {
-    return value;
-  }
-  return t(value) as unknown as T;
+  return typeof value !== 'string' ? value : (t(value) as unknown as T);
 }
 
 export const getSelectOptionsFromSchema = (

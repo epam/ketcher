@@ -71,9 +71,6 @@ export class AtomAttr extends BaseOperation {
       return false;
     }
     const atom = restruct.molecule.atoms.get(aid);
-    if (!atom) {
-      return false;
-    }
-    return Reflect.get(atom, attribute) === value;
+    return !atom ? false : Reflect.get(atom, attribute) === value;
   }
 }

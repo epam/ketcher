@@ -70,10 +70,9 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
 
       sortedData.sort((a, b) => {
         const ratioDiff = (b.ratio ?? 0) - (a.ratio ?? 0);
-        if (ratioDiff !== 0) {
-          return ratioDiff;
-        }
-        return a.monomerName.localeCompare(b.monomerName);
+        return ratioDiff !== 0
+          ? ratioDiff
+          : a.monomerName.localeCompare(b.monomerName);
       });
     }
 

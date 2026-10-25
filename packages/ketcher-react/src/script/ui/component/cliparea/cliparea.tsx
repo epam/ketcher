@@ -295,11 +295,9 @@ class ClipArea extends Component<ClipAreaProps> {
 }
 
 function isActiveElement(el: HTMLElement): boolean {
-  if (el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'button')
-    return false;
-  return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(
-    el.tagName,
-  );
+  return el.tagName === 'INPUT' && (el as HTMLInputElement).type === 'button'
+    ? false
+    : ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(el.tagName);
 }
 
 function autoselect(cliparea: HTMLTextAreaElement): void {

@@ -57,19 +57,14 @@ class MonomerTool implements BaseTool {
         this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
-    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
-        this.monomer,
-        position,
-      );
-    } else {
-      modelChanges = this.editor.drawingEntitiesManager.addMonomer(
-        this.monomer,
-        // We convert monomer coordinates from pixels to angstroms
-        // because the model layer (like BaseMonomer) should not work with pixels
-        position,
-      );
-    }
+    // We convert monomer coordinates from pixels to angstroms
+    // because the model layer (like BaseMonomer) should not work with pixels
+    modelChanges = isAmbiguousMonomerLibraryItem(this.monomer)
+      ? this.editor.drawingEntitiesManager.addAmbiguousMonomer(
+          this.monomer,
+          position,
+        )
+      : this.editor.drawingEntitiesManager.addMonomer(this.monomer, position);
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);

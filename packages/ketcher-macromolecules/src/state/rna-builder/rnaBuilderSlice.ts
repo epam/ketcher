@@ -71,16 +71,13 @@ const readPersistedPresetPhosphateFilter = (): PresetPhosphateFilter => {
   const stored: unknown = localStorageWrapper.getItem(
     PRESET_PHOSPHATE_FILTER_STORAGE_KEY,
   );
-  if (
-    stored &&
+  return stored &&
     typeof stored === 'object' &&
     typeof (stored as PresetPhosphateFilter).fivePrime === 'boolean' &&
     typeof (stored as PresetPhosphateFilter).threePrime === 'boolean' &&
     typeof (stored as PresetPhosphateFilter).noPhosphate === 'boolean'
-  ) {
-    return stored as PresetPhosphateFilter;
-  }
-  return { fivePrime: false, threePrime: false, noPhosphate: false };
+    ? (stored as PresetPhosphateFilter)
+    : { fivePrime: false, threePrime: false, noPhosphate: false };
 };
 
 interface IRnaBuilderState {
@@ -599,18 +596,14 @@ export const selectFilteredPresets = createSelector(
           );
         }
 
-        if (searchText === '/') {
-          return !!item.idtAliases;
-        }
-
-        return (
-          name?.includes(searchText) ||
-          sugarName?.includes(searchText) ||
-          phosphateName?.includes(searchText) ||
-          baseName?.includes(searchText) ||
-          transformedIdtText?.toLowerCase().includes(searchText) ||
-          axoLabsAlias.includes(searchText)
-        );
+        return searchText === '/'
+          ? !!item.idtAliases
+          : name?.includes(searchText) ||
+              sugarName?.includes(searchText) ||
+              phosphateName?.includes(searchText) ||
+              baseName?.includes(searchText) ||
+              transformedIdtText?.toLowerCase().includes(searchText) ||
+              axoLabsAlias.includes(searchText);
       })
       .filter((item: IRnaPreset) => {
         // Apply the phosphate-position filter selected via the preset toolbar.

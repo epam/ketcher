@@ -203,8 +203,5 @@ export function getSnappedArrowVector(arrow: Vec2) {
   }
   const isSnappingToNegativeYAxis =
     Math.abs(oxAngle - AXIS.NEGATIVE_Y) <= ARROW_MAX_SNAPPING_ANGLE;
-  if (isSnappingToNegativeYAxis) {
-    return new Vec2(0, -arrowLength);
-  }
-  return arrow;
+  return isSnappingToNegativeYAxis ? new Vec2(0, -arrowLength) : arrow;
 }

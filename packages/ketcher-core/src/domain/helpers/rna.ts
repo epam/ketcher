@@ -48,14 +48,10 @@ export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
   return editor.monomersLibrary.find((libraryItem) => {
     // Check for ambiguous peptides
     if (isAmbiguousMonomerLibraryItem(libraryItem)) {
-      if (
-        AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !==
+      return AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !==
         KetMonomerClass.AminoAcid
-      ) {
-        return false;
-      }
-
-      return libraryItem.label === peptideName;
+        ? false
+        : libraryItem.label === peptideName;
     }
 
     // Check for regular peptides

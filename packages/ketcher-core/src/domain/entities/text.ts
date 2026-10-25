@@ -43,11 +43,9 @@ export interface TextAttributes {
 }
 
 function preparePositions(positions?: Array<Point>) {
-  if (!positions?.length) {
-    return [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
-  }
-
-  return positions.map((position) => new Vec2(position));
+  return !positions?.length
+    ? [new Vec2(), new Vec2(), new Vec2(), new Vec2()]
+    : positions.map((position) => new Vec2(position));
 }
 
 export class Text extends BaseMicromoleculeEntity {

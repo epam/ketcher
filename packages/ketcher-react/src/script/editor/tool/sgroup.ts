@@ -606,11 +606,9 @@ class SGroupTool implements Tool {
     newSelected: { atoms: Array<number>; bonds: Array<number> },
     molecule: Struct,
   ) {
-    if (this.lassoHelper.running()) {
-      return this.handleLassoSelection(newSelected, molecule);
-    }
-
-    return this.handleClickSelection(event, ci);
+    return this.lassoHelper.running()
+      ? this.handleLassoSelection(newSelected, molecule)
+      : this.handleClickSelection(event, ci);
   }
 
   private handleLassoSelection(
@@ -667,11 +665,10 @@ class SGroupTool implements Tool {
       };
     }
 
-    if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-      return { id: ci.id, selection: null };
-    }
-
-    return { id: null, selection: null };
+    return {
+      id: ci.map === 'sgroups' || ci.map === 'sgroupData' ? ci.id : null,
+      selection: null,
+    };
   }
 
   private shouldOpenDialog(id, selection): boolean {
@@ -901,10 +898,9 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
   const struct = restruct.molecule;
 
   if (selection.atoms && !selection.bonds) {
-    if (manyComponentsSelected(restruct, selection.atoms)) {
-      return SgContexts.Multifragment;
-    }
-    return SgContexts.Atom;
+    return manyComponentsSelected(restruct, selection.atoms)
+      ? SgContexts.Multifragment
+      : SgContexts.Atom;
   }
 
   const bonds = (selection.bonds ?? [])

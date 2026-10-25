@@ -87,13 +87,9 @@ GenericInput.val = function (ev, schema) {
 
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-  if (isInteger) {
-    return Number(value) || 0;
-  }
-
   // When the value can be a float the validation is passed to the parent component
   // because it's more complicated
-  return value;
+  return isInteger ? Number(value) || 0 : value;
 };
 
 function TextArea({ schema: _schema, value, onChange, innerRef, ...rest }) {
@@ -344,10 +340,9 @@ function ctrlMap(component, props: Props) {
   }
 
   // schema is an array
-  if (multiple) {
-    return multipleSelectCtrl(component, schema, onChange);
-  }
-  return singleSelectCtrl(component, schema, onChange);
+  return multiple
+    ? multipleSelectCtrl(component, schema, onChange)
+    : singleSelectCtrl(component, schema, onChange);
 }
 
 function componentMap(props: Props) {

@@ -35,10 +35,9 @@ export function getMonomerVariant(
   const struct = editor.render.ctab.molecule;
   const labels = monomerFgIds.map((id) => {
     const sg = struct.sgroups.get(id);
-    if (sg instanceof MonomerMicromolecule) {
-      return sg.monomer.monomerItem.label ?? '';
-    }
-    return '';
+    return sg instanceof MonomerMicromolecule
+      ? (sg.monomer.monomerItem.label ?? '')
+      : '';
   });
 
   const allIdentical = labels.every((l) => l === labels[0]);

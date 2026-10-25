@@ -79,10 +79,6 @@ export class KetcherLogger {
   private static isMinimumLogLevel(minimumLevel: LogLevel): boolean {
     const { enabled, level } = this.settings;
 
-    if (!enabled || level == null) {
-      return false;
-    }
-
-    return level >= minimumLevel;
+    return !enabled || level == null ? false : level >= minimumLevel;
   }
 }

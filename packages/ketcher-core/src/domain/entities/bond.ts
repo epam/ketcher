@@ -311,15 +311,13 @@ export class Bond extends BaseMicromoleculeEntity {
   getCenter(struct: StructBondEndpointAccess): Vec2 {
     const p1 = struct.getBondEndpoint(this.begin)?.pp;
     const p2 = struct.getBondEndpoint(this.end)?.pp;
-    if (!p1 || !p2) return new Vec2();
-    return Vec2.lc2(p1, 0.5, p2, 0.5);
+    return !p1 || !p2 ? new Vec2() : Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
   getDir(struct: StructBondEndpointAccess): Vec2 {
     const p1 = struct.getBondEndpoint(this.begin)?.pp;
     const p2 = struct.getBondEndpoint(this.end)?.pp;
-    if (!p1 || !p2) return new Vec2();
-    return p2.sub(p1).normalized();
+    return !p1 || !p2 ? new Vec2() : p2.sub(p1).normalized();
   }
 
   clone(aidMap?: Map<number, number> | null): Bond {
@@ -348,11 +346,7 @@ export class Bond extends BaseMicromoleculeEntity {
     const sGroup1 = struct.getGroupFromAtomId(this.begin);
     const sGroup2 = struct.getGroupFromAtomId(this.end);
 
-    if (!sGroup1 || !sGroup2) {
-      return false;
-    }
-
-    return sGroup1 !== sGroup2;
+    return !sGroup1 || !sGroup2 ? false : sGroup1 !== sGroup2;
   }
 
   public static isBondToHiddenLeavingGroup(

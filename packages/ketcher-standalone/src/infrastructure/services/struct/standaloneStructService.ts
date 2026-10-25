@@ -181,17 +181,13 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  if (property === 'gross-formula') {
-    return 'gross';
-  }
-  return property;
+  return property === 'gross-formula' ? 'gross' : property;
 }
 
 function mapWarningGroup(property: string) {
-  if (property === 'OVERLAP_BOND') {
-    return 'overlapping_bonds';
-  }
-  return property.toLowerCase();
+  return property === 'OVERLAP_BOND'
+    ? 'overlapping_bonds'
+    : property.toLowerCase();
 }
 
 /**

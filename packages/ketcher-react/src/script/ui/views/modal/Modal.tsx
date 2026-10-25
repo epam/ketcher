@@ -82,9 +82,7 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
 function Modal(props: Props) {
   const { modal, ...rest } = props;
 
-  if (!modal) return null;
-
-  return <ModalContent modal={modal} {...rest} />;
+  return !modal ? null : <ModalContent modal={modal} {...rest} />;
 }
 
 export type { ModalProps };

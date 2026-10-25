@@ -587,25 +587,18 @@ export class SequenceMode extends BaseMode {
           const partnerBeforeEdit = getHydrogenBondedPartner(editedBase);
           const wasEditedBaseEligible = isBaseEligibleForDuplexSync(editedBase);
 
-          if (
-            editedBase.monomerItem.isAmbiguous ||
-            baseMonomerItem.isAmbiguous
-          ) {
-            modelChanges.merge(
-              replaceMonomer(
-                editor.drawingEntitiesManager,
-                editedBase,
-                baseMonomerItem,
-              ),
-            );
-          } else {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.modifyMonomerItem(
-                editedBase,
-                baseMonomerItem,
-              ),
-            );
-          }
+          modelChanges.merge(
+            editedBase.monomerItem.isAmbiguous || baseMonomerItem.isAmbiguous
+              ? replaceMonomer(
+                  editor.drawingEntitiesManager,
+                  editedBase,
+                  baseMonomerItem,
+                )
+              : editor.drawingEntitiesManager.modifyMonomerItem(
+                  editedBase,
+                  baseMonomerItem,
+                ),
+          );
 
           const mirroredBaseCommand = createMirroredBaseCommand({
             drawingEntitiesManager: editor.drawingEntitiesManager,
@@ -985,31 +978,25 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (
+    modelChanges.merge(
       addPhosphateIfNeeded &&
-      firstNodeToConnect instanceof Nucleoside &&
-      ((secondNodeToConnect instanceof Nucleotide &&
-        !secondNodeToConnect.isFiveEndPhosphate) ||
-        secondNodeToConnect instanceof Nucleoside ||
-        (secondNodeToConnect instanceof MonomerSequenceNode &&
-          secondNodeToConnect.monomer instanceof Phosphate &&
-          secondNodeToConnect.monomer.hydrogenBonds.length))
-    ) {
-      modelChanges.merge(
-        this.bondNodesThroughNewPhosphate(
-          newNodePosition,
-          firstNodeToConnect.lastMonomerInNode,
-          secondNodeToConnect.firstMonomerInNode,
-        ),
-      );
-    } else {
-      modelChanges.merge(
-        this.tryToCreatePolymerBond(
-          firstNodeToConnect.lastMonomerInNode,
-          secondNodeToConnect.firstMonomerInNode,
-        ),
-      );
-    }
+        firstNodeToConnect instanceof Nucleoside &&
+        ((secondNodeToConnect instanceof Nucleotide &&
+          !secondNodeToConnect.isFiveEndPhosphate) ||
+          secondNodeToConnect instanceof Nucleoside ||
+          (secondNodeToConnect instanceof MonomerSequenceNode &&
+            secondNodeToConnect.monomer instanceof Phosphate &&
+            secondNodeToConnect.monomer.hydrogenBonds.length))
+        ? this.bondNodesThroughNewPhosphate(
+            newNodePosition,
+            firstNodeToConnect.lastMonomerInNode,
+            secondNodeToConnect.firstMonomerInNode,
+          )
+        : this.tryToCreatePolymerBond(
+            firstNodeToConnect.lastMonomerInNode,
+            secondNodeToConnect.firstMonomerInNode,
+          ),
+    );
   }
 
   private deleteBondToNextNodeInChain(
@@ -1228,14 +1215,10 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ??
         twoStrandedNodeInSameChainAfterSelection;
-      let nodeInSameChainAfterSelection =
-        potentialNodeInSameChainAfterSelection;
-      if (
+      const nodeInSameChainAfterSelection =
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
-      ) {
-        nodeInSameChainAfterSelection =
-          potentialNodeInSameChainAfterSelection.secondConnectedNode;
-      }
+          ? potentialNodeInSameChainAfterSelection.secondConnectedNode
+          : potentialNodeInSameChainAfterSelection;
       const previouseNodeInBackbone =
         strandType === STRAND_TYPE.SENSE
           ? nodeBeforeSelection
@@ -1630,17 +1613,12 @@ export class SequenceMode extends BaseMode {
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
-          if (this.isAntisenseEditMode) {
-            this.deleteBondToNextNodeInChain(
-              currentTwoStrandedNode?.antisenseNode,
-              modelChanges,
-            );
-          } else {
-            this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain?.senseNode,
-              modelChanges,
-            );
-          }
+          this.deleteBondToNextNodeInChain(
+            this.isAntisenseEditMode
+              ? currentTwoStrandedNode?.antisenseNode
+              : previousTwoStrandedNodeInSameChain?.senseNode,
+            modelChanges,
+          );
 
           modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
@@ -2141,19 +2119,19 @@ export class SequenceMode extends BaseMode {
   }
 
   private isR1Free(entity?: SequenceNode | BaseMonomer): boolean {
-    if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R1 === null;
-    }
-
-    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+    return (
+      (entity instanceof BaseMonomer
+        ? entity.attachmentPointsToBonds.R1
+        : entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1) === null
+    );
   }
 
   private isR2Free(entity?: SequenceNode | BaseMonomer): boolean {
-    if (entity instanceof BaseMonomer) {
-      return entity.attachmentPointsToBonds.R2 === null;
-    }
-
-    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 === null;
+    return (
+      (entity instanceof BaseMonomer
+        ? entity.attachmentPointsToBonds.R2
+        : entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2) === null
+    );
   }
 
   private areR1R2Free(
@@ -2949,21 +2927,19 @@ export class SequenceMode extends BaseMode {
       position,
     ) as Sugar;
 
-    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null = null;
-    if (rnaBase) {
-      rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
-        rnaBase,
-        position,
-      ) as RNABase;
-    }
+    const rnaBaseMonomer: RNABase | AmbiguousMonomer | null = rnaBase
+      ? (editor.drawingEntitiesManager.createMonomer(
+          rnaBase,
+          position,
+        ) as RNABase)
+      : null;
 
-    let phosphateMonomer: Phosphate | null = null;
-    if (phosphate) {
-      phosphateMonomer = editor.drawingEntitiesManager.createMonomer(
-        phosphate,
-        position,
-      ) as Phosphate;
-    }
+    const phosphateMonomer: Phosphate | null = phosphate
+      ? (editor.drawingEntitiesManager.createMonomer(
+          phosphate,
+          position,
+        ) as Phosphate)
+      : null;
 
     let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
 
@@ -3398,21 +3374,19 @@ export class SequenceMode extends BaseMode {
       return { modelChanges, node: newPhosphateNode };
     }
 
-    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      return this.handlePeptideNodeAddition(
-        enteredSymbol,
-        newNodePosition,
-        nextNodeToConnect,
-        previousNodeToConnect,
-      );
-    } else {
-      return this.handleRnaDnaNodeAddition(
-        enteredSymbol,
-        newNodePosition,
-        nextNodeToConnect,
-        previousNodeToConnect,
-      );
-    }
+    return editor.sequenceTypeEnterMode === SequenceType.PEPTIDE
+      ? this.handlePeptideNodeAddition(
+          enteredSymbol,
+          newNodePosition,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        )
+      : this.handleRnaDnaNodeAddition(
+          enteredSymbol,
+          newNodePosition,
+          nextNodeToConnect,
+          previousNodeToConnect,
+        );
   }
 
   private showMergeWarningModal(message?: string | null) {

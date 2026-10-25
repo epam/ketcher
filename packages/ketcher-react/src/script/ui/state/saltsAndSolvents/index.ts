@@ -38,10 +38,7 @@ const initialState: SaltsAndSolventsState = {
 
 const saltsAndSolventsReducer = (state = initialState, action: AnyAction) => {
   const { type, payload } = action;
-  if (type === 'SALTS_AND_SOLVENTS_INIT') {
-    return { ...state, ...payload };
-  }
-  return state;
+  return type === 'SALTS_AND_SOLVENTS_INIT' ? { ...state, ...payload } : state;
 };
 
 export const initSaltsAndSolvents = (lib: SdfItem[]) => ({

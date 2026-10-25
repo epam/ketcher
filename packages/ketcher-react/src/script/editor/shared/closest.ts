@@ -104,11 +104,9 @@ function calculateDistanceToText(
   const clampedX = clampCoordinate(cursorPosition.x, minX, maxX);
   const clampedY = clampCoordinate(cursorPosition.y, minY, maxY);
 
-  if (clampedX === cursorPosition.x && clampedY === cursorPosition.y) {
-    return SELECTION_WITHIN_TEXT;
-  }
-
-  return Vec2.dist(new Vec2(clampedX, clampedY), cursorPosition);
+  return clampedX === cursorPosition.x && clampedY === cursorPosition.y
+    ? SELECTION_WITHIN_TEXT
+    : Vec2.dist(new Vec2(clampedX, clampedY), cursorPosition);
 }
 
 function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
@@ -832,10 +830,9 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
         renderOptions,
         maxDistance,
       );
-      if (distance <= maxDistance && (!acc || acc.dist > distance)) {
-        return { id, dist: distance / renderOptions.microModeScale, ref };
-      }
-      return acc;
+      return distance <= maxDistance && (!acc || acc.dist > distance)
+        ? { id, dist: distance / renderOptions.microModeScale, ref }
+        : acc;
     },
     null,
   );

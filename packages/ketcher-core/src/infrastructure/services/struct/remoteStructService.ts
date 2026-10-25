@@ -89,9 +89,10 @@ function request<T = unknown>(
   headers?: Record<string, string>,
   responseHandler?: (promise: Promise<Response>) => Promise<T>,
 ): Promise<T> {
-  let requestUrl = url;
-  if (data && method === 'GET')
-    requestUrl = parametrizeUrl(url, data as Record<string, string>);
+  const requestUrl =
+    data && method === 'GET'
+      ? parametrizeUrl(url, data as Record<string, string>)
+      : url;
 
   const mergedHeaders = {
     Accept: 'application/json',

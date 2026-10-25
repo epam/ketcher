@@ -53,11 +53,11 @@ export const CDXStructuresViewer = ({
   const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
-    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
-      inputHandler('');
-    } else {
-      inputHandler(itemsMap[selectedIndex].base64struct);
-    }
+    inputHandler(
+      !itemsMap[selectedIndex] || itemsMap[selectedIndex].error
+        ? ''
+        : itemsMap[selectedIndex].base64struct,
+    );
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImage = useCallback(

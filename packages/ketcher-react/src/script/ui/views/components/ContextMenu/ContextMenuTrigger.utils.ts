@@ -90,8 +90,9 @@ function computeHasNonMonomerStructure(
   if (selection?.bonds?.length) {
     return selection.bonds.some((bondId) => {
       const bond = struct.bonds.get(bondId);
-      if (!bond) return false;
-      return !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
+      return !bond
+        ? false
+        : !monomerAtomIds.has(bond.begin) || !monomerAtomIds.has(bond.end);
     });
   }
 

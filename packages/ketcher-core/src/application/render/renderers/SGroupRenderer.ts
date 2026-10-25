@@ -63,11 +63,9 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public get labelTooltipText(): string | null {
-    if (this.sgroup.type !== SGroup.TYPES.DAT) {
-      return null;
-    }
-
-    return `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
+    return this.sgroup.type !== SGroup.TYPES.DAT
+      ? null
+      : `${this.sgroup.data.fieldName}=${this.sgroup.data.fieldValue}`;
   }
 
   private addLabelElement<ElementType extends SVGElement>(
@@ -581,22 +579,20 @@ export class SGroupRenderer extends BaseRenderer {
   private getAtomHoverPath(atomRenderer: AtomRenderer): paper.Path {
     const contour = atomRenderer.getHoverContour();
 
-    if (contour.type === 'circle') {
-      return new paperjs.Path.Circle(
-        new paperjs.Point(contour.center.x, contour.center.y),
-        contour.radius,
-      );
-    }
-
-    return new paperjs.Path.Rectangle(
-      new paperjs.Rectangle(
-        contour.x,
-        contour.y,
-        contour.width,
-        contour.height,
-      ),
-      new paperjs.Size(contour.radius, contour.radius),
-    );
+    return contour.type === 'circle'
+      ? new paperjs.Path.Circle(
+          new paperjs.Point(contour.center.x, contour.center.y),
+          contour.radius,
+        )
+      : new paperjs.Path.Rectangle(
+          new paperjs.Rectangle(
+            contour.x,
+            contour.y,
+            contour.width,
+            contour.height,
+          ),
+          new paperjs.Size(contour.radius, contour.radius),
+        );
   }
 
   private getBondHoverPath(

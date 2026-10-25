@@ -91,13 +91,10 @@ export class ChainsCollection {
           X_COORDINATE_REDUCTION_FACTOR +
         (chain2.firstNode?.monomer.position.y ?? 0);
 
-      if (chain1Weight !== chain2Weight) {
-        return chain1Weight - chain2Weight;
-      }
-      return (
-        (chain1.firstNode?.monomer.id ?? 0) -
-        (chain2.firstNode?.monomer.id ?? 0)
-      );
+      return chain1Weight !== chain2Weight
+        ? chain1Weight - chain2Weight
+        : (chain1.firstNode?.monomer.id ?? 0) -
+            (chain2.firstNode?.monomer.id ?? 0);
     });
 
     const reorderedChains = new Set<Chain>();
@@ -331,14 +328,10 @@ export class ChainsCollection {
     const monomerListShallowCopy = monomerList.slice();
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
-      if (
-        monomer2.position.x + monomer2.position.y >
+      return monomer2.position.x + monomer2.position.y >
         monomer1.position.x + monomer1.position.y
-      ) {
-        return -1;
-      } else {
-        return 1;
-      }
+        ? -1
+        : 1;
     });
 
     const monomerWithLowerCoords = monomerListShallowCopy[0];

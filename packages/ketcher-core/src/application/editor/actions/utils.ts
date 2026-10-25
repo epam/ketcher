@@ -113,8 +113,7 @@ export function atomGetAttr(
   name: AtomAttributeName,
 ) {
   const atom = restruct.molecule.atoms.get(aid);
-  if (!atom) return null;
-  return atom[name];
+  return !atom ? null : atom[name];
 }
 
 export function atomGetDegree(restruct: ReStruct, aid: number): number {
@@ -310,11 +309,10 @@ export function atomForNewBond(
 
     if (shallBe180DegToPrevBond) {
       const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
-      if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
-        angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
-      } else {
-        angle = (prevBondAngle * Math.PI) / 180;
-      }
+      angle =
+        prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0
+          ? (prevBondAngle * Math.PI) / 180 + Math.PI
+          : (prevBondAngle * Math.PI) / 180;
     } else {
       angle =
         maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x);

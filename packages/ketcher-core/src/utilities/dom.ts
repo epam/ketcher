@@ -38,10 +38,7 @@ export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    if (window.isPolymerEditorTurnedOn) {
-      return handler(...args);
-    }
-    return undefined;
+    return window.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 
@@ -63,10 +60,7 @@ export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    if (!window.isPolymerEditorTurnedOn) {
-      return handler(...args);
-    }
-    return undefined;
+    return !window.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 
@@ -82,8 +76,7 @@ export function isSelectionOutsideElement(
     return false;
   }
   const selection = document.getSelection();
-  if (!selection || selection.isCollapsed || !selection.anchorNode) {
-    return false;
-  }
-  return !containerEl.contains(selection.anchorNode);
+  return !selection || selection.isCollapsed || !selection.anchorNode
+    ? false
+    : !containerEl.contains(selection.anchorNode);
 }

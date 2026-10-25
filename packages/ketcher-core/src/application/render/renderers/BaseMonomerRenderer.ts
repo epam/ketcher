@@ -201,10 +201,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return item.getAngle();
     });
     const isSectorOccupied = allAngles.some((item) => {
-      if (angle !== item && typeof angle === 'number') {
-        return Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340;
-      }
-      return false;
+      return angle !== item && typeof angle === 'number'
+        ? Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340
+        : false;
     });
 
     if (isSectorOccupied) {

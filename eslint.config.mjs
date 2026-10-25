@@ -16,15 +16,13 @@ import reactYouMightNotNeedAnEffectPlugin from 'eslint-plugin-react-you-might-no
 import globals from 'globals';
 
 const sanitizeGlobals = (source) => {
-  if (!source || typeof source !== 'object') {
-    return {};
-  }
-
-  return Object.fromEntries(
-    Object.entries(source).filter(([name]) =>
-      /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
-    ),
-  );
+  return !source || typeof source !== 'object'
+    ? {}
+    : Object.fromEntries(
+        Object.entries(source).filter(([name]) =>
+          /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
+        ),
+      );
 };
 
 export default [

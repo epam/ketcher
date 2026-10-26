@@ -49,7 +49,7 @@ class SimpleObjectTool implements Tool {
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const rnd = this.editor.render;
     const p0 = CoordinateTransformation.pageToModel(event, rnd);
     this.dragCtx = { p0 };
@@ -66,7 +66,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const rnd = this.editor.render;
 
     if (this.dragCtx) {
@@ -134,7 +134,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mouseup(event) {
+  mouseup(event: PointerEvent) {
     if (!this.dragCtx) {
       return;
     }

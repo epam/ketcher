@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -82,7 +81,7 @@ export const EditorEvents = () => {
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
-  }, [editor]);
+  }, [dispatch, editor]);
 
   useIndigoVersionToRedux();
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,6 +17,8 @@
 import {
   Action,
   Atom,
+  type AtomAttributes,
+  type ElementLabel,
   Bond,
   FunctionalGroup,
   SGroup,
@@ -34,18 +35,19 @@ import {
 
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import type { AtomToolDragContext } from './atom.types';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProps: any;
-  private dragCtx: any;
+  private readonly atomProps: AtomAttributes;
+  private dragCtx?: AtomToolDragContext;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor, atomProps) {
+  constructor(editor: Editor, atomProps: AtomAttributes) {
     this.editor = editor;
     this.atomProps = atomProps;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
@@ -97,7 +99,7 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProps.label;
+      this.editor.hoverIcon.label = atomProps.label as ElementLabel;
       this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
     }

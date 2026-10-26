@@ -1,4 +1,3 @@
-import type { Ketcher } from 'ketcher-core';
 import { Page } from 'playwright/test';
 
 export async function updateMonomersLibrary(

@@ -34,8 +34,7 @@ export async function updateMonomersLibraryAndGetLoggedErrors(
   sdfString: string,
 ): Promise<{ error: string | null; loggedErrors: string }> {
   return await page.evaluate(async (cmd) => {
-    const testWindow = globalThis as typeof globalThis &
-      LogCaptureWindow & { ketcher: Ketcher };
+    const testWindow = globalThis.window as LogCaptureWindow;
     const originalLogging = testWindow.logging;
     const originalConsoleError = console.error;
     const loggedErrors: string[] = [];

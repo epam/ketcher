@@ -174,8 +174,9 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!this.paths.length || !paper) return null;
-    return this.hoverPath(restruct.render).attr(options.selectionStyle);
+    return !this.paths.length || !paper
+      ? null
+      : this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
   show(restruct: ReStruct, _id: number, options: RenderOptions): void {

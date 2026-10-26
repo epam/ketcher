@@ -136,10 +136,9 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   };
 
   const isPrimary = (button) => {
-    if (primaryButtons && primaryButtons.length > 0) {
-      return primaryButtons.includes(button);
-    }
-    return isButtonOk(button);
+    return primaryButtons && primaryButtons.length > 0
+      ? primaryButtons.includes(button)
+      : isButtonOk(button);
   };
 
   const exit = (mode) => {

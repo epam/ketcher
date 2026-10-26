@@ -82,8 +82,10 @@ const HeaderContent = ({
 }) => {
   const { t } = useTranslation('dialogs');
   const getIsResetDisabled = () => {
-    if (formState.result.init) return isEqual(defaultSettings, initState);
-    else return isEqual(defaultSettings, formState.result);
+    return isEqual(
+      defaultSettings,
+      formState.result.init ? initState : formState.result,
+    );
   };
 
   return (

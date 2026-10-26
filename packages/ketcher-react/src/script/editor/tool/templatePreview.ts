@@ -95,11 +95,9 @@ class TemplatePreview {
       'bonds',
     ]);
 
-    if (ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false) {
-      return ci;
-    } else {
-      return null;
-    }
+    return ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false
+      ? ci
+      : null;
   }
 
   movePreview(event: PointerEvent) {

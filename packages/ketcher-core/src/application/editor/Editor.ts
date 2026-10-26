@@ -569,15 +569,12 @@ export class CoreEditor {
       firstMonomer?: MonomerItemType,
       secondMonomer?: MonomerItemType,
     ) => {
-      if (!firstMonomer?.props || !secondMonomer?.props) {
-        return false;
-      }
-
-      return (
-        firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
-        firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
-        firstMonomer.props.hidden === secondMonomer.props.hidden
-      );
+      return !firstMonomer?.props || !secondMonomer?.props
+        ? false
+        : firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
+            firstMonomer.props.MonomerClass ===
+              secondMonomer.props.MonomerClass &&
+            firstMonomer.props.hidden === secondMonomer.props.hidden;
     };
     const getIdtAliasesList = (idtAliases?: IKetIdtAliases): string[] => {
       const base = idtAliases?.base;
@@ -628,10 +625,9 @@ export class CoreEditor {
       const isBilnCollision =
         Boolean(incoming.props?.aliasBILN) &&
         conflicting.props?.aliasBILN === incoming.props?.aliasBILN;
-      if (isHelmCollision || isBilnCollision) {
-        return `Alias collision detected${detail}.`;
-      }
-      return `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
+      return isHelmCollision || isBilnCollision
+        ? `Alias collision detected${detail}.`
+        : `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
     };
 
     // handle monomer templates
@@ -928,16 +924,12 @@ export class CoreEditor {
               const existingTemplate =
                 monomersLibraryParsedJson[existingTemplateRef.$ref];
 
-              if (
-                (existingTemplate as IKetMonomerGroupTemplate)?.type !==
+              return (existingTemplate as IKetMonomerGroupTemplate)?.type !==
                 KetTemplateType.MONOMER_GROUP_TEMPLATE
-              ) {
-                return false;
-              }
-
-              return getIdtAliasesList(
-                (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
-              ).some((alias) => newTemplateIdtAliases.includes(alias));
+                ? false
+                : getIdtAliasesList(
+                    (existingTemplate as IKetMonomerGroupTemplate).idtAliases,
+                  ).some((alias) => newTemplateIdtAliases.includes(alias));
             },
           );
 
@@ -1122,14 +1114,10 @@ export class CoreEditor {
 
   public checkIfBilnAliasExists(alias: string) {
     return this._monomersLibrary.some((monomerItem) => {
-      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-        return false;
-      }
-
-      return (
-        hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
-        monomerItem.props.aliasBILN === alias
-      );
+      return isAmbiguousMonomerLibraryItem(monomerItem)
+        ? false
+        : hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
+            monomerItem.props.aliasBILN === alias;
     });
   }
 
@@ -1607,17 +1595,12 @@ export class CoreEditor {
         new Vec2(1.5, 0),
       );
     } else if (this.drawingEntitiesManager.hasMonomers) {
-      if (
-        this.nextAutochainPosition &&
-        this.mode.modeName !== 'snake-layout-mode'
-      ) {
-        newMonomerPosition = this.nextAutochainPosition;
-      } else {
-        newMonomerPosition =
-          this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
-            new Vec2(0, 1.5),
-          );
-      }
+      newMonomerPosition =
+        this.nextAutochainPosition && this.mode.modeName !== 'snake-layout-mode'
+          ? this.nextAutochainPosition
+          : this.drawingEntitiesManager.bottomLeftMonomerPosition.add(
+              new Vec2(0, 1.5),
+            );
     } else {
       newMonomerPosition = Coordinates.canvasToModel(
         new Vec2(MONOMER_START_X_POSITION, MONOMER_START_Y_POSITION),
@@ -1833,8 +1816,9 @@ export class CoreEditor {
   ): IAutochainMonomerAddResult | undefined {
     const modelPosition = Coordinates.canvasToModel(position);
     if (isLibraryItemRnaPreset(item)) {
-      if (!item.sugar) return undefined;
-      return this.onPlaceRnaPresetOnCanvas(item, modelPosition);
+      return !item.sugar
+        ? undefined
+        : this.onPlaceRnaPresetOnCanvas(item, modelPosition);
     } else if (isAmbiguousMonomerLibraryItem(item)) {
       return this.onPlaceAmbiguousMonomerOnCanvas(item, modelPosition);
     } else {

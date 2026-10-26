@@ -75,10 +75,9 @@ class EnhancedStereoTool implements Tool {
           const frag =
             frid !== undefined ? restruct.molecule.frags.get(frid) : null;
 
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
+          return frag?.stereoAtoms
+            ? acc.mergeWith(fromStereoFlagUpdate(restruct, frid))
+            : acc;
         },
         fromAtomsAttrs(
           restruct,

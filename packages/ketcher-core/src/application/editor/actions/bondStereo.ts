@@ -41,11 +41,11 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse): Action {
       action.addOp(
         new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct),
       );
-      if (attrs.stereoLabel === null) {
-        action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct));
-      } else {
-        action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct));
-      }
+      action.addOp(
+        attrs.stereoLabel === null
+          ? new FragmentDeleteStereoAtom(frid, aid).perform(restruct)
+          : new FragmentAddStereoAtom(frid, aid).perform(restruct),
+      );
     }
     if (withReverse) action.operations.reverse();
   }

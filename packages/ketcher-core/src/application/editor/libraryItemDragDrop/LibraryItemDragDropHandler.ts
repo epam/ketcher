@@ -782,11 +782,12 @@ export class LibraryItemDragDropHandler {
       );
       // If the new template's APs can't be determined, do not raise a false
       // "deletion of bonds" warning.
-      if (!newFreeAPs) return 0;
-      return computeLostBondsForMonomerReplacement(
-        replaceTarget.monomer,
-        newFreeAPs,
-      ).length;
+      return !newFreeAPs
+        ? 0
+        : computeLostBondsForMonomerReplacement(
+            replaceTarget.monomer,
+            newFreeAPs,
+          ).length;
     }
 
     // Preset → single monomer: the monomer's bonds are re-routed to whichever

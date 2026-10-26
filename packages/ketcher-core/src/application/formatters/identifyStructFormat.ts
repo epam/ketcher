@@ -50,11 +50,7 @@ export function identifyStructFormat(
   }
 
   if (isSDF) {
-    if (isV2000) {
-      return SupportedFormat.sdf;
-    } else {
-      return SupportedFormat.sdfV3000;
-    }
+    return isV2000 ? SupportedFormat.sdf : SupportedFormat.sdfV3000;
   }
 
   if (isV2000) {
@@ -122,9 +118,7 @@ export function identifyStructFormat(
   const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
 
-  if (!isThreeLetter && isSequence) {
-    return SupportedFormat.sequence;
-  }
-
-  return SupportedFormat.unknown;
+  return !isThreeLetter && isSequence
+    ? SupportedFormat.sequence
+    : SupportedFormat.unknown;
 }

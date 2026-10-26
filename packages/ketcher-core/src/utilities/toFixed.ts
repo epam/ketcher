@@ -1,9 +1,5 @@
 export function toFixed<TValue extends number | string>(value: TValue): string {
   let parsedValue: number;
-  if (typeof value === 'number') {
-    parsedValue = value;
-  } else {
-    parsedValue = Number.parseFloat(value);
-  }
+  parsedValue = typeof value === 'number' ? value : Number.parseFloat(value);
   return parsedValue.toFixed(8);
 }

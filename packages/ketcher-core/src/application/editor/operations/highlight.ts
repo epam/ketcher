@@ -237,14 +237,13 @@ export class HighlightUpdate extends BaseOperation {
     const highlight = restruct.molecule.highlights.get(
       this.newData.highlightId,
     );
-    if (!highlight) return false;
-    return (
-      highlight.color === this.newData.color &&
-      highlight.atoms.length === this.newData.atoms.length &&
-      highlight.bonds.length === this.newData.bonds.length &&
-      highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
-      highlight.bonds.every((id, i) => this.newData.bonds[i] === id)
-    );
+    return !highlight
+      ? false
+      : highlight.color === this.newData.color &&
+          highlight.atoms.length === this.newData.atoms.length &&
+          highlight.bonds.length === this.newData.bonds.length &&
+          highlight.atoms.every((id, i) => this.newData.atoms[i] === id) &&
+          highlight.bonds.every((id, i) => this.newData.bonds[i] === id);
   }
 }
 

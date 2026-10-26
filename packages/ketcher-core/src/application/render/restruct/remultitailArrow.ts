@@ -53,12 +53,9 @@ export class ReMultitailArrow extends ReObject {
   }
 
   static getTailIdFromRefName(name: string): number | null {
-    if (name.startsWith(MultitailArrowRefName.TAILS)) {
-      return Number.parseInt(
-        name.replace(`${MultitailArrowRefName.TAILS}-`, ''),
-      );
-    }
-    return null;
+    return name.startsWith(MultitailArrowRefName.TAILS)
+      ? Number.parseInt(name.replace(`${MultitailArrowRefName.TAILS}-`, ''))
+      : null;
   }
 
   constructor(public multitailArrow: MultitailArrow) {

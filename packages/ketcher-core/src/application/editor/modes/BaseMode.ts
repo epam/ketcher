@@ -347,14 +347,13 @@ export abstract class BaseMode {
       return;
     }
     const format = identifyStructFormat(pastedStr, true);
-    if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedStr);
-    } else {
-      pasteOperations = await this.pasteWithIndigoConversion(
-        pastedStr,
-        editor.sequenceTypeEnterMode,
-      );
-    }
+    pasteOperations =
+      format === SupportedFormat.ket
+        ? this.pasteKetFormatFragment(pastedStr)
+        : await this.pasteWithIndigoConversion(
+            pastedStr,
+            editor.sequenceTypeEnterMode,
+          );
 
     if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;

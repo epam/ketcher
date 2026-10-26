@@ -53,10 +53,7 @@ const Table = (props: TableProps) => {
   const selected = (label: string): boolean => value === label;
 
   const result = (): GenericElement | null => {
-    if (!value?.length) {
-      return null;
-    }
-    return { type: 'gen', label: value, pseudo: value };
+    return !value?.length ? null : { type: 'gen', label: value, pseudo: value };
   };
 
   const onAtomSelect = (label: string): void => {
@@ -113,8 +110,7 @@ function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<StateProps>;
+    return !atom ? {} : ({ ...fromElement(atom) } as Partial<StateProps>);
   }
 
   return {};

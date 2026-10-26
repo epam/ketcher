@@ -68,10 +68,9 @@ const useBondTypeChange = () => {
         props?.bondIds ?? [],
       );
 
-      if (selectedBondIds.length !== 0) {
-        return editor.struct().isBondFromMacromolecule(selectedBondIds[0]);
-      }
-      return true;
+      return selectedBondIds.length !== 0
+        ? editor.struct().isBondFromMacromolecule(selectedBondIds[0])
+        : true;
     },
     [ketcherId],
   );

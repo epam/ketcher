@@ -51,16 +51,14 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
       );
     }
 
-    if (layoutMode === 'snake-layout-mode') {
-      return getDynamicPositions(
-        visibleStart,
-        visibleEnd,
-        SnakeModeItemWidth,
-        SnakeModeStartOffset,
-      );
-    }
-
-    return [];
+    return layoutMode === 'snake-layout-mode'
+      ? getDynamicPositions(
+          visibleStart,
+          visibleEnd,
+          SnakeModeItemWidth,
+          SnakeModeStartOffset,
+        )
+      : [];
   }, [layoutMode, svgElement, transform]);
 
   const svgChildren = useMemo(() => {

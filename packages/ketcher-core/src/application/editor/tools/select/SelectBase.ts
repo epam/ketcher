@@ -132,11 +132,10 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
-    } else {
-      shouldStartMove = true;
-    }
+    shouldStartMove =
+      this.editor.mode.modeName === 'sequence-layout-mode'
+        ? !(renderer instanceof BaseSequenceItemRenderer)
+        : true;
     if (shouldStartMove) this.mode = 'moving';
   }
 
@@ -332,11 +331,9 @@ abstract class SelectBase implements BaseTool {
     } else if (isChainSelectionModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            return node.monomers;
-          } else {
-            return node.monomer;
-          }
+          return node instanceof Nucleoside || node instanceof Nucleotide
+            ? node.monomers
+            : node.monomer;
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
@@ -853,21 +850,19 @@ abstract class SelectBase implements BaseTool {
       secondConnectedMonomer.center,
     );
 
-    if (!alignment) {
-      return SelectBase.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return SelectBase.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
+    return !alignment
+      ? SelectBase.calculateSideDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+        )
+      : SelectBase.calculateInBetweenDistanceSnap(
+          cursorPosition,
+          initialMonomer,
+          connectedMonomer,
+          secondConnectedMonomer,
+          alignment,
+        );
   }
 
   private tryToSnap(event: MouseEvent, movementDelta: Vec2) {

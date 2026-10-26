@@ -233,11 +233,7 @@ export class SGroup {
 
   isExpanded(): boolean {
     // flag ".data.expanded" exists only for the SuperAtom
-    if (SGroup.isSuperAtom(this)) {
-      return Boolean(this.data.expanded);
-    } else {
-      return true;
-    }
+    return SGroup.isSuperAtom(this) ? Boolean(this.data.expanded) : true;
   }
 
   isContracted(): boolean {
@@ -446,16 +442,15 @@ export class SGroup {
     }
 
     const superatomClass = this.data.class;
-    if (isSuperatomClass(superatomClass)) {
-      return SUPERATOM_CLASS_TEXT[superatomClass];
-    }
-
-    return '';
+    return isSuperatomClass(superatomClass)
+      ? SUPERATOM_CLASS_TEXT[superatomClass]
+      : '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp || !sgroup.bracketBox) return null;
-    return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
+    return !sgroup?.pp || !sgroup.bracketBox
+      ? null
+      : Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
   static isSaltOrSolvent(moleculeName: string): boolean {
@@ -599,10 +594,7 @@ export class SGroup {
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
     const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
-      if (remol && render) {
-        return remol.atoms.get(aid);
-      }
-      return mol.atoms.get(aid);
+      return remol && render ? remol.atoms.get(aid) : mol.atoms.get(aid);
     };
 
     sGroup.bracketDirection = new Vec2(1, 0);
@@ -906,10 +898,7 @@ export class SGroup {
   }
 
   static isSuperAtom(sGroup?: SGroup): boolean {
-    if (!sGroup) {
-      return false;
-    }
-    return sGroup?.type === SGroup.TYPES.SUP;
+    return !sGroup ? false : sGroup?.type === SGroup.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {

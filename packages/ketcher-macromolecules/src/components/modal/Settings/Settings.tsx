@@ -63,8 +63,9 @@ export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [settingsService, isModalOpen]);
 
   const hasChanges = useMemo(() => {
-    if (!currentSettings || !initialSettings) return false;
-    return JSON.stringify(currentSettings) !== JSON.stringify(initialSettings);
+    return !currentSettings || !initialSettings
+      ? false
+      : JSON.stringify(currentSettings) !== JSON.stringify(initialSettings);
   }, [currentSettings, initialSettings]);
 
   const handleSettingsChange = (partial: Partial<SettingsFormValue>) => {

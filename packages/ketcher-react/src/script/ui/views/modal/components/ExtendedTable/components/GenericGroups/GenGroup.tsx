@@ -35,8 +35,7 @@ const getLegendClassname = (title: string) => {
     'Acyclic',
     'Cyclic',
   ];
-  if (mainTitles.includes(title)) return 'legendMain';
-  return 'legend';
+  return mainTitles.includes(title) ? 'legendMain' : 'legend';
 };
 
 const GenGroup = ({

@@ -360,17 +360,9 @@ export class AttachmentPoint {
     flip = false,
   ) {
     let angleRadians: number;
-    if (flip) {
-      angleRadians = Vec2.oxAngleForVector(
-        polymerBond.endPosition,
-        polymerBond.position,
-      );
-    } else {
-      angleRadians = Vec2.oxAngleForVector(
-        polymerBond.position,
-        polymerBond.endPosition,
-      );
-    }
+    angleRadians = flip
+      ? Vec2.oxAngleForVector(polymerBond.endPosition, polymerBond.position)
+      : Vec2.oxAngleForVector(polymerBond.position, polymerBond.endPosition);
 
     return angleRadians;
   }
@@ -496,9 +488,8 @@ export class AttachmentPoint {
   }
 
   public getAngle() {
-    if (this.initialAngle < 0 && this.isUsed) {
-      return this.initialAngle + 360;
-    }
-    return this.initialAngle;
+    return this.initialAngle < 0 && this.isUsed
+      ? this.initialAngle + 360
+      : this.initialAngle;
   }
 }

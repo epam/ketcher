@@ -49,10 +49,9 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return undefined;
-    }
-    return { backgroundId: '#rna-base-modified-background' };
+    return this.monomer.monomerItem.props.unresolved
+      ? undefined
+      : { backgroundId: '#rna-base-modified-background' };
   }
 
   protected appendBody(

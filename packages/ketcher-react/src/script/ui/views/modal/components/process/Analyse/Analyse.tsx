@@ -63,8 +63,9 @@ interface AnalyseDialogCallProps {
 type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
-  if (typeof value === 'number') return value.toFixed(round);
-  return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
+  return typeof value === 'number'
+    ? value.toFixed(round)
+    : value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
 }
 
 const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(

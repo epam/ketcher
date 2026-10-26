@@ -31,9 +31,7 @@ export function restorePersistedSelectionTool(
 ): SelectionToolAction | undefined {
   // Convert the persisted selection option back to the runtime tool expected
   // by the editor action handler.
-  if (tool?.tool === 'select' && tool.opts === FRAGMENT_SELECTION_OPTION) {
-    return { tool: FRAGMENT_SELECTION_TOOL };
-  }
-
-  return tool;
+  return tool?.tool === 'select' && tool.opts === FRAGMENT_SELECTION_OPTION
+    ? { tool: FRAGMENT_SELECTION_TOOL }
+    : tool;
 }

@@ -336,8 +336,9 @@ export const selectSelectedMenuGroupItemsState = (state: RootState) =>
 
 export const selectSelectedMenuGroupItem =
   (groupItemName: string | undefined) => (state: RootState) => {
-    if (!groupItemName) return undefined;
-    return state.editor.selectedMenuGroupItems[groupItemName];
+    return !groupItemName
+      ? undefined
+      : state.editor.selectedMenuGroupItems[groupItemName];
   };
 
 export const selectLastSelectedSelectionMenuItem = (state): string => {

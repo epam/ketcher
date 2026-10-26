@@ -86,10 +86,7 @@ export class Atom extends DrawingEntity {
           case BondType.Hydrogen:
             break;
           case BondType.Aromatic:
-            if (this.bonds.length === 1) {
-              return -1;
-            }
-            return this.bonds.length;
+            return this.bonds.length === 1 ? -1 : this.bonds.length;
           default:
             return -1;
         }

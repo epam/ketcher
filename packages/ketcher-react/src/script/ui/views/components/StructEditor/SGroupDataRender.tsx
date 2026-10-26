@@ -55,11 +55,10 @@ function getPanelPositionRelativeToRect(
 
   // Default position for panel is in the bottom;
   let x = middleBottomSide.x - width / 2;
-  let y = middleBottomSide.y;
-
-  if (clientY > viewportBottomLimit) {
-    y = middleTopSide.y - height;
-  }
+  let y =
+    clientY > viewportBottomLimit
+      ? middleTopSide.y - height
+      : middleBottomSide.y;
 
   if (clientX > viewportRightLimit) {
     x = middleLeftSide.x - width;

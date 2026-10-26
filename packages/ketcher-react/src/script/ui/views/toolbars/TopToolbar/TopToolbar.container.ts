@@ -78,11 +78,13 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   const dispatchAction = (actionName) => {
-    if (['zoom-in', 'zoom-out'].includes(actionName)) {
-      dispatch(onAction(action[actionName].action()));
-    } else {
-      dispatch(onAction(action[actionName].action));
-    }
+    dispatch(
+      onAction(
+        ['zoom-in', 'zoom-out'].includes(actionName)
+          ? action[actionName].action()
+          : action[actionName].action,
+      ),
+    );
   };
 
   return {

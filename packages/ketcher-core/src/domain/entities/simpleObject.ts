@@ -55,9 +55,8 @@ export class SimpleObject extends BaseMicromoleculeEntity {
   }
 
   center(): Vec2 {
-    if (this.mode === SimpleObjectMode.rectangle) {
-      return Vec2.centre(this.pos[0], this.pos[1]);
-    }
-    return this.pos[0];
+    return this.mode === SimpleObjectMode.rectangle
+      ? Vec2.centre(this.pos[0], this.pos[1])
+      : this.pos[0];
   }
 }

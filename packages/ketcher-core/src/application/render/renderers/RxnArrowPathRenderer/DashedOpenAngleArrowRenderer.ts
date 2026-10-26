@@ -19,15 +19,9 @@ export class DashedOpenAngleArrowRenderer {
 
     // Dashed arrow
     for (let i = 0; i < arrowLength / dashInterval; i++) {
-      if (i % 2) {
-        pathParts.push(
-          `L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
-        );
-      } else {
-        pathParts.push(
-          `M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
-        );
-      }
+      pathParts.push(
+        `${i % 2 ? 'L' : 'M'}${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+      );
     }
 
     // Arrowhead

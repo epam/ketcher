@@ -31,17 +31,11 @@ export function selMerge(selection, add, reversible: boolean) {
 }
 
 export function getSelectedAtoms(selection, molecule) {
-  if (selection?.atoms) {
-    return mapAtomIdsToAtoms(selection?.atoms, molecule);
-  }
-  return [];
+  return selection?.atoms ? mapAtomIdsToAtoms(selection?.atoms, molecule) : [];
 }
 
 export function getSelectedBonds(selection, molecule) {
-  if (selection?.bonds) {
-    return mapBondIdsToBonds(selection?.bonds, molecule);
-  }
-  return [];
+  return selection?.bonds ? mapBondIdsToBonds(selection?.bonds, molecule) : [];
 }
 
 export function canOpenAtomProperties(molecule: Struct, atomId: number) {

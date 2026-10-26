@@ -97,17 +97,16 @@ function disabled(
   actObj: UiAction,
   { editor, server, options }: ActionParams,
 ): boolean {
-  if (typeof actObj.disabled === 'function')
-    return actObj.disabled(editor, server, options);
-  return false;
+  return typeof actObj.disabled === 'function'
+    ? actObj.disabled(editor, server, options)
+    : false;
 }
 
 function hidden(
   actObj: UiAction,
   { options }: Pick<ActionParams, 'options'>,
 ): boolean {
-  if (typeof actObj.hidden === 'function') return actObj.hidden(options);
-  return false;
+  return typeof actObj.hidden === 'function' ? actObj.hidden(options) : false;
 }
 
 function status(

@@ -56,10 +56,9 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox) {
-      return super.getVBoxObj(render);
-    }
-    return new Box2Abs(this.a.pp, this.a.pp);
+    return this.visel.boundingBox
+      ? super.getVBoxObj(render)
+      : new Box2Abs(this.a.pp, this.a.pp);
   }
 
   getShiftedSegmentPosition(

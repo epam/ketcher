@@ -124,10 +124,7 @@ function isMenuOpened(currentNode: HTMLElement | null): boolean {
 }
 
 function getItemKey(item: MenuItem): string {
-  if (typeof item === 'string') {
-    return item;
-  }
-  return item.id;
+  return typeof item === 'string' ? item : item.id;
 }
 
 export function showMenuOrButton(

@@ -71,36 +71,24 @@ export const MultiTailedArrow = async (
     ...locators,
 
     async getTailsCount() {
-      if (arrowId === null) {
-        return 0;
-      }
-
-      return await tailResizeHandlers.count();
+      return arrowId === null ? 0 : await tailResizeHandlers.count();
     },
 
     getTailsMoveHandler(options: { tailIndex: number }) {
       const { tailIndex } = options;
-      if (arrowId === null) {
-        return page.locator(
-          '[data-testid="__missing-multi-tailed-tail-index__"]',
-        );
-      }
-
       return page.locator(
-        `[data-testid="tails-${tailIndex}-move"][data-arrow-id="${arrowId}"]`,
+        arrowId === null
+          ? '[data-testid="__missing-multi-tailed-tail-index__"]'
+          : `[data-testid="tails-${tailIndex}-move"][data-arrow-id="${arrowId}"]`,
       );
     },
 
     getTailsResizeHandler(options: { tailIndex: number }) {
       const { tailIndex } = options;
-      if (arrowId === null) {
-        return page.locator(
-          '[data-testid="__missing-multi-tailed-tail-index__"]',
-        );
-      }
-
       return page.locator(
-        `[data-testid="tails-${tailIndex}-resize"][data-arrow-id="${arrowId}"]`,
+        arrowId === null
+          ? '[data-testid="__missing-multi-tailed-tail-index__"]'
+          : `[data-testid="tails-${tailIndex}-resize"][data-arrow-id="${arrowId}"]`,
       );
     },
 

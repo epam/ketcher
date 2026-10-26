@@ -125,11 +125,9 @@ export function getHydrogenBondedPartner(
 ): BaseMonomer | undefined {
   const hydrogenBond = monomer?.hydrogenBonds[0];
 
-  if (!monomer || !hydrogenBond) {
-    return undefined;
-  }
-
-  return hydrogenBond.getAnotherMonomer(monomer);
+  return !monomer || !hydrogenBond
+    ? undefined
+    : hydrogenBond.getAnotherMonomer(monomer);
 }
 
 /**
@@ -144,16 +142,10 @@ export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
 
   const sugar = getSugarFromRnaBase(base);
 
-  if (!sugar) {
-    // Unsplit nucleotide: the backbone connection is on the monomer itself.
-    return Boolean(
-      getPreviousMonomerInChain(base) ?? getNextMonomerInChain(base),
-    );
-  }
-
-  return Boolean(
-    getPreviousMonomerInChain(sugar) ?? getNextMonomerInChain(sugar),
-  );
+  // Unsplit nucleotide: the backbone connection is on the monomer itself.
+  return sugar
+    ? Boolean(getPreviousMonomerInChain(sugar) ?? getNextMonomerInChain(sugar))
+    : Boolean(getPreviousMonomerInChain(base) ?? getNextMonomerInChain(base));
 }
 
 /**
@@ -167,16 +159,12 @@ export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
 export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
   const partner = getHydrogenBondedPartner(base);
 
-  if (!base || !partner) {
-    return false;
-  }
-
-  return (
-    base.selected &&
-    partner.selected &&
-    isBaseEligibleForDuplexSync(base) &&
-    isBaseEligibleForDuplexSync(partner)
-  );
+  return !base || !partner
+    ? false
+    : base.selected &&
+        partner.selected &&
+        isBaseEligibleForDuplexSync(base) &&
+        isBaseEligibleForDuplexSync(partner);
 }
 
 export interface MirroredBaseTarget {
@@ -235,11 +223,9 @@ export function resolveMirroredBaseTarget(params: {
     oppositeSugarLabel: getSugarFromRnaBase(partner)?.label,
   });
 
-  if (!targetLabel || targetLabel === partner.label) {
-    return undefined;
-  }
-
-  return { partner, targetLabel };
+  return !targetLabel || targetLabel === partner.label
+    ? undefined
+    : { partner, targetLabel };
 }
 
 /**

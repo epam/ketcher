@@ -129,10 +129,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    if (this.visel.boundingBox) {
-      return ReObject.prototype.getVBoxObj.call(this, render);
-    }
-    return new Box2Abs(this.a.pp, this.a.pp);
+    return this.visel.boundingBox
+      ? ReObject.prototype.getVBoxObj.call(this, render)
+      : new Box2Abs(this.a.pp, this.a.pp);
   }
 
   drawHover(render: Render, drawOutline = true) {
@@ -383,11 +382,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   ) => {
     const atom = this.a;
     const { render } = restruct;
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-
-    return this.getSelectionContour(render, highlightPadding).attr(style);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
   makeHoverPlate(render: Render, drawOutline = true) {
@@ -409,10 +406,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const { render } = restruct;
     const { options } = render;
 
-    if (this.isPlateShouldBeHidden(atom, render)) {
-      return null;
-    }
-    return this.getSelectionContour(render).attr(options.selectionStyle);
+    return this.isPlateShouldBeHidden(atom, render)
+      ? null
+      : this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
   // Keep atom available in DOM for tests even when the label is hidden
@@ -502,14 +498,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       atomSymbolShift = Math.min(atomSymbolShift, maxShift);
     }
 
-    if (atomSymbolShift > 0) {
-      return atomPosition.addScaled(
-        direction,
-        atomSymbolShift + 3 * renderOptions.lineWidth,
-      );
-    } else {
-      return atomPosition;
-    }
+    return atomSymbolShift > 0
+      ? atomPosition.addScaled(
+          direction,
+          atomSymbolShift + 3 * renderOptions.lineWidth,
+        )
+      : atomPosition;
   }
 
   hasAttachmentPoint(): boolean {
@@ -1102,11 +1096,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       fragment?.enhancedStereoFlag,
     );
 
-    let text = '';
-
-    if (displayStereoLabel) {
-      text = `${stereoLabel}\n`;
-    }
+    let text = displayStereoLabel ? `${stereoLabel}\n` : '';
 
     if (shortenCustomQueryText.length > 0) {
       text += `${shortenCustomQueryText}\n`;
@@ -1443,15 +1433,11 @@ function getStereoAtomColor(
   options: RenderOptions,
   stereoLabel: string | null | undefined,
 ): string | undefined {
-  if (
-    !stereoLabel ||
+  return !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return DEFAULT_STEREO_COLOR;
-  }
-
-  return getColorFromStereoLabel(options, stereoLabel);
+    ? DEFAULT_STEREO_COLOR
+    : getColorFromStereoLabel(options, stereoLabel);
 }
 
 export function getColorFromStereoLabel(
@@ -1475,15 +1461,12 @@ export function getColorFromStereoLabel(
 function getStereoAtomOpacity(options: RenderOptions, stereoLabel: string) {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
   const stereoLabelNumber = +stereoLabel.replace(stereoLabelType, '');
-  if (
-    !options.autoFadeOfStereoLabels ||
+  return !options.autoFadeOfStereoLabels ||
     stereoLabelType === StereoLabel.Abs ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
-  ) {
-    return 1;
-  }
-  return Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
+    ? 1
+    : Math.max(1 - (stereoLabelNumber - 1) / 10, StereoLabelMinOpacity);
 }
 
 function shouldDisplayStereoLabel(

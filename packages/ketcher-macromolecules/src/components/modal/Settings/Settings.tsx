@@ -39,7 +39,7 @@ import { Icon } from 'ketcher-react';
 
 export const Settings = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
-  const settingsService = window.ketcher?.settingsService;
+  const settingsService = globalThis.ketcher?.settingsService;
 
   const [currentSettings, setCurrentSettings] =
     useState<SettingsFormValue | null>(null);

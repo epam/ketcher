@@ -101,7 +101,7 @@ const shortcutKeys = new Set([
 ]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
-  if (window.isPolymerEditorTurnedOn) {
+  if (globalThis.isPolymerEditorTurnedOn) {
     return true;
   }
   if (state.modal || selectIsAbbreviationLookupOpen(state)) {
@@ -134,7 +134,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     return true;
   }
 
-  abbreviationLookupTimeoutId = window.setTimeout(() => {
+  abbreviationLookupTimeoutId = globalThis.window.setTimeout(() => {
     dispatch(closeAbbreviationLookup());
     abbreviationLookupTimeoutId = undefined;
   }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
@@ -406,7 +406,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal && !window.isPolymerEditorTurnedOn;
+      return !state.modal && !globalThis.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();

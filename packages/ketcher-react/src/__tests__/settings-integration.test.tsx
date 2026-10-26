@@ -125,7 +125,7 @@ describe('Settings Integration Tests', () => {
     SettingsService.resetInstance();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     // Clean up window.ketcher
-    delete window.ketcher;
+    delete globalThis.window.ketcher;
   });
 
   afterEach(() => {

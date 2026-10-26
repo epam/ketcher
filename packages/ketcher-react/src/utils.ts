@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 export const isTouchDevice =
-  typeof window !== 'undefined' &&
-  ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  typeof globalThis.window !== 'undefined' &&
+  ('ontouchstart' in globalThis || navigator.maxTouchPoints > 0);
 
 /**
  * Determines the appropriate HTML element for fullscreen mode based on the current DOM structure.

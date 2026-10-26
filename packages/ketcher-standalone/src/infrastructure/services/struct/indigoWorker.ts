@@ -85,7 +85,7 @@ function handle(
       };
     }
 
-    self.postMessage(msg);
+    globalThis.postMessage(msg);
   });
 }
 
@@ -96,7 +96,7 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   }
 }
 
-self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
+globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
   const message = e.data;
 
   switch (message.type) {

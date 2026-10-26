@@ -163,7 +163,7 @@ export class SettingsManager {
       ...newEditorLineLength,
     };
 
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<EditorLineLength>(SetEditorLineLengthAction, {
         detail: editorLineLength,
       }),

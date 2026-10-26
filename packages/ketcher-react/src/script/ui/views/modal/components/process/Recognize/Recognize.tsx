@@ -231,7 +231,8 @@ type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
+  const URL =
+    globalThis.URL || (globalThis.window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 

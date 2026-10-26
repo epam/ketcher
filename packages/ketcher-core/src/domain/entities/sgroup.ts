@@ -626,7 +626,7 @@ export class SGroup {
     contentBoxes.forEach((bba) => {
       braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
-    const currentRender = render ?? window.ketcher?.editor?.render;
+    const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
       currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;

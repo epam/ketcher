@@ -106,7 +106,7 @@ class KetcherBuilder {
     );
     this.structService.addKetcherId(ketcherId);
 
-    window.addEventListener(
+    globalThis.addEventListener(
       STRUCT_SERVICE_INITIALIZED_EVENT,
       () => {
         oldStructService?.destroy?.();

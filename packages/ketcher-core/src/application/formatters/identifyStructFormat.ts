@@ -93,7 +93,7 @@ export function identifyStructFormat(
   if (
     clearStr.length % 4 === 0 &&
     isBase64String.test(clearStr) &&
-    window.atob(clearStr).startsWith(cdxHeader)
+    globalThis.atob(clearStr).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx;
   }

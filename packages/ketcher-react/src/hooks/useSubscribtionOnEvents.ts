@@ -86,13 +86,13 @@ export const useSubscriptionOnEvents = () => {
     };
 
     const initEventName = ketcherInitEventName(ketcherId);
-    window.addEventListener(initEventName, subscribeOnInit);
+    globalThis.addEventListener(initEventName, subscribeOnInit);
     return () => {
       const ketcher = getKetcherSafely();
       if (ketcher) {
         unsubscribe(ketcher);
       }
-      window.removeEventListener(initEventName, subscribeOnInit);
+      globalThis.removeEventListener(initEventName, subscribeOnInit);
     };
   }, [ketcherId, dispatch]);
 };

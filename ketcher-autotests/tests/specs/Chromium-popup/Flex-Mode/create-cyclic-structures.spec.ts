@@ -123,6 +123,7 @@ test.describe('Cyclic structures', () => {
       page,
       'KET/three-sugar-connected-to-each-other.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, sugar).open();

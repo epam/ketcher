@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -46,9 +45,15 @@ import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import type { IconName } from 'components';
 
+interface TextFormState {
+  form: {
+    valid: boolean;
+  };
+}
+
 interface TextProps extends DialogParams {
-  formState: any;
-  id?: any;
+  formState: TextFormState;
+  id?: string;
   content: string;
   position?: string;
 }
@@ -118,9 +123,9 @@ function EditorRefPlugin({
 }
 
 const TextEditorInner = (props: {
-  formState: any;
+  formState: TextFormState;
   position?: string;
-  id?: any;
+  id?: string;
   params: TextProps;
 }) => {
   const { formState, position, id, params } = props;
@@ -297,4 +302,6 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store: any) => ({ formState: store.modal }))(Text);
+export default connect((store: { modal: TextFormState }) => ({
+  formState: store.modal,
+}))(Text);

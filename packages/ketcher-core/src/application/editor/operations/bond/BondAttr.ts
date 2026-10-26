@@ -40,9 +40,9 @@ export class BondAttr extends BaseOperation {
   ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
     this.data =
-      bondId !== undefined && attribute !== undefined
-        ? { bid: bondId, attribute, value, needInvalidateBond }
-        : null;
+      bondId === undefined || attribute === undefined
+        ? null
+        : { bid: bondId, attribute, value, needInvalidateBond };
     this.data2 = null;
   }
 

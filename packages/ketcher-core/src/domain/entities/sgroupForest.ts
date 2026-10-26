@@ -20,9 +20,13 @@ import type { Struct } from './struct';
 import { assert, KetcherLogger } from 'utilities';
 
 export class SGroupForest {
-  /** node id -> parent id */
+  /**
+  node id -> parent id
+  */
   parent: Map<number, number>;
-  /** node id -> list of child ids */
+  /**
+  node id -> list of child ids
+  */
   children: Map<number, number[]>;
   atomSets: Map<number, Pile<number>>;
 
@@ -34,7 +38,9 @@ export class SGroupForest {
     this.atomSets = new Map();
   }
 
-  /** returns an array or s-group ids in the order of breadth-first search */
+  /**
+  returns an array or s-group ids in the order of breadth-first search
+  */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
     const queue = Array.from(this.children.get(-1) as Array<number>);

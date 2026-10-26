@@ -38,7 +38,9 @@ import {
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
 
-/** Entity classes for concrete (non-ambiguous) monomers only. */
+/**
+Entity classes for concrete (non-ambiguous) monomers only.
+*/
 export type ConcreteMonomerEntityClass =
   | typeof Chem
   | typeof Peptide
@@ -48,7 +50,9 @@ export type ConcreteMonomerEntityClass =
   | typeof UnresolvedMonomer
   | typeof UnsplitNucleotide;
 
-/** All monomer entity classes, including ambiguous. */
+/**
+All monomer entity classes, including ambiguous.
+*/
 export type MonomerEntityClass =
   ConcreteMonomerEntityClass | typeof AmbiguousMonomer;
 

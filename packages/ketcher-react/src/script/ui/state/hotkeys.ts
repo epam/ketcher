@@ -290,7 +290,9 @@ function handleHotkeyGroup(
   }
 }
 
-/* HotKeys */
+/*
+HotKeys
+*/
 function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState();
 
@@ -387,7 +389,9 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
-/* ClipArea */
+/*
+ClipArea
+*/
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,

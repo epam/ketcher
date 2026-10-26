@@ -2216,11 +2216,17 @@ type AtomCustomQueryPropertyName =
   | 'substitutionCount'
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
-  /** Atom property name used to determine whether the query attribute applies. */
+  /**
+  Atom property name used to determine whether the query attribute applies.
+  */
   propertyName: AtomCustomQueryPropertyName;
-  /** Reads the raw atom/query-property value before text normalization. */
+  /**
+  Reads the raw atom/query-property value before text normalization.
+  */
   getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
-  /** Converts a normalized value to its Molfile query attribute representation. */
+  /**
+  Converts a normalized value to its Molfile query attribute representation.
+  */
   format: (value: string) => string;
 };
 
@@ -2419,7 +2425,9 @@ function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }
 
-/** Project an axis-aligned box onto AP-local along/perp axes. */
+/**
+Project an axis-aligned box onto AP-local along/perp axes.
+*/
 function projectBoxOnApAxes(
   W: number,
   H: number,
@@ -2433,7 +2441,9 @@ function projectBoxOnApAxes(
   };
 }
 
-/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
+/**
+Count atom-relative visel extents that overlap the candidate canvas-space box.
+*/
 function countExtOverlaps(
   exts: Box2Abs[],
   atomPos: Vec2,

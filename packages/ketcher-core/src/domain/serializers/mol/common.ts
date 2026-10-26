@@ -37,7 +37,9 @@ function getAtom(mol: Struct, id: number): Atom {
   return atom;
 }
 
-/* Parse Mol */
+/*
+Parse Mol
+*/
 function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
     const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
@@ -62,7 +64,9 @@ function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   throw new Error('Molfile version unknown: ' + version);
 }
 
-/* Parse Rxn */
+/*
+Parse Rxn
+*/
 function parseRxn(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
@@ -81,7 +85,9 @@ function parseRxn(
   return struct;
 }
 
-/* Prepare For Saving */
+/*
+Prepare For Saving
+*/
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
     MUL: SGroup.prepareMulForSaving,
@@ -151,7 +157,9 @@ function prepareDatForSaving(sgroup: SGroup, mol: Struct): void {
   sgroup.atoms = SGroup.getAtoms(mol, sgroup);
 }
 
-/* Save To Molfile */
+/*
+Save To Molfile
+*/
 const saveToMolfile: Record<
   string,
   (

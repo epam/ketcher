@@ -24,7 +24,9 @@ import { storage } from '../../storage-ext';
 
 export { default as initTmplLib } from './init-lib';
 
-/* TEMPLATES */
+/*
+TEMPLATES
+*/
 export function selectTmpl(tmpl) {
   return {
     type: 'TMPL_SELECT',
@@ -53,7 +55,9 @@ export function changeTab(tab) {
   };
 }
 
-/* TEMPLATE-ATTACH-EDIT */
+/*
+TEMPLATE-ATTACH-EDIT
+*/
 export function initAttach(name, attach) {
   return {
     type: 'INIT_ATTACH',
@@ -124,7 +128,9 @@ export function deleteTmpl(tmpl) {
   };
 }
 
-/* SAVE */
+/*
+SAVE
+*/
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} };
@@ -161,7 +167,9 @@ function updateLocalStore(lib) {
   storage.setItem('ketcher-tmpls', userLib);
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export const initTmplsState = {
   lib: [],
   selected: null,

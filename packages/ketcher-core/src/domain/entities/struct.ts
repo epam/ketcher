@@ -1007,7 +1007,9 @@ export class Struct {
     return lengths;
   }
 
-  /** Median of `values`, or -1 when there is nothing to measure. */
+  /**
+  Median of `values`, or -1 when there is nothing to measure.
+  */
   static median(values: number[]): number {
     if (values.length === 0) {
       return -1;
@@ -1548,7 +1550,9 @@ export class Struct {
   }
 
   getComponents() {
-    /* saver */
+    /*
+    saver
+    */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
     let arrowPos: number | null = null;

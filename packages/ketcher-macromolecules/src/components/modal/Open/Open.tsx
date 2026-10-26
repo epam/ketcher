@@ -374,7 +374,9 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
-        /* Fullscreen restoration failed or was denied by the browser */
+        /*
+        Fullscreen restoration failed or was denied by the browser
+        */
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }

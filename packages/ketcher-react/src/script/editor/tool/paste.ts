@@ -307,7 +307,9 @@ class PasteTool implements Tool {
   }
 }
 
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
 function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();

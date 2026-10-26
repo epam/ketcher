@@ -17,7 +17,9 @@
 import { Vec2 } from './vec2';
 import { assert } from 'utilities';
 
-/** @internal */
+/**
+@internal
+*/
 export class HalfBond {
   begin: number;
   end: number;

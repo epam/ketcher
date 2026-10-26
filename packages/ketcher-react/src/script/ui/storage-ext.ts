@@ -17,7 +17,9 @@
 import { KetcherLogger } from 'ketcher-core';
 import type { IStorage } from './types';
 
-/* local storage */
+/*
+local storage
+*/
 export const storage: IStorage = {
   warningMessage:
     'Your changes will be lost after the tab closing. See Help (Note 2).',

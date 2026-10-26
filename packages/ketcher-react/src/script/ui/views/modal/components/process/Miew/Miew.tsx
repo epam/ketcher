@@ -74,7 +74,9 @@ type MiewDialogCallProps = {
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
-/* OPTIONS for MIEW */
+/*
+OPTIONS for MIEW
+*/
 const BACKGROUND_COLOR = {
   dark: '0x202020',
   light: '0xcccccc',
@@ -131,7 +133,9 @@ function createMiewOptions(userOpts) {
 
   return options;
 }
-/* ---------------- */
+/*
+----------------
+*/
 const FooterContent = () => {
   const { t } = useTranslation('dialogs');
   return (

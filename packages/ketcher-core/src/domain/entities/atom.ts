@@ -212,7 +212,9 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   hasImplicitH?: boolean;
   pseudo!: string;
 
-  /** @deprecated */
+  /**
+  @deprecated
+  */
   get attpnt() {
     return this.attachmentPoints;
   }

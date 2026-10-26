@@ -57,7 +57,9 @@ class ReSGroup extends ReObject {
 
   constructor(sgroup: SGroup) {
     super('sgroup');
-    /** @type {SGroup} */
+    /**
+    @type {SGroup}
+    */
     this.item = sgroup;
   }
 

@@ -165,7 +165,7 @@ Select.val = function (ev, schema) {
 
   return Array.from(options).reduce(
     (res, o: HTMLOptionElement, i) =>
-      !o.selected ? res : [enumSchema(schema, i), ...res],
+      o.selected ? [enumSchema(schema, i), ...res] : res,
     [] as HTMLOptionElement[],
   );
 };
@@ -230,7 +230,7 @@ FieldSet.val = function (ev, schema) {
   if (inputCollection?.length) {
     result = Array.from(inputCollection).reduce(
       (res, inp: HTMLInputElement, i) =>
-        !inp.checked ? res : [enumSchema(schema, i), ...res],
+        inp.checked ? [enumSchema(schema, i), ...res] : res,
 
       [] as HTMLInputElement[],
     );
@@ -269,8 +269,8 @@ function enumSchema(schema, cbOrIndex) {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
       const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
-        title !== undefined ? title : item,
-        item?.value !== undefined ? item.value : item,
+        title === undefined ? item : title,
+        item?.value === undefined ? item : item.value,
       );
     });
   }
@@ -278,7 +278,7 @@ function enumSchema(schema, cbOrIndex) {
   if (!isTypeValue) return schema.enum[cbOrIndex];
 
   const res = schema[cbOrIndex];
-  return res.value !== undefined ? res.value : res;
+  return res.value === undefined ? res : res.value;
 }
 
 function inputCtrl(component, schema, onChange) {
@@ -291,7 +291,7 @@ function inputCtrl(component, schema, onChange) {
 
   return {
     onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       onChange(val);
     },
     ...props,
@@ -302,7 +302,7 @@ function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
     onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       if (val !== undefined) onChange(val);
     },
   };

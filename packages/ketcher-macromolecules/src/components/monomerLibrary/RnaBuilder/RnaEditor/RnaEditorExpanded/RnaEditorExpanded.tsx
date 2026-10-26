@@ -595,12 +595,12 @@ export const RnaEditorExpanded = ({
             </button>
           </span>
         </Tooltip>
-        {!triggerDisabled && !showPhosphatePositionTooltip ? (
+        {triggerDisabled || showPhosphatePositionTooltip ? null : (
           <div className={styles.phosphatePositionSelector}>
             {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
             {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
           </div>
-        ) : null}
+        )}
       </div>
     );
   };

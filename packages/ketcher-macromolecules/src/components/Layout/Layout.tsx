@@ -163,7 +163,7 @@ const Top = (
         </StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
-      {!startInView || !endInView ? (
+      {startInView && endInView ? null : (
         <StyledArrowScrollWrapper>
           <ArrowScroll
             startInView={startInView}
@@ -173,7 +173,7 @@ const Top = (
             isLeftRight
           />
         </StyledArrowScrollWrapper>
-      ) : null}
+      )}
     </div>
   );
 };

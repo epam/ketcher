@@ -277,9 +277,9 @@ export function serverCall<T>(
 
   const request: { struct: string; [key: string]: unknown } = {
     struct: serializedStruct,
-    ...(method !== 'calculate' && method !== 'check'
-      ? { output_format: ChemicalMimeType.KET }
-      : {}),
+    ...(method === 'calculate' || method === 'check'
+      ? {}
+      : { output_format: ChemicalMimeType.KET }),
     ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
     ...(options.data ?? {}),
   };

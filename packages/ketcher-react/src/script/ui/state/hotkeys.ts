@@ -241,7 +241,7 @@ function handleHotkeyGroup(
   event,
 ) {
   const index = checkGroupOnTool(group, actionTool);
-  const groupLength = group !== null ? group.length : 1;
+  const groupLength = group === null ? 1 : group.length;
   const newIndex = (index + 1) % groupLength;
   const actName = group[newIndex];
 

@@ -298,11 +298,11 @@ export const EditorEvents = () => {
         if (sequenceNode instanceof Nucleoside) {
           position = PresetPosition.ChainEnd;
         } else if (
-          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
+          sequenceNode.firstMonomerInNode.R1AttachmentPoint === undefined
         ) {
-          position = PresetPosition.ChainStart;
-        } else {
           position = PresetPosition.ChainMiddle;
+        } else {
+          position = PresetPosition.ChainStart;
         }
 
         const presetPreviewData: PresetPreviewState = {

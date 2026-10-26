@@ -103,7 +103,7 @@ export function getAngleFromEvent(
       ? restruct.molecule.halfBonds.get(atom.neighbors[0])?.end
       : undefined;
     const nei =
-      neiId !== undefined ? restruct.molecule.atoms.get(neiId) : undefined;
+      neiId === undefined ? undefined : restruct.molecule.atoms.get(neiId);
 
     if (!atom || !nei) {
       angle = 0;

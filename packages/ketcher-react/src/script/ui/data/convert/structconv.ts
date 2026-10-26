@@ -440,7 +440,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : (sbond.customQuery?.toString() ?? ''),
+    customQuery: isCustomQuery ? (sbond.customQuery?.toString() ?? '') : '',
   };
 }
 
@@ -450,7 +450,7 @@ export function toBond(bond: ReturnType<typeof fromBond>) {
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    customQuery: !isCustomQuery ? null : bond.customQuery,
+    customQuery: isCustomQuery ? bond.customQuery : null,
     ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }

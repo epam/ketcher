@@ -692,7 +692,7 @@ function serializeRewrite(
 ): unknown {
   const res: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
-    return instance !== undefined ? instance : schema.default;
+    return instance === undefined ? schema.default : instance;
   }
 
   const instanceObj = instance as Record<string, unknown>;

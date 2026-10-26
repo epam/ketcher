@@ -28,9 +28,9 @@ import {
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
-  typeof window !== 'undefined'
-    ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
-    : undefined;
+  typeof window === 'undefined'
+    ? undefined
+    : (window as Window & { clipboardData?: DataTransfer }).clipboardData;
 
 const isSafariBrowser = (): boolean =>
   typeof navigator !== 'undefined' &&

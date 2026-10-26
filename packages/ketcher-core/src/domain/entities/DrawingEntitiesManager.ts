@@ -143,6 +143,7 @@ import {
   StereoFlagDeleteOperation,
 } from 'application/editor/operations/stereoFlag';
 import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,
@@ -2771,6 +2772,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteStereoFlag(flag);
       editor.renderersContainer.addStereoFlag(flag);
     });
+    editor.renderersContainer.rerenderRGroups();
   }
 
   public applyMonomersSequenceLayout() {
@@ -2787,6 +2789,7 @@ export class DrawingEntitiesManager {
 
   public clearCanvas() {
     const editor = provideEditorInstance();
+    editor.renderersContainer.clearRGroups();
 
     // TODO rewrite to work with base class (drawingEntity)
 
@@ -2971,6 +2974,19 @@ export class DrawingEntitiesManager {
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof RGroupDrawingEntity) {
+      const command = new Command();
+      const drawingEntities = [
+        ...drawingEntity.atoms,
+        ...drawingEntity.bonds,
+      ].filter((entity) => !selectedDrawingEntities?.includes(entity));
+      drawingEntities.forEach((entity) => {
+        entity.turnOnSelection();
+        command.addOperation(new DrawingEntitySelectOperation(entity));
+      });
+      return { command, drawingEntities };
+    }
+
     if (drawingEntity instanceof SGroupDrawingEntity) {
       return this.getAllSelectedEntitiesForSGroup(
         drawingEntity,

@@ -50,6 +50,9 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { RGroupRenderer } from './RGroupRenderer';
+import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
+import { getRGroupDefinitions } from 'domain/helpers/rGroupDefinitions';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -71,6 +74,7 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
+  public rgroups = new Map<number, RGroupRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -152,6 +156,7 @@ export class RenderersManager {
   }
 
   public deleteAllDrawingEntities() {
+    this.clearRGroups();
     this.monomers.forEach((monomerRenderer) => {
       monomerRenderer.remove();
     });
@@ -731,6 +736,45 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
+    this.rerenderRGroups();
+  }
+
+  public clearRGroups(): void {
+    this.rgroups.forEach((renderer) => renderer.remove());
+    this.rgroups.clear();
+  }
+
+  public rerenderRGroups(): void {
+    const definitions = getRGroupDefinitions(
+      [...this.atoms.values()].map(({ atom }) => atom),
+      [...this.bonds.values()].map(({ bond }) => bond),
+    );
+
+    this.rgroups.forEach((renderer, id) => {
+      if (!definitions.has(id)) {
+        renderer.remove();
+        this.rgroups.delete(id);
+      }
+    });
+    definitions.forEach((definition, id) => {
+      let renderer = this.rgroups.get(id);
+      if (!renderer) {
+        renderer = new RGroupRenderer(
+          new RGroupDrawingEntity(
+            id,
+            definition.rgroup,
+            definition.atoms,
+            definition.bonds,
+          ),
+        );
+        this.rgroups.set(id, renderer);
+      } else {
+        renderer.rgroupDrawingEntity.atoms = definition.atoms;
+        renderer.rgroupDrawingEntity.bonds = definition.bonds;
+        renderer.rgroupDrawingEntity.rgroup = definition.rgroup;
+      }
+      renderer.refresh();
+    });
   }
 
   public rerenderSideConnectionPolymerBonds() {

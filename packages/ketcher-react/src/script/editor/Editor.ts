@@ -103,6 +103,17 @@ import {
 
 import closest from './shared/closest';
 import type { SelectedItems, SkipItem } from './shared/closest.types';
+import type {
+  BondEditResult,
+  EditorCursor,
+  EditorMessage,
+  EditorTooltip,
+  ElementEditResult,
+  EnhancedStereoEditParams,
+  RemoveFGParams,
+  RGroupEditResult,
+  SGroupDialogResult,
+} from './Editor.types';
 import { type ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
@@ -279,29 +290,32 @@ class Editor implements KetcherEditor {
   contextMenu: ContextMenuInfo;
   rotateController: RotateController;
   event: {
-    message: Subscription;
-    tooltip: Subscription;
-    elementEdit: PipelineSubscription;
+    message: Subscription<EditorMessage>;
+    tooltip: Subscription<EditorTooltip | undefined>;
+    elementEdit: PipelineSubscription<unknown, Promise<ElementEditResult>>;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
     zoomChanged: PipelineSubscription;
-    bondEdit: PipelineSubscription;
-    rgroupEdit: PipelineSubscription;
-    sgroupEdit: PipelineSubscription;
+    bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>;
+    rgroupEdit: PipelineSubscription<unknown, Promise<RGroupEditResult>>;
+    sgroupEdit: PipelineSubscription<unknown, Promise<SGroupDialogResult>>;
     sdataEdit: PipelineSubscription;
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
-    removeFG: PipelineSubscription;
+    removeFG: PipelineSubscription<RemoveFGParams, Promise<unknown>>;
     editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
     dearomatizeStruct: PipelineSubscription;
-    enhancedStereoEdit: PipelineSubscription;
+    enhancedStereoEdit: PipelineSubscription<
+      EnhancedStereoEditParams,
+      Promise<string | null>
+    >;
     confirm: PipelineSubscription;
     showInfo: PipelineSubscription;
     apiSettings: PipelineSubscription;
-    cursor: Subscription;
+    cursor: Subscription<EditorCursor>;
     updateFloatingTools: Subscription<FloatingToolsParams>;
     monomerWizardStateChange: Subscription<boolean>;
   };

@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type AbbreviationLookupLocators = {
-  window: Locator;
-  abbreviationLookupEditbox: Locator;
-};
-
 export const AbbreviationLookup = (page: Page) => {
+  type AbbreviationLookupLocators = {
+    window: Locator;
+    abbreviationLookupEditbox: Locator;
+  };
+
   const locators: AbbreviationLookupLocators = {
     window: page.getByTestId('AbbreviationLookup'),
     abbreviationLookupEditbox: page.getByTestId('AbbreviationLookup-input'),

@@ -13,9 +13,9 @@ import {
   getReferencingCustomPresets,
 } from './MonomerLibraryContextMenu.utils';
 
-type LibraryMenuProps = { libraryItem?: MonomerItemType };
-
 export const MonomerLibraryContextMenu = () => {
+  type LibraryMenuProps = { libraryItem?: MonomerItemType };
+
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const { presetsCustom } = useAppSelector(selectRnaBuilderSlice);

@@ -9,18 +9,18 @@ import {
   waitForLoadAndRender,
 } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
-type PasteFromClipboardDialogLocators = {
-  addToCanvasButton: Locator;
-  openAsNewButton: Locator;
-  contentTypeSelector: Locator;
-  monomerTypeSelector: Locator;
-  peptideLettersCodeSelector: Locator;
-  openStructureTextarea: Locator;
-  closeWindowButton: Locator;
-  cancelButton: Locator;
-};
-
 export const PasteFromClipboardDialog = (page: Page) => {
+  type PasteFromClipboardDialogLocators = {
+    addToCanvasButton: Locator;
+    openAsNewButton: Locator;
+    contentTypeSelector: Locator;
+    monomerTypeSelector: Locator;
+    peptideLettersCodeSelector: Locator;
+    openStructureTextarea: Locator;
+    closeWindowButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: PasteFromClipboardDialogLocators = {
     addToCanvasButton: page.getByTestId('add-to-canvas-button'),
     openAsNewButton: page.getByTestId('open-as-new-button'),

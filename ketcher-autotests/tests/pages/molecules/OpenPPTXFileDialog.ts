@@ -3,19 +3,19 @@ import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinner
 import { CommonTopLeftToolbar } from '../common/CommonTopLeftToolbar';
 import { openFile } from '@utils/files';
 
-type OpenPPTXFileDialogLocators = {
-  closeWindowButton: Locator;
-  addToCanvasButton: Locator;
-  openAsNewProjectButton: Locator;
-  cancelButton: Locator;
-};
-
 export enum Action {
   AddToCanvas,
   OpenAsNewProject,
 }
 
 export const OpenPPTXFileDialog = (page: Page) => {
+  type OpenPPTXFileDialogLocators = {
+    closeWindowButton: Locator;
+    addToCanvasButton: Locator;
+    openAsNewProjectButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: OpenPPTXFileDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     addToCanvasButton: page.getByTestId('add-to-canvas-button'),

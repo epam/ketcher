@@ -21,9 +21,8 @@ class SingleUpDownBondPathRenderer {
     const bsp = 0.7 * StereoBondWidth;
 
     let path = `M${startPosition.x},${startPosition.y}`;
-    let sectionStartPosition: typeof startPosition;
     for (let i = 0; i < linesNumber; ++i) {
-      sectionStartPosition = startPosition
+      const sectionStartPosition = startPosition
         .addScaled(d, step * (i + 0.5))
         .addScaled(
           firstHalfEdge.leftNormal,

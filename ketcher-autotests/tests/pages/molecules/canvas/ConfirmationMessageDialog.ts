@@ -1,13 +1,13 @@
 import { Page, Locator } from '@playwright/test';
 
-type ConfirmationMessageDialogLocators = {
-  confirmationModalWindow: Locator;
-  confirmationModalBody: Locator;
-  confirmationModalOk: Locator;
-  confirmationModalCancel: Locator;
-};
-
 export const ConfirmationMessageDialog = (page: Page) => {
+  type ConfirmationMessageDialogLocators = {
+    confirmationModalWindow: Locator;
+    confirmationModalBody: Locator;
+    confirmationModalOk: Locator;
+    confirmationModalCancel: Locator;
+  };
+
   const locators: ConfirmationMessageDialogLocators = {
     confirmationModalWindow: page.getByTestId('info-modal-window'),
     confirmationModalBody: page

@@ -5,11 +5,11 @@ import {
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
 
-type ContextMenuLocators = {
-  contextMenuBody: Locator;
-};
-
 export const ContextMenu = (page: Page, element: ClickTarget) => {
+  type ContextMenuLocators = {
+    contextMenuBody: Locator;
+  };
+
   const getOption = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

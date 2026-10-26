@@ -1,10 +1,10 @@
 import { Page, Locator } from '@playwright/test';
 
-type DragonGhostElementLocators = {
-  dragonGhostElement: Locator;
-};
-
 export const DragonGhostElement = (page: Page) => {
+  type DragonGhostElementLocators = {
+    dragonGhostElement: Locator;
+  };
+
   const locators: DragonGhostElementLocators = {
     dragonGhostElement: page.getByTestId('drag-ghost'),
   };

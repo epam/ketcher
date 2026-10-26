@@ -23,102 +23,102 @@ import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDial
 import { TopRightToolbar } from '../TopRightToolbar';
 import { waitForRender } from '@utils/common';
 
-type GeneralSectionLocators = {
-  resetToSelectToolCombobox: Locator;
-  rotationStepEditbox: Locator;
-  showValenceWarningsSwitcher: Locator;
-  atomColoringSwitcher: Locator;
-  fontCombobox: Locator;
-  fontSizeEditbox: Locator;
-  fontSizeUnitsCombobox: Locator;
-  subFontSizeEditbox: Locator;
-  subFontSizeUnitsCombobox: Locator;
-  reactionComponentMarginSizeEditbox: Locator;
-  reactionComponentMarginSizeCombobox: Locator;
-  imageResolutionCombobox: Locator;
-};
-
-type StereochemistrySectionLocators = {
-  showTheStereoFlagsSwitcher: Locator;
-  labelDisplayAtStereogenicCentersCombobox: Locator;
-  absoluteCenterColorColorpicker: Locator;
-  andCentersColorColorpicker: Locator;
-  orCentersColorColorpicker: Locator;
-  colorStereogenicCentersCombobox: Locator;
-  autoFadeAndOrCenterLabelsSwitcher: Locator;
-  textOfAbsoluteFlagEditbox: Locator;
-  textOfANDFlagEditbox: Locator;
-  textOfORFlagEditbox: Locator;
-  textOfMixedFlagEditbox: Locator;
-  ignoreTheChiralFlagSwitcher: Locator;
-};
-
-type AtomsSectionLocators = {
-  displayCarbonExplicitlySwitcher: Locator;
-  displayChargeSwitcher: Locator;
-  displayValenceSwitcher: Locator;
-  showHydrogenLabelsCombobox: Locator;
-};
-
-type BondsSectionLocators = {
-  aromaticBondsAsCircleSwitcher: Locator;
-  bondLengthEditbox: Locator;
-  bondLengthUnitsCombobox: Locator;
-  bondSpacingEditbox: Locator;
-  bondThicknessEditbox: Locator;
-  bondThicknessUnitsCombobox: Locator;
-  stereoWedgeBondWidthEditbox: Locator;
-  stereoWedgeBondWidthUnitsCombobox: Locator;
-  hashSpacingEditbox: Locator;
-  hashSpacingUnitsCombobox: Locator;
-};
-
-type ReactionsSectionLocators = {
-  addRsitesAtMassCalculationSwitcher: Locator;
-  addIsotopesAtMassCalculationSwitcher: Locator;
-};
-
-type ValidationSectionLocators = {
-  ignoreStereochemistryErrorsSwitcher: Locator;
-  ignorePseudoatomsAtMassSwitcher: Locator;
-  skipSuperatomsAtAromatizationSwitcher: Locator;
-  dearomatizeOnFileLoadSwitcher: Locator;
-};
-
-type ThreeDViewerSectionLocators = {
-  displayModeCombobox: Locator;
-  backgroundColorCombobox: Locator;
-  labelColoringCombobox: Locator;
-};
-
-type OptionsForDebuggingSectionLocators = {
-  smartLayoutSwitcher: Locator;
-  showAtomIdsSwitcher: Locator;
-  showBondsIdsSwitcher: Locator;
-  showHalfBondsIdsSwitcher: Locator;
-  showLoopIdsSwitcher: Locator;
-};
-
-type SettingsDialogLocators = {
-  window: Locator;
-  openFromFileButton: Locator;
-  saveToFileButton: Locator;
-  resetButton: Locator;
-  closeWindowButton: Locator;
-  generalSection: Locator;
-  stereochemistrySection: Locator;
-  atomsSection: Locator;
-  bondsSection: Locator;
-  reactionsSection: Locator;
-  validationSection: Locator;
-  threeDViewerSection: Locator;
-  optionsForDebuggingSection: Locator;
-  setACSSettingsButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const SettingsDialog = (page: Page) => {
+  type GeneralSectionLocators = {
+    resetToSelectToolCombobox: Locator;
+    rotationStepEditbox: Locator;
+    showValenceWarningsSwitcher: Locator;
+    atomColoringSwitcher: Locator;
+    fontCombobox: Locator;
+    fontSizeEditbox: Locator;
+    fontSizeUnitsCombobox: Locator;
+    subFontSizeEditbox: Locator;
+    subFontSizeUnitsCombobox: Locator;
+    reactionComponentMarginSizeEditbox: Locator;
+    reactionComponentMarginSizeCombobox: Locator;
+    imageResolutionCombobox: Locator;
+  };
+
+  type StereochemistrySectionLocators = {
+    showTheStereoFlagsSwitcher: Locator;
+    labelDisplayAtStereogenicCentersCombobox: Locator;
+    absoluteCenterColorColorpicker: Locator;
+    andCentersColorColorpicker: Locator;
+    orCentersColorColorpicker: Locator;
+    colorStereogenicCentersCombobox: Locator;
+    autoFadeAndOrCenterLabelsSwitcher: Locator;
+    textOfAbsoluteFlagEditbox: Locator;
+    textOfANDFlagEditbox: Locator;
+    textOfORFlagEditbox: Locator;
+    textOfMixedFlagEditbox: Locator;
+    ignoreTheChiralFlagSwitcher: Locator;
+  };
+
+  type AtomsSectionLocators = {
+    displayCarbonExplicitlySwitcher: Locator;
+    displayChargeSwitcher: Locator;
+    displayValenceSwitcher: Locator;
+    showHydrogenLabelsCombobox: Locator;
+  };
+
+  type BondsSectionLocators = {
+    aromaticBondsAsCircleSwitcher: Locator;
+    bondLengthEditbox: Locator;
+    bondLengthUnitsCombobox: Locator;
+    bondSpacingEditbox: Locator;
+    bondThicknessEditbox: Locator;
+    bondThicknessUnitsCombobox: Locator;
+    stereoWedgeBondWidthEditbox: Locator;
+    stereoWedgeBondWidthUnitsCombobox: Locator;
+    hashSpacingEditbox: Locator;
+    hashSpacingUnitsCombobox: Locator;
+  };
+
+  type ReactionsSectionLocators = {
+    addRsitesAtMassCalculationSwitcher: Locator;
+    addIsotopesAtMassCalculationSwitcher: Locator;
+  };
+
+  type ValidationSectionLocators = {
+    ignoreStereochemistryErrorsSwitcher: Locator;
+    ignorePseudoatomsAtMassSwitcher: Locator;
+    skipSuperatomsAtAromatizationSwitcher: Locator;
+    dearomatizeOnFileLoadSwitcher: Locator;
+  };
+
+  type ThreeDViewerSectionLocators = {
+    displayModeCombobox: Locator;
+    backgroundColorCombobox: Locator;
+    labelColoringCombobox: Locator;
+  };
+
+  type OptionsForDebuggingSectionLocators = {
+    smartLayoutSwitcher: Locator;
+    showAtomIdsSwitcher: Locator;
+    showBondsIdsSwitcher: Locator;
+    showHalfBondsIdsSwitcher: Locator;
+    showLoopIdsSwitcher: Locator;
+  };
+
+  type SettingsDialogLocators = {
+    window: Locator;
+    openFromFileButton: Locator;
+    saveToFileButton: Locator;
+    resetButton: Locator;
+    closeWindowButton: Locator;
+    generalSection: Locator;
+    stereochemistrySection: Locator;
+    atomsSection: Locator;
+    bondsSection: Locator;
+    reactionsSection: Locator;
+    validationSection: Locator;
+    threeDViewerSection: Locator;
+    optionsForDebuggingSection: Locator;
+    setACSSettingsButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

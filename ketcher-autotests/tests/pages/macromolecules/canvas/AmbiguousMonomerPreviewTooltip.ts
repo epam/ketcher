@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type AmbiguousMonomerPreviewTooltipLocators = {
-  window: Locator;
-  monomerPreviewTooltipTitle: Locator;
-};
-
 export const AmbiguousMonomerPreviewTooltip = (page: Page) => {
+  type AmbiguousMonomerPreviewTooltipLocators = {
+    window: Locator;
+    monomerPreviewTooltipTitle: Locator;
+  };
+
   const locators: AmbiguousMonomerPreviewTooltipLocators = {
     window: page.getByTestId('polymer-library-preview'),
     monomerPreviewTooltipTitle: page.getByTestId('preview-tooltip-title'),

@@ -6,8 +6,6 @@ import {
   MonomerPreviewTitle,
 } from './MonomerPreviewProperties.styles';
 
-type RowItem = { label: string; text: string };
-
 interface MonomerPreviewProps {
   readonly idtAliasesText?: string;
   readonly axoLabsText?: string;
@@ -28,6 +26,8 @@ export default function MonomerPreviewProperties({
   preset,
 }: MonomerPreviewProps) {
   const { t } = useTranslation('macromolecules');
+  type RowItem = { label: string; text: string };
+
   const rows: RowItem[] = [
     ...(idtAliasesText ? [{ label: 'IDT', text: idtAliasesText }] : []),
     ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),

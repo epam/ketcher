@@ -66,18 +66,6 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
   [MonomerGroups.BASES]: KetMonomerClass.Base,
 };
 
-type MonomerMatchData = {
-  idtAliases?: IKetIdtAliases;
-  name?: string;
-  fullName?: string;
-  helmAlias?: string;
-  bilnAlias?: string;
-  axoLabsAlias?: string;
-  modificationTypes?: string[];
-  oneLetterCode?: string;
-  isAminoAcid: boolean;
-};
-
 const matchesAminoAcidThreeLetterCode = (
   oneLetterCode: string | undefined,
   isAminoAcid: boolean,
@@ -400,6 +388,18 @@ export const selectFilteredMonomers = createSelector(
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
     const shortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
+    type MonomerMatchData = {
+      idtAliases?: IKetIdtAliases;
+      name?: string;
+      fullName?: string;
+      helmAlias?: string;
+      bilnAlias?: string;
+      axoLabsAlias?: string;
+      modificationTypes?: string[];
+      oneLetterCode?: string;
+      isAminoAcid: boolean;
+    };
+
     const checkMonomerMatch = (
       searchFilter: string,
       {

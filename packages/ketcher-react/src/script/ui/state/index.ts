@@ -90,13 +90,13 @@ export type AppStore = Store<RootState, UnknownAction> & {
   dispatch: AppDispatch;
 };
 
-// INIT and UPDATE actions merge arbitrary payload keys into the state
-type WorkingState = Partial<RootState> & Record<string, unknown>;
-
 function getRootReducer(
   setEditor: SetEditor,
 ): Reducer<RootState, UnknownAction, PreloadedRootState> {
   return function root(state, action) {
+    // INIT and UPDATE actions merge arbitrary payload keys into the state
+    type WorkingState = Partial<RootState> & Record<string, unknown>;
+
     let updatedState: WorkingState = { ...state };
 
     switch (action.type) {

@@ -1,13 +1,13 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
-type EditAbbreviationDialogLocators = {
-  window: Locator;
-  removeAbbreviationButton: Locator;
-  cancelButton: Locator;
-};
-
 export const EditAbbreviationDialog = (page: Page) => {
+  type EditAbbreviationDialogLocators = {
+    window: Locator;
+    removeAbbreviationButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: EditAbbreviationDialogLocators = {
     window: page.getByTestId('edit-abbreviation-window'),
     removeAbbreviationButton: page.getByTestId('remove-abbreviation-button'),

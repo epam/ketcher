@@ -1,18 +1,18 @@
 import { Page, Locator } from '@playwright/test';
 
-type CalculatedValuesDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  chemicalFormulaInput: Locator;
-  molecularWeightInput: Locator;
-  molecularWeightSelect: Locator;
-  exactMassInput: Locator;
-  exactMassSelect: Locator;
-  elementalAnalysisInput: Locator;
-  closeButton: Locator;
-};
-
 export const CalculatedValuesDialog = (page: Page) => {
+  type CalculatedValuesDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    chemicalFormulaInput: Locator;
+    molecularWeightInput: Locator;
+    molecularWeightSelect: Locator;
+    exactMassInput: Locator;
+    exactMassSelect: Locator;
+    elementalAnalysisInput: Locator;
+    closeButton: Locator;
+  };
+
   const selectDropdownValue = async (locator: Locator, value: string) => {
     await locator.click();
     await page.getByTestId(`${value}-option`).click();

@@ -26,11 +26,6 @@ import type { Phosphate } from 'domain/entities/Phosphate';
  */
 type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
-type AmbiguousMonomerLike = {
-  monomerItem?: { isAmbiguous?: boolean };
-  monomerClass?: KetMonomerClass;
-};
-
 /**
  * Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
  * to avoid introducing an additional dependency edge into the entity graph.
@@ -38,6 +33,11 @@ type AmbiguousMonomerLike = {
 const isAmbiguousMonomerEntity = (
   monomer?: BaseMonomer,
 ): monomer is AmbiguousMonomerEntity => {
+  type AmbiguousMonomerLike = {
+    monomerItem?: { isAmbiguous?: boolean };
+    monomerClass?: KetMonomerClass;
+  };
+
   const ambiguousMonomer = monomer as AmbiguousMonomerLike | undefined;
 
   return Boolean(

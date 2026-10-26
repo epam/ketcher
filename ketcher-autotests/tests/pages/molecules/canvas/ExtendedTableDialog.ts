@@ -2,15 +2,15 @@ import { Page, Locator } from '@playwright/test';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { RightToolbar } from '../RightToolbar';
 
-type ExtendedTableDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  addButton: Locator;
-  cancelButton: Locator;
-  extendedTableWindow: Locator;
-};
-
 export const ExtendedTableDialog = (page: Page) => {
+  type ExtendedTableDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    addButton: Locator;
+    cancelButton: Locator;
+    extendedTableWindow: Locator;
+  };
+
   const getButton = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

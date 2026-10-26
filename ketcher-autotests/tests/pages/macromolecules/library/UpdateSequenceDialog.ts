@@ -1,14 +1,14 @@
 import { Page, Locator } from '@playwright/test';
 
-type UpdateSequenceDialogLocators = {
-  window: Locator;
-  body: Locator;
-  closeWindowButton: Locator;
-  yesButton: Locator;
-  cancelButton: Locator;
-};
-
 export const UpdateSequenceDialog = (page: Page) => {
+  type UpdateSequenceDialogLocators = {
+    window: Locator;
+    body: Locator;
+    closeWindowButton: Locator;
+    yesButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: UpdateSequenceDialogLocators = {
     window: page.getByTestId('update-sequence-modal'),
     closeWindowButton: page.getByTestId('close-window-button'),

@@ -9,12 +9,12 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
-
 /**
  * Fullname: useFunctionalGroupExpandOrContract
  */
 const useFunctionalGroupEoc = () => {
+  type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
   const dispatch = useDispatch();
 

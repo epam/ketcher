@@ -34,6 +34,23 @@ function span(struct: Struct): number {
   return last.pp.x - first.pp.x;
 }
 
+describe('Struct.getAvgClosestAtomDistance', () => {
+  it.each([
+    { positions: [], expected: -1 },
+    { positions: [0], expected: -1 },
+    { positions: [0, 3], expected: 3 },
+    { positions: [0, 2, 7], expected: 3 },
+    { positions: [0, 0, 3], expected: 1 },
+  ])('returns $expected for atoms at $positions', ({ positions, expected }) => {
+    const struct = new Struct();
+    positions.forEach((x) => {
+      struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(x, 0) }));
+    });
+
+    expect(struct.getAvgClosestAtomDistance()).toBe(expected);
+  });
+});
+
 describe('Struct.median', () => {
   it('returns -1 for an empty set', () => {
     expect(Struct.median([])).toBe(-1);

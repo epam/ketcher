@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type NotificationBannerOnMacroLocators = {
-  message: Locator;
-  closeButton: Locator;
-};
-
 export const NotificationBannerOnMacro = (page: Page) => {
+  type NotificationBannerOnMacroLocators = {
+    message: Locator;
+    closeButton: Locator;
+  };
+
   const locators: NotificationBannerOnMacroLocators = {
     message: page.getByTestId('error-tooltip-0'),
     closeButton: page

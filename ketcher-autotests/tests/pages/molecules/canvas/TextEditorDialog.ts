@@ -3,29 +3,29 @@ import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
 import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 
-type FontOptions = {
-  isBold?: boolean;
-  isItalic?: boolean;
-  isSuperscript?: boolean;
-  isSubscript?: boolean;
-  fontSize?: number;
-  content?: string;
-};
-
-type TextEditorDialogLocators = {
-  closeWindowButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-  textBoldButton: Locator;
-  textItalicButton: Locator;
-  textSuperscriptButton: Locator;
-  textSubscriptButton: Locator;
-  specialSymbolsButton: Locator;
-  fontSizeDropdown: Locator;
-  textEditor: Locator;
-};
-
 export const TextEditorDialog = (page: Page) => {
+  type FontOptions = {
+    isBold?: boolean;
+    isItalic?: boolean;
+    isSuperscript?: boolean;
+    isSubscript?: boolean;
+    fontSize?: number;
+    content?: string;
+  };
+
+  type TextEditorDialogLocators = {
+    closeWindowButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+    textBoldButton: Locator;
+    textItalicButton: Locator;
+    textSuperscriptButton: Locator;
+    textSubscriptButton: Locator;
+    specialSymbolsButton: Locator;
+    fontSizeDropdown: Locator;
+    textEditor: Locator;
+  };
+
   const locators: TextEditorDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     applyButton: page.getByTestId('OK'),

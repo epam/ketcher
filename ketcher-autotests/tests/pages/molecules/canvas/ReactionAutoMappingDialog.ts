@@ -2,15 +2,15 @@ import { Page, Locator } from '@playwright/test';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { waitForRender } from '@utils/common';
 
-type ReactionAutoMappingLocators = {
-  window: Locator;
-  closeButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-  modeDropdown: Locator;
-};
-
 export const ReactionAutoMappingDialog = (page: Page) => {
+  type ReactionAutoMappingLocators = {
+    window: Locator;
+    closeButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+    modeDropdown: Locator;
+  };
+
   const locators: ReactionAutoMappingLocators = {
     window: page.getByTestId('automap-dialog'),
     closeButton: page.getByTestId('close-window-button'),

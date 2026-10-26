@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type AbbreviationPreviewTooltipLocators = {
-  window: Locator;
-  abbreviationPreviewTooltipPicture: Locator;
-};
-
 export const AbbreviationPreviewTooltip = (page: Page) => {
+  type AbbreviationPreviewTooltipLocators = {
+    window: Locator;
+    abbreviationPreviewTooltipPicture: Locator;
+  };
+
   const locators: AbbreviationPreviewTooltipLocators = {
     window: page.getByTestId('monomer-preview-micro').locator('..'),
     abbreviationPreviewTooltipPicture: page.getByTestId(

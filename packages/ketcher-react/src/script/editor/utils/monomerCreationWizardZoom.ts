@@ -6,23 +6,6 @@ type MonomerCreationWizardZoomConfig = {
   roundingStepsPer100Percent: number;
 };
 
-type StructBoundingBox = {
-  min: { x: number; y: number };
-  max: { x: number; y: number };
-};
-
-type MonomerCreationWizardZoomInput = {
-  // Bounding box of the structure in Ketcher's model units.
-  structBoundingBox: StructBoundingBox;
-  // Pixels per model unit at 100% zoom.
-  microModeScale: number;
-  // Available viewport size in pixels.
-  viewportWidth: number;
-  viewportHeight: number;
-  // Current zoom level (1 = 100%).
-  currentZoom: number;
-};
-
 /**
  * Creates the zoom calculator used when a structure is loaded into the
  * monomer creation wizard (epam/ketcher#11416).
@@ -33,6 +16,23 @@ type MonomerCreationWizardZoomInput = {
 export const createMonomerCreationWizardZoomCalculator = (
   config: Partial<MonomerCreationWizardZoomConfig> = {},
 ) => {
+  type StructBoundingBox = {
+    min: { x: number; y: number };
+    max: { x: number; y: number };
+  };
+
+  type MonomerCreationWizardZoomInput = {
+    // Bounding box of the structure in Ketcher's model units.
+    structBoundingBox: StructBoundingBox;
+    // Pixels per model unit at 100% zoom.
+    microModeScale: number;
+    // Available viewport size in pixels.
+    viewportWidth: number;
+    viewportHeight: number;
+    // Current zoom level (1 = 100%).
+    currentZoom: number;
+  };
+
   const {
     // The calculated zoom is never lower than 50%. If the structure does not
     // fit even at 50%, that is accepted.

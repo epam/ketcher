@@ -9,13 +9,13 @@ import type {
   SelectionContextMenuProps,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<
-  | AttachmentGroupContextMenuProps
-  | AtomContextMenuProps
-  | SelectionContextMenuProps
->;
-
 const useAttachmentGroupDelete = () => {
+  type Params = ItemEventParams<
+    | AttachmentGroupContextMenuProps
+    | AtomContextMenuProps
+    | SelectionContextMenuProps
+  >;
+
   const { ketcherId } = useAppContext();
 
   return useCallback(

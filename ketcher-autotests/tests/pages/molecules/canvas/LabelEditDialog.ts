@@ -1,15 +1,15 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
-type LabelEditLocators = {
-  labelEditDialog: Locator;
-  atomEditBox: Locator;
-  closeButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const LabelEditDialog = (page: Page) => {
+  type LabelEditLocators = {
+    labelEditDialog: Locator;
+    atomEditBox: Locator;
+    closeButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: LabelEditLocators = {
     labelEditDialog: page.getByTestId('labelEdit-dialog'),
     atomEditBox: page.getByTestId('label-input'),

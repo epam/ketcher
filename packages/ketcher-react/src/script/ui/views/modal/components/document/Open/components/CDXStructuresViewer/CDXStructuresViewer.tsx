@@ -34,17 +34,17 @@ export type CDXStructuresViewerProps = {
   fileName: string;
 };
 
-type item = { base64struct: string; error?: string; struct?: Struct };
-
-type itemsMapInterface = {
-  [x: number]: item;
-};
-
 export const CDXStructuresViewer = ({
   structList = [],
   inputHandler,
   fileName,
 }: CDXStructuresViewerProps) => {
+  type item = { base64struct: string; error?: string; struct?: Struct };
+
+  type itemsMapInterface = {
+    [x: number]: item;
+  };
+
   const { t } = useTranslation('dialogs');
   const server = useSelector(serverSelector);
   const editorOptions = useSelector(editorOptionsSelector);

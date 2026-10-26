@@ -1,15 +1,15 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 
-type EditMonomerDialogLocators = {
-  window: Locator;
-  editMonomerButton: Locator;
-  editAllMonomersButton: Locator;
-  removeGroupingButton: Locator;
-  cancelButton: Locator;
-};
-
 export const EditMonomerDialog = (page: Page) => {
+  type EditMonomerDialogLocators = {
+    window: Locator;
+    editMonomerButton: Locator;
+    editAllMonomersButton: Locator;
+    removeGroupingButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: EditMonomerDialogLocators = {
     window: page.getByTestId('edit-monomer-window'),
     editMonomerButton: page.getByTestId('Edit Monomer-button'),

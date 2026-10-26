@@ -24,64 +24,64 @@ import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog
 import { waitForRender } from '@utils/common';
 import { PeriodicTableDialog } from './PeriodicTableDialog';
 
-type GeneralProperties = {
-  generalSection: Locator & {
-    foldStateKeeper: Locator;
-    atomTypeDropdown: Locator;
-    editButton: Locator;
-    labelInput: Locator;
-    numberReadonlyInput: Locator;
-    listReadonlyInput: Locator;
-    notListCheckbox: Locator;
-    specialInput: Locator;
-    aliasInput: Locator;
-    chargeInput: Locator;
-    isotopeInput: Locator;
-    valenceDropdown: Locator;
-    radicalDropdown: Locator;
-  };
-};
-
-type QuerySpecificProperties = {
-  querySpecificSection: Locator & {
-    foldStateKeeper: Locator;
-    ringBondCountDropdown: Locator;
-    hCountDropdown: Locator;
-    substitutionCountInput: Locator;
-    unsaturatedCheckbox: Locator;
-    aromaticityDropdown: Locator;
-    implicitHCountDropdown: Locator;
-    ringMembershipDropdown: Locator;
-    ringSizeDropdown: Locator;
-    connectivityDropdown: Locator;
-    chiralityDropdown: Locator;
-  };
-};
-
-type ReactionFlags = {
-  reactionFlagsSection: Locator & {
-    foldStateKeeper: Locator;
-    inversionDropdown: Locator;
-    exactChangeCheckbox: Locator;
-  };
-};
-
-type CustomQuery = {
-  customQueryCheckbox: Locator;
-  customQueryTextArea: Locator;
-};
-
-type AtomPropertiesDialogLocators = GeneralProperties &
-  QuerySpecificProperties &
-  ReactionFlags &
-  CustomQuery & {
-    window: Locator;
-    closeWindowButton: Locator;
-    applyButton: Locator;
-    cancelButton: Locator;
-  };
-
 export const AtomPropertiesDialog = (page: Page) => {
+  type GeneralProperties = {
+    generalSection: Locator & {
+      foldStateKeeper: Locator;
+      atomTypeDropdown: Locator;
+      editButton: Locator;
+      labelInput: Locator;
+      numberReadonlyInput: Locator;
+      listReadonlyInput: Locator;
+      notListCheckbox: Locator;
+      specialInput: Locator;
+      aliasInput: Locator;
+      chargeInput: Locator;
+      isotopeInput: Locator;
+      valenceDropdown: Locator;
+      radicalDropdown: Locator;
+    };
+  };
+
+  type QuerySpecificProperties = {
+    querySpecificSection: Locator & {
+      foldStateKeeper: Locator;
+      ringBondCountDropdown: Locator;
+      hCountDropdown: Locator;
+      substitutionCountInput: Locator;
+      unsaturatedCheckbox: Locator;
+      aromaticityDropdown: Locator;
+      implicitHCountDropdown: Locator;
+      ringMembershipDropdown: Locator;
+      ringSizeDropdown: Locator;
+      connectivityDropdown: Locator;
+      chiralityDropdown: Locator;
+    };
+  };
+
+  type ReactionFlags = {
+    reactionFlagsSection: Locator & {
+      foldStateKeeper: Locator;
+      inversionDropdown: Locator;
+      exactChangeCheckbox: Locator;
+    };
+  };
+
+  type CustomQuery = {
+    customQueryCheckbox: Locator;
+    customQueryTextArea: Locator;
+  };
+
+  type AtomPropertiesDialogLocators = GeneralProperties &
+    QuerySpecificProperties &
+    ReactionFlags &
+    CustomQuery & {
+      window: Locator;
+      closeWindowButton: Locator;
+      applyButton: Locator;
+      cancelButton: Locator;
+    };
+
   const selectDropdownValue = async (
     locator: Locator,
     valueLocatorString: string,

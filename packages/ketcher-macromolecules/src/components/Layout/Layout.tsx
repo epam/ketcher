@@ -127,9 +127,6 @@ const DummyDiv = styled.div({
   height: '40px',
 });
 
-type LayoutSection =
-  'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
-
 const Top = (
   props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
 ) => {
@@ -179,6 +176,9 @@ const Top = (
 };
 
 export const Layout = ({ children }: LayoutProps) => {
+  type LayoutSection =
+    'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
+
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,

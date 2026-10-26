@@ -227,9 +227,9 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   );
 }
 
-type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
-
 function url(file: File | null): string | null {
+  type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
+
   if (!file) return null;
   const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';

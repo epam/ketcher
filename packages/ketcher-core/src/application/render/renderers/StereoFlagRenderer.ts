@@ -156,11 +156,11 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.setSelectionContourAttributes(this.hoverAreaElement);
 
-    type RendererDataNode = Omit<SVGRectElement, '__data__'> & {
-      __data__?: unknown;
-    };
-
     this.hoverAreaElement.each((_, index, nodes) => {
+      type RendererDataNode = Omit<SVGRectElement, '__data__'> & {
+        __data__?: unknown;
+      };
+
       // Make sure selection tools can access renderer through event.target.__data__
       const node = nodes[index] as RendererDataNode;
       node.__data__ = this;

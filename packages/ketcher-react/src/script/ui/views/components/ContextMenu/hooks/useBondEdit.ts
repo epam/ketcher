@@ -10,9 +10,9 @@ import type {
 import { getEditableBondIds, noOperation } from '../utils';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
-
 const useBondEdit = () => {
+  type Params = ItemEventParams<BondsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

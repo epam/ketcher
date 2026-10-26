@@ -7,35 +7,35 @@ import {
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-type PeptidesTabLocators = {
-  isoelectricPointValue: Locator;
-  isoelectricPointInfoButton: Locator;
-  extinctionCoefficientValue: Locator;
-  extinctionCoefficientInfoButton: Locator;
-  hydrophobicityInfoButton: Locator;
-  hydrophobicityGraph: Locator;
-};
-
-type RNATabLocators = {
-  meltingTemperatureValue: Locator;
-  unipositiveIonsEditbox: Locator;
-  unipositiveIonsUnitsCombobox: Locator;
-  oligonucleotidesEditbox: Locator;
-  oligonucleotidesUnitsCombobox: Locator;
-};
-
-type CalculateVariablesPanelLocators = {
-  panel: Locator;
-  molecularFormula: Locator;
-  molecularMassValue: Locator;
-  molecularMassUnitsCombobox: Locator;
-  molecularMassUnitDropDownList: Locator;
-  peptidesTab: Locator & PeptidesTabLocators;
-  rnaTab: Locator & RNATabLocators;
-  closeButton: Locator;
-};
-
 export const CalculateVariablesPanel = (page: Page) => {
+  type PeptidesTabLocators = {
+    isoelectricPointValue: Locator;
+    isoelectricPointInfoButton: Locator;
+    extinctionCoefficientValue: Locator;
+    extinctionCoefficientInfoButton: Locator;
+    hydrophobicityInfoButton: Locator;
+    hydrophobicityGraph: Locator;
+  };
+
+  type RNATabLocators = {
+    meltingTemperatureValue: Locator;
+    unipositiveIonsEditbox: Locator;
+    unipositiveIonsUnitsCombobox: Locator;
+    oligonucleotidesEditbox: Locator;
+    oligonucleotidesUnitsCombobox: Locator;
+  };
+
+  type CalculateVariablesPanelLocators = {
+    panel: Locator;
+    molecularFormula: Locator;
+    molecularMassValue: Locator;
+    molecularMassUnitsCombobox: Locator;
+    molecularMassUnitDropDownList: Locator;
+    peptidesTab: Locator & PeptidesTabLocators;
+    rnaTab: Locator & RNATabLocators;
+    closeButton: Locator;
+  };
+
   const peptidesTab: Locator & PeptidesTabLocators = Object.assign(
     page.getByTestId('peptides-properties-tab'),
     {

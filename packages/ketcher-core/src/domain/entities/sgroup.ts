@@ -93,12 +93,6 @@ interface SGroupData {
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
-type RenderableSGroupAtom =
-  | Atom
-  | {
-      pp?: Vec2;
-      getVBoxObj?: (render: Render) => Box2Abs | null;
-    };
 
 export class SGroup {
   static readonly TYPES = {
@@ -591,6 +585,13 @@ export class SGroup {
     remol?: ReStruct,
     render?: Render,
   ): void {
+    type RenderableSGroupAtom =
+      | Atom
+      | {
+          pp?: Vec2;
+          getVBoxObj?: (render: Render) => Box2Abs | null;
+        };
+
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
     const PADDING_VECTOR = !SGroup.isCOPGroup(sGroup)
       ? new Vec2(0.2, 0.4)

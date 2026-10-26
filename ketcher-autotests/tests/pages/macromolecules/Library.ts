@@ -16,32 +16,32 @@ import { moveMouseAway } from '../../utils/moveMouseAway';
 import { Preset } from '../constants/monomers/Presets';
 import { getVisibleCanvas } from '@utils/canvas';
 
-type PresetsSectionLocators = {
-  newPresetsButton: Locator;
-};
-
-type RNATabLocators = {
-  rnaAccordion: Locator;
-  rnaEditor: Locator & RNABuilderLocators;
-  presetsSection: Locator & PresetsSectionLocators;
-  sugarsSection: Locator;
-  basesSection: Locator;
-  phosphatesSection: Locator;
-  nucleotidesSection: Locator;
-};
-
-type LibraryLocators = {
-  libraryBody: Locator;
-  searchEditbox: Locator;
-  hideLibraryButton: Locator;
-  showLibraryButton: Locator;
-  favoritesTab: Locator;
-  peptidesTab: Locator;
-  rnaTab: Locator & RNATabLocators;
-  chemTab: Locator;
-};
-
 export const Library = (page: Page) => {
+  type PresetsSectionLocators = {
+    newPresetsButton: Locator;
+  };
+
+  type RNATabLocators = {
+    rnaAccordion: Locator;
+    rnaEditor: Locator & RNABuilderLocators;
+    presetsSection: Locator & PresetsSectionLocators;
+    sugarsSection: Locator;
+    basesSection: Locator;
+    phosphatesSection: Locator;
+    nucleotidesSection: Locator;
+  };
+
+  type LibraryLocators = {
+    libraryBody: Locator;
+    searchEditbox: Locator;
+    hideLibraryButton: Locator;
+    showLibraryButton: Locator;
+    favoritesTab: Locator;
+    peptidesTab: Locator;
+    rnaTab: Locator & RNATabLocators;
+    chemTab: Locator;
+  };
+
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

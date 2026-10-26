@@ -6,23 +6,23 @@ import {
 } from '../constants/macromoleculesTopToolbar/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 
-type MacromoleculesTopToolbarLocators = {
-  arrangeAsRingButton: Locator;
-  createAntisenseStrandDropdownButton: Locator;
-  createAntisenseStrandDropdownExpandButton: Locator;
-  arrangeAsARingButton: Locator;
-  calculatePropertiesButton: Locator;
-  syncSequenceEditModeButton: Locator;
-  switchLayoutModeDropdownButton: Locator;
-  switchLayoutModeDropdownExpandButton: Locator;
-  rnaButton: Locator;
-  dnaButton: Locator;
-  peptidesButton: Locator;
-  arrowScrollLeftButton: Locator;
-  arrowScrollRightButton: Locator;
-};
-
 export const MacromoleculesTopToolbar = (page: Page) => {
+  type MacromoleculesTopToolbarLocators = {
+    arrangeAsRingButton: Locator;
+    createAntisenseStrandDropdownButton: Locator;
+    createAntisenseStrandDropdownExpandButton: Locator;
+    arrangeAsARingButton: Locator;
+    calculatePropertiesButton: Locator;
+    syncSequenceEditModeButton: Locator;
+    switchLayoutModeDropdownButton: Locator;
+    switchLayoutModeDropdownExpandButton: Locator;
+    rnaButton: Locator;
+    dnaButton: Locator;
+    peptidesButton: Locator;
+    arrowScrollLeftButton: Locator;
+    arrowScrollRightButton: Locator;
+  };
+
   const locators: MacromoleculesTopToolbarLocators = {
     arrangeAsRingButton: page.getByTestId('arrange-ring'),
     createAntisenseStrandDropdownButton: page.getByTestId('antisenseRnaStrand'),

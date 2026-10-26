@@ -8,12 +8,12 @@ import type {
 import { fromAttachmentGroupAddition, ketcherProvider } from 'ketcher-core';
 import { isAttachmentGroupCreationSelectionValid } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
-
 export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP =
   'Selection must contain only continuous atoms without extra elements or bonds';
 
 const useAttachmentGroupCreate = () => {
+  type Params = ItemEventParams<AtomContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

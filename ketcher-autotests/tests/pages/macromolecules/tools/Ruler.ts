@@ -3,12 +3,12 @@ import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 import { keyboardPressOnCanvas } from '@utils/keyboard';
 
-type RulerLocators = {
-  handle: Locator;
-  valueInput: Locator;
-};
-
 export const Ruler = (page: Page) => {
+  type RulerLocators = {
+    handle: Locator;
+    valueInput: Locator;
+  };
+
   const locators: RulerLocators = {
     handle: page.getByTestId('ruler-handle'),
     valueInput: page.getByTestId('ruler-input'),

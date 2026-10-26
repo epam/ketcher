@@ -4,16 +4,16 @@ import {
   AttachmentPointOption,
 } from './constants/editConnectionPointPopup/Constants';
 
-type EditConnectionPointPopupLocators = {
-  editConnectionPointPopupWindow: Locator;
-  connectionPointNameCombobox: Locator;
-  connectionPointAtomCombobox: Locator;
-};
-
 export const EditConnectionPointPopup = (
   page: Page,
   attachmentPoint?: Locator,
 ) => {
+  type EditConnectionPointPopupLocators = {
+    editConnectionPointPopupWindow: Locator;
+    connectionPointNameCombobox: Locator;
+    connectionPointAtomCombobox: Locator;
+  };
+
   const locators: EditConnectionPointPopupLocators = {
     editConnectionPointPopupWindow: page.getByTestId(
       'attachment-point-edit-popup',

@@ -8,9 +8,9 @@ import type {
   SelectionContextMenuProps,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<SelectionContextMenuProps>;
-
 const useDelete = () => {
+  type Params = ItemEventParams<SelectionContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

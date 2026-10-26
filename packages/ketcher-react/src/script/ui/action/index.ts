@@ -290,7 +290,8 @@ const config: Record<string, UiAction> = {
   },
 };
 
-const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
+const configWithNonViewOnlyActionsDisabled = {} as Tools;
+Object.entries({
   ...config,
   ...server,
   ...debug,
@@ -301,13 +302,11 @@ const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
   ...functionalGroups,
   ...fullscreen,
   ...help,
-}).reduce(
-  (acc, [key, item]) => ({
-    ...acc,
-    [key]: updateConfigItem(item as UiAction),
-  }),
-  {},
-) as Tools;
+}).forEach(([key, item]) => {
+  configWithNonViewOnlyActionsDisabled[key] = updateConfigItem(
+    item as UiAction,
+  );
+});
 
 function hasSelection(editor) {
   const selection = editor.selection();

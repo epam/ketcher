@@ -30,20 +30,16 @@ export class DistanceSnapView {
     });
 
     // Find either the left-most or bottom-most monomer
-    const extremeMonomer = alignedMonomers.reduce(
-      (extremeMonomer, nextMonomer) => {
-        if (alignment === 'horizontal') {
-          return nextMonomer.center.y > extremeMonomer.center.y
-            ? nextMonomer
-            : extremeMonomer;
-        } else {
-          return nextMonomer.center.x < extremeMonomer.center.x
-            ? nextMonomer
-            : extremeMonomer;
+    let extremeMonomer = alignedMonomers[0];
+    for (const nextMonomer of alignedMonomers.slice(1)) {
+      if (alignment === 'horizontal') {
+        if (nextMonomer.center.y > extremeMonomer.center.y) {
+          extremeMonomer = nextMonomer;
         }
-      },
-      alignedMonomers[0],
-    );
+      } else if (nextMonomer.center.x < extremeMonomer.center.x) {
+        extremeMonomer = nextMonomer;
+      }
+    }
 
     const alignerPosition = new Vec2(
       alignment === 'horizontal' ? 0 : extremeMonomer.center.x - 1.5,

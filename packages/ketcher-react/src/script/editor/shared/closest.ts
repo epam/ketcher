@@ -786,34 +786,32 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
   );
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
-  return Array.from(reStruct.images.entries()).reduce(
-    (acc: ClosestReturnType<ImageReferencePositionInfo>, [id, item]) => {
-      const distanceToPoint = item.calculateDistanceToPoint(
+  let closestImage: ClosestReturnType<ImageReferencePositionInfo> = null;
+  reStruct.images.forEach((item, id) => {
+    const distanceToPoint = item.calculateDistanceToPoint(
+      canvasScaledPosition,
+      renderOptions,
+    );
+    if (distanceToPoint <= maxDistance) {
+      if (closestImage && closestImage.dist < distanceToPoint) {
+        return;
+      }
+      // We would like to grab items under the images and those items should have higher priority then images
+      // So we wanna make sure that those items can be grabbed without pixel-perfect pixel-hunting
+      const dist = Math.max(distanceToPoint, maxDistance / 3);
+      const closestPosition = item.calculateClosestReferencePosition(
         canvasScaledPosition,
         renderOptions,
       );
-      if (distanceToPoint <= maxDistance) {
-        if (acc && acc.dist < distanceToPoint) {
-          return acc;
-        }
-        // We would like to grab items under the images and those items should have higher priority then images
-        // So we wanna make sure that those items can be grabbed without pixel-perfect pixel-hunting
-        const dist = Math.max(distanceToPoint, maxDistance / 3);
-        const closestPosition = item.calculateClosestReferencePosition(
-          canvasScaledPosition,
-          renderOptions,
-        );
-        const includeRef = closestPosition.distance < maxDistance;
-        return {
-          id,
-          dist: dist / renderOptions.microModeScale,
-          ref: includeRef ? closestPosition.ref : null,
-        };
-      }
-      return acc;
-    },
-    null,
-  );
+      const includeRef = closestPosition.distance < maxDistance;
+      closestImage = {
+        id,
+        dist: dist / renderOptions.microModeScale,
+        ref: includeRef ? closestPosition.ref : null,
+      };
+    }
+  });
+  return closestImage;
 }
 
 function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
@@ -825,20 +823,25 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
 
-  return Array.from(reStruct.multitailArrows.entries()).reduce(
-    (acc: ClosestReturnType<unknown>, [id, item]) => {
-      const { distance, ref } = item.calculateDistanceToPoint(
-        canvasScaledPosition,
-        renderOptions,
-        maxDistance,
-      );
-      if (distance <= maxDistance && (!acc || acc.dist > distance)) {
-        return { id, dist: distance / renderOptions.microModeScale, ref };
-      }
-      return acc;
-    },
-    null,
-  );
+  let closestMultitailArrow: ClosestReturnType<unknown> = null;
+  reStruct.multitailArrows.forEach((item, id) => {
+    const { distance, ref } = item.calculateDistanceToPoint(
+      canvasScaledPosition,
+      renderOptions,
+      maxDistance,
+    );
+    if (
+      distance <= maxDistance &&
+      (!closestMultitailArrow || closestMultitailArrow.dist > distance)
+    ) {
+      closestMultitailArrow = {
+        id,
+        dist: distance / renderOptions.microModeScale,
+        ref,
+      };
+    }
+  });
+  return closestMultitailArrow;
 }
 
 export default {

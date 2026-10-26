@@ -3,9 +3,11 @@ import type { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
 
 export function geometricCenter(positions: Vec2[]): Vec2 {
-  return positions
-    .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
-    .scaled(1 / positions.length);
+  let sum = new Vec2(0, 0);
+  positions.forEach((position) => {
+    sum = sum.add(position);
+  });
+  return sum.scaled(1 / positions.length);
 }
 
 export function getAtomPositions(atomIds: number[], atoms: Pool<Atom>): Vec2[] {

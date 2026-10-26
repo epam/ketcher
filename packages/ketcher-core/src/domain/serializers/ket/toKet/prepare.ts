@@ -28,10 +28,10 @@ export function prepareStructForKet(struct: Struct) {
     // RGroups writing
     rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
-    const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
-      (res, frid) => res.union(struct.getFragmentIds(frid)),
-      new Pile<number>(),
-    );
+    let fragsAtoms = new Pile<number>();
+    rgroup.frags.forEach((frid) => {
+      fragsAtoms = fragsAtoms.union(struct.getFragmentIds(frid));
+    });
 
     ketNodes.push({
       type: 'rgroup',

@@ -22,10 +22,11 @@ function constant(schema, prop) {
 
 export function mapOf(schema, prop) {
   console.assert(schema.oneOf);
-  return schema.oneOf.reduce((res, desc) => {
-    res[constant(desc, prop)] = desc;
-    return res;
-  }, {});
+  const result = {};
+  schema.oneOf.forEach((desc) => {
+    result[constant(desc, prop)] = desc;
+  });
+  return result;
 }
 
 export function selectListOf(schema, prop) {

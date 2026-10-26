@@ -128,13 +128,12 @@ class ReText extends ReObject {
       ...firstRow.map((path) => path.getBBox().y),
     );
 
-    const widestRow: Array<RaphaelBaseElement> = paths.reduce(
-      (widestRow, nextRow) =>
-        this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
-          ? nextRow
-          : widestRow,
-      paths[0],
-    );
+    let widestRow: Array<RaphaelBaseElement> = paths[0];
+    paths.slice(1).forEach((nextRow) => {
+      if (this.getRowWidth(nextRow) > this.getRowWidth(widestRow)) {
+        widestRow = nextRow;
+      }
+    });
     const lastElOfWidestRow = widestRow.at(-1);
     const lastRow = paths.at(-1);
 
@@ -156,10 +155,11 @@ class ReText extends ReObject {
   }
 
   getRowWidth(row: Array<RaphaelBaseElement>): number {
-    return row.reduce((rowWidth, nextRow) => {
+    let rowWidth = 0;
+    row.forEach((nextRow) => {
       rowWidth += nextRow.getBBox().width;
-      return rowWidth;
-    }, 0);
+    });
+    return rowWidth;
   }
 
   drawHover(render: Render): Element | null {

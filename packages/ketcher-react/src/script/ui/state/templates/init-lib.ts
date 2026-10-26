@@ -139,13 +139,12 @@ function prefetchRender(
   baseUrl: string,
   cacheEl: Element,
 ): Promise<string[]> {
-  const files = tmpls.reduce((res, tmpl) => {
+  const files: string[] = [];
+  tmpls.forEach((tmpl) => {
     const file = prefetchSplit(tmpl).file;
 
-    if (file && !res.includes(file)) res.push(file);
-
-    return res;
-  }, [] as string[]);
+    if (file && !files.includes(file)) files.push(file);
+  });
   const fetch = Promise.all(
     files.map((fn) =>
       prefetchStatic(baseUrl + fn).catch((e) => {

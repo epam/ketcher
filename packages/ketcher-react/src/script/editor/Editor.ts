@@ -1907,25 +1907,20 @@ class Editor implements KetcherEditor {
     let leavingAtomId: number;
     let additionalAction: Action | null = null;
     if (!forceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
-      const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
-        .sort((a, b) => a - b)
-        .reduce(
-          (acc, currentAtomId) => {
-            const atom = this.struct().atoms.get(currentAtomId);
-            assert(atom);
+      let minimalAtomicNumber = 999;
+      let minimalAtomicNumberAtomId = -1;
+      for (const currentAtomId of Array.from(potentialLeavingAtoms).sort(
+        (a, b) => a - b,
+      )) {
+        const atom = this.struct().atoms.get(currentAtomId);
+        assert(atom);
 
-            const atomicNumber = Elements.get(atom.label)?.number;
-            if (atomicNumber !== undefined) {
-              const minimalAtomicNumber = acc[0];
-              if (atomicNumber < minimalAtomicNumber) {
-                return [atomicNumber, currentAtomId];
-              }
-            }
-
-            return acc;
-          },
-          [999, -1] as [number, number],
-        );
+        const atomicNumber = Elements.get(atom.label)?.number;
+        if (atomicNumber !== undefined && atomicNumber < minimalAtomicNumber) {
+          minimalAtomicNumber = atomicNumber;
+          minimalAtomicNumberAtomId = currentAtomId;
+        }
+      }
 
       leavingAtomId = minimalAtomicNumberAtomId;
     } else {
@@ -3888,13 +3883,11 @@ class Editor implements KetcherEditor {
     if (ci === 'all') {
       selectAll = true;
       // TODO: better way will be this.struct()
-      resolvedCi = structObjects.reduce(
-        (res, key) => {
-          res[key] = Array.from(ReStruct[key].keys());
-          return res;
-        },
-        {} as Record<string, number[]>,
-      );
+      const allStructureItems: Record<string, number[]> = {};
+      structObjects.forEach((key) => {
+        allStructureItems[key] = Array.from(ReStruct[key].keys());
+      });
+      resolvedCi = allStructureItems;
     }
 
     if (ci === 'descriptors') {
@@ -4189,10 +4182,10 @@ class Editor implements KetcherEditor {
 
   explicitSelected(autoSelectBonds = true) {
     const selection = this.selection() ?? {};
-    const res = structObjects.reduce((acc, key) => {
-      acc[key] = selection[key] ? selection[key].slice() : [];
-      return acc;
-    }, {} as Selection);
+    const res: Selection = {};
+    structObjects.forEach((key) => {
+      res[key] = selection[key] ? selection[key].slice() : [];
+    });
 
     const struct = this.render.ctab.molecule;
 

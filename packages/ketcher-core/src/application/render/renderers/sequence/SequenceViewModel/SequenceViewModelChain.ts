@@ -33,10 +33,7 @@ export class SequenceViewModelChain {
   }
 
   public get nodes() {
-    return this.rows.reduce(
-      (acc, row) => acc.concat(row.sequenceViewModelItems),
-      [] as ITwoStrandedChainItem[],
-    );
+    return this.rows.flatMap((row) => row.sequenceViewModelItems);
   }
 
   public get length() {

@@ -283,13 +283,12 @@ export class SGroupRenderer extends BaseRenderer {
     { lowerIndexText, upperIndexText, indexAttribute }: DrawBracketsOptions,
   ): void {
     const brackets = this.getBracketParameters(bracketBox);
-    const rightBracket = brackets.reduce(
-      (currentRightBracket, bracket) =>
-        this.isMoreRightwardBracket(bracket, currentRightBracket)
-          ? bracket
-          : currentRightBracket,
-      brackets[0],
-    );
+    let rightBracket = brackets[0];
+    for (const bracket of brackets.slice(1)) {
+      if (this.isMoreRightwardBracket(bracket, rightBracket)) {
+        rightBracket = bracket;
+      }
+    }
 
     brackets.forEach((bracket) => this.appendBracket(bracket));
 

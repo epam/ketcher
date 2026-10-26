@@ -1,6 +1,5 @@
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import type { SequenceNode } from 'domain/entities/monomer-chains/types';
@@ -20,9 +19,9 @@ export function isTwoStrandedNodeRestrictedForHydrogenBondCreation(
   twoStrandedNode?: ITwoStrandedChainItem,
 ) {
   const senseNodeHydrogenBonds =
-    twoStrandedNode?.senseNode?.monomers.reduce((acc, monomer) => {
-      return acc.concat(monomer.hydrogenBonds);
-    }, [] as HydrogenBond[]) || [];
+    twoStrandedNode?.senseNode?.monomers.flatMap(
+      (monomer) => monomer.hydrogenBonds,
+    ) || [];
 
   return Boolean(
     isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.senseNode) ||

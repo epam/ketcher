@@ -262,20 +262,18 @@ export class SGroup {
         contentBoxes.push(bba);
       });
 
-      const contentBB = contentBoxes.reduce<Box2Abs | null>(
-        (contentBounds, bba) => {
-          let bbb: Box2Abs | null = null;
-          [bba.p0.x, bba.p1.x].forEach((x) => {
-            [bba.p0.y, bba.p1.y].forEach((y) => {
-              const v = new Vec2(x, y);
-              bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
-            });
+      let contentBB: Box2Abs | null = null;
+      for (const bba of contentBoxes) {
+        let bbb: Box2Abs | null = null;
+        [bba.p0.x, bba.p1.x].forEach((x) => {
+          [bba.p0.y, bba.p1.y].forEach((y) => {
+            const v = new Vec2(x, y);
+            bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
           });
-          assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
-          return !contentBounds ? bbb : Box2Abs.union(contentBounds, bbb);
-        },
-        null,
-      );
+        });
+        assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
+        contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb);
+      }
 
       assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
       topLeftPoint = isBondContent ? contentBB.centre() : contentBB.p0;

@@ -19,7 +19,6 @@ import type { AnyAction } from 'redux';
 import { appUpdate } from '../options/actions';
 import {
   type SdfItem,
-  type Struct,
   FunctionalGroupsProvider,
   SdfSerializer,
 } from 'ketcher-core';
@@ -78,10 +77,7 @@ export function initFGTemplates() {
     const provider = FunctionalGroupsProvider.getInstance();
     const sdfSerializer = new SdfSerializer();
     const templates = sdfSerializer.deserialize(templatesRawData);
-    const functionalGroups = templates.reduce(
-      (acc: Struct[], { struct }) => [...acc, struct],
-      [],
-    );
+    const functionalGroups = templates.map(({ struct }) => struct);
     provider.setFunctionalGroupsList(functionalGroups);
     dispatch(initFGroups(templates));
     dispatch(appUpdate({ functionalGroups: true }));

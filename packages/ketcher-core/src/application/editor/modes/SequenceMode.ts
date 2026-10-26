@@ -105,11 +105,6 @@ export interface StartNewSequenceEventData {
   indexOfRowBefore: number;
 }
 
-interface PreservedHydrogenBonds {
-  toMonomer: BaseMonomer;
-  fromMonomer: BaseMonomer;
-}
-
 interface PreservedSideChainConnection {
   sourceMonomer: BaseMonomer;
   firstMonomerAttachmentPointName: AttachmentPointName;
@@ -2323,18 +2318,11 @@ export class SequenceMode extends BaseMode {
     const position = selectedNode.monomer.position;
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
-    const preservedHydrodenBonds = selectedNode.monomers.reduce(
-      (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
-            return {
-              toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
-              fromMonomer: monomer,
-            };
-          }),
-        );
-      },
-      [] as PreservedHydrogenBonds[],
+    const preservedHydrodenBonds = selectedNode.monomers.flatMap((monomer) =>
+      monomer.hydrogenBonds.map((hydrodenBond) => ({
+        toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
+        fromMonomer: monomer,
+      })),
     );
     const hasPreviousNodeInChain =
       selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
@@ -3007,18 +2995,11 @@ export class SequenceMode extends BaseMode {
 
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
-    const preservedHydrodenBonds = selectedNode.monomers.reduce(
-      (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
-            return {
-              toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
-              fromMonomer: monomer,
-            };
-          }),
-        );
-      },
-      [] as PreservedHydrogenBonds[],
+    const preservedHydrodenBonds = selectedNode.monomers.flatMap((monomer) =>
+      monomer.hydrogenBonds.map((hydrodenBond) => ({
+        toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
+        fromMonomer: monomer,
+      })),
     );
 
     selectedNode.monomers.forEach((monomer) => {

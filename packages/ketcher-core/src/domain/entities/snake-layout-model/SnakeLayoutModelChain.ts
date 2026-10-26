@@ -33,14 +33,7 @@ export class SnakeLayoutModelChain {
   }
 
   public get nodes() {
-    return this.rows.reduce(
-      (acc, row) => acc.concat(row.snakeLayoutModelItems),
-      [] as (
-        | ITwoStrandedSnakeLayoutNode
-        | EmptySnakeLayoutNode
-        | MoleculeSnakeLayoutNode
-      )[],
-    );
+    return this.rows.flatMap((row) => row.snakeLayoutModelItems);
   }
 
   public get length() {

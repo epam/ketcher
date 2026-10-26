@@ -917,18 +917,17 @@ class ReStruct {
       const attachmentPointIds =
         this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
 
-      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce(
-        (previousVBox, attachmentPointId) => {
-          const attachmentPoint =
-            this.rgroupAttachmentPoints.get(attachmentPointId);
-          assert(attachmentPoint != null);
-          const currentVBox = attachmentPoint.getVBoxObj(this.render);
-          return previousVBox && currentVBox
-            ? Box2Abs.union(previousVBox, currentVBox)
+      let oneAtomAttachmentPointsVBox: Box2Abs | null = null;
+      attachmentPointIds.forEach((attachmentPointId) => {
+        const attachmentPoint =
+          this.rgroupAttachmentPoints.get(attachmentPointId);
+        assert(attachmentPoint != null);
+        const currentVBox = attachmentPoint.getVBoxObj(this.render);
+        oneAtomAttachmentPointsVBox =
+          oneAtomAttachmentPointsVBox && currentVBox
+            ? Box2Abs.union(oneAtomAttachmentPointsVBox, currentVBox)
             : currentVBox;
-        },
-        null as Box2Abs | null,
-      );
+      });
 
       if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
         allAtomAttachmentPointsVBox = Box2Abs.union(

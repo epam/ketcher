@@ -73,10 +73,11 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     let unionized = false;
 
     // Union two of sets
-    const setsToReturn = sets.reduce((prevSets, curSet) => {
+    let setsToReturn = new Array<Pile<T>>();
+    for (const curSet of sets) {
       let isCurSetMerged = false;
 
-      const newSets = prevSets.map((set) => {
+      const newSets = setsToReturn.map((set) => {
         const intersec = set.intersection(curSet);
         if (intersec.size > 0) {
           unionized = true;
@@ -87,8 +88,8 @@ export class Pile<TValue = unknown> extends Set<TValue> {
       });
 
       if (!isCurSetMerged) newSets.push(curSet);
-      return newSets;
-    }, new Array<Pile<T>>());
+      setsToReturn = newSets;
+    }
 
     // Recursively union two of sets === union all sets
     return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;

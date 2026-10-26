@@ -2897,24 +2897,19 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
-    const newDrawingEntities = drawingEntities.reduce(
-      (
-        selectedDrawingEntities: DrawingEntity[],
-        drawingEntity: DrawingEntity,
-      ) => {
-        const res =
-          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-            drawingEntity,
-            true,
-            selectedDrawingEntities,
-          );
-        res.drawingEntities.forEach((entity) =>
-          command.addOperation(new DrawingEntitySelectOperation(entity)),
+    let newDrawingEntities: DrawingEntity[] = [];
+    for (const drawingEntity of drawingEntities) {
+      const res =
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+          drawingEntity,
+          true,
+          newDrawingEntities,
         );
-        return selectedDrawingEntities.concat(res.drawingEntities);
-      },
-      [],
-    );
+      res.drawingEntities.forEach((entity) =>
+        command.addOperation(new DrawingEntitySelectOperation(entity)),
+      );
+      newDrawingEntities = newDrawingEntities.concat(res.drawingEntities);
+    }
     return { command, drawingEntities: newDrawingEntities };
   }
 
@@ -3741,30 +3736,28 @@ export class DrawingEntitiesManager {
         });
 
         const chainsToCenterArray = [...chainsToCenters.entries()];
-        const chainWithLowestCenter = chainsToCenterArray.reduce(
-          ([previousChain, previousChainCenter], [chainToCheck, center]) => {
-            return center.y < previousChainCenter.y
-              ? [chainToCheck, center]
-              : [previousChain, previousChainCenter];
-          },
-          chainsToCenterArray[0],
-        );
+        let chainWithLowestCenter = chainsToCenterArray[0];
+        for (const [chainToCheck, center] of chainsToCenterArray.slice(1)) {
+          if (center.y < chainWithLowestCenter[1].y) {
+            chainWithLowestCenter = [chainToCheck, center];
+          }
+        }
         const chainsToComplimentaryChainsAmountArray = [
           ...chainsToComplimentaryChainsAmount.entries(),
         ];
-        const chainWithMoreComplimentaryChains =
-          chainsToComplimentaryChainsAmountArray.reduce(
-            (
-              [previousChain, previousChainComplimentaryChainsAmount],
-              [chainToCheck, complimentaryChainsAmount],
-            ) => {
-              return complimentaryChainsAmount >
-                previousChainComplimentaryChainsAmount
-                ? [chainToCheck, complimentaryChainsAmount]
-                : [previousChain, previousChainComplimentaryChainsAmount];
-            },
-            chainsToComplimentaryChainsAmountArray[0],
-          );
+        let chainWithMoreComplimentaryChains =
+          chainsToComplimentaryChainsAmountArray[0];
+        for (const [
+          chainToCheck,
+          complimentaryChainsAmount,
+        ] of chainsToComplimentaryChainsAmountArray.slice(1)) {
+          if (complimentaryChainsAmount > chainWithMoreComplimentaryChains[1]) {
+            chainWithMoreComplimentaryChains = [
+              chainToCheck,
+              complimentaryChainsAmount,
+            ];
+          }
+        }
 
         senseChain =
           chainsToComplimentaryChainsAmount.size === 1

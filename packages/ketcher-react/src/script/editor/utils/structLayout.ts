@@ -1,10 +1,11 @@
 import { ReStruct, Vec2 } from 'ketcher-core';
 
 export function getSelectionMap(structure: ReStruct) {
-  return Object.keys(ReStruct.maps).reduce((result, map) => {
-    result[map] = Array.from(structure[map].keys());
-    return result;
-  }, {});
+  const selectionMap = {};
+  Object.keys(ReStruct.maps).forEach((map) => {
+    selectionMap[map] = Array.from(structure[map].keys());
+  });
+  return selectionMap;
 }
 
 export function getStructCenter(reStruct: ReStruct, selection?) {

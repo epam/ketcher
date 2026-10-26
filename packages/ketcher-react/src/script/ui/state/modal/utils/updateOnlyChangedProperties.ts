@@ -18,13 +18,11 @@ export function updateOnlyChangedProperties(
       (key) => userChangedElement[key] !== '',
     ),
   );
-  return Object.getOwnPropertyNames(unchangedElement).reduce(
-    (updatedElement, key) => {
-      updatedElement[key] = updatedKeys.has(key)
-        ? castAtomPropToType(key, userChangedElement[key])
-        : unchangedElement[key];
-      return updatedElement;
-    },
-    {},
-  );
+  const updatedElement = {};
+  Object.getOwnPropertyNames(unchangedElement).forEach((key) => {
+    updatedElement[key] = updatedKeys.has(key)
+      ? castAtomPropToType(key, userChangedElement[key])
+      : unchangedElement[key];
+  });
+  return updatedElement;
 }

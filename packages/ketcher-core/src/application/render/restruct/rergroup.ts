@@ -96,14 +96,14 @@ class ReRGroup extends ReObject {
   draw(render: Render, options: RenderOptions): { data: unknown[] } {
     let bb = this.calcBBox(render);
 
-    if (!bb) {
+    if (bb) {
+      // add a little space between the attachment points and brackets
+      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
+    } else {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools',
       );
       return { data: [] };
-    } else {
-      // add a little space between the attachment points and brackets
-      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
     const ret: { data: unknown[] } = { data: [] };

@@ -237,10 +237,10 @@ export class ChainsCollection {
 
         handledMonomers.add(previousMonomerInChain);
 
-        if (!previousMonomer) {
-          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
-        } else {
+        if (previousMonomer) {
           previousMonomerInChain = previousMonomer;
+        } else {
+          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
         }
       }
     });

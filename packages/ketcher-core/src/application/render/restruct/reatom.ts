@@ -2253,7 +2253,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;
-      return !charge.startsWith('-') ? `+${charge}` : charge;
+      return charge.startsWith('-') ? charge : `+${charge}`;
     },
   },
   {
@@ -2264,7 +2264,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'explicitValence',
     getValue: (atom) => atom.explicitValence,
-    format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    format: (value) => (Number(value) === -1 ? '' : `v${value}`),
   },
   {
     propertyName: 'ringBondCount',

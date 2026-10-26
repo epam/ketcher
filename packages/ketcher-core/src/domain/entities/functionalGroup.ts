@@ -198,7 +198,7 @@ export class FunctionalGroup {
     const key = functionalGroups.find(
       (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id,
     );
-    return key !== null ? functionalGroups.get(key) : undefined;
+    return key === null ? undefined : functionalGroups.get(key);
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {

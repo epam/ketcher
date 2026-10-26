@@ -196,7 +196,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       );
     });
 
-    return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
+    return result ? null : MultitailValidationErrors.INCORRECT_TAILS;
   }
 
   static getConstructorParamsFromKetNode(

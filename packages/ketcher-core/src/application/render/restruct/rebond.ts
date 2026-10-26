@@ -167,13 +167,13 @@ class ReBond extends ReObject {
     // to when it is connected to a Carbon atom w/o a label
     // please refer to: ketcher-core/docs/data/hover_selection_2.png
     const halfBondStart =
-      bond.hb1 !== undefined
-        ? restruct.molecule.halfBonds.get(bond.hb1)?.p
-        : undefined;
+      bond.hb1 === undefined
+        ? undefined
+        : restruct.molecule.halfBonds.get(bond.hb1)?.p;
     const halfBondEnd =
-      bond.hb2 !== undefined
-        ? restruct.molecule.halfBonds.get(bond.hb2)?.p
-        : undefined;
+      bond.hb2 === undefined
+        ? undefined
+        : restruct.molecule.halfBonds.get(bond.hb2)?.p;
     if (!halfBondStart || !halfBondEnd) return [];
 
     const isStereoBond =
@@ -418,8 +418,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : null;
-    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : null;
+    const hb1 = hb1Id === undefined ? null : struct.halfBonds.get(hb1Id);
+    const hb2 = hb2Id === undefined ? null : struct.halfBonds.get(hb2Id);
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);

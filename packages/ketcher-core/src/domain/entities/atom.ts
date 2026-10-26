@@ -1116,7 +1116,7 @@ export function radicalElectrons(radical: unknown) {
 }
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return value !== undefined ? value : defaultValue;
+  return value === undefined ? defaultValue : value;
 }
 
 function isCorrectPseudo(label) {

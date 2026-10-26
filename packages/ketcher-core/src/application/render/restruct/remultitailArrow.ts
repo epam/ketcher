@@ -463,13 +463,13 @@ export class ReMultitailArrow extends ReObject {
           ? {
               distance,
               ref:
-                refName !== MultitailArrowRefName.SPINE
-                  ? {
+                refName === MultitailArrowRefName.SPINE
+                  ? null
+                  : {
                       name: refName,
                       isLine,
                       tailId,
-                    }
-                  : null,
+                    },
             }
           : acc;
       },

@@ -14,8 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Integration tests for settings bidirectional flow:
  * Redux → Core → Hook → Redux (complete cycle)
@@ -23,10 +21,21 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import {
+  type UnknownAction,
+  type Dispatch,
+  type Middleware,
+  type Store,
+  createStore,
+  applyMiddleware,
+} from 'redux';
+import type { ReactNode } from 'react';
 import { useSettings } from '../hooks/useSettings';
 import { saveSettings } from '../script/ui/state/options';
 import {
+  type ISettingsService,
+  type Ketcher,
+  type Settings,
   SettingsService,
   MemoryStorageAdapter,
   getDefaultSettings,
@@ -35,30 +44,55 @@ import {
 
 const TEST_KETCHER_ID = 'settings-integration-test';
 
-const attachSettingsService = (settingsService: any) => {
+interface IntegrationState {
+  editor: { ketcher: { settingsService?: ISettingsService } };
+  options: { settings: Settings };
+}
+
+interface SettingsAction extends UnknownAction {
+  data?: Partial<Settings>;
+}
+
+type ThunkAction<R = unknown> = (
+  dispatch: Dispatch,
+  getState: () => IntegrationState,
+) => R;
+
+interface ThunkDispatch {
+  <R>(thunk: ThunkAction<R>): R;
+}
+
+const isThunkAction = (action: unknown): action is ThunkAction =>
+  typeof action === 'function';
+
+const attachSettingsService = (settingsService: ISettingsService) => {
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,
     settingsService,
-  } as any);
+  } as unknown as Ketcher);
 };
 
 // Simple thunk middleware
-const thunkMiddleware = (store: any) => (next: any) => (action: any) =>
-  typeof action === 'function'
-    ? action(store.dispatch, store.getState)
-    : next(action);
+const thunkMiddleware: Middleware<ThunkDispatch, IntegrationState> =
+  ({ dispatch, getState }) =>
+  (next) =>
+  (action) =>
+    isThunkAction(action) ? action(dispatch, getState) : next(action);
 
 // Create a full Redux store with thunk middleware
-const createIntegrationStore = (settingsService?: any) => {
-  const initialState = {
+const createIntegrationStore = (settingsService?: ISettingsService) => {
+  const initialState: IntegrationState = {
     editor: { ketcher: { settingsService } },
     options: {
       settings: getDefaultSettings(),
     },
   };
 
-  const rootReducer = (state = initialState, action: any) => {
+  const rootReducer = (
+    state: IntegrationState = initialState,
+    action: SettingsAction,
+  ): IntegrationState => {
     switch (action.type) {
       case 'SAVE_SETTINGS':
       case 'SYNC_SETTINGS_FROM_CORE':
@@ -81,8 +115,8 @@ const createIntegrationStore = (settingsService?: any) => {
 };
 
 // Wrapper component
-const createWrapper = (store: any) =>
-  function Wrapper({ children }: { children?: any }) {
+const createWrapper = (store: Store) =>
+  function Wrapper({ children }: { children?: ReactNode }) {
     return <Provider store={store}>{children}</Provider>;
   };
 
@@ -91,9 +125,7 @@ describe('Settings Integration Tests', () => {
     SettingsService.resetInstance();
     ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     // Clean up window.ketcher
-    if ((window as any).ketcher) {
-      delete (window as any).ketcher;
-    }
+    delete window.ketcher;
   });
 
   afterEach(() => {
@@ -119,7 +151,7 @@ describe('Settings Integration Tests', () => {
       };
 
       await act(async () => {
-        await store.dispatch(saveSettings(newSettings, TEST_KETCHER_ID) as any);
+        await store.dispatch(saveSettings(newSettings, TEST_KETCHER_ID));
       });
 
       // Verify Core received the update
@@ -159,8 +191,8 @@ describe('Settings Integration Tests', () => {
 
       // Verify Redux state was updated
       const reduxSettings = store.getState().options.settings;
-      expect((reduxSettings as any).resetToSelect).toBe(false);
-      expect((reduxSettings as any).rotationStep).toBe(45);
+      expect(reduxSettings.resetToSelect).toBe(false);
+      expect(reduxSettings.rotationStep).toBe(45);
 
       // Verify hook state was updated
       expect(result.current.settings?.resetToSelect).toBe(false);
@@ -190,9 +222,7 @@ describe('Settings Integration Tests', () => {
       };
 
       await act(async () => {
-        await store.dispatch(
-          saveSettings(updateFromRedux, TEST_KETCHER_ID) as any,
-        );
+        await store.dispatch(saveSettings(updateFromRedux, TEST_KETCHER_ID));
       });
 
       // Step 2: Verify Core received it
@@ -214,9 +244,9 @@ describe('Settings Integration Tests', () => {
 
       // Step 5: Verify Redux has all updates
       const finalReduxSettings = store.getState().options.settings;
-      expect((finalReduxSettings as any).resetToSelect).toBe(false); // From step 1
-      expect((finalReduxSettings as any).atomColoring).toBe(false); // From step 1
-      expect((finalReduxSettings as any).rotationStep).toBe(60); // From step 3
+      expect(finalReduxSettings.resetToSelect).toBe(false); // From step 1
+      expect(finalReduxSettings.atomColoring).toBe(false); // From step 1
+      expect(finalReduxSettings.rotationStep).toBe(60); // From step 3
     });
 
     it('should not create infinite update loop', async () => {
@@ -240,7 +270,7 @@ describe('Settings Integration Tests', () => {
       // Make one update
       await act(async () => {
         await store.dispatch(
-          saveSettings({ resetToSelect: false }, TEST_KETCHER_ID) as any,
+          saveSettings({ resetToSelect: false }, TEST_KETCHER_ID),
         );
       });
 
@@ -274,7 +304,7 @@ describe('Settings Integration Tests', () => {
           saveSettings(
             { resetToSelect: false, rotationStep: 25 },
             TEST_KETCHER_ID,
-          ) as any,
+          ),
         );
       });
 
@@ -356,8 +386,8 @@ describe('Settings Integration Tests', () => {
 
       // Verify Redux was synced
       const reduxSettings = store.getState().options.settings;
-      expect((reduxSettings as any).atomColoring).toBe(false);
-      expect((reduxSettings as any).fontszUnit).toBe('pt');
+      expect(reduxSettings.atomColoring).toBe(false);
+      expect(reduxSettings.fontszUnit).toBe('pt');
     });
 
     it('should have acs in available presets', async () => {
@@ -398,12 +428,12 @@ describe('Settings Integration Tests', () => {
 
       // This should not throw
       await act(async () => {
-        await store.dispatch(saveSettings({ resetToSelect: false }) as any);
+        await store.dispatch(saveSettings({ resetToSelect: false }));
       });
 
       // Redux state should still update
       const reduxSettings = store.getState().options.settings;
-      expect((reduxSettings as any).resetToSelect).toBe(false);
+      expect(reduxSettings.resetToSelect).toBe(false);
     });
   });
 
@@ -468,7 +498,7 @@ describe('Settings Integration Tests', () => {
       // Try to update with invalid value (rotationStep max is 90) with flat format
       await expect(async () => {
         await result.current.updateSettings({
-          rotationStep: 200 as any,
+          rotationStep: 200,
         });
       }).rejects.toThrow();
 

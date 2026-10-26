@@ -1001,6 +1001,7 @@ test.describe('Snake Bond Tool', () => {
       page,
       `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);

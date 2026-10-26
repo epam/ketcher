@@ -1087,6 +1087,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       MacroFileType.AxoLabs,
       "5'-(Unknown1)(Unknown2)(Unknown3)-3'",
     );
+    await moveMouseAway(page);
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerId: 6 }),

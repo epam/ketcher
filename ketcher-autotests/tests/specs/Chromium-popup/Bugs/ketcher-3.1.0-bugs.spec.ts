@@ -11,6 +11,7 @@ import {
   pasteFromClipboardByKeyboard,
   takeElementScreenshot,
   copyContentToClipboard,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
@@ -441,6 +442,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await copyToClipboardByKeyboard(page);
     await page.mouse.move(500, 500);
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -2,6 +2,7 @@ import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import {
   MacroFileType,
+  moveMouseAway,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeEditorScreenshot,
 } from '@utils';
@@ -13,6 +14,7 @@ test.describe('Support aliases from HELM', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
   });
+  test.afterEach(async ({ FlexCanvas: _ }) => {});
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -112,6 +114,7 @@ test.describe('Support aliases from HELM', () => {
       MacroFileType.HELM,
       'RNA1{m(A).[fl2r](A).fl5pr2r(A).menoe2r(A).fl3pr2r(A).GalNAc3C62r(A).oheom2r(A).pyren1ylm2r(A).allyl2r(A).MOE(A).prpargyl2r(A).e2noe2r(A).iprmnoe2r(A).guane2r(A).m2npr2r(A).m2nenc2r(A).ctfl3moe(A).n3r(A).me3fl2r(A).m3ALlna(A).moe3ana(A).25moe3r(A).s4r(A).5R6Rm5cEt(A).5R6Sm5cEt(A).5S6Rm5cEt(A).5S6Sm5cEt(A).Rm5ALlna(A).Sm5fl2r(A).Sm5ALlna(A).Svinyl5lna(A).Sm6fhna(A).Sm6ALlna(A).Diprglyol2r(A).Liprglyol2r(A).RGNA(A).Rm5fl2r(A).Rflclna(A).Rso2lna(A).RSpabCNA(A).SGNA(A).Sso2lna(A).SRpabCNA(A).Smn2cet(A).Rmn2cet(A).hna(A).afl2Nmc(A).Dlyspna(A).Llyspna(A).R(A).25R(A).tna(A).UNA(A).ALlna(A).ALmeclna(A).ALtrina1(A).ALtrina2(A)}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -140,6 +143,7 @@ test.describe('Support aliases from HELM', () => {
       MacroFileType.HELM,
       'RNA1{3A6}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -283,6 +283,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
+    if (this.atom.label === 'R#') {
+      return false;
+    }
+
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -308,6 +312,19 @@ export class AtomRenderer extends BaseRenderer {
   public get labelText() {
     if (this.atom.properties.atomList) {
       return this.atom.properties.atomList.label();
+    }
+    if (
+      this.atom.label === 'R#' &&
+      !this.atom.properties.alias &&
+      this.atom.properties.rglabel
+    ) {
+      let text = '';
+      for (let index = 0; index < 32; index++) {
+        if (this.atom.properties.rglabel & (1 << index)) {
+          text += `R${index + 1}`;
+        }
+      }
+      return text;
     }
     return this.atom.properties.alias ?? this.atom.label;
   }
@@ -467,9 +484,9 @@ export class AtomRenderer extends BaseRenderer {
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
-          this.isGenericLabel ? ' font-style: italic;' : ''
-        }`,
+        `user-select: none; font-family: Arial; letter-spacing: ${
+          this.atom.label === 'R#' ? '0' : '1.2px'
+        };${this.isGenericLabel ? ' font-style: italic;' : ''}`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');

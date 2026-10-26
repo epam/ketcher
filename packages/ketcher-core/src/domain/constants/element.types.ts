@@ -344,4 +344,4 @@ export type GenericAtomLabel =
  * canvas — either a real periodic-table element (plus D/T), or a generic /
  * pseudo query label from the extended table.
  */
-export type CoreAtomLabel = AtomLabel | GenericAtomLabel;
+export type CoreAtomLabel = AtomLabel | GenericAtomLabel | 'R#';

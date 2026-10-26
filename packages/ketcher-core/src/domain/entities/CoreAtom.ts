@@ -26,6 +26,7 @@ export interface AtomProperties {
   cip?: AtomCIP | null;
   stereoLabel?: string | null;
   atomList?: AtomList | null;
+  rglabel?: number | null;
 }
 
 export class Atom extends DrawingEntity {

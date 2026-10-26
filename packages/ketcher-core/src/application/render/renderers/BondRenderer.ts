@@ -217,6 +217,17 @@ export class BondRenderer extends BaseRenderer {
       );
     });
 
+    if (atom.label === 'R#') {
+      // Match ReAtom.getShiftedSegmentPosition in molecules mode.
+      if (shiftValue <= 0) return position;
+      const padding = 3 * LINE_WIDTH;
+      const bondLength = Coordinates.modelToCanvas(
+        halfEdge.secondAtom.position.sub(halfEdge.firstAtom.position),
+      ).length();
+      shiftValue = Math.min(shiftValue, Math.max(bondLength / 2 - padding, 0));
+      return position.addScaled(halfEdge.direction, padding + shiftValue);
+    }
+
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
 

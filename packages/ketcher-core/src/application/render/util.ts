@@ -141,12 +141,13 @@ function chooseNonOverlappingLabelPlacement(
   getLabelBox: (direction: Vec2, additionalDistance: number) => Box2Abs,
   getLabelDistance: (direction: Vec2, additionalDistance: number) => number,
   occupiedBoxes: Box2Abs[],
+  visibleBox?: Box2Abs,
 ): { direction: Vec2; additionalDistance: number } {
   assert(directions.length > 0);
 
   let selectedPlacement = {
     direction: directions[0],
-    additionalDistance: Number.POSITIVE_INFINITY,
+    additionalDistance: 0,
   };
   let shortestDistance = Number.POSITIVE_INFINITY;
 
@@ -155,6 +156,12 @@ function chooseNonOverlappingLabelPlacement(
 
     for (let attempt = 0; attempt <= occupiedBoxes.length; attempt += 1) {
       const labelBox = getLabelBox(direction, additionalDistance);
+      if (
+        visibleBox &&
+        (!visibleBox.contains(labelBox.p0) || !visibleBox.contains(labelBox.p1))
+      ) {
+        break;
+      }
       const overlappingBoxes = occupiedBoxes.filter(
         (occupiedBox) =>
           labelBox.p0.x < occupiedBox.p1.x &&

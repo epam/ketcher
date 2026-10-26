@@ -1399,6 +1399,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       ...occupiedAtomLabelBoxes,
       ...occupiedBondBoxes,
     ];
+    const { minX, minY, width, height } = render.viewBox;
+    const viewport = new Box2Abs(minX, minY, minX + width, minY + height);
+    const visibleBox = viewport.contains(ps) ? viewport : undefined;
+    const labelCollisionBox = cipLabelBox.extend(gap, gap);
     const getShiftVector = (direction: Vec2) => {
       let baseDistance = 3;
       for (const ext of this.visel.exts) {
@@ -1414,21 +1418,33 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           direction.negated(),
           Box2Abs.fromRelBox(cipTextBBox),
         );
-      return direction.scaled(2 + shiftDistance);
+      const shift = direction.scaled(2 + shiftDistance);
+      if (!visibleBox) {
+        return shift;
+      }
+      return new Vec2(
+        Math.max(
+          visibleBox.p0.x - labelCollisionBox.p0.x,
+          Math.min(shift.x, visibleBox.p1.x - labelCollisionBox.p1.x),
+        ),
+        Math.max(
+          visibleBox.p0.y - labelCollisionBox.p0.y,
+          Math.min(shift.y, visibleBox.p1.y - labelCollisionBox.p1.y),
+        ),
+      );
     };
     const placement = util.chooseNonOverlappingLabelPlacement(
       this.getLabelDirections(render.ctab.molecule),
       (candidateDirection, additionalDistance) =>
-        cipLabelBox
-          .translate(
-            getShiftVector(candidateDirection).add(
-              candidateDirection.scaled(additionalDistance),
-            ),
-          )
-          .extend(gap, gap),
+        labelCollisionBox.translate(
+          getShiftVector(candidateDirection).add(
+            candidateDirection.scaled(additionalDistance),
+          ),
+        ),
       (candidateDirection, additionalDistance) =>
         getShiftVector(candidateDirection).length() + additionalDistance,
       occupiedLabelBoxes,
+      visibleBox,
     );
     const shiftVector = getShiftVector(placement.direction).add(
       placement.direction.scaled(placement.additionalDistance),

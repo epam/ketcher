@@ -23,6 +23,53 @@ describe('util', () => {
   });
 
   describe('chooseNonOverlappingLabelPlacement()', () => {
+    it('accepts a collision rather than moving outside the visible canvas', () => {
+      const directions = [new Vec2(1, 0), new Vec2(0, 1)];
+      const visibleBox = new Box2Abs(0, 0, 20, 20);
+      const getLabelBox = (direction: Vec2, additionalDistance: number) =>
+        new Box2Abs(8, 8, 12, 12).translate(
+          direction.scaled(additionalDistance),
+        );
+
+      const placement = util.chooseNonOverlappingLabelPlacement(
+        directions,
+        getLabelBox,
+        (_direction, additionalDistance) => additionalDistance,
+        [visibleBox],
+        visibleBox,
+      );
+
+      expect(placement).toEqual({
+        direction: directions[0],
+        additionalDistance: 0,
+      });
+      const labelBox = getLabelBox(
+        placement.direction,
+        placement.additionalDistance,
+      );
+      expect(visibleBox.contains(labelBox.p0)).toBe(true);
+      expect(visibleBox.contains(labelBox.p1)).toBe(true);
+    });
+
+    it('chooses a visible direction over a shorter placement outside the canvas', () => {
+      const directions = [new Vec2(1, 0), new Vec2(0, 1)];
+      const placement = util.chooseNonOverlappingLabelPlacement(
+        directions,
+        (direction, additionalDistance) =>
+          new Box2Abs(14, 4, 18, 8).translate(
+            direction.scaled(additionalDistance),
+          ),
+        (_direction, additionalDistance) => additionalDistance,
+        [new Box2Abs(13, 3, 19, 15)],
+        new Box2Abs(0, 0, 20, 20),
+      );
+
+      expect(placement).toEqual({
+        direction: directions[1],
+        additionalDistance: 11.5,
+      });
+    });
+
     it('moves labels out of occupied boxes when all sectors initially collide', () => {
       const directions = [new Vec2(1, 0), new Vec2(0, 1)];
       const getLabelBox = (direction: Vec2, additionalDistance: number) => {

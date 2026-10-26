@@ -974,6 +974,26 @@ class ReStruct {
     });
   }
 
+  refreshCIPLabels(): void {
+    const atomsWithCIP = Array.from(this.atoms.entries()).filter(
+      ([, atom]) => atom.a.cip || atom.cip,
+    );
+    atomsWithCIP.forEach(([, atom]) => {
+      if (atom.cip) {
+        const path = atom.cip.path;
+        path.remove();
+        atom.visel.paths = atom.visel.paths.filter(
+          (viselPath) => viselPath !== path,
+        );
+        atom.cip = undefined;
+      }
+    });
+    atomsWithCIP.forEach(([aid, atom]) => {
+      atom.showCIPLabel(this, aid, this.render.options);
+    });
+    this.setSelection();
+  }
+
   private showCIPLabels(): void {
     const options = this.render.options;
     this.atomsChanged.forEach((_value, aid) => {

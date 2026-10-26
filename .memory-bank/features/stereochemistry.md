@@ -20,6 +20,20 @@ Stereo descriptors are derived from the drawn structure and stay consistent with
 - **WHEN** the user clicks _Calculate CIP_ with stereocenters present
 - **THEN** each recognized stereocenter is annotated with its S/R, s/r, or E/Z label
 
+#### Scenario: Placing atom CIP labels in a crowded canvas
+
+- **WHEN** a visible atom's CIP label is rendered near other labels or bonds
+- **THEN** a collision-free position within the visible canvas is preferred
+- **AND** if no such position is found, a collision is accepted rather than moving the label outside the visible canvas
+- **AND** initial positions near a canvas edge are adjusted to keep the label inside the visible area, provided the canvas is large enough to contain it
+
+#### Scenario: Changing the visible canvas area
+
+- **WHEN** the user pans, zooms, or resizes the canvas
+- **THEN** atom CIP labels are repositioned for the new visible area without recalculating their stereochemical descriptors
+- **AND** labels belonging to atoms outside the visible canvas are not pulled onto its edges
+- **AND** refreshing labels preserves the current selection and does not leave duplicate annotations
+
 #### Scenario: Assigning enhanced stereo marks
 
 - **WHEN** the user selects tetrahedral stereocenters and assigns Absolute / AND / OR in the _Enhanced Stereochemistry_ dialog

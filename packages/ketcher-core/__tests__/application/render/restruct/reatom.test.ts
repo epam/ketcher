@@ -69,6 +69,7 @@ describe('CIP labels avoid bond geometry', () => {
         addReObjectPath: jest.fn(),
         render: {
           paper: { text: () => text, rect: () => rectangle, set: () => group },
+          viewBox: { minX: -100, minY: -100, width: 200, height: 200 },
         },
       } as unknown as ReStruct;
       restruct.render.ctab = restruct;
@@ -85,6 +86,72 @@ describe('CIP labels avoid bond geometry', () => {
         expect(placedBox.p1.y).toBeLessThan(bondBox.p0.y);
       }
       expect(placedBox.centre().x).toBeCloseTo(0);
+      restruct.render.viewBox = {
+        minX: 500,
+        minY: 500,
+        width: 200,
+        height: 200,
+      };
+      atomRenderer.showCIPLabel(restruct, atomId, options);
+      const [offscreenShiftX, offscreenShiftY] =
+        group.translateAbs.mock.calls[1];
+      expect(offscreenShiftX).toBeCloseTo(shiftX);
+      expect(offscreenShiftY).toBeCloseTo(shiftY);
+    },
+  );
+
+  it.each([
+    { x: 101, y: 220 },
+    { x: 139, y: 220 },
+    { x: 120, y: 201 },
+    { x: 120, y: 239 },
+  ])(
+    'keeps a blocked CIP label inside the viewport near ($x, $y)',
+    ({ x, y }) => {
+      const struct = new Struct();
+      const atomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(x, y), cip: AtomCIP.S }),
+      );
+      const atomRenderer = new ReAtom(struct.atoms.get(atomId)!);
+      const labelBox = { x: x - 3, y: y - 3, width: 6, height: 6 };
+      const text = {
+        attr: jest.fn().mockReturnThis(),
+        getBBox: () => labelBox,
+      };
+      const rectangle = { attr: jest.fn().mockReturnThis() };
+      const group = {
+        push: jest.fn(),
+        getBBox: () => labelBox,
+        translateAbs: jest.fn(),
+      };
+      const visibleBox = new Box2Abs(100, 200, 140, 240);
+      const options = {
+        microModeScale: 1,
+        fontszInPx: 10,
+        offset: new Vec2(),
+      } as RenderOptions;
+      const restruct = {
+        molecule: struct,
+        atoms: new Map([[atomId, atomRenderer]]),
+        bonds: new Map([[0, { getCIPCollisionBoxes: () => [visibleBox] }]]),
+        addReObjectPath: jest.fn(),
+        render: {
+          paper: { text: () => text, rect: () => rectangle, set: () => group },
+          viewBox: { minX: 100, minY: 200, width: 40, height: 40 },
+        },
+      } as unknown as ReStruct;
+      restruct.render.ctab = restruct;
+
+      atomRenderer.showCIPLabel(restruct, atomId, options);
+
+      const [shiftX, shiftY] = group.translateAbs.mock.calls[0];
+      expect(Number.isFinite(shiftX)).toBe(true);
+      expect(Number.isFinite(shiftY)).toBe(true);
+      const placedBox = Box2Abs.fromRelBox(labelBox).translate(
+        new Vec2(shiftX, shiftY),
+      );
+      expect(visibleBox.contains(placedBox.p0)).toBe(true);
+      expect(visibleBox.contains(placedBox.p1)).toBe(true);
     },
   );
 });

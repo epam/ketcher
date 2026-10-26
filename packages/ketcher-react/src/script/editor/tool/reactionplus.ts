@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,14 +18,21 @@ import {
   fromMultipleMove,
   fromPlusAddition,
   CoordinateTransformation,
+  type Vec2,
+  type Action,
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
+interface ReactionPlusDragContext {
+  xy0: Vec2;
+  action?: Action;
+}
+
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx: ReactionPlusDragContext | undefined;
 
   constructor(editor) {
     this.editor = editor;

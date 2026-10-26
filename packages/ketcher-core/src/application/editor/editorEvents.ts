@@ -64,6 +64,8 @@ export interface IEditorEvents {
   updateMonomersLibrary: Subscription;
   createAntisenseChain: Subscription;
   copySelectedStructure: Subscription;
+  copySelectedStructureAs: Subscription;
+  cutSelectedStructure: Subscription;
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
@@ -143,6 +145,8 @@ export const editorEvents: IEditorEvents = {
   updateMonomersLibrary: new Subscription(),
   createAntisenseChain: new Subscription(),
   copySelectedStructure: new Subscription(),
+  copySelectedStructureAs: new Subscription(),
+  cutSelectedStructure: new Subscription(),
   pasteFromClipboard: new Subscription(),
   deleteSelectedStructure: new Subscription(),
   selectEntities: new Subscription(),
@@ -369,6 +373,24 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Alt+c'],
     handler: (editor: CoreEditor) => {
       editor.events.layoutCircular.dispatch();
+    },
+  },
+  copyAsKet: {
+    shortcut: 'Mod+Shift+k',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('ket');
+    },
+  },
+  copyAsMol: {
+    shortcut: 'Mod+Shift+m',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('mol');
+    },
+  },
+  copyImage: {
+    shortcut: 'Mod+Shift+f',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('image');
     },
   },
 };

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import {
   StereoLabel,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { AttachmentGroup } from 'domain/entities/attachmentGroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
@@ -38,7 +39,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale } from 'domain/helpers';
+import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
 import draw, {
   AP_PATH_SCALE,
   AP_WAVE_HALF_PERP,
@@ -59,6 +60,7 @@ import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculati
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import type { ReBondEndpoint } from './rebondEndpoint';
 
 interface ElemAttr {
   text: string;
@@ -81,7 +83,7 @@ export enum ShowHydrogenLabelNames {
   On = 'On',
 }
 
-class ReAtom extends ReObject {
+class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
@@ -122,7 +124,7 @@ class ReAtom extends ReObject {
     this.component = -1;
   }
 
-  static isSelectable(): true {
+  static isSelectable(): boolean {
     return true;
   }
 
@@ -327,7 +329,7 @@ class ReAtom extends ReObject {
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
-    const height = fontszInPx * 1.23;
+    const height = ps2.y - ps1.y;
     return paper.rect(
       ps1.x - padding,
       ps1.y - padding,
@@ -1089,7 +1091,7 @@ class ReAtom extends ReObject {
 
     // we render them together to avoid possible collisions
 
-    const fragmentId = Number(restruct.atoms.get(aid)?.a.fragment);
+    const fragmentId = Number(this.a.fragment);
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
@@ -1409,7 +1411,14 @@ class ReAtom extends ReObject {
         largeAngles.push(angles[(index + 1) % angles.length] - angle);
       }
     }
-    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    const firstAngle = angles.at(0);
+    const lastAngle = angles.at(-1);
+
+    if (firstAngle === undefined || lastAngle === undefined) {
+      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
+    }
+
+    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (const [index, angle] of angles.entries()) {
@@ -1519,6 +1528,18 @@ function isLabelVisible(
   options: RenderOptions,
   atom: ReAtom,
 ) {
+  const attachmentGroupId =
+    atom.a instanceof AttachmentGroup
+      ? restruct.molecule.attachmentGroups.keyOf(atom.a)
+      : null;
+
+  if (
+    attachmentGroupId !== null &&
+    isAttachmentGroupWithHapticBond(restruct.molecule, attachmentGroupId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(

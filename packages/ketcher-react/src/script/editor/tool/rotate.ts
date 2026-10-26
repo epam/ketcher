@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -118,6 +118,8 @@ class RotateTool implements Tool {
   }
 
   getCenter() {
+    this.centerAtomId = undefined;
+
     if (!this.selection) {
       return;
     }
@@ -162,13 +164,20 @@ class RotateTool implements Tool {
        */
       const attachmentBondId = attachmentBonds.keys().next().value as number;
       const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond;
-      this.centerAtomId = [attachmentBond.begin, attachmentBond.end].find(
+      const centerAtomId = [attachmentBond.begin, attachmentBond.end].find(
         (atomId) =>
           this.selection?.bonds?.includes(attachmentBondId)
             ? !visibleAtoms.includes(atomId)
             : visibleAtoms.includes(atomId),
-      ) as number;
-      center = this.struct.atoms.get(this.centerAtomId)?.pp;
+      );
+      const centerAtom =
+        centerAtomId === undefined
+          ? undefined
+          : this.struct.atoms.get(centerAtomId);
+      if (centerAtom) {
+        this.centerAtomId = centerAtomId;
+        center = centerAtom.pp;
+      }
     }
 
     const { texts, rxnArrows, rxnPluses } = this.selection;
@@ -335,7 +344,11 @@ class RotateTool implements Tool {
     }
 
     const centerAtom = this.struct.atoms.get(this.centerAtomId);
-    assert(centerAtom != null);
+    if (!centerAtom) {
+      this.centerAtomId = undefined;
+      this.snapInfo = null;
+      return;
+    }
     const {
       rotatableHalfBondIds,
       rotatableHalfBondAngles,

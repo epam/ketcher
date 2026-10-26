@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -389,7 +389,7 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
 
 // According Unicode Consortium sould be
 // nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// http://www.unicode.org/reports/tr18/#Line_Boundaries
+// https://www.unicode.org/reports/tr18/#Line_Boundaries
 const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
   return str.replace(nlRe, '\n');

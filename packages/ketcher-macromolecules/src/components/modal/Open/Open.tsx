@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -387,8 +387,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     const fileName = files[0].name;
     const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+    const fileExtension = splittedFilenameByDot.at(-1);
 
     setFileName(fileName);
     if (fileExtension) {

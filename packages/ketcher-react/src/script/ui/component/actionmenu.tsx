@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +31,7 @@ import { resolveActionTitle } from '../action/resolveActionTitle';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
+import type { VisibleTools } from '../state/toolbar/types';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
@@ -49,16 +49,12 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface VisibleToolsMap {
-  [key: string]: string;
-}
-
 interface SharedActionProps {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
   opened?: string;
-  visibleTools: VisibleToolsMap;
+  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -80,16 +76,6 @@ interface ActionButtonProps {
   action: UiAction;
   status?: ItemStatus;
   onAction: (action: UiActionAction) => void;
-  disableableButtons?: string[];
-  indigoVerification?: boolean;
-}
-
-interface SharedActionProps {
-  status: StatusMap;
-  onOpen: (id: string | undefined, isSelected: boolean) => void;
-  onAction: (action: UiActionAction) => void;
-  opened?: string;
-  visibleTools: VisibleToolsMap;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -327,7 +313,7 @@ function ActionMenu({
 function toolMargin(
   menuName: string,
   menu: MenuItem[],
-  visibleTools: VisibleToolsMap,
+  visibleTools: VisibleTools,
 ): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way

@@ -5,7 +5,7 @@ let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
 export const TOOLTIP_DELAY = 300;
 
-type InfoPanelData = {
+export type InfoPanelData = {
   groupStruct: Struct;
   sGroup: SGroup;
   event: PointerEvent;

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +17,14 @@
 import './index.less';
 
 import init, { type Config } from './script';
-import { type RefObject, useEffect, useRef } from 'react';
+import { type RefObject, useCallback, useEffect, useRef } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
-import type { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
+import type { Api } from './script/api';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -48,7 +48,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
   const ketcherRef = useRef<Ketcher | null>(null);
 
-  const setServerRef = useRef<(structService: StructService) => void>(() => {});
+  const setServerRef = useRef<(structService: Api) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 
   const rootElRef = useRef<HTMLDivElement>(null);
@@ -71,11 +71,15 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     );
   }, [structServiceProvider]);
 
-  const initKetcher = async () => {
+  // Editor is initialized once on mount with the props of the first render
+  const initialPropsRef = useRef(props);
+
+  const initKetcher = useCallback(async () => {
+    const initialProps = initialPropsRef.current;
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
 
     initPromiseRef.current = init({
-      ...props,
+      ...initialProps,
       element: rootElRef.current,
       appRoot: appRootRef.current,
     });
@@ -85,15 +89,15 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       ketcherBuilderRef.current = builder;
       ketcherRef.current = ketcher;
       setServerRef.current = setServer;
-      props.onSetKetcherId?.(ketcher.id);
+      initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (typeof props.onInit === 'function' && ketcher) {
-        props.onInit(ketcher);
+      if (typeof initialProps.onInit === 'function' && ketcher) {
+        initialProps.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
         window.dispatchEvent(ketcherInitEvent);
       }
     });
-  };
+  }, []);
 
   useEffect(() => {
     if (initPromiseRef.current === null) {
@@ -110,9 +114,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
-
-    // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, []);
+  }, [initKetcher]);
 
   return (
     <div

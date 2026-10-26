@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,10 +71,12 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  /** Fragment ID included in rlabel element payloads fired by the editor. */
+  fragId?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */
-interface SGroupInput {
+export interface SGroupInput {
   type?: string;
   attrs: {
     context: string;
@@ -101,7 +103,7 @@ interface SGroupInput {
 }
 
 /** S-group form data returned by the S-group dialog. */
-interface SGroupFormData {
+export interface SGroupFormData {
   type?: string;
   context?: string;
   fieldName?: string;
@@ -508,6 +510,10 @@ const bondCaptionMap: Record<string, { type: number; stereo: number }> = {
   },
   dative: {
     type: Bond.PATTERN.TYPE.DATIVE,
+    stereo: Bond.PATTERN.STEREO.NONE,
+  },
+  haptic: {
+    type: Bond.PATTERN.TYPE.HAPTIC,
     stereo: Bond.PATTERN.STEREO.NONE,
   },
 };

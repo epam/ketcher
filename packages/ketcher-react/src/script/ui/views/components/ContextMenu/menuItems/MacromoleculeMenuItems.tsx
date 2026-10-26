@@ -13,9 +13,10 @@ import {
   fromFragmentDeletion,
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
+  KetcherFunctionality,
   MonomerMicromolecule,
 } from 'ketcher-core';
-import { useAppContext } from 'src/hooks';
+import { useAppContext, useIsFunctionalityDisabled } from 'src/hooks';
 import type Editor from 'src/script/editor';
 
 const MacromoleculeMenuItems = (
@@ -25,6 +26,9 @@ const MacromoleculeMenuItems = (
   const { ketcherId } = useAppContext();
   const [action, hidden] = useMonomerExpansionHandlers();
   const removeGroupingHandler = useRemoveGrouping();
+  const isExpandMonomersDisabled = useIsFunctionalityDisabled(
+    KetcherFunctionality.ExpandMonomers,
+  );
 
   const functionalGroups = props.propsFromTrigger?.functionalGroups;
   const totalMonomerCount = props.propsFromTrigger?.totalMonomerCount ?? 0;
@@ -135,7 +139,7 @@ const MacromoleculeMenuItems = (
       <Item
         {...props}
         data-testid={`${expandText}-option`}
-        hidden={(params) => hidden(params, true)}
+        hidden={(params) => isExpandMonomersDisabled || hidden(params, true)}
         onClick={(params) => action(params, true)}
         disabled={expandingDisabled}
       >

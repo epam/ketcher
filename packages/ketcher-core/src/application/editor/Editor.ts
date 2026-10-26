@@ -1,5 +1,10 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { type Editor, EditorType } from 'application/editor/editor.types';
+import {
+  type CreateBondViaModalPayload,
+  type Editor,
+  EditorType,
+  type SelectLayoutModePayload,
+} from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   editorEvents,
@@ -10,7 +15,6 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
-  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
   CONTENT_LAYOUT_MODE,
 } from 'application/editor/modes/types';
@@ -1527,7 +1531,7 @@ export class CoreEditor {
     );
 
     this.events.toggleLineLengthHighlighting.add(
-      (shouldHighlightLineLength: boolean, currentPosition = 0) => {
+      (shouldHighlightLineLength: boolean, currentPosition: number = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
         if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
@@ -2140,16 +2144,7 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
-  private onCreateBond(payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-    polymerBond?: PolymerBond;
-    isReconnection?: boolean;
-    initialFirstMonomerAttachmentPoint?: AttachmentPointName;
-    initialSecondMonomerAttachmentPoint?: AttachmentPointName;
-  }) {
+  private onCreateBond(payload: CreateBondViaModalPayload) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
       const history = EditorHistory.getInstance(this);
@@ -2209,10 +2204,7 @@ export class CoreEditor {
     }
   }
 
-  private onSelectMode(
-    data:
-      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
-  ) {
+  private onSelectMode(data: SelectLayoutModePayload) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);

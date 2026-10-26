@@ -64,7 +64,7 @@ const config: Record<string, UiAction> = {
 
         dispatch(removeStructAction());
 
-        if (!editor.struct().isBlank()) editor.struct(null);
+        if (!editor.struct().isBlank()) editor.struct(undefined);
       },
     },
     disabled: (editor) => editor.isMonomerCreationWizardActive,

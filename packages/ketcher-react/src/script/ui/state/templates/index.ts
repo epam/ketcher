@@ -14,14 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import initTmplLib, { initLib } from './init-lib';
+import { initLib } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
+import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
-export { initTmplLib };
+export { default as initTmplLib } from './init-lib';
 
 /* TEMPLATES */
 export function selectTmpl(tmpl) {
@@ -187,6 +188,14 @@ const attachActions = new Set([
 
 function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
+
+  if (
+    action.type === 'MODAL_OPEN' &&
+    action.data?.name === 'templates' &&
+    isNumber(action.data?.prop?.tab)
+  ) {
+    return { ...state, tab: action.data.prop.tab };
+  }
 
   if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };

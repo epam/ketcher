@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -22,11 +21,9 @@ import {
   useCallback,
   RefObject,
 } from 'react';
+import { isTouchDevice } from 'ketcher-react';
 import { StyledInput } from 'components/ZoomControls/styles';
-import {
-  hotkeysShortcuts,
-  updateInputString,
-} from 'components/ZoomControls/helpers';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 interface ZoomInputProps {
   onZoomSubmit: () => void;
@@ -65,27 +62,23 @@ export const ZoomInput = ({
     el.select();
   };
 
+  // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
     const inputEl = inputRef.current;
-    updateInputString(currentZoom, inputEl);
-    if (document.activeElement === inputEl) {
+    if (!isTouchDevice) {
+      inputEl?.focus();
       inputEl?.select();
     }
-  }, [currentZoom, inputRef]);
-
-  // Focus on input field upon mounting
-  useEffect(() => {
-    const inputEl = inputRef.current;
-    inputEl?.focus();
-    inputEl?.select();
   }, [inputRef]);
 
   return (
     <StyledInput
       ref={inputRef}
       data-testid="zoom-value"
+      defaultValue={`${currentZoom}%`}
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
+      inputMode="numeric"
     />
   );
 };

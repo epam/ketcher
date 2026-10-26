@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -32,12 +31,12 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   deserialize(content: string): Array<SdfItem> {
     const result: Array<SdfItem> = [];
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    let m: any = DelimeterRegex.exec(content);
+    let m: RegExpExecArray | null = DelimeterRegex.exec(content);
     while (m !== null) {
       const chunk = m[0].replaceAll('\r', '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
-        const propChunks: any = chunk
+        const propChunks: string[] = chunk
           .substr(end + 7)
           .trim()
           .split(/^$\n?/m);

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,7 +19,7 @@ import {
   ErrorsContext,
   SettingsContext,
 } from './../../../contexts';
-import type { StructService } from 'ketcher-core';
+import type { Api } from 'src/script/api';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
@@ -29,6 +28,19 @@ import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
 import { initResize, removeResizeListener } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
+import type Editor from 'src/script/editor';
+import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
+import type { CustomButton } from '../../builders/ketcher/CustomButtons';
+import type { StoreOptions } from '../state/store.types';
+
+export interface InitAppOptions extends StoreOptions {
+  buttons: ButtonsConfig;
+  errorHandler: ((message: string) => void) | null;
+  version: string;
+  buildDate: string;
+  buildNumber: string;
+  customButtons: Array<CustomButton>;
+}
 
 function initApp(
   prevKetcherId: string,
@@ -36,18 +48,15 @@ function initApp(
   element: HTMLDivElement | null,
   appRoot: Root,
   staticResourcesUrl: string,
-  options: any,
-  server: StructService,
-  resolve: (args: {
-    editor: any;
-    setServer: (server: StructService) => void;
-  }) => void,
+  options: InitAppOptions,
+  server: Api,
+  resolve: (args: { editor: Editor; setServer: (server: Api) => void }) => void,
   togglerComponent?: JSX.Element,
 ) {
   // hack to return server setter to Editor.tsx
   // because it does not have access to store
 
-  let getServerSetter: () => (structService: StructService) => void;
+  let getServerSetter: () => (structService: Api) => void;
 
   const setEditor = (editor) => {
     const setServer = getServerSetter();
@@ -56,7 +65,7 @@ function initApp(
   const store = createStore(options, server, setEditor);
 
   getServerSetter = () => {
-    return (structService: StructService) => {
+    return (structService: Api) => {
       store.dispatch(setServer(structService));
     };
   };
@@ -68,7 +77,9 @@ function initApp(
   appRoot.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
-        <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
+        <ErrorsContext.Provider
+          value={{ errorHandler: options.errorHandler ?? (() => {}) }}
+        >
           <AppContext.Provider
             value={{
               ketcherId,

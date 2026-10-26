@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,12 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, {
-  type ComponentType,
-  PureComponent,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { type ComponentType, PureComponent } from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
@@ -66,20 +60,6 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(innerRef);
-
-  useEffect(() => {
-    if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current;
-    }
-  }, [innerRef]);
-
-  useEffect(() => {
-    if (inputRef.current && isFocused) {
-      inputRef.current.focus();
-    }
-  }, [inputRef, isFocused]);
-
   return (
     <>
       <input
@@ -87,7 +67,8 @@ export function GenericInput({
         value={value ?? ''}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
-        ref={inputRef}
+        ref={innerRef}
+        autoFocus={isFocused}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}
@@ -428,19 +409,11 @@ class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
   component: ComponentType<InputComponentProps>;
-  ctrl: {
-    type?: string;
-    onChange?: (val: unknown) => void;
-    onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
-    selected?: (testVal: unknown, value: unknown) => boolean;
-    multiple?: boolean;
-  };
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props);
     this.component = (props.component ||
       componentMap(props)) as ComponentType<InputComponentProps>;
-    this.ctrl = ctrlMap(this.component, props);
   }
 
   render() {
@@ -450,11 +423,12 @@ class Input extends PureComponent<
       innerRef,
       ...restProps
     } = this.props;
+    const ctrl = ctrlMap(this.component, this.props);
     return (
       <AnyComponentWithRef
         Component={this.component}
         ref={innerRef}
-        {...this.ctrl}
+        {...ctrl}
         {...restProps}
       />
     );

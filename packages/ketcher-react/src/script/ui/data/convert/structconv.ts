@@ -71,10 +71,12 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  /** Fragment ID included in rlabel element payloads fired by the editor. */
+  fragId?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */
-interface SGroupInput {
+export interface SGroupInput {
   type?: string;
   attrs: {
     context: string;
@@ -101,7 +103,7 @@ interface SGroupInput {
 }
 
 /** S-group form data returned by the S-group dialog. */
-interface SGroupFormData {
+export interface SGroupFormData {
   type?: string;
   context?: string;
   fieldName?: string;

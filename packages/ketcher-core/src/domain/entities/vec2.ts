@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -23,6 +22,8 @@ export interface Point {
   z?: number;
 }
 
+type Vec2ConstructorArgs = [Point] | [x?: number, y?: number, z?: number];
+
 // Optimize major GC in case of importing big sequences - only parse float when necessary
 // most of the time it is already a number from atom.clone
 function toNumber(value: number | string): number {
@@ -39,24 +40,24 @@ export class Vec2 {
 
   constructor(point: Point);
   constructor(x?: number, y?: number, z?: number);
-  constructor(...args: Array<any>) {
+  constructor(...args: Vec2ConstructorArgs) {
     if (args.length === 0) {
       this.x = 0;
       this.y = 0;
       this.z = 0;
-    } else if (arguments.length === 1) {
-      const point = args[0];
+    } else if (args.length === 1) {
+      const point: Point = typeof args[0] === 'object' ? args[0] : {};
       this.x = toNumber(point.x || 0);
       this.y = toNumber(point.y || 0);
       this.z = toNumber(point.z || 0);
-    } else if (arguments.length === 2) {
+    } else if (args.length === 2) {
       this.x = toNumber(args[0] || 0);
       this.y = toNumber(args[1] || 0);
       this.z = 0;
-    } else if (arguments.length === 3) {
-      this.x = toNumber(args[0]);
-      this.y = toNumber(args[1]);
-      this.z = toNumber(args[2]);
+    } else if (args.length === 3) {
+      this.x = toNumber(args[0] ?? NaN);
+      this.y = toNumber(args[1] ?? NaN);
+      this.z = toNumber(args[2] ?? NaN);
     } else {
       throw new Error('Vec2(): invalid arguments');
     }

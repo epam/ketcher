@@ -7,22 +7,38 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { rGroupLogicToString } from 'domain/helpers/rGroupLogic';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from './constants';
+import type { Atom } from 'domain/entities/CoreAtom';
+
+interface RGroupRendererOptions {
+  canvas?: D3SvgElementSelection<SVGGElement, void>;
+  atomPositions?: Map<Atom, Vec2>;
+  atomLabelBoxes?: Map<Atom, Box2Abs[]>;
+}
 
 /** Brackets and logic for a definition; its atoms/bonds retain their own renderers. */
 export class RGroupRenderer extends BaseRenderer {
   private geometryKey?: string;
   private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
-  constructor(public readonly rgroupDrawingEntity: RGroupDrawingEntity) {
+  constructor(
+    public readonly rgroupDrawingEntity: RGroupDrawingEntity,
+    private readonly options: RGroupRendererOptions = {},
+  ) {
     super(rgroupDrawingEntity);
+    if (options.canvas) this.canvas = options.canvas;
     rgroupDrawingEntity.setBaseRenderer(this as BaseRenderer);
   }
 
   private getBracketBox(): Box2Abs | undefined {
     let box: Box2Abs | undefined;
     this.rgroupDrawingEntity.atoms.forEach((atom) => {
-      const position = Coordinates.modelToCanvas(atom.position);
+      const position = Coordinates.modelToCanvas(
+        this.options.atomPositions?.get(atom) ?? atom.position,
+      );
       let atomBox = new Box2Abs(position, position);
+      this.options.atomLabelBoxes?.get(atom)?.forEach((labelBox) => {
+        atomBox = Box2Abs.union(atomBox, labelBox.translate(position));
+      });
       atom.renderer?.labelBBoxes.forEach((labelBox) => {
         atomBox = Box2Abs.union(
           atomBox,

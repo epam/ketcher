@@ -144,6 +144,11 @@ import {
 } from 'application/editor/operations/stereoFlag';
 import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
+import type { RGroup } from 'domain/entities/rgroup';
+import {
+  RGroupPropertiesOperation,
+  type RGroupProperties,
+} from 'application/editor/operations/coreRGroup/RGroupPropertiesOperation';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,
@@ -573,7 +578,11 @@ export class DrawingEntitiesManager {
   public unselectDrawingEntity(drawingEntity: DrawingEntity) {
     const command = new Command();
     drawingEntity.turnOffSelection();
-    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    command.addOperation(
+      new DrawingEntitySelectOperation(drawingEntity, () =>
+        drawingEntity.turnOffSelection(),
+      ),
+    );
     return command;
   }
 
@@ -2578,6 +2587,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+    command.merge(
+      targetDrawingEntitiesManager.overwritePastedRGroupProperties(this),
+    );
 
     // Merge stereo flags
     this.stereoFlags.forEach((stereoFlag) => {
@@ -2601,6 +2613,34 @@ export class DrawingEntitiesManager {
     });
 
     return { command, mergedDrawingEntities };
+  }
+
+  private overwritePastedRGroupProperties(
+    source: DrawingEntitiesManager,
+  ): Command {
+    const incoming = new Map<number, RGroupProperties>();
+    source.monomers.forEach((monomer) => {
+      monomer.monomerItem.struct.rgroups.forEach((group, id) => {
+        // A reference atom alone must not overwrite an existing definition.
+        if (!group.frags.size) return;
+        const { range, resth, ifthen } = group;
+        incoming.set(id, { range, resth, ifthen });
+      });
+    });
+    const command = new Command();
+    incoming.forEach((properties, id) => {
+      const groups = new Set<RGroup>();
+      const hiddenGroup = this.micromoleculesHiddenEntities.rgroups.get(id);
+      if (hiddenGroup) groups.add(hiddenGroup);
+      this.monomers.forEach((monomer) => {
+        const group = monomer.monomerItem.struct.rgroups.get(id);
+        if (group) groups.add(group);
+      });
+      command.addOperation(
+        new RGroupPropertiesOperation([...groups], properties),
+      );
+    });
+    return command;
   }
 
   public filterSelection() {

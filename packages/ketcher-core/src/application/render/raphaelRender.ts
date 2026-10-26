@@ -157,6 +157,10 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  public hideScrollbars(): void {
+    this.scrollbar.destroy();
+  }
+
   /**
    * The options this render was asked for, without the values defaultOptions
    * derives from them. This is the right base for building a render with

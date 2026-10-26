@@ -290,10 +290,19 @@ export class SequenceMode extends BaseMode {
 
     if (
       firstMonomerPosition &&
-      this.isFirstInit &&
+      needScroll &&
       !zoom.isPositionInViewport(firstMonomerPosition)
     ) {
-      zoom.resetZoom();
+      const lastMonomerPosition = (
+        chainsCollection.lastNode?.monomer.renderer as BaseSequenceItemRenderer
+      )?.scaledMonomerPositionForSequence;
+
+      zoom.scrollToCenter(
+        Vec2.centre(
+          firstMonomerPosition,
+          lastMonomerPosition ?? firstMonomerPosition,
+        ),
+      );
     }
     this.isFirstInit = false;
 

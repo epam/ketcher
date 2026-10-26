@@ -5,6 +5,9 @@ import { provideEditorInstance } from '../editorSingleton';
 import { Command } from 'domain/entities/Command';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
+import ZoomTool from '../tools/Zoom';
+import { Vec2 } from 'domain/entities';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 
 export class FlexMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -25,6 +28,19 @@ export class FlexMode extends BaseMode {
 
     modelChanges.merge(antisenseChanges);
     editor.renderersContainer.update(modelChanges);
+
+    if (editor.drawingEntitiesManager.hasMonomers) {
+      const zoom = ZoomTool.instance;
+      const structureBbox = getRenderedStructuresBbox();
+      const structureCenter = new Vec2(
+        structureBbox.left + structureBbox.width / 2,
+        structureBbox.top + structureBbox.height / 2,
+      );
+
+      if (!zoom.isPositionInViewport(structureCenter)) {
+        zoom.scrollToCenter(structureCenter);
+      }
+    }
 
     return command;
   }

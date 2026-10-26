@@ -438,6 +438,10 @@ export class ZoomTool implements BaseTool {
     return x >= 0 && x <= width && y >= 0 && y <= height;
   }
 
+  public scrollToCenter(position: Vec2) {
+    this.zoom?.translateTo(this.canvasWrapper, position.x, position.y);
+  }
+
   scaleCoordinates(position: Vec2) {
     const newX = this._zoomTransform.applyX(position.x);
     const newY = this._zoomTransform.applyY(position.y);

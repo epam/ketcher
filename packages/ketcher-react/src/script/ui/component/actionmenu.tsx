@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -77,16 +76,6 @@ interface ActionButtonProps {
   action: UiAction;
   status?: ItemStatus;
   onAction: (action: UiActionAction) => void;
-  disableableButtons?: string[];
-  indigoVerification?: boolean;
-}
-
-interface SharedActionProps {
-  status: StatusMap;
-  onOpen: (id: string | undefined, isSelected: boolean) => void;
-  onAction: (action: UiActionAction) => void;
-  opened?: string;
-  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }

@@ -3,6 +3,7 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
+  moveMouseAway,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
@@ -724,6 +725,7 @@ test.describe('Import correct HELM sequence: ', () => {
         correctHELMString.HELMString,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

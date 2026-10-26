@@ -434,6 +434,7 @@ test.describe('Zoom Tool', () => {
       MacroFileType.HELM,
       'PEPTIDE1{G.F.E.D.C.A.M.L.K.I.H.Q.P.O.N.T.S.R.V.U.W.G.F.E.D.C.A.M.L.K.I.H.Q.P.O.N.T.S.R.V.U.W}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;

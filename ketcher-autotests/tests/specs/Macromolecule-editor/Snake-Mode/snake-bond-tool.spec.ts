@@ -866,6 +866,7 @@ test.describe('Snake Bond Tool', () => {
       page,
       `KET/sequence-with-side-connection.ket`,
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);

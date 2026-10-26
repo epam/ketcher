@@ -184,6 +184,7 @@ describe('CoreEditor', () => {
 
       const zoomChangedDispatch = jest.fn();
       const microEditor = {
+        selection: jest.fn(),
         zoom: jest.fn(),
         struct: jest.fn(() => new Struct()),
         render: { setMolecule: jest.fn(), options: { microModeScale: null } },

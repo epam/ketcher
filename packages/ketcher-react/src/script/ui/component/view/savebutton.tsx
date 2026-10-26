@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +15,7 @@
  ***************************************************************************/
 import {
   type GenerateImageOptions,
+  type StructService,
   KetcherLogger,
   ketcherProvider,
 } from 'ketcher-core';
@@ -27,7 +27,7 @@ import { fileSaver } from './saveButton.utils';
 import type { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: any;
+  server?: StructService | null;
   filename: string;
   data?: Blob | string;
   getData?: () => Blob | string;
@@ -35,7 +35,7 @@ type Props = {
   mode?: string;
   options?: GenerateImageOptions;
   onSave?: () => void;
-  onError?: (err: any) => void;
+  onError?: (err: unknown) => void;
   className?: string;
   title?: string;
   disabled?: boolean;

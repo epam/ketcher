@@ -17,7 +17,7 @@
 import {
   type Action,
   type SimpleObjectMode,
-  Vec2,
+  type Vec2,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,

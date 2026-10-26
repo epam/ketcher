@@ -36,10 +36,12 @@ class FragmentDeleteStereoAtom extends BaseOperation {
   execute(restruct: ReStruct) {
     const { aid, frid } = this.data;
     const frag = restruct.molecule.frags.get(frid);
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, false);
-      BaseOperation.invalidateEnhancedFlag(restruct, frid);
+    if (!frag) {
+      return;
     }
+
+    frag.updateStereoAtom(restruct.molecule, aid, frid, false);
+    BaseOperation.invalidateEnhancedFlag(restruct, frid);
   }
 
   invert() {

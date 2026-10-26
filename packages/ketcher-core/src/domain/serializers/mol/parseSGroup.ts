@@ -131,12 +131,14 @@ function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {
-  if (!sgroup.data.absolute && mol) {
-    if (!sgroup.pp) {
-      throw new Error('SGroup pp is not set');
-    }
-    sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
+  if (!(!sgroup.data.absolute && mol)) {
+    return;
   }
+
+  if (!sgroup.pp) {
+    throw new Error('SGroup pp is not set');
+  }
+  sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
 }
 
 function postLoadMon(_sgroup: SGroup): void {
@@ -334,17 +336,16 @@ function applyDataSGroupData(
   finalize: boolean,
 ): void {
   sg.data.fieldValue = (sg.data.fieldValue || '') + data;
-  if (finalize) {
-    sg.data.fieldValue = trimRight(sg.data.fieldValue);
-    if (
-      sg.data.fieldValue.startsWith('"') &&
-      sg.data.fieldValue.endsWith('"')
-    ) {
-      sg.data.fieldValue = sg.data.fieldValue.substring(
-        1,
-        sg.data.fieldValue.length - 1,
-      );
-    }
+  if (!finalize) {
+    return;
+  }
+
+  sg.data.fieldValue = trimRight(sg.data.fieldValue);
+  if (sg.data.fieldValue.startsWith('"') && sg.data.fieldValue.endsWith('"')) {
+    sg.data.fieldValue = sg.data.fieldValue.substring(
+      1,
+      sg.data.fieldValue.length - 1,
+    );
   }
 }
 

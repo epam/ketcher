@@ -19,11 +19,13 @@ export class ReactionArrowMoveTool
     closestItem: ReactionArrowClosestItem,
     isResizing: boolean,
   ) {
-    if (closestItem.map === 'rxnArrows') {
-      const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
-      assert(reArrow != null);
-      reArrow.isResizing = isResizing;
+    if (!(closestItem.map === 'rxnArrows')) {
+      return;
     }
+
+    const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
+    assert(reArrow != null);
+    reArrow.isResizing = isResizing;
   }
 
   mousedown(event: PointerEvent, closestItem: ReactionArrowClosestItem) {

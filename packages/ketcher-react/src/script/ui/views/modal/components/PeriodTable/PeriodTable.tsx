@@ -109,15 +109,15 @@ class Table extends Component<TableProps, TableState> {
   };
 
   onAtomSelect = (label?: string) => {
-    if (label) {
-      const { type, value } = this.state;
-      const normalizedValue = Array.isArray(value) ? value : [];
-      const newValue =
-        type === 'atom' || type === 'gen'
-          ? label
-          : xor([label], normalizedValue);
-      this.setState({ value: newValue });
+    if (!label) {
+      return;
     }
+
+    const { type, value } = this.state;
+    const normalizedValue = Array.isArray(value) ? value : [];
+    const newValue =
+      type === 'atom' || type === 'gen' ? label : xor([label], normalizedValue);
+    this.setState({ value: newValue });
   };
 
   onAtomActivate = (label?: string) => {

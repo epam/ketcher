@@ -41,11 +41,13 @@ class UpdateIfThen extends BaseOperation {
     const struct = restruct.molecule;
 
     struct.rgroups.forEach((rg, rgid) => {
-      if (rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid)) {
-        rg.ifthen = this.rgid_new;
-        this.ifThenHistory.set(rgid, this.rgid_old);
-        struct.rgroups.set(rgid, rg);
+      if (!(rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid))) {
+        return;
       }
+
+      rg.ifthen = this.rgid_new;
+      this.ifThenHistory.set(rgid, this.rgid_old);
+      struct.rgroups.set(rgid, rg);
     });
   }
 

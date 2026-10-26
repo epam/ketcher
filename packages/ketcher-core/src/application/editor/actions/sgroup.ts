@@ -645,55 +645,57 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;
 
-      if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
-        const apNumber = attachmentPoint.attachmentPointNumber;
-        const isOccupied = Array.from(struct.bonds.values()).some(
-          ({
-            begin: bondBegin,
-            end: bondEnd,
-            beginSuperatomAttachmentPointNumber,
-            endSuperatomAttachmentPointNumber,
-          }: BondAttributes) => {
-            const isAttached =
-              bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
-            if (!isAttached) return false;
-            const otherAtomId =
-              bondBegin === attachmentAtomId ? bondEnd : bondBegin;
-            if (otherAtomId === leaveAtomId) return false;
-            if (!atoms.includes(otherAtomId)) {
-              const bondApNumber =
-                bondBegin === attachmentAtomId
-                  ? beginSuperatomAttachmentPointNumber
-                  : endSuperatomAttachmentPointNumber;
-              if (isNumber(bondApNumber) && isNumber(apNumber)) {
-                return bondApNumber === apNumber;
-              }
-              return true;
+      if (!(isNumber(leaveAtomId) && isNumber(attachmentAtomId))) {
+        return;
+      }
+
+      const apNumber = attachmentPoint.attachmentPointNumber;
+      const isOccupied = Array.from(struct.bonds.values()).some(
+        ({
+          begin: bondBegin,
+          end: bondEnd,
+          beginSuperatomAttachmentPointNumber,
+          endSuperatomAttachmentPointNumber,
+        }: BondAttributes) => {
+          const isAttached =
+            bondBegin === attachmentAtomId || bondEnd === attachmentAtomId;
+          if (!isAttached) return false;
+          const otherAtomId =
+            bondBegin === attachmentAtomId ? bondEnd : bondBegin;
+          if (otherAtomId === leaveAtomId) return false;
+          if (!atoms.includes(otherAtomId)) {
+            const bondApNumber =
+              bondBegin === attachmentAtomId
+                ? beginSuperatomAttachmentPointNumber
+                : endSuperatomAttachmentPointNumber;
+            if (isNumber(bondApNumber) && isNumber(apNumber)) {
+              return bondApNumber === apNumber;
             }
-            return false;
+            return true;
+          }
+          return false;
+        },
+      );
+
+      if (isOccupied) {
+        struct.bonds.forEach(
+          (
+            { begin: bondBegin, end: bondEnd }: BondAttributes,
+            bondId: number,
+          ) => {
+            if (bondBegin === leaveAtomId || bondEnd === leaveAtomId) {
+              action.addOp(new BondDelete(bondId));
+            }
           },
         );
-
-        if (isOccupied) {
-          struct.bonds.forEach(
-            (
-              { begin: bondBegin, end: bondEnd }: BondAttributes,
-              bondId: number,
-            ) => {
-              if (bondBegin === leaveAtomId || bondEnd === leaveAtomId) {
-                action.addOp(new BondDelete(bondId));
-              }
-            },
-          );
-          action.addOp(new AtomDelete(leaveAtomId));
-        } else if (isExpanded) {
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
-        } else {
-          const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
-          const newLabel = monomerCaps?.[apLabel] || 'H';
-          action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
-          action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
-        }
+        action.addOp(new AtomDelete(leaveAtomId));
+      } else if (isExpanded) {
+        action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
+      } else {
+        const apLabel = `R${attachmentPoint.attachmentPointNumber ?? 0}`;
+        const newLabel = monomerCaps?.[apLabel] || 'H';
+        action.addOp(new AtomAttr(leaveAtomId, 'label', newLabel));
+        action.addOp(new AtomAttr(leaveAtomId, 'rglabel', null));
       }
     });
   }

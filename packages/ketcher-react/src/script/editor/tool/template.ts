@@ -266,17 +266,19 @@ class TemplateTool implements Tool {
       return;
     }
 
-    if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-      // calculate fragment center
-      const bond = this.struct.bonds.get(ci.id);
-      if (!bond) {
-        return;
-      }
-
-      // calculate default template flip
-      dragCtx.sign1 = getBondFlipSign(this.struct, bond);
-      dragCtx.sign2 = this.template.sign;
+    if (!(ci.map === 'bonds' && !this.isModeFunctionalGroup)) {
+      return;
     }
+
+    // calculate fragment center
+    const bond = this.struct.bonds.get(ci.id);
+    if (!bond) {
+      return;
+    }
+
+    // calculate default template flip
+    dragCtx.sign1 = getBondFlipSign(this.struct, bond);
+    dragCtx.sign2 = this.template.sign;
   }
 
   mousemove(event: MouseEvent) {
@@ -666,10 +668,12 @@ function getTargetAtomId(
     return ci.id;
   }
 
-  if (ci.map === 'functionalGroups') {
-    const group = struct.sgroups.get(ci.id);
-    return group?.getAttachmentAtomId();
+  if (ci.map !== 'functionalGroups') {
+    return;
   }
+
+  const group = struct.sgroups.get(ci.id);
+  return group?.getAttachmentAtomId();
 }
 
 export default TemplateTool;

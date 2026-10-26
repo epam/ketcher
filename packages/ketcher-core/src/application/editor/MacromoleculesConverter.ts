@@ -707,23 +707,25 @@ export class MacromoleculesConverter {
 
         // Add stereo flag if the fragment has an enhanced stereo flag
         monomer.monomerItem.struct.frags.forEach((fragment) => {
-          if (fragment?.enhancedStereoFlag) {
-            const stereoFlagPosition =
-              fragment.stereoFlagPosition ||
-              Fragment.getDefaultStereoFlagPosition(
-                monomer.monomerItem.struct,
-                0,
-              );
+          if (!fragment?.enhancedStereoFlag) {
+            return;
+          }
 
-            if (stereoFlagPosition) {
-              command.merge(
-                drawingEntitiesManager.addStereoFlag(
-                  stereoFlagPosition,
-                  fragment.enhancedStereoFlag,
-                  monomer,
-                ),
-              );
-            }
+          const stereoFlagPosition =
+            fragment.stereoFlagPosition ||
+            Fragment.getDefaultStereoFlagPosition(
+              monomer.monomerItem.struct,
+              0,
+            );
+
+          if (stereoFlagPosition) {
+            command.merge(
+              drawingEntitiesManager.addStereoFlag(
+                stereoFlagPosition,
+                fragment.enhancedStereoFlag,
+                monomer,
+              ),
+            );
           }
         });
       }
@@ -850,7 +852,7 @@ export class MacromoleculesConverter {
       if (endAtomAttachmentPoint) {
         superatomAttachmentPointToBond.set(endAtomAttachmentPoint, bond);
       }
-      if (
+      if (!(
         endAtomSgroup !== beginAtomSgroup &&
         isNumber(beginAtomAttachmentPointNumber) &&
         isNumber(endAtomAttachmentPointNumber) &&
@@ -860,33 +862,35 @@ export class MacromoleculesConverter {
           beginAtomSgroup.isSuperatomWithoutLabel) &&
         (endAtomSgroup instanceof MonomerMicromolecule ||
           endAtomSgroup.isSuperatomWithoutLabel)
-      ) {
-        // Here we take monomers from sgroupToMonomer in case of macromolecules structure and
-        // from fragmentIdToMonomer in case of micromolecules structure.
-        const firstMonomer =
-          beginAtomSgroup instanceof MonomerMicromolecule
-            ? sgroupToMonomer.get(beginAtomSgroup)
-            : fragmentIdToMonomer.get(beginAtom.fragment);
-        const secondMonomer =
-          endAtomSgroup instanceof MonomerMicromolecule
-            ? sgroupToMonomer.get(endAtomSgroup)
-            : fragmentIdToMonomer.get(endAtom.fragment);
-
-        assert(firstMonomer);
-        assert(secondMonomer);
-
-        command.merge(
-          drawingEntitiesManager.createPolymerBond(
-            firstMonomer,
-            secondMonomer,
-            getAttachmentPointLabel(beginAtomAttachmentPointNumber),
-            getAttachmentPointLabel(endAtomAttachmentPointNumber),
-            bond.type === Bond.PATTERN.TYPE.HYDROGEN
-              ? MACROMOLECULES_BOND_TYPES.HYDROGEN
-              : MACROMOLECULES_BOND_TYPES.SINGLE,
-          ),
-        );
+      )) {
+        return;
       }
+
+      // Here we take monomers from sgroupToMonomer in case of macromolecules structure and
+      // from fragmentIdToMonomer in case of micromolecules structure.
+      const firstMonomer =
+        beginAtomSgroup instanceof MonomerMicromolecule
+          ? sgroupToMonomer.get(beginAtomSgroup)
+          : fragmentIdToMonomer.get(beginAtom.fragment);
+      const secondMonomer =
+        endAtomSgroup instanceof MonomerMicromolecule
+          ? sgroupToMonomer.get(endAtomSgroup)
+          : fragmentIdToMonomer.get(endAtom.fragment);
+
+      assert(firstMonomer);
+      assert(secondMonomer);
+
+      command.merge(
+        drawingEntitiesManager.createPolymerBond(
+          firstMonomer,
+          secondMonomer,
+          getAttachmentPointLabel(beginAtomAttachmentPointNumber),
+          getAttachmentPointLabel(endAtomAttachmentPointNumber),
+          bond.type === Bond.PATTERN.TYPE.HYDROGEN
+            ? MACROMOLECULES_BOND_TYPES.HYDROGEN
+            : MACROMOLECULES_BOND_TYPES.SINGLE,
+        ),
+      );
     });
 
     // Arrows and pluses

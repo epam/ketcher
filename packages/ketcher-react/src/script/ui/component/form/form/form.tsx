@@ -78,12 +78,14 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
   const defaultsApplied: Record<string, unknown> = { ...state };
 
   Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
-    if (property !== null && typeof property === 'object') {
-      const defaultValue = (property as SchemaProperty).default;
-      // Only set default if key is completely missing from state
-      if (defaultValue !== undefined && !(name in defaultsApplied)) {
-        defaultsApplied[name] = defaultValue;
-      }
+    if (!(property !== null && typeof property === 'object')) {
+      return;
+    }
+
+    const defaultValue = (property as SchemaProperty).default;
+    // Only set default if key is completely missing from state
+    if (defaultValue !== undefined && !(name in defaultsApplied)) {
+      defaultsApplied[name] = defaultValue;
     }
   });
 
@@ -172,16 +174,18 @@ class Form extends Component<FormProps> {
   componentDidUpdate(prevProps: FormProps) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
 
-    if (
+    if (!(
       (schema.key && schema.key !== prevProps.schema.key) ||
       (customValid !== prevProps.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
-    ) {
-      this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      const stateWithDefaults = applySchemaDefaults(result, schema);
-      this.schema.serialize(stateWithDefaults);
-      this.updateState(stateWithDefaults);
+    )) {
+      return;
     }
+
+    this.schema = propSchema(schema, { customValid, serialize, deserialize });
+    const stateWithDefaults = applySchemaDefaults(result, schema);
+    this.schema.serialize(stateWithDefaults);
+    this.updateState(stateWithDefaults);
   }
 
   updateState(newState: Record<string, unknown>) {

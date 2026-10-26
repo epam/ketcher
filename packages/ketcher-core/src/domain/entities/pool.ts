@@ -81,10 +81,12 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
 
   changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
     this.forEach((value, key) => {
-      if (hasResetInitiallySelected(value)) {
-        value.resetInitiallySelected(invalidate);
-        this.set(key, value);
+      if (!hasResetInitiallySelected(value)) {
+        return;
       }
+
+      value.resetInitiallySelected(invalidate);
+      this.set(key, value);
     });
   }
 

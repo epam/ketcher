@@ -110,20 +110,22 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
       reStruct.molecule,
     );
 
-    if (positionAtomId !== undefined) {
-      const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
-        (atomId) => atomId !== positionAtomId,
-      );
-      const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
-      action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
-      action.mergeWith(
-        fromFragmentDeletion(reStruct, {
-          atoms: atomsToDelete,
-          bonds: bondsToDelete,
-        }),
-      );
-      newMergeItems.atoms.set(srcAtomId, positionAtomId);
+    if (positionAtomId === undefined) {
+      return;
     }
+
+    const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
+      (atomId) => atomId !== positionAtomId,
+    );
+    const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
+    action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
+    action.mergeWith(
+      fromFragmentDeletion(reStruct, {
+        atoms: atomsToDelete,
+        bonds: bondsToDelete,
+      }),
+    );
+    newMergeItems.atoms.set(srcAtomId, positionAtomId);
   });
 
   return [newMergeItems, action] as const;

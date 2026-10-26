@@ -529,10 +529,12 @@ class ReBond extends ReObject {
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
-      if (hasCurrentHighlight) {
-        highlightColor = highlight.color;
-        highlightOutline = highlight.outline;
+      if (!hasCurrentHighlight) {
+        return;
       }
+
+      highlightColor = highlight.color;
+      highlightOutline = highlight.outline;
     });
 
     // Drawing highlight. Outline highlights (#9441) are drawn as a single
@@ -595,12 +597,14 @@ class ReBond extends ReObject {
       }
     }
 
-    if (isNumber(endSGroupId)) {
-      bondPathElement.dataset.tosgroupid = String(endSGroupId);
+    if (!isNumber(endSGroupId)) {
+      return;
+    }
 
-      if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.dataset.tomonomerid = String(endSGroupId);
-      }
+    bondPathElement.dataset.tosgroupid = String(endSGroupId);
+
+    if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
+      bondPathElement.dataset.tomonomerid = String(endSGroupId);
     }
   }
 

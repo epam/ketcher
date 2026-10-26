@@ -291,11 +291,13 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     this.editor.hover(null);
 
-    if (this.action) {
-      this.action.perform(rnd.ctab); // revert the action
-      delete this.action;
-      rnd.update();
+    if (!this.action) {
+      return;
     }
+
+    this.action.perform(rnd.ctab); // revert the action
+    delete this.action;
+    rnd.update();
   }
 
   mouseleave() {

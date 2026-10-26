@@ -25,23 +25,25 @@ class EraserTool implements BaseTool {
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = EditorHistory.getInstance(editor);
-    if (
+    if (!(
       this.editor.drawingEntitiesManager.selectedEntities.length &&
       this.editor.mode.modeName !== 'sequence-layout-mode'
-    ) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.deleteSelectedEntities();
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
-      );
-      this.history.update(modelChanges);
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
+    )) {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.deleteSelectedEntities();
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.events.selectEntities.dispatch(
+      this.editor.drawingEntitiesManager.selectedEntities.map(
+        (entity) => entity[1],
+      ),
+    );
   }
 
   mousedown(event) {
@@ -51,24 +53,25 @@ class EraserTool implements BaseTool {
       return;
     }
 
-    if (selectedItemRenderer instanceof BaseRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.deleteDrawingEntity(
-          selectedItemRenderer.drawingEntity,
-          true,
-          true,
-        );
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
-      );
-      this.history.update(modelChanges);
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.events.selectEntities.dispatch(
-        this.editor.drawingEntitiesManager.selectedEntities.map(
-          (entity) => entity[1],
-        ),
-      );
+    if (!(selectedItemRenderer instanceof BaseRenderer)) {
+      return;
     }
+
+    const modelChanges = this.editor.drawingEntitiesManager.deleteDrawingEntity(
+      selectedItemRenderer.drawingEntity,
+      true,
+      true,
+    );
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.events.selectEntities.dispatch(
+      this.editor.drawingEntitiesManager.selectedEntities.map(
+        (entity) => entity[1],
+      ),
+    );
   }
 
   // TODO move hover logic somewhere to apply it for all or several tools from one place.

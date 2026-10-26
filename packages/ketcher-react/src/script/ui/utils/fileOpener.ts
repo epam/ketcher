@@ -80,15 +80,17 @@ function readPPTXStructures(buffer: ArrayBuffer): string[] {
   const cfb = CFB.read(new Uint8Array(buffer), { type: 'array' });
   const structures: string[] = [];
   cfb.FullPaths.forEach((path) => {
-    if (path.endsWith('.bin')) {
-      const ole = CFB.find(cfb, path);
-      if (!ole) return;
-      const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
-      if (!sdf) return;
-      const base64String = arrayBufferToBase64(sdf.content);
-      if (base64String.startsWith('VmpDRDAxMDAEAw')) {
-        structures.push(base64String);
-      }
+    if (!path.endsWith('.bin')) {
+      return;
+    }
+
+    const ole = CFB.find(cfb, path);
+    if (!ole) return;
+    const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
+    if (!sdf) return;
+    const base64String = arrayBufferToBase64(sdf.content);
+    if (base64String.startsWith('VmpDRDAxMDAEAw')) {
+      structures.push(base64String);
     }
   });
   return structures;

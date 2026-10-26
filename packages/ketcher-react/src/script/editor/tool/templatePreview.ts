@@ -180,12 +180,14 @@ class TemplatePreview {
   }
 
   private hideFloatingPreview() {
-    if (this.floatingPreviewAction) {
-      const action = this.floatingPreviewAction.perform(this.restruct);
-      this.editor.update(action, true);
-      this.floatingPreviewAction = null;
-      this.floatingPreview = null;
+    if (!this.floatingPreviewAction) {
+      return;
     }
+
+    const action = this.floatingPreviewAction.perform(this.restruct);
+    this.editor.update(action, true);
+    this.floatingPreviewAction = null;
+    this.floatingPreview = null;
   }
 
   public hideConnectedPreview() {
@@ -194,10 +196,12 @@ class TemplatePreview {
       this.connectedPreviewAction = null;
       this.editor.render.update();
     }
-    if (this.connectedPreviewTimeout) {
-      clearTimeout(this.connectedPreviewTimeout);
-      this.connectedPreviewTimeout = null;
+    if (!this.connectedPreviewTimeout) {
+      return;
     }
+
+    clearTimeout(this.connectedPreviewTimeout);
+    this.connectedPreviewTimeout = null;
   }
 
   private showConnectedPreview(event: MouseEvent, ci: ClosestItemType) {

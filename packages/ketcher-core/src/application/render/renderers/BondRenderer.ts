@@ -818,12 +818,14 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = topologyText.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      topologyText
-        .attr('x', position.x - box.width / 2)
-        .attr('y', position.y + box.height / 4);
+    if (!textNode) {
+      return;
     }
+
+    const box = textNode.getBBox();
+    topologyText
+      .attr('x', position.x - box.width / 2)
+      .attr('y', position.y + box.height / 4);
   }
 
   private appendReactingCenterMark(bondFromStruct: StructBond) {
@@ -994,33 +996,35 @@ export class BondRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     const textNode = cipText?.node();
-    if (textNode) {
-      const box = textNode.getBBox();
-      cipText?.attr('x', 0)?.attr('y', -box.y);
+    if (!textNode) {
+      return;
+    }
 
-      const rectWidth = box.width + 2;
-      const rectHeight = box.height + 2;
-      cipGroup
-        ?.insert('rect', 'text')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', rectWidth)
-        .attr('height', rectHeight)
-        .attr('rx', 3)
-        .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+    const box = textNode.getBBox();
+    cipText?.attr('x', 0)?.attr('y', -box.y);
 
-      cipGroup?.attr(
-        'transform',
-        `
+    const rectWidth = box.width + 2;
+    const rectHeight = box.height + 2;
+    cipGroup
+      ?.insert('rect', 'text')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', rectWidth)
+      .attr('height', rectHeight)
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('fill', '#f5f5f5');
+
+    cipGroup?.attr(
+      'transform',
+      `
         translate(${-this.scaledPosition.startPosition.x}, ${-this
           .scaledPosition.startPosition.y})
         translate(${this.scaledCenter.x - rectWidth / 2}, ${
           this.scaledCenter.y - rectHeight / 2
         })
         `,
-      );
-    }
+    );
   }
 
   public remove() {

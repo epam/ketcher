@@ -162,11 +162,13 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
       const { key } = event;
       const active = document.activeElement;
       const activeTextarea = active?.tagName === 'TEXTAREA';
-      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-        exit(key === 'Enter' ? 'OK' : 'Cancel');
-        event.preventDefault();
-        event.stopPropagation();
+      if (!(key === 'Escape' || (key === 'Enter' && !activeTextarea))) {
+        return;
       }
+
+      exit(key === 'Enter' ? 'OK' : 'Cancel');
+      event.preventDefault();
+      event.stopPropagation();
     };
 
     document.addEventListener('keydown', keyDown);

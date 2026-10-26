@@ -121,10 +121,12 @@ function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
       text.getReferencePoints(),
     );
 
-    if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (!(dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist))) {
+      return;
     }
+
+    minDist = dist;
+    ret = { id, dist: minDist };
   });
   return ret;
 }
@@ -140,12 +142,14 @@ function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
       restruct.render.options.microModeScale,
     );
 
-    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
-      minDist = dist.minDist;
-      refPoint = dist.refPoint;
-
-      ret = { id, dist: minDist, ref: refPoint };
+    if (!(dist.minDist < 0.3 && (!ret || dist.minDist < minDist))) {
+      return;
     }
+
+    minDist = dist.minDist;
+    refPoint = dist.refPoint;
+
+    ret = { id, dist: minDist, ref: refPoint };
   });
   return ret;
 }
@@ -182,10 +186,12 @@ function findClosestAtom(
 
     const dist = Vec2.dist(pos, atom.a.pp);
 
-    if (dist < effectiveMinDist) {
-      closestAtom = aid;
-      effectiveMinDist = dist;
+    if (!(dist < effectiveMinDist)) {
+      return;
     }
+
+    closestAtom = aid;
+    effectiveMinDist = dist;
   });
 
   if (closestAtom !== null) {
@@ -212,13 +218,15 @@ function findClosestAttachmentGroup(
   restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
     if (id === skipId) return;
     const dist = Vec2.dist(pos, attachmentGroup.a.pp);
-    if (
+    if (!(
       dist < effectiveMinDist ||
       (minDist !== null && dist === effectiveMinDist)
-    ) {
-      closestId = id;
-      effectiveMinDist = dist;
+    )) {
+      return;
     }
+
+    closestId = id;
+    effectiveMinDist = dist;
   });
 
   return closestId === null ? null : { id: closestId, dist: effectiveMinDist };
@@ -284,14 +292,18 @@ function findClosestBond(
     const inStripe =
       Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0;
 
-    if (inStripe) {
-      const dist = Math.abs(Vec2.dot(pos.sub(p1), norm));
-
-      if (dist < effectiveMinDist) {
-        closestBond = bid;
-        effectiveMinDist = dist;
-      }
+    if (!inStripe) {
+      return;
     }
+
+    const dist = Math.abs(Vec2.dot(pos.sub(p1), norm));
+
+    if (!(dist < effectiveMinDist)) {
+      return;
+    }
+
+    closestBond = bid;
+    effectiveMinDist = dist;
   });
 
   if (closestBondCenter !== null) {
@@ -335,10 +347,12 @@ function findClosestEnhancedFlag(
 
     const dist = Math.abs(pos.y - p.y);
 
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (!(dist < 0.3 && (!ret || dist < minDist))) {
+      return;
     }
+
+    minDist = dist;
+    ret = { id, dist: minDist };
   });
   return ret;
 }
@@ -350,26 +364,30 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
   restruct.sgroupData.forEach((item, id) => {
     if (item.sgroup.type !== 'DAT') throw new Error('Data group expected');
 
-    if (item.sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
-      const box = item.sgroup.dataArea;
-      if (!box) {
-        return;
-      }
-      const inBox =
-        box.p0.y < pos.y &&
-        box.p1.y > pos.y &&
-        box.p0.x < pos.x &&
-        box.p1.x > pos.x;
-      const xDist = Math.min(
-        Math.abs(box.p0.x - pos.x),
-        Math.abs(box.p1.x - pos.x),
-      );
-
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = { id, dist: xDist };
-        minDist = xDist;
-      }
+    if (item.sgroup.data.fieldName === 'MRV_IMPLICIT_H') {
+      return;
     }
+
+    const box = item.sgroup.dataArea;
+    if (!box) {
+      return;
+    }
+    const inBox =
+      box.p0.y < pos.y &&
+      box.p1.y > pos.y &&
+      box.p0.x < pos.x &&
+      box.p1.x > pos.x;
+    const xDist = Math.min(
+      Math.abs(box.p0.x - pos.x),
+      Math.abs(box.p1.x - pos.x),
+    );
+
+    if (!(inBox && (ret === null || xDist < minDist))) {
+      return;
+    }
+
+    ret = { id, dist: xDist };
+    minDist = xDist;
   });
 
   return ret;
@@ -435,14 +453,18 @@ function findClosestRGroup(
   const skipId = skip?.map === 'rgroups' ? skip.id : null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
-    if (rgid !== skipId && rgroup.labelBox?.contains(pos, 0.5)) {
-      const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
-
-      if (!ret || dist < effectiveMinDist) {
-        effectiveMinDist = dist;
-        ret = { id: rgid, dist: effectiveMinDist };
-      }
+    if (!(rgid !== skipId && rgroup.labelBox?.contains(pos, 0.5))) {
+      return;
     }
+
+    const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
+
+    if (!(!ret || dist < effectiveMinDist)) {
+      return;
+    }
+
+    effectiveMinDist = dist;
+    ret = { id: rgid, dist: effectiveMinDist };
   });
 
   return ret;
@@ -468,13 +490,17 @@ function findClosestRgroupAttachmentPoints(
     const itemOutlinePoints = [...reItem.getOutlinePoints()];
     const isCursorInsideOutline =
       cursorPosition.isInsidePolygon(itemOutlinePoints);
-    if (isCursorInsideOutline) {
-      const dist = reItem.getDistanceTo(cursorPosition);
-      if (dist < minDist) {
-        minDist = dist;
-        closestItemId = id;
-      }
+    if (!isCursorInsideOutline) {
+      return;
     }
+
+    const dist = reItem.getDistanceTo(cursorPosition);
+    if (!(dist < minDist)) {
+      return;
+    }
+
+    minDist = dist;
+    closestItemId = id;
   });
 
   return closestItemId === undefined
@@ -496,12 +522,14 @@ function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
       restruct.render.options.microModeScale,
     );
 
-    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
-      minDist = dist.minDist;
-      refPoint = dist.refPoint;
-
-      ret = { id, dist: minDist, ref: refPoint };
+    if (!(dist.minDist < 0.3 && (!ret || dist.minDist < minDist))) {
+      return;
     }
+
+    minDist = dist.minDist;
+    refPoint = dist.refPoint;
+
+    ret = { id, dist: minDist, ref: refPoint };
   });
   return ret;
 }
@@ -514,10 +542,12 @@ function findClosestRxnPlus(restruct: ReStruct, pos: Vec2) {
     const p = plus.item.pp;
     const dist = Math.max(Math.abs(pos.x - p.x), Math.abs(pos.y - p.y));
 
-    if (dist < 0.3 && (!ret || dist < minDist)) {
-      minDist = dist;
-      ret = { id, dist: minDist };
+    if (!(dist < 0.3 && (!ret || dist < minDist))) {
+      return;
     }
+
+    minDist = dist;
+    ret = { id, dist: minDist };
   });
 
   return ret;
@@ -560,10 +590,12 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pg.x),
       );
 
-      if (inBox && (ret === null || xDist < minDist)) {
-        ret = sgid;
-        minDist = xDist;
+      if (!(inBox && (ret === null || xDist < minDist))) {
+        return;
       }
+
+      ret = sgid;
+      minDist = xDist;
     });
   });
 
@@ -676,18 +708,20 @@ function findCloseMerge(
 
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
-    if (bond) {
-      const beginAtom = struct.getBondEndpoint(bond.begin);
-      const endAtom = struct.getBondEndpoint(bond.end);
-      if (!beginAtom || !endAtom) {
-        // Same stale-cache scenario as findClosestBond: skip instead of crashing.
-        KetcherLogger.warn(
-          atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
-        );
-        return;
-      }
-      pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
+    if (!bond) {
+      return;
     }
+
+    const beginAtom = struct.getBondEndpoint(bond.begin);
+    const endAtom = struct.getBondEndpoint(bond.end);
+    if (!beginAtom || !endAtom) {
+      // Same stale-cache scenario as findClosestBond: skip instead of crashing.
+      KetcherLogger.warn(
+        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+      );
+      return;
+    }
+    pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
   });
 
   const result: MergeResult & { [key: string]: Map<number, number> } = {

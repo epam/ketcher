@@ -657,23 +657,25 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     const DARK_COLOR = '#333333';
     const LIGHT_COLOR = 'white';
 
-    if (config && this.monomer.isModification) {
-      let fillColor: string | undefined;
+    if (!(config && this.monomer.isModification)) {
+      return;
+    }
 
-      if (config.requiresFill) {
-        const isTextColorDark = this.textColor === DARK_COLOR;
-        fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
-      }
+    let fillColor: string | undefined;
 
-      const useElement = this.rootElement
-        ?.append('use')
-        .attr('xlink:href', config.backgroundId)
-        .attr('pointer-events', 'none')
-        .attr('class', 'modification-background');
+    if (config.requiresFill) {
+      const isTextColorDark = this.textColor === DARK_COLOR;
+      fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
+    }
 
-      if (fillColor) {
-        useElement?.attr('fill', fillColor);
-      }
+    const useElement = this.rootElement
+      ?.append('use')
+      .attr('xlink:href', config.backgroundId)
+      .attr('pointer-events', 'none')
+      .attr('class', 'modification-background');
+
+    if (fillColor) {
+      useElement?.attr('fill', fillColor);
     }
   }
 

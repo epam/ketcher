@@ -149,10 +149,12 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     const ci = this.editor.findItem(event, ['rxnArrows']);
     const p0 = CoordinateTransformation.pageToModel(event, this.render);
 
-    if (!ci) {
-      const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];
-      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
+    if (ci) {
+      return;
     }
+
+    const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];
+    this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
   }
 
   private updateResizingState(arrowId: number, isResizing: boolean) {

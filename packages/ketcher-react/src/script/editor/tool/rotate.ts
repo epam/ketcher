@@ -73,18 +73,20 @@ class RotateTool implements Tool {
   constructor(editor: Editor, flipDirection?: FlipDirection) {
     this.editor = editor;
 
-    if (flipDirection) {
-      const selectionCenter = this.getCenter();
-      const canvasCenter = this.reStruct.getVBoxObj().centre();
-      const action = fromFlip(
-        this.reStruct,
-        this.selection,
-        flipDirection,
-        selectionCenter || canvasCenter,
-      );
-      editor.update(action);
-      editor.rotateController.rerender();
+    if (!flipDirection) {
+      return;
     }
+
+    const selectionCenter = this.getCenter();
+    const canvasCenter = this.reStruct.getVBoxObj().centre();
+    const action = fromFlip(
+      this.reStruct,
+      this.selection,
+      flipDirection,
+      selectionCenter || canvasCenter,
+    );
+    editor.update(action);
+    editor.rotateController.rerender();
   }
 
   private get reStruct() {
@@ -295,15 +297,17 @@ class RotateTool implements Tool {
         );
         const monomerRotateAction = new Action();
         sGroups.forEach((sGroup) => {
-          if (sGroup instanceof MonomerMicromolecule) {
-            const angleInRadians = (dragCtx.angle * Math.PI) / 180;
-            monomerRotateAction.addOp(
-              new RotateMonomerOperation({
-                id: sGroup.id,
-                value: angleInRadians,
-              }),
-            );
+          if (!(sGroup instanceof MonomerMicromolecule)) {
+            return;
           }
+
+          const angleInRadians = (dragCtx.angle * Math.PI) / 180;
+          monomerRotateAction.addOp(
+            new RotateMonomerOperation({
+              id: sGroup.id,
+              value: angleInRadians,
+            }),
+          );
         });
         // `perform` executes the rotation and returns the inverted action
         // (the one that must go into the undo history). Merging the

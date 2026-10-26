@@ -213,10 +213,12 @@ export class SettingsManager {
 
   static addMonomerLibraryUpdate(newUpdate: string) {
     const updates = this.monomerLibraryUpdates;
-    if (!updates.includes(newUpdate)) {
-      updates.push(newUpdate);
-      this.monomerLibraryUpdates = updates;
+    if (updates.includes(newUpdate)) {
+      return;
     }
+
+    updates.push(newUpdate);
+    this.monomerLibraryUpdates = updates;
   }
 
   static get persistMonomerLibraryUpdates(): boolean {

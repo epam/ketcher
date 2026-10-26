@@ -25,37 +25,39 @@ export function getStereoAtomsMap(
   const correctAtomIds: Array<number> = [];
 
   bonds.forEach((bond: Bond | undefined) => {
-    if (bond) {
-      const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
-        bond.begin,
-      );
-      const endNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
-        bond.end,
-      );
+    if (!bond) {
+      return;
+    }
 
+    const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
+      bond.begin,
+    );
+    const endNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
+      bond.end,
+    );
+
+    if (
+      StereoValidator.isCorrectStereoCenter(
+        bond,
+        beginNeighs,
+        endNeighs,
+        struct,
+      )
+    ) {
+      const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel;
       if (
-        StereoValidator.isCorrectStereoCenter(
-          bond,
-          beginNeighs,
-          endNeighs,
-          struct,
-        )
+        stereoLabel == null ||
+        stereoAtomsMap.get(bond.begin)?.stereoLabel == null
       ) {
-        const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel;
-        if (
-          stereoLabel == null ||
-          stereoAtomsMap.get(bond.begin)?.stereoLabel == null
-        ) {
-          stereoAtomsMap.set(bond.begin, {
-            stereoParity: getStereoParity(bond.stereo),
-            stereoLabel: stereoLabel ?? `${StereoLabel.Abs}`,
-          });
-        }
-        correctAtomIds.push(bond.begin);
-      } else {
-        resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.begin);
-        resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.end);
+        stereoAtomsMap.set(bond.begin, {
+          stereoParity: getStereoParity(bond.stereo),
+          stereoLabel: stereoLabel ?? `${StereoLabel.Abs}`,
+        });
       }
+      correctAtomIds.push(bond.begin);
+    } else {
+      resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.begin);
+      resetStereoAtomIfNotCorrect(stereoAtomsMap, correctAtomIds, bond.end);
     }
   });
 

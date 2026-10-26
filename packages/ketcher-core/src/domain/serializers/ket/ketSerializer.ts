@@ -1076,24 +1076,28 @@ export class KetSerializer implements Serializer<Struct> {
 
     if (needSetSelection) {
       drawingEntitiesManager.atoms.forEach((atom) => {
-        if (atom.selected) {
-          const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
-          const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+        if (!atom.selected) {
+          return;
+        }
 
-          if (isNumber(globalAtomId)) {
-            moleculesSelection.atoms.push(globalAtomId);
-          }
+        const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
+        const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+
+        if (isNumber(globalAtomId)) {
+          moleculesSelection.atoms.push(globalAtomId);
         }
       });
 
       drawingEntitiesManager.bonds.forEach((bond) => {
-        if (bond.selected) {
-          const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
-          const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+        if (!bond.selected) {
+          return;
+        }
 
-          if (isNumber(globalBondId)) {
-            moleculesSelection.bonds.push(globalBondId);
-          }
+        const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
+        const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+
+        if (isNumber(globalBondId)) {
+          moleculesSelection.bonds.push(globalBondId);
         }
       });
     }
@@ -1159,7 +1163,7 @@ export class KetSerializer implements Serializer<Struct> {
         SGroupAttachmentPoint
       > = new Map();
       attachmentPoints.forEach((attachmentPoint) => {
-        if (
+        if (!(
           isNumber(attachmentPoint.leaveAtomId) &&
           Atom.isHiddenLeavingGroupAtom(
             struct,
@@ -1167,19 +1171,21 @@ export class KetSerializer implements Serializer<Struct> {
             true,
             true,
           )
-        ) {
-          const attachmentPointClone = new SGroupAttachmentPoint(
-            attachmentPoint.atomId,
-            undefined,
-            attachmentPoint.attachmentId,
-            attachmentPoint.attachmentPointNumber,
-          );
-          attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
-          sgroup.atoms.splice(
-            sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
-            1,
-          );
+        )) {
+          return;
         }
+
+        const attachmentPointClone = new SGroupAttachmentPoint(
+          attachmentPoint.atomId,
+          undefined,
+          attachmentPoint.attachmentId,
+          attachmentPoint.attachmentPointNumber,
+        );
+        attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
+        sgroup.atoms.splice(
+          sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
+          1,
+        );
       });
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {

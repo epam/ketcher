@@ -38,13 +38,15 @@ export const deleteCachedCustomRnaPreset = (presetName?: string) => {
   const cachedPresets = getCachedCustomRnaPresets();
   const presetIndexInCachedList = getPresetIndexInList(presetName);
 
-  if (cachedPresets) {
-    cachedPresets.splice(presetIndexInCachedList, 1);
-
-    if (cachedPresets.length)
-      localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
-    else localStorageWrapper.removeItem(CUSTOM_PRESETS);
+  if (!cachedPresets) {
+    return;
   }
+
+  cachedPresets.splice(presetIndexInCachedList, 1);
+
+  if (cachedPresets.length)
+    localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
+  else localStorageWrapper.removeItem(CUSTOM_PRESETS);
 };
 
 // Toggle 'favorite' field in custom preset from LocalStorage
@@ -54,9 +56,11 @@ export const toggleCachedCustomRnaPresetFavorites = (presetName?: string) => {
   const cachedPresets = getCachedCustomRnaPresets();
   const presetIndexInCachedList = getPresetIndexInList(presetName);
 
-  if (cachedPresets && presetIndexInCachedList > -1) {
-    cachedPresets[presetIndexInCachedList].favorite =
-      !cachedPresets[presetIndexInCachedList].favorite;
-    localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
+  if (!(cachedPresets && presetIndexInCachedList > -1)) {
+    return;
   }
+
+  cachedPresets[presetIndexInCachedList].favorite =
+    !cachedPresets[presetIndexInCachedList].favorite;
+  localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
 };

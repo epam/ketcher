@@ -93,21 +93,25 @@ function setupEditor(
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) {
-        editor.event[name].remove(oldProps[eventName]);
-      }
+    if (!(props[eventName] !== oldProps[eventName])) {
+      return;
+    }
 
-      if (props[eventName]) {
-        editor.event[name].add(props[eventName]);
-      }
+    if (oldProps[eventName]) {
+      editor.event[name].remove(oldProps[eventName]);
+    }
+
+    if (props[eventName]) {
+      editor.event[name].add(props[eventName]);
     }
   });
 
-  if (struct !== oldProps.struct || optionsChanged) {
-    editor.render.unobserveCanvasResize();
-    editor.render.observeCanvasResize();
+  if (!(struct !== oldProps.struct || optionsChanged)) {
+    return;
   }
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {

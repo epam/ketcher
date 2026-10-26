@@ -236,15 +236,17 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
-    if (this.sgroup.pp) {
-      const position = Scale.modelToCanvas(this.sgroup.pp, this.editorSettings);
-
-      this.appendValue(position, (bbox) =>
-        this.sgroup.data.context === SgContexts.Bond
-          ? this.getCenteredDataSGroupLabelShift(position, bbox)
-          : this.getAbsoluteDataSGroupLabelShift(position, bbox),
-      );
+    if (!this.sgroup.pp) {
+      return;
     }
+
+    const position = Scale.modelToCanvas(this.sgroup.pp, this.editorSettings);
+
+    this.appendValue(position, (bbox) =>
+      this.sgroup.data.context === SgContexts.Bond
+        ? this.getCenteredDataSGroupLabelShift(position, bbox)
+        : this.getAbsoluteDataSGroupLabelShift(position, bbox),
+    );
   }
 
   private calculateBracketBox(): Box2Abs | null {

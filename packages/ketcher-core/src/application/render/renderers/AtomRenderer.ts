@@ -592,18 +592,20 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendCharge() {
-    if (this.atom.hasCharge) {
-      const charge = this.atom.properties.charge as number;
-
-      this.textElement
-        ?.append('tspan')
-        .text(
-          (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
-            (charge > 0 ? '+' : '–'),
-        )
-        .attr('fill', this.labelColor)
-        .attr('dy', -4);
+    if (!this.atom.hasCharge) {
+      return;
     }
+
+    const charge = this.atom.properties.charge as number;
+
+    this.textElement
+      ?.append('tspan')
+      .text(
+        (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
+          (charge > 0 ? '+' : '–'),
+      )
+      .attr('fill', this.labelColor)
+      .attr('dy', -4);
   }
 
   private appendRadical() {
@@ -650,35 +652,39 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendExplicitValence() {
-    if (this.atom.hasExplicitValence) {
-      const explicitValence = this.atom.properties.explicitValence as number;
-
-      this.textElement
-        ?.append('tspan')
-        .text(`(${VALENCE_MAP[explicitValence]})`)
-        .attr('fill', this.labelColor)
-        .attr('letter-spacing', 0.2)
-        .attr('dy', -4);
+    if (!this.atom.hasExplicitValence) {
+      return;
     }
+
+    const explicitValence = this.atom.properties.explicitValence as number;
+
+    this.textElement
+      ?.append('tspan')
+      .text(`(${VALENCE_MAP[explicitValence]})`)
+      .attr('fill', this.labelColor)
+      .attr('letter-spacing', 0.2)
+      .attr('dy', -4);
   }
 
   private appendExplicitIsotope() {
-    if (this.atom.hasExplicitIsotope) {
-      const explicitIsotope = this.atom.properties.isotope as number;
-
-      this.textElement
-        /*
-         * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
-         * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
-         * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
-         * Probably we could consider another approach for positioning the atom properties?
-         */
-        ?.insert('tspan', ':first-child')
-        .text(explicitIsotope)
-        .attr('fill', this.labelColor)
-        .attr('letter-spacing', 0.2)
-        .attr('dy', -4);
+    if (!this.atom.hasExplicitIsotope) {
+      return;
     }
+
+    const explicitIsotope = this.atom.properties.isotope as number;
+
+    this.textElement
+      /*
+       * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
+       * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
+       * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
+       * Probably we could consider another approach for positioning the atom properties?
+       */
+      ?.insert('tspan', ':first-child')
+      .text(explicitIsotope)
+      .attr('fill', this.labelColor)
+      .attr('letter-spacing', 0.2)
+      .attr('dy', -4);
   }
 
   private appendAtomProperties() {

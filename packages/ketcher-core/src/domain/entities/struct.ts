@@ -1315,7 +1315,7 @@ export class Struct {
         assert(hb, `HalfBond ${hbid} not found`);
         const aid1 = hb.begin;
         const aid2 = hb.end;
-        if (aid2 in atomToHalfBond) {
+        if (Object.hasOwn(atomToHalfBond, aid2)) {
           // subloop found
           const s = atomToHalfBond[aid2]; // where the subloop begins
           const subloop = loop.slice(s, index + 1);

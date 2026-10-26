@@ -69,7 +69,7 @@ const MonomerGroup = ({
       activeGroupItemValidations[`${monomerItem.props?.MonomerClass}s`];
     if (monomerValidations?.length > 0 && monomerItem.props?.MonomerCaps) {
       for (const monomerValidation of monomerValidations) {
-        if (!(monomerValidation in monomerItem.props.MonomerCaps)) {
+        if (!Object.hasOwn(monomerItem.props.MonomerCaps, monomerValidation)) {
           return true;
         }
       }

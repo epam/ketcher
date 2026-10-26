@@ -141,7 +141,7 @@ export class ViewModel {
         const halfEdge = halfEdgesInLoop[l];
         const firstAtomId = halfEdge.firstAtom.id;
         const secondAtomId = halfEdge.secondAtom.id;
-        if (secondAtomId in atomToHalfBond) {
+        if (Object.hasOwn(atomToHalfBond, secondAtomId)) {
           // subloop found
           const s = atomToHalfBond[secondAtomId]; // where the subloop begins
           const subloop = halfEdgesInLoop.slice(s, l + 1);

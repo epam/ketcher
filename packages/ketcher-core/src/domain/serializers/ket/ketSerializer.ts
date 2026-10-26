@@ -828,7 +828,7 @@ export class KetSerializer implements Serializer<Struct> {
     );
     const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
 
-    if (fileContent[templateNameWithPrefix]) {
+    if (Object.hasOwn(fileContent, templateNameWithPrefix)) {
       return;
     }
 
@@ -867,7 +867,7 @@ export class KetSerializer implements Serializer<Struct> {
     const templateNameWithPrefix =
       setAmbiguousMonomerTemplatePrefix(templateId);
 
-    if (fileContent[templateNameWithPrefix]) {
+    if (Object.hasOwn(fileContent, templateNameWithPrefix)) {
       return;
     }
 

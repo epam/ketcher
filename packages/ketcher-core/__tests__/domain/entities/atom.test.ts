@@ -102,6 +102,19 @@ describe('Atom', () => {
     it('should return default attr if value is in attrsList', () => {
       expect(Atom.attrGetDefault('label')).toBe('C');
     });
+
+    it('preserves falsy own defaults', () => {
+      expect(Atom.attrGetDefault('radical')).toBe(0);
+      expect(Atom.attrGetDefault('isPreview')).toBe(false);
+      expect(Atom.attrGetDefault('alias')).toBeNull();
+    });
+
+    it.each(['toString', 'constructor', '__proto__', 'unknown'])(
+      'does not return inherited or missing default "%s"',
+      (attribute) => {
+        expect(Atom.attrGetDefault(attribute)).toBeUndefined();
+      },
+    );
   });
 
   describe('clone', () => {

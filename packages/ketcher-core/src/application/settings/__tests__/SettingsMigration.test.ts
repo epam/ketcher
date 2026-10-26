@@ -19,6 +19,31 @@ describe('SettingsMigration', () => {
       expect(migrated).toEqual(flatFormat);
     });
 
+    it.each([false, 0, '', null, undefined])(
+      'recognizes an own flat key with value %p',
+      (value) => {
+        const stored = { resetToSelect: value };
+
+        expect(SettingsMigration.migrate(stored)).toBe(stored);
+      },
+    );
+
+    it('ignores an inherited flat key', () => {
+      const stored = Object.create({ resetToSelect: false });
+
+      expect(SettingsMigration.migrate(stored)).toEqual({});
+      expect(SettingsMigration.migrate(stored)).not.toBe(stored);
+    });
+
+    it('ignores an inherited category key when recognizing flat settings', () => {
+      const stored = Object.assign(
+        Object.create({ editor: { rotationStep: 30 } }),
+        { resetToSelect: false },
+      );
+
+      expect(SettingsMigration.migrate(stored)).toBe(stored);
+    });
+
     it('should migrate namespaced format to flat format', () => {
       const namespacedFormat = {
         editor: { resetToSelect: false, rotationStep: 30 },

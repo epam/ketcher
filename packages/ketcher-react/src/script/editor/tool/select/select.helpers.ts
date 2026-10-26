@@ -23,7 +23,7 @@ function uniqArray(dest, add, reversible: boolean) {
 export function selMerge(selection, add, reversible: boolean) {
   if (add) {
     Object.keys(add).forEach((item) => {
-      if (!selection[item]) selection[item] = add[item].slice();
+      if (!Object.hasOwn(selection, item)) selection[item] = add[item].slice();
       else selection[item] = uniqArray(selection[item], add[item], reversible);
     });
   }

@@ -48,8 +48,10 @@ export class SettingsMigration {
       'macromolecules',
     ];
 
-    const hasFlatKeys = flatKeys.some((key) => key in stored);
-    const hasCategoryKeys = categoryKeys.some((key) => key in stored);
+    const hasFlatKeys = flatKeys.some((key) => Object.hasOwn(stored, key));
+    const hasCategoryKeys = categoryKeys.some((key) =>
+      Object.hasOwn(stored, key),
+    );
 
     // It's flat if it has flat keys and no category keys
     return hasFlatKeys && !hasCategoryKeys;

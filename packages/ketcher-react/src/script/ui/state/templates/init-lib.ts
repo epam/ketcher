@@ -159,6 +159,6 @@ function prefetchRender(
       if (svgContent) cacheEl.innerHTML += svgContent;
     });
 
-    return files.filter((_, i) => !!svgs[i]);
+    return files.filter((_, i) => Boolean(svgs[i]));
   });
 }

@@ -93,7 +93,10 @@ export abstract class BaseMode {
       const hotKeys = initHotKeys(this.keyboardEventHandlers);
       const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
-      if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
+      if (
+        shortcutKey &&
+        Object.hasOwn(this.keyboardEventHandlers, shortcutKey)
+      ) {
         if (shortcutKey === 'start-new-sequence') {
           event.preventDefault();
         }

@@ -256,9 +256,11 @@ export function fromBondsAttrs(
     let shouldUpdateStereo = false;
 
     Object.keys(Bond.attrlist).forEach((key) => {
-      if (!(key in attrs) && !reset) return;
+      if (!Object.hasOwn(attrs, key) && !reset) return;
 
-      const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
+      const value = Object.hasOwn(attrs, key)
+        ? attrs[key]
+        : Bond.attrGetDefault(key);
 
       action.addOp(
         new BondAttr(bid, key as keyof typeof Bond.attrlist, value).perform(
@@ -268,7 +270,7 @@ export function fromBondsAttrs(
       if (key === 'type') {
         shouldRecalculateImplicitH = true;
       }
-      if (key === 'stereo' && key in attrs) {
+      if (key === 'stereo' && Object.hasOwn(attrs, key)) {
         shouldRecalculateImplicitH = true;
         shouldUpdateStereo = true;
       }

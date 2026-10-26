@@ -50,15 +50,17 @@ export const CDXStructuresViewer = ({
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
-  const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
+  const selectedStructure = structList[selectedIndex];
+  const selectedItem = itemsMap[selectedIndex];
+  const loading = Boolean(selectedStructure) && !selectedItem;
 
   useEffect(() => {
-    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
+    if (!selectedItem || selectedItem.error) {
       inputHandler('');
     } else {
-      inputHandler(itemsMap[selectedIndex].base64struct);
+      inputHandler(selectedItem.base64struct);
     }
-  }, [inputHandler, itemsMap, selectedIndex]);
+  }, [inputHandler, selectedItem]);
 
   const getImage = useCallback(
     (str, index) => {
@@ -81,8 +83,13 @@ export const CDXStructuresViewer = ({
 
   const handleSelectStructure = (index: number) => {
     setSelectedIndex(index);
-    if (index !== selectedIndex && structList[index] && !itemsMap[index]) {
-      getImage(structList[index], index);
+    const structure = structList[index];
+    if (
+      index !== selectedIndex &&
+      structure &&
+      !Object.hasOwn(itemsMap, index)
+    ) {
+      getImage(structure, index);
     }
   };
 

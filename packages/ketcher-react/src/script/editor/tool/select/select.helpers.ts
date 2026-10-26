@@ -270,8 +270,6 @@ export function isSelectionMoveHandled(
   return false;
 }
 
-export { isSelectionMoveHandled as onSelectionMove };
-
 export function onSelectionEnd(
   event: PointerEvent,
   editor: Editor,

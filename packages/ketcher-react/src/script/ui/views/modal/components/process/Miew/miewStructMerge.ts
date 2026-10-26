@@ -93,12 +93,6 @@ export function didMergeCoordinatesFromResult(
   return true;
 }
 
-export {
-  shouldPreserveMeta as needsMetaPreservation,
-  shouldPreserveStructure as needsStructurePreservation,
-  didMergeCoordinatesFromResult as mergeCoordinatesFromResult,
-};
-
 function getAtomCentroid(struct: Struct): Vec2 {
   if (struct.atoms.size === 0) {
     return new Vec2(0, 0);

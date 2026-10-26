@@ -22,7 +22,7 @@ import {
   Bond,
   RxnArrowMode,
   StereoFlag,
-  exceedsMolfileV2000Limit as isMolfileV2000LimitExceeded,
+  isMolfileV2000LimitExceeded,
   getPropertiesByFormat,
 } from 'ketcher-core';
 

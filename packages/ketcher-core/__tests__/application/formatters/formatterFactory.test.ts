@@ -1,5 +1,5 @@
 import {
-  exceedsMolfileV2000Limit as isMolfileV2000LimitExceeded,
+  isMolfileV2000LimitExceeded,
   MOLFILE_V2000_ATOM_BOND_LIMIT,
 } from 'application/formatters/constants';
 import { FormatterFactory } from 'application/formatters/formatterFactory';

@@ -267,8 +267,6 @@ export function setFragmentRecognition(isFrag: boolean) {
   };
 }
 
-export { setFragmentRecognition as shouldFragment };
-
 /*
 CHECK
 */

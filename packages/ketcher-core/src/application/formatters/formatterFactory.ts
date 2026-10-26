@@ -27,7 +27,7 @@ import type { Struct } from 'domain/entities/struct';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
-import { exceedsMolfileV2000Limit as isMolfileV2000LimitExceeded } from './constants';
+import { isMolfileV2000LimitExceeded } from './constants';
 
 export class FormatterFactory {
   readonly #structService: StructService;

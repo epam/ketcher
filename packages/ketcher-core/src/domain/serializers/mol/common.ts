@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,9 @@ function getAtom(mol: Struct, id: number): Atom {
   return atom;
 }
 
-/* Parse Mol */
+/*
+Parse Mol
+*/
 function parseMol(
   ctabLines: string[],
   shouldIgnoreChiralFlag?: boolean,
@@ -68,7 +70,9 @@ function parseCTab(
   throw new Error('Molfile version unknown: ' + version);
 }
 
-/* Parse Rxn */
+/*
+Parse Rxn
+*/
 function parseRxn(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
@@ -87,7 +91,9 @@ function parseRxn(
   return struct;
 }
 
-/* Prepare For Saving */
+/*
+Prepare For Saving
+*/
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
     MUL: SGroup.prepareMulForSaving,
@@ -157,7 +163,9 @@ function prepareDatForSaving(sgroup: SGroup, mol: Struct): void {
   sgroup.atoms = SGroup.getAtoms(mol, sgroup);
 }
 
-/* Save To Molfile */
+/*
+Save To Molfile
+*/
 const saveToMolfile: Record<
   string,
   (
@@ -395,7 +403,7 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
 
 // According Unicode Consortium sould be
 // nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// http://www.unicode.org/reports/tr18/#Line_Boundaries
+// https://www.unicode.org/reports/tr18/#Line_Boundaries
 const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
   return str.replace(nlRe, '\n');

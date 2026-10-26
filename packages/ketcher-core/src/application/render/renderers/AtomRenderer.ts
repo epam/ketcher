@@ -312,7 +312,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias ?? this.atom.label;
   }
 
-  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  /**
+  True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *).
+  */
   public get isGenericLabel(): boolean {
     return isGenericAtom(this.atom.label);
   }
@@ -324,7 +326,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.label === AtomLabel.H;
   }
 
-  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  /**
+  The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary.
+  */
   public get displayLabelText() {
     const text = this.labelText;
     if (text.length > MAX_LABEL_LENGTH) {
@@ -333,7 +337,9 @@ export class AtomRenderer extends BaseRenderer {
     return text;
   }
 
-  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  /**
+  When the label is truncated, this holds the full text for use as a tooltip.
+  */
   public get labelTooltipText(): string | null {
     const text = this.labelText;
     return text.length > MAX_LABEL_LENGTH ? text : null;

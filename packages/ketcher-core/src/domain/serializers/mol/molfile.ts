@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -150,7 +150,9 @@ export class Molfile {
   }
 
   getCTab(molecule: Struct, rgroups?: Struct['rgroups']) {
-    /* saver */
+    /*
+    saver
+    */
     this.molecule = molecule.clone();
     this.centerMonomerMicromoleculeAtoms();
     this.prepareSGroups(false, false);
@@ -165,7 +167,9 @@ export class Molfile {
     shouldOmitRGroups?: boolean,
     shouldPreserveIndigoDesc?: boolean,
   ) {
-    /* saver */
+    /*
+    saver
+    */
     this.reaction = molecule.hasRxnArrow();
     this.molfile = '' + molecule.name;
     if (this.reaction) {
@@ -236,7 +240,9 @@ export class Molfile {
   }
 
   writeHeader() {
-    /* saver */
+    /*
+    saver
+    */
 
     const date = new Date();
 
@@ -256,12 +262,16 @@ export class Molfile {
   }
 
   write(str: string) {
-    /* saver */
+    /*
+    saver
+    */
     this.molfile += str;
   }
 
   writeCR(str?: string) {
-    /* saver */
+    /*
+    saver
+    */
     if (arguments.length === 0) {
       str = '';
     }
@@ -270,7 +280,9 @@ export class Molfile {
   }
 
   writeWhiteSpace(length = 0) {
-    /* saver */
+    /*
+    saver
+    */
     if (arguments.length === 0) {
       length = 1;
     }
@@ -279,13 +291,17 @@ export class Molfile {
   }
 
   writePadded(str: string, width: number) {
-    /* saver */
+    /*
+    saver
+    */
     this.write(str);
     this.writeWhiteSpace(width - str.length);
   }
 
   writePaddedNumber(number: number, width: number) {
-    /* saver */
+    /*
+    saver
+    */
     const str = (number - 0).toString();
 
     this.writeWhiteSpace(width - str.length);
@@ -293,12 +309,16 @@ export class Molfile {
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
-    /* saver */
+    /*
+    saver
+    */
     this.write(utils.paddedNum(number, width, precision));
   }
 
   writeCTab2000Header() {
-    /* saver */
+    /*
+    saver
+    */
     const molecule = this.molecule;
     assert(molecule !== null, 'molecule is not defined');
     this.writePaddedNumber(molecule.atoms.size, 3);
@@ -321,7 +341,9 @@ export class Molfile {
   }
 
   writeCTab2000(rgroups?: Struct['rgroups']) {
-    /* saver */
+    /*
+    saver
+    */
     const molecule = this.molecule;
     if (!molecule) return;
 

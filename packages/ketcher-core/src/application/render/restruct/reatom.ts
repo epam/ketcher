@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -174,7 +174,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const [attachmentPointName] = attachmentPointEntry;
       hoverElement.hover(
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'highlightAttachmentPointControls',
               {
@@ -184,7 +184,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           );
         },
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'resetHighlightAttachmentPointControls',
               {
@@ -929,7 +929,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'highlightAttachmentPointControls',
                   {
@@ -953,7 +953,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'resetHighlightAttachmentPointControls',
                   {
@@ -1031,7 +1031,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0.15 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'highlightAttachmentPointControls',
                       { detail: apName },
@@ -1042,7 +1042,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apName },
@@ -2217,11 +2217,17 @@ type AtomCustomQueryPropertyName =
   | 'substitutionCount'
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
-  /** Atom property name used to determine whether the query attribute applies. */
+  /**
+  Atom property name used to determine whether the query attribute applies.
+  */
   propertyName: AtomCustomQueryPropertyName;
-  /** Reads the raw atom/query-property value before text normalization. */
+  /**
+  Reads the raw atom/query-property value before text normalization.
+  */
   getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
-  /** Converts a normalized value to its Molfile query attribute representation. */
+  /**
+  Converts a normalized value to its Molfile query attribute representation.
+  */
   format: (value: string) => string;
 };
 
@@ -2420,7 +2426,9 @@ function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }
 
-/** Project an axis-aligned box onto AP-local along/perp axes. */
+/**
+Project an axis-aligned box onto AP-local along/perp axes.
+*/
 function projectBoxOnApAxes(
   W: number,
   H: number,
@@ -2434,7 +2442,9 @@ function projectBoxOnApAxes(
   };
 }
 
-/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
+/**
+Count atom-relative visel extents that overlap the candidate canvas-space box.
+*/
 function countExtOverlaps(
   exts: Box2Abs[],
   atomPos: Vec2,

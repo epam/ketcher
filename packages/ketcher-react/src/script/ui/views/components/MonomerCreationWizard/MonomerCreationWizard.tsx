@@ -1023,13 +1023,13 @@ const MonomerCreationWizardInternal = ({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationExternalNotificationAction,
       externalNotificationEventListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
       );
@@ -1047,13 +1047,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationAttachmentPointClickEvent,
       attachmentPointClickHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationAttachmentPointClickEvent,
         attachmentPointClickHandler,
       );
@@ -1087,13 +1087,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationComponentStructureUpdateEvent,
       componentStructureUpdateHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationComponentStructureUpdateEvent,
         componentStructureUpdateHandler,
       );

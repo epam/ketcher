@@ -274,7 +274,9 @@ export class CoreEditor {
   private libraryItemDragCancelled = false;
 
   public theme: CoreEditorTheme;
-  /** Handles all drag-and-drop attachment-point logic for library items. */
+  /**
+  Handles all drag-and-drop attachment-point logic for library items.
+  */
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
@@ -1508,7 +1510,7 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -1527,7 +1529,7 @@ export class CoreEditor {
     this.events.toggleLineLengthHighlighting.add(
       (shouldHighlightLineLength: boolean, currentPosition = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -2896,7 +2898,7 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.mode.destroy();
       this._type = type;
-      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
+      globalThis.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
       this.drawingEntitiesManager = drawingEntitiesManager;
       this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
       this.mode = new (getModeConstructor(modeName))();
@@ -2974,7 +2976,7 @@ export class CoreEditor {
 
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      window._ketcher_isAutozoomDisabled ||
+      globalThis._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers
     ) {

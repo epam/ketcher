@@ -100,7 +100,9 @@ export async function didDeleteWithAttachmentGroupSplitConfirm(
 
 export { didDeleteWithAttachmentGroupSplitConfirm as deleteWithAttachmentGroupSplitConfirm };
 
-/** Sync call sites: confirm/cancel safely, then optionally run a follow-up. */
+/**
+Sync call sites: confirm/cancel safely, then optionally run a follow-up.
+*/
 export function runDeleteWithAttachmentGroupSplitConfirm(
   editor: Editor,
   deletion: DeletionSelection,

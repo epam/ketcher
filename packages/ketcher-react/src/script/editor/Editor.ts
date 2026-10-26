@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -451,7 +451,9 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
-  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
+  /**
+  Apply {@link value}: {@link Struct} if provided to {@link render} and
+  */
   struct(
     value?: Struct,
     shouldCenterStruct = true,
@@ -512,7 +514,9 @@ class Editor implements KetcherEditor {
     return result;
   }
 
-  /** Apply options from {@link value} */
+  /**
+  Apply options from {@link value}
+  */
   options(value?: Record<string, unknown>) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -1137,7 +1141,7 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment =
       potentialLeavingAtomForManualAssignment;
 
-    window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
+    globalThis.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
 
     return true;
   }
@@ -3013,7 +3017,9 @@ class Editor implements KetcherEditor {
     struct.bonds.add(newBond);
   }
 
-  /** Removes the bond from the struct if it is still present. */
+  /**
+  Removes the bond from the struct if it is still present.
+  */
   private deleteBond(struct: Struct, bond: Bond) {
     const bondId = struct.bonds.keyOf(bond);
     if (bondId === null) {
@@ -3468,7 +3474,7 @@ class Editor implements KetcherEditor {
       atomIds: updatedAtoms,
       bondIds: updatedBonds,
     };
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
         detail: eventData,
       }),
@@ -4429,7 +4435,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     const subs = editor.event[eventName];
 
     target.addEventListener(eventName, (...args) => {
-      if (window.isPolymerEditorTurnedOn) return;
+      if (globalThis.isPolymerEditorTurnedOn) return;
       subs.dispatch(...args);
     });
 

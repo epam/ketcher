@@ -133,7 +133,7 @@ export class RenderStruct {
         ...renderOptions,
       };
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         extendedOptions.fontsz = 30;
         extendedOptions.fontszsub = 20;
         extendedOptions.width = svgSize;
@@ -142,13 +142,13 @@ export class RenderStruct {
 
       const rnd = new Render(wrapperElement, extendedOptions);
 
-      if (!window.isPolymerEditorTurnedOn) {
+      if (!globalThis.isPolymerEditorTurnedOn) {
         preparedStruct.rescale();
       }
 
       rnd.setMolecule(preparedStruct);
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         // Raphael sets overflow:hidden as an inline style on the SVG element,
         // which clips bond strokes at the bounding-box edge and makes them
         // appear thinner than bonds in the interior. Override it so strokes

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,11 +33,15 @@ import type { AtomMap, SGroupMap } from './mol.types';
 
 const shouldLoadRGroupFragments = true; // TODO: set to load the fragments
 
-/** M-property block: string keys (CHG, alias, …) map to per-atom pools */
+/**
+M-property block: string keys (CHG, alias, …) map to per-atom pools
+*/
 type MPropertyProps = Map<string, Pool<string | number | AtomList>>;
 
 function parseAtomLine(atomLine: string): Atom {
-  /* reader */
+  /*
+  reader
+  */
   const atomSplit = utils.partitionLine(
     atomLine,
     utils.fmtInfo.atomLinePartition,
@@ -72,7 +76,9 @@ function parseAtomLine(atomLine: string): Atom {
 }
 
 function parseBondLine(bondLine: string): Bond {
-  /* reader */
+  /*
+  reader
+  */
   const bondSplit = utils.partitionLine(
     bondLine,
     utils.fmtInfo.bondLinePartition,
@@ -96,7 +102,9 @@ function parseAtomListLine(atomListLine: string): {
   aid: number;
   atomList: AtomList;
 } {
-  /* reader */
+  /*
+  reader
+  */
   const split = utils.partitionLine(
     atomListLine,
     utils.fmtInfo.atomListHeaderPartition,
@@ -420,7 +428,9 @@ function parsePropertyLines(
   sGroups: SGroupMap,
   rLogic: Record<number, RGroupAttributes>,
 ): MPropertyProps {
-  /* reader */
+  /*
+  reader
+  */
   const props = new Map<string, Pool<string | number | AtomList>>();
 
   while (shift < end) {
@@ -460,7 +470,9 @@ function applyAtomProp(
   values: Pool<string | number | AtomList>,
   propId: string,
 ): void {
-  /* reader */
+  /*
+  reader
+  */
   values.forEach((propVal, aid) => {
     const atom = atoms.get(aid);
     if (atom) {
@@ -506,7 +518,9 @@ function parseCTabV2000(
   countsSplit: string[],
   shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ctab = new Struct();
   let i: number;
   const atomCount = utils.parseDecimalInt(countsSplit[0]);
@@ -665,7 +679,9 @@ function parseRxn2000(
   shouldReactionRelayout?: boolean,
   shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -705,7 +721,9 @@ function parseCTab(
   ctabLines: string[],
   shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
@@ -715,7 +733,9 @@ function parseCTab(
 }
 
 function labelsListToIds(labels: string[]): number[] {
-  /* reader */
+  /*
+  reader
+  */
   const ids: number[] = [];
   for (const label of labels) {
     const element = Elements.get(label.trim());
@@ -736,7 +756,9 @@ function parsePropertyLineAtomList(
   hdr: string[],
   lst: string[],
 ): Pool<AtomList> {
-  /* reader */
+  /*
+  reader
+  */
   const aid = utils.parseDecimalInt(hdr[1]) - 1;
   const count = utils.parseDecimalInt(hdr[2]);
   const isNotList = hdr[4].trim() === 'T';

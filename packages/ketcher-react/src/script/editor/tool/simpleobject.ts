@@ -32,7 +32,7 @@ import type { Tool } from './Tool';
 interface SimpleObjectDragContext {
   p0: Vec2;
   previous?: Vec2;
-  ci?: ClosestItemWithMap<Vec2, 'simpleObjects'>;
+  ci?: ClosestItemWithMap;
   isNew?: boolean;
   action?: Action;
   itemId?: number;

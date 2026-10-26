@@ -69,7 +69,9 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   reactionplus: ReactionPlusTool,
   reactionmap: ReactionMapTool,
   reactionunmap: ReactionUnmapTool,
-  paste: PasteTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  paste: PasteTool as unknown as ToolConstructorInterface,
   // Cast to ToolConstructorInterface: constructor param types are narrower
   // than `unknown[]`, but toolsMap only ever calls these with the correct args.
   rotate: RotateTool as unknown as ToolConstructorInterface,

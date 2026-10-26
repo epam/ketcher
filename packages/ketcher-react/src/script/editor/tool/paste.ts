@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type Struct,
   type EditorTemplate,
   fromItemsFuse,
@@ -36,13 +36,32 @@ import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
+import type { MergeItems } from './template.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
+
+type PasteItems = {
+  atoms: number[];
+  bonds: number[];
+};
+
+/**
+ * Drag context stored when a single contracted group is dropped on another
+ * functional group in PasteTool.
+ */
+interface PasteDragContext {
+  xy0: Vec2;
+  item: ClosestItemWithMap;
+  action?: Action;
+  angle?: number;
+  mergeItems?: MergeItems;
+}
 
 let isMovePreviewCalculationInProgress = false;
 
 const debouncedSetAndHoverMergeItems = debounce(function (
-  editor,
-  pasteItems,
-  pasteToolInstance,
+  editor: Editor,
+  pasteItems: PasteItems,
+  pasteToolInstance: PasteTool,
   needResetTool = false,
 ) {
   const mergeItems = getItemsToFuse(editor, pasteItems);
@@ -57,12 +76,12 @@ const debouncedSetAndHoverMergeItems = debounce(function (
 class PasteTool implements Tool {
   private readonly editor: Editor;
   private readonly struct: Struct;
-  private action: any;
-  private dragCtx: any;
-  private mergeItems: any;
+  private action?: Action | null;
+  private dragCtx?: PasteDragContext;
+  private mergeItems: MergeItems = null;
   private readonly isSingleContractedGroup: boolean;
 
-  constructor(editor, struct) {
+  constructor(editor: Editor, struct: Struct) {
     this.editor = editor;
     this.editor.selection(null);
     this.struct = struct;
@@ -94,7 +113,7 @@ class PasteTool implements Tool {
     debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
   }
 
-  public setMergeItems(mergeItems) {
+  public setMergeItems(mergeItems: MergeItems) {
     this.mergeItems = mergeItems;
   }
 
@@ -102,7 +121,7 @@ class PasteTool implements Tool {
     return this.editor.render.ctab;
   }
 
-  mousedown(event) {
+  mousedown(event: MouseEvent) {
     if (
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
@@ -144,7 +163,7 @@ class PasteTool implements Tool {
     };
   }
 
-  mousemove(event) {
+  mousemove(event: MouseEvent) {
     this.mergeItems = null;
     this.editor.hover(null);
     if (isMovePreviewCalculationInProgress) {
@@ -244,14 +263,16 @@ class PasteTool implements Tool {
   }
 
   mouseup() {
-    const idsOfItemsMerged = this.mergeItems && {
-      ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
-      }),
-      ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
-      }),
-    };
+    const idsOfItemsMerged = this.mergeItems
+      ? {
+          ...(this.mergeItems.atoms && {
+            atoms: Array.from(this.mergeItems.atoms.values()),
+          }),
+          ...(this.mergeItems.bonds && {
+            bonds: Array.from(this.mergeItems.bonds.values()),
+          }),
+        }
+      : undefined;
 
     const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
       this.editor.struct(),

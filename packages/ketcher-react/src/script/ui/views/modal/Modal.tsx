@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,13 +25,10 @@ import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
 import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
+import type { ModalState } from '../../state/modal';
 
 interface ModalProps extends BaseCallProps {
-  modal: {
-    name: string;
-    form: any;
-    prop: any;
-  };
+  modal: Pick<ModalState, 'name' | 'form' | 'prop'>;
 }
 
 type Props = ModalProps & BaseCallProps & ModalContainerProps;

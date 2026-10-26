@@ -48,7 +48,9 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
-  atom: AtomTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  atom: AtomTool as unknown as ToolConstructorInterface,
   // Cast to ToolConstructorInterface: constructor param types are narrower
   // than `unknown[]`, but toolsMap only ever calls these with the correct args.
   bond: BondTool as unknown as ToolConstructorInterface,

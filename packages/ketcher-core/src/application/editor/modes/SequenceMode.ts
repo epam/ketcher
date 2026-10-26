@@ -4,6 +4,7 @@ import { BaseMode } from 'application/editor/modes/BaseMode';
 import type { LayoutMode } from 'application/editor/modes/types';
 import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
 import ZoomTool from 'application/editor/tools/Zoom';
+import type { ZoomTransform } from 'd3';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   type TwoStrandedNodeSelection,
@@ -175,6 +176,7 @@ export class SequenceMode extends BaseMode {
   private _isAntisenseEditMode = false;
   private _isSyncEditMode = true;
   private isFirstInit = true;
+  private zoomTransformBeforeScrollToSequence?: ZoomTransform;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
@@ -297,6 +299,7 @@ export class SequenceMode extends BaseMode {
         chainsCollection.lastNode?.monomer.renderer as BaseSequenceItemRenderer
       )?.scaledMonomerPositionForSequence;
 
+      this.zoomTransformBeforeScrollToSequence = zoom.zoomTransform;
       zoom.scrollToCenter(
         Vec2.centre(
           firstMonomerPosition,
@@ -3646,6 +3649,12 @@ export class SequenceMode extends BaseMode {
   public destroy() {
     this.turnOffEditMode();
     SequenceRenderer.clear();
+
+    if (this.zoomTransformBeforeScrollToSequence) {
+      ZoomTool.instance.applyZoomTransform(
+        this.zoomTransformBeforeScrollToSequence,
+      );
+    }
   }
 }
 

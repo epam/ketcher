@@ -442,6 +442,10 @@ export class ZoomTool implements BaseTool {
     this.zoom?.translateTo(this.canvasWrapper, position.x, position.y);
   }
 
+  public applyZoomTransform(transform: ZoomTransform) {
+    this.zoom?.transform(this.canvasWrapper, transform);
+  }
+
   scaleCoordinates(position: Vec2) {
     const newX = this._zoomTransform.applyX(position.x);
     const newY = this._zoomTransform.applyY(position.y);

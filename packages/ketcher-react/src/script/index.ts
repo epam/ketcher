@@ -17,7 +17,10 @@
 import type { Root } from 'react-dom/client';
 import { type ButtonsConfig, KetcherBuilder } from './builders';
 
-import type { StructServiceProvider } from 'ketcher-core';
+import type {
+  StructServiceProvider,
+  DisabledFunctionalityConfig,
+} from 'ketcher-core';
 import type { CustomButton } from './builders/ketcher/CustomButtons';
 
 interface Config {
@@ -30,6 +33,12 @@ interface Config {
   errorHandler: (message: string) => void;
   togglerComponent?: JSX.Element;
   ketcherId: string;
+  /**
+   * List of Ketcher functionality to disable across all of their UI entry
+   * points (context menu items, toolbar buttons, etc). See
+   * `KetcherFunctionality` for the available values.
+   */
+  disabledFunctionality?: DisabledFunctionalityConfig;
 }
 
 export type { Config, ButtonsConfig };
@@ -44,12 +53,14 @@ async function buildKetcherAsync({
   errorHandler,
   togglerComponent,
   customButtons,
+  disabledFunctionality,
   ketcherId: prevKetcherId,
 }: Config) {
   const builder = new KetcherBuilder();
 
   const structService = builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
+  builder.withDisabledFunctionality(disabledFunctionality ?? []);
   const ketcher = await builder.build();
   structService.addKetcherId(ketcher.id);
 

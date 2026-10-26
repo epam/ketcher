@@ -29,6 +29,7 @@ import {
   type ISettingsStorage,
   type Settings,
   type DeepPartial,
+  type DisabledFunctionalityConfig,
 } from 'ketcher-core';
 
 import type { ButtonsConfig } from './ButtonsConfig';
@@ -47,6 +48,7 @@ class KetcherBuilder {
   private settingsService: ISettingsService | null;
   private storageAdapter: ISettingsStorage | null;
   private initialSettings: DeepPartial<Settings> | null;
+  private disabledFunctionality: DisabledFunctionalityConfig | null;
 
   constructor() {
     this.structService = null;
@@ -55,6 +57,7 @@ class KetcherBuilder {
     this.settingsService = null;
     this.storageAdapter = null;
     this.initialSettings = null;
+    this.disabledFunctionality = null;
   }
 
   /**
@@ -81,6 +84,18 @@ class KetcherBuilder {
    */
   withSettings(settings: DeepPartial<Settings>): this {
     this.initialSettings = settings;
+    return this;
+  }
+
+  /**
+   * Provide a list of Ketcher functionality to disable (e.g. "expand
+   * monomers" from the macromolecules context menu). See
+   * `KetcherFunctionality` for the available values.
+   */
+  withDisabledFunctionality(
+    disabledFunctionality: DisabledFunctionalityConfig,
+  ): this {
+    this.disabledFunctionality = disabledFunctionality;
     return this;
   }
 
@@ -217,6 +232,7 @@ class KetcherBuilder {
       this.structService,
       this.formatterFactory,
       settingsService,
+      this.disabledFunctionality ?? [],
     );
     ketcher[this.serviceMode] = true;
 

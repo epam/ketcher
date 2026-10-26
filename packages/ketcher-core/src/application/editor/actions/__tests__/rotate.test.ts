@@ -7,6 +7,9 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { Atom } from 'domain/entities/atom';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { ReStruct } from 'application/render';
+import type { FlipDirection } from '../../shared/utils.types';
 
 /**
  * Regression tests for https://github.com/epam/ketcher/issues/6170
@@ -143,9 +146,23 @@ describe('fromRotate: stale selection ids', () => {
  * MonomerMicromolecule only reads `monomer.monomerItem.expanded` in its
  * constructor, so a minimal cast to `BaseMonomer` is safe here.
  */
-function makeMonomerSGroup(struct, atomPositions, expanded) {
-  const mockMonomer = { monomerItem: { expanded } };
-  const sGroup = new MonomerMicromolecule(SGroup.TYPES.SUP, mockMonomer);
+type MockMonomerItem = {
+  expanded: boolean;
+  transformation?: { flip?: FlipDirection };
+};
+
+function makeMonomerSGroup(
+  struct: Struct,
+  atomPositions: Vec2[],
+  expanded: boolean,
+) {
+  const mockMonomer: { monomerItem: MockMonomerItem } = {
+    monomerItem: { expanded },
+  };
+  const sGroup = new MonomerMicromolecule(
+    SGroup.TYPES.SUP,
+    mockMonomer as unknown as BaseMonomer,
+  );
   sGroup.pp = new Vec2(2, 0); // non-zero so rotation/flip visibly moves it
   const sGroupId = struct.sgroups.add(sGroup);
   sGroup.id = sGroupId; // Pool.add returns the ID but does not set it on the object
@@ -165,12 +182,13 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
   const center = new Vec2(0, 0);
   const angle = Math.PI / 2;
   // Minimal restruct for tests: satisfies AtomMove/SGroupDataMove.execute without a render layer
-  const restruct = (struct) => ({
-    molecule: struct,
-    atoms: new Map(),
-    getBondEndpoint: () => undefined,
-    markItem: () => undefined,
-  });
+  const restruct = (struct: Struct): ReStruct =>
+    ({
+      molecule: struct,
+      atoms: new Map(),
+      getBondEndpoint: () => undefined,
+      markItem: () => undefined,
+    }) as unknown as ReStruct;
 
   it('translates (does not individually rotate) atoms of a collapsed monomer when no expanded monomer is in the selection', () => {
     const struct = new Struct();
@@ -179,8 +197,8 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
       [new Vec2(1, 0)],
       false,
     );
-    const atom = struct.atoms.get(atomIds[0]);
-    const relativeBefore = Vec2.diff(atom.pp, sGroup.pp);
+    const atom = struct.atoms.get(atomIds[0])!;
+    const relativeBefore = Vec2.diff(atom.pp, sGroup.pp!);
     const { x: origX, y: origY } = atom.pp;
 
     fromRotate(restruct(struct), { atoms: atomIds }, center, angle);
@@ -191,7 +209,7 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
     ).toBeGreaterThan(0.1);
     // ...but its position relative to the sgroup is unchanged, i.e. it was
     // translated together with the monomer rather than individually rotated.
-    const relativeAfter = Vec2.diff(atom.pp, sGroup.pp);
+    const relativeAfter = Vec2.diff(atom.pp, sGroup.pp!);
     expect(relativeAfter.x).toBeCloseTo(relativeBefore.x);
     expect(relativeAfter.y).toBeCloseTo(relativeBefore.y);
   });
@@ -199,7 +217,7 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
   it('moves atoms of an expanded monomer', () => {
     const struct = new Struct();
     const { atomIds } = makeMonomerSGroup(struct, [new Vec2(1, 0)], true);
-    const atom = struct.atoms.get(atomIds[0]);
+    const atom = struct.atoms.get(atomIds[0])!;
     const { x: origX, y: origY } = atom.pp;
 
     fromRotate(restruct(struct), { atoms: atomIds }, center, angle);
@@ -217,12 +235,12 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
       [new Vec2(1, 0)],
       false,
     );
-    const { x: origX, y: origY } = sGroup.pp;
+    const { x: origX, y: origY } = sGroup.pp!;
 
     fromRotate(restruct(struct), { atoms: atomIds }, center, angle);
 
     expect(
-      Math.abs(sGroup.pp.x - origX) + Math.abs(sGroup.pp.y - origY),
+      Math.abs(sGroup.pp!.x - origX) + Math.abs(sGroup.pp!.y - origY),
     ).toBeGreaterThan(0.1);
   });
 
@@ -236,9 +254,9 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
       true,
     );
 
-    const atomCollapsed = struct.atoms.get(collapsedAtomIds[0]);
-    const atomExpanded = struct.atoms.get(expandedAtomIds[0]);
-    const relativeBefore = Vec2.diff(atomCollapsed.pp, collapsedSGroup.pp);
+    const atomCollapsed = struct.atoms.get(collapsedAtomIds[0])!;
+    const atomExpanded = struct.atoms.get(expandedAtomIds[0])!;
+    const relativeBefore = Vec2.diff(atomCollapsed.pp, collapsedSGroup.pp!);
     const { x: ex, y: ey } = atomExpanded.pp;
 
     fromRotate(
@@ -251,7 +269,7 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
     // Since an expanded monomer is present, the collapsed monomer's atom is
     // now rotated individually too (its position relative to its sgroup
     // changes), instead of being translated as a rigid body.
-    const relativeAfter = Vec2.diff(atomCollapsed.pp, collapsedSGroup.pp);
+    const relativeAfter = Vec2.diff(atomCollapsed.pp, collapsedSGroup.pp!);
     expect(
       Math.abs(relativeAfter.x - relativeBefore.x) +
         Math.abs(relativeAfter.y - relativeBefore.y),
@@ -264,12 +282,13 @@ describe('fromRotate: collapsed MonomerMicromolecule', () => {
 
 describe('fromFlip: collapsed MonomerMicromolecule', () => {
   const center = new Vec2(0, 0);
-  const restruct = (struct) => ({
-    molecule: struct,
-    atoms: new Map(),
-    getBondEndpoint: () => undefined,
-    markItem: () => undefined,
-  });
+  const restruct = (struct: Struct): ReStruct =>
+    ({
+      molecule: struct,
+      atoms: new Map(),
+      getBondEndpoint: () => undefined,
+      markItem: () => undefined,
+    }) as unknown as ReStruct;
 
   it('translates (does not individually flip) atoms of a collapsed monomer when no expanded monomer is in the selection', () => {
     const struct = new Struct();
@@ -278,8 +297,8 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
       [new Vec2(1, 0)],
       false,
     );
-    const atom = struct.atoms.get(atomIds[0]);
-    const relativeBefore = Vec2.diff(atom.pp, sGroup.pp);
+    const atom = struct.atoms.get(atomIds[0])!;
+    const relativeBefore = Vec2.diff(atom.pp, sGroup.pp!);
     const { x: origX, y: origY } = atom.pp;
 
     fromFlip(restruct(struct), { atoms: atomIds }, 'horizontal', center);
@@ -290,7 +309,7 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
     ).toBeGreaterThan(0.1);
     // ...but its position relative to the sgroup is unchanged, i.e. it was
     // translated together with the monomer rather than individually flipped.
-    const relativeAfter = Vec2.diff(atom.pp, sGroup.pp);
+    const relativeAfter = Vec2.diff(atom.pp, sGroup.pp!);
     expect(relativeAfter.x).toBeCloseTo(relativeBefore.x);
     expect(relativeAfter.y).toBeCloseTo(relativeBefore.y);
   });
@@ -315,7 +334,7 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
       [new Vec2(1, 0)],
       true,
     );
-    const atom = struct.atoms.get(atomIds[0]);
+    const atom = struct.atoms.get(atomIds[0])!;
     const { x: origX, y: origY } = atom.pp;
 
     fromFlip(restruct(struct), { atoms: atomIds }, 'horizontal', center);
@@ -323,7 +342,7 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
     expect(
       Math.abs(atom.pp.x - origX) + Math.abs(atom.pp.y - origY),
     ).toBeGreaterThan(0.1);
-    expect(mockMonomer.monomerItem.transformation.flip).toBe('horizontal');
+    expect(mockMonomer.monomerItem.transformation?.flip).toBe('horizontal');
   });
 
   it('flips every monomer atom individually in a mixed selection (at least one expanded monomer present)', () => {
@@ -333,8 +352,8 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
     const { atomIds: expandedAtomIds, mockMonomer: expandedM } =
       makeMonomerSGroup(struct, [new Vec2(3, 0)], true);
 
-    const atomCollapsed = struct.atoms.get(collapsedAtomIds[0]);
-    const atomExpanded = struct.atoms.get(expandedAtomIds[0]);
+    const atomCollapsed = struct.atoms.get(collapsedAtomIds[0])!;
+    const atomExpanded = struct.atoms.get(expandedAtomIds[0])!;
     const { x: cx, y: cy } = atomCollapsed.pp;
     const { x: ex, y: ey } = atomExpanded.pp;
 
@@ -351,7 +370,7 @@ describe('fromFlip: collapsed MonomerMicromolecule', () => {
     expect(
       Math.abs(atomExpanded.pp.x - ex) + Math.abs(atomExpanded.pp.y - ey),
     ).toBeGreaterThan(0.1);
-    expect(collapsedM.monomerItem.transformation.flip).toBe('horizontal');
-    expect(expandedM.monomerItem.transformation.flip).toBe('horizontal');
+    expect(collapsedM.monomerItem.transformation?.flip).toBe('horizontal');
+    expect(expandedM.monomerItem.transformation?.flip).toBe('horizontal');
   });
 });

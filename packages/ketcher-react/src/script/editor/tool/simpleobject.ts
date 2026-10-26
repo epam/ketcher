@@ -38,15 +38,6 @@ interface SimpleObjectDragContext {
   itemId?: number;
 }
 
-function isSimpleObjectClosestItem(
-  item: ClosestItemWithMap | null,
-): item is ClosestItemWithMap<Vec2, 'simpleObjects'> {
-  return (
-    item?.map === 'simpleObjects' &&
-    (item.ref == null || item.ref instanceof Vec2)
-  );
-}
-
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
   private readonly editor: Editor;

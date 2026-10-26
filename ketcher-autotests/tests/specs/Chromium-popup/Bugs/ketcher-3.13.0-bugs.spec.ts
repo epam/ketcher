@@ -18,6 +18,8 @@ import {
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
+import { waitForRender } from '@utils/common/loaders';
+import { getVisibleCanvas } from '@utils/canvas';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
@@ -212,13 +214,33 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
-    await ContextMenu(page, sugarAtom).click(
-      MonomerOnMicroOption.CollapseMonomer,
-    );
+    await waitForRender(page, async () => {
+      await ContextMenu(page, sugarAtom).click(
+        MonomerOnMicroOption.CollapseMonomer,
+      );
+    });
 
-    // Step 7: Screenshot stereogenic center to verify stereo bonds persist
+    // Step 7: Screenshot stereogenic center to verify stereo bonds persist.
+    // Clamp the left edge of the crop to the canvas element boundary so the
+    // toolbar strip (which renders differently based on preceding test state)
+    // is excluded while all chemistry — both stereo bonds and flanking atoms —
+    // remains fully captured within the 180 px padding.
     const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
-    await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
+    await collapsedLabel.waitFor({ state: 'visible' });
+    const labelBox = await collapsedLabel.boundingBox();
+    const canvasBox = await (await getVisibleCanvas(page)).boundingBox();
+    if (!labelBox || !canvasBox) {
+      throw new Error('Could not get bounding boxes');
+    }
+    const padding = 180;
+    const clip = {
+      x: Math.max(labelBox.x - padding, canvasBox.x),
+      y: Math.max(labelBox.y - padding, 0),
+      width: labelBox.width + padding * 2,
+      height: labelBox.height + padding * 2,
+    };
+    const screenshot = await page.screenshot({ clip });
+    expect(screenshot).toMatchSnapshot();
   });
 
   test('Case 5 — Save Structure dialog causes memory leak when switching formats repeatedly', async () => {

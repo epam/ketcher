@@ -56,7 +56,7 @@ class SimpleObjectTool implements Tool {
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
-    if (isSimpleObjectClosestItem(ci)) {
+    if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;

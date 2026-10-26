@@ -44,11 +44,10 @@ import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import type { IconName } from 'components';
+import { FormState } from 'src/script/ui/component/form/form/form';
 
 interface TextFormState {
-  form: {
-    valid: boolean;
-  };
+  form: FormState;
 }
 
 interface TextProps extends DialogParams {

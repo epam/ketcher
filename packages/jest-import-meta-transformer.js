@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * TypeScript AST transformer for ts-jest that replaces import.meta.env
  * with process.env, enabling Jest (CommonJS) compatibility.

@@ -13,7 +13,7 @@ module.exports = {
           moduleResolution: 'node16',
         },
         astTransformers: {
-          before: [{ path: './jest-import-meta-transformer.js' }],
+          before: [{ path: '../jest-import-meta-transformer.js' }],
         },
       },
     ],

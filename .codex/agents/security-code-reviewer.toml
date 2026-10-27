@@ -17,7 +17,7 @@ Scope: Ketcher has no login, session, database, or server of its own in these pa
 
 Focus:
 
-- HTML sinks: `innerHTML`, `insertAdjacentHTML`, and `dangerouslySetInnerHTML` fed by model, file, or service text. One known case is the fallback branch at `packages/ketcher-react/src/script/ui/views/components/StructEditor/StructEditor.tsx:254`, which writes `msg.info` as HTML when the JSON parse fails. Trace where that text comes from before you report it.
+- HTML sinks: `innerHTML`, `insertAdjacentHTML`, and `dangerouslySetInnerHTML` fed by model, file, or service text. One known case is the fallback branch in `StructEditor.tsx` that writes `msg.info` as HTML when the JSON parse fails. Trace where that text comes from before you report it.
 - Code execution: `eval`, `new Function`, and script or module loads from a string built from input.
 - Untrusted input: text from an opened, dropped, or pasted file (KET, MOL, SDF, RXN, and the other formats in [serialization.md](.memory-bank/modules/serialization.md)) and from clipboard utilities in `packages/ketcher-core/src/utilities/clipboardUtils.ts`. Flag a path where that text reaches a sink or the Indigo worker without a typed parse first.
 - Worker messages: a handler on either side of the Indigo worker boundary (`packages/ketcher-standalone/src/infrastructure/services/struct/`) that uses a payload field it did not check against its type.

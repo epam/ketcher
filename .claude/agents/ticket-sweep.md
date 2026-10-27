@@ -43,5 +43,4 @@ Print, in this order:
 
 - **Decide, then park.** Every choice in the run is yours to make. A choice you genuinely cannot make travels as text: into the PR body via `handle-tickets` (which makes that PR a draft), or into the report's **Skipped** section when there is no PR to carry it.
 - **Every command returns on its own.** Run git and `gh` in non-interactive form — `--no-edit`, `--yes`, `GIT_EDITOR=true`, `--fill` or an explicit `--body` on `gh pr create`. A command that would open an editor or wait on a keypress is the one way this run hangs forever.
-- **One cluster per run.** The rest keep until the next sweep; a run that reaches for a second cluster lands more PRs than a human reviews in a day.
 - **Failure is a section, not a stop.** A unit that fails to deliver appears under **Skipped** with its reason while the other units finish. Only stage 1's preflight ends the whole run early.

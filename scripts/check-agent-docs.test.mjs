@@ -152,7 +152,7 @@ test('an agent file that asks before committing contradicts AGENTS.md, unless it
     ...generatedFor(RULES),
     'AGENTS.md': agents,
     '.claude/commands/ship.md': 'Ask the user before you commit.\n',
-    '.github/skills/commit/SKILL.md': 'Commit only after the user approves.\n',
+    '.agents/skills/commit/SKILL.md': 'Commit only after the user approves.\n',
   });
   assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
     ['conflict', '.claude/commands/ship.md'],

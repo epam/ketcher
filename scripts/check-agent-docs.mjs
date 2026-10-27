@@ -36,8 +36,8 @@ const CHECK_FILE = 'scripts/check-agent-docs.mjs';
 // Flows a user starts to review each commit (the /commit skill, release
 // commits). Their ask-before-commit steps are not a conflict source.
 const USER_REVIEWED_COMMIT_FLOWS = [
-  '.github/skills/commit/SKILL.md',
-  '.claude/skills/prepare-release/SKILL.md',
+  '.agents/skills/commit/SKILL.md',
+  '.agents/skills/prepare-release/SKILL.md',
 ];
 
 // Each conflict lists two sides. A match on the second side in one file that

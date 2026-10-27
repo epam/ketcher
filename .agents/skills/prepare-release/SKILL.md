@@ -20,12 +20,12 @@ operation — edit four `package.json` versions, optionally the
 PR — with a different source/target branch and version-string rule each
 time:
 
-| Mode                | Source branch | Target (PR base) | When                                   |
-|---------------------|----------------|-------------------|-----------------------------------------|
-| `new-candidate`     | `master`       | `master`          | starting a new release candidate cycle |
-| `update-candidate`  | `release/X.Y`  | `release/X.Y`     | new candidate after fixes land         |
-| `promote-public`    | `release/X.Y`  | `release/X.Y`     | promoting the final candidate to public|
-| `patch-public`      | `release/X.Y`  | `release/X.Y`     | hotfix on an already-public release    |
+| Mode               | Source branch | Target (PR base) | When                                    |
+| ------------------ | ------------- | ---------------- | --------------------------------------- |
+| `new-candidate`    | `master`      | `master`         | starting a new release candidate cycle  |
+| `update-candidate` | `release/X.Y` | `release/X.Y`    | new candidate after fixes land          |
+| `promote-public`   | `release/X.Y` | `release/X.Y`    | promoting the final candidate to public |
+| `patch-public`     | `release/X.Y` | `release/X.Y`    | hotfix on an already-public release     |
 
 Note: the mode names use "candidate" — the actual version strings and git
 tags still use the real semver/npm convention `X.Y.0-rc.N` (e.g.
@@ -150,8 +150,7 @@ git push -u origin bump-X.Y
 ```
 
 Find the PR template (`find . -iname pull_request_template.md`) and open a
-PR via `mcp__plugin_github_github__create_pull_request` (or `gh pr create`
-if that tool isn't available):
+PR with `gh pr create`:
 
 - `title`: matches the commit message
 - `head`: `bump-X.Y`

@@ -8,7 +8,7 @@ argument-hint: <mode: draft-candidate|publish-public> <X.Y>
 # Create a Ketcher GitHub release
 
 Parse the mode and version (`X.Y`) from the arguments the user gave; ask if
-unclear. This runs *after* the matching `prepare-release` PR has merged —
+unclear. This runs _after_ the matching `prepare-release` PR has merged —
 check `git log` on the target branch, or ask the user to confirm, before
 tagging. Tagging before the bump merges tags the wrong version.
 
@@ -29,15 +29,6 @@ to a `flagged` bucket instead of being silently dropped — always show the
 user `excluded` and `flagged` before finalizing a release body, and do a
 quick read over the kept entries yourself for typos (don't reword
 chemistry/domain terms that merely look unfamiliar).
-
-`combine` mode's `looks_sectioned()` check requires `re.MULTILINE` on
-`SECTION_HEADER_RE` to detect an already-sectioned draft (`^###...$`
-otherwise only matches when the *entire* body starts with `###`). Without
-it, every input — sectioned or not — silently falls through to the raw
-`gh issue view` pipeline, which can drop previously-curated entries into
-`flagged` if a lookup fails for any reason. If `combine` ever starts
-re-flagging entries from an already-sectioned draft, check this regex
-first before assuming the entries themselves are the problem.
 
 ## Mode: `draft-candidate`
 
@@ -74,7 +65,7 @@ it.** Without `previous_tag_name`, `generate-notes` can pick a base years
 back instead of the previous cycle, producing a changelog with well over a
 thousand stray entries. Always pass one:
 
-- Case B: the previous candidate in *this* cycle, `vX.Y.0-rc.{N-1}`.
+- Case B: the previous candidate in _this_ cycle, `vX.Y.0-rc.{N-1}`.
 - Case A: the previous minor's rc.1 tag (this matches the release doc's own
   "diff with the previous release rc.1 tag" instruction). Find it with
   `gh release list --repo epam/ketcher | grep -- '-rc\.1$'` and confirm
@@ -88,12 +79,12 @@ gh api repos/epam/ketcher/releases/generate-notes \
   -f tag_name=vX.Y.0-rc.N -f previous_tag_name={start-tag} \
   --jq .body > /tmp/raw-notes.txt
 
-python3 .claude/skills/create-release/scripts/clean_changelog.py \
+python3 .agents/skills/create-release/scripts/clean_changelog.py \
   --owner epam --repo ketcher clean < /tmp/raw-notes.txt
 ```
 
 `--owner`/`--repo` are top-level flags, not part of `clean`/`combine` —
-place them *before* the subcommand or argparse rejects them as unrecognized
+place them _before_ the subcommand or argparse rejects them as unrecognized
 arguments. Always write it
 `clean_changelog.py --owner X --repo Y {clean,combine} ...`.
 
@@ -153,7 +144,7 @@ and unlike `draft-candidate` (a draft nobody sees), this GitHub release
 goes public immediately. Publishing the GitHub release before the npm
 packages exist risks someone finding the release first and hitting a
 version that isn't installable yet — and the release date below is read
-*from* the npm publish timestamp, so that step has nothing to read until
+_from_ the npm publish timestamp, so that step has nothing to read until
 npm publish has actually run.
 
 **Stop here and tell the user the tag is pushed — ask them to confirm once
@@ -204,7 +195,7 @@ mode as the Case A bug above) and should be re-created with
 as-is.
 
 ```bash
-python3 .claude/skills/create-release/scripts/clean_changelog.py \
+python3 .agents/skills/create-release/scripts/clean_changelog.py \
   --owner epam --repo ketcher combine --report \
   /tmp/rc1.txt /tmp/rc2.txt ... /tmp/rcN.txt \
   > /tmp/release-notes.md
@@ -226,6 +217,7 @@ than trusting a paraphrase:
 ---
 
 ### Additional notes:
+
 - Ketcher X.Y.Z has been built and tested with Indigo version X.Y ([standalone](STANDALONE_URL) and [remote](REMOTE_URL)).
 ```
 
@@ -244,7 +236,7 @@ release actually shipped with. Build the two links from it:
   `https://hub.docker.com/layers/epmlsop/indigo-service/{X.Y.Z}/images`
   (the trailing `sha256-...` digest segment is only needed if the tag has
   more than one image. Check first: `curl -s
-  "https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}"`
+"https://hub.docker.com/v2/repositories/epmlsop/indigo-service/tags/{X.Y.Z}"`
   and count entries in the response's `images` array. Exactly one → the
   digest-less `/images` URL is unambiguous, use it as-is. More than one →
   pick the correct image and append its digest to the URL instead.)
@@ -358,7 +350,7 @@ done
 
 Deliberately **don't** pass `--cleanup-tag` — the underlying `vX.Y.0-rc.N`
 git tags are legitimate version-history markers (they're what got tagged
-and, for rc.1, pushed to trigger real builds); only the draft *release*
+and, for rc.1, pushed to trigger real builds); only the draft _release_
 entries are noise worth removing once the public release supersedes them.
 
 Report the release URL. Mention that the npm CodeBuild publish itself,

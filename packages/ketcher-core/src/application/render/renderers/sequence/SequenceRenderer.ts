@@ -318,8 +318,8 @@ export class SequenceRenderer {
   }
 
   public static getNextChainPosition(
-    currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
-    previousChainLength: number = SequenceRenderer.lastChainLength,
+    currentChainStartPosition: Vec2 = this.lastChainStartPosition,
+    previousChainLength: number = this.lastChainLength,
   ) {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     return new Vec2(

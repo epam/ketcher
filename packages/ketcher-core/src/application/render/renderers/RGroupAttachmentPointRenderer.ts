@@ -7,7 +7,10 @@ import { getRGroupAttachmentPointDirection } from './rGroupAttachmentPointGeomet
 import { getSvgCurveShapeAttachmentPoint } from 'application/render/draw';
 import { editorEvents } from 'application/editor/editorEvents';
 import type { D3SvgElementSelection } from 'application/render/types';
-import util from 'application/render/util';
+import {
+  atomLabelShift,
+  attachmentPointGeometry,
+} from 'application/render/geometry/atomGeometry';
 import { SELECTION_COLOR } from './constants';
 
 export class RGroupAttachmentPointRenderer extends BaseRenderer {
@@ -31,10 +34,25 @@ export class RGroupAttachmentPointRenderer extends BaseRenderer {
     );
   }
 
+  private get geometry() {
+    const atom = this.attachmentPoint.atom;
+    const position = Coordinates.modelToCanvas(atom.position);
+    const direction = this.direction;
+    const scale = this.editorSettings.macroModeScale;
+    const shift = atomLabelShift(
+      position,
+      direction,
+      atom.renderer?.labelBBoxes.map((box) => Box2Abs.fromRelBox(box)) ?? [],
+    );
+    const stemStart = position.addScaled(
+      direction,
+      shift > 0 ? shift + (3 * scale) / 20 : 0,
+    );
+    return attachmentPointGeometry(position, direction, scale, stemStart);
+  }
+
   public get endPoint() {
-    return Coordinates.modelToCanvas(
-      this.attachmentPoint.atom.position,
-    ).addScaled(this.direction, this.editorSettings.macroModeScale * 0.85);
+    return this.geometry.attachmentPointEnd;
   }
 
   public get selectionPoints() {
@@ -68,24 +86,13 @@ export class RGroupAttachmentPointRenderer extends BaseRenderer {
 
   public show(): void {
     const { atom, point } = this.attachmentPoint;
-    const position = Coordinates.modelToCanvas(atom.position);
+    const {
+      shiftedStemStart: start,
+      attachmentPointEnd: end,
+      labelPosition: label,
+    } = this.geometry;
     const direction = this.direction;
     const scale = this.editorSettings.macroModeScale;
-    let shift = 0;
-    atom.renderer?.labelBBoxes.forEach((box) => {
-      shift = Math.max(
-        shift,
-        util.shiftRayBox(
-          position,
-          direction,
-          Box2Abs.fromRelBox(box).translate(position),
-        ),
-      );
-    });
-    if (shift > 0) shift += (3 * scale) / 20;
-    shift = Math.min(shift, scale * 0.7);
-    const start = position.addScaled(direction, shift);
-    const end = this.endPoint;
     this.rootElement = this.canvas
       .append('g')
       .data([this])
@@ -109,9 +116,6 @@ export class RGroupAttachmentPointRenderer extends BaseRenderer {
       .attr('stroke-width', scale / 20)
       .attr('pointer-events', 'none');
     if (this.showNumber) {
-      const label = position
-        .addScaled(direction.rotateSC(1, 0), 0.17 * scale)
-        .addScaled(direction, 0.7 * scale);
       this.rootElement
         .append('text')
         .attr('x', label.x)

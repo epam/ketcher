@@ -6,7 +6,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { rGroupLogicToString } from 'domain/helpers/rGroupLogic';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { SELECTION_COLOR } from './constants';
+import { GROUP_BRACKET_COLOR, SELECTION_COLOR } from './constants';
 import type { Atom } from 'domain/entities/CoreAtom';
 
 interface RGroupRendererOptions {
@@ -108,7 +108,7 @@ export class RGroupRenderer extends BaseRenderer {
         .attr('d', path)
         .attr('data-testid', 'r-group-bracket')
         .attr('fill', 'none')
-        .attr('stroke', '#000')
+        .attr('stroke', GROUP_BRACKET_COLOR)
         .attr('stroke-width', 1);
     });
 

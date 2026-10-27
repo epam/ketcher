@@ -1,3 +1,4 @@
+import { formatRGroupLabels } from 'domain/helpers/rGroupLabels';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
@@ -319,13 +320,7 @@ export class AtomRenderer extends BaseRenderer {
       !this.atom.properties.alias &&
       this.atom.properties.rglabel
     ) {
-      let text = '';
-      for (let index = 0; index < 32; index++) {
-        if (this.atom.properties.rglabel & (1 << index)) {
-          text += `R${index + 1}`;
-        }
-      }
-      return text;
+      return formatRGroupLabels(this.atom.properties.rglabel);
     }
     return this.atom.properties.alias ?? this.atom.label;
   }

@@ -15,6 +15,7 @@ import type { CoreEditor } from 'application/editor/Editor';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { AtomDeleteOperation } from 'application/editor/operations/coreAtom/atom';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 function atom(type: 'primary' | 'secondary') {
   const struct = new Struct();
@@ -147,6 +148,19 @@ describe('R-group attachment points in macro mode', () => {
     expect(
       getRGroupAttachmentPointDirection(first, 'primary', false).y,
     ).toBeCloseTo(-1);
+  });
+
+  it('includes a bond to a monomer when choosing the free AP direction', () => {
+    const attached = atom('primary');
+    const monomer = { position: new Vec2(0, -1) } as BaseMonomer;
+    attached.addBond(new MonomerToAtomBond(monomer, attached));
+    const direction = getRGroupAttachmentPointDirection(
+      attached,
+      'primary',
+      false,
+    );
+    expect(direction.x).toBeCloseTo(Math.sqrt(3) / 2);
+    expect(direction.y).toBeCloseTo(0.5);
   });
 
   it.each(['rectangle', 'lasso'])(

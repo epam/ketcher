@@ -3,6 +3,7 @@ import { KetMonomerClass } from 'application/formatters/types/ket';
 export const UNRESOLVED_MONOMER_COLOR = '#585858';
 
 export const BAD_VALENCE_WARNING_COLOR = '#F00';
+export const GROUP_BRACKET_COLOR = 'darkgray';
 export const BAD_VALENCE_LINE_OFFSET = 2;
 
 export const SELECTION_COLOR = '#57FF8F';

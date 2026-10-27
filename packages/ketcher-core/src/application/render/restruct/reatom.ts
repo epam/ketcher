@@ -15,6 +15,12 @@
  ***************************************************************************/
 
 import {
+  findLargestSector,
+  atomLabelShift,
+  limitBondLabelShift,
+} from 'application/render/geometry/atomGeometry';
+import { formatRGroupLabels } from 'domain/helpers/rGroupLabels';
+import {
   Atom,
   AttachmentPoints,
   type AtomQueryProperties,
@@ -482,24 +488,18 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       _atomPosition ?? this.a.pp,
       renderOptions,
     );
-    let atomSymbolShift = 0;
-    const exts = this.visel.exts;
-    const ratio = this.getRatio(renderOptions, bondLen);
-    for (const ext of exts) {
-      const box = ext.translate(atomPosition);
-      const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
-      const shift = shiftRayBox * ratio;
-      atomSymbolShift = Math.max(atomSymbolShift, shift);
-    }
-
-    // A wide/multi-part label (e.g. an atom list, or several combined
-    // properties like isotope+charge+valence) can otherwise compute a shift
-    // larger than the bond itself, pushing the endpoint past the other atom
-    // and making the bond look detached from the structure (#3508). Never
-    // consume more than half the bond, so the two endpoints can't cross.
+    let atomSymbolShift = atomLabelShift(
+      atomPosition,
+      direction,
+      this.visel.exts,
+      this.getRatio(renderOptions, bondLen),
+    );
     if (bondLen) {
-      const maxShift = Math.max(bondLen / 2 - 3 * renderOptions.lineWidth, 0);
-      atomSymbolShift = Math.min(atomSymbolShift, maxShift);
+      atomSymbolShift = limitBondLabelShift(
+        atomSymbolShift,
+        bondLen,
+        3 * renderOptions.lineWidth,
+      );
     }
 
     if (atomSymbolShift > 0) {
@@ -1397,38 +1397,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     neighborAngle: number;
     largestAngle: number;
   } {
-    let angles: Array<number> = [];
-    this.a.neighbors.forEach((halfBondId) => {
-      const halfBond = struct.halfBonds.get(halfBondId);
-      if (halfBond) {
-        angles.push(halfBond.ang);
-      }
+    const angles = this.a.neighbors.flatMap((id) => {
+      const halfBond = struct.halfBonds.get(id);
+      return halfBond ? [halfBond.ang] : [];
     });
-    angles = angles.sort((a, b) => a - b);
-    const largeAngles: Array<number> = [];
-    for (const [index, angle] of angles.entries()) {
-      if (index < angles.length - 1) {
-        largeAngles.push(angles[(index + 1) % angles.length] - angle);
-      }
-    }
-    const firstAngle = angles.at(0);
-    const lastAngle = angles.at(-1);
-
-    if (firstAngle === undefined || lastAngle === undefined) {
-      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
-    }
-
-    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
-    let largestAngle = 0;
-    let neighborAngle = -Math.PI / 2;
-    for (const [index, angle] of angles.entries()) {
-      if (largeAngles[index] > largestAngle) {
-        largestAngle = largeAngles[index];
-        neighborAngle = angle;
-      }
-    }
-
-    return { neighborAngle, largestAngle };
+    return findLargestSector(angles);
   }
 
   bisectLargestSector(struct: Struct): Vec2 {
@@ -1812,13 +1785,7 @@ function getLabelText(
   }
 
   if (atom.label && atom.rglabel !== null) {
-    let text = '';
-    const rglabelNum = atom.rglabel as unknown as number;
-    for (let rgi = 0; rgi < 32; rgi++) {
-      if (rglabelNum & (1 << rgi)) {
-        text += 'R' + (rgi + 1).toString();
-      }
-    }
+    let text = formatRGroupLabels(atom.rglabel);
     if (
       sgroup instanceof MonomerMicromolecule &&
       Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)

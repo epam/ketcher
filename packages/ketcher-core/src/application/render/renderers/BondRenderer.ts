@@ -1,3 +1,7 @@
+import {
+  atomLabelShift,
+  limitBondLabelShift,
+} from 'application/render/geometry/atomGeometry';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { Atom } from 'domain/entities/CoreAtom';
@@ -26,7 +30,6 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
   SELECTION_COLOR,
@@ -193,29 +196,11 @@ export class BondRenderer extends BaseRenderer {
       return position;
     }
 
-    const atomLabelBBoxes = atom.renderer?.labelBBoxes;
-    const atomPositionInPixels = atom.renderer.scaledPosition;
-    let shiftValue = 0;
-
-    atomLabelBBoxes?.forEach((labelSymbolBBox) => {
-      const relativeLabelSymbolBox2Abs = new Box2Abs(
-        labelSymbolBBox.x,
-        labelSymbolBBox.y,
-        labelSymbolBBox.x + labelSymbolBBox.width,
-        labelSymbolBBox.y + labelSymbolBBox.height,
-      );
-      const absoluteLabelSymbolBox2Abs =
-        relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
-
-      shiftValue = Math.max(
-        shiftValue,
-        util.shiftRayBox(
-          atomPositionInPixels,
-          halfEdge.direction,
-          absoluteLabelSymbolBox2Abs,
-        ),
-      );
-    });
+    let shiftValue = atomLabelShift(
+      atom.renderer.scaledPosition,
+      halfEdge.direction,
+      atom.renderer.labelBBoxes.map((box) => Box2Abs.fromRelBox(box)),
+    );
 
     if (atom.label === 'R#') {
       // Match ReAtom.getShiftedSegmentPosition in molecules mode.
@@ -224,7 +209,7 @@ export class BondRenderer extends BaseRenderer {
       const bondLength = Coordinates.modelToCanvas(
         halfEdge.secondAtom.position.sub(halfEdge.firstAtom.position),
       ).length();
-      shiftValue = Math.min(shiftValue, Math.max(bondLength / 2 - padding, 0));
+      shiftValue = limitBondLabelShift(shiftValue, bondLength, padding);
       return position.addScaled(halfEdge.direction, padding + shiftValue);
     }
 

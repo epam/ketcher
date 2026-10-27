@@ -61,7 +61,7 @@ Planned:
 
 ### AI review (planned rebuild: Phase 5)
 
-Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` command with four reviewer agents. The rebuild replaces that with these steps:
+Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill with four reviewer agents. The rebuild replaces that with these steps:
 
 1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md`, `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
 2. **Finders.** Separate passes that read the diff with a suspicion stance (planned: task 5.4).

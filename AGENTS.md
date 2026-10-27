@@ -41,6 +41,7 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 | Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                  |
 | Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                    |
 | PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                  |
+| Public API reference                           | `packages/ketcher-core/docs/`                    | Committed, not regenerated. Planned: generated TypeDoc in CI, not committed (D12)      |
 | Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                               |
 | Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                   |
 
@@ -65,6 +66,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 ## Git and commits
 
 - Work on a feature branch. Commit, push it, and open a PR without asking. `master` is protected, so every change lands through PR review.
+- Two flows stop for review before each commit, because a user starts them to check each one: the `/commit` skill and `prepare-release`.
 - Do not commit to `master` or a release branch, force-push a branch someone else works on, or merge a PR.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 

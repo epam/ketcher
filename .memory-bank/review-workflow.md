@@ -22,11 +22,9 @@ The `openspec-*` skills are optional. OpenSpec is pinned in the root `devDepende
 
 For bugs, refactors, and lint cleanups. No spec: one ticket, one PR, linked to the issue. The agent workflow for it is not decided yet.
 
-Agents commit and push to a feature branch and open the PR without asking. `master` is protected, so every change lands through review. The rules are in `AGENTS.md` (Git and commits).
-
 ### Large-scale change flow
 
-For changes too large to read line by line. Follow the [large-scale change protocol](#large-scale-change-protocol) at the end of this file. The `large-scale-change` label starts it (planned: the label is created in Phase 2, task 2.2.8, and routed in Phase 4, task 4.6).
+For changes too large to read line by line. Follow the [large-scale change protocol](#large-scale-change-protocol) at the end of this file. The `large-scale-change` label starts it (planned: the label does not exist yet; routing is Phase 4, task 4.6).
 
 ## PR-type contract
 
@@ -38,18 +36,6 @@ Checked for every PR, whatever flow the author used. A PR that matches no row fo
 | Feature                       | An OpenSpec change (or a spec in the same format), tests | Planned: Danger fails the PR without an OpenSpec change, and `openspec validate --all --strict` (Phase 3, tasks 3.4, 3.10) |
 | Large-scale change            | The large-scale change protocol sections                 | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
 | Archive of an OpenSpec change | No unchecked tasks                                       | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                               |
-
-## One owner per fact
-
-Each fact has one owner. Other files link to the owner and do not restate it.
-
-| Fact                                                                | Owner                                                                                                        | Today                                                              |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| Current product behavior (WHEN/THEN)                                | `openspec/specs/` (decision D11)                                                                             | `.memory-bank/features/`                                           |
-| Architecture, modules, invariants, glossary, ADRs, testing, formats | `.memory-bank/`                                                                                              | Exists                                                             |
-| Public API reference                                                | Generated TypeDoc in CI, not committed (planned: Phase 1, task 1.1.8; decision D12). `README.md` links to it | `packages/ketcher-core/docs/`, committed and not regenerated       |
-| Agent rules                                                         | `AGENTS.md` and `.memory-bank/review-rules.md`. Tool files are generated or symlinked                        | `CLAUDE.md` and `.github/copilot-instructions.md`, written by hand |
-| E2E conventions                                                     | `.memory-bank/testing/testing.md`                                                                            | Exists                                                             |
 
 ## Review pipeline
 

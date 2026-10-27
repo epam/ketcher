@@ -33,4 +33,4 @@ The `Test task` line of the comment block is AUTOTEST_REQUEST_URL. The rest of t
 - The spec file path, and the path of every page object or helper you created.
 - The result of the spec run.
 - Any testing.md convention you could not follow, with the reason.
-- Git commits follow the git rules in `CLAUDE.md`.
+- Git commits follow the git rules in `AGENTS.md`.

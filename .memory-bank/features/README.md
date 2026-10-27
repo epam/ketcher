@@ -14,7 +14,7 @@ Limitations are not requirements. They stay in the feature file. Update the spec
 
 ## Documented Features
 
-The ten most important features, distilled from [documentation/help.md](../../documentation/help.md):
+The main features, distilled from [documentation/help.md](../../documentation/help.md):
 
 ### Molecules mode (small molecules & reactions)
 

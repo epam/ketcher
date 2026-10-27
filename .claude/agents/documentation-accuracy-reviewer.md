@@ -20,7 +20,7 @@ Scope: The editor has no HTTP endpoints, login, or database. Do not check API en
 Focus:
 
 - Exported types, props, and methods changed in `packages/ketcher-core/src/index.ts` or `packages/ketcher-react/src/index.tsx` need JSDoc that matches the new signature.
-- Do not ask for hand edits to `packages/ketcher-core/docs/`. The owner of the public API reference is in the owner table of [review-workflow.md](../../.memory-bank/review-workflow.md#one-owner-per-fact).
+- Do not ask for hand edits to `packages/ketcher-core/docs/`. The owner of the public API reference is in the owner table of [AGENTS.md](../../AGENTS.md#where-knowledge-lives).
 - A change to behaviour that a scenario in `openspec/specs/<capability>/spec.md` describes makes that scenario false. Check each WHEN/THEN the diff touches.
 - A changed file that moves, renames, or drops a public interface named in a module doc makes that doc wrong. Check the module doc's Public interfaces and Dependencies sections.
 - A change to KET reading or writing must match the KET specification in [the formats folder](../../.memory-bank/formats/README.md) for the version it reads or writes.

@@ -4,7 +4,7 @@ Rules that a reviewer checks in a diff. A reviewer applies the rules whose scope
 
 Each rule is a `###` heading in the form `R<number>: <rule>`, followed by its fields. Scope, Severity, Enforced by, Status, Why, and Source are required. Bad, Good, and Bans are optional. Rules that come from mined review comments start as `proposed`, and the team approves them before they apply. Rules that were already in agent instructions are `active`, and their source is `agent-docs`.
 
-Severity levels are: blocker, which must be fixed before merge; major, which must be fixed or declined with a one-line reason; and nit, which is optional. Human reviewers prefix optional comments with `Nit:` or `Non-blocking:`.
+Severity levels are defined in the [output contract](review-workflow.md#output-contract). Human reviewers prefix optional comments with `Nit:` or `Non-blocking:`.
 
 ## Architecture
 

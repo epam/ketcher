@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -40,6 +39,16 @@ import type { Editor, Selection } from '../Editor';
 import type { Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
 
+type MergeItems = ReturnType<typeof getItemsToFuse>;
+
+interface RotateDragContext {
+  xy0: Vec2;
+  angle1: number;
+  angle?: number;
+  action?: Action;
+  mergeItems?: MergeItems;
+}
+
 type SnapMode = 'one-bond' | 'multiple-bonds';
 type SnapInfo = {
   snapMode: SnapMode;
@@ -65,7 +74,7 @@ const ANGLE_INDICATOR_VISIBLE_DELTA = Math.PI / 9; // 20 degrees
 
 class RotateTool implements Tool {
   private readonly editor: Editor;
-  dragCtx: any;
+  dragCtx?: RotateDragContext;
   isNotActiveTool = true;
   private centerAtomId?: number;
   private snapInfo: SnapInfo | null = null;
@@ -226,9 +235,7 @@ class RotateTool implements Tool {
 
       const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
       if (!('angle' in dragCtx) || dragCtx.angle !== rotateAngleInDegrees) {
-        if ('action' in dragCtx) {
-          dragCtx.action.perform(this.reStruct);
-        }
+        dragCtx.action?.perform(this.reStruct);
 
         dragCtx.angle = rotateAngleInDegrees;
         dragCtx.action = fromRotate(
@@ -280,12 +287,12 @@ class RotateTool implements Tool {
         }
       });
 
-      let action: Action = dragCtx.action;
+      let action = dragCtx.action ?? new Action();
 
       if (!isMergingSGroup) {
-        action = action
-          ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
-          : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
+        action = fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(
+          action,
+        );
       }
 
       if (this.selection?.atoms) {
@@ -296,7 +303,7 @@ class RotateTool implements Tool {
         const monomerRotateAction = new Action();
         sGroups.forEach((sGroup) => {
           if (sGroup instanceof MonomerMicromolecule) {
-            const angleInRadians = (dragCtx.angle * Math.PI) / 180;
+            const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
                 id: sGroup.id,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -843,8 +843,8 @@ class SGroupTool implements Tool {
           editor.selection(null);
         }
       })
-      .catch((e) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+      .catch((error) => {
+        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
       });
   }
 }
@@ -890,7 +890,7 @@ function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
 
   const atomSet = new Pile(sgAtoms);
 
-  const sgBonds = Array.from(struct.bonds.values()).filter(
+  const sgBonds = [...struct.bonds.values()].filter(
     (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
@@ -1003,7 +1003,7 @@ function countOfSelectedComponents(
 ): number {
   const atomSet = new Pile<number>(atoms);
 
-  return Array.from(restruct.connectedComponents.values()).reduce(
+  return [...restruct.connectedComponents.values()].reduce(
     (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );

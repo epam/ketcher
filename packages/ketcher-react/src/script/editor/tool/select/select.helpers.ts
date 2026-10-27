@@ -26,7 +26,7 @@ export function selMerge(selection, add, reversible: boolean) {
       if (selection[item]) {
         selection[item] = uniqArray(selection[item], add[item], reversible);
       } else {
-        selection[item] = add[item].slice();
+        selection[item] = [...add[item]];
       }
     });
   }

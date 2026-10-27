@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,8 +55,8 @@ export function checkServer() {
             server: res?.isAvailable,
           }),
         ),
-      (e: unknown) => {
-        editor?.errorHandler?.(String(e));
+      (error: unknown) => {
+        editor?.errorHandler?.(String(error));
       },
     );
   };
@@ -71,9 +71,9 @@ export function recognize(file: File | null, version: string) {
       (res) => {
         dispatch(setStruct(res.struct));
       },
-      (e) => {
+      (error) => {
         dispatch(setStruct(null));
-        editor?.errorHandler?.(String(e));
+        editor?.errorHandler?.(String(error));
       },
     );
     dispatch(setStruct(process));
@@ -84,7 +84,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
   const errors: KetcherCheckErrors = {};
 
   if (checkParams.includes('chiral_flag')) {
-    const isAbs = Array.from(struct.frags.values()).some(
+    const isAbs = [...struct.frags.values()].some(
       (fr) => (fr?.enhancedStereoFlag as string | undefined) === 'abs',
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
@@ -126,9 +126,9 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
         res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
         dispatch(checkErrors(res));
       })
-      .catch((e) => {
-        KetcherLogger.error('index.js::check', e);
-        editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::check', error);
+        editor?.errorHandler?.(String(error));
       });
   };
 }
@@ -162,9 +162,9 @@ export function analyse(): AppThunk {
           data: { values },
         }),
       )
-      .catch((e) => {
-        KetcherLogger.error('index.js::analyse', e);
-        editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::analyse', error);
+        editor?.errorHandler?.(String(error));
       });
   };
 }
@@ -194,9 +194,9 @@ export function serverTransform(
           }),
         );
       })
-      .catch((e) => {
-        KetcherLogger.error('index.js::serverTransform', e);
-        state.editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::serverTransform', error);
+        state.editor?.errorHandler?.(String(error));
       })
       .finally(() => {
         dispatch(indigoVerification(false));

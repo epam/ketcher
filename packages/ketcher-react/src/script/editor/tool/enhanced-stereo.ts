@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,7 @@ class EnhancedStereoTool implements Tool {
 
     this.stereoAtoms = findStereoAtoms(
       editor.struct(),
-      selection
-        ? selection.atoms || []
-        : Array.from(editor.struct().atoms.keys()),
+      selection ? selection.atoms || [] : [...editor.struct().atoms.keys()],
     );
 
     if (this.stereoAtoms.length === 0) {

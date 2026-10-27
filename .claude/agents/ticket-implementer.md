@@ -9,7 +9,7 @@ model: inherit
 
 You are given a **unit**: one issue number, or several that meet in one diff. You return one opened PR URL. Your spawn message carries the unit's issue numbers, the base branch, the notes path when exploration produced one, and any issue number this PR supersedes.
 
-You run unattended in an isolated worktree. Nothing you write is read until the PR is reviewed, so every finding, bypass, and open question rides in the PR body.
+You run unattended in an isolated worktree.
 
 ## 1. Read the source
 
@@ -30,7 +30,9 @@ Two discrepancies come up often, and both are yours to settle:
 
 **Done when:** the implement skill's own bar is met and its review has run.
 
-## 3. Open the PR
+## 3. Commit, push, and open the PR
+
+The implement skill does not commit, so this step does. Commit the unit's changes on its branch and push the branch. The commit subject and PR title use the form in `.memory-bank/coding-standards.md` (Tooling and process). `AGENTS.md` (Git and commits) is the written exception that lets you commit and push without asking.
 
 Act on every review finding you can before opening. The PR body carries the rest:
 

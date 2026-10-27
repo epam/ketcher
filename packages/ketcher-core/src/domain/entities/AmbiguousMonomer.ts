@@ -125,7 +125,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
           for (const [attachmentPointName, label] of Object.entries(
             monomer.monomerItem.props.MonomerCaps,
           )) {
-            if (!monomerCaps[attachmentPointName]) {
+            if ((monomerCaps[attachmentPointName]?.length ?? 0) === 0) {
               delete monomerCaps[attachmentPointName];
             } else if (monomerCaps[attachmentPointName] !== label) {
               monomerCaps[attachmentPointName] = '';

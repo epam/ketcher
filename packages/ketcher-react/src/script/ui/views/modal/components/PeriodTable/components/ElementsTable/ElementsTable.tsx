@@ -70,7 +70,8 @@ function rowPartition(elements: Element[]): Row[] {
     if (!row) {
       result.push([item]);
     } else {
-      if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
+      if (Object.hasOwn(beforeSpan, item.label))
+        row.push(beforeSpan[item.label]);
       row.push(item);
     }
     return result;

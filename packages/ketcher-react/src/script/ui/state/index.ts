@@ -168,7 +168,7 @@ function sanitizeForDevTools(value: unknown): unknown {
 
   ['editor', 'server', 'functionalGroups', 'saltsAndSolvents'].forEach(
     (key) => {
-      if (key in sanitized) {
+      if (Object.hasOwn(sanitized, key)) {
         sanitized[key] = NOT_SERIALIZED;
       }
     },

@@ -416,14 +416,9 @@ export const RnaEditorExpanded = ({
       editor?.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
 
-    if (newPreset[monomerGroupToPresetGroup[selectedGroup]]) {
-      dispatch(
-        setActiveMonomerKey(
-          getMonomerUniqueKey(
-            newPreset[monomerGroupToPresetGroup[selectedGroup]],
-          ),
-        ),
-      );
+    const presetMonomer = newPreset[monomerGroupToPresetGroup[selectedGroup]];
+    if (presetMonomer) {
+      dispatch(setActiveMonomerKey(getMonomerUniqueKey(presetMonomer)));
     }
 
     dispatch(setActiveRnaBuilderItem(selectedGroup));

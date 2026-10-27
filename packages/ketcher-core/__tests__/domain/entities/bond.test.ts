@@ -5,6 +5,7 @@ import {
 } from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
+import { BondCIP } from 'domain/entities/types';
 
 const bondParams: BondAttributes = {
   begin: 1,
@@ -26,6 +27,42 @@ describe('Bond', () => {
 
       expect(Bond.getAttrHash(bond)).toStrictEqual(attrs);
     });
+
+    it('omits zero and null values except stereo', () => {
+      const bond = new Bond({ begin: 0, end: 1, type: 1 });
+
+      expect(Bond.getAttrHash(bond)).toStrictEqual({ type: 1, stereo: 0 });
+    });
+
+    it('keeps negative numeric attributes and nonempty strings', () => {
+      const bond = new Bond({
+        begin: 0,
+        end: 1,
+        type: 1,
+        reactingCenterStatus: -1,
+        cip: BondCIP.E,
+      });
+
+      expect(Bond.getAttrHash(bond)).toStrictEqual({
+        type: 1,
+        stereo: 0,
+        reactingCenterStatus: -1,
+        cip: 'E',
+      });
+    });
+
+    it('omits an empty query string and NaN numeric values', () => {
+      const bond = new Bond({
+        begin: 0,
+        end: 1,
+        type: 1,
+        topology: Number.NaN,
+      });
+      bond.customQuery = '';
+      Object.defineProperty(bond, 'topology', { value: Number.NaN });
+
+      expect(Bond.getAttrHash(bond)).toStrictEqual({ type: 1, stereo: 0 });
+    });
   });
 
   describe('attrGetDefault static function', () => {
@@ -34,7 +71,15 @@ describe('Bond', () => {
       expect(Bond.attrGetDefault('topology')).toBe(0);
       expect(Bond.attrGetDefault('type')).toBe(1);
       expect(Bond.attrGetDefault('reactingCenterStatus')).toBe(0);
+      expect(Bond.attrGetDefault('customQuery')).toBeNull();
     });
+
+    it.each(['toString', 'constructor', '__proto__', 'unknown'])(
+      'does not return inherited or missing default "%s"',
+      (attribute) => {
+        expect(Bond.attrGetDefault(attribute)).toBeUndefined();
+      },
+    );
   });
 
   describe('hasRxnProps', () => {

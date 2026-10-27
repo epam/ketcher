@@ -812,7 +812,7 @@ export class LibraryItemDragDropHandler {
       const allFreeAPs = new Set<AttachmentPointName>();
       (['sugar', 'phosphate', 'base'] as PresetComponentRole[]).forEach(
         (role) => {
-          if (rolePresent[role]) {
+          if (rolePresent[role] === true) {
             freeAttachmentPointsByMonomer[role].forEach((ap) =>
               allFreeAPs.add(ap),
             );
@@ -1120,9 +1120,7 @@ export class LibraryItemDragDropHandler {
 
       for (const apName of monomer.unUsedAttachmentPointsNamesList) {
         // Skip if this AP's angle is not defined (unusual AP names)
-        if (
-          !(apName in (attachmentPointNumberToAngle as Record<string, unknown>))
-        ) {
+        if (!Object.hasOwn(attachmentPointNumberToAngle, apName)) {
           continue;
         }
 

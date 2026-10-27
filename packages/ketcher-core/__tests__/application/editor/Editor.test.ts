@@ -66,6 +66,29 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('dispatches tool handlers inherited from a class prototype', () => {
+    const handleClick = jest.fn();
+    class TestTool {
+      click(event: Event) {
+        handleClick(event);
+      }
+    }
+    const tool = new TestTool();
+    const canvas = document.createElement('div');
+    const event = { target: canvas };
+    const { useToolIfNeeded } = CoreEditor.prototype as unknown as {
+      useToolIfNeeded: (
+        this: { tool: TestTool; canvas: HTMLElement },
+        name: 'click',
+        event: { target: HTMLElement },
+      ) => boolean;
+    };
+
+    expect(Object.hasOwn(tool, 'click')).toBe(false);
+    expect(useToolIfNeeded.call({ tool, canvas }, 'click', event)).toBe(true);
+    expect(handleClick).toHaveBeenCalledWith(event);
+  });
+
   it('uses the current canvas for library drag/drop after manager swaps', () => {
     const canvas = createPolymerEditorCanvas();
     const editor = new CoreEditor({

@@ -457,7 +457,7 @@ export function computeLostBondsForPresetReplacement(
 
     const role = getPresetComponentRole(component);
 
-    if (!role || !rolePresent[role]) {
+    if (!role || rolePresent[role] !== true) {
       // The new preset has no component of this role → every external bond on
       // the old component is lost.
       lost.push(...externalBonds);

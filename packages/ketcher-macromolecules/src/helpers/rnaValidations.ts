@@ -6,7 +6,8 @@ const hasCap = (
   cap: 'R1' | 'R2' | 'R3',
 ) =>
   Boolean(
-    presetPart?.props?.MonomerCaps && cap in presetPart.props.MonomerCaps,
+    presetPart?.props?.MonomerCaps &&
+    Object.hasOwn(presetPart.props.MonomerCaps, cap),
   );
 
 export const getPhosphatePositionAvailability = (newPreset: IRnaPreset) => {

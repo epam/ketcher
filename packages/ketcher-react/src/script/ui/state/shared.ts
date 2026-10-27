@@ -128,7 +128,7 @@ export function load(struct: string | Struct, options?) {
       const parsedStruct = await parseStruct(struct, server, otherOptions);
       const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
-        (sGroup) => !supportedSGroupTypes[sGroup.type],
+        (sGroup) => !Object.hasOwn(supportedSGroupTypes, sGroup.type),
       );
       const hasMoleculeToMonomerConnections = parsedStruct.bonds.find(
         (_, bond) => {

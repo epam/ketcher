@@ -81,7 +81,7 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
     if (property !== null && typeof property === 'object') {
       const defaultValue = (property as SchemaProperty).default;
       // Only set default if key is completely missing from state
-      if (defaultValue !== undefined && !(name in defaultsApplied)) {
+      if (defaultValue !== undefined && !Object.hasOwn(defaultsApplied, name)) {
         defaultsApplied[name] = defaultValue;
       }
     }
@@ -697,7 +697,7 @@ function serializeRewrite(
 
   const instanceObj = instance as Record<string, unknown>;
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instanceObj)
+    if (Object.hasOwn(instanceObj, p))
       res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
   });
 
@@ -724,7 +724,7 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   errors.forEach((item) => {
     // jsonschema uses "instance.fieldName"; strip the "instance." prefix
     const field = item.property.replace(/^instance\./, '');
-    if (!errs[field]) errs[field] = getInvalidMessage(item);
+    if (!Object.hasOwn(errs, field)) errs[field] = getInvalidMessage(item);
   });
 
   return errs;

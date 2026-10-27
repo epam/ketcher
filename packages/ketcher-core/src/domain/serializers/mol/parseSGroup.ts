@@ -86,10 +86,10 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
 
   const bondsToRemove: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const beginIn = bond.begin in atomReductionMap;
-    const endIn = bond.end in atomReductionMap;
-    const endInPatoms = bond.end in patomsMap;
-    const beginInPatoms = bond.begin in patomsMap;
+    const beginIn = Object.hasOwn(atomReductionMap, bond.begin);
+    const endIn = Object.hasOwn(atomReductionMap, bond.end);
+    const endInPatoms = Object.hasOwn(patomsMap, bond.end);
+    const beginInPatoms = Object.hasOwn(patomsMap, bond.begin);
     if (
       (beginIn && endIn) ||
       (beginIn && endInPatoms) ||

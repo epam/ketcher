@@ -6,7 +6,7 @@ type ModeConstructor = new (previousMode?: LayoutMode) => BaseMode;
 const modesMap: Partial<Record<LayoutMode, ModeConstructor>> = {};
 
 export function registerMode(mode: LayoutMode, ctor: ModeConstructor) {
-  if (modesMap[mode] && modesMap[mode] !== ctor) {
+  if (Object.hasOwn(modesMap, mode) && modesMap[mode] !== ctor) {
     throw new Error(`Mode "${mode}" is already registered`);
   }
   if (modesMap[mode] === ctor) {

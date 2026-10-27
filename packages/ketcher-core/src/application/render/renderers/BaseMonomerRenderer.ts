@@ -417,7 +417,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.monomer.listOfAttachmentPoints.forEach((attachmentPoint) => {
       rootElement.attr(
         `data-${attachmentPoint}`,
-        !!this.monomer.attachmentPointsToBonds[attachmentPoint],
+        this.monomer.attachmentPointsToBonds[attachmentPoint] !== null &&
+          this.monomer.attachmentPointsToBonds[attachmentPoint] !== undefined,
       );
     });
     return rootElement;
@@ -446,7 +447,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
     const monomerUniqueKey = this.monomer.label + monomerClass;
 
-    if (!labelPositions[monomerUniqueKey]) {
+    if (!Object.hasOwn(labelPositions, monomerUniqueKey)) {
       const textBBox = (textElement.node() as SVGTextElement).getBBox();
       labelPositions[monomerUniqueKey] = {
         x: this.width / 2 - textBBox.width / 2,

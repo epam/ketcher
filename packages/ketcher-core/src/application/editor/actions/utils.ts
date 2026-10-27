@@ -174,9 +174,10 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
   const selection: EditorSelection = {};
 
   selectionKeys.forEach((entityType) => {
-    if (struct?.[entityType]) {
+    const entities = struct?.[entityType];
+    if (entities !== undefined && entities !== null) {
       const selected: number[] = [];
-      struct[entityType].forEach((value, key) => {
+      entities.forEach((value, key) => {
         if (
           typeof value.getInitiallySelected === 'function' &&
           value.getInitiallySelected()

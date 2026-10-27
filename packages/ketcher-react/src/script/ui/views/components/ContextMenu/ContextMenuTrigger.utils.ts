@@ -141,7 +141,7 @@ export const getIsItemInSelection = ({
 
     default:
       return (
-        item.map in selection &&
+        Object.hasOwn(selection, item.map) &&
         Array.isArray(selection[item.map]) &&
         selection[item.map].includes(item.id)
       );

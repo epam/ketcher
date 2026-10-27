@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react';
-import { Struct } from 'ketcher-core';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { KetMonomerClass, Struct } from 'ketcher-core';
 
 import { MonomerGroup } from './MonomerGroup';
 import { getMonomerUniqueKey } from 'state/library';
@@ -77,6 +77,41 @@ describe('Monomer Group', () => {
     groupTitle: 'Mock title',
   };
   const onItemClick = jest.fn();
+
+  it.each([
+    { caps: { R1: '' }, selectable: true },
+    { caps: Object.create({ R1: 'H' }), selectable: false },
+  ])(
+    'requires an own cap but accepts an empty cap label: selectable=$selectable',
+    ({ caps, selectable }) => {
+      const monomer = {
+        ...mockGroupProps.groupItems[0],
+        props: {
+          ...mockGroupProps.groupItems[0].props,
+          MonomerClass: KetMonomerClass.Sugar,
+          MonomerCaps: caps,
+        },
+      };
+      const handleClick = jest.fn();
+      render(
+        withThemeAndStoreProvider(
+          <MonomerGroup items={[monomer]} onItemClick={handleClick} />,
+          {
+            rnaBuilder: {
+              groupItemValidations: {
+                Sugars: ['R1'],
+                Bases: [],
+                Phosphates: [],
+              },
+            },
+          },
+        ),
+      );
+
+      fireEvent.click(screen.getByTestId(getMonomerUniqueKey(monomer)));
+      expect(handleClick).toHaveBeenCalledTimes(selectable ? 1 : 0);
+    },
+  );
 
   it('should render correct without title prop', () => {
     const view = render(

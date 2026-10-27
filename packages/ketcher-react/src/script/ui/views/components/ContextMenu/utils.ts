@@ -141,7 +141,7 @@ export function onlyHasProperty<T extends object>(
   );
 
   const numberOfProps = props.length;
-  return numberOfProps === 1 && key in checkedObject;
+  return numberOfProps === 1 && Object.hasOwn(checkedObject, key);
 }
 
 export function getBondIdsConnectingSelectedAtoms(

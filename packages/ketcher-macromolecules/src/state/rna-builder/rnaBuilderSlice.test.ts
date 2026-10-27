@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { buildRnaPresetConnections, IRnaPreset } from 'ketcher-core';
-import { selectFilteredPresets, selectPresetFullName } from './rnaBuilderSlice';
+import {
+  selectCurrentMonomerGroup,
+  selectFilteredPresets,
+  selectPresetFullName,
+} from './rnaBuilderSlice';
 import { RootState } from 'state';
 
 const presetMonomers = {
@@ -54,6 +58,28 @@ const makePreset = (
   name,
   nameInList: name,
   ...overrides,
+});
+
+describe('selectCurrentMonomerGroup', () => {
+  it.each(['constructor', 'toString', '__proto__'])(
+    'does not resolve an inherited group name %s',
+    (groupName) => {
+      const preset = {
+        ...presetMonomers,
+        '[object Object]': presetMonomers.sugar,
+        [String(Object.prototype.constructor)]: presetMonomers.base,
+        [String(Object.prototype.toString)]: presetMonomers.phosphate,
+      };
+      expect(selectCurrentMonomerGroup(preset, groupName)).toBeUndefined();
+    },
+  );
+
+  it('returns the selected group value and allows missing monomers', () => {
+    expect(selectCurrentMonomerGroup(presetMonomers, 'Sugars')).toBe(
+      presetMonomers.sugar,
+    );
+    expect(selectCurrentMonomerGroup({}, 'Sugars')).toBeUndefined();
+  });
 });
 
 describe('selectPresetFullName', () => {

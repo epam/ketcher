@@ -527,7 +527,7 @@ export function validation(settings): Record<string, string> | null {
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;
 
-    if (optionsSchema.properties[prop] && !errorsProps.has(prop))
+    if (Object.hasOwn(optionsSchema.properties, prop) && !errorsProps.has(prop))
       res[prop] = settings[prop];
 
     return res;

@@ -326,10 +326,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
     try {
       clipboardItem = new ClipboardItem(clipboardItemData);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.info(
         'cannot create ClipboardItem, falling back to writeText',
-        e,
+        error,
       );
 
       // Fallback for browsers that don't support ClipboardItem constructor or
@@ -342,7 +342,7 @@ async function copy(data: ClipboardData): Promise<void> {
 
         return;
       } else {
-        KetcherLogger.error('cliparea.tsx::copy', e);
+        KetcherLogger.error('cliparea.tsx::copy', error);
       }
     }
 
@@ -361,8 +361,8 @@ async function copy(data: ClipboardData): Promise<void> {
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
-  } catch (e) {
-    KetcherLogger.error('cliparea.tsx::copy', e);
+  } catch (error) {
+    KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
@@ -378,8 +378,8 @@ function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
         curFmt = fmt;
         clipboardData.setData(fmt, data[fmt]);
       });
-    } catch (e) {
-      console.error('cliparea.tsx::legacyCopy', e);
+    } catch (error) {
+      console.error('cliparea.tsx::legacyCopy', error);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
@@ -428,9 +428,9 @@ export function exec(action: string): boolean {
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
-    } catch (e) {
+    } catch (error) {
       // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
+      KetcherLogger.error('cliparea.tsx::exec', error);
       enabled = false;
     }
   }

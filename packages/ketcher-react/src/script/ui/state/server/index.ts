@@ -55,8 +55,8 @@ export function checkServer() {
             server: res?.isAvailable,
           }),
         ),
-      (e: unknown) => {
-        editor?.errorHandler?.(String(e));
+      (error: unknown) => {
+        editor?.errorHandler?.(String(error));
       },
     );
   };
@@ -71,9 +71,9 @@ export function recognize(file: File | null, version: string) {
       (res) => {
         dispatch(setStruct(res.struct));
       },
-      (e) => {
+      (error) => {
         dispatch(setStruct(null));
-        editor?.errorHandler?.(String(e));
+        editor?.errorHandler?.(String(error));
       },
     );
     dispatch(setStruct(process));
@@ -126,9 +126,9 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
         res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
         dispatch(checkErrors(res));
       })
-      .catch((e) => {
-        KetcherLogger.error('index.js::check', e);
-        editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::check', error);
+        editor?.errorHandler?.(String(error));
       });
   };
 }
@@ -162,9 +162,9 @@ export function analyse(): AppThunk {
           data: { values },
         }),
       )
-      .catch((e) => {
-        KetcherLogger.error('index.js::analyse', e);
-        editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::analyse', error);
+        editor?.errorHandler?.(String(error));
       });
   };
 }
@@ -194,9 +194,9 @@ export function serverTransform(
           }),
         );
       })
-      .catch((e) => {
-        KetcherLogger.error('index.js::serverTransform', e);
-        state.editor?.errorHandler?.(String(e));
+      .catch((error) => {
+        KetcherLogger.error('index.js::serverTransform', error);
+        state.editor?.errorHandler?.(String(error));
       })
       .finally(() => {
         dispatch(indigoVerification(false));

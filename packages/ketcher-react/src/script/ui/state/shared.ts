@@ -251,11 +251,11 @@ export function load(struct: string | Struct, options?) {
       editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (e: any) {
-      KetcherLogger.error('shared.ts::load', e);
+    } catch (error: any) {
+      KetcherLogger.error('shared.ts::load', error);
       dispatch(setAnalyzingFile(false));
-      if (e) {
-        errorHandler?.(e.message);
+      if (error) {
+        errorHandler?.(error.message);
       }
     } finally {
       notifyRequestCompleted();

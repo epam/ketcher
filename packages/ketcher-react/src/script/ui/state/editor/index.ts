@@ -257,9 +257,9 @@ export default function initEditor(
         'aromatize',
         serverOpts,
         struct,
-      ).catch((e: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      ).catch((error: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       });
     },
     onDearomatizeStruct: (struct: Struct) => {
@@ -271,9 +271,9 @@ export default function initEditor(
         'dearomatize',
         serverOpts,
         struct,
-      ).catch((e: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
-        state.editor.errorHandler?.(String(e));
+      ).catch((error: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', error);
+        state.editor.errorHandler?.(String(error));
       });
     },
     onMouseDown: () => {

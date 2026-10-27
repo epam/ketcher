@@ -74,10 +74,10 @@ export class SettingsManager {
       );
       delete settings.selectionTool;
       return settings;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
-        e,
+        error,
       );
       return {} as SavedSettings;
     }
@@ -108,8 +108,11 @@ export class SettingsManager {
       }
 
       return optionsFromLocalStorage;
-    } catch (e) {
-      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
+    } catch (error) {
+      KetcherLogger.error(
+        'SettingsManager.ts::SettingsManager::getOptions',
+        error,
+      );
       return {} as SavedOptions;
     }
   }

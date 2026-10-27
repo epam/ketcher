@@ -146,8 +146,11 @@ class RGroupFragmentTool implements Tool {
 
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('rgroupfragment.ts::RGroupFragmentTool::click', e);
+      .catch((error) => {
+        KetcherLogger.error(
+          'rgroupfragment.ts::RGroupFragmentTool::click',
+          error,
+        );
       }); // w/o changes
 
     return true;

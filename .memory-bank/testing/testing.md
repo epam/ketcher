@@ -21,7 +21,7 @@ Each package has its own Jest configuration. Tests live in `__tests__/` director
   - Config: `packages/ketcher-macromolecules/jest.config.js`
 - **ketcher-standalone**: minimal unit tests
 
-Mocking: mock only system boundaries (see the `tdd` skill's mocking guide). Ketcher exception: in a component test, a hook that is the only way the component reaches a boundary counts as the boundary. Example: `useSettings` in `ketcher-react` is the only way components reach browser storage. Mock that hook at the top of the test file and keep every other module of the package real.
+Mocking: mock only system boundaries. Ketcher exception: in a component test, a hook that is the only way the component reaches a boundary counts as the boundary. Example: `useSettings` in `ketcher-react` is the only way components reach browser storage. Mock that hook at the top of the test file and keep every other module of the package real.
 
 Run all unit tests: `npm run test` (from root)
 Run type checks: `npm run test:types`

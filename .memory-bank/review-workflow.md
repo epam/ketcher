@@ -20,11 +20,7 @@ The `openspec-*` skills are optional. OpenSpec is pinned in the root `devDepende
 
 ### Ticket flow
 
-For tickets that one fix shape resolves, such as bugs, refactors, and lint cleanups. No spec.
-
-1. `find-ticket-clusters` groups open tickets that one fix resolves.
-2. `handle-tickets` claims a batch, partitions it into units, and starts one `ticket-implementer` per unit.
-3. Each unit ends as one PR. `ticket-sweep` runs these steps unattended when a schedule or hook starts it.
+For bugs, refactors, and lint cleanups. No spec: one ticket, one PR, linked to the issue. The agent workflow for it is not decided yet.
 
 Agents commit and push to a feature branch and open the PR without asking. `master` is protected, so every change lands through review. The rules are in `AGENTS.md` (Git and commits).
 

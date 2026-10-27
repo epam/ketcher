@@ -1,5 +1,0 @@
-interface:
-  display_name: 'Implement'
-  short_description: 'Build one ticket without a spec'
-policy:
-  allow_implicit_invocation: false

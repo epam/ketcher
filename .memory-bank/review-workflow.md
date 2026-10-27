@@ -14,7 +14,7 @@ For features and high-risk changes. Only those need a spec.
 
 1. **Propose.** Add `openspec/changes/<change>/` with `proposal.md`, spec deltas, `design.md`, and `tasks.md`.
 2. **Implement.** Tick each task when it is done, one at a time.
-3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/` (planned: Phase 2, task 2.7.3). Until then, current behavior lives in `.memory-bank/features/`.
+3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
 
 The `openspec-*` skills are optional. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
 
@@ -47,13 +47,13 @@ Checked for every PR, whatever flow the author used. A PR that matches no row fo
 
 Each fact has one owner. Other files link to the owner and do not restate it.
 
-| Fact                                                                | Owner                                                                                                                        | Today                                                              |
-| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Current product behavior (WHEN/THEN)                                | `openspec/specs/` (planned: Phase 2, task 2.7.3; decision D11)                                                               | `.memory-bank/features/`                                           |
-| Architecture, modules, invariants, glossary, ADRs, testing, formats | `.memory-bank/`                                                                                                              | Exists                                                             |
-| Public API reference                                                | Generated TypeDoc in CI, not committed (planned: Phase 1, task 1.1.8; decision D12). `README.md` links to it                 | `packages/ketcher-core/docs/`, committed and not regenerated       |
-| Agent rules                                                         | `AGENTS.md` and `.memory-bank/review-rules.md` (planned: Phase 2, tasks 2.3.1, 2.2.4). Tool files are generated or symlinked | `CLAUDE.md` and `.github/copilot-instructions.md`, written by hand |
-| E2E conventions                                                     | `.memory-bank/testing/testing.md`                                                                                            | Exists                                                             |
+| Fact                                                                | Owner                                                                                                        | Today                                                              |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| Current product behavior (WHEN/THEN)                                | `openspec/specs/` (decision D11)                                                                             | `.memory-bank/features/`                                           |
+| Architecture, modules, invariants, glossary, ADRs, testing, formats | `.memory-bank/`                                                                                              | Exists                                                             |
+| Public API reference                                                | Generated TypeDoc in CI, not committed (planned: Phase 1, task 1.1.8; decision D12). `README.md` links to it | `packages/ketcher-core/docs/`, committed and not regenerated       |
+| Agent rules                                                         | `AGENTS.md` and `.memory-bank/review-rules.md`. Tool files are generated or symlinked                        | `CLAUDE.md` and `.github/copilot-instructions.md`, written by hand |
+| E2E conventions                                                     | `.memory-bank/testing/testing.md`                                                                            | Exists                                                             |
 
 ## Review pipeline
 
@@ -66,7 +66,7 @@ Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `np
 Planned:
 
 - Danger on every PR (Phase 3, task 3.4).
-- `check:agent-docs` in CI (Phase 2, task 2.5.1).
+- `check:agent-docs` in CI. It runs locally today: `npm run check:agent-docs`.
 - `check:autotests` in CI (Phase 3, task 3.5).
 - Codemod replay check and compare scripts, on large-scale change PRs only (Phase 3, tasks 3.8, 3.9).
 - `openspec validate` in CI (Phase 3, task 3.10).
@@ -81,7 +81,7 @@ Planned:
 
 Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` command with four reviewer agents. The rebuild replaces that with these steps:
 
-1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md` (planned: task 2.2.4), `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
+1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md`, `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
 2. **Finders.** Separate passes that read the diff with a suspicion stance (planned: task 5.4).
 3. **Verifier.** A second pass checks each finding against the code before it is posted (planned: task 5.4).
 4. **Output.** Verified inline comments with suggestion blocks, and the review brief as one top-level comment (planned: task 5.4). Every finding follows the [output contract](#output-contract).
@@ -97,7 +97,7 @@ AI review may raise a risk tier, never lower it (planned: task 5.5).
 
 ## Output contract
 
-Applies to every AI reviewer. The current `/review-pr` command and reviewer agents do not follow it yet (planned rewrite: Phase 2, tasks 2.4.1, 2.4.2). Other documents link here instead of restating it.
+Applies to every AI reviewer, including `/review-pr` and the reviewer agents. Other documents link here instead of restating it.
 
 1. **Order.** The first pass reads the diff without the PR description. Then fetch the linked issue and answer one question: does the diff fix it? The answer goes in the brief.
 2. **Severity.**
@@ -106,26 +106,26 @@ Applies to every AI reviewer. The current `/review-pr` command and reviewer agen
    - `nit`: style or wording. Optional, never blocks.
 3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a bug that no rule covers. A finding without a failing scenario is dropped.
 4. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
-5. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised (planned: task 2.2.5).
+5. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
 6. **No praise, and no summary** of what the diff does.
 
 ## Feedback loop and rule life cycle
 
 Feedback (planned):
 
-- A 👎 on a bot comment makes the pattern a candidate for `.memory-bank/accepted-patterns.md` (planned: tracking in Phase 5, task 5.6; file in Phase 2, task 2.2.5).
+- A 👎 on a bot comment makes the pattern a candidate for `.memory-bank/accepted-patterns.md` (planned: tracking in Phase 5, task 5.6).
 - A finding that repeats three times becomes a rule proposal (planned: Phase 6, task 6.3).
 - Each escaped defect becomes a case in the golden set for the eval (planned: Phase 5, task 5.1; Phase 6, task 6.3).
 
-Rules live in `.memory-bank/review-rules.md` (planned: task 2.2.4) with a `Status` field:
+Rules live in `.memory-bank/review-rules.md` with a `Status` field:
 
-| Status          | Meaning                                                                                                    | Moves to                                             |
-| --------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `proposed`      | Drafted from review comments or escaped defects. Owners have not approved it.                              | `approved`, when the owners approve it (decision D3) |
-| `approved`      | The owners accepted the rule.                                                                              | `active`                                             |
-| `active`        | In the rules file. Generated into agent instructions unless lint or tsc enforces it (planned: task 2.3.4). | `moved-to-lint`, or `retired`                        |
-| `moved-to-lint` | A lint rule enforces it, and the entry says `Enforced by: lint` (planned: task 3.7).                       | `retired`                                            |
-| `retired`       | The rule no longer applies. The entry stays, so its ID is not reused.                                      | none                                                 |
+| Status          | Meaning                                                                                   | Moves to                                             |
+| --------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `proposed`      | Drafted from review comments or escaped defects. Owners have not approved it.             | `approved`, when the owners approve it (decision D3) |
+| `approved`      | The owners accepted the rule.                                                             | `active`                                             |
+| `active`        | In the rules file. Generated into `.github/instructions/` unless lint or tsc enforces it. | `moved-to-lint`, or `retired`                        |
+| `moved-to-lint` | A lint rule enforces it, and the entry says `Enforced by: lint` (planned: task 3.7).      | `retired`                                            |
+| `retired`       | The rule no longer applies. The entry stays, so its ID is not reused.                     | none                                                 |
 
 ## Large-scale change protocol
 

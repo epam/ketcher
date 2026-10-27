@@ -222,6 +222,16 @@ export class Render {
     return CoordinateTransformation.pageToModel(event, this);
   }
 
+  /**
+   * Gives the canvas a fixed size in px and refits the content into it.
+   */
+  setSize(width: number, height: number) {
+    this.userOpts = { ...this.userOpts, width, height };
+    this.paper.setSize(width, height);
+    this.sz = this.getCanvasSizeVector();
+    this.update(true);
+  }
+
   setZoom(zoom: number, event?: WheelEvent) {
     const zoomedWidth = this.sz.x / zoom;
     const zoomedHeight = this.sz.y / zoom;

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
 
   filter(predicate: (key: number, value: TValue) => boolean): Pool<TValue> {
     return new Pool<TValue>(
-      Array.from(this).filter(([key, value]) => predicate(key, value)),
+      [...this].filter(([key, value]) => predicate(key, value)),
     );
   }
 

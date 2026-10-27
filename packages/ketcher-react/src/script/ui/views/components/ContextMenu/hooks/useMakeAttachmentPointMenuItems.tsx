@@ -37,27 +37,27 @@ const useMakeAttachmentPointMenuItems = ({
     connectionAttachmentPoints,
   } = editor.monomerCreationState;
 
-  const isAtomInAssignedAttachmentPoint = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
+  const isAtomInAssignedAttachmentPoint = [
+    ...assignedAttachmentPoints.values(),
+  ].some((atomPair) => {
     const [attachmentAtomId, leavingAtomId] = atomPair;
     return (
       selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
     );
   });
 
-  const isAtomAlreadyLeavingAtom = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [, leavingAtomId] = atomPair;
-    return selectedAtomId === leavingAtomId;
-  });
+  const isAtomAlreadyLeavingAtom = [...assignedAttachmentPoints.values()].some(
+    (atomPair) => {
+      const [, leavingAtomId] = atomPair;
+      return selectedAtomId === leavingAtomId;
+    },
+  );
 
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
-  const isPotentialLeavingGroupAtom = Array.from(
-    potentialAttachmentPoints.values(),
-  ).some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
+  const isPotentialLeavingGroupAtom = [
+    ...potentialAttachmentPoints.values(),
+  ].some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
   const isPotentialAttachmentAtom =
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +28,9 @@ import {
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
-  typeof window !== 'undefined'
-    ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
+  typeof globalThis.window !== 'undefined'
+    ? (globalThis.window as Window & { clipboardData?: DataTransfer })
+        .clipboardData
     : undefined;
 
 const isSafariBrowser = (): boolean =>
@@ -240,7 +241,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              window.ketcher?.editor?.errorHandler?.(
+              globalThis.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -325,10 +326,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
     try {
       clipboardItem = new ClipboardItem(clipboardItemData);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.info(
         'cannot create ClipboardItem, falling back to writeText',
-        e,
+        error,
       );
 
       // Fallback for browsers that don't support ClipboardItem constructor or
@@ -341,7 +342,7 @@ async function copy(data: ClipboardData): Promise<void> {
 
         return;
       } else {
-        KetcherLogger.error('cliparea.tsx::copy', e);
+        KetcherLogger.error('cliparea.tsx::copy', error);
       }
     }
 
@@ -360,8 +361,8 @@ async function copy(data: ClipboardData): Promise<void> {
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
-  } catch (e) {
-    KetcherLogger.error('cliparea.tsx::copy', e);
+  } catch (error) {
+    KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
@@ -377,8 +378,8 @@ function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
         curFmt = fmt;
         clipboardData.setData(fmt, data[fmt]);
       });
-    } catch (e) {
-      console.error('cliparea.tsx::legacyCopy', e);
+    } catch (error) {
+      console.error('cliparea.tsx::legacyCopy', error);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
@@ -420,16 +421,16 @@ export function exec(action: string): boolean {
   let enabled = document.queryCommandSupported(action);
   if (enabled) {
     try {
-      const windowWithClipboardEvent = window as Window & {
+      const windowWithClipboardEvent = globalThis.window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
       enabled =
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
-    } catch (e) {
+    } catch (error) {
       // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
+      KetcherLogger.error('cliparea.tsx::exec', error);
       enabled = false;
     }
   }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -242,7 +242,7 @@ class ReStruct {
     aid: Array<number> | number,
     adjacentComponents: Pile<number>,
   ): Pile<number> {
-    const list = Array.isArray(aid) ? Array.from(aid) : [aid];
+    const list = Array.isArray(aid) ? [...aid] : [aid];
     const ids = new Pile<number>();
     const visitedEndpoints = new Set<number>();
 
@@ -285,10 +285,7 @@ class ReStruct {
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
     const adjacentComponents = new Pile<number>();
-    const aidSet = this.getConnectedComponent(
-      Array.from(idSet),
-      adjacentComponents,
-    );
+    const aidSet = this.getConnectedComponent([...idSet], adjacentComponents);
 
     adjacentComponents.delete(compId);
 
@@ -490,7 +487,7 @@ class ReStruct {
   private getAllElementsAsSelectionMap(): SelectionMap {
     const selection: SelectionMap = {};
     Object.keys(ReStruct.maps).forEach((map) => {
-      selection[map] = Array.from(this[map].keys());
+      selection[map] = [...this[map].keys()];
     });
     return selection;
   }
@@ -522,7 +519,9 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
-  /** Visel is a shorthand for VISual ELement */
+  /**
+  Visel is a shorthand for VISual ELement
+  */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +16,6 @@
  ***************************************************************************/
 
 import {
-  type Action,
   type Struct,
   type EditorTemplate,
   fromItemsFuse,
@@ -36,32 +36,13 @@ import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup
 import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
-import type { MergeItems } from './template.types';
-import type { ClosestItemWithMap } from '../shared/closest.types';
-
-type PasteItems = {
-  atoms: number[];
-  bonds: number[];
-};
-
-/**
- * Drag context stored when a single contracted group is dropped on another
- * functional group in PasteTool.
- */
-interface PasteDragContext {
-  xy0: Vec2;
-  item: ClosestItemWithMap;
-  action?: Action;
-  angle?: number;
-  mergeItems?: MergeItems;
-}
 
 let isMovePreviewCalculationInProgress = false;
 
 const debouncedSetAndHoverMergeItems = debounce(function (
-  editor: Editor,
-  pasteItems: PasteItems,
-  pasteToolInstance: PasteTool,
+  editor,
+  pasteItems,
+  pasteToolInstance,
   needResetTool = false,
 ) {
   const mergeItems = getItemsToFuse(editor, pasteItems);
@@ -76,12 +57,12 @@ const debouncedSetAndHoverMergeItems = debounce(function (
 class PasteTool implements Tool {
   private readonly editor: Editor;
   private readonly struct: Struct;
-  private action?: Action | null;
-  private dragCtx?: PasteDragContext;
-  private mergeItems: MergeItems = null;
+  private action: any;
+  private dragCtx: any;
+  private mergeItems: any;
   private readonly isSingleContractedGroup: boolean;
 
-  constructor(editor: Editor, struct: Struct) {
+  constructor(editor, struct) {
     this.editor = editor;
     this.editor.selection(null);
     this.struct = struct;
@@ -113,7 +94,7 @@ class PasteTool implements Tool {
     debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
   }
 
-  public setMergeItems(mergeItems: MergeItems) {
+  public setMergeItems(mergeItems) {
     this.mergeItems = mergeItems;
   }
 
@@ -121,7 +102,7 @@ class PasteTool implements Tool {
     return this.editor.render.ctab;
   }
 
-  mousedown(event: MouseEvent) {
+  mousedown(event) {
     if (
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
@@ -163,7 +144,7 @@ class PasteTool implements Tool {
     };
   }
 
-  mousemove(event: MouseEvent) {
+  mousemove(event) {
     this.mergeItems = null;
     this.editor.hover(null);
     if (isMovePreviewCalculationInProgress) {
@@ -263,16 +244,14 @@ class PasteTool implements Tool {
   }
 
   mouseup() {
-    const idsOfItemsMerged = this.mergeItems
-      ? {
-          ...(this.mergeItems.atoms && {
-            atoms: Array.from(this.mergeItems.atoms.values()),
-          }),
-          ...(this.mergeItems.bonds && {
-            bonds: Array.from(this.mergeItems.bonds.values()),
-          }),
-        }
-      : undefined;
+    const idsOfItemsMerged = this.mergeItems && {
+      ...(this.mergeItems.atoms && {
+        atoms: [...this.mergeItems.atoms.values()],
+      }),
+      ...(this.mergeItems.bonds && {
+        bonds: [...this.mergeItems.bonds.values()],
+      }),
+    };
 
     const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
       this.editor.struct(),
@@ -328,7 +307,9 @@ class PasteTool implements Tool {
   }
 }
 
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
 function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();

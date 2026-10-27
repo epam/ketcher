@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -356,11 +356,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             isLoading: false,
           });
         })
-        .catch((e) => {
-          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
+        .catch((error) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', error);
+          errorHandler(error);
           this.props.onResetForm(formState);
-          return e;
+          return error;
         });
     } else {
       this.setState({ disableControls: true, isLoading: true });
@@ -368,7 +368,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).some(
+        [...struct.atoms].some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -408,10 +408,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               structStr,
             });
           },
-          (e) => {
-            errorHandler(e.message);
+          (error) => {
+            errorHandler(error.message);
             this.props.onResetForm(formState);
-            return e;
+            return error;
           },
         )
         .finally(() => {
@@ -549,8 +549,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return;
     }
 
-    navigator.clipboard.writeText(structStr || '').catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    navigator.clipboard.writeText(structStr || '').catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       this.props.editor.errorHandler(
         i18n.t('common:errors.featureNotAvailableInBrowser'),
       );

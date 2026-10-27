@@ -6,22 +6,27 @@ import {
   BaseSequenceItemRenderer,
 } from 'application/render';
 
-export type ModifyAminoAcidsViewParams = {
-  monomersToModify: BaseMonomer[];
+export type MonomersHighlightViewParams = {
+  monomers: BaseMonomer[];
 };
 
-export class ModifyAminoAcidsView {
-  public static readonly viewName = 'ModifyAminoAcidsView';
+/**
+ * Marks the monomers an action is about to change, e.g. the amino acids of a
+ * modification or all instances of a monomer in "Edit All".
+ */
+export class MonomersHighlightView {
+  public static readonly viewName = 'MonomersHighlightView';
+  public static readonly testId = 'monomer-highlight';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: ModifyAminoAcidsViewParams,
+    params: MonomersHighlightViewParams,
   ) {
     const editor = provideEditorInstance();
-    const { monomersToModify } = params;
+    const { monomers } = params;
 
     if (editor.mode.modeName === 'sequence-layout-mode') {
-      monomersToModify.forEach((monomer) => {
+      monomers.forEach((monomer) => {
         const { renderer } = monomer;
 
         if (!(renderer instanceof BaseSequenceItemRenderer)) {
@@ -37,6 +42,7 @@ export class ModifyAminoAcidsView {
 
         const group = transientLayer
           .append('g')
+          .attr('data-testid', MonomersHighlightView.testId)
           .attr(
             'transform',
             `translate(${monomerRendererPositionInPixels.x - 2}, ${
@@ -76,7 +82,7 @@ export class ModifyAminoAcidsView {
         }
       });
     } else {
-      monomersToModify.forEach((monomer) => {
+      monomers.forEach((monomer) => {
         const monomerCenterInPixels = monomer.renderer?.center;
 
         if (!monomerCenterInPixels) {
@@ -85,6 +91,7 @@ export class ModifyAminoAcidsView {
 
         transientLayer
           .append('circle')
+          .attr('data-testid', MonomersHighlightView.testId)
           .attr('cx', monomerCenterInPixels.x)
           .attr('cy', monomerCenterInPixels.y)
           .attr('r', BaseMonomerRenderer.selectionCircleRadius)

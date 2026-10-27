@@ -342,3 +342,12 @@ export function getSymbolLocator(
 
   return locator;
 }
+
+/**
+ * Marks drawn over the monomers that an action is about to change, e.g. while
+ * hovering "Edit All" or a "Modify amino acids" entry of the context menu.
+ * One mark per monomer: a ring in Flex and Snake modes, a tile in Sequence mode.
+ */
+export function getMonomerHighlightLocator(page: Page): Locator {
+  return page.getByTestId('monomer-highlight');
+}

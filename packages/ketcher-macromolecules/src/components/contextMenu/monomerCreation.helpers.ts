@@ -1,6 +1,5 @@
 import {
   BaseMonomer,
-  BaseSequenceItemRenderer,
   CoreAtom,
   type CoreEditor,
   HydrogenBond,
@@ -107,33 +106,5 @@ export const getMonomerCreationMenuState = (
     showEdit: monomers.length > 0,
     editDisabled: editAllDisabled || monomers.length !== 1,
     editAllDisabled,
-  };
-};
-
-export const highlightMonomers = (monomers: BaseMonomer[]) => {
-  const previouslyHovered = new Map(
-    monomers.map((monomer) => [monomer, monomer.hovered]),
-  );
-  monomers.forEach((monomer) => {
-    monomer.turnOnHover();
-    const renderer = monomer.renderer;
-    if (renderer instanceof BaseSequenceItemRenderer) {
-      renderer.drawBackgroundElementHover();
-    } else {
-      renderer?.redrawHover();
-    }
-  });
-
-  return () => {
-    monomers.forEach((monomer) => {
-      if (previouslyHovered.get(monomer)) return;
-      monomer.turnOffHover();
-      const renderer = monomer.renderer;
-      if (renderer instanceof BaseSequenceItemRenderer) {
-        renderer.removeBackgroundElementHover();
-      } else {
-        renderer?.redrawHover();
-      }
-    });
   };
 };

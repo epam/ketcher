@@ -2332,7 +2332,7 @@ export class CoreEditor {
       modelChanges.addOperation(new ReinitializeModeOperation());
       this.renderersContainer.update(modelChanges);
       editorHistory.update(modelChanges);
-      this.transientDrawingView.hideModifyAminoAcidsView();
+      this.transientDrawingView.hideMonomersHighlight();
       this.transientDrawingView.update();
     };
 

@@ -1,10 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { BaseMonomer, CoreEditor } from 'ketcher-core';
 import { MenuItem } from './ContextMenu';
-import {
-  getMonomerCreationMenuState,
-  highlightMonomers,
-} from './monomerCreation.helpers';
+import { getMonomerCreationMenuState } from './monomerCreation.helpers';
 
 export const useMonomerCreationMenu = (
   editor: CoreEditor | undefined,
@@ -15,6 +12,21 @@ export const useMonomerCreationMenu = (
   const clearHighlight = () => {
     clearHover.current?.();
     clearHover.current = undefined;
+  };
+  // Marks the monomers with the same indicator as "Modify amino acids"
+  const showHighlight = (
+    targetEditor: CoreEditor,
+    monomersToHighlight: BaseMonomer[],
+  ) => {
+    const { transientDrawingView } = targetEditor;
+    transientDrawingView.showMonomersHighlight({
+      monomers: monomersToHighlight,
+    });
+    transientDrawingView.update();
+    clearHover.current = () => {
+      transientDrawingView.hideMonomersHighlight();
+      transientDrawingView.update();
+    };
   };
   useEffect(() => () => clearHover.current?.(), []);
 
@@ -53,8 +65,8 @@ export const useMonomerCreationMenu = (
             separator: true,
             onMouseOver: () => {
               clearHighlight();
-              if (!state.editAllDisabled) {
-                clearHover.current = highlightMonomers(state.matchingMonomers);
+              if (editor && !state.editAllDisabled) {
+                showHighlight(editor, state.matchingMonomers);
               }
             },
             onMouseOut: clearHighlight,

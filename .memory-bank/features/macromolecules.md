@@ -113,7 +113,7 @@ Monomers connect through defined attachment points, sequences render as single-l
 
 - **WHEN** the user right-clicks a single monomer or a sequence symbol representing one monomer
 - **THEN** _Edit Monomer_ and _Edit All [code] (count)_ appear above _Delete_
-- **AND** hovering _Edit All_ highlights the affected instances; saving replaces those instances with the new library monomer
+- **AND** hovering _Edit All_ marks every affected instance with the same indicator as the _Modify amino acids_ hover (a teal circle around the monomer in Flex and Snake modes, a green tile behind the symbol in Sequence mode); the marks disappear when the pointer leaves the item or the menu closes; saving replaces those instances with the new library monomer
 - **AND** both editing options remain visible but disabled for sequence symbols representing multiple monomers
 
 #### Scenario: Editing library monomers

@@ -1,7 +1,6 @@
 import {
   AtomLabel,
   BaseMonomer,
-  BaseSequenceItemRenderer,
   CoreAtom,
   type CoreEditor,
   HydrogenBond,
@@ -14,7 +13,6 @@ import {
 import {
   canCreateMonomer,
   getMonomerCreationMenuState,
-  highlightMonomers,
 } from './monomerCreation.helpers';
 
 type DrawingEntitiesManager = CoreEditor['drawingEntitiesManager'];
@@ -159,33 +157,5 @@ describe('macromolecule monomer creation menu', () => {
     expect(
       getMonomerCreationMenuState(manager, [monomer]).editAllDisabled,
     ).toBe(true);
-  });
-
-  it('restores hover state without changing the selection', () => {
-    const monomer = createMonomer();
-    const redrawHover = jest.fn();
-    monomer.renderer = { redrawHover } as unknown as BaseMonomer['renderer'];
-    const clear = highlightMonomers([monomer]);
-    expect(monomer.hovered).toBe(true);
-    expect(monomer.selected).toBe(true);
-    expect(redrawHover).toHaveBeenCalledTimes(1);
-    clear();
-    expect(monomer.hovered).toBe(false);
-    expect(monomer.selected).toBe(true);
-    expect(redrawHover).toHaveBeenCalledTimes(2);
-  });
-
-  it('highlights sequence symbols using their background renderer', () => {
-    const monomer = createMonomer();
-    const drawBackgroundElementHover = jest.fn();
-    const removeBackgroundElementHover = jest.fn();
-    monomer.renderer = Object.assign(
-      Object.create(BaseSequenceItemRenderer.prototype),
-      { drawBackgroundElementHover, removeBackgroundElementHover },
-    );
-    const clear = highlightMonomers([monomer]);
-    expect(drawBackgroundElementHover).toHaveBeenCalledTimes(1);
-    clear();
-    expect(removeBackgroundElementHover).toHaveBeenCalledTimes(1);
   });
 });

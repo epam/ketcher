@@ -280,13 +280,13 @@ export const getModifyAminoAcidsMenuItems = (
         name: `${AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX}${modificationType}`,
         title: modificationType,
         onMouseOver: () => {
-          editor.transientDrawingView.showModifyAminoAcidsView({
-            monomersToModify: [...aminoAcidsToModify.keys()],
+          editor.transientDrawingView.showMonomersHighlight({
+            monomers: [...aminoAcidsToModify.keys()],
           });
           editor.transientDrawingView.update();
         },
         onMouseOut: () => {
-          editor.transientDrawingView.hideModifyAminoAcidsView();
+          editor.transientDrawingView.hideMonomersHighlight();
           editor.transientDrawingView.update();
         },
       };

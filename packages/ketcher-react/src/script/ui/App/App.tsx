@@ -94,7 +94,7 @@ const App = (props: Props) => {
       // Ideally is to remove ketcher instance in cleanup function of the most parent component (MicromoleculesEditor, or Editor, depends on usage)
       ketcherProvider.removeKetcherInstance(ketcherId);
     };
-  }, [checkServer, dispatch, ketcherId]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- Library initialization intentionally runs once per App mount.
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{

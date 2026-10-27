@@ -391,11 +391,10 @@ function legacyPaste(cb: DataTransfer, formats: string[]): ClipboardData {
     data['text/plain'] = ieCb.getData('text');
   } else {
     data['text/plain'] = cb.getData('text/plain');
-    data = formats.reduce((res, fmt) => {
+    formats.forEach((fmt) => {
       const d = cb.getData(fmt);
-      if (d) res[fmt] = d;
-      return res;
-    }, data);
+      if (d) data[fmt] = d;
+    });
   }
   return data;
 }

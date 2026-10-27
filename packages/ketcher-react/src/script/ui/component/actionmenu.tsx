@@ -225,13 +225,9 @@ function renderActiveMenuItem(
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
-      const subMenuItems = menuWithMenuItems.reduce((acc: string[], curr) => {
-        const stringItems = curr.menu.filter(
-          (item): item is string => typeof item === 'string',
-        );
-        acc.push(...stringItems);
-        return acc;
-      }, []);
+      const subMenuItems = menuWithMenuItems.flatMap((curr) =>
+        curr.menu.filter((item): item is string => typeof item === 'string'),
+      );
 
       activeMenuItem =
         findActiveMenuItem(subMenuItems, status) ?? subMenuItems[0];
@@ -259,16 +255,12 @@ function ActionMenu({
   role,
   ...props
 }: Readonly<ActionMenuProps>) {
-  const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
+  const visibleMenu = menu.filter((item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = props.status[itemKey];
     // Items without status or with hidden !== true should be visible
-    if (status?.hidden !== true) {
-      items.push(item);
-    }
-
-    return items;
-  }, []);
+    return status?.hidden !== true;
+  });
 
   const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);

@@ -65,7 +65,8 @@ const actinides: Element[] = Elements.filter(
 );
 
 function rowPartition(elements: Element[]): Row[] {
-  return elements.reduce((result: Row[], item: Element) => {
+  const result: Row[] = [];
+  elements.forEach((item) => {
     const row = result[item.period - 1];
     if (!row) {
       result.push([item]);
@@ -73,8 +74,8 @@ function rowPartition(elements: Element[]): Row[] {
       if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
       row.push(item);
     }
-    return result;
-  }, []);
+  });
+  return result;
 }
 
 interface ElementsTableProps {

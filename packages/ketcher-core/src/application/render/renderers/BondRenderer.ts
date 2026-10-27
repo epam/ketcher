@@ -539,14 +539,16 @@ export class BondRenderer extends BaseRenderer {
       });
     });
 
-    const combinedPath = paths.reduce((acc, { d }) => {
-      return acc + d;
-    }, '');
+    let combinedPath = '';
+    paths.forEach(({ d }) => {
+      combinedPath += d;
+    });
 
-    const combinedPathWidth = paths.reduce((acc, { attrs }) => {
+    let combinedPathWidth = 0;
+    paths.forEach(({ attrs }) => {
       const strokeWidth = Number(attrs['stroke-width'] ?? BOND_WIDTH);
-      return acc + strokeWidth;
-    }, 0);
+      combinedPathWidth += strokeWidth;
+    });
 
     const hoverPath = this.rootElement
       .append('path')

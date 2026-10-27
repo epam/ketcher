@@ -144,34 +144,25 @@ export class SnakeLayoutModel {
 
         snakeLayoutNodes.forEach((snakeLayoutNode) => {
           const senseMonomersConnectedByHydrogenBond =
-            snakeLayoutNode.monomers.reduce((foundMonomersInNode, monomer) => {
-              return [
-                ...foundMonomersInNode,
-                ...monomer.hydrogenBonds.reduce(
-                  (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
-                    const monomerConnectedByHydrogenBond =
-                      hydrogenBond.getAnotherMonomer(monomer);
+            snakeLayoutNode.monomers.flatMap((monomer) =>
+              monomer.hydrogenBonds.flatMap((hydrogenBond) => {
+                const monomerConnectedByHydrogenBond =
+                  hydrogenBond.getAnotherMonomer(monomer);
 
-                    return monomerConnectedByHydrogenBond &&
-                      ((isRnaBaseApplicableForAntisense(
-                        monomerConnectedByHydrogenBond,
-                      ) &&
-                        isRnaBaseApplicableForAntisense(monomer)) ||
-                        editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
-                          monomer,
-                        )?.firstMonomer ===
-                          monomerToChain.get(monomerConnectedByHydrogenBond)
-                            ?.firstMonomer)
-                      ? [
-                          ...foundMonomersConnectedHydrogenBonds,
-                          monomerConnectedByHydrogenBond,
-                        ]
-                      : foundMonomersConnectedHydrogenBonds;
-                  },
-                  [] as BaseMonomer[],
-                ),
-              ];
-            }, [] as BaseMonomer[]);
+                return monomerConnectedByHydrogenBond &&
+                  ((isRnaBaseApplicableForAntisense(
+                    monomerConnectedByHydrogenBond,
+                  ) &&
+                    isRnaBaseApplicableForAntisense(monomer)) ||
+                    editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                      monomer,
+                    )?.firstMonomer ===
+                      monomerToChain.get(monomerConnectedByHydrogenBond)
+                        ?.firstMonomer)
+                  ? [monomerConnectedByHydrogenBond]
+                  : [];
+              }),
+            );
           const firstSenseMonomerConnectedByHydrogenBond =
             senseMonomersConnectedByHydrogenBond[0];
           const twoStrandedSnakeLayoutNode =

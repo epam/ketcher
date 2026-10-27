@@ -212,10 +212,13 @@ export function checkOverlapping(
       return atoms.some((aid) => sgAtoms.includes(aid));
     },
   };
-  const sgroups = atoms.reduce((res, aid) => {
+  let sgroups = new Pile<number>();
+  atoms.forEach((aid) => {
     const atom = struct.atoms.get(aid);
-    return atom ? res.union(atom.sgs) : res;
-  }, new Pile<number>());
+    if (atom) {
+      sgroups = sgroups.union(atom.sgs);
+    }
+  });
 
   return Array.from(sgroups).some(searchFunction[sGroupType]);
 }

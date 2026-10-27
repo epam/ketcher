@@ -260,30 +260,27 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       if (nodeIndexInSubChain === -1) return false;
 
       // Split subchain into arrays of non-linker nodes
-      const nonLinkerNodeGroups = subChain.nodes.reduce(
-        (groups, node) => {
-          let lastGroup = groups.at(-1);
+      const nonLinkerNodeGroups: SequenceNode[][] = [[]];
+      for (const node of subChain.nodes) {
+        let lastGroup = nonLinkerNodeGroups.at(-1);
 
-          if (!lastGroup) {
-            lastGroup = [];
-            groups.push(lastGroup);
-          }
+        if (!lastGroup) {
+          lastGroup = [];
+          nonLinkerNodeGroups.push(lastGroup);
+        }
 
-          if (
-            node instanceof LinkerSequenceNode ||
-            node.monomer instanceof Phosphate ||
-            this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
-          ) {
-            if (lastGroup.length > 0) {
-              groups.push([]);
-            }
-          } else {
-            lastGroup.push(node);
+        if (
+          node instanceof LinkerSequenceNode ||
+          node.monomer instanceof Phosphate ||
+          this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
+        ) {
+          if (lastGroup.length > 0) {
+            nonLinkerNodeGroups.push([]);
           }
-          return groups;
-        },
-        [[]] as SequenceNode[][],
-      );
+        } else {
+          lastGroup.push(node);
+        }
+      }
 
       // Find the group containing the current node
       const currentGroup = nonLinkerNodeGroups.find((group) =>

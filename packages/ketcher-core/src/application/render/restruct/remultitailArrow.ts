@@ -261,6 +261,18 @@ export class ReMultitailArrow extends ReObject {
     const selectionPointSet = paper.set();
     const selectionPoints: TestSelectionPoint[] = [];
     let spineMoveSelectionPoint: TestSelectionPoint | null = null;
+    const tailSelectionPoints: Record<string, Vec2> = {};
+    tails.forEach((value, key) => {
+      Object.assign(
+        tailSelectionPoints,
+        this.getSelectionPointsFromReferencePoint(
+          value,
+          topSpine,
+          `${MultitailArrow.TAILS_NAME}-${key}`,
+          OFFSET,
+        ),
+      );
+    });
     const points: Record<string, Vec2> = {
       'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
@@ -281,18 +293,7 @@ export class ReMultitailArrow extends ReObject {
         'head',
         OFFSET,
       ),
-      ...Array.from(tails.entries()).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          ...this.getSelectionPointsFromReferencePoint(
-            value,
-            topSpine,
-            `${MultitailArrow.TAILS_NAME}-${key}`,
-            OFFSET,
-          ),
-        }),
-        {},
-      ),
+      ...tailSelectionPoints,
     };
     points['head-move'] = headMovePoint;
     Object.entries(points).forEach(([key, point]) => {
@@ -438,46 +439,45 @@ export class ReMultitailArrow extends ReObject {
     entities: Array<[string, Vec2 | Line]>,
     isLine: boolean,
   ): MultitailArrowClosestReferencePosition {
-    return entities.reduce(
-      (acc, [name, value]) => {
-        const distance = isLine
-          ? point.calculateDistanceToLine(value as Line)
-          : Vec2.dist(point, value as Vec2);
-        const tailId = ReMultitailArrow.getTailIdFromRefName(name);
-        let refName: MultitailArrowRefName;
-        if (typeof tailId === 'number') {
-          refName = MultitailArrowRefName.TAILS;
-        } else if (
-          [
-            MultitailArrowRefName.HEAD,
-            MultitailArrowRefName.BOTTOM_TAIL,
-            MultitailArrowRefName.TOP_TAIL,
-          ].includes(name as MultitailArrowRefName)
-        ) {
-          refName = name as MultitailArrowRefName;
-        } else {
-          refName = MultitailArrowRefName.SPINE;
-        }
+    let closestPosition: MultitailArrowClosestReferencePosition = {
+      distance: Number.POSITIVE_INFINITY,
+      ref: null,
+    };
+    entities.forEach(([name, value]) => {
+      const distance = isLine
+        ? point.calculateDistanceToLine(value as Line)
+        : Vec2.dist(point, value as Vec2);
+      const tailId = ReMultitailArrow.getTailIdFromRefName(name);
+      let refName: MultitailArrowRefName;
+      if (typeof tailId === 'number') {
+        refName = MultitailArrowRefName.TAILS;
+      } else if (
+        [
+          MultitailArrowRefName.HEAD,
+          MultitailArrowRefName.BOTTOM_TAIL,
+          MultitailArrowRefName.TOP_TAIL,
+        ].includes(name as MultitailArrowRefName)
+      ) {
+        refName = name as MultitailArrowRefName;
+      } else {
+        refName = MultitailArrowRefName.SPINE;
+      }
 
-        return distance < acc.distance
-          ? {
-              distance,
-              ref:
-                refName !== MultitailArrowRefName.SPINE
-                  ? {
-                      name: refName,
-                      isLine,
-                      tailId,
-                    }
-                  : null,
-            }
-          : acc;
-      },
-      {
-        distance: Number.POSITIVE_INFINITY,
-        ref: null,
-      } as MultitailArrowClosestReferencePosition,
-    );
+      if (distance < closestPosition.distance) {
+        closestPosition = {
+          distance,
+          ref:
+            refName !== MultitailArrowRefName.SPINE
+              ? {
+                  name: refName,
+                  isLine,
+                  tailId,
+                }
+              : null,
+        };
+      }
+    });
+    return closestPosition;
   }
 
   private getTailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {

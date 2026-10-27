@@ -53,9 +53,12 @@ export class ScaleTransformer {
   }
 
   private pickNearestFromList(value: number, list) {
-    const nearest = list.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
-    );
+    let nearest = list[0];
+    list.slice(1).forEach((current) => {
+      if (Math.abs(current - value) < Math.abs(nearest - value)) {
+        nearest = current;
+      }
+    });
     return nearest;
   }
 }

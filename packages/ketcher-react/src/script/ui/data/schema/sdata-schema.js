@@ -337,13 +337,13 @@ export const sdataCustomSchema = {
   required: ['context', 'fieldName', 'fieldValue', 'radiobuttons'],
 };
 
-export const sdataSchema = Object.keys(sData).reduce((acc, title) => {
-  acc[title] = mapOf(sData[title], 'fieldName');
-  Object.keys(acc[title]).forEach((fieldName) => {
-    acc[title][fieldName].properties.context = contextSchema;
+export const sdataSchema = {};
+Object.keys(sData).forEach((title) => {
+  sdataSchema[title] = mapOf(sData[title], 'fieldName');
+  Object.keys(sdataSchema[title]).forEach((fieldName) => {
+    sdataSchema[title][fieldName].properties.context = contextSchema;
   });
-  return acc;
-}, {});
+});
 
 /**
  * Returns first key of passed object

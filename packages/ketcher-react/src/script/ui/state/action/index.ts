@@ -133,14 +133,12 @@ function buildStateWithStatuses(
   activeTool: UiActionAction | null | undefined,
   params: ActionParams,
 ): ActionState {
-  return Object.keys(actions).reduce(
-    (res, actionName) => {
-      const value = status(actionName, res.activeTool, params);
-      if (!isEmpty(value)) res[actionName] = value;
-      return res;
-    },
-    { activeTool } as ActionState,
-  );
+  const result: ActionState = { activeTool };
+  Object.keys(actions).forEach((actionName) => {
+    const value = status(actionName, result.activeTool, params);
+    if (!isEmpty(value)) result[actionName] = value;
+  });
+  return result;
 }
 
 export default function (

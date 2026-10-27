@@ -12,11 +12,13 @@ import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 
 function uniqArray(dest, add, reversible: boolean) {
-  return add.reduce((_, item) => {
+  let result = [];
+  add.forEach((item) => {
     if (reversible) dest = xor(dest, [item]);
     else if (!dest.includes(item)) dest.push(item);
-    return dest;
-  }, []);
+    result = dest;
+  });
+  return result;
 }
 
 // TODO: deep-merge?

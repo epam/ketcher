@@ -748,16 +748,11 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           const warnings = JSON.parse(msg.payload) as KeyValuePair;
 
-          const result: CheckResult = Object.entries(warnings).reduce(
-            (acc, curr) => {
-              const [key, value] = curr;
-              const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value as string;
-
-              return acc;
-            },
-            {} as CheckResult,
-          );
+          const result: CheckResult = {};
+          Object.entries(warnings).forEach(([key, value]) => {
+            const mappedPropertyName = mapWarningGroup(key);
+            result[mappedPropertyName] = value as string;
+          });
           resolve(result);
         } else {
           reject(new Error(msg.error));
@@ -800,19 +795,15 @@ class IndigoService implements StructService {
         const msg: OutputMessage<string> = data;
         if (!msg.hasError) {
           const calculatedProperties: CalculateResult = JSON.parse(msg.payload);
-          const result: CalculateResult = Object.entries(
-            calculatedProperties,
-          ).reduce((acc, curr) => {
-            const [key, value] = curr;
+          const result = {} as CalculateResult;
+          Object.entries(calculatedProperties).forEach(([key, value]) => {
             const mappedPropertyName = mapCalculatedPropertyName(
               key as CalculateProps,
             );
             if (properties.includes(mappedPropertyName)) {
-              acc[mappedPropertyName] = value;
+              result[mappedPropertyName] = value;
             }
-
-            return acc;
-          }, {} as CalculateResult);
+          });
           resolve(result);
         } else {
           reject(new Error(msg.error));

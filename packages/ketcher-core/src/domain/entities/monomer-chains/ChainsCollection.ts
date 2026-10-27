@@ -432,27 +432,25 @@ export class ChainsCollection {
     if (complimentaryChainGoesToStartChain) {
       return [chain];
     } else {
-      return complimentaryChainsWithData.reduce(
-        (acc, { complimentaryChain }) => {
-          if (
-            complimentaryChain === startChain ||
-            complimentaryChain === previousChain
-          ) {
-            return acc;
-          }
+      const complimentaryChains: Chain[] = [];
+      complimentaryChainsWithData.forEach(({ complimentaryChain }) => {
+        if (
+          complimentaryChain === startChain ||
+          complimentaryChain === previousChain
+        ) {
+          return;
+        }
 
-          return [
-            ...acc,
-            ...this.findCycledComplimentaryChains(
-              complimentaryChain,
-              startChain,
-              chain,
-              visitedChains,
-            ),
-          ];
-        },
-        [] as Chain[],
-      );
+        complimentaryChains.push(
+          ...this.findCycledComplimentaryChains(
+            complimentaryChain,
+            startChain,
+            chain,
+            visitedChains,
+          ),
+        );
+      });
+      return complimentaryChains;
     }
   }
 

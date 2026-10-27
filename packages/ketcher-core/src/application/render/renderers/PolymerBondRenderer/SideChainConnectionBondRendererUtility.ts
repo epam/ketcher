@@ -42,19 +42,13 @@ export class SideChainConnectionBondRendererUtility {
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (SnakeLayoutCellWidth / 2) * cos;
     const yOffset = (this.cellHeight / 2) * sin;
-    const maxXOffset = cell.connections.reduce(
-      (max: number, connection: Connection): number => {
-        return Math.max(max, connection.xOffset);
-      },
-      0,
-    );
-    const maxYOffset = cell.connections.reduce(
-      (max: number, connection: Connection): number => {
-        const connectionYOffset = connection.yOffset || 0;
-        return Math.max(max, connectionYOffset);
-      },
-      0,
-    );
+    let maxXOffset = 0;
+    let maxYOffset = 0;
+    for (const connection of cell.connections) {
+      maxXOffset = Math.max(maxXOffset, connection.xOffset);
+      const connectionYOffset = connection.yOffset || 0;
+      maxYOffset = Math.max(maxYOffset, connectionYOffset);
+    }
 
     let endOfPathPart: number;
     if (horizontal && turnPointIsUsed) {

@@ -48,11 +48,12 @@ const PanelBox = styled('div')`
 const theme = createTheme(defaultTheme);
 
 const getHiddenButtonsConfig = (btnArr: string[]): ButtonsConfig => {
-  return btnArr.reduce((acc, button) => {
-    if (button) acc[button] = { hidden: true };
+  const hiddenButtons: ButtonsConfig = {};
+  for (const button of btnArr) {
+    if (button) hiddenButtons[button] = { hidden: true };
+  }
 
-    return acc;
-  }, {});
+  return hiddenButtons;
 };
 
 const structServiceProvider = new StandaloneStructServiceProvider();

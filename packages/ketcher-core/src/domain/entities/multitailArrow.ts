@@ -399,29 +399,31 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       this.height,
     ]);
     allTailsOffsets.sort((a, b) => a.sub(b).getFloatingPrecision());
-    return allTailsOffsets.reduce(
-      (acc: Array<TailDistance>, item, index, array) => {
-        if (index === 0) {
-          return acc;
-        }
-        const distance = item.sub(array[index - 1]);
-        const centerFloatingPoint = item.sub(distance.divide(2));
-        return acc.concat({
-          distance: distance.getFloatingPrecision(),
-          center: centerFloatingPoint.getFloatingPrecision(),
-        });
-      },
-      [],
-    );
+    const tailDistances: Array<TailDistance> = [];
+    for (let index = 1; index < allTailsOffsets.length; index++) {
+      const item = allTailsOffsets[index];
+      const previousItem = allTailsOffsets[index - 1];
+
+      const distance = item.sub(previousItem);
+      const centerFloatingPoint = item.sub(distance.divide(2));
+      tailDistances.push({
+        distance: distance.getFloatingPrecision(),
+        center: centerFloatingPoint.getFloatingPrecision(),
+      });
+    }
+    return tailDistances;
   }
 
   getTailsMaxDistance(): TailDistance {
-    return this.getTailsDistance(Array.from(this.tailsYOffset.values())).reduce(
-      (acc: TailDistance, item) => {
-        return item.distance > acc.distance ? item : acc;
-      },
-      { distance: 0, center: 0 },
-    );
+    let maxDistance: TailDistance = { distance: 0, center: 0 };
+    for (const item of this.getTailsDistance(
+      Array.from(this.tailsYOffset.values()),
+    )) {
+      if (item.distance > maxDistance.distance) {
+        maxDistance = item;
+      }
+    }
+    return maxDistance;
   }
 
   getTailCoordinate(id: number): FixedPrecisionCoordinates | undefined {

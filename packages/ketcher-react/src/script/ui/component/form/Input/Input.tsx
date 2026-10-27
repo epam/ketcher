@@ -163,11 +163,13 @@ Select.val = function (ev, schema) {
 
   const options = select.options;
 
-  return Array.from(options).reduce(
-    (res, o: HTMLOptionElement, i) =>
-      !o.selected ? res : [enumSchema(schema, i), ...res],
-    [] as HTMLOptionElement[],
-  );
+  const selectedOptions: ReturnType<typeof enumSchema>[] = [];
+  Array.from(options).forEach((option, index) => {
+    if (option.selected) {
+      selectedOptions.unshift(enumSchema(schema, index));
+    }
+  });
+  return selectedOptions;
 };
 
 function FieldSet({
@@ -228,12 +230,12 @@ FieldSet.val = function (ev, schema) {
   let result;
 
   if (inputCollection?.length) {
-    result = Array.from(inputCollection).reduce(
-      (res, inp: HTMLInputElement, i) =>
-        !inp.checked ? res : [enumSchema(schema, i), ...res],
-
-      [] as HTMLInputElement[],
-    );
+    result = [] as ReturnType<typeof enumSchema>[];
+    Array.from(inputCollection).forEach((input, index) => {
+      if (input.checked) {
+        result.unshift(enumSchema(schema, index));
+      }
+    });
   }
 
   return input.type === 'radio' ? result[0] : result;

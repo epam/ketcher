@@ -34,12 +34,14 @@ export function shortcutStr(shortcut?: string | string[]) {
   );
 }
 
-export const generateMenuShortcuts = <T>(obj) =>
-  Object.keys(obj).reduce((acc, key) => {
+export const generateMenuShortcuts = <T>(obj) => {
+  const shortcuts = {};
+  Object.keys(obj).forEach((key) => {
     if (obj[key]?.shortcut) {
       const shortcut = obj[key].shortcut;
       const processedShortcut = shortcutStr(shortcut);
-      acc[key] = processedShortcut;
+      shortcuts[key] = processedShortcut;
     }
-    return acc;
-  }, {}) as { [key in keyof T]: string };
+  });
+  return shortcuts as { [key in keyof T]: string };
+};

@@ -32,20 +32,10 @@ const selectCustomButtons = (state) => state?.options?.customButtons ?? [];
 const disabledButtonsSelector = createSelector(
   [getActionState],
   (actionState) =>
-    Object.keys(actionState).reduce((acc: string[], item) => {
-      if (actionState[item]?.disabled) {
-        acc.push(item);
-      }
-      return acc;
-    }, []),
+    Object.keys(actionState).filter((item) => actionState[item]?.disabled),
 );
 const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
-  Object.keys(actionState).reduce((acc: string[], item) => {
-    if (actionState[item]?.hidden) {
-      acc.push(item);
-    }
-    return acc;
-  }, []),
+  Object.keys(actionState).filter((item) => actionState[item]?.hidden),
 );
 
 const disableableButtons = [

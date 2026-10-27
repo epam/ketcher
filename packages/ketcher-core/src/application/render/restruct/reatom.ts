@@ -308,9 +308,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     if (labelBoxes.length === 0) {
       return this.getVBoxObj(render);
     }
-    let vbox = labelBoxes
-      .slice(1)
-      .reduce((union, box) => Box2Abs.union(union, box), labelBoxes[0]);
+    let vbox = labelBoxes[0];
+    labelBoxes.slice(1).forEach((box) => {
+      vbox = Box2Abs.union(vbox, box);
+    });
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }
@@ -776,19 +777,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const [attachmentAtoms, leavingGroups] = Array.from(
-          assignedAttachmentPoints.values(),
-        ).reduce(
-          (acc, currentPair) => {
-            const attachmentAtomId = currentPair[0];
-            acc[0].add(attachmentAtomId);
-
-            const leavingAtomId = currentPair[1];
-            acc[1].add(leavingAtomId);
-            return acc;
-          },
-          [new Set<number>(), new Set<number>()] as [Set<number>, Set<number>],
-        );
+        const attachmentAtoms = new Set<number>();
+        const leavingGroups = new Set<number>();
+        assignedAttachmentPoints.forEach((currentPair) => {
+          attachmentAtoms.add(currentPair[0]);
+          leavingGroups.add(currentPair[1]);
+        });
 
         let style: RenderOptionStyles | undefined;
         if (attachmentAtoms.has(aid)) {

@@ -1566,7 +1566,7 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Delete'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
+          if (!this.isEditMode && this.hasSelectedEntities) {
             this.deleteSelection();
           } else {
             deleteNode(Direction.Right);
@@ -1577,7 +1577,7 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Backspace'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
+          if (!this.isEditMode && this.hasSelectedEntities) {
             this.deleteSelection();
           } else {
             deleteNode(Direction.Left);
@@ -2086,7 +2086,7 @@ export class SequenceMode extends BaseMode {
     const editor = provideEditorInstance();
     const selections = SequenceRenderer.selections;
 
-    if (selections.length > 0) {
+    if (this.hasSelectedEntities) {
       const monomersBeingDeleted = new Set<BaseMonomer>(
         editor.drawingEntitiesManager.selectedMonomers,
       );
@@ -2109,11 +2109,17 @@ export class SequenceMode extends BaseMode {
       this.finishNodesDeletion(
         deletionModelChanges,
         SequenceRenderer.caretPosition,
-        selections[0][0].nodeIndexOverall,
+        selections[0]?.[0].nodeIndexOverall,
       );
     }
 
     return true;
+  }
+
+  private get hasSelectedEntities() {
+    const editor = provideEditorInstance();
+
+    return editor.drawingEntitiesManager.selectedEntities.length > 0;
   }
 
   isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {

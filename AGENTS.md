@@ -79,9 +79,10 @@ Issues are GitHub issues in epam/ketcher. See `docs/agents/issue-tracker.md`.
 
 - **Shared skills** live in `.agents/skills/<name>/`. `.claude/skills/<name>` is a relative symlink to that folder (`../../.agents/skills/<name>`), so Claude Code and Codex read one copy. To share a skill, move it there and add the symlink.
 - **Claude-only skills** live directly in `.claude/skills/`.
-- **Vendor skills**: `code-review`, `implement-spec`, and `tdd` come from mattpocock/skills, as recorded in `skills-lock.json`. Do not edit them. Configure them through `docs/agents/*.md`, or put Ketcher rules in a repo-owned skill or in `.memory-bank/`.
+- **Vendor skills**: `code-review`, `implement-spec`, and `tdd` come from mattpocock/skills. `create-verification-skill` and `maintain-verification-skill` come from pstack (cursor/plugins, MIT). `skills-lock.json` pins the installed ones; refresh them with `npx skills update`. Do not edit them. Configure them through `docs/agents/*.md`, or put Ketcher rules in a repo-owned skill or in `.memory-bank/`.
+- **Verification skill**: `create-verification-skill` writes `verify-ketcher` to `.cursor/skills/verify-ketcher/`, a path it hard-codes. Move the result to `.agents/skills/verify-ketcher/`, then add relative symlinks to it from `.claude/skills/verify-ketcher` and `.cursor/skills/verify-ketcher`, so `maintain-verification-skill` still finds it. `verify-ketcher` belongs to the repo: edit it freely.
 - **Spec workflows**: OpenSpec changes run through `/opsx:apply`. The `/opsx:*` commands are optional and work only where OpenSpec is installed locally. `implement` takes one ticket, or tickets that share a diff, with no OpenSpec change. `implement-spec` is the upstream ticket-graph orchestrator and runs only when a user calls it.
-- **Copilot files**: `.github/skills/commit/` stays in `.github/`, because Copilot's skill path is not verified. Planned: `.github/instructions/*.instructions.md` generated from `review-rules.md`. Not built yet.
+- **Copilot files**: `.github/skills/commit/` stays in `.github/`, because Copilot's skill path is not verified. `.github/instructions/*.instructions.md` are generated from `review-rules.md`; do not edit them by hand.
 
 ## Unverified tool behaviors
 

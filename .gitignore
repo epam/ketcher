@@ -50,3 +50,6 @@ output.txt
 
 # verify-ketcher skill: server state, browser session, evidence
 .verify-ketcher/
+
+# ketcher-flow skill: run directories and worktrees
+.ketcher-flow/

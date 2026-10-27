@@ -16,11 +16,11 @@ For features and high-risk changes. Only those need a spec.
 2. **Implement.** Tick each task when it is done, one at a time.
 3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
 
-The `openspec-*` skills are optional. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
+Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
 
 ### Ticket flow
 
-For bugs, refactors, and lint cleanups. No spec: one ticket, one PR, linked to the issue. The agent workflow for it is not decided yet.
+For bugs, refactors, and lint cleanups. No spec: one ticket, one PR, linked to the issue. Agents run it with the `ketcher-flow` skill (`.agents/skills/ketcher-flow/`): a bug is diagnosed to a failing test and approved by the user before the fix, a refactor is pinned by tests before code moves, and a small change goes straight to a PR.
 
 ### Large-scale change flow
 

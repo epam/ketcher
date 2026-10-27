@@ -502,10 +502,26 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await clickOnCanvas(page, 0, 0);
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
-      paddingWidth: 180,
-      paddingHeight: 90,
-    });
+    // Clamp the left edge of the crop to the canvas element boundary so the
+    // toolbar strip (which renders differently based on preceding test state)
+    // is excluded while all relevant atoms remain captured within the padding.
+    const atomLocator = getAtomLocator(page, { atomId: 4 });
+    await atomLocator.waitFor({ state: 'visible' });
+    const atomBox = await atomLocator.boundingBox();
+    const canvasBox9 = await (await getVisibleCanvas(page)).boundingBox();
+    if (!atomBox || !canvasBox9) {
+      throw new Error('Could not get bounding boxes');
+    }
+    const paddingW = 180;
+    const paddingH = 90;
+    const clip9 = {
+      x: Math.max(atomBox.x - paddingW, canvasBox9.x),
+      y: Math.max(atomBox.y - paddingH, 0),
+      width: atomBox.width + paddingW * 2,
+      height: atomBox.height + paddingH * 2,
+    };
+    const screenshot9 = await page.screenshot({ clip: clip9 });
+    expect(screenshot9).toMatchSnapshot();
   });
 
   test('Case 10 — Monomer area selection works wrong if user scrolls down during selection', async ({

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AttachmentPoints } from 'domain/entities/atom';
+import {
+  Atom,
+  AttachmentPoints,
+  type AtomAttributes,
+} from 'domain/entities/atom';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -23,8 +27,15 @@ import { ifDef } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { atomToStruct, bondToStruct } from './atomBondToStruct';
+import type {
+  KetItem,
+  KetMoleculeNode,
+  KetRgLabelNode,
+  KetSGroupAttachmentPointNode,
+  KetSGroupNode,
+} from '../types';
 
-export function toRlabel(values) {
+export function toRlabel(values: number[]): number {
   let res = 0;
   values.forEach((val) => {
     const rgi = val - 1;
@@ -33,7 +44,14 @@ export function toRlabel(values) {
   return res;
 }
 
-export function moleculeToStruct(ketItem: any): Struct {
+type KetMoleculeItem = KetItem & {
+  atoms?: KetMoleculeNode['atoms'];
+  bonds?: KetMoleculeNode['bonds'];
+  sgroups?: KetMoleculeNode['sgroups'];
+  properties?: KetMoleculeNode['properties'];
+};
+
+export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
 
   if (ketItem.atoms) {
@@ -63,6 +81,15 @@ export function moleculeToStruct(ketItem: any): Struct {
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroupData) => {
       const sgroup = sgroupToStruct(sgroupData);
+      // Drop dangling atom references (atom ids absent from the struct). A malformed
+      // file can reference a non-existent atom; without this the whole S-group is later
+      // silently discarded when the struct is reconstructed/cloned (Struct.clone).
+      // Mirrors the MOL parser (SGroup.filter + empty-group removal in mol/v2000.ts).
+      const hadAtoms = sgroup.atoms.length > 0;
+      sgroup.atoms = sgroup.atoms.filter((atomId) => struct.atoms.has(atomId));
+      if (hadAtoms && sgroup.atoms.length === 0) {
+        return; // all references were invalid — skip this malformed S-group
+      }
       const id = struct.sgroups.add(sgroup);
       sgroup.id = id;
     });
@@ -76,16 +103,18 @@ export function moleculeToStruct(ketItem: any): Struct {
   return struct;
 }
 
-export function rglabelToStruct(source) {
-  const params: any = {};
-  params.label = 'R#';
+export function rglabelToStruct(source: KetRgLabelNode): Atom {
+  const params: AtomAttributes = { label: 'R#' };
+  const [x = 0, y = 0, z = 0] = source.location ?? [0, 0, 0];
   ifDef(params, 'pp', {
-    x: source.location[0],
-    y: -source.location[1],
-    z: source.location[2] || 0.0,
+    x,
+    y: -y,
+    z,
   });
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
-  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
+  const rglabel = toRlabel(
+    (source.$refs ?? []).map((el) => parseInt(el.slice(3), 10)),
+  );
   ifDef(params, 'rglabel', rglabel);
   const newAtom = new Atom(params);
   newAtom.setInitiallySelected(source.selected);
@@ -95,7 +124,7 @@ export function rglabelToStruct(source) {
 function addRGroupAttachmentPointsToStruct(
   struct: Struct,
   attachedAtomId: number,
-  attachmentPoints: AttachmentPoints | null,
+  attachmentPoints: AttachmentPoints | null | undefined,
   initiallySelected?: initiallySelectedType,
 ) {
   const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
@@ -110,8 +139,6 @@ function addRGroupAttachmentPointsToStruct(
   } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
-    );
-    rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }
@@ -120,28 +147,27 @@ function addRGroupAttachmentPointsToStruct(
   });
 }
 
-type KetAttachmentPoint = {
+type KetAttachmentPoint = KetSGroupAttachmentPointNode & {
   attachmentAtom: number;
-  leavingAtom?: number;
-  attachmentId?: string;
 };
 
-export function sgroupToStruct(source) {
-  const sgroup = new SGroup(source.type);
+export function sgroupToStruct(source: KetSGroupNode): SGroup {
+  const sgroupType = source.type ?? 'GEN';
+  const sgroup = new SGroup(sgroupType);
   ifDef(sgroup, 'atoms', source.atoms);
-  switch (source.type) {
+  switch (sgroupType) {
     case 'MUL': {
       ifDef(sgroup.data, 'mul', source.mul);
       break;
     }
     case 'SRU': {
       ifDef(sgroup.data, 'subscript', source.subscript);
-      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
+      ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
     case 'COP': {
       ifDef(sgroup.data, 'subtype', source.subtype);
-      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
+      ifDef(sgroup.data, 'connectivity', source.connectivity?.toLowerCase());
       break;
     }
     case 'SUP': {
@@ -150,13 +176,17 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'class', source.class);
       ifDef(sgroup, 'id', source.id);
       source.attachmentPoints?.forEach(
-        (
-          sourceAttachmentPoint: KetAttachmentPoint,
-          sourceAttachmentPointIndex: number,
-        ) => {
+        (sourceAttachmentPoint, sourceAttachmentPointIndex: number) => {
+          const { attachmentAtom } = sourceAttachmentPoint;
+          if (typeof attachmentAtom !== 'number') {
+            return;
+          }
           sgroup.addAttachmentPoint(
             sgroupAttachmentPointToStruct(
-              sourceAttachmentPoint,
+              {
+                ...sourceAttachmentPoint,
+                attachmentAtom,
+              },
               sourceAttachmentPointIndex + 1,
             ),
           );
@@ -191,7 +221,7 @@ function sgroupAttachmentPointToStruct(
     atomId,
     leavingAtomId,
     attachmentId,
-    attachmentId && !isNaN(Number(attachmentId))
+    attachmentId && !Number.isNaN(Number(attachmentId))
       ? Number(attachmentId)
       : attachmentPointNumber,
   );

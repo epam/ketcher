@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -69,7 +68,7 @@ test.describe('1. User can expand hydrogens for ', () => {
     await waitForPageInit(page);
   });
 
-  const temporaryFailedTestsFileNames = [
+  const temporaryFailedTestsFileNames = new Set([
     'Aromatic/Aromatic (Ring Topology) - Five hydrogens.ket',
     'Aromatic/Aromatic (Ring Topology) - Four hydrogens.ket',
     'Aromatic/Aromatic (Ring Topology) - Three hydrogens.ket',
@@ -111,7 +110,7 @@ test.describe('1. User can expand hydrogens for ', () => {
     'Single Up-Down/Single Up-Down - Five hydrogens (S).ket',
     'Single Up-Down/Single Up-Down - Four hydrogens (S).ket',
     'Single Up-Down/Single Up-Down - Three hydrogens (S).ket',
-  ];
+  ]);
 
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom).ket',
@@ -337,7 +336,7 @@ test.describe('1. User can expand hydrogens for ', () => {
 
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
-      if (temporaryFailedTestsFileNames.includes(fileName)) {
+      if (temporaryFailedTestsFileNames.has(fileName)) {
         // These tests are not stable
         test.skip();
       }
@@ -389,7 +388,7 @@ test.describe('2. User can expand hydrogens for ', () => {
     await waitForPageInit(page);
   });
 
-  const temporaryFailedTestsFileNames = [
+  const temporaryFailedTestsFileNames = new Set([
     'Aromatic/Aromatic (Ring Topology) - Five hydrogens+A.ket',
     'Aromatic/Aromatic (Ring Topology) - Four hydrogens+A.ket',
     'Aromatic/Aromatic (Ring Topology) - Three hydrogens+A.ket',
@@ -426,7 +425,7 @@ test.describe('2. User can expand hydrogens for ', () => {
     'Single Up-Down/Single Up-Down - Five hydrogens (S)+A.ket',
     'Single Up-Down/Single Up-Down - Four hydrogens (S)+A.ket',
     'Single Up-Down/Single Up-Down - Three hydrogens (S)+A.ket',
-  ];
+  ]);
 
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom)+A.ket',
@@ -642,7 +641,7 @@ test.describe('2. User can expand hydrogens for ', () => {
 
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
-      if (temporaryFailedTestsFileNames.includes(fileName)) {
+      if (temporaryFailedTestsFileNames.has(fileName)) {
         // These tests are not stable
         test.skip();
       }

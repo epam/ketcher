@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable no-restricted-globals */
 
 import {
   AromatizeCommandData,
@@ -29,6 +28,8 @@ import {
   DearomatizeCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
+  IndigoModule,
+  IndigoOptions,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
@@ -36,8 +37,6 @@ import {
   CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
 const normalizeError = (error: unknown): Error => {
@@ -51,13 +50,8 @@ const normalizeError = (error: unknown): Error => {
   }
 };
 
-interface IndigoOptions {
-  set: (key: string, value: string) => void;
-}
-
 type HandlerType = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  indigo: any,
+  indigo: IndigoModule,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -69,8 +63,7 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  module.then((indigo: any) => {
+  module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;
@@ -92,7 +85,7 @@ function handle(
       };
     }
 
-    self.postMessage(msg);
+    globalThis.postMessage(msg);
   });
 }
 
@@ -103,7 +96,7 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   }
 }
 
-self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
+globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
   const message = e.data;
 
   switch (message.type) {
@@ -115,7 +108,9 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         {
           ...data.options,
           'render-output-format': data.outputFormat,
-          'render-background-color': data.backgroundColor,
+          ...(data.backgroundColor === undefined
+            ? {}
+            : { 'render-background-color': data.backgroundColor }),
         },
         Command.GenerateImageAsBase64,
         data.struct,
@@ -297,6 +292,6 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     }
 
     default:
-      throw Error('Unsupported enum type');
+      throw new Error('Unsupported enum type');
   }
 };

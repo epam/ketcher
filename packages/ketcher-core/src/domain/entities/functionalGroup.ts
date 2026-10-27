@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
@@ -66,7 +66,7 @@ export class FunctionalGroup {
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded;
+    return Boolean(this.#sgroup.data.expanded);
   }
 
   get relatedSGroup(): SGroup {
@@ -231,7 +231,7 @@ export class FunctionalGroup {
   ) {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
-      const atomsInSGroup = sGroup?.atoms;
+      const atomsInSGroup = sGroup?.atoms ?? [];
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,

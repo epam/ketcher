@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,12 +54,11 @@ function ButtonList({
   classes,
   testId,
 }: Readonly<ButtonListProps>) {
-  let className: string;
   const selected = classes.selected ?? 'selected';
   return (
     <ul>
       {schema.items.enum.map((item, i) => {
-        className = value.includes(item) ? selected : '';
+        const className = value.includes(item) ? selected : '';
         return (
           <li key={item}>
             <button

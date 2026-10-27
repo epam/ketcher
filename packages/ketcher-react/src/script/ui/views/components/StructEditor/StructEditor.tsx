@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -148,7 +148,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       this.scrollCanvas(event);
       this.editor.rotateController.updateFloatingToolsPosition();
       this.editor.hoverIcon.updatePosition();
-      this.editor.tool()?.mousemove?.(this.editor.lastEvent);
+      if (this.editor.lastEvent) {
+        this.editor.tool()?.mousemove?.(this.editor.lastEvent);
+      }
     }
   };
 
@@ -218,7 +220,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
 
     this.editor = new Editor(
       this.props.ketcherId,
-      this.editorRef.current,
+      this.editorRef.current as HTMLDivElement,
       {
         ...this.props.options,
       },
@@ -258,8 +260,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     });
 
     this.editor.event.tooltip.add((data) => {
-      const message = data ? data.message : undefined;
-
+      const message = data ? data.message : '';
       this.setState({
         tooltip: message,
       });
@@ -350,6 +351,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       'onRgroupEdit',
       'onSgroupEdit',
       'onRemoveFG',
+      'onEditMonomer',
       'onMessage',
       'onAromatizeStruct',
       'onDearomatizeStruct',
@@ -388,6 +390,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       <TagComponent
         className={clsx(classes.canvas, className)}
         {...props}
+        dir="ltr"
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"
       >

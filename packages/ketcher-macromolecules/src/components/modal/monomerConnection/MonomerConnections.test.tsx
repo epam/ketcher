@@ -5,7 +5,6 @@ import { Struct, Peptide } from 'ketcher-core';
 import { MonomerConnection } from './MonomerConnections';
 import { configureAppStore } from '../../../state/store';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
 
 const mockStore = configureAppStore({});
@@ -32,7 +31,7 @@ const secondPeptide = new Peptide({
 firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
 firstPeptide.monomerItem.props.MonomerCaps = { R1: 'H', R2: 'H' };
 secondPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-secondPeptide.monomerItem.props.MonomerCaps = { R1: 'O', R2: 'O' };
+secondPeptide.monomerItem.props.MonomerCaps = { R1: 'OH', R2: 'OH' };
 
 const mockProps = {
   onClose: jest.fn(),

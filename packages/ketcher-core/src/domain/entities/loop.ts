@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import { Bond } from './bond';
 import type { Struct } from './struct';
+import { assert } from 'utilities';
 
 export class Loop {
   hbs: number[];
@@ -30,7 +31,18 @@ export class Loop {
     this.convex = isConvex || false;
 
     hbs.forEach((hb) => {
-      const bond: Bond = struct.bonds.get(struct.halfBonds.get(hb)!.bid)!;
+      const halfBond = struct.halfBonds.get(hb);
+      assert(
+        halfBond,
+        `Expected half-bond ${hb} to exist when constructing loop`,
+      );
+
+      const bond: Bond | undefined = struct.bonds.get(halfBond.bid);
+      assert(
+        bond,
+        `Expected bond ${halfBond.bid} to exist for half-bond ${hb} when constructing loop`,
+      );
+
       if (bond.type !== Bond.PATTERN.TYPE.AROMATIC) this.aromatic = false;
       if (bond.type === Bond.PATTERN.TYPE.DOUBLE) this.dblBonds++;
     });

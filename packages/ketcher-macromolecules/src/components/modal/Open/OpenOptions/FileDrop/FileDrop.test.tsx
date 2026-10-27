@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,12 +65,12 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
 
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(input.files?.[0]).toBe(mockFile);
@@ -87,11 +87,11 @@ describe('FileDrop component', () => {
     const { container } = render(
       withThemeProvider(<FileDrop {...mockProps} />),
     );
-    // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+
     const input = container.querySelector(
       'input[type=file]',
     ) as HTMLInputElement;
-    userEvent.upload(input, mockFile);
+    await userEvent.upload(input, mockFile);
 
     await waitFor(() => {
       expect(mockProps.onDropAccepted).toHaveBeenCalled();

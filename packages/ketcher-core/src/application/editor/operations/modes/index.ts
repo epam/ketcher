@@ -1,5 +1,5 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -7,7 +7,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
@@ -23,16 +22,21 @@ import type { Operation } from 'domain/entities/Operation';
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
+  constructor(private readonly forceRecalculateAntisense = false) {}
+
   public execute(_renderersManager: RenderersManager) {
     const editor = provideEditorInstance();
 
-    editor.mode.initialize(false);
+    editor.mode.initialize(
+      false,
+      undefined,
+      true,
+      this.forceRecalculateAntisense,
+    );
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    const editor = provideEditorInstance();
-
-    editor.mode.initialize(false);
+  public invert(renderersManager: RenderersManager) {
+    this.execute(renderersManager);
   }
 }
 

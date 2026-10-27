@@ -6,7 +6,7 @@ import { Subscription } from 'subscription';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,7 +40,6 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
-import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
   type LogSettings,
@@ -50,6 +49,7 @@ import {
   getSvgFromDrawnStructures,
   KetcherLogger,
   ensureString,
+  assert,
 } from 'utilities';
 import { ketcherProvider } from './ketcherProvider';
 import {
@@ -60,6 +60,7 @@ import {
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
   type ExportImageParams,
+  type KetcherApiSettings,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -77,12 +78,21 @@ type SetMoleculeOptions = {
   preserveCanvasPosition?: boolean;
 };
 
-const allowedApiSettings = {
-  'general.dearomatize-on-load': 'dearomatize-on-load',
-  ignoreChiralFlag: 'ignoreChiralFlag',
-  disableQueryElements: 'disableQueryElements',
-  bondThickness: 'bondThickness',
-};
+const allowedApiSettings = [
+  ['general.dearomatize-on-load', 'dearomatize-on-load'],
+  ['ignoreChiralFlag', 'ignoreChiralFlag'],
+  ['disableQueryElements', 'disableQueryElements'],
+  ['bondThickness', 'bondThickness'],
+] as const;
+
+type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
+type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
+type KetcherGetSettingsResult = Partial<
+  Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
+type KetcherSetOptionsPayload = Partial<
+  Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   inputFormat: ChemicalMimeType.MonomerLibrary,
@@ -103,9 +113,16 @@ export class Ketcher {
   libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
-    // we should assign editor exactly after ketcher creation
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return this.#editor!;
+    // we should assign editor exactly after ketcher creation, so #editor
+    // being null here would indicate a programming error (accessing the
+    // editor before Ketcher has finished initializing), not a normal
+    // runtime case
+    if (!this.#editor) {
+      throw new Error(
+        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
+      );
+    }
+    return this.#editor;
   }
 
   get eventBus(): EventEmitter {
@@ -173,17 +190,17 @@ export class Ketcher {
   }
 
   // TEMP.: getting only dearomatize-on-load setting
-  get settings() {
+  get settings(): KetcherGetSettingsResult {
     const options = this.editor.options();
-    const result = Object.entries(allowedApiSettings).reduce(
-      (acc, [apiSetting, clientSetting]) => {
-        if (clientSetting in options) {
-          return { ...acc, [apiSetting]: clientSetting };
-        }
-        return acc;
-      },
-      {},
-    );
+    const result: KetcherGetSettingsResult = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = options[clientSetting];
+
+      if (value !== undefined) {
+        result[apiSetting] = value;
+      }
+    }
 
     if (!Object.keys(result).length) {
       throw new Error('Allowed options are not provided');
@@ -196,17 +213,19 @@ export class Ketcher {
     this.#editor = editor;
   }
 
-  // TODO: create options type
-  setSettings(settings: Record<string, string | boolean>) {
+  setSettings(settings: KetcherApiSettings): void {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');
     }
-    const options = {};
-    for (const [apiSetting, clientSetting] of Object.entries(
-      allowedApiSettings,
-    )) {
-      options[clientSetting] = settings[apiSetting];
+    const options: KetcherSetOptionsPayload = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = settings[apiSetting];
+
+      if (value !== undefined) {
+        options[clientSetting] = value;
+      }
     }
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
@@ -222,7 +241,7 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SMILES format is not available in macro mode');
     }
     const format = isExtended
@@ -242,7 +261,7 @@ export class Ketcher {
 
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.MOL due to reaction arrows.',
       );
     }
@@ -285,11 +304,11 @@ export class Ketcher {
   }
 
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
-      throw Error(
+      throw new Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.',
       );
     }
@@ -362,6 +381,7 @@ export class Ketcher {
           error instanceof Error ? error.message : 'Unknown error occurred';
         throw new Error(
           `Failed to convert structure to ${format} format: ${errorMessage}`,
+          { cause: error },
         );
       }
     }
@@ -378,7 +398,7 @@ export class Ketcher {
   }
 
   getSmarts(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SMARTS format is not available in macro mode');
     }
     return getStructure(
@@ -390,7 +410,7 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CML format is not available in macro mode');
     }
     return getStructure(
@@ -402,7 +422,7 @@ export class Ketcher {
   }
 
   getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('SDF format is not available in macro mode');
     }
     const format =
@@ -418,7 +438,7 @@ export class Ketcher {
   }
 
   getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('RDF format is not available in macro mode');
     }
     const format =
@@ -434,7 +454,7 @@ export class Ketcher {
   }
 
   getCDXml(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CDXML format is not available in macro mode');
     }
     return getStructure(
@@ -446,7 +466,7 @@ export class Ketcher {
   }
 
   getCDX(): Promise<string> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('CDX format is not available in macro mode');
     }
     return getStructure(
@@ -529,7 +549,7 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
 
@@ -597,7 +617,7 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
           !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
 
@@ -632,7 +652,7 @@ export class Ketcher {
     const editor = provideEditorInstance();
 
     await runAsyncAction<void>(async () => {
-      if (window.isPolymerEditorTurnedOn) {
+      if (globalThis.isPolymerEditorTurnedOn) {
         const ketSerializer = new KetSerializer();
         const serializedKet = ketSerializer.serialize(
           new Struct(),
@@ -663,7 +683,7 @@ export class Ketcher {
   }
 
   async layout(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Layout is not available in macro mode');
     }
 
@@ -678,7 +698,7 @@ export class Ketcher {
   }
 
   async aromatize(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Aromatize is not available in macro mode');
     }
 
@@ -692,7 +712,7 @@ export class Ketcher {
   }
 
   async dearomatize(): Promise<void> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Dearomatize is not available in macro mode');
     }
 
@@ -706,7 +726,7 @@ export class Ketcher {
   }
 
   async calculate(options?: CalculateData): Promise<CalculateResult> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Calculate is not available in macro mode');
     }
     return await this._indigo.calculate(this.editor.struct(), options);
@@ -731,7 +751,7 @@ export class Ketcher {
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
     const editor = provideEditorInstance();
     const fileName = 'ketcher';
-    let blobPart;
+    let blobPart: string | undefined;
 
     if (format === 'svg' && editor?.canvas) {
       blobPart = getSvgFromDrawnStructures(
@@ -751,7 +771,7 @@ export class Ketcher {
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       throw new Error('Recognize is not available in macro mode');
     }
     return this._indigo.recognize(image, { version });
@@ -759,13 +779,13 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = {
-      outputFormat: 'png',
-    },
+    options?: GenerateImageOptions,
   ): Promise<Blob> {
-    let meta = '';
+    const { outputFormat = 'png', ...imageOptions } = (options ??
+      {}) as Partial<GenerateImageOptions>;
+    let meta: string;
 
-    switch (options.outputFormat) {
+    switch (outputFormat) {
       case 'svg':
         meta = 'image/svg+xml';
         break;
@@ -773,13 +793,13 @@ export class Ketcher {
       case 'png':
       default:
         meta = 'image/png';
-        options.outputFormat = 'png';
     }
     const serverSettings = this.editor.serverSettings;
 
     const base64 = await this.structService.generateImageAsBase64(data, {
       ...serverSettings,
-      ...options,
+      ...imageOptions,
+      outputFormat: outputFormat === 'svg' ? 'svg' : 'png',
     });
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
@@ -834,7 +854,7 @@ export class Ketcher {
         );
 
         dataInKetFormat = convertResult.struct;
-      } catch (error) {
+      } catch (error: unknown) {
         const originalMessage =
           error instanceof Error ? error.message : String(error);
         throw new MonomerLibraryConvertError(
@@ -892,7 +912,11 @@ export class Ketcher {
       params,
     );
 
-    editor.updateMonomersLibrary(dataInKetFormat);
+    editor.updateMonomersLibrary(
+      dataInKetFormat,
+      undefined,
+      params?.shouldPersist,
+    );
     if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);

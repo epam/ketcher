@@ -6,6 +6,7 @@ import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
@@ -261,16 +262,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       // Split subchain into arrays of non-linker nodes
       const nonLinkerNodeGroups = subChain.nodes.reduce(
         (groups, node) => {
+          let lastGroup = groups.at(-1);
+
+          if (!lastGroup) {
+            lastGroup = [];
+            groups.push(lastGroup);
+          }
+
           if (
             node instanceof LinkerSequenceNode ||
             node.monomer instanceof Phosphate ||
             this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
           ) {
-            if (groups[groups.length - 1].length > 0) {
+            if (lastGroup.length > 0) {
               groups.push([]);
             }
           } else {
-            groups[groups.length - 1].push(node);
+            lastGroup.push(node);
           }
           return groups;
         },
@@ -296,7 +304,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
-    const caclulateNumberToDisplay = (subChain) => {
+    const calculateNumberToDisplay = (subChain: BaseSubChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
@@ -330,8 +338,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         nodeIndex === 0 ||
         nodeIndex === subChain.nodes.length - 1 ||
         (nodeIndex === subChain.nodes.length - 2 &&
-          subChain.nodes[subChain.nodes.length - 1].monomer instanceof
-            Phosphate) ||
+          subChain.nodes.at(-1)?.monomer instanceof Phosphate) ||
         this.isNthNodeInChain
       ) {
         numberToDisplay = nodeIndex + 1;
@@ -340,7 +347,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return numberToDisplay !== undefined;
     };
 
-    this.chain.subChains.some(caclulateNumberToDisplay);
+    this.chain.subChains.some(calculateNumberToDisplay);
 
     if (isNumber(numberToDisplay)) {
       return numberToDisplay;
@@ -407,7 +414,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   // in snake/flex layout mode is represented as % in hexagon
-  private checkIfNodeIsAmbiguousMonomerPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass === MONOMER_CONST.AMINO_ACID
@@ -416,7 +423,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // in snake/flex layout mode is represented as % in:
   // rectangle, circle, diamond, rounded rectangle, etc. (not hexagon)
-  private checkIfNodeIsAmbiguousMonomerNotPeptide(node) {
+  private checkIfNodeIsAmbiguousMonomerNotPeptide(node: SequenceNode) {
     return (
       node instanceof AmbiguousMonomerSequenceNode &&
       node.monomer.monomerClass !== MONOMER_CONST.AMINO_ACID
@@ -554,7 +561,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isNodeInFirstSubChain(): boolean {
     if (!this.isSubChainNode(this.node)) return false;
-    return this.chain.subChains[0].nodes.indexOf(this.node) !== -1;
+    return this.chain.subChains[0].nodes.includes(this.node);
   }
 
   // returns true if node is not in ignore list and is first node in subchain
@@ -574,7 +581,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   // or has only ignored nodes after it in subchain
   private get isLastInSubChain() {
     return this.chain.subChains.some((subChain) => {
-      const lastNode = subChain.nodes[subChain.nodes.length - 1];
+      const lastNode = subChain.nodes.at(-1);
 
       return (
         !this.inIgnoreList(this.node) &&
@@ -590,7 +597,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret(xOffset = CARET_X_OFFSET_BEFORE_NODE) {
-    this.caretElement = this.spacerElement?.append('g');
+    // The caret only marks the edit position, so it stays out of exported images
+    this.caretElement = this.spacerElement
+      ?.append('g')
+      .attr('class', 'dynamic-element');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
       this.caretElement
@@ -662,12 +672,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendChainStartArrow() {
-    this.rootElement
+    const arrowElement = this.rootElement
       ?.append('use')
       .attr('x', -17)
       .attr('y', -27)
       .attr('data-testid', 'sequence-start-arrow')
-      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`)
+      // Shown only while editing, so it stays out of exported images
+      .attr('class', 'dynamic-element');
+
+    if (this.isAntisenseNode) {
+      // Rotate around the arrow glyph's own center (not the whole use/symbol box,
+      // whose fill-box is computed unreliably for use+symbol), keeping it in place.
+      arrowElement?.attr('transform', 'rotate(180, -11, -6)');
+    }
   }
 
   private drawGreyOverlay() {

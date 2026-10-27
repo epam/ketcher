@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -103,23 +103,21 @@ const ToolbarMultiToolItem = (props: Props) => {
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
-    const savedSelectionTool = SettingsManager.selectionTool;
-    const savedSelectionToolId =
-      savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
-        (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+    const savedSelectionTool = SettingsManager.getSelectionTool('micro');
+    const savedSelectionToolId = savedSelectionTool
+      ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+      : undefined;
+    const savedSelectionOption = savedSelectionToolId
+      ? options.find(
+          (option) =>
+            !status[option.id]?.hidden && option.id === savedSelectionToolId,
+        )
+      : undefined;
 
-    if (!currentId) {
-      currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
-        options[0].id;
-    }
+    currentId =
+      savedSelectionOption?.id ??
+      options.find((option) => !status[option.id]?.hidden)?.id ??
+      options[0].id;
   }
   const onOpenOptions = () => {
     // TODO: same as #type above

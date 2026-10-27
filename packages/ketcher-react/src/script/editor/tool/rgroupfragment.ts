@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import {
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class RGroupFragmentTool implements Tool {
   private readonly editor: Editor;
@@ -88,7 +89,7 @@ class RGroupFragmentTool implements Tool {
         }
       }
       if (result.length > 0) {
-        this.editor.event.removeFG.dispatch({ fgIds: result });
+        dispatchMonomerOrGroupDialog(this.editor, result);
         return;
       }
     } else if (bondResult.length > 0) {
@@ -103,7 +104,7 @@ class RGroupFragmentTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
+      dispatchMonomerOrGroupDialog(this.editor, result);
       return;
     }
 

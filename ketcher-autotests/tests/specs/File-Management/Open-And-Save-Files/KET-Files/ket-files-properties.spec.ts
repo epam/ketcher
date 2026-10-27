@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import { expect, test } from '@fixtures';
 import {
   BondsSetting,
@@ -32,7 +31,7 @@ test('Open KET file with properties and check properties are saved in struct', a
   await openFileAndAddToCanvas(page, 'KET/ket-with-properties.ket');
 
   const fragments = await page.evaluate(() => {
-    const editor = window.ketcher?.editor;
+    const editor = globalThis.window.ketcher?.editor;
     const struct =
       typeof editor?.struct === 'function' ? editor.struct() : null;
     const fragsIterator = struct?.frags?.values();

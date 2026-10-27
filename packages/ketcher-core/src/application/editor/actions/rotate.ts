@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -260,7 +260,6 @@ function fromStructureFlip(
 }
 
 export function fromRotate(restruct, selection, center, angle: number) {
-  // eslint-disable-line
   const struct = restruct.molecule;
 
   const action = new Action();
@@ -301,6 +300,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.rxnPluses) {
     selection.rxnPluses.forEach((pid) => {
       const plus = struct.rxnPluses.get(pid);
+      if (!plus) return;
+
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)));
     });
   }
@@ -308,6 +309,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.texts) {
     selection.texts.forEach((textId) => {
       const text = struct.texts.get(textId);
+      if (!text) return;
+
       action.addOp(
         new TextMove(textId, rotateDelta(text.position, center, angle)),
       );
@@ -317,6 +320,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
   if (selection.sgroupData) {
     selection.sgroupData.forEach((did) => {
       const data = struct.sgroups.get(did);
+      if (!data?.pp) return;
+
       action.addOp(
         new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),
       );
@@ -327,6 +332,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
     selection.enhancedFlags.forEach((flagId) => {
       const frId = flagId;
       const frag = restruct.molecule.frags.get(frId);
+      if (!frag) return;
+
       action.addOp(
         new EnhancedFlagMove(
           flagId,

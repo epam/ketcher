@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,7 @@ export class ZoomTool implements BaseTool {
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
+  private rememberedZoomTransform: ZoomTransform | null = null;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
@@ -65,7 +66,6 @@ export class ZoomTool implements BaseTool {
   MINZOOMSCALE = 0.2;
   MAXZOOMSCALE = 4;
 
-  // eslint-disable-next-line no-use-before-define
   private static _instance: ZoomTool;
   public static get instance() {
     return ZoomTool._instance;
@@ -89,6 +89,13 @@ export class ZoomTool implements BaseTool {
 
   initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
+      .extent((): [[number, number], [number, number]] => {
+        const rect = this.canvasWrapper.node()?.getBoundingClientRect();
+        return [
+          [0, 0],
+          [rect?.width ?? 0, rect?.height ?? 0],
+        ];
+      })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
@@ -127,6 +134,24 @@ export class ZoomTool implements BaseTool {
 
   public get zoomTransform() {
     return this._zoomTransform;
+  }
+
+  public rememberZoomTransform() {
+    this.rememberedZoomTransform ??= this._zoomTransform;
+  }
+
+  public forgetRememberedZoomTransform() {
+    this.rememberedZoomTransform = null;
+  }
+
+  public restoreRememberedZoomTransform() {
+    const transform = this.rememberedZoomTransform;
+
+    this.rememberedZoomTransform = null;
+
+    if (transform) {
+      this.zoom?.transform(this.canvasWrapper, transform);
+    }
   }
 
   zoomAction({ transform }) {
@@ -209,7 +234,7 @@ export class ZoomTool implements BaseTool {
     scrollBar.bar
       ?.attr('rx', this.RADIUS)
       .attr('draggable', true)
-      .attr('cursor', 'pointer')
+      .attr('cursor', 'default')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
       .attr('data-testid', scrollBar.name + '-bar')
@@ -245,11 +270,9 @@ export class ZoomTool implements BaseTool {
     isOffsetInPercents = true,
     needScrollVertical = true,
   ) {
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const wrapperRect = this.canvasWrapper.node()?.getBoundingClientRect();
+    const canvasWrapperHeight = wrapperRect?.height ?? 0;
+    const canvasWrapperWidth = wrapperRect?.width ?? 0;
 
     // Calculate X offset
     let xOffsetValue: number;
@@ -341,11 +364,8 @@ export class ZoomTool implements BaseTool {
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const canvasWrapperHeight = wrapperBoundingBox.height;
+    const canvasWrapperWidth = wrapperBoundingBox.width;
     this.scrollBars = {
       horizontal: {
         name: 'horizontal',
@@ -402,6 +422,8 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
+    this.rememberedZoomTransform = null;
+
     const canvasWrapperNode = this.canvasWrapper.node();
 
     if (!canvasWrapperNode?.transform?.baseVal) {

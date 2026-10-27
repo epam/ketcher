@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,19 +19,20 @@ import { StereoLabelStyleType } from '../../render/restruct/generalEnumTypes';
 import type ReStruct from '../../render/restruct/restruct';
 
 import type { OperationType } from './OperationType';
+import { KetcherLogger } from 'utilities';
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
-type OperationType = ValueOf<typeof OperationType>;
+type OperationTypeValue = ValueOf<typeof OperationType>;
 
-class BaseOperation {
-  // eslint-disable-next-line no-use-before-define
+class BaseOperation<D = unknown> {
   private _inverted: BaseOperation | undefined;
-  type: OperationType;
+  type: OperationTypeValue;
   priority: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
-  data: any;
+  data!: D;
 
-  constructor(type: OperationType, priority = 0) {
+  static InverseConstructor: new (...args: never[]) => BaseOperation;
+
+  constructor(type: OperationTypeValue, priority = 0) {
     this.type = type;
     this.priority = priority;
   }
@@ -40,31 +41,49 @@ class BaseOperation {
     throw new Error('Operation.execute() is not implemented');
   }
 
-  /** Returns inverted of this */
-  perform(restruct: ReStruct): BaseOperation {
+  /**
+  Returns inverted of this
+  */
+  perform(restruct: ReStruct): ReturnType<this['invert']> {
     this.execute(restruct);
     if (!this._inverted) {
       this._inverted = this.invert();
       this._inverted._inverted = this;
     }
-    return this._inverted;
+    return this._inverted as ReturnType<this['invert']>;
   }
 
   invert(): BaseOperation {
-    throw new Error('Operation.invert() is not implemented');
+    const InverseConstructor = (this.constructor as typeof BaseOperation)
+      .InverseConstructor;
+    if (!InverseConstructor) {
+      KetcherLogger.error('Operation.invert() is not implemented');
+      return this;
+    }
+    const inverted = new InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 
   isDummy(_restruct: ReStruct): boolean {
     return false;
   }
 
-  protected static invalidateAtom(restruct: ReStruct, atomId: number, level?) {
-    const atom = restruct.atoms.get(atomId);
+  protected static invalidateAtom(
+    restruct: ReStruct,
+    atomId: number,
+    level = 0,
+  ) {
+    const atom = restruct.getBondEndpoint(atomId);
     if (!atom) {
       return;
     }
 
-    restruct.markAtom(atomId, level ? 1 : 0);
+    if (restruct.attachmentGroups.has(atomId)) {
+      restruct.markAttachmentGroup(atomId, level ? 1 : 0);
+    } else {
+      restruct.markAtom(atomId, level ? 1 : 0);
+    }
 
     const halfBonds = restruct.molecule.halfBonds;
 
@@ -79,12 +98,18 @@ class BaseOperation {
       }
 
       restruct.markBond(halfBond.bid, 1);
-      restruct.markAtom(halfBond.end, 0);
+      if (restruct.attachmentGroups.has(halfBond.end)) {
+        restruct.markAttachmentGroup(halfBond.end, 0);
+      } else {
+        restruct.markAtom(halfBond.end, 0);
+      }
 
       if (level) {
         BaseOperation.invalidateLoop(restruct, halfBond.bid);
       }
     });
+
+    if (restruct.attachmentGroups.has(atomId)) return;
 
     const fragment = atom.a.fragment;
     const stereoLabelStyle = restruct.render.options.stereoLabelStyle;
@@ -134,10 +159,14 @@ class BaseOperation {
     restruct: ReStruct,
     mapName: keyof typeof ReStruct.maps,
     id: number,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches legacy invalidate depth flag
-    level?: any,
+    level = 0,
   ) {
     if (mapName === 'atoms') {
+      BaseOperation.invalidateAtom(restruct, id, level);
+      return;
+    }
+
+    if (mapName === 'attachmentGroups') {
       BaseOperation.invalidateAtom(restruct, id, level);
       return;
     }

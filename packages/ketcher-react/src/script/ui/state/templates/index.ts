@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import initTmplLib, { initLib } from './init-lib';
+import { initLib } from './init-lib';
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
+import { isNumber } from 'lodash';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
 
-export { initTmplLib };
+export { default as initTmplLib } from './init-lib';
 
-/* TEMPLATES */
+/*
+TEMPLATES
+*/
 export function selectTmpl(tmpl) {
   return {
     type: 'TMPL_SELECT',
@@ -52,7 +55,9 @@ export function changeTab(tab) {
   };
 }
 
-/* TEMPLATE-ATTACH-EDIT */
+/*
+TEMPLATE-ATTACH-EDIT
+*/
 export function initAttach(name, attach) {
   return {
     type: 'INIT_ATTACH',
@@ -91,9 +96,7 @@ export function editTmpl(tmpl) {
             attach?: Record<string, unknown>;
           };
           tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
-          tmpl.props = data
-            ? { ...(tmpl.props || {}), ...(data.attach || {}) }
-            : tmpl.props;
+          tmpl.props = data ? { ...tmpl.props, ...data.attach } : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);
@@ -125,7 +128,9 @@ export function deleteTmpl(tmpl) {
   };
 }
 
-/* SAVE */
+/*
+SAVE
+*/
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} };
@@ -162,7 +167,9 @@ function updateLocalStore(lib) {
   storage.setItem('ketcher-tmpls', userLib);
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export const initTmplsState = {
   lib: [],
   selected: null,
@@ -173,21 +180,32 @@ export const initTmplsState = {
   tab: 0,
 };
 
-const tmplActions = [
+const tmplActions = new Set([
   'TMPL_INIT',
   'TMPL_SELECT',
   'TMPL_CHANGE_GROUP',
   'TMPL_CHANGE_FILTER',
   'TMPL_CHANGE_TAB',
-];
+]);
 
-const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];
+const attachActions = new Set([
+  'INIT_ATTACH',
+  'SET_ATTACH_POINTS',
+  'SET_TMPL_NAME',
+]);
 
 function templatesReducer(state = initTmplsState, action) {
-  if (tmplActions.includes(action.type))
-    return { ...state, ...(action.data || {}) };
+  if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
 
-  if (attachActions.includes(action.type)) {
+  if (
+    action.type === 'MODAL_OPEN' &&
+    action.data?.name === 'templates' &&
+    isNumber(action.data?.prop?.tab)
+  ) {
+    return { ...state, tab: action.data.prop.tab };
+  }
+
+  if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };
     return { ...state, attach };
   }

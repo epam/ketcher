@@ -21,7 +21,8 @@
             "y": -7.9750000000000005
         },
         "alias": "D",
-        "templateId": "D___Aspartic acid"
+        "templateId": "D___Aspartic acid",
+        "expanded": false
     },
     "monomerTemplate-D___Aspartic acid": {
         "type": "monomerTemplate",
@@ -49,7 +50,8 @@
                     -0.8201,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -223,6 +225,9 @@
                 },
                 "type": "side"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "D"
     }

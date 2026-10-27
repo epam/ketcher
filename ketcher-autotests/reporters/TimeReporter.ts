@@ -23,7 +23,6 @@ class TimeReporter implements Reporter {
     console.log('\nTest Execution Times (sorted):');
     this.results.forEach((result) => {
       console.log(
-        // eslint-disable-next-line no-magic-numbers
         `${result.title}: ${result.duration / 1000}ms (${result.status})`,
       );
     });

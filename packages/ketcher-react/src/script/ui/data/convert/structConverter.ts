@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,13 @@
 
 import {
   type Atom,
+  type RxnArrow,
   type Struct,
   type SupportedFormat,
   Bond,
   RxnArrowMode,
   StereoFlag,
+  exceedsMolfileV2000Limit,
   getPropertiesByFormat,
 } from 'ketcher-core';
 
@@ -59,7 +61,7 @@ export function couldBeSaved(
   }
 
   if (format === 'smiles') {
-    const arrayOfAtoms: Array<any> = Array.from(struct.atoms.values());
+    const arrayOfAtoms: Array<Atom> = Array.from(struct.atoms.values());
     const hasGenerics = arrayOfAtoms.some((atom) => atom.pseudo);
     if (hasGenerics) {
       warnings.push(
@@ -70,7 +72,9 @@ export function couldBeSaved(
 
   if (format !== 'ket') {
     if (hasRxnArrow) {
-      const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values());
+      const arrayOfArrows: Array<RxnArrow> = Array.from(
+        struct.rxnArrows.values(),
+      );
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode;
       if (
         ![RxnArrowMode.OpenAngle, RxnArrowMode.Retrosynthetic].includes(
@@ -140,6 +144,15 @@ export function couldBeSaved(
     const isVal = struct.atoms.find((_ind, atom) => atom.explicitValence >= 0);
     if (isVal !== null)
       warnings.push(`In ${formatName} valence is not supported`);
+  }
+
+  if (
+    (['mol'] as SupportedFormat[]).includes(format) &&
+    exceedsMolfileV2000Limit(struct)
+  ) {
+    warnings.push(
+      'The structure exceeds the MDL Molfile V2000 limit (999 atoms/bonds) and will be saved in V3000 format.',
+    );
   }
 
   if (

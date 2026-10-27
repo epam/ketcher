@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetcherLogger, Settings, SettingsFormValue } from 'ketcher-core';
+import { KetcherLogger, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
-import { FIELD_DEFINITIONS } from './fieldGroups';
+import { FIELD_DEFINITIONS, SettingFieldName } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
 interface SettingsFieldsProps {
-  fields: Array<keyof Settings>;
+  fields: Array<SettingFieldName>;
   settings: SettingsFormValue;
   onChange: (partial: Partial<SettingsFormValue>) => void;
 }
@@ -45,13 +45,14 @@ export const SettingsFields = ({
           <SettingsField
             key={String(fieldName)}
             name={String(fieldName)}
-            label={field.label}
+            labelKey={field.labelKey}
             type={field.type}
             value={settings[fieldName]}
             options={field.options}
             min={field.min}
             max={field.max}
             step={field.step}
+            tooltipKey={field.tooltipKey}
             onChange={(value) => onChange({ [fieldName]: value })}
           />
         );

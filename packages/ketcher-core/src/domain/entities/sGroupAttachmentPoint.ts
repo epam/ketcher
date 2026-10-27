@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'utilities';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 
 /**

@@ -10,16 +10,14 @@ type ElementType = 'text' | 'background' | 'spacer';
  * so we don't have to add handlers to each sequence item individually.
  */
 export class SequenceEventDelegationManager {
-  // eslint-disable-next-line no-use-before-define
   private static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
-  private boundHandlers: Map<string, (event: MouseEvent) => void> = new Map();
+  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
+    new Map();
 
   public static get instance() {
-    if (!SequenceEventDelegationManager._instance) {
-      SequenceEventDelegationManager._instance =
-        new SequenceEventDelegationManager();
-    }
+    SequenceEventDelegationManager._instance ??=
+      new SequenceEventDelegationManager();
     return SequenceEventDelegationManager._instance;
   }
 
@@ -81,7 +79,7 @@ export class SequenceEventDelegationManager {
   }
 
   private getElementType(target: SVGElement): ElementType | null {
-    const dataType = target.getAttribute('data-element-type');
+    const dataType = target.dataset.elementType;
     if (
       dataType === 'text' ||
       dataType === 'background' ||
@@ -97,8 +95,8 @@ export class SequenceEventDelegationManager {
       if (parentGroup) return 'spacer';
       return 'background';
     }
-    if (tagName === 'g' && target.hasAttribute('data-element-type')) {
-      return target.getAttribute('data-element-type') as ElementType;
+    if (tagName === 'g' && target.dataset.elementType !== undefined) {
+      return target.dataset.elementType as ElementType;
     }
 
     return null;

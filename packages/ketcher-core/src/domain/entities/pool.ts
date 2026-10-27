@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pool<TValue = any> extends Map<number, TValue> {
+interface WithResetInitiallySelected {
+  resetInitiallySelected(invalidate?: boolean): void;
+}
+
+function hasResetInitiallySelected(
+  value: unknown,
+): value is WithResetInitiallySelected {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    'resetInitiallySelected' in value &&
+    typeof (value as WithResetInitiallySelected).resetInitiallySelected ===
+      'function'
+  );
+}
+
+export class Pool<TValue = unknown> extends Map<number, TValue> {
   private nextId = 0;
 
   add(item: TValue): number {
@@ -25,6 +41,10 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
   newId(): number {
     return this.nextId++;
+  }
+
+  reserveId(id: number): void {
+    this.nextId = Math.max(this.nextId, id + 1);
   }
 
   keyOf(item: TValue): number | null {
@@ -61,11 +81,7 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
   changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
     this.forEach((value, key) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (typeof value.resetInitiallySelected === 'function') {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+      if (hasResetInitiallySelected(value)) {
         value.resetInitiallySelected(invalidate);
         this.set(key, value);
       }

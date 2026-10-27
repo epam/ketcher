@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  CoordinateTransformation,
   FunctionalGroup,
   ketcherProvider,
   MULTITAIL_ARROW_KEY,
@@ -29,6 +30,7 @@ import {
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
 import {
+  getAttachmentGroupTargetForBondHalf,
   getIsItemInSelection,
   getMenuPropsForClosestItem,
   getMenuPropsForSelection,
@@ -72,7 +74,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
       );
 
-      sGroupId !== null && selectedSGroupsIds.add(sGroupId);
+      if (sGroupId !== null) {
+        selectedSGroupsIds.add(sGroupId);
+      }
     });
 
     return {
@@ -102,9 +106,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       if (editor.isMonomerCreationWizardActive) {
         const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
-          const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-alias',
-          );
+          const attachmentPointName = (
+            rLabelElement as HTMLElement | SVGElement
+          ).dataset.attachmentPointAlias;
           if (attachmentPointName) {
             show({
               id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
@@ -119,7 +123,15 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
       }
 
-      const closestItem = editor.findItem(event, null);
+      const foundItem = editor.findItem(event, null);
+      const attachmentGroupTarget = foundItem
+        ? getAttachmentGroupTargetForBondHalf(
+            editor.struct(),
+            foundItem,
+            CoordinateTransformation.pageToModel(event, editor.render),
+          )
+        : null;
+      const closestItem = attachmentGroupTarget ?? foundItem;
       const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
@@ -136,6 +148,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
 
         return;
+      } else if (attachmentGroupTarget) {
+        editor.selection(null);
+        triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (!selection) {
         triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
@@ -149,7 +164,8 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         if (
           !selection.bonds &&
           !selection.atoms &&
-          !selection.rgroupAttachmentPoints
+          !selection.rgroupAttachmentPoints &&
+          !selection.attachmentGroups
         ) {
           if (selection[MULTITAIL_ARROW_KEY]) {
             triggerType = ContextMenuTriggerType.ClosestItem;
@@ -184,17 +200,19 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
             selection,
             selectedFunctionalGroups,
             ketcherId,
+            editor,
           );
           break;
         }
       }
 
-      showProps &&
+      if (showProps) {
         show({
           id: showProps.id,
           event,
           props: { ...showProps, ketcherId },
         });
+      }
     },
     [getSelectedGroupsInfo, show, ketcherId],
   );

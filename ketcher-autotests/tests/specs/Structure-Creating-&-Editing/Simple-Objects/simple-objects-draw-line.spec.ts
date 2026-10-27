@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

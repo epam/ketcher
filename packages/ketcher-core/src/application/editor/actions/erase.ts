@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,8 @@
 
 import {
   AtomDelete,
+  AttachmentGroupDelete,
+  AttachmentGroupAttr,
   BondDelete,
   CalcImplicitH,
   ImageDelete,
@@ -31,7 +33,7 @@ import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { atomGetDegree, formatSelection } from './utils';
 import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
@@ -48,7 +50,7 @@ export function fromOneAtomDeletion(restruct, atomId: number) {
 function fromBondDeletion(
   restruct: ReStruct,
   bid: number,
-  skipAtoms: Array<any> = [],
+  skipAtoms: number[] = [],
 ) {
   let action = new Action();
 
@@ -69,12 +71,14 @@ function fromBondDeletion(
     });
   }
 
-  const bond: any = restruct.molecule.bonds.get(bid);
-  const atomsToRemove: Array<any> = [];
+  const bond = restruct.molecule.bonds.get(bid);
+  assert(bond != null);
+  const atomsToRemove: number[] = [];
 
   action.addOp(new BondDelete(bid));
 
   if (
+    restruct.molecule.atoms.has(bond.begin) &&
     !skipAtoms.includes(bond.begin) &&
     atomGetDegree(restruct, bond.begin) === 0
   ) {
@@ -86,6 +90,7 @@ function fromBondDeletion(
   }
 
   if (
+    restruct.molecule.atoms.has(bond.end) &&
     !skipAtoms.includes(bond.end) &&
     atomGetDegree(restruct, bond.end) === 0
   ) {
@@ -98,8 +103,15 @@ function fromBondDeletion(
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove);
   action = action.perform(restruct);
-  action.addOp(new CalcImplicitH([bond.begin, bond.end]).perform(restruct));
-  action.mergeWith(fromBondStereoUpdate(restruct, bond, false));
+  const atomIds = [bond.begin, bond.end].filter((id) =>
+    restruct.molecule.atoms.has(id),
+  );
+  if (atomIds.length) {
+    action.addOp(new CalcImplicitH(atomIds).perform(restruct));
+  }
+  if (atomIds.length === 2) {
+    action.mergeWith(fromBondStereoUpdate(restruct, bond, false));
+  }
 
   action.operations.reverse();
 
@@ -143,6 +155,25 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   selection.atoms = Array.from(new Set(selection.atoms));
   selection.bonds = Array.from(new Set(selection.bonds));
 
+  struct.attachmentGroups.forEach((attachmentGroup, id) => {
+    const remainingAtomIds = attachmentGroup.atomIds.filter(
+      (atomId) => !selection.atoms.includes(atomId),
+    );
+    if (remainingAtomIds.length === attachmentGroup.atomIds.length) return;
+
+    if (remainingAtomIds.length < 2) {
+      selection.attachmentGroups.push(id);
+    } else {
+      action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
+    }
+  });
+  selection.attachmentGroups = Array.from(new Set(selection.attachmentGroups));
+
+  selection.attachmentGroups.forEach((attachmentGroupId) => {
+    selection.bonds.push(...struct.getConnectedBondIds(attachmentGroupId));
+  });
+  selection.bonds = Array.from(new Set(selection.bonds));
+
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
     if (sgroup?.isSuperatomWithoutLabel) {
@@ -164,10 +195,14 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
-      if (selection.bonds.indexOf(nei.bid) === -1) {
+      if (!selection.bonds.includes(nei.bid)) {
         selection.bonds = selection.bonds.concat([nei.bid]);
       }
     });
+  });
+
+  selection.attachmentGroups.forEach((id) => {
+    action.addOp(new AttachmentGroupDelete(id));
   });
 
   const actionRemoveBonds = new Action();
@@ -239,9 +274,15 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     .mergeWith(actionRemoveBonds)
     .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
-  const rgForRemove: Array<number> = frids.map(
-    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,
-  );
+  const rgForRemove = frids.reduce<Array<number>>((acc, frid) => {
+    const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
+
+    if (isNumber(rgid)) {
+      acc.push(rgid);
+    }
+
+    return acc;
+  }, []);
 
   while (frids.length > 0) {
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(

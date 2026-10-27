@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pile<TValue = any> extends Set<TValue> {
+export class Pile<TValue = unknown> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
   find(predicate: (item: TValue) => boolean) {
@@ -25,11 +25,11 @@ export class Pile<TValue = any> extends Set<TValue> {
     return null;
   }
 
-  equals(setB: Pile): boolean {
+  equals(setB: Pile<TValue>): boolean {
     return this.isSuperset(setB) && setB.isSuperset(this);
   }
 
-  isSuperset(subset: Pile): boolean {
+  isSuperset(subset: Pile<TValue>): boolean {
     for (const item of subset) {
       if (!this.has(item)) return false;
     }

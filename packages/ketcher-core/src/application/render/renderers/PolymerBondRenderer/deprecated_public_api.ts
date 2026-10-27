@@ -3,5 +3,4 @@ import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/
 
 // FIXME: Do we need to use this type outside of `ketcher-core`?
 export type DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;

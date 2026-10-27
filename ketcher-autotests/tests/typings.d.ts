@@ -4,5 +4,6 @@ declare global {
   interface Window {
     ketcher: Ketcher;
     isPolymerEditorTurnedOn: boolean;
+    _ketcher_isAutozoomDisabled?: boolean;
   }
 }

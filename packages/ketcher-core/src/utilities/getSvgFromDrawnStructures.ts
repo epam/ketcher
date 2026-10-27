@@ -1,32 +1,43 @@
 import { KetcherLogger } from './KetcherLogger';
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
-const ADDITIONAL_TOP_MARGIN = 54;
-const ADDITIONAL_LEFT_MARGIN = 50;
 const DEFAULT_MARGIN = 10;
+// Layers of transient views (e.g. the rotation frame and handles around the
+// selection), they are not part of the drawn structures
+const TRANSIENT_LAYERS_SELECTOR =
+  '.transient-views-layer, .transient-views-top-layer';
 
-type Margins = {
-  horizontal: number;
-  vertical: number;
+type StructuresClientRect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;
+
+/**
+ * Bounding rect of the drawn structures without the transient views.
+ * Falls back to the whole group if none of its other children has a size.
+ */
+const getDrawnStructuresClientRect = (
+  drawnStructures: Element,
+): StructuresClientRect => {
+  const contentRects = Array.from(drawnStructures.children)
+    .filter((child) => !child.matches(TRANSIENT_LAYERS_SELECTOR))
+    .map((child) => child.getBoundingClientRect())
+    .filter((rect) => rect.width > 0 || rect.height > 0);
+
+  if (!contentRects.length) {
+    return drawnStructures.getBoundingClientRect();
+  }
+
+  const left = Math.min(...contentRects.map((rect) => rect.left));
+  const top = Math.min(...contentRects.map((rect) => rect.top));
+  const right = Math.max(...contentRects.map((rect) => rect.right));
+  const bottom = Math.max(...contentRects.map((rect) => rect.bottom));
+
+  return { x: left, y: top, width: right - left, height: bottom - top };
 };
 
 export const getSvgFromDrawnStructures = (
   canvas: SVGSVGElement,
   type: 'preview' | 'file',
-  margins: Margins | number = {
-    horizontal: DEFAULT_MARGIN,
-    vertical: DEFAULT_MARGIN,
-  },
+  margin: number = DEFAULT_MARGIN,
 ) => {
-  // Convert number to Margins object to support backward compatibility
-  const marginValues: Margins =
-    typeof margins === 'number'
-      ? { horizontal: margins, vertical: margins }
-      : {
-          horizontal: DEFAULT_MARGIN + margins.horizontal,
-          vertical: DEFAULT_MARGIN + margins.vertical,
-        };
-
   // Copy and clean up svg structures before previewing or saving
   let svgInnerHTML = canvas?.innerHTML || '';
   const wrapper = document.createElementNS(SVG_NAMESPACE_URI, 'svg');
@@ -35,6 +46,10 @@ export const getSvgFromDrawnStructures = (
   wrapper.querySelector('#rectangle-selection-area')?.remove();
   // remove dynamic elements (scrolls, highlighters, attachment points...)
   wrapper.querySelectorAll('.dynamic-element')?.forEach((el) => el.remove());
+  // remove transient views (rotation frame and handles around the selection...)
+  wrapper
+    .querySelectorAll(TRANSIENT_LAYERS_SELECTOR)
+    ?.forEach((el) => el.remove());
   // set default cursor, mostly for sequence mode
   wrapper
     .querySelectorAll('text')
@@ -51,9 +66,9 @@ export const getSvgFromDrawnStructures = (
   // preserving other style properties on bond path elements (stroke, fill, stroke-width, etc.)
   svgInnerHTML = svgInnerHTML?.replace(/\bcursor:\s*pointer;\s*/g, '');
 
-  const drawStructureClientRect = canvas
-    ?.getElementsByClassName('drawn-structures')[0]
-    .getBoundingClientRect();
+  const drawnStructures = canvas?.getElementsByClassName('drawn-structures')[0];
+  const drawStructureClientRect =
+    drawnStructures && getDrawnStructuresClientRect(drawnStructures);
 
   if (!drawStructureClientRect || !svgInnerHTML) {
     const errorMessage = 'Cannot get drawn structures!';
@@ -61,16 +76,14 @@ export const getSvgFromDrawnStructures = (
     return;
   }
 
-  const viewBoxX =
-    drawStructureClientRect.x -
-    ADDITIONAL_LEFT_MARGIN -
-    marginValues.horizontal;
-  const viewBoxY =
-    drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
-  const viewBoxWidth =
-    drawStructureClientRect.width + marginValues.horizontal * 2;
-  const viewBoxHeight =
-    drawStructureClientRect.height + marginValues.vertical * 2;
+  // Position the viewBox relative to the canvas element itself, so the export
+  // stays centered regardless of where the canvas is placed on screen
+  // (e.g. full-screen vs popup mode).
+  const canvasClientRect = canvas.getBoundingClientRect();
+  const viewBoxX = drawStructureClientRect.x - canvasClientRect.x - margin;
+  const viewBoxY = drawStructureClientRect.y - canvasClientRect.y - margin;
+  const viewBoxWidth = drawStructureClientRect.width + margin * 2;
+  const viewBoxHeight = drawStructureClientRect.height + margin * 2;
   const viewBox = `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`;
 
   if (type === 'preview')

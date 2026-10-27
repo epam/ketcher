@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Atom } from 'domain/entities/atom';
+import type { BondEndpoint } from 'domain/entities/bondEndpoint';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { HalfBond } from 'domain/entities/halfBond';
@@ -31,10 +31,16 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import type { RenderOptions, RenderOptionStyles } from '../render.types';
+import type {
+  RelativeBox,
+  RenderPath,
+  RenderOptions,
+  RenderOptionStyles,
+} from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 
 type FragmentSelectionPreviewOptions = {
   disabled?: boolean;
@@ -43,16 +49,18 @@ type FragmentSelectionPreviewOptions = {
 class ReBond extends ReObject {
   b: Bond;
   doubleBondShift: number;
-  path: any;
+  // A bond's rendered path is a single Element for most bond types, or a
+  // RaphaelSet (paper.set([...])) for aromatic bonds.
+  path: RenderPath;
   neihbid1 = -1;
   neihbid2 = -1;
   boldStereo?: boolean;
-  rbb?: { x: number; y: number; width: number; height: number };
+  rbb?: RelativeBox;
   cip?: {
     // Raphael paths
-    path: any;
-    text: any;
-    rectangle: any;
+    path: RaphaelSet;
+    text: Element;
+    rectangle: Element;
   };
 
   constructor(bond: Bond) {
@@ -75,14 +83,18 @@ class ReBond extends ReObject {
       : atomId;
   }
 
-  static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
+  static bondRecalc(
+    bond: ReBond,
+    restruct: ReStruct,
+    options: RenderOptions,
+  ): void {
     const render = restruct.render;
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
-    const beginAtom = restruct.atoms.get(
+    const beginAtom = restruct.getBondEndpoint(
       ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
-    const endAtom = restruct.atoms.get(
+    const endAtom = restruct.getBondEndpoint(
       ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
     );
 
@@ -98,14 +110,14 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      p1 = sgroup1.isContracted() ? (sgroup1.pp as Vec2) : beginAtom.a.pp;
+    if (sgroup1?.isContracted() && sgroup1 !== sgroup2) {
+      p1 = sgroup1.getContractedPosition(restruct.molecule).position;
     } else {
       p1 = beginAtom.a.pp;
     }
 
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-      p2 = sgroup2.isContracted() ? (sgroup2.pp as Vec2) : endAtom.a.pp;
+    if (sgroup2?.isContracted() && sgroup1 !== sgroup2) {
+      p2 = sgroup2.getContractedPosition(restruct.molecule).position;
     } else {
       p2 = endAtom.a.pp;
     }
@@ -130,9 +142,9 @@ class ReBond extends ReObject {
     hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2, bond.b.len);
 
     bond.b.sb = options.lineWidth * 5;
-    /* eslint-disable no-mixed-operators */
+
     bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
-    /* eslint-enable no-mixed-operators */
+
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
@@ -154,8 +166,15 @@ class ReBond extends ReObject {
     // bond is connected to an atom with a label as opposed
     // to when it is connected to a Carbon atom w/o a label
     // please refer to: ketcher-core/docs/data/hover_selection_2.png
-    const halfBondStart = restruct.molecule.halfBonds.get(bond.hb1!)!.p;
-    const halfBondEnd = restruct.molecule.halfBonds.get(bond.hb2!)!.p;
+    const halfBondStart =
+      bond.hb1 !== undefined
+        ? restruct.molecule.halfBonds.get(bond.hb1)?.p
+        : undefined;
+    const halfBondEnd =
+      bond.hb2 !== undefined
+        ? restruct.molecule.halfBonds.get(bond.hb2)?.p
+        : undefined;
+    if (!halfBondStart || !halfBondEnd) return [];
 
     const isStereoBond =
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
@@ -258,6 +277,8 @@ class ReBond extends ReObject {
 
   getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
+    const selectionPoints = this.getSelectionPoints(render, isHighlight);
+    if (!selectionPoints.length) return null;
     const [
       startPadTop,
       startTop,
@@ -267,7 +288,7 @@ class ReBond extends ReObject {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints(render, isHighlight);
+    ] = selectionPoints;
 
     // for a visual representation of the points
     // please refer to: ketcher-core/docs/data/hover_selection_exp.png
@@ -290,6 +311,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(render, false);
+    if (!rect) return null;
 
     return rect.attr(
       drawOutline
@@ -298,12 +320,17 @@ class ReBond extends ReObject {
     );
   }
 
-  makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: RaphaelPaper,
+    options: RenderOptions,
+  ) {
     if (this.isPlateShouldBeHidden(restruct, options)) {
       return null;
     }
 
     const rect = this.getSelectionContour(restruct.render, false);
+    if (!rect) return null;
 
     return rect.attr(options.selectionStyle);
   }
@@ -316,6 +343,26 @@ class ReBond extends ReObject {
     const bond = this.b;
     const sgroups = restruct.render.ctab.sgroups;
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups;
+
+    // Hide hydrogen bonds if either connected monomer is expanded
+    if (bond.type === Bond.PATTERN.TYPE.HYDROGEN) {
+      const beginSgroup = restruct.molecule.getGroupFromAtomId(bond.begin);
+      const endSgroup = restruct.molecule.getGroupFromAtomId(bond.end);
+
+      if (
+        beginSgroup instanceof MonomerMicromolecule &&
+        beginSgroup.monomer.monomerItem.expanded
+      ) {
+        return true;
+      }
+      if (
+        endSgroup instanceof MonomerMicromolecule &&
+        endSgroup.monomer.monomerItem.expanded
+      ) {
+        return true;
+      }
+    }
+
     return (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
@@ -335,14 +382,15 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, true);
+    if (!rect) return null;
     return rect.attr(highlightStyle);
   }
 
-  show(restruct: ReStruct, bid: number, options: any): void {
-    // eslint-disable-line max-statements
+  show(restruct: ReStruct, bid: number, options: RenderOptions): void {
     const render = restruct.render;
     const struct = restruct.molecule;
-    const bond = restruct.molecule.bonds.get(bid)!;
+    const bond = restruct.molecule.bonds.get(bid);
+    if (!bond) return;
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
 
@@ -351,7 +399,6 @@ class ReBond extends ReObject {
     }
 
     if (
-      bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
@@ -369,15 +416,15 @@ class ReBond extends ReObject {
     }
 
     const paper = render.paper;
-    const hb1 =
-      this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null;
-    const hb2 =
-      this.b.hb2 !== undefined ? struct.halfBonds.get(this.b.hb2) : null;
+    const hb1Id = this.b.hb1;
+    const hb2Id = this.b.hb2;
+    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : null;
+    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : null;
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
     setDoubleBondShift(this, struct);
-    if (!hb1 || !hb2) return;
+    if (hb1Id === undefined || hb2Id === undefined || !hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
@@ -389,7 +436,9 @@ class ReBond extends ReObject {
       null,
       true,
     );
-    const reactingCenter: any = {};
+    const reactingCenter: { path: Element | null; rbb?: RelativeBox } = {
+      path: null,
+    };
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
       reactingCenter.rbb = util.relBox(reactingCenter.path.getBBox());
@@ -401,7 +450,9 @@ class ReBond extends ReObject {
         true,
       );
     }
-    const topology: any = {};
+    const topology: { path: Element | null; rbb?: RelativeBox } = {
+      path: null,
+    };
     topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
       topology.rbb = util.relBox(topology.path.getBBox());
@@ -415,7 +466,7 @@ class ReBond extends ReObject {
     }
     this.setHover(this.hover, render);
 
-    let ipath = null;
+    let ipath: ReturnType<typeof getIdsPath>;
     const bondIdxOff = options.subFontSize * 0.6;
     if (options.showBondIds) {
       ipath = getIdsPath(bid, paper, hb1, hb2, bondIdxOff, 0.5, 0.5, hb1.norm);
@@ -423,7 +474,7 @@ class ReBond extends ReObject {
     }
     if (options.showHalfBondIds) {
       ipath = getIdsPath(
-        this.b.hb1!,
+        hb1Id,
         paper,
         hb1,
         hb2,
@@ -434,7 +485,7 @@ class ReBond extends ReObject {
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
       ipath = getIdsPath(
-        this.b.hb2!,
+        hb2Id,
         paper,
         hb1,
         hb2,
@@ -474,17 +525,21 @@ class ReBond extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
+    let highlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
+        highlightOutline = highlight.outline;
       }
     });
 
-    // Drawing highlight
-    if (isHighlighted) {
-      const style = {
+    // Drawing highlight. Outline highlights (#9441) are drawn as a single
+    // merged contour by ReStruct.showHighlightOutlines, so skip them here;
+    // only filled (active-tab) highlights are drawn per-bond.
+    if (isHighlighted && !highlightOutline) {
+      const style: RenderOptionStyles = {
         fill: highlightColor,
         stroke: 'none',
       };
@@ -514,20 +569,16 @@ class ReBond extends ReObject {
       return;
     }
 
-    bondPathElement.setAttribute('data-testid', 'bond');
-    bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
-    bondPathElement.setAttribute(
-      'data-bondtype',
+    bondPathElement.dataset.testid = 'bond';
+    bondPathElement.dataset.bondid = String(struct.bonds.keyOf(bond));
+    bondPathElement.dataset.bondtype = String(
       bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
     );
-    bondPathElement.setAttribute('data-bondstereo', bond.stereo);
-    bondPathElement.setAttribute('data-fromatomid', bond.begin);
-    bondPathElement.setAttribute('data-toatomid', bond.end);
-    bondPathElement.setAttribute('data-topology', bond.topology);
-    bondPathElement.setAttribute(
-      'data-reacting-center',
-      bond.reactingCenterStatus,
-    );
+    bondPathElement.dataset.bondstereo = String(bond.stereo);
+    bondPathElement.dataset.fromatomid = String(bond.begin);
+    bondPathElement.dataset.toatomid = String(bond.end);
+    bondPathElement.dataset.topology = String(bond.topology);
+    bondPathElement.dataset.reactingCenter = String(bond.reactingCenterStatus);
 
     const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
     const endSGroupId = struct.getGroupIdFromAtomId(bond.end);
@@ -537,18 +588,18 @@ class ReBond extends ReObject {
     }
 
     if (isNumber(beginSGroupId)) {
-      bondPathElement.setAttribute('data-fromsgroupid', beginSGroupId);
+      bondPathElement.dataset.fromsgroupid = String(beginSGroupId);
 
       if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-frommonomerid', beginSGroupId);
+        bondPathElement.dataset.frommonomerid = String(beginSGroupId);
       }
     }
 
     if (isNumber(endSGroupId)) {
-      bondPathElement.setAttribute('data-tosgroupid', endSGroupId);
+      bondPathElement.dataset.tosgroupid = String(endSGroupId);
 
       if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
-        bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
+        bondPathElement.dataset.tomonomerid = String(endSGroupId);
       }
     }
   }
@@ -564,8 +615,8 @@ class ReBond extends ReObject {
       this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
     const halfBond2 =
       this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
-    const atom1 = render.ctab.molecule.atoms.get(this.b.begin);
-    const atom2 = render.ctab.molecule.atoms.get(this.b.end);
+    const atom1 = render.ctab.molecule.getBondEndpoint(this.b.begin);
+    const atom2 = render.ctab.molecule.getBondEndpoint(this.b.end);
 
     if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
       return null;
@@ -682,7 +733,7 @@ class ReBond extends ReObject {
 }
 
 function findIncomingStereoUpBond(
-  atom: Atom,
+  atom: BondEndpoint,
   bid0: number,
   includeBoldStereoBond: boolean,
   restruct: ReStruct,
@@ -729,7 +780,7 @@ function findIncomingUpBonds(
   restruct: ReStruct,
 ): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
-    const atom = restruct.molecule.atoms.get(aid);
+    const atom = restruct.molecule.getBondEndpoint(aid);
     if (!atom) return -1;
     const pos = findIncomingStereoUpBond(atom, bid0, true, restruct);
     return pos < 0 ? -1 : atom.neighbors[pos];
@@ -738,18 +789,19 @@ function findIncomingUpBonds(
   // Keep bold stereo rendering independent from endpoint label visibility:
   // half-bond coordinates are already shifted away from visible labels.
   bond.neihbid1 =
-    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+    restruct.getBondEndpoint(bond.b.begin)?.showLabel && !bond.boldStereo
       ? -1
       : halfbonds[0];
   bond.neihbid2 =
-    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+    restruct.getBondEndpoint(bond.b.end)?.showLabel && !bond.boldStereo
       ? -1
       : halfbonds[1];
 }
 
-function checkStereoBold(bid0, bond, restruct) {
+function checkStereoBold(bid0: number, bond: ReBond, restruct: ReStruct): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
-    const atom = restruct.molecule.atoms.get(aid);
+    const atom = restruct.molecule.getBondEndpoint(aid);
+    if (!atom) return -1;
     const pos = findIncomingStereoUpBond(atom, bid0, false, restruct);
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
@@ -762,12 +814,12 @@ function getBondPath(
   hb1: HalfBond,
   hb2: HalfBond,
   isSnapping: boolean,
-) {
-  let path: any = null;
+): RenderPath | null {
+  let path: RenderPath | null;
   const render = restruct.render;
   const struct = restruct.molecule;
-  const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
-  const shiftB = !restruct.atoms.get(hb2.begin)?.showLabel;
+  const shiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
+  const shiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
   let newHalfBonds: [HalfBond, HalfBond];
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;
@@ -943,6 +995,15 @@ function getBondPath(
         isSnapping,
       );
       break;
+    case Bond.PATTERN.TYPE.HAPTIC:
+      path = draw.bondHaptic(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
+      break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
   }
@@ -953,7 +1014,9 @@ function getBondPath(
   return path;
 }
 
-/* Get Path */
+/*
+Get Path
+*/
 function getBondSingleUpPath(
   render: Render,
   hb1: HalfBond,
@@ -962,7 +1025,6 @@ function getBondSingleUpPath(
   struct: Struct,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
   const options = render.options;
@@ -1008,7 +1070,7 @@ function getBondSingleUpPath(
 }
 
 function getStereoBondColor(
-  options: any,
+  options: RenderOptions,
   bond: ReBond,
   struct: Struct,
 ): string {
@@ -1035,7 +1097,7 @@ function getStereoBondColor(
     return defaultColor;
   }
 
-  return getColorFromStereoLabel(options, stereoLabel);
+  return getColorFromStereoLabel(options, stereoLabel) ?? defaultColor;
 }
 
 function getBondSingleStereoBoldPath(
@@ -1046,7 +1108,6 @@ function getBondSingleStereoBoldPath(
   struct: Struct,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const options = render.options;
   const coords1 = stereoUpBondGetCoordinates(
     hb1,
@@ -1086,7 +1147,6 @@ function getBondDoubleStereoBoldPath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
   const n = hb1.norm;
@@ -1148,14 +1208,15 @@ export function getBondLineShift(cos: number, sin: number): number {
 function stereoUpBondGetCoordinates(
   hb: HalfBond,
   neihbid: number,
-  bondSpace: any,
+  bondSpace: number,
   struct: Struct,
 ): [Vec2, Vec2] {
   const neihb = struct.halfBonds.get(neihbid);
-  const cos = Vec2.dot(hb.dir, neihb!.dir);
-  const sin = Vec2.cross(hb.dir, neihb!.dir);
+  if (!neihb) return [hb.p, hb.p];
+  const cos = Vec2.dot(hb.dir, neihb.dir);
+  const sin = Vec2.cross(hb.dir, neihb.dir);
   const cosHalf = Math.sqrt(0.5 * (1 - cos));
-  const biss = neihb!.dir.rotateSC(
+  const biss = neihb.dir.rotateSC(
     (sin >= 0 ? -1 : 1) * cosHalf,
     Math.sqrt(0.5 * (1 + cos)),
   );
@@ -1266,7 +1327,6 @@ function getBondDoublePath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params, max-statements
   const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
 
   const a = hb1.p;
@@ -1356,7 +1416,6 @@ function getBondAromaticPath(
   shiftB: boolean,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
   let mask = 0;
   let dash: number[] | null = null;
@@ -1394,7 +1453,6 @@ function getAromaticBondPaths(
   mask: number,
   dash: number[] | null,
 ) {
-  // eslint-disable-line max-params, max-statements
   const a = hb1.p;
   const b = hb2.p;
   const n = hb1.norm;
@@ -1441,7 +1499,6 @@ function getReactingCenterPath(
   hb1: HalfBond,
   hb2: HalfBond,
 ) {
-  // eslint-disable-line max-statements
   const a = hb1.p;
   const b = hb2.p;
   const c = b.add(a).scaled(0.5);
@@ -1456,15 +1513,17 @@ function getReactingCenterPath(
   const alongIntMadeBroken = 2 * lw; // half interval between along for MADE_OR_BROKEN
   const alongSz = 1.5 * bs; // half size along for CENTER
   const acrossInt = 1.5 * bs; // half interval across for CENTER
-  const acrossSz = 3.0 * bs; // half size across for all
+  const acrossSz = 3 * bs; // half size across for all
   const tiltTan = 0.2; // tangent of the tilt angle
 
   switch (bond.b.reactingCenterStatus) {
     case Bond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
-      p.push(c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, acrossSz).addScaled(d, -tiltTan * acrossSz),
+        c.addScaled(n, -acrossSz).addScaled(d, tiltTan * acrossSz),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.CENTER: // #
       p.push(
@@ -1472,48 +1531,45 @@ function getReactingCenterPath(
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
-      );
-      p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
           .addScaled(d, -alongIntRc),
+        c.addScaled(d, alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, acrossInt),
+        c.addScaled(d, alongSz).addScaled(n, -acrossInt),
+        c.addScaled(d, -alongSz).addScaled(n, -acrossInt),
       );
-      p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
-      p.push(c.addScaled(d, alongSz).addScaled(n, -acrossInt));
-      p.push(c.addScaled(d, -alongSz).addScaled(n, -acrossInt));
       break;
     // case Bond.PATTERN.REACTING_CENTER.UNCHANGED: draw a circle
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+      );
       break;
     case Bond.PATTERN.REACTING_CENTER.ORDER_CHANGED:
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(c.addScaled(n, acrossSz), c.addScaled(n, -acrossSz));
       break;
     case Bond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED:
-      p.push(c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken));
-      p.push(c.addScaled(n, acrossSz));
-      p.push(c.addScaled(n, -acrossSz));
+      p.push(
+        c.addScaled(n, acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, alongIntMadeBroken),
+        c.addScaled(n, acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, -acrossSz).addScaled(d, -alongIntMadeBroken),
+        c.addScaled(n, acrossSz),
+        c.addScaled(n, -acrossSz),
+      );
       break;
     default:
       return null;
@@ -1527,9 +1583,8 @@ function getBondMark(
   hb1: HalfBond,
   hb2: HalfBond,
 ) {
-  // eslint-disable-line max-statements
   const options = render.options;
-  let mark: string | null = null;
+  let mark: string;
   let tooltip: string | null = null;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
@@ -1558,18 +1613,19 @@ function getBondMark(
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
-  tooltip &&
+  if (tooltip) {
     path.node.childNodes[0].setAttribute(
       'data-tooltip',
       util.escapeHtml(tooltip),
     );
+  }
 
   return path;
 }
 
 function getIdsPath(
   bid: number,
-  paper: any,
+  paper: RaphaelPaper,
   hb1: HalfBond,
   hb2: HalfBond,
   bondIdxOff: number,
@@ -1577,31 +1633,44 @@ function getIdsPath(
   param2: number,
   norm: Vec2,
 ) {
-  // eslint-disable-line max-params
   const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
   const ipath = paper.text(pb.x, pb.y, bid.toString());
   const irbb = util.relBox(ipath.getBBox());
   draw.recenterText(ipath, irbb);
   return ipath;
 }
-/* ----- */
+/*
+-----
+*/
 
 function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   const hb1 = bond.b.hb1;
   const hb2 = bond.b.hb2;
 
-  if ((!hb1 && hb1 !== 0) || (!hb2 && hb2 !== 0)) {
+  if (hb1 === undefined || hb2 === undefined) {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
     return;
   }
 
-  const loop1 = struct.halfBonds.get(hb1)!.loop;
-  const loop2 = struct.halfBonds.get(hb2)!.loop;
+  const halfBond1 = struct.halfBonds.get(hb1);
+  const halfBond2 = struct.halfBonds.get(hb2);
+  if (!halfBond1 || !halfBond2) {
+    bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+    return;
+  }
+  const loop1 = halfBond1.loop;
+  const loop2 = halfBond2.loop;
   if (loop1 >= 0 && loop2 >= 0) {
-    const d1 = struct.loops.get(loop1)!.dblBonds;
-    const d2 = struct.loops.get(loop2)!.dblBonds;
-    const n1 = struct.loops.get(loop1)!.hbs.length;
-    const n2 = struct.loops.get(loop2)!.hbs.length;
+    const loopData1 = struct.loops.get(loop1);
+    const loopData2 = struct.loops.get(loop2);
+    if (!loopData1 || !loopData2) {
+      bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond);
+      return;
+    }
+    const d1 = loopData1.dblBonds;
+    const d2 = loopData2.dblBonds;
+    const n1 = loopData1.hbs.length;
+    const n2 = loopData2.hbs.length;
     bond.doubleBondShift = selectDoubleBondShift(n1, n2, d1, d2);
   } else if (loop1 >= 0) {
     bond.doubleBondShift = -1;

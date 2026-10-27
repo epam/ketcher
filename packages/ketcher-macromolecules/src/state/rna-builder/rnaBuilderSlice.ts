@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,6 +39,7 @@ import {
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
+  isShortNameOnlySearch,
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
@@ -51,9 +52,7 @@ export enum RnaBuilderPresetsItem {
 export type RnaBuilderNucleotidesItem = 'Nucleotides';
 
 export type RnaBuilderItem =
-  | RnaBuilderPresetsItem
-  | MonomerGroups
-  | RnaBuilderNucleotidesItem;
+  RnaBuilderPresetsItem | MonomerGroups | RnaBuilderNucleotidesItem;
 
 // Filter applied to RNA presets in the library based on the position of the
 // phosphate group in the preset. Each flag enables one of three buckets:
@@ -105,6 +104,7 @@ interface IRnaBuilderState {
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
+  invalidPresetNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
   presetPhosphateFilter: PresetPhosphateFilter;
 }
@@ -127,6 +127,7 @@ const initialState: IRnaBuilderState = {
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
+  invalidPresetNameError: '',
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
@@ -189,7 +190,8 @@ export const rnaBuilderSlice = createSlice({
       );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
-      state.activePreset!.name = action.payload;
+      if (!state.activePreset) return;
+      state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,
@@ -247,9 +249,11 @@ export const rnaBuilderSlice = createSlice({
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
         newPreset.nameInList = newPreset.name;
-        presetIndexInList === -1
-          ? state.presetsCustom.push(newPreset)
-          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        if (presetIndexInList === -1) {
+          state.presetsCustom.push(newPreset);
+        } else {
+          state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        }
       } else {
         state.presetsCustom.push(newPreset);
       }
@@ -280,6 +284,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setInvalidPresetError: (state, action: PayloadAction<string>) => {
       state.invalidPresetError = action.payload;
+    },
+    setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -368,9 +375,8 @@ export const rnaBuilderSlice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === uniquePresetKey,
-      );
+      const isKeyAlreadyExisted: boolean =
+        favoriteItemsUniqueKeys.includes(uniquePresetKey);
 
       if (isKeyAlreadyExisted) {
         localStorageWrapper.setItem(
@@ -413,6 +419,13 @@ export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
 ): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
 
+export const selectIsBaseModificationBlocked = (state: RootState): boolean =>
+  Boolean(
+    state.rnaBuilder.sequenceSelection?.some(
+      (labeledNode) => labeledNode.isInSelectedAntisensePair,
+    ),
+  );
+
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
@@ -441,9 +454,6 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(
-    preset as RnaPresetWithOptionalFields,
-  );
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -454,11 +464,11 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
     fullName += base;
   }
 
+  // The phosphate is always appended, whatever position the picker holds:
+  // prefixing it for 5' leaves no cue where the phosphate label ends and the
+  // sugar label begins, so the name would become ambiguous (#9693).
   if (phosphate) {
-    fullName =
-      phosphatePosition === 'left'
-        ? `${phosphate}${fullName}`
-        : `${fullName}${phosphate}`;
+    fullName += phosphate;
   }
 
   return fullName;
@@ -470,6 +480,10 @@ export const selectUniqueNameError = (state: RootState) => {
 
 export const selectInvalidPresetError = (state: RootState) => {
   return state.rnaBuilder.invalidPresetError;
+};
+
+export const selectInvalidPresetNameError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetNameError;
 };
 
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
@@ -519,10 +533,15 @@ export const selectFilteredPresets = createSelector(
     phosphateFilter,
   ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
+    // See isShortNameOnlySearch for why '-' and '_' bypass multi-field matching.
+    const shortNameOnly = isShortNameOnlySearch(searchText);
 
     return presetsAll
       .filter((item: IRnaPreset) => {
         const name = item.name?.toLowerCase();
+        if (shortNameOnly) {
+          return name?.includes(searchText) ?? false;
+        }
         const sugarName = item.sugar?.label?.toLowerCase();
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();
@@ -565,18 +584,17 @@ export const selectFilteredPresets = createSelector(
 
         if (searchText.endsWith('/') && searchText.length > 1) {
           const aliasRest = searchText.slice(0, -1);
-          const aliasLastSymbol = searchText[searchText.length - 2];
+          const aliasLastSymbol = searchText.at(-2);
 
           return (
             (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-              transformedIdtText[transformedIdtText.length - 1] ===
-                aliasLastSymbol) ||
+              transformedIdtText.at(-1) === aliasLastSymbol) ||
             (idtName?.endsWith(aliasRest) &&
-              idtName[idtName.length - 1] === aliasLastSymbol) ||
+              idtName.at(-1) === aliasLastSymbol) ||
             modificationAliases.some(
               (mod) =>
                 mod.toLowerCase().endsWith(aliasRest) &&
-                mod[mod.length - 1] === aliasLastSymbol,
+                mod.at(-1) === aliasLastSymbol,
             )
           );
         }
@@ -636,6 +654,7 @@ export const {
   setIsEditMode,
   setUniqueNameError,
   setInvalidPresetError,
+  setInvalidPresetNameError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

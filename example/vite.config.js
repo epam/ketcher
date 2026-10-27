@@ -1,6 +1,6 @@
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { createLogger, defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
@@ -210,6 +210,7 @@ logger.warn = (msg, options) => {
 
 export default defineConfig({
   server: {
+    host: '127.0.0.1',
     open: true,
   },
   optimizeDeps: {
@@ -220,10 +221,7 @@ export default defineConfig({
     rolldownOptions: {
       output: {
         manualChunks(id) {
-          if (
-            id.includes('/node_modules/@emotion/') ||
-            id.includes('/node_modules/@mui/')
-          ) {
+          if (id.includes('@emotion') || id.includes('@mui')) {
             return 'vendor-emotion-mui';
           }
         },
@@ -239,6 +237,7 @@ export default defineConfig({
       '@emotion/sheet',
       '@emotion/utils',
       '@emotion/weak-memoize',
+      '@mui/material',
     ],
   },
   css: {
@@ -349,7 +348,9 @@ export default defineConfig({
         ),
       },
 
-      /** Web worker in ketcher-standalone */
+      /**
+      Web worker in ketcher-standalone
+      */
       {
         find: 'web-worker:./../indigoWorker',
         replacement: './../indigoWorker?worker',

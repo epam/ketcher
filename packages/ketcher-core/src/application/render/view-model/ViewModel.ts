@@ -134,7 +134,7 @@ export class ViewModel {
     let continueFlag = true;
 
     while (continueFlag) {
-      const atomToHalfBond = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
+      const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
       continueFlag = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
@@ -220,7 +220,7 @@ export class ViewModel {
   }
 
   private findLoops() {
-    const newLoops: Array<number[]> = [];
+    const newLoops: number[] = [];
     const bondsToMark = new Pile<number>();
 
     /*
@@ -247,13 +247,13 @@ export class ViewModel {
       ) {
         if (!(index > 0 && currentHalfEdge === halfEdge)) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
-          continue; // eslint-disable-line no-continue
+          continue;
         }
 
         // loop found
         const subloops = this.partitionLoop(halfEdgesInPotentialLoop);
         subloops.forEach((halfEdgesInSubLoop) => {
-          let loopId;
+          let loopId: number;
           if (
             this.loopIsInner(halfEdgesInSubLoop) &&
             !this.loopHasSelfIntersections(halfEdgesInSubLoop)
@@ -313,7 +313,14 @@ export class ViewModel {
     for (let i = 0; i < angles.length - 1; ++i) {
       largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
     }
-    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    const firstAngle = angles.at(0);
+    const lastAngle = angles.at(-1);
+
+    if (firstAngle === undefined || lastAngle === undefined) {
+      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
+    }
+
+    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (let i = 0; i < angles.length; ++i) {

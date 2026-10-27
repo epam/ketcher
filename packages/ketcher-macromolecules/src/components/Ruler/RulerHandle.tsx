@@ -16,9 +16,6 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const handleRef = useRef<SVGGElement>(null);
 
-  // TODO suppressed after upgrade to react 19. Need to fix
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   useTranslateAlongXAxis(svgRef, offsetX);
 
   useEffect(() => {

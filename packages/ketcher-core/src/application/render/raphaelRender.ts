@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
@@ -29,9 +30,14 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import type { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type EditAllInstancesPresetRequirements = {
+  type: KetMonomerClass;
+  attachmentPoints: AttachmentPointName[];
+};
 
 export type MonomerCreationInitialValues = {
   type: KetMonomerClass;
@@ -40,6 +46,21 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  position?: Vec2;
+  editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
+  originalType?: KetMonomerClass;
+  originalSymbol?: string;
+  presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+   * When editMode is 'all' and the user had multiple monomers of the same
+   * type/symbol selected, this contains the SGroup IDs of those specific
+   * monomers. If provided, only these monomers will be replaced instead of
+   * all canvas instances.
+   */
+  selectedSGroupIds?: number[];
 };
 
 export type RnaComponentAtoms = Map<
@@ -67,6 +88,10 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
 } | null;
 
 export class Render {
@@ -78,8 +103,9 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -87,7 +113,7 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
@@ -131,10 +157,20 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
   updateOptions(opts: string) {
     try {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
@@ -157,7 +193,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }
@@ -253,7 +291,6 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
     viewSz =
       viewSz ??
       new Vec2(
@@ -274,11 +311,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -302,6 +335,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

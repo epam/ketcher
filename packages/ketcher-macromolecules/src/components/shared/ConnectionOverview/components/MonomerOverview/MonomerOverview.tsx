@@ -7,6 +7,7 @@ import {
 import {
   AttachmentPointList,
   StyledStructRender,
+  StyledUnresolvedMonomer,
 } from './MonomerOverview.styles';
 import UnresolvedMonomerPreview from 'components/preview/components/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
 import MonomerMiniature from 'components/shared/ConnectionOverview/components/MonomerMiniature/MonomerMiniature';
@@ -51,7 +52,11 @@ const MonomerOverview = ({
       />
     );
   } else if (isUnresolvedMonomer) {
-    monomerPreviewContent = <UnresolvedMonomerPreview testId={testId} />;
+    monomerPreviewContent = (
+      <StyledUnresolvedMonomer isExpanded={expanded}>
+        <UnresolvedMonomerPreview testId={testId} />
+      </StyledUnresolvedMonomer>
+    );
   } else {
     monomerPreviewContent = (
       <StyledStructRender

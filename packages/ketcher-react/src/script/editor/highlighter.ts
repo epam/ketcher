@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ type HighlightAttributes = {
   bonds: number[];
   rgroupAttachmentPoints: number[];
   color: string;
+  outline?: boolean;
 };
 
 export class Highlighter {
@@ -49,7 +50,7 @@ export class Highlighter {
     const createdHighlights: HighlightAttributes[] = [];
 
     args.forEach((arg) => {
-      const { atoms, bonds, rgroupAttachmentPoints, color } = arg;
+      const { atoms, bonds, rgroupAttachmentPoints, color, outline } = arg;
       if (typeof color !== 'string') {
         return;
       }
@@ -81,6 +82,7 @@ export class Highlighter {
         bonds: validBonds,
         rgroupAttachmentPoints: validRgroupAttachmentPoints,
         color,
+        outline,
       });
     });
     const action = fromHighlightCreate(

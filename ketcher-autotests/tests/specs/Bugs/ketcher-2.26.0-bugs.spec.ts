@@ -1,7 +1,3 @@
-/* eslint-disable no-inline-comments */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -23,14 +19,13 @@ import {
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
   moveMouseAway,
-  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
+  ArrowType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -98,16 +93,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -330,36 +317,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
-    async ({ SnakeCanvas: _ }) => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6947
-       * Bug: https://github.com/epam/ketcher/issues/5634
-       * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
-       * Scenario:
-       * 1. Go to Macro - Snake mode
-       * 2. Load from file
-       * 3. Save to MOL V3000
-       */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
-      );
-      await takeEditorScreenshot(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5634
+     * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from file
+     * 3. Save to MOL V3000
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
     MoleculesCanvas: _,
@@ -715,20 +701,25 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await ContextMenu(page, multiTailedArrow).click(
+      MultiTailedArrowOption.AddNewTail,
+    );
+
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-    await removeTail(page, 'tails-0-move');
+    await multiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1006,9 +997,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/monomers-connected-to-microstructures.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',
@@ -1295,6 +1285,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);

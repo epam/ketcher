@@ -5,16 +5,22 @@ import {
 } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { getSvgFromDrawnStructures } from '../../../../../src/utilities/getSvgFromDrawnStructures';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
-import { peptideMonomerItem, polymerEditorTheme } from '../../../../mock-data';
+import {
+  coreEditorTheme,
+  peptideMonomerItem,
+  polymerEditorTheme,
+} from '../../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../../../helpers/dom';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -95,7 +101,7 @@ describe('SequenceRenderer', () => {
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new SequenceMode(),
@@ -127,11 +133,30 @@ describe('SequenceRenderer', () => {
     // ClearTool performs all of its work in the constructor as a side effect.
     // Instantiating it is how the tool is "run",
     // so the constructed instance is intentionally discarded.
-    // eslint-disable-next-line no-new
+
     // @ts-expect-error TS6133.
     const _ = new ClearTool(editor);
 
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
     expect(getSequenceBondPaths()).toHaveLength(0);
+  });
+
+  it('keeps the caret and the chain start arrow out of the exported SVG (#4669)', () => {
+    setupCyclicTwoPeptideStructure();
+    // In text-editing mode the first symbol of a chain carries the start arrow
+    (editor.mode as SequenceMode).isEditMode = true;
+    showCurrentMonomersInSequenceLayout();
+    const [monomer] = [...editor.drawingEntitiesManager.monomers.values()];
+    (monomer.renderer as BaseSequenceItemRenderer).showCaret();
+
+    const caret = canvas.querySelector('.blinking');
+    const arrow = canvas.querySelector('[data-testid="sequence-start-arrow"]');
+    expect(caret).not.toBeNull();
+    expect(arrow).not.toBeNull();
+
+    const svg = getSvgFromDrawnStructures(canvas, 'file');
+
+    expect(svg).not.toContain('blinking');
+    expect(svg).not.toContain('sequence-start-arrow');
   });
 });

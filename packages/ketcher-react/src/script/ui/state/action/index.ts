@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,10 @@ import { isEmpty, isEqual, pickBy } from 'lodash/fp';
 import { type Struct, SettingsManager } from 'ketcher-core';
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
+import {
+  normalizeSelectionToolForPersistence,
+  restorePersistedSelectionTool,
+} from '../selectionToolPersistence';
 
 type ActionParams = {
   editor: Editor & {
@@ -146,15 +150,18 @@ export default function (
   let activeTool: UiActionAction | null | undefined;
   switch (type) {
     case 'INIT': {
-      const savedSelectedTool = SettingsManager.selectionTool;
+      const savedSelectedTool = SettingsManager.getSelectionTool('micro');
       const resolvedAction =
-        savedSelectedTool || actions['select-rectangle'].action;
+        restorePersistedSelectionTool(savedSelectedTool) ||
+        actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool;
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -167,8 +174,10 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool;
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,

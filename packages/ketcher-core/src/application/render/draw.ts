@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,12 +74,8 @@ function rectangleArrowHighlightAndSelection(
     `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
     `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
     `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
-    `L${toFixed(endX + wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}` +
-    `L${toFixed(start.x - wOffset)},${toFixed(
-      start.y + (!height ? hOffset : 0),
-    )}Z`;
+    `L${toFixed(endX + wOffset)},${toFixed(start.y + (height ? 0 : hOffset))}` +
+    `L${toFixed(start.x - wOffset)},${toFixed(start.y + (height ? 0 : hOffset))}Z`;
 
   return svgPath(path).rotate(angle, start.x, start.y).toString();
 }
@@ -614,7 +610,7 @@ function arrowFailed(
 
   const path: string[] = [];
 
-  // Arrow with arrowhead
+  // Arrow with arrowhead and failed sign lines
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y)}` +
       `L${toFixed(endX)},${toFixed(start.y)}` +
@@ -628,20 +624,12 @@ function arrowFailed(
         start.y - arrowHeadWidth,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y)}Z`,
-  );
-
-  // Failed sign line 1
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y + failSignWidth,
     )}` +
       `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
         start.y - failSignWidth,
       )}`,
-  );
-
-  // Failed sign line 2
-  path.push(
     `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
       start.y - failSignWidth,
     )}` +
@@ -676,7 +664,7 @@ function arrowRetrosynthetic(
 
   const path: string[] = [];
 
-  // First arrow and arrowhead
+  // First and second arrows with arrowheads
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -684,10 +672,6 @@ function arrowRetrosynthetic(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
-  );
-
-  // Second arrow and arrowhead
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
@@ -761,7 +745,7 @@ function arrowEquilibriumFilledHalfBow(
 
   const path: string[] = [];
 
-  // top arrow
+  // top and bottom arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -771,10 +755,6 @@ function arrowEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // bottom arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -811,7 +791,7 @@ function arrowEquilibriumFilledTriangle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -822,10 +802,6 @@ function arrowEquilibriumFilledTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + arrowHeadLength)},${toFixed(
@@ -863,17 +839,13 @@ function arrowEquilibriumOpenAngle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second arrow
-  path.push(
     `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
@@ -910,7 +882,7 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -920,10 +892,6 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
@@ -961,17 +929,13 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
@@ -1015,7 +979,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1025,10 +989,6 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
       `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
@@ -1067,7 +1027,7 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 
   const path: string[] = [];
 
-  // First arrow
+  // First and second (unbalanced) arrows
   path.push(
     `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
       `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -1075,10 +1035,6 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowOffset)}Z`,
-  );
-
-  // Second (Unbalanced) arrow
-  path.push(
     `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
       `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
@@ -1145,7 +1101,6 @@ function bondSingleUp(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}Z',
@@ -1174,7 +1129,6 @@ function bondSingleStereoBold(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const bond = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
@@ -1205,7 +1159,6 @@ function bondDoubleStereoBold(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   return paper.set([
     sgBondPath,
     paper
@@ -1235,7 +1188,6 @@ function bondSingleDown(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const a = halfBond1.p;
   const n = halfBond1.norm;
   const bsp = 0.7 * options.stereoBond;
@@ -1270,13 +1222,12 @@ function bondSingleEither(
   isSnapping: boolean,
   color = '#000',
 ) {
-  // eslint-disable-line max-params
   const a = halfBond1.p;
   const n = halfBond1.norm;
   const bsp = 0.7 * options.stereoBond;
 
   let path = 'M' + toFixed(a.x) + ',' + toFixed(a.y);
-  let r = a;
+  let r: Vec2;
   for (let i = 0; i < nlines; ++i) {
     r = a
       .addScaled(d, step * (i + 0.5))
@@ -1302,7 +1253,6 @@ function bondDouble(
   options: RenderOptions,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-params
   return paper
     .path(
       cisTrans
@@ -1329,7 +1279,6 @@ function bondSingleOrDouble(
   options: RenderOptions,
   isSnapping: boolean,
 ) {
-  // eslint-disable-line max-statements, max-params
   const a = halfBond1.p;
   const b = halfBond2.p;
   const n = halfBond1.norm;
@@ -1446,7 +1395,12 @@ function bondDative(
   const a = halfBond1.p;
   const b = halfBond2.p;
 
-  if (isNaN(a.x) || isNaN(a.y) || isNaN(b.x) || isNaN(b.y)) {
+  if (
+    Number.isNaN(a.x) ||
+    Number.isNaN(a.y) ||
+    Number.isNaN(b.x) ||
+    Number.isNaN(b.y)
+  ) {
     return paper.path('');
   }
 
@@ -1463,6 +1417,26 @@ function bondDative(
     .path(makeStroke(a, b))
     .attr(options.lineattr)
     .attr({ 'arrow-end': 'block-midium-long' })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
+function bondHaptic(
+  paper: RaphaelPaper,
+  halfBond1: HalfBond,
+  halfBond2: HalfBond,
+  options: RenderOptions,
+  isSnapping: boolean,
+  color = '#000',
+) {
+  const a = halfBond1.p;
+  const b = halfBond2.p;
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
@@ -1567,9 +1541,8 @@ function bracket(
   bracketHeight: number,
   options: RenderOptions,
 ) {
-  // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
-  bracketHeight = bracketHeight || 1.0;
+  bracketHeight = bracketHeight || 1;
   const halfBracketHeight = 0.5;
   const bracketPoint0 = bondCenter.addScaled(
     bracketDirection,
@@ -1624,7 +1597,12 @@ function selectionPolygon(
   r: Vec2[],
   options: RenderOptions,
 ) {
-  const v = r[r.length - 1];
+  const v = r.at(-1);
+
+  if (!v) {
+    throw new Error('Cannot draw a selection polygon without points');
+  }
+
   let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
     pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);
@@ -1688,7 +1666,6 @@ function aromaticBondPaths(
   mask: number,
   dash: number[] | null,
 ) {
-  // eslint-disable-line max-params
   const l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2);
   const l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3);
 
@@ -1735,6 +1712,12 @@ function rgroupAttachmentPoint(
   return resultShape;
 }
 
+// Wave glyph dimensions in path-local units (derived from attachmentPointSvgPathString).
+// x spans +13 to −13.1 → perpendicular half-extent 13.1; y max = 5.2 → far-along extent.
+export const AP_PATH_SCALE = 39.8;
+export const AP_WAVE_HALF_PERP = 13.1;
+export const AP_WAVE_FAR_ALONG = 5.2;
+
 function getSvgCurveShapeAttachmentPoint(
   centerPosition: Vec2,
   directionVector: Vec2,
@@ -1743,9 +1726,8 @@ function getSvgCurveShapeAttachmentPoint(
   // declared here https://github.com/epam/ketcher/issues/2165
   // this path has (0,0) in the position of attachment point atom
   const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
-  const attachmentPointSvgPathSize = 39.8;
 
-  const shapeScale = basicSize / attachmentPointSvgPathSize;
+  const shapeScale = basicSize / AP_PATH_SCALE;
   const angleDegrees =
     (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90;
 
@@ -1761,7 +1743,7 @@ function rgroupAttachmentPointLabel(
   labelPosition: Vec2,
   labelText: string,
   options: RenderOptions,
-  fill,
+  fill: string,
 ) {
   const labelPath = paper
     .text(labelPosition.x, labelPosition.y, labelText)
@@ -1791,6 +1773,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

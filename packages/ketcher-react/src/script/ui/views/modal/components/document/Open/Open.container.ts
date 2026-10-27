@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +34,6 @@ const mapStateToProps = (state): StateProps => ({
   errorHandler: state.editor.errorHandler,
   isRecognizeDisabled: state.actionState.recognize?.disabled,
   isAnalyzingFile: state.requestsStatuses.isAnalyzingFile,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({

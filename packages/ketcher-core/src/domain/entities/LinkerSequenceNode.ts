@@ -15,7 +15,7 @@ import { KetMonomerClass } from 'domain/constants/monomers';
 export class LinkerSequenceNode {
   constructor(
     public monomer: BaseMonomer,
-    private firstMonomerInChain?: BaseMonomer,
+    private readonly firstMonomerInChain?: BaseMonomer,
   ) {}
 
   public get SubChainConstructor() {
@@ -27,7 +27,13 @@ export class LinkerSequenceNode {
   }
 
   public get lastMonomerInNode() {
-    return this.monomers[this.monomers.length - 1];
+    const lastMonomer = this.monomers.at(-1);
+
+    if (!lastMonomer) {
+      throw new Error('Cannot get the last monomer of an empty linker node');
+    }
+
+    return lastMonomer;
   }
 
   public get monomers() {

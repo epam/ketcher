@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -41,8 +42,16 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  len?: number;
+  sb?: number;
+  sa?: number;
+  angle?: number;
+  hb1?: number;
+  hb2?: number;
 }
 
+export type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+export type StructBondEndpointAccess = Pick<Struct, 'getBondEndpoint'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {
@@ -56,6 +65,7 @@ export class Bond extends BaseMicromoleculeEntity {
       ANY: 8,
       DATIVE: 9,
       HYDROGEN: 10,
+      HAPTIC: HAPTIC_BOND_TYPE,
     },
 
     STEREO: {
@@ -151,18 +161,22 @@ export class Bond extends BaseMicromoleculeEntity {
     this.center = new Vec2();
   }
 
-  static getAttrHash(bond: Bond) {
-    const attrs = {};
+  static getAttrHash(
+    bond: Bond,
+  ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
+    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
     for (const attr in Bond.attrlist) {
-      if (bond[attr] || attr === 'stereo') {
-        attrs[attr] = bond[attr];
+      const key = attr as keyof typeof Bond.attrlist;
+      if (bond[key] || key === 'stereo') {
+        attrs[key] = bond[key] as never;
       }
     }
     return attrs;
   }
 
   static getBondNeighbourIds(struct: Struct, bondId: number) {
-    const bond = struct.bonds.get(bondId)!;
+    const bond = struct.bonds.get(bondId);
+    if (!bond) return { beginBondIds: [], endBondIds: [] };
     const { begin, end } = bond;
     const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
       (id) => id !== bondId,
@@ -294,23 +308,27 @@ export class Bond extends BaseMicromoleculeEntity {
     return !!this.reactingCenterStatus;
   }
 
-  getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
+  getCenter(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
+    if (!p1 || !p2) return new Vec2();
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
-  getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)!.pp;
-    const p2 = struct.atoms.get(this.end)!.pp;
+  getDir(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
+    if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }
 
   clone(aidMap?: Map<number, number> | null): Bond {
     const cp = new Bond(this);
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)!;
-      cp.end = aidMap.get(cp.end)!;
+      const newBegin = aidMap.get(cp.begin);
+      const newEnd = aidMap.get(cp.end);
+      if (newBegin !== undefined) cp.begin = newBegin;
+      if (newEnd !== undefined) cp.end = newEnd;
     }
     return cp;
   }

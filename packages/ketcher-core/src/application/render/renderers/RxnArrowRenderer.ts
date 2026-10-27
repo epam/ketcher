@@ -32,8 +32,7 @@ const ARROW_STROKE_WIDTH = 2;
 
 export class RxnArrowRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public arrow: RxnArrow) {
     super(arrow);
@@ -234,10 +233,10 @@ export class RxnArrowRenderer extends BaseRenderer {
       `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
       `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
       `L${toFixed(endX + wOffset)},${toFixed(
-        start.y + (!height ? hOffset : 0),
+        start.y + (height ? 0 : hOffset),
       )}` +
       `L${toFixed(start.x - wOffset)},${toFixed(
-        start.y + (!height ? hOffset : 0),
+        start.y + (height ? 0 : hOffset),
       )}Z`;
 
     return svgPath(path).rotate(angle, start.x, start.y).toString();

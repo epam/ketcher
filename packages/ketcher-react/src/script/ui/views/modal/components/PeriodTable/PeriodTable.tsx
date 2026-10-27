@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ import type { Dispatch } from 'redux';
 import { onAction } from '../../../../state';
 import { xor } from 'lodash/fp';
 import { Icon } from 'components';
+import i18n from 'src/i18n/i18n';
 
 interface TableOwnProps {
   type?: PeriodTableType;
@@ -96,7 +97,7 @@ class Table extends Component<TableProps, TableState> {
   headerContent = () => (
     <div className={classes.dialogHeader}>
       <Icon name="period-table" />
-      <span>Periodic Table</span>
+      <span>{i18n.t('dialogs:periodTable.headerTitle')}</span>
     </div>
   );
 
@@ -169,7 +170,7 @@ class Table extends Component<TableProps, TableState> {
         params={dialogParams}
         result={this.result}
         buttons={['Cancel', 'OK']}
-        buttonsNameMap={{ OK: 'Add' }}
+        buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
           !this.props.isNestedModal ? (

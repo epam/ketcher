@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useDebouncedShowPreview } from 'hooks';
 import {
   getRnaPresetPhosphatePosition,
   isAmbiguousMonomerLibraryItem,
   MonomerItemType,
   RnaPresetWithOptionalFields,
 } from 'ketcher-core';
-import { debounce } from 'lodash';
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -36,7 +35,7 @@ import {
   GroupContainerColumn,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor, selectShowPreview, showPreview } from 'state/common';
+import { selectEditor, selectShowPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -121,20 +120,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   // region # Preview
   const preview = useAppSelector(selectShowPreview);
 
-  const dispatchShowPreview = useCallback(
-    (payload: unknown) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  const closeLibraryPreview = useCallback((): void => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
+  const {
+    showPreview: debouncedShowPreview,
+    closePreview: closeLibraryPreview,
+  } = useDebouncedShowPreview();
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
@@ -146,7 +135,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       return;
     }
 
-    if (preview.type === PreviewType.Preset || !e.currentTarget) {
+    if (preview?.type === PreviewType.Preset || !e.currentTarget) {
       return;
     }
 

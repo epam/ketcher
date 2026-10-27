@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { useTranslation } from 'react-i18next';
 import {
   selectIsMacromoleculesPropertiesWindowOpened,
   toggleMacromoleculesPropertiesWindowVisibility,
@@ -50,6 +51,7 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 );
 
 export const CalculateMacromoleculePropertiesButton = () => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
 
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
@@ -72,7 +74,9 @@ export const CalculateMacromoleculePropertiesButton = () => {
     <StyledButton
       isActive={isMacromoleculesPropertiesWindowOpened}
       onClick={handleClick}
-      title={`Calculate properties (${hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility})`}
+      title={t('macromoleculeProperties.calculateProperties', {
+        shortcut: hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility,
+      })}
       data-testid="calculate-macromolecule-properties-button"
     >
       <svg

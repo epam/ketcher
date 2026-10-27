@@ -6,7 +6,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import {
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
+import type { Point } from 'domain/entities/vec2';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
@@ -62,7 +63,6 @@ import {
   templateToMonomerProps,
   variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
-import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import {
@@ -70,7 +70,7 @@ import {
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
-import { KetcherLogger } from 'utilities';
+import { assert, KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
@@ -103,10 +103,79 @@ import { multitailArrowToStruct } from 'domain/serializers/ket/fromKet/multitail
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import {
+  addAttachmentGroupsToStruct,
+  addHapticConnectionsToStruct,
+  buildAttachmentGroupsForKet,
+  buildHapticConnectionsForKet,
+  getConnectionType,
+  getHapticConnectionMoleculeIds,
+  type KetAtomLocation,
+  parseMoleculeNode,
+  prepareStructForHapticKetSerialization,
+} from './hapticKet';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import type { KetFileImageNode } from 'domain/entities/image';
+import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type {
+  KetHeader,
+  KetMoleculeNode,
+  KetReactionNode,
+  KetSimpleObjectNode,
+  KetTextNode,
+} from 'domain/serializers/ket/types';
 
-function parseNode(node: any, struct: any) {
+type KetMicromoleculeDefinition =
+  | KetSimpleObjectNode
+  | KetReactionNode
+  | KetMoleculeNode
+  | KetTextNode
+  | {
+      type?:
+        | 'rgroup'
+        | typeof MULTITAIL_ARROW_SERIALIZE_KEY
+        | typeof IMAGE_SERIALIZE_KEY;
+      stereoFlagPosition?: Point;
+    };
+
+type KetMicromoleculeNode =
+  | KetMicromoleculeDefinition
+  | {
+      $ref: string;
+    };
+
+type KetMicromoleculeSerializedNode =
+  | { $ref: string }
+  | ReturnType<typeof plusToKet>
+  | ReturnType<typeof arrowToKet>
+  | ReturnType<typeof simpleObjectToKet>
+  | ReturnType<typeof textToKet>
+  | ReturnType<typeof imageToKet>
+  | ReturnType<typeof multitailArrowToKet>;
+
+interface IKetMicromoleculeFile {
+  header?: KetHeader;
+  root: {
+    nodes: Record<string, KetMicromoleculeNode>;
+    connections?: IKetConnection[];
+  };
+  // Allows dynamic $ref key lookup: ket[nodes[i].$ref!]
+  [key: string]: unknown;
+}
+
+interface IKetMicromoleculeSerializedResult {
+  root: {
+    nodes: KetMicromoleculeSerializedNode[];
+    connections?: IKetConnection[];
+  };
+  header?: KetHeader;
+  // Allows dynamic property assignment for mol/rg sections: result[`mol${id}`], result[`rg${id}`]
+  [key: string]: unknown;
+}
+
+function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -121,8 +190,10 @@ function parseNode(node: any, struct: any) {
     case 'molecule': {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
-        const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        const fragment = currentStruct.frags.get(0);
+        if (fragment) {
+          fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        }
       }
 
       currentStruct.mergeInto(struct);
@@ -137,17 +208,21 @@ function parseNode(node: any, struct: any) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(node, struct);
+      multitailArrowToStruct(
+        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
+        struct,
+      );
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node, struct);
+      imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
     default:
       break;
   }
 }
+
 export class KetSerializer implements Serializer<Struct> {
   private static _monomerFactory: MonomerFactoryFn | null = null;
 
@@ -173,21 +248,66 @@ export class KetSerializer implements Serializer<Struct> {
     return KetSerializer.fillStruct(ket);
   }
 
-  private static fillStruct(ket) {
+  private static fillStruct(ket: IKetMicromoleculeFile) {
     const resultingStruct = new Struct();
     const nodes = ket.root.nodes;
+    const moleculeAtomIdMaps = new Map<string, Map<number, number>>();
 
     Object.keys(nodes).forEach((i) => {
-      if (nodes[i].type) parseNode(nodes[i], resultingStruct);
-      else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
+      const node = nodes[i];
+      const nodeReference = '$ref' in node ? node.$ref : undefined;
+      const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
+        KetMicromoleculeDefinition | undefined;
+
+      if (nodeDefinition?.type === 'molecule') {
+        parseMoleculeNode(
+          nodeDefinition,
+          resultingStruct,
+          nodeReference ?? `inline-${i}`,
+          moleculeAtomIdMaps,
+        );
+      } else if (nodeDefinition) {
+        parseNode(nodeDefinition, resultingStruct);
+      }
     });
+
+    ket.root.connections?.forEach((connection: IKetConnection) => {
+      if (getConnectionType(connection) !== KetConnectionType.HAPTIC) {
+        return;
+      }
+
+      getHapticConnectionMoleculeIds(connection).forEach((moleculeId) => {
+        const nodeDefinition = ket[moleculeId] as
+          KetMicromoleculeDefinition | undefined;
+        if (nodeDefinition?.type === 'molecule') {
+          parseMoleculeNode(
+            nodeDefinition,
+            resultingStruct,
+            moleculeId,
+            moleculeAtomIdMaps,
+          );
+        }
+      });
+    });
+
+    const attachmentGroupEntityIdMap = addAttachmentGroupsToStruct(
+      ket,
+      resultingStruct,
+      moleculeAtomIdMaps,
+    );
+    addHapticConnectionsToStruct(
+      ket,
+      resultingStruct,
+      moleculeAtomIdMaps,
+      attachmentGroupEntityIdMap,
+    );
     resultingStruct.name = ket.header?.moleculeName ?? '';
 
     return resultingStruct;
   }
 
   serializeMicromolecules(struct: Struct, monomer?: BaseMonomer): string {
-    const result: any = {
+    const result: IKetMicromoleculeSerializedResult = {
       root: {
         nodes: [],
       },
@@ -195,20 +315,40 @@ export class KetSerializer implements Serializer<Struct> {
     const header = headerToKet(struct);
     if (header) result.header = header;
 
-    const ketNodes = prepareStructForKet(struct);
+    const { structForKet, originalToKetStructAtomIdMap } =
+      prepareStructForHapticKetSerialization(struct);
+    const ketStructAtomIdToOriginalAtomIdMap = new Map<number, number>();
+    originalToKetStructAtomIdMap.forEach((ketStructAtomId, originalAtomId) => {
+      ketStructAtomIdToOriginalAtomIdMap.set(ketStructAtomId, originalAtomId);
+    });
+    const originalAtomToKetLocation = new Map<number, KetAtomLocation>();
+    const ketNodes = prepareStructForKet(structForKet);
 
     let moleculeId = 0;
     ketNodes.forEach((item) => {
       switch (item.type) {
         case 'molecule': {
-          result.root.nodes.push({ $ref: `mol${moleculeId}` });
-          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!, monomer);
+          if (!item.fragment) break;
+          const moleculeKey = `mol${moleculeId}`;
+          result.root.nodes.push({ $ref: moleculeKey });
+          result[moleculeKey] = moleculeToKet(item.fragment, monomer);
+          item.sourceAtomIdMap?.forEach((moleculeAtomId, ketStructAtomId) => {
+            const originalAtomId =
+              ketStructAtomIdToOriginalAtomIdMap.get(ketStructAtomId) ??
+              ketStructAtomId;
+            originalAtomToKetLocation.set(originalAtomId, {
+              moleculeId: moleculeKey,
+              atomId: moleculeAtomId.toString(),
+            });
+          });
+          moleculeId++;
           break;
         }
         case 'rgroup': {
+          if (!item.fragment) break;
           const { rgnumber } = item.data as { rgnumber: number };
           result.root.nodes.push({ $ref: `rg${rgnumber}` });
-          result[`rg${rgnumber}`] = rgroupToKet(item.fragment!, item.data);
+          result[`rg${rgnumber}`] = rgroupToKet(item.fragment, item.data);
           break;
         }
         case 'plus': {
@@ -239,6 +379,20 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
+    const attachmentGroupLocations = buildAttachmentGroupsForKet(
+      struct,
+      result,
+      originalAtomToKetLocation,
+    );
+    const connections = buildHapticConnectionsForKet(
+      struct,
+      originalAtomToKetLocation,
+      attachmentGroupLocations,
+    );
+    if (connections.length) {
+      result.root.connections = connections;
+    }
+
     return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
   }
 
@@ -262,8 +416,9 @@ export class KetSerializer implements Serializer<Struct> {
     editor: CoreEditor,
   ) {
     if (
-      connection.connectionType !== KetConnectionType.SINGLE &&
-      connection.connectionType !== KetConnectionType.HYDROGEN
+      getConnectionType(connection) !== KetConnectionType.SINGLE &&
+      getConnectionType(connection) !== KetConnectionType.HYDROGEN &&
+      getConnectionType(connection) !== KetConnectionType.HAPTIC
     ) {
       editor.events.error.dispatch('Error during file parsing');
       return true;
@@ -337,6 +492,10 @@ export class KetSerializer implements Serializer<Struct> {
             nodeDefinition?.type !== KetNodeType.AMBIGUOUS_MONOMER
           );
         }),
+        connections: parsedFileContent.root.connections?.filter(
+          (connection) =>
+            getConnectionType(connection) === KetConnectionType.HAPTIC,
+        ),
       },
     };
     parsedFileContent.root.nodes.forEach((node) => {
@@ -365,15 +524,19 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
-    if (template.idtAliases && template.aliasAxoLabs && template.aliasBILN) {
+    if (
+      template.idtAliases &&
+      template.aliasAxoLabs &&
+      template.aliasBILN &&
+      template.modificationTypes
+    ) {
       return;
     }
     const library = provideEditorInstance()?.monomersLibraryParsedJson;
     if (!library) return;
 
     const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as
-      | IKetMonomerTemplate
-      | undefined;
+      IKetMonomerTemplate | undefined;
 
     if (!libraryTemplate) return;
 
@@ -385,6 +548,9 @@ export class KetSerializer implements Serializer<Struct> {
     }
     if (!template.aliasBILN && libraryTemplate.aliasBILN) {
       template.aliasBILN = libraryTemplate.aliasBILN;
+    }
+    if (!template.modificationTypes && libraryTemplate.modificationTypes) {
+      template.modificationTypes = libraryTemplate.modificationTypes;
     }
   }
 
@@ -496,7 +662,7 @@ export class KetSerializer implements Serializer<Struct> {
     >();
 
     parsedFileContent.root.connections?.forEach((connection) => {
-      switch (connection.connectionType) {
+      switch (getConnectionType(connection)) {
         case KetConnectionType.SINGLE: {
           const firstMonomer = drawingEntitiesManager.monomers.get(
             Number(
@@ -1079,6 +1245,10 @@ export class KetSerializer implements Serializer<Struct> {
     fileContent.root.nodes = [
       ...serializedMacromolecules.root.nodes,
       ...serializedMicromoleculesStruct.root.nodes,
+    ];
+    fileContent.root.connections = [
+      ...serializedMacromolecules.root.connections,
+      ...(serializedMicromoleculesStruct.root.connections ?? []),
     ];
 
     return JSON.stringify(

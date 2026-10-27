@@ -10,7 +10,7 @@ export function isNodeRestrictedForHydrogenBondCreation(
 ) {
   return (
     !node ||
-    node instanceof LinkerSequenceNode ||
+    (node instanceof LinkerSequenceNode && node.monomers.length > 1) ||
     node instanceof BackBoneSequenceNode ||
     node instanceof EmptySequenceNode
   );
@@ -26,11 +26,11 @@ export function isTwoStrandedNodeRestrictedForHydrogenBondCreation(
 
   return Boolean(
     isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.senseNode) ||
-      isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.antisenseNode) ||
-      twoStrandedNode?.antisenseNode?.monomers.some((monomer) =>
-        monomer.hydrogenBonds.some((hydrogenBond) => {
-          return senseNodeHydrogenBonds.includes(hydrogenBond);
-        }),
-      ),
+    isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.antisenseNode) ||
+    twoStrandedNode?.antisenseNode?.monomers.some((monomer) =>
+      monomer.hydrogenBonds.some((hydrogenBond) => {
+        return senseNodeHydrogenBonds.includes(hydrogenBond);
+      }),
+    ),
   );
 }

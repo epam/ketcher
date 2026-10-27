@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import type { SettingsFormValue } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 import { FIELD_GROUPS } from './fieldGroups';
 import { SettingsFields } from './SettingsFields';
 import { Icon } from 'ketcher-react';
@@ -38,6 +39,7 @@ export const SettingsAccordion = ({
   expandedGroups,
   onGroupToggle,
 }: SettingsAccordionProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   // Detect if any field in a group has changed (simplified - could enhance later)
   const hasGroupChanged = (_group) => {
     // For now, always show as not changed - can implement proper change detection later
@@ -60,7 +62,7 @@ export const SettingsAccordion = ({
             <AccordionHeader>
               <GroupLabel>
                 <Icon name="elements-group" />
-                <span>{group.title}</span>
+                <span>{t(group.titleKey)}</span>
               </GroupLabel>
               {hasGroupChanged(group) && <ChangeIndicator />}
             </AccordionHeader>

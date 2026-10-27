@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,7 +40,7 @@ export function useLayoutMode() {
   const editor = useAppSelector(selectEditor);
   const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
 
-  let ketcher: Ketcher;
+  let ketcher: Ketcher | undefined;
 
   // TODO remove this try-catch and investigate why code execution comes here when ketcher instance is already removed
   //  This can happen when open/close several times the editor in duo mode
@@ -53,8 +53,6 @@ export function useLayoutMode() {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const isBlank = ketcher?.editor?.struct().isBlank();
   const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(

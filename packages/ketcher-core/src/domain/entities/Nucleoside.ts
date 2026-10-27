@@ -1,6 +1,6 @@
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
@@ -66,8 +66,9 @@ export class Nucleoside {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(

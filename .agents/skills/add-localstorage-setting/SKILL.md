@@ -143,7 +143,7 @@ updateSettings({ myNewArraySetting: newItems });
 
 ### 4a — Mock `useSettings` at the top of the test file
 
-`useSettings` is the storage boundary for this component test; see [tdd/mocking.md](../tdd/mocking.md).
+`useSettings` is the storage boundary for this component test; see the mocking rule in [testing.md](../../../.memory-bank/testing/testing.md).
 
 ```javascript
 import { useSettings } from 'src/hooks';

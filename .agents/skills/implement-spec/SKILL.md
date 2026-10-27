@@ -1,32 +1,35 @@
 ---
 name: implement-spec
-description: 'Implement an OpenSpec change (openspec/changes/<change>/) task by task.'
+description: "Implement a specification in code."
 disable-model-invocation: true
 ---
 
-Implement the OpenSpec change the user names, in `openspec/changes/<change>/`. The change folder is the spec:
+You have been provided a spec. This spec should have tickets associated with it, describing how to implement the spec.
 
-- `proposal.md`: why the change exists and its scope
-- `specs/`: the requirements
-- `design.md`: how it is built
-- `tasks.md`: the checklist to implement
+The goal is a PR which implements the entire spec on a single branch.
+
+The tickets are not a list of steps. They are a **task graph** with blocking relationships between them. This means there is always a **frontier** of tickets which are ready to be grabbed.
+
+Communication to and from subagents should be sparse. Communicate primarily through **context pointers**: to the spec, tickets, research notes, and previous commits. Don't duplicate information already available via pointers.
+
+**Implementer subagents** should be run in the background where possible for **maximum concurrency**.
 
 ## Steps
 
-1. Read `proposal.md`, `design.md`, `specs/`, and `tasks.md`. Read the `.memory-bank/` files for the area you touch before writing code.
+1. Read the spec and tickets. Read enough to understand the task graph.
 
-2. Work the tasks in `tasks.md` in order. Before a task, check it still fits the code. If the design does not fit the code, stop and tell the user. Do not change the design silently.
+2. (optional) Use an **exploration subagent** to conduct any exploration required by the tickets - relevant codebase files or external documentation. Ensure the exploration subagent can save files - it should save its markdown notes in a directory outside the repo, accessible by all future subagents. This lets **implementer subagents** focus on implementation rather than exploration.
 
-3. For each task, implement it with /tdd at pre-agreed seams, then mark it `- [x]` in `tasks.md` before you start the next one. Mark tasks one at a time, never all at the end.
+3. Create a branch, and a draft PR. The PR should be marked as 'closing' the spec issue and tickets.
 
-4. Run typechecking and the single test files for what changed. Run the full test suite once at the end. Validate the change with `openspec validate <change> --strict`.
+4. Use **implementer subagents** to implement each ticket. Each implementer subagent should work in its own worktree, on its own branch.
 
-5. Once all tasks are done, use /code-review on the diff against the base branch.
+5. Once an **implementer subagent** completes, merge its work to the PR branch with a **merger subagent**.
 
-6. Ask before writing Playwright E2E tests. First read `.memory-bank/testing/testing.md`, then draft a plan from `.memory-bank/testing/e2e-test-plan-template.md` and get approval before you write spec code.
+6. If this changes the **frontier** of available tickets, kick off more **implementer subagents** to work on the new tickets. This allows for maximum concurrency.
 
-7. Update `.memory-bank/` only when archiving the change, not while it is in progress.
+7. Once all tickets are complete, run /code-review on the PR branch. Fix all issues raised by the code review in a single **implementer subagent**.
 
-8. Do not create a branch, open a PR, or commit until the user approves. Show the staged diff first, then commit only on approval. Do not merge.
+8. Mark the PR as ready for review.
 
-The ticket pipeline (`handle-tickets` with `ticket-implementer`) is a separate flow with no spec. Use `implement` for a single ticket.
+9. Clean up all **implementer subagent** worktrees.

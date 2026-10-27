@@ -13,7 +13,7 @@ Conventions that hold in the repo today. Each one names its evidence: a lint rul
 - Object literals use property and method shorthand. Evidence: `object-shorthand` (error), `eslint.config.mjs:111`.
 - Browser packages do not import Node's `assert`. They use the `assert` that ketcher-core exports. Evidence: `no-restricted-imports` at `eslint.config.mjs:194` (ketcher-react and ketcher-macromolecules) and `eslint.config.mjs:308` (ketcher-core).
 - Unused variables are a lint error unless the name starts with `_`. Evidence: `@typescript-eslint/no-unused-vars` with `^_` patterns, `eslint.config.mjs:117-123`.
-- A signature change to a public API symbol keeps the symbol's JSDoc matching the new signature. The `index.ts` barrels re-export with `export *` and carry none, so the JSDoc lives on the declaration, most of the public surface sitting in `packages/ketcher-core/src/application/ketcher.ts`. Evidence: the documented members of the `Ketcher` class there, `ketcher.ts:132` and `ketcher.ts:169`, rendered by TypeDoc into `packages/ketcher-core/docs/`.
+- A signature change to a public API symbol keeps the symbol's JSDoc matching the new signature. The `index.ts` barrels are re-exports (`export *`, plus a handful of named ones) and carry none, so the JSDoc lives on the declaration, most of the public surface sitting in `packages/ketcher-core/src/application/ketcher.ts`. Evidence: the documented members of the `Ketcher` class there, `ketcher.ts:132` and `ketcher.ts:823`.
 
 ## Architecture
 

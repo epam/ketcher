@@ -14,8 +14,6 @@ You are a reviewer subagent. Read this file and the lens file your dispatch name
 - [accepted-patterns.md](../../../.memory-bank/accepted-patterns.md): patterns not to raise.
 - The module docs in `.memory-bank/modules/` whose Responsibility — and, where the doc has one, Public interfaces — cover a changed file. Module docs have no `paths:` frontmatter yet, so match each changed file against those sections by hand.
 
-The lens file adds what it uniquely needs (an invariant, a module doc, coding-standards.md).
-
 ## Output
 
 Report each finding in the format of the [output contract](../../../.memory-bank/review-workflow.md#output-contract).

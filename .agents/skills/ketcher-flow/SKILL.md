@@ -73,7 +73,7 @@ Review runs from the branch's worktree, against the run's spec (the issue, the r
    | [documentation-accuracy](../code-review/documentation-accuracy.md) | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
    | [security](../code-review/security.md)               | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
 
-   Each dispatches a fresh **reviewer** subagent that reads the [code-review skill](../code-review/SKILL.md) and the lens file this table links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
+   Each reviewer reads the [code-review skill](../code-review/SKILL.md) and the lens file its row links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
 
 3. **Fix.** Every finding ends fixed in a new commit or declined with a one-line reason. The flow names which implementer fixes. Blockers and majors are fixed. Batch accepted nits into one commit or decline them.
 

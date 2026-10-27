@@ -8,7 +8,7 @@ Scope: The editor has no HTTP endpoints, login, or database. Do not check API en
 
 Focus:
 
-- A signature change to a symbol exported from `packages/ketcher-core/src/index.ts` or `packages/ketcher-react/src/index.tsx` leaves JSDoc that matches it, on the symbol's declaration (the convention in coding-standards.md). The barrels themselves are `export *` re-exports.
+- A signature change to a symbol exported from `packages/ketcher-core/src/index.ts` or `packages/ketcher-react/src/index.tsx` leaves JSDoc that matches it, on the symbol's declaration — the [JSDoc convention](../../../.memory-bank/coding-standards.md) under _Language and types_. The barrels themselves are re-exports (`export *`, plus a handful of named ones).
 - Do not ask for hand edits to `packages/ketcher-core/docs/`. The owner of the public API reference is in the owner table of [AGENTS.md](../../../AGENTS.md#where-knowledge-lives).
 - A change to behaviour that a scenario in `openspec/specs/<capability>/spec.md` describes makes that scenario false. Check each WHEN/THEN the diff touches.
 - A changed file that moves, renames, or drops a public interface named in a module doc makes that doc wrong. Check the module doc's public-interface lines where the doc has such a section.

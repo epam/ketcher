@@ -35,6 +35,7 @@ History must be updated via `EditorHistory.update(command)` after every undoable
 
 **A4 — domain layer has no rendering or React imports**
 The `packages/ketcher-core/src/domain/` directory must not import from `application/render/`, `application/editor/` (except types), React, or any UI framework. It must remain a pure TypeScript domain layer.
+Today 24 domain files break this rule. They are listed in [accepted-patterns.md](accepted-patterns.md#domain-files-that-import-from-application) as known debt. The rule applies to new code: a change may remove a violation but must not add one. A lint check with these files as an allowlist is planned (review-harness plan, Phase 3.1).
 
 **A5 — ketcher-core has no React dependency**
 `packages/ketcher-core` must not declare React as a dependency. It is a framework-agnostic library consumed by React packages.

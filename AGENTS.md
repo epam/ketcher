@@ -47,7 +47,8 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 
 Rules for updating the memory bank:
 
-- Update it when a change is archived, not while the change is in progress. Proposals and specs in progress do not touch it.
+- The PR that changes a fact also updates the file that owns it (table above). An OpenSpec change in progress is the exception: it updates the memory bank when it is archived, not before.
+- The PR description names the memory-bank file it updated, or says "Memory bank: not needed".
 - Features and `domain.md` name no functions, files, or variables. Put those in `modules/` or code comments.
 - Edit each file in the format its row above gives.
 
@@ -64,8 +65,8 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 
 ## Git and commits
 
-- Ask before you commit, push, or open a PR. Staging (`git add`) is fine without asking. Commit only after the user explicitly approves.
-- Three unattended ticket agents may commit, push, and open PRs without asking: `ticket-implementer`, `ticket-sweep`, and `handle-tickets`. This is the only exception to the ask-first rule.
+- Work on a feature branch. Commit, push it, and open a PR without asking. `master` is protected, so every change lands through PR review.
+- Do not commit to `master` or a release branch, force-push a branch someone else works on, or merge a PR.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 
 ## Agent skills

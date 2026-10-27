@@ -6,7 +6,7 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 
 ### Domain files that import from application
 
-**Where:** 43 files under `packages/ketcher-core/src/domain/`, for example `packages/ketcher-core/src/domain/AttachmentPoint.ts`.
+**Where:** 24 files under `packages/ketcher-core/src/domain/` make runtime imports from `application/render/` or `application/editor/`, for example `packages/ketcher-core/src/domain/AttachmentPoint.ts`. The most common is `editorSingleton`, in 8 files. Another 12 import only types, which invariant A4 allows.
 **Why it is accepted:** These imports predate rule R1 in review-rules.md. Moving them is a separate refactor. Flag only new imports of this kind.
 **Example:** `import { provideEditorInstance } from 'application/editor/editorSingleton';` at `packages/ketcher-core/src/domain/AttachmentPoint.ts:1`.
 
@@ -67,11 +67,3 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 **Where:** `lodash` is a declared dependency of all four packages, for example `packages/ketcher-core/package.json:57`, and source files under `packages/` import it in 84 files.
 **Why it is accepted:** It is an existing dependency, so using it adds nothing new to review. Do not flag it as a library the project does not use.
 **Example:** `import { isNumber, uniqueId } from 'lodash';` at `packages/ketcher-core/src/application/ketcher.ts:70`.
-
-## Commits and agents
-
-### Unattended ticket agents commit and open pull requests
-
-**Where:** `.claude/agents/ticket-implementer.md` (section 3, "Open the PR", line 33), `.claude/agents/ticket-sweep.md`, and `.claude/skills/handle-tickets/SKILL.md`.
-**Why it is accepted:** This is a decided exception to the rule that agents ask before they commit. It covers these three unattended agents only. Every other agent still asks first.
-**Example:** `.claude/agents/ticket-implementer.md:33` directs the agent to open the PR, with its commit and push done unattended.

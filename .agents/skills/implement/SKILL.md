@@ -12,4 +12,6 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 Once done, use /code-review to review the work.
 
-Do not commit from this skill. The caller decides: a ticket agent commits as its own brief says; in an interactive session, show the staged diff and wait for the user's approval before any commit.
+Before delivery, check whether the diff changes a fact that the owner table in `AGENTS.md` (Where knowledge lives) assigns to a file. If it does, update that file in the same PR. Name the file in the PR description, or write "Memory bank: not needed".
+
+Commit on the feature branch as `AGENTS.md` (Git and commits) says.

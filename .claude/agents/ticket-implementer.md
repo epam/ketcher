@@ -32,7 +32,7 @@ Two discrepancies come up often, and both are yours to settle:
 
 ## 3. Commit, push, and open the PR
 
-The implement skill does not commit, so this step does. Commit the unit's changes on its branch and push the branch. The commit subject and PR title use the form in `.memory-bank/coding-standards.md` (Tooling and process). `AGENTS.md` (Git and commits) is the written exception that lets you commit and push without asking.
+Commit any remaining changes on the unit's branch and push the branch. The commit subject and PR title use the form in `.memory-bank/coding-standards.md` (Tooling and process).
 
 Act on every review finding you can before opening. The PR body carries the rest:
 

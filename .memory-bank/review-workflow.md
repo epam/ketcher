@@ -26,7 +26,7 @@ For tickets that one fix shape resolves, such as bugs, refactors, and lint clean
 2. `handle-tickets` claims a batch, partitions it into units, and starts one `ticket-implementer` per unit.
 3. Each unit ends as one PR. `ticket-sweep` runs these steps unattended when a schedule or hook starts it.
 
-The unattended ticket agents (`ticket-implementer`, `ticket-sweep`, `handle-tickets`) may commit and open PRs. Every other agent asks first. The written exception is planned for `AGENTS.md` (planned: Phase 2, task 2.1.2).
+Agents commit and push to a feature branch and open the PR without asking. `master` is protected, so every change lands through review. The rules are in `AGENTS.md` (Git and commits).
 
 ### Large-scale change flow
 

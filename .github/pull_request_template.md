@@ -15,8 +15,8 @@ Tick the row that matches this PR. The full contract is in `.memory-bank/review-
 
 - [ ] unit-tests written
 - [ ] e2e-tests written
-- [ ] documentation updated
-- [ ] PR name follows the pattern `#1234 – issue name`
+- [ ] memory bank updated (name the file), or not needed
+- [ ] PR name follows the pattern `#1234 - issue name`
 - [ ] branch name doesn't contain '#'
 - [ ] PR is linked with the issue
 - [ ] base branch (master or release/xx) is correct

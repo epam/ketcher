@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -168,9 +168,13 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
-  /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
+  /**
+  Translation key (namespace:key) resolved by the consuming component via t(), not display text.
+  */
   title?: string;
-  /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+  /**
+  Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }.
+  */
   titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;

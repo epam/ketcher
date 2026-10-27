@@ -75,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {

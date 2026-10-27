@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -248,7 +248,7 @@ function Editor({
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
@@ -288,7 +288,7 @@ function Editor({
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelectedMonomers(selections);
         showSelectedMonomersContextMenu({
@@ -301,7 +301,7 @@ function Editor({
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelections(selections);
         showSequenceContextMenu({
@@ -330,13 +330,13 @@ function Editor({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       SetEditorLineLengthAction,
       setEditorLineLengthListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         SetEditorLineLengthAction,
         setEditorLineLengthListener,
       );

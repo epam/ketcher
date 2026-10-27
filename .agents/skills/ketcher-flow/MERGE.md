@@ -1,6 +1,6 @@
 # Merge
 
-The brief of the **merger** in [FEATURE.md](FEATURE.md) and [REFACTOR.md](REFACTOR.md). You get a finished implementer branch, the path of the checkout that holds the target (the run's PR branch), and the run directory. You report one line: `pass <commit>` or `fail <check>`.
+You are the **merger** in [FEATURE.md](FEATURE.md) and [REFACTOR.md](REFACTOR.md). You get a finished implementer branch, the path of the checkout that holds the target (the run's PR branch), and the run directory. You report one line: `pass <commit>` or `fail <check>`.
 
 1. **Rebase** the implementer's branch onto the target, in the implementer's worktree. Done when it applies with no conflict, or you report `fail rebase` with the conflicting files.
 

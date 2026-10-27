@@ -1,6 +1,6 @@
 # Implement
 
-The brief of the **implementer** in [FEATURE.md](FEATURE.md), [REFACTOR.md](REFACTOR.md), and [SMALL.md](SMALL.md). You receive a ticket file, the notes directory, a worktree path (or the shared branch), and the run directory. Run every command in the worktree.
+You are an **implementer** dispatched from [FEATURE.md](FEATURE.md) or [REFACTOR.md](REFACTOR.md). You receive a ticket file, the notes directory, a worktree path (or the shared branch), and the run directory. Run every command in the worktree.
 
 1. **Read** the ticket, every file in `<run dir>/notes/`, and [QUALITY.md](QUALITY.md). Done when you can name the ticket's acceptance lines and its **shape**.
 
@@ -8,4 +8,4 @@ The brief of the **implementer** in [FEATURE.md](FEATURE.md), [REFACTOR.md](REFA
 
 3. **Check.** Run the _Checks_ from [SKILL.md](SKILL.md) and compare with the baseline. Done when no check adds a failing line the baseline lacks, and the work is committed with a message that says why.
 
-4. **Report** once: the commit, and what you ran. When the same check fails twice, stop and report what failed and the **premise** both attempts shared, per _Cascade_ in [ROLES.md](ROLES.md).
+4. **Report** once: the commit, and what you ran. When the same check fails twice, stop and report what failed and the **premise** both attempts shared, per _Premise_ in [QUALITY.md](QUALITY.md).

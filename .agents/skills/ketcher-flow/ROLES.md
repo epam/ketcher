@@ -21,9 +21,9 @@ The roles a flow dispatches, and the model each one runs on. This file is the si
 - The user can move any row ("implementers on opus"). Show the table and take overrides when a flow says to.
 - **Cascade.** When the same check fails twice, the implementer stops and names the **premise** both attempts shared (_Premise_ in [QUALITY.md](QUALITY.md)). Send the ticket to the next stronger model with that premise as the first thing to test.
 
-## Briefs
+## Dispatches
 
-Send **context pointers**, not text: a flow file's path, a ticket file, an issue number, a worktree path, a commit. Every implementer brief carries the path of [QUALITY.md](QUALITY.md), the run directory, and these output rules:
+Send **context pointers**, not text: a flow file's path, a ticket file, an issue number, a worktree path, a commit. Every implementer dispatch carries the path of [QUALITY.md](QUALITY.md), the run directory, and these output rules:
 
 - run tests with a short reporter, and print full logs only on failure;
 - run `git diff --stat` before `git diff`;

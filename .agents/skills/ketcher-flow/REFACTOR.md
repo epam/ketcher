@@ -18,7 +18,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
    Done when `target.md` exists. When you cannot write the gain, stop and tell the user the code is already in a fair shape: that is a finished run, not a failure.
 
-2. Show the user `target.md` and the roles table from [ROLES.md](ROLES.md), and ask about worktrees, as [FEATURE.md](FEATURE.md) step 3 does. Then create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline.
+2. Show the user `target.md` and the roles table from [ROLES.md](ROLES.md), and ask about worktrees: each implementer in its own worktree by default (parallel implementers on one branch collide), or the shared branch. Then create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline.
 
 3. **Pin.** Dispatch an **implementer** with [IMPLEMENT.md](IMPLEMENT.md) and a ticket `<run dir>/tickets/pin.md`: Jest tests through the interface for every behavior `target.md` touches, per _Tests_ in QUALITY.md, passing on today's code. Where the behavior shows only in the editor, record a `verify-ketcher` run on `<base>` as the pin's app half, in `<run dir>/verify/before/`. Done when the pin is one commit and green.
 

@@ -86,7 +86,7 @@ Applies to every AI reviewer, including `/review-pr` and the reviewer agents. Ot
    - `blocker`: an invariant break, a regression, or a bug. Fix before merge.
    - `major`: breaks a rule in `.memory-bank/review-rules.md` or a PR-type requirement, with no change in behavior. Fix before merge.
    - `nit`: style or wording. Optional, never blocks.
-3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a bug that no rule covers. A finding without a failing scenario is dropped.
+3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a finding no rule covers. A finding without a failing scenario is dropped. For a structural finding, the failing scenario is the concrete change it makes harder, named: "adding a fourth bond type needs edits in these three switches".
 4. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
 5. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
 6. **No praise, and no summary** of what the diff does.

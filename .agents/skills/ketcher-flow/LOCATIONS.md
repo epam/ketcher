@@ -30,4 +30,4 @@ Parallel implementers each work in their own worktree, so their edits do not col
 
 A fresh worktree has no `node_modules`. Run `npm install` from its root. On macOS, `cp -c -R <root>/node_modules <worktree>/` (and the same for each `packages/*/node_modules` and `ketcher-autotests/node_modules` that exists) is a copy-on-write clone and is faster. A ticket that changes `package.json` or the lockfile always runs `npm install`.
 
-Remove a run's worktrees when its PR is open: `git worktree remove <path>`. Done when `git worktree list` shows none from this run.
+Remove a worktree when no further work will run in it — the flow that opened its PR says when, never while review rounds may still dispatch into it: `git worktree remove <path>`. Done when `git worktree list` shows none from this run.

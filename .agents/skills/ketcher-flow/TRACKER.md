@@ -4,7 +4,7 @@ Ketcher tracks work in GitHub issues on `epam/ketcher`, through the `gh` CLI.
 
 ## Issues
 
-- **Kind.** A bug is an issue of type `Bug` (not a label). Features are type `Feature`, other work type `Task`. List open bugs: `gh issue list --state open --search "type:Bug"`. File one: `gh issue create --type Bug --title <title> --label <area label> --body-file <file>` (one `--label` per label).
+- **Kind.** A bug is an issue of type `Bug` (not a label). Features are type `Feature`, other work type `Task`. List open bugs: `gh issue list --state open --search "type:Bug" --limit 500`. File one: `gh issue create --type Bug --title <title> --label <area label> --body-file <file>` (one `--label` per label).
 - **Area labels.** Pick from `gh label list` the labels for the area the fix lands in (`Macromolecules`, `Sequence mode`, `Monomer Library`, `Export to KET`, and so on). Leave `Priority:` and `Severity:` labels to the maintainers.
 - **Titles.** A bug title states the wrong behavior as a plain sentence, in the terms of [glossary.md](../../../.memory-bank/glossary.md). Read the titles of recent bugs first and match them.
 - **Read** an issue with its comments: `gh issue view <N> --comments`.

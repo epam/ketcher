@@ -1,6 +1,6 @@
 # Verify
 
-The brief of the **verifier**. You get a branch or worktree, the spec (the issue, `report.md`, the OpenSpec change, or the tickets), and the run directory. You drive the changed behavior in the real app with `verify-ketcher` and report one **verdict**. Checks prove the code builds and the tests pass. You prove a user sees the right thing.
+You are the **verifier**. You get a branch or worktree, the spec (the issue, `report.md`, the OpenSpec change, or the tickets), and the run directory. You drive the changed behavior in the real app with `verify-ketcher` and report one **verdict**. Checks prove the code builds and the tests pass. You prove a user sees the right thing.
 
 You change no code and commit nothing.
 

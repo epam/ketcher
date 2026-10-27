@@ -15,9 +15,9 @@ Read these when the step you are on needs them:
 - [LOCATIONS.md](LOCATIONS.md): the run directory, worktrees, `<base>`, branches. Read before the first run directory or worktree.
 - [TRACKER.md](TRACKER.md): GitHub issues, the PR title and body, comments. Read when a flow reads, files, or comments on issues, or opens a PR.
 - [ROLES.md](ROLES.md): the roles a flow dispatches and the model each one runs on, per tool. Read before the first dispatch.
-- [QUALITY.md](QUALITY.md): how code is shaped, written, tested, fixed, and reviewed. Every implementer and review brief carries its path.
+- [QUALITY.md](QUALITY.md): how code is shaped, written, tested, fixed, and reviewed. Every implementer and reviewer dispatch carries its path.
 
-The flows call three vendored skills from `mattpocock/skills`, at fixed steps: `diagnosing-bugs` and `tdd` (from [RED.md](RED.md)) and `codebase-design` (for _Design It Twice_). They are pinned in `skills-lock.json` and never edited: the Ketcher specifics live in the flow file that calls them, and win where the two differ. Call them with your tool's skill command, or read their `SKILL.md` when it has none.
+The flows call three vendored skills from `mattpocock/skills`, at fixed steps: `diagnosing-bugs` and `tdd` (from [RED.md](RED.md)) and `codebase-design` (for _Design It Twice_). They are pinned and never edited: the Ketcher specifics live in the flow file that calls them, and win where the two differ. Call them with your tool's skill command, or read their `SKILL.md` when it has none.
 
 ## Kinds
 
@@ -63,17 +63,17 @@ Review runs from the branch's worktree, against the run's spec (the issue, the r
 
 1. **Cleanup.** An **implementer** reads the diff since the branch point against _Write_ in [QUALITY.md](QUALITY.md) and removes what a careful author would not have written: narrating comments, defensive checks inside trusted code, casts that only silence the compiler, leftover debug output. Behavior stays the same and the checks still pass against the baseline. Done when the cleanup is one commit, or the diff had nothing to clean.
 
-2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, with the reason for each reviewer left out ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel. Dispatch the panel as fresh **reviewers** in parallel on that diff.
+2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, naming who is off the panel and why ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel. Dispatch the panel as fresh **reviewers** in parallel on that diff.
 
    | Reviewer                          | On the panel when the diff                                                                                                                                               |
    | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-   | **spec reviewer**                 | always. Its brief is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                             |
+   | **spec reviewer**                 | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                             |
    | `code-quality-reviewer`           | changes code, tests included                                                                                                                                             |
    | `performance-reviewer`            | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
    | `documentation-accuracy-reviewer` | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
    | `security-code-reviewer`          | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
 
-   The four agents live in `.claude/agents/`, and each file is its reviewer's brief. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
+   The four agents live in `.claude/agents/`, and each file is its reviewer's instructions. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
 
 3. **Fix.** Every finding ends fixed in a new commit or declined with a one-line reason. The flow names which implementer fixes. Blockers and majors are fixed. Batch accepted nits into one commit or decline them.
 

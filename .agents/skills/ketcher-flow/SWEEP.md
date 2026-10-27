@@ -6,9 +6,14 @@ The user is asked at most three times: the input set when it is large (step 2), 
 
 ## Steps
 
-1. **Follow up on open PRs.** Create the run directory, slug `sweep-<YYYY-MM-DD-HHMM>`. `git fetch origin`, then save the _Checks_ baseline in a clean worktree, `git worktree add --detach <root>/.ketcher-flow/worktrees/baseline <base>`, installed as LOCATIONS.md says. Earlier sweeps' PRs are the open PRs whose branch has a worktree under `.ketcher-flow/worktrees/` (`git worktree list`, then `gh pr list --state open --head <branch>`). For each one with unresolved review threads or a "changes requested" review, dispatch an **implementer** in follow-up mode with [SWEEP-FIX.md](SWEEP-FIX.md), the PR number, and its worktree. Run these in the background and go on to step 2. When one reports, review it as in step 7 and send it the findings. Done when every such PR has its follow-up brief.
+1. **Follow up on open PRs.** Create the run directory, slug `sweep-<YYYY-MM-DD-HHMM>`.
+   - Save the _Checks_ baseline: `git fetch origin`, then `git worktree add --detach <root>/.ketcher-flow/worktrees/baseline <base>`, installed as LOCATIONS.md says.
+   - **Earlier sweeps' PRs** are the open PRs whose branch has a worktree under `.ketcher-flow/worktrees/` (`git worktree list`, then `gh pr list --state open --head <branch>`).
+   - For each one with unresolved review threads or a "changes requested" review, dispatch an **implementer** in follow-up mode with [SWEEP-FIX.md](SWEEP-FIX.md), the PR number, and its worktree. Run these in the background and go on to step 2. When one reports, review it as in step 7 and send it the findings.
 
-2. **Take the input.** When the user named issues, those are the input. Otherwise list open bugs: `gh issue list --state open --search "type:Bug" --limit 500`. Drop issues an open PR already closes (`gh pr list --state open --json closingIssuesReferences`) and issues labeled `waiting user reply` or `Questions remain`. The Ketcher backlog holds hundreds of bugs: when more than 20 remain, show the count by area label and ask the user which to take (an area, a priority, or the 20 newest). Done when you hold the list of bugs to triage.
+   Done when every such PR has its follow-up brief.
+
+2. **Take the input.** When the user named issues, those are the input. Otherwise list the open bugs as TRACKER.md says. Drop issues an open PR already closes (`gh pr list --state open --json closingIssuesReferences`) and issues labeled `waiting user reply` or `Questions remain`. The Ketcher backlog holds hundreds of bugs: when more than 20 remain, show the count by area label and ask the user which to take (an area, a priority, or the 20 newest). Done when you hold the list of bugs to triage.
 
 3. **Triage.** For each bug, create a detached triage worktree, `git worktree add --detach <root>/.ketcher-flow/worktrees/triage-<N> <base>`, and install it as LOCATIONS.md says. Dispatch one **diagnoser** per bug, at most 5 at once since each one builds and may run the app (_Parallel runs_ in [VERIFY.md](VERIFY.md) gives each its port), each with [SWEEP-TRIAGE.md](SWEEP-TRIAGE.md), its issue number, its triage worktree, and the run directory. Done when every bug has an outcome file `<run dir>/<N>.md`.
 

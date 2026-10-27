@@ -1,4 +1,5 @@
 import { Command } from 'domain/entities/Command';
+import { DrawingEntitySelectOperation } from '../operations/drawingEntity';
 import { PastePreview } from '../PastePreview';
 import { getRGroupDefinitions } from 'domain/helpers/rGroupDefinitions';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
@@ -438,8 +439,18 @@ export abstract class BaseMode {
     );
 
     if (position) {
+      const selected = editor.drawingEntitiesManager.selectedEntitiesArr;
       modelChanges.merge(
         editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
+      // Paste selection callbacks run when the command executes (including redo).
+      // Clear their selection here without changing ordinary selection commands.
+      selected.forEach((entity) =>
+        modelChanges.addOperation(
+          new DrawingEntitySelectOperation(entity, () =>
+            entity.turnOffSelection(),
+          ),
+        ),
       );
     }
 

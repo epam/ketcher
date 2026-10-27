@@ -68,6 +68,8 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 
 **Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the editor's history adapter, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
 
+Selection commands can clear an old selection and establish a new one before rendering. Ordinary deselection operations must render the final model state, rather than clear it again during command execution. R-group paste confirmation appends its own deselection callbacks after paste selection callbacks so placement and redo leave the pasted entities unselected.
+
 ## Assumptions & constraints
 
 - UI/tools must never mutate `Struct` or the drawing-entities manager directly — always go through an Action/Command.

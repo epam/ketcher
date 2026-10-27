@@ -579,11 +579,7 @@ export class DrawingEntitiesManager {
   public unselectDrawingEntity(drawingEntity: DrawingEntity) {
     const command = new Command();
     drawingEntity.turnOffSelection();
-    command.addOperation(
-      new DrawingEntitySelectOperation(drawingEntity, () =>
-        drawingEntity.turnOffSelection(),
-      ),
-    );
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     return command;
   }
 

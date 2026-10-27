@@ -165,6 +165,18 @@ describe('clipboard paste preview', () => {
     expect(historyUpdate).toHaveBeenCalledTimes(1);
   });
 
+  it('preserves a new selection made after clearing the previous selection', () => {
+    const manager = editor.drawingEntitiesManager;
+    const atoms = [...manager.atoms.values()];
+    atoms[0].turnOnSelection();
+    const command = manager.selectDrawingEntity(atoms[0]);
+    command.execute(
+      new Proxy({}, { get: () => jest.fn() }) as RenderersManager,
+    );
+    expect(atoms[0].selected).toBe(true);
+    expect(atoms[1].selected).toBe(false);
+  });
+
   it('pastes ordinary structures immediately and keeps them selected', async () => {
     const ordinaryKet = JSON.stringify({
       root: { nodes: [{ $ref: 'mol0' }], connections: [], templates: [] },

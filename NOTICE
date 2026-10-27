@@ -17,8 +17,3 @@
  The Mozilla Public License https://opensource.org/licenses/MPL-1.0
  Public Domain https://wiki.creativecommons.org/wiki/Public_domain
  Unlicense http://unlicense.org/
-
- The agent skills create-verification-skill and maintain-verification-skill in .agents/skills/, and
- .agents/docs/harness/claude-code.md, are from pstack
- (https://github.com/cursor/plugins/tree/main/harness/pstack/claude-code), Copyright (c) 2026 Lauren Tan,
- licensed under the MIT License https://opensource.org/licenses/MIT

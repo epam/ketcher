@@ -4,7 +4,7 @@ The brief of the **implementer** in [FEATURE.md](FEATURE.md), [REFACTOR.md](REFA
 
 1. **Read** the ticket, every file in `<run dir>/notes/`, and [QUALITY.md](QUALITY.md). Done when you can name the ticket's acceptance lines and its **shape**.
 
-2. **Implement** to the ticket's shape, writing by QUALITY.md, inside the ticket's write scope only. When the shape does not fit the code you find, stop with nothing committed and report **shape misfit**: what in the code the shape did not expect, with `file:line`. For a ticket with `Kind: bug`, follow [RED.md](RED.md) to a red loop, then turn it green as RED.md says. New behavior gets a failing test first, per _Tests_ in QUALITY.md.
+2. **Implement** to the ticket's shape, writing by QUALITY.md, inside the ticket's write scope only. When the shape does not fit the code you find, stop with nothing committed and report **shape misfit**: what in the code the shape did not expect, with `file:line`. For a ticket with `Kind: bug`, follow [RED.md](RED.md) to a red loop, then turn it green as RED.md says. New behavior is built test-first with the `tdd` skill, as _Turning it green_ in RED.md says, and its tests follow _Tests_ in QUALITY.md.
 
 3. **Check.** Run the _Checks_ from [SKILL.md](SKILL.md) and compare with the baseline. Done when no check adds a failing line the baseline lacks, and the work is committed with a message that says why.
 

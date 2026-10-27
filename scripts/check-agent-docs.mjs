@@ -22,6 +22,11 @@ import {
   topLevelNames,
 } from './agent-docs/paths.mjs';
 import {
+  CLAUDE_AGENTS_DIR,
+  CODEX_AGENTS_DIR,
+  renderCodexAgents,
+} from './agent-docs/codex-agents.mjs';
+import {
   INSTRUCTIONS_DIR,
   RULE_FILE,
   parseRules,
@@ -118,6 +123,42 @@ const instructionsFresh = {
           file,
           message: 'no rule generates this file',
           fix: 'run `npm run generate:agent-instructions`, which deletes it',
+        });
+      }
+    }
+    return findings;
+  },
+};
+
+const codexAgentsFresh = {
+  id: 'codex-agents-fresh',
+  run(repo) {
+    const sources = {};
+    for (const file of repo.files()) {
+      if (file.startsWith(`${CLAUDE_AGENTS_DIR}/`) && file.endsWith('.md')) {
+        sources[file] = repo.read(file) ?? '';
+      }
+    }
+    if (Object.keys(sources).length === 0) return [];
+    const expected = renderCodexAgents(sources);
+    const findings = [];
+    for (const [file, text] of expected) {
+      if (repo.read(file) !== text) {
+        findings.push({
+          code: 'codex-agents-stale',
+          file,
+          message: 'does not match what .claude/agents generates',
+          fix: 'run `npm run generate:codex-agents` and commit the result',
+        });
+      }
+    }
+    for (const file of repo.files()) {
+      if (file.startsWith(`${CODEX_AGENTS_DIR}/`) && !expected.has(file)) {
+        findings.push({
+          code: 'codex-agents-orphan',
+          file,
+          message: 'no .claude/agents file generates this file',
+          fix: 'run `npm run generate:codex-agents`, which deletes it',
         });
       }
     }
@@ -315,6 +356,7 @@ const conflicts = {
 export const CHECKS = [
   rulesGrammar,
   instructionsFresh,
+  codexAgentsFresh,
   pathsExist,
   lintClaims,
   bans,

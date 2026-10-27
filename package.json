@@ -36,6 +36,7 @@
     "up": "node ./scripts/build-run.mjs",
     "check:agent-docs": "node scripts/check-agent-docs.mjs",
     "generate:agent-instructions": "node scripts/generate-agent-instructions.mjs",
+    "generate:codex-agents": "node scripts/generate-codex-agents.mjs",
     "test:scripts": "node --test \"scripts/**/*.test.mjs\""
   },
   "devDependencies": {

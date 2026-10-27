@@ -6,15 +6,19 @@ The bug's description is evidence, not diagnosis: it says what someone saw, neve
 
 ## Steps
 
-1. **Reproduce.** When the bug shows in the editor, reproduce it with `verify-ketcher` ([its SKILL.md](../verify-ketcher/SKILL.md)) on `<base>`: load the structure the issue gives, do the steps, and export. Save the evidence to `<run dir>/repro/<issue or topic>/`. When other agents drive the app at the same time, follow _Parallel runs_ in [VERIFY.md](VERIFY.md). The exported structure that disagrees with the issue's expected result is your first observation. Skip this step for a bug outside the editor (a build, an API call with no UI, a type).
+The loop discipline is the vendored `diagnosing-bugs` skill ([its SKILL.md](../diagnosing-bugs/SKILL.md)): run its Phases 1 and 2 (build a tight loop, reproduce and minimise), and Phases 3 and 4 when the cause is not plain from the trace. This file adds what Ketcher gives those phases. Where they differ, this file wins.
 
-2. **Trace.** Follow the symptom from what the user sees to the code that decides it: the toolbar button or dialog, the editor tool, the operation, the domain entity or serializer behind it. Note each `file:line` on the way. Read [domain.md](../../../.memory-bank/domain.md), [glossary.md](../../../.memory-bank/glossary.md), and the `modules/` doc of the area first, and use their terms.
+1. **Read the area.** Its `GLOSSARY.md` is [glossary.md](../../../.memory-bank/glossary.md) here, and its ADRs live in [adr/](../../../.memory-bank/adr/). Also read [domain.md](../../../.memory-bank/domain.md) and the `modules/` doc of the area, and use their terms.
 
-3. **Build the loop** as a failing Jest test at the lowest seam that reaches the bug: a serializer, a domain entity, an operation, a hook, a component. The red you build now is the red the fix turns green. When the bug names `file:line` sites, aim the test there first.
+2. **Reproduce in the app.** When the bug shows in the editor, reproduce it with `verify-ketcher` ([its SKILL.md](../verify-ketcher/SKILL.md)) on `<base>`: load the structure the issue gives, do the steps, and export. This is the skill's headless-browser loop, already built. Save the evidence to `<run dir>/repro/<issue or topic>/`. When other agents drive the app at the same time, follow _Parallel runs_ in [VERIFY.md](VERIFY.md). Skip this step for a bug outside the editor (a build, an API call with no UI, a type).
 
-   When the bug lives only in rendering or in a browser interaction no unit test reaches, push the loop down to the **pure decision** behind it (the function that computes the position, the label, the selection). When nothing pure decides it, the `verify-ketcher` recipe from step 1 is the loop, and the regression test is a Playwright spec. `AGENTS.md` says to ask the user before writing one: ask when you are the orchestrator, and as a subagent report "E2E spec needed" with the recipe, per _Asking the user_ in [ROLES.md](ROLES.md).
+3. **Push the loop down** to a failing Jest test at the lowest seam that reaches the bug: a serializer, a domain entity, an operation, a hook, a component. Trace from the toolbar button or dialog through the editor tool and the operation to the entity or serializer behind it, noting each `file:line`. When the bug names `file:line` sites, aim the test there first. The red you build now is the red the fix turns green.
+
+   When the bug lives only in rendering or in a browser interaction, push the loop to the **pure decision** behind it (the function that computes the position, the label, the selection). When nothing pure decides it, the `verify-ketcher` recipe from step 2 is the loop, and the regression test is a Playwright spec. `AGENTS.md` says to ask the user before writing one, per _Asking the user_ in [ROLES.md](ROLES.md).
 
 4. **Check the reason.** The test is red for the reason the bug gives, not for a missing import or a typo.
+
+The skill tells you to ask the user when no loop can be built, and to show hypotheses before testing them. As a subagent, put both in your report instead, per _Asking the user_ in ROLES.md.
 
 Done when both hold:
 
@@ -25,4 +29,6 @@ If the loop stays green everywhere you can reach, the behavior is by design (che
 
 ## Turning it green
 
-The fix is test-first from that red: change the code at the root cause (_Fixes_ in [QUALITY.md](QUALITY.md)) until the red test passes, then run the package's whole suite (`cd packages/<name> && npm run test:unit`). Each new behavior the fix needs gets its own failing test first. Done when the red test and the suite pass.
+Fix test-first with the vendored `tdd` skill ([its SKILL.md](../tdd/SKILL.md)), starting from this red. Its seams count as confirmed when the flow already agreed them: the approved report's **What** for a bug, the ticket's shape for a task, the triage outcome in a sweep. Ask about seams only outside those. The refactoring it leaves out of the loop happens in _Review_ in [SKILL.md](SKILL.md).
+
+Change the code at the root cause (_Fixes_ in [QUALITY.md](QUALITY.md)) until the red test passes, then run the package's whole suite (`cd packages/<name> && npm run test:unit`). Mock only what [testing.md](../../../.memory-bank/testing/testing.md) allows. Done when the red test and the suite pass, and the `[DEBUG-...]` probes from the diagnosis are gone (`git grep -n "DEBUG-"`).

@@ -12,7 +12,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
 1. **Target.** Create the run directory, slug `refactor-<topic>`. Read the code in scope, with an **explorer** for anything large, and the `modules/` docs that own it. Write `<run dir>/target.md`:
    - **Now**: the current shape, and what makes it hard to read: the layers a reader traces, the state a reader holds, the rules repeated across files.
-   - **Target**: the shape you would build today, per _Shape first_ in [QUALITY.md](QUALITY.md): module layout, types, call graph. A target that changes an interface other modules call gets two **designers**, as [FEATURE.md](FEATURE.md) step 6 does.
+   - **Target**: the shape you would build today, per _Shape first_ in [QUALITY.md](QUALITY.md): module layout, types, call graph. A target that changes an interface other modules call goes through _Design It Twice_, as [FEATURE.md](FEATURE.md) step 6 says. Use the `codebase-design` vocabulary (module, interface, seam, depth) in `target.md`.
    - **Gain**: how a reader answers "where does X come from?" and "what can change X?" faster in the target.
    - **Size**: whether the diff will qualify as a large-scale change. When it will, add the split decision from the [large-scale change protocol](../../../.memory-bank/review-workflow.md#large-scale-change-protocol) and run each split as its own branch and PR.
 

@@ -14,8 +14,8 @@ The roles a flow dispatches, and the model each one runs on. This file is the si
 | **reviewer**       | reads a diff it did not write                                  | `opus`              | the strongest model, high effort | `general-purpose`, the strongest model |
 
 - **Claude Code**: dispatch with the Agent tool and set its `model` from the row. The four reviewer agents in `.claude/agents/` dispatch by `subagent_type`; give them the reviewer row's model.
-- **Codex**: dispatch with `spawn_agent`, setting `model` and `reasoning_effort` from the row. Pick the model names from the session's model list. Review runs on a different model from the implementers.
-- **GitHub Copilot CLI**: dispatch through the `task` tool with the agent named in the row, and set the model on the call. Pick the model names from `/model`. For a reviewer agent in `.claude/agents/`, pass its file as the brief of a `general-purpose` subagent.
+- **Codex**: dispatch with `spawn_agent`, setting `model` and `reasoning_effort` from the row. Pick the model names from the session's model list. The four reviewer agents are Codex roles too (`.codex/agents/*.toml`, generated from `.claude/agents/`): pass the agent's name as `agent_type`. Review runs on a different model from the implementers.
+- **GitHub Copilot CLI**: dispatch through the `task` tool with the agent named in the row, and set the model on the call. Pick the model names from `/model`. Copilot CLI loads `.claude/agents/` as custom agents, so a reviewer agent dispatches by its name.
 - **No subagents** (a tool or mode that cannot dispatch, such as an IDE chat without agent mode): you play each role yourself, in the order the flow gives. For each reviewer, start from the diff and the spec alone, as if you had not written the code, and finish one role's report before you start the next.
 - **Asking the user** is the orchestrator's job. A subagent that needs the user's answer (an E2E spec, a product decision) stops, puts the question in its report, and the orchestrator asks.
 - The user can move any row ("implementers on opus"). Show the table and take overrides when a flow says to.

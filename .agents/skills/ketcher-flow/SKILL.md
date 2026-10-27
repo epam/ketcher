@@ -17,6 +17,8 @@ Read these when the step you are on needs them:
 - [ROLES.md](ROLES.md): the roles a flow dispatches and the model each one runs on, per tool. Read before the first dispatch.
 - [QUALITY.md](QUALITY.md): how code is shaped, written, tested, fixed, and reviewed. Every implementer and review brief carries its path.
 
+The flows call three vendored skills from `mattpocock/skills`, at fixed steps: `diagnosing-bugs` and `tdd` (from [RED.md](RED.md)) and `codebase-design` (for _Design It Twice_). They are pinned in `skills-lock.json` and never edited: the Ketcher specifics live in the flow file that calls them, and win where the two differ. Call them with your tool's skill command, or read their `SKILL.md` when it has none.
+
 ## Kinds
 
 Read the request and the conversation. Take the first row that fits:

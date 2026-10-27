@@ -293,7 +293,7 @@ function handleHotkeyGroup(
 /*
 HotKeys
 */
-function keyHandle(dispatch, getState, hotKeys, event) {
+function keyHandle(dispatch, getState, hotKeys, event: KeyboardEvent) {
   const state = getState();
 
   if (shouldIgnoreKeyEvent(state, event)) {

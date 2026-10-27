@@ -268,7 +268,7 @@ function toRule(block, file, findings) {
     }
   }
 
-  let severity = text('Severity');
+  const severity = text('Severity');
   if (has('Severity') && !SEVERITIES.includes(severity)) {
     fail(
       'rule-bad-value',
@@ -278,7 +278,7 @@ function toRule(block, file, findings) {
     );
   }
 
-  let status = text('Status');
+  const status = text('Status');
   if (has('Status') && !STATUSES.includes(status)) {
     fail(
       'rule-bad-value',

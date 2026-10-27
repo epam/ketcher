@@ -11,4 +11,3 @@ Spec: [openspec/specs/undo-redo/spec.md](../../openspec/specs/undo-redo/spec.md)
 ## Related
 
 - Engine: [operations-history](../modules/operations-history.md), [editor-engine](../modules/editor-engine.md)
-- Implementation: `HISTORY_SIZE = 32` in the molecules editor and the macromolecules `EditorHistory`.

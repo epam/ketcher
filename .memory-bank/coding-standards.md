@@ -25,15 +25,14 @@ Conventions that hold in the repo today. Each one names its evidence: a lint rul
 ## React and UI
 
 - Hook rules are lint errors in the packages. Evidence: `react-hooks/exhaustive-deps` at `eslint.config.mjs:133`, and `react-hooks/set-state-in-effect` and `react-you-might-not-need-an-effect/no-event-handler` at `eslint.config.mjs:206` and `:213` (ketcher-react and ketcher-macromolecules).
-- UI components are function components. Twelve class components remain and are listed in `accepted-patterns.md`. Evidence: `packages/ketcher-react/src/script/ui/Portal/Portal.tsx` is one of them.
+- UI components are function components. The class components that remain are listed in `accepted-patterns.md`. Evidence: `packages/ketcher-react/src/script/ui/Portal/Portal.tsx` is one of them.
 
 ## Tests
 
 - Unit tests run on Jest. Each package has a `test:unit` script. Evidence: `"test:unit": "jest"` in `packages/ketcher-core/package.json:43`, and `jest --passWithNoTests` in the other three packages.
-- E2E tests run on Playwright. Their conventions live in `.memory-bank/testing/testing.md` and are not restated here. Evidence: `ketcher-autotests/playwright.config.ts`.
+- E2E tests run on Playwright. Their conventions live in `.memory-bank/testing/testing.md`. Evidence: `ketcher-autotests/playwright.config.ts`.
 
 ## Tooling and process
 
 - Prettier is a lint error, and source uses LF line endings. Evidence: `prettier/prettier` (error) and `linebreak-style` `unix` (error), `eslint.config.mjs:107-108`.
 - Commit and PR titles have the form `#<issue> - <title>`, with an ASCII hyphen. Evidence: 196 of the last 300 commit subjects use this form, and 37 use an en dash.
-- Node.js 24.20.0 or newer and npm 7 or newer are required. Evidence: `engines` in the root `package.json:70-72`.

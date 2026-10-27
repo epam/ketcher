@@ -35,6 +35,7 @@ function memoryRepo(files, exec = () => ({ status: 0, stdout: '' })) {
   return {
     files: () => Object.keys(files).sort(),
     read: (path) => files[path] ?? null,
+    ignored: () => false,
     exec,
   };
 }

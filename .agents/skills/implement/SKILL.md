@@ -12,6 +12,6 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 Once done, use /code-review to review the work.
 
-Before delivery, check whether the diff changes a fact that the owner table in `AGENTS.md` (Where knowledge lives) assigns to a file. If it does, update that file in the same PR. Name the file in the PR description, or write "Memory bank: not needed".
+Before delivery, follow the memory-bank update rules in `AGENTS.md` (Where knowledge lives).
 
 Commit on the feature branch as `AGENTS.md` (Git and commits) says.

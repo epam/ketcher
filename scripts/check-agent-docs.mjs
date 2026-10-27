@@ -138,7 +138,7 @@ const pathsExist = {
         if (
           isCheckedRef(ref, roots) &&
           !refResolves(index, doc, token) &&
-          !repo.ignored?.(token)
+          !repo.ignored(token)
         ) {
           findings.push({
             code: 'path-missing',

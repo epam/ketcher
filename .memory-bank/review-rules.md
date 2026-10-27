@@ -162,7 +162,7 @@ Scope: ketcher-autotests/tests/**
 Severity: major
 Enforced by: AI
 Status: proposed
-Why: Page objects own the selectors, so specs read as user steps and a selector change touches one file. The selector and page-object conventions are in .memory-bank/testing/testing.md, section Page Object Model (POM). This rule links there and does not restate them. Existing raw calls are accepted; see accepted-patterns.md.
+Why: Page objects own the selectors, so specs read as user steps and a selector change touches one file. The selector and page-object conventions are in .memory-bank/testing/testing.md, section Page Object Model (POM). Existing raw calls are accepted; see accepted-patterns.md.
 Source: PR #9651, PR #10466, PR #10320
 Bad: `await page.getByTestId('zoom-out').click();` in a spec file
 Good: call the method on the page object that owns the zoom control

@@ -518,7 +518,7 @@ export class Ketcher {
       hasQueryAtoms = selection.atoms.some((atomId) => {
         const atom = structure.atoms.get(atomId);
         assert(atom);
-        const sGroupIds = Array.from(atom.sgs.values());
+        const sGroupIds = [...atom.sgs.values()];
         const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
           const sGroup = structure.sgroups.get(sGroupId);
           assert(sGroup);

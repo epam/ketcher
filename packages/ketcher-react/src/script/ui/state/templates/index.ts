@@ -145,7 +145,7 @@ export function saveUserTmpl(struct) {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
-        const lib = getState().templates.lib.concat(tmpl);
+        const lib = [...getState().templates.lib, tmpl];
         dispatch(initLib(lib));
         updateLocalStore(lib);
       })

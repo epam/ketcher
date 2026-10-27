@@ -34,7 +34,7 @@ const isSaltOrSolvent = (moleculeName: string): boolean => {
 
 const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
   const atoms = sgroup.allAtoms
-    ? Array.from(molecule.atoms.keys())
+    ? [...molecule.atoms.keys()]
     : (sgroup.atoms as number[]);
   const bonds: number[] = [];
 

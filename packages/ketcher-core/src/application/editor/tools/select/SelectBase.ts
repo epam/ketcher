@@ -343,7 +343,7 @@ abstract class SelectBase implements BaseTool {
       const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
-      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
+      drawingEntities = [...drawingEntities, ...bondsInsideCurrentChain];
       modelChanges.merge(
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,

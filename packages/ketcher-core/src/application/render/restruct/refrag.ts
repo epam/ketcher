@@ -36,13 +36,13 @@ class ReFrag extends ReObject {
   }
 
   fragGetAtoms(restruct: ReStruct, fid: number): number[] {
-    return Array.from(restruct.atoms.keys()).filter(
+    return [...restruct.atoms.keys()].filter(
       (aid) => restruct.atoms.get(aid)?.a.fragment === fid,
     );
   }
 
   fragGetBonds(restruct: ReStruct, fid: number): number[] {
-    return Array.from(restruct.bonds.keys()).filter((bid) => {
+    return [...restruct.bonds.keys()].filter((bid) => {
       const bond = restruct.bonds.get(bid)?.b;
       if (!bond) {
         return false;

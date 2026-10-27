@@ -535,8 +535,8 @@ export class Struct {
   prepareLoopStructure() {
     this.initHalfBonds();
     this.initNeighbors();
-    this.updateHalfBonds(Array.from(this.atoms.keys()));
-    this.sortNeighbors(Array.from(this.atoms.keys()));
+    this.updateHalfBonds([...this.atoms.keys()]);
+    this.sortNeighbors([...this.atoms.keys()]);
     this.findLoops();
   }
 
@@ -1043,7 +1043,7 @@ export class Struct {
     let totalDist = 0;
     let minDist;
     let dist: number;
-    const keys = Array.from(this.atoms.keys());
+    const keys = [...this.atoms.keys()];
     let k;
     let j;
     for (k = 0; k < keys.length; ++k) {
@@ -1431,7 +1431,7 @@ export class Struct {
 
     return {
       newLoops,
-      bondsToMark: Array.from(bondsToMark),
+      bondsToMark: [...bondsToMark],
     };
   }
 
@@ -1519,10 +1519,7 @@ export class Struct {
   }
 
   public setStereoLabelsToAtoms() {
-    const stereAtomsMap = getStereoAtomsMap(
-      this,
-      Array.from(this.bonds.values()),
-    );
+    const stereAtomsMap = getStereoAtomsMap(this, [...this.bonds.values()]);
 
     this.atoms.forEach((atom, id) => {
       if (this?.atomGetNeighbors(id)?.length === 0) {
@@ -1645,7 +1642,7 @@ export class Struct {
     // Search by sgroups is more expensive, but allows to find
     // functional groups for atoms which are not exist in struct already.
     // F.e. if atom already deleted and it needs to find its functional group
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (sgroup.atoms.includes(atomId)) return groupId;
     }
     return null;
@@ -1675,7 +1672,7 @@ export class Struct {
   getGroupIdFromBondId(bondId: number): number | null {
     const bond = this.bonds.get(bondId);
     if (!bond) return null;
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)
@@ -1702,7 +1699,7 @@ export class Struct {
 
     const groupsIds: number[] = [];
 
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)

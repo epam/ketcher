@@ -166,7 +166,7 @@ class TemplatePreview {
         fragmentIds.add(atom.fragment);
       }
     });
-    return Array.from(fragmentIds);
+    return [...fragmentIds];
   }
 
   private showFloatingPreview(position: Vec2) {

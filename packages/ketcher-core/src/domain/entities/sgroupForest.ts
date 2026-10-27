@@ -43,7 +43,7 @@ export class SGroupForest {
   */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
-    const queue = Array.from(this.children.get(-1) as Array<number>);
+    const queue = [...(this.children.get(-1) as Array<number>)];
     while (queue.length > 0) {
       const id = queue.shift();
       if (typeof id !== 'number') {
@@ -79,7 +79,7 @@ export class SGroupForest {
       );
     });
 
-    const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
+    const parents = [...this.atomSets.keys()].filter((sgid) => {
       if (isSubset.get(sgid) !== true) {
         return false;
       }
@@ -89,7 +89,7 @@ export class SGroupForest {
       );
     });
 
-    const children = Array.from(this.atomSets.keys()).filter((id) => {
+    const children = [...this.atomSets.keys()].filter((id) => {
       const parentId = this.parent.get(id);
       if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
         return false;
@@ -217,5 +217,5 @@ export function checkOverlapping(
     return atom ? res.union(atom.sgs) : res;
   }, new Pile<number>());
 
-  return Array.from(sgroups).some(searchFunction[sGroupType]);
+  return [...sgroups].some(searchFunction[sGroupType]);
 }

@@ -132,7 +132,7 @@ updateSettings({ myNewArraySetting: newItems });
 
 **Important**
 
-- Do **not** use `void` or `.catch(() => {})` — both trigger ESLint errors (`no-confusing-void-expression`, `no-empty-function`). Just call `updateSettings(...)` without awaiting unless you need the result.
+- Call `updateSettings(...)` without awaiting unless you need the result.
 - Do **not** read from or write to `localStorage` directly. Always go through `updateSettings` / `settings`.
 - `settings` is `null` on the first render (async init). Always guard with `?? fallback`.
 - If you need a local UI state that mirrors the setting, initialize it to `[]` / `null` / `''` and populate it on first meaningful interaction (e.g., when a picker opens), reading from `settings` at that point.
@@ -142,6 +142,8 @@ updateSettings({ myNewArraySetting: newItems });
 ## Step 4 — Test the component
 
 ### 4a — Mock `useSettings` at the top of the test file
+
+`useSettings` is the storage boundary for this component test; see [tdd/mocking.md](../tdd/mocking.md).
 
 ```javascript
 import { useSettings } from 'src/hooks';

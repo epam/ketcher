@@ -13,6 +13,8 @@ Don't mock:
 - Internal collaborators
 - Anything you control
 
+**Exception: a hook that is the only gateway to a boundary.** In a component test, a hook such as `useSettings` in `ketcher-react` counts as the boundary when it is the only way the component reaches browser storage. Mock that hook at the top of the component test file. Every other module of the package stays real.
+
 ## Designing for Mockability
 
 At system boundaries, design interfaces that are easy to mock:

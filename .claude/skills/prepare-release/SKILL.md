@@ -71,8 +71,9 @@ If it's not there, stop — the Indigo team needs to publish it first; don't
 substitute a different version.
 
 `npm install`, sanity-check `git diff package-lock.json` touches only the
-packages you changed, commit as `Update Ketcher to release candidate
-X.Y.0-rc.1`, go to **Wrap-up**.
+packages you changed. Stage the changed files, show the user
+`git diff --cached --stat`, and ask before committing as `Update Ketcher to
+release candidate X.Y.0-rc.1`. Then go to **Wrap-up**.
 
 ## Mode: `update-candidate` — bump an existing release candidate
 
@@ -89,8 +90,9 @@ version for this candidate (optional — only needed if the fixes being
 picked up depend on an indigo change). If yes, confirm the target version
 is published the same way as in `new-candidate`.
 
-`npm install`, sanity-check the lockfile diff, commit as `Update Ketcher to
-release candidate X.Y.0-rc.{N+1}`, go to **Wrap-up**.
+`npm install`, sanity-check the lockfile diff. Stage the changed files, show
+the user `git diff --cached --stat`, and ask before committing as `Update
+Ketcher to release candidate X.Y.0-rc.{N+1}`. Then go to **Wrap-up**.
 
 ## Mode: `promote-public` — promote a release candidate to public
 
@@ -110,8 +112,9 @@ say so rather than guessing.
 land around 15-20 changed lines touching only `version`/`resolved`/
 `integrity` for the bumped packages (`git log --all --grep "Update Ketcher
 to public version"` finds a real precedent commit if you want a concrete
-anchor). Commit as `Update Ketcher to public version X.Y.0`, go to
-**Wrap-up**.
+anchor). Stage the changed files, show the user `git diff --cached --stat`,
+and ask before committing as `Update Ketcher to public version X.Y.0`. Then
+go to **Wrap-up**.
 
 ## Mode: `patch-public` — bump a public release for a hotfix
 
@@ -128,8 +131,9 @@ lands straight on the release branch with its own patch version.
 Ask the user whether `indigo-ketcher` needs bumping to a newer published
 patch for this fix, same as in `update-candidate`.
 
-`npm install`, sanity-check the lockfile diff, commit as `Update Ketcher to
-public version X.Y.{Z+1}`, go to **Wrap-up**.
+`npm install`, sanity-check the lockfile diff. Stage the changed files, show
+the user `git diff --cached --stat`, and ask before committing as `Update
+Ketcher to public version X.Y.{Z+1}`. Then go to **Wrap-up**.
 
 ## Wrap-up (all modes)
 

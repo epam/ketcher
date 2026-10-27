@@ -133,23 +133,49 @@ export const getConnectionAttachmentPointsForRnaPresetComponent = (
 };
 
 /**
- * Returns a Map of connection (inter-component) attachment point names to
- * [componentAtomId, otherComponentAtomId] pairs for the given RNA component tab.
- * Used to render and highlight these readonly APs on the canvas.
+ * Returns all inter-component connection atom IDs for the RNA preset.
+ * Each boundary atom is included so both ends of every connection are visible.
  */
-export const getConnectionAttachmentPointAtomIdsForComponent = (
+export const getConnectionAttachmentPointAtomIdsForRnaPreset = (
   wizardState: RnaPresetWizardState,
   struct: Struct,
-  componentKey: RnaPresetComponentKey,
   phosphatePosition?: PhosphatePosition,
 ): Map<AttachmentPointName, [number, number]> => {
   const result = new Map<AttachmentPointName, [number, number]>();
+  const seenAtomIds = new Set<number>();
+  const fallbackApNames = [
+    AttachmentPointName.R4,
+    AttachmentPointName.R5,
+    AttachmentPointName.R6,
+    AttachmentPointName.R7,
+  ];
+  let fallbackIdx = 0;
 
+  const addConnectionAtom = (
+    apName: AttachmentPointName,
+    atomIds: [number, number],
+  ) => {
+    const [atomId] = atomIds;
+    if (seenAtomIds.has(atomId)) {
+      return;
+    }
+
+    seenAtomIds.add(atomId);
+    if (!result.has(apName)) {
+      result.set(apName, atomIds);
+      return;
+    }
+
+    const fallbackApName = fallbackApNames[fallbackIdx++];
+    if (fallbackApName !== undefined) {
+      result.set(fallbackApName, atomIds);
+    }
+  };
   const baseAtoms = wizardState.base.structure?.atoms ?? [];
   const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
   const phosphateAtoms = wizardState.phosphate.structure?.atoms ?? [];
 
-  // Sugar ↔ Base connection
+  // Keep the existing preset-tab ordering when resolving duplicate AP names.
   if (sugarAtoms.length > 0 && baseAtoms.length > 0) {
     const bond = findBondBetweenRnaPresetComponents(
       struct,
@@ -162,15 +188,11 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
         : bond.end;
       const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
 
-      if (componentKey === 'sugar') {
-        result.set(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
-      } else if (componentKey === 'base') {
-        result.set(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
-      }
+      addConnectionAtom(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
+      addConnectionAtom(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
     }
   }
 
-  // Sugar ↔ Phosphate connection
   if (phosphatePosition && sugarAtoms.length > 0 && phosphateAtoms.length > 0) {
     const bond = findBondBetweenRnaPresetComponents(
       struct,
@@ -188,63 +210,8 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
       const { sugar: sugarApName, phosphate: phosphateApName } =
         getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
 
-      if (componentKey === 'sugar') {
-        result.set(sugarApName, [sugarAtomId, phosphateAtomId]);
-      } else if (componentKey === 'phosphate') {
-        result.set(phosphateApName, [phosphateAtomId, sugarAtomId]);
-      }
-    }
-  }
-
-  return result;
-};
-
-/**
- * Returns a Map of all inter-component connection atom IDs for the Preset
- * (overview) tab. Unlike the per-component version, this collects boundary
- * atoms from every RNA component so that all four junction atoms (both sides
- * of the Sugar↔Base bond and both sides of the Sugar↔Phosphate bond) receive
- * a blue circle indicator on the canvas.
- *
- * Map keys are the natural AP names when available; conflicts are resolved
- * by falling back to R4, R5, … so that every atom ID occupies a unique slot.
- */
-export const getConnectionAttachmentPointAtomIdsForPreset = (
-  wizardState: RnaPresetWizardState,
-  struct: Struct,
-  phosphatePosition?: PhosphatePosition,
-): Map<AttachmentPointName, [number, number]> => {
-  const result = new Map<AttachmentPointName, [number, number]>();
-  const seenAtomIds = new Set<number>();
-  const fallbackApNames = [
-    AttachmentPointName.R4,
-    AttachmentPointName.R5,
-    AttachmentPointName.R6,
-    AttachmentPointName.R7,
-  ];
-  let fallbackIdx = 0;
-
-  for (const componentKey of RNA_COMPONENT_KEYS) {
-    const componentMap = getConnectionAttachmentPointAtomIdsForComponent(
-      wizardState,
-      struct,
-      componentKey,
-      phosphatePosition,
-    );
-    for (const [apName, tuple] of componentMap) {
-      const [atomId] = tuple;
-      if (seenAtomIds.has(atomId)) {
-        continue;
-      }
-      seenAtomIds.add(atomId);
-      if (!result.has(apName)) {
-        result.set(apName, tuple);
-      } else {
-        const fallback = fallbackApNames[fallbackIdx++];
-        if (fallback !== undefined) {
-          result.set(fallback, tuple);
-        }
-      }
+      addConnectionAtom(sugarApName, [sugarAtomId, phosphateAtomId]);
+      addConnectionAtom(phosphateApName, [phosphateAtomId, sugarAtomId]);
     }
   }
 

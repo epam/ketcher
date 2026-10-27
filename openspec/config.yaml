@@ -18,6 +18,7 @@ context: |
   - Do not update the memory bank while the change is in progress. Update it when archiving, as AGENTS.md describes.
   - Mark each task done as soon as it is complete. Do not mark them all at the end.
   - E2E tests follow the E2E rule in AGENTS.md (read testing.md, ask before writing specs).
+  - For a change a user can see in the editor, run the `verify-ketcher` skill before you report it done, and put its result in the PR under "Verified in the app".
 
   ### Additional rules for openspec-archive-change
   - Edit each memory-bank file in the format AGENTS.md gives for it.

@@ -47,3 +47,6 @@ output.txt
 
 .cursor
 .cursor/*
+
+# verify-ketcher skill: server state, browser session, evidence
+.verify-ketcher/

@@ -16,7 +16,7 @@ For features and high-risk changes. Only those need a spec.
 2. **Implement.** Tick each task when it is done, one at a time.
 3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/` (planned: Phase 2, task 2.7.3). Until then, current behavior lives in `.memory-bank/features/`.
 
-The `/opsx:*` commands are optional. They work only where a developer installed OpenSpec locally. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
+The `openspec-*` skills are optional. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
 
 ### Ticket flow
 

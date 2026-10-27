@@ -158,6 +158,40 @@ test('an agent file that asks before committing contradicts AGENTS.md, unless it
   ]);
 });
 
+test('a generated OpenSpec skill that differs from `openspec update --force` is named and restored', () => {
+  const statuses = ['', ' M .agents/skills/openspec-explore/SKILL.md\n'];
+  const calls = [];
+  const repo = memoryRepo(
+    { [RULE_FILE]: RULES, ...generatedFor(RULES), 'openspec/config.yaml': '' },
+    (command, args) => {
+      calls.push([command, ...args].join(' '));
+      if (command === 'git' && args[0] === 'status') {
+        return { status: 0, stdout: statuses.shift() ?? '' };
+      }
+      return { status: 0, stdout: '' };
+    },
+  );
+  assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
+    ['openspec-stale', '.agents/skills/openspec-explore/SKILL.md'],
+  ]);
+  assert.ok(
+    calls.includes('git checkout -- .agents/skills/openspec-explore/SKILL.md'),
+  );
+});
+
+test('the OpenSpec check is skipped in a repo without openspec/config.yaml', () => {
+  const calls = [];
+  const repo = memoryRepo(
+    { [RULE_FILE]: RULES, ...generatedFor(RULES) },
+    (command) => {
+      calls.push(command);
+      return { status: 0, stdout: '' };
+    },
+  );
+  assert.deepEqual(check(repo, CHECKS), []);
+  assert.ok(!calls.includes('npx'));
+});
+
 test('a check that throws becomes one finding and the other checks still run', () => {
   const boom = {
     id: 'boom',

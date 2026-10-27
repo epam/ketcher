@@ -234,6 +234,57 @@ const bans = {
   },
 };
 
+// Folders that `openspec update` writes its generated skills into.
+const OPENSPEC_SKILL_DIRS = ['.agents/skills', '.claude/skills'];
+
+const openspecFresh = {
+  id: 'openspec-fresh',
+  run(repo) {
+    if (repo.read('openspec/config.yaml') === null) return [];
+    const dirty = () =>
+      repo
+        .exec('git', [
+          'status',
+          '--porcelain',
+          '--untracked-files=all',
+          '--',
+          ...OPENSPEC_SKILL_DIRS,
+        ])
+        .stdout.split('\n')
+        .filter(Boolean);
+    const before = new Set(dirty());
+    const update = repo.exec('npx', [
+      '--no-install',
+      'openspec',
+      'update',
+      '--force',
+    ]);
+    if (update.status !== 0) {
+      return [
+        {
+          code: 'openspec-update-failed',
+          file: 'package.json',
+          message: '`openspec update --force` failed',
+          fix: 'run `npm install`, so the pinned @fission-ai/openspec is installed',
+        },
+      ];
+    }
+    const changed = dirty().filter((line) => !before.has(line));
+    // Undo what the update wrote. Only paths that were clean before are touched.
+    for (const line of changed) {
+      const file = line.slice(3);
+      if (line.startsWith('??')) repo.exec('git', ['clean', '-fq', '--', file]);
+      else repo.exec('git', ['checkout', '--', file]);
+    }
+    return changed.map((line) => ({
+      code: 'openspec-stale',
+      file: line.slice(3),
+      message: 'differs from what `openspec update --force` generates',
+      fix: 'run `npx openspec update --force` and commit the result. Generated OpenSpec skills are not edited by hand',
+    }));
+  },
+};
+
 const conflicts = {
   id: 'conflicts',
   run(repo) {
@@ -268,6 +319,7 @@ export const CHECKS = [
   lintClaims,
   bans,
   conflicts,
+  openspecFresh,
 ];
 
 /**

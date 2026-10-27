@@ -1,6 +1,6 @@
 ---
 name: implement
-description: 'Implement one ticket, or a set of tickets that meet in one diff, without an OpenSpec change. For work that has a change under openspec/changes/, use /opsx:apply.'
+description: 'Implement one ticket, or a set of tickets that meet in one diff, without an OpenSpec change. For work that has a change under openspec/changes/, use openspec-apply-change.'
 disable-model-invocation: true
 ---
 

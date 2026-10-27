@@ -41,6 +41,7 @@
   "devDependencies": {
     "@eslint/css": "^1.4.0",
     "@eslint/js": "^10.0.1",
+    "@fission-ai/openspec": "1.15.0",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
     "color-alpha": "^1.1.3",

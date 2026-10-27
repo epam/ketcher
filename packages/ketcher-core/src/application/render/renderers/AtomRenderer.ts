@@ -18,6 +18,7 @@ import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -574,7 +575,7 @@ export class AtomRenderer extends BaseRenderer {
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
-    this.cipLabelElement?.select('rect')?.attr('fill', '#F5F5F5');
+    this.cipLabelElement?.select('rect')?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public drawSelection() {
@@ -763,7 +764,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('height', height + 2)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('fill', '#f5f5f5');
+      .attr('fill', CANVAS_BACKGROUND_COLOR);
 
     this.cipLabelElementBBox = this.cipLabelElement?.node()?.getBBox();
 

@@ -4,7 +4,6 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { CHECKS, check } from './check-agent-docs.mjs';
-import { renderCodexAgents } from './agent-docs/codex-agents.mjs';
 import {
   RULE_FILE,
   parseRules,
@@ -75,52 +74,6 @@ test('an instruction file that no rule generates is named', () => {
   });
   assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
     ['instructions-orphan', '.github/instructions/old.instructions.md'],
-  ]);
-});
-
-const AGENT_MD = '.claude/agents/demo-reviewer.md';
-const AGENT_TOML = '.codex/agents/demo-reviewer.toml';
-const AGENT_TEXT =
-  '---\nname: demo-reviewer\ndescription: Demo.\ntools: Read\n---\n\nBody.\n';
-const generatedAgents = () =>
-  Object.fromEntries(renderCodexAgents({ [AGENT_MD]: AGENT_TEXT }));
-
-test('fresh Codex agent files have no findings', () => {
-  const repo = memoryRepo({
-    [RULE_FILE]: RULES,
-    ...generatedFor(RULES),
-    [AGENT_MD]: AGENT_TEXT,
-    ...generatedAgents(),
-  });
-  assert.deepEqual(check(repo, CHECKS), []);
-});
-
-test('a stale or missing Codex agent file is named', () => {
-  const base = { [RULE_FILE]: RULES, ...generatedFor(RULES) };
-  const stale = memoryRepo({
-    ...base,
-    [AGENT_MD]: AGENT_TEXT,
-    [AGENT_TOML]: 'old\n',
-  });
-  assert.deepEqual(codesAndFiles(check(stale, CHECKS)), [
-    ['codex-agents-stale', AGENT_TOML],
-  ]);
-  const missing = memoryRepo({ ...base, [AGENT_MD]: AGENT_TEXT });
-  assert.deepEqual(codesAndFiles(check(missing, CHECKS)), [
-    ['codex-agents-stale', AGENT_TOML],
-  ]);
-});
-
-test('an orphan Codex agent file is named', () => {
-  const repo = memoryRepo({
-    [RULE_FILE]: RULES,
-    ...generatedFor(RULES),
-    [AGENT_MD]: AGENT_TEXT,
-    ...generatedAgents(),
-    '.codex/agents/old.toml': 'x\n',
-  });
-  assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
-    ['codex-agents-orphan', '.codex/agents/old.toml'],
   ]);
 });
 

@@ -82,7 +82,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 - **Workflow**: `/ketcher-flow <scope>` ([SKILL.md](.agents/skills/ketcher-flow/SKILL.md)) takes a feature, a bug, a refactor, a small change, a list of symptoms, or a set of open bugs to a reviewed PR. Features go through the OpenSpec skills. When you take on a task with code changes and your tool cannot run the skill, read that file and follow the flow it picks.
 - **E2E tests**: before you write Playwright specs, read [testing.md](.memory-bank/testing/testing.md) and ask the user to proceed. For a new spec file or folder, follow its E2E Test Plans section.
 - **Copilot** reads skills from `.agents/skills/` and `.claude/skills/`. `.github/instructions/*.instructions.md` are generated from `review-rules.md`; do not edit them by hand.
-- **Agents**: `.claude/agents/*.md` is the source for subagents. Claude Code and Copilot CLI read it directly. Codex reads `.codex/agents/*.toml`, which `npm run generate:codex-agents` generates from it; do not edit those by hand.
+- **Subagents**: the repo defines no named agent files. A subagent's instructions live in a skill under `.agents/skills/`, dispatched as [ROLES.md](.agents/skills/ketcher-flow/ROLES.md) says: the prompt names the skill and, where one exists, the lens or role file. Codex and Copilot get the same paths — no generated agent files to maintain.
 
 ## Unverified tool behaviors
 
@@ -91,4 +91,3 @@ These are not tested yet. Check each one before you rely on the symlink setup.
 - Codex and GitHub Copilot accept SKILL.md frontmatter fields outside the Agent Skills spec, such as `disable-model-invocation`, `argument-hint`, and `user-invocable`.
 - GitHub Copilot lists a skill twice when it exists in `.agents/skills/` and is also reached through a `.claude/skills/` symlink.
 - GitHub Copilot CLI runs the `ketcher-flow` roles as `general-purpose` subagents through its `task` tool, with the model set on each call. GitHub's CLI docs describe this; no run in this repo has tried it.
-- GitHub Copilot CLI honors the Claude tool names in the `tools:` lines of `.claude/agents/*.md`. It does load those agents by name, and it replaces their `model: inherit` with its default model, with a warning.

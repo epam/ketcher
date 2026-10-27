@@ -10,7 +10,6 @@ const AGENT_FILES = [
   '.github/copilot-instructions.md',
 ];
 const AGENT_GLOBS = [
-  '.claude/agents/*.md',
   '.claude/commands/*.md',
   '.agents/skills/**/*.md',
   '.claude/skills/**/*.md',

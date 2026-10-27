@@ -29,6 +29,21 @@ describe('shared atom geometry', () => {
     });
   });
 
+  it('preserves the micro renderer arithmetic for wrapping sectors', () => {
+    const angles = [-7 / 97, 7 / 173];
+    expect(findLargestSector(angles)).toEqual({
+      neighborAngle: angles[1],
+      largestAngle: angles[0] - angles[1] + 2 * Math.PI,
+    });
+    const angle = angles[1] + ((angles[0] - angles[1] + 2 * Math.PI) * 2) / 3;
+    const direction = attachmentPointDirection(
+      angles.map((angle) => ({ angle, isTriple: false })),
+      'secondary',
+      true,
+    );
+    expect(direction).toEqual(new Vec2(Math.cos(angle), Math.sin(angle)));
+  });
+
   it('places single-bond and triple-bond APs at 120 and 180 degrees', () => {
     const single = attachmentPointDirection(
       [{ angle: 0, isTriple: false }],

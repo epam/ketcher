@@ -1,5 +1,6 @@
 import { Command } from 'domain/entities/Command';
 import { PastePreview } from '../PastePreview';
+import { getRGroupDefinitions } from 'domain/helpers/rGroupDefinitions';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { EditorHistory } from '../EditorHistory';
 import type { CoreEditor } from '../Editor';
@@ -394,7 +395,12 @@ export abstract class BaseMode {
       return;
     }
 
-    if (preview) {
+    const hasRGroupDefinitions =
+      getRGroupDefinitions(
+        drawingEntitiesManager.atoms.values(),
+        drawingEntitiesManager.bonds.values(),
+      ).size > 0;
+    if (preview && hasRGroupDefinitions) {
       if (editor.mode !== this) return;
       this.pastePreview?.cancel();
       this.pastePreview = new PastePreview(

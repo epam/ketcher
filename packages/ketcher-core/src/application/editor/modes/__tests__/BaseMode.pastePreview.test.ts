@@ -165,6 +165,24 @@ describe('clipboard paste preview', () => {
     expect(historyUpdate).toHaveBeenCalledTimes(1);
   });
 
+  it('pastes ordinary structures immediately and keeps them selected', async () => {
+    const ordinaryKet = JSON.stringify({
+      root: { nodes: [{ $ref: 'mol0' }], connections: [], templates: [] },
+      mol0: {
+        type: 'molecule',
+        atoms: [{ label: 'C', location: [0, 0, 0] }],
+        bonds: [],
+      },
+    });
+    await mode.pasteFromClipboard({ 'text/plain': ordinaryKet });
+    expect(show).not.toHaveBeenCalled();
+    expect(editor.drawingEntitiesManager.atoms.size).toBe(3);
+    expect(historyUpdate).toHaveBeenCalledTimes(1);
+    expect(
+      [...editor.drawingEntitiesManager.atoms.values()].at(-1)?.selected,
+    ).toBe(true);
+  });
+
   it.each(['Escape', 'tool', 'mode', 'destroy'])(
     'cancels with %s without changing the model',
     async (action) => {

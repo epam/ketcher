@@ -10,11 +10,13 @@ export function findLargestSector(neighborAngles: readonly number[]) {
   let neighborAngle = -Math.PI / 2;
   let largestAngle = 0;
   angles.forEach((angle, index) => {
-    const next =
-      index === angles.length - 1 ? angles[0] + 2 * Math.PI : angles[index + 1];
-    if (next - angle > largestAngle) {
+    const sectorAngle =
+      index === angles.length - 1
+        ? angles[0] - angle + 2 * Math.PI
+        : angles[index + 1] - angle;
+    if (sectorAngle > largestAngle) {
       neighborAngle = angle;
-      largestAngle = next - angle;
+      largestAngle = sectorAngle;
     }
   });
   return { neighborAngle, largestAngle };
@@ -37,8 +39,16 @@ export function attachmentPointDirection(
       (neighbors[0].isTriple ? Math.PI : (2 * Math.PI) / 3);
   } else {
     const sector = findLargestSector(neighbors.map(({ angle }) => angle));
-    const fraction = both ? (type === 'primary' ? 1 / 3 : 2 / 3) : 1 / 2;
-    angle = sector.neighborAngle + sector.largestAngle * fraction;
+    // Keep the arithmetic order used by the micro renderer: tiny rounding
+    // differences can change the largest sector or rasterized AP outlines.
+    let offset = sector.largestAngle / 2;
+    if (both) {
+      offset =
+        type === 'primary'
+          ? sector.largestAngle / 3
+          : (sector.largestAngle * 2) / 3;
+    }
+    angle = sector.neighborAngle + offset;
   }
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }

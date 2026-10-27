@@ -36,6 +36,9 @@ export class RGroupRenderer extends BaseRenderer {
         this.options.atomPositions?.get(atom) ?? atom.position,
       );
       let atomBox = new Box2Abs(position, position);
+      atom.renderer?.attachmentPointBoxes?.forEach((box) => {
+        atomBox = Box2Abs.union(atomBox, box.translate(position));
+      });
       this.options.atomLabelBoxes?.get(atom)?.forEach((labelBox) => {
         atomBox = Box2Abs.union(atomBox, labelBox.translate(position));
       });

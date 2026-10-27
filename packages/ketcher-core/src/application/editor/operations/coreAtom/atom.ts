@@ -20,6 +20,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import type { Bond as MicromoleculesBond } from 'domain/entities/bond';
 import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { KetcherLogger } from 'utilities';
+import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 
 interface BondWithIdInMicromolecules {
   bondId: number;
@@ -29,12 +30,14 @@ interface BondWithIdInMicromolecules {
 interface DeletedMoleculeStructItems {
   atomInMoleculeStruct: MicromoleculesAtom;
   bondsInMoleculeStruct: BondWithIdInMicromolecules[];
+  attachmentPoints: Array<[number, RGroupAttachmentPoint]>;
 }
 
 function addAtomToMoleculeStruct(
   atom: Atom,
   atomInMoleculeStruct: MicromoleculesAtom,
   bondsInMoleculeStruct: BondWithIdInMicromolecules[] = [],
+  attachmentPoints: Array<[number, RGroupAttachmentPoint]> = [],
 ) {
   const moleculeStruct = atom.monomer.monomerItem.struct;
 
@@ -43,6 +46,9 @@ function addAtomToMoleculeStruct(
   bondsInMoleculeStruct.forEach(({ bondId, bond }) => {
     moleculeStruct.bonds.set(bondId, bond);
   });
+  attachmentPoints.forEach(([id, point]) =>
+    moleculeStruct.rgroupAttachmentPoints.set(id, point),
+  );
 }
 
 function deleteAtomFromMoleculeStruct(atom: Atom) {
@@ -63,6 +69,12 @@ function deleteAtomFromMoleculeStruct(atom: Atom) {
   });
 
   moleculeStruct.atoms.delete(atom.atomIdInMicroMode);
+  const attachmentPoints = [...moleculeStruct.rgroupAttachmentPoints].filter(
+    ([, point]) => point.atomId === atom.atomIdInMicroMode,
+  );
+  attachmentPoints.forEach(([id]) =>
+    moleculeStruct.rgroupAttachmentPoints.delete(id),
+  );
 
   bondsInMoleculeStruct.forEach((_, bondId) => {
     moleculeStruct.bonds.delete(bondId);
@@ -70,6 +82,7 @@ function deleteAtomFromMoleculeStruct(atom: Atom) {
 
   return {
     atomInMoleculeStruct,
+    attachmentPoints,
     bondsInMoleculeStruct: [...bondsInMoleculeStruct.entries()].map(
       ([bondId, bond]) => {
         return { bondId, bond };
@@ -97,6 +110,7 @@ export class AtomAddOperation implements Operation {
         this.atom,
         this.deletedMoleculeStructItems.atomInMoleculeStruct,
         this.deletedMoleculeStructItems.bondsInMoleculeStruct,
+        this.deletedMoleculeStructItems.attachmentPoints,
       );
     }
   }
@@ -142,6 +156,7 @@ export class AtomDeleteOperation implements Operation {
         this.atom,
         this.deletedMoleculeStructItems.atomInMoleculeStruct,
         this.deletedMoleculeStructItems.bondsInMoleculeStruct,
+        this.deletedMoleculeStructItems.attachmentPoints,
       );
     }
   }

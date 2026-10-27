@@ -144,6 +144,7 @@ import {
 } from 'application/editor/operations/stereoFlag';
 import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
+import { RGroupAttachmentPointDrawingEntity } from 'domain/entities/RGroupAttachmentPointDrawingEntity';
 import type { RGroup } from 'domain/entities/rgroup';
 import {
   RGroupPropertiesOperation,
@@ -1104,6 +1105,14 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.selectAttachmentPointAtoms(command, (point) => {
+      point.selectIfLocatedInRectangle(
+        rectangleTopLeftPoint,
+        rectangleBottomRightPoint,
+        previousSelectedEntities.some(([, entity]) => entity === point.atom),
+        shiftKey,
+      );
+    });
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
@@ -1151,10 +1160,33 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.selectAttachmentPointAtoms(command, (point) => {
+      point.selectIfLocatedInPolygon(
+        polygonPoints,
+        previousSelectedEntities.some(([, entity]) => entity === point.atom),
+        shiftKey,
+      );
+    });
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
     return command;
+  }
+
+  private selectAttachmentPointAtoms(
+    command: Command,
+    select: (point: RGroupAttachmentPointDrawingEntity) => void,
+  ): void {
+    provideEditorInstance().renderersContainer?.rgroupAttachmentPoints?.forEach(
+      (renderer) => {
+        const point = renderer.attachmentPoint;
+        select(point);
+        if (point.selected && !point.atom.selected) {
+          point.atom.turnOnSelection();
+          command.addOperation(new DrawingEntitySelectOperation(point.atom));
+        }
+      },
+    );
   }
 
   /**
@@ -2390,6 +2422,7 @@ export class DrawingEntitiesManager {
     this.clearMicromoleculesHiddenEntities();
     struct.mergeInto(this.micromoleculesHiddenEntities);
     this.micromoleculesHiddenEntities.atoms = new Pool();
+    this.micromoleculesHiddenEntities.rgroupAttachmentPoints = new Pool();
     this.micromoleculesHiddenEntities.bonds = new Pool();
     this.micromoleculesHiddenEntities.halfBonds = new Pool();
     this.micromoleculesHiddenEntities.sgroups = new Pool();
@@ -2812,6 +2845,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteStereoFlag(flag);
       editor.renderersContainer.addStereoFlag(flag);
     });
+    editor.renderersContainer.rerenderRGroupAttachmentPoints();
     editor.renderersContainer.rerenderRGroups();
   }
 
@@ -3014,6 +3048,13 @@ export class DrawingEntitiesManager {
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof RGroupAttachmentPointDrawingEntity) {
+      return this.getAllSelectedEntitiesForSingleEntity(
+        drawingEntity.atom,
+        needToSelectConnectedBonds,
+        selectedDrawingEntities,
+      );
+    }
     if (drawingEntity instanceof RGroupDrawingEntity) {
       const command = new Command();
       const drawingEntities = [

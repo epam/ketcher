@@ -66,6 +66,19 @@ export class PastePreviewView extends TransientView {
             atom,
             ctab.atoms.get(id)?.visel.exts.map((box) => box.clone()) ?? [],
           );
+        if (id !== undefined) {
+          const pointBox = ctab.getRGroupAttachmentPointsVBoxByAtomIds([id]);
+          if (pointBox) {
+            const position = Coordinates.modelToCanvas(atom.position);
+            boxes
+              .get(atom)
+              ?.push(
+                pointBox
+                  .transform(Coordinates.modelToCanvas, provideEditorSettings())
+                  .translate(position.negated()),
+              );
+          }
+        }
       });
       PastePreviewView.labelBoxes.set(svg, boxes);
       svg.style.overflow = 'visible';

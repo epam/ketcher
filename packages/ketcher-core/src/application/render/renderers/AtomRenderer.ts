@@ -44,6 +44,7 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
+  public attachmentPointBoxes: Box2Abs[] = [];
   private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -371,6 +372,14 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
+    if (
+      isCarbon &&
+      this.atom.monomer.monomerItem.struct.rgroupAttachmentPoints.some(
+        (point) => point.atomId === this.atom.atomIdInMicroMode,
+      )
+    ) {
+      return false;
+    }
     const visibleTerminal = true;
     const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
@@ -456,6 +465,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get shouldDisplayHydrogen() {
+    const points = this.atom.monomer.monomerItem.struct.rgroupAttachmentPoints;
+    if (points.some((point) => point.atomId === this.atom.atomIdInMicroMode)) {
+      return false;
+    }
     // Remove when rules for displaying hydrogen are implemented same as in molecules mode
     return this.atom.label !== AtomLabel.C || this.isAtomTerminal;
   }

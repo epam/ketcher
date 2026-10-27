@@ -24,7 +24,7 @@ import {
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
-import { BaseMonomer, shortcutStr } from 'ketcher-core';
+import { BaseMonomer, EditorHistory, shortcutStr } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -33,7 +33,7 @@ import {
   isAntisenseOptionVisible,
   isCycleExistsForSelectedMonomers,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
@@ -100,6 +100,31 @@ export function TopMenuComponent() {
       editor?.events.selectEntities.remove(selectEntitiesHandler);
     };
   }, [editor]);
+
+  // The history lives outside React. Reading it through useSyncExternalStore
+  // keeps the buttons in step with it from the first paint on, and re-renders
+  // only when one of the two booleans actually changes.
+  const subscribeToHistory = useCallback(
+    (onHistoryChange: () => void) => {
+      if (!editor) {
+        return () => {};
+      }
+
+      editor.events.modelChange.add(onHistoryChange);
+
+      return () => {
+        editor.events.modelChange.remove(onHistoryChange);
+      };
+    },
+    [editor],
+  );
+  const history = editor ? EditorHistory.getInstance(editor) : undefined;
+  const canUndo = useSyncExternalStore(subscribeToHistory, () =>
+    Boolean(history && history.historyPointer > 0),
+  );
+  const canRedo = useSyncExternalStore(subscribeToHistory, () =>
+    Boolean(history && history.historyPointer < history.historyStack.length),
+  );
 
   const menuItemHandlers = createMenuItemHandlers({
     editor,
@@ -195,13 +220,13 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="undo"
           title={t('topMenu.undo', { shortcut: hotkeysShortcuts.undo })}
-          disabled={isDisabled}
+          disabled={isDisabled || !canUndo}
           testId="undo"
         />
         <Menu.Item
           itemId="redo"
           title={t('topMenu.redo', { shortcut: hotkeysShortcuts.redo })}
-          disabled={isDisabled}
+          disabled={isDisabled || !canRedo}
           testId="redo"
         />
       </Menu.Group>

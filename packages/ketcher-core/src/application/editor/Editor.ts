@@ -306,6 +306,7 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private settingsUnsubscribe?: () => void;
 
   constructor({
     ketcherId,
@@ -365,6 +366,27 @@ export class CoreEditor {
     setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
+    this.subscribeToSettingsChanges();
+  }
+
+  private subscribeToSettingsChanges() {
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    const settingsService = ketcher?.settingsService;
+
+    if (!settingsService) {
+      return;
+    }
+
+    let previousShowValenceWarnings =
+      settingsService.getSettings().showValenceWarnings;
+
+    this.settingsUnsubscribe = settingsService.subscribe((settings) => {
+      if (settings.showValenceWarnings !== previousShowValenceWarnings) {
+        previousShowValenceWarnings = settings.showValenceWarnings;
+        this.drawingEntitiesManager.rerenderMolecules();
+        this.renderersContainer.runPostRenderMethods();
+      }
+    });
   }
 
   private resetCanvasOffset() {
@@ -2431,6 +2453,9 @@ export class CoreEditor {
     this.cleanupsForDomEvents.forEach((cleanupFunction) => {
       cleanupFunction();
     });
+
+    this.settingsUnsubscribe?.();
+    this.settingsUnsubscribe = undefined;
   }
 
   get trackedDomEvents() {

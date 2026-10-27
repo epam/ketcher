@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -28,10 +27,15 @@ import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
 import { Dialog } from '../../../../components';
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input';
 import OpenButton from '../../../../../component/view/openbutton';
+import type { FileContent } from '../../../../../component/view/openButton.types';
 import { SaveButton } from '../../../../../component/view/savebutton';
 import Select from '../../../../../component/form/Select';
 import Accordion from './Accordion';
-import { type StructService, KetcherLogger } from 'ketcher-core';
+import {
+  type SettingsFormValue,
+  type StructService,
+  KetcherLogger,
+} from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
 import { connect } from 'react-redux';
@@ -49,7 +53,7 @@ import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;
-  initState: any;
+  initState: SettingsFormValue;
   appOpts: {
     version: string;
     buildDate: string;
@@ -63,7 +67,7 @@ interface SettingsProps extends BaseProps {
 }
 
 interface SettingsCallProps extends BaseCallProps {
-  onOpenFile: (any) => void;
+  onOpenFile: (content: File | FileContent) => void;
   onReset: () => void;
   onACSStyle: (result) => void;
 }

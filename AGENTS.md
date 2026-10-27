@@ -24,26 +24,26 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 
 `.memory-bank/` is the knowledge base. Read it before any non-trivial task: before implementing, fixing, refactoring, writing tests, or designing a change, and whenever architecture, domain terms, or invariants are unclear. Each fact has one owner file. Other files link to it and do not restate it.
 
-| Fact                                           | Owner                                            | Format                                                                                 |
-| ---------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Current product behavior (WHEN/THEN scenarios) | `openspec/specs/<capability>/spec.md`            | Requirements with SHALL text and scenarios. Archiving a change merges its deltas here. |
-| Feature summary and limitations                | `.memory-bank/features/<name>.md`                | Title, problem, link to the spec, Limitations, Related. No second copy of behavior.    |
-| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                               |
-| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints |
-| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                   |
-| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                              |
-| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                       |
-| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                    |
-| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                  |
-| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                              |
-| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                              |
-| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source               |
-| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                  |
-| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                    |
-| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                  |
-| Public API reference                           | `packages/ketcher-core/docs/`                    | Committed, not regenerated. Planned: generated TypeDoc in CI, not committed (D12)      |
-| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                               |
-| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                   |
+| Fact                                           | Owner                                            | Format                                                                                                 |
+| ---------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Current product behavior (WHEN/THEN scenarios) | `openspec/specs/<capability>/spec.md`            | Requirements with SHALL text and scenarios. Archiving a change merges its deltas here.                 |
+| Feature summary and limitations                | `.memory-bank/features/<name>.md`                | Title, problem, link to the spec, Limitations, Related. No second copy of behavior.                    |
+| Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                               |
+| Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                 |
+| Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                   |
+| Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                              |
+| Non-negotiable rules                           | `.memory-bank/invariants.md`                     | Labeled IDs (D1, A1, B1, ...), each a rule that must never break                                       |
+| Architecture decisions                         | `.memory-bank/adr/YYYY-MM-DD-<title>.md`         | Decision, Context, Alternatives considered, Rationale, Consequences                                    |
+| File formats (KET, MOL)                        | `.memory-bank/formats/`                          | Format specifications and their index                                                                  |
+| E2E testing strategy                           | `.memory-bank/testing/testing.md`                | Levels, locations, how to run, selector and fixture rules                                              |
+| Plan for a new E2E spec file                   | `.memory-bank/testing/e2e-test-plan-template.md` | Plan structure, approved before spec code                                                              |
+| Review rules                                   | `.memory-bank/review-rules.md`                   | `### R<n>` blocks with Scope, Severity, Enforced by, Status, Why, Source                               |
+| Accepted review patterns                       | `.memory-bank/accepted-patterns.md`              | `###` per pattern: Where, Why it is accepted, Example                                                  |
+| Coding standards                               | `.memory-bank/coding-standards.md`               | Conventions, each with its evidence                                                                    |
+| PR types and review output                     | `.memory-bank/review-workflow.md`                | Flows, PR-type table, output contract                                                                  |
+| Public API reference                           | `packages/ketcher-core/docs/`                    | Generated TypeDoc output. It is committed and not regenerated, so check the source before you trust it |
+| Setup and development                          | `DEVNOTES.md`                                    | Human-facing setup guide                                                                               |
+| Agent rules                                    | `AGENTS.md`                                      | Tool files link here                                                                                   |
 
 Rules for updating the memory bank:
 
@@ -66,7 +66,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 ## Git and commits
 
 - Work on a feature branch. Commit, push it, and open a PR without asking. `master` is protected, so every change lands through PR review.
-- Two flows stop for review before each commit, because a user starts them to check each one: the `/commit` skill and `prepare-release`.
+- Exception: the `/commit` skill and `prepare-release` show the staged diff and wait for approval before each commit. Their purpose is that review.
 - Do not commit to `master` or a release branch, force-push a branch someone else works on, or merge a PR.
 - Commit subjects and PR titles use the form in [coding-standards.md](.memory-bank/coding-standards.md#tooling-and-process).
 

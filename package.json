@@ -33,7 +33,10 @@
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",
     "serve:demo": "cd demo && npm run serve",
-    "up": "node ./scripts/build-run.mjs"
+    "up": "node ./scripts/build-run.mjs",
+    "check:agent-docs": "node scripts/check-agent-docs.mjs",
+    "generate:agent-instructions": "node scripts/generate-agent-instructions.mjs",
+    "test:scripts": "node --test \"scripts/**/*.test.mjs\""
   },
   "devDependencies": {
     "@eslint/css": "^1.4.0",

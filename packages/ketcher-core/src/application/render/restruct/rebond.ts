@@ -92,10 +92,10 @@ class ReBond extends ReObject {
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
     const beginAtom = restruct.getBondEndpoint(
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
+      this.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
     const endAtom = restruct.getBondEndpoint(
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
+      this.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
     );
 
     if (

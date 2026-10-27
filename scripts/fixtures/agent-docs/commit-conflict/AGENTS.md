@@ -1,3 +1,3 @@
 # Agent rules
 
-Ask before you commit, push, or open a PR.
+Commit, push it, and open a PR without asking.

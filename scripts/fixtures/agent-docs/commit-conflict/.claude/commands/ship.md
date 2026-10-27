@@ -1,3 +1,3 @@
 # Ship
 
-Commit the change and push the branch.
+Ask the user before you commit.

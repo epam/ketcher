@@ -144,15 +144,14 @@ test('a lint claim is checked against the ESLint level for a file in Scope', () 
   assert.deepEqual(check(passing, CHECKS), []);
 });
 
-test('an agent file that commits and pushes contradicts the ask-first file, unless it is an unattended agent', () => {
-  const agents = 'Ask before you commit, push, or open a PR.\n';
+test('an agent file that asks before committing contradicts AGENTS.md, unless it is a user-reviewed commit flow', () => {
+  const agents = 'Commit, push it, and open a PR without asking.\n';
   const repo = memoryRepo({
     [RULE_FILE]: RULES,
     ...generatedFor(RULES),
     'AGENTS.md': agents,
-    '.claude/commands/ship.md': 'Commit the change and push the branch.\n',
-    '.claude/agents/ticket-implementer.md':
-      'Commit the unit and push the branch.\n',
+    '.claude/commands/ship.md': 'Ask the user before you commit.\n',
+    '.github/skills/commit/SKILL.md': 'Commit only after the user approves.\n',
   });
   assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
     ['conflict', '.claude/commands/ship.md'],

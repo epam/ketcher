@@ -33,12 +33,11 @@ const CHECK_FILE = 'scripts/check-agent-docs.mjs';
 
 // Data tables. Edit these when a doc set or a conflict pattern changes.
 
-// Agents that may commit and push without asking (D14). Their commit step is
-// the exception to the ask-first rule, so they are not a conflict source.
-const UNATTENDED_AGENTS = [
-  '.claude/agents/ticket-implementer.md',
-  '.claude/agents/ticket-sweep.md',
-  '.claude/skills/handle-tickets/SKILL.md',
+// Flows a user starts to review each commit (the /commit skill, release
+// commits). Their ask-before-commit steps are not a conflict source.
+const USER_REVIEWED_COMMIT_FLOWS = [
+  '.github/skills/commit/SKILL.md',
+  '.claude/skills/prepare-release/SKILL.md',
 ];
 
 // Each conflict lists two sides. A match on the second side in one file that
@@ -49,14 +48,14 @@ const CONFLICTS = [
     fix: 'make the agent files agree with AGENTS.md "Git and commits"',
     sides: [
       {
-        name: 'ask before commit',
-        pattern:
-          /\bask\b[^.\n]*\bbefore (?:you )?commit\b|\bcommit only after\b/i,
+        name: 'commit without asking',
+        pattern: /\bcommit\b[^.\n]*\bwithout asking\b/i,
       },
       {
-        name: 'commit and push without asking',
-        pattern: /\bcommit\b[^.\n]*\band push\b/i,
-        exempt: UNATTENDED_AGENTS,
+        name: 'ask before commit',
+        pattern:
+          /\bask\b[^.\n]*\bbefore (?:you )?commit(?:ting)?\b|\bcommit only after\b/i,
+        exempt: USER_REVIEWED_COMMIT_FLOWS,
       },
     ],
   },
@@ -136,13 +135,17 @@ const pathsExist = {
     for (const doc of docPaths(files)) {
       for (const ref of pathRefs(repo.read(doc) ?? '')) {
         const { token, line } = ref;
-        if (isCheckedRef(ref, roots) && !refResolves(index, doc, token)) {
+        if (
+          isCheckedRef(ref, roots) &&
+          !refResolves(index, doc, token) &&
+          !repo.ignored?.(token)
+        ) {
           findings.push({
             code: 'path-missing',
             file: doc,
             line,
             message: `"${token}" does not exist in the repo`,
-            fix: 'fix the path, or delete the reference. Ignored files do not count.',
+            fix: 'fix the path, or delete the reference. Gitignored paths (build output) are allowed.',
           });
         }
       }
@@ -294,7 +297,8 @@ export function check(repo, checks = CHECKS) {
 
 /**
  * Repo adapter for a git work tree. `files` lists tracked and untracked,
- * non-ignored files that exist on disk. `exec` runs a command in the root.
+ * non-ignored files that exist on disk. `ignored` says whether .gitignore
+ * covers a path. `exec` runs a command in the root.
  */
 export function diskRepo(root) {
   const listed = spawnSync(
@@ -314,6 +318,16 @@ export function diskRepo(root) {
     .sort();
   return {
     files: () => files,
+    ignored(path) {
+      const result = spawnSync(
+        'git',
+        ['check-ignore', '-q', '--no-index', path],
+        {
+          cwd: root,
+        },
+      );
+      return result.status === 0;
+    },
     read(file) {
       try {
         return readFileSync(join(root, file), 'utf8');

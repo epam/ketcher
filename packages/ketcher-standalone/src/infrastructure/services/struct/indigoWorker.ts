@@ -273,7 +273,7 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
             data.format,
             indigoOptions,
           ),
-        undefined,
+        data.options,
         Command.ExplicitHydrogens,
       );
       break;

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -120,7 +120,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const requestIdle = globalThis.requestIdleCallback;
+    const requestIdle = window.requestIdleCallback;
     if (typeof requestIdle === 'function') {
       const callback = requestIdle(
         () => {
@@ -133,18 +133,18 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
         { timeout: PREVIEW_IDLE_TIMEOUT_MS },
       );
       return () => {
-        globalThis.cancelIdleCallback?.(callback);
+        window.cancelIdleCallback?.(callback);
       };
     }
 
-    const frameId = globalThis.requestAnimationFrame(() => {
+    const frameId = window.requestAnimationFrame(() => {
       startTransition(() => {
         setPreviewRenderedCount((prev) =>
           Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
         );
       });
     });
-    return () => globalThis.cancelAnimationFrame(frameId);
+    return () => window.cancelAnimationFrame(frameId);
   }, [previewRenderedCount, templates.length, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls

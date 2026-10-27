@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,13 +20,9 @@ import type { Struct } from './struct';
 import { assert, KetcherLogger } from 'utilities';
 
 export class SGroupForest {
-  /**
-  node id -> parent id
-  */
+  /** node id -> parent id */
   parent: Map<number, number>;
-  /**
-  node id -> list of child ids
-  */
+  /** node id -> list of child ids */
   children: Map<number, number[]>;
   atomSets: Map<number, Pile<number>>;
 
@@ -38,12 +34,10 @@ export class SGroupForest {
     this.atomSets = new Map();
   }
 
-  /**
-  returns an array or s-group ids in the order of breadth-first search
-  */
+  /** returns an array or s-group ids in the order of breadth-first search */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
-    const queue = [...(this.children.get(-1) as Array<number>)];
+    const queue = Array.from(this.children.get(-1) as Array<number>);
     while (queue.length > 0) {
       const id = queue.shift();
       if (typeof id !== 'number') {
@@ -79,7 +73,7 @@ export class SGroupForest {
       );
     });
 
-    const parents = [...this.atomSets.keys()].filter((sgid) => {
+    const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
       if (isSubset.get(sgid) !== true) {
         return false;
       }
@@ -89,7 +83,7 @@ export class SGroupForest {
       );
     });
 
-    const children = [...this.atomSets.keys()].filter((id) => {
+    const children = Array.from(this.atomSets.keys()).filter((id) => {
       const parentId = this.parent.get(id);
       if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
         return false;
@@ -164,8 +158,8 @@ export class SGroupForest {
     try {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
-    } catch (error) {
-      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', error);
+    } catch (e) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
       console.info('error: sgid is not in the forest');
     }
 
@@ -217,5 +211,5 @@ export function checkOverlapping(
     return atom ? res.union(atom.sgs) : res;
   }, new Pile<number>());
 
-  return [...sgroups].some(searchFunction[sGroupType]);
+  return Array.from(sgroups).some(searchFunction[sGroupType]);
 }

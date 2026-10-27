@@ -2,7 +2,7 @@ import { ReStruct, Vec2 } from 'ketcher-core';
 
 export function getSelectionMap(structure: ReStruct) {
   return Object.keys(ReStruct.maps).reduce((result, map) => {
-    result[map] = [...structure[map].keys()];
+    result[map] = Array.from(structure[map].keys());
     return result;
   }, {});
 }

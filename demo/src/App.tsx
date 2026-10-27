@@ -89,10 +89,8 @@ const App = () => {
             structServiceProvider={structServiceProvider}
             errorHandler={(err) => console.log(err)}
             onInit={(ketcher: Ketcher) => {
-              (globalThis as any).ketcher = ketcher;
-              (globalThis as any).KetcherFunctions = KetcherAPI(
-                globalThis.ketcher,
-              );
+              (global as any).ketcher = ketcher;
+              (global as any).KetcherFunctions = KetcherAPI(global.ketcher);
             }}
           />
         </KetcherBox>

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,7 @@ function pollDeferred<T>(
             reject(normalizeError(error));
           }
         },
-        (error) => reject(normalizeError(error)),
+        (err) => reject(normalizeError(err)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);
@@ -261,10 +261,10 @@ export class RemoteStructService implements StructService {
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
-    } catch (error) {
+    } catch (e) {
       KetcherLogger.error(
         'remoteStructService.ts::RemoteStructService::info',
-        error,
+        e,
       );
       indigoVersion = '';
       imagoVersions = [];

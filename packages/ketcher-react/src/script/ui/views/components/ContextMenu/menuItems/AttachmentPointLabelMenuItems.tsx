@@ -47,7 +47,7 @@ const AttachmentPointLabelMenuItems = ({
       position: Coordinates.modelToView(leavingAtom.pp),
     };
 
-    globalThis.dispatchEvent(
+    window.dispatchEvent(
       new CustomEvent<AttachmentPointClickData>(
         MonomerCreationAttachmentPointClickEvent,
         {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -460,9 +460,7 @@ function findClosestRgroupAttachmentPoints(
   minDistToOtherItems: number | null,
 ) {
   let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
-  /**
-  @type {number | undefined}
-  */
+  /** @type {number | undefined} */
   let closestItemId;
 
   restruct.visibleRGroupAttachmentPoints.forEach((reItem, id) => {
@@ -699,7 +697,7 @@ function findCloseMerge(
 
   maps.forEach((map) => {
     if (map === 'atoms') {
-      [...pos.atoms.keys()].forEach((atomId) => {
+      Array.from(pos.atoms.keys()).forEach((atomId) => {
         const atomPosition = pos.atoms.get(atomId);
         if (!atomPosition) return;
         const merged = mergeAtomToAtom(
@@ -715,21 +713,20 @@ function findCloseMerge(
       });
     } else {
       const posMap = (pos as Record<string, Map<number, Vec2>>)[map];
-      result[map] = [...posMap.keys()].reduce<Map<number, number>>(
-        (res, srcId) => {
-          const skip: SkipItem = { map, id: srcId };
-          const srcPos = posMap.get(srcId);
-          if (!srcPos) return res;
-          const item = findMaps[map](restruct, srcPos, skip, null, options);
+      result[map] = Array.from<number>(posMap.keys()).reduce<
+        Map<number, number>
+      >((res, srcId) => {
+        const skip: SkipItem = { map, id: srcId };
+        const srcPos = posMap.get(srcId);
+        if (!srcPos) return res;
+        const item = findMaps[map](restruct, srcPos, skip, null, options);
 
-          if (item && !selected[map].includes(item.id)) {
-            res.set(srcId, item.id);
-          }
+        if (item && !selected[map].includes(item.id)) {
+          res.set(srcId, item.id);
+        }
 
-          return res;
-        },
-        new Map(),
-      );
+        return res;
+      }, new Map());
     }
   });
 
@@ -789,7 +786,7 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
   );
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
-  return [...reStruct.images.entries()].reduce(
+  return Array.from(reStruct.images.entries()).reduce(
     (acc: ClosestReturnType<ImageReferencePositionInfo>, [id, item]) => {
       const distanceToPoint = item.calculateDistanceToPoint(
         canvasScaledPosition,
@@ -828,7 +825,7 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
 
-  return [...reStruct.multitailArrows.entries()].reduce(
+  return Array.from(reStruct.multitailArrows.entries()).reduce(
     (acc: ClosestReturnType<unknown>, [id, item]) => {
       const { distance, ref } = item.calculateDistanceToPoint(
         canvasScaledPosition,

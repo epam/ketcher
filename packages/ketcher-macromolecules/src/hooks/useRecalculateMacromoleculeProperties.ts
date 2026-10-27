@@ -111,10 +111,10 @@ export const useRecalculateMacromoleculeProperties = () => {
 
         notifyRequestCompleted();
         dispatch(setMacromoleculesProperties(macromoleculeProperties));
-      } catch (error) {
+      } catch (e) {
         KetcherLogger.error(
           'Error during parsing macromolecule properties: ',
-          error,
+          e,
         );
 
         dispatch(setMacromoleculesProperties(undefined));

@@ -19,7 +19,7 @@ const useMarkAs = () => {
 
   const handler = useCallback(
     (componentType: RnaPresetComponentType) => (_params: Params) => {
-      globalThis.dispatchEvent(
+      window.dispatchEvent(
         new CustomEvent<RnaPresetComponentType>(
           MonomerCreationMarkAsComponentAction,
           { detail: componentType },

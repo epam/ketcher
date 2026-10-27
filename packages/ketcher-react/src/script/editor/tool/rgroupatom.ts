@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -146,8 +146,8 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch((error) => {
-      KetcherLogger.error('rgroupatom.ts:propsDialog', error);
+    .catch((e) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
     }); // w/o changes
 }
 

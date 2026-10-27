@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +18,6 @@
 import {
   Action,
   Atom,
-  type AtomAttributes,
-  type ElementLabel,
   Bond,
   FunctionalGroup,
   SGroup,
@@ -35,19 +34,18 @@ import {
 
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
-import type { AtomToolDragContext } from './atom.types';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProps: AtomAttributes;
-  private dragCtx?: AtomToolDragContext;
+  private readonly atomProps: any;
+  private dragCtx: any;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor: Editor, atomProps: AtomAttributes) {
+  constructor(editor, atomProps) {
     this.editor = editor;
     this.atomProps = atomProps;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
@@ -99,7 +97,7 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProps.label as ElementLabel;
+      this.editor.hoverIcon.label = atomProps.label;
       this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
     }
@@ -373,8 +371,8 @@ export function atomLongtapEvent(tool, render) {
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch((error) => {
-        KetcherLogger.error('atom.ts::atomLongtapEvent', error);
+      .catch((e) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
       }); // w/o changes
   }, 750);
 

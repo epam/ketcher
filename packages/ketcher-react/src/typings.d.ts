@@ -4,7 +4,8 @@ declare module '*.less' {
 }
 
 declare namespace JSX {
-  type Element = React.JSX.Element;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type Element = React.ReactElement<any, any>;
 }
 
 declare module '*.sdf' {
@@ -50,62 +51,32 @@ interface HTMLElement {
 }
 
 declare module 'subscription' {
-  export type SubscriptionHandler<
-    TDispatchValue = unknown,
-    TDispatchResult = unknown,
-  > = {
-    bivarianceHack(value: TDispatchValue, ...rest: unknown[]): TDispatchResult;
-  }['bivarianceHack'];
-
-  export interface Handler<
-    TDispatchValue = unknown,
-    TDispatchResult = unknown,
-  > {
-    f: SubscriptionHandler<TDispatchValue, TDispatchResult>;
-    once: boolean;
-    priority: number;
-  }
-
-  export class Subscription<
-    TDispatchValue = unknown,
-    TDispatchResult = unknown,
-  > {
-    handlers: Array<Handler<TDispatchValue, TDispatchResult>>;
-    handlersForDispatch(): typeof this.handlers;
-    add(
-      handler: SubscriptionHandler<TDispatchValue, TDispatchResult>,
-      priority?: number,
-    ): void;
-    addOnce(
-      handler: SubscriptionHandler<TDispatchValue, TDispatchResult>,
-      priority?: number,
-    ): void;
-    remove(handler: SubscriptionHandler<TDispatchValue, TDispatchResult>): void;
-    hasHandler(): boolean;
-    dispatch(value?: TDispatchValue, ...rest: unknown[]): void;
+  export class Subscription<TDispatchValue = any> {
+    handlers: Array<any>;
+    handlersForDispatch: () => typeof this.handlers;
+    add: (f: any, priority?: number) => void;
+    addOnce: (f: any, priority?: number) => void;
+    remove: (f: any) => void;
+    hasHandler: () => boolean;
+    dispatch: (value?: TDispatchValue) => void;
   }
 
   export class PipelineSubscription<
-    TDispatchValue = unknown,
-    TDispatchResult = unknown,
-  > extends Subscription<TDispatchValue, TDispatchResult> {
-    dispatch(value?: TDispatchValue): TDispatchResult;
+    TDispatchValue = any,
+  > extends Subscription<TDispatchValue> {
+    dispatch: (value?: TDispatchValue) => any;
   }
 
   export class StoppableSubscription<
-    TDispatchValue = unknown,
-    TDispatchResult = unknown,
-  > extends Subscription<TDispatchValue, TDispatchResult> {
-    dispatch(
-      value?: TDispatchValue,
-      ...rest: unknown[]
-    ): TDispatchResult | undefined;
+    TDispatchValue = any,
+  > extends Subscription<TDispatchValue> {
+    dispatch: (value?: TDispatchValue) => any;
   }
 
   export class DOMSubscription<
-    TDispatchEvent = unknown,
+    TDispatchEvent = any,
   > extends Subscription<TDispatchEvent> {
-    dispatch(event: TDispatchEvent): boolean;
+    dispatch: (event: TDispatchEvent) => boolean;
   }
 }
 

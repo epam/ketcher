@@ -244,16 +244,18 @@ const MonomerCreationWizardFields = (
         {(assignedAttachmentPoints.size > 0 ||
           readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
-            {[...assignedAttachmentPoints.entries()].map(([name, atomPair]) => (
-              <AttachmentPoint
-                name={name}
-                editor={editor}
-                onNameChange={handleAttachmentPointNameChange}
-                onLeavingAtomChange={handleLeavingAtomChange}
-                onRemove={handleAttachmentPointRemove}
-                key={`${name}-${atomPair[0]}-${atomPair[1]}`}
-              />
-            ))}
+            {Array.from(assignedAttachmentPoints.entries()).map(
+              ([name, atomPair]) => (
+                <AttachmentPoint
+                  name={name}
+                  editor={editor}
+                  onNameChange={handleAttachmentPointNameChange}
+                  onLeavingAtomChange={handleLeavingAtomChange}
+                  onRemove={handleAttachmentPointRemove}
+                  key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                />
+              ),
+            )}
             {readonlyAttachmentPoints.map(
               ({ name: attachmentPointName, leavingAtomLabel }) => (
                 <ReadonlyAttachmentPoint

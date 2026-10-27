@@ -311,13 +311,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       applyHighlights(selectedTab);
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       MonomerCreationMarkAsComponentAction,
       handleMarkAsComponent,
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         MonomerCreationMarkAsComponentAction,
         handleMarkAsComponent,
       );
@@ -466,7 +466,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               </div>
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
-                  {[...presetAttachmentPoints.entries()].map(
+                  {Array.from(presetAttachmentPoints.entries()).map(
                     ([name, atomPair]) => (
                       <AttachmentPoint
                         name={name}

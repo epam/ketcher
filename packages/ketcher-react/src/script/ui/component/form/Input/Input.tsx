@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -163,7 +163,7 @@ Select.val = function (ev, schema) {
 
   const options = select.options;
 
-  return [...options].reduce(
+  return Array.from(options).reduce(
     (res, o: HTMLOptionElement, i) =>
       !o.selected ? res : [enumSchema(schema, i), ...res],
     [] as HTMLOptionElement[],
@@ -228,7 +228,7 @@ FieldSet.val = function (ev, schema) {
   let result;
 
   if (inputCollection?.length) {
-    result = [...inputCollection].reduce(
+    result = Array.from(inputCollection).reduce(
       (res, inp: HTMLInputElement, i) =>
         !inp.checked ? res : [enumSchema(schema, i), ...res],
 

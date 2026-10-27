@@ -6,7 +6,7 @@ import { Subscription } from 'subscription';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -241,7 +241,7 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('SMILES format is not available in macro mode');
     }
     const format = isExtended
@@ -304,7 +304,7 @@ export class Ketcher {
   }
 
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');
     }
     if (!this.containsReaction()) {
@@ -398,7 +398,7 @@ export class Ketcher {
   }
 
   getSmarts(): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('SMARTS format is not available in macro mode');
     }
     return getStructure(
@@ -410,7 +410,7 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('CML format is not available in macro mode');
     }
     return getStructure(
@@ -422,7 +422,7 @@ export class Ketcher {
   }
 
   getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('SDF format is not available in macro mode');
     }
     const format =
@@ -438,7 +438,7 @@ export class Ketcher {
   }
 
   getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('RDF format is not available in macro mode');
     }
     const format =
@@ -454,7 +454,7 @@ export class Ketcher {
   }
 
   getCDXml(): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('CDXML format is not available in macro mode');
     }
     return getStructure(
@@ -466,7 +466,7 @@ export class Ketcher {
   }
 
   getCDX(): Promise<string> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('CDX format is not available in macro mode');
     }
     return getStructure(
@@ -518,7 +518,7 @@ export class Ketcher {
       hasQueryAtoms = selection.atoms.some((atomId) => {
         const atom = structure.atoms.get(atomId);
         assert(atom);
-        const sGroupIds = [...atom.sgs.values()];
+        const sGroupIds = Array.from(atom.sgs.values());
         const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
           const sGroup = structure.sgroups.get(sGroupId);
           assert(sGroup);
@@ -549,7 +549,7 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (globalThis.isPolymerEditorTurnedOn) {
+      if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
 
@@ -617,7 +617,7 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      if (globalThis.isPolymerEditorTurnedOn) {
+      if (window.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
           !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
 
@@ -652,7 +652,7 @@ export class Ketcher {
     const editor = provideEditorInstance();
 
     await runAsyncAction<void>(async () => {
-      if (globalThis.isPolymerEditorTurnedOn) {
+      if (window.isPolymerEditorTurnedOn) {
         const ketSerializer = new KetSerializer();
         const serializedKet = ketSerializer.serialize(
           new Struct(),
@@ -683,7 +683,7 @@ export class Ketcher {
   }
 
   async layout(): Promise<void> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('Layout is not available in macro mode');
     }
 
@@ -698,7 +698,7 @@ export class Ketcher {
   }
 
   async aromatize(): Promise<void> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('Aromatize is not available in macro mode');
     }
 
@@ -712,7 +712,7 @@ export class Ketcher {
   }
 
   async dearomatize(): Promise<void> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('Dearomatize is not available in macro mode');
     }
 
@@ -726,7 +726,7 @@ export class Ketcher {
   }
 
   async calculate(options?: CalculateData): Promise<CalculateResult> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('Calculate is not available in macro mode');
     }
     return await this._indigo.calculate(this.editor.struct(), options);
@@ -771,7 +771,7 @@ export class Ketcher {
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
-    if (globalThis.isPolymerEditorTurnedOn) {
+    if (window.isPolymerEditorTurnedOn) {
       throw new Error('Recognize is not available in macro mode');
     }
     return this._indigo.recognize(image, { version });

@@ -1,30 +1,21 @@
 import { Subscription } from 'subscription';
-import type {
-  IRnaPreset,
-  ToolEventHandlerName,
-} from 'application/editor/tools/Tool';
+import type { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
-import type {
-  CreateBondViaModalPayload,
-  SelectLayoutModePayload,
-  MonomerCreationWizardRequest,
-} from './editor.types';
-import type { HistoryOperationType } from './EditorHistory';
-import type { AmbiguousMonomerType, MonomerItemType } from 'domain/types';
+import type { MonomerCreationWizardRequest } from './editor.types';
 
 export interface IEditorEvents {
-  selectMonomer: Subscription<MonomerItemType>;
-  selectPreset: Subscription<IRnaPreset>;
+  selectMonomer: Subscription;
+  selectPreset: Subscription;
   selectTool: Subscription;
   selectSelectionTool: Subscription;
-  createBondViaModal: Subscription<CreateBondViaModalPayload>;
+  createBondViaModal: Subscription;
   cancelBondCreationViaModal: Subscription;
-  selectMode: Subscription<SelectLayoutModePayload>;
+  selectMode: Subscription;
   layoutModeChange: Subscription;
-  selectHistory: Subscription<HistoryOperationType>;
+  selectHistory: Subscription;
   error: Subscription;
   openErrorModal: Subscription;
   openMonomerConnectionModal: Subscription;
@@ -85,8 +76,8 @@ export interface IEditorEvents {
   toggleLineLengthHighlighting: Subscription;
   setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
-  autochain: Subscription<MonomerItemType | AmbiguousMonomerType | IRnaPreset>;
-  previewAutochain: Subscription<MonomerItemType | IRnaPreset>;
+  autochain: Subscription;
+  previewAutochain: Subscription;
   removeAutochainPreview: Subscription;
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
@@ -97,15 +88,15 @@ export interface IEditorEvents {
 }
 
 export const editorEvents: IEditorEvents = {
-  selectMonomer: new Subscription<MonomerItemType>(),
-  selectPreset: new Subscription<IRnaPreset>(),
+  selectMonomer: new Subscription(),
+  selectPreset: new Subscription(),
   selectTool: new Subscription(),
   selectSelectionTool: new Subscription(),
-  createBondViaModal: new Subscription<CreateBondViaModalPayload>(),
+  createBondViaModal: new Subscription(),
   cancelBondCreationViaModal: new Subscription(),
-  selectMode: new Subscription<SelectLayoutModePayload>(),
+  selectMode: new Subscription(),
   layoutModeChange: new Subscription(),
-  selectHistory: new Subscription<HistoryOperationType>(),
+  selectHistory: new Subscription(),
   error: new Subscription(),
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
@@ -166,10 +157,8 @@ export const editorEvents: IEditorEvents = {
   toggleLineLengthHighlighting: new Subscription(),
   setLibraryItemDragState: new Subscription(),
   placeLibraryItemOnCanvas: new Subscription(),
-  autochain: new Subscription<
-    MonomerItemType | AmbiguousMonomerType | IRnaPreset
-  >(),
-  previewAutochain: new Subscription<MonomerItemType | IRnaPreset>(),
+  autochain: new Subscription(),
+  previewAutochain: new Subscription(),
   removeAutochainPreview: new Subscription(),
   switchToMacromoleculesMode: new Subscription(),
   switchToMoleculesMode: new Subscription(),
@@ -179,9 +168,8 @@ export const editorEvents: IEditorEvents = {
   flipVertical: new Subscription(),
 };
 export function resetEditorEvents() {
-  const events: Record<keyof IEditorEvents, Subscription> = editorEvents;
-  for (const key of Object.keys(events) as Array<keyof IEditorEvents>) {
-    events[key] = new Subscription();
+  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
+    editorEvents[key] = new Subscription();
   }
 }
 export const renderersEvents: ToolEventHandlerName[] = [

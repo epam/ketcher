@@ -1940,7 +1940,7 @@ export class DrawingEntitiesManager {
 
     const chainsCollection =
       _chainsCollection ||
-      ChainsCollection.fromMonomers([...this.monomers.values()]);
+      ChainsCollection.fromMonomers(Array.from(this.monomers.values()));
 
     if (!_chainsCollection) {
       chainsCollection.rearrange();
@@ -2911,7 +2911,7 @@ export class DrawingEntitiesManager {
         res.drawingEntities.forEach((entity) =>
           command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
-        return [...selectedDrawingEntities, ...res.drawingEntities];
+        return selectedDrawingEntities.concat(res.drawingEntities);
       },
       [],
     );

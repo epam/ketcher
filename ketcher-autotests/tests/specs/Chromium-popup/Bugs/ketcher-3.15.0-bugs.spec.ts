@@ -738,8 +738,8 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     // Simulate focus loss and return by dispatching blur/focus events
     await page.evaluate(() => {
-      globalThis.dispatchEvent(new Event('blur'));
-      globalThis.dispatchEvent(new Event('focus'));
+      window.dispatchEvent(new Event('blur'));
+      window.dispatchEvent(new Event('focus'));
     });
 
     // After regaining focus, the rotation handle should still be visible

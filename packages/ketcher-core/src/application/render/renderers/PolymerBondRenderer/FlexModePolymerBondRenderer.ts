@@ -178,26 +178,26 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
       if (prevPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
-          this.path += generateCornerFromLeftToBottom();
+          this.path = this.path.concat(generateCornerFromLeftToBottom());
         } else {
-          this.path += generateCornerFromLeftToTop();
+          this.path = this.path.concat(generateCornerFromLeftToTop());
         }
       } else if (cornerPoint.y < nextPoint.y) {
-        this.path += generateCornerFromRightToBottom();
+        this.path = this.path.concat(generateCornerFromRightToBottom());
       } else {
-        this.path += generateCornerFromRightToTop();
+        this.path = this.path.concat(generateCornerFromRightToTop());
       }
     } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
       if (prevPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
-          this.path += generateCornerFromTopToRight();
+          this.path = this.path.concat(generateCornerFromTopToRight());
         } else {
-          this.path += generateCornerFromTopToLeft();
+          this.path = this.path.concat(generateCornerFromTopToLeft());
         }
       } else if (cornerPoint.x < nextPoint.x) {
-        this.path += generateCornerFromBottomToRight();
+        this.path = this.path.concat(generateCornerFromBottomToRight());
       } else {
-        this.path += generateCornerFromBottomToLeft();
+        this.path = this.path.concat(generateCornerFromBottomToLeft());
       }
     }
   }

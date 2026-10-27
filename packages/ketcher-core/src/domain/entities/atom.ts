@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -212,9 +213,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   hasImplicitH?: boolean;
   pseudo!: string;
 
-  /**
-  @deprecated
-  */
+  /** @deprecated */
   get attpnt() {
     return this.attachmentPoints;
   }
@@ -301,10 +300,10 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
-      get() {
+      get: function () {
         return getPseudo(this.label);
       },
-      set(value) {
+      set: function (value) {
         if (isCorrectPseudo(value)) {
           this.label = value;
         }

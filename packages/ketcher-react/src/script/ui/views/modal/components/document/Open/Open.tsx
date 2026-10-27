@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -107,11 +107,11 @@ const Open: FC<Props> = (props) => {
   );
 
   const onFileLoad = (files) => {
-    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
+    if ((window as any).isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
+      (window as any).isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);

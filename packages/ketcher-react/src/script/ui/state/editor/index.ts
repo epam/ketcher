@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -152,7 +152,7 @@ export default function initEditor(
         const params = {
           type: 'atom',
           values: elem.values,
-          disabledIds: [...rgroups.entries()].reduce<number[]>(
+          disabledIds: Array.from(rgroups.entries()).reduce<number[]>(
             (acc, [rgid, rg]) => {
               if (elem.fragId !== undefined && rg.frags.has(elem.fragId))
                 acc.push(rgid);
@@ -201,7 +201,7 @@ export default function initEditor(
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
-        const rgroupLabels = [...struct.rgroups.keys()];
+        const rgroupLabels = Array.from(struct.rgroups.keys());
         if (!rgroup.range) rgroup.range = '>0';
 
         return openDialog(dispatch, 'rgroupLogic', {
@@ -210,14 +210,13 @@ export default function initEditor(
         });
       }
 
-      const disabledIds = [...struct.atoms.values()].reduce<unknown[]>(
+      const disabledIds = Array.from(struct.atoms.values()).reduce<unknown[]>(
         (acc, atom) => {
           if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
-            return [
-              ...acc,
-              ...((fromElement(atom) as { values?: (string | number)[] })
-                ?.values ?? []),
-            ];
+            return acc.concat(
+              (fromElement(atom) as { values?: (string | number)[] })?.values ??
+                [],
+            );
           return acc;
         },
         [],
@@ -258,9 +257,9 @@ export default function initEditor(
         'aromatize',
         serverOpts,
         struct,
-      ).catch((error: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', error);
-        state.editor.errorHandler?.(String(error));
+      ).catch((e: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onAromatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
       });
     },
     onDearomatizeStruct: (struct: Struct) => {
@@ -272,9 +271,9 @@ export default function initEditor(
         'dearomatize',
         serverOpts,
         struct,
-      ).catch((error: unknown) => {
-        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', error);
-        state.editor.errorHandler?.(String(error));
+      ).catch((e: unknown) => {
+        KetcherLogger.error('index.ts::initEditor::onDearomatizeStruct', e);
+        state.editor.errorHandler?.(String(e));
       });
     },
     onMouseDown: () => {

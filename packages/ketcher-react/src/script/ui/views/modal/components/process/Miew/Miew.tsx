@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,9 +74,7 @@ type MiewDialogCallProps = {
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
-/*
-OPTIONS for MIEW
-*/
+/* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
   dark: '0x202020',
   light: '0xcccccc',
@@ -133,9 +131,7 @@ function createMiewOptions(userOpts) {
 
   return options;
 }
-/*
-----------------
-*/
+/* ---------------- */
 const FooterContent = () => {
   const { t } = useTranslation('dialogs');
   return (
@@ -183,8 +179,8 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsInitialized(true);
         })
-        .catch((error) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
+        .catch((e) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
         });
     },
     [miewOpts, server, struct],
@@ -218,10 +214,10 @@ const MiewDialog = ({
       result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
-    } catch (error) {
+    } catch (e) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
-        error,
+        e,
       );
       dispatch(
         showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
@@ -260,10 +256,10 @@ const MiewDialog = ({
           }),
         );
         return;
-      } catch (error) {
+      } catch (e) {
         KetcherLogger.error(
           'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
-          error,
+          e,
         );
         dispatch(
           showSnackbarNotification(
@@ -277,10 +273,10 @@ const MiewDialog = ({
     try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
-    } catch (error) {
+    } catch (e) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
-        error,
+        e,
       );
       dispatch(
         showSnackbarNotification(

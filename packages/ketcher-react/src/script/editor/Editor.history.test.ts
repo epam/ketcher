@@ -76,7 +76,7 @@ describe('History across molecule and macromolecule modes', () => {
   afterEach(() => {
     macro.destroy();
     ketcherProvider.removeKetcherInstance(ketcherId);
-    globalThis.isPolymerEditorTurnedOn = false;
+    window.isPolymerEditorTurnedOn = false;
     document.body.innerHTML = '';
     if (originalGetBBox) {
       SVGElement.prototype.getBBox = originalGetBBox;

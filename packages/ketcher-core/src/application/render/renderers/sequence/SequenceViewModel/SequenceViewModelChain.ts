@@ -34,7 +34,7 @@ export class SequenceViewModelChain {
 
   public get nodes() {
     return this.rows.reduce(
-      (acc, row) => [...acc, ...row.sequenceViewModelItems],
+      (acc, row) => acc.concat(row.sequenceViewModelItems),
       [] as ITwoStrandedChainItem[],
     );
   }

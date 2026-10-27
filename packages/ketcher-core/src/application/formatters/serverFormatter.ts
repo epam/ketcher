@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -79,22 +79,16 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (error: unknown) {
+    } catch (e: unknown) {
       let message;
-      if (
-        error instanceof Error &&
-        error.message === 'Server is not compatible'
-      ) {
+      if (e instanceof Error && e.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        const details = error instanceof Error ? error.message : String(error);
+        const details = e instanceof Error ? e.message : String(e);
         message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error(
-        'serverFormatter.ts::getStringFromStructureAsync',
-        error,
-      );
-      throw new Error(message, { cause: error });
+      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
+      throw new Error(message, { cause: e });
     }
   }
 
@@ -150,17 +144,14 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (error: unknown) {
-      if (
-        !(error instanceof Error) ||
-        error.message !== 'Server is not compatible'
-      ) {
+    } catch (e: unknown) {
+      if (!(e instanceof Error) || e.message !== 'Server is not compatible') {
         KetcherLogger.error(
           'serverFormatter.ts::getStructureFromStringAsync',
-          error,
+          e,
         );
-        const details = error instanceof Error ? error.message : String(error);
-        throw new Error(`Convert error!\n${details}`, { cause: error });
+        const details = e instanceof Error ? e.message : String(e);
+        throw new Error(`Convert error!\n${details}`, { cause: e });
       }
 
       const formatError =
@@ -173,7 +164,7 @@ export class ServerFormatter implements StructFormatter {
           : getPropertiesByFormat(this.#format).name;
 
       throw new Error(`${formatError} is not supported in standalone mode.`, {
-        cause: error,
+        cause: e,
       });
     }
   }

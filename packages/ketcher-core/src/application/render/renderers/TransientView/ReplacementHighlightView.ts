@@ -16,9 +16,7 @@ type UnitedPaperPath = {
 };
 
 export type ReplacementHighlightViewParams = {
-  /**
-  The canvas monomers that will be replaced on drop.
-  */
+  /** The canvas monomers that will be replaced on drop. */
   monomers: BaseMonomer[];
 };
 
@@ -28,17 +26,11 @@ export type ReplacementHighlightViewParams = {
  * system.
  */
 const OUTLINE_COLOR = '#167782';
-/**
-Thickness (px, canvas space) of the outline stroke.
-*/
+/** Thickness (px, canvas space) of the outline stroke. */
 const OUTLINE_THICKNESS = 1;
-/**
-Distance (px, canvas space) the outline sits outside the monomer shapes.
-*/
+/** Distance (px, canvas space) the outline sits outside the monomer shapes. */
 const OUTLINE_GAP = 6;
-/**
-Half-width (px, canvas space) of the neck drawn along intra-preset bonds.
-*/
+/** Half-width (px, canvas space) of the neck drawn along intra-preset bonds. */
 const NECK_HALF_WIDTH = 0.6;
 /**
  * Draws a single smooth path that outlines the whole group of monomers that

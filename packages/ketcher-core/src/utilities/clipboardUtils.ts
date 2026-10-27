@@ -49,8 +49,8 @@ export function legacyCopy(
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (error) {
-    console.error('clipboardUtils.ts::legacyCopy', error);
+  } catch (e) {
+    console.error('clipboardUtils.ts::legacyCopy', e);
     console.info(`Could not write exact type ${curFmt}`);
   }
 }
@@ -75,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  globalThis.dispatchEvent(event);
+  window.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {

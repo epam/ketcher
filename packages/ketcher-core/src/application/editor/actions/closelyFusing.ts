@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,8 +54,8 @@ export function getItemsToFuse(editor, items) {
   const struct = editor.render.ctab.molecule;
 
   const mergeItems = items || {
-    atoms: [...struct.atoms.keys()],
-    bonds: [...struct.bonds.keys()],
+    atoms: Array.from(struct.atoms.keys()),
+    bonds: Array.from(struct.bonds.keys()),
   };
 
   return closestToMerge(
@@ -68,13 +68,13 @@ export function getHoverToFuse(items) {
   if (!items) return null;
 
   const hoverItems = {
-    atoms: [...items.atoms.values()],
-    bonds: [...items.bonds.values()],
+    atoms: Array.from(items.atoms.values()),
+    bonds: Array.from(items.bonds.values()),
     ...(items.functionalGroups && {
-      functionalGroups: [...items.functionalGroups.values()],
+      functionalGroups: Array.from(items.functionalGroups.values()),
     }),
     ...(items.atomToFunctionalGroup && {
-      sgroups: [...items.atomToFunctionalGroup.values()],
+      sgroups: Array.from(items.atomToFunctionalGroup.values()),
     }),
   };
 

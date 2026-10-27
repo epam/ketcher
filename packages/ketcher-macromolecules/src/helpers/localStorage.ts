@@ -2,7 +2,7 @@ class LocalStorageWrapper {
   localStorage: Storage;
 
   constructor() {
-    this.localStorage = globalThis.localStorage;
+    this.localStorage = window.localStorage;
   }
 
   getItem(key: string) {

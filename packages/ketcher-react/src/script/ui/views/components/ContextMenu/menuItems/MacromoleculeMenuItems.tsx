@@ -114,9 +114,7 @@ const MacromoleculeMenuItems = (
     editor.focusCliparea();
   };
 
-  /**
-  Apply / remove hover highlight on all canvas instances of the same monomer code.
-  */
+  /** Apply / remove hover highlight on all canvas instances of the same monomer code. */
   const setEditAllHover = (isHovering: boolean) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const render = editor.render;

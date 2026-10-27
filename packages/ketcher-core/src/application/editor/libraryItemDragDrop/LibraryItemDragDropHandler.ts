@@ -40,17 +40,11 @@ import {
 } from './replacementHelpers';
 import { KetcherLogger } from 'utilities';
 
-/**
-AP bond-target ring threshold in canvas pixels.
-*/
+/** AP bond-target ring threshold in canvas pixels. */
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
-/**
-AP snap-circle hover threshold in canvas pixels.
-*/
+/** AP snap-circle hover threshold in canvas pixels. */
 const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 20;
-/**
-AP replace proximity threshold in canvas pixels.
-*/
+/** AP replace proximity threshold in canvas pixels. */
 const DRAG_REPLACE_PROXIMITY_THRESHOLD_PX = 20;
 
 export interface IAutochainMonomerAddResult {
@@ -98,9 +92,7 @@ export interface LibraryItemDragDropHandlerDeps {
 export type ReplacementTargetKind = 'same-geometry-preset' | 'monomer';
 
 export type ReplacementTarget = {
-  /**
-  The canvas monomer nearest to the cursor (center of the hit zone)
-  */
+  /** The canvas monomer nearest to the cursor (center of the hit zone) */
   monomer: BaseMonomer;
   kind: ReplacementTargetKind;
   /**
@@ -135,9 +127,7 @@ export class LibraryItemDragDropHandler {
   private dragCircleHoverTarget: AttachmentPointTarget | null = null;
   private isDragDropBondModalOpen = false;
   private dragDropModalContext: DragDropModalContext | null = null;
-  /**
-  Tracks whether a library-item drag is currently in progress.
-  */
+  /** Tracks whether a library-item drag is currently in progress. */
   private currentDragState: LibraryItemDragState = null;
   /**
    * The current replacement target if the cursor is within
@@ -244,16 +234,12 @@ export class LibraryItemDragDropHandler {
     this.dragDropModalContext = null;
   }
 
-  /**
-  Whether a drag-drop connection modal is currently open.
-  */
+  /** Whether a drag-drop connection modal is currently open. */
   get isModalOpen(): boolean {
     return this.isDragDropBondModalOpen;
   }
 
-  /**
-  Whether a library item is currently being dragged.
-  */
+  /** Whether a library item is currently being dragged. */
   get isDragging(): boolean {
     return this.currentDragState !== null;
   }

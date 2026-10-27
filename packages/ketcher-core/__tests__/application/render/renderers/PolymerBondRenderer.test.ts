@@ -14,9 +14,9 @@ describe('Polymer Bond Renderer', () => {
     polymerBond.moveToLinkedEntities();
     const polymerBondRenderer =
       polymerBond.renderer as FlexModeOrSnakeModePolymerBondRenderer;
-    globalThis.SVGElement.prototype.getBBox = jest.fn();
+    global.SVGElement.prototype.getBBox = jest.fn();
     jest
-      .spyOn(globalThis.SVGElement.prototype, 'getBBox')
+      .spyOn(global.SVGElement.prototype, 'getBBox')
       .mockImplementation(() => ({ width: 30, height: 20 }) as DOMRect);
     polymerBondRenderer.show();
 

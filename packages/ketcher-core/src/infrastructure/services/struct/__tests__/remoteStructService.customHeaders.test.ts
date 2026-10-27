@@ -1,14 +1,14 @@
 import { RemoteStructService } from '../remoteStructService';
 
 describe('RemoteStructService custom headers error handling', () => {
-  const originalFetch = globalThis.fetch;
+  const originalFetch = global.fetch;
 
   afterEach(() => {
-    globalThis.fetch = originalFetch;
+    global.fetch = originalFetch;
   });
 
   it('rejects the returned promise instead of throwing synchronously when fetch throws (e.g. invalid custom headers)', () => {
-    globalThis.fetch = jest.fn(() => {
+    global.fetch = jest.fn(() => {
       throw new TypeError('Invalid value');
     }) as unknown as typeof fetch;
 

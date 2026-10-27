@@ -12,8 +12,8 @@ jest.mock('./TemplateItem', () => ({
   ),
 }));
 
-const originalRequestIdleCallback = globalThis.requestIdleCallback;
-const originalCancelIdleCallback = globalThis.cancelIdleCallback;
+const originalRequestIdleCallback = window.requestIdleCallback;
+const originalCancelIdleCallback = window.cancelIdleCallback;
 
 const createTemplates = (count: number): Template[] =>
   Array.from({ length: count }, (_, index) => {
@@ -47,11 +47,11 @@ describe('TemplateTable', () => {
       return idleCallbacks.length;
     });
 
-    Object.defineProperty(globalThis, 'requestIdleCallback', {
+    Object.defineProperty(window, 'requestIdleCallback', {
       configurable: true,
       value: requestIdleCallback,
     });
-    Object.defineProperty(globalThis, 'cancelIdleCallback', {
+    Object.defineProperty(window, 'cancelIdleCallback', {
       configurable: true,
       value: jest.fn(),
     });
@@ -59,21 +59,21 @@ describe('TemplateTable', () => {
 
   afterEach(() => {
     if (originalRequestIdleCallback) {
-      Object.defineProperty(globalThis, 'requestIdleCallback', {
+      Object.defineProperty(window, 'requestIdleCallback', {
         configurable: true,
         value: originalRequestIdleCallback,
       });
     } else {
-      Reflect.deleteProperty(globalThis, 'requestIdleCallback');
+      Reflect.deleteProperty(window, 'requestIdleCallback');
     }
 
     if (originalCancelIdleCallback) {
-      Object.defineProperty(globalThis, 'cancelIdleCallback', {
+      Object.defineProperty(window, 'cancelIdleCallback', {
         configurable: true,
         value: originalCancelIdleCallback,
       });
     } else {
-      Reflect.deleteProperty(globalThis, 'cancelIdleCallback');
+      Reflect.deleteProperty(window, 'cancelIdleCallback');
     }
   });
 

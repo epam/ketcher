@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,7 @@
 import { KetcherLogger } from 'ketcher-core';
 import type { IStorage } from './types';
 
-/*
-local storage
-*/
+/* local storage */
 export const storage: IStorage = {
   warningMessage:
     'Your changes will be lost after the tab closing. See Help (Note 2).',
@@ -27,8 +25,8 @@ export const storage: IStorage = {
     try {
       const localStorageRef: Storage = globalThis.localStorage;
       return localStorageRef;
-    } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::isAvailable', error);
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::isAvailable', e);
       return false;
     }
   },
@@ -39,10 +37,10 @@ export const storage: IStorage = {
       if (stored !== null) {
         item = JSON.parse(stored);
       }
-    } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::getItem', error);
-      const storageError = error as Error;
-      console.info('LocalStorage:', storageError.name);
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::getItem', e);
+      const error = e as Error;
+      console.info('LocalStorage:', error.name);
     }
     return item;
   },
@@ -51,10 +49,10 @@ export const storage: IStorage = {
     try {
       globalThis.localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
-    } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::setItem', error);
-      const storageError = error as Error;
-      console.info('LocalStorage:', storageError.name);
+    } catch (e: unknown) {
+      KetcherLogger.error('storage-ext.ts::storage::setItem', e);
+      const error = e as Error;
+      console.info('LocalStorage:', error.name);
       isSet = false;
     }
     return isSet;

@@ -81,21 +81,21 @@ const ReadonlyAttachmentPoint = ({
       }
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       'highlightAttachmentPointControls',
       handleHighlight,
     );
-    globalThis.addEventListener(
+    window.addEventListener(
       'resetHighlightAttachmentPointControls',
       handleReset,
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         'highlightAttachmentPointControls',
         handleHighlight,
       );
-      globalThis.removeEventListener(
+      window.removeEventListener(
         'resetHighlightAttachmentPointControls',
         handleReset,
       );

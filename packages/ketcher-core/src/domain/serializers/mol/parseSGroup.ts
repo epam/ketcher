@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -256,7 +256,7 @@ function applySGroupArrayProp(
   if (part.length !== num) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
 
-  sGroups[sid][propName] = [...sGroups[sid][propName], ...part];
+  sGroups[sid][propName] = sGroups[sid][propName].concat(part);
 }
 
 function applyDataSGroupName(sg: SGroup, name: string): void {

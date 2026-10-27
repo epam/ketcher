@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,8 +50,8 @@ async function copyImageToClipboard(): Promise<void> {
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
-  } catch (error) {
-    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', error);
+  } catch (e) {
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
 
     if (errorHandler) {
       errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));

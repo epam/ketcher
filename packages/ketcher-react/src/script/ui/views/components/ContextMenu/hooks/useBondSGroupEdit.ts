@@ -16,7 +16,7 @@ const useBondSGroupEdit = () => {
 
   const handler = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const sGroups = [...sGroupsRef.current];
+    const sGroups = Array.from(sGroupsRef.current);
     SGroupTool.sgroupDialog(editor, sGroups[0]);
   }, [ketcherId]);
 

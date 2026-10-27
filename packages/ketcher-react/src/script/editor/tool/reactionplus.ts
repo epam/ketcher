@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +19,21 @@ import {
   fromMultipleMove,
   fromPlusAddition,
   CoordinateTransformation,
-  type Vec2,
-  type Action,
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
-interface ReactionPlusDragContext {
-  xy0: Vec2;
-  action?: Action;
-}
-
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: ReactionPlusDragContext | undefined;
+  private dragCtx: any;
 
-  constructor(editor: Editor) {
+  constructor(editor) {
     this.editor = editor;
     this.editor.selection(null);
   }
 
-  mousedown(event: PointerEvent) {
+  mousedown(event) {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
@@ -50,7 +44,7 @@ class ReactionPlusTool implements Tool {
     }
   }
 
-  mousemove(event: PointerEvent) {
+  mousemove(event) {
     const editor = this.editor;
     const rnd = editor.render;
 
@@ -89,7 +83,7 @@ class ReactionPlusTool implements Tool {
     return true;
   }
 
-  click(event: PointerEvent) {
+  click(event) {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 

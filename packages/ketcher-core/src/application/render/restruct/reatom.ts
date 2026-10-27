@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -163,18 +163,18 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     const { assignedAttachmentPoints } = render.monomerCreationState;
 
-    const attachmentPointEntry = [...assignedAttachmentPoints.entries()].find(
-      ([, atomsPair]) => {
-        const [attachmentAtomId, leavingAtomId] = atomsPair;
-        return attachmentAtomId === atomId || leavingAtomId === atomId;
-      },
-    );
+    const attachmentPointEntry = Array.from(
+      assignedAttachmentPoints.entries(),
+    ).find(([, atomsPair]) => {
+      const [attachmentAtomId, leavingAtomId] = atomsPair;
+      return attachmentAtomId === atomId || leavingAtomId === atomId;
+    });
 
     if (attachmentPointEntry && hoverElement) {
       const [attachmentPointName] = attachmentPointEntry;
       hoverElement.hover(
         () => {
-          globalThis.dispatchEvent(
+          window.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'highlightAttachmentPointControls',
               {
@@ -184,7 +184,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           );
         },
         () => {
-          globalThis.dispatchEvent(
+          window.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'resetHighlightAttachmentPointControls',
               {
@@ -213,11 +213,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    const potentialLeavingGroups = [...potentialAttachmentPoints.values()];
+    const potentialLeavingGroups = Array.from(
+      potentialAttachmentPoints.values(),
+    );
 
-    const isAtomInAssignedAttachmentPoint = [
-      ...assignedAttachmentPoints.values(),
-    ].some((atomsPair) => {
+    const isAtomInAssignedAttachmentPoint = Array.from(
+      assignedAttachmentPoints.values(),
+    ).some((atomsPair) => {
       const [attachmentAtomId, leavingAtomId] = atomsPair;
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
@@ -774,9 +776,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const [attachmentAtoms, leavingGroups] = [
-          ...assignedAttachmentPoints.values(),
-        ].reduce(
+        const [attachmentAtoms, leavingGroups] = Array.from(
+          assignedAttachmentPoints.values(),
+        ).reduce(
           (acc, currentPair) => {
             const attachmentAtomId = currentPair[0];
             acc[0].add(attachmentAtomId);
@@ -817,13 +819,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
-        const attachmentPointName = [...assignedAttachmentPoints.keys()].find(
-          (key) => {
-            const atomsPair = assignedAttachmentPoints.get(key);
-            assert(atomsPair);
-            return atomsPair[1] === aid;
-          },
-        );
+        const attachmentPointName = Array.from(
+          assignedAttachmentPoints.keys(),
+        ).find((key) => {
+          const atomsPair = assignedAttachmentPoints.get(key);
+          assert(atomsPair);
+          return atomsPair[1] === aid;
+        });
 
         if (attachmentPointName) {
           const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
@@ -927,7 +929,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
 
-              globalThis.dispatchEvent(
+              window.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'highlightAttachmentPointControls',
                   {
@@ -951,7 +953,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
 
-              globalThis.dispatchEvent(
+              window.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'resetHighlightAttachmentPointControls',
                   {
@@ -992,9 +994,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // the connection atom, same visual style as regular attachment atoms
         // but without an R-label. Hover syncs with the panel row.
         if (connectionAttachmentPoints) {
-          const isConnectionAtom = [
-            ...connectionAttachmentPoints.values(),
-          ].some(([connectionAtomId]) => connectionAtomId === aid);
+          const isConnectionAtom = Array.from(
+            connectionAttachmentPoints.values(),
+          ).some(([connectionAtomId]) => connectionAtomId === aid);
 
           if (isConnectionAtom && !problematicAtoms?.has(aid)) {
             // Draw the same blue outline ring used for regular attachment atoms
@@ -1019,7 +1021,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             });
 
             // Find the AP name(s) for this connection atom to drive panel sync
-            const connectionApNames = [...connectionAttachmentPoints.entries()]
+            const connectionApNames = Array.from(
+              connectionAttachmentPoints.entries(),
+            )
               .filter(([, [caid]]) => caid === aid)
               .map(([apName]) => apName);
 
@@ -1027,7 +1031,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0.15 });
                 connectionApNames.forEach((apName) => {
-                  globalThis.dispatchEvent(
+                  window.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'highlightAttachmentPointControls',
                       { detail: apName },
@@ -1038,7 +1042,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0 });
                 connectionApNames.forEach((apName) => {
-                  globalThis.dispatchEvent(
+                  window.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apName },
@@ -1128,10 +1132,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
         if (color !== undefined) {
-          aamPath.node.firstChild.setAttribute('fill', color);
+          aamPath.node.childNodes[0].setAttribute('fill', color);
         }
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
-        aamPath.node.firstChild.setAttribute('fill-opacity', opacity);
+        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
@@ -1656,7 +1660,7 @@ function getOnlyQueryAttributesCustomQuery(atom: Atom) {
 
 function addTooltip(node: SVGElement, text: string) {
   const tooltip = text.split(/(?<=[;,])/).join(' ');
-  (node.firstChild as SVGElement).setAttribute(
+  (node.childNodes[0] as SVGElement).setAttribute(
     'data-tooltip',
     util.escapeHtml(tooltip),
   );
@@ -2212,17 +2216,11 @@ type AtomCustomQueryPropertyName =
   | 'substitutionCount'
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
-  /**
-  Atom property name used to determine whether the query attribute applies.
-  */
+  /** Atom property name used to determine whether the query attribute applies. */
   propertyName: AtomCustomQueryPropertyName;
-  /**
-  Reads the raw atom/query-property value before text normalization.
-  */
+  /** Reads the raw atom/query-property value before text normalization. */
   getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
-  /**
-  Converts a normalized value to its Molfile query attribute representation.
-  */
+  /** Converts a normalized value to its Molfile query attribute representation. */
   format: (value: string) => string;
 };
 
@@ -2421,9 +2419,7 @@ function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }
 
-/**
-Project an axis-aligned box onto AP-local along/perp axes.
-*/
+/** Project an axis-aligned box onto AP-local along/perp axes. */
 function projectBoxOnApAxes(
   W: number,
   H: number,
@@ -2437,9 +2433,7 @@ function projectBoxOnApAxes(
   };
 }
 
-/**
-Count atom-relative visel extents that overlap the candidate canvas-space box.
-*/
+/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
 function countExtOverlaps(
   exts: Box2Abs[],
   atomPos: Vec2,

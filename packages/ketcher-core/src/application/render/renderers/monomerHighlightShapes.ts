@@ -325,9 +325,7 @@ export const createDiamondHighlightPath = (
   );
 };
 
-/**
-A capsule path used to bridge two monomers along an internal polymer bond.
-*/
+/** A capsule path used to bridge two monomers along an internal polymer bond. */
 export const createSegmentHighlightPath = (
   start: Point,
   end: Point,

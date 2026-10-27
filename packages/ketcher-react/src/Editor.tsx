@@ -93,7 +93,7 @@ export const Editor = (props: Props) => {
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
   const togglePolymerEditor = useCallback((toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
-    globalThis.isPolymerEditorTurnedOn = toggleValue;
+    window.isPolymerEditorTurnedOn = toggleValue;
   }, []);
 
   const togglerComponent = !disableMacromoleculesEditor ? (
@@ -164,7 +164,7 @@ export const Editor = (props: Props) => {
 
   useEffect(() => {
     return () => {
-      globalThis.isPolymerEditorTurnedOn = false;
+      window.isPolymerEditorTurnedOn = false;
     };
   }, []);
 

@@ -48,8 +48,8 @@ export function updateSelectedAtoms({
         });
         editor.update(action);
       })
-      .catch((error) => {
-        KetcherLogger.error('atoms.ts::updateSelectedAtoms', error);
+      .catch((e) => {
+        KetcherLogger.error('atoms.ts::updateSelectedAtoms', e);
       });
   }
 }

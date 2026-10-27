@@ -71,7 +71,7 @@ function makeBonds(
   struct: Struct,
   atomsIdMapping: Map<number, number>,
 ) {
-  [...existingStruct.bonds].forEach((value) => {
+  Array.from(existingStruct.bonds).forEach((value) => {
     const [_, bond] = value;
     const clonedBond = bond.clone(atomsIdMapping);
     const isInsideSGroup =

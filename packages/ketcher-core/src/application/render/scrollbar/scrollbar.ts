@@ -50,9 +50,7 @@ export abstract class Scrollbar {
       fill: this.COLOR,
     });
 
-    /**
-    @see https://dmitrybaranovskiy.github.io/raphael/reference.html#Element.drag
-    */
+    /** @see https://dmitrybaranovskiy.github.io/raphael/reference.html#Element.drag */
     bar.drag(
       this.onDragMove,
       this.onDragStart,

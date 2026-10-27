@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,9 +48,7 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
-  // Cast to ToolConstructorInterface: constructor param types are narrower
-  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
-  atom: AtomTool as unknown as ToolConstructorInterface,
+  atom: AtomTool,
   // Cast to ToolConstructorInterface: constructor param types are narrower
   // than `unknown[]`, but toolsMap only ever calls these with the correct args.
   bond: BondTool as unknown as ToolConstructorInterface,

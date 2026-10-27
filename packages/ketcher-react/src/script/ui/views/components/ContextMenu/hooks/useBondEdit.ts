@@ -26,8 +26,8 @@ const useBondEdit = () => {
         const bonds = mapBondIdsToBonds(bondIds, molecule);
         const changeBondPromise = await editor.event.bondEdit.dispatch(bonds);
         updateSelectedBonds({ bonds: bondIds, changeBondPromise, editor });
-      } catch (error) {
-        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', error);
+      } catch (e) {
+        KetcherLogger.error('useBondEdit.ts::useBondEdit::handler', e);
         noOperation();
       }
     },

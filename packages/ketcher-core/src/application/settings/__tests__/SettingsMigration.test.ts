@@ -298,7 +298,7 @@ describe('SettingsMigration', () => {
 
     beforeAll(() => {
       originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(
-        globalThis,
+        global,
         'localStorage',
       );
     });
@@ -306,7 +306,7 @@ describe('SettingsMigration', () => {
     beforeEach(() => {
       mockLocalStorage = {};
 
-      Object.defineProperty(globalThis, 'localStorage', {
+      Object.defineProperty(global, 'localStorage', {
         value: {
           getItem: jest.fn((key: string) => mockLocalStorage[key] || null),
           setItem: jest.fn((key: string, value: string) => {
@@ -324,12 +324,12 @@ describe('SettingsMigration', () => {
     afterEach(() => {
       if (originalLocalStorageDescriptor) {
         Object.defineProperty(
-          globalThis,
+          global,
           'localStorage',
           originalLocalStorageDescriptor,
         );
       } else {
-        Reflect.deleteProperty(globalThis, 'localStorage');
+        Reflect.deleteProperty(global, 'localStorage');
       }
     });
 
@@ -409,7 +409,7 @@ describe('SettingsMigration', () => {
     });
 
     it('should handle localStorage not available', () => {
-      Object.defineProperty(globalThis, 'localStorage', {
+      Object.defineProperty(global, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },

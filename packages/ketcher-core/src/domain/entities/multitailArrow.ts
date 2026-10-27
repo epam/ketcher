@@ -366,7 +366,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   getReferencePositionsArray(): Array<Vec2> {
     const { tails, ...positions } = this.getReferencePositions();
-    return [...Object.values(positions), ...tails.values()];
+    return Object.values(positions).concat(Array.from(tails.values()));
   }
 
   getReferenceLines(
@@ -394,11 +394,10 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   getTailsDistance(
     tailsYOffsets: Array<FixedPrecisionCoordinates>,
   ): Array<TailDistance> {
-    const allTailsOffsets = [
-      ...tailsYOffsets,
+    const allTailsOffsets = tailsYOffsets.concat([
       new FixedPrecisionCoordinates(0),
       this.height,
-    ];
+    ]);
     allTailsOffsets.sort((a, b) => a.sub(b).getFloatingPrecision());
     return allTailsOffsets.reduce(
       (acc: Array<TailDistance>, item, index, array) => {
@@ -407,20 +406,17 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         }
         const distance = item.sub(array[index - 1]);
         const centerFloatingPoint = item.sub(distance.divide(2));
-        return [
-          ...acc,
-          {
-            distance: distance.getFloatingPrecision(),
-            center: centerFloatingPoint.getFloatingPrecision(),
-          },
-        ];
+        return acc.concat({
+          distance: distance.getFloatingPrecision(),
+          center: centerFloatingPoint.getFloatingPrecision(),
+        });
       },
       [],
     );
   }
 
   getTailsMaxDistance(): TailDistance {
-    return this.getTailsDistance([...this.tailsYOffset.values()]).reduce(
+    return this.getTailsDistance(Array.from(this.tailsYOffset.values())).reduce(
       (acc: TailDistance, item) => {
         return item.distance > acc.distance ? item : acc;
       },
@@ -549,7 +545,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       Math.abs(tailDistance.center - proposedPositionFloatingPrecision) -
       tailDistance.distance / 2;
 
-    const tailsWithoutCurrent = [...this.tailsYOffset.entries()]
+    const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
       .filter(([key]) => key !== tailId)
       .map(([_, value]) => value);
     const tailDistances = this.getTailsDistance(tailsWithoutCurrent).filter(
@@ -604,7 +600,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         MultitailArrow.MIN_HEIGHT.value,
       ),
     );
-    const tailsOffset = [...this.tailsYOffset.values()];
+    const tailsOffset = Array.from(this.tailsYOffset.values());
     tailsOffset.sort((a, b) => a.value - b.value);
     const lastTail = tailsOffset.at(-1) || new FixedPrecisionCoordinates(0);
     const firstTail =
@@ -715,12 +711,15 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       ),
     ];
     const tailX = spineTopX.sub(tailLength);
-    const nonBorderTails = [...tailsYOffset.values()].map((yOffset) =>
+    const nonBorderTails = Array.from(tailsYOffset.values()).map((yOffset) =>
       spineTopY.add(yOffset),
     );
     const convertTail = (y: FixedPrecisionCoordinates) =>
       new Vec2(tailX.getFloatingPrecision(), y.getFloatingPrecision());
-    const tails = [spineTopY, ...nonBorderTails, bottomY].map(convertTail);
+    const tails = [spineTopY]
+      .concat(nonBorderTails)
+      .concat(bottomY)
+      .map(convertTail);
 
     return {
       type: MULTITAIL_ARROW_SERIALIZE_KEY,

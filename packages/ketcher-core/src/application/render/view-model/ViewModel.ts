@@ -291,7 +291,7 @@ export class ViewModel {
 
     return {
       newLoops,
-      bondsToMark: [...bondsToMark],
+      bondsToMark: Array.from(bondsToMark),
     };
   }
 

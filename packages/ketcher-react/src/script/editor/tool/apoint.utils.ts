@@ -29,15 +29,15 @@ export async function editRGroupAttachmentPoint(
         fromRGroupAttachmentPointUpdate(
           editor.render.ctab,
           atomId,
-          currentAttachmentPoints ?? null,
+          currentAttachmentPoints,
         );
       const action = actionFromAtomsAttrs.mergeWith(
         actionFromRGroupAttachmentPointUpdate,
       );
       editor.update(action);
     }
-  } catch (error) {
-    KetcherLogger.error('apoint.utils.ts::editRGroupAttachmentPoint', error);
+  } catch (e) {
+    KetcherLogger.error('apoint.utils.ts::editRGroupAttachmentPoint', e);
     // close modal without any operations
   }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,9 +52,10 @@ const EnhancedStereo: FC<Props> = (props) => {
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
-  const stereoLabels: Array<string> = findStereLabels(struct, [
-    ...struct.atoms.keys(),
-  ]);
+  const stereoLabels: Array<string> = findStereLabels(
+    struct,
+    Array.from(struct.atoms.keys()),
+  );
 
   const maxAnd: number = maxOfAnds(stereoLabels);
   const maxOr: number = maxOfOrs(stereoLabels);

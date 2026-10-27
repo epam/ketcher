@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,7 @@ export function prepareStructForKet(struct: Struct) {
     // RGroups writing
     rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
-    const fragsAtoms = [...rgroup.frags.values()].reduce(
+    const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
       new Pile<number>(),
     );
@@ -41,7 +41,7 @@ export function prepareStructForKet(struct: Struct) {
     });
   }
 
-  const filteredFragmentIds = [...struct.frags.keys()].filter(
+  const filteredFragmentIds = Array.from(struct.frags.keys()).filter(
     (fid) => !rgFrags.has(fid),
   );
   addMolecules(ketNodes, filteredFragmentIds, struct);
@@ -99,7 +99,7 @@ export function prepareStructForKet(struct: Struct) {
 
   ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
-      const sgroups: SGroup[] = [...ketNode.fragment.sgroups.values()];
+      const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
       const filteredSGroups = sgroups.filter((sg: SGroup) =>
         sg.atoms.every((atom) => atom !== undefined),
       );
@@ -136,9 +136,9 @@ function addMolecules(
     fragmentIds,
     struct,
   );
-  const mergedFragments = Pile.unionIntersections([
-    ...sGroupFragmentsMap.values(),
-  ]);
+  const mergedFragments = Pile.unionIntersections(
+    Array.from(sGroupFragmentsMap.values()),
+  );
 
   mergedFragments.forEach((fragments) => {
     let atomSet = new Pile<number>();

@@ -31,7 +31,7 @@ describe('Zoom Tool', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
     zoomed.mockClear();
-    globalThis.SVGElement.prototype.getBBox = () =>
+    window.SVGElement.prototype.getBBox = () =>
       ({
         width: 20,
         height: 30,

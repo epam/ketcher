@@ -185,7 +185,7 @@ const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
 const keepInfoNotifications = (notifications: WizardNotifications) =>
   new Map(
-    [...notifications.entries()].filter(
+    Array.from(notifications.entries()).filter(
       ([, notification]) => notification.type === 'info',
     ),
   );
@@ -1023,13 +1023,13 @@ const MonomerCreationWizardInternal = ({
       }
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       MonomerCreationExternalNotificationAction,
       externalNotificationEventListener,
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
       );
@@ -1047,13 +1047,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       MonomerCreationAttachmentPointClickEvent,
       attachmentPointClickHandler,
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         MonomerCreationAttachmentPointClickEvent,
         attachmentPointClickHandler,
       );
@@ -1087,13 +1087,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    globalThis.addEventListener(
+    window.addEventListener(
       MonomerCreationComponentStructureUpdateEvent,
       componentStructureUpdateHandler,
     );
 
     return () => {
-      globalThis.removeEventListener(
+      window.removeEventListener(
         MonomerCreationComponentStructureUpdateEvent,
         componentStructureUpdateHandler,
       );
@@ -1289,9 +1289,9 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const attachmentPointsList = [
-      ...attachmentAtomIdsWithExternalBonds.keys(),
-    ].join(' and ');
+    const attachmentPointsList = Array.from(
+      attachmentAtomIdsWithExternalBonds.keys(),
+    ).join(' and ');
     const message = t(
       'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
       { points: attachmentPointsList },
@@ -1412,7 +1412,9 @@ const MonomerCreationWizardInternal = ({
     const {
       notifications: attachmentPointsNotifications,
       problematicAttachmentPoints,
-    } = validateAttachmentPoints([...monomerAssignedAttachmentPoints.keys()]);
+    } = validateAttachmentPoints(
+      Array.from(monomerAssignedAttachmentPoints.keys()),
+    );
     if (attachmentPointsNotifications.size > 0) {
       wizardStateDispatch({
         type: 'SetNotifications',
@@ -1459,7 +1461,8 @@ const MonomerCreationWizardInternal = ({
       );
       if (leavingGroupNotifications.size > 0) {
         needSaveMonomers = false;
-        const firstMessage = [...leavingGroupNotifications.values()][0].message;
+        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
+          .message;
         setLeavingGroupDialogMessage(firstMessage);
       }
     }
@@ -2137,15 +2140,17 @@ const MonomerCreationWizardInternal = ({
         </p>
 
         <div className={styles.notificationsArea}>
-          {[...notifications.entries()].map(([id, { type, message }]) => (
-            <Notification
-              id={id}
-              type={type}
-              message={message}
-              key={id}
-              onDismiss={handleNotificationDismiss}
-            />
-          ))}
+          {Array.from(notifications.entries()).map(
+            ([id, { type, message }]) => (
+              <Notification
+                id={id}
+                type={type}
+                message={message}
+                key={id}
+                onDismiss={handleNotificationDismiss}
+              />
+            ),
+          )}
         </div>
       </div>
 

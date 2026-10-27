@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -174,8 +174,8 @@ export class Render {
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (error) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
+    } catch (e) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
       console.log('Not a valid settings object');
     }
     return false;
@@ -193,9 +193,7 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /**
-  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
-  */
+  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }

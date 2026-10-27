@@ -28,7 +28,7 @@ export class Command {
 
   public invert(renderersManagers: RenderersManager) {
     const operations = this.undoOperationReverse
-      ? [...this.operations].reverse()
+      ? this.operations.slice().reverse()
       : [...this.operations];
 
     if (this.setUndoOperationByPriority) {

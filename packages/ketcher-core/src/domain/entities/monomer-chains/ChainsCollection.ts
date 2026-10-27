@@ -314,7 +314,7 @@ export class ChainsCollection {
       }
 
       if (monomer === nextMonomerInChain) {
-        cyclicChains.push([...monomersInSameChain]);
+        cyclicChains.push(Array.from(monomersInSameChain));
       }
     });
 
@@ -328,7 +328,7 @@ export class ChainsCollection {
   private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerListShallowCopy = [...monomerList];
+    const monomerListShallowCopy = monomerList.slice();
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
       if (

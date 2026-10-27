@@ -7,7 +7,7 @@ import {
 
 describe('sequenceTypeStorage', () => {
   afterEach(() => {
-    globalThis.localStorage.clear();
+    window.localStorage.clear();
   });
 
   it('defaults to RNA when nothing is persisted', () => {
@@ -23,7 +23,7 @@ describe('sequenceTypeStorage', () => {
   });
 
   it('falls back to RNA when the stored value is invalid', () => {
-    globalThis.localStorage.setItem(
+    window.localStorage.setItem(
       SEQUENCE_TYPE_STORAGE_KEY,
       JSON.stringify('NOT_A_TYPE'),
     );
@@ -36,7 +36,7 @@ describe('sequenceTypeStorage', () => {
       .mockImplementation(() => undefined);
     // Raw, non-JSON string (bypassing JSON.stringify) simulates a corrupted or
     // manually-edited value that makes JSON.parse throw inside getItem.
-    globalThis.localStorage.setItem(SEQUENCE_TYPE_STORAGE_KEY, 'not-json{');
+    window.localStorage.setItem(SEQUENCE_TYPE_STORAGE_KEY, 'not-json{');
 
     expect(getPersistedSequenceType()).toBe(SequenceType.RNA);
     expect(loggerSpy).toHaveBeenCalled();

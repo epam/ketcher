@@ -27,7 +27,7 @@ export function useMacromoleculesHotkeys() {
       }
     });
 
-    globalThis.addEventListener('keydown', handler);
-    return () => globalThis.removeEventListener('keydown', handler);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
 }

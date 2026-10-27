@@ -87,7 +87,7 @@ jest.mock('d3', () => {
   };
 });
 
-globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),

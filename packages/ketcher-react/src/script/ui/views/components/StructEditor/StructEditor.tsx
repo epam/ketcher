@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -246,10 +246,10 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         try {
           const parsedInfo = JSON.parse(msg.info);
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch (error) {
+        } catch (e) {
           KetcherLogger.error(
             'StructEditor.tsx::StructEditor::componentDidMount',
-            error,
+            e,
           );
           el.innerHTML = msg.info;
         }
@@ -260,7 +260,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     });
 
     this.editor.event.tooltip.add((data) => {
-      const message = data ? data.message : '';
+      const message = data ? data.message : undefined;
+
       this.setState({
         tooltip: message,
       });

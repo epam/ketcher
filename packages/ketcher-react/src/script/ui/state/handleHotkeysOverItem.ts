@@ -179,10 +179,10 @@ function handleAtomPropsDialog({
 
         editor.update(updatedAtom);
       })
-      .catch((error) => {
+      .catch((e) => {
         KetcherLogger.error(
           'handleHotkeysOverItem.ts::handleAtomPropsDialog',
-          error,
+          e,
         );
       });
   }
@@ -214,10 +214,10 @@ function handleBondPropsDialog({
 
       editor.update(updatedBond);
     })
-    .catch((error) => {
+    .catch((e) => {
       KetcherLogger.error(
         'handleHoutkeysOverItem.ts::handleBondPropsDialog',
-        error,
+        e,
       );
     });
 }
@@ -399,11 +399,8 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
         fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
       );
     }
-  } catch (error) {
-    KetcherLogger.error(
-      'handleHotkeysOverItem.ts::handleRGroupAtomTool',
-      error,
-    );
+  } catch (e) {
+    KetcherLogger.error('handleHotkeysOverItem.ts::handleRGroupAtomTool', e);
   } // w/o changes
 }
 

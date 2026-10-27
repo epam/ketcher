@@ -33,14 +33,10 @@ export type PresetGeometry = Pick<
 >;
 
 export type BondRecord = {
-  /**
-  The attachment point name on the original monomer
-  */
+  /** The attachment point name on the original monomer */
   attachmentPointName: AttachmentPointName;
   bond: PolymerBond | HydrogenBond | MonomerToAtomBond;
-  /**
-  The other entity involved in the bond
-  */
+  /** The other entity involved in the bond */
   otherEntity: BaseMonomer;
   /**
    * For polymer bonds: the AP name on the *other* monomer that the bond
@@ -50,13 +46,9 @@ export type BondRecord = {
 };
 
 export type BondReestablishmentPlan = {
-  /**
-  Bonds that can be re-established on the new monomer
-  */
+  /** Bonds that can be re-established on the new monomer */
   reestablishable: BondRecord[];
-  /**
-  Bonds that cannot be re-established (AP absent on new monomer)
-  */
+  /** Bonds that cannot be re-established (AP absent on new monomer) */
   lost: BondRecord[];
 };
 

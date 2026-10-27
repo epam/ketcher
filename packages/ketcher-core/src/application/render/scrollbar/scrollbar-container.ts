@@ -19,9 +19,7 @@ export class ScrollbarContainer {
     this.#horizontalBar.destroy();
   }
 
-  /**
-  Specified {@link render} resets scrollbars
-  */
+  /** Specified {@link render} resets scrollbars */
   update() {
     this.#scrollOffset.update();
     this.#verticalBar.update();

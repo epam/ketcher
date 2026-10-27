@@ -62,8 +62,8 @@ export const getAttachmentPointsForRnaPresetComponent = (
   );
 
   return new Map(
-    [...assignedAttachmentPoints.entries()].filter(([, [attachmentAtomId]]) =>
-      componentAtomIds.has(attachmentAtomId),
+    Array.from(assignedAttachmentPoints.entries()).filter(
+      ([, [attachmentAtomId]]) => componentAtomIds.has(attachmentAtomId),
     ),
   );
 };
@@ -258,7 +258,7 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   );
 
   return new Map(
-    [...assignedAttachmentPoints.entries()].filter(
+    Array.from(assignedAttachmentPoints.entries()).filter(
       ([attachmentPointName]) =>
         !occupiedAttachmentPoints.has(attachmentPointName),
     ),

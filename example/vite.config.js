@@ -348,9 +348,7 @@ export default defineConfig({
         ),
       },
 
-      /**
-      Web worker in ketcher-standalone
-      */
+      /** Web worker in ketcher-standalone */
       {
         find: 'web-worker:./../indigoWorker',
         replacement: './../indigoWorker?worker',

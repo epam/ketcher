@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -101,7 +101,7 @@ const shortcutKeys = new Set([
 ]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
-  if (globalThis.isPolymerEditorTurnedOn) {
+  if (window.isPolymerEditorTurnedOn) {
     return true;
   }
   if (state.modal || selectIsAbbreviationLookupOpen(state)) {
@@ -134,7 +134,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     return true;
   }
 
-  abbreviationLookupTimeoutId = globalThis.window.setTimeout(() => {
+  abbreviationLookupTimeoutId = window.setTimeout(() => {
     dispatch(closeAbbreviationLookup());
     abbreviationLookupTimeoutId = undefined;
   }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
@@ -290,9 +290,7 @@ function handleHotkeyGroup(
   }
 }
 
-/*
-HotKeys
-*/
+/* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState();
 
@@ -389,9 +387,7 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
-/*
-ClipArea
-*/
+/* ClipArea */
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
@@ -406,7 +402,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal && !globalThis.isPolymerEditorTurnedOn;
+      return !state.modal && !window.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();
@@ -545,10 +541,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (error: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', error);
+  } catch (e: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', e);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(e.message);
     }
   }
 
@@ -577,10 +573,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (error: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
+  } catch (e: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(e.message);
     }
   }
 

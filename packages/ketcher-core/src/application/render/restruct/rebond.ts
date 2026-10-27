@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -1014,9 +1014,7 @@ function getBondPath(
   return path;
 }
 
-/*
-Get Path
-*/
+/* Get Path */
 function getBondSingleUpPath(
   render: Render,
   hb1: HalfBond,
@@ -1614,7 +1612,10 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
+    path.node.childNodes[0].setAttribute(
+      'data-tooltip',
+      util.escapeHtml(tooltip),
+    );
   }
 
   return path;
@@ -1636,9 +1637,7 @@ function getIdsPath(
   draw.recenterText(ipath, irbb);
   return ipath;
 }
-/*
------
-*/
+/* ----- */
 
 function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   const hb1 = bond.b.hb1;

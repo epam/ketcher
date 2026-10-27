@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,11 +31,11 @@ const TEST_KETCHER_ID = 'use-settings-test';
 
 const detachMockSettingsService = () => {
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
-  delete globalThis.ketcher;
+  delete window.ketcher;
 };
 
 const attachMockSettingsService = (settingsService: ISettingsService) => {
-  globalThis.ketcher = { settingsService } as unknown as Ketcher;
+  window.ketcher = { settingsService } as unknown as Ketcher;
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,

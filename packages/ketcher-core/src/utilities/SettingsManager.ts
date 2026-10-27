@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -74,10 +74,10 @@ export class SettingsManager {
       );
       delete settings.selectionTool;
       return settings;
-    } catch (error) {
+    } catch (e) {
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
-        error,
+        e,
       );
       return {} as SavedSettings;
     }
@@ -108,11 +108,8 @@ export class SettingsManager {
       }
 
       return optionsFromLocalStorage;
-    } catch (error) {
-      KetcherLogger.error(
-        'SettingsManager.ts::SettingsManager::getOptions',
-        error,
-      );
+    } catch (e) {
+      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
       return {} as SavedOptions;
     }
   }
@@ -166,7 +163,7 @@ export class SettingsManager {
       ...newEditorLineLength,
     };
 
-    globalThis.dispatchEvent(
+    window.dispatchEvent(
       new CustomEvent<EditorLineLength>(SetEditorLineLengthAction, {
         detail: editorLineLength,
       }),

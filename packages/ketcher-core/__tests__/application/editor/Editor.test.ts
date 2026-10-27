@@ -1653,7 +1653,7 @@ describe('CoreEditor', () => {
       const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'standby';
 
-      globalThis.dispatchEvent(new Event('blur'));
+      window.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).not.toHaveBeenCalled();
     });
@@ -1663,7 +1663,7 @@ describe('CoreEditor', () => {
       const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'moving';
 
-      globalThis.dispatchEvent(new Event('blur'));
+      window.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).toHaveBeenCalledTimes(1);
     });

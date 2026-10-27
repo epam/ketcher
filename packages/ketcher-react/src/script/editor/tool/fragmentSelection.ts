@@ -300,7 +300,7 @@ export default class FragmentSelectionTool implements Tool {
 
   private queueTooltip(message: string) {
     this.clearTooltip();
-    this.tooltipTimeoutId = globalThis.window.setTimeout(() => {
+    this.tooltipTimeoutId = window.setTimeout(() => {
       this.editor.event.tooltip.dispatch({ message });
     }, TOOLTIP_DELAY);
   }
@@ -414,7 +414,7 @@ export default class FragmentSelectionTool implements Tool {
       }
     }
 
-    return { atoms, bonds: [...bondsSet] };
+    return { atoms, bonds: Array.from(bondsSet) };
   }
 
   private getComponentData(struct: Struct) {

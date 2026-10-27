@@ -40,7 +40,7 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
       atomIds: this.newAtomIds,
       bondIds: this.newBondIds,
     };
-    globalThis.dispatchEvent(
+    window.dispatchEvent(
       new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
         detail: eventData,
       }),

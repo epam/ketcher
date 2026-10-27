@@ -55,7 +55,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           model: claude-sonnet-4-6
           direct_prompt: |
-            1. Use the autotests-generator skill (.claude/skills/autotests-generator/SKILL.md) to generate Playwright autotests based on Autotest Request issue.
+            1. Use the generate-autotests skill (.claude/skills/generate-autotests/SKILL.md) to generate Playwright autotests based on Autotest Request issue.
                AUTOTEST_REQUEST_NUMBER: ${{ github.event.issue.number }}.
                AUTOTEST_REQUEST_TITLE: ${{ github.event.issue.title }}.
                AUTOTEST_REQUEST_URL: ${{ github.event.issue.html_url }}.

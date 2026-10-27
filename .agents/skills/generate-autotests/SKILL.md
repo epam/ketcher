@@ -1,5 +1,5 @@
 ---
-name: autotests-generator
+name: generate-autotests
 description: Generate a Playwright autotest for Ketcher from an Autotest Request issue. Use when asked to write an autotest from an Autotest Request, or when the claude-implement-autotests workflow dispatches it.
 ---
 

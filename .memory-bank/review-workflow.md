@@ -61,7 +61,7 @@ Planned:
 
 ### AI review (planned rebuild: Phase 5)
 
-Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill with four reviewer agents. The rebuild replaces that with these steps:
+Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill with the code-review skill's four lenses. The rebuild replaces that with these steps:
 
 1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md`, `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
 2. **Finders.** Separate passes that read the diff with a suspicion stance (planned: task 5.4).
@@ -79,7 +79,7 @@ AI review may raise a risk tier, never lower it (planned: task 5.5).
 
 ## Output contract
 
-Applies to every AI reviewer, including `/review-pr` and the reviewer agents. Other documents link here instead of restating it.
+Applies to every AI reviewer, including `/review-pr` and the code-review lenses. Other documents link here instead of restating it.
 
 1. **Order.** The first pass reads the diff without the PR description. Then fetch the linked issue and answer one question: does the diff fix it? The answer goes in the brief.
 2. **Severity.**

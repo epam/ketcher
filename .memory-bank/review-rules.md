@@ -112,6 +112,15 @@ Source: PR #9960, PR #10649, PR #10371, PR #9292
 Bad: `const newAid = ...`
 Good: `const newAtomId = ...`
 
+### R16: A change does not push a source file past 1,000 lines
+
+Scope: packages/*/src/**
+Severity: major
+Enforced by: AI
+Status: proposed
+Why: A file past 1,000 lines carries several responsibilities and resists focused review. The rule flags only a file the diff pushes past the threshold; files already over it are not findings.
+Source: agent-docs
+
 ## React and UI
 
 ### R11: Do not use useEffect for event work or derived state, and clean up every subscription

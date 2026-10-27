@@ -68,12 +68,12 @@ Review runs from the branch's worktree, against the run's spec (the issue, the r
    | Reviewer                          | On the panel when the diff                                                                                                                                               |
    | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
    | **spec reviewer**                 | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                             |
-   | `code-quality-reviewer`           | changes code, tests included                                                                                                                                             |
-   | `performance-reviewer`            | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
-   | `documentation-accuracy-reviewer` | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
-   | `security-code-reviewer`          | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
+   | [code-quality](../code-review/code-quality.md)                    | changes code, tests included                                                                                                                                             |
+   | [performance](../code-review/performance.md)                      | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
+   | [documentation-accuracy](../code-review/documentation-accuracy.md) | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
+   | [security](../code-review/security.md)               | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
 
-   The four agents live in `.claude/agents/`, and each file is its reviewer's instructions. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
+   Each dispatches a fresh **reviewer** subagent that reads the [code-review skill](../code-review/SKILL.md) and the lens file this table links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
 
 3. **Fix.** Every finding ends fixed in a new commit or declined with a one-line reason. The flow names which implementer fixes. Blockers and majors are fixed. Batch accepted nits into one commit or decline them.
 

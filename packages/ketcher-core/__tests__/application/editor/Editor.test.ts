@@ -14,6 +14,7 @@ import {
 import type { SelectBase } from 'application/editor/tools/select';
 import { Struct, Vec2 } from 'domain/entities';
 import ZoomTool from 'application/editor/tools/Zoom';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { EditorType } from 'application/editor/editor.types';
 import {
   coreEditorTheme,
@@ -171,6 +172,47 @@ describe('CoreEditor', () => {
       expect(zoomToSpy).toHaveBeenCalledWith(2);
       editor.destroy();
     });
+
+    it('carries the molecules canvas scroll position over to the macro zoom tool', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+
+      const microEditor = {
+        selection: jest.fn(),
+        zoom: jest.fn(() => 1),
+        struct: jest.fn(() => new Struct()),
+        render: {
+          setMolecule: jest.fn(),
+          options: { microModeScale: null },
+          // viewBox center is (minX + width/2, minY + height/2) = (60, 60)
+          viewBox: { minX: 10, minY: 20, width: 100, height: 80 },
+        },
+        addHistoryAction: jest.fn(),
+        macromoleculeConvertionError: undefined,
+      };
+      (
+        editor as unknown as { micromoleculesEditor: unknown }
+      ).micromoleculesEditor = microEditor;
+
+      const scrollToSpy = jest
+        .spyOn(ZoomTool.instance, 'scrollTo')
+        .mockImplementation(() => undefined);
+
+      editor.switchToMacromolecules();
+
+      expect(scrollToSpy).toHaveBeenCalledWith(
+        new Vec2(60, 60),
+        false,
+        50,
+        50,
+        true,
+      );
+      editor.destroy();
+    });
   });
 
   describe('switchToMicromolecules', () => {
@@ -187,7 +229,11 @@ describe('CoreEditor', () => {
         selection: jest.fn(),
         zoom: jest.fn(),
         struct: jest.fn(() => new Struct()),
-        render: { setMolecule: jest.fn(), options: { microModeScale: null } },
+        render: {
+          setMolecule: jest.fn(),
+          setViewBox: jest.fn(),
+          options: { microModeScale: null },
+        },
         addHistoryAction: jest.fn(),
         event: { zoomChanged: { dispatch: zoomChangedDispatch } },
         macromoleculeConvertionError: undefined,
@@ -204,6 +250,54 @@ describe('CoreEditor', () => {
 
       expect(microEditor.zoom).toHaveBeenCalledWith(2);
       expect(zoomChangedDispatch).toHaveBeenCalled();
+      editor.destroy();
+    });
+
+    it('carries the macro canvas scroll position over to the molecules editor', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+
+      const setViewBox = jest.fn();
+      const microEditor = {
+        selection: jest.fn(),
+        zoom: jest.fn(),
+        struct: jest.fn(() => new Struct()),
+        render: {
+          setMolecule: jest.fn(),
+          setViewBox,
+          options: { microModeScale: null },
+        },
+        addHistoryAction: jest.fn(),
+        event: { zoomChanged: { dispatch: jest.fn() } },
+        macromoleculeConvertionError: undefined,
+      };
+      (
+        editor as unknown as { micromoleculesEditor: unknown }
+      ).micromoleculesEditor = microEditor;
+      (editor as unknown as { _type: EditorType })._type =
+        EditorType.Macromolecules;
+
+      jest.spyOn(ZoomTool.instance, 'getZoomLevel').mockReturnValue(1);
+      // The point at the macro viewport center, in canvas coordinates.
+      jest
+        .spyOn(Coordinates, 'viewToCanvas')
+        .mockReturnValue(new Vec2(100, 60));
+
+      editor.switchToMicromolecules();
+
+      expect(setViewBox).toHaveBeenCalled();
+      // The updater re-centers the micro viewBox on the carried-over point.
+      const updater = setViewBox.mock.calls[0][0];
+      expect(updater({ minX: 0, minY: 0, width: 40, height: 20 })).toEqual({
+        minX: 80,
+        minY: 50,
+        width: 40,
+        height: 20,
+      });
       editor.destroy();
     });
   });

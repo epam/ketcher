@@ -14,6 +14,7 @@ import type { MultitailArrowRenderer } from 'application/render/renderers/Multit
 export class MultitailArrow extends DrawingEntity {
   public renderer?: MultitailArrowRenderer = undefined;
   public arrowId?: number;
+  public initiallySelected?: boolean;
 
   constructor(
     private spineTopX: FixedPrecisionCoordinates,
@@ -78,7 +79,7 @@ export class MultitailArrow extends DrawingEntity {
       multitailArrowKetNode,
     );
 
-    return new MultitailArrow(
+    const arrow = new MultitailArrow(
       spineTopX,
       spineTopY,
       height,
@@ -87,6 +88,8 @@ export class MultitailArrow extends DrawingEntity {
       tailsLength,
       tailsYOffset,
     );
+    arrow.initiallySelected = multitailArrowKetNode.selected;
+    return arrow;
   }
 
   toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
@@ -99,7 +102,7 @@ export class MultitailArrow extends DrawingEntity {
       this.tailsYOffset,
       this.height,
       this.center,
-      false,
+      this.initiallySelected,
     );
   }
 

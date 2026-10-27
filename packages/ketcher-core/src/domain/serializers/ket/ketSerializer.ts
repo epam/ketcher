@@ -77,6 +77,7 @@ import {
   getKetRef,
   modifyTransformation,
   populateStructWithSelection,
+  remapSelectionForClonedStruct,
   setAmbiguousMonomerTemplatePrefix,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
@@ -1203,7 +1204,7 @@ export class KetSerializer implements Serializer<Struct> {
     struct.enableInitiallySelected();
     const populatedStruct = populateStructWithSelection(
       struct,
-      selection,
+      remapSelectionForClonedStruct(_struct, selection),
       true,
     );
     MacromoleculesConverter.convertStructToDrawingEntities(

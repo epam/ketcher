@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -307,7 +307,9 @@ class PasteTool implements Tool {
   }
 }
 
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
 function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();

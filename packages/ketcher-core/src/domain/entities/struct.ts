@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -1007,7 +1007,9 @@ export class Struct {
     return lengths;
   }
 
-  /** Median of `values`, or -1 when there is nothing to measure. */
+  /**
+  Median of `values`, or -1 when there is nothing to measure.
+  */
   static median(values: number[]): number {
     if (values.length === 0) {
       return -1;
@@ -1548,7 +1550,9 @@ export class Struct {
   }
 
   getComponents() {
-    /* saver */
+    /*
+    saver
+    */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
     let arrowPos: number | null = null;

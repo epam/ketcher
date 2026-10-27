@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,9 +20,13 @@ import type { Struct } from './struct';
 import { assert, KetcherLogger } from 'utilities';
 
 export class SGroupForest {
-  /** node id -> parent id */
+  /**
+  node id -> parent id
+  */
   parent: Map<number, number>;
-  /** node id -> list of child ids */
+  /**
+  node id -> list of child ids
+  */
   children: Map<number, number[]>;
   atomSets: Map<number, Pile<number>>;
 
@@ -34,7 +38,9 @@ export class SGroupForest {
     this.atomSets = new Map();
   }
 
-  /** returns an array or s-group ids in the order of breadth-first search */
+  /**
+  returns an array or s-group ids in the order of breadth-first search
+  */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
     const queue = Array.from(this.children.get(-1) as Array<number>);

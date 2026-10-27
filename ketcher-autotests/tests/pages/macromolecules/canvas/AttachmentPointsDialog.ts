@@ -6,18 +6,18 @@ import {
 } from '../constants/attachmentPointsDialog/Constants';
 import { AttachmentPoint } from '@utils/macromolecules/monomer';
 
-type AttachmentPointsDialogLocators = {
-  window: Locator;
-  closeButton: Locator;
-  expandWindowButton: Locator;
-  leftMonomerOverview: Locator;
-  rightMonomerOverview: Locator;
-  connectButton: Locator;
-  reconnectButton: Locator;
-  cancelButton: Locator;
-};
-
 export const AttachmentPointsDialog = (page: Page) => {
+  type AttachmentPointsDialogLocators = {
+    window: Locator;
+    closeButton: Locator;
+    expandWindowButton: Locator;
+    leftMonomerOverview: Locator;
+    rightMonomerOverview: Locator;
+    connectButton: Locator;
+    reconnectButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: AttachmentPointsDialogLocators = {
     window: page.getByTestId('monomer-connection-modal'),
     closeButton: page.getByTestId('close-window-button'),

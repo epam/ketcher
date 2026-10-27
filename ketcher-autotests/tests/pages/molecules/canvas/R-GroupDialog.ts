@@ -2,14 +2,14 @@ import { Page, Locator } from '@playwright/test';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { waitForRender } from '@utils/common';
 
-type RGroupDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const RGroupDialog = (page: Page) => {
+  type RGroupDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: RGroupDialogLocators = {
     window: page.getByTestId('rgroup-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),

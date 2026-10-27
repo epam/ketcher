@@ -1,16 +1,16 @@
 import { Page, Locator } from '@playwright/test';
 import { NotificationMessageType } from '@tests/pages/constants/notificationMessageBanner/Constants';
 
-type NotificationMessageBannerLocators = {
-  notificationMessageBanner: Locator;
-  notificationMessageBody: Locator;
-  notificationMessageOkButton: Locator;
-};
-
 export const NotificationMessageBanner = (
   page: Page,
   notificationMessageType: NotificationMessageType,
 ) => {
+  type NotificationMessageBannerLocators = {
+    notificationMessageBanner: Locator;
+    notificationMessageBody: Locator;
+    notificationMessageOkButton: Locator;
+  };
+
   const locators: NotificationMessageBannerLocators = {
     notificationMessageBanner: page.getByTestId(
       `notification-${notificationMessageType}-message-banner`,

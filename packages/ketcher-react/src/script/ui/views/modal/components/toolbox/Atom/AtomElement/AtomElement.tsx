@@ -14,9 +14,9 @@ import type { BaseProps } from '../../../../modal.types';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
-type ChangeFunction = (value: string) => void;
-
 const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
+  type ChangeFunction = (value: string) => void;
+
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
   const { t } = useTranslation();

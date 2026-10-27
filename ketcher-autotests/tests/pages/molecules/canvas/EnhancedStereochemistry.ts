@@ -3,21 +3,21 @@ import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
 import { EnhancedStereochemistryRadio } from '@tests/pages/constants/EnhancedStereochemistry/Constants';
 
-type EnhancedStereochemistryLocators = {
-  window: Locator;
-  absRadio: Locator;
-  newAndGroupRadio: Locator;
-  addToAndGroupRadio: Locator;
-  addToAndGroupSelect: Locator;
-  newOrGroupRadio: Locator;
-  addToOrGroupRadio: Locator;
-  addToOrGroupSelect: Locator;
-  closeWindowButton: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const EnhancedStereochemistry = (page: Page) => {
+  type EnhancedStereochemistryLocators = {
+    window: Locator;
+    absRadio: Locator;
+    newAndGroupRadio: Locator;
+    addToAndGroupRadio: Locator;
+    addToAndGroupSelect: Locator;
+    newOrGroupRadio: Locator;
+    addToOrGroupRadio: Locator;
+    addToOrGroupSelect: Locator;
+    closeWindowButton: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: EnhancedStereochemistryLocators = {
     window: page.getByTestId('enhancedStereo-dialog'),
     absRadio: page.getByTestId('abs-radio'),

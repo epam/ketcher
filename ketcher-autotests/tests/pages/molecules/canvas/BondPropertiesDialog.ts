@@ -6,20 +6,20 @@ import {
 } from '@tests/pages/constants/bondProperties/Constants';
 import { waitForRender } from '@utils/common';
 
-type BondPropertiesDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  bondDialog: Locator;
-  bondTypeDropdown: Locator;
-  bondTopologyDropdown: Locator;
-  bondReactingCenterDropdown: Locator;
-  bondCustomQueryCheckbox: Locator;
-  bondCustomQueryText: Locator;
-  cancelButton: Locator;
-  applyButton: Locator;
-};
-
 export const BondPropertiesDialog = (page: Page) => {
+  type BondPropertiesDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    bondDialog: Locator;
+    bondTypeDropdown: Locator;
+    bondTopologyDropdown: Locator;
+    bondReactingCenterDropdown: Locator;
+    bondCustomQueryCheckbox: Locator;
+    bondCustomQueryText: Locator;
+    cancelButton: Locator;
+    applyButton: Locator;
+  };
+
   const locators: BondPropertiesDialogLocators = {
     window: page.getByTestId('bondProps-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),

@@ -1,14 +1,14 @@
 import { Page, Locator, expect } from '@playwright/test';
 
-type ConfirmMessageDialogLocators = {
-  window: Locator;
-  header: Locator;
-  question: Locator;
-  cancelButton: Locator;
-  okButton: Locator;
-};
-
 export const ConfirmMessageDialog = (page: Page) => {
+  type ConfirmMessageDialogLocators = {
+    window: Locator;
+    header: Locator;
+    question: Locator;
+    cancelButton: Locator;
+    okButton: Locator;
+  };
+
   const locators: ConfirmMessageDialogLocators = {
     window: page.getByTestId('confirm-dialog'),
     header: page.getByTestId('confirm-header'),

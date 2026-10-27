@@ -10,9 +10,9 @@ import type {
 import { ketcherProvider } from 'ketcher-core';
 import { getEditableAtomIds } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
-
 const useAtomEdit = () => {
+  type Params = ItemEventParams<AtomContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

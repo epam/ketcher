@@ -2,22 +2,22 @@ import { Page, Locator } from '@playwright/test';
 import { MoleculesFileFormatType } from '../constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFileFormats';
 
-type SaveStructureDialogLocators = {
-  window: Locator;
-  fileNameEditbox: Locator;
-  fileFormatDropdownList: Locator;
-  previewTab: Locator;
-  saveStructureTextarea: Locator;
-  warningsTab: Locator;
-  warningTextarea: Locator;
-  copyToClipboardButton: Locator;
-  saveToTemplatesButton: Locator;
-  saveButton: Locator;
-  cancelButton: Locator;
-  closeWindowButton: Locator;
-};
-
 export const SaveStructureDialog = (page: Page) => {
+  type SaveStructureDialogLocators = {
+    window: Locator;
+    fileNameEditbox: Locator;
+    fileFormatDropdownList: Locator;
+    previewTab: Locator;
+    saveStructureTextarea: Locator;
+    warningsTab: Locator;
+    warningTextarea: Locator;
+    copyToClipboardButton: Locator;
+    saveToTemplatesButton: Locator;
+    saveButton: Locator;
+    cancelButton: Locator;
+    closeWindowButton: Locator;
+  };
+
   const millisecondsInSecond = 1000;
 
   const locators: SaveStructureDialogLocators = {

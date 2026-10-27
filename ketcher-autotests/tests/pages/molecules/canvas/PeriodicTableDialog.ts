@@ -5,17 +5,17 @@ import {
 } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { RightToolbar } from '../RightToolbar';
 
-type PeriodicTableDialogLocators = {
-  window: Locator;
-  singleRadioButton: Locator;
-  listRadioButton: Locator;
-  notListRadioButton: Locator;
-  addFileButton: Locator;
-  cancelButton: Locator;
-  closeWindowButton: Locator;
-};
-
 export const PeriodicTableDialog = (page: Page) => {
+  type PeriodicTableDialogLocators = {
+    window: Locator;
+    singleRadioButton: Locator;
+    listRadioButton: Locator;
+    notListRadioButton: Locator;
+    addFileButton: Locator;
+    cancelButton: Locator;
+    closeWindowButton: Locator;
+  };
+
   const getButton = (dataTestId: string): Locator =>
     page.getByTestId('period-table-dialog').getByTestId(dataTestId);
 

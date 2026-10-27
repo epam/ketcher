@@ -101,12 +101,6 @@ import {
 import { Icon } from 'ketcher-react';
 import styles from './RnaEditorExpanded.module.less';
 
-type SequenceSelectionGroupNames = {
-  [MonomerGroups.SUGARS]: string;
-  [MonomerGroups.BASES]: string;
-  [MonomerGroups.PHOSPHATES]: string;
-};
-
 function useLatestRef<T>(value: T) {
   const ref = useRef(value);
   useEffect(() => {
@@ -239,6 +233,12 @@ export const RnaEditorExpanded = ({
     item: undefined,
     isSequenceEdit: isSequenceEditInRNABuilderMode,
   });
+  type SequenceSelectionGroupNames = {
+    [MonomerGroups.SUGARS]: string;
+    [MonomerGroups.BASES]: string;
+    [MonomerGroups.PHOSPHATES]: string;
+  };
+
   const sequenceSelectionGroupNames: SequenceSelectionGroupNames | undefined =
     generateSequenceSelectionGroupNames(sequenceSelection);
   if (isEditMode !== wasEditMode) {

@@ -29,23 +29,6 @@ import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/Chain
 const DEFAULT_MONOMER_SIZE = { width: 0, height: 0 };
 const DEFAULT_SCALED_MONOMER_POSITION = new Vec2(0, 0);
 
-type SequenceNodeRendererConstructor<
-  TNode extends SequenceNode,
-  TRenderer extends BaseSequenceItemRenderer,
-> = new (
-  node: TNode,
-  firstMonomerInChainPosition: Vec2,
-  monomerIndexInChain: number,
-  isLastMonomerInChain: boolean,
-  chain: Chain,
-  nodeIndexOverall: number,
-  editingNodeIndexOverall: number,
-  monomerSize: { width: number; height: number },
-  scaledMonomerPosition: Vec2,
-  twoStrandedNode: ITwoStrandedChainItem,
-  previousRowsWithAntisense?: number,
-) => TRenderer;
-
 export class SequenceNodeRendererFactory {
   static fromNode(
     node: SequenceNode,
@@ -59,6 +42,23 @@ export class SequenceNodeRendererFactory {
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
     previousRowsWithAntisense = 0,
   ): BaseSequenceItemRenderer {
+    type SequenceNodeRendererConstructor<
+      TNode extends SequenceNode,
+      TRenderer extends BaseSequenceItemRenderer,
+    > = new (
+      node: TNode,
+      firstMonomerInChainPosition: Vec2,
+      monomerIndexInChain: number,
+      isLastMonomerInChain: boolean,
+      chain: Chain,
+      nodeIndexOverall: number,
+      editingNodeIndexOverall: number,
+      monomerSize: { width: number; height: number },
+      scaledMonomerPosition: Vec2,
+      twoStrandedNode: ITwoStrandedChainItem,
+      previousRowsWithAntisense?: number,
+    ) => TRenderer;
+
     const monomerSize = renderer?.monomerSize ?? DEFAULT_MONOMER_SIZE;
     const scaledMonomerPosition =
       renderer?.scaledMonomerPosition ?? DEFAULT_SCALED_MONOMER_POSITION;

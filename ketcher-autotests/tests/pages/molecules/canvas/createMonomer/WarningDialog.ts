@@ -1,14 +1,14 @@
 import { Page, Locator } from '@playwright/test';
 
-type WarningMessageDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  warningMessageBody: Locator;
-  okButton: Locator;
-  cancelButton: Locator;
-};
-
 export const WarningMessageDialog = (page: Page) => {
+  type WarningMessageDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    warningMessageBody: Locator;
+    okButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: WarningMessageDialogLocators = {
     window: page.getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),

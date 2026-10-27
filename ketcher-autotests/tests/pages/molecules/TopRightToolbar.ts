@@ -1,10 +1,10 @@
 import { Page, Locator } from '@playwright/test';
 
-type TopRightToolbarLocators = {
-  settingsButton: Locator;
-};
-
 export const TopRightToolbar = (page: Page) => {
+  type TopRightToolbarLocators = {
+    settingsButton: Locator;
+  };
+
   const locators: TopRightToolbarLocators = {
     settingsButton: page
       .getByTestId('settings-button')

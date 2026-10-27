@@ -2,19 +2,19 @@ import { Page, Locator, expect } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { MiewDialog } from './canvas/MiewDialog';
 
-type IndigoFunctionsToolbarLocators = {
-  aromatizeButton: Locator;
-  dearomatizeButton: Locator;
-  layoutButton: Locator;
-  cleanUpButton: Locator;
-  calculateCIPButton: Locator;
-  checkStructureButton: Locator;
-  calculatedValuesButton: Locator;
-  addRemoveExplicitHydrogensButton: Locator;
-  ThreeDViewerButton: Locator;
-};
-
 export const IndigoFunctionsToolbar = (page: Page) => {
+  type IndigoFunctionsToolbarLocators = {
+    aromatizeButton: Locator;
+    dearomatizeButton: Locator;
+    layoutButton: Locator;
+    cleanUpButton: Locator;
+    calculateCIPButton: Locator;
+    checkStructureButton: Locator;
+    calculatedValuesButton: Locator;
+    addRemoveExplicitHydrogensButton: Locator;
+    ThreeDViewerButton: Locator;
+  };
+
   const locators: IndigoFunctionsToolbarLocators = {
     aromatizeButton: page.getByTestId('Aromatize button'),
     dearomatizeButton: page.getByTestId('Dearomatize button'),

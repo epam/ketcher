@@ -2,15 +2,15 @@ import { Page, Locator } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 
-type TopLeftToolbarLocators = {
-  clearCanvasButton: Locator;
-  openButton: Locator;
-  saveButton: Locator;
-  undoButton: Locator;
-  redoButton: Locator;
-};
-
 export const CommonTopLeftToolbar = (page: Page) => {
+  type TopLeftToolbarLocators = {
+    clearCanvasButton: Locator;
+    openButton: Locator;
+    saveButton: Locator;
+    undoButton: Locator;
+    redoButton: Locator;
+  };
+
   const locators: TopLeftToolbarLocators = {
     clearCanvasButton: page
       .getByTestId('clear-canvas')

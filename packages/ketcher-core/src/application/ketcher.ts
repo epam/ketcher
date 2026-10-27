@@ -86,12 +86,8 @@ const allowedApiSettings = [
 ] as const;
 
 type AllowedApiSetting = (typeof allowedApiSettings)[number][0];
-type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
 type KetcherGetSettingsResult = Partial<
   Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
->;
-type KetcherSetOptionsPayload = Partial<
-  Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
 >;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
@@ -214,6 +210,11 @@ export class Ketcher {
   }
 
   setSettings(settings: KetcherApiSettings): void {
+    type AllowedClientSetting = (typeof allowedApiSettings)[number][1];
+    type KetcherSetOptionsPayload = Partial<
+      Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
+    >;
+
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');

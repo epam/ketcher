@@ -10,27 +10,27 @@ import {
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { waitForRender } from '@utils/common';
 
-type SGroupPropertiesLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  typeDropdown: Locator;
-  contextDropdown: Locator;
-  fieldNameEditbox: Locator;
-  fieldValueEditbox: Locator;
-  absoluteRadioButton: Locator;
-  relativeRadioButton: Locator;
-  attachedRadioButton: Locator;
-  repeatCountEditbox: Locator;
-  polymerLabelEditbox: Locator;
-  subtypeDropdown: Locator;
-  repeatPatternDropdown: Locator;
-  nameEditbox: Locator;
-  componentDropdown: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const SGroupPropertiesDialog = (page: Page) => {
+  type SGroupPropertiesLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    typeDropdown: Locator;
+    contextDropdown: Locator;
+    fieldNameEditbox: Locator;
+    fieldValueEditbox: Locator;
+    absoluteRadioButton: Locator;
+    relativeRadioButton: Locator;
+    attachedRadioButton: Locator;
+    repeatCountEditbox: Locator;
+    polymerLabelEditbox: Locator;
+    subtypeDropdown: Locator;
+    repeatPatternDropdown: Locator;
+    nameEditbox: Locator;
+    componentDropdown: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: SGroupPropertiesLocators = {
     window: page.getByTestId('sgroup-dialog').getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),

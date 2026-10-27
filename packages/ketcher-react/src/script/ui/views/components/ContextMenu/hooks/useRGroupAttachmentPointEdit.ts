@@ -8,8 +8,6 @@ import type {
 import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
 import { type Ketcher, ketcherProvider, assert } from 'ketcher-core';
 
-type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
-
 const getAtomIdByProps = (
   props: RGroupAttachmentPointContextMenuProps | undefined,
   ketcher: Ketcher,
@@ -30,6 +28,8 @@ const getAtomIdByProps = (
 };
 
 const useRGroupAttachmentPointEdit = () => {
+  type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

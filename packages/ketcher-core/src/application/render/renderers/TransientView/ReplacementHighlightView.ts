@@ -9,12 +9,6 @@ import {
 } from 'application/render/renderers/monomerHighlightShapes';
 import paperjs from 'paper';
 
-type UnitedPaperPath = {
-  unite(path: InstanceType<typeof paperjs.CompoundPath>): UnitedPaperPath;
-  remove(): void;
-  pathData: string;
-};
-
 export type ReplacementHighlightViewParams = {
   /**
   The canvas monomers that will be replaced on drop.
@@ -93,6 +87,12 @@ export class ReplacementHighlightView extends TransientView {
   private static getUnitedPathData(
     pathsData: HighlightPathData[],
   ): HighlightPathData | undefined {
+    type UnitedPaperPath = {
+      unite(path: InstanceType<typeof paperjs.CompoundPath>): UnitedPaperPath;
+      remove(): void;
+      pathData: string;
+    };
+
     paperjs.setup(document.createElement('canvas'));
 
     let combinedPath: UnitedPaperPath | undefined;

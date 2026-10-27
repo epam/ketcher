@@ -1,15 +1,15 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 
-type RotationToolLocators = {
-  flipHorizontallyButton: Locator;
-  flipVerticallyButton: Locator;
-  deleteButton: Locator;
-  rotationHandle: Locator;
-  rotationCenterHandle: Locator;
-};
-
 export const RotationTool = (page: Page) => {
+  type RotationToolLocators = {
+    flipHorizontallyButton: Locator;
+    flipVerticallyButton: Locator;
+    deleteButton: Locator;
+    rotationHandle: Locator;
+    rotationCenterHandle: Locator;
+  };
+
   const locators: RotationToolLocators = {
     flipHorizontallyButton: page.getByTestId('transform-flip-h'),
     flipVerticallyButton: page.getByTestId('transform-flip-v'),

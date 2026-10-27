@@ -87,24 +87,14 @@ type MonomersLibraryParsedJson = {
 
 type RnaComponentTemplateRef = { $ref?: string; class?: string };
 
-type MonomerTemplate = {
-  class?: string;
-};
-
-type RnaPresetTemplate = {
-  type?: string;
-  class?: string;
-  templates?: RnaComponentTemplateRef[];
-  connections?: Array<{
-    endpoint1?: { templateId?: string; attachmentPointId?: string };
-    endpoint2?: { templateId?: string; attachmentPointId?: string };
-  }>;
-};
-
 const getTemplateClass = (
   templateRef: RnaComponentTemplateRef,
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
+  type MonomerTemplate = {
+    class?: string;
+  };
+
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
     MonomerTemplate | undefined;
 
@@ -161,6 +151,16 @@ export const getEditAllInstancesInitialValues = (
   ) {
     monomersLibraryParsedJson?.root?.templates?.forEach(
       (templateRef: { $ref?: string }) => {
+        type RnaPresetTemplate = {
+          type?: string;
+          class?: string;
+          templates?: RnaComponentTemplateRef[];
+          connections?: Array<{
+            endpoint1?: { templateId?: string; attachmentPointId?: string };
+            endpoint2?: { templateId?: string; attachmentPointId?: string };
+          }>;
+        };
+
         const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
           RnaPresetTemplate | undefined;
         const isRnaPreset =

@@ -3,16 +3,16 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
 
-type AttachmentPointsDialogLocators = {
-  closeWindowButton: Locator;
-  window: Locator;
-  primaryAttachmentPointCheckbox: Locator;
-  secondaryAttachmentPointCheckbox: Locator;
-  applyButton: Locator;
-  cancelButton: Locator;
-};
-
 export const AttachmentPointsDialog = (page: Page) => {
+  type AttachmentPointsDialogLocators = {
+    closeWindowButton: Locator;
+    window: Locator;
+    primaryAttachmentPointCheckbox: Locator;
+    secondaryAttachmentPointCheckbox: Locator;
+    applyButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: AttachmentPointsDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     window: page.getByTestId('attachmentPoints-dialog'),

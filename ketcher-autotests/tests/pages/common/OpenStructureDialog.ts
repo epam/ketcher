@@ -1,15 +1,15 @@
 import { Page, Locator } from '@playwright/test';
 
-type OpenStructureDialogLocators = {
-  pasteFromClipboardButton: Locator;
-  openFromFileButton: Locator;
-  openFromImageButton: Locator;
-  closeWindowButton: Locator;
-  window: Locator;
-  previewTextArea: Locator;
-};
-
 export const OpenStructureDialog = (page: Page) => {
+  type OpenStructureDialogLocators = {
+    pasteFromClipboardButton: Locator;
+    openFromFileButton: Locator;
+    openFromImageButton: Locator;
+    closeWindowButton: Locator;
+    window: Locator;
+    previewTextArea: Locator;
+  };
+
   const locators: OpenStructureDialogLocators = {
     pasteFromClipboardButton: page.getByTestId('paste-from-clipboard-button'),
     openFromFileButton: page.getByTestId('open-from-file-button'),

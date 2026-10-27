@@ -64,8 +64,6 @@ type SdataAction = Omit<ModalReducerAction<SdataResult>, 'data'> & {
 type SdataStateWithResult = Pick<SdataState, 'result'> &
   Partial<Omit<SdataState, 'result'>>;
 
-type SchemaMap = Record<string, Record<string, unknown>>;
-
 const getSdataDefaultValue = (...args: unknown[]): string =>
   (getSdataDefault as (...params: unknown[]) => string)(...args);
 
@@ -143,6 +141,8 @@ const onFieldNameChange = (
   state: SdataState,
   payload: Partial<SdataResult> & Record<string, unknown>,
 ): SdataStateWithResult => {
+  type SchemaMap = Record<string, Record<string, unknown>>;
+
   const fieldName = String(payload.fieldName ?? '');
 
   const context = state.result.context;

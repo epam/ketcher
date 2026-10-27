@@ -1,12 +1,12 @@
 import { Page, Locator } from '@playwright/test';
 
-type InfoMessageDialogLocators = {
-  infoModalWindow: Locator;
-  infoModalBody: Locator;
-  infoModalOk: Locator;
-};
-
 export const InfoMessageDialog = (page: Page) => {
+  type InfoMessageDialogLocators = {
+    infoModalWindow: Locator;
+    infoModalBody: Locator;
+    infoModalOk: Locator;
+  };
+
   const locators: InfoMessageDialogLocators = {
     infoModalWindow: page.getByTestId('info-modal-window'),
     infoModalBody: page

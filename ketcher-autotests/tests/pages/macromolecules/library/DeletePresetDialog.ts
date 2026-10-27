@@ -1,14 +1,14 @@
 import { Page, Locator } from '@playwright/test';
 
-type DeletePresetDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  textMessageBody: Locator;
-  cancelButton: Locator;
-  deleteButton: Locator;
-};
-
 export const DeletePresetDialog = (page: Page) => {
+  type DeletePresetDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    textMessageBody: Locator;
+    cancelButton: Locator;
+    deleteButton: Locator;
+  };
+
   const locators: DeletePresetDialogLocators = {
     window: page.getByTestId('delete-preset-modal'),
     closeWindowButton: page.getByTestId('close-window-button'),

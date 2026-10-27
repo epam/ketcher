@@ -27,11 +27,11 @@ import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { isHapticBondWithAttachmentGroup, ketcherProvider } from 'ketcher-core';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
-
 const bondNamesForContextMenu = getBondNamesForContextMenu(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
+  type Params = ItemEventParams<BondsContextMenuProps>;
+
   const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const [handleEdit] = useBondEdit();

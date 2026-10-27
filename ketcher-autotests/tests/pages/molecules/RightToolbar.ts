@@ -1,25 +1,25 @@
 import { Page, Locator } from '@playwright/test';
 import { Atom } from '../constants/atoms/atoms';
 
-type RightToolbarLocators = {
-  hydrogenButton: Locator;
-  carbonButton: Locator;
-  nitrogenButton: Locator;
-  oxygenButton: Locator;
-  sulfurButton: Locator;
-  phosphorusButton: Locator;
-  fluorineButton: Locator;
-  chlorineButton: Locator;
-  bromineButton: Locator;
-  iodineButton: Locator;
-  periodicTableButton: Locator;
-  anyAtomButton: Locator;
-  extendedTableButton: Locator;
-  arrowScrollUpButton: Locator;
-  arrowScrollDownButton: Locator;
-};
-
 export const RightToolbar = (page: Page) => {
+  type RightToolbarLocators = {
+    hydrogenButton: Locator;
+    carbonButton: Locator;
+    nitrogenButton: Locator;
+    oxygenButton: Locator;
+    sulfurButton: Locator;
+    phosphorusButton: Locator;
+    fluorineButton: Locator;
+    chlorineButton: Locator;
+    bromineButton: Locator;
+    iodineButton: Locator;
+    periodicTableButton: Locator;
+    anyAtomButton: Locator;
+    extendedTableButton: Locator;
+    arrowScrollUpButton: Locator;
+    arrowScrollDownButton: Locator;
+  };
+
   const getButton = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

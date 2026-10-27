@@ -85,8 +85,6 @@ const Footer = styled(DialogActions)<FooterProps>`
   }
 `;
 
-type ModalSubcomponent = 'Content' | 'Footer';
-
 export const Modal = ({
   children,
   title,
@@ -140,6 +138,8 @@ export const Modal = ({
     }),
     [theme.ketcher.color.background.overlay],
   );
+
+  type ModalSubcomponent = 'Content' | 'Footer';
 
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
     Content: null,

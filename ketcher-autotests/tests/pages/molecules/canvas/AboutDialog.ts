@@ -1,14 +1,14 @@
 import { Page, Locator } from '@playwright/test';
 
-type AboutDialogLocators = {
-  closeWindowButton: Locator;
-  okButton: Locator;
-  buildVersion: Locator;
-  buildTime: Locator;
-  buildIndigoVersion: Locator;
-};
-
 export const AboutDialog = (page: Page) => {
+  type AboutDialogLocators = {
+    closeWindowButton: Locator;
+    okButton: Locator;
+    buildVersion: Locator;
+    buildTime: Locator;
+    buildIndigoVersion: Locator;
+  };
+
   const locators: AboutDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     okButton: page.getByTestId('ok-button'),

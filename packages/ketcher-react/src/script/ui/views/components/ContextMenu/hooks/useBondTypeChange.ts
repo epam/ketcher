@@ -14,9 +14,9 @@ import type {
 } from '../contextMenu.types';
 import { getEditableBondIds } from '../utils';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
-
 const useBondTypeChange = () => {
+  type Params = ItemEventParams<BondsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
   const handler = useCallback(
     ({ id, props }: Params) => {

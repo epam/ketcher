@@ -1,14 +1,14 @@
 import { Page, Locator } from '@playwright/test';
 
-type ConfirmYourActionDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  messageBody: Locator;
-  yesButton: Locator;
-  cancelButton: Locator;
-};
-
 export const ConfirmYourActionDialog = (page: Page) => {
+  type ConfirmYourActionDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    messageBody: Locator;
+    yesButton: Locator;
+    cancelButton: Locator;
+  };
+
   const locators: ConfirmYourActionDialogLocators = {
     window: page.getByTestId('confirmation-dialog'),
     closeWindowButton: page.getByTestId('close-window-button'),

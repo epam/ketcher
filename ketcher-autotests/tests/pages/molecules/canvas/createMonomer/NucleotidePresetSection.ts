@@ -3,45 +3,45 @@ import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Consta
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { selectAtomAndBonds } from './selectAtomAndBonds';
 
-type AliasesSectionLocators = {
-  helmAliasEditbox: Locator;
-  helmAliasEditboxClearButton: Locator;
-};
-
-type PresetTabLocators = {
-  nameEditbox: Locator;
-};
-
-type BaseTabLocators = {
-  maskAsBaseButton: Locator;
-  codeEditbox: Locator;
-  nameEditbox: Locator;
-  naturalAnalogueCombobox: Locator;
-  aliasesSection: Locator & AliasesSectionLocators;
-};
-
-type SugarTabLocators = {
-  maskAsSugarButton: Locator;
-  codeEditbox: Locator;
-  nameEditbox: Locator;
-  aliasesSection: Locator & AliasesSectionLocators;
-};
-
-type PhosphateTabLocators = {
-  maskAsPhosphateButton: Locator;
-  codeEditbox: Locator;
-  nameEditbox: Locator;
-  aliasesSection: Locator & AliasesSectionLocators;
-};
-
-type NucleotidePresetSectionLocators = {
-  presetTab: Locator & PresetTabLocators;
-  baseTab: Locator & BaseTabLocators;
-  sugarTab: Locator & SugarTabLocators;
-  phosphateTab: Locator & PhosphateTabLocators;
-};
-
 export const NucleotidePresetSection = (page: Page) => {
+  type AliasesSectionLocators = {
+    helmAliasEditbox: Locator;
+    helmAliasEditboxClearButton: Locator;
+  };
+
+  type PresetTabLocators = {
+    nameEditbox: Locator;
+  };
+
+  type BaseTabLocators = {
+    maskAsBaseButton: Locator;
+    codeEditbox: Locator;
+    nameEditbox: Locator;
+    naturalAnalogueCombobox: Locator;
+    aliasesSection: Locator & AliasesSectionLocators;
+  };
+
+  type SugarTabLocators = {
+    maskAsSugarButton: Locator;
+    codeEditbox: Locator;
+    nameEditbox: Locator;
+    aliasesSection: Locator & AliasesSectionLocators;
+  };
+
+  type PhosphateTabLocators = {
+    maskAsPhosphateButton: Locator;
+    codeEditbox: Locator;
+    nameEditbox: Locator;
+    aliasesSection: Locator & AliasesSectionLocators;
+  };
+
+  type NucleotidePresetSectionLocators = {
+    presetTab: Locator & PresetTabLocators;
+    baseTab: Locator & BaseTabLocators;
+    sugarTab: Locator & SugarTabLocators;
+    phosphateTab: Locator & PhosphateTabLocators;
+  };
+
   const locators: NucleotidePresetSectionLocators = {
     presetTab: Object.assign(page.getByTestId(NucleotidePresetTab.Preset), {
       nameEditbox: page.getByTestId('code-input'),

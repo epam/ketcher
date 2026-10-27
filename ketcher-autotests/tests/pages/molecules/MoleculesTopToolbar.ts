@@ -4,13 +4,13 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils/common/loaders';
 
-type MoleculesTopToolbarLocators = {
-  copyButton: Locator;
-  pasteButton: Locator;
-  cutButton: Locator;
-};
-
 export const MoleculesTopToolbar = (page: Page) => {
+  type MoleculesTopToolbarLocators = {
+    copyButton: Locator;
+    pasteButton: Locator;
+    cutButton: Locator;
+  };
+
   const locators: MoleculesTopToolbarLocators = {
     copyButton: page.getByTestId('copy-button'),
     pasteButton: page.getByTestId('paste-button'),

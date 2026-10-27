@@ -4,23 +4,23 @@ import { ArrowTool } from '../constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '../constants/reactionMappingTool/Constants';
 import { ShapeType } from '../constants/shapeSelectionTool/Constants';
 
-type LeftToolbarLocators = {
-  chainButton: Locator;
-  stereochemistryButton: Locator;
-  chargePlusButton: Locator;
-  chargeMinusButton: Locator;
-  sGroupButton: Locator;
-  rGroupToolsButton: Locator;
-  createMonomerButton: Locator;
-  reactionPlusToolButton: Locator;
-  arrowToolsButton: Locator;
-  reactionMappingToolsButton: Locator;
-  shapeToolsButton: Locator;
-  addTextButton: Locator;
-  addImageButton: Locator;
-};
-
 export const LeftToolbar = (page: Page) => {
+  type LeftToolbarLocators = {
+    chainButton: Locator;
+    stereochemistryButton: Locator;
+    chargePlusButton: Locator;
+    chargeMinusButton: Locator;
+    sGroupButton: Locator;
+    rGroupToolsButton: Locator;
+    createMonomerButton: Locator;
+    reactionPlusToolButton: Locator;
+    arrowToolsButton: Locator;
+    reactionMappingToolsButton: Locator;
+    shapeToolsButton: Locator;
+    addTextButton: Locator;
+    addImageButton: Locator;
+  };
+
   const locators: LeftToolbarLocators = {
     chainButton: page.getByTestId('chain'),
     stereochemistryButton: page.getByTestId('enhanced-stereo'),

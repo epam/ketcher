@@ -6,18 +6,18 @@ import {
   MicroBondTool,
 } from '../constants/bondSelectionTool/Constants';
 
-type LeftToolbarLocators = {
-  handToolButton: Locator;
-  areaSelectionDropdownButton: Locator;
-  areaSelectionDropdownExpandButton: Locator;
-  toolSelectionDropdownPanel: Locator;
-  eraseButton: Locator;
-  bondSelectionDropdownButton: Locator;
-  bondSelectionDropdownExpandButton: Locator;
-  bondMultiToolSection: Locator;
-};
-
 export const CommonLeftToolbar = (page: Page) => {
+  type LeftToolbarLocators = {
+    handToolButton: Locator;
+    areaSelectionDropdownButton: Locator;
+    areaSelectionDropdownExpandButton: Locator;
+    toolSelectionDropdownPanel: Locator;
+    eraseButton: Locator;
+    bondSelectionDropdownButton: Locator;
+    bondSelectionDropdownExpandButton: Locator;
+    bondMultiToolSection: Locator;
+  };
+
   const bondToolbarActionTimeout = 5000;
   const bondTypeButtonVisibleTimeout = 1500;
   const locators: LeftToolbarLocators = {

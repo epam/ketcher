@@ -7,35 +7,35 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 
-type TemplateLibraryTabLocators = {
-  alphaDSugarsSection: Locator;
-  aromaticsSection: Locator;
-  betaDSugarsSection: Locator;
-  bicyclesSection: Locator;
-  bridgedPolycyclicsSection: Locator;
-  crownEthersSection: Locator;
-  dAminoAcidsSection: Locator;
-  dSugarsSection: Locator;
-  heterocyclicRingsSection: Locator;
-  lAminoAcidsSection: Locator;
-  nucleobasesSection: Locator;
-  ringsSection: Locator;
-  sugarsSection: Locator;
-  threeDTemplatesSection: Locator;
-};
-
-type StructureLibraryDialogLocators = {
-  window: Locator;
-  closeWindowButton: Locator;
-  searchEditBox: Locator;
-  templateLibraryTab: Locator & TemplateLibraryTabLocators;
-  functionalGroupTab: Locator;
-  saltsAndSalventsTab: Locator;
-  saveToSdfButton: Locator;
-  deleteTemplateButton: Locator;
-};
-
 export const StructureLibraryDialog = (page: Page) => {
+  type TemplateLibraryTabLocators = {
+    alphaDSugarsSection: Locator;
+    aromaticsSection: Locator;
+    betaDSugarsSection: Locator;
+    bicyclesSection: Locator;
+    bridgedPolycyclicsSection: Locator;
+    crownEthersSection: Locator;
+    dAminoAcidsSection: Locator;
+    dSugarsSection: Locator;
+    heterocyclicRingsSection: Locator;
+    lAminoAcidsSection: Locator;
+    nucleobasesSection: Locator;
+    ringsSection: Locator;
+    sugarsSection: Locator;
+    threeDTemplatesSection: Locator;
+  };
+
+  type StructureLibraryDialogLocators = {
+    window: Locator;
+    closeWindowButton: Locator;
+    searchEditBox: Locator;
+    templateLibraryTab: Locator & TemplateLibraryTabLocators;
+    functionalGroupTab: Locator;
+    saltsAndSalventsTab: Locator;
+    saveToSdfButton: Locator;
+    deleteTemplateButton: Locator;
+  };
+
   const getElement = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
 

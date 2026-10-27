@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type NotificationBannerOnMicroLocators = {
-  message: Locator;
-  closeButton: Locator;
-};
-
 export const NotificationBannerOnMicro = (page: Page) => {
+  type NotificationBannerOnMicroLocators = {
+    message: Locator;
+    closeButton: Locator;
+  };
+
   const locators: NotificationBannerOnMicroLocators = {
     message: page.getByTestId('notification-banner'),
     closeButton: page.getByTestId('notification-banner-close-button'),

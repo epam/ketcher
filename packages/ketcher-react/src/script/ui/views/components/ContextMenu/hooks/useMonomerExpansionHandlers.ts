@@ -14,8 +14,6 @@ import type {
   MacromoleculeContextMenuProps,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<MacromoleculeContextMenuProps>;
-
 export const canExpandMonomer = (functionalGroup: FunctionalGroup) => {
   return (
     functionalGroup.relatedSGroup instanceof MonomerMicromolecule &&
@@ -25,6 +23,8 @@ export const canExpandMonomer = (functionalGroup: FunctionalGroup) => {
 };
 
 const useMonomerExpansionHandlers = () => {
+  type Params = ItemEventParams<MacromoleculeContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const action = useCallback(

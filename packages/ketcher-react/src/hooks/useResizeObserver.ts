@@ -21,11 +21,6 @@ import useResizeObserver from 'use-resize-observer/polyfilled';
 
 const throttleMilliseconds = 100;
 
-type Size = {
-  width: number | undefined;
-  height: number | undefined;
-};
-
 type Options<THTMLElement extends HTMLElement> = {
   ref?: RefObject<THTMLElement> | THTMLElement | null;
 };
@@ -39,6 +34,11 @@ type HookResponse<THTMLElement extends HTMLElement> = {
 function useThrottleResizeObserver<THTMLElement extends HTMLElement>(
   options: Options<THTMLElement> = {},
 ): HookResponse<THTMLElement> {
+  type Size = {
+    width: number | undefined;
+    height: number | undefined;
+  };
+
   const [size, setSize] = useState<Size>({
     height: undefined,
     width: undefined,

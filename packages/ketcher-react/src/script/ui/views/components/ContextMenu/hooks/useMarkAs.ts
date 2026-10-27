@@ -12,9 +12,9 @@ import {
   MonomerCreationMarkAsComponentAction,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.constants';
 
-type Params = ItemEventParams<SelectionContextMenuProps>;
-
 const useMarkAs = () => {
+  type Params = ItemEventParams<SelectionContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

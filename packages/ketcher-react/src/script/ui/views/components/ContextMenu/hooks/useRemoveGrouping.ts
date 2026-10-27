@@ -7,8 +7,6 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<MacromoleculeContextMenuProps>;
-
 /**
  * Returns a handler that removes the S-group grouping for each monomer in the
  * context (mirrors `useFunctionalGroupRemove` but typed for macromolecule props).
@@ -18,6 +16,8 @@ type Params = ItemEventParams<MacromoleculeContextMenuProps>;
  * before removing the S-group, so no extra step is needed here.
  */
 const useRemoveGrouping = () => {
+  type Params = ItemEventParams<MacromoleculeContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

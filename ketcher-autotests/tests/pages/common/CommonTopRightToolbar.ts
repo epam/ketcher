@@ -6,28 +6,28 @@ import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToo
 import { hideRuler } from '@utils/canvas/ruler/helpers';
 import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 
-type CommonTopRightToolbarLocators = {
-  ketcherModeSwitcherCombobox: Locator;
-  fullScreenButton: Locator;
-  helpButton: Locator;
-  aboutButton: Locator;
-  zoomSelector: Locator;
-};
-
-type ZoomDropdownLocators = {
-  zoomValueEditbox: Locator;
-  zoomOutButton: Locator;
-  zoomInButton: Locator;
-  zoomDefaultButton: Locator;
-};
-
-type TurnOnMacromoleculesEditorOptions = {
-  disableChainLengthRuler?: boolean;
-  disableAutozoom?: boolean;
-  enableFlexMode?: boolean;
-};
-
 export const CommonTopRightToolbar = (page: Page) => {
+  type CommonTopRightToolbarLocators = {
+    ketcherModeSwitcherCombobox: Locator;
+    fullScreenButton: Locator;
+    helpButton: Locator;
+    aboutButton: Locator;
+    zoomSelector: Locator;
+  };
+
+  type ZoomDropdownLocators = {
+    zoomValueEditbox: Locator;
+    zoomOutButton: Locator;
+    zoomInButton: Locator;
+    zoomDefaultButton: Locator;
+  };
+
+  type TurnOnMacromoleculesEditorOptions = {
+    disableChainLengthRuler?: boolean;
+    disableAutozoom?: boolean;
+    enableFlexMode?: boolean;
+  };
+
   const locators: CommonTopRightToolbarLocators = {
     ketcherModeSwitcherCombobox: page
       .getByTestId('polymer-toggler')

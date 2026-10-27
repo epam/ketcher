@@ -8,9 +8,9 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
-
 const useBondSGroupEdit = () => {
+  type Params = ItemEventParams<BondsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
   const sGroupsRef = useRef(new Pile<number>());
 

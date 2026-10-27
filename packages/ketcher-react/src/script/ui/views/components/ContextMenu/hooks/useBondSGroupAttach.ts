@@ -8,11 +8,11 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
-
 const getFirstBondId = (props?: BondsContextMenuProps) => props?.bondIds?.[0];
 
 const useBondSGroupAttach = () => {
+  type Params = ItemEventParams<BondsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

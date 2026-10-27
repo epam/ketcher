@@ -9,9 +9,9 @@ import type {
 } from '../contextMenu.types';
 import { noOperation } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
-
 const useAtomStereo = () => {
+  type Params = ItemEventParams<AtomContextMenuProps>;
+
   const { ketcherId } = useAppContext();
   const stereoAtomIdsRef = useRef<number[] | undefined>(undefined);
 

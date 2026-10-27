@@ -2,27 +2,27 @@ import { Page, Locator } from '@playwright/test';
 import { StructureCheckSetting } from '@tests/pages/constants/structureCheck/Constants';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/index';
 
-type StructureCheckDialogLocators = {
-  closeWindowButton: Locator;
-  lastCheckInfo: Locator;
-  valenceCheckbox: Locator;
-  radicalCheckbox: Locator;
-  pseudoatomCheckbox: Locator;
-  stereochemistryCheckbox: Locator;
-  queryCheckbox: Locator;
-  overlappingAtomsCheckbox: Locator;
-  overlappingBondsCheckbox: Locator;
-  rGroupsCheckbox: Locator;
-  chiralityCheckbox: Locator;
-  threeDSructureCheckbox: Locator;
-  chiralFlag: Locator;
-  checkButton: Locator;
-  cancelButton: Locator;
-  applyButton: Locator;
-  idsExplanation: Locator;
-};
-
 export const StructureCheckDialog = (page: Page) => {
+  type StructureCheckDialogLocators = {
+    closeWindowButton: Locator;
+    lastCheckInfo: Locator;
+    valenceCheckbox: Locator;
+    radicalCheckbox: Locator;
+    pseudoatomCheckbox: Locator;
+    stereochemistryCheckbox: Locator;
+    queryCheckbox: Locator;
+    overlappingAtomsCheckbox: Locator;
+    overlappingBondsCheckbox: Locator;
+    rGroupsCheckbox: Locator;
+    chiralityCheckbox: Locator;
+    threeDSructureCheckbox: Locator;
+    chiralFlag: Locator;
+    checkButton: Locator;
+    cancelButton: Locator;
+    applyButton: Locator;
+    idsExplanation: Locator;
+  };
+
   const locators: StructureCheckDialogLocators = {
     closeWindowButton: page.getByTestId('close-window-button'),
     lastCheckInfo: page.getByTestId('checkInfo-lastCheck'),

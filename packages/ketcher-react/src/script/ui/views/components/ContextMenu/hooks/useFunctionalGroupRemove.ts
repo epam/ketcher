@@ -9,9 +9,9 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
-
 const useFunctionalGroupRemove = () => {
+  type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
+
   const { ketcherId } = useAppContext();
   const dispatch = useDispatch();
 

@@ -11,9 +11,9 @@ import type {
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
-
 const useDelete = () => {
+  type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
+
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(

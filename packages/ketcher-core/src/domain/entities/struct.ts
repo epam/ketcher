@@ -1041,20 +1041,16 @@ export class Struct {
 
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
-    let minDist;
-    let dist: number;
     const keys = Array.from(this.atoms.keys());
-    let k;
-    let j;
-    for (k = 0; k < keys.length; ++k) {
-      minDist = -1;
-      for (j = 0; j < keys.length; ++j) {
+    for (let k = 0; k < keys.length; ++k) {
+      let minDist = -1;
+      for (let j = 0; j < keys.length; ++j) {
         if (j === k) continue;
         const atomJ = this.atoms.get(keys[j]);
         const atomK = this.atoms.get(keys[k]);
         assert(atomJ, `Atom ${keys[j]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
-        dist = Vec2.dist(atomJ.pp, atomK.pp);
+        const dist = Vec2.dist(atomJ.pp, atomK.pp);
         if (minDist < 0 || minDist > dist) minDist = dist;
       }
       totalDist += minDist;

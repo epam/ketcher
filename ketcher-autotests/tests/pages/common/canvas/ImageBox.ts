@@ -1,18 +1,18 @@
 import { Page, Locator } from '@playwright/test';
 
-type ImageBoxLocators = {
-  imageBoxBody: Locator;
-  topLeftHandle: Locator;
-  topMiddleHandle: Locator;
-  topRightHandle: Locator;
-  leftMiddleHandle: Locator;
-  rightMiddleHandle: Locator;
-  bottomLeftHandle: Locator;
-  bottomMiddleHandle: Locator;
-  bottomRightHandle: Locator;
-};
-
 export const ImageBox = async (page: Page, imageBox?: Locator) => {
+  type ImageBoxLocators = {
+    imageBoxBody: Locator;
+    topLeftHandle: Locator;
+    topMiddleHandle: Locator;
+    topRightHandle: Locator;
+    leftMiddleHandle: Locator;
+    rightMiddleHandle: Locator;
+    bottomLeftHandle: Locator;
+    bottomMiddleHandle: Locator;
+    bottomRightHandle: Locator;
+  };
+
   let imageBoxId;
   if (imageBox) {
     imageBoxId = await imageBox.getAttribute('data-image-id');

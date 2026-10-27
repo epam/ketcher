@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -103,6 +103,17 @@ import {
 
 import closest from './shared/closest';
 import type { SelectedItems, SkipItem } from './shared/closest.types';
+import type {
+  BondEditResult,
+  EditorCursor,
+  EditorMessage,
+  EditorTooltip,
+  ElementEditResult,
+  EnhancedStereoEditParams,
+  RemoveFGParams,
+  RGroupEditResult,
+  SGroupDialogResult,
+} from './Editor.types';
 import { type ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
@@ -279,29 +290,32 @@ class Editor implements KetcherEditor {
   contextMenu: ContextMenuInfo;
   rotateController: RotateController;
   event: {
-    message: Subscription;
-    tooltip: Subscription;
-    elementEdit: PipelineSubscription;
+    message: Subscription<EditorMessage>;
+    tooltip: Subscription<EditorTooltip | undefined>;
+    elementEdit: PipelineSubscription<unknown, Promise<ElementEditResult>>;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
     zoomChanged: PipelineSubscription;
-    bondEdit: PipelineSubscription;
-    rgroupEdit: PipelineSubscription;
-    sgroupEdit: PipelineSubscription;
+    bondEdit: PipelineSubscription<Bond[], Promise<BondEditResult>>;
+    rgroupEdit: PipelineSubscription<unknown, Promise<RGroupEditResult>>;
+    sgroupEdit: PipelineSubscription<unknown, Promise<SGroupDialogResult>>;
     sdataEdit: PipelineSubscription;
     quickEdit: PipelineSubscription;
     attachEdit: PipelineSubscription;
-    removeFG: PipelineSubscription;
+    removeFG: PipelineSubscription<RemoveFGParams, Promise<unknown>>;
     editMonomer: PipelineSubscription;
     change: Subscription;
     selectionChange: PipelineSubscription;
     aromatizeStruct: PipelineSubscription;
     dearomatizeStruct: PipelineSubscription;
-    enhancedStereoEdit: PipelineSubscription;
+    enhancedStereoEdit: PipelineSubscription<
+      EnhancedStereoEditParams,
+      Promise<string | null>
+    >;
     confirm: PipelineSubscription;
     showInfo: PipelineSubscription;
     apiSettings: PipelineSubscription;
-    cursor: Subscription;
+    cursor: Subscription<EditorCursor>;
     updateFloatingTools: Subscription<FloatingToolsParams>;
     monomerWizardStateChange: Subscription<boolean>;
   };
@@ -451,7 +465,9 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
-  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
+  /**
+  Apply {@link value}: {@link Struct} if provided to {@link render} and
+  */
   struct(
     value?: Struct,
     needToCenterStruct = true,
@@ -512,7 +528,9 @@ class Editor implements KetcherEditor {
     return result;
   }
 
-  /** Apply options from {@link value} */
+  /**
+  Apply options from {@link value}
+  */
   options(value?: Record<string, unknown>) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -1137,7 +1155,7 @@ class Editor implements KetcherEditor {
     this.potentialLeavingAtomsForManualAssignment =
       potentialLeavingAtomForManualAssignment;
 
-    window.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
+    globalThis.dispatchEvent(new CustomEvent('monomerCreationEnabled'));
 
     return true;
   }
@@ -3013,7 +3031,9 @@ class Editor implements KetcherEditor {
     struct.bonds.add(newBond);
   }
 
-  /** Removes the bond from the struct if it is still present. */
+  /**
+  Removes the bond from the struct if it is still present.
+  */
   private deleteBond(struct: Struct, bond: Bond) {
     const bondId = struct.bonds.keyOf(bond);
     if (bondId === null) {
@@ -3468,7 +3488,7 @@ class Editor implements KetcherEditor {
       atomIds: updatedAtoms,
       bondIds: updatedBonds,
     };
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
         detail: eventData,
       }),
@@ -4429,7 +4449,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     const subs = editor.event[eventName];
 
     target.addEventListener(eventName, (...args) => {
-      if (window.isPolymerEditorTurnedOn) return;
+      if (globalThis.isPolymerEditorTurnedOn) return;
       subs.dispatch(...args);
     });
 

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +28,9 @@ import {
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
-  typeof window !== 'undefined'
-    ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
+  typeof globalThis.window !== 'undefined'
+    ? (globalThis.window as Window & { clipboardData?: DataTransfer })
+        .clipboardData
     : undefined;
 
 const isSafariBrowser = (): boolean =>
@@ -240,7 +241,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              window.ketcher?.editor?.errorHandler?.(
+              globalThis.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -287,6 +288,8 @@ class ClipArea extends Component<ClipAreaProps> {
         contentEditable
         autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}
+        readOnly
+        inputMode="none"
       />
     );
   }
@@ -418,7 +421,7 @@ export function exec(action: string): boolean {
   let enabled = document.queryCommandSupported(action);
   if (enabled) {
     try {
-      const windowWithClipboardEvent = window as Window & {
+      const windowWithClipboardEvent = globalThis.window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
       enabled =

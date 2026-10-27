@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, {
-  type ComponentType,
-  PureComponent,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { type ComponentType, PureComponent } from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
@@ -66,20 +60,6 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(innerRef);
-
-  useEffect(() => {
-    if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current;
-    }
-  }, [innerRef]);
-
-  useEffect(() => {
-    if (inputRef.current && isFocused) {
-      inputRef.current.focus();
-    }
-  }, [inputRef, isFocused]);
-
   return (
     <>
       <input
@@ -87,7 +67,8 @@ export function GenericInput({
         value={value ?? ''}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
-        ref={inputRef}
+        ref={innerRef}
+        autoFocus={isFocused}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}

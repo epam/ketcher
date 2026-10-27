@@ -17,7 +17,7 @@
 import { type AtomListParams, AtomList } from './atomList';
 import { type Point, Vec2 } from './vec2';
 
-import { Elements } from 'domain/constants';
+import { Elements, isMetalElementType } from 'domain/constants';
 import { Pile } from './pile';
 import type { Struct } from './struct';
 import {
@@ -29,6 +29,7 @@ import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { BondEndpoint } from './bondEndpoint';
+import { SettingsManager } from 'utilities';
 
 /**
  * Return unions of Pick.
@@ -449,6 +450,26 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       return true;
     }
     const element = Elements.get(label);
+
+    // Per the 2017 BIOVIA Chemical Representation specification, metal
+    // atoms (alkali, alkaline-earth, transition, post-transition,
+    // lanthanide, actinide) are absent from the main-group valence table
+    // and therefore default to zero valence beyond their existing bonds,
+    // with zero implicit hydrogens. This only applies to the default
+    // (no-override) calculation; an explicit implicit-H count set via
+    // "Add/Remove explicit Hydrogen" is still honored.
+    if (
+      SettingsManager.valenceMode === 'biovia-2017' &&
+      isMetalElementType(element?.type)
+    ) {
+      const hydrogenCount = this.overrideHydrogenCountIfNeeded(0);
+      return this.applyValenceResult(
+        connectionCount,
+        hydrogenCount,
+        connectionCount,
+      );
+    }
+
     const radicalCount = radicalElectrons(this.radical);
     const absCharge = Math.abs(charge);
     const valenceResult = this.calculateValenceResult(element?.group, {

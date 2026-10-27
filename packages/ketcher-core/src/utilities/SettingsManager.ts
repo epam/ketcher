@@ -16,6 +16,7 @@
 
 import { KetcherLogger } from './KetcherLogger';
 import type { LayoutMode } from 'application/editor/modes/types';
+import type { ValenceMode } from 'application/settings/types';
 
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
@@ -66,6 +67,7 @@ interface SavedOptions {
 export class SettingsManager {
   private static disableCustomQueryValue?: boolean;
   private static persistMonomerLibraryUpdatesValue = true;
+  private static valenceModeValue: ValenceMode = 'default';
 
   static getSettings(): SavedSettings {
     try {
@@ -228,5 +230,19 @@ export class SettingsManager {
 
   static set persistMonomerLibraryUpdates(value: boolean | undefined) {
     this.persistMonomerLibraryUpdatesValue = value ?? true;
+  }
+
+  /**
+   * Current valence calculation mode, mirrored from the `ketcher-core`
+   * `SettingsService` whenever settings are loaded or updated (see
+   * `SettingsService::syncDomainLayerSettings`). Read by `Atom.calcValence`
+   * to decide whether metal atoms default to zero valence (`biovia-2017`).
+   */
+  static get valenceMode(): ValenceMode {
+    return this.valenceModeValue;
+  }
+
+  static set valenceMode(valenceMode: ValenceMode | undefined) {
+    this.valenceModeValue = valenceMode ?? 'default';
   }
 }

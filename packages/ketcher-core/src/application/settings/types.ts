@@ -9,6 +9,15 @@ export type { DeepPartial } from 'types';
 export type CssLengthUnit = 'px' | 'pt' | 'cm' | 'inch';
 
 /**
+ * Valence calculation mode for molfile parsing/rendering.
+ * - 'default': Ketcher's historical (pre-2014 BIOVIA) valence table
+ * - 'biovia-2009': pre-2014 BIOVIA valence table (explicit selection)
+ * - 'biovia-2017': 2017 BIOVIA Chemical Representation valence table,
+ *   under which metal atoms default to zero valence / zero implicit H
+ */
+export type ValenceMode = 'biovia-2009' | 'biovia-2017' | 'default';
+
+/**
  * Complete settings structure in flat format
  */
 export interface Settings {
@@ -73,7 +82,7 @@ export interface Settings {
   readonly 'aromatize-skip-superatoms': boolean;
   readonly 'dearomatize-on-load': boolean;
   readonly 'gross-formula-add-isotopes': boolean;
-  readonly 'valence-mode': 'biovia-2009' | 'biovia-2017' | 'default';
+  readonly 'valence-mode': ValenceMode;
 
   // Debug/developer settings
   readonly showAtomIds: boolean;

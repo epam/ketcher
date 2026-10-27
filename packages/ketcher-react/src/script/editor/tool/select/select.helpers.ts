@@ -179,12 +179,13 @@ export function isItemSelected(
         selectedAtoms.includes(bond.begin) && selectedAtoms.includes(bond.end)
       );
     }
-    default:
+    default: {
       return (
         (selection as Record<string, number[] | undefined>)[ci.map]?.includes(
           ci.id,
         ) ?? false
       );
+    }
   }
 }
 

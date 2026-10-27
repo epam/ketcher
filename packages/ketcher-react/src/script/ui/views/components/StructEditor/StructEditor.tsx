@@ -312,8 +312,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     });
 

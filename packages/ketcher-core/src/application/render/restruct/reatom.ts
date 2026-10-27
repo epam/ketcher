@@ -1461,14 +1461,18 @@ export function getColorFromStereoLabel(
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
   switch (stereoLabelType) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return options.colorOfAndCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Or:
+    }
+    case StereoLabel.Or: {
       return options.colorOfOrCenters ?? DEFAULT_STEREO_COLOR;
-    case StereoLabel.Abs:
+    }
+    case StereoLabel.Abs: {
       return options.colorOfAbsoluteCenters;
-    default:
+    }
+    default: {
       return DEFAULT_STEREO_COLOR;
+    }
   }
 }
 
@@ -1506,20 +1510,25 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereoLabelStyleType.Off:
+    case StereoLabelStyleType.Off: {
       return false;
-    case StereoLabelStyleType.On:
+    }
+    case StereoLabelStyleType.On: {
       return true;
-    case StereoLabelStyleType.Classic:
+    }
+    case StereoLabelStyleType.Classic: {
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereoLabelStyleType.IUPAC:
+    }
+    case StereoLabelStyleType.IUPAC: {
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );
-    default:
+    }
+    default: {
       return true;
+    }
   }
 }
 
@@ -1866,7 +1875,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
   let path = paper.set();
   let hshift: number;
   switch (atom.a.radical) {
-    case 1:
+    case 1: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1875,12 +1884,14 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('fill', atom.color);
       break;
-    case 2:
+    }
+    case 2: {
       path = paper.set();
       path.push(draw.radicalBullet(paper, ps, options));
       path.attr('fill', atom.color);
       break;
-    case 3:
+    }
+    case 3: {
       path = paper.set();
       hshift = 1.6 * options.lineWidth;
       path.push(
@@ -1889,8 +1900,10 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       );
       path.attr('stroke', atom.color);
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
   const rbb = util.relBox(path.getBBox());
   const labelHeight = atom.label?.rbb.height ?? 0;

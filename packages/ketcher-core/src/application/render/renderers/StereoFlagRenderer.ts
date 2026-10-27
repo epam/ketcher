@@ -41,16 +41,21 @@ export class StereoFlagRenderer extends BaseRenderer {
 
   private get flagLabel(): string {
     switch (this.stereoFlag.flagType) {
-      case StereoFlagEnum.Abs:
+      case StereoFlagEnum.Abs: {
         return 'ABS';
-      case StereoFlagEnum.And:
+      }
+      case StereoFlagEnum.And: {
         return 'AND Enantiomer';
-      case StereoFlagEnum.Or:
+      }
+      case StereoFlagEnum.Or: {
         return 'OR Enantiomer';
-      case StereoFlagEnum.Mixed:
+      }
+      case StereoFlagEnum.Mixed: {
         return 'Mixed';
-      default:
+      }
+      default: {
         return '';
+      }
     }
   }
 

@@ -483,27 +483,36 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
 
     switch (groupno) {
-      case 1:
+      case 1: {
         return this.calculateGroup1Valence(context);
-      case 2:
+      }
+      case 2: {
         return this.calculateGroup2Valence(context);
-      case 3:
+      }
+      case 3: {
         return this.calculateGroup3Valence(context);
-      case 4:
+      }
+      case 4: {
         return this.calculateGroup4Valence(context);
-      case 5:
+      }
+      case 5: {
         return this.calculateGroup5Valence(context);
-      case 6:
+      }
+      case 6: {
         return this.calculateGroup6Valence(context);
-      case 7:
+      }
+      case 7: {
         return this.calculateGroup7Valence(context);
-      case 8:
+      }
+      case 8: {
         return this.calculateGroup8Valence(context);
-      default:
+      }
+      default: {
         return {
           valence: context.connectionCount,
           hydrogenCount: 0,
         };
+      }
     }
   }
 

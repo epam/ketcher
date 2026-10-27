@@ -165,12 +165,14 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.BILN;
       break;
     }
-    case ChemicalMimeType.RDF:
+    case ChemicalMimeType.RDF: {
       format = SupportedFormat.RDF;
       break;
-    case ChemicalMimeType.MonomerLibrary:
+    }
+    case ChemicalMimeType.MonomerLibrary: {
       format = SupportedFormat.MonomerLibrary;
       break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');

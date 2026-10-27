@@ -61,18 +61,22 @@ export const getOtherLibraryMonomers = (
  */
 const getHelmNamespace = (type: KetMonomerClass | 'rnaPreset' | undefined) => {
   switch (type) {
-    case KetMonomerClass.AminoAcid:
+    case KetMonomerClass.AminoAcid: {
       return 'peptide';
+    }
     case KetMonomerClass.Sugar:
     case KetMonomerClass.Base:
     case KetMonomerClass.Phosphate:
-    case KetMonomerClass.RNA:
+    case KetMonomerClass.RNA: {
       return 'rna';
-    case KetMonomerClass.CHEM:
+    }
+    case KetMonomerClass.CHEM: {
       return 'chem';
-    default:
+    }
+    default: {
       // Unrecognised classes keep their own namespace rather than losing the check.
       return type;
+    }
   }
 };
 

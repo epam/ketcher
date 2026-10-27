@@ -229,14 +229,15 @@ function useLabelStyles(
   let stroke = '#7C7C7F';
 
   switch (usageInMacromolecule) {
-    case UsageInMacromolecule.MonomerPreview:
+    case UsageInMacromolecule.MonomerPreview: {
       stroke = 'none';
       if (attachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       break;
-    case UsageInMacromolecule.MonomerConnectionsModal:
+    }
+    case UsageInMacromolecule.MonomerConnectionsModal: {
       if (attachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';
@@ -246,7 +247,8 @@ function useLabelStyles(
         stroke = '#B4B9D6';
       }
       break;
-    case UsageInMacromolecule.BondPreview:
+    }
+    case UsageInMacromolecule.BondPreview: {
       if (attachmentPointSelected) {
         fill = '#CDF1FC';
       } else if (attachmentPointUsed) {
@@ -255,8 +257,10 @@ function useLabelStyles(
       }
       stroke = 'none';
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   return { color, fill, stroke };

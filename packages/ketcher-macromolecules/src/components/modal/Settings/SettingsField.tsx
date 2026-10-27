@@ -81,7 +81,7 @@ export const SettingsField = ({
   }
   const renderField = () => {
     switch (type) {
-      case 'checkbox':
+      case 'checkbox': {
         return (
           <label>
             {labelContent}
@@ -93,8 +93,9 @@ export const SettingsField = ({
             />
           </label>
         );
+      }
 
-      case 'number':
+      case 'number': {
         return (
           <label>
             {labelContent}
@@ -116,8 +117,9 @@ export const SettingsField = ({
             />
           </label>
         );
+      }
 
-      case 'select':
+      case 'select': {
         return (
           <label>
             {labelContent}
@@ -160,8 +162,9 @@ export const SettingsField = ({
             </FormControl>
           </label>
         );
+      }
 
-      case 'color':
+      case 'color': {
         return (
           <label>
             {labelContent}
@@ -196,9 +199,10 @@ export const SettingsField = ({
             </div>
           </label>
         );
+      }
 
       case 'text':
-      default:
+      default: {
         return (
           <label>
             {labelContent}
@@ -217,6 +221,7 @@ export const SettingsField = ({
             />
           </label>
         );
+      }
     }
   };
 

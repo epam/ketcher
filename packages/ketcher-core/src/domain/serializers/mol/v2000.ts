@@ -328,84 +328,110 @@ function processMPropertyLine(
   rLogic: Record<number, RGroupAttributes>,
 ): boolean {
   switch (type) {
-    case 'END':
+    case 'END': {
       return true; // Signal to break loop
-    case 'CHG':
+    }
+    case 'CHG': {
       handleSimpleAtomProperty('charge', propertyData, props);
       break;
-    case 'RAD':
+    }
+    case 'RAD': {
       handleSimpleAtomProperty('radical', propertyData, props);
       break;
-    case 'ISO':
+    }
+    case 'ISO': {
       handleSimpleAtomProperty('isotope', propertyData, props);
       break;
-    case 'RBC':
+    }
+    case 'RBC': {
       handleSimpleAtomProperty('ringBondCount', propertyData, props);
       break;
-    case 'SUB':
+    }
+    case 'SUB': {
       handleSubstitutionProperty(propertyData, props);
       break;
-    case 'UNS':
+    }
+    case 'UNS': {
       handleSimpleAtomProperty('unsaturatedAtom', propertyData, props);
       break;
-    case 'RGP':
+    }
+    case 'RGP': {
       handleRGroupProperty(propertyData, props);
       break;
-    case 'LOG':
+    }
+    case 'LOG': {
       handleRGroupLogic(propertyData, rLogic);
       break;
-    case 'APO':
+    }
+    case 'APO': {
       handleSimpleAtomProperty('attachmentPoints', propertyData, props);
       break;
-    case 'ALS':
+    }
+    case 'ALS': {
       handleAtomListProperty(propertyData, props);
       break;
-    case 'STY':
+    }
+    case 'STY': {
       sGroup.initSGroup(sGroups, propertyData);
       break;
-    case 'SST':
+    }
+    case 'SST': {
       sGroup.applySGroupProp(sGroups, 'subtype', propertyData);
       break;
-    case 'SLB':
+    }
+    case 'SLB': {
       sGroup.applySGroupProp(sGroups, 'label', propertyData, true);
       break;
-    case 'SPL':
+    }
+    case 'SPL': {
       sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true);
       break;
-    case 'SCN':
+    }
+    case 'SCN': {
       sGroup.applySGroupProp(sGroups, 'connectivity', propertyData);
       break;
-    case 'SAL':
+    }
+    case 'SAL': {
       sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1);
       break;
-    case 'SBL':
+    }
+    case 'SBL': {
       sGroup.applySGroupArrayProp(sGroups, 'bonds', propertyData, -1);
       break;
-    case 'SPA':
+    }
+    case 'SPA': {
       sGroup.applySGroupArrayProp(sGroups, 'patoms', propertyData, -1);
       break;
+    }
     case 'SMT':
-    case 'SCL':
+    case 'SCL': {
       handleSGroupDataProperty(type, propertyData, sGroups);
       break;
-    case 'SDT':
+    }
+    case 'SDT': {
       sGroup.applyDataSGroupDesc(sGroups, propertyData);
       break;
-    case 'SDD':
+    }
+    case 'SDD': {
       sGroup.applyDataSGroupInfoLine(sGroups, propertyData);
       break;
-    case 'SCD':
+    }
+    case 'SCD': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, false);
       break;
-    case 'SED':
+    }
+    case 'SED': {
       sGroup.applyDataSGroupDataLine(sGroups, propertyData, true);
       break;
-    case 'SDS':
+    }
+    case 'SDS': {
       handleSGroupExpandedProperty(propertyData, sGroups);
       break;
-    case 'SAP':
+    }
+    case 'SAP': {
       handleSGroupAttachmentProperty(propertyData, sGroups);
       break;
+    }
   }
 
   return false; // Continue loop

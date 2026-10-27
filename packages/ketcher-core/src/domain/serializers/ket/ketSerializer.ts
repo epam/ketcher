@@ -218,8 +218,9 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
       imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
-    default:
+    default: {
       break;
+    }
   }
 }
 
@@ -371,11 +372,13 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(imageToKet(item));
           break;
         }
-        case MULTITAIL_ARROW_SERIALIZE_KEY:
+        case MULTITAIL_ARROW_SERIALIZE_KEY: {
           result.root.nodes.push(multitailArrowToKet(item));
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
     });
 
@@ -622,8 +625,9 @@ export class KetSerializer implements Serializer<Struct> {
           command.merge(monomerAdditionCommand);
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
     const fileContentForMicromolecules =
@@ -769,8 +773,9 @@ export class KetSerializer implements Serializer<Struct> {
 
           break;
         }
-        default:
+        default: {
           break;
+        }
       }
     });
 

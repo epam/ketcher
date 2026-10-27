@@ -108,8 +108,9 @@ function modalReducer(
       };
     }
 
-    default:
+    default: {
       return state;
+    }
   }
 }
 

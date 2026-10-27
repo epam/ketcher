@@ -3633,7 +3633,7 @@ class Editor implements KetcherEditor {
 
     for (const [operation, ids] of changesMap.entries()) {
       switch (operation) {
-        case OperationType.ATOM_DELETE:
+        case OperationType.ATOM_DELETE: {
           {
             // Invalidate assigned attachment points – check if any of the atoms in the atom pair is deleted
             const attachmentPointsToInvalidate = Array.from(
@@ -3715,6 +3715,7 @@ class Editor implements KetcherEditor {
             this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
+        }
 
         case OperationType.BOND_ATTR: {
           for (const id of ids.values()) {
@@ -3872,8 +3873,9 @@ class Editor implements KetcherEditor {
           break;
         }
 
-        default:
+        default: {
           break;
+        }
       }
     }
 
@@ -4155,8 +4157,9 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].add(handler);
+      }
     }
 
     return subscriber;
@@ -4183,10 +4186,11 @@ class Editor implements KetcherEditor {
         break;
       }
 
-      default:
+      default: {
         this.event[eventName].remove(
           subscriber.handler as (action?: unknown) => void,
         );
+      }
     }
   }
 

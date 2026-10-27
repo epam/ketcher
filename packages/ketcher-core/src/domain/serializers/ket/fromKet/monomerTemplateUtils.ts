@@ -58,8 +58,9 @@ function parseNode(node, struct) {
       imageToStruct(node, struct);
       break;
     }
-    default:
+    default: {
       break;
+    }
   }
 }
 

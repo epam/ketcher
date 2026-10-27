@@ -59,7 +59,7 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
     const op = operation._inverted;
     switch (op.type) {
       case OperationType.ATOM_ADD:
-      case OperationType.ATOM_DELETE:
+      case OperationType.ATOM_DELETE: {
         data.push({
           operation: op.type,
           id: op.data.aid,
@@ -70,8 +70,9 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           },
         });
         break;
+      }
 
-      case OperationType.ATOM_ATTR:
+      case OperationType.ATOM_ATTR: {
         data.push({
           operation: operation.type,
           id: operation.data.aid,
@@ -80,8 +81,9 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           to: operation.data2.value,
         });
         break;
+      }
 
-      case OperationType.ATOM_MOVE:
+      case OperationType.ATOM_MOVE: {
         data.push({
           operation: op.type,
           id: op.data.aid,
@@ -91,53 +93,59 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           },
         });
         break;
+      }
 
       case OperationType.BOND_ADD:
       case OperationType.BOND_DELETE:
-      case OperationType.BOND_ATTR:
+      case OperationType.BOND_ATTR: {
         data.push({
           operation: op.type,
           id: op.data.bid,
         });
         break;
+      }
 
       case OperationType.FRAGMENT_ADD:
-      case OperationType.FRAGMENT_DELETE:
+      case OperationType.FRAGMENT_DELETE: {
         data.push({
           operation: op.type,
           id: op.frid,
         });
         break;
+      }
 
       case OperationType.FRAGMENT_ADD_STEREO_ATOM:
-      case OperationType.FRAGMENT_DELETE_STEREO_ATOM:
+      case OperationType.FRAGMENT_DELETE_STEREO_ATOM: {
         data.push({
           operation: op.type,
           atomId: op.data.aid,
           fragId: op.data.frid,
         });
         break;
+      }
 
       case OperationType.S_GROUP_ATOM_ADD:
-      case OperationType.S_GROUP_ATOM_REMOVE:
+      case OperationType.S_GROUP_ATOM_REMOVE: {
         data.push({
           operation: op.type,
           atomId: op.data.aid,
           sGroupId: op.data.sgid,
         });
         break;
+      }
 
       case OperationType.S_GROUP_CREATE:
-      case OperationType.S_GROUP_DELETE:
+      case OperationType.S_GROUP_DELETE: {
         data.push({
           operation: op.type,
           type: op.data.type,
           sGroupId: op.data.sgid,
         });
         break;
+      }
 
       case OperationType.RXN_ARROW_ADD:
-      case OperationType.RXN_ARROW_DELETE:
+      case OperationType.RXN_ARROW_DELETE: {
         data.push({
           operation: op.type,
           id: op.data.id,
@@ -148,16 +156,18 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           })),
         });
         break;
+      }
 
       case OperationType.RXN_ARROW_RESIZE:
-      case OperationType.SIMPLE_OBJECT_RESIZE:
+      case OperationType.SIMPLE_OBJECT_RESIZE: {
         data.push({
           operation: op.type,
           id: op.data.id,
         });
         break;
+      }
 
-      case OperationType.RXN_ARROW_MOVE:
+      case OperationType.RXN_ARROW_MOVE: {
         data.push({
           operation: op.type,
           id: op.data.id,
@@ -167,24 +177,27 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           },
         });
         break;
+      }
 
-      case OperationType.R_GROUP_FRAGMENT:
+      case OperationType.R_GROUP_FRAGMENT: {
         data.push({
           operation: operation.type,
           id: op.frid,
         });
         break;
+      }
 
       case OperationType.SIMPLE_OBJECT_ADD:
-      case OperationType.SIMPLE_OBJECT_DELETE:
+      case OperationType.SIMPLE_OBJECT_DELETE: {
         data.push({
           operation: op.type,
           id: op.data.id,
           mode: op.data.mode,
         });
         break;
+      }
 
-      case OperationType.SIMPLE_OBJECT_MOVE:
+      case OperationType.SIMPLE_OBJECT_MOVE: {
         data.push({
           operation: operation.type,
           id: operation.data.id,
@@ -194,11 +207,13 @@ function handleMicroChanges(action, handler, data: ChangeEventData[]) {
           },
         });
         break;
+      }
 
-      default:
+      default: {
         data.push({
           operation: op.type,
         });
+      }
     }
   });
 

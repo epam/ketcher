@@ -29,7 +29,7 @@ export function fromRGroupAttachmentPointAddition(
 ) {
   const action = new Action();
   switch (attachmentPoints) {
-    case AttachmentPoints.FirstSideOnly:
+    case AttachmentPoints.FirstSideOnly: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -37,8 +37,9 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    case AttachmentPoints.SecondSideOnly:
+    case AttachmentPoints.SecondSideOnly: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -46,8 +47,9 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    case AttachmentPoints.BothSides:
+    case AttachmentPoints.BothSides: {
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -61,9 +63,11 @@ export function fromRGroupAttachmentPointAddition(
         }),
       );
       break;
+    }
 
-    default:
+    default: {
       break;
+    }
   }
   return action.perform(restruct);
 }

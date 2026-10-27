@@ -185,13 +185,15 @@ export default function (
       );
     }
 
-    case 'UPDATE':
+    case 'UPDATE': {
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
         params as ActionParams,
       );
+    }
 
-    default:
+    default: {
       return state;
+    }
   }
 }

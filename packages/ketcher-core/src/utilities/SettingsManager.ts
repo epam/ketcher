@@ -232,12 +232,6 @@ export class SettingsManager {
     this.persistMonomerLibraryUpdatesValue = value ?? true;
   }
 
-  /**
-   * Current valence calculation mode, mirrored from the `ketcher-core`
-   * `SettingsService` whenever settings are loaded or updated (see
-   * `SettingsService::syncDomainLayerSettings`). Read by `Atom.calcValence`
-   * to decide whether metal atoms default to zero valence (`biovia-2017`).
-   */
   static get valenceMode(): ValenceMode {
     return this.valenceModeValue;
   }

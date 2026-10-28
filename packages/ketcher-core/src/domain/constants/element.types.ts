@@ -156,8 +156,7 @@ export interface Element {
  * non-metals / metalloids / halogens / noble gases.
  *
  * Used to determine, per the 2017 BIOVIA Chemical Representation
- * specification, which elements fall outside the main-group valence table
- * (H, B, C, N, O, F, Si, P, S, Cl, As, Se, Br, Te, I, At, noble gases) and
+ * specification, which elements fall outside the main-group valence table and
  * therefore default to zero valence / zero implicit hydrogens.
  */
 export const METAL_ELEMENT_TYPES = [
@@ -167,9 +166,7 @@ export const METAL_ELEMENT_TYPES = [
   'transition',
   'lanthanide',
   'actinide',
-] as const;
-
-export type MetalElementType = (typeof METAL_ELEMENT_TYPES)[number];
+];
 
 /**
  * Returns true if the given `Element.type` value denotes a metal
@@ -177,7 +174,7 @@ export type MetalElementType = (typeof METAL_ELEMENT_TYPES)[number];
  * actinide element).
  */
 export function isMetalElementType(type?: string): boolean {
-  return !!type && (METAL_ELEMENT_TYPES as readonly string[]).includes(type);
+  return !!type && METAL_ELEMENT_TYPES.includes(type);
 }
 
 export enum AtomLabel {

@@ -164,7 +164,7 @@ The blast radius is the potential impact or scope of the changes introduced by t
 
 ## PR type and Check list
 
-Tick the one PR type row that matches, and only the checklist items that are true. After the checklist, add:
+Tick every PR type row that matches, and only the checklist items that are true. After the checklist, add:
 
 - `Closes #<N>` for each issue the PR fixes;
 - `Memory bank:` and the file the PR updated, or `not needed`.

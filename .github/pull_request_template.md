@@ -19,10 +19,12 @@
 
 ## PR type
 
-Tick the row that matches this PR. The full contract is in `.memory-bank/review-workflow.md`.
+Tick every row that matches this PR: Large-scale change and Archive go with another type. The full contract is in `.memory-bank/review-workflow.md`.
 
 - [ ] Bug fix: linked issue and a regression test
 - [ ] Feature: OpenSpec change in `openspec/changes/<change>/` and tests
+- [ ] Refactor: behavior kept, held by tests written before the code moved
+- [ ] Small change: no behavior change, held by the existing tests and the type check
 - [ ] Large-scale change: opened with `?template=large-scale-change.md`
 - [ ] Archive of an OpenSpec change: no unchecked tasks
 

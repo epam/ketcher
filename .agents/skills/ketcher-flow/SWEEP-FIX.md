@@ -28,7 +28,7 @@ The orchestrator runs _Review_ from SKILL.md and sends you its steps one message
 - **Cleanup**: apply _Cleanup_ from that section to your branch's diff, as one commit. Rerun the checks and report.
 - **Findings** from a round: fix each in a new commit, or decline it with one line of reason. Rerun the checks and report the commits and the declines.
 
-When the orchestrator says review is done, open the PR as TRACKER.md says. Review has stopped, so open it ready, not as a draft. Title: `#<N> - <title>` of the first issue, naming the others after it. The body is the **brief**, then a `---` rule, then the PR template sections, `Closes #<N>` for each committed bug, and "Verified in the app" from the verifier's report.
+When the orchestrator says review is done, open the PR as TRACKER.md says. Review has stopped, so open it ready, not as a draft. Title: `#<N> - <title>` of the first issue, naming the others after it. The body is the **brief**, then a `---` rule, then the PR template sections with PR type "Bug fix", `Closes #<N>` for each committed bug, and "Verified in the app" from the verifier's report.
 
 ### The brief
 

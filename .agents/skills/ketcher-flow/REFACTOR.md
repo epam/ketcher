@@ -32,4 +32,4 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
 8. Run _Review_ from SKILL.md with `target.md` as the spec. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
 
-9. **Land** as SKILL.md says, with the issue when there is one. Report: the structure that changed, the pin it held against, the verify verdict, what was reverted and why, and any bugs found on the way.
+9. **Land** as SKILL.md says, with PR type "Refactor" and the issue when there is one. Report: the structure that changed, the pin it held against, the verify verdict, what was reverted and why, and any bugs found on the way.

@@ -30,12 +30,14 @@ For changes too large to read line by line. Follow the [large-scale change proto
 
 Checked for every PR, whatever flow the author used. A PR that matches no row follows the PR template checklist only.
 
-| PR type                       | Must contain                                             | Checked by                                                                                                                 |
-| ----------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Bug fix                       | Linked issue, a regression test                          | PR template checklist today. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)                   |
-| Feature                       | An OpenSpec change (or a spec in the same format), tests | Planned: Danger fails the PR without an OpenSpec change, and `openspec validate --all --strict` (Phase 3, tasks 3.4, 3.10) |
-| Large-scale change            | The large-scale change protocol sections                 | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
-| Archive of an OpenSpec change | No unchecked tasks                                       | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                               |
+| PR type                       | Must contain                                                     | Checked by                                                                                                                 |
+| ----------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Bug fix                       | Linked issue, a regression test                                  | PR template checklist today. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)                   |
+| Feature                       | An OpenSpec change (or a spec in the same format), tests         | Planned: Danger fails the PR without an OpenSpec change, and `openspec validate --all --strict` (Phase 3, tasks 3.4, 3.10) |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | PR template checklist                                                                                                      |
+| Small change                  | No behavior change; existing tests and the type check hold it    | PR template checklist                                                                                                      |
+| Large-scale change            | The large-scale change protocol sections                         | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
+| Archive of an OpenSpec change | No unchecked tasks                                               | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                               |
 
 ## Review pipeline
 

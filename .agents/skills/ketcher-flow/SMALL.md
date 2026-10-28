@@ -20,4 +20,4 @@ The existing tests and the type check hold the behavior. A small change that nee
 
 5. **Review.** Run _Review_ from SKILL.md with `scope.md` and the issue as the spec. You do the cleanup and the fixes yourself. One round is often enough: stop when a round has nothing to act on.
 
-6. **Land** as SKILL.md says, with `Closes #N` when there is an issue. Report: the PR, the checks, the verify verdict, and any new scopes found.
+6. **Land** as SKILL.md says, with PR type "Small change" and `Closes #N` when there is an issue. Report: the PR, the checks, the verify verdict, and any new scopes found.

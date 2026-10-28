@@ -2441,8 +2441,8 @@ class Editor implements KetcherEditor {
 
       if (
         sgroup === replacementSourceSGroup ||
-        !sgroup.isMonomer ||
         symbol !== originalSymbol ||
+        !sgroup.isMonomer ||
         props?.MonomerClass !== originalType
       ) {
         return;

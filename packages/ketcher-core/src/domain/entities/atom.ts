@@ -395,11 +395,11 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     return Boolean(
       isAnyAtom ||
       isAnyMetal ||
+      isAnyHalogen ||
+      isAnyGroup ||
       this.substitutionCount !== 0 ||
       this.unsaturatedAtom !== 0 ||
       this.ringBondCount !== 0 ||
-      isAnyHalogen ||
-      isAnyGroup ||
       this.hCount !== 0 ||
       this.atomList !== null ||
       Object.values(queryProperties).some(

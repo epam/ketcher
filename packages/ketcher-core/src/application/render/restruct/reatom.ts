@@ -680,8 +680,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       if (
         !isHydrogen &&
-        implh > 0 &&
         !shouldHideHydrogenInPreview &&
+        implh > 0 &&
         !this.a.alias &&
         displayHydrogen(struct, this, options.showHydrogenLabels)
       ) {

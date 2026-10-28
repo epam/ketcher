@@ -130,15 +130,15 @@ export class BondRenderer extends BaseRenderer {
     const BENZENE_RING_BONDS_AMOUNT = 6;
 
     if (
-      (loop2DoubleBondsAmount === 1 || loop1DoubleBondsAmount > 1) &&
       loop1HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
-      loop2HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT
+      loop2HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
+      (loop2DoubleBondsAmount === 1 || loop1DoubleBondsAmount > 1)
     )
       return -1;
     if (
-      (loop1DoubleBondsAmount === 1 || loop2DoubleBondsAmount > 1) &&
       loop2HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
-      loop1HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT
+      loop1HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
+      (loop1DoubleBondsAmount === 1 || loop2DoubleBondsAmount > 1)
     )
       return 1;
     if (

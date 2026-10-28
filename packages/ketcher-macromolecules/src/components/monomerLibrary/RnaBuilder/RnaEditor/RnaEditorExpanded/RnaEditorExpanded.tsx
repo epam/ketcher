@@ -251,8 +251,8 @@ export const RnaEditorExpanded = ({
     isEditMode &&
     isSequenceEditInRNABuilderMode &&
     activePresetGroupItem &&
-    activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
-    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem
+    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem &&
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets
   ) {
     setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
     setIsSequenceSelectionUpdated(true);

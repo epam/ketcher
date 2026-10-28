@@ -488,7 +488,7 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (hydrogenAmount > 0 && !isHydrogenLabel && !this.atom.hasAlias) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(

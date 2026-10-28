@@ -1386,7 +1386,7 @@ export class Struct {
       if (hb.loop !== -1) return;
 
       for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.size; ++c) {
-        if (c > 0 && hbIdNext === hbId) {
+        if (hbIdNext === hbId && c > 0) {
           // loop found
           const subloops = this.partitionLoop(loop);
           subloops.forEach((subloop) => {

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type ClipboardTransferData =
@@ -50,8 +49,8 @@ export function legacyCopy(
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (e) {
-    console.error('clipboardUtils.ts::legacyCopy', e);
+  } catch (error) {
+    console.error('clipboardUtils.ts::legacyCopy', error);
     console.info(`Could not write exact type ${curFmt}`);
   }
 }
@@ -76,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {

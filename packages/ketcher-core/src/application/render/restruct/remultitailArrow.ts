@@ -110,8 +110,7 @@ export class ReMultitailArrow extends ReObject {
     verticalDirection: -1 | 1,
     horizontalDirection: -1 | 1,
   ): void {
-    const cubicBezierOffset =
-      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const cubicBezierOffset = horizontalDirection * this.CUBIC_BEZIER_OFFSET;
     const start = lineStart.add(
       new Vec2(offset * horizontalDirection, offset * verticalDirection),
     );
@@ -135,7 +134,7 @@ export class ReMultitailArrow extends ReObject {
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions(renderOptions);
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 
@@ -281,7 +280,7 @@ export class ReMultitailArrow extends ReObject {
         'head',
         OFFSET,
       ),
-      ...Array.from(tails.entries()).reduce(
+      ...[...tails.entries()].reduce(
         (acc, [key, value]) => ({
           ...acc,
           ...this.getSelectionPointsFromReferencePoint(
@@ -313,13 +312,10 @@ export class ReMultitailArrow extends ReObject {
         spineMoveSelectionPoint = element;
       }
       if (element.node?.setAttribute) {
-        element.node.setAttribute('data-testid', key);
+        element.node.dataset.testid = key;
         element.node.setAttribute('pointer-events', 'all');
         if (typeof this.multitailArrow.arrowId === 'number') {
-          element.node.setAttribute(
-            'data-arrow-id',
-            String(this.multitailArrow.arrowId),
-          );
+          element.node.dataset.arrowId = String(this.multitailArrow.arrowId);
         }
       }
       selectionPoints.push(element);
@@ -344,10 +340,7 @@ export class ReMultitailArrow extends ReObject {
       .attr({ ...options.selectionStyle });
 
     if (typeof this.multitailArrow.arrowId === 'number') {
-      paths.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
+      paths.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }
 
     selectionSet.push(paths);
@@ -390,17 +383,11 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
-    path.node?.setAttribute('data-testid', RXN_ARROW_TEST_ID);
-    path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
+    path.node.dataset.testid = RXN_ARROW_TEST_ID;
+    path.node.dataset.arrowtype = MULTITAIL_ARROW_TEST_ID;
     if (typeof this.multitailArrow.arrowId === 'number') {
-      path.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
-      header.node?.setAttribute(
-        'data-arrow-id',
-        String(this.multitailArrow.arrowId),
-      );
+      path.node.dataset.arrowId = String(this.multitailArrow.arrowId);
+      header.node.dataset.arrowId = String(this.multitailArrow.arrowId);
     }
     path.attr(renderOptions.lineattr);
     header.attr({
@@ -475,13 +462,13 @@ export class ReMultitailArrow extends ReObject {
           ? {
               distance,
               ref:
-                refName !== MultitailArrowRefName.SPINE
-                  ? {
+                refName === MultitailArrowRefName.SPINE
+                  ? null
+                  : {
                       name: refName,
                       isLine,
                       tailId,
-                    }
-                  : null,
+                    },
             }
           : acc;
       },
@@ -493,7 +480,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   private getTailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {
-    return Array.from(tails.entries()).map(([key, value]) => [
+    return [...tails.entries()].map(([key, value]) => [
       `${MultitailArrow.TAILS_NAME}-${key}`,
       value,
     ]);
@@ -510,9 +497,10 @@ export class ReMultitailArrow extends ReObject {
       referencePositions,
     );
     const { tails, ...rest } = referenceLines;
-    const tailsAndHeadLines: Array<[string, Line]> = Object.entries(
-      rest,
-    ).concat(this.getTailArrayFromPool(tails));
+    const tailsAndHeadLines: Array<[string, Line]> = [
+      ...Object.entries(rest),
+      ...this.getTailArrayFromPool(tails),
+    ];
 
     const lineResult = this.getClosestArrowPartPosition(
       point,
@@ -528,9 +516,10 @@ export class ReMultitailArrow extends ReObject {
         ...validReferencePositions
       } = referencePositions;
 
-      const tailsAnddHeadPoints: Array<[string, Vec2]> = Object.entries(
-        validReferencePositions,
-      ).concat(this.getTailArrayFromPool(tailsPoints));
+      const tailsAnddHeadPoints: Array<[string, Vec2]> = [
+        ...Object.entries(validReferencePositions),
+        ...this.getTailArrayFromPool(tailsPoints),
+      ];
 
       const pointsResult = this.getClosestArrowPartPosition(
         point,

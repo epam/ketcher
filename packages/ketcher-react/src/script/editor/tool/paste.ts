@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -73,18 +73,17 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(
-          this.editor.lastEvent as MouseEvent,
-          rnd,
-        )
-      : CoordinateTransformation.pageToModel(
-          {
-            clientX: clientAreaRect.left + clientWidth / 2,
-            clientY: clientAreaRect.top + clientHeight / 2,
-          },
-          rnd,
-        );
+    // Always center the pasted element initially. The mousemove handler will
+    // update the position as the user moves the mouse. Using lastEvent here
+    // would place the element at the position of a previous mouse event,
+    // which could be over an existing element and cause unwanted movement.
+    const point = CoordinateTransformation.pageToModel(
+      {
+        clientX: clientAreaRect.left + clientWidth / 2,
+        clientY: clientAreaRect.top + clientHeight / 2,
+      },
+      rnd,
+    );
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
@@ -247,10 +246,10 @@ class PasteTool implements Tool {
   mouseup() {
     const idsOfItemsMerged = this.mergeItems && {
       ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
+        atoms: [...this.mergeItems.atoms.values()],
       }),
       ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
+        bonds: [...this.mergeItems.bonds.values()],
       }),
     };
 
@@ -308,7 +307,9 @@ class PasteTool implements Tool {
   }
 }
 
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
 function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();

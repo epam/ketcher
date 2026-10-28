@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,9 @@ function paddedNum(
  * @returns The parsed integer, or 0 if parsing fails
  */
 function parseDecimalInt(str: string): number {
-  /* reader */
+  /*
+  reader
+  */
   const val = Number.parseInt(str, 10);
 
   return Number.isNaN(val) ? 0 : val;
@@ -110,7 +112,9 @@ function partitionLine(
   parts: number[],
   withspace: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
@@ -132,7 +136,9 @@ function partitionLineFixed(
   itemLength: number,
   withspace: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
   const step = withspace ? itemLength + 1 : itemLength;
   let shift = 0;
@@ -487,7 +493,9 @@ function rxnMerge(
   _nAgents: number,
   shouldReactionRelayout?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
   if (SHOULD_RESCALE_MOLECULES) {
@@ -530,7 +538,9 @@ function rxnMerge(
  * @returns Merged R-group structure
  */
 function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
   scaffold.mergeInto(ret, null, null, false, true);

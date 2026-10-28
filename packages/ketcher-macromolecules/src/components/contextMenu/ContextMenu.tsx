@@ -16,10 +16,11 @@ import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectIsContextMenuActive, setContextMenuActive } from 'state/common';
 
-interface MenuItem {
+export interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
+  itemClassName?: string;
   icon?: ReactElement;
   disabled?:
     | boolean
@@ -53,6 +54,7 @@ interface MenuProps {
   id: CONTEXT_MENU_ID;
   menuItems: MenuItem[];
   handleMenuChange: (params: ItemParams) => void;
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
 const assembleMenuItems = (
@@ -71,6 +73,7 @@ const assembleMenuItems = (
       hidden,
       disabled,
       isMenuTitle,
+      itemClassName,
       separator,
       subMenuItems,
       onMouseOver,
@@ -94,7 +97,9 @@ const assembleMenuItems = (
           data-testid={name}
           hidden={hidden}
           disabled={disabled}
-          className={isMenuTitle ? 'contexify_item-title' : ''}
+          className={[isMenuTitle ? 'contexify_item-title' : '', itemClassName]
+            .filter(Boolean)
+            .join(' ')}
           onMouseOver={() => {
             if (isMouseOverThrottling) {
               return;
@@ -126,7 +131,12 @@ const assembleMenuItems = (
   return items;
 };
 
-export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
+export const ContextMenu = ({
+  id,
+  handleMenuChange,
+  menuItems,
+  onVisibilityChange,
+}: MenuProps) => {
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
 
@@ -168,7 +178,7 @@ export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
   }, [dispatch, isContextMenuActive]);
 
   return (
-    <StyledMenu id={id}>
+    <StyledMenu id={id} onVisibilityChange={onVisibilityChange}>
       {assembleMenuItems(menuItems, handleMenuChange) as never}
     </StyledMenu>
   );

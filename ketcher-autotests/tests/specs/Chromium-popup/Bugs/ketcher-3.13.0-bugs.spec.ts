@@ -18,6 +18,8 @@ import {
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
+import { waitForRender } from '@utils/common/loaders';
+import { getVisibleCanvas } from '@utils/canvas';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
@@ -212,13 +214,33 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
-    await ContextMenu(page, sugarAtom).click(
-      MonomerOnMicroOption.CollapseMonomer,
-    );
+    await waitForRender(page, async () => {
+      await ContextMenu(page, sugarAtom).click(
+        MonomerOnMicroOption.CollapseMonomer,
+      );
+    });
 
-    // Step 7: Screenshot stereogenic center to verify stereo bonds persist
+    // Step 7: Screenshot stereogenic center to verify stereo bonds persist.
+    // Clamp the left edge of the crop to the canvas element boundary so the
+    // toolbar strip (which renders differently based on preceding test state)
+    // is excluded while all chemistry — both stereo bonds and flanking atoms —
+    // remains fully captured within the 180 px padding.
     const collapsedLabel = getAbbreviationLocator(page, { name: 'sssS' });
-    await takeElementScreenshot(page, collapsedLabel, { padding: 180 });
+    await collapsedLabel.waitFor({ state: 'visible' });
+    const labelBox = await collapsedLabel.boundingBox();
+    const canvasBox = await (await getVisibleCanvas(page)).boundingBox();
+    if (!labelBox || !canvasBox) {
+      throw new Error('Could not get bounding boxes');
+    }
+    const padding = 180;
+    const clip = {
+      x: Math.max(labelBox.x - padding, canvasBox.x),
+      y: Math.max(labelBox.y - padding, 0),
+      width: labelBox.width + padding * 2,
+      height: labelBox.height + padding * 2,
+    };
+    const screenshot = await page.screenshot({ clip });
+    expect(screenshot).toMatchSnapshot();
   });
 
   test('Case 5 — Save Structure dialog causes memory leak when switching formats repeatedly', async () => {
@@ -480,10 +502,26 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await clickOnCanvas(page, 0, 0);
 
     // Visual verification: take a screenshot where bad valence (if present) is visible.
-    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
-      paddingWidth: 180,
-      paddingHeight: 90,
-    });
+    // Clamp the left edge of the crop to the canvas element boundary so the
+    // toolbar strip (which renders differently based on preceding test state)
+    // is excluded while all relevant atoms remain captured within the padding.
+    const atomLocator = getAtomLocator(page, { atomId: 4 });
+    await atomLocator.waitFor({ state: 'visible' });
+    const atomBox = await atomLocator.boundingBox();
+    const canvasBox9 = await (await getVisibleCanvas(page)).boundingBox();
+    if (!atomBox || !canvasBox9) {
+      throw new Error('Could not get bounding boxes');
+    }
+    const paddingW = 180;
+    const paddingH = 90;
+    const clip9 = {
+      x: Math.max(atomBox.x - paddingW, canvasBox9.x),
+      y: Math.max(atomBox.y - paddingH, 0),
+      width: atomBox.width + paddingW * 2,
+      height: atomBox.height + paddingH * 2,
+    };
+    const screenshot9 = await page.screenshot({ clip: clip9 });
+    expect(screenshot9).toMatchSnapshot();
   });
 
   test('Case 10 — Monomer area selection works wrong if user scrolls down during selection', async ({

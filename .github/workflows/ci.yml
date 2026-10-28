@@ -54,6 +54,13 @@ jobs:
         env:
           CI: true
 
+      - name: Validate OpenSpec
+        run: |
+          npx openspec validate --all --strict --no-interactive
+          npx openspec validate --archived --no-interactive
+        env:
+          OPENSPEC_TELEMETRY: 0
+
       - name: Run build example-ssr
         run: npm run build
         working-directory: example-ssr
@@ -65,3 +72,6 @@ jobs:
       - name: Run test example-ssr
         run: npm run test:types
         working-directory: example-ssr
+
+      - name: Check autotests code
+        run: npm run check:autotests

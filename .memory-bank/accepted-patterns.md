@@ -4,10 +4,10 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 
 ## Architecture
 
-### Domain files that import from application
+### Domain files that import from application (allowlisted under invariant A4)
 
-**Where:** 24 files under `packages/ketcher-core/src/domain/` make runtime imports from `application/render/` or `application/editor/`, for example `packages/ketcher-core/src/domain/AttachmentPoint.ts`. The most common is `editorSingleton`, in 8 files. Another 12 import only types, which invariant A4 allows.
-**Why it is accepted:** These imports predate rule R1 in review-rules.md. Moving them is a separate refactor. Flag only new imports of this kind.
+**Where:** the domain files list their pre-A4 runtime imports from `application/render/` and `application/editor/` in `scripts/eslint-invariants-rules.mjs` under `ALLOWED_DOMAIN_IMPORTS` (see the array for the current files and modules, for example `packages/ketcher-core/src/domain/AttachmentPoint.ts` with `application/editor/editorSingleton`). The lint rule `ketcher-invariants/domain-no-application-imports` absorbs the listed imports and errors on every new one. The most common module is `editorSingleton`. The list cannot go stale: `scripts/invariant-rules.test.mjs` fails when an entry no longer has a real violation.
+**Why it is accepted:** These imports predate rule R1 in review-rules.md. Moving them is a separate refactor. R1 is now enforced by lint, so the reviewer sees only new imports.
 **Example:** `import { provideEditorInstance } from 'application/editor/editorSingleton';` at `packages/ketcher-core/src/domain/AttachmentPoint.ts:1`.
 
 ## Naming
@@ -61,6 +61,12 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 **Example:** `export interface AtomProperties {` at `packages/ketcher-core/src/domain/entities/CoreAtom.ts:20`, and `export type Neighbor = {` at `packages/ketcher-core/src/domain/entities/struct.ts:52`.
 
 ## Dependencies
+
+### react-device-detect in ketcher-core
+
+**Where:** `packages/ketcher-core/src/utilities/shortcutsUtil.ts` and `packages/ketcher-core/src/application/editor/tools/select/SelectBase.ts` import `react-device-detect`, which is declared as a dependency in `packages/ketcher-core/package.json`.
+**Why it is accepted:** The import predates invariant A5, and `react-device-detect` declares `react` as a peer dependency, so the import silently binds ketcher-core to React. The lint rule `ketcher-invariants/ui-imports-in-core` absorbs these two imports and errors on every new one (`ALLOWED_UI_IMPORTS` in scripts/eslint-invariants-rules.mjs). Removing the dependency is a separate refactor.
+**Example:** `import { MOBILE_DETECT } from 'react-device-detect';` at `packages/ketcher-core/src/application/editor/tools/select/SelectBase.ts:30`.
 
 ### lodash imports
 

@@ -25,7 +25,7 @@ A monomer in the library is uniquely identified by the combination of `(MonomerN
 ## Architectural Invariants
 
 **A1 — Renderer never mutates the model**
-Renderers (Raphael `ReStruct` and D3 `RenderersManager`) are read-only consumers of the domain model. They must never call mutation methods on `Struct`, `DrawingEntitiesManager`, or any entity directly.
+Renderers (Raphael `ReStruct` and D3 `RenderersManager`, including the `SequenceRenderer` renderers) are read-only consumers of the domain model. They must never call mutation methods on `Struct`, `DrawingEntitiesManager`, or any entity directly. Enforced by the `ketcher-invariants/renderer-no-model-mutations` lint rule over `application/render/**` (review-harness plan, Phase 3.1); direct `Struct` mutations stay a review-lens concern. SequenceRenderer violations that predate the rule are allowlisted in `ALLOWED_MODEL_MUTATIONS`.
 
 **A2 — All model mutations go through Command + BaseOperation**
 Every change to `DrawingEntitiesManager` or `Struct` must be encoded as a `Command` containing `BaseOperation` objects with `execute()` and `invert()`. Direct mutations outside this pattern break undo/redo.
@@ -35,10 +35,11 @@ History must be updated via `EditorHistory.update(command)` after every undoable
 
 **A4 — domain layer has no rendering or React imports**
 The `packages/ketcher-core/src/domain/` directory must not import from `application/render/`, `application/editor/` (except types), React, or any UI framework. It must remain a pure TypeScript domain layer.
-Existing violations are listed in [accepted-patterns.md](accepted-patterns.md#domain-files-that-import-from-application) as known debt. The rule applies to new code: a change may remove a violation but must not add one. A lint check with these files as an allowlist is planned (review-harness plan, Phase 3.1).
+Existing runtime violations are allowlisted in `scripts/eslint-invariants-rules.mjs` (`ALLOWED_DOMAIN_IMPORTS`) and flagged by the `ketcher-invariants/domain-no-application-imports` lint rule (review-harness plan, Phase 3.1, enforced by CI). The rule applies to new code: a change may remove a violation but must not add one.
 
 **A5 — ketcher-core has no React dependency**
 `packages/ketcher-core` must not declare React as a dependency. It is a framework-agnostic library consumed by React packages.
+Enforced by the `ketcher-invariants/ui-imports-in-core` and `ui-deps-in-core` lint rules (review-harness plan, Phase 3.1). The existing `react-device-detect` import is accepted debt: `react-device-detect` declares `react` as a peer dependency, so the imports are allowlisted in `scripts/eslint-invariants-rules.mjs` (`ALLOWED_UI_IMPORTS`) and new ones are flagged.
 
 **A6 — Single Ketcher instance per ketcherId**
 The `ketcherProvider` registry enforces at most one `Ketcher` instance per `ketcherId`. Code must use `ketcherProvider.getKetcher(id)` to retrieve instances — never store raw `Ketcher` references in module-level variables without going through the provider.

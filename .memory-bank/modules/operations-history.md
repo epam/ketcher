@@ -57,6 +57,7 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - An instance per CoreEditor, released on teardown.
 - In the combined editor, `EditorHistoryAction` adapts Command inversion/execution to the micro editor's Action stack. Macro-only core consumers retain a local Command stack.
 - **update** — either merges into the latest Command or inserts at the pointer, shifting out the oldest when over the cap.
+- Sequence edits append a reversible `SequenceIdsResetOperation` to the same Command. It clears imported sequence IDs on the affected covalently connected monomers, while newly imported independent sequences and non-sequence changes retain their IDs.
 - **undo** — decrements the pointer, inverts the Command, unselects all entities, and re-renders. **The same Command object is re-invoked** — unlike micro, which swaps in the inverse Action.
 - **redo** — the mirror, re-executing the Command.
 

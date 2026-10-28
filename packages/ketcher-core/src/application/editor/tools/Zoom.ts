@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,7 @@ export class ZoomTool implements BaseTool {
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
+  private rememberedZoomTransform: ZoomTransform | null = null;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
@@ -67,12 +68,12 @@ export class ZoomTool implements BaseTool {
 
   private static _instance: ZoomTool;
   public static get instance() {
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
     ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
@@ -133,6 +134,24 @@ export class ZoomTool implements BaseTool {
 
   public get zoomTransform() {
     return this._zoomTransform;
+  }
+
+  public rememberZoomTransform() {
+    this.rememberedZoomTransform ??= this._zoomTransform;
+  }
+
+  public forgetRememberedZoomTransform() {
+    this.rememberedZoomTransform = null;
+  }
+
+  public restoreRememberedZoomTransform() {
+    const transform = this.rememberedZoomTransform;
+
+    this.rememberedZoomTransform = null;
+
+    if (transform) {
+      this.zoom?.transform(this.canvasWrapper, transform);
+    }
   }
 
   zoomAction({ transform }) {
@@ -215,7 +234,7 @@ export class ZoomTool implements BaseTool {
     scrollBar.bar
       ?.attr('rx', this.RADIUS)
       .attr('draggable', true)
-      .attr('cursor', 'pointer')
+      .attr('cursor', 'default')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
       .attr('data-testid', scrollBar.name + '-bar')
@@ -403,6 +422,8 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
+    this.rememberedZoomTransform = null;
+
     const canvasWrapperNode = this.canvasWrapper.node();
 
     if (!canvasWrapperNode?.transform?.baseVal) {

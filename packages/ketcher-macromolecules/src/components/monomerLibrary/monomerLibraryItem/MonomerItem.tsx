@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,12 +35,16 @@ import {
   selectEditor,
   selectIsSequenceMode,
   selectIsDragging,
+  setContextMenuActive,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
   cardMouseOverHandler,
   getAutochainErrorMessage,
 } from 'components/monomerLibrary/monomerLibraryItem/shared';
+import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
+import { useContextMenu } from 'react-contexify';
+import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 
 export const AUTOCHAIN_ELEMENT_CLASSNAME = 'autochain';
 
@@ -57,6 +61,7 @@ const MonomerItem = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
+  const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_MONOMER_LIBRARY });
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
   const isDragging = useAppSelector(selectIsDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
@@ -79,6 +84,17 @@ const MonomerItem = ({
   const monomerItem = isAmbiguousMonomerLibraryItem(item)
     ? undefined
     : (item as MonomerItemType);
+
+  const openMenu = (event: MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!monomerItem) {
+      return;
+    }
+    onStarClick();
+    dispatch(setContextMenuActive(true));
+    show({ event, props: { libraryItem: monomerItem } });
+  };
 
   const addFavorite = useCallback(
     (event: MouseEvent) => {
@@ -148,11 +164,12 @@ const MonomerItem = ({
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      onContextMenu={monomerItem ? openMenu : undefined}
       onDoubleClick={(e) => {
         onAutochainIconClick(e);
         onAutochainIconMouseOut();
       }}
-      {...(!isDisabled ? { onClick } : {})}
+      {...(isDisabled ? {} : { onClick })}
       ref={cardRef}
       data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
       data-idtalias-modifications-endpoint5={
@@ -172,6 +189,21 @@ const MonomerItem = ({
       )}
     >
       <CardTitle>{item.label}</CardTitle>
+      {monomerItem && (
+        <button
+          type="button"
+          className="dots"
+          aria-label={`Actions for ${item.label}`}
+          aria-haspopup="menu"
+          onMouseDownCapture={(event) => event.stopPropagation()}
+          onMouseMove={(event) => event.stopPropagation()}
+          onMouseEnter={onStarClick}
+          onClick={openMenu}
+          onDoubleClick={(event) => event.stopPropagation()}
+        >
+          <StyledIcon name="vertical-dots" />
+        </button>
+      )}
       {!isDisabled && (
         <>
           {!isSequenceMode && (

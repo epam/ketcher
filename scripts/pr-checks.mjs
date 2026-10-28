@@ -1,8 +1,9 @@
 // PR checks that Danger runs on every pull request (dangerfile.ts).
 // The rules are pure: dangerfile.ts reads the PR from GitHub and passes it in.
-// Each rule's owner doc: the title form in .memory-bank/coding-standards.md,
-// the PR-type contract and the large-scale change protocol in
-// .memory-bank/review-workflow.md.
+// Each rule's owner doc: .memory-bank/review-workflow.md (the Danger rules,
+// the PR-type contract, and the large-scale change protocol). The exact title
+// form stays a convention in .memory-bank/coding-standards.md and is not
+// enforced here.
 
 export const LSC_LABEL = 'large-scale-change';
 export const MAX_CHANGED_LINES = 400;
@@ -17,8 +18,6 @@ const E2E_TEST = /^ketcher-autotests\/tests\/.*\.spec\.ts$/;
 const OPENSPEC_CHANGE = /^openspec\/changes\//;
 
 const BACKMERGE = /^Backmerge:\s*/i;
-const TITLE = /^#\d+(, #\d+)* -\s+\S/;
-const TITLE_EN_DASH = /^#\d+(, #\d+)* [–—] \S/;
 const TITLE_ISSUES = /^#\d+(\s*,\s*#\d+)*/;
 
 /**
@@ -65,21 +64,7 @@ function checkTitle(pr) {
   const title = pr.title.replace(BACKMERGE, '');
   const findings = [];
   const issuePrefix = title.match(TITLE_ISSUES);
-  if (issuePrefix && TITLE_EN_DASH.test(title)) {
-    findings.push(
-      warn(
-        'title',
-        'Title uses a dash other than the ASCII hyphen. The form is `#<issue> - <title>` (`.memory-bank/coding-standards.md`).',
-      ),
-    );
-  } else if (issuePrefix && !TITLE.test(title)) {
-    findings.push(
-      fail(
-        'title',
-        'Title must be `#<issue> - <title>` with an ASCII hyphen and one space on each side (`.memory-bank/coding-standards.md`).',
-      ),
-    );
-  } else if (!issuePrefix && linkedIssues.length > 0) {
+  if (!issuePrefix && linkedIssues.length > 0) {
     findings.push(
       fail(
         'title',

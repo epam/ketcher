@@ -43,13 +43,8 @@ test('a branch name with # fails', () => {
   assert.deepEqual(rules(findings, 'fail'), ['branch']);
 });
 
-test('title: missing separator, missing #, and no issue prefix with a linked issue fail', () => {
-  for (const title of [
-    '#100-Atom labels',
-    '#100 Atom labels',
-    '100 - Atom labels',
-    'Atom labels break',
-  ]) {
+test('title: no issue prefix with a linked issue fails', () => {
+  for (const title of ['100 - Atom labels', 'Atom labels break']) {
     assert.deepEqual(
       rules(checkPullRequest(pr({ title })), 'fail'),
       ['title'],
@@ -58,10 +53,14 @@ test('title: missing separator, missing #, and no issue prefix with a linked iss
   }
 });
 
-test('title: an en dash warns and does not fail', () => {
-  const findings = checkPullRequest(pr({ title: '#100 – Atom labels' }));
-  assert.deepEqual(rules(findings, 'fail'), []);
-  assert.deepEqual(rules(findings, 'warn'), ['title']);
+test('title: the separator form is not enforced', () => {
+  for (const title of [
+    '#100-Atom labels',
+    '#100 Atom labels',
+    '#100 – Atom labels',
+  ]) {
+    assert.deepEqual(checkPullRequest(pr({ title })), [], title);
+  }
 });
 
 test('title: a Backmerge prefix and several issues are accepted', () => {

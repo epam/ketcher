@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,9 +28,10 @@ import {
 } from 'ketcher-core';
 
 const ieCb: DataTransfer | undefined =
-  typeof window !== 'undefined'
-    ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
-    : undefined;
+  typeof globalThis.window === 'undefined'
+    ? undefined
+    : (globalThis.window as Window & { clipboardData?: DataTransfer })
+        .clipboardData;
 
 const isSafariBrowser = (): boolean =>
   typeof navigator !== 'undefined' &&
@@ -240,7 +241,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              window.ketcher?.editor?.errorHandler?.(
+              globalThis.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -287,6 +288,8 @@ class ClipArea extends Component<ClipAreaProps> {
         contentEditable
         autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}
+        readOnly
+        inputMode="none"
       />
     );
   }
@@ -319,16 +322,36 @@ async function copy(data: ClipboardData): Promise<void> {
       );
     });
 
-    const clipboardItem = new ClipboardItem(clipboardItemData);
+    let clipboardItem: ClipboardItem | undefined;
+
+    try {
+      clipboardItem = new ClipboardItem(clipboardItemData);
+    } catch (error) {
+      KetcherLogger.info(
+        'cannot create ClipboardItem, falling back to writeText',
+        error,
+      );
+
+      // Fallback for browsers that don't support ClipboardItem constructor or
+      // custom mime types in ClipboardItem constructor
+      if (navigator.clipboard.writeText) {
+        // Fallback to simple text copy
+        const textData = data['text/plain'] || JSON.stringify(data);
+
+        await navigator.clipboard.writeText(textData);
+
+        return;
+      } else {
+        KetcherLogger.error('cliparea.tsx::copy', error);
+      }
+    }
 
     // Chrome: clipboardItem.presentationStyle is undefined
     // Safari-specific check for presentationStyle property
-    const itemWithPresentationStyle = clipboardItem as ClipboardItem & {
-      presentationStyle?: string;
-    };
     if (
-      itemWithPresentationStyle.presentationStyle &&
-      itemWithPresentationStyle.presentationStyle === 'unspecified'
+      !clipboardItem ||
+      (clipboardItem.presentationStyle &&
+        clipboardItem.presentationStyle === 'unspecified')
     ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy
@@ -338,8 +361,8 @@ async function copy(data: ClipboardData): Promise<void> {
     } else {
       await navigator.clipboard.write([clipboardItem]);
     }
-  } catch (e) {
-    KetcherLogger.error('cliparea.tsx::copy', e);
+  } catch (error) {
+    KetcherLogger.error('cliparea.tsx::copy', error);
     console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
@@ -355,8 +378,8 @@ function legacyCopy(clipboardData: DataTransfer, data: ClipboardData): void {
         curFmt = fmt;
         clipboardData.setData(fmt, data[fmt]);
       });
-    } catch (e) {
-      console.error('cliparea.tsx::legacyCopy', e);
+    } catch (error) {
+      console.error('cliparea.tsx::legacyCopy', error);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
@@ -398,16 +421,16 @@ export function exec(action: string): boolean {
   let enabled = document.queryCommandSupported(action);
   if (enabled) {
     try {
-      const windowWithClipboardEvent = window as Window & {
+      const windowWithClipboardEvent = globalThis.window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
       enabled =
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
-    } catch (e) {
+    } catch (error) {
       // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
+      KetcherLogger.error('cliparea.tsx::exec', error);
       enabled = false;
     }
   }

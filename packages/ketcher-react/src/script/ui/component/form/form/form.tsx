@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +29,16 @@ import Select from '../Select';
 import classes from './form.module.less';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export interface FormOwnProps {
   children: React.ReactNode;
@@ -310,12 +314,16 @@ function Label({
   children,
   ...props
 }: Readonly<LabelProps>) {
+  const { t } = useTranslation();
+  const resolvedTitle = resolveTranslatableText(title, t) ?? '';
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
+      {labelPos !== 'after' &&
+        renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
       {labelPos === 'after' &&
-        renderLabelContentAfter(title ?? '', tooltip ?? null)}
+        renderLabelContentAfter(resolvedTitle, resolvedTooltip)}
     </label>
   );
 }
@@ -582,6 +590,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
 
 const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
+  const { t } = useTranslation();
 
   const selectDesc: {
     title?: string;
@@ -605,7 +614,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   return (
     <Field
       name={name}
-      options={getSelectOptionsFromSchema(selectDesc)}
+      options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
       {...prop}
       component={Select}
@@ -683,7 +692,7 @@ function serializeRewrite(
 ): unknown {
   const res: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
-    return instance !== undefined ? instance : schema.default;
+    return instance === undefined ? schema.default : instance;
   }
 
   const instanceObj = instance as Record<string, unknown>;
@@ -721,4 +730,4 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   return errs;
 }
 
-export { Field, CustomQueryField, FieldWithModal, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf, Label };

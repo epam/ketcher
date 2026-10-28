@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,9 +37,11 @@ function getAtom(mol: Struct, id: number): Atom {
   return atom;
 }
 
-/* Parse Mol */
+/*
+Parse Mol
+*/
 function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  if (ctabLines[0].search('\\$MDL') === 0) {
+  if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
     const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
     struct.name = ctabLines[3].trim();
     return struct;
@@ -62,7 +64,9 @@ function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   throw new Error('Molfile version unknown: ' + version);
 }
 
-/* Parse Rxn */
+/*
+Parse Rxn
+*/
 function parseRxn(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
@@ -81,7 +85,9 @@ function parseRxn(
   return struct;
 }
 
-/* Prepare For Saving */
+/*
+Prepare For Saving
+*/
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
     MUL: SGroup.prepareMulForSaving,
@@ -151,7 +157,9 @@ function prepareDatForSaving(sgroup: SGroup, mol: Struct): void {
   sgroup.atoms = SGroup.getAtoms(mol, sgroup);
 }
 
-/* Save To Molfile */
+/*
+Save To Molfile
+*/
 const saveToMolfile: Record<
   string,
   (
@@ -180,26 +188,23 @@ function saveMulToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(
-    makeAtomBondLines(
-      'SAL',
-      idstr,
-      Array.from(sgroup.atomSet.values()),
-      atomMap,
-    ),
-  ); // TODO: check atomSet
-  lines = lines.concat(
-    makeAtomBondLines(
+  lines = [
+    ...lines,
+    ...makeAtomBondLines('SAL', idstr, [...sgroup.atomSet.values()], atomMap),
+  ]; // TODO: check atomSet
+  lines = [
+    ...lines,
+    ...makeAtomBondLines(
       'SPA',
       idstr,
-      Array.from(sgroup.parentAtomSet.values()),
+      [...sgroup.parentAtomSet.values()],
       atomMap,
     ),
-  );
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  ];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
   const smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
   lines.push(smtLine);
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -213,9 +218,9 @@ function saveSruToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -240,8 +245,8 @@ function saveSupToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
 
   let sgroupName: string | undefined;
 
@@ -277,7 +282,7 @@ function saveDatToMolfile(
   let pp = sgroup.pp;
   if (!data.absolute) pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
   let sdtLine =
     'M  SDT ' +
     idstr +
@@ -389,7 +394,7 @@ function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
 
 // According Unicode Consortium sould be
 // nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
-// http://www.unicode.org/reports/tr18/#Line_Boundaries
+// https://www.unicode.org/reports/tr18/#Line_Boundaries
 const nlRe = /\r\n|[\n\r]/g;
 function normalizeNewlines(str: string): string {
   return str.replace(nlRe, '\n');

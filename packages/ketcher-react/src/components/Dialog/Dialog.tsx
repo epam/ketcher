@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,7 @@ import {
 } from 'react';
 
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
@@ -81,6 +82,16 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     ...rest
   } = props;
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const { t } = useTranslation('common');
+  // `button` values are also semantic identifiers (see isButtonOk/exit below)
+  // and testids — only their *displayed* text is translated here, by default,
+  // for the well-known tokens. Anything else (or a buttonsNameMap override)
+  // is the caller's own text, untouched.
+  const defaultButtonLabels: Record<string, string> = {
+    OK: t('button.ok'),
+    Cancel: t('button.cancel'),
+    Save: t('button.save'),
+  };
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
@@ -200,9 +211,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           {footerContent}
           {buttons.length > 0 &&
             buttons.map((button) =>
-              typeof button !== 'string' ? (
-                button
-              ) : (
+              typeof button === 'string' ? (
                 <input
                   key={button}
                   type="button"
@@ -210,11 +219,17 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                     isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={buttonsNameMap?.[button] ?? button}
+                  value={
+                    buttonsNameMap?.[button] ??
+                    defaultButtonLabels[button] ??
+                    button
+                  }
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
+              ) : (
+                button
               ),
             )}
         </footer>

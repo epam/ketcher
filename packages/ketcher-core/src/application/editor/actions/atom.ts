@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,19 +38,25 @@ import type { Pile } from 'domain/entities/pile';
 import type { Point } from 'domain/entities/vec2';
 import type ReStruct from 'application/render/restruct/restruct';
 import { assert } from 'utilities';
+import { isAtomLabelAllowedByHapticBonds } from 'domain/helpers/hapticBond';
 
 export function fromAtomAddition(
   restruct: ReStruct,
   pos: Point | null,
   atom?: Partial<AtomAttributes>,
+  fragmentId: number | null = null,
 ) {
-  const atomAttrs: Partial<AtomAttributes> = { ...(atom ?? {}) };
+  const atomAttrs: Partial<AtomAttributes> = { ...atom };
   const action = new Action();
 
-  const fragmentAdd = new FragmentAdd();
-  action.addOp(fragmentAdd.perform(restruct));
-  assert(fragmentAdd.frid !== null, 'Fragment was not added');
-  atomAttrs.fragment = fragmentAdd.frid;
+  if (fragmentId === null) {
+    const fragmentAdd = new FragmentAdd();
+    action.addOp(fragmentAdd.perform(restruct));
+    assert(fragmentAdd.frid !== null, 'Fragment was not added');
+    atomAttrs.fragment = fragmentAdd.frid;
+  } else {
+    atomAttrs.fragment = fragmentId;
+  }
 
   const atomAdd = new AtomAdd(atomAttrs, pos ?? undefined);
   action.addOp(atomAdd.perform(restruct));
@@ -74,6 +80,28 @@ export function fromAtomsAttrs(
   const attrNames = Object.keys(Atom.attrlist) as AtomAttributeName[];
 
   aids.forEach((atomId) => {
+    const atom = restruct.molecule.atoms.get(atomId);
+    assert(atom != null);
+
+    const resultingLabel =
+      'label' in atomAttrs
+        ? atomAttrs.label
+        : reset
+          ? Atom.attrGetDefault('label')
+          : atom.label;
+    if (resultingLabel !== atom.label) {
+      if (
+        typeof resultingLabel !== 'string' ||
+        !isAtomLabelAllowedByHapticBonds(
+          restruct.molecule,
+          atomId,
+          resultingLabel,
+        )
+      ) {
+        return;
+      }
+    }
+
     attrNames.forEach((key) => {
       if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
       if (!(key in atomAttrs) && !reset) return;
@@ -113,9 +141,6 @@ export function fromAtomsAttrs(
     }
     // when a heteroatom connects to an aromatic ring it's necessary to add a ImplicitHCount
     // property to this atom to specify the number of hydrogens on it.
-    const atom = restruct.molecule.atoms.get(atomId);
-    assert(atom != null);
-
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(
         new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(
@@ -168,11 +193,11 @@ export function mergeFragmentsIfNeeded(
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
   assert(isNumber(frid), `Fragment of atom ${srcId} was not found`);
 
-  if (frid2 !== frid && isNumber(frid2)) {
-    const struct = restruct.molecule;
+  const struct = restruct.molecule;
 
+  if (frid2 !== frid && isNumber(frid2) && struct.frags.has(frid2)) {
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
-    if (typeof rgid !== 'undefined') {
+    if (rgid !== undefined) {
       action
         .mergeWith(fromRGroupFragment(restruct, null, frid2))
         .mergeWith(fromUpdateIfThen(restruct, 0, rgid));

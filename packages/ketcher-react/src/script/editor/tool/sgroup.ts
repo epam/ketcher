@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,6 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
 } from 'ketcher-core';
 
@@ -115,7 +114,7 @@ class SGroupTool implements Tool {
           }
 
           const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
+            atomId === null ? null : struct.atoms.get(atomId)?.a;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -133,9 +132,9 @@ class SGroupTool implements Tool {
               SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
             const sgroupAtoms =
-              actualSgroupId !== undefined
-                ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
-                : undefined;
+              actualSgroupId === undefined
+                ? undefined
+                : SGroup.getAtoms(molecule, sgroups.get(actualSgroupId));
             const sgroupBonds =
               actualSgroupId !== undefined &&
               SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
@@ -194,7 +193,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const atomFromStruct =
-        atomId !== null ? struct.atoms.get(atomId)?.a : null;
+        atomId === null ? null : struct.atoms.get(atomId)?.a;
 
       if (
         atomFromStruct &&
@@ -218,7 +217,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const bondFromStruct =
-        bondId !== null ? struct.bonds.get(bondId)?.b : null;
+        bondId === null ? null : struct.bonds.get(bondId)?.b;
 
       if (
         bondFromStruct &&
@@ -759,7 +758,7 @@ class SGroupTool implements Tool {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
-    const sg = id !== null ? struct.sgroups.get(id) : null;
+    const sg = id === null ? null : struct.sgroups.get(id);
 
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
     if (sg?.isMonomer && id !== null) {
@@ -830,8 +829,6 @@ class SGroupTool implements Tool {
               newSg.attrs,
             ).mergeWith(fromSgroupDeletion(restruct, id));
 
-            action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct));
-
             editor.update(action);
             editor.selection(selection);
             return;
@@ -846,8 +843,8 @@ class SGroupTool implements Tool {
           editor.selection(null);
         }
       })
-      .catch((e) => {
-        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
+      .catch((error) => {
+        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
       });
   }
 }
@@ -893,7 +890,7 @@ function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
 
   const atomSet = new Pile(sgAtoms);
 
-  const sgBonds = Array.from(struct.bonds.values()).filter(
+  const sgBonds = [...struct.bonds.values()].filter(
     (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
@@ -941,7 +938,7 @@ function fromContextType(
   currSelection: Selection,
 ) {
   const restruct = editor.render.ctab;
-  const sg = id !== null ? restruct.molecule.sgroups.get(id) : undefined;
+  const sg = id === null ? undefined : restruct.molecule.sgroups.get(id);
   const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
   const context = newSg.attrs.context;
 
@@ -1006,7 +1003,7 @@ function countOfSelectedComponents(
 ): number {
   const atomSet = new Pile<number>(atoms);
 
-  return Array.from(restruct.connectedComponents.values()).reduce(
+  return [...restruct.connectedComponents.values()].reduce(
     (acc: number, component) => acc + (atomSet.isSuperset(component) ? 1 : 0),
     0,
   );

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
@@ -24,6 +25,7 @@ import {
 } from 'state/common';
 
 export const LayoutModeButton = () => {
+  const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
@@ -58,17 +60,17 @@ export const LayoutModeButton = () => {
         <Menu.Item
           itemId="sequence-layout-mode"
           testId="sequence-layout-mode"
-          title="Switch to sequence layout mode"
+          title={t('layoutMode.switchToSequence')}
         ></Menu.Item>
         <Menu.Item
           itemId="snake-layout-mode"
           testId="snake-layout-mode"
-          title="Switch to snake layout mode"
+          title={t('layoutMode.switchToSnake')}
         ></Menu.Item>
         <Menu.Item
           itemId="flex-layout-mode"
           testId="flex-layout-mode"
-          title="Switch to flex layout mode"
+          title={t('layoutMode.switchToFlex')}
         ></Menu.Item>
       </Menu.Submenu>
     </MenuContext.Provider>

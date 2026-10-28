@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,8 +59,7 @@ const deserializeSdfTemplates = (
     tmpls.map((tmpl) => {
       const pr = prefetchSplit(tmpl);
       if (pr.file)
-        tmpl.props.prerender =
-          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
+        tmpl.props.prerender = cachedFiles.includes(pr.file) ? `#${pr.id}` : '';
 
       return tmpl;
     }),
@@ -77,7 +76,7 @@ export default async function initTmplLib(
   const fileName = 'library.sdf';
 
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls());
+    const lib = [...res, ...userTmpls()];
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
     if (needReinitializeTemplateLibrary) {
@@ -110,8 +109,8 @@ function userTmpls(): SdfItem[] {
           struct: ketSerializer.deserialize(tmpl.struct),
           props: tmpl.props,
         };
-      } catch (e) {
-        KetcherLogger.error('init-lib.ts::userTmpls', e);
+      } catch (error) {
+        KetcherLogger.error('init-lib.ts::userTmpls', error);
         return null;
       }
     })
@@ -121,7 +120,7 @@ function userTmpls(): SdfItem[] {
 export function prefetchStatic(url: string): Promise<string> {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
     if (resp.ok) return resp.text();
-    throw Error('Could not fetch ' + url);
+    throw new Error('Could not fetch ' + url);
   });
 }
 
@@ -143,14 +142,14 @@ function prefetchRender(
   const files = tmpls.reduce((res, tmpl) => {
     const file = prefetchSplit(tmpl).file;
 
-    if (file && res.indexOf(file) === -1) res.push(file);
+    if (file && !res.includes(file)) res.push(file);
 
     return res;
   }, [] as string[]);
   const fetch = Promise.all(
     files.map((fn) =>
-      prefetchStatic(baseUrl + fn).catch((e) => {
-        KetcherLogger.error('init-lib.ts::prefetchRender', e);
+      prefetchStatic(baseUrl + fn).catch((error) => {
+        KetcherLogger.error('init-lib.ts::prefetchRender', error);
       }),
     ),
   );

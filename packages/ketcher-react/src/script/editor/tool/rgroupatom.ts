@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -131,7 +131,7 @@ function propsDialog(editor, id, pos) {
   Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = { ...Atom.attrlist, ...(elem || {}) };
+      elem = { ...Atom.attrlist, ...elem };
 
       if (!id && id !== 0 && elem.rglabel) {
         editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
@@ -146,8 +146,8 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', error);
     }); // w/o changes
 }
 

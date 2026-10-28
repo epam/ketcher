@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,7 +59,7 @@ class ReLoop extends ReObject {
       if (!bond) {
         return;
       }
-      const beginAtom = restruct.atoms.get(halfBond.begin);
+      const beginAtom = restruct.getBondEndpoint(halfBond.begin);
       if (!beginAtom) {
         return;
       }
@@ -88,15 +88,15 @@ class ReLoop extends ReObject {
       }
     }
 
-    this.centre = this.centre.scaled(1.0 / halfBondIds.length);
+    this.centre = this.centre.scaled(1 / halfBondIds.length);
     this.radius = -1;
     for (const halfBondId of halfBondIds) {
       const halfBond = molecule.halfBonds.get(halfBondId);
       if (!halfBond) {
         return;
       }
-      const beginAtom = restruct.atoms.get(halfBond.begin);
-      const endAtom = restruct.atoms.get(halfBond.end);
+      const beginAtom = restruct.getBondEndpoint(halfBond.begin);
+      const endAtom = restruct.getBondEndpoint(halfBond.end);
       if (!beginAtom || !endAtom) {
         return;
       }
@@ -163,7 +163,7 @@ class ReLoop extends ReObject {
         );
         const halfAngle = (Math.PI - angle) / 2;
         const direction = nextHalfBond.dir.rotate(halfAngle);
-        const nextBeginAtom = restruct.atoms.get(nextHalfBond.begin);
+        const nextBeginAtom = restruct.getBondEndpoint(nextHalfBond.begin);
         if (!nextBeginAtom) {
           return;
         }
@@ -192,7 +192,7 @@ class ReLoop extends ReObject {
     const { halfBonds } = struct;
     return this.loop.hbs.every((halfBondId) => {
       const halfBond = halfBonds.get(halfBondId);
-      return halfBond !== undefined && halfBond.loop === rlid;
+      return halfBond?.loop === rlid;
     });
   }
 }

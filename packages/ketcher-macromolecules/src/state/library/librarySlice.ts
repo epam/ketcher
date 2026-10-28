@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,6 +87,15 @@ const matchesAminoAcidThreeLetterCode = (
   const code = AMINO_ACID_ONE_TO_THREE_LETTER_CODE[oneLetterCode.toUpperCase()];
   return code ? code.toLowerCase().includes(searchFilter) : false;
 };
+
+// Exact '-' and '_' queries bypass normal multi-field matching because internal
+// IDT/HELM/BILN-related fields can otherwise create results for characters not
+// visible on the card.
+const SHORT_NAME_ONLY_SEARCH_CHARACTERS: readonly string[] = ['-', '_'];
+
+export function isShortNameOnlySearch(text: string): boolean {
+  return SHORT_NAME_ONLY_SEARCH_CHARACTERS.includes(text);
+}
 
 const initialState: LibraryState = {
   monomers: [],
@@ -330,7 +339,7 @@ export const selectAmbiguousMonomersInCategory = (
     });
   }
 
-  const firstAmbiguousMonomersInLibrary = ['X', 'N'];
+  const firstAmbiguousMonomersInLibrary = new Set(['X', 'N']);
 
   groupedAmbiguousMonomerLibraryItems.forEach((group) => {
     group.groupItems.sort(
@@ -341,9 +350,7 @@ export const selectAmbiguousMonomersInCategory = (
     );
 
     group.groupItems.sort((ambiguousMonomerLibraryItem) =>
-      firstAmbiguousMonomersInLibrary.includes(
-        ambiguousMonomerLibraryItem.label,
-      )
+      firstAmbiguousMonomersInLibrary.has(ambiguousMonomerLibraryItem.label)
         ? -1
         : 1,
     );
@@ -392,7 +399,7 @@ export const selectFilteredMonomers = createSelector(
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
-
+    const shortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
     const checkMonomerMatch = (
       searchFilter: string,
       {
@@ -442,7 +449,7 @@ export const selectFilteredMonomers = createSelector(
 
           const matchesIdtBase =
             idtBase?.length === textBetweenSlashes.length &&
-            Array.from(idtBase).every(
+            [...idtBase].every(
               (char, index) => char === textBetweenSlashes[index],
             );
 
@@ -452,7 +459,7 @@ export const selectFilteredMonomers = createSelector(
                 .some(
                   (mod) =>
                     mod.length === textBetweenSlashes.length &&
-                    Array.from(mod).every(
+                    [...mod].every(
                       (char, index) => char === textBetweenSlashes[index],
                     ),
                 )
@@ -568,7 +575,9 @@ export const selectFilteredMonomers = createSelector(
         if (!item.isAmbiguous && (item as MonomerItemType).props?.hidden) {
           return false;
         }
-
+        if (shortNameOnly) {
+          return item.label.toLowerCase().includes(normalizedSearchFilter);
+        }
         if (item.isAmbiguous) {
           const {
             label,

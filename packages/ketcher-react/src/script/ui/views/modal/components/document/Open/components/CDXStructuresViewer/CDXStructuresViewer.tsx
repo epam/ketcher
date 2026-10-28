@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,7 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -45,6 +45,7 @@ export const CDXStructuresViewer = ({
   inputHandler,
   fileName,
 }: CDXStructuresViewerProps) => {
+  const { t } = useTranslation('dialogs');
   const server = useSelector(serverSelector);
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -78,13 +79,22 @@ export const CDXStructuresViewer = ({
     [server],
   );
 
-  const currentStructItem = structList[selectedIndex];
+  const handleSelectStructure = (index: number) => {
+    setSelectedIndex(index);
+    if (index !== selectedIndex && structList[index] && !itemsMap[index]) {
+      getImage(structList[index], index);
+    }
+  };
+
+  const loadFirstStructure = useCallback(() => {
+    if (structList[0]) {
+      getImage(structList[0], 0);
+    }
+  }, [getImage, structList]);
 
   useEffect(() => {
-    if (currentStructItem && !itemsMap[selectedIndex]) {
-      getImage(currentStructItem, selectedIndex);
-    }
-  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
+    loadFirstStructure();
+  }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
     if (loading) {
@@ -95,7 +105,11 @@ export const CDXStructuresViewer = ({
       );
     }
     if (structure?.error) {
-      return <div>Error: {itemsMap[selectedIndex]?.error}</div>;
+      return (
+        <div>
+          {t('document.cdxViewer.errorLabel')} {itemsMap[selectedIndex]?.error}
+        </div>
+      );
     }
     if (structure?.struct) {
       return (
@@ -112,23 +126,25 @@ export const CDXStructuresViewer = ({
     if (!structList?.length) {
       return (
         <div className={styles.centerWrapper}>
-          <div>No embedded structures found in the file</div>
+          <div>{t('document.cdxViewer.noEmbeddedStructures')}</div>
         </div>
       );
     }
     return (
       <div className={styles.structuresWrapper}>
         <div className={styles.menuListWrapper}>
-          <div className={styles.header}>Select structure</div>
+          <div className={styles.header}>
+            {t('document.cdxViewer.selectStructure')}
+          </div>
           <MenuList>
             {structList.map((value, index) => (
               <MenuItem
                 key={value + index}
                 data-testid={`cdx-structure-${index + 1}`}
                 selected={index === selectedIndex}
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => handleSelectStructure(index)}
               >
-                {`Structure ${index + 1}`}
+                {t('document.cdxViewer.structureN', { number: index + 1 })}
                 {itemsMap[index]?.error && <Icon name="error" />}
               </MenuItem>
             ))}
@@ -144,7 +160,8 @@ export const CDXStructuresViewer = ({
   return (
     <div className={styles.wrapper}>
       <div>
-        File: <span className={styles.fileName}>{fileName}</span>
+        {t('document.cdxViewer.fileLabel')}{' '}
+        <span className={styles.fileName}>{fileName}</span>
       </div>
       {renderStructures()}
     </div>

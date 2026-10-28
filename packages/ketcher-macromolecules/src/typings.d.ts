@@ -8,8 +8,7 @@ declare module '*.module.less' {
 declare module '*.less';
 
 declare namespace JSX {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type Element = React.ReactElement<any, any>;
+  type Element = React.ReactElement;
 }
 
 declare namespace NodeJS {

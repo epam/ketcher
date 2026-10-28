@@ -35,6 +35,7 @@ History must be updated via `EditorHistory.update(command)` after every undoable
 
 **A4 — domain layer has no rendering or React imports**
 The `packages/ketcher-core/src/domain/` directory must not import from `application/render/`, `application/editor/` (except types), React, or any UI framework. It must remain a pure TypeScript domain layer.
+Existing violations are listed in [accepted-patterns.md](accepted-patterns.md#domain-files-that-import-from-application) as known debt. The rule applies to new code: a change may remove a violation but must not add one. A lint check with these files as an allowlist is planned (review-harness plan, Phase 3.1).
 
 **A5 — ketcher-core has no React dependency**
 `packages/ketcher-core` must not declare React as a dependency. It is a framework-agnostic library consumed by React packages.
@@ -56,3 +57,6 @@ After any number of undo/redo operations, the canvas must be in a valid state wh
 
 **B2 — Format round-trip fidelity for KET**
 Serializing the current canvas to KET and immediately deserializing it must yield a functionally equivalent structure. The KET format is the lossless round-trip format.
+
+**B3 — Chemistry vocabulary is never localized**
+Element symbols, bond-type names (as shown in the bond toolbar/context menu), MDL/SDF format codes, and numeric/valence notation must remain identical text regardless of the active UI language. Only UI chrome (labels, dialog titles, tooltips, messages) is translated. See [modules/i18n.md](./modules/i18n.md).

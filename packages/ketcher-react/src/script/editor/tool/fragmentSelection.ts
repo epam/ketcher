@@ -67,7 +67,7 @@ export default class FragmentSelectionTool implements Tool {
       };
       const currentSelection = this.editor.selection();
       const mergedSelection = event.shiftKey
-        ? selMerge({ ...(currentSelection || {}) }, selection, false)
+        ? selMerge({ ...currentSelection }, selection, false)
         : selection;
 
       this.editor.selection(mergedSelection);
@@ -300,7 +300,7 @@ export default class FragmentSelectionTool implements Tool {
 
   private queueTooltip(message: string) {
     this.clearTooltip();
-    this.tooltipTimeoutId = window.setTimeout(() => {
+    this.tooltipTimeoutId = globalThis.window.setTimeout(() => {
       this.editor.event.tooltip.dispatch({ message });
     }, TOOLTIP_DELAY);
   }
@@ -414,7 +414,7 @@ export default class FragmentSelectionTool implements Tool {
       }
     }
 
-    return { atoms, bonds: Array.from(bondsSet) };
+    return { atoms, bonds: [...bondsSet] };
   }
 
   private getComponentData(struct: Struct) {

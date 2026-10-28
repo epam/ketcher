@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +38,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
   }
 
   filter(expression: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(expression));
+    return new Pile([...this].filter(expression));
   }
 
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {
@@ -91,6 +91,6 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     }, new Array<Pile<T>>());
 
     // Recursively union two of sets === union all sets
-    return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;
+    return unionized ? this.unionIntersections(setsToReturn) : setsToReturn;
   }
 }

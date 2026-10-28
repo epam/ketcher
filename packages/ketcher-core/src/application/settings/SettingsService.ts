@@ -78,11 +78,12 @@ export class SettingsService implements ISettingsService {
   static async getInstance(
     options: SettingsServiceOptions = {},
   ): Promise<SettingsService> {
-    if (!SettingsService.instance) {
-      SettingsService.instance = new SettingsService(options);
-      await SettingsService.instance.init();
+    const instance = this.instance ?? new SettingsService(options);
+    this.instance = instance;
+    if (!instance.initialized) {
+      await instance.init();
     }
-    return SettingsService.instance;
+    return instance;
   }
 
   /**
@@ -132,14 +133,14 @@ export class SettingsService implements ISettingsService {
 
         // 4. Validate merged settings
         const validation = this.validator.validate(merged);
-        if (!validation.valid) {
+        if (validation.valid) {
+          this.settings = merged;
+        } else {
           KetcherLogger.warn(
             'Invalid settings in storage, using defaults',
             validation.errors,
           );
           // Keep settings from constructor (includes custom defaults if provided)
-        } else {
-          this.settings = merged;
         }
       }
 
@@ -357,7 +358,7 @@ export class SettingsService implements ISettingsService {
    * Deep freeze object to make it immutable
    */
   private freeze<T>(obj: T): T {
-    return JSON.parse(JSON.stringify(obj));
+    return globalThis.structuredClone(obj);
   }
 
   /**

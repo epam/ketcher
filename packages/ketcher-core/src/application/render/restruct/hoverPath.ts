@@ -14,15 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable no-undef */
 import paperjs from 'paper';
 import type { Element as RaphaelElement } from 'raphael';
 
 export type HoverPathSource = RaphaelElement | null | undefined;
 
+type PaperPath = InstanceType<typeof paperjs.Path>;
+type PaperCompoundPath = InstanceType<typeof paperjs.CompoundPath>;
+type PaperPathItem = InstanceType<typeof paperjs.PathItem>;
+
 export function paperPathFromSVGElement(
   element: SVGElement,
-): paper.Path | paper.CompoundPath | undefined {
+): PaperPath | PaperCompoundPath | undefined {
   const tagName = element.tagName;
 
   if (tagName === 'circle') {
@@ -72,7 +75,7 @@ export function uniteHoverPaths(
   }
 
   paperjs.setup(document.createElement('canvas'));
-  let combinedPath: paper.PathItem | undefined;
+  let combinedPath: PaperPathItem | undefined;
 
   elements.forEach((element) => {
     const paperPath = paperPathFromSVGElement(element);

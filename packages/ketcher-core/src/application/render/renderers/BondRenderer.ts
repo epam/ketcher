@@ -29,6 +29,7 @@ import {
 import util from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -258,7 +259,7 @@ export class BondRenderer extends BaseRenderer {
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#f5f5f5');
+      ?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public appendHover() {
@@ -321,6 +322,7 @@ export class BondRenderer extends BaseRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'atomic-bond')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', this.bond.type)
       .attr('data-bondstereo', this.bond.stereo)
@@ -1007,7 +1009,7 @@ export class BondRenderer extends BaseRenderer {
         .attr('height', rectHeight)
         .attr('rx', 3)
         .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+        .attr('fill', CANVAS_BACKGROUND_COLOR);
 
       cipGroup?.attr(
         'transform',

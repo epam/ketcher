@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -535,8 +535,8 @@ export class Struct {
   prepareLoopStructure() {
     this.initHalfBonds();
     this.initNeighbors();
-    this.updateHalfBonds(Array.from(this.atoms.keys()));
-    this.sortNeighbors(Array.from(this.atoms.keys()));
+    this.updateHalfBonds([...this.atoms.keys()]);
+    this.sortNeighbors([...this.atoms.keys()]);
     this.findLoops();
   }
 
@@ -778,16 +778,16 @@ export class Struct {
   }
 
   sortNeighbors(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((aid) => {
+        this.atomSortNeighbors(aid);
+      });
+    } else {
       this.atoms.forEach((_atom, aid) => {
         this.atomSortNeighbors(aid);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomSortNeighbors(id);
-      });
-    } else {
-      list.forEach((aid) => {
-        this.atomSortNeighbors(aid);
       });
     }
   }
@@ -804,16 +804,16 @@ export class Struct {
   }
 
   updateHalfBonds(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((atomId) => {
+        this.atomUpdateHalfBonds(atomId);
+      });
+    } else {
       this.atoms.forEach((_atom, atomId) => {
         this.atomUpdateHalfBonds(atomId);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomUpdateHalfBonds(id);
-      });
-    } else {
-      list.forEach((atomId) => {
-        this.atomUpdateHalfBonds(atomId);
       });
     }
   }
@@ -946,14 +946,14 @@ export class Struct {
   getCoordBoundingBoxObj(): CoordBoundingBox {
     let bb: CoordBoundingBox | null = null;
     function extend(pp: Vec2) {
-      if (!bb) {
+      if (bb) {
+        bb.min = Vec2.min(bb.min, pp);
+        bb.max = Vec2.max(bb.max, pp);
+      } else {
         bb = {
           min: new Vec2(pp),
           max: new Vec2(pp),
         };
-      } else {
-        bb.min = Vec2.min(bb.min, pp);
-        bb.max = Vec2.max(bb.max, pp);
       }
     }
 
@@ -1007,7 +1007,9 @@ export class Struct {
     return lengths;
   }
 
-  /** Median of `values`, or -1 when there is nothing to measure. */
+  /**
+  Median of `values`, or -1 when there is nothing to measure.
+  */
   static median(values: number[]): number {
     if (values.length === 0) {
       return -1;
@@ -1032,8 +1034,8 @@ export class Struct {
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
-      scale >= Struct.MIN_RESCALE &&
-      scale <= Struct.MAX_RESCALE
+      scale >= this.MIN_RESCALE &&
+      scale <= this.MAX_RESCALE
     );
   }
 
@@ -1041,7 +1043,7 @@ export class Struct {
     let totalDist = 0;
     let minDist;
     let dist: number;
-    const keys = Array.from(this.atoms.keys());
+    const keys = [...this.atoms.keys()];
     let k;
     let j;
     for (k = 0; k < keys.length; ++k) {
@@ -1429,7 +1431,7 @@ export class Struct {
 
     return {
       newLoops,
-      bondsToMark: Array.from(bondsToMark),
+      bondsToMark: [...bondsToMark],
     };
   }
 
@@ -1503,24 +1505,21 @@ export class Struct {
       }
     });
 
-    if (!list) {
-      this.atoms.forEach((_atom, aid) => {
-        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
-      });
-    } else {
+    if (list) {
       list.forEach((aid) => {
         if (this.atoms.get(aid)) {
           this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
         }
       });
+    } else {
+      this.atoms.forEach((_atom, aid) => {
+        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
+      });
     }
   }
 
   public setStereoLabelsToAtoms() {
-    const stereAtomsMap = getStereoAtomsMap(
-      this,
-      Array.from(this.bonds.values()),
-    );
+    const stereAtomsMap = getStereoAtomsMap(this, [...this.bonds.values()]);
 
     this.atoms.forEach((atom, id) => {
       if (this?.atomGetNeighbors(id)?.length === 0) {
@@ -1548,7 +1547,9 @@ export class Struct {
   }
 
   getComponents() {
-    /* saver */
+    /*
+    saver
+    */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
     let arrowPos: number | null = null;
@@ -1641,7 +1642,7 @@ export class Struct {
     // Search by sgroups is more expensive, but allows to find
     // functional groups for atoms which are not exist in struct already.
     // F.e. if atom already deleted and it needs to find its functional group
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (sgroup.atoms.includes(atomId)) return groupId;
     }
     return null;
@@ -1671,7 +1672,7 @@ export class Struct {
   getGroupIdFromBondId(bondId: number): number | null {
     const bond = this.bonds.get(bondId);
     if (!bond) return null;
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)
@@ -1698,7 +1699,7 @@ export class Struct {
 
     const groupsIds: number[] = [];
 
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)
@@ -1961,27 +1962,27 @@ export class Struct {
             firstMonomerHasStereoBondOnAttachmentPoint &&
             !secondMonomerHasStereoBondOnAttachmentPoint
           ) {
-            if (bond.begin !== firstMonomerAtom) {
+            if (bond.begin === firstMonomerAtom) {
+              bond.stereo = firstMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 firstMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = firstMonomerAttachmentPointBondStereo;
             }
           } else if (
             !firstMonomerHasStereoBondOnAttachmentPoint &&
             secondMonomerHasStereoBondOnAttachmentPoint
           ) {
-            if (bond.begin !== secondMonomerAtom) {
+            if (bond.begin === secondMonomerAtom) {
+              bond.stereo = secondMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 secondMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = secondMonomerAttachmentPointBondStereo;
             }
           } else if (
             firstMonomerHasStereoBondOnAttachmentPoint &&

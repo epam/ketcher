@@ -1,8 +1,8 @@
 # Stereochemistry
 
-## Problem
-
 Many molecules are chiral, and their biological and chemical behavior depends on 3D configuration. Ketcher must let users express stereochemistry in 2D (stereo bonds), compute standard descriptors, and group stereocenters with enhanced-stereochemistry relationships.
+
+Spec: [openspec/specs/stereochemistry/spec.md](../../openspec/specs/stereochemistry/spec.md)
 
 ## User interaction
 

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -82,7 +81,7 @@ export const EditorEvents = () => {
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
     dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
-  }, [editor]);
+  }, [dispatch, editor]);
 
   useIndigoVersionToRedux();
 
@@ -299,11 +298,11 @@ export const EditorEvents = () => {
         if (sequenceNode instanceof Nucleoside) {
           position = PresetPosition.ChainEnd;
         } else if (
-          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
+          sequenceNode.firstMonomerInNode.R1AttachmentPoint === undefined
         ) {
-          position = PresetPosition.ChainStart;
-        } else {
           position = PresetPosition.ChainMiddle;
+        } else {
+          position = PresetPosition.ChainStart;
         }
 
         const presetPreviewData: PresetPreviewState = {
@@ -386,7 +385,7 @@ export const EditorEvents = () => {
 
     const guardedHandleClosePreview =
       guardForMacromoleculesEditor(handleClosePreview);
-    window.addEventListener('hidePreview', guardedHandleClosePreview);
+    globalThis.addEventListener('hidePreview', guardedHandleClosePreview);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
@@ -407,7 +406,7 @@ export const EditorEvents = () => {
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 
-      window.removeEventListener('hidePreview', guardedHandleClosePreview);
+      globalThis.removeEventListener('hidePreview', guardedHandleClosePreview);
     };
   }, [
     editor,

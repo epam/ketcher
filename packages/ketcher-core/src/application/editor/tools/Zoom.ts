@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,12 +68,12 @@ export class ZoomTool implements BaseTool {
 
   private static _instance: ZoomTool;
   public static get instance() {
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
     ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {

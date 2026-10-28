@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -692,7 +692,7 @@ function serializeRewrite(
 ): unknown {
   const res: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
-    return instance !== undefined ? instance : schema.default;
+    return instance === undefined ? schema.default : instance;
   }
 
   const instanceObj = instance as Record<string, unknown>;

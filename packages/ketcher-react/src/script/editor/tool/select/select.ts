@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,6 @@ import {
   type Vec2,
   CoordinateTransformation,
   fromImageResize,
-  fromItemsFuse,
   fromMultipleMove,
   fromSimpleObjectResizing,
   fromTextDeletion,
@@ -276,7 +275,9 @@ class SelectTool implements Tool {
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
 
-      /* handle atoms */
+      /*
+      handle atoms
+      */
       const shouldDisplayDegree =
         selectionDragCtx.item.map === 'atoms' &&
         atoms?.get(selectionDragCtx.item.id)?.neighbors.length === 1 &&
@@ -289,9 +290,13 @@ class SelectTool implements Tool {
         const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
-      /* end */
+      /*
+      end
+      */
 
-      /* handle image resize */
+      /*
+      handle image resize
+      */
       if (isImageSelectionDragContext(selectionDragCtx)) {
         if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
         const position = CoordinateTransformation.pageToModel(event, rnd);
@@ -304,9 +309,13 @@ class SelectTool implements Tool {
         editor.update(selectionDragCtx.action, true);
         return true;
       }
-      /* end + fullstop */
+      /*
+      end + fullstop
+      */
 
-      /* handle simpleObjects */
+      /*
+      handle simpleObjects
+      */
       if (isSimpleObjectSelectionDragContext(selectionDragCtx)) {
         if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
         const props = getResizingProps(editor, selectionDragCtx, event);
@@ -317,16 +326,22 @@ class SelectTool implements Tool {
         editor.update(selectionDragCtx.action, true);
         return true;
       }
-      /* end + fullstop */
+      /*
+      end + fullstop
+      */
 
-      /* handle functionalGroups */
+      /*
+      handle functionalGroups
+      */
       if (
         selectionDragCtx.item.map === 'functionalGroups' &&
         !selectionDragCtx.action
       ) {
         editor.event.showInfo.dispatch(null);
       }
-      /* end */
+      /*
+      end
+      */
 
       if (selectionDragCtx.action) {
         selectionDragCtx.action.perform(restruct);
@@ -439,7 +454,9 @@ class SelectTool implements Tool {
 
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
-    /* ignore salts and solvents */
+    /*
+    ignore salts and solvents
+    */
     const lastSelectedSgroupId = selectedSgroups.at(-1);
     const possibleSaltOrSolvent =
       lastSelectedSgroupId === undefined
@@ -451,16 +468,14 @@ class SelectTool implements Tool {
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
-    if (
-      dragCtx &&
+    const isMergePrevented =
+      Boolean(dragCtx) &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups))
-    ) {
-      preventSaltAndSolventsMerge(struct, dragCtx, editor);
-      this.dragCtx = null;
-    }
-    /* end */
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups));
+    /*
+    end
+    */
     if (isArrowDragContext(dragCtx)) {
       if (CommonArrowTool.isDragContextReaction(dragCtx)) {
         dragCtx.action = this.reactionArrowMoveTool.mouseup(event, dragCtx);
@@ -478,7 +493,13 @@ class SelectTool implements Tool {
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {
-      if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
+      if (isMergePrevented) {
+        // No merge, but the move still has to be committed to history.
+        if (dragCtx.mergeItems) {
+          editor.selection(null);
+        }
+        dropAndMerge(editor, null, dragCtx.action, dragCtx.copyAction);
+      } else if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
           dragCtx.mergeItems,
@@ -642,8 +663,8 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch((e) => {
-          KetcherLogger.error('select.ts::SelectTool::dblclick', e);
+        .catch((error) => {
+          KetcherLogger.error('select.ts::SelectTool::dblclick', error);
         });
     }
     return true;
@@ -672,9 +693,9 @@ class SelectTool implements Tool {
     let isDraggingOnSaltOrSolventAtom;
     let isDraggingOnSaltOrSolventBond;
     if (dragCtx?.mergeItems) {
-      const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
-      const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
-      const sgroupsOnCanvas = Array.from(sgroups.values())
+      const mergeAtoms = [...dragCtx.mergeItems.atoms.values()];
+      const mergeBonds = [...dragCtx.mergeItems.bonds.values()];
+      const sgroupsOnCanvas = [...sgroups.values()]
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
@@ -802,24 +823,6 @@ function getHoverTarget(
     id: item.id,
     items: fragSelection,
   };
-}
-
-function preventSaltAndSolventsMerge(
-  struct: ReStruct,
-  dragCtx: Pick<NonNullable<DragContext>, 'action' | 'mergeItems'>,
-  editor: Editor,
-) {
-  const action = dragCtx.action
-    ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
-    : fromItemsFuse(struct, null);
-  editor.hover(null);
-  if (dragCtx.mergeItems) {
-    editor.selection(null);
-  }
-  editor.update(action);
-  editor.event.message.dispatch({
-    info: false,
-  });
 }
 
 function getMapsForClosestItem(selectFragment: boolean) {

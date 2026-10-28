@@ -25,13 +25,15 @@ jobs:
       # restructure, .agents/skills lacks review-pr, so the symlink that the
       # restore brings in is broken, /review-pr does not load, and the run
       # ends green with no review posted. Replace .agents with master's copy
-      # so the skill set matches what .claude points at. This copies files
-      # only; nothing from the PR head is executed.
-      - name: Align agent skills with master
+      # so the skill set matches what .claude points at. CLAUDE.md, which the
+      # action also restores, imports AGENTS.md, so take AGENTS.md from master
+      # too; otherwise a PR could change the instructions of its own review.
+      # This copies files only; nothing from the PR head is executed.
+      - name: Align agent config with master
         run: |
           git fetch origin master --depth 1
-          rm -rf .agents
-          git checkout origin/master -- .agents
+          rm -rf .agents AGENTS.md
+          git checkout origin/master -- .agents AGENTS.md
 
       - name: PR Review with Progress Tracking
         uses: anthropics/claude-code-action@v1

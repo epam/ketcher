@@ -27,6 +27,7 @@ interface ImportMetaEnv {
   readonly NODE_ENV?: string;
   readonly INDIGO_VERSION?: string;
   readonly INDIGO_MACHINE?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
 }
 
 interface ImportMeta {

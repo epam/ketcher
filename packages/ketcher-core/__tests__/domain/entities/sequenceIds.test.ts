@@ -14,7 +14,7 @@ import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { ServerFormatter } from 'application/formatters/serverFormatter';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
-import type { StructService } from 'domain/services';
+import { ChemicalMimeType, type StructService } from 'domain/services';
 import { mock } from 'jest-mock-extended';
 import { coreEditorTheme, polymerEditorTheme } from '../../mock-data';
 import {
@@ -114,7 +114,10 @@ describe('imported sequence IDs', () => {
   it('sends active IDs to Indigo for Molfile export and omits them after a reset', async () => {
     loadPeptides();
     const service = mock<StructService>();
-    service.convert.mockResolvedValue({ struct: 'molfile' });
+    service.convert.mockResolvedValue({
+      struct: 'molfile',
+      format: ChemicalMimeType.Mol,
+    });
     const formatter = new ServerFormatter(
       service,
       serializer,

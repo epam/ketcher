@@ -30,6 +30,6 @@ Run _Review_, with the report as the spec. You do the cleanup and the fixes your
 
 ## Phase 6: Land
 
-Open the PR as _Landing_ says, with PR type "Bug fix", `Closes #N` when there is an issue, and the repro and the fix evidence under "Verified in the app". When review has stopped, mark it ready.
+Open the PR as _Landing_ says, with `Closes #N` when there is an issue, and the repro and the fix evidence under "Verified in the app". When review has stopped, mark it ready.
 
 Report: the issue URL or report path, the PR, what the checks said, the verify verdict, and anything left open.

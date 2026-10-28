@@ -46,7 +46,7 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
    Done when no two tickets on the same frontier share a path.
 
-8. **Branch and PR.** Create the branch as _Branches_ in LOCATIONS.md says. Commit the change folder as the first commit, and open a draft PR with PR type "Feature", per TRACKER.md. Done when the draft PR exists and your checkout is its branch.
+8. **Branch and PR.** Create the branch as _Branches_ in LOCATIONS.md says. Commit the change folder as the first commit, and open a draft PR, per TRACKER.md. Done when the draft PR exists and your checkout is its branch.
 
 9. **Implement.** Save the _Checks_ baseline. Dispatch an **implementer** per ticket on the frontier, each with [IMPLEMENT.md](IMPLEMENT.md), its ticket file, `<run dir>/notes/`, and its worktree or the shared branch.
 
@@ -58,7 +58,7 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
 11. **Verify** on the PR branch: dispatch a **verifier** with [VERIFY.md](VERIFY.md) and the change's spec deltas as the spec. A `fail` becomes a fix by a new implementer, then verify again. A `could not run` is not a pass: carry it to the PR and the final report.
 
-12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../openspec-archive-change/SKILL.md)). Then update the memory bank, as `AGENTS.md` says: the feature summary in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Tick the PR type "Archive of an OpenSpec change" too. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
+12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../openspec-archive-change/SKILL.md)). Then update the memory bank, as `AGENTS.md` says: the feature summary in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
 
 13. **Review.** Run _Review_ from SKILL.md with the archived change folder as the spec, so the archive and the memory-bank edits are reviewed with the code. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
 

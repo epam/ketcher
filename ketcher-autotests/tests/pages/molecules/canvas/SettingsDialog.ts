@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,
@@ -432,23 +431,6 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
 
 export async function setSettingsOption(
   page: Page,
-  option: (typeof comboBoxOptions)[number],
-  value: ComboBoxValue,
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: (typeof switcherOptions)[number],
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: AllSettingsOptions,
-  value?: string,
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
   option: AllSettingsOptions,
   value = '',
 ) {
@@ -474,20 +456,16 @@ export async function setSettingsOption(
   }
 }
 
-export function setSettingsOptions(
+export async function setSettingsOptions(
   page: Page,
   options: (
+    | { option: AllSettingsOptions; value?: string }
     | ComboBoxOptionEntry
     | SwitcherOptionEntry
     | EditboxOptionEntry
     | OtherOptionEntry
   )[],
-): Promise<void>;
-
-export async function setSettingsOptions(
-  page: Page,
-  options: { option: AllSettingsOptions; value?: string }[],
-) {
+): Promise<void> {
   const optionsToSectionMap = createOptionToSectionMap();
   const hasFontOption = options.some(
     (entry) => entry.option === GeneralSetting.Font,

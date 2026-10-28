@@ -211,9 +211,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           {footerContent}
           {buttons.length > 0 &&
             buttons.map((button) =>
-              typeof button !== 'string' ? (
-                button
-              ) : (
+              typeof button === 'string' ? (
                 <input
                   key={button}
                   type="button"
@@ -230,6 +228,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
+              ) : (
+                button
               ),
             )}
         </footer>

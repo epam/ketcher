@@ -45,7 +45,7 @@ export function sanitizeCustomColors(
     uniqueColors.add(normalizedColor);
   });
 
-  return Array.from(uniqueColors).slice(0, MAX_CUSTOM_COLORS);
+  return [...uniqueColors].slice(0, MAX_CUSTOM_COLORS);
 }
 
 export function addCustomColor(

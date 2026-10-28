@@ -497,7 +497,11 @@ class Editor implements KetcherEditor {
 
   // this is used by API addFragment method
   structToAddFragment(struct: Struct, x?: number, y?: number): Struct {
-    if (x != null && y != null) {
+    if (x == null || y == null) {
+      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
+
+      this.renderAndRecoordinateStruct(superStruct);
+    } else {
       const position = new Vec2(x, y);
       const [action] = fromPaste(
         this.render.ctab,
@@ -508,10 +512,6 @@ class Editor implements KetcherEditor {
         true,
       );
       this.update(action, true);
-    } else {
-      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
-
-      this.renderAndRecoordinateStruct(superStruct);
     }
 
     this.centerViewportAccordingToStruct();
@@ -1026,7 +1026,7 @@ class Editor implements KetcherEditor {
 
     // When there's no selection, use all atoms from the structure
     const atomsToProcess =
-      selection !== null ? selection.atoms : [...currentStruct.atoms.keys()];
+      selection === null ? [...currentStruct.atoms.keys()] : selection.atoms;
 
     if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;
@@ -1852,14 +1852,14 @@ class Editor implements KetcherEditor {
       const potentialLeavingAtomsSet = potentialAttachmentPoints.get(
         originalAttachmentAtomId,
       );
-      if (!potentialLeavingAtomsSet) {
+      if (potentialLeavingAtomsSet) {
+        potentialLeavingAtomsSet.add(originalLeavingAtomId);
+      } else {
         const potentialLeavingAtoms = new Set([originalLeavingAtomId]);
         potentialAttachmentPoints.set(
           originalAttachmentAtomId,
           potentialLeavingAtoms,
         );
-      } else {
-        potentialLeavingAtomsSet.add(originalLeavingAtomId);
       }
     });
 
@@ -3727,12 +3727,12 @@ class Editor implements KetcherEditor {
 
             // If bond between attachment atom and leaving atom becomes non-suitable, mark the AP as problematic
             if (attachmentPointWithBond) {
-              if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
-                this.monomerCreationState.problematicAttachmentPoints.add(
+              if (Editor.isBondSuitableForAttachmentPoint(bond)) {
+                this.monomerCreationState.problematicAttachmentPoints.delete(
                   attachmentPointWithBond[0],
                 );
               } else {
-                this.monomerCreationState.problematicAttachmentPoints.delete(
+                this.monomerCreationState.problematicAttachmentPoints.add(
                   attachmentPointWithBond[0],
                 );
               }
@@ -4570,10 +4570,10 @@ function setHover(ci: HoverTarget, visible: boolean, render: Render) {
           paperPath.closePath();
         }
 
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
+        if (combinedPath) {
           combinedPath = combinedPath.unite(paperPath);
+        } else {
+          combinedPath = paperPath;
         }
       }
 

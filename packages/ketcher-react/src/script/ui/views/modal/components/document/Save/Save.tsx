@@ -249,13 +249,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats = !this.props.server
+    const formats = this.props.server
       ? [
-          SupportedFormat.ket,
-          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-          SupportedFormat.smiles,
-        ]
-      : [
           SupportedFormat.ket,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
@@ -277,6 +272,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           SupportedFormat.cdxml,
           SupportedFormat.cdx,
           SupportedFormat.binaryCdx,
+        ]
+      : [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
         ];
 
     this.saveSchema = saveSchema;
@@ -686,7 +686,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               : format.name)
           }
           key="save-file-button"
-          type={!this.isValidStringFormat(format) ? format.mime : undefined}
+          type={this.isValidStringFormat(format) ? undefined : format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}

@@ -124,8 +124,8 @@ class RotateController implements RotateControllerContract {
   }
 
   /**
-   * Revert rotation by pressing "Escape" key or "Right click" button
-   */
+  Revert rotation by pressing "Escape" key or "Right click" button
+  */
   revert() {
     if (!this.rotateTool.dragCtx?.action || !this.isRotating) {
       return;

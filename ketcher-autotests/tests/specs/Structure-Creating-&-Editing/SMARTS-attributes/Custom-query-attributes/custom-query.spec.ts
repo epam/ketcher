@@ -70,8 +70,8 @@ test.describe('Checking custom query in SMARTS format', () => {
     page,
   }) => {
     /**
-     * https://github.com/epam/Indigo/issues/1337
-     */
+    https://github.com/epam/Indigo/issues/1337
+    */
     await AtomPropertiesDialog(page).setOptions({
       CustomQuery: {
         CustomQueryCheckbox: true,

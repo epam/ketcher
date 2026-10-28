@@ -57,23 +57,23 @@ export async function clickOnCanvas(
   y: number,
   options?: {
     /**
-     * Defaults to `left`.
-     */
+    Defaults to `left`.
+    */
     button?: MouseButton;
 
     /**
-     * defaults to 1. See [UIEvent.detail].
-     */
+    defaults to 1. See [UIEvent.detail].
+    */
     clickCount?: number;
 
     /**
-     * Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
-     */
+    Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
+    */
     delay?: number;
     waitForRenderTimeOut?: number;
     /**
-     *      * Time to wait canvas event for for waitForRenderTimeOut.
-     */
+    * Time to wait canvas event for for waitForRenderTimeOut.
+    */
     from?: 'pageTopLeft' | 'pageCenter' | 'canvasTopLeft' | 'canvasCenter';
   },
 ) {

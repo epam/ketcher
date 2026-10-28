@@ -1,16 +1,16 @@
 /**
- * SVG path primitives used to describe a monomer's replacement-highlight
- * silhouette.
- *
- * Each monomer renderer owns the path that best matches its body:
- *   – hexagon for peptides
- *   – pentagon for unsplit nucleotides
- *   – rectangle for sugars/CHEM
- *   – diamond for RNA bases
- *   – circle for phosphates
- * `ReplacementHighlightView` collects those paths, adds capsule paths for
- * internal bonds, and combines everything with Paper.js boolean union.
- */
+SVG path primitives used to describe a monomer's replacement-highlight
+silhouette.
+
+Each monomer renderer owns the path that best matches its body:
+  – hexagon for peptides
+  – pentagon for unsplit nucleotides
+  – rectangle for sugars/CHEM
+  – diamond for RNA bases
+  – circle for phosphates
+`ReplacementHighlightView` collects those paths, adds capsule paths for
+internal bonds, and combines everything with Paper.js boolean union.
+*/
 
 export type Point = { x: number; y: number };
 export type HighlightPathData = string;
@@ -173,16 +173,16 @@ export const createCircleHighlightPath = (
 };
 
 /**
- * Expands a convex polygon outward by `offset` pixels using edge-normal
- * offsetting: each edge is shifted perpendicularly outward by `offset`, then
- * new vertices are placed at the intersection of adjacent shifted edges.
- *
- * This produces a geometrically accurate offset shape regardless of the angle
- * between adjacent edges (unlike simple radial scaling).
- *
- * Assumes CCW winding with the SVG y-axis pointing down (i.e. the "outward"
- * normal of an edge from A→B is (+dy, −dx) / len).
- */
+Expands a convex polygon outward by `offset` pixels using edge-normal
+offsetting: each edge is shifted perpendicularly outward by `offset`, then
+new vertices are placed at the intersection of adjacent shifted edges.
+
+This produces a geometrically accurate offset shape regardless of the angle
+between adjacent edges (unlike simple radial scaling).
+
+Assumes CCW winding with the SVG y-axis pointing down (i.e. the "outward"
+normal of an edge from A→B is (+dy, −dx) / len).
+*/
 const expandPolygon = (points: Point[], offset: number): Point[] => {
   const n = points.length;
 
@@ -228,13 +228,13 @@ const expandPolygon = (points: Point[], offset: number): Point[] => {
 };
 
 /**
- * Flat-top hexagon path matching the Peptide monomer body shape.
- *
- * Six vertices: two horizontal tips (left/right) and four flat-edge corners
- * (top-left, top-right, bottom-right, bottom-left). `HEXAGON_INNER_X_RATIO`
- * encodes how far the flat corners indent from the left/right extremes, taken
- * directly from the peptide SVG symbol (see constant definition above).
- */
+Flat-top hexagon path matching the Peptide monomer body shape.
+
+Six vertices: two horizontal tips (left/right) and four flat-edge corners
+(top-left, top-right, bottom-right, bottom-left). `HEXAGON_INNER_X_RATIO`
+encodes how far the flat corners indent from the left/right extremes, taken
+directly from the peptide SVG symbol (see constant definition above).
+*/
 export const createHexagonHighlightPath = (
   center: Point,
   width: number,
@@ -264,12 +264,12 @@ export const createHexagonHighlightPath = (
 };
 
 /**
- * Pentagon path matching the UnsplitNucleotide monomer body shape: a flat
- * bottom edge with two upper angled sides converging at a single top tip.
- *
- * All shape ratios are module-level constants derived from the nucleotide SVG
- * symbol (see PENTAGON_* constant definitions above).
- */
+Pentagon path matching the UnsplitNucleotide monomer body shape: a flat
+bottom edge with two upper angled sides converging at a single top tip.
+
+All shape ratios are module-level constants derived from the nucleotide SVG
+symbol (see PENTAGON_* constant definitions above).
+*/
 export const createNucleotideHighlightPath = (
   center: Point,
   width: number,

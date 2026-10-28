@@ -17,11 +17,11 @@
 import type { Serializer, Struct } from 'ketcher-core';
 
 /**
- * Supported serialization format types for structure copying.
- */
+Supported serialization format types for structure copying.
+*/
 export type SerializationType = 'mol' | 'ket';
 
 /**
- * Serializer for a Struct type.
- */
+Serializer for a Struct type.
+*/
 export type StructSerializer = Serializer<Struct>;

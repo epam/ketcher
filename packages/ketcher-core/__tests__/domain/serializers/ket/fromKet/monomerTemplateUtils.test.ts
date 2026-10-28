@@ -3,8 +3,8 @@ import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKe
 
 describe('getLeavingGroupLabelWithHydrogens', () => {
   /**
-   * Helper function to create a simple struct with atoms and bonds for testing
-   */
+  Helper function to create a simple struct with atoms and bonds for testing
+  */
   function createTestStruct(
     atomLabel: string,
     bondCount: number,

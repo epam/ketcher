@@ -1026,11 +1026,11 @@ export class Struct {
   }
 
   /**
-   * A scale factor outside [0.01, 100] means the source geometry is degenerate;
-   * normalizing it would distort the drawing more than leaving it alone. Shared
-   * with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
-   * path applies the same rule rather than a copy of these bounds.
-   */
+  A scale factor outside [0.01, 100] means the source geometry is degenerate;
+  normalizing it would distort the drawing more than leaving it alone. Shared
+  with rescaleMolecules() in serializers/mol/utils.js so the reaction-merge
+  path applies the same rule rather than a copy of these bounds.
+  */
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
@@ -1250,14 +1250,14 @@ export class Struct {
   }
 
   /**
-   * Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
-   * unit). Applied identically to every input format; rescaleMolecules() in
-   * serializers/mol/utils.js follows the same rule for the reaction-merge path.
-   *
-   * The median rather than the mean: a handful of distorted bonds used to drag the
-   * average far from 1, shrinking the whole drawing — shapes, texts and images
-   * included — on load. See issue #5275.
-   */
+  Normalizes coordinates so the median bond length becomes 1 (Ketcher's canvas
+  unit). Applied identically to every input format; rescaleMolecules() in
+  serializers/mol/utils.js follows the same rule for the reaction-merge path.
+
+  The median rather than the mean: a handful of distorted bonds used to drag the
+  average far from 1, shrinking the whole drawing — shapes, texts and images
+  included — on load. See issue #5275.
+  */
   rescale() {
     const median = this.getMedianBondLength();
     if (median <= 0) {
@@ -1719,10 +1719,10 @@ export class Struct {
   }
 
   /**
-   * @returns visibleAtoms = selected atoms
-   *                       - atoms in contracted functional groups
-   *                       + functional groups's attachment atoms
-   */
+  @returns visibleAtoms = selected atoms
+                        - atoms in contracted functional groups
+                        + functional groups's attachment atoms
+  */
   getSelectedVisibleAtoms(selection: EditorSelection | null) {
     return (
       selection?.atoms?.filter((atomId) => {

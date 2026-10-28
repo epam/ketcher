@@ -17,23 +17,23 @@ import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMo
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 /**
- * The message shown when base modification is refused because both strands of
- * a hydrogen-bonded pair are selected (rule 1.3 of epam/ketcher#6595). The
- * wording is mandated verbatim by the issue -- do not reword, re-wrap or
- * re-punctuate it.
- *
- * It lives here, rather than being duplicated in ketcher-macromolecules,
- * because both the refusal guard in SequenceMode and the RNA builder's own
- * guard must dispatch exactly the same text.
- */
+The message shown when base modification is refused because both strands of
+a hydrogen-bonded pair are selected (rule 1.3 of epam/ketcher#6595). The
+wording is mandated verbatim by the issue -- do not reword, re-wrap or
+re-punctuate it.
+
+It lives here, rather than being duplicated in ketcher-macromolecules,
+because both the refusal guard in SequenceMode and the RNA builder's own
+guard must dispatch exactly the same text.
+*/
 export const BASE_MODIFICATION_DISABLED_IN_SYNC_MODE =
   'Modification of bases is disabled in sync mode when both the sense and antisense strands are selected. Go to non-sync mode for base modification.';
 
 /**
- * Follows the existing convention in Nucleoside, Nucleotide and the sequence
- * item renderers: deoxyribose is recognized by an exact label match. Modified
- * DNA sugars are therefore not recognized, which is a documented limitation.
- */
+Follows the existing convention in Nucleoside, Nucleotide and the sequence
+item renderers: deoxyribose is recognized by an exact label match. Modified
+DNA sugars are therefore not recognized, which is a documented limitation.
+*/
 export function isDeoxyriboseSugarLabel(sugarLabel?: string): boolean {
   return sugarLabel === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
 }
@@ -47,12 +47,12 @@ export function getLibraryItemNaturalAnalogue(
 }
 
 /**
- * Follows the same isAmbiguousMonomerLibraryItem branching used by
- * getRnaPartLibraryItem/getPeptideLibraryItem (domain/helpers/rna.ts) and by
- * getLibraryItemNaturalAnalogue above: an ambiguous library item has no
- * `props`, so its monomer class must be derived from its constituent
- * monomers via AmbiguousMonomer.getMonomerClass rather than read off props.
- */
+Follows the same isAmbiguousMonomerLibraryItem branching used by
+getRnaPartLibraryItem/getPeptideLibraryItem (domain/helpers/rna.ts) and by
+getLibraryItemNaturalAnalogue above: an ambiguous library item has no
+`props`, so its monomer class must be derived from its constituent
+monomers via AmbiguousMonomer.getMonomerClass rather than read off props.
+*/
 export function getLibraryItemMonomerClass(
   item: MonomerOrAmbiguousType,
 ): KetMonomerClass | undefined {
@@ -62,15 +62,15 @@ export function getLibraryItemMonomerClass(
 }
 
 /**
- * Whether replacing a node with this library item would set a new base on
- * it. True for a base monomer, and for an unsplit nucleotide, whose base is
- * part of the monomer itself (monomer class RNA or DNA). False for sugars,
- * phosphates, CHEM and peptides: those replace the node without giving it a
- * base, so rule 1.3 has nothing to be ambiguous about.
- *
- * A preset is not a library item and has no monomer class of its own; the
- * caller passes `preset.base`, which is an ordinary Base-class item.
- */
+Whether replacing a node with this library item would set a new base on
+it. True for a base monomer, and for an unsplit nucleotide, whose base is
+part of the monomer itself (monomer class RNA or DNA). False for sugars,
+phosphates, CHEM and peptides: those replace the node without giving it a
+base, so rule 1.3 has nothing to be ambiguous about.
+
+A preset is not a library item and has no monomer class of its own; the
+caller passes `preset.base`, which is an ordinary Base-class item.
+*/
 export function itemCarriesBase(item: MonomerOrAmbiguousType): boolean {
   const monomerClass = getLibraryItemMonomerClass(item);
 
@@ -94,9 +94,9 @@ export function getMonomerNaturalAnalogue(
 }
 
 /**
- * Rule 1.1 and rule 1.2 of epam/ketcher#6595. Returns the label the paired
- * base must become, or undefined when the pair must be left alone.
- */
+Rule 1.1 and rule 1.2 of epam/ketcher#6595. Returns the label the paired
+base must become, or undefined when the pair must be left alone.
+*/
 export function resolveMirroredBaseLabel(params: {
   previousNaturalAnalogue?: string;
   newNaturalAnalogue?: string;
@@ -133,10 +133,10 @@ export function getHydrogenBondedPartner(
 }
 
 /**
- * The structural condition from rule 1.3: the base reaches a sugar through the
- * R1/R3 pairing, and that sugar carries at least one backbone connection.
- * Unsplit nucleotides satisfy the first half by monomer class.
- */
+The structural condition from rule 1.3: the base reaches a sugar through the
+R1/R3 pairing, and that sugar carries at least one backbone connection.
+Unsplit nucleotides satisfy the first half by monomer class.
+*/
 export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
   if (!base || !isRnaBaseApplicableForAntisense(base)) {
     return false;
@@ -157,13 +157,13 @@ export function isBaseEligibleForDuplexSync(base?: BaseMonomer): boolean {
 }
 
 /**
- * True when this base and the base it is hydrogen bonded to are both selected
- * and both eligible. Rule 1.3 blocks base modification entirely when this is
- * true for a base in the selection. It is judged from the selection itself: a
- * column-based gesture (click, shift-click, select-all, any edit-mode
- * selection) really does select both strands, while a view-mode drag over one
- * row selects only that strand.
- */
+True when this base and the base it is hydrogen bonded to are both selected
+and both eligible. Rule 1.3 blocks base modification entirely when this is
+true for a base in the selection. It is judged from the selection itself: a
+column-based gesture (click, shift-click, select-all, any edit-mode
+selection) really does select both strands, while a view-mode drag over one
+row selects only that strand.
+*/
 export function isSelectedAntisensePair(base?: BaseMonomer): boolean {
   const partner = getHydrogenBondedPartner(base);
 
@@ -185,14 +185,14 @@ export interface MirroredBaseTarget {
 }
 
 /**
- * The decision half of createMirroredBaseCommand: which base the edit
- * rewrites, and to what. Returns undefined when nothing will change -- sync
- * off, no eligible partner, the partner is itself selected (rule 1.1: "that
- * symbol is not selected itself"), the natural analogue is unchanged, or the
- * partner already carries the complement. Shared with
- * SequenceMode.countMirroredBaseChanges so the confirmation's count and the
- * edit cannot disagree.
- */
+The decision half of createMirroredBaseCommand: which base the edit
+rewrites, and to what. Returns undefined when nothing will change -- sync
+off, no eligible partner, the partner is itself selected (rule 1.1: "that
+symbol is not selected itself"), the natural analogue is unchanged, or the
+partner already carries the complement. Shared with
+SequenceMode.countMirroredBaseChanges so the confirmation's count and the
+edit cannot disagree.
+*/
 export function resolveMirroredBaseTarget(params: {
   editedBase: BaseMonomer;
   previousNaturalAnalogue?: string;
@@ -243,59 +243,59 @@ export function resolveMirroredBaseTarget(params: {
 }
 
 /**
- * Builds the command that rewrites the hydrogen-bonded partner of
- * `editedBase` so the pair stays complementary. Direction-agnostic: the same
- * function serves sense-to-antisense and antisense-to-sense edits, since it
- * always mirrors from whichever base was actually edited to its partner.
- *
- * Returns undefined when there is nothing to mirror (sync mode is off, there
- * is no eligible partner, the partner is itself selected, or the natural
- * analogue did not change), so the caller can tell "no-op" apart from a real
- * command to merge into its own.
- */
+Builds the command that rewrites the hydrogen-bonded partner of
+`editedBase` so the pair stays complementary. Direction-agnostic: the same
+function serves sense-to-antisense and antisense-to-sense edits, since it
+always mirrors from whichever base was actually edited to its partner.
+
+Returns undefined when there is nothing to mirror (sync mode is off, there
+is no eligible partner, the partner is itself selected, or the natural
+analogue did not change), so the caller can tell "no-op" apart from a real
+command to merge into its own.
+*/
 export function createMirroredBaseCommand(params: {
   drawingEntitiesManager: DrawingEntitiesManager;
   editedBase: BaseMonomer;
   previousNaturalAnalogue?: string;
   newBaseMonomerItem: MonomerOrAmbiguousType;
   /**
-   * Whether SYNC edit mode is on. Rule 2.1 makes the sync toggle alone the
-   * condition for touching the opposite strand: the editor's separate
-   * "antisense edit mode" (which strand an insertion or deletion applies to,
-   * turned on by simply clicking an antisense symbol) must NOT enable the
-   * mirror, or a non-sync edit of an antisense base would rewrite its sense
-   * partner.
-   */
+  Whether SYNC edit mode is on. Rule 2.1 makes the sync toggle alone the
+  condition for touching the opposite strand: the editor's separate
+  "antisense edit mode" (which strand an insertion or deletion applies to,
+  turned on by simply clicking an antisense symbol) must NOT enable the
+  mirror, or a non-sync edit of an antisense base would rewrite its sense
+  partner.
+  */
   isSyncEditMode: boolean;
   resolveBaseLibraryItem: (label: string) => MonomerOrAmbiguousType | undefined;
   /**
-   * The hydrogen-bonded partner of `editedBase`, captured by the caller
-   * BEFORE performing the sense-side edit. Needed whenever that edit
-   * replaces or deletes `editedBase`'s underlying monomer instead of
-   * mutating it in place (the ambiguous-monomer replace branch here, and
-   * the library-replace path's node deletion): such an edit unsets every
-   * bond on the stale `editedBase` object, including its hydrogen bond, so
-   * the partner can no longer be re-derived from it afterwards.
-   *
-   * When supplied, this short-circuits `getHydrogenBondedPartner`. It is
-   * independent of `wasEditedBaseEligible` below: supplying one does not
-   * imply anything about the other, and each falls back to being computed
-   * from `editedBase` when omitted.
-   */
+  The hydrogen-bonded partner of `editedBase`, captured by the caller
+  BEFORE performing the sense-side edit. Needed whenever that edit
+  replaces or deletes `editedBase`'s underlying monomer instead of
+  mutating it in place (the ambiguous-monomer replace branch here, and
+  the library-replace path's node deletion): such an edit unsets every
+  bond on the stale `editedBase` object, including its hydrogen bond, so
+  the partner can no longer be re-derived from it afterwards.
+
+  When supplied, this short-circuits `getHydrogenBondedPartner`. It is
+  independent of `wasEditedBaseEligible` below: supplying one does not
+  imply anything about the other, and each falls back to being computed
+  from `editedBase` when omitted.
+  */
   partner?: BaseMonomer;
   /**
-   * Whether `editedBase` was structurally eligible for duplex sync
-   * (`isBaseEligibleForDuplexSync`), computed by the caller BEFORE
-   * performing the sense-side edit. Needed for the same reason as
-   * `partner`: an edit that replaces or deletes `editedBase`'s monomer also
-   * unsets its own backbone (R1) connection, so eligibility can no longer
-   * be re-derived from the stale reference afterwards.
-   *
-   * When omitted, eligibility is computed fresh from `editedBase`, which is
-   * correct for any edit that mutates the monomer in place rather than
-   * replacing it (e.g. the non-ambiguous `modifyMonomerItem` branch, where
-   * `editedBase`'s bonds are never touched).
-   */
+  Whether `editedBase` was structurally eligible for duplex sync
+  (`isBaseEligibleForDuplexSync`), computed by the caller BEFORE
+  performing the sense-side edit. Needed for the same reason as
+  `partner`: an edit that replaces or deletes `editedBase`'s monomer also
+  unsets its own backbone (R1) connection, so eligibility can no longer
+  be re-derived from the stale reference afterwards.
+
+  When omitted, eligibility is computed fresh from `editedBase`, which is
+  correct for any edit that mutates the monomer in place rather than
+  replacing it (e.g. the non-ambiguous `modifyMonomerItem` branch, where
+  `editedBase`'s bonds are never touched).
+  */
   wasEditedBaseEligible?: boolean;
 }): Command | undefined {
   const { drawingEntitiesManager, resolveBaseLibraryItem } = params;

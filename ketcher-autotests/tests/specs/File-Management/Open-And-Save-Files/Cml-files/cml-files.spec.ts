@@ -32,19 +32,19 @@ test.describe('CML files', () => {
 
   test('Open and Save files - CML - CML for empty canvas', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1944
-     * Description: Save a clear canvas in CML format with preset parameters:
-     * The input field contains <?xml version="1.0" ?> <cml> <molecule title="" /> </cml>.
-     */
+    Test case: EPMLSOPKET-1944
+    Description: Save a clear canvas in CML format with preset parameters:
+    The input field contains <?xml version="1.0" ?> <cml> <molecule title="" /> </cml>.
+    */
 
     await verifyFileExport(page, 'CML/cml-12492-compare.cml', FileType.CML);
   });
 
   test('Open and Save file - CML - CML for structure', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1945
-     * Description: Saved cml file with structure is compering with paste cml structure golden file
-     */
+    Test case: EPMLSOPKET-1945
+    Description: Saved cml file with structure is compering with paste cml structure golden file
+    */
     await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-molecule.cml');
     // check that structure opened from file is displayed correctly
 
@@ -55,9 +55,9 @@ test.describe('CML files', () => {
     page,
   }) => {
     /**
-     * Test case: EPMLSOPKET-1946
-     * Description: Saved cml file with structure is compering with paste cml 3 structures
-     */
+    Test case: EPMLSOPKET-1946
+    Description: Saved cml file with structure is compering with paste cml 3 structures
+    */
     await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-1946.cml');
     // check that structure opened from file is displayed correctly
 
@@ -86,9 +86,9 @@ test.describe('CML files', () => {
     page,
   }) => {
     /**
-     * Test case: EPMLSOPKET-1948
-     * Description: Saved cml file with structure is compering with paste R-group from a mol file
-     */
+    Test case: EPMLSOPKET-1948
+    Description: Saved cml file with structure is compering with paste R-group from a mol file
+    */
 
     await openFileAddToCanvasTakeScreenshot(
       page,

@@ -102,9 +102,9 @@ abstract class SelectBase implements BaseTool {
   };
 
   /**
-   * Reads renderer data from d3-bound event targets (`target.__data__`).
-   * Returns undefined when an event target has no renderer payload.
-   */
+  Reads renderer data from d3-bound event targets (`target.__data__`).
+  Returns undefined when an event target has no renderer payload.
+  */
   private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
     return (event.target as { __data__?: T } | null)?.__data__;
   }

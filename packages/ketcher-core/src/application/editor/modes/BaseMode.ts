@@ -220,9 +220,9 @@ export abstract class BaseMode {
   }
 
   /**
-   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
-   * exports it (monomers are drawn as they look on the canvas).
-   */
+  Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+  exports it (monomers are drawn as they look on the canvas).
+  */
   private async copyCanvasAsImage(): Promise<void> {
     const editor = provideEditorInstance();
     const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
@@ -250,9 +250,9 @@ export abstract class BaseMode {
   }
 
   /**
-   * Puts the copied structure on the clipboard. By default only KET is written
-   * as plain text; modes can override it to add other formats.
-   */
+  Puts the copied structure on the clipboard. By default only KET is written
+  as plain text; modes can override it to add other formats.
+  */
   protected writeToClipboard(
     serializedKet: string,
     _drawingEntitiesManager: DrawingEntitiesManager,

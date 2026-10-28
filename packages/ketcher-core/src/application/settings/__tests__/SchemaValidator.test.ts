@@ -1,6 +1,6 @@
 /**
- * Unit tests for SchemaValidator
- */
+Unit tests for SchemaValidator
+*/
 
 import { SchemaValidator } from '../SchemaValidator';
 import { getDefaultSettings } from '../schema';

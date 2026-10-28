@@ -2,10 +2,10 @@ import type { Vec2 } from 'domain/entities/vec2';
 import { provideEditorSettings } from '../editorSettings';
 import ZoomTool from '../tools/Zoom';
 /**
- * `model` -- The original coordinates of entities, namely angstroms
- * `canvas` -- The real coordinates used to draw entities
- * `view` -- The zoomed canvas coordinates
- */
+`model` -- The original coordinates of entities, namely angstroms
+`canvas` -- The real coordinates used to draw entities
+`view` -- The zoomed canvas coordinates
+*/
 export class Coordinates {
   static canvasToModel(position: Vec2) {
     const settings = provideEditorSettings();

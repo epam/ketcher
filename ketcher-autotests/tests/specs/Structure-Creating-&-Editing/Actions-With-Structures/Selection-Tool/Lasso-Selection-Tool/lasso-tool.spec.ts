@@ -89,9 +89,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('Drag atom/bond/molecule', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1339
-     * Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
-     */
+    Test case: EPMLSOPKET-1339
+    Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
+    */
     const selectCoords = { x: 100, y: 100 };
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
@@ -105,9 +105,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('Select the reaction components', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1340
-     * Description: Hover and selection of plus sign and reaction arrow
-     */
+    Test case: EPMLSOPKET-1340
+    Description: Hover and selection of plus sign and reaction arrow
+    */
     const yShift = 5;
     const shiftCoords = { x: 270, y: 10 };
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
@@ -142,9 +142,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('Drag the reaction components', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1342
-     * Description: Selected structures and components are moved to the another place.
-     */
+    Test case: EPMLSOPKET-1342
+    Description: Selected structures and components are moved to the another place.
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     const point = await selectObjects(page, xAxis, yAxis);
@@ -158,9 +158,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('Fuse atoms together', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1343
-     * Description: Atoms are fused.
-     */
+    Test case: EPMLSOPKET-1343
+    Description: Atoms are fused.
+    */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
@@ -177,11 +177,11 @@ test.describe('Lasso Selection tool', () => {
 
   test('Fuse bonds together', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-2861
-     * Description: When benzene is merged with stereo bond, benzene's bond is changed.
-     * When stereo bond is merged with benzene, benzene's bond is not changed.
-     * No new labels (abs, Chiral) appears.
-     */
+    Test case: EPMLSOPKET-2861
+    Description: When benzene is merged with stereo bond, benzene's bond is changed.
+    When stereo bond is merged with benzene, benzene's bond is not changed.
+    No new labels (abs, Chiral) appears.
+    */
     const selectCoords = { x: 50, y: 50 };
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
@@ -214,9 +214,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('Delete with selection', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1345
-     * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
-     */
+    Test case: EPMLSOPKET-1345
+    Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await selectObjects(page, yAxis, yAxis);
@@ -231,9 +231,9 @@ test.describe('Lasso Selection tool', () => {
 
   test('UndoRedo moving of structures', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1345
-     * Description: Undo/Redo should work correctly for the actions for the selected objects.
-     */
+    Test case: EPMLSOPKET-1345
+    Description: Undo/Redo should work correctly for the actions for the selected objects.
+    */
     const randomCoords = { x: 20, y: 20 };
     const shiftCoords = { x: 70, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -324,10 +324,10 @@ test.describe('Lasso Selection tool', () => {
     page,
   }) => {
     /**
-     * Test case: EPMLSOPKET-8923
-     * Description: Don't break the selection if the user's cursor goes beyond the canvas.
-     * GitHub issue: https://github.com/epam/ketcher/issues/2060
-     */
+    Test case: EPMLSOPKET-8923
+    Description: Don't break the selection if the user's cursor goes beyond the canvas.
+    GitHub issue: https://github.com/epam/ketcher/issues/2060
+    */
     const yShift = 100;
     const xShift = 500;
     await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);

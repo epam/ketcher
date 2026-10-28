@@ -35,9 +35,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test('open reaction map dropdown', async () => {
     /**
-     * Test case: EPMLSOPKET-2865
-     * Description: Verifying of the button
-     */
+    Test case: EPMLSOPKET-2865
+    Description: Verifying of the button
+    */
     const reactionMappingToolsButton = page.getByTestId(
       ReactionMappingType.ReactionMapping,
     );
@@ -51,9 +51,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test('Not possible when the reaction is absent on canvas', async () => {
     /**
-     * Test case: EPMLSOPKET-1801
-     * Description: Not possible when the reaction is absent on canvas
-     */
+    Test case: EPMLSOPKET-1801
+    Description: Not possible when the reaction is absent on canvas
+    */
     const point1 = { x: -230, y: 0 };
     const point2 = { x: 200, y: 0 };
     const reactionAutoMappingButton = page.getByTestId(
@@ -82,9 +82,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test('UI dialog', async () => {
     /**
-     * Test case: EPMLSOPKET-1808
-     * Description:  UI dialog
-     */
+    Test case: EPMLSOPKET-1808
+    Description:  UI dialog
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-2.rxn');
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
@@ -96,9 +96,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test.describe('full reaction on canvas', () => {
     /**
-     * Test cases: EPMLSOPKET-1809/EPMLSOPKET-1810/EPMLSOPKET-1811
-     * Description:  Different modes - full reaction on canvas
-     */
+    Test cases: EPMLSOPKET-1809/EPMLSOPKET-1810/EPMLSOPKET-1811
+    Description:  Different modes - full reaction on canvas
+    */
     const modes = [
       AutoMapModeOption.Discard,
       AutoMapModeOption.Keep,
@@ -168,9 +168,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     test('After the manual mapping with incorrect ordering', async () => {
       /**
-       * Test cases: EPMLSOPKET-1817
-       * Description: After the manual mapping with incorrect ordering
-       */
+      Test cases: EPMLSOPKET-1817
+      Description: After the manual mapping with incorrect ordering
+      */
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
@@ -186,9 +186,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     test('After the manual mapping with incorrect pairs', async () => {
       /**
-       * Test cases: EPMLSOPKET-1818
-       * Description: After the manual mapping with incorrect pairs
-       */
+      Test cases: EPMLSOPKET-1818
+      Description: After the manual mapping with incorrect pairs
+      */
       await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
@@ -204,18 +204,18 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     test('Compare the behavior', async () => {
       /**
-       * Test cases: EPMLSOPKET-1819
-       * Description: Compare the behavior
-       */
+      Test cases: EPMLSOPKET-1819
+      Description: Compare the behavior
+      */
       await openFileAndAddToCanvas(page, 'Rxn-V2000/for-mappingTools-10.rxn');
     });
   });
 
   test('Clear mode', async () => {
     /**
-     * Test cases: EPMLSOPKET-1821
-     * Description: Clear mode
-     */
+    Test cases: EPMLSOPKET-1821
+    Description: Clear mode
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
     const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
     await LeftToolbar(page).selectReactionMappingTool(
@@ -246,9 +246,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test('Half reaction on canvas', async () => {
     /**
-     * Test cases: EPMLSOPKET-1821
-     * Description: Half reaction on canvas
-     */
+    Test cases: EPMLSOPKET-1821
+    Description: Half reaction on canvas
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-half.rxn');
     const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
     await LeftToolbar(page).selectReactionMappingTool(
@@ -261,9 +261,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
   // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
   test.skip('Verifying of the correct automapping', async () => {
     /**
-     * Test cases: EPMLSOPKET-1832
-     * Description:  Verifying of the correct automapping
-     */
+    Test cases: EPMLSOPKET-1832
+    Description:  Verifying of the correct automapping
+    */
     const yOffsetFromCenter1 = 100;
     const yOffsetFromCenter2 = 300;
     const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);

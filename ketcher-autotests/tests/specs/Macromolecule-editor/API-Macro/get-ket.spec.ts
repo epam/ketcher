@@ -38,9 +38,9 @@ test.describe('getKet', () => {
     page,
   }) => {
     /**
-     * Test case: #3531
-     * Description: Layout method throws an Error: layout is not available in macro mode
-     */
+    Test case: #3531
+    Description: Layout method throws an Error: layout is not available in macro mode
+    */
 
     let errorCaught = false;
 
@@ -66,9 +66,9 @@ test.describe('getKet', () => {
     page,
   }) => {
     /**
-     * Test case: #3531
-     * Description: Recognize method throws an Error with invalid input
-     */
+    Test case: #3531
+    Description: Recognize method throws an Error with invalid input
+    */
 
     let errorCaught = false;
 
@@ -106,9 +106,9 @@ test.describe('getKet', () => {
     formatsToTest.forEach((format) => {
       test(`Check that ${format} method throws an Error`, async ({ page }) => {
         /**
-         * Test case: #3531
-         * Description: 'getSmiles','getRxn','getSmarts','getCml','getSdf','getCDXml','getCDX', method throws an Error
-         */
+        Test case: #3531
+        Description: 'getSmiles','getRxn','getSmarts','getCml','getSdf','getCDXml','getCDX', method throws an Error
+        */
 
         await page.waitForFunction(() => (globalThis as any).ketcher);
 

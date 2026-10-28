@@ -112,20 +112,20 @@ export function atomToStruct(source) {
 }
 
 /**
- *
- * @param source
- * @param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
- * source.atoms contains numbers related to fragment, but we need to count atoms related to struct. Example:
- * fragments: [{
- *   atoms: [...],
- *   bonds: [...], this bonds point to atoms in the first fragment
- * }, {
- *   atoms: [...],
- *   bonds: [...], this bonds point to atoms in the second fragment
- * }]
- * When we add bonds from second fragment we need to count atoms from fragments[0].atoms.length + 1, not from zero
- * @returns newly created Bond
- */
+
+@param source
+@param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
+source.atoms contains numbers related to fragment, but we need to count atoms related to struct. Example:
+fragments: [{
+  atoms: [...],
+  bonds: [...], this bonds point to atoms in the first fragment
+}, {
+  atoms: [...],
+  bonds: [...], this bonds point to atoms in the second fragment
+}]
+When we add bonds from second fragment we need to count atoms from fragments[0].atoms.length + 1, not from zero
+@returns newly created Bond
+*/
 export function bondToStruct(source, atomOffset = 0) {
   const params: Partial<BondAttributes> = {};
 

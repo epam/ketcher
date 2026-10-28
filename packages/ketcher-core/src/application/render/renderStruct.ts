@@ -8,9 +8,9 @@ import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
- * Is used to improve search and opening tab performance in Template Dialog
- * Rendering a lot of structures causes great delay
- */
+Is used to improve search and opening tab performance in Template Dialog
+Rendering a lot of structures causes great delay
+*/
 type RenderStructOptions = Partial<RenderOptions> & {
   cachePrefix?: string;
   needCache?: boolean;
@@ -24,9 +24,9 @@ const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
-   * for S-Groups we want to show expanded structure
-   * without brackets
-   */
+  for S-Groups we want to show expanded structure
+  without brackets
+  */
   static prepareStruct(struct: Struct) {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
@@ -166,11 +166,11 @@ export class RenderStruct {
 }
 
 /**
- * Why?
- * We need somehow display sgroup attachment points (tooltips, preview, templates),
- * But due to current rendering approach for sgroups (ungrouping sgroups)
- * - we have to use RGroup attachment points on atoms for this purposes
- */
+Why?
+We need somehow display sgroup attachment points (tooltips, preview, templates),
+But due to current rendering approach for sgroups (ungrouping sgroups)
+- we have to use RGroup attachment points on atoms for this purposes
+*/
 function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
 ) {

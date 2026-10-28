@@ -21,10 +21,10 @@ export type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
 export type ClipboardData = ModernClipboardData | LegacyClipboardData;
 
 /**
- *
- * Legacy browser API doesn't support async operations, so it is not possible
- * to call indigo, when copy/cut/paste
- */
+
+Legacy browser API doesn't support async operations, so it is not possible
+to call indigo, when copy/cut/paste
+*/
 export function isClipboardAPIAvailable(): boolean {
   return (
     typeof navigator?.clipboard?.writeText === 'function' &&
@@ -117,9 +117,9 @@ export async function getStructStringFromClipboardData(
 }
 
 /**
- * Checks whether the system clipboard currently holds any content that can be
- * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
- */
+Checks whether the system clipboard currently holds any content that can be
+pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
+*/
 export async function isPasteContentAvailable(
   validateContent: (content: string) => Promise<boolean>,
 ): Promise<boolean> {

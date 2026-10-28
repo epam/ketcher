@@ -23,9 +23,9 @@ Sign value used for bond-orientation calculations: positive (+1), negative (−1
 export type Sign = 0 | 1 | -1;
 
 /**
- * The processed internal template object built by TemplateTool from the raw input.
- * Contains pre-computed attachment ids, geometry, and the molecule fragment.
- */
+The processed internal template object built by TemplateTool from the raw input.
+Contains pre-computed attachment ids, geometry, and the molecule fragment.
+*/
 export interface InternalTemplate {
   aid: number;
   bid: number;
@@ -39,13 +39,13 @@ export interface InternalTemplate {
 }
 
 /**
- * The raw template input received by TemplateTool as the `opts` argument.
- * This covers all callers: TemplateDialog, AbbreviationLookup, TemplatesList, etc.
- *
- * Only properties accessed inside template.ts are declared here; additional
- * properties on the passed object are ignored (TypeScript structural typing
- * allows callers to pass richer objects such as `Template` from TemplateTable).
- */
+The raw template input received by TemplateTool as the `opts` argument.
+This covers all callers: TemplateDialog, AbbreviationLookup, TemplatesList, etc.
+
+Only properties accessed inside template.ts are declared here; additional
+properties on the passed object are ignored (TypeScript structural typing
+allows callers to pass richer objects such as `Template` from TemplateTable).
+*/
 export interface TemplateToolInput {
   struct: Struct;
   /**
@@ -66,8 +66,8 @@ export interface TemplateToolInput {
 }
 
 /**
- * Merge-items map returned by `getItemsToFuse` / `closestToMerge`.
- */
+Merge-items map returned by `getItemsToFuse` / `closestToMerge`.
+*/
 export type MergeItems = {
   atoms: Map<number, number>;
   bonds: Map<number, number>;
@@ -75,8 +75,8 @@ export type MergeItems = {
 } | null;
 
 /**
- * Drag context stored during a mouse-drag sequence in TemplateTool.
- */
+Drag context stored during a mouse-drag sequence in TemplateTool.
+*/
 export interface DragContext {
   xy0: Vec2;
   item?: ClosestItemWithMap | null;

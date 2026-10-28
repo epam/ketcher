@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 /**
- * This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
- * configuration in `rollup.config.mjs`. The alias `_indigo-worker-import-alias_` is
- * replaced with one of the modules in `indigoWorkerImports/`, depending on the build type.
- * Do not map it with tsconfig `paths`: rollup-plugin-typescript2 would resolve it before
- * the alias plugin and every build would get the same worker loader.
- */
+This module alias is resolved by Rollup at build time via the `@rollup/plugin-alias`
+configuration in `rollup.config.mjs`. The alias `_indigo-worker-import-alias_` is
+replaced with one of the modules in `indigoWorkerImports/`, depending on the build type.
+Do not map it with tsconfig `paths`: rollup-plugin-typescript2 would resolve it before
+the alias plugin and every build would get the same worker loader.
+*/
 declare module '_indigo-worker-import-alias_' {
   export function getIndigoWorker(): Worker;
 }

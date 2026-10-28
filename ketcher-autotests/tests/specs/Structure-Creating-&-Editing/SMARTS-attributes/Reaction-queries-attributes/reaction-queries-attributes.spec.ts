@@ -86,9 +86,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
   test('Checking SMARTS with S-Group', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3338
-     * Description: pasting SMARTS with query groups should not trigger any error
-     */
+    Test case: https://github.com/epam/ketcher/issues/3338
+    Description: pasting SMARTS with query groups should not trigger any error
+    */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
@@ -104,8 +104,8 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/1316
-     */
+    Test case: https://github.com/epam/Indigo/issues/1316
+    */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
     const atomToolbar = RightToolbar(page);
@@ -130,8 +130,8 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   }) => {
     test.fail();
     /**
-     * Test case: https://github.com/epam/Indigo/issues/1252
-     */
+    Test case: https://github.com/epam/Indigo/issues/1252
+    */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
     const delta = 30;

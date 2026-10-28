@@ -33,21 +33,21 @@ const DefaultEditorLineLength: EditorLineLength = {
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 /**
- * Shape of the selection tool persisted in local storage.
- * Mirrors the `ActionObj` used by the UI reducer that assigns it,
- * but is kept minimal here to avoid coupling `ketcher-core` to
- * UI-layer action types.
- */
+Shape of the selection tool persisted in local storage.
+Mirrors the `ActionObj` used by the UI reducer that assigns it,
+but is kept minimal here to avoid coupling `ketcher-core` to
+UI-layer action types.
+*/
 export interface PersistedSelectionTool {
   tool: 'select';
   opts?: unknown;
 }
 
 /**
- * Editor mode for selection tool persistence.
- * - 'macro': Macromolecules mode (ketcher-macromolecules package)
- * - 'micro': Micromolecules mode (ketcher-react package)
- */
+Editor mode for selection tool persistence.
+- 'macro': Macromolecules mode (ketcher-macromolecules package)
+- 'micro': Micromolecules mode (ketcher-react package)
+*/
 export type EditorMode = 'macro' | 'micro';
 
 interface SavedSettings {
@@ -125,9 +125,9 @@ export class SettingsManager {
   }
 
   /**
-   * Get the persisted selection tool for the specified editor mode.
-   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
-   */
+  Get the persisted selection tool for the specified editor mode.
+  @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+  */
   static getSelectionTool(mode: EditorMode) {
     const settings = this.getSettings();
     const key = mode === 'macro' ? 'selectionToolMacro' : 'selectionToolMicro';
@@ -135,10 +135,10 @@ export class SettingsManager {
   }
 
   /**
-   * Save the selection tool for the specified editor mode.
-   * @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
-   * @param selectionTool - The selection tool to persist
-   */
+  Save the selection tool for the specified editor mode.
+  @param mode - 'macro' for macromolecules editor, 'micro' for micro editor
+  @param selectionTool - The selection tool to persist
+  */
   static setSelectionTool(
     mode: EditorMode,
     selectionTool: PersistedSelectionTool | undefined,

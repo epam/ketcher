@@ -45,9 +45,9 @@ test.afterEach(async () => {
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test('Paste CDXML', async () => {
     /**
-     * Test case: EPMLSOPKET-2956
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-2956
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-2956.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -55,9 +55,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Open CDXML by Open Structure', async () => {
     /**
-     * Test case: EPMLSOPKET-3086
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-3086
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-3086.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -65,9 +65,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Open/Import structure while opening a CDXML file', async () => {
     /**
-     * Test case: EPMLSOPKET-4712
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4712
+    Description: Open/Import structure while openning a CDXML file
+    */
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
@@ -89,18 +89,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Open structure in another editor', async () => {
     /**
-     * Test case: EPMLSOPKET-4713
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4713
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4713.cdxml');
     await takeEditorScreenshot(page);
   });
 
   test('Text tool - Save as .cdxml file', async () => {
     /**
-     * Test case: EPMLSOPKET-4714
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4714
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4714.cdxml');
     await selectAllStructuresOnCanvas(page);
     await deleteByKeyboard(page);
@@ -109,9 +109,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Simple Objects - Delete file', async () => {
     /**
-     * Test case: EPMLSOPKET-4715
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4715
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4715.cdxml');
     await selectAllStructuresOnCanvas(page);
     await deleteByKeyboard(page);
@@ -120,9 +120,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Clear Canvas - Structure is opened from .cdxml file', async () => {
     /**
-     * Test case: EPMLSOPKET-4716
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4716
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4716.cdxml');
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -135,9 +135,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Functional Groups - Open from .cdxml file with contracted and expanded function', async () => {
     /**
-     * Test case: EPMLSOPKET-4717
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4717
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4717.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -145,9 +145,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Open/save/open cdxml file with structure', async () => {
     /**
-     * Test case: EPMLSOPKET-4718
-     * Description: Open/Import structure while openning a CDXML file
-     */
+    Test case: EPMLSOPKET-4718
+    Description: Open/Import structure while openning a CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-4718-structures.cdxml');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -155,9 +155,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Save/Open file - Save *.cdxml file', async () => {
     /**
-     * Test case: EPMLSOPKET-6969
-     * Description: Open/Import structure CDXML file
-     */
+    Test case: EPMLSOPKET-6969
+    Description: Open/Import structure CDXML file
+    */
     await openFileAndAddToCanvas(page, 'CDXML/cdxml-6969.cdxml');
 
     await verifyFileExport(
@@ -619,9 +619,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that a single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/reactant-single-reaction.ket',
@@ -641,9 +641,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that a single reaction containing only products can be saved/loaded from CDXML with appropriate positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Single reaction containing only products can be saved/loaded from CDXML with appropriate positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Single reaction containing only products can be saved/loaded from CDXML with appropriate positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/products-single-reaction.ket',
@@ -663,9 +663,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -685,9 +685,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multiple-individual-reactions.ket',
@@ -707,9 +707,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/several-cascade-reactions.ket',
@@ -729,9 +729,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/combination-of-single-and-cascade-reactions.ket',
@@ -751,9 +751,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/cascade-of-multiple-reactions.ket',
@@ -773,9 +773,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/pathway-with-mixed-single-reactions-and-cascades.ket',

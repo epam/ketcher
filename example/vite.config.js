@@ -292,9 +292,9 @@ export default defineConfig({
           tags: [
             {
               /**
-               * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
-               * Fix: global is not defined
-               */
+              HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+              Fix: global is not defined
+              */
               injectTo: 'body',
               tag: 'script',
               children: 'var global = global || window',

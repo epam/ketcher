@@ -10,9 +10,9 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * Select one atom / functional group using Select Tool
-   */
+  Steps to check manually:
+  Select one atom / functional group using Select Tool
+  */
   it(`hides for only one visible atom`, () => {
     // @ts-ignore
     const tool = () => new SelectTool();
@@ -51,10 +51,10 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * 1. Select at least two atoms (then controller shows)
-   * 2. click Rotate Tool
-   */
+  Steps to check manually:
+  1. Select at least two atoms (then controller shows)
+  2. click Rotate Tool
+  */
   it('hides when active tool is not SelectTool', () => {
     const ketcherId = '1';
     const editor = new Editor(
@@ -90,9 +90,9 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * Click `zoom in` or press `Ctrl+=`
-   */
+  Steps to check manually:
+  Click `zoom in` or press `Ctrl+=`
+  */
   it('rerenders while zooming', () => {
     const ketcherId = '1';
     const editor = new Editor(
@@ -109,9 +109,9 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * Drag handle by right mouse button
-   */
+  Steps to check manually:
+  Drag handle by right mouse button
+  */
   it('can be only dragged by left mouse button', () => {
     const controller = new RotateController({ selection: () => null } as any);
     const changeCrossColor = jest.fn();
@@ -130,10 +130,10 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * Select and move a big structure to edge of canvas,
-   * then rotate it by the handle, see if center position is correct
-   */
+  Steps to check manually:
+  Select and move a big structure to edge of canvas,
+  then rotate it by the handle, see if center position is correct
+  */
   test('center changes with `scale` and `offset`', () => {
     const controller = new RotateController({ selection: () => null } as any);
     // @ts-ignore
@@ -293,10 +293,10 @@ describe('Rotate controller', () => {
   });
 
   /**
-   * Steps to check manually:
-   * 1. Press 'Escape' while rotating
-   * 2. Undo
-   */
+  Steps to check manually:
+  1. Press 'Escape' while rotating
+  2. Undo
+  */
   it(`cancels rotation without modifying history stack`, () => {
     const ketcherId = '1';
     const editor = new Editor(

@@ -134,15 +134,15 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * WARNING: this method always reports its return type as
-   * `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
-   * circle branch actually produces a `SVGCircleElement` selection.  The
-   * deliberate misreport is required because TypeScript cannot resolve D3's
-   * overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
-   * union selection, which would force every call site to add its own cast.
-   * Callers must therefore restrict themselves to element-agnostic D3 methods
-   * (`attr`, `style`, `remove`) and must not rely on the element type itself.
-   */
+  WARNING: this method always reports its return type as
+  `D3SvgElementSelection<SVGRectElement, void> | undefined` even though the
+  circle branch actually produces a `SVGCircleElement` selection.  The
+  deliberate misreport is required because TypeScript cannot resolve D3's
+  overloaded `attr()` signature on a `SVGCircleElement | SVGRectElement`
+  union selection, which would force every call site to add its own cast.
+  Callers must therefore restrict themselves to element-agnostic D3 methods
+  (`attr`, `style`, `remove`) and must not rely on the element type itself.
+  */
   private appendSelectionContour():
     D3SvgElementSelection<SVGRectElement, void> | undefined {
     if (
@@ -214,8 +214,8 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * Updates the width and height of the SelectionContour
-   */
+  Updates the width and height of the SelectionContour
+  */
   private updateSelectionContour() {
     if (!this.rootElement || !this.textElement) return;
 
@@ -251,12 +251,12 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   /**
-   * Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
-   * AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
-   * via showHover/hideHover, unlike other renderers that add/remove elements.
-   * When the model layer turns on hover (e.g., Fragment selection tool), we need
-   * to explicitly show the hover element after it's created/returned by appendHover.
-   */
+  Override redrawHover to handle AtomRenderer's opacity-based hover visibility.
+  AtomRenderer creates hover elements hidden (opacity 0) and toggles visibility
+  via showHover/hideHover, unlike other renderers that add/remove elements.
+  When the model layer turns on hover (e.g., Fragment selection tool), we need
+  to explicitly show the hover element after it's created/returned by appendHover.
+  */
   public redrawHover() {
     if (this.drawingEntity.hovered) {
       const hoverElement = this.appendHover();

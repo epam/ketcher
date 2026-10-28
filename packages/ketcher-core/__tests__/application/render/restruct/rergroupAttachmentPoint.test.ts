@@ -135,12 +135,12 @@ function createTwoNeighborAttachmentPointFixture(renderOptions: RenderOptions) {
 }
 
 /**
- * Fixture for the #3268 regression: atom at (0,0) with attachment point and
- * query properties (rb3;s2), two symmetric neighbors that force the bisect
- * direction to coincide with the AP direction (both go left, i.e. (−1, 0)).
- * A separate detached BothSides atom activates AP number rendering.
- * update() is NOT called inside the fixture so callers can install spies first.
- */
+Fixture for the #3268 regression: atom at (0,0) with attachment point and
+query properties (rb3;s2), two symmetric neighbors that force the bisect
+direction to coincide with the AP direction (both go left, i.e. (−1, 0)).
+A separate detached BothSides atom activates AP number rendering.
+update() is NOT called inside the fixture so callers can install spies first.
+*/
 function createQueryPropertyFixture(renderOptions: RenderOptions) {
   const struct = new Struct();
 

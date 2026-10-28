@@ -1,16 +1,16 @@
 /**
- * LocalStorage adapter for settings persistence
- * Wraps browser localStorage with error handling and availability checks
- */
+LocalStorage adapter for settings persistence
+Wraps browser localStorage with error handling and availability checks
+*/
 
 import type { ISettingsStorage, Settings } from './types';
 import { KetcherLogger } from 'utilities';
 
 export class LocalStorageAdapter implements ISettingsStorage {
   /**
-   * Load settings from localStorage
-   * Returns null if not found or on error
-   */
+  Load settings from localStorage
+  Returns null if not found or on error
+  */
   async load(key: string): Promise<Partial<Settings> | null> {
     if (!this.isAvailable()) {
       KetcherLogger.warn('localStorage is not available');
@@ -33,9 +33,9 @@ export class LocalStorageAdapter implements ISettingsStorage {
   }
 
   /**
-   * Save settings to localStorage
-   * Throws error if localStorage is not available
-   */
+  Save settings to localStorage
+  Throws error if localStorage is not available
+  */
   async save(key: string, settings: Settings): Promise<void> {
     if (!this.isAvailable()) {
       throw new Error('localStorage is not available');
@@ -54,8 +54,8 @@ export class LocalStorageAdapter implements ISettingsStorage {
   }
 
   /**
-   * Clear settings from localStorage
-   */
+  Clear settings from localStorage
+  */
   async clear(key: string): Promise<void> {
     if (!this.isAvailable()) {
       return;
@@ -72,8 +72,8 @@ export class LocalStorageAdapter implements ISettingsStorage {
   }
 
   /**
-   * Check if localStorage is available
-   */
+  Check if localStorage is available
+  */
   isAvailable(): boolean {
     try {
       const test = '__storage_test__';

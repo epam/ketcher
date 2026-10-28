@@ -134,10 +134,10 @@ class RotateTool implements Tool {
 
     if (attachmentBonds.size > 1) {
       /**
-       *  Handle multiple attachment bonds with one intersection:
-       *               0    (selected atom)
-       *             / | \  (bonds)
-       */
+      Handle multiple attachment bonds with one intersection:
+                   0    (selected atom)
+                 / | \  (bonds)
+      */
       const bondPoints: [number, number][] = [];
       attachmentBonds.forEach((bond) => {
         bondPoints.push([bond.begin, bond.end]);
@@ -152,16 +152,16 @@ class RotateTool implements Tool {
       }
     } else if (attachmentBonds.size === 1) {
       /**
-       * Handle one attachment bond:
-       * 1. the bond is unselected
-       *          0  (selected atom) --> center
-       *          |  (unselected bond)
-       *          o  (unselected atom)
-       * 2. the bond is selected
-       *          0  (selected atom)
-       *          |  (selected bond)
-       *          o  (unselected atom) --> center
-       */
+      Handle one attachment bond:
+      1. the bond is unselected
+               0  (selected atom) --> center
+               |  (unselected bond)
+               o  (unselected atom)
+      2. the bond is selected
+               0  (selected atom)
+               |  (selected bond)
+               o  (unselected atom) --> center
+      */
       const attachmentBondId = attachmentBonds.keys().next().value as number;
       const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond;
       const centerAtomId = [attachmentBond.begin, attachmentBond.end].find(

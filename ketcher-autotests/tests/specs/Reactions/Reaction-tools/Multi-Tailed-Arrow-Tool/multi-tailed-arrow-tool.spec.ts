@@ -81,10 +81,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that default Multi-Tailed Arrow with two tails can be saved to .ket file with correct coordinates of spine, tails and head', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
-     * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
+    and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
 
@@ -97,10 +97,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows can be saved together to .ket file with correct coordinates of spines, tails and heads', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows saved together to .ket file with correct coordinates of spines, tails and heads
-     * and after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows saved together to .ket file with correct coordinates of spines, tails and heads
+    and after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -115,10 +115,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows with different elements can be saved together to .ket file with the correct coordinates of spines, tails and heads', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows with different elements saved together to .ket file with the correct coordinates of spines,
-     * tails and heads, after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows with different elements saved together to .ket file with the correct coordinates of spines,
+    tails and heads, after that loaded from .ket file and added to selected place on Canvas with the same parameters and positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows-with-elements.ket',
@@ -133,10 +133,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrows with different elements together can be added to selected place on Canvas from 2 different .ket files', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Multi-Tailed Arrows with different elements together added to selected place on Canvas from 2 different .ket files
-     * and they are on the correct positions to each other and they saved together to .ket file with correct parameters.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Multi-Tailed Arrows with different elements together added to selected place on Canvas from 2 different .ket files
+    and they are on the correct positions to each other and they saved together to .ket file with correct parameters.
+    */
     await openFileAndAddToCanvas(
       page,
       'KET/three-different-multi-tail-arrows-with-elements.ket',
@@ -158,10 +158,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file', async () => {
     test.setTimeout(90000);
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures saved together to .ket file,
-     * after that loaded from .ket file and added to selected place on Canvas with correct position and layer level.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures saved together to .ket file,
+    after that loaded from .ket file and added to selected place on Canvas with correct position and layer level.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.ket',
@@ -176,11 +176,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.01, tail - 0.01, head - 0.01), its a minimal size', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Multi-Tailed Arrow with minimal sizes can be loaded without errors (minimal sizes: spine - 0.01
-     * (can't check because of distance between head and top/bottom tail), tail - 0.01, head - 0.01, distance between tails - 0.01,
-     * distance between head and top/bottom tail - 0.01) and head, spine and tails can be changed to bigger size.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Multi-Tailed Arrow with minimal sizes can be loaded without errors (minimal sizes: spine - 0.01
+    (can't check because of distance between head and top/bottom tail), tail - 0.01, head - 0.01, distance between tails - 0.01,
+    distance between head and top/bottom tail - 0.01) and head, spine and tails can be changed to bigger size.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-minimal.ket',
@@ -302,9 +302,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   for (const { description, file } of testConfigs) {
     test(`Verify that ${description}`, async () => {
       /**
-       * Test case: https://github.com/epam/ketcher/issues/5104
-       * Description: ${detailedDescription}
-       */
+      Test case: https://github.com/epam/ketcher/issues/5104
+      Description: ${detailedDescription}
+      */
       await CommonTopLeftToolbar(page).openFile();
       await openFile(page, file);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
@@ -315,10 +315,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas
-     * with correct positions and parameters using "PASTE FROM CLIPBOARD - Add to Canvas"
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas
+    with correct positions and parameters using "PASTE FROM CLIPBOARD - Add to Canvas"
+    */
     const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
@@ -329,9 +329,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"
+    */
     const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
@@ -342,10 +342,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
-     * with correct positions and sizes of spines, tails and heads
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
+    with correct positions and sizes of spines, tails and heads
+    */
     const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
@@ -357,9 +357,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
+    */
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'KET/multi-tailed-arrow-to-compare.ket');
     await takeEditorScreenshot(page);
@@ -367,9 +367,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
@@ -382,9 +382,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 3 different Multi-Tailed Arrows can be zoomed in/out (20, 400, 100) after adding to Canvas from .ket file', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Three different Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas from .ket file
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Three different Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas from .ket file
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -400,9 +400,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that action of adding to Canvas of Multi-Tailed Arrows from .ket file can be Undo/Redo', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Action of adding to Canvas of Multi-Tailed Arrows from .ket file and Undo/Redo.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Action of adding to Canvas of Multi-Tailed Arrows from .ket file and Undo/Redo.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -418,11 +418,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Click on Arrows tool on left toolbar and verify that "Multi-Tailed Arrow Tool" icon is the latest in row', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Click on Arrows tool on left toolbar and verify that "Multi-Tailed Arrow Tool" icon is the latest in row, it's clickable and
-     * after clicking it displays with filling, after clicking on another tool or esc, the icon selection with filling is removed and "Arrow Open Angle Tool"
-     * is displayed without filling.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Click on Arrows tool on left toolbar and verify that "Multi-Tailed Arrow Tool" icon is the latest in row, it's clickable and
+    after clicking it displays with filling, after clicking on another tool or esc, the icon selection with filling is removed and "Arrow Open Angle Tool"
+    is displayed without filling.
+    */
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
@@ -435,9 +435,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrows can be zoomed in/out (20, 400, 100) after adding to Canvas using zoom buttons', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas using zoom buttons
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas using zoom buttons
+    */
     test.slow();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -457,9 +457,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button can be Undo/Redo', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button and Undo/Redo.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button and Undo/Redo.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -473,9 +473,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows deleted using "Clear Canvas" (or Ctrl+Delete)
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows deleted using "Clear Canvas" (or Ctrl+Delete)
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -491,9 +491,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" deleted using "Clear Canvas" (or Ctrl+Delete)
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" deleted using "Clear Canvas" (or Ctrl+Delete)
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -507,10 +507,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows can be deleted using "Erase"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows
-     * deleted using "Erase" (or Delete, Backspace buttons)
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows
+    deleted using "Erase" (or Delete, Backspace buttons)
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -533,10 +533,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool"
-     * deleted using "Erase" (or Delete, Backspace buttons)
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool"
+    deleted using "Erase" (or Delete, Backspace buttons)
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -557,10 +557,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for 3 different Multi-Tailed Arrows loaded from KET when other elements are on Canvas ', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for 3 different Multi-Tailed Arrows
-     * loaded from KET when other elements are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for 3 different Multi-Tailed Arrows
+    loaded from KET when other elements are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-multi-tail-arrows-and-rings.ket',
@@ -575,10 +575,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for 3 different Multi-Tailed Arrows loaded from KET when other elements are on Canvas ', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for 3 different Multi-Tailed Arrows
-     * loaded from KET when other elements are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for 3 different Multi-Tailed Arrows
+    loaded from KET when other elements are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-multi-tail-arrows-and-rings.ket',
@@ -593,9 +593,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/rings-with-multi-tailed-arrows.ket',
@@ -610,9 +610,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements when Multi-Tailed Arrows loaded from KET are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/rings-with-multi-tailed-arrows.ket',
@@ -627,9 +627,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for elements with Multi-Tailed Arrows loaded from KET together', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/rings-with-multi-tailed-arrows.ket',
@@ -642,9 +642,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for elements with Multi-Tailed Arrows loaded from KET together', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for elements with Multi-Tailed Arrows loaded from KET together
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/rings-with-multi-tailed-arrows.ket',
@@ -657,10 +657,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) can be added to selected places on Canvas using "Multi-Tailed Arrow Tool"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) added to selected places on Canvas
-     * using "Multi-Tailed Arrow Tool" and saved to .ket file with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) added to selected places on Canvas
+    using "Multi-Tailed Arrow Tool" and saved to .ket file with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
 
@@ -673,10 +673,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas one by one using "Multi-Tailed Arrow Tool"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas
-     * one by one using "Multi-Tailed Arrow Tool" and saved together to .ket file with the correct coordinates of spines, tails and heads.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas
+    one by one using "Multi-Tailed Arrow Tool" and saved together to .ket file with the correct coordinates of spines, tails and heads.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
@@ -691,10 +691,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas (with previously added elements)', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas (with previously added elements)
-     * one by one using "Multi-Tailed Arrow Tool" button and they saved together to .ket file with the correct coordinates of spines, tails and heads.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas (with previously added elements)
+    one by one using "Multi-Tailed Arrow Tool" button and they saved together to .ket file with the correct coordinates of spines, tails and heads.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-benzene-rings.ket',
@@ -713,9 +713,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Copy/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-multi-tail-arrows-and-rings.ket',
@@ -736,9 +736,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Cut/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Cut/Paste actions for Multi-Tailed Arrows loaded from KET Undo/Redo when other elements are on Canvas
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-multi-tail-arrows-and-rings.ket',
@@ -759,9 +759,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
@@ -780,9 +780,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
@@ -801,9 +801,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Multi-Tailed Arrows can not be saved to template - "Save to Template" button is disabled', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
-     */
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
+    */
     const saveToTemplatesButton =
       SaveStructureDialog(page).saveToTemplatesButton;
     const saveStructureTextarea =
@@ -1660,10 +1660,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second and 3 to the third', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second
-     * and 3 to the third, verify that these 3 Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second
+    and 3 to the third, verify that these 3 Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1713,11 +1713,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to first one, 2 tails to second and 3 to third', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Using "Multi-Tailed Arrow Tool" button, add 2 default Multi-Tailed Arrow to Canvas, add 3 tails to each arrow,
-     * remove 1 middle tail for the first and 2 tails for the second, verify that these 2 Multi-Tailed Arrows saved to KET
-     * with the correct coordinates of spines, tails and heads.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Using "Multi-Tailed Arrow Tool" button, add 2 default Multi-Tailed Arrow to Canvas, add 3 tails to each arrow,
+    remove 1 middle tail for the first and 2 tails for the second, verify that these 2 Multi-Tailed Arrows saved to KET
+    with the correct coordinates of spines, tails and heads.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1766,11 +1766,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add 1 default Multi-Tailed Arrow to Canvas, verify that 3 tails can be added using "Add new tail"', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Using "Multi-Tailed Arrow Tool" button, add 1 default Multi-Tailed Arrow to Canvas, verify that 3 tails added using "Add new tail" (5 are in total),
-     *  remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails added using "Add new tail", after that changed Multi-Tailed Arrow
-     *  with 6 tails saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Using "Multi-Tailed Arrow Tool" button, add 1 default Multi-Tailed Arrow to Canvas, verify that 3 tails added using "Add new tail" (5 are in total),
+     remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails added using "Add new tail", after that changed Multi-Tailed Arrow
+     with 6 tails saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1807,11 +1807,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Undo/Redo actions can be performed for added by Tool 1 default Multi-Tailed Arrow with two tails after adding/removing of tails', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Undo/Redo actions performed for added by Tool 1 default Multi-Tailed Arrow with two tails after adding/removing of tails.
-     * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
-     * A bug has been logged: https://github.com/epam/ketcher/issues/5548
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Undo/Redo actions performed for added by Tool 1 default Multi-Tailed Arrow with two tails after adding/removing of tails.
+    After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
+    A bug has been logged: https://github.com/epam/ketcher/issues/5548
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1847,11 +1847,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Undo/Redo actions can be performed for added by Tool 3 default Multi-Tailed Arrows after adding/removing of tails', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Verify that Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after adding/removing of tails.
-     * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
-     * A bug has been logged: https://github.com/epam/ketcher/issues/5548
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Verify that Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after adding/removing of tails.
+    After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
+    A bug has been logged: https://github.com/epam/ketcher/issues/5548
+    */
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
@@ -1909,10 +1909,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow after adding of tails and removing of tails', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
-     * after adding of tails and removing of tails with correct quantity of tails.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
+    after adding of tails and removing of tails with correct quantity of tails.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1943,10 +1943,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow after adding of tails and removing of tails', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
-     * after adding of tails and removing of tails with correct quantity of tails.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
+    after adding of tails and removing of tails with correct quantity of tails.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -1977,9 +1977,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that loaded from KET Multi-Tailed Arrow after adding/removing of tails can be selected and moved with correct size and position of spine, tails and head', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Loaded from KET Multi-Tailed Arrow after adding/removing of tails selected and moved with correct size and position of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Loaded from KET Multi-Tailed Arrow after adding/removing of tails selected and moved with correct size and position of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-2-tails-1.ket',
@@ -2005,10 +2005,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that added by Tool Multi-Tailed Arrow after adding/removing of tails can be selected and moved with correct size and position of spine, tails and head', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5056
-     * Description: Added by Tool Multi-Tailed Arrow after adding/removing of tails selected and moved
-     * with correct size and position of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Added by Tool Multi-Tailed Arrow after adding/removing of tails selected and moved
+    with correct size and position of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2033,10 +2033,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow, verify that head arrow can be moved up to 0.15 from the edge, after that changed Multi-Tailed Arrow can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Load from KET default Multi-Tailed Arrow, head arrow moved up to 0.15 from the edge, after that changed
-     * Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Load from KET default Multi-Tailed Arrow, head arrow moved up to 0.15 from the edge, after that changed
+    Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2061,10 +2061,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load KET default Multi-Tailed Arrow, verify that head arrow can be moved down to 0.15 from the edge, after that changed Multi-Tailed Arrow can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Load from KET default Multi-Tailed Arrow, head arrow moved down to 0.15 from the edge, after that changed
-     * Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Load from KET default Multi-Tailed Arrow, head arrow moved down to 0.15 from the edge, after that changed
+    Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2089,10 +2089,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('KET default Multi-Tailed Arrow, verify that size of head arrow can be reduced to left (minimal size is 0.5), changed Multi-Tailed Arrow can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Load from KET default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Load from KET default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2117,10 +2117,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('KET default Multi-Tailed Arrow, verify that size of head arrow can be increased to right, changed Multi-Tailed Arrow can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Load from KET default Multi-Tailed Arrow, verify that size of head arrow increased to right,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Load from KET default Multi-Tailed Arrow, verify that size of head arrow increased to right,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2145,10 +2145,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow can be moved up to 0.15 from edge, after that can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved up to 0.15 from the edge,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved up to 0.15 from the edge,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2171,10 +2171,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow can be moved down up to 0.15 from edge, and can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved down up to 0.15 from the edge,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved down up to 0.15 from the edge,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2197,10 +2197,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add Multi-Tailed Arrow, verify that size of head arrow can be reduced to left (minimal size is 0.5), after saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2223,10 +2223,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow can be increased to right, after that can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow increased to right,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow increased to right,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2368,9 +2368,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Undo/Redo actions can be performed for added from KET default Multi-Tailed Arrow after moving/changing size of head ', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Verify that Undo/Redo actions performed for added from KET default Multi-Tailed Arrow after moving/changing size of head .
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Verify that Undo/Redo actions performed for added from KET default Multi-Tailed Arrow after moving/changing size of head .
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2561,9 +2561,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that loaded from KET Multi-Tailed Arrow after moving/changing size of head can be selected and moved to new position', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Loaded from KET Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Loaded from KET Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2588,9 +2588,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that Undo/Redo actions can be performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5058
-     * Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2821,10 +2821,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow, verify that top tail can be moved up and bottom tail can be moved down, after that can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved up and bottom tail moved down,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved up and bottom tail moved down,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2851,10 +2851,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow, verify that top tail can be moved down up to 0.15 from head arrow and bottom tail can be moved up to 0.5 from top tail', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved down up to 0.15 from head arrow and bottom
-     * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved down up to 0.15 from head arrow and bottom
+    tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2881,10 +2881,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET Multi-Tailed Arrow with tail length = 1, verify that size of two tails can be reduced to right (minimal size is 0.4), after that saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Load from KET Multi-Tailed Arrow with tail length = 1, verify that size of two tails reduced to right (minimal size is 0.4),
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Load from KET Multi-Tailed Arrow with tail length = 1, verify that size of two tails reduced to right (minimal size is 0.4),
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-2-tails-1.ket',
@@ -2909,10 +2909,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow, verify that size of two tails can be increased to left, after that changed Multi-Tailed Arrow can be saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Load from KET default Multi-Tailed Arrow, verify that size of two tails increased to left,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Load from KET default Multi-Tailed Arrow, verify that size of two tails increased to left,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-default.ket',
@@ -2937,10 +2937,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail can be moved up and bottom tail can be moved down', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail moved up and
-     * bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail moved up and
+    bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2968,10 +2968,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Add default Multi-Tailed Arrow by button, verify that top tail can be moved down up to 0.15 from head arrow and bottom tail can be moved up to 0.5 from top tail', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Add default Multi-Tailed Arrow by button, verify that top tail moved down up to 0.15 from head arrow and bottom
-     * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Add default Multi-Tailed Arrow by button, verify that top tail moved down up to 0.15 from head arrow and bottom
+    tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -2999,10 +2999,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Add default Multi-Tailed Arrow by button, verify that size of two tails can be reduced to right (minimal size is 0.4) and increased to left', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of two tails reduced to
-     * right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of two tails reduced to
+    right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const multiTailedArrow1 = await MultiTailedArrow(
@@ -3634,10 +3634,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow with 3 tails, verify that middle tail can be moved up to 0.35 from top tail, after that saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, middle tail moved up to 0.35 from top tail,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, middle tail moved up to 0.35 from top tail,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-3-tails-default.ket',
@@ -3664,10 +3664,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow with 3 tails, verify that middle tail can be moved down up to 0.35 from top tail, after that saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, middle tail moved down up to 0.35 from top tail,
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, middle tail moved down up to 0.35 from top tail,
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-3-tails-default.ket',
@@ -3694,10 +3694,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Load from KET default Multi-Tailed Arrow with 3 tails, size of three tails can be reduced by middle tail to right (minimal size is 0.4), after that saved to KET', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5107
-     * Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, size of three tails reduced by middle tail to right (minimal size is 0.4),
-     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
-     */
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Loaded from KET default Multi-Tailed Arrow with 3 tails, size of three tails reduced by middle tail to right (minimal size is 0.4),
+    after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-3-tails-default.ket',
@@ -3870,9 +3870,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2129
-     * Description: Added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2129
+    Description: Added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-to-compare.ket',
@@ -3884,9 +3884,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2129
-     * Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2129
+    Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
+    */
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -3896,9 +3896,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2129
-     * Description: Added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2129
+    Description: Added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrows-with-elements.ket',
@@ -3922,9 +3922,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened from SVG/PNG file with the correct size of file', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2129
-     * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened together from SVG/PNG file with the correct size of file.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2129
+    Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened together from SVG/PNG file with the correct size of file.
+    */
     await openImageAndAddToCanvas(
       page,
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
@@ -3951,7 +3951,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         2. Perform Aromatize and Dearomatize actions, verify the reaction's position using screenshots.
         3. Verify the saved KET file matches the expected KET file.
         4. Load the expected KET file and verify its appearance using screenshots.
-     */
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize.ket',
@@ -4084,7 +4084,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
           2. Perform Layout action, verify the reaction's position using screenshots.
           3. Verify the saved KET file matches the expected KET file.
           4. Load the expected KET file and verify its appearance using screenshots.
-       */
+      */
       await openFileAndAddToCanvasAsNewProject(page, file);
       await takeEditorScreenshot(page);
       await IndigoFunctionsToolbar(page).layout();

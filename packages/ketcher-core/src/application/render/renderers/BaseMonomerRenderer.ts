@@ -119,13 +119,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   /**
-   * The path that outlines this monomer's replacement-highlight area.
-   *
-   * The default is a rectangle matching the monomer body; renderers with a
-   * different body shape (e.g. phosphates, RNA bases) override this. The
-   * optional offset lets transient views request an inflated path while keeping
-   * the body-shape knowledge inside the renderer.
-   */
+  The path that outlines this monomer's replacement-highlight area.
+
+  The default is a rectangle matching the monomer body; renderers with a
+  different body shape (e.g. phosphates, RNA bases) override this. The
+  optional offset lets transient views request an inflated path while keeping
+  the body-shape knowledge inside the renderer.
+  */
   public getHighlightPath(offset = 0): HighlightPathData {
     return createRectHighlightPath(
       this.center,

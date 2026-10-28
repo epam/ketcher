@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 /**
- * Interface for storage operations with error handling
- */
+Interface for storage operations with error handling
+*/
 export interface IStorage {
   /**
   Warning message displayed when using storage in unsupported environments
@@ -24,23 +24,23 @@ export interface IStorage {
   warningMessage: string;
 
   /**
-   * Checks if localStorage is available
-   * @returns localStorage object if available, false otherwise
-   */
+  Checks if localStorage is available
+  @returns localStorage object if available, false otherwise
+  */
   isAvailable(): Storage | false;
 
   /**
-   * Retrieves and parses an item from localStorage
-   * @param key - The key to retrieve from storage
-   * @returns Parsed JSON value or null if item not found or parsing fails
-   */
+  Retrieves and parses an item from localStorage
+  @param key - The key to retrieve from storage
+  @returns Parsed JSON value or null if item not found or parsing fails
+  */
   getItem(key: string): unknown | null;
 
   /**
-   * Stores a stringified value in localStorage
-   * @param key - The key to store under
-   * @param data - The data to store (will be JSON stringified)
-   * @returns true if storage was successful, false otherwise
-   */
+  Stores a stringified value in localStorage
+  @param key - The key to store under
+  @param data - The data to store (will be JSON stringified)
+  @returns true if storage was successful, false otherwise
+  */
   setItem(key: string, data: unknown): boolean;
 }

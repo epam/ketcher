@@ -41,11 +41,11 @@ Library items grouped by their `props.group` value.
 type TemplateGroups = Record<string, Template[]>;
 
 /**
- * Loose JSON-schema shape consumed by {@link getSelectOptionsFromSchema}.
- * Callers pass a variety of schema-ish objects (form `SchemaProperty`,
- * jsonschema `Schema`, plain records), so `enum`/`enumNames` are validated at
- * runtime rather than relied on structurally.
- */
+Loose JSON-schema shape consumed by {@link getSelectOptionsFromSchema}.
+Callers pass a variety of schema-ish objects (form `SchemaProperty`,
+jsonschema `Schema`, plain records), so `enum`/`enumNames` are validated at
+runtime rather than relied on structurally.
+*/
 type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 
 export function greekify(str: string): string {
@@ -94,11 +94,11 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
 }
 
 /**
- * Every schema `title`/`enumNames` value must be an explicit
- * "namespace:key.path" translation key — there is no literal-text
- * passthrough. `t` is required (not optional) so a call site can't
- * silently skip translation by omitting it.
- */
+Every schema `title`/`enumNames` value must be an explicit
+"namespace:key.path" translation key — there is no literal-text
+passthrough. `t` is required (not optional) so a call site can't
+silently skip translation by omitting it.
+*/
 export function resolveTranslatableText<T>(value: T, t: TFunction): T {
   if (typeof value !== 'string') {
     return value;
@@ -127,12 +127,12 @@ export const getSelectOptionsFromSchema = (
 };
 
 /**
- * Creates a function, which is not called if the current argument is the same as the last one
- * @param func function to be debounced
- * @param delay delay in ms
- * @param skipArguments indexes in arguments array to skip for comparison
- * @returns debounced function, which is not called with previous argument
- */
+Creates a function, which is not called if the current argument is the same as the last one
+@param func function to be debounced
+@param delay delay in ms
+@param skipArguments indexes in arguments array to skip for comparison
+@returns debounced function, which is not called with previous argument
+*/
 export function memoizedDebounce<TArgs extends unknown[]>(
   func: (...args: TArgs) => unknown,
   delay = 0,

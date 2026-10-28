@@ -25,10 +25,10 @@ type LogCaptureWindow = typeof globalThis.window & {
 };
 
 /**
- * Updates the monomer library with KetcherLogger enabled and returns the
- * rejection message (if any) together with the errors it logged. Invalid
- * monomers are skipped and only reported through the logger.
- */
+Updates the monomer library with KetcherLogger enabled and returns the
+rejection message (if any) together with the errors it logged. Invalid
+monomers are skipped and only reported through the logger.
+*/
 export async function updateMonomersLibraryAndGetLoggedErrors(
   page: Page,
   sdfString: string,

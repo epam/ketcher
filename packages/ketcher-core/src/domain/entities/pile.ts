@@ -59,16 +59,16 @@ export class Pile<TValue = unknown> extends Set<TValue> {
   }
 
   /**
-   * Union multiple sets which have intersections
-   * @example ```
-   * const setA = new Pile([0, 1])
-   * const setB = new Pile([1, 2])
-   * const setC = new Pile([2, 3])
-   * const setD = new Pile([4, 5])
-   * console.log(Pile.unionMultiple([setA, setB, setC, setD]))
-   * // [{0, 1, 2, 3}, {4, 5}]
-   * ```
-   */
+  Union multiple sets which have intersections
+  @example ```
+  const setA = new Pile([0, 1])
+  const setB = new Pile([1, 2])
+  const setC = new Pile([2, 3])
+  const setD = new Pile([4, 5])
+  console.log(Pile.unionMultiple([setA, setB, setC, setD]))
+  // [{0, 1, 2, 3}, {4, 5}]
+  ```
+  */
   static unionIntersections<T>(sets: Array<Pile<T>>): Array<Pile<T>> {
     let unionized = false;
 

@@ -36,9 +36,9 @@ test.describe('Save files', () => {
 
   test('Save file - Save *.rxn file', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1849
-     * Description: Reaction is saved correctly in .rxn file
-     */
+    Test case: EPMLSOPKET-1849
+    Description: Reaction is saved correctly in .rxn file
+    */
 
     await pasteFromClipboardAndOpenAsNewProject(
       page,
@@ -55,9 +55,9 @@ test.describe('Save files', () => {
 
   test('Save file - Save *.mol file', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1848
-     * Description: Structure (benzine ring) is saved correctly to .mol format
-     */
+    Test case: EPMLSOPKET-1848
+    Description: Structure (benzine ring) is saved correctly to .mol format
+    */
 
     await drawBenzeneRing(page);
     await verifyFileExport(
@@ -70,9 +70,9 @@ test.describe('Save files', () => {
 
   test('Save file - Save *.ket file', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-2934
-     * Description: Sctuctures are saved correctly in .ket file
-     */
+    Test case: EPMLSOPKET-2934
+    Description: Sctuctures are saved correctly in .ket file
+    */
 
     await pasteFromClipboardAndOpenAsNewProject(
       page,
@@ -124,9 +124,9 @@ test.describe('Save files', () => {
     page,
   }) => {
     /**
-     * Test case: EPMLSOPKET-5260
-     * Description: Structure is saved according to automated selected format MDL Molfile v3000
-     */
+    Test case: EPMLSOPKET-5260
+    Description: Structure is saved according to automated selected format MDL Molfile v3000
+    */
 
     await openFileAndAddToCanvas(
       page,
@@ -185,9 +185,9 @@ test.describe('Save files', () => {
 
   test('Support for exporting to "InChiKey" file format', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-18030
-     * Description: Save file - InChiKey for Benzene ring on canvas
-     */
+    Test case: EPMLSOPKET-18030
+    Description: Save file - InChiKey for Benzene ring on canvas
+    */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
     await waitForIndigoToLoad(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
@@ -325,9 +325,9 @@ test.describe('Open/Save/Paste files', () => {
     page,
   }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3387
-     * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
-     */
+    Test case: https://github.com/epam/ketcher/issues/3387
+    Description: All the atom properties (general and query specific) for atom list should be saved in ket format
+    */
     await openFileAndAddToCanvas(
       page,
       'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',

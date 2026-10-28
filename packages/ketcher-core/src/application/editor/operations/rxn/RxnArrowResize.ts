@@ -68,13 +68,13 @@ export class RxnArrowResize extends Base {
 
       if (
         /**
-         *          (anchor)
-         *   (pos[1])   ^
-         *              |  ↘ (d)
-         *   (pos[0])   o —— > (current)
-         *
-         * more details: ./RxnArrowResize.doc.png
-         */
+                 (anchor)
+          (pos[1])   ^
+                     |  ↘ (d)
+          (pos[0])   o —— > (current)
+
+        more details: ./RxnArrowResize.doc.png
+        */
         toFixed(anchor.x) === toFixed(item.pos[1].x) &&
         toFixed(anchor.y) === toFixed(item.pos[1].y)
       ) {
@@ -93,13 +93,13 @@ export class RxnArrowResize extends Base {
 
       if (
         /**
-         *          (anchor)
-         *   (pos[0])   o
-         *              |  ↘ (d)
-         *   (pos[1])   x —— o  (current)
-         *
-         * more details: ./RxnArrowResize.doc.png
-         */
+                 (anchor)
+          (pos[0])   o
+                     |  ↘ (d)
+          (pos[1])   x —— o  (current)
+
+        more details: ./RxnArrowResize.doc.png
+        */
         toFixed(anchor.x) === toFixed(item.pos[0].x) &&
         toFixed(anchor.y) === toFixed(item.pos[0].y)
       ) {

@@ -28,9 +28,9 @@ test.describe('setMode', () => {
 
   test('Validate ketcher.setMode for Flex Mode', async ({ page }) => {
     /**
-     * Test case: #4539
-     * Description: ketcher.setMode switch canvas to Flex Mode
-     */
+    Test case: #4539
+    Description: ketcher.setMode switch canvas to Flex Mode
+    */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -42,9 +42,9 @@ test.describe('setMode', () => {
 
   test('Validate ketcher.setMode for Snake Mode', async ({ page }) => {
     /**
-     * Test case: #4539
-     * Description: ketcher.setMode switch canvas to Snake Mode
-     */
+    Test case: #4539
+    Description: ketcher.setMode switch canvas to Snake Mode
+    */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await takeEditorScreenshot(page);
     await setMode(page, 'snake');
@@ -53,9 +53,9 @@ test.describe('setMode', () => {
 
   test('Validate ketcher.setMode for Sequence Mode', async ({ page }) => {
     /**
-     * Test case: #4539
-     * Description: ketcher.setMode switch canvas to Sequence Mode
-     */
+    Test case: #4539
+    Description: ketcher.setMode switch canvas to Sequence Mode
+    */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await takeEditorScreenshot(page);
     await setMode(page, 'sequence');
@@ -66,9 +66,9 @@ test.describe('setMode', () => {
     page,
   }) => {
     /**
-     * Test case: #4539
-     * Description: ketcher.setMode switch canvas to Sequence Mode
-     */
+    Test case: #4539
+    Description: ketcher.setMode switch canvas to Sequence Mode
+    */
     await openFileAndAddToCanvasMacro(page, 'KET/hundred-monomers.ket');
     await takeEditorScreenshot(page);
     await setMode(page, 'snake');
@@ -83,9 +83,9 @@ test.describe('setMode', () => {
     page,
   }) => {
     /**
-     * Test case: #4539
-     * Description: ketcher.setMode switch canvas to Snake Mode
-     */
+    Test case: #4539
+    Description: ketcher.setMode switch canvas to Snake Mode
+    */
     const zoomValue = 0.5;
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
     await takeEditorScreenshot(page);

@@ -15,13 +15,13 @@ const MULTI_LANGUAGE_BUILD =
   process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 /**
- * ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>
- * (see Editor.tsx), so it reuses that shared i18next instance instead of
- * standing up its own. Namespaces are merged in here via addResourceBundle
- * rather than added to ketcher-react's own i18n.ts, to avoid a reverse
- * ketcher-react -> ketcher-macromolecules source dependency (macromolecules
- * already depends on react, not the other way around).
- */
+ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>
+(see Editor.tsx), so it reuses that shared i18next instance instead of
+standing up its own. Namespaces are merged in here via addResourceBundle
+rather than added to ketcher-react's own i18n.ts, to avoid a reverse
+ketcher-react -> ketcher-macromolecules source dependency (macromolecules
+already depends on react, not the other way around).
+*/
 i18n.addResourceBundle('en', 'macromolecules', BASE_RESOURCES.macromolecules);
 i18n.addResourceBundle(
   'en',

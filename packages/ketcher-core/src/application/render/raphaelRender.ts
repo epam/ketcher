@@ -55,11 +55,11 @@ export type MonomerCreationInitialValues = {
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
   /**
-   * When editMode is 'all' and the user had multiple monomers of the same
-   * type/symbol selected, this contains the SGroup IDs of those specific
-   * monomers. If provided, only these monomers will be replaced instead of
-   * all canvas instances.
-   */
+  When editMode is 'all' and the user had multiple monomers of the same
+  type/symbol selected, this contains the SGroup IDs of those specific
+  monomers. If provided, only these monomers will be replaced instead of
+  all canvas instances.
+  */
   selectedSGroupIds?: number[];
 };
 
@@ -158,10 +158,10 @@ export class Render {
   };
 
   /**
-   * The options this render was asked for, without the values defaultOptions
-   * derives from them. This is the right base for building a render with
-   * changed options: the derived values get recomputed instead of carried over.
-   */
+  The options this render was asked for, without the values defaultOptions
+  derives from them. This is the right base for building a render with
+  changed options: the derived values get recomputed instead of carried over.
+  */
   get userOptions(): Partial<RenderOptions> {
     return this.userOpts;
   }
@@ -258,8 +258,8 @@ export class Render {
   }
 
   /**
-   * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
-   */
+  @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
+  */
   setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
   setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {

@@ -133,9 +133,9 @@ export class Ketcher {
   }
 
   /**
-   * Get settings service for managing application settings
-   * Returns undefined if settings service was not provided during construction
-   */
+  Get settings service for managing application settings
+  Returns undefined if settings service was not provided during construction
+  */
   get settingsService(): ISettingsService | undefined {
     return this.#settingsService;
   }
@@ -182,9 +182,9 @@ export class Ketcher {
   }
 
   /**
-   * Handle settings changes from settings service
-   * Updates editor and triggers re-render if needed
-   */
+  Handle settings changes from settings service
+  Updates editor and triggers re-render if needed
+  */
   #onSettingsChanged(settings: Settings): void {
     // This will be called when settings change
     // The editor will need to be updated with new settings
@@ -748,8 +748,8 @@ export class Ketcher {
   }
 
   /**
-   * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
-   */
+  @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
+  */
   setZoom(value: number) {
     const editor = provideEditorInstance();
     if (editor && value) editor.zoomTool.zoomTo(value);
@@ -836,12 +836,12 @@ export class Ketcher {
   }
 
   /**
-   * Converts raw monomer data to KET format before it is sent to the editor.
-   *
-   * @throws {Error} When conversion fails or the server rejects the payload.
-   *   The thrown message is prefixed with
-   *   "Monomer item could not be loaded because of an error: ".
-   */
+  Converts raw monomer data to KET format before it is sent to the editor.
+
+  @throws {Error} When conversion fails or the server rejects the payload.
+    The thrown message is prefixed with
+    "Monomer item could not be loaded because of an error: ".
+  */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,

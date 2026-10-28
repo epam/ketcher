@@ -455,7 +455,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               </div>
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
-                  {Array.from(presetAttachmentPoints.entries()).map(
+                  {[...presetAttachmentPoints.entries()].map(
                     ([name, atomPair]) => (
                       <AttachmentPoint
                         name={name}

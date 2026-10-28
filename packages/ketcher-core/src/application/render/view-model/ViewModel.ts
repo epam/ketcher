@@ -34,20 +34,20 @@ export class ViewModel {
   private setAtomsToHalfEdgesMap(atom: Atom, halfEdge: HalfEdge) {
     const atomHalfEdges = this.atomsToHalfEdges.get(atom);
 
-    if (!atomHalfEdges) {
-      this.atomsToHalfEdges.set(atom, [halfEdge]);
-    } else {
+    if (atomHalfEdges) {
       atomHalfEdges.push(halfEdge);
+    } else {
+      this.atomsToHalfEdges.set(atom, [halfEdge]);
     }
   }
 
   private setBondsToHalfEdgesMap(bond: Bond, halfEdge: HalfEdge) {
     const bondsToHalfEdges = this.bondsToHalfEdges.get(bond);
 
-    if (!bondsToHalfEdges) {
-      this.bondsToHalfEdges.set(bond, [halfEdge]);
-    } else {
+    if (bondsToHalfEdges) {
       bondsToHalfEdges.push(halfEdge);
+    } else {
+      this.bondsToHalfEdges.set(bond, [halfEdge]);
     }
   }
 
@@ -245,7 +245,7 @@ export class ViewModel {
         index <= this.halfEdges.size;
         currentHalfEdge = currentHalfEdge.nextHalfEdge, ++index
       ) {
-        if (!(index > 0 && currentHalfEdge === halfEdge)) {
+        if (index === 0 || currentHalfEdge !== halfEdge) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
           continue;
         }
@@ -291,7 +291,7 @@ export class ViewModel {
 
     return {
       newLoops,
-      bondsToMark: Array.from(bondsToMark),
+      bondsToMark: [...bondsToMark],
     };
   }
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,10 +92,10 @@ class ReBond extends ReObject {
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
     const beginAtom = restruct.getBondEndpoint(
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
+      this.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
     const endAtom = restruct.getBondEndpoint(
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
+      this.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
     );
 
     if (
@@ -167,13 +167,13 @@ class ReBond extends ReObject {
     // to when it is connected to a Carbon atom w/o a label
     // please refer to: ketcher-core/docs/data/hover_selection_2.png
     const halfBondStart =
-      bond.hb1 !== undefined
-        ? restruct.molecule.halfBonds.get(bond.hb1)?.p
-        : undefined;
+      bond.hb1 === undefined
+        ? undefined
+        : restruct.molecule.halfBonds.get(bond.hb1)?.p;
     const halfBondEnd =
-      bond.hb2 !== undefined
-        ? restruct.molecule.halfBonds.get(bond.hb2)?.p
-        : undefined;
+      bond.hb2 === undefined
+        ? undefined
+        : restruct.molecule.halfBonds.get(bond.hb2)?.p;
     if (!halfBondStart || !halfBondEnd) return [];
 
     const isStereoBond =
@@ -418,8 +418,8 @@ class ReBond extends ReObject {
     const paper = render.paper;
     const hb1Id = this.b.hb1;
     const hb2Id = this.b.hb2;
-    const hb1 = hb1Id !== undefined ? struct.halfBonds.get(hb1Id) : null;
-    const hb2 = hb2Id !== undefined ? struct.halfBonds.get(hb2Id) : null;
+    const hb1 = hb1Id === undefined ? null : struct.halfBonds.get(hb1Id);
+    const hb2 = hb2Id === undefined ? null : struct.halfBonds.get(hb2Id);
 
     checkStereoBold(bid, this, restruct);
     ReBond.bondRecalc(this, restruct, options);
@@ -1014,7 +1014,9 @@ function getBondPath(
   return path;
 }
 
-/* Get Path */
+/*
+Get Path
+*/
 function getBondSingleUpPath(
   render: Render,
   hb1: HalfBond,
@@ -1612,10 +1614,7 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-    path.node.childNodes[0].setAttribute(
-      'data-tooltip',
-      util.escapeHtml(tooltip),
-    );
+    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
   }
 
   return path;
@@ -1637,7 +1636,9 @@ function getIdsPath(
   draw.recenterText(ipath, irbb);
   return ipath;
 }
-/* ----- */
+/*
+-----
+*/
 
 function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   const hb1 = bond.b.hb1;
@@ -1683,8 +1684,8 @@ function selectDoubleBondShift(
   d1: number,
   d2: number,
 ): number {
-  if (n1 === 6 && n2 !== 6 && (d1 > 1 || d2 === 1)) return -1;
-  if (n2 === 6 && n1 !== 6 && (d2 > 1 || d1 === 1)) return 1;
+  if (n1 === 6 && n2 !== 6 && (d2 === 1 || d1 > 1)) return -1;
+  if (n2 === 6 && n1 !== 6 && (d1 === 1 || d2 > 1)) return 1;
   if (n2 * d1 > n1 * d2) return -1;
   if (n2 * d1 < n1 * d2) return 1;
   if (n2 > n1) return -1;

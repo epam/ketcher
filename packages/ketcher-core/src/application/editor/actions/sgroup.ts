@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -290,10 +290,7 @@ export function setExpandMonomerSGroup(
     }
   });
 
-  const sGroupBBox = SGroup.getObjBBox(
-    Array.from(sGroupAtoms.values()),
-    struct,
-  );
+  const sGroupBBox = SGroup.getObjBBox([...sGroupAtoms.values()], struct);
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
   const sGroupCenter = sGroup.isContracted()
@@ -339,14 +336,14 @@ export function setExpandMonomerSGroup(
           }
 
           const previousArray = sGroupsToMove.get(index) ?? [];
-          sGroupsToMove.set(index, previousArray.concat(anotherSGroupId));
+          sGroupsToMove.set(index, [...previousArray, anotherSGroupId]);
         }
       }
 
       const atom = struct.atoms.get(currentAtomId);
       if (atom) {
         const previousArray = atomsToMove.get(index) ?? [];
-        atomsToMove.set(index, previousArray.concat(currentAtomId));
+        atomsToMove.set(index, [...previousArray, currentAtomId]);
 
         atom.neighbors.forEach((halfBondId) => {
           const neighborAtomId = struct?.halfBonds?.get(halfBondId)?.end;
@@ -647,7 +644,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
       if (isNumber(leaveAtomId) && isNumber(attachmentAtomId)) {
         const apNumber = attachmentPoint.attachmentPointNumber;
-        const isOccupied = Array.from(struct.bonds.values()).some(
+        const isOccupied = [...struct.bonds.values()].some(
           ({
             begin: bondBegin,
             end: bondEnd,
@@ -786,15 +783,12 @@ export function fromSgroupAction(
   }
 
   const atomsFromBonds = getAtomsFromBonds(restruct.molecule, selection.bonds);
-  const newSourceAtoms = uniq(sourceAtoms.concat(atomsFromBonds));
+  const newSourceAtoms = uniq([...sourceAtoms, ...atomsFromBonds]);
 
   if (context === SgContexts.Fragment) {
-    return fromGroupAction(
-      restruct,
-      newSg,
-      newSourceAtoms,
-      Array.from(restruct.atoms.keys()),
-    );
+    return fromGroupAction(restruct, newSg, newSourceAtoms, [
+      ...restruct.atoms.keys(),
+    ]);
   }
 
   if (context === SgContexts.Multifragment) {
@@ -814,7 +808,7 @@ export function fromSgroupAction(
       restruct,
       newSg,
       newSourceAtoms as number[],
-      Array.from(restruct.atoms.keys()),
+      [...restruct.atoms.keys()],
     );
   }
 
@@ -867,7 +861,7 @@ function fromQueryComponentSGroupAction(
     sourceAtoms.map((aid) => restruct.atoms.get(aid)?.a.fragment),
   );
 
-  Array.from(allFragments).forEach((fragId) => {
+  [...allFragments].forEach((fragId) => {
     const atoms = targetAtoms.reduce((res: number[], aid: number) => {
       const atom = restruct.atoms.get(aid)?.a;
       if (fragId === atom?.fragment) res.push(aid);
@@ -877,8 +871,8 @@ function fromQueryComponentSGroupAction(
 
     const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
-    selection.atoms = selection.atoms.concat(atoms);
-    selection.bonds = selection.bonds.concat(bonds);
+    selection.atoms = [...selection.atoms, ...atoms];
+    selection.bonds = [...selection.bonds, ...bonds];
   });
 
   return {
@@ -897,7 +891,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
-  return Array.from(allFragments).reduce(
+  return [...allFragments].reduce(
     (acc, fragId) => {
       const atoms = targetAtoms.reduce((res, aid) => {
         const atom = restruct.atoms.get(aid).a;
@@ -912,8 +906,8 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
         fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
       );
 
-      acc.selection.atoms = acc.selection.atoms.concat(atoms);
-      acc.selection.bonds = acc.selection.bonds.concat(bonds);
+      acc.selection.atoms = [...acc.selection.atoms, ...atoms];
+      acc.selection.bonds = [...acc.selection.bonds, ...bonds];
 
       return acc;
     },
@@ -931,7 +925,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
   const struct = restruct.molecule;
   let bonds = getAtomsBondIds(struct, sourceAtoms);
 
-  if (currSelection.bonds) bonds = uniq(bonds.concat(currSelection.bonds));
+  if (currSelection.bonds) bonds = uniq([...bonds, ...currSelection.bonds]);
 
   return bonds.reduce<{
     action: Action;
@@ -1032,7 +1026,7 @@ export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
 function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
   const atomSet = new Pile(atoms);
 
-  return Array.from(struct.bonds.keys()).filter((bid) => {
+  return [...struct.bonds.keys()].filter((bid) => {
     const bond = struct.bonds.get(bid);
     if (!bond) {
       return false;
@@ -1045,7 +1039,7 @@ function getAtomsFromBonds(struct, bonds) {
   bonds = bonds || [];
   return bonds.reduce((acc, bondid) => {
     const bond = struct.bonds.get(bondid);
-    acc = acc.concat([bond.begin, bond.end]);
+    acc = [...acc, bond.begin, bond.end];
     return acc;
   }, []);
 }

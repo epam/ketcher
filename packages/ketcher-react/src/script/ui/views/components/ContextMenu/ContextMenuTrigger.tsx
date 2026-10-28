@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -162,18 +162,18 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         })
       ) {
         if (
-          !selection.bonds &&
-          !selection.atoms &&
-          !selection.rgroupAttachmentPoints &&
-          !selection.attachmentGroups
+          selection.bonds ||
+          selection.atoms ||
+          selection.rgroupAttachmentPoints ||
+          selection.attachmentGroups
         ) {
+          triggerType = ContextMenuTriggerType.Selection;
+        } else {
           if (selection[MULTITAIL_ARROW_KEY]) {
             triggerType = ContextMenuTriggerType.ClosestItem;
           } else {
             triggerType = ContextMenuTriggerType.None;
           }
-        } else {
-          triggerType = ContextMenuTriggerType.Selection;
         }
       } else {
         // closestItem is outside of selection

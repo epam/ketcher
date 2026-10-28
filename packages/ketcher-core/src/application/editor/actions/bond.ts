@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -206,14 +206,14 @@ export function fromBondAddition(
   const beginFragmentAtomId = getFragmentAtomId(beginAtomId);
   const endFragmentAtomId = getFragmentAtomId(endAtomId);
   const mergedFragmentId =
-    beginFragmentAtomId !== undefined && endFragmentAtomId !== undefined
-      ? mergeFragmentsIfNeeded(
+    beginFragmentAtomId === undefined || endFragmentAtomId === undefined
+      ? undefined
+      : mergeFragmentsIfNeeded(
           action,
           reStruct,
           beginFragmentAtomId,
           endFragmentAtomId,
-        )
-      : undefined;
+        );
   if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
     action.addOp(
       new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct),
@@ -438,9 +438,9 @@ export function bondChangingAction(
       ? plainBondTypes
       : null;
   if (
+    loop &&
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-    loop &&
     bond.stereo === Bond.PATTERN.STEREO.NONE
   ) {
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`

@@ -90,7 +90,7 @@ export class CanvasMatrix {
         if (currentConnections.has(connection.polymerBond)) {
           currentConnections.delete(connection.polymerBond);
           currentConnections.forEach((connections: Set<Connection>): void => {
-            Array.from(connections.values()).forEach(
+            [...connections.values()].forEach(
               (currentConnection: Connection): void => {
                 increaseOffset(currentConnection);
               },
@@ -109,7 +109,7 @@ export class CanvasMatrix {
       ) {
         currentConnections.clear();
       }
-      Array.from(currentConnections.keys()).forEach((polymerBond) => {
+      [...currentConnections.keys()].forEach((polymerBond) => {
         const polymerBondConnections =
           this.polymerBondToConnections.get(polymerBond);
         if (

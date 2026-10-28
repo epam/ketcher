@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,7 +71,7 @@ function pollDeferred<T>(
             reject(normalizeError(error));
           }
         },
-        (err) => reject(normalizeError(err)),
+        (error) => reject(normalizeError(error)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);
@@ -103,7 +103,7 @@ function request<T = unknown>(
     fetchResponse = fetch(requestUrl, {
       method,
       headers: mergedHeaders,
-      body: method !== 'GET' ? (data as string | Blob) : undefined,
+      body: method === 'GET' ? undefined : (data as string | Blob),
       credentials: 'same-origin',
     });
   } catch (error) {
@@ -261,10 +261,10 @@ export class RemoteStructService implements StructService {
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'remoteStructService.ts::RemoteStructService::info',
-        e,
+        error,
       );
       indigoVersion = '';
       imagoVersions = [];

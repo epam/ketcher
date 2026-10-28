@@ -1689,8 +1689,8 @@ export class SequenceMode extends BaseMode {
             currentTwoStrandedNode,
           );
           if (
-            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
             nextNucleotideFromCurrent !== undefined &&
+            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
             !hasValidAntisense(currentTwoStrandedNode) &&
             !hasValidAntisense(nextNucleotideFromCurrent)
           ) {
@@ -2325,14 +2325,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );
@@ -3009,14 +3010,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );

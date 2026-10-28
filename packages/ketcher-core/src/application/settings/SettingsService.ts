@@ -78,11 +78,12 @@ export class SettingsService implements ISettingsService {
   static async getInstance(
     options: SettingsServiceOptions = {},
   ): Promise<SettingsService> {
-    if (!SettingsService.instance) {
-      SettingsService.instance = new SettingsService(options);
-      await SettingsService.instance.init();
+    const instance = this.instance ?? new SettingsService(options);
+    this.instance = instance;
+    if (!instance.initialized) {
+      await instance.init();
     }
-    return SettingsService.instance;
+    return instance;
   }
 
   /**
@@ -132,14 +133,14 @@ export class SettingsService implements ISettingsService {
 
         // 4. Validate merged settings
         const validation = this.validator.validate(merged);
-        if (!validation.valid) {
+        if (validation.valid) {
+          this.settings = merged;
+        } else {
           KetcherLogger.warn(
             'Invalid settings in storage, using defaults',
             validation.errors,
           );
           // Keep settings from constructor (includes custom defaults if provided)
-        } else {
-          this.settings = merged;
         }
       }
 
@@ -321,10 +322,10 @@ export class SettingsService implements ISettingsService {
 
         if (
           sourceValue &&
-          typeof sourceValue === 'object' &&
           targetValue &&
-          !Array.isArray(sourceValue) &&
+          typeof sourceValue === 'object' &&
           typeof targetValue === 'object' &&
+          !Array.isArray(sourceValue) &&
           !Array.isArray(targetValue)
         ) {
           // Recursively merge objects

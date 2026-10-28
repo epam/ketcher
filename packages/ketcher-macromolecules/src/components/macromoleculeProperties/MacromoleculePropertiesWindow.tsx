@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +35,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -568,10 +567,14 @@ const roundToMinNiceNumber = (number: number) => {
 
 const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const { data: initialData } = props;
-  const data = lttb(
-    initialData.map((_item, index) => index + 1),
-    initialData,
-    100,
+  const data = useMemo(
+    () =>
+      lttb(
+        initialData.map((_item, index) => index + 1),
+        initialData,
+        100,
+      ),
+    [initialData],
   );
   const [containerWidth, setContainerWidth] = useState(0);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -703,27 +706,29 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
         .attr('stroke-width', 1)
         .attr('d', line);
     }
-  }, [initialData, containerWidth]);
+  }, [initialData, data.xs, data.ys, containerWidth]);
 
   // rerender the chart when the size of container changes
-  const resizeObserver = new ResizeObserver(
-    debounce((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width !== containerWidth) {
-          setContainerWidth(entry.contentRect.width);
-        }
-      }
-    }, 100),
-  );
-
   useEffect(() => {
-    if (svgRef.current) {
-      resizeObserver.observe(svgRef.current);
-    }
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const debouncedResize = debounce((entries: ResizeObserverEntry[]) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setContainerWidth((currentWidth) =>
+          currentWidth === width ? currentWidth : width,
+        );
+      }
+    }, 100);
+    const resizeObserver = new ResizeObserver(debouncedResize);
+    resizeObserver.observe(svg);
+
     return () => {
       resizeObserver.disconnect();
+      debouncedResize.cancel();
     };
-  }, [svgRef, containerWidth]);
+  }, []);
 
   return (
     <StyledHydrophobicityChartSvg

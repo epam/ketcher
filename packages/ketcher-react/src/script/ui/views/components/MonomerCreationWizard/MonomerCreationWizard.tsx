@@ -1621,58 +1621,10 @@ const MonomerCreationWizardInternal = ({
 
     // check rna preset code
     const presetCode = rnaPresetWizardState.preset.name?.trim();
-    if (!presetCode) {
-      needSaveMonomers = false;
-      rnaPresetWizardStateDispatch({
-        type: 'SetErrors',
-        errors: {
-          name: true,
-        },
-        rnaComponentKey: 'preset',
-        editor,
-      });
-      rnaPresetWizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: new Map([
-          [
-            'emptyMandatoryFields',
-            {
-              type: 'error',
-              message: NotificationMessages.emptyMandatoryFields,
-            },
-          ],
-        ]),
-        rnaComponentKey: 'preset',
-        editor,
-      });
-    } else {
+    if (presetCode) {
       // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
       const presetCodeRegex = /^[a-zA-Z0-9-_*]+$/;
-      if (!presetCodeRegex.test(presetCode)) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: {
-            name: true,
-          },
-          rnaComponentKey: 'preset',
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: new Map([
-            [
-              'invalidPresetCode',
-              {
-                type: 'error',
-                message: NotificationMessages.invalidPresetCode,
-              },
-            ],
-          ]),
-          rnaComponentKey: 'preset',
-          editor,
-        });
-      } else {
+      if (presetCodeRegex.test(presetCode)) {
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
         if (coreEditor.checkIfPresetCodeExists(presetCode)) {
@@ -1700,7 +1652,55 @@ const MonomerCreationWizardInternal = ({
             editor,
           });
         }
+      } else {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            name: true,
+          },
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidPresetCode',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidPresetCode,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
       }
+    } else {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          name: true,
+        },
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'emptyMandatoryFields',
+            {
+              type: 'error',
+              message: NotificationMessages.emptyMandatoryFields,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
     }
 
     componentsToValidate.forEach((componentToValidate) => {

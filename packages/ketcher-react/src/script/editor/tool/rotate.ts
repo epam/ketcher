@@ -200,9 +200,7 @@ class RotateTool implements Tool {
   }
 
   mousemove = throttle((event) => {
-    if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
-    } else {
+    if (this.dragCtx) {
       const dragCtx = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
@@ -248,6 +246,8 @@ class RotateTool implements Tool {
 
         this.editor.update(dragCtx.action, true);
       }
+    } else {
+      this.editor.hover(null, null, event);
     }
     return true;
   }, 40); // 25fps

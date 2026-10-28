@@ -133,14 +133,14 @@ export class SettingsService implements ISettingsService {
 
         // 4. Validate merged settings
         const validation = this.validator.validate(merged);
-        if (!validation.valid) {
+        if (validation.valid) {
+          this.settings = merged;
+        } else {
           KetcherLogger.warn(
             'Invalid settings in storage, using defaults',
             validation.errors,
           );
           // Keep settings from constructor (includes custom defaults if provided)
-        } else {
-          this.settings = merged;
         }
       }
 

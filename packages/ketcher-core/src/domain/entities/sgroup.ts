@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import type { Atom } from './atom';
-import type { Bond } from './bond';
+import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
@@ -92,7 +92,6 @@ interface SGroupData {
 
 type AtomIdRemap = Record<number, number> | number[];
 type StructAtomsAccess = Pick<Struct, 'atoms'>;
-type StructBondsAccess = Pick<Struct, 'bonds'>;
 type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
 type RenderableSGroupAtom =
   | Atom
@@ -563,7 +562,7 @@ export class SGroup {
   }
 
   static getCrossBonds(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess,
     parentAtomSet: Pile<number>,
   ): { [key: number]: Array<number> } {
     const crossBonds: { [key: number]: Array<number> } = {};
@@ -627,7 +626,7 @@ export class SGroup {
     contentBoxes.forEach((bba) => {
       braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
     });
-    const currentRender = render ?? window.ketcher?.editor?.render;
+    const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
       currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
@@ -643,7 +642,7 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol: StructBondsAccess,
+    mol: StructAtomsAndBondsAccess & StructBondEndpointAccess,
     crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
     bb: Box2Abs,

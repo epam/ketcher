@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,26 +22,40 @@ import {
 } from 'ketcher-core';
 import i18n from '../../../i18n/i18n';
 
-async function copyImageToClipboard() {
-  const state = globalThis.currentState;
-  const editor = state.editor;
-  const options = state.options;
+async function copyImageToClipboard(): Promise<void> {
+  const { editor, options } = (globalThis as typeof globalThis & Window)
+    .currentState;
+
+  if (!editor) {
+    KetcherLogger.error(
+      'copyImageToClipboard.ts::copyImageToClipboard',
+      'Editor is not initialized',
+    );
+    return;
+  }
+
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
+
   try {
     const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
     const ketSerializer = new KetSerializer();
     const structStr = ketSerializer.serialize(struct);
+
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-    const item = new globalThis.ClipboardItem({ [image.type]: image });
+
+    const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
   } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
+
+    if (errorHandler) {
+      errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
+    }
   }
 }
 

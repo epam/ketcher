@@ -7,7 +7,7 @@ export function updateSelectedBonds({
   editor,
 }: {
   bonds: number[];
-  changeBondPromise: Promise<Bond>;
+  changeBondPromise: Bond | PromiseLike<Bond>;
   editor;
 }) {
   const action = new Action();

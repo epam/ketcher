@@ -1,5 +1,10 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { type Editor, EditorType } from 'application/editor/editor.types';
+import {
+  type CreateBondViaModalPayload,
+  type Editor,
+  EditorType,
+  type SelectLayoutModePayload,
+} from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   editorEvents,
@@ -10,7 +15,6 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
-  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
   HAS_CONTENT_LAYOUT_MODE,
 } from 'application/editor/modes/types';
@@ -235,6 +239,14 @@ const getHelmAliasUniquenessScope = (
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
+// Template refs of monomers explicitly created via the Monomer Creation Wizard.
+// Only refs in this set are eligible for deletion by the user.
+// Populated by updateMonomersLibrary(…, …, isUserCreated=true) and replayed
+// from localStorage updates tagged source:'wizard' (or legacy entries without
+// a source tag, which are always from the wizard). API-added monomers —
+// via ketcher.updateMonomersLibrary or ketcher.replaceMonomersLibrary — are
+// never added here. See Editor.isUserMadeMonomer.
+let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
 export class CoreEditor {
   public events: IEditorEvents;
@@ -266,7 +278,9 @@ export class CoreEditor {
   private libraryItemDragCancelled = false;
 
   public theme: CoreEditorTheme;
-  /** Handles all drag-and-drop attachment-point logic for library items. */
+  /**
+  Handles all drag-and-drop attachment-point logic for library items.
+  */
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
@@ -471,25 +485,38 @@ export class CoreEditor {
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
     storedMonomerLibraryUpdates.forEach((update) => {
       const parsedUpdate = JSON.parse(update);
 
       if (parsedUpdate.removedMonomerRef) {
+        const ref = parsedUpdate.removedMonomerRef;
         const monomer = this._monomersLibrary.find(
           (item) =>
             !isAmbiguousMonomerLibraryItem(item) &&
-            getMonomerTemplateRefFromMonomerItem(item) ===
-              parsedUpdate.removedMonomerRef,
+            getMonomerTemplateRefFromMonomerItem(item) === ref,
         );
-        if (monomer) this.removeMonomerFromLibrary(monomer, false);
+        if (monomer) {
+          this.removeMonomerFromLibrary(monomer, false);
+        } else if (
+          this._monomersLibraryParsedJson?.[ref]?.type ===
+          KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          // `removedMonomerRef` is reused for preset removal (see
+          // `removePresetFromLibrary`) since both are persisted the same way.
+          this.removePresetFromLibrary(ref, false);
+        }
       } else if (parsedUpdate.replacement) {
         this.clearMonomersLibrary();
-        this.updateMonomersLibrary(parsedUpdate.data);
+        this.updateMonomersLibrary(parsedUpdate.data, undefined, true);
       } else {
+        // Every entry in localStorage was placed there by user action
+        // (MCW create/edit, or ketcher.updateMonomersLibrary with shouldPersist).
         this.updateMonomersLibrary(
           parsedUpdate.data || update,
           parsedUpdate.editedMonomerRef,
+          true,
         );
       }
     });
@@ -505,6 +532,7 @@ export class CoreEditor {
   public updateMonomersLibrary(
     monomersDataRaw: string | JSON,
     editedMonomerRef?: string,
+    isUserCreated?: boolean,
   ) {
     // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
     // in the constructor before any consumer can call `updateMonomersLibrary`.
@@ -804,6 +832,9 @@ export class CoreEditor {
         );
         monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
+        if (isUserCreated) {
+          persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
+        }
       } else {
         const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
           this._monomersLibrary[existingMonomerIndex],
@@ -957,22 +988,71 @@ export class CoreEditor {
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
-        if (
+        return (
           template?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE &&
-          'options' in template
-        ) {
-          return template.options.some(
+          'options' in template &&
+          template.options.some(
             ({ templateId }) =>
               templateId === ref ||
               setMonomerTemplatePrefix(templateId) === ref,
-          );
-        }
-        return (
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template.templates.some((component) => component.$ref === ref)
+          )
         );
       }) ?? false
     );
+  }
+
+  /**
+   * Returns every library preset (`MONOMER_GROUP_TEMPLATE`) that references
+   * `monomer` as one of its components. Unlike `isMonomerReferencedInLibrary`
+   * (which only guards against ambiguous-template membership), preset
+   * participation does not block deletion by itself — callers use this list
+   * to drive the delete-confirmation/cascade flow instead.
+   */
+  public getReferencingPresets(
+    monomer: MonomerItemType,
+  ): IKetMonomerGroupTemplate[] {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const parsedJson = this._monomersLibraryParsedJson;
+    if (!parsedJson) return [];
+    const presets: IKetMonomerGroupTemplate[] = [];
+    parsedJson.root.templates.forEach(({ $ref }) => {
+      const template = parsedJson[$ref];
+      if (
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template.templates.some((component) => component.$ref === ref)
+      ) {
+        presets.push(template);
+      }
+    });
+    return presets;
+  }
+
+  /**
+   * A monomer is "user-made" when its template ref was explicitly added via the
+   * Monomer Creation Wizard (see `persistentUserCreatedMonomerRefs`). Monomers
+   * from the bundled default library and monomers added by the embedding app
+   * via ketcher.updateMonomersLibrary / ketcher.replaceMonomersLibrary are NOT
+   * user-made and cannot be deleted by the user.
+   */
+  public isUserMadeMonomer(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return persistentUserCreatedMonomerRefs.has(ref);
+  }
+
+  /**
+   * Whether at least one instance of `monomer` is currently placed on the
+   * canvas, following the same ref-comparison idiom used elsewhere (e.g.
+   * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
+   */
+  public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
+    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
+      const placedMonomerItem = placedMonomer.monomerItem;
+      return (
+        !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
+        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+      );
+    });
   }
 
   public removeMonomerFromLibrary(
@@ -981,7 +1061,7 @@ export class CoreEditor {
   ) {
     if (this.isMonomerReferencedInLibrary(monomer)) {
       throw new Error(
-        'A monomer used in an RNA preset or ambiguous monomer cannot be deleted.',
+        'A monomer used in an ambiguous monomer cannot be deleted.',
       );
     }
     const ref = getMonomerTemplateRefFromMonomerItem(monomer);
@@ -1000,6 +1080,26 @@ export class CoreEditor {
     if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
       SettingsManager.addMonomerLibraryUpdate(
         JSON.stringify({ removedMonomerRef: ref }),
+      );
+    }
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Removes a library preset (`MONOMER_GROUP_TEMPLATE`) by its template ref,
+   * mirroring `removeMonomerFromLibrary`'s splice/filter/delete/persist/dispatch
+   * shape. Does not touch the preset's component monomers.
+   */
+  public removePresetFromLibrary(presetRef: string, shouldPersist = true) {
+    if (!this._monomersLibraryParsedJson) return;
+    this._monomersLibraryParsedJson.root.templates =
+      this._monomersLibraryParsedJson.root.templates.filter(
+        ({ $ref }) => $ref !== presetRef,
+      );
+    delete this._monomersLibraryParsedJson[presetRef];
+    if (shouldPersist && SettingsManager.persistMonomerLibraryUpdates) {
+      SettingsManager.addMonomerLibraryUpdate(
+        JSON.stringify({ removedMonomerRef: presetRef }),
       );
     }
     this.events.updateMonomersLibrary.dispatch();
@@ -1375,6 +1475,15 @@ export class CoreEditor {
       this.mode.onCopy();
       this.clearSelectionAfterCopy();
     });
+    this.events.cutSelectedStructure.add(() => {
+      this.mode.onCut();
+    });
+    this.events.copySelectedStructureAs.add(
+      (format: 'ket' | 'mol' | 'image') => {
+        this.mode.onCopyAs(format);
+        this.clearSelectionAfterCopy();
+      },
+    );
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
     });
@@ -1405,7 +1514,7 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -1422,9 +1531,9 @@ export class CoreEditor {
     );
 
     this.events.toggleLineLengthHighlighting.add(
-      (value: boolean, currentPosition = 0) => {
+      (value: boolean, currentPosition: number = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -2035,16 +2144,7 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
-  private onCreateBond(payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-    polymerBond?: PolymerBond;
-    isReconnection?: boolean;
-    initialFirstMonomerAttachmentPoint?: AttachmentPointName;
-    initialSecondMonomerAttachmentPoint?: AttachmentPointName;
-  }) {
+  private onCreateBond(payload: CreateBondViaModalPayload) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
       const history = EditorHistory.getInstance(this);
@@ -2104,10 +2204,7 @@ export class CoreEditor {
     }
   }
 
-  private onSelectMode(
-    data:
-      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
-  ) {
+  private onSelectMode(data: SelectLayoutModePayload) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);
@@ -2697,6 +2794,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
+    this.micromoleculesEditor.selection(null);
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2794,7 +2892,7 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.mode.destroy();
       this._type = type;
-      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
+      globalThis.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
       this.drawingEntitiesManager = drawingEntitiesManager;
       this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
       this.mode = new (getModeConstructor(modeName))();
@@ -2868,9 +2966,11 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
+    ZoomTool.instance.forgetRememberedZoomTransform();
+
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      window._ketcher_isAutozoomDisabled ||
+      globalThis._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers
     ) {
@@ -2894,6 +2994,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,12 +31,12 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   deserialize(content: string): Array<SdfItem> {
     const result: Array<SdfItem> = [];
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    let m: any = DelimeterRegex.exec(content);
+    let m: RegExpExecArray | null = DelimeterRegex.exec(content);
     while (m !== null) {
       const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
-        const propChunks: any = chunk
+        const propChunks: string[] = chunk
           .substr(end + 7)
           .trim()
           .split(/^$\n?/m);

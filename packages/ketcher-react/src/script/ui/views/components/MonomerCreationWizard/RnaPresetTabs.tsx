@@ -300,13 +300,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       applyHighlights(selectedTab);
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationMarkAsComponentAction,
       handleMarkAsComponent,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationMarkAsComponentAction,
         handleMarkAsComponent,
       );

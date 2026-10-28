@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -1420,6 +1420,26 @@ function bondDative(
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
+function bondHaptic(
+  paper: RaphaelPaper,
+  halfBond1: HalfBond,
+  halfBond2: HalfBond,
+  options: RenderOptions,
+  isSnapping: boolean,
+  color = '#000',
+) {
+  const a = halfBond1.p;
+  const b = halfBond2.p;
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
 function drawArrowSymbol(
   paper: RaphaelPaper,
   point: Vec2,
@@ -1577,7 +1597,12 @@ function selectionPolygon(
   r: Vec2[],
   options: RenderOptions,
 ) {
-  const v = r[r.length - 1];
+  const v = r.at(-1);
+
+  if (!v) {
+    throw new Error('Cannot draw a selection polygon without points');
+  }
+
   let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
     pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);
@@ -1748,6 +1773,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

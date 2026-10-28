@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +28,7 @@ import { isNumber } from 'lodash';
 import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { BondEndpoint } from './bondEndpoint';
 
 /**
  * Return unions of Pick.
@@ -129,7 +129,7 @@ type ValenceComputationResult = {
   hydrogenCount: number;
 };
 
-export class Atom extends BaseMicromoleculeEntity {
+export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -212,7 +212,9 @@ export class Atom extends BaseMicromoleculeEntity {
   hasImplicitH?: boolean;
   pseudo!: string;
 
-  /** @deprecated */
+  /**
+  @deprecated
+  */
   get attpnt() {
     return this.attachmentPoints;
   }
@@ -299,10 +301,10 @@ export class Atom extends BaseMicromoleculeEntity {
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
-      get: function () {
+      get() {
         return getPseudo(this.label);
       },
-      set: function (value) {
+      set(value) {
         if (isCorrectPseudo(value)) {
           this.label = value;
         }
@@ -329,13 +331,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
-    const result: number[] = [];
-    for (const [bondId, bond] of struct.bonds.entries()) {
-      if (bond.begin === atomId || bond.end === atomId) {
-        result.push(bondId);
-      }
-    }
-    return result;
+    return struct.getConnectedBondIds(atomId);
   }
 
   static getAttrHash(atom: Atom) {

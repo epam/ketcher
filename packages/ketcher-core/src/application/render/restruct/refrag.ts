@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,8 +48,8 @@ class ReFrag extends ReObject {
         return false;
       }
 
-      const firstFrag = restruct.atoms.get(bond.begin)?.a.fragment;
-      const secondFrag = restruct.atoms.get(bond.end)?.a.fragment;
+      const firstFrag = restruct.getBondEndpoint(bond.begin)?.a.fragment;
+      const secondFrag = restruct.getBondEndpoint(bond.end)?.a.fragment;
 
       return firstFrag === fid && secondFrag === fid;
     });
@@ -74,7 +74,7 @@ class ReFrag extends ReObject {
         bba = bba.extend(ext, ext);
       } else {
         if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render;
+          render = (globalThis as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
           .translate((render.options.offset ?? new Vec2()).negated())
@@ -131,7 +131,7 @@ class ReFrag extends ReObject {
     });
 
     render.ctab.bonds.forEach((bond) => {
-      if (render.ctab.atoms.get(bond.b.begin)?.a.fragment === fid) {
+      if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
         bond.setHover(hover, render);
       }
     });

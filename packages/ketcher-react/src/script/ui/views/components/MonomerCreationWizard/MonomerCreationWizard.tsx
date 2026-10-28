@@ -30,6 +30,7 @@ import Select from '../../../component/form/Select';
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -891,6 +892,16 @@ const MonomerCreationWizardInternal = ({
   const editor = ketcher.editor as Editor;
   const dispatch = useDispatch();
 
+  const leftColumnRef = useRef<HTMLDivElement>(null);
+
+  // Fit the structure into the area left free by the wizard's panels once,
+  // when the wizard opens. Exiting the wizard does not adjust zoom/position.
+  useLayoutEffect(() => {
+    if (leftColumnRef.current) {
+      editor.fitStructToMonomerCreationViewport(leftColumnRef.current);
+    }
+  }, [editor]);
+
   // Initial wizard values are derived once on mount. The wizard is mounted
   // only while `monomerCreationState` is set (see the wrapper below), so
   // edit-mode initial values from `editInstanceInitialValues` are seeded via
@@ -1012,13 +1023,13 @@ const MonomerCreationWizardInternal = ({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationExternalNotificationAction,
       externalNotificationEventListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
       );
@@ -1036,13 +1047,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationAttachmentPointClickEvent,
       attachmentPointClickHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationAttachmentPointClickEvent,
         attachmentPointClickHandler,
       );
@@ -1076,13 +1087,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationComponentStructureUpdateEvent,
       componentStructureUpdateHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationComponentStructureUpdateEvent,
         componentStructureUpdateHandler,
       );
@@ -2120,7 +2131,7 @@ const MonomerCreationWizardInternal = ({
       className={styles.monomerCreationWizard}
       data-testid="monomer-creation-wizard"
     >
-      <div className={styles.leftColumn}>
+      <div className={styles.leftColumn} ref={leftColumnRef}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
           {originalMonomerItem

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Dialog, StructEditor } from '../../views/components';
-import { Component } from 'react';
+import { Component, type ComponentType } from 'react';
 import { isEmpty } from 'lodash';
 import {
   initAttach,
@@ -412,9 +412,12 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-// Type assertion needed due to @types/react version mismatch with react-redux
 const connector = connect(mapStateToProps, mapDispatchToProps);
-export default connector(withTranslation(['dialogs'])(Attach) as never);
+const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
+  withTranslation(['dialogs'])(Attach),
+);
+
+export default ConnectedAttach;
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

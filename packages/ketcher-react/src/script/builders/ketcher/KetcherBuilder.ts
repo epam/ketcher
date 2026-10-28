@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 import {
   type ServiceMode,
-  type StructService,
   type StructServiceProvider,
   DefaultStructServiceOptions,
   FormatterFactory,
@@ -33,7 +32,7 @@ import {
 
 import type { ButtonsConfig } from './ButtonsConfig';
 import type { Editor } from '../../editor';
-import createApi from '../../api';
+import createApi, { type Api } from '../../api';
 import { initApp } from '../../ui';
 import type { Root } from 'react-dom/client';
 import { IndigoProvider } from 'src/script/providers';
@@ -41,7 +40,7 @@ import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
 import type { CustomButton } from './CustomButtons';
 
 class KetcherBuilder {
-  private structService: StructService | null;
+  private structService: Api | null;
   private serviceMode: ServiceMode | null;
   private formatterFactory: FormatterFactory | null;
   private settingsService: ISettingsService | null;
@@ -97,7 +96,7 @@ class KetcherBuilder {
   reinitializeApi(
     ketcherId: string,
     structServiceProvider: StructServiceProvider,
-    setStructServiceToStore: (structService: StructService) => void,
+    setStructServiceToStore: (structService: Api) => void,
   ) {
     const oldStructService = this.structService;
 
@@ -107,7 +106,7 @@ class KetcherBuilder {
     );
     this.structService.addKetcherId(ketcherId);
 
-    window.addEventListener(
+    globalThis.addEventListener(
       STRUCT_SERVICE_INITIALIZED_EVENT,
       () => {
         oldStructService?.destroy?.();
@@ -145,7 +144,7 @@ class KetcherBuilder {
     customButtons?: Array<CustomButton>,
   ): Promise<{
     cleanup: ReturnType<typeof initApp> | null;
-    setServer: (structService: StructService) => void;
+    setServer: (structService: Api) => void;
   }> {
     const { structService } = this;
     if (!structService) {
@@ -155,7 +154,7 @@ class KetcherBuilder {
 
     const { editor, setServer } = await new Promise<{
       editor: Editor;
-      setServer: (structService: StructService) => void;
+      setServer: (structService: Api) => void;
     }>((resolve) => {
       cleanup = initApp(
         prevKetcherId,

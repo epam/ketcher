@@ -93,10 +93,10 @@ export const Editor = (props: Props) => {
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
   const togglePolymerEditor = useCallback((toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
+    globalThis.isPolymerEditorTurnedOn = toggleValue;
   }, []);
 
-  const togglerComponent = !disableMacromoleculesEditor ? (
+  const togglerComponent = disableMacromoleculesEditor ? undefined : (
     <ModeControl
       toggle={(value) => {
         if (!isMonomerWizardOpen) togglePolymerEditor(value);
@@ -104,7 +104,7 @@ export const Editor = (props: Props) => {
       isPolymerEditor={showPolymerEditor}
       disabled={isMonomerWizardOpen}
     />
-  ) : undefined;
+  );
 
   useEffect(() => {
     const onWizardStateChange = (active: boolean) => {
@@ -164,7 +164,7 @@ export const Editor = (props: Props) => {
 
   useEffect(() => {
     return () => {
-      window.isPolymerEditorTurnedOn = false;
+      globalThis.isPolymerEditorTurnedOn = false;
     };
   }, []);
 

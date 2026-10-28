@@ -134,12 +134,12 @@ class TemplatePreview {
         this.showConnectedPreview(event, previewTarget);
       }, PREVIEW_DELAY);
     } else if (shouldHidePreview) {
-      if (!this.floatingPreview) {
+      if (this.floatingPreview) {
+        this.moveFloatingPreview();
+      } else {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
         this.editor.render.update(false, null);
-      } else {
-        this.moveFloatingPreview();
       }
     }
   }
@@ -166,7 +166,7 @@ class TemplatePreview {
         fragmentIds.add(atom.fragment);
       }
     });
-    return Array.from(fragmentIds);
+    return [...fragmentIds];
   }
 
   private showFloatingPreview(position: Vec2) {

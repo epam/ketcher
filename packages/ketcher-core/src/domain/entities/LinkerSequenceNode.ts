@@ -86,9 +86,9 @@ export class LinkerSequenceNode {
     const nextMonomerInChain = getNextMonomerInChain(monomer);
 
     return (
-      LinkerSequenceNode.isValidPartForLinker(monomer) &&
-      (LinkerSequenceNode.isValidPartForLinker(previousMonomerInChain) ||
-        LinkerSequenceNode.isValidPartForLinker(nextMonomerInChain))
+      this.isValidPartForLinker(monomer) &&
+      (this.isValidPartForLinker(previousMonomerInChain) ||
+        this.isValidPartForLinker(nextMonomerInChain))
     );
   }
 }

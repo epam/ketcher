@@ -444,23 +444,23 @@ export class CoreEditor {
           monomersLibraryUpdateData,
         );
       this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-    } catch (err) {
+    } catch (error) {
       KetcherLogger.error(
         'Editor::initializeMonomersLibraryFromKetcher failed:',
-        err,
+        error,
       );
 
       let errorMessage: string;
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        errorMessage = err;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       } else {
         errorMessage = 'Failed to load monomers library';
       }
 
       const errorTitle =
-        err instanceof MonomerLibraryConvertError
+        error instanceof MonomerLibraryConvertError
           ? 'Monomer library conversion failed'
           : 'Monomer library update failed';
 
@@ -468,7 +468,7 @@ export class CoreEditor {
         errorMessage,
         errorTitle,
       });
-      onError?.(err);
+      onError?.(error);
     }
   }
 
@@ -2285,7 +2285,7 @@ export class CoreEditor {
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
     Object.entries(grouped).forEach(([analogue, typesSet]) => {
-      const types = Array.from(typesSet).sort((a, b) => {
+      const types = [...typesSet].sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
         const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();

@@ -80,8 +80,8 @@ export default function copyAs(type: SerializationType): void {
     } else {
       navigator.clipboard.writeText(structData);
     }
-  } catch (e) {
-    KetcherLogger.error('copyAs.ts::copyAs', e);
+  } catch (error) {
+    KetcherLogger.error('copyAs.ts::copyAs', error);
     errorHandler?.(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }

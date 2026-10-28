@@ -249,13 +249,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats = !this.props.server
+    const formats = this.props.server
       ? [
-          SupportedFormat.ket,
-          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-          SupportedFormat.smiles,
-        ]
-      : [
           SupportedFormat.ket,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
@@ -277,6 +272,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           SupportedFormat.cdxml,
           SupportedFormat.cdx,
           SupportedFormat.binaryCdx,
+        ]
+      : [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
         ];
 
     this.saveSchema = saveSchema;
@@ -356,11 +356,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             isLoading: false,
           });
         })
-        .catch((e) => {
-          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
+        .catch((error) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', error);
+          errorHandler(error);
           this.props.onResetForm(formState);
-          return e;
+          return error;
         });
     } else {
       this.setState({ disableControls: true, isLoading: true });
@@ -368,7 +368,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).some(
+        [...struct.atoms].some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -408,10 +408,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               structStr,
             });
           },
-          (e) => {
-            errorHandler(e.message);
+          (error) => {
+            errorHandler(error.message);
             this.props.onResetForm(formState);
-            return e;
+            return error;
           },
         )
         .finally(() => {
@@ -549,8 +549,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return;
     }
 
-    navigator.clipboard.writeText(structStr || '').catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    navigator.clipboard.writeText(structStr || '').catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       this.props.editor.errorHandler(
         i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
@@ -686,7 +686,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               : format.name)
           }
           key="save-file-button"
-          type={!this.isValidStringFormat(format) ? format.mime : undefined}
+          type={this.isValidStringFormat(format) ? undefined : format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}

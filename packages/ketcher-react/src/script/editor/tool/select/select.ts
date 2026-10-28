@@ -663,8 +663,8 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch((e) => {
-          KetcherLogger.error('select.ts::SelectTool::dblclick', e);
+        .catch((error) => {
+          KetcherLogger.error('select.ts::SelectTool::dblclick', error);
         });
     }
     return true;
@@ -693,9 +693,9 @@ class SelectTool implements Tool {
     let isDraggingOnSaltOrSolventAtom;
     let isDraggingOnSaltOrSolventBond;
     if (dragCtx?.mergeItems) {
-      const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
-      const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
-      const sgroupsOnCanvas = Array.from(sgroups.values())
+      const mergeAtoms = [...dragCtx.mergeItems.atoms.values()];
+      const mergeBonds = [...dragCtx.mergeItems.bonds.values()];
+      const sgroupsOnCanvas = [...sgroups.values()]
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>

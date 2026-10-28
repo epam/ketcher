@@ -46,10 +46,10 @@ export const getOtherLibraryMonomers = (
     if (!original) {
       return true;
     }
-    return original.props.id !== undefined
-      ? item.props.id !== original.props.id
-      : item.props.MonomerName !== original.props.MonomerName ||
-          item.props.MonomerClass !== original.props.MonomerClass;
+    return original.props.id === undefined
+      ? item.props.MonomerName !== original.props.MonomerName ||
+          item.props.MonomerClass !== original.props.MonomerClass
+      : item.props.id !== original.props.id;
   });
 
 /*

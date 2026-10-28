@@ -109,7 +109,7 @@ export class Nucleotide {
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
-    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

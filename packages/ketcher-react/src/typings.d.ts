@@ -3,6 +3,8 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css';
+
 declare namespace JSX {
   type Element = React.JSX.Element;
 }

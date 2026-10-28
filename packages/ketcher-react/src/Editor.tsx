@@ -278,7 +278,7 @@ export const Editor = (props: Props) => {
     if (
       !ketcher ||
       !moleculesEditorRef.current ||
-      !(macromoleculesEditorRef.current || disableMacromoleculesEditor)
+      !(disableMacromoleculesEditor || macromoleculesEditorRef.current)
     ) {
       return;
     }

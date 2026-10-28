@@ -188,8 +188,8 @@ const RnaElementsAccordionView = ({
               </>
             </DetailsContainer>
           );
-        return groupData.groupName === RnaBuilderPresetsItem.Presets &&
-          expanded ? (
+        return expanded &&
+          groupData.groupName === RnaBuilderPresetsItem.Presets ? (
           <StyledAccordionWrapper key={groupData.groupName}>
             <StyledAccordion
               data-testid="styled-accordion"

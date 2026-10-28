@@ -507,7 +507,7 @@ export const CreateMonomerDialog = (page: Page) => {
     async submit({ ignoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
-        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
+        if (ignoreWarning && (await WarningMessageDialog(page).isVisible())) {
           await WarningMessageDialog(page).ok();
         }
       });

@@ -389,7 +389,7 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
+    if (isAtomInMiddleOfChain || (isAtomTerminal && visibleTerminal)) {
       return true;
     }
 
@@ -488,12 +488,12 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(
           'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          shouldHydrogenBeOnLeft && this.atom.hasExplicitIsotope ? 4 : 0,
         )
         .text('H');
 

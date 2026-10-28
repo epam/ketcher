@@ -92,7 +92,7 @@ const resolvePackageAlias = (source, importer) => {
     }
 
     const replacementPath =
-      replacement.hasWildcard && suffix
+      suffix && replacement.hasWildcard
         ? `${replacement.value}/${suffix}`
         : replacement.value;
 

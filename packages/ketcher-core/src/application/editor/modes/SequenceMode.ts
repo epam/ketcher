@@ -576,7 +576,7 @@ export class SequenceMode extends BaseMode {
           );
         }
         // Update Base monomerItem object
-        if (nodeToModify.rnaBase && baseMonomerItem) {
+        if (baseMonomerItem && nodeToModify.rnaBase) {
           const editedBase = nodeToModify.rnaBase;
           const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
           // Captured before the edit: the ambiguous branch below replaces
@@ -684,7 +684,7 @@ export class SequenceMode extends BaseMode {
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
 
-    if (this.isEditMode && isClickedOnSequenceItem) {
+    if (isClickedOnSequenceItem && this.isEditMode) {
       this.unselectAllEntities();
     }
   }
@@ -729,7 +729,7 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
+    if (isEventOnSequenceItem && this.isEditMode && !event.shiftKey) {
       let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
 
       // Case when user clicks between symbols. In this case renderer stored in eventData
@@ -964,8 +964,8 @@ export class SequenceMode extends BaseMode {
   ) {
     if (
       !firstNodeToConnect ||
-      firstNodeToConnect instanceof EmptySequenceNode ||
       !secondNodeToConnect ||
+      firstNodeToConnect instanceof EmptySequenceNode ||
       secondNodeToConnect instanceof EmptySequenceNode
     ) {
       return;
@@ -1302,8 +1302,8 @@ export class SequenceMode extends BaseMode {
         !nodeInSameChainBeforeSelection &&
         nodeAfterSelection &&
         selectionStartNode &&
-        !(nodeAfterSelection instanceof EmptySequenceNode) &&
-        nodeAfterSelection === nodeInSameChainAfterSelection
+        nodeAfterSelection === nodeInSameChainAfterSelection &&
+        !(nodeAfterSelection instanceof EmptySequenceNode)
       ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.moveMonomer(
@@ -1530,8 +1530,8 @@ export class SequenceMode extends BaseMode {
           this.needToEditAntisense &&
           nodeToDelete.antisenseNode &&
           // Do not delete empty antisense node and connect prev and next nodes if delete empty node in one chain (no need to connect previous and current chains)
-          (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode) ||
-            !previousNodeInSameChain)
+          (!previousNodeInSameChain ||
+            !(nodeToDelete.antisenseNode instanceof EmptySequenceNode))
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(
@@ -1689,9 +1689,9 @@ export class SequenceMode extends BaseMode {
             currentTwoStrandedNode,
           );
           if (
+            nextNucleotideFromCurrent !== undefined &&
             hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
             !hasValidAntisense(currentTwoStrandedNode) &&
-            nextNucleotideFromCurrent !== undefined &&
             !hasValidAntisense(nextNucleotideFromCurrent)
           ) {
             let nextNodeWithAntisense = currentTwoStrandedNode
@@ -1931,7 +1931,7 @@ export class SequenceMode extends BaseMode {
           if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode && !isEnteringSymbolP
+              !isEnteringSymbolP && this.isAntisenseEditMode
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
@@ -1981,10 +1981,10 @@ export class SequenceMode extends BaseMode {
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode ||
+              isEnteringSymbolP ||
+                this.isAntisenseEditMode ||
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
-                isEnteringSymbolP
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
@@ -2001,9 +2001,9 @@ export class SequenceMode extends BaseMode {
             }
 
             if (
-              this.isSyncEditMode &&
               antisenseNodeCreationResult &&
               senseNodeToConnect &&
+              this.isSyncEditMode &&
               (senseNodeToConnect instanceof Nucleotide ||
                 senseNodeToConnect instanceof Nucleoside)
             ) {
@@ -2062,8 +2062,8 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           const arrowKey = event.key;
           if (
-            SequenceRenderer.caretPosition === 0 &&
-            arrowKey === 'ArrowLeft'
+            arrowKey === 'ArrowLeft' &&
+            SequenceRenderer.caretPosition === 0
           ) {
             return;
           }
@@ -2237,7 +2237,7 @@ export class SequenceMode extends BaseMode {
     const hasPhosphateAtChainEnd =
       chainsCollection?.lastNode?.monomer?.isPhosphate;
 
-    if (!SequenceRenderer.isCaretAtChainEnd && hasPhosphateAtChainEnd) {
+    if (hasPhosphateAtChainEnd && !SequenceRenderer.isCaretAtChainEnd) {
       nextCaretPosition -= 1;
     }
 
@@ -2810,7 +2810,7 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     newBaseCarryingItem: MonomerOrAmbiguousType | undefined,
   ): boolean {
-    if (!this.isSyncEditMode || !newBaseCarryingItem) {
+    if (!newBaseCarryingItem || !this.isSyncEditMode) {
       return false;
     }
 
@@ -3331,8 +3331,8 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
 
     if (
-      nextNodeToConnect instanceof EmptySequenceNode &&
-      previousNodeToConnect
+      previousNodeToConnect &&
+      nextNodeToConnect instanceof EmptySequenceNode
     ) {
       if (
         !previousTwoStrandedNodeInSameChain?.antisenseNode &&

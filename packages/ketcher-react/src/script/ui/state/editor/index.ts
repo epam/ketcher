@@ -95,12 +95,12 @@ export default function initEditor(
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (
+        force === true ||
         shouldResetToSelect(
           activeTool,
           resetOption,
           typeof toolAction?.opts === 'string' ? toolAction.opts : undefined,
-        ) ||
-        force === true
+        )
       )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });

@@ -114,7 +114,7 @@ export function identifyStructFormat(
     return SupportedFormat.idt;
   }
 
-  if (!sanitizedString.includes('\n') && !isMacromolecules) {
+  if (!isMacromolecules && !sanitizedString.includes('\n')) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +15,9 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type SimpleObjectMode,
+  type Vec2,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
@@ -25,12 +26,22 @@ import {
   SimpleObjectDelete,
 } from 'ketcher-core';
 import type Editor from '../Editor';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import type { Tool } from './Tool';
+
+interface SimpleObjectDragContext {
+  p0: Vec2;
+  previous?: Vec2;
+  ci?: ClosestItemWithMap;
+  isNew?: boolean;
+  action?: Action;
+  itemId?: number;
+}
 
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx?: SimpleObjectDragContext;
 
   constructor(editor: Editor, mode: SimpleObjectMode) {
     this.mode = mode;
@@ -38,7 +49,7 @@ class SimpleObjectTool implements Tool {
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const rnd = this.editor.render;
     const p0 = CoordinateTransformation.pageToModel(event, rnd);
     this.dragCtx = { p0 };
@@ -55,7 +66,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const rnd = this.editor.render;
 
     if (this.dragCtx) {
@@ -123,7 +134,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mouseup(event) {
+  mouseup(event: PointerEvent) {
     if (!this.dragCtx) {
       return;
     }

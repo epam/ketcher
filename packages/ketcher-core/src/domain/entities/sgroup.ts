@@ -612,7 +612,7 @@ export class SGroup {
       if (!atom) return;
 
       let structBoundingBox: Box2Abs | null = null;
-      if ('getVBoxObj' in atom && atom.getVBoxObj && render) {
+      if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
         structBoundingBox = atom.getVBoxObj(render);
       } else if (atom.pp) {
         const position = new Vec2(atom.pp);

@@ -256,7 +256,7 @@ export function fromBondsAttrs(
     let shouldUpdateStereo = false;
 
     Object.keys(Bond.attrlist).forEach((key) => {
-      if (!(key in attrs) && !reset) return;
+      if (!reset && !(key in attrs)) return;
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
@@ -438,10 +438,10 @@ export function bondChangingAction(
       ? plainBondTypes
       : null;
   if (
+    loop &&
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-    bond.stereo === Bond.PATTERN.STEREO.NONE &&
-    loop
+    bond.stereo === Bond.PATTERN.STEREO.NONE
   ) {
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];

@@ -268,8 +268,8 @@ function AttachmentPointSelectionPanel({
       attachmentPoints={monomer.listOfAttachmentPoints.map(
         (attachmentPoint) => {
           const disabled = Boolean(
-            connectedAttachmentPoints.includes(attachmentPoint) &&
-            attachmentPoint !== selectedAttachmentPoint,
+            attachmentPoint !== selectedAttachmentPoint &&
+            connectedAttachmentPoints.includes(attachmentPoint),
           );
           return (
             <AttachmentPoint key={attachmentPoint}>

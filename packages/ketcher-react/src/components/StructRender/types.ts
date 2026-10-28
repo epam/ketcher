@@ -14,17 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct, RenderOptions } from 'ketcher-core';
-
-export interface StructRenderOptions extends Partial<RenderOptions> {
-  cachePrefix?: string;
-  needCache?: boolean;
-  wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
-}
+import type { Struct, RenderStructOptions } from 'ketcher-core';
 
 export interface IStructRenderProps {
   struct: Struct;
-  options?: StructRenderOptions;
+  options?: RenderStructOptions;
   className?: string;
   update?: boolean;
   fullsize?: boolean;

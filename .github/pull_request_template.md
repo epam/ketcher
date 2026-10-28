@@ -1,6 +1,18 @@
-## How the feature works? / How did you fix the issue?
+## Summary
 
-(Screenshots, videos, or GIFs, if applicable)
+How the feature works, or how you fixed the issue. Add a diagram, a diff sketch, or a tree when it makes the change clearer.
+
+## Evidence
+
+Before and after: screenshots, videos, or GIFs for a visual change; a test run or console output otherwise.
+
+- **Before:**
+- **After:**
+
+## Merge danger
+
+- **Door:** one-way or two-way (can the change be rolled back cheaply?)
+- **Blast radius:** what else this change can break (other modes, file formats, API consumers, layout)
 
 ## PR type
 

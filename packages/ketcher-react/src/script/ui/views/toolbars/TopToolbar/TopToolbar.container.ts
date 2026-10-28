@@ -25,17 +25,15 @@ import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
 import type { UiActionAction } from '../../../action';
 import type { RequestState } from '../../../state/request/request.types';
+import type { ActionStatus } from '../../../state/action';
 import type { ToolbarState } from '../../../state/toolbar/types';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 import type Editor from '../../../../editor';
 
-type ActionStatus = {
-  disabled?: boolean;
-  hidden?: boolean;
-};
-
 type State = {
-  actionState?: Record<string, ActionStatus | undefined> & {
+  // zoom stores the numeric zoom level in `selected`, unlike the boolean
+  // `selected` of other actions, so it is excluded from the shared shape here
+  actionState?: Record<string, Omit<ActionStatus, 'selected'> | undefined> & {
     zoom?: { selected?: number };
   };
   editor?: Pick<Editor, 'isMonomerCreationWizardActive'> | null;

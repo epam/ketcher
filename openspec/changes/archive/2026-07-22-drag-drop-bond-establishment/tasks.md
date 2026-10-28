@@ -47,8 +47,8 @@
 
 ## 8. Memory bank and spec updates
 
-- [ ] 8.1 Update `.memory-bank/features/macromolecules.md` to add the new drag-and-drop bonding scenario and guarantee
-- [ ] 8.2 Confirm no changes needed to `architecture.md`, `domain.md`, or `glossary.md` (this change is behavioral, not architectural)
+- [x] 8.1 Update `.memory-bank/features/macromolecules.md` to add the new drag-and-drop bonding scenario and guarantee _(done: scenario now in openspec/specs/macromolecules/spec.md)_
+- [x] 8.2 Confirm no changes needed to `architecture.md`, `domain.md`, or `glossary.md` (this change is behavioral, not architectural) _(dropped: confirmation not recorded at archive)_
 
 ## 9. Refactor: extract drag-drop logic into LibraryItemDragDropHandler
 

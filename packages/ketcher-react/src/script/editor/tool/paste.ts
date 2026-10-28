@@ -246,10 +246,10 @@ class PasteTool implements Tool {
   mouseup() {
     const idsOfItemsMerged = this.mergeItems && {
       ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
+        atoms: [...this.mergeItems.atoms.values()],
       }),
       ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
+        bonds: [...this.mergeItems.bonds.values()],
       }),
     };
 

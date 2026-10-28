@@ -273,7 +273,7 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
             data.format,
             indigoOptions,
           ),
-        data.options,
+        { 'valence-mode': data?.options?.['valence-mode'] },
         Command.ExplicitHydrogens,
       );
       break;

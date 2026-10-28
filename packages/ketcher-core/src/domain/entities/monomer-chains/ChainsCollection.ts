@@ -237,10 +237,10 @@ export class ChainsCollection {
 
         handledMonomers.add(previousMonomerInChain);
 
-        if (!previousMonomer) {
-          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
-        } else {
+        if (previousMonomer) {
           previousMonomerInChain = previousMonomer;
+        } else {
+          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
         }
       }
     });
@@ -314,7 +314,7 @@ export class ChainsCollection {
       }
 
       if (monomer === nextMonomerInChain) {
-        cyclicChains.push(Array.from(monomersInSameChain));
+        cyclicChains.push([...monomersInSameChain]);
       }
     });
 
@@ -328,7 +328,7 @@ export class ChainsCollection {
   private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerListShallowCopy = monomerList.slice();
+    const monomerListShallowCopy = [...monomerList];
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
       if (

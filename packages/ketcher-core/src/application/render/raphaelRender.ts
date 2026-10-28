@@ -180,8 +180,8 @@ export class Render {
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
       console.log('Not a valid settings object');
     }
     return false;

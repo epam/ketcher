@@ -214,7 +214,14 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
     -2;
   const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
-  if (oPos2.x !== 0) {
+  if (oPos2.x === 0) {
+    obj.pos1 = { x: 0, y: 0 };
+    obj.pos2 = { x: 0, y: 0 };
+    obj.pos1.y = c / oPos2.y;
+    obj.pos2.y = c / oPos2.y;
+    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+  } else {
     const b = -2 * oPos2.y * c;
     const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
     const D = b * b - 4 * a * e;
@@ -226,13 +233,6 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
       obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x;
       obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x;
     }
-  } else {
-    obj.pos1 = { x: 0, y: 0 };
-    obj.pos2 = { x: 0, y: 0 };
-    obj.pos1.y = c / oPos2.y;
-    obj.pos2.y = c / oPos2.y;
-    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   }
   if (obj.pos1 !== null) {
     obj.pos1.x += aPoint.x;

@@ -246,10 +246,10 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         try {
           const parsedInfo = JSON.parse(msg.info);
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch (e) {
+        } catch (error) {
           KetcherLogger.error(
             'StructEditor.tsx::StructEditor::componentDidMount',
-            e,
+            error,
           );
           el.innerHTML = msg.info;
         }

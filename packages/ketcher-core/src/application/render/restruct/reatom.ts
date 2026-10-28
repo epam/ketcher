@@ -164,12 +164,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     const { assignedAttachmentPoints } = render.monomerCreationState;
 
-    const attachmentPointEntry = Array.from(
-      assignedAttachmentPoints.entries(),
-    ).find(([, atomsPair]) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
-      return attachmentAtomId === atomId || leavingAtomId === atomId;
-    });
+    const attachmentPointEntry = [...assignedAttachmentPoints.entries()].find(
+      ([, atomsPair]) => {
+        const [attachmentAtomId, leavingAtomId] = atomsPair;
+        return attachmentAtomId === atomId || leavingAtomId === atomId;
+      },
+    );
 
     if (attachmentPointEntry && hoverElement) {
       const [attachmentPointName] = attachmentPointEntry;
@@ -214,13 +214,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    const potentialLeavingGroups = Array.from(
-      potentialAttachmentPoints.values(),
-    );
+    const potentialLeavingGroups = [...potentialAttachmentPoints.values()];
 
-    const isAtomInAssignedAttachmentPoint = Array.from(
-      assignedAttachmentPoints.values(),
-    ).some((atomsPair) => {
+    const isAtomInAssignedAttachmentPoint = [
+      ...assignedAttachmentPoints.values(),
+    ].some((atomsPair) => {
       const [attachmentAtomId, leavingAtomId] = atomsPair;
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
@@ -778,9 +776,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-        const [attachmentAtoms, leavingGroups] = Array.from(
-          assignedAttachmentPoints.values(),
-        ).reduce(
+        const [attachmentAtoms, leavingGroups] = [
+          ...assignedAttachmentPoints.values(),
+        ].reduce(
           (acc, currentPair) => {
             const attachmentAtomId = currentPair[0];
             acc[0].add(attachmentAtomId);
@@ -821,13 +819,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
-        const attachmentPointName = Array.from(
-          assignedAttachmentPoints.keys(),
-        ).find((key) => {
-          const atomsPair = assignedAttachmentPoints.get(key);
-          assert(atomsPair);
-          return atomsPair[1] === aid;
-        });
+        const attachmentPointName = [...assignedAttachmentPoints.keys()].find(
+          (key) => {
+            const atomsPair = assignedAttachmentPoints.get(key);
+            assert(atomsPair);
+            return atomsPair[1] === aid;
+          },
+        );
 
         if (attachmentPointName) {
           const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
@@ -996,9 +994,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // the connection atom, same visual style as regular attachment atoms
         // but without an R-label. Hover syncs with the panel row.
         if (connectionAttachmentPoints) {
-          const isConnectionAtom = Array.from(
-            connectionAttachmentPoints.values(),
-          ).some(([connectionAtomId]) => connectionAtomId === aid);
+          const isConnectionAtom = [
+            ...connectionAttachmentPoints.values(),
+          ].some(([connectionAtomId]) => connectionAtomId === aid);
 
           if (isConnectionAtom && !problematicAtoms?.has(aid)) {
             // Draw the same blue outline ring used for regular attachment atoms
@@ -1023,9 +1021,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             });
 
             // Find the AP name(s) for this connection atom to drive panel sync
-            const connectionApNames = Array.from(
-              connectionAttachmentPoints.entries(),
-            )
+            const connectionApNames = [...connectionAttachmentPoints.entries()]
               .filter(([, [caid]]) => caid === aid)
               .map(([apName]) => apName);
 
@@ -2359,7 +2355,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;
-      return !charge.startsWith('-') ? `+${charge}` : charge;
+      return charge.startsWith('-') ? charge : `+${charge}`;
     },
   },
   {
@@ -2370,7 +2366,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'explicitValence',
     getValue: (atom) => atom.explicitValence,
-    format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    format: (value) => (Number(value) === -1 ? '' : `v${value}`),
   },
   {
     propertyName: 'ringBondCount',

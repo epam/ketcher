@@ -74,7 +74,7 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
         status[item.id]?.hidden ||
         item.options?.every((option) => status[option.id]?.hidden)
           ? acc
-          : acc.concat(item),
+          : [...acc, item],
       [],
     ) ?? [];
 

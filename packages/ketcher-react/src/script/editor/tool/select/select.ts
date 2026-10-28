@@ -195,8 +195,8 @@ class SelectTool implements Tool {
     if (ci.map === 'frags') {
       sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
-      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
-      sgroups
+      sgroups &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups')
     ) {
       const sgroup = sgroups.item;
       sel = {

@@ -473,8 +473,8 @@ export class CoreEditor {
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
-      persistentMonomersLibrary.length !== 0 &&
-      persistentMonomersLibraryParsedJson !== undefined
+      persistentMonomersLibraryParsedJson !== undefined &&
+      persistentMonomersLibrary.length !== 0
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
@@ -558,7 +558,7 @@ export class CoreEditor {
       : undefined;
     if (
       editedMonomerRef &&
-      (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
+      (!editedMonomer || newMonomersLibraryChunk.length !== 1)
     ) {
       throw new Error(
         'The original monomer is no longer available for editing.',
@@ -1273,8 +1273,8 @@ export class CoreEditor {
       const target = event.target as Node | null;
       // Guard: only handle events whose target is inside this editor's root element
       if (
-        !this.ketcherRootElement ||
         !target ||
+        !this.ketcherRootElement ||
         !this.ketcherRootElement.contains(target)
       ) {
         return;
@@ -1310,7 +1310,7 @@ export class CoreEditor {
             const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
 
             // Add sense node if it's selected
-            if (senseNode?.monomer.selected && senseNode) {
+            if (senseNode && senseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: senseNode as SubChainNode,
@@ -1319,7 +1319,7 @@ export class CoreEditor {
             }
 
             // Add antisense node if it's selected
-            if (antisenseNode?.monomer.selected && antisenseNode) {
+            if (antisenseNode && antisenseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: antisenseNode as SubChainNode,

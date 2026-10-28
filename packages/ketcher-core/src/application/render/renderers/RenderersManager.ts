@@ -282,7 +282,7 @@ export class RenderersManager {
     let currentSegmentLength = 0;
 
     subChain.nodes.forEach((node, nodeIndex) => {
-      if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
+      if (currentSegmentLength === 0 && this.isRnaEnumerationNode(node)) {
         currentSegmentLength = this.getRnaEnumerationSegmentLength(
           subChain,
           nodeIndex,

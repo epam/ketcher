@@ -245,7 +245,7 @@ export class ViewModel {
         index <= this.halfEdges.size;
         currentHalfEdge = currentHalfEdge.nextHalfEdge, ++index
       ) {
-        if (!(index > 0 && currentHalfEdge === halfEdge)) {
+        if (index === 0 || currentHalfEdge !== halfEdge) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
           continue;
         }

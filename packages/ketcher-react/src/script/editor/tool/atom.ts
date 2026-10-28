@@ -269,11 +269,11 @@ class AtomTool implements Tool {
     const struct = editor.struct();
     const action = new Action();
 
-    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+    if (!dragCtx || struct.isTargetFromMacromolecule(ci)) {
       return;
     }
 
-    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
+    if (!ci && (!dragCtx.item || dragCtx?.isSaltOrSolvent)) {
       action.mergeWith(
         fromAtomAddition(
           reStruct,
@@ -281,7 +281,7 @@ class AtomTool implements Tool {
           atomProps,
         ),
       );
-    } else if (dragCtx.item && ci) {
+    } else if (ci && dragCtx.item) {
       if (dragCtx.item.id === ci.id) {
         if (
           ci.map === 'functionalGroups' &&

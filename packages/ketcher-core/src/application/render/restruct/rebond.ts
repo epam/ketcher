@@ -110,13 +110,13 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1?.isContracted() && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup1?.isContracted()) {
       p1 = sgroup1.getContractedPosition(restruct.molecule).position;
     } else {
       p1 = beginAtom.a.pp;
     }
 
-    if (sgroup2?.isContracted() && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup2?.isContracted()) {
       p2 = sgroup2.getContractedPosition(restruct.molecule).position;
     } else {
       p2 = endAtom.a.pp;
@@ -762,9 +762,9 @@ function findIncomingStereoUpBond(
     }
 
     if (
+      includeBoldStereoBond &&
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
-      includeBoldStereoBond &&
       neibond.boldStereo
     ) {
       return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
@@ -1684,8 +1684,8 @@ function selectDoubleBondShift(
   d1: number,
   d2: number,
 ): number {
-  if (n1 === 6 && n2 !== 6 && (d1 > 1 || d2 === 1)) return -1;
-  if (n2 === 6 && n1 !== 6 && (d2 > 1 || d1 === 1)) return 1;
+  if (n1 === 6 && n2 !== 6 && (d2 === 1 || d1 > 1)) return -1;
+  if (n2 === 6 && n1 !== 6 && (d1 === 1 || d2 > 1)) return 1;
   if (n2 * d1 > n1 * d2) return -1;
   if (n2 * d1 < n1 * d2) return 1;
   if (n2 > n1) return -1;

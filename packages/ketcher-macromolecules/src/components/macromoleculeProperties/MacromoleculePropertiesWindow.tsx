@@ -478,7 +478,7 @@ function lttb(xs, ys, threshold) {
   // Largest Triangle Three Buckets algorithm
   const dataLength = xs.length;
 
-  if (threshold >= dataLength || threshold === 0) {
+  if (threshold === 0 || threshold >= dataLength) {
     return { xs, ys };
   }
 

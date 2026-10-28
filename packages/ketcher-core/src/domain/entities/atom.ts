@@ -394,13 +394,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
       this.label === 'GH' ||
       this.label === 'GH*';
     return Boolean(
-      this.substitutionCount !== 0 ||
-      this.unsaturatedAtom !== 0 ||
-      this.ringBondCount !== 0 ||
       isAnyAtom ||
       isAnyMetal ||
       isAnyHalogen ||
       isAnyGroup ||
+      this.substitutionCount !== 0 ||
+      this.unsaturatedAtom !== 0 ||
+      this.ringBondCount !== 0 ||
       this.hCount !== 0 ||
       this.atomList !== null ||
       Object.values(queryProperties).some(
@@ -702,7 +702,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
     }
     if (label === 'Bi' || label === 'Sb' || label === 'As') {
       if (charge === 1) {
-        if (radicalCount + connectionCount <= 2 && label !== 'As') {
+        if (label !== 'As' && radicalCount + connectionCount <= 2) {
           return {
             valence: 2,
             hydrogenCount: 2 - radicalCount - connectionCount,

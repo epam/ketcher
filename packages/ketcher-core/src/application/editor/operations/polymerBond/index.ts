@@ -188,10 +188,10 @@ export class SelectLayoutModeOperation implements Operation {
 }
 
 export class ReconnectPolymerBondOperation implements Operation {
-  public polymerBond;
   constructor(
     private readonly reconnectPolymerBondModelChange: () => PolymerBond,
     private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
+    public polymerBond: PolymerBond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

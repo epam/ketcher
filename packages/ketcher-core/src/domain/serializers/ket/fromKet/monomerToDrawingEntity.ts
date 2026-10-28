@@ -140,6 +140,7 @@ export function variantMonomerToDrawingEntity(
       id: template.id,
       subtype: template.subtype,
       label: node.alias,
+      seqId: node.seqid,
       options: template.options,
       idtAliases: template.idtAliases,
       isAmbiguous: true,

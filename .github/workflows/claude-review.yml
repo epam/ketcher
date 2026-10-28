@@ -16,7 +16,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 1
 
@@ -36,7 +36,7 @@ jobs:
           git checkout origin/master -- .agents AGENTS.md
 
       - name: PR Review with Progress Tracking
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
         env:
           CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
         with:

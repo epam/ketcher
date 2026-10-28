@@ -2413,6 +2413,7 @@ export class DrawingEntitiesManager {
           ? targetDrawingEntitiesManager.addAmbiguousMonomer(
               {
                 ...monomer.variantMonomerItem,
+                seqId: monomer.monomerItem.seqId,
               },
               monomer.position,
             )
@@ -3179,6 +3180,7 @@ export class DrawingEntitiesManager {
           initialFirstMonomerAttachmentPoint: newFirstMonomerAttachmentPoint,
           initialSecondMonomerAttachmentPoint: newSecondMonomerAttachmentPoint,
         }),
+        polymerBond,
       ),
     );
 

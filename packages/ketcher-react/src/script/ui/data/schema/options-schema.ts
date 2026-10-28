@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -520,14 +520,14 @@ export function validation(settings): Record<string, string> | null {
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',
   });
-  const errorsProps = result.errors.map((e) =>
-    e.property.replace(/^instance\./, ''),
+  const errorsProps = new Set(
+    result.errors.map((e) => e.property.replace(/^instance\./, '')),
   );
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;
 
-    if (optionsSchema.properties[prop] && !errorsProps.includes(prop))
+    if (optionsSchema.properties[prop] && !errorsProps.has(prop))
       res[prop] = settings[prop];
 
     return res;

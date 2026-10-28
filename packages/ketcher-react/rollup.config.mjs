@@ -1,6 +1,6 @@
 import autoprefixer from 'autoprefixer';
 import babel from '@rollup/plugin-babel';
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';

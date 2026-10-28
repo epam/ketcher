@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -116,7 +116,7 @@ export class HighlightDelete extends BaseOperation {
       const struct = restruct.molecule;
 
       const highlightToRemove = struct.highlights.get(this.data.highlightId);
-      if (typeof highlightToRemove === 'undefined') {
+      if (highlightToRemove === undefined) {
         return;
       }
 
@@ -261,7 +261,7 @@ function notifyChanged(
 
   if (atoms) {
     atoms.forEach((atomId) => {
-      if (typeof reAtoms.get(atomId) !== 'undefined') {
+      if (reAtoms.get(atomId) !== undefined) {
         restruct.markAtom(atomId, 1);
       }
     });
@@ -269,7 +269,7 @@ function notifyChanged(
 
   if (bonds) {
     bonds.forEach((bondId) => {
-      if (typeof reBonds.get(bondId) !== 'undefined') {
+      if (reBonds.get(bondId) !== undefined) {
         restruct.markBond(bondId, 1);
       }
     });
@@ -277,7 +277,7 @@ function notifyChanged(
 
   if (rgroupAttachmentPoints) {
     rgroupAttachmentPoints.forEach((rgroupAPid) => {
-      if (typeof reRgroupAttachmentPoints.get(rgroupAPid) !== 'undefined') {
+      if (reRgroupAttachmentPoints.get(rgroupAPid) !== undefined) {
         restruct.markRgroupAttachmentPoint(rgroupAPid, 1);
       }
     });

@@ -1,6 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-import { lazy, Suspense, useEffect, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import {
   type EditorProps,
@@ -15,6 +21,7 @@ import {
   type Editor as MoleculesEditor,
   type CoreEditor,
   ketcherProvider,
+  type MonomerCreationWizardRequest,
 } from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
@@ -51,34 +58,80 @@ const MacromoleculesEditorComponent = lazy(
 >;
 
 export const Editor = (props: Props) => {
+  const {
+    onInit,
+    disableMacromoleculesEditor,
+    monomersLibraryUpdate,
+    monomersLibraryReplace,
+    ...restProps
+  } = props;
   // Subscribes this component to react-i18next's languageChanged event so
   // `dir` below is re-evaluated on a live language switch, not just on next
   // full page load. The hook's `t`/`i18n` return values aren't used here.
   useTranslation();
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
   const [moleculesEditor, setMoleculesEditor] = useState<MoleculesEditor>();
-  const [ketcher, setKetcher] = useState<Ketcher>();
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
 
   const [ketcherId, setKetcherId] = useState<string>('');
-  const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  };
+  const initializedKetcherRef = useRef<Ketcher | null>(null);
+  // Refs (not state) so both init callbacks always see the latest instances,
+  // regardless of which render they were created in.
+  const ketcherRef = useRef<Ketcher | undefined>(undefined);
+  const moleculesEditorRef = useRef<MoleculesEditor | undefined>(undefined);
+  const macromoleculesEditorRef = useRef<CoreEditor | undefined>(undefined);
+  const prevShowPolymerEditorRef = useRef<boolean>(showPolymerEditor);
+  const editorsReadyRef = useRef<boolean>(false);
 
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
+  const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
+  const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
+    undefined,
+  );
+  const wizardSessionActive = useRef(false);
+  const skipModeConversion = useRef(false);
+  const pendingWizardFinish = useRef<boolean | undefined>(undefined);
+  const togglePolymerEditor = useCallback((toggleValue: boolean) => {
+    setShowPolymerEditor(toggleValue);
+    globalThis.isPolymerEditorTurnedOn = toggleValue;
+  }, []);
+
+  const togglerComponent = disableMacromoleculesEditor ? undefined : (
     <ModeControl
-      toggle={togglePolymerEditor}
+      toggle={(value) => {
+        if (!isMonomerWizardOpen) togglePolymerEditor(value);
+      }}
       isPolymerEditor={showPolymerEditor}
+      disabled={isMonomerWizardOpen}
     />
-  ) : undefined;
+  );
+
+  useEffect(() => {
+    const onWizardStateChange = (active: boolean) => {
+      setIsMonomerWizardOpen(active || wizardSessionActive.current);
+    };
+    moleculesEditor?.event.monomerWizardStateChange.add(onWizardStateChange);
+    return () => {
+      moleculesEditor?.event.monomerWizardStateChange.remove(
+        onWizardStateChange,
+      );
+    };
+  }, [moleculesEditor]);
 
   useEffect(() => {
     const switchToMacromoleculesModeHandler = () => {
+      if (wizardSessionActive.current) return;
       togglePolymerEditor(true);
     };
     const switchToMoleculesModeHandler = () => {
+      if (wizardSessionActive.current) return;
+      togglePolymerEditor(false);
+    };
+    const openWizardHandler = (request: MonomerCreationWizardRequest) => {
+      if (wizardSessionActive.current) return;
+      wizardSessionActive.current = true;
+      pendingWizard.current = request;
+      setIsMonomerWizardOpen(true);
       togglePolymerEditor(false);
     };
 
@@ -88,6 +141,9 @@ export const Editor = (props: Props) => {
       );
       macromoleculesEditor.events.switchToMoleculesMode.add(
         switchToMoleculesModeHandler,
+      );
+      macromoleculesEditor.events.openMonomerCreationWizard.add(
+        openWizardHandler,
       );
     }
 
@@ -99,18 +155,105 @@ export const Editor = (props: Props) => {
         macromoleculesEditor.events.switchToMoleculesMode.remove(
           switchToMoleculesModeHandler,
         );
+        macromoleculesEditor.events.openMonomerCreationWizard.remove(
+          openWizardHandler,
+        );
       }
     };
-  }, [macromoleculesEditor]);
+  }, [macromoleculesEditor, togglePolymerEditor]);
 
   useEffect(() => {
     return () => {
-      window.isPolymerEditorTurnedOn = false;
+      globalThis.isPolymerEditorTurnedOn = false;
     };
   }, []);
 
+  /*
+   * Runs after the macromolecules canvas is shown but before the browser
+   * paints, so the rebuilt structures are measured against a laid-out canvas
+   * and the user never sees the pre-wizard canvas flash.
+   */
+  useLayoutEffect(() => {
+    const savedCanvas = pendingWizardFinish.current;
+
+    if (savedCanvas === undefined || !macromoleculesEditor) {
+      return;
+    }
+
+    pendingWizardFinish.current = undefined;
+
+    try {
+      macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
+    } catch (error) {
+      moleculesEditor?.errorHandler?.(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }, [showPolymerEditor, macromoleculesEditor, moleculesEditor]);
+
+  /*
+   * This effect is synchronization with the DOM, not event handling.
+   * The imperative editors must switch only after React has committed the
+   * visibility change of their wrappers (display: none -> visible).
+   * Moving this logic into togglePolymerEditor was attempted, but it renders
+   * into a still-hidden container (zero-size SVG bounding boxes, focus fails),
+   * which broke the e2e test that expands monomers in micromolecules mode.
+   */
+  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
+    // Guard to prevent running on initial lazy-load mount when editors become ready
+    // and showPolymerEditor is false, to avoid unexpected focus shifts
     if (moleculesEditor && macromoleculesEditor) {
+      // Mark editors as ready once
+      if (!editorsReadyRef.current) {
+        editorsReadyRef.current = true;
+        prevShowPolymerEditorRef.current = showPolymerEditor;
+        return;
+      }
+
+      // Only proceed if showPolymerEditor actually changed
+      if (prevShowPolymerEditorRef.current === showPolymerEditor) {
+        prevShowPolymerEditorRef.current = showPolymerEditor;
+        return;
+      }
+
+      prevShowPolymerEditorRef.current = showPolymerEditor;
+
+      if (skipModeConversion.current) {
+        skipModeConversion.current = false;
+        return;
+      }
+      const request = pendingWizard.current;
+      if (request) {
+        pendingWizard.current = undefined;
+        /*
+         * Only schedules the restore: rebuilding the macromolecules canvas
+         * measures the DOM (monomer labels are laid out from getBBox), and
+         * that canvas is still hidden until React re-renders in macro mode.
+         * The layout effect above performs it once the canvas is on screen.
+         */
+        const finishSession = (savedCanvas: boolean) => {
+          wizardSessionActive.current = false;
+          skipModeConversion.current = true;
+          pendingWizardFinish.current = savedCanvas;
+          setIsMonomerWizardOpen(false);
+          togglePolymerEditor(true);
+        };
+        try {
+          moleculesEditor.openMonomerCreationWizardFromMacro(
+            request,
+            finishSession,
+          );
+        } catch (error) {
+          // Roll back the imperative transition if opening the wizard failed.
+          // eslint-disable-next-line react-you-might-not-need-an-effect/no-chain-state-updates
+          if (wizardSessionActive.current) finishSession(false);
+          moleculesEditor.errorHandler?.(
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+        return;
+      }
       if (showPolymerEditor) {
         moleculesEditor?.closeMonomerCreationWizard?.();
         macromoleculesEditor?.switchToMacromolecules();
@@ -119,27 +262,51 @@ export const Editor = (props: Props) => {
         moleculesEditor?.focusCliparea();
       }
     }
-  }, [showPolymerEditor]);
+  }, [
+    showPolymerEditor,
+    moleculesEditor,
+    macromoleculesEditor,
+    togglePolymerEditor,
+  ]);
+  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
-  useEffect(() => {
+  // Called from both init callbacks. The editors initialize asynchronously in
+  // no guaranteed order, so onInit fires on whichever call finds both ready
+  // (or only the molecules editor, if macromolecules is disabled).
+  const notifyInitIfReady = () => {
+    const ketcher = ketcherRef.current;
     if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || props.disableMacromoleculesEditor)
+      !ketcher ||
+      !moleculesEditorRef.current ||
+      !(macromoleculesEditorRef.current || disableMacromoleculesEditor)
     ) {
-      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
-        props.onInit?.(ketcher);
-      }
+      return;
     }
-  }, [moleculesEditor, macromoleculesEditor]);
+
+    // After analysis, we identified potential risks in removing either check:
+    // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
+    // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
+    // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
+    if (
+      ketcherProvider.getIndexById(ketcher.id) !== -1 &&
+      initializedKetcherRef.current !== ketcher
+    ) {
+      initializedKetcherRef.current = ketcher;
+      onInit?.(ketcher);
+    }
+  };
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
-    setKetcher(ketcher);
+    ketcherRef.current = ketcher;
+    moleculesEditorRef.current = ketcher.editor;
     setMoleculesEditor(ketcher.editor);
+    notifyInitIfReady();
   };
 
   const onInitMacromoleculesEditor = (macromoleculesEditor: CoreEditor) => {
+    macromoleculesEditorRef.current = macromoleculesEditor;
     setMacromoleculesEditor(macromoleculesEditor);
+    notifyInitIfReady();
   };
 
   return (
@@ -164,8 +331,8 @@ export const Editor = (props: Props) => {
                 togglerComponent={togglerComponent}
                 ketcherId={ketcherId}
                 isMacromoleculesEditorTurnedOn={showPolymerEditor}
-                monomersLibraryUpdate={props.monomersLibraryUpdate}
-                monomersLibraryReplace={props.monomersLibraryReplace}
+                monomersLibraryUpdate={monomersLibraryUpdate}
+                monomersLibraryReplace={monomersLibraryReplace}
                 onInit={onInitMacromoleculesEditor}
               />
             )}
@@ -179,7 +346,7 @@ export const Editor = (props: Props) => {
           }}
         >
           <MicromoleculesEditorComponent
-            {...props}
+            {...restProps}
             ketcherId={ketcherId}
             onSetKetcherId={setKetcherId}
             togglerComponent={togglerComponent}

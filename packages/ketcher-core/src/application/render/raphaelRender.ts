@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,10 +30,9 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import type { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditAllInstancesPresetRequirements = {
   type: KetMonomerClass;
@@ -49,6 +48,9 @@ export type MonomerCreationInitialValues = {
   aliasBILN: string;
   position?: Vec2;
   editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
@@ -90,9 +92,6 @@ export type MonomerCreationState = {
     AttachmentPointName,
     [number, number]
   >;
-  // Reference to the BaseMonomer entity on the macromolecules canvas being
-  // edited. Populated only when editing an existing monomer.
-  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -175,8 +174,8 @@ export class Render {
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
       console.log('Not a valid settings object');
     }
     return false;
@@ -194,7 +193,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }

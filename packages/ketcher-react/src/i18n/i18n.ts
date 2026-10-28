@@ -96,10 +96,10 @@ function isSupportedLanguage(value: unknown): value is keyof typeof resources {
 }
 
 function getStoredLanguage(): keyof typeof resources {
-  if (typeof window === 'undefined') {
+  if (typeof globalThis.window === 'undefined') {
     return DEFAULT_LANGUAGE;
   }
-  const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  const stored = globalThis.localStorage.getItem(LANGUAGE_STORAGE_KEY);
   return isSupportedLanguage(stored) ? stored : DEFAULT_LANGUAGE;
 }
 
@@ -126,9 +126,9 @@ if (!i18n.isInitialized) {
           : undefined,
     });
 
-  if (typeof window !== 'undefined') {
+  if (typeof globalThis.window !== 'undefined') {
     i18n.on('languageChanged', (lng) => {
-      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+      globalThis.localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
     });
   }
 }

@@ -41,6 +41,7 @@ interface ImportMetaEnv {
   readonly HELP_LINK?: string;
   readonly NODE_ENV?: string;
   readonly KETCHER_ENABLE_REDUX_LOGGER?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
 }
 
 interface ImportMeta {

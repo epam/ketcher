@@ -135,7 +135,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       return;
     }
 
-    if (preview.type === PreviewType.Preset || !e.currentTarget) {
+    if (preview?.type === PreviewType.Preset || !e.currentTarget) {
       return;
     }
 

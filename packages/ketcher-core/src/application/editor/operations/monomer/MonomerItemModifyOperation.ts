@@ -19,13 +19,20 @@ import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerItemModifyOperation implements Operation {
   monomer: BaseMonomer;
+  public readonly changesSequence: boolean;
   constructor(
     monomer: BaseMonomer,
     public updateMonomerItem: () => BaseMonomer,
     public revertMonomerItem: () => BaseMonomer,
   ) {
     this.monomer = monomer;
+    const previousItem = monomer.monomerItem;
     this.execute();
+    const updatedItem = this.monomer.monomerItem;
+    this.changesSequence =
+      previousItem.struct !== updatedItem.struct ||
+      previousItem.props !== updatedItem.props ||
+      previousItem.label !== updatedItem.label;
   }
 
   public execute() {

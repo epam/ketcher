@@ -38,6 +38,7 @@ export enum AttachmentPointName {
 
 export type MonomerItemBase = {
   label: string;
+  seqId?: number;
   isAmbiguous?: boolean;
   favorite?: boolean;
 };
@@ -68,7 +69,6 @@ export type MonomerItemType = MonomerItemBase & {
     hidden?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];
-  seqId?: number;
   isAntisense?: boolean;
   isSense?: boolean;
   expanded?: boolean;

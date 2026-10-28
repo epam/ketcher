@@ -19,6 +19,7 @@ import type { CoreEditor } from './Editor';
 import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { EditorHistoryAction } from './EditorHistoryAction';
+import { SequenceIdsResetOperation } from './operations/monomer/SequenceIdsResetOperation';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -56,6 +57,12 @@ export class EditorHistory {
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+    const resetSequenceIds = SequenceIdsResetOperation.forCommand(command);
+    if (resetSequenceIds) {
+      command.addOperation(resetSequenceIds);
+      resetSequenceIds.execute(this.editor.renderersContainer);
+      this.editor.renderersContainer.runPostRenderMethods();
+    }
     const latestCommand = this.previousCommand;
     if (
       megreWithLatestHistoryCommand &&

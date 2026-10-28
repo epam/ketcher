@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,
@@ -432,26 +431,12 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
 
 export async function setSettingsOption(
   page: Page,
-  option: (typeof comboBoxOptions)[number],
-  value: ComboBoxValue,
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: (typeof switcherOptions)[number],
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: AllSettingsOptions,
-  value?: string,
-): Promise<void>;
-
-export async function setSettingsOption(
-  page: Page,
-  option: AllSettingsOptions,
-  value = '',
-) {
+  option:
+    | (typeof comboBoxOptions)[number]
+    | (typeof switcherOptions)[number]
+    | AllSettingsOptions,
+  value: string | ComboBoxValue = '',
+): Promise<void> {
   const optionsToSectionMap = createOptionToSectionMap();
   const section = optionsToSectionMap.get(option);
 
@@ -474,20 +459,16 @@ export async function setSettingsOption(
   }
 }
 
-export function setSettingsOptions(
+export async function setSettingsOptions(
   page: Page,
   options: (
+    | { option: AllSettingsOptions; value?: string }
     | ComboBoxOptionEntry
     | SwitcherOptionEntry
     | EditboxOptionEntry
     | OtherOptionEntry
   )[],
-): Promise<void>;
-
-export async function setSettingsOptions(
-  page: Page,
-  options: { option: AllSettingsOptions; value?: string }[],
-) {
+): Promise<void> {
   const optionsToSectionMap = createOptionToSectionMap();
   const hasFontOption = options.some(
     (entry) => entry.option === GeneralSetting.Font,
@@ -504,7 +485,11 @@ export async function setSettingsOptions(
   const sortedOptions = [...options];
   sortedOptions.sort((a, b) => a.option.localeCompare(b.option));
 
-  for (const { option, value } of sortedOptions) {
+  for (const sortedOption of sortedOptions) {
+    const { option, value } = {
+      ...sortedOption,
+      value: 'value' in sortedOption ? sortedOption.value : '',
+    };
     const section = optionsToSectionMap.get(option) ?? SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);

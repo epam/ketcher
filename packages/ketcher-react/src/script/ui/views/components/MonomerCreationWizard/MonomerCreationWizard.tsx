@@ -30,6 +30,7 @@ import Select from '../../../component/form/Select';
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
@@ -184,7 +185,7 @@ const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
 const keepInfoNotifications = (notifications: WizardNotifications) =>
   new Map(
-    Array.from(notifications.entries()).filter(
+    [...notifications.entries()].filter(
       ([, notification]) => notification.type === 'info',
     ),
   );
@@ -891,6 +892,16 @@ const MonomerCreationWizardInternal = ({
   const editor = ketcher.editor as Editor;
   const dispatch = useDispatch();
 
+  const leftColumnRef = useRef<HTMLDivElement>(null);
+
+  // Fit the structure into the area left free by the wizard's panels once,
+  // when the wizard opens. Exiting the wizard does not adjust zoom/position.
+  useLayoutEffect(() => {
+    if (leftColumnRef.current) {
+      editor.fitStructToMonomerCreationViewport(leftColumnRef.current);
+    }
+  }, [editor]);
+
   // Initial wizard values are derived once on mount. The wizard is mounted
   // only while `monomerCreationState` is set (see the wrapper below), so
   // edit-mode initial values from `editInstanceInitialValues` are seeded via
@@ -1012,13 +1023,13 @@ const MonomerCreationWizardInternal = ({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationExternalNotificationAction,
       externalNotificationEventListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationExternalNotificationAction,
         externalNotificationEventListener,
       );
@@ -1036,13 +1047,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationAttachmentPointClickEvent,
       attachmentPointClickHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationAttachmentPointClickEvent,
         attachmentPointClickHandler,
       );
@@ -1076,13 +1087,13 @@ const MonomerCreationWizardInternal = ({
       });
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationComponentStructureUpdateEvent,
       componentStructureUpdateHandler,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationComponentStructureUpdateEvent,
         componentStructureUpdateHandler,
       );
@@ -1278,9 +1289,9 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-    const attachmentPointsList = Array.from(
-      attachmentAtomIdsWithExternalBonds.keys(),
-    ).join(' and ');
+    const attachmentPointsList = [
+      ...attachmentAtomIdsWithExternalBonds.keys(),
+    ].join(' and ');
     const message = t(
       'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
       { points: attachmentPointsList },
@@ -1401,9 +1412,7 @@ const MonomerCreationWizardInternal = ({
     const {
       notifications: attachmentPointsNotifications,
       problematicAttachmentPoints,
-    } = validateAttachmentPoints(
-      Array.from(monomerAssignedAttachmentPoints.keys()),
-    );
+    } = validateAttachmentPoints([...monomerAssignedAttachmentPoints.keys()]);
     if (attachmentPointsNotifications.size > 0) {
       wizardStateDispatch({
         type: 'SetNotifications',
@@ -1450,8 +1459,7 @@ const MonomerCreationWizardInternal = ({
       );
       if (leavingGroupNotifications.size > 0) {
         needSaveMonomers = false;
-        const firstMessage = Array.from(leavingGroupNotifications.values())[0]
-          .message;
+        const firstMessage = [...leavingGroupNotifications.values()][0].message;
         setLeavingGroupDialogMessage(firstMessage);
       }
     }
@@ -1613,58 +1621,10 @@ const MonomerCreationWizardInternal = ({
 
     // check rna preset code
     const presetCode = rnaPresetWizardState.preset.name?.trim();
-    if (!presetCode) {
-      needSaveMonomers = false;
-      rnaPresetWizardStateDispatch({
-        type: 'SetErrors',
-        errors: {
-          name: true,
-        },
-        rnaComponentKey: 'preset',
-        editor,
-      });
-      rnaPresetWizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: new Map([
-          [
-            'emptyMandatoryFields',
-            {
-              type: 'error',
-              message: NotificationMessages.emptyMandatoryFields,
-            },
-          ],
-        ]),
-        rnaComponentKey: 'preset',
-        editor,
-      });
-    } else {
+    if (presetCode) {
       // Validate preset code format (only letters, numbers, hyphens, underscores, asterisks)
       const presetCodeRegex = /^[a-zA-Z0-9-_*]+$/;
-      if (!presetCodeRegex.test(presetCode)) {
-        needSaveMonomers = false;
-        rnaPresetWizardStateDispatch({
-          type: 'SetErrors',
-          errors: {
-            name: true,
-          },
-          rnaComponentKey: 'preset',
-          editor,
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: new Map([
-            [
-              'invalidPresetCode',
-              {
-                type: 'error',
-                message: NotificationMessages.invalidPresetCode,
-              },
-            ],
-          ]),
-          rnaComponentKey: 'preset',
-          editor,
-        });
-      } else {
+      if (presetCodeRegex.test(presetCode)) {
         // Validate preset code uniqueness (only if format is valid)
         const coreEditor = provideEditorInstance();
         if (coreEditor.checkIfPresetCodeExists(presetCode)) {
@@ -1692,7 +1652,55 @@ const MonomerCreationWizardInternal = ({
             editor,
           });
         }
+      } else {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            name: true,
+          },
+          rnaComponentKey: 'preset',
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'invalidPresetCode',
+              {
+                type: 'error',
+                message: NotificationMessages.invalidPresetCode,
+              },
+            ],
+          ]),
+          rnaComponentKey: 'preset',
+          editor,
+        });
       }
+    } else {
+      needSaveMonomers = false;
+      rnaPresetWizardStateDispatch({
+        type: 'SetErrors',
+        errors: {
+          name: true,
+        },
+        rnaComponentKey: 'preset',
+        editor,
+      });
+      rnaPresetWizardStateDispatch({
+        type: 'SetNotifications',
+        notifications: new Map([
+          [
+            'emptyMandatoryFields',
+            {
+              type: 'error',
+              message: NotificationMessages.emptyMandatoryFields,
+            },
+          ],
+        ]),
+        rnaComponentKey: 'preset',
+        editor,
+      });
     }
 
     componentsToValidate.forEach((componentToValidate) => {
@@ -2120,7 +2128,7 @@ const MonomerCreationWizardInternal = ({
       className={styles.monomerCreationWizard}
       data-testid="monomer-creation-wizard"
     >
-      <div className={styles.leftColumn}>
+      <div className={styles.leftColumn} ref={leftColumnRef}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
           {originalMonomerItem
@@ -2129,17 +2137,15 @@ const MonomerCreationWizardInternal = ({
         </p>
 
         <div className={styles.notificationsArea}>
-          {Array.from(notifications.entries()).map(
-            ([id, { type, message }]) => (
-              <Notification
-                id={id}
-                type={type}
-                message={message}
-                key={id}
-                onDismiss={handleNotificationDismiss}
-              />
-            ),
-          )}
+          {[...notifications.entries()].map(([id, { type, message }]) => (
+            <Notification
+              id={id}
+              type={type}
+              message={message}
+              key={id}
+              onDismiss={handleNotificationDismiss}
+            />
+          ))}
         </div>
       </div>
 

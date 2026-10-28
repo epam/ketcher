@@ -1940,7 +1940,7 @@ export class DrawingEntitiesManager {
 
     const chainsCollection =
       _chainsCollection ||
-      ChainsCollection.fromMonomers(Array.from(this.monomers.values()));
+      ChainsCollection.fromMonomers([...this.monomers.values()]);
 
     if (!_chainsCollection) {
       chainsCollection.rearrange();
@@ -2911,7 +2911,7 @@ export class DrawingEntitiesManager {
         res.drawingEntities.forEach((entity) =>
           command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
-        return selectedDrawingEntities.concat(res.drawingEntities);
+        return [...selectedDrawingEntities, ...res.drawingEntities];
       },
       [],
     );
@@ -3053,6 +3053,46 @@ export class DrawingEntitiesManager {
     });
 
     return isValid;
+  }
+
+  /**
+   * Returns true when the canvas contains both RNA and DNA sequences.
+   *
+   * Both monomer types share MonomerType='RNA' in the library, so they cannot
+   * be distinguished via the generic monomerTypes Set used in
+   * validateIfApplicableForFasta(). This check is therefore kept separate so
+   * that formats which CAN represent mixed RNA/DNA (e.g. IDT) do not trigger
+   * a false validation error.
+   *
+   * Detection strategy:
+   *  - Split nucleotides: inspect the Sugar monomer label ('R' = RNA, 'dR' = DNA)
+   *  - Unsplit nucleotides: inspect MonomerClass (KetMonomerClass.RNA vs .DNA)
+   */
+  public hasRnaAndDnaMix(): boolean {
+    let hasRnaContent = false;
+    let hasDnaContent = false;
+
+    this.monomers.forEach((monomer) => {
+      if (monomer instanceof Sugar) {
+        if (monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
+        ) {
+          hasDnaContent = true;
+        }
+      } else if (monomer instanceof UnsplitNucleotide) {
+        if (monomer.monomerItem.props.MonomerClass === KetMonomerClass.RNA) {
+          hasRnaContent = true;
+        } else if (
+          monomer.monomerItem.props.MonomerClass === KetMonomerClass.DNA
+        ) {
+          hasDnaContent = true;
+        }
+      }
+    });
+
+    return hasRnaContent && hasDnaContent;
   }
 
   public moveMonomer(monomer: BaseMonomer, position: Vec2) {
@@ -3773,9 +3813,7 @@ export class DrawingEntitiesManager {
         rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode;
     }
 
-    return DrawingEntitiesManager.antisenseChainBasesMap(isDnaAntisense)[
-      baseLabelKey
-    ];
+    return this.antisenseChainBasesMap(isDnaAntisense)[baseLabelKey];
   }
 
   private static getAntisenseBaseLabelForNode(
@@ -3794,10 +3832,7 @@ export class DrawingEntitiesManager {
         return undefined;
       }
 
-      return DrawingEntitiesManager.getAntisenseBaseLabel(
-        rnaBase,
-        isDnaAntisense,
-      );
+      return this.getAntisenseBaseLabel(rnaBase, isDnaAntisense);
     }
 
     if (isUnsplitNucleotideNode(node)) {
@@ -3809,10 +3844,7 @@ export class DrawingEntitiesManager {
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 
       return SENSE_NATURAL_ANALOGUES.has(naturalAnalogCode)
-        ? DrawingEntitiesManager.getAntisenseBaseLabel(
-            naturalAnalogCode,
-            isDnaAntisense,
-          )
+        ? this.getAntisenseBaseLabel(naturalAnalogCode, isDnaAntisense)
         : undefined;
     }
 
@@ -3823,8 +3855,10 @@ export class DrawingEntitiesManager {
     node: Nucleoside | Nucleotide | MonomerSequenceNode,
     isDnaAntisense: boolean,
   ) {
-    const antisenseBaseLabel =
-      DrawingEntitiesManager.getAntisenseBaseLabelForNode(node, isDnaAntisense);
+    const antisenseBaseLabel = this.getAntisenseBaseLabelForNode(
+      node,
+      isDnaAntisense,
+    );
 
     if (!antisenseBaseLabel) {
       return;
@@ -3872,14 +3906,14 @@ export class DrawingEntitiesManager {
           (monomer) => monomer.selected,
         );
 
-        if (!hasSelectedMonomerInNode) {
+        if (hasSelectedMonomerInNode) {
+          selectedPiece.push(node);
+        } else {
           if (hasRnaInPiece) {
             selectedPiecesInChains.push(selectedPiece);
           }
           selectedPiece = [];
           hasRnaInPiece = false;
-        } else {
-          selectedPiece.push(node);
         }
 
         if (
@@ -4048,10 +4082,16 @@ export class DrawingEntitiesManager {
             const isModifiedPhosphate =
               monomer instanceof Phosphate && monomer.isModification;
             const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            const isAmbiguousPhosphateMonomer =
+              isAmbiguousMonomer &&
+              monomer.monomerClass === KetMonomerClass.Phosphate;
+            // AmbiguousMonomer.monomerItem lacks the `monomers` field needed to recreate it, so fall back to variantMonomerItem
             let antisenseMonomerItem: MonomerOrAmbiguousType =
-              monomer.monomerItem;
+              isAmbiguousMonomer
+                ? monomer.variantMonomerItem
+                : monomer.monomerItem;
 
-            if (isModifiedPhosphate || isAmbiguousMonomer) {
+            if (isModifiedPhosphate || isAmbiguousPhosphateMonomer) {
               const nonModifiedPhosphateItem = getRnaPartLibraryItem(
                 editor,
                 RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -4059,8 +4099,6 @@ export class DrawingEntitiesManager {
 
               if (nonModifiedPhosphateItem) {
                 antisenseMonomerItem = nonModifiedPhosphateItem;
-              } else if (isAmbiguousMonomer) {
-                antisenseMonomerItem = monomer.variantMonomerItem;
               }
             }
             const monomerAddCommand = this.addMonomer(

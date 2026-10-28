@@ -352,7 +352,8 @@
           "enumSingleDouble": "单或双键",
           "enumSingleAromatic": "单或芳香键",
           "enumDoubleAromatic": "双或芳香键",
-          "enumDative": "配位键"
+          "enumDative": "配位键",
+          "enumHaptic": "多中心键"
         },
         "topology": {
           "title": "拓扑",

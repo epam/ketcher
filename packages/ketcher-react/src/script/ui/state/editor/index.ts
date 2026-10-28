@@ -89,7 +89,7 @@ export default function initEditor(
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const toolAction =
-        typeof activeToolAction !== 'function' ? activeToolAction : null;
+        typeof activeToolAction === 'function' ? null : activeToolAction;
       const activeTool = toolAction?.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;
       const selectMode = state.toolbar.visibleTools.select;

@@ -347,9 +347,9 @@ class Attach extends Component<AttachProps> {
                 showAttachmentPoints={false}
               />
             </EditorContainer>
-            {!storage.isAvailable() ? (
+            {storage.isAvailable() ? null : (
               <Warning>{storage.warningMessage}</Warning>
-            ) : null}
+            )}
           </LeftColumn>
           <RightColumn>
             <NameInput

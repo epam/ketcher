@@ -81,8 +81,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return (
-      distance >=
-      MultitailArrow.MIN_TAIL_DISTANCE.multiply(2).getFloatingPrecision()
+      distance >= this.MIN_TAIL_DISTANCE.multiply(2).getFloatingPrecision()
     );
   }
 
@@ -91,7 +90,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const tailLength = FixedPrecisionCoordinates.fromFloatingPrecision(
       Math.max(
         (bottomRight.x - topLeft.x) / 3,
-        MultitailArrow.MIN_TAIL_LENGTH.getFloatingPrecision(),
+        this.MIN_TAIL_LENGTH.getFloatingPrecision(),
       ),
     );
     const topSpineX = FixedPrecisionCoordinates.fromFloatingPrecision(
@@ -103,7 +102,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const height = FixedPrecisionCoordinates.fromFloatingPrecision(
       Math.max(
         bottomRight.y - topLeft.y,
-        MultitailArrow.MIN_HEIGHT.getFloatingPrecision(),
+        this.MIN_HEIGHT.getFloatingPrecision(),
       ),
     );
     const headOffsetX = FixedPrecisionCoordinates.fromFloatingPrecision(
@@ -155,14 +154,14 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
     if (
       spineStartX.value !== spineEndX.value ||
-      spineStartY.value < spineEndY.sub(MultitailArrow.KET_MIN_DISTANCE).value
+      spineStartY.value < spineEndY.sub(this.KET_MIN_DISTANCE).value
     ) {
       return MultitailValidationErrors.INCORRECT_SPINE;
     }
     if (
-      headX.value < spineStartX.add(MultitailArrow.KET_MIN_DISTANCE).value ||
-      headY.sub(MultitailArrow.KET_MIN_DISTANCE).value < spineEndY.value ||
-      headY.add(MultitailArrow.KET_MIN_DISTANCE).value > spineStartY.value
+      headX.value < spineStartX.add(this.KET_MIN_DISTANCE).value ||
+      headY.sub(this.KET_MIN_DISTANCE).value < spineEndY.value ||
+      headY.add(this.KET_MIN_DISTANCE).value > spineStartY.value
     ) {
       return MultitailValidationErrors.INCORRECT_HEAD;
     }
@@ -174,17 +173,14 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     }
 
     const firstTailX = tailsFixedPrecision[0].x;
-    if (
-      firstTailX.value > spineStartX.sub(MultitailArrow.KET_MIN_DISTANCE).value
-    ) {
+    if (firstTailX.value > spineStartX.sub(this.KET_MIN_DISTANCE).value) {
       return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
     const result = tailsFixedPrecision.every((tail, index, allTails) => {
       if (
         index > 0 &&
-        allTails[index - 1].y.value <
-          tail.y.add(MultitailArrow.KET_MIN_DISTANCE).value
+        allTails[index - 1].y.value < tail.y.add(this.KET_MIN_DISTANCE).value
       ) {
         return false;
       }
@@ -196,7 +192,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       );
     });
 
-    return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
+    return result ? null : MultitailValidationErrors.INCORRECT_TAILS;
   }
 
   static getConstructorParamsFromKetNode(
@@ -255,7 +251,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       headOffsetY,
       tailsLength,
       tailsYOffset,
-    } = MultitailArrow.getConstructorParamsFromKetNode(ketFileNode);
+    } = this.getConstructorParamsFromKetNode(ketFileNode);
 
     return new MultitailArrow(
       spineTopX,

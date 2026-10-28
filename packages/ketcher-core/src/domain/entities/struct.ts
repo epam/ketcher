@@ -778,16 +778,16 @@ export class Struct {
   }
 
   sortNeighbors(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((aid) => {
+        this.atomSortNeighbors(aid);
+      });
+    } else {
       this.atoms.forEach((_atom, aid) => {
         this.atomSortNeighbors(aid);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomSortNeighbors(id);
-      });
-    } else {
-      list.forEach((aid) => {
-        this.atomSortNeighbors(aid);
       });
     }
   }
@@ -804,16 +804,16 @@ export class Struct {
   }
 
   updateHalfBonds(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((atomId) => {
+        this.atomUpdateHalfBonds(atomId);
+      });
+    } else {
       this.atoms.forEach((_atom, atomId) => {
         this.atomUpdateHalfBonds(atomId);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomUpdateHalfBonds(id);
-      });
-    } else {
-      list.forEach((atomId) => {
-        this.atomUpdateHalfBonds(atomId);
       });
     }
   }
@@ -946,14 +946,14 @@ export class Struct {
   getCoordBoundingBoxObj(): CoordBoundingBox {
     let bb: CoordBoundingBox | null = null;
     function extend(pp: Vec2) {
-      if (!bb) {
+      if (bb) {
+        bb.min = Vec2.min(bb.min, pp);
+        bb.max = Vec2.max(bb.max, pp);
+      } else {
         bb = {
           min: new Vec2(pp),
           max: new Vec2(pp),
         };
-      } else {
-        bb.min = Vec2.min(bb.min, pp);
-        bb.max = Vec2.max(bb.max, pp);
       }
     }
 
@@ -1034,8 +1034,8 @@ export class Struct {
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
-      scale >= Struct.MIN_RESCALE &&
-      scale <= Struct.MAX_RESCALE
+      scale >= this.MIN_RESCALE &&
+      scale <= this.MAX_RESCALE
     );
   }
 
@@ -1505,15 +1505,15 @@ export class Struct {
       }
     });
 
-    if (!list) {
-      this.atoms.forEach((_atom, aid) => {
-        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
-      });
-    } else {
+    if (list) {
       list.forEach((aid) => {
         if (this.atoms.get(aid)) {
           this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
         }
+      });
+    } else {
+      this.atoms.forEach((_atom, aid) => {
+        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
       });
     }
   }
@@ -1962,27 +1962,27 @@ export class Struct {
             firstMonomerHasStereoBondOnAttachmentPoint &&
             !secondMonomerHasStereoBondOnAttachmentPoint
           ) {
-            if (bond.begin !== firstMonomerAtom) {
+            if (bond.begin === firstMonomerAtom) {
+              bond.stereo = firstMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 firstMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = firstMonomerAttachmentPointBondStereo;
             }
           } else if (
             !firstMonomerHasStereoBondOnAttachmentPoint &&
             secondMonomerHasStereoBondOnAttachmentPoint
           ) {
-            if (bond.begin !== secondMonomerAtom) {
+            if (bond.begin === secondMonomerAtom) {
+              bond.stereo = secondMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 secondMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = secondMonomerAttachmentPointBondStereo;
             }
           } else if (
             firstMonomerHasStereoBondOnAttachmentPoint &&

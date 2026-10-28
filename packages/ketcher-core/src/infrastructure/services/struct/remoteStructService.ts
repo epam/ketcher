@@ -103,7 +103,7 @@ function request<T = unknown>(
     fetchResponse = fetch(requestUrl, {
       method,
       headers: mergedHeaders,
-      body: method !== 'GET' ? (data as string | Blob) : undefined,
+      body: method === 'GET' ? undefined : (data as string | Blob),
       credentials: 'same-origin',
     });
   } catch (error) {

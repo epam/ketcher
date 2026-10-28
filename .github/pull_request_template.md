@@ -1,18 +1,21 @@
 ## Summary
 
-How the feature works, or how you fixed the issue. Add a diagram, a diff sketch, or a tree when it makes the change clearer.
+<diagram, diff-sketch, or tree>
 
 ## Evidence
 
-Before and after: screenshots, videos, or GIFs for a visual change; a test run or console output otherwise.
+- **Before:** <screenshot/output/failing test run>
+  **After:** <screenshot/output/passing test run>
 
-- **Before:**
-- **After:**
+## Merge Danger
 
-## Merge danger
+**Door:** <one-way or two-way>
 
-- **Door:** one-way or two-way (can the change be rolled back cheaply?)
-- **Blast radius:** what else this change can break (other modes, file formats, API consumers, layout)
+<optional: description>
+
+**Blast Radius:** <one-word description>
+
+<optional: potential ramifications of merge>
 
 ## PR type
 

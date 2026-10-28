@@ -431,12 +431,9 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
 
 export async function setSettingsOption(
   page: Page,
-  option:
-    | (typeof comboBoxOptions)[number]
-    | (typeof switcherOptions)[number]
-    | AllSettingsOptions,
-  value: string | ComboBoxValue = '',
-): Promise<void> {
+  option: AllSettingsOptions,
+  value = '',
+) {
   const optionsToSectionMap = createOptionToSectionMap();
   const section = optionsToSectionMap.get(option);
 

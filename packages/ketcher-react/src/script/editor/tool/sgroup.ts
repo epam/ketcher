@@ -114,7 +114,7 @@ class SGroupTool implements Tool {
           }
 
           const atomFromStruct =
-            atomId !== null ? struct.atoms.get(atomId)?.a : null;
+            atomId === null ? null : struct.atoms.get(atomId)?.a;
 
           if (atomFromStruct) {
             for (const sgId of atomFromStruct.sgs.values()) {
@@ -132,9 +132,9 @@ class SGroupTool implements Tool {
               SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
             const sgroupAtoms =
-              actualSgroupId !== undefined
-                ? SGroup.getAtoms(molecule, sgroups.get(actualSgroupId))
-                : undefined;
+              actualSgroupId === undefined
+                ? undefined
+                : SGroup.getAtoms(molecule, sgroups.get(actualSgroupId));
             const sgroupBonds =
               actualSgroupId !== undefined &&
               SGroup.getBonds(molecule, sgroups.get(actualSgroupId));
@@ -193,7 +193,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const atomFromStruct =
-        atomId !== null ? struct.atoms.get(atomId)?.a : null;
+        atomId === null ? null : struct.atoms.get(atomId)?.a;
 
       if (
         atomFromStruct &&
@@ -217,7 +217,7 @@ class SGroupTool implements Tool {
         ci.id,
       );
       const bondFromStruct =
-        bondId !== null ? struct.bonds.get(bondId)?.b : null;
+        bondId === null ? null : struct.bonds.get(bondId)?.b;
 
       if (
         bondFromStruct &&
@@ -758,7 +758,7 @@ class SGroupTool implements Tool {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() ?? {};
-    const sg = id !== null ? struct.sgroups.get(id) : null;
+    const sg = id === null ? null : struct.sgroups.get(id);
 
     // Show "Edit Monomer" dialog for monomer S-groups instead of S-Group properties
     if (sg?.isMonomer && id !== null) {
@@ -938,7 +938,7 @@ function fromContextType(
   currSelection: Selection,
 ) {
   const restruct = editor.render.ctab;
-  const sg = id !== null ? restruct.molecule.sgroups.get(id) : undefined;
+  const sg = id === null ? undefined : restruct.molecule.sgroups.get(id);
   const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
   const context = newSg.attrs.context;
 

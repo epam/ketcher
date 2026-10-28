@@ -268,11 +268,11 @@ export class SGroup {
           [bba.p0.x, bba.p1.x].forEach((x) => {
             [bba.p0.y, bba.p1.y].forEach((y) => {
               const v = new Vec2(x, y);
-              bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
+              bbb = bbb ? bbb.include(v) : new Box2Abs(v, v);
             });
           });
           assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
-          return !contentBounds ? bbb : Box2Abs.union(contentBounds, bbb);
+          return contentBounds ? Box2Abs.union(contentBounds, bbb) : bbb;
         },
         null,
       );
@@ -592,9 +592,9 @@ export class SGroup {
     render?: Render,
   ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = !this.isCOPGroup(sGroup)
-      ? new Vec2(0.2, 0.4)
-      : new Vec2(1.2, 1.2);
+    const PADDING_VECTOR = this.isCOPGroup(sGroup)
+      ? new Vec2(1.2, 1.2)
+      : new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
@@ -624,7 +624,7 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
+      braketBox = braketBox ? Box2Abs.union(braketBox, bba) : bba;
     });
     const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');

@@ -207,7 +207,7 @@ export const getModifyAminoAcidsMenuItems = (
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
 
-    if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
+    if (!monomerNaturalAnalogCode || !(selectedMonomer instanceof Peptide)) {
       return;
     }
 
@@ -226,7 +226,7 @@ export const getModifyAminoAcidsMenuItems = (
         monomerLibraryItem.props?.MonomerNaturalAnalogCode,
       );
 
-    if (!monomerLibraryItem.props || !monomersWithSameNaturalAnalogCode) {
+    if (!monomersWithSameNaturalAnalogCode || !monomerLibraryItem.props) {
       return;
     }
 

@@ -116,7 +116,7 @@ function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
   const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -307,7 +307,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key?.length === 1 && !hoveredItem) {
+  if (!hoveredItem && key?.length === 1) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -324,7 +324,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }

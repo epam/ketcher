@@ -597,8 +597,8 @@ class Editor implements KetcherEditor {
 
   zoom(value?: number, event?: WheelEvent) {
     if (
-      arguments.length === 0 ||
       value === undefined ||
+      arguments.length === 0 ||
       this.render.options.zoom === value
     ) {
       return this.render.options.zoom;
@@ -2393,7 +2393,7 @@ class Editor implements KetcherEditor {
         oppositeEndpoint === 'begin' ? bond.begin : bond.end;
       const oppositeSGroup = struct.getGroupFromAtomId(oppositeAtomId);
 
-      if (oppositeSGroup?.isMonomer && oppositeSGroup !== sgroup) {
+      if (oppositeSGroup !== sgroup && oppositeSGroup?.isMonomer) {
         this.updateBondEndpointByAttachmentPoint(
           bond,
           oppositeEndpoint,
@@ -2441,9 +2441,9 @@ class Editor implements KetcherEditor {
 
       if (
         sgroup === replacementSourceSGroup ||
+        symbol !== originalSymbol ||
         !sgroup.isMonomer ||
-        props?.MonomerClass !== originalType ||
-        symbol !== originalSymbol
+        props?.MonomerClass !== originalType
       ) {
         return;
       }
@@ -2813,11 +2813,11 @@ class Editor implements KetcherEditor {
         const fromSgroup = struct.getGroupFromAtomId(bond.begin);
         const toSgroup = struct.getGroupFromAtomId(bond.end);
 
-        if (fromSgroup && fromSgroup.isMonomer && fromSgroup !== toSgroup) {
+        if (fromSgroup && fromSgroup !== toSgroup && fromSgroup.isMonomer) {
           this.updateBondEndpointByAttachmentPoint(bond, 'begin', fromSgroup);
         }
 
-        if (toSgroup && toSgroup.isMonomer && toSgroup !== fromSgroup) {
+        if (toSgroup && toSgroup !== fromSgroup && toSgroup.isMonomer) {
           this.updateBondEndpointByAttachmentPoint(bond, 'end', toSgroup);
         }
       });
@@ -3406,8 +3406,8 @@ class Editor implements KetcherEditor {
         : undefined;
 
       if (
-        !isNumber(currentBondId) ||
         !currentBond ||
+        !isNumber(currentBondId) ||
         visitedBonds.has(currentBondId)
       ) {
         continue;
@@ -3966,7 +3966,7 @@ class Editor implements KetcherEditor {
       const previousId = this.getHoverId(hoverState);
       const nextId = this.getHoverId(ci);
       isSameHoverTarget = Boolean(
-        ci && hoverState.map === ci.map && previousId === nextId,
+        previousId === nextId && ci && hoverState.map === ci.map,
       );
 
       if (!isSameHoverTarget) {

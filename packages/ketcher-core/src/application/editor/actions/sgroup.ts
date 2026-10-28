@@ -251,7 +251,7 @@ export function setExpandMonomerSGroup(
       let hasEffectiveCurrentStereo = hasCurrentStereo;
       let hasEffectiveOtherStereo = hasOtherStereo;
       if (attrs.expanded !== otherMonomerIsExpanded) {
-        if (attrs.expanded && hasCurrentStereo) {
+        if (hasCurrentStereo && attrs.expanded) {
           hasEffectiveOtherStereo = false;
         } else if (otherMonomerIsExpanded && hasOtherStereo) {
           hasEffectiveCurrentStereo = false;
@@ -325,7 +325,7 @@ export function setExpandMonomerSGroup(
       const atomInSGroup = atomSGroups && atomSGroups.size > 0;
       if (atomInSGroup) {
         for (const anotherSGroupId of atomSGroups.values()) {
-          if (visitedSGroups.has(anotherSGroupId) || anotherSGroupId === sgid) {
+          if (anotherSGroupId === sgid || visitedSGroups.has(anotherSGroupId)) {
             continue;
           }
           visitedSGroups.add(anotherSGroupId);
@@ -764,7 +764,7 @@ export function fromSgroupAddition(
     restruct.sgroups.get(sgid).item.neiAtoms.forEach((aid) => {
       const plainCarbon = restruct.atoms.get(aid).a.isPlainCarbon();
 
-      if (atomGetDegree(restruct, aid) === 1 && plainCarbon) {
+      if (plainCarbon && atomGetDegree(restruct, aid) === 1) {
         asteriskAction.addOp(new AtomAttr(aid, 'label', '*'));
       }
     });

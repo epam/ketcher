@@ -596,7 +596,7 @@ class BondTool implements Tool {
           )
         : null;
 
-      if (dragCtx.action && dragEndFailure) {
+      if (dragEndFailure && dragCtx.action) {
         const revertedPreviewAction = dragCtx.action.perform(render.ctab);
         delete dragCtx.action;
         this.hapticBond.showValidationError(dragEndFailure);

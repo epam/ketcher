@@ -316,8 +316,8 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
       ? r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer)
       : undefined;
 
-  return isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer) &&
-    r1ConnectedMonomer === monomer
+  return r1ConnectedMonomer === monomer &&
+    isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer)
     ? r3ConnectedMonomer
     : undefined;
 }
@@ -341,8 +341,8 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
       ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
       : undefined;
 
-  return isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar) &&
-    r3ConnectedMonomer === monomer
+  return r3ConnectedMonomer === monomer &&
+    isMonomerOfClass(r1ConnectedMonomer, KetMonomerClass.Sugar)
     ? r1ConnectedMonomer
     : undefined;
 }

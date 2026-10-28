@@ -110,8 +110,8 @@ export function fromPaste(
     if (
       fragmentId !== undefined &&
       fragmentId !== null &&
-      !fridMap.has(fragmentId) &&
-      !isMacromoleculeAtom
+      !isMacromoleculeAtom &&
+      !fridMap.has(fragmentId)
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 

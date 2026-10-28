@@ -429,7 +429,7 @@ export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
 ) => {
-  if (!monomerGroupToPresetGroup[groupName] || !preset) return;
+  if (!preset || !monomerGroupToPresetGroup[groupName]) return;
 
   return preset[monomerGroupToPresetGroup[groupName]];
 };
@@ -457,7 +457,7 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
 
   if (sugar && phosphate) {
     fullName += `(${base})`;
-  } else if ((sugar || phosphate) && base) {
+  } else if (base && (sugar || phosphate)) {
     fullName += `(${base})`;
   } else {
     fullName += base;

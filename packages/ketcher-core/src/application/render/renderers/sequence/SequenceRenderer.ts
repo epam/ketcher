@@ -357,7 +357,7 @@ export class SequenceRenderer {
                   monomerToChain.get(polymerBond.firstMonomer) ===
                     monomerToChain.get(polymerBond.secondMonomer);
 
-                if (handledHydrogenBonds.has(polymerBond) || isBondInOneChain) {
+                if (isBondInOneChain || handledHydrogenBonds.has(polymerBond)) {
                   return;
                 }
 
@@ -433,8 +433,8 @@ export class SequenceRenderer {
               // because for rna we display only one letter instead of three
               const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
               if (
-                isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
-                connectedSugarToBase
+                connectedSugarToBase &&
+                isRnaBaseOrAmbiguousRnaBase(anotherMonomer)
               ) {
                 bondRenderer = new PolymerBondSequenceRenderer(
                   new PolymerBond(monomer, connectedSugarToBase),

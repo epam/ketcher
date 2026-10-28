@@ -245,11 +245,11 @@ export const RnaEditorExpanded = ({
       setIsSequenceSelectionUpdated(false);
     }
   } else if (
-    activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
     isEditMode &&
     isSequenceEditInRNABuilderMode &&
     activePresetGroupItem &&
-    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem
+    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem &&
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets
   ) {
     setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
     setIsSequenceSelectionUpdated(true);
@@ -328,10 +328,10 @@ export const RnaEditorExpanded = ({
 
   useEffect(() => {
     if (
-      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets ||
-      !isEditModeRef.current ||
       !isSequenceEditInRNABuilderMode ||
-      !activePresetGroupItem
+      !activePresetGroupItem ||
+      !isEditModeRef.current ||
+      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets
     ) {
       return;
     }
@@ -344,8 +344,8 @@ export const RnaEditorExpanded = ({
         // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
         // Do not set 'sugarLabel', 'baseLabel' for Phosphate
         if (
-          (node.isNucleosideConnectedAndSelectedWithPhosphate &&
-            field === 'phosphateLabel') ||
+          (field === 'phosphateLabel' &&
+            node.isNucleosideConnectedAndSelectedWithPhosphate) ||
           (node.type === Entities.Phosphate &&
             (field === 'sugarLabel' || field === 'baseLabel'))
         ) {
@@ -397,9 +397,9 @@ export const RnaEditorExpanded = ({
 
   const selectGroup = (selectedGroup) => () => {
     if (
-      selectedGroup === MonomerGroups.BASES &&
       isBaseModificationBlocked &&
-      isSequenceEditInRNABuilderMode
+      isSequenceEditInRNABuilderMode &&
+      selectedGroup === MonomerGroups.BASES
     ) {
       editor?.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
     }
@@ -629,7 +629,7 @@ export const RnaEditorExpanded = ({
 
     const resolvedPhosphatePosition = resolvePhosphatePosition(newPreset);
 
-    if (newPreset?.phosphate && !resolvedPhosphatePosition) {
+    if (!resolvedPhosphatePosition && newPreset?.phosphate) {
       return;
     }
 

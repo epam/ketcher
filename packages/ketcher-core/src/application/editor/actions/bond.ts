@@ -438,10 +438,10 @@ export function bondChangingAction(
       ? plainBondTypes
       : null;
   if (
+    loop &&
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-    bond.stereo === Bond.PATTERN.STEREO.NONE &&
-    loop
+    bond.stereo === Bond.PATTERN.STEREO.NONE
   ) {
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];

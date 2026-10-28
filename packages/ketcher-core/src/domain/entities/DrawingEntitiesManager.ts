@@ -643,7 +643,7 @@ export class DrawingEntitiesManager {
   }
 
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
-    if (drawingEntity.monomerItem.props.isMicromoleculeFragment && offset) {
+    if (offset && drawingEntity.monomerItem.props.isMicromoleculeFragment) {
       drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
         atom.pp.add_(offset);
       });

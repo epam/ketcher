@@ -176,10 +176,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
     if (
+      cells &&
       (this.polymerBond.isSideChainConnection ||
         this.isSideChainLikeBackbone) &&
-      (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
-      cells
+      (!this.isHydrogenBond || editor.mode instanceof SnakeMode)
     ) {
       this.appendSideConnectionBond(rootElement, cells);
     } else if (

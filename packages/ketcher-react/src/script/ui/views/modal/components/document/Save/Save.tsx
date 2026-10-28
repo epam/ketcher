@@ -619,9 +619,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
+      !isLoading &&
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 

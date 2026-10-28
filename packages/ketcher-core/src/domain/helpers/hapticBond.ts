@@ -116,7 +116,7 @@ export function getAttachmentGroupIdForHapticBondHalf(
   bond: Pick<Bond, 'type' | 'begin' | 'end'> | null | undefined,
   pointer: Vec2,
 ): number | null {
-  if (!isHapticBondWithAttachmentGroup(struct, bond) || !bond) {
+  if (!bond || !isHapticBondWithAttachmentGroup(struct, bond)) {
     return null;
   }
 

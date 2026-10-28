@@ -309,7 +309,7 @@ abstract class SelectBase implements BaseTool {
 
     if (!isShiftKeyPressed && !isChainSelectionModKey && !isAltKeyPressed) {
       this.startMoveIfNeeded(renderer);
-      if (renderer.drawingEntity.selected && !isSequenceItem) {
+      if (!isSequenceItem && renderer.drawingEntity.selected) {
         return;
       }
       modelChanges.merge(
@@ -1172,7 +1172,7 @@ abstract class SelectBase implements BaseTool {
         if (hasMonomerSelection) {
           const firstMonomerCurrentPosition = selectedMonomers[0]?.position;
           const actualMovementDelta =
-            this.firstMonomerPositionBeforeMove && firstMonomerCurrentPosition
+            firstMonomerCurrentPosition && this.firstMonomerPositionBeforeMove
               ? Vec2.diff(
                   firstMonomerCurrentPosition,
                   this.firstMonomerPositionBeforeMove,

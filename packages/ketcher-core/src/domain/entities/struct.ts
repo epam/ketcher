@@ -668,7 +668,7 @@ export class Struct {
     let startCoords: Vec2;
     let endCoords: Vec2;
 
-    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup1 instanceof MonomerMicromolecule) {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : beginEndpoint.pp;
@@ -679,7 +679,7 @@ export class Struct {
       startCoords = beginEndpoint.pp;
     }
 
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup2 instanceof MonomerMicromolecule) {
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : endEndpoint.pp;
@@ -1386,7 +1386,7 @@ export class Struct {
       if (hb.loop !== -1) return;
 
       for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.size; ++c) {
-        if (c > 0 && hbIdNext === hbId) {
+        if (hbIdNext === hbId && c > 0) {
           // loop found
           const subloops = this.partitionLoop(loop);
           subloops.forEach((subloop) => {
@@ -1454,7 +1454,7 @@ export class Struct {
     atom.badConn = false;
 
     if (isAromatic) {
-      if (atom.label === 'C' && charge === 0) {
+      if (charge === 0 && atom.label === 'C') {
         if (conn === 3) {
           atom.implicitH = -radicalElectrons(atom.radical);
           return;
@@ -1464,10 +1464,10 @@ export class Struct {
           return;
         }
       } else if (
-        (atom.label === 'O' && charge === 0) ||
-        (atom.label === 'N' && charge === 0 && conn === 3) ||
-        (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3) ||
+        (charge === 0 && atom.label === 'O') ||
+        (charge === 0 && conn === 3 && atom.label === 'N') ||
+        (charge === 1 && conn === 3 && atom.label === 'N') ||
+        (charge === 0 && conn === 3 && atom.label === 'S') ||
         !atom.implicitH
       ) {
         atom.implicitH = 0;

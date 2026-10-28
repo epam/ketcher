@@ -265,7 +265,7 @@ export class SimpleObjectResize extends Base {
         item.pos[1].y = current.y;
         this.data.current = previousPos1;
       }
-    } else if (item.mode === SimpleObjectMode.line && anchor) {
+    } else if (anchor && item.mode === SimpleObjectMode.line) {
       const previousPos0 = item.pos[0].get_xy0();
       const previousPos1 = item.pos[1].get_xy0();
 
@@ -288,7 +288,7 @@ export class SimpleObjectResize extends Base {
         item.pos[0].y = anchor.y = current.y;
         current.y = previousPos0.y;
       }
-    } else if (item.mode === SimpleObjectMode.rectangle && anchor) {
+    } else if (anchor && item.mode === SimpleObjectMode.rectangle) {
       handleRectangleChangeWithAnchor(item, anchor, current);
     } else item.pos[1].add_(d);
 

@@ -325,10 +325,10 @@ export class SettingsService implements ISettingsService {
 
         if (
           sourceValue &&
-          typeof sourceValue === 'object' &&
-          !Array.isArray(sourceValue) &&
           targetValue &&
+          typeof sourceValue === 'object' &&
           typeof targetValue === 'object' &&
+          !Array.isArray(sourceValue) &&
           !Array.isArray(targetValue)
         ) {
           // Recursively merge objects

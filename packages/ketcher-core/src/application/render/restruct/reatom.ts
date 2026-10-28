@@ -680,10 +680,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       if (
         !isHydrogen &&
-        !this.a.alias &&
+        !shouldHideHydrogenInPreview &&
         implh > 0 &&
-        shouldDisplayHydrogen(struct, this, options.showHydrogenLabels) &&
-        !shouldHideHydrogenInPreview
+        !this.a.alias &&
+        shouldDisplayHydrogen(struct, this, options.showHydrogenLabels)
       ) {
         const data = showHydrogen(this, render, implh, {
           hydroIndex,
@@ -917,9 +917,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               assert(render.monomerCreationState);
 
               if (
+                isProblematic ||
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
-                isProblematic
+                  attachmentPointName
               ) {
                 return;
               }
@@ -941,9 +941,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               assert(render.monomerCreationState);
 
               if (
+                isProblematic ||
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
-                isProblematic
+                  attachmentPointName
               ) {
                 return;
               }
@@ -1118,7 +1118,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill:
-          options.atomColoring && elem
+          elem && options.atomColoring
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
       });

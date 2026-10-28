@@ -160,7 +160,7 @@ export const ContextMenu = ({
 
   useEffect(() => {
     const handleEscapeKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || !isContextMenuActive) {
+      if (!isContextMenuActive || event.key !== 'Escape') {
         return;
       }
 

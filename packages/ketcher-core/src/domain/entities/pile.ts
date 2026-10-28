@@ -91,6 +91,6 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     }, new Array<Pile<T>>());
 
     // Recursively union two of sets === union all sets
-    return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;
+    return unionized ? this.unionIntersections(setsToReturn) : setsToReturn;
   }
 }

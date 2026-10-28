@@ -286,7 +286,7 @@ export class SGroup {
 
     const sgroups = [...struct.sgroups.values()];
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
+      if (!doesDescriptorIntersect(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -315,7 +315,7 @@ export class SGroup {
 
   addAttachmentPoint(
     attachmentPoint: SGroupAttachmentPoint,
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
       ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
@@ -325,7 +325,7 @@ export class SGroup {
         attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
-    if (isAttachmentPointAlreadyExist && validateUniqueness) {
+    if (isAttachmentPointAlreadyExist && shouldValidateUniqueness) {
       throw new Error(
         'The same attachment point cannot be added to an S-group more than once',
       );
@@ -337,10 +337,10 @@ export class SGroup {
   addAttachmentPoints(
     attachmentPoints:
       ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
-      this.addAttachmentPoint(attachmentPoint, validateUniqueness);
+      this.addAttachmentPoint(attachmentPoint, shouldValidateUniqueness);
     }
   }
 
@@ -725,7 +725,7 @@ export class SGroup {
   static getObjBBox(
     atoms: number[],
     mol: Struct,
-    useCollapsedSgroupsPosition = false,
+    shouldUseCollapsedSgroupsPosition = false,
   ): Box2Abs {
     const a0 = mol.atoms.get(atoms[0])?.pp;
     assert(a0, `SGroup.getObjBBox: atom ${atoms[0]} position is not found`);
@@ -736,7 +736,7 @@ export class SGroup {
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
+        shouldUseCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -933,7 +933,10 @@ export class SGroup {
   }
 }
 
-function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {
+function doesDescriptorIntersect(
+  sgroups: SGroup[],
+  topLeftPoint: Vec2,
+): boolean {
   return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false;
 

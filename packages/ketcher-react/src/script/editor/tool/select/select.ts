@@ -70,7 +70,7 @@ import {
   isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
-  onSelectionMove,
+  isSelectionMoveHandled,
   onSelectionStart,
   selMerge,
 } from './select.helpers';
@@ -375,7 +375,7 @@ class SelectTool implements Tool {
 
       editor.update(selectionDragCtx.action, true);
     } else {
-      const isSelectionRunning = onSelectionMove(
+      const isSelectionRunning = isSelectionMoveHandled(
         event,
         this.editor,
         this.#lassoHelper,
@@ -825,7 +825,7 @@ function getHoverTarget(
   };
 }
 
-function getMapsForClosestItem(selectFragment: boolean) {
+function getMapsForClosestItem(shouldSelectFragment: boolean) {
   return [
     'sgroups',
     'functionalGroups',
@@ -839,7 +839,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'simpleObjects',
     'texts',
     IMAGE_KEY,
-    ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
+    ...(shouldSelectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }
 

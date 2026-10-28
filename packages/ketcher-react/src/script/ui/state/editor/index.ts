@@ -84,23 +84,23 @@ export default function initEditor(
   };
 
   const resetToSelect =
-    (force = false) =>
+    (shouldForceReset = false) =>
     async (dispatch: AppDispatch) => {
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const toolAction =
         typeof activeToolAction === 'function' ? null : activeToolAction;
       const activeTool = toolAction?.tool;
-      if (!activeTool || (activeTool === 'select' && !force)) return;
+      if (!activeTool || (activeTool === 'select' && !shouldForceReset)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (
-        force === true ||
         shouldResetToSelect(
           activeTool,
           resetOption,
           typeof toolAction?.opts === 'string' ? toolAction.opts : undefined,
-        )
+        ) ||
+        shouldForceReset === true
       )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });

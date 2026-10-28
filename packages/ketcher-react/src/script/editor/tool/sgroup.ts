@@ -94,7 +94,7 @@ class SGroupTool implements Tool {
       };
       let actualSgroupId;
       let atomsResult: Array<number> = [];
-      let extraAtoms;
+      let hasExtraAtoms;
       const functionalGroups = molecule.functionalGroups;
       const result: Array<number> = [];
 
@@ -110,7 +110,7 @@ class SGroupTool implements Tool {
           );
 
           if (atomId == null) {
-            extraAtoms = true;
+            hasExtraAtoms = true;
           }
 
           const atomFromStruct =
@@ -149,7 +149,7 @@ class SGroupTool implements Tool {
           }
         }
       }
-      if (extraAtoms) {
+      if (hasExtraAtoms) {
         atomsResult = [];
       }
 
@@ -314,10 +314,10 @@ class SGroupTool implements Tool {
     newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     const atomsResult: Array<number> = [];
-    let extraAtoms = false;
+    let hasExtraAtoms = false;
 
     if (!selected || !functionalGroups.size || !selected.atoms) {
-      return { atomsResult, extraAtoms };
+      return { atomsResult, extraAtoms: hasExtraAtoms };
     }
 
     const sgroups = struct.sgroups;
@@ -329,7 +329,7 @@ class SGroupTool implements Tool {
       );
 
       if (atomId == null) {
-        extraAtoms = true;
+        hasExtraAtoms = true;
         continue;
       }
 
@@ -355,7 +355,7 @@ class SGroupTool implements Tool {
       atomsResult.push(atomId);
     }
 
-    return { atomsResult, extraAtoms };
+    return { atomsResult, extraAtoms: hasExtraAtoms };
   }
 
   private getActualSgroupId(atomFromStruct: Atom): number | undefined {
@@ -413,10 +413,10 @@ class SGroupTool implements Tool {
     struct: ReStruct,
   ) {
     const bondsResult: Array<number> = [];
-    let extraBonds = false;
+    let hasExtraBonds = false;
 
     if (!selected || !functionalGroups.size || !selected.bonds) {
-      return { bondsResult, extraBonds };
+      return { bondsResult, extraBonds: hasExtraBonds };
     }
 
     for (const bond of selected.bonds) {
@@ -427,7 +427,7 @@ class SGroupTool implements Tool {
       );
 
       if (bondId === null) {
-        extraBonds = true;
+        hasExtraBonds = true;
         continue;
       }
 
@@ -437,7 +437,7 @@ class SGroupTool implements Tool {
       }
     }
 
-    return { bondsResult, extraBonds };
+    return { bondsResult, extraBonds: hasExtraBonds };
   }
 
   private expandFunctionalGroupSelection(
@@ -526,12 +526,12 @@ class SGroupTool implements Tool {
   private collectFunctionalGroupIds(
     atomsResult: Array<number>,
     bondsResult: Array<number>,
-    extraAtoms: boolean,
-    extraBonds: boolean,
+    hasExtraAtoms: boolean,
+    hasExtraBonds: boolean,
     functionalGroups: Pool<FunctionalGroup>,
     molecule: Struct,
   ): Array<number> {
-    if (extraAtoms || extraBonds) {
+    if (hasExtraAtoms || hasExtraBonds) {
       return [];
     }
 
@@ -880,11 +880,11 @@ function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
     return SgContexts.Atom;
   }
 
-  if (manyComponentsSelected(restruct, sgAtoms)) {
+  if (areMultipleComponentsSelected(restruct, sgAtoms)) {
     return SgContexts.Multifragment;
   }
 
-  if (singleComponentSelected(restruct, sgAtoms)) {
+  if (isSingleComponentSelected(restruct, sgAtoms)) {
     return SgContexts.Fragment;
   }
 
@@ -901,7 +901,7 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
   const struct = restruct.molecule;
 
   if (selection.atoms && !selection.bonds) {
-    if (manyComponentsSelected(restruct, selection.atoms)) {
+    if (areMultipleComponentsSelected(restruct, selection.atoms)) {
       return SgContexts.Multifragment;
     }
     return SgContexts.Atom;
@@ -922,11 +922,14 @@ function getContextBySelection(restruct: ReStruct, selection: Selection) {
     (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
-  if (allBondsSelected && singleComponentSelected(restruct, selection.atoms)) {
+  if (
+    isSingleComponentSelected(restruct, selection.atoms) &&
+    allBondsSelected
+  ) {
     return SgContexts.Fragment;
   }
 
-  return manyComponentsSelected(restruct, selection.atoms)
+  return areMultipleComponentsSelected(restruct, selection.atoms)
     ? SgContexts.Multifragment
     : SgContexts.Group;
 }
@@ -989,11 +992,14 @@ function anyChainedBonds(bonds: Array<Bond>) {
   return false;
 }
 
-function singleComponentSelected(restruct: ReStruct, atoms: Array<number>) {
+function isSingleComponentSelected(restruct: ReStruct, atoms: Array<number>) {
   return countOfSelectedComponents(restruct, atoms) === 1;
 }
 
-function manyComponentsSelected(restruct: ReStruct, atoms: Array<number>) {
+function areMultipleComponentsSelected(
+  restruct: ReStruct,
+  atoms: Array<number>,
+) {
   return countOfSelectedComponents(restruct, atoms) > 1;
 }
 

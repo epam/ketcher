@@ -373,17 +373,17 @@ export function setExpandMonomerSGroup(
       }
 
       const SAME_LINE_THRESHOLD = 0.5;
-      const inOneLine =
+      const isInOneLine =
         movableSGroupCenter.y < sGroupCenter.y + SAME_LINE_THRESHOLD &&
         movableSGroupCenter.y > sGroupCenter.y - SAME_LINE_THRESHOLD;
 
-      if (inOneLine) {
+      if (isInOneLine) {
         sameLine.add(sGroupId);
         return;
       }
 
       const WIDE_LINE_THRESHOLD = 2;
-      const inWideLine =
+      const isInWideLine =
         movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
         movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD;
 
@@ -417,7 +417,7 @@ export function setExpandMonomerSGroup(
           );
         });
 
-      if (inWideLine && hasComplementaryBondToMainLine) {
+      if (isInWideLine && hasComplementaryBondToMainLine) {
         sameLine.add(sGroupId);
       }
     });
@@ -463,30 +463,32 @@ export function setExpandMonomerSGroup(
         return;
       }
 
-      const moveDown = movableSGroupCenter.y > sGroupCenter.y;
-      const moveUp = movableSGroupCenter.y < sGroupCenter.y;
-      const moveRight = movableSGroupCenter.x > sGroupCenter.x;
-      const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
-      const moveHorizontally = sameLine.has(sGroupId);
-      const moveVertically = !moveHorizontally;
+      const shouldMoveDown = movableSGroupCenter.y > sGroupCenter.y;
+      const shouldMoveUp = movableSGroupCenter.y < sGroupCenter.y;
+      const shouldMoveRight = movableSGroupCenter.x > sGroupCenter.x;
+      const shouldMoveLeft = movableSGroupCenter.x < sGroupCenter.x;
+      const shouldMoveHorizontally = sameLine.has(sGroupId);
+      const shouldMoveVertically = !shouldMoveHorizontally;
 
       let horizontalDirection = 0;
-      if (moveRight) {
+      if (shouldMoveRight) {
         horizontalDirection = 1;
-      } else if (moveLeft) {
+      } else if (shouldMoveLeft) {
         horizontalDirection = -1;
       }
 
       let verticalDirection = 0;
-      if (moveDown) {
+      if (shouldMoveDown) {
         verticalDirection = 1;
-      } else if (moveUp) {
+      } else if (shouldMoveUp) {
         verticalDirection = -1;
       }
 
       const moveVector = new Vec2(
-        (moveHorizontally ? 1 : 0) * horizontalDirection * horizontalOffset,
-        (moveVertically ? 1 : 0) * verticalDirection * baseVerticalOffset,
+        (shouldMoveHorizontally ? 1 : 0) *
+          horizontalDirection *
+          horizontalOffset,
+        (shouldMoveVertically ? 1 : 0) * verticalDirection * baseVerticalOffset,
       );
       const finalMoveVector = attrs.expanded
         ? moveVector
@@ -510,10 +512,10 @@ export function setExpandMonomerSGroup(
     const attachmentAtom = struct.atoms.get(attachmentAtomsFromInside[index]);
     // S-groups in this branch were already moved by the lines logic above; the
     // plain atoms left over have to follow them, not the attachment point.
-    const followsMovedSGroups = Boolean(sGroupsToMove.get(index)?.length);
+    const shouldFollowMovedSGroups = Boolean(sGroupsToMove.get(index)?.length);
 
     let moveVector: Vec2;
-    if (attachmentAtom && !followsMovedSGroups) {
+    if (attachmentAtom && !shouldFollowMovedSGroups) {
       /*
        * Expanding moves the anchor of every bond to outside from the contracted
        * label to the attachment atom, and collapsing moves it back. Shifting
@@ -570,7 +572,11 @@ export function sGroupAttributeAction(id, attrs) {
   return action;
 }
 
-export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
+export function fromSgroupDeletion(
+  restruct: Restruct,
+  id,
+  shouldPerform = true,
+) {
   let action = new Action();
   const struct = restruct.molecule;
 
@@ -697,7 +703,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
 
   action.mergeWith(sGroupAttributeAction(id, attrs));
 
-  if (needPerform) {
+  if (shouldPerform) {
     action = action.perform(restruct);
 
     outsideConnections.forEach(([atomId, neighborAtomId]) => {
@@ -1062,7 +1068,7 @@ export function fromSgroupAttachmentPointRemove(
   sgroupId: number,
   atomId: number,
   leaveAtomId?: number,
-  needPerform = true,
+  shouldPerform = true,
 ) {
   let action = new Action();
   const struct = restruct.molecule;
@@ -1080,7 +1086,7 @@ export function fromSgroupAttachmentPointRemove(
     }
   });
 
-  if (needPerform) {
+  if (shouldPerform) {
     action = action.perform(restruct);
   }
 

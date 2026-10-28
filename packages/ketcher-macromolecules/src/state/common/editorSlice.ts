@@ -278,14 +278,13 @@ export const selectMonomerLibraryLoadError = (
   state: RootState,
 ): string | null => state.editor.monomerLibraryLoadError;
 
-export const selectIsSequenceEditInRNABuilderMode = (
-  state: RootState,
-): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
+export const isRnaBuilderSequenceEditMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceEditInRNABuilderMode;
 
-export const selectIsSequenceMode = (state: RootState): boolean =>
+export const isSequenceModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
 
-export const selectIsSequenceSyncEditMode = (state: RootState): boolean =>
+export const isSequenceSyncEditModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceSyncEditMode;
 
 export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
@@ -298,10 +297,10 @@ export const selectIsHandToolSelected = (state: RootState) =>
 export const hasAntisenseChains = (state: RootState): CoreEditor =>
   state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
 
-export const selectIsContextMenuActive = (state: RootState): boolean =>
+export const isContextMenuActivated = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
 
-export const selectIsDragging = (state: RootState): boolean =>
+export const isEditorDragging = (state: RootState): boolean =>
   state.editor.isDragging;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (

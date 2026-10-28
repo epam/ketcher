@@ -491,8 +491,8 @@ export class SequenceRenderer {
     return this.isCaretAfterRowEndValue;
   }
 
-  private static set isCaretAfterRowEnd(value: boolean) {
-    this.isCaretAfterRowEndValue = value;
+  private static set isCaretAfterRowEnd(isAfterRowEnd: boolean) {
+    this.isCaretAfterRowEndValue = isAfterRowEnd;
   }
 
   public static setCaretPosition(
@@ -508,11 +508,14 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      const afterRowEnd =
+      const isAfterRowEnd =
         this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
-      renderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.redrawCaret(caretPosition, isAfterRowEnd);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
+        renderer.antisenseNodeRenderer?.redrawCaret(
+          caretPosition,
+          isAfterRowEnd,
+        );
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -526,10 +529,13 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      const afterRowEnd =
+      const isAfterRowEnd =
         this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
-      renderer?.redrawCaret(caretPosition, afterRowEnd);
-      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.redrawCaret(caretPosition, isAfterRowEnd);
+      renderer?.antisenseNodeRenderer?.redrawCaret(
+        caretPosition,
+        isAfterRowEnd,
+      );
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
@@ -805,10 +811,10 @@ export class SequenceRenderer {
 
   private static redrawCaretOnRenderer(
     renderer: BaseSequenceItemRenderer,
-    afterRowEnd: boolean,
+    isAfterRowEnd: boolean,
   ) {
     renderer.removeCaret();
-    if (afterRowEnd) {
+    if (isAfterRowEnd) {
       renderer.showCaretAfterNode();
     } else {
       renderer.showCaret();
@@ -817,18 +823,18 @@ export class SequenceRenderer {
 
   private static redrawCaretOnBothStrands(
     node: ITwoStrandedChainItem,
-    afterRowEnd: boolean,
+    isAfterRowEnd: boolean,
   ) {
-    this.isCaretAfterRowEnd = afterRowEnd;
+    this.isCaretAfterRowEnd = isAfterRowEnd;
     const renderer = node.senseNode?.renderer;
 
     if (!(renderer instanceof BaseSequenceItemRenderer)) {
       return;
     }
 
-    this.redrawCaretOnRenderer(renderer, afterRowEnd);
+    this.redrawCaretOnRenderer(renderer, isAfterRowEnd);
     if (renderer.antisenseNodeRenderer) {
-      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, afterRowEnd);
+      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, isAfterRowEnd);
     }
   }
 
@@ -1241,14 +1247,14 @@ export class SequenceRenderer {
     const modelChanges = new Command();
     const senseNodeMonomer = twoStrandedNode.senseNode?.monomer;
     const antiSenseNodeMonomer = twoStrandedNode.antisenseNode?.monomer;
-    const needTurnOffSelection = senseNodeMonomer?.selected;
+    const shouldTurnOffSelection = senseNodeMonomer?.selected;
 
     if (senseNodeMonomer) {
       const result =
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           senseNodeMonomer,
         );
-      if (needTurnOffSelection) {
+      if (shouldTurnOffSelection) {
         modelChanges.merge(
           editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
             result.drawingEntities,
@@ -1264,7 +1270,7 @@ export class SequenceRenderer {
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           antiSenseNodeMonomer,
         );
-      if (needTurnOffSelection) {
+      if (shouldTurnOffSelection) {
         modelChanges.merge(
           editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
             result.drawingEntities,

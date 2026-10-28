@@ -41,7 +41,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.subtype ===
@@ -65,7 +65,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
-      { generateId },
+      { generateId: shouldGenerateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
@@ -77,13 +77,13 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public static getMonomerClass(monomers: BaseMonomer[]) {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
-    const containDifferentMonomerTypes = monomers.some((monomer) => {
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
       const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
       return monomerClass !== monomerClassToCompare;
     });
 
-    if (containDifferentMonomerTypes) {
+    if (hasDifferentMonomerTypes) {
       return KetMonomerClass.CHEM;
     }
 

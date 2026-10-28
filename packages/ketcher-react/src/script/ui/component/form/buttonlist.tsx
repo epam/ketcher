@@ -37,11 +37,11 @@ interface ButtonListProps {
 }
 
 function oneOrMore(
-  multiple: boolean,
+  isMultiple: boolean,
   values: string[],
   item: string,
 ): string[] {
-  if (multiple) return xor(values, [item]);
+  if (isMultiple) return xor(values, [item]);
   return xor(values, [...values, item]);
 }
 

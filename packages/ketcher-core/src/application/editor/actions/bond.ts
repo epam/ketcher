@@ -162,14 +162,14 @@ export function fromBondAddition(
 
   let beginAtomId: number, endAtomId: number;
 
-  const startsOnAtom = typeof begin === 'number';
-  const endsOnAtom = typeof end === 'number';
+  const isStartOnAtom = typeof begin === 'number';
+  const isEndOnAtom = typeof end === 'number';
 
-  if (!startsOnAtom && !endsOnAtom) {
+  if (!isStartOnAtom && !isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownNothingAndUpNothing(begin, end);
-  } else if (!startsOnAtom && endsOnAtom) {
+  } else if (!isStartOnAtom && isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownNothingAndUpAtom(begin, end);
-  } else if (startsOnAtom && !endsOnAtom) {
+  } else if (isStartOnAtom && !isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end);
   } else {
     [beginAtomId, endAtomId] = [begin as number, end as number];
@@ -227,7 +227,7 @@ export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: Partial<Bond>,
-  reset?: boolean,
+  shouldReset?: boolean,
 ): Action {
   const struct = restruct.molecule;
   const action = new Action();
@@ -242,7 +242,7 @@ export function fromBondsAttrs(
     const resultingType =
       'type' in attrs
         ? attrs.type
-        : reset
+        : shouldReset
           ? Bond.attrGetDefault('type')
           : bond.type;
     if (
@@ -256,7 +256,7 @@ export function fromBondsAttrs(
     let shouldUpdateStereo = false;
 
     Object.keys(Bond.attrlist).forEach((key) => {
-      if (!reset && !(key in attrs)) return;
+      if (!(key in attrs) && !shouldReset) return;
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 

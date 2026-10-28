@@ -2,7 +2,7 @@
  * Helpers for the monomer-replacement drag-drop feature.
  *
  * These pure functions handle:
- *  - Preset geometry equality comparison (presetsHaveSameGeometry)
+ *  - Preset geometry equality comparison (hasSamePresetGeometry)
  *  - Bond collection from an existing monomer (collectMonomerBonds)
  *  - Re-establishment plan computation (computeReestablishableBonds)
  *  - Preset-level bond mapping (mapPresetBonds)
@@ -71,7 +71,7 @@ export type BondReestablishmentPlan = {
  * It only compares which structural slots are filled and the phosphate
  * orientation.
  */
-export function presetsHaveSameGeometry(
+export function hasSamePresetGeometry(
   presetA: IRnaPreset,
   presetB: IRnaPreset,
 ): boolean {
@@ -98,6 +98,8 @@ export function presetsHaveSameGeometry(
 
   return true;
 }
+
+export { hasSamePresetGeometry as presetsHaveSameGeometry };
 
 /**
  * Returns all bonds attached to `monomer`, keyed by attachment-point name.

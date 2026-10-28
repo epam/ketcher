@@ -823,7 +823,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
   );
 };
 
-const containOnlyPartOfNumber = (value: number) => {
+const hasOnlyZeroDigitsAndSeparators = (value: number) => {
   return !/[^0.,]/.test(String(value));
 };
 
@@ -894,7 +894,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(unipositiveIonsValue)
+              !hasOnlyZeroDigitsAndSeparators(unipositiveIonsValue)
             }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
@@ -907,7 +907,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesValue)
+              !hasOnlyZeroDigitsAndSeparators(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
@@ -996,7 +996,7 @@ export const MacromoleculePropertiesWindow = () => {
   );
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-  const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+  const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
   const {
     debouncedCallback: debouncedRecalculateMacromoleculeProperties,
     invokeImmediately: recalculateMacromoleculePropertiesImmediately,
@@ -1016,7 +1016,7 @@ export const MacromoleculePropertiesWindow = () => {
     }
 
     recalculatePropertiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+      debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
     };
 
     // selectEntities covers recalculation when the selection changes;
@@ -1029,14 +1029,18 @@ export const MacromoleculePropertiesWindow = () => {
       editor?.events.selectEntities.remove(recalculatePropertiesHandler);
       editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
-  }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
+  }, [
+    debouncedRecalculateMacromoleculeProperties,
+    editor,
+    shouldSkipDataFetch,
+  ]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
   }, [
     unipositiveIonsValue,
     oligonucleotidesValue,
-    skipDataFetch,
+    shouldSkipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);
 
@@ -1044,16 +1048,16 @@ export const MacromoleculePropertiesWindow = () => {
   // debounced), the measurement unit is a single discrete dropdown
   // selection, so recalculating immediately here avoids an unnecessary
   // 500ms delay on top of the actual recalculation time (#7316). Both
-  // effects share `skipDataFetch`, so opening the properties window also
+  // effects share `shouldSkipDataFetch`, so opening the properties window also
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
     cancelDebouncedRecalculateMacromoleculeProperties();
-    recalculateMacromoleculePropertiesImmediately(skipDataFetch);
+    recalculateMacromoleculePropertiesImmediately(shouldSkipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
-    skipDataFetch,
+    shouldSkipDataFetch,
     cancelDebouncedRecalculateMacromoleculeProperties,
     recalculateMacromoleculePropertiesImmediately,
   ]);

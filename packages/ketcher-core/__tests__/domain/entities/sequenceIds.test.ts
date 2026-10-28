@@ -12,6 +12,10 @@ import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMo
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { ServerFormatter } from 'application/formatters/serverFormatter';
+import { SupportedFormat } from 'application/formatters/structFormatter.types';
+import type { StructService } from 'domain/services';
+import { mock } from 'jest-mock-extended';
 import { coreEditorTheme, polymerEditorTheme } from '../../mock-data';
 import {
   createPolymerEditorCanvas,
@@ -105,6 +109,32 @@ describe('imported sequence IDs', () => {
       7, 12,
     ]);
     expect(exportSequenceIds()).toEqual([7, 12]);
+  });
+
+  it('sends active IDs to Indigo for Molfile export and omits them after a reset', async () => {
+    loadPeptides();
+    const service = mock<StructService>();
+    service.convert.mockResolvedValue({ struct: 'molfile' });
+    const formatter = new ServerFormatter(
+      service,
+      serializer,
+      SupportedFormat.molV3000,
+    );
+    const manager = editor.drawingEntitiesManager;
+    await formatter.getStringFromStructureAsync(new Struct(), manager);
+    expect(JSON.parse(service.convert.mock.calls[0][0].struct)).toMatchObject({
+      monomer0: { seqid: 7 },
+      monomer1: { seqid: 12 },
+    });
+
+    const [bond] = manager.polymerBonds.values();
+    const command = manager.deletePolymerBond(bond);
+    EditorHistory.getInstance(editor).update(command);
+    editor.renderersContainer.update(command);
+    await formatter.getStringFromStructureAsync(new Struct(), manager);
+    const resetKet = JSON.parse(service.convert.mock.calls[1][0].struct);
+    expect(resetKet.monomer0).not.toHaveProperty('seqid');
+    expect(resetKet.monomer1).not.toHaveProperty('seqid');
   });
 
   it('keeps imported sequence IDs when moving a monomer', () => {

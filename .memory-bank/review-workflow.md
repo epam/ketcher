@@ -128,13 +128,15 @@ For a change that is too large to read line by line but mostly mechanical. The p
 
 **Required PR body sections** when the `large-scale-change` label is set. Open the PR with `?template=large-scale-change.md` to get them from `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md`.
 
+- **Summary:** a diagram, diff sketch, or tree of the change.
 - **Split decision:** which option, and why the earlier options do not work.
 - **Codemod:** script path, how to run it, and the known cases it skips.
 - **Evidence of equivalence:** output of the compare scripts (planned: Phase 3, task 3.9), before and after the change.
   - Test runner migration: test count per package; tests added, removed, skipped, or renamed; coverage.
   - Build tool upgrade: `dist/` file list and sizes; diff of the public `.d.ts` exports; standalone consumer check passes; E2E passes.
 - **Review map:** the 5 to 10 files with decisions, one line each. The author adds self-review comments on those lines.
-- **Revert plan:** how to roll back, and what else must roll back with it.
+- **Merge Danger:** the door and the blast radius. Its **Revert plan** says how to roll back, and what else must roll back with it.
+- **PR type and Check list**, as in the standard template. Tick Large-scale change and the type of the change itself.
 
 **Process**
 

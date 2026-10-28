@@ -13,7 +13,7 @@ The Ketcher adaptation of `pr` from `mattpocock/skills`. The _Sections_ text is 
 
 Write the PR body as `.github/pull_request_template.md`, filled in. Its first three sections are the upstream template; PR type and Check list follow. `gh pr create --body-file` leaves the template out, so copy every heading in order.
 
-A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md`. Add the Merge Danger section to it; its Revert plan answers the door.
+A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
 
 ## Title
 

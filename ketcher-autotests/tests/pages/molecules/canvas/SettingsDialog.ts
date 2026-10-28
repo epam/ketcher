@@ -482,11 +482,7 @@ export async function setSettingsOptions(
   const sortedOptions = [...options];
   sortedOptions.sort((a, b) => a.option.localeCompare(b.option));
 
-  for (const sortedOption of sortedOptions) {
-    const { option, value } = {
-      ...sortedOption,
-      value: 'value' in sortedOption ? sortedOption.value : '',
-    };
+  for (const { option, value } of sortedOptions) {
     const section = optionsToSectionMap.get(option) ?? SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);

@@ -85,4 +85,4 @@ A finding that reveals a new bug is a new scope of kind bug, not work added here
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The PR body fills the PR template, names the memory-bank file the PR updated or says "Memory bank: not needed", and carries "Verified in the app". You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. You never merge.

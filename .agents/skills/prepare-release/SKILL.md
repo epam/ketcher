@@ -156,8 +156,7 @@ PR with `gh pr create`:
 - `head`: `bump-X.Y`
 - `base`: the mode's target branch from the table above
 - `body`: the repo's PR template filled in — a short description of the
-  bump, mechanical checklist items checked, human-judgment items (tests,
-  docs, linked issue, reviewers) left for the user.
+  bump in Summary, and `Memory bank: not needed`.
 
 Report the PR URL. Tell the user which `create-release` mode to run once
 this PR is merged (`draft-candidate` after `new-candidate`/`update-candidate`,

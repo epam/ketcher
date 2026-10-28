@@ -28,14 +28,16 @@ For changes too large to read line by line. Follow the [large-scale change proto
 
 ## PR-type contract
 
-Checked for every PR, whatever flow the author used. A PR that matches no row follows the PR template checklist only.
+Checked for every PR, whatever flow the author used. The author ticks nothing: the AI review names the type in the brief, from the diff and the linked issue. A linked issue of type `Bug` makes a bug fix. A new folder in `openspec/changes/` makes a feature, and a move into `openspec/changes/archive/` an archive. A structure change with no behavior change is a refactor when it adds tests that pin the behavior, and a small change when it adds none. A large-scale change also has one of the other types. A PR that matches no row has no contract beyond review.
 
-| PR type                       | Must contain                                             | Checked by                                                                                                            |
-| ----------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Bug fix                       | Linked issue, a regression test                          | PR template checklist today. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)              |
-| Feature                       | An OpenSpec change (or a spec in the same format), tests | `openspec validate --all --strict` in CI. Planned: Danger fails the PR without an OpenSpec change (Phase 3, task 3.4) |
-| Large-scale change            | The large-scale change protocol sections                 | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)        |
-| Archive of an OpenSpec change | No unchecked tasks                                       | `openspec validate --archived` in CI                                                                                  |
+| PR type                       | Must contain                                                     | Checked by                                                                                                                 |
+| ----------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)                               |
+| Feature                       | An OpenSpec change (or a spec in the same format), tests         | `openspec validate --all --strict` in CI. Planned: Danger fails the PR without an OpenSpec change (Phase 3, task 3.4) |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                            |
+| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                            |
+| Large-scale change            | The large-scale change protocol sections                         | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
+| Archive of an OpenSpec change | No unchecked tasks                                               | `openspec validate --archived` in CI                                                                                  |
 
 ## Review pipeline
 
@@ -124,13 +126,15 @@ For a change that is too large to read line by line but mostly mechanical. The p
 
 **Required PR body sections** when the `large-scale-change` label is set. Open the PR with `?template=large-scale-change.md` to get them from `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md`.
 
+- **Summary:** a diagram, diff sketch, or tree of the change.
 - **Split decision:** which option, and why the earlier options do not work.
 - **Codemod:** script path, how to run it, and the known cases it skips.
 - **Evidence of equivalence:** output of the compare scripts (planned: Phase 3, task 3.9), before and after the change.
   - Test runner migration: test count per package; tests added, removed, skipped, or renamed; coverage.
   - Build tool upgrade: `dist/` file list and sizes; diff of the public `.d.ts` exports; standalone consumer check passes; E2E passes.
 - **Review map:** the 5 to 10 files with decisions, one line each. The author adds self-review comments on those lines.
-- **Revert plan:** how to roll back, and what else must roll back with it.
+- **Merge Danger:** the door and the blast radius. Its **Revert plan** says how to roll back, and what else must roll back with it.
+- **Closes and Memory bank** lines, as in the standard template.
 
 **Process**
 

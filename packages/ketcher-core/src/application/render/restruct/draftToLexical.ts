@@ -130,10 +130,13 @@ function buildTextSegments(
 
     // Check if we need to start a new segment
     if (
-      !currentSegment ||
-      currentSegment.format !== charStyle.format ||
-      currentSegment.style !== charStyle.style
+      currentSegment &&
+      currentSegment.format === charStyle.format &&
+      currentSegment.style === charStyle.style
     ) {
+      // Continue current segment
+      currentSegment.text += char;
+    } else {
       if (currentSegment) {
         segments.push(currentSegment);
       }
@@ -142,9 +145,6 @@ function buildTextSegments(
         format: charStyle.format,
         style: charStyle.style,
       };
-    } else {
-      // Continue current segment
-      currentSegment.text += char;
     }
   }
 

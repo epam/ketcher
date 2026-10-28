@@ -2325,14 +2325,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );
@@ -3009,14 +3010,15 @@ export class SequenceMode extends BaseMode {
       this.preserveSideChainConnections(selectedNode);
     const preservedHydrodenBonds = selectedNode.monomers.reduce(
       (acc, monomer) => {
-        return acc.concat(
-          monomer.hydrogenBonds.map((hydrodenBond) => {
+        return [
+          ...acc,
+          ...monomer.hydrogenBonds.map((hydrodenBond) => {
             return {
               toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
               fromMonomer: monomer,
             };
           }),
-        );
+        ];
       },
       [] as PreservedHydrogenBonds[],
     );

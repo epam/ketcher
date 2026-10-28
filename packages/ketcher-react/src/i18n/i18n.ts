@@ -21,7 +21,7 @@ export const defaultNS = 'common';
 // to a literal after @rollup/plugin-replace substitutes the env var at
 // build time.
 const IS_MULTI_LANGUAGE_BUILD =
-  process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+  import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 type LocaleResources = typeof BASE_RESOURCES;
 
@@ -117,9 +117,9 @@ if (!i18n.isInitialized) {
         escapeValue: false,
       },
       returnEmptyString: false,
-      saveMissing: process.env.NODE_ENV === 'development',
+      saveMissing: import.meta.env.NODE_ENV === 'development',
       missingKeyHandler:
-        process.env.NODE_ENV === 'development'
+        import.meta.env.NODE_ENV === 'development'
           ? (_lngs, ns, key) => {
               console.warn(`[i18n] Missing key "${key}" in namespace "${ns}"`);
             }

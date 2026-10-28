@@ -137,7 +137,7 @@ export const isItemInSelection = ({
       return selectedSGroupsIds.has(item.id);
 
     case 'functionalGroups':
-      return Array.from(selectedFunctionalGroups.keys()).includes(item.id);
+      return [...selectedFunctionalGroups.keys()].includes(item.id);
 
     default:
       return (
@@ -312,7 +312,7 @@ export function getMenuPropsForSelection(
   );
 
   if (selectedFunctionalGroups.size > 0) {
-    const functionalGroups = Array.from(selectedFunctionalGroups.values());
+    const functionalGroups = [...selectedFunctionalGroups.values()];
     if (
       functionalGroups.some(
         (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,

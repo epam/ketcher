@@ -69,7 +69,7 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
     isMatchingEntry: (key: number, value: TValue) => boolean,
   ): Pool<TValue> {
     return new Pool<TValue>(
-      Array.from(this).filter(([key, value]) => isMatchingEntry(key, value)),
+      [...this].filter(([key, value]) => isMatchingEntry(key, value)),
     );
   }
 

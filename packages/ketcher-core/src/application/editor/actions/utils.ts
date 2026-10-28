@@ -124,7 +124,7 @@ export function atomGetDegree(restruct: ReStruct, aid: number): number {
 }
 
 export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
-  return Array.from(getReAtom(restruct, atomId).a.sgs);
+  return [...getReAtom(restruct, atomId).a.sgs];
 }
 
 export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
@@ -165,7 +165,7 @@ export function findStereoAtoms(
 
 export function structSelection(struct: Struct): EditorSelection {
   return selectionKeys.reduce<EditorSelection>((res, key) => {
-    res[key] = Array.from(struct[key].keys());
+    res[key] = [...struct[key].keys()];
     return res;
   }, {});
 }

@@ -173,13 +173,13 @@ class Table extends Component<TableProps, TableState> {
         buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
-          !this.props.isNestedModal ? (
+          this.props.isNestedModal ? undefined : (
             <TypeChoice
               value={this.state.type}
               onChange={this.changeType}
               disabled={this.props.isMonomerCreationWizardActive}
             />
-          ) : undefined
+          )
         }
       >
         <div className={classes.periodTable}>

@@ -23,9 +23,11 @@ function uniqArray(dest, add, isReversible: boolean) {
 export function selMerge(selection, add, isReversible: boolean) {
   if (add) {
     Object.keys(add).forEach((item) => {
-      if (!selection[item]) selection[item] = add[item].slice();
-      else
+      if (selection[item]) {
         selection[item] = uniqArray(selection[item], add[item], isReversible);
+      } else {
+        selection[item] = [...add[item]];
+      }
     });
   }
   return selection;
@@ -241,7 +243,7 @@ export function selectElementsOnCanvas(
       ? selMerge(lassoHelper.end(), elements, false)
       : lassoHelper.end();
   editor.selection(
-    !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+    event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
   );
 }
 
@@ -263,7 +265,7 @@ export function isSelectionMoveHandled(
     const sel = lassoHelper.addPoint(event);
 
     editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+      event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
     );
     return true;
   }

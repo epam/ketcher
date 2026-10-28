@@ -348,7 +348,7 @@ abstract class SelectBase implements BaseTool {
       const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
-      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
+      drawingEntities = [...drawingEntities, ...bondsInsideCurrentChain];
       modelChanges.merge(
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
@@ -539,7 +539,7 @@ abstract class SelectBase implements BaseTool {
         );
 
         if (
-          SelectBase.needApplyGroupCenterSnapForOneAxis(
+          this.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -558,7 +558,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          SelectBase.needApplyGroupCenterSnapForOneAxis(
+          this.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -605,7 +605,7 @@ abstract class SelectBase implements BaseTool {
     snapAlignment: MonomersAlignment,
     distance: number,
   ) {
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       firstMonomer.center,
       secondMonomer.center,
     );
@@ -641,7 +641,7 @@ abstract class SelectBase implements BaseTool {
     const remainingAlignedMonomers: BaseMonomer[] = [];
 
     const traverse = (currentMonomer: BaseMonomer) => {
-      const nextMonomers = SelectBase.getNextMonomers(
+      const nextMonomers = this.getNextMonomers(
         currentMonomer,
         visitedMonomers,
       );
@@ -651,7 +651,7 @@ abstract class SelectBase implements BaseTool {
         }
 
         if (
-          SelectBase.checkMonomersAlignment(
+          this.checkMonomersAlignment(
             currentMonomer,
             nextMonomer,
             alignment,
@@ -689,7 +689,7 @@ abstract class SelectBase implements BaseTool {
       return { distanceSnapPosition: null };
     }
 
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       connectedMonomer.center,
       monomerForAlignment.center,
     );
@@ -736,7 +736,7 @@ abstract class SelectBase implements BaseTool {
       connectedMonomer,
       monomerForAlignment,
     ];
-    const additionalAlignedMonomers = SelectBase.findRemainingAlignedMonomers(
+    const additionalAlignedMonomers = this.findRemainingAlignedMonomers(
       monomerForAlignment,
       alignedMonomers,
       alignment,
@@ -803,14 +803,14 @@ abstract class SelectBase implements BaseTool {
     ];
 
     const additionalAlignedMonomersFromOneSide =
-      SelectBase.findRemainingAlignedMonomers(
+      this.findRemainingAlignedMonomers(
         firstConnectedMonomer,
         alignedMonomers,
         alignment,
         snapDistance,
       );
     const additionalAlignedMonomersFromOtherSide =
-      SelectBase.findRemainingAlignedMonomers(
+      this.findRemainingAlignedMonomers(
         secondConnectedMonomer,
         alignedMonomers,
         alignment,
@@ -836,7 +836,7 @@ abstract class SelectBase implements BaseTool {
   ) {
     const secondShortestBond = initialMonomer.polymerBondsSortedByLength[1];
     if (!secondShortestBond) {
-      return SelectBase.calculateSideDistanceSnap(
+      return this.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
@@ -846,27 +846,27 @@ abstract class SelectBase implements BaseTool {
     const secondConnectedMonomer =
       secondShortestBond.getAnotherMonomer(initialMonomer);
     if (!secondConnectedMonomer) {
-      return SelectBase.calculateSideDistanceSnap(
+      return this.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
       );
     }
 
-    const alignment = SelectBase.determineAlignment(
+    const alignment = this.determineAlignment(
       connectedMonomer.center,
       secondConnectedMonomer.center,
     );
 
     if (!alignment) {
-      return SelectBase.calculateSideDistanceSnap(
+      return this.calculateSideDistanceSnap(
         cursorPosition,
         initialMonomer,
         connectedMonomer,
       );
     }
 
-    return SelectBase.calculateInBetweenDistanceSnap(
+    return this.calculateInBetweenDistanceSnap(
       cursorPosition,
       initialMonomer,
       connectedMonomer,

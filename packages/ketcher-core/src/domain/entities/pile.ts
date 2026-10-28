@@ -38,7 +38,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
   }
 
   filter(isMatchingItem: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(isMatchingItem));
+    return new Pile([...this].filter(isMatchingItem));
   }
 
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {
@@ -92,7 +92,7 @@ export class Pile<TValue = unknown> extends Set<TValue> {
 
     // Recursively union two of sets === union all sets
     return hasUnionizedSets
-      ? Pile.unionIntersections(setsToReturn)
+      ? this.unionIntersections(setsToReturn)
       : setsToReturn;
   }
 }

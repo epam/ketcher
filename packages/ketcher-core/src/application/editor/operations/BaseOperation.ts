@@ -105,7 +105,7 @@ class BaseOperation<D = unknown> {
       }
 
       if (level) {
-        BaseOperation.invalidateLoop(restruct, halfBond.bid);
+        this.invalidateLoop(restruct, halfBond.bid);
       }
     });
 
@@ -145,14 +145,14 @@ class BaseOperation<D = unknown> {
   }
 
   protected static invalidateBond(restruct: ReStruct, bondId: number) {
-    BaseOperation.invalidateLoop(restruct, bondId);
+    this.invalidateLoop(restruct, bondId);
 
     const bond = restruct.bonds.get(bondId);
     if (!bond) {
       return;
     }
-    BaseOperation.invalidateAtom(restruct, bond.b.begin, 0);
-    BaseOperation.invalidateAtom(restruct, bond.b.end, 0);
+    this.invalidateAtom(restruct, bond.b.begin, 0);
+    this.invalidateAtom(restruct, bond.b.end, 0);
   }
 
   protected static invalidateItem(
@@ -162,20 +162,20 @@ class BaseOperation<D = unknown> {
     level = 0,
   ) {
     if (mapName === 'atoms') {
-      BaseOperation.invalidateAtom(restruct, id, level);
+      this.invalidateAtom(restruct, id, level);
       return;
     }
 
     if (mapName === 'attachmentGroups') {
-      BaseOperation.invalidateAtom(restruct, id, level);
+      this.invalidateAtom(restruct, id, level);
       return;
     }
 
     if (mapName === 'bonds') {
-      BaseOperation.invalidateBond(restruct, id);
+      this.invalidateBond(restruct, id);
 
       if (level > 0) {
-        BaseOperation.invalidateLoop(restruct, id);
+        this.invalidateLoop(restruct, id);
       }
       return;
     }
@@ -187,7 +187,7 @@ class BaseOperation<D = unknown> {
     restruct: ReStruct,
     fragmentId: number,
   ) {
-    BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
+    this.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
   }
 }
 

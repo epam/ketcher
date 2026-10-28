@@ -103,7 +103,7 @@ export class Nucleoside {
       ),
     );
 
-    return { modelChanges, node: Nucleoside.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

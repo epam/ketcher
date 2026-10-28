@@ -256,7 +256,7 @@ function applySGroupArrayProp(
   if (part.length !== num) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
 
-  sGroups[sid][propName] = sGroups[sid][propName].concat(part);
+  sGroups[sid][propName] = [...sGroups[sid][propName], ...part];
 }
 
 function applyDataSGroupName(sg: SGroup, name: string): void {

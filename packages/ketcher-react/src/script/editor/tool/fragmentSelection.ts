@@ -414,7 +414,7 @@ export default class FragmentSelectionTool implements Tool {
       }
     }
 
-    return { atoms, bonds: Array.from(bondsSet) };
+    return { atoms, bonds: [...bondsSet] };
   }
 
   private getComponentData(struct: Struct) {

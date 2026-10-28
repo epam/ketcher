@@ -59,8 +59,10 @@ import {
 } from './utils';
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
+  type DisabledFunctionalityConfig,
   type ExportImageParams,
   type KetcherApiSettings,
+  type KetcherFunctionality,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -109,6 +111,7 @@ export class Ketcher {
   _indigo: Indigo;
   readonly #eventBus: EventEmitter;
   readonly #settingsService?: ISettingsService;
+  readonly #disabledFunctionality: ReadonlySet<KetcherFunctionality>;
   changeEvent: Subscription;
   libraryUpdateEvent: Subscription;
 
@@ -137,10 +140,21 @@ export class Ketcher {
     return this.#settingsService;
   }
 
+  /**
+   * Checks whether a given piece of functionality was disabled via the
+   * `disabledFunctionality` configuration option. Any UI entry point that
+   * can trigger that functionality (context menu item, toolbar button,
+   * etc.) should consult this method and hide/disable itself accordingly.
+   */
+  isFunctionalityDisabled(functionality: KetcherFunctionality): boolean {
+    return this.#disabledFunctionality.has(functionality);
+  }
+
   constructor(
     structService: StructService,
     formatterFactory: FormatterFactory,
     settingsService?: ISettingsService,
+    disabledFunctionality?: DisabledFunctionalityConfig,
   ) {
     assert(structService != null);
     assert(formatterFactory != null);
@@ -150,6 +164,7 @@ export class Ketcher {
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
     this.#settingsService = settingsService;
+    this.#disabledFunctionality = new Set(disabledFunctionality ?? []);
     this._indigo = new Indigo(this.structService);
     this.#eventBus = new EventEmitter();
     this.logging = {
@@ -520,7 +535,7 @@ export class Ketcher {
       hasQueryAtoms = selection.atoms.some((atomId) => {
         const atom = structure.atoms.get(atomId);
         assert(atom);
-        const sGroupIds = Array.from(atom.sgs.values());
+        const sGroupIds = [...atom.sgs.values()];
         const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
           const sGroup = structure.sgroups.get(sGroupId);
           assert(sGroup);

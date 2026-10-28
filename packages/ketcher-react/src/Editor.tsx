@@ -96,7 +96,7 @@ export const Editor = (props: Props) => {
     globalThis.isPolymerEditorTurnedOn = isPolymerEditorVisible;
   }, []);
 
-  const togglerComponent = !disableMacromoleculesEditor ? (
+  const togglerComponent = disableMacromoleculesEditor ? undefined : (
     <ModeControl
       toggle={(value) => {
         if (!isMonomerWizardOpen) togglePolymerEditor(value);
@@ -104,7 +104,7 @@ export const Editor = (props: Props) => {
       isPolymerEditor={showPolymerEditor}
       disabled={isMonomerWizardOpen}
     />
-  ) : undefined;
+  );
 
   useEffect(() => {
     const onWizardStateChange = (isWizardActive: boolean) => {

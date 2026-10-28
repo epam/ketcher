@@ -194,26 +194,23 @@ function saveMulToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(
-    makeAtomBondLines(
-      'SAL',
-      idstr,
-      Array.from(sgroup.atomSet.values()),
-      atomMap,
-    ),
-  ); // TODO: check atomSet
-  lines = lines.concat(
-    makeAtomBondLines(
+  lines = [
+    ...lines,
+    ...makeAtomBondLines('SAL', idstr, [...sgroup.atomSet.values()], atomMap),
+  ]; // TODO: check atomSet
+  lines = [
+    ...lines,
+    ...makeAtomBondLines(
       'SPA',
       idstr,
-      Array.from(sgroup.parentAtomSet.values()),
+      [...sgroup.parentAtomSet.values()],
       atomMap,
     ),
-  );
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  ];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
   const smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
   lines.push(smtLine);
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -227,9 +224,9 @@ function saveSruToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -254,8 +251,8 @@ function saveSupToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
 
   let sgroupName: string | undefined;
 
@@ -291,7 +288,7 @@ function saveDatToMolfile(
   let pp = sgroup.pp;
   if (!data.absolute) pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
   let sdtLine =
     'M  SDT ' +
     idstr +

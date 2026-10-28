@@ -43,7 +43,7 @@ export class SGroupForest {
   */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
-    const queue = Array.from(this.children.get(-1) as Array<number>);
+    const queue = [...(this.children.get(-1) as Array<number>)];
     while (queue.length > 0) {
       const id = queue.shift();
       if (typeof id !== 'number') {
@@ -79,7 +79,7 @@ export class SGroupForest {
       );
     });
 
-    const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
+    const parents = [...this.atomSets.keys()].filter((sgid) => {
       if (subsetById.get(sgid) !== true) {
         return false;
       }
@@ -89,7 +89,7 @@ export class SGroupForest {
       );
     });
 
-    const children = Array.from(this.atomSets.keys()).filter((id) => {
+    const children = [...this.atomSets.keys()].filter((id) => {
       const parentId = this.parent.get(id);
       if (parentId !== undefined && strictSupersetById.get(parentId) === true) {
         return false;
@@ -164,8 +164,8 @@ export class SGroupForest {
     try {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
-    } catch (e) {
-      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
+    } catch (error) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', error);
       console.info('error: sgid is not in the forest');
     }
 
@@ -217,5 +217,5 @@ export function checkOverlapping(
     return atom ? res.union(atom.sgs) : res;
   }, new Pile<number>());
 
-  return Array.from(sgroups).some(searchFunction[sGroupType]);
+  return [...sgroups].some(searchFunction[sGroupType]);
 }

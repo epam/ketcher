@@ -35,10 +35,10 @@ export class EditorHistory {
   }
 
   static getInstance(editor: CoreEditor): EditorHistory {
-    let instance = EditorHistory.instances.get(editor);
+    let instance = this.instances.get(editor);
     if (!instance) {
       instance = new EditorHistory(editor);
-      EditorHistory.instances.set(editor, instance);
+      this.instances.set(editor, instance);
     }
     return instance;
   }

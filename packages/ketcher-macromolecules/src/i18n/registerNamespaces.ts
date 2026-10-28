@@ -12,7 +12,7 @@ import {
 } from './localeResources.generated';
 
 const IS_MULTI_LANGUAGE_BUILD =
-  process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+  import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
 
 /**
  * ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>

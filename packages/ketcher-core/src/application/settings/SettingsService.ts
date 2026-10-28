@@ -20,7 +20,7 @@ import { getDefaultSettings, PRESETS } from './schema';
 import { LocalStorageAdapter } from './LocalStorageAdapter';
 import { SchemaValidator } from './SchemaValidator';
 import { SettingsMigration } from './SettingsMigration';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, SettingsManager } from 'utilities';
 
 /**
  * Default storage key for localStorage
@@ -78,11 +78,12 @@ export class SettingsService implements ISettingsService {
   static async getInstance(
     options: SettingsServiceOptions = {},
   ): Promise<SettingsService> {
-    if (!SettingsService.instance) {
-      SettingsService.instance = new SettingsService(options);
-      await SettingsService.instance.init();
+    const instance = this.instance ?? new SettingsService(options);
+    this.instance = instance;
+    if (!instance.initialized) {
+      await instance.init();
     }
-    return SettingsService.instance;
+    return instance;
   }
 
   /**
@@ -132,14 +133,14 @@ export class SettingsService implements ISettingsService {
 
         // 4. Validate merged settings
         const validation = this.validator.validate(merged);
-        if (!validation.valid) {
+        if (validation.valid) {
+          this.settings = merged;
+        } else {
           KetcherLogger.warn(
             'Invalid settings in storage, using defaults',
             validation.errors,
           );
           // Keep settings from constructor (includes custom defaults if provided)
-        } else {
-          this.settings = merged;
         }
       }
 
@@ -149,6 +150,7 @@ export class SettingsService implements ISettingsService {
       }
 
       this.initialized = true;
+      this.syncDomainLayerSettings();
     } catch (error) {
       KetcherLogger.error(
         '[SettingsService] Failed to initialize settings:',
@@ -156,6 +158,7 @@ export class SettingsService implements ISettingsService {
       );
       // Keep settings from constructor (includes custom defaults if provided)
       this.initialized = true;
+      this.syncDomainLayerSettings();
     }
   }
 
@@ -195,6 +198,7 @@ export class SettingsService implements ISettingsService {
 
     // 4. Update internal state
     this.settings = updated;
+    this.syncDomainLayerSettings();
 
     // 5. Persist
     if (this.autoSave) {
@@ -367,5 +371,17 @@ export class SettingsService implements ISettingsService {
     if (!this.initialized) {
       throw new Error('SettingsService not initialized. Call init() first.');
     }
+  }
+
+  /**
+   * Mirror settings that are consumed directly by the domain layer
+   * (`ketcher-core` entities that have no dependency on `SettingsService`)
+   * into `SettingsManager`. Called whenever `this.settings` is (re)loaded
+   * or updated, so e.g. `Atom.calcValence` can read the current
+   * `valence-mode` synchronously without needing settings threaded through
+   * every call site.
+   */
+  private syncDomainLayerSettings(): void {
+    SettingsManager.valenceMode = this.settings['valence-mode'];
   }
 }

@@ -191,7 +191,7 @@ function selectStereoFlagsIfNecessary(
     }
 
     const currentAtoms = fragmentToAtoms.get(atomFragment) ?? [];
-    const updatedAtoms = currentAtoms.concat(atomId);
+    const updatedAtoms = [...currentAtoms, atomId];
     fragmentToAtoms.set(atomFragment, updatedAtoms);
   });
 
@@ -202,7 +202,7 @@ function selectStereoFlagsIfNecessary(
     );
 
     if (shouldSelectStereoFlag) {
-      stereoFlags = stereoFlags.concat(fragmentId);
+      stereoFlags = [...stereoFlags, fragmentId];
     }
   });
 
@@ -497,7 +497,11 @@ class Editor implements KetcherEditor {
 
   // this is used by API addFragment method
   structToAddFragment(struct: Struct, x?: number, y?: number): Struct {
-    if (x != null && y != null) {
+    if (x == null || y == null) {
+      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
+
+      this.renderAndRecoordinateStruct(superStruct);
+    } else {
       const position = new Vec2(x, y);
       const [action] = fromPaste(
         this.render.ctab,
@@ -508,10 +512,6 @@ class Editor implements KetcherEditor {
         true,
       );
       this.update(action, true);
-    } else {
-      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
-
-      this.renderAndRecoordinateStruct(superStruct);
     }
 
     this.centerViewportAccordingToStruct();
@@ -919,7 +919,7 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    return Editor.suitableAttachmentPointStereoTypes.has(bond.stereo);
+    return this.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
   /**
@@ -943,7 +943,7 @@ class Editor implements KetcherEditor {
 
     const potentialAttachmentPoints = new Map<number, Set<number>>();
     struct.bonds.forEach((bond) => {
-      if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
+      if (!this.isBondSuitableForAttachmentPoint(bond)) {
         return;
       }
 
@@ -984,14 +984,14 @@ class Editor implements KetcherEditor {
       return false;
     }
 
-    const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
+    const bondToTerminalRGroupAtom = this.getBondByNeighborHalfBondId(
       struct,
       atom.neighbors[0],
     );
 
     return (
       bondToTerminalRGroupAtom !== null &&
-      Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
+      this.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
     );
   }
 
@@ -1026,9 +1026,7 @@ class Editor implements KetcherEditor {
 
     // When there's no selection, use all atoms from the structure
     const atomsToProcess =
-      selection !== null
-        ? selection.atoms
-        : Array.from(currentStruct.atoms.keys());
+      selection === null ? [...currentStruct.atoms.keys()] : selection.atoms;
 
     if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;
@@ -1167,9 +1165,9 @@ class Editor implements KetcherEditor {
     const nonLeavingAtoms = structure.atoms.filter((atomId) => {
       assert(monomerCreationState);
 
-      return Array.from(
-        monomerCreationState.assignedAttachmentPoints.values(),
-      ).every((atomPair) => atomPair[1] !== atomId);
+      return [...monomerCreationState.assignedAttachmentPoints.values()].every(
+        (atomPair) => atomPair[1] !== atomId,
+      );
     });
 
     if (nonLeavingAtoms.size < 2) {
@@ -1186,7 +1184,7 @@ class Editor implements KetcherEditor {
     }
 
     const suitableBonds = nonLeavingAtomBonds.filter((_, bond) =>
-      Editor.isBondSuitableForAttachmentPoint(bond),
+      this.isBondSuitableForAttachmentPoint(bond),
     );
 
     return suitableBonds.size >= 1;
@@ -1199,9 +1197,7 @@ class Editor implements KetcherEditor {
       sgroups.size > 0 ||
       rgroups.size > 0 ||
       functionalGroups.size > 0 ||
-      Array.from(atoms.values()).some((atom) =>
-        genericsList.includes(atom.label),
-      )
+      [...atoms.values()].some((atom) => genericsList.includes(atom.label))
     );
   }
 
@@ -1293,10 +1289,10 @@ class Editor implements KetcherEditor {
       if (!atomIds.size) {
         throw new Error('Select a structure to create or edit a monomer.');
       }
-      const bonds = Array.from(struct.bonds.entries())
+      const bonds = [...struct.bonds.entries()]
         .filter(([, bond]) => atomIds.has(bond.begin) && atomIds.has(bond.end))
         .map(([id]) => id);
-      const selection = { atoms: Array.from(atomIds), bonds };
+      const selection = { atoms: [...atomIds], bonds };
       this.struct(struct, false);
       this.selection(selection);
       if (request.mode === 'create') {
@@ -1314,7 +1310,7 @@ class Editor implements KetcherEditor {
             return undefined;
           }
           const monomerAtomIdsSet = new Set(monomerAtomIds.values());
-          return Array.from(struct.sgroups.entries()).find(
+          return [...struct.sgroups.entries()].find(
             ([, group]) =>
               group instanceof MonomerMicromolecule &&
               group.atoms.some((atomId) => monomerAtomIdsSet.has(atomId)),
@@ -1355,7 +1351,7 @@ class Editor implements KetcherEditor {
     const leavingAtoms = new Set<number>();
     const attachmentPlaceholders = new Map<number, number>();
     monomerToAtomIdMap.forEach((atomMap, monomer) => {
-      if (!Array.from(atomMap.values()).every((id) => selectedAtoms.has(id))) {
+      if (![...atomMap.values()].every((id) => selectedAtoms.has(id))) {
         return;
       }
       monomer.monomerItem.attachmentPoints?.forEach((point, index) => {
@@ -1366,7 +1362,7 @@ class Editor implements KetcherEditor {
           const attachmentAtom = template.atoms.get(point.attachmentAtom);
           if (attachmentAtom?.label === 'R#') {
             // Legacy templates use a terminal R-group itself as the AP.
-            const bonds = Array.from(template.bonds.values()).filter(
+            const bonds = [...template.bonds.values()].filter(
               (bond) =>
                 bond.begin === point.attachmentAtom ||
                 bond.end === point.attachmentAtom,
@@ -1393,13 +1389,13 @@ class Editor implements KetcherEditor {
         }
       });
     });
-    Array.from(struct.sgroups.entries()).forEach(([id, group]) => {
+    [...struct.sgroups.entries()].forEach(([id, group]) => {
       if (
         group.isMonomer &&
         group.atoms.every((atomId) => selectedAtoms.has(atomId))
       ) {
         struct.sGroupDelete(id);
-        Array.from(struct.functionalGroups.entries()).forEach(
+        [...struct.functionalGroups.entries()].forEach(
           ([fgId, functionalGroup]) => {
             if (functionalGroup.relatedSGroupId === id) {
               struct.functionalGroups.delete(fgId);
@@ -1412,7 +1408,7 @@ class Editor implements KetcherEditor {
       struct.atoms.delete(id);
       selectedAtoms.delete(id);
     });
-    Array.from(struct.bonds.entries()).forEach(([id, bond]) => {
+    [...struct.bonds.entries()].forEach(([id, bond]) => {
       const begin = attachmentPlaceholders.get(bond.begin) ?? bond.begin;
       const end = attachmentPlaceholders.get(bond.end) ?? bond.end;
       if (begin === end || leavingAtoms.has(begin) || leavingAtoms.has(end)) {
@@ -1452,7 +1448,7 @@ class Editor implements KetcherEditor {
 
     const { monomer } = primarySgroup;
     const atoms = [...primarySgroup.atoms];
-    const bonds = Array.from(struct.bonds.entries())
+    const bonds = [...struct.bonds.entries()]
       .filter(
         ([, bond]) => atoms.includes(bond.begin) && atoms.includes(bond.end),
       )
@@ -1519,8 +1515,8 @@ class Editor implements KetcherEditor {
     this.struct(structure, false);
     this.openMonomerCreationWizard(
       {
-        atoms: Array.from(structure.atoms.keys()),
-        bonds: Array.from(structure.bonds.keys()),
+        atoms: [...structure.atoms.keys()],
+        bonds: [...structure.bonds.keys()],
       },
       initialValues,
       attachmentPoints,
@@ -1542,8 +1538,8 @@ class Editor implements KetcherEditor {
     const currentStruct = this.render.ctab.molecule;
     const rawSelection = selectionOverride ??
       this.selection() ?? {
-        atoms: Array.from(this.struct().atoms.keys()),
-        bonds: Array.from(this.struct().bonds.keys()),
+        atoms: [...this.struct().atoms.keys()],
+        bonds: [...this.struct().bonds.keys()],
       };
     const selection: Selection = {
       rxnArrows: [],
@@ -1558,7 +1554,7 @@ class Editor implements KetcherEditor {
 
     if (editInstanceInitialValues) {
       selectedStruct.functionalGroups.clear();
-      Array.from(selectedStruct.sgroups.keys()).forEach((sgid) => {
+      [...selectedStruct.sgroups.keys()].forEach((sgid) => {
         selectedStruct.sGroupDelete(sgid);
       });
       this.terminalRGroupAtoms = [];
@@ -1697,9 +1693,9 @@ class Editor implements KetcherEditor {
         } else {
           // For duplicate R1/R2 or other cases, assign to smallest available Rn (n>2)
           // or fall back to R1/R2 if no side attachment points are available
-          const assignedAttachmentPointNames = Array.from(
-            assignedAttachmentPoints.keys(),
-          );
+          const assignedAttachmentPointNames = [
+            ...assignedAttachmentPoints.keys(),
+          ];
           // Skip R1/R2 when:
           // 1. Processing a duplicate R1/R2 label (requirement 2.6: prefer R3+)
           // 2. Processing other labels when we haven't assigned all expected side attachments yet
@@ -1769,9 +1765,9 @@ class Editor implements KetcherEditor {
         attachmentAtomId,
       );
 
-      const bondFromOriginalAttachmentAtom = Array.from(
-        currentStruct.bonds.values(),
-      ).find(
+      const bondFromOriginalAttachmentAtom = [
+        ...currentStruct.bonds.values(),
+      ].find(
         (bond) =>
           (bond.begin === leavingAtomId && bond.end === attachmentAtomId) ||
           (bond.end === leavingAtomId && bond.begin === attachmentAtomId),
@@ -1786,9 +1782,7 @@ class Editor implements KetcherEditor {
       });
       selectedStruct.bonds.add(newBond);
 
-      const assignedAttachmentPointNames = Array.from(
-        assignedAttachmentPoints.keys(),
-      );
+      const assignedAttachmentPointNames = [...assignedAttachmentPoints.keys()];
       const attachmentPointName = getNextFreeAttachmentPoint(
         assignedAttachmentPointNames,
         assignedAttachmentPointNames.length < sideAttachmentPointsNames.length,
@@ -1858,14 +1852,14 @@ class Editor implements KetcherEditor {
       const potentialLeavingAtomsSet = potentialAttachmentPoints.get(
         originalAttachmentAtomId,
       );
-      if (!potentialLeavingAtomsSet) {
+      if (potentialLeavingAtomsSet) {
+        potentialLeavingAtomsSet.add(originalLeavingAtomId);
+      } else {
         const potentialLeavingAtoms = new Set([originalLeavingAtomId]);
         potentialAttachmentPoints.set(
           originalAttachmentAtomId,
           potentialLeavingAtoms,
         );
-      } else {
-        potentialLeavingAtomsSet.add(originalLeavingAtomId);
       }
     });
 
@@ -1925,7 +1919,7 @@ class Editor implements KetcherEditor {
     let leavingAtomId: number;
     let additionalAction: Action | null = null;
     if (!shouldForceAddNewLeavingGroupAtom && potentialLeavingAtoms) {
-      const [, minimalAtomicNumberAtomId] = Array.from(potentialLeavingAtoms)
+      const [, minimalAtomicNumberAtomId] = [...potentialLeavingAtoms]
         .sort((a, b) => a - b)
         .reduce(
           (acc, currentAtomId) => {
@@ -2439,7 +2433,7 @@ class Editor implements KetcherEditor {
         ? new Set(selectedSGroupIds)
         : null;
 
-    Array.from(struct.sgroups.entries()).forEach(([sgId, sgroup]) => {
+    [...struct.sgroups.entries()].forEach(([sgId, sgroup]) => {
       const sgroupWithMonomer = sgroup as SGroup & EditableSGroupMonomer;
       const sgroupMonomer = sgroupWithMonomer.monomer;
       const { props, label } = sgroupMonomer?.monomerItem ?? {};
@@ -2909,8 +2903,8 @@ class Editor implements KetcherEditor {
 
       if (selectedAtoms.size > 0 || selectedBonds.size > 0) {
         this.selection({
-          atoms: Array.from(selectedAtoms),
-          bonds: Array.from(selectedBonds),
+          atoms: [...selectedAtoms],
+          bonds: [...selectedBonds],
         });
       }
     });
@@ -3636,9 +3630,9 @@ class Editor implements KetcherEditor {
         case OperationType.ATOM_DELETE:
           {
             // Invalidate assigned attachment points – check if any of the atoms in the atom pair is deleted
-            const attachmentPointsToInvalidate = Array.from(
-              this.monomerCreationState.assignedAttachmentPoints.entries(),
-            ).filter(
+            const attachmentPointsToInvalidate = [
+              ...this.monomerCreationState.assignedAttachmentPoints.entries(),
+            ].filter(
               ([, atomPair]) => ids.has(atomPair[0]) || ids.has(atomPair[1]),
             );
 
@@ -3679,9 +3673,9 @@ class Editor implements KetcherEditor {
             );
 
             // Invalidate potential attachment points
-            const potentialAttachmentPointsToInvalidate = Array.from(
-              this.monomerCreationState.potentialAttachmentPoints.entries(),
-            );
+            const potentialAttachmentPointsToInvalidate = [
+              ...this.monomerCreationState.potentialAttachmentPoints.entries(),
+            ];
 
             potentialAttachmentPointsToInvalidate.forEach(
               ([attachmentAtomId, leavingAtomIds]) => {
@@ -3693,7 +3687,7 @@ class Editor implements KetcherEditor {
                 } else {
                   // If any leaving atoms are deleted, remove them from the set
                   const updatedLeavingAtomIds = new Set(
-                    Array.from(leavingAtomIds).filter((id) => !ids.has(id)),
+                    [...leavingAtomIds].filter((id) => !ids.has(id)),
                   );
 
                   // If no leaving atoms remain, remove the entire entry
@@ -3722,9 +3716,9 @@ class Editor implements KetcherEditor {
             assert(bond);
 
             // Handle assigned attachment points
-            const attachmentPointWithBond = Array.from(
-              this.monomerCreationState.assignedAttachmentPoints.entries(),
-            ).find(([, atomPair]) => {
+            const attachmentPointWithBond = [
+              ...this.monomerCreationState.assignedAttachmentPoints.entries(),
+            ].find(([, atomPair]) => {
               return (
                 (bond.begin === atomPair[0] && bond.end === atomPair[1]) ||
                 (bond.begin === atomPair[1] && bond.end === atomPair[0])
@@ -3733,12 +3727,12 @@ class Editor implements KetcherEditor {
 
             // If bond between attachment atom and leaving atom becomes non-suitable, mark the AP as problematic
             if (attachmentPointWithBond) {
-              if (!Editor.isBondSuitableForAttachmentPoint(bond)) {
-                this.monomerCreationState.problematicAttachmentPoints.add(
+              if (Editor.isBondSuitableForAttachmentPoint(bond)) {
+                this.monomerCreationState.problematicAttachmentPoints.delete(
                   attachmentPointWithBond[0],
                 );
               } else {
-                this.monomerCreationState.problematicAttachmentPoints.delete(
+                this.monomerCreationState.problematicAttachmentPoints.add(
                   attachmentPointWithBond[0],
                 );
               }
@@ -3790,9 +3784,9 @@ class Editor implements KetcherEditor {
             assert(bond);
 
             // Handle assigned attachment points - existing logic
-            const attachmentPointWithBondToLeavingAtom = Array.from(
-              this.monomerCreationState.assignedAttachmentPoints.entries(),
-            ).find(([, [attachmentAtomId, leavingAtomId]]) => {
+            const attachmentPointWithBondToLeavingAtom = [
+              ...this.monomerCreationState.assignedAttachmentPoints.entries(),
+            ].find(([, [attachmentAtomId, leavingAtomId]]) => {
               return (
                 (bond.begin === leavingAtomId &&
                   bond.end !== attachmentAtomId) ||
@@ -3910,7 +3904,7 @@ class Editor implements KetcherEditor {
       // TODO: better way will be this.struct()
       resolvedCi = structObjects.reduce(
         (res, key) => {
-          res[key] = Array.from(ReStruct[key].keys());
+          res[key] = [...ReStruct[key].keys()];
           return res;
         },
         {} as Record<string, number[]>,
@@ -3919,7 +3913,7 @@ class Editor implements KetcherEditor {
 
     if (ci === 'descriptors') {
       ReStruct = this.render.ctab;
-      resolvedCi = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
+      resolvedCi = { sgroupData: [...ReStruct.sgroupData.keys()] };
     }
 
     if (resolvedCi) {
@@ -3928,7 +3922,7 @@ class Editor implements KetcherEditor {
       Object.keys(resolvedCi).forEach((key) => {
         if (resolvedCi[key]?.length > 0)
           // TODO: deep merge
-          res[key] = resolvedCi[key].slice();
+          res[key] = [...resolvedCi[key]];
       });
 
       if (Object.keys(res).length !== 0) {
@@ -3940,9 +3934,9 @@ class Editor implements KetcherEditor {
       );
       if (stereoFlags.length !== 0) {
         if (this._selection?.enhancedFlags) {
-          this._selection.enhancedFlags = Array.from(
-            new Set([...this._selection.enhancedFlags, ...stereoFlags]),
-          );
+          this._selection.enhancedFlags = [
+            ...new Set([...this._selection.enhancedFlags, ...stereoFlags]),
+          ];
         } else {
           res.enhancedFlags = stereoFlags;
         }
@@ -4210,7 +4204,7 @@ class Editor implements KetcherEditor {
   explicitSelected(shouldAutoSelectBonds = true) {
     const selection = this.selection() ?? {};
     const res = structObjects.reduce((acc, key) => {
-      acc[key] = selection[key] ? selection[key].slice() : [];
+      acc[key] = selection[key] ? [...selection[key]] : [];
       return acc;
     }, {} as Selection);
 
@@ -4580,10 +4574,10 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
           paperPath.closePath();
         }
 
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
+        if (combinedPath) {
           combinedPath = combinedPath.unite(paperPath);
+        } else {
+          combinedPath = paperPath;
         }
       }
 

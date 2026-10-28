@@ -68,12 +68,12 @@ export class ZoomTool implements BaseTool {
 
   private static _instance: ZoomTool;
   public static get instance() {
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
     ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {

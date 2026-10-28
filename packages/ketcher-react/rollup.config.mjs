@@ -75,6 +75,9 @@ export const valuesToReplace = {
   'import.meta.env.INDIGO_MACHINE': JSON.stringify(
     process.env.INDIGO_MACHINE || '',
   ),
+  'import.meta.env.KETCHER_ENABLE_REDUX_LOGGER': JSON.stringify(
+    process.env.KETCHER_ENABLE_REDUX_LOGGER || '',
+  ),
   'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
     process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
   ),

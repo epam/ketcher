@@ -210,7 +210,13 @@ export function sections(markdown) {
   const flush = () => {
     if (heading !== null) result.set(heading, normalize(lines.join('\n')));
   };
-  for (const line of markdown.replace(/<!--[\s\S]*?-->/g, '').split(/\r?\n/)) {
+  let withoutComments = markdown;
+  let previous;
+  do {
+    previous = withoutComments;
+    withoutComments = withoutComments.replace(/<!--[\s\S]*?-->/g, '');
+  } while (withoutComments !== previous);
+  for (const line of withoutComments.split(/\r?\n/)) {
     const match = line.match(/^#{2,3}\s+(.+?)\s*$/);
     if (match) {
       flush();

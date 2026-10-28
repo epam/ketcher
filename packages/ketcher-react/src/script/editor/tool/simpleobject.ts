@@ -68,13 +68,7 @@ class SimpleObjectTool implements Tool {
           this.dragCtx.action.perform(rnd.ctab);
         }
 
-        if (!this.dragCtx.ci.ref) {
-          this.dragCtx.action = fromMultipleMove(
-            rnd.ctab,
-            this.editor.selection() ?? {},
-            diff,
-          );
-        } else {
+        if (this.dragCtx.ci.ref) {
           this.dragCtx.action = fromSimpleObjectResizing(
             rnd.ctab,
             this.dragCtx.ci.id,
@@ -83,10 +77,18 @@ class SimpleObjectTool implements Tool {
             this.dragCtx.ci.ref,
             event.shiftKey,
           );
+        } else {
+          this.dragCtx.action = fromMultipleMove(
+            rnd.ctab,
+            this.editor.selection() ?? {},
+            diff,
+          );
         }
         this.editor.update(this.dragCtx.action, true);
       } else {
-        if (!this.dragCtx.action) {
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(rnd.ctab);
+        } else {
           const action = fromSimpleObjectAddition(
             rnd.ctab,
             [this.dragCtx.p0, this.dragCtx.p0],
@@ -103,8 +105,6 @@ class SimpleObjectTool implements Tool {
           this.dragCtx.itemId = addOperation.data.id;
           this.dragCtx.action = action;
           this.editor.update(this.dragCtx.action, true);
-        } else {
-          this.dragCtx.action.perform(rnd.ctab);
         }
 
         this.dragCtx.action = fromSimpleObjectResizing(

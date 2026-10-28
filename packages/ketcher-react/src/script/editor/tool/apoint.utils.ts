@@ -36,8 +36,8 @@ export async function editRGroupAttachmentPoint(
       );
       editor.update(action);
     }
-  } catch (e) {
-    KetcherLogger.error('apoint.utils.ts::editRGroupAttachmentPoint', e);
+  } catch (error) {
+    KetcherLogger.error('apoint.utils.ts::editRGroupAttachmentPoint', error);
     // close modal without any operations
   }
 }

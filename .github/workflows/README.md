@@ -1,63 +1,17 @@
-# Autotest Workflows
+# GitHub Actions workflows
 
-This repository has two GitHub Actions workflows that automate the autotest lifecycle for feature work.
+Every workflow file in this folder, with its trigger, purpose, and status. Status is from `gh workflow list --all` (checked 2026-10-27).
 
-## 1. `claude-create-autotest-request.yml`
+The autotest chain runs in two steps. A `Feature` issue that gets the `Run TA creation workflow` label produces an `Autotests` issue (`*-create-autotest-request.yml`). A `Task` issue with the `Autotests` and `Run TA creation workflow` labels produces a PR with the Playwright spec (`claude-implement-autotests.yml`).
 
-This workflow creates a follow-up issue for autotest implementation.
-
-How it starts:
-- It runs when an issue gets a label.
-- It only continues if the added label is `Run TA creation workflow`.
-- It also checks that the labeled issue is a `Feature` issue.
-
-What it does:
-- Reads the source feature issue title, description, and link.
-- Sends that information to Anthropic with a prompt asking for a concise markdown checklist of test scenarios.
-- Validates that the response actually contains checklist items in `- [ ] ...` format.
-- Creates a new issue:
-  - title: `Autotests: <feature title>`
-  - label: `Autotests`
-  - type: `Task`
-  - body: source issue link plus the generated checklist
-- Posts a comment back to the original feature issue with a link to the created autotest request.
-
-Result:
-- A feature issue is converted into a dedicated autotest request issue that contains suggested scenarios for automation.
-
-## 2. `claude-implement-autotests.yml`
-
-This workflow turns an Autotest Request issue into Playwright test code and opens a pull request.
-
-How it starts:
-- It runs when an issue gets a label.
-- It only continues if the added label is `Run TA creation workflow`.
-- It also checks that the labeled issue is a `Task` issue.
-
-What it does:
-- Checks out the repository.
-- Reads the autotest issue and validates that its body contains at least one markdown checklist item.
-- Derives a feature-specific target folder from the issue title:
-  - `Autotests: Some Feature` becomes a directory under
-    `ketcher-autotests/tests/specs/Chromium-popup/Features/<Feature-Name>`
-- Invokes Claude Code with instructions to:
-  - implement all checklist scenarios as Playwright autotests
-  - create the target directory if needed
-  - place the generated spec file inside that directory
-- Reads the current git branch name.
-- Creates a pull request against `master`.
-- Adds a comment to the autotest issue with the generated PR link.
-
-Result:
-- An `Autotests` issue is translated into Playwright test implementation and a PR that references and closes that issue.
-
-## End-to-end flow
-
-1. A product or engineering task is created as a `Feature` issue.
-2. An authorized contributor adds the `Run TA creation workflow` label.
-3. GitHub Action generates an `Autotests: ...` issue with a checklist of scenarios.
-4. The checklist can be reviewed or adjusted in that issue.
-5. An authorized contributor adds the `Run TA creation workflow` label.
-6. GitHub Action generates the Playwright test implementation and opens a PR.
-
-In short, the first workflow creates the autotest request, and the second workflow implements it.
+| Workflow file                                                         | Trigger                                                                                                                               | What it does                                                                                                                                                                                                         | Status                                                                                                                                                                              | Owner notes                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml` (CI)                                                         | `push` and `pull_request` to `master` and `release/**`                                                                                | Installs dependencies on Node 24.20.0, runs `npm audit --audit-level=critical`, builds, runs `npm test`, `npm run lint`, and `npm run test:types`.                                                                   | active                                                                                                                                                                              | The audit gate fails only on critical advisories.                                                                                                                                                                               |
+| `codeql-analysis.yml` (CodeQL)                                        | `push` to `master` and `release/*`, `pull_request` to `master`, and cron `21 20 * * 4` (weekly, Thursday 20:21 UTC)                   | CodeQL code scanning. Results go to code scanning.                                                                                                                                                                   | active                                                                                                                                                                              | The language matrix is in the file. The file header asks maintainers to check it.                                                                                                                                               |
+| `sonar.yml` (Sonar)                                                   | `push` and `pull_request` to `master` and `release/**`, and `workflow_dispatch`                                                       | SonarQube scan through `sonarsource/sonarqube-scan-action`, then a quality gate check against sonar.epam.com.                                                                                                        | active                                                                                                                                                                              | Same-repo PRs run on the `self-hosted-sonar` runner. PRs from forks run on `ubuntu-latest`. A curl step checks that sonar.epam.com is reachable first.                                                                          |
+| `run-tests.yml` (Run Playwright Tests (FullScale))                    | `push` and `pull_request` to `master` and `release/**`, and `workflow_dispatch`                                                       | Builds the packages and the standalone example, runs the `chromium` Playwright project in 10 shards, and merges the blob reports.                                                                                    | active                                                                                                                                                                              | Sets `IGNORE_UNSTABLE_TESTS: true`.                                                                                                                                                                                             |
+| `run-tests-popup.yml` (Run Playwright Tests (Popup))                  | `push` and `pull_request` to `master` and `release/**`, and `workflow_dispatch`                                                       | Builds as in FullScale, runs the `chromium-popup` Playwright project in one shard, and merges the blob reports.                                                                                                      | active                                                                                                                                                                              | Same build and env as FullScale.                                                                                                                                                                                                |
+| `claude-review.yml` (Claude PR Review)                                | `pull_request` `labeled`. The job runs only if the PR has the `Run Claude Review` label and its title does not contain `Autotests`.   | Runs `claude-code-action` with `/review-pr` on the PR, using `claude-opus-4-7`. It can post inline review comments.                                                                                                  | active                                                                                                                                                                              | The prompt passes `REPO` and `PR_NUMBER` as text. The `/review-pr` skill (`.agents/skills/review-pr`) reads them from its arguments. That a skill runs from the action's prompt as a command did is not verified in CI yet.     |
+| `claude-create-autotest-request.yml` (Claude Create Autotest Request) | `issues` `labeled`. The job runs only for the `Run TA creation workflow` label on a `Feature` issue.                                  | Calls the Anthropic API (`claude-sonnet-4-6`) for a markdown checklist of test scenarios. Creates an `Autotests` issue with the checklist and comments the link on the feature issue.                                | disabled: `disabled_manually`. Turned off in the GitHub Actions UI or through the API, so the file stays but does not run. Re-enable with `gh workflow enable 275983184` or the UI. | Same trigger and prompt as the active `openai-create-autotest-request.yml`. Enabling both would create two `Autotests` issues for each label. Deletion is recommended for a later PR once the team confirms the OpenAI variant. |
+| `openai-create-autotest-request.yml` (OpenAI Create Autotest Request) | `issues` `labeled`. The job runs only for the `Run TA creation workflow` label on a `Feature` issue.                                  | Calls OpenAI `gpt-4o` for a markdown checklist of test scenarios. Creates an `Autotests` issue with the checklist and comments the link on the feature issue.                                                        | active                                                                                                                                                                              | Needs the `OPENAI_API_KEY` secret. This is the active copy of the Claude variant above.                                                                                                                                         |
+| `claude-implement-autotests.yml` (Claude Implement Autotests)         | `issues` `labeled`. The job runs only when the issue has the `Autotests` and `Run TA creation workflow` labels and is a `Task` issue. | Runs Claude Code with the `generate-autotests` skill (`claude-sonnet-4-6`) to write a Playwright spec. Commits and pushes a branch, opens a PR to `master` with `Closes #N`, and comments the PR link on the issue. | active                                                                                                                                                                              | For a later PR: the prompt writes to a nested `Features/<n>-<title>/` folder. Repo specs sit flat in their feature folders, and the example folder in the prompt does not exist.                                                |

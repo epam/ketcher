@@ -79,16 +79,22 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (e: unknown) {
+    } catch (error: unknown) {
       let message;
-      if (e instanceof Error && e.message === 'Server is not compatible') {
+      if (
+        error instanceof Error &&
+        error.message === 'Server is not compatible'
+      ) {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        const details = e instanceof Error ? e.message : String(e);
+        const details = error instanceof Error ? error.message : String(error);
         message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
-      throw new Error(message, { cause: e });
+      KetcherLogger.error(
+        'serverFormatter.ts::getStringFromStructureAsync',
+        error,
+      );
+      throw new Error(message, { cause: error });
     }
   }
 
@@ -144,14 +150,17 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (e: unknown) {
-      if (!(e instanceof Error) || e.message !== 'Server is not compatible') {
+    } catch (error: unknown) {
+      if (
+        !(error instanceof Error) ||
+        error.message !== 'Server is not compatible'
+      ) {
         KetcherLogger.error(
           'serverFormatter.ts::getStructureFromStringAsync',
-          e,
+          error,
         );
-        const details = e instanceof Error ? e.message : String(e);
-        throw new Error(`Convert error!\n${details}`, { cause: e });
+        const details = error instanceof Error ? error.message : String(error);
+        throw new Error(`Convert error!\n${details}`, { cause: error });
       }
 
       const formatError =
@@ -164,7 +173,7 @@ export class ServerFormatter implements StructFormatter {
           : getPropertiesByFormat(this.#format).name;
 
       throw new Error(`${formatError} is not supported in standalone mode.`, {
-        cause: e,
+        cause: error,
       });
     }
   }

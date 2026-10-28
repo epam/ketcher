@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 const isMac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
+  typeof navigator === 'undefined' ? false : /Mac/.test(navigator.platform);
 
 export const KeyboardModifiers = {
   Alt: 'Alt',

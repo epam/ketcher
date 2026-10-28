@@ -30,14 +30,14 @@ For changes too large to read line by line. Follow the [large-scale change proto
 
 Checked for every PR, whatever flow the author used. The author ticks nothing: the AI review names the type in the brief, from the diff and the linked issue. A linked issue of type `Bug` makes a bug fix. A new folder in `openspec/changes/` makes a feature, and a move into `openspec/changes/archive/` an archive. A structure change with no behavior change is a refactor when it adds tests that pin the behavior, and a small change when it adds none. A large-scale change also has one of the other types. A PR that matches no row has no contract beyond review.
 
-| PR type                       | Must contain                                                     | Checked by                                                                                                                 |
-| ----------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Planned: Danger warns when a bug fix has no test change (Phase 3, task 3.4)                               |
-| Feature                       | An OpenSpec change (or a spec in the same format), tests         | Planned: Danger fails the PR without an OpenSpec change, and `openspec validate --all --strict` (Phase 3, tasks 3.4, 3.10) |
-| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                            |
-| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                            |
-| Large-scale change            | The large-scale change protocol sections                         | Planned: Danger fails the PR when a section is missing, and the codemod replay check (Phase 3, tasks 3.4, 3.8)             |
-| Archive of an OpenSpec change | No unchecked tasks                                               | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                               |
+| PR type                       | Must contain                                                     | Checked by                                                                                                                                       |
+| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Danger warns when the PR changes no unit or E2E test                                                                            |
+| Feature                       | An OpenSpec change (or a spec in the same format), tests         | Danger fails the PR without a file in `openspec/changes/` (backmerges skipped). Planned: `openspec validate --all --strict` (Phase 3, task 3.10) |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                                                  |
+| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                                                  |
+| Large-scale change            | The large-scale change protocol sections                         | Danger fails the PR when a section is missing or still holds the template text. Planned: the codemod replay check (Phase 3, task 3.8)            |
+| Archive of an OpenSpec change | No unchecked tasks                                               | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                                                     |
 
 ## Review pipeline
 
@@ -47,9 +47,19 @@ The stages run in this order: gates, risk tier, AI review, human review.
 
 Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, and the example-ssr build, lint, and test. `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
 
+`danger.yml` runs Danger on every PR to `master` and `release/**`. The rules are in `scripts/pr-checks.mjs`. A fail blocks the PR; a warning only shows in Danger's comment.
+
+| Rule         | Fails                                                                                                                                                         | Warns                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Title        | It starts with `#<issue>` in a form other than `#<issue> - <title>`, or it has no issue prefix while the PR links an issue. A `Backmerge: ` prefix is allowed | An en dash instead of the hyphen; an issue in the title that the PR does not link           |
+| Branch       | Its name contains `#`                                                                                                                                         |                                                                                             |
+| Linked issue |                                                                                                                                                               | The PR links no issue (`Closes #N`)                                                         |
+| Size         |                                                                                                                                                               | Over 400 changed lines, lockfiles and snapshots not counted. Skipped on large-scale changes |
+| Unit test    |                                                                                                                                                               | `ketcher-core` domain or operations code changed with no unit test change                   |
+| PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing                                                          | Bug fix without a test change                                                               |
+
 Planned:
 
-- Danger on every PR (Phase 3, task 3.4).
 - `check:agent-docs` in CI. It runs locally today: `npm run check:agent-docs`.
 - `check:autotests` in CI (Phase 3, task 3.5).
 - Codemod replay check and compare scripts, on large-scale change PRs only (Phase 3, tasks 3.8, 3.9).

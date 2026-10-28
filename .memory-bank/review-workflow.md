@@ -43,13 +43,12 @@ The stages run in this order: gates, risk tier, AI review, human review.
 
 ### Gates
 
-Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, `openspec validate`, and the example-ssr build, lint, and test. `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
+Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, `openspec validate`, the example-ssr build, lint, and test, and `check:autotests` (type check and lint of `ketcher-autotests`). `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
 
 Planned:
 
 - Danger on every PR (Phase 3, task 3.4).
 - `check:agent-docs` in CI. It runs locally today: `npm run check:agent-docs`.
-- `check:autotests` in CI (Phase 3, task 3.5).
 - Codemod replay check and compare scripts, on large-scale change PRs only (Phase 3, tasks 3.8, 3.9).
 
 ### Risk tier (planned: Phase 4)

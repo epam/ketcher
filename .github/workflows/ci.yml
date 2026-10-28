@@ -72,3 +72,6 @@ jobs:
       - name: Run test example-ssr
         run: npm run test:types
         working-directory: example-ssr
+
+      - name: Check autotests code
+        run: npm run check:autotests

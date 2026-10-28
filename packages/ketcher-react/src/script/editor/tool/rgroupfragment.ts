@@ -132,7 +132,9 @@ class RGroupFragmentTool implements Tool {
       .then((newRg) => {
         let action;
 
-        if (ci.map !== 'rgroups') {
+        if (ci.map === 'rgroups') {
+          action = fromRGroupAttrs(struct, ci.id, newRg);
+        } else {
           const rgidOld = RGroup.findRGroupByFragment(
             struct.molecule.rgroups,
             ci.id,
@@ -140,8 +142,6 @@ class RGroupFragmentTool implements Tool {
           action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
             fromUpdateIfThen(struct, newRg.label, rgidOld),
           );
-        } else {
-          action = fromRGroupAttrs(struct, ci.id, newRg);
         }
 
         editor.update(action);

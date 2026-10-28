@@ -3906,14 +3906,14 @@ export class DrawingEntitiesManager {
           (monomer) => monomer.selected,
         );
 
-        if (!hasSelectedMonomerInNode) {
+        if (hasSelectedMonomerInNode) {
+          selectedPiece.push(node);
+        } else {
           if (hasRnaInPiece) {
             selectedPiecesInChains.push(selectedPiece);
           }
           selectedPiece = [];
           hasRnaInPiece = false;
-        } else {
-          selectedPiece.push(node);
         }
 
         if (

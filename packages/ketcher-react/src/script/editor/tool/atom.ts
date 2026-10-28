@@ -353,9 +353,9 @@ export function atomLongtapEvent(tool, render) {
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom
   const atom =
-    atomid !== undefined && atomid !== null
-      ? render.ctab.molecule.atoms.get(atomid)
-      : new Atom({ label: '' });
+    atomid === undefined || atomid === null
+      ? new Atom({ label: '' })
+      : render.ctab.molecule.atoms.get(atomid);
   const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid);
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {

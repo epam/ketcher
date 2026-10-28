@@ -169,7 +169,7 @@ const MonomerItem = ({
         onAutochainIconClick(e);
         onAutochainIconMouseOut();
       }}
-      {...(!isDisabled ? { onClick } : {})}
+      {...(isDisabled ? {} : { onClick })}
       ref={cardRef}
       data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
       data-idtalias-modifications-endpoint5={

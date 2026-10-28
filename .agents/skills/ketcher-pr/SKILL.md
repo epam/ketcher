@@ -11,7 +11,7 @@ metadata:
 
 The Ketcher adaptation of `pr` from `mattpocock/skills`. The _Sections_ text is upstream, word for word; each **In Ketcher** paragraph adds what this repo needs.
 
-Write the PR body as `.github/pull_request_template.md`, filled in. Its first three sections are the upstream template; PR type and Check list follow. `gh pr create --body-file` leaves the template out, so copy every heading in order.
+Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order.
 
 A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
 
@@ -162,9 +162,6 @@ The blast radius is the potential impact or scope of the changes introduced by t
 
 **In Ketcher:** one-way doors here include a changed KET or MOL output, a removed or renamed public API of `ketcher-core` or `ketcher-react`, and settings saved in users' local storage. For blast radius, check both editor modes (molecules and macromolecules), file format round trips, `ketcher-standalone` and remote mode, and API consumers.
 
-## PR type and Check list
+## Closes and Memory bank
 
-Tick every PR type row that matches, and only the checklist items that are true. After the checklist, add:
-
-- `Closes #<N>` for each issue the PR fixes;
-- `Memory bank:` and the file the PR updated, or `not needed`.
+One `Closes #<N>` line per issue the PR fixes; with no issue, delete the line. `Memory bank:` names the file the PR updated, or says `not needed`.

@@ -321,7 +321,7 @@ function Editor({
     ]): void => {
       setContextMenuEvent(event);
       updatePasteAvailability();
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       setSelectedMonomers(selections);
       showSelectedMonomersContextMenuRef.current({
@@ -335,7 +335,7 @@ function Editor({
     ]): void => {
       setContextMenuEvent(event);
       updatePasteAvailability();
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       setSelections(selections);
       showSequenceContextMenuRef.current({
@@ -356,7 +356,6 @@ function Editor({
       onToggleMacromoleculesPropertiesVisibility,
     );
 
-<<<<<<< HEAD
     return () => {
       editor?.events.rightClickSequence.remove(onRightClickSequence);
       editor?.events.rightClickPolymerBond.remove(onRightClickPolymerBond);
@@ -372,49 +371,6 @@ function Editor({
       );
     };
   }, [editor, dispatch, updatePasteAvailability]);
-=======
-    editor?.events.rightClickSelectedMonomers.add(
-      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
-        setSelectedMonomers(selectedMonomers);
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers },
-        });
-      },
-    );
-    editor?.events.rightClickCanvas.add(
-      ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        globalThis.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelectedMonomers(selections);
-        showSelectedMonomersContextMenu({
-          event,
-          props: { selectedMonomers: selections },
-        });
-      },
-    );
-    editor?.events.rightClickCanvasSequence.add(
-      ([event, selections]: [PointerEvent, NodesSelection]) => {
-        setContextMenuEvent(event);
-        updatePasteAvailability();
-        globalThis.dispatchEvent(new Event('hidePreview'));
-        dispatch(setContextMenuActive(true));
-        setSelections(selections);
-        showSequenceContextMenu({
-          event,
-          props: {},
-        });
-      },
-    );
-    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
-      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
-    });
-  }, [editor]);
->>>>>>> origin/master
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

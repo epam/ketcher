@@ -6,6 +6,11 @@ import {
 } from 'domain/constants';
 import { AtomList } from 'domain/entities/atomList';
 import type { Atom } from 'domain/entities/CoreAtom';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+
+jest.mock('application/editor/editorSingleton', () => ({
+  provideEditorInstance: jest.fn(),
+}));
 
 /**
  * Helper to call a getter on AtomRenderer without going through the
@@ -92,5 +97,45 @@ describe('AtomRenderer.isGenericLabel', () => {
     expect(
       callGetter('isGenericLabel', mockAtom('L#' as GenericAtomLabel)),
     ).toBe(false);
+  });
+});
+
+describe('AtomRenderer.isLabelVisible', () => {
+  const getIsLabelVisible = (atom: object, neighborCount: number) => {
+    const halfEdges = Array.from({ length: neighborCount }, (_, index) => ({
+      direction: { x: Math.cos(index), y: Math.sin(index) },
+    }));
+    (provideEditorInstance as jest.Mock).mockReturnValue({
+      viewModel: { atomsToHalfEdges: new Map([[atom, halfEdges]]) },
+    });
+    const descriptor = Object.getOwnPropertyDescriptor(
+      AtomRenderer.prototype,
+      'isLabelVisible',
+    );
+    return descriptor?.get?.call({
+      atom,
+      isAtomTerminal: neighborCount <= 1,
+    });
+  };
+
+  const plainCarbon = {
+    label: AtomLabel.C,
+    hasCharge: false,
+    hasRadical: false,
+    hasAlias: false,
+    hasExplicitValence: false,
+    hasExplicitIsotope: false,
+  };
+
+  it('hides the label of a carbon with several bonds and a good valence', () => {
+    expect(getIsLabelVisible({ ...plainCarbon, hasBadValence: false }, 3)).toBe(
+      false,
+    );
+  });
+
+  it('shows the label of a carbon with a bad valence', () => {
+    expect(getIsLabelVisible({ ...plainCarbon, hasBadValence: true }, 6)).toBe(
+      true,
+    );
   });
 });

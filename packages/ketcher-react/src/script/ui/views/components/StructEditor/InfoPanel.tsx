@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -110,7 +110,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
   // so it must be checked before the clientX/clientY guard.
   // sGroup.pp must exist to avoid assertion error in getContractedPosition.
-  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+  if (render && sGroup instanceof MonomerMicromolecule && sGroup.pp) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
       const { position } = sGroup.getContractedPosition(render.ctab.molecule);
@@ -139,9 +139,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
 
   if (
     nonTooltipSGroup ||
-    (!molecule && !sGroupData) ||
     clientX === undefined ||
-    clientY === undefined
+    clientY === undefined ||
+    (!molecule && !sGroupData)
   ) {
     return null;
   }

@@ -100,7 +100,7 @@ class TextTool implements Tool {
     this.editor.hover(null);
 
     if (!closestItem) {
-      propsDialog(
+      propertiesDialog(
         this.editor,
         null,
         CoordinateTransformation.pageToModel(event, render),
@@ -116,7 +116,7 @@ class TextTool implements Tool {
     this.editor.hover(null);
 
     if (closestItem.map === 'texts') {
-      propsDialog(
+      propertiesDialog(
         this.editor,
         closestItem.id,
         closestItem.position,
@@ -128,7 +128,7 @@ class TextTool implements Tool {
   }
 }
 
-function propsDialog(
+function propertiesDialog(
   editor: any,
   id: number | null,
   position: Vec2,
@@ -138,7 +138,7 @@ function propsDialog(
   const text: Text | null = id || id === 0 ? struct.texts.get(id) : null;
   const origilContent = text ? text.content : '';
 
-  const res = editor.event.elementEdit.dispatch({
+  const result = editor.event.elementEdit.dispatch({
     content: origilContent,
     id,
     position,
@@ -146,7 +146,7 @@ function propsDialog(
     type: 'text',
   });
 
-  res
+  result
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
         editor.update(
@@ -161,7 +161,7 @@ function propsDialog(
       }
     })
     .catch((error) => {
-      KetcherLogger.error('text.ts::propsDialog', error);
+      KetcherLogger.error('text.ts::propertiesDialog', error);
     });
 }
 

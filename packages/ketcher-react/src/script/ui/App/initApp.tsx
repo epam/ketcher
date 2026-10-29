@@ -43,14 +43,17 @@ export interface InitAppOptions extends StoreOptions {
 }
 
 function initApp(
-  prevKetcherId: string,
+  previousKetcherId: string,
   ketcherId: string,
   element: HTMLDivElement | null,
   appRoot: Root,
   staticResourcesUrl: string,
   options: InitAppOptions,
   server: Api,
-  resolve: (args: { editor: Editor; setServer: (server: Api) => void }) => void,
+  resolve: (arguments_: {
+    editor: Editor;
+    setServer: (server: Api) => void;
+  }) => void,
   togglerComponent?: JSX.Element,
 ) {
   // hack to return server setter to Editor.tsx
@@ -83,7 +86,7 @@ function initApp(
           <AppContext.Provider
             value={{
               ketcherId,
-              prevKetcherId,
+              prevKetcherId: previousKetcherId,
             }}
           >
             <App togglerComponent={togglerComponent} />

@@ -30,7 +30,7 @@ interface TabPanel {
   tabIndex?: number;
 }
 
-interface TabsProps {
+interface TabsProperties {
   tabs: TabPanel[];
   tabIndex?: number;
   changeTab: (index: number) => void;
@@ -42,30 +42,30 @@ interface TabsState {
   tabIndex: number;
 }
 
-class Tabs extends Component<TabsProps, TabsState> {
-  constructor(props: TabsProps) {
-    super(props);
+class Tabs extends Component<TabsProperties, TabsState> {
+  constructor(properties: TabsProperties) {
+    super(properties);
     this.state = {
-      tabIndex: props.tabIndex ?? 0,
+      tabIndex: properties.tabIndex ?? 0,
     };
     this.props.changeTab(this.state.tabIndex);
   }
 
   // TODO: refactor the component
-  changeTab(_ev: MouseEvent | KeyboardEvent, index: number) {
+  changeTab(_event: MouseEvent | KeyboardEvent, index: number) {
     this.setState({ tabIndex: index });
     if (this.props.changeTab) this.props.changeTab(index);
   }
 
-  handleKeyDown(ev: KeyboardEvent, index: number) {
-    if (ev.key === 'Enter' || ev.key === ' ') {
-      ev.preventDefault();
-      this.changeTab(ev, index);
+  handleKeyDown(event_: KeyboardEvent, index: number) {
+    if (event_.key === 'Enter' || event_.key === ' ') {
+      event_.preventDefault();
+      this.changeTab(event_, index);
     }
   }
 
-  componentDidUpdate(prevProps: TabsProps) {
-    if (this.props.tabIndex !== prevProps.tabIndex) {
+  componentDidUpdate(previousProperties: TabsProperties) {
+    if (this.props.tabIndex !== previousProperties.tabIndex) {
       this.setState({ tabIndex: this.props.tabIndex || 0 });
     }
   }
@@ -74,7 +74,7 @@ class Tabs extends Component<TabsProps, TabsState> {
     const { tabs, contentClassName, className, tabIndex } = this.props;
     const tabPanel = tabs[this.state.tabIndex];
     const TabComponent = tabPanel?.component;
-    const componentProps = tabPanel?.props;
+    const componentProperties = tabPanel?.props;
     return (
       <div>
         <ul className={className} tabIndex={tabIndex}>
@@ -86,8 +86,8 @@ class Tabs extends Component<TabsProps, TabsState> {
                 className={clsx({
                   [classes.active]: this.state.tabIndex === index,
                 })}
-                onClick={(ev) => this.changeTab(ev, index)}
-                onKeyDown={(ev) => this.handleKeyDown(ev, index)}
+                onClick={(event_) => this.changeTab(event_, index)}
+                onKeyDown={(event_) => this.handleKeyDown(event_, index)}
                 tabIndex={0}
                 data-testid={tabPanel.caption + '-tab'}
               >
@@ -98,7 +98,7 @@ class Tabs extends Component<TabsProps, TabsState> {
         </ul>
         {TabComponent && (
           <div className={contentClassName}>
-            <TabComponent {...componentProps} />
+            <TabComponent {...componentProperties} />
           </div>
         )}
       </div>

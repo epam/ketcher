@@ -29,7 +29,7 @@ import {
   getSdataDefault,
   sdataCustomSchema,
 } from '../schema/sdata-schema';
-import { matchCharge } from '../utils';
+import { matchCharge } from '../utilities';
 
 const DefaultStereoGroupNumber = 1;
 
@@ -155,10 +155,10 @@ export function fromElement(selem: Atom) {
   return selem; // probably generic
 }
 
-export function toElement(elem: ElementFormData) {
-  if (elem.type === 'rlabel') {
-    const values = Array.isArray(elem.values)
-      ? elem.values.filter(
+export function toElement(element: ElementFormData) {
+  if (element.type === 'rlabel') {
+    const values = Array.isArray(element.values)
+      ? element.values.filter(
           (value): value is number => typeof value === 'number',
         )
       : [];
@@ -168,60 +168,62 @@ export function toElement(elem: ElementFormData) {
       rglabel: values.length === 0 ? null : toRlabel(values),
     };
   }
-  if (elem.type === 'list' || elem.type === 'not-list')
-    return toAtomList(elem as { type: 'list' | 'not-list'; values: string[] });
+  if (element.type === 'list' || element.type === 'not-list')
+    return toAtomList(
+      element as { type: 'list' | 'not-list'; values: string[] },
+    );
 
-  if (!elem.label && elem.ap) {
-    return { attachmentPoints: toApoint(elem.ap) };
+  if (!element.label && element.ap) {
+    return { attachmentPoints: toApoint(element.ap) };
   }
-  if (elem.atomType === 'list') {
-    elem.label = 'L#';
-    elem.pseudo = null;
-    elem.atomList = new AtomList({
-      notList: !!elem.notList,
+  if (element.atomType === 'list') {
+    element.label = 'L#';
+    element.pseudo = null;
+    element.atomList = new AtomList({
+      notList: !!element.notList,
       ids:
-        (elem.atomList as string | null)
+        (element.atomList as string | null)
           ?.split(',')
-          .map((el: string) => Elements.get(el)?.number)
+          .map((elementName: string) => Elements.get(elementName)?.number)
           .filter((id): id is number => id !== undefined) || [],
     });
-    delete elem.notList;
-    delete elem.atomType;
-    return toAtom(elem);
+    delete element.notList;
+    delete element.atomType;
+    return toAtom(element);
   }
 
-  if (elem.atomType === 'pseudo') {
-    elem.label = elem.pseudo ?? undefined;
-    elem.atomList = null;
-    delete elem.notList;
-    delete elem.atomType;
-    return toAtom(elem);
-  }
-
-  if (
-    Elements.get(capitalize(elem.label ?? '')) ||
-    (elem.customQuery && elem.customQuery !== '')
-  ) {
-    elem.label = capitalize(elem.label ?? '');
-    elem.pseudo = null;
-    elem.atomList = null;
-    delete elem.notList;
-    delete elem.atomType;
-    return toAtom(elem);
+  if (element.atomType === 'pseudo') {
+    element.label = element.pseudo ?? undefined;
+    element.atomList = null;
+    delete element.notList;
+    delete element.atomType;
+    return toAtom(element);
   }
 
   if (
-    elem.label === 'A' ||
-    elem.label === '*' ||
-    elem.label === 'Q' ||
-    elem.label === 'X' ||
-    elem.label === 'R'
+    Elements.get(capitalize(element.label ?? '')) ||
+    (element.customQuery && element.customQuery !== '')
   ) {
-    elem.pseudo = elem.label;
-    return toAtom(elem);
+    element.label = capitalize(element.label ?? '');
+    element.pseudo = null;
+    element.atomList = null;
+    delete element.notList;
+    delete element.atomType;
+    return toAtom(element);
   }
 
-  return elem;
+  if (
+    element.label === 'A' ||
+    element.label === '*' ||
+    element.label === 'Q' ||
+    element.label === 'X' ||
+    element.label === 'R'
+  ) {
+    element.pseudo = element.label;
+    return toAtom(element);
+  }
+
+  return element;
 }
 
 export function fromAtom(satom?: Atom) {
@@ -233,7 +235,7 @@ export function fromAtom(satom?: Atom) {
     atomType,
     atomList:
       satom.atomList?.ids
-        .map((i) => Elements.get(i)?.label)
+        .map((index) => Elements.get(index)?.label)
         .filter((label) => label !== undefined)
         .join(',') ?? '',
     notList: satom.atomList?.notList || false,
@@ -337,7 +339,7 @@ function fromAtomList(satom: Atom) {
     type: atomList?.notList ? 'not-list' : 'list',
     values:
       atomList?.ids
-        .map((i) => Elements.get(i)?.label)
+        .map((index) => Elements.get(index)?.label)
         .filter((label) => label !== undefined) ?? [],
   };
 }
@@ -349,7 +351,7 @@ function toAtomList(atom: { type: 'list' | 'not-list'; values: string[] }) {
     atomList: new AtomList({
       notList: atom.type === 'not-list',
       ids: atom.values
-        .map((el: string) => Elements.get(el)?.number)
+        .map((elementName: string) => Elements.get(elementName)?.number)
         .filter((id): id is number => id !== undefined),
     }),
   };
@@ -421,22 +423,22 @@ function toApoint(ap: { primary: boolean; secondary: boolean }) {
 }
 
 function fromRlabel(rg: number) {
-  const res: number[] = [];
+  const result: number[] = [];
   for (let rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      res.push(rgi + 1);
+      result.push(rgi + 1);
     }
   }
-  return res;
+  return result;
 }
 
 function toRlabel(values: number[]) {
-  let res = 0;
-  values.forEach((val) => {
-    const rgi = val - 1;
-    res |= 1 << rgi;
+  let result = 0;
+  values.forEach((value) => {
+    const rgi = value - 1;
+    result |= 1 << rgi;
   });
-  return res;
+  return result;
 }
 
 export function fromBond(sbond?: Bond) {
@@ -568,40 +570,40 @@ export function fromSgroup(ssgroup: SGroupInput) {
 }
 
 export function toSgroup(sgroup: SGroupFormData) {
-  const { type, radiobuttons, ...props } = sgroup;
-  const attrs = { ...props };
+  const { type, radiobuttons, ...properties } = sgroup;
+  const attributes = { ...properties };
 
   const absolute = 'absolute';
   const attached = 'attached';
 
   switch (radiobuttons) {
     case 'Absolute':
-      attrs[absolute] = true;
-      attrs[attached] = false;
+      attributes[absolute] = true;
+      attributes[attached] = false;
       break;
     case 'Attached':
-      attrs[absolute] = false;
-      attrs[attached] = true;
+      attributes[absolute] = false;
+      attributes[attached] = true;
       break;
     case 'Relative':
-      attrs[absolute] = false;
-      attrs[attached] = false;
+      attributes[absolute] = false;
+      attributes[attached] = false;
       break;
     default:
       break;
   }
 
-  if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim();
+  if (attributes.fieldName) attributes.fieldName = attributes.fieldName.trim();
 
-  if (attrs.fieldValue) {
-    attrs.fieldValue =
-      typeof attrs.fieldValue === 'string'
-        ? attrs.fieldValue.trim()
-        : attrs.fieldValue;
+  if (attributes.fieldValue) {
+    attributes.fieldValue =
+      typeof attributes.fieldValue === 'string'
+        ? attributes.fieldValue.trim()
+        : attributes.fieldValue;
   }
 
   return {
     type,
-    attrs,
+    attrs: attributes,
   };
 }

@@ -3,10 +3,10 @@ import type { FileSaverReturnType } from './saveButton.types';
 
 export const fileSaver = (server): FileSaverReturnType => {
   return new Promise((resolve, reject) => {
-    if (saveAs && globalThis.Blob) {
-      resolve((data, fn, type) => {
+    if (globalThis.Blob && saveAs) {
+      resolve((data, filename, type) => {
         const blob = new Blob([data], { type });
-        saveAs(blob, fn);
+        saveAs(blob, filename);
       });
     } else if (server) {
       resolve(

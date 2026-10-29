@@ -18,7 +18,7 @@ import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
 import classes from './ColorPicker.module.less';
 
-interface ColorSliderProps {
+interface ColorSliderProperties {
   value: number;
   min: number;
   max: number;
@@ -38,23 +38,25 @@ function ColorSlider({
   background,
   thumbColor,
   ariaLabel,
-}: Readonly<ColorSliderProps>) {
-  const containerRef = useRef<HTMLDivElement>(null);
+}: Readonly<ColorSliderProperties>) {
+  const containerReference = useRef<HTMLDivElement>(null);
   // Track container width as state so re-measuring on resize triggers re-render
   const [containerWidth, setContainerWidth] = useState(0);
-  const dragRef = useRef<{ startX: number; startValue: number } | null>(null);
+  const dragReference = useRef<{ startX: number; startValue: number } | null>(
+    null,
+  );
 
   // Measure once after mount (before paint) and on resize
   useLayoutEffect(() => {
-    if (!containerRef.current) {
+    if (!containerReference.current) {
       return;
     }
 
-    setContainerWidth(containerRef.current.offsetWidth);
+    setContainerWidth(containerReference.current.offsetWidth);
     const ro = new ResizeObserver((entries) => {
       setContainerWidth(entries[0].contentRect.width);
     });
-    ro.observe(containerRef.current);
+    ro.observe(containerReference.current);
     return () => ro.disconnect();
   }, []);
 
@@ -63,33 +65,33 @@ function ColorSlider({
   const ratio = containerWidth > 0 ? (value - min) / (max - min) : 0;
   const thumbLeft = ratio * (containerWidth - thumbWidth);
 
-  const handlePointerDown = (e: PointerEvent<SVGSVGElement>) => {
-    e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    dragRef.current = { startX: e.clientX, startValue: value };
+  const handlePointerDown = (event_: PointerEvent<SVGSVGElement>) => {
+    event_.preventDefault();
+    event_.currentTarget.setPointerCapture(event_.pointerId);
+    dragReference.current = { startX: event_.clientX, startValue: value };
   };
 
-  const handlePointerMove = (e: PointerEvent<SVGSVGElement>) => {
-    if (!dragRef.current || !containerRef.current) {
+  const handlePointerMove = (event_: PointerEvent<SVGSVGElement>) => {
+    if (!dragReference.current || !containerReference.current) {
       return;
     }
 
-    const containerW = containerRef.current.offsetWidth;
-    const dx = e.clientX - dragRef.current.startX;
+    const containerW = containerReference.current.offsetWidth;
+    const dx = event_.clientX - dragReference.current.startX;
     const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);
-    const raw = dragRef.current.startValue + deltaValue;
+    const raw = dragReference.current.startValue + deltaValue;
     const stepped = Math.round(raw / step) * step;
     const clamped = Math.min(max, Math.max(min, stepped));
     onValueChange(clamped);
   };
 
-  const handlePointerUp = (e: PointerEvent<SVGSVGElement>) => {
-    dragRef.current = null;
-    e.currentTarget.releasePointerCapture(e.pointerId);
+  const handlePointerUp = (event_: PointerEvent<SVGSVGElement>) => {
+    dragReference.current = null;
+    event_.currentTarget.releasePointerCapture(event_.pointerId);
   };
 
   return (
-    <div ref={containerRef} className={classes.sliderContainer}>
+    <div ref={containerReference} className={classes.sliderContainer}>
       <svg
         className={classes.sliderThumb}
         style={{ left: thumbLeft }}
@@ -115,7 +117,9 @@ function ColorSlider({
         max={max}
         step={step}
         value={value}
-        onChange={(e) => onValueChange(Number.parseInt(e.target.value, 10))}
+        onChange={(event_) =>
+          onValueChange(Number.parseInt(event_.target.value, 10))
+        }
         className={classes.sliderInput}
         style={{ background }}
         aria-label={ariaLabel}

@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type AppCallProps, App } from './App';
+import { type AppCallProperties, App } from './App';
 
 import { checkServer } from '../state/server';
 import { connect } from 'react-redux';
 
-const mapDispatchToProps: AppCallProps = {
+const mapDispatchToProperties: AppCallProperties = {
   checkServer,
 };
 
 const AppContainer = connect<
   Record<string, never>,
-  AppCallProps,
+  AppCallProperties,
   { togglerComponent?: JSX.Element }
 >(
   null,
-  mapDispatchToProps,
+  mapDispatchToProperties,
 )(App);
 
 export { AppContainer };

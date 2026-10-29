@@ -7,7 +7,7 @@ import {
   CLIP_AREA_TEST_ID,
   createOption,
   KetcherWrapper,
-} from './AbbreviationLookup.test.utils';
+} from './AbbreviationLookup.test.utilities';
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup';
 import { onAction } from '../../state';
 import {

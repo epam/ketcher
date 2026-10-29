@@ -21,7 +21,7 @@ import { Elements } from 'ketcher-core';
 
 import type { Template } from '../../template/TemplateTable';
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors';
-import { templatesLibSelector } from '../../../state/templates/selectors';
+import { templatesLibSelector as templatesLibrarySelector } from '../../../state/templates/selectors';
 import { saltsAndSolventsSelector } from '../../../state/saltsAndSolvents/selectors';
 import {
   type AbbreviationOption,
@@ -30,7 +30,7 @@ import {
 
 export const useOptions = (): AbbreviationOption[] => {
   const functionGroups = useSelector(functionalGroupsSelector);
-  const templates = useSelector(templatesLibSelector);
+  const templates = useSelector(templatesLibrarySelector);
   const saltsAndSolvents = useSelector(saltsAndSolventsSelector);
 
   return useMemo<AbbreviationOption[]>(() => {

@@ -11,11 +11,11 @@ import type { Editor, Selection } from '../../Editor';
 import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 
-function uniqArray(dest, add, isReversible: boolean) {
+function uniqArray(destination, add, reversible: boolean) {
   return add.reduce((_, item) => {
-    if (isReversible) dest = xor(dest, [item]);
-    else if (!dest.includes(item)) dest.push(item);
-    return dest;
+    if (reversible) destination = xor(destination, [item]);
+    else if (!destination.includes(item)) destination.push(item);
+    return destination;
   }, []);
 }
 

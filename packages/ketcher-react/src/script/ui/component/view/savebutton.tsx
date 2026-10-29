@@ -23,10 +23,10 @@ import { saveAs } from 'file-saver';
 
 import type { KeyboardEvent, MouseEvent, PropsWithChildren } from 'react';
 import { useAppContext } from '../../../../hooks';
-import { fileSaver } from './saveButton.utils';
+import { fileSaver } from './saveButton.utilities';
 import type { SaverType } from './saveButton.types';
 
-type Props = {
+type Properties = {
   server?: StructService | null;
   filename: string;
   data?: Blob | string;
@@ -35,16 +35,16 @@ type Props = {
   mode?: string;
   options?: GenerateImageOptions;
   onSave?: () => void;
-  onError?: (err: unknown) => void;
+  onError?: (error: unknown) => void;
   className?: string;
   title?: string;
   disabled?: boolean;
   testId?: string;
 };
 
-type SaveButtonProps = PropsWithChildren<Props>;
+type SaveButtonProperties = PropsWithChildren<Properties>;
 
-const SaveButton = (props: SaveButtonProps) => {
+const SaveButton = (properties: SaveButtonProperties) => {
   const noop = () => null;
   const {
     server,
@@ -60,7 +60,7 @@ const SaveButton = (props: SaveButtonProps) => {
     title,
     disabled,
     testId,
-  } = props;
+  } = properties;
   const { ketcherId } = useAppContext();
 
   const saveFile = async () => {
@@ -115,7 +115,7 @@ const SaveButton = (props: SaveButtonProps) => {
         save(event);
       }}
     >
-      {props.children}
+      {properties.children}
     </button>
   );
 };

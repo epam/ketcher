@@ -126,9 +126,9 @@ class RGroupFragmentTool implements Tool {
         : molecule.rgroups.get(ci.id) || {}),
     };
 
-    const res = editor.event.rgroupEdit.dispatch(rg);
+    const response = editor.event.rgroupEdit.dispatch(rg);
 
-    Promise.resolve(res)
+    Promise.resolve(response)
       .then((newRg) => {
         let action;
 

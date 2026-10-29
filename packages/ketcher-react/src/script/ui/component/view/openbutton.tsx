@@ -26,7 +26,7 @@ import { fileOpener } from '../../utils';
 import classes from './buttons.module.less';
 import type { FileContent, OpenerFunction } from './openButton.types';
 
-type OpenButtonOwnProps = {
+type OpenButtonOwnProperties = {
   server?: unknown;
   type?: string;
   className?: string;
@@ -34,22 +34,22 @@ type OpenButtonOwnProps = {
   onError?: (error: Error) => void;
 };
 
-type OpenButtonProps = PropsWithChildren<
-  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof OpenButtonOwnProps> &
-    OpenButtonOwnProps
+type OpenButtonProperties = PropsWithChildren<
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof OpenButtonOwnProperties> &
+    OpenButtonOwnProperties
 >;
 
 type OpenButtonState = {
   opener?: OpenerFunction;
 };
 
-class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
+class OpenButton extends Component<OpenButtonProperties, OpenButtonState> {
   private btn: HTMLInputElement | null = null;
   private isMounted = false;
   private initOpenerRequestId = 0;
 
-  constructor(props: OpenButtonProps) {
-    super(props);
+  constructor(properties: OpenButtonProperties) {
+    super(properties);
     this.state = {};
   }
 
@@ -58,8 +58,8 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     this.initOpener(this.props.server);
   }
 
-  componentDidUpdate(prevProps: OpenButtonProps) {
-    if (prevProps.server !== this.props.server) {
+  componentDidUpdate(previousProperties: OpenButtonProperties) {
+    if (previousProperties.server !== this.props.server) {
       this.initOpener(this.props.server);
     }
   }
@@ -80,8 +80,8 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     }
   }
 
-  open(ev: ChangeEvent<HTMLInputElement>) {
-    const files = ev.target.files;
+  open(event_: ChangeEvent<HTMLInputElement>) {
+    const files = event_.target.files;
     const noop = () => null;
     const { onLoad = noop, onError = noop } = this.props;
 
@@ -90,8 +90,8 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     } else if (files?.length) {
       onLoad(files[0]);
     }
-    ev.target.value = '';
-    ev.preventDefault();
+    event_.target.value = '';
+    event_.preventDefault();
   }
 
   render() {
@@ -101,21 +101,21 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
       onLoad: _onLoad,
       onError: _onError,
       className,
-      ...buttonProps
+      ...buttonProperties
     } = this.props;
 
     return (
       <button
         onClick={() => this.btn?.click()}
         className={clsx(classes.openButton, className)}
-        {...buttonProps}
+        {...buttonProperties}
       >
         <input
-          onChange={(ev) => this.open(ev)}
+          onChange={(event_) => this.open(event_)}
           accept={type}
           type="file"
-          ref={(el) => {
-            this.btn = el;
+          ref={(element) => {
+            this.btn = element;
           }}
         />
         {children}

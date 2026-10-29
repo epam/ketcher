@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@ import {
   selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
@@ -47,10 +47,10 @@ export function TopMenuComponent() {
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const [selectedEntities, setSelectedEntities] = useState<BaseMonomer[]>([]);
-  const [needOpenByMenuItemClick, setNeedOpenByMenuItemClick] =
+  const [shouldOpenByMenuItemClick, setShouldOpenByMenuItemClick] =
     useState<boolean>(false);
   const [antisenseActiveOption, setAntisenseActiveOption] =
     useState<IconName>();
@@ -65,7 +65,7 @@ export function TopMenuComponent() {
     (entity) => entity && typeof entity.forEachBond === 'function',
   );
 
-  const cyclicStructureFormationDisabled =
+  const isCyclicStructureFormationDisabled =
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
       0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
@@ -76,7 +76,7 @@ export function TopMenuComponent() {
         selectedEntities.length > 0 &&
         !isAntisenseCreationDisabled(selectedEntities)
       ) {
-        setNeedOpenByMenuItemClick(false);
+        setShouldOpenByMenuItemClick(false);
         if (
           !hasUnsplitNucleotide(selectedEntities) &&
           hasOnlyDeoxyriboseSugars(selectedEntities)
@@ -89,7 +89,7 @@ export function TopMenuComponent() {
           setAntisenseActiveOption('antisenseRnaStrand');
         } else {
           setAntisenseActiveOption('antisenseStrand');
-          setNeedOpenByMenuItemClick(true);
+          setShouldOpenByMenuItemClick(true);
         }
       }
     };
@@ -212,7 +212,7 @@ export function TopMenuComponent() {
             title={t('topMenu.arrangeAsRing', {
               shortcut: hotkeysShortcuts.arrangeRing,
             })}
-            disabled={cyclicStructureFormationDisabled}
+            disabled={isCyclicStructureFormationDisabled}
             testId="arrange-ring"
           />
         </Menu.Group>
@@ -224,7 +224,7 @@ export function TopMenuComponent() {
             !isAntisenseOptionVisible(selectedEntities) ||
             isAntisenseCreationDisabled(selectedEntities)
           }
-          needOpenByMenuItemClick={needOpenByMenuItemClick}
+          needOpenByMenuItemClick={shouldOpenByMenuItemClick}
           vertical={true}
           autoSize={true}
           layoutModeButton={true}

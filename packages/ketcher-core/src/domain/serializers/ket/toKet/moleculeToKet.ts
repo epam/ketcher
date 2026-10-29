@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -67,9 +67,9 @@ export function moleculeToKet(
   monomer?: BaseMonomer,
 ): KetMoleculeNode {
   const body: Omit<KetMoleculeNode, 'type'> = {
-    atoms: Array.from(struct.atoms.values()).map((atom) => {
+    atoms: [...struct.atoms.values()].map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
-      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      if (!monomer && atom.label === 'R#') return rglabelToKet(atom);
       return atomToKet(atom, monomer);
     }),
   };
@@ -104,7 +104,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
     ifDef(
       result,
       'label',
-      source.label === 'R#' && monomer
+      monomer && source.label === 'R#'
         ? monomer.monomerItem.props.MonomerCaps?.[
             getAttachmentPointLabelWithBinaryShift(source.rglabel ?? 0)
           ]

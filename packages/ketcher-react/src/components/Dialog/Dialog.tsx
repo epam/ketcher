@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -161,8 +161,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
       const { key } = event;
       const active = document.activeElement;
-      const activeTextarea = active?.tagName === 'TEXTAREA';
-      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+      const isActiveTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !isActiveTextarea)) {
         exit(key === 'Enter' ? 'OK' : 'Cancel');
         event.preventDefault();
         event.stopPropagation();
@@ -211,9 +211,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           {footerContent}
           {buttons.length > 0 &&
             buttons.map((button) =>
-              typeof button !== 'string' ? (
-                button
-              ) : (
+              typeof button === 'string' ? (
                 <input
                   key={button}
                   type="button"
@@ -230,6 +228,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
+              ) : (
+                button
               ),
             )}
         </footer>

@@ -646,7 +646,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
+  public redrawCaret(editingNodeIndexOverall?: number, isAfterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -654,7 +654,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      if (afterRowEnd) {
+      if (isAfterRowEnd) {
         this.showCaretAfterNode();
       } else {
         this.showCaret();

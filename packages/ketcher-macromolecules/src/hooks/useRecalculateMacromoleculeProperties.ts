@@ -74,8 +74,8 @@ export const useRecalculateMacromoleculeProperties = () => {
           .length > 1;
 
       if (
-        !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
         !areAllMonomersConnectedByCovalentOrHydrogenBonds ||
+        !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
         (hasNoSelection && hasNoChainsButMultipleFragments)
       ) {
         dispatch(setMacromoleculesProperties(undefined));

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,8 +33,8 @@ import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
-  selectIsSequenceMode,
-  selectIsDragging,
+  isSequenceModeEnabled,
+  isEditorDragging,
   setContextMenuActive,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
@@ -62,8 +62,8 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_MONOMER_LIBRARY });
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
-  const isDragging = useAppSelector(selectIsDragging);
+  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -73,7 +73,7 @@ const findMaps: Record<string, FindMapFunction> = {
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
 type ReferencePoint = Vec2 | null;
 
-function rectangleContainsPoint(
+function isPointInRectangle(
   startX: number,
   startY: number,
   width: number,
@@ -373,7 +373,7 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
       if (!box) {
         return;
       }
-      const inBox =
+      const isInBox =
         box.p0.y < pos.y &&
         box.p1.y > pos.y &&
         box.p0.x < pos.x &&
@@ -383,7 +383,7 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pos.x),
       );
 
-      if (inBox && (returnValue === null || xDistance < minDistance)) {
+      if (isInBox && (returnValue === null || xDistance < minDistance)) {
         returnValue = { id, dist: xDistance };
         minDistance = xDistance;
       }
@@ -577,7 +577,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 
     sg.areas.forEach((box) => {
-      const inBox =
+      const isInBox =
         box.p0.y < pg.y &&
         box.p1.y > pg.y &&
         box.p0.x < pg.x &&
@@ -587,7 +587,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pg.x),
       );
 
-      if (inBox && (returnValue === null || xDistance < minDistance)) {
+      if (isInBox && (returnValue === null || xDistance < minDistance)) {
         returnValue = sgid;
         minDistance = xDistance;
       }
@@ -613,7 +613,7 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip: SkipItem | null) {
     const { startX, startY, width, height } =
       reSGroup.getTextHighlightDimensions(restruct.render, 0);
     const { x, y } = Scale.modelToCanvas(pos, restruct.render.options);
-    if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
+    if (isPointInRectangle(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;
       const centerY = startY + height / 2;
       const rectangleCenter = new Vec2(centerX, centerY);
@@ -724,7 +724,7 @@ function findCloseMerge(
 
   maps.forEach((map) => {
     if (map === 'atoms') {
-      Array.from(pos.atoms.keys()).forEach((atomId) => {
+      [...pos.atoms.keys()].forEach((atomId) => {
         const atomPosition = pos.atoms.get(atomId);
         if (!atomPosition) return;
         const merged = mergeAtomToAtom(
@@ -735,7 +735,7 @@ function findCloseMerge(
           result,
         );
         if (!merged) {
-          mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
+          didMergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
         }
       });
     } else {
@@ -790,7 +790,7 @@ function mergeAtomToAtom(
  * @param result { Object } Mutating arguments!!!
  * @return {boolean}
  */
-function mergeAtomToFunctionalGroup(
+function didMergeAtomToFunctionalGroup(
   atomId: number,
   restruct: ReStruct,
   atomPosition: Vec2,

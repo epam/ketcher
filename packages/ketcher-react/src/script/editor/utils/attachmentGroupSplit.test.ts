@@ -9,7 +9,7 @@ import {
 import {
   ATTACHMENT_GROUP_SPLIT_WARNING,
   getAttachmentGroupIdsSplitByDeletion,
-  deleteWithAttachmentGroupSplitConfirm,
+  didDeleteWithAttachmentGroupSplitConfirm,
   runDeleteWithAttachmentGroupSplitConfirm,
 } from './attachmentGroupSplit';
 import type Editor from '../Editor';
@@ -104,7 +104,7 @@ describe('attachmentGroupSplit', () => {
     });
   });
 
-  describe('deleteWithAttachmentGroupSplitConfirm', () => {
+  describe('didDeleteWithAttachmentGroupSplitConfirm', () => {
     it('applies the deletion without a warning when the attachment group stays connected', async () => {
       const { struct } = createRing();
       const confirm = jest.fn();
@@ -118,7 +118,7 @@ describe('attachmentGroupSplit', () => {
       } as unknown as Editor;
 
       await expect(
-        deleteWithAttachmentGroupSplitConfirm(
+        didDeleteWithAttachmentGroupSplitConfirm(
           editor,
           { bonds: [0] },
           applyDeletion,
@@ -143,7 +143,7 @@ describe('attachmentGroupSplit', () => {
       } as unknown as Editor;
 
       await expect(
-        deleteWithAttachmentGroupSplitConfirm(
+        didDeleteWithAttachmentGroupSplitConfirm(
           editor,
           { bonds: [firstBondId] },
           applyDeletion,

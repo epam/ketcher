@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +17,8 @@
 import {
   Action,
   Atom,
+  type AtomAttributes,
+  type ElementLabel,
   Bond,
   FunctionalGroup,
   SGroup,
@@ -34,18 +35,19 @@ import {
 
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
+import type { AtomToolDragContext } from './atom.types';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProperties: any;
-  private dragCtx: any;
+  private readonly atomProperties: AtomAttributes;
+  private dragCtx?: AtomToolDragContext;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor, atomProperties) {
+  constructor(editor: Editor, atomProperties: AtomAttributes) {
     this.editor = editor;
     this.atomProperties = atomProperties;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
@@ -99,7 +101,7 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProperties.label;
+      this.editor.hoverIcon.label = atomProperties.label as ElementLabel;
       this.editor.hoverIcon.fill =
         ElementColor[atomProperties.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
@@ -270,11 +272,11 @@ class AtomTool implements Tool {
     const struct = editor.struct();
     const action = new Action();
 
-    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+    if (!dragCtx || struct.isTargetFromMacromolecule(ci)) {
       return;
     }
 
-    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
+    if (!ci && (!dragCtx.item || dragCtx?.isSaltOrSolvent)) {
       action.mergeWith(
         fromAtomAddition(
           reStruct,
@@ -282,7 +284,7 @@ class AtomTool implements Tool {
           atomProperties,
         ),
       );
-    } else if (dragCtx.item && ci) {
+    } else if (ci && dragCtx.item) {
       if (dragCtx.item.id === ci.id) {
         if (
           ci.map === 'functionalGroups' &&
@@ -361,9 +363,9 @@ export function atomLongtapEvent(tool, render) {
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom
   const atom =
-    atomid !== undefined && atomid !== null
-      ? render.ctab.molecule.atoms.get(atomid)
-      : new Atom({ label: '' });
+    atomid === undefined || atomid === null
+      ? new Atom({ label: '' })
+      : render.ctab.molecule.atoms.get(atomid);
   const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid);
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {

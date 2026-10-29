@@ -60,7 +60,9 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     if (!this.dragContext) return;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const diff = current.sub(this.dragContext.p0);
-    if (!this.dragContext.action) {
+    if (this.dragContext.action) {
+      this.dragContext.action.perform(this.reStruct);
+    } else {
       const action = fromArrowAddition(
         this.reStruct,
         [this.dragContext.p0, this.dragContext.p0],
@@ -82,8 +84,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       };
       this.dragContext = dragContext;
       this.editor.update(dragContext.action, true);
-    } else {
-      this.dragContext.action.perform(this.reStruct);
     }
 
     const dragContext = this.dragContext;

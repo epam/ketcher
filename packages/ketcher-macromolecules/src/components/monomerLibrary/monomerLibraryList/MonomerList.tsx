@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,12 +61,12 @@ const MonomerList = ({
   const presets = useAppSelector(selectFilteredPresets);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
 
-  const items = !isFavoriteTab
-    ? selectMonomersInCategory(monomers, libraryName)
-    : ({
+  const items = isFavoriteTab
+    ? ({
         monomers: selectMonomersInFavorites(monomers),
         presets: selectPresetsInFavorites(presets),
-      } as Favorites);
+      } as Favorites)
+    : selectMonomersInCategory(monomers, libraryName);
 
   const monomerGroups = selectMonomerGroups(
     isFavoriteTab

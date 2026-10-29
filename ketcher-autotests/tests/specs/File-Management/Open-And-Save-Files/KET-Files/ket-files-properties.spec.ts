@@ -2,7 +2,8 @@ import { expect, test } from '@fixtures';
 import {
   BondsSetting,
   GeneralSetting,
-  MeasurementUnit, SettingsSection,
+  MeasurementUnit,
+  SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {

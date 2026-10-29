@@ -13,9 +13,8 @@ export class SequenceEventDelegationManager {
   private static _instance: SequenceEventDelegationManager | null = null;
 
   public static get instance() {
-    SequenceEventDelegationManager._instance ??=
-      new SequenceEventDelegationManager();
-    return SequenceEventDelegationManager._instance;
+    this._instance ??= new SequenceEventDelegationManager();
+    return this._instance;
   }
 
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;

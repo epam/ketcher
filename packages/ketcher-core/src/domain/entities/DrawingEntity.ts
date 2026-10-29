@@ -110,7 +110,7 @@ export abstract class DrawingEntity {
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -120,15 +120,15 @@ export abstract class DrawingEntity {
     let isSelected = false;
 
     selectionPoints.forEach((point) => {
-      const locatedInRectangle =
+      const isLocatedInRectangle =
         rectangleBottomRightPoint.x > point.x &&
         rectangleBottomRightPoint.y > point.y &&
         rectangleTopLeftPoint.x < point.x &&
         rectangleTopLeftPoint.y < point.y;
-      if (shiftKey) {
-        isSelected = isPreviousSelected || locatedInRectangle;
+      if (isShiftKeyPressed) {
+        isSelected = isPreviousSelected || isLocatedInRectangle;
       } else {
-        isSelected = locatedInRectangle;
+        isSelected = isLocatedInRectangle;
       }
     });
 
@@ -144,7 +144,7 @@ export abstract class DrawingEntity {
   public selectIfLocatedInPolygon(
     polygonPoints: Vec2[],
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -155,7 +155,7 @@ export abstract class DrawingEntity {
 
     selectionPoints.forEach((point) => {
       const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
-      if (shiftKey) {
+      if (isShiftKeyPressed) {
         isSelected = isPreviousSelected || locatedInPolygon;
       } else {
         isSelected = locatedInPolygon;

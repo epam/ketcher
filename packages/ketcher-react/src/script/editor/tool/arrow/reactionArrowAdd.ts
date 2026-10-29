@@ -109,7 +109,9 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     if (!this.dragCtx) return;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const diff = current.sub(this.dragCtx.p0);
-    if (!this.dragCtx.action) {
+    if (this.dragCtx.action) {
+      this.dragCtx.action.perform(this.reStruct);
+    } else {
       const action = fromArrowAddition(
         this.reStruct,
         [this.dragCtx.p0, this.dragCtx.p0],
@@ -131,8 +133,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       };
       this.dragCtx = dragCtx;
       this.editor.update(dragCtx.action, true);
-    } else {
-      this.dragCtx.action.perform(this.reStruct);
     }
 
     const dragCtx = this.dragCtx;

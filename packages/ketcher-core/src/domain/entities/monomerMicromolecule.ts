@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,7 @@ export class MonomerMicromolecule extends SGroup {
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
   ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
@@ -38,7 +38,7 @@ export class MonomerMicromolecule extends SGroup {
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
-    if (needCloneAttachmentPoints && atomIdMap) {
+    if (shouldCloneAttachmentPoints && atomIdMap) {
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
         false,

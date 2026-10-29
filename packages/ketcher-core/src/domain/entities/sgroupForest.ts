@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,9 +20,13 @@ import type { Struct } from './struct';
 import { assert, KetcherLogger } from 'utilities';
 
 export class SGroupForest {
-  /** node id -> parent id */
+  /**
+  node id -> parent id
+  */
   parent: Map<number, number>;
-  /** node id -> list of child ids */
+  /**
+  node id -> list of child ids
+  */
   children: Map<number, number[]>;
   atomSets: Map<number, Pile<number>>;
 
@@ -53,7 +57,7 @@ export class SGroupForest {
   /** returns an array or s-group ids in the order of breadth-first search */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
-    const queue = Array.from(this.children.get(-1) as Array<number>);
+    const queue = [...(this.children.get(-1) as Array<number>)];
     while (queue.length > 0) {
       const id = queue.shift();
       if (typeof id !== 'number') {
@@ -76,36 +80,36 @@ export class SGroupForest {
 
   getAtomSetRelations(newId: number, atoms: Pile<number>) {
     // find the lowest superset in the hierarchy
-    const isStrictSuperset = new Map<number, boolean>();
-    const isSubset = new Map<number, boolean>();
+    const strictSupersetById = new Map<number, boolean>();
+    const subsetById = new Map<number, boolean>();
 
     this.atomSets.delete(newId);
 
     this.atomSets.forEach((atomSet, id) => {
-      isSubset.set(id, atomSet.isSuperset(atoms));
-      isStrictSuperset.set(
+      subsetById.set(id, atomSet.isSuperset(atoms));
+      strictSupersetById.set(
         id,
         atoms.isSuperset(atomSet) && !atomSet.equals(atoms),
       );
     });
 
-    const parents = Array.from(this.atomSets.keys()).filter((sgid) => {
-      if (isSubset.get(sgid) !== true) {
+    const parents = [...this.atomSets.keys()].filter((sgid) => {
+      if (subsetById.get(sgid) !== true) {
         return false;
       }
       const childs = this.children.get(sgid);
       return (
-        childs?.findIndex((childId) => isSubset.get(childId) === true) === -1
+        childs?.findIndex((childId) => subsetById.get(childId) === true) === -1
       );
     });
 
-    const children = Array.from(this.atomSets.keys()).filter((id) => {
+    const children = [...this.atomSets.keys()].filter((id) => {
       const parentId = this.parent.get(id);
-      if (parentId !== undefined && isStrictSuperset.get(parentId) === true) {
+      if (parentId !== undefined && strictSupersetById.get(parentId) === true) {
         return false;
       }
 
-      return isStrictSuperset.get(id) === true;
+      return strictSupersetById.get(id) === true;
     });
 
     return {
@@ -158,8 +162,8 @@ export class SGroupForest {
     try {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
-    } catch (e) {
-      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
+    } catch (error) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', error);
       console.info('error: sgid is not in the forest');
     }
 
@@ -211,5 +215,5 @@ export function checkOverlapping(
     return atom ? res.union(atom.sgs) : res;
   }, new Pile<number>());
 
-  return Array.from(sgroups).some(searchFunction[sGroupType]);
+  return [...sgroups].some(searchFunction[sGroupType]);
 }

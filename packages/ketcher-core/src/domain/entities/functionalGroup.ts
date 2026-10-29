@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,7 +34,7 @@ const isSaltOrSolvent = (moleculeName: string): boolean => {
 
 const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
   const atoms = sgroup.allAtoms
-    ? Array.from(molecule.atoms.keys())
+    ? [...molecule.atoms.keys()]
     : (sgroup.atoms as number[]);
   const bonds: number[] = [];
 
@@ -102,10 +102,7 @@ export class FunctionalGroup {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
     assert(rgroupAttachmentPoint != null);
     const attachedAtom = rgroupAttachmentPoint.atomId;
-    return FunctionalGroup.atomsInFunctionalGroup(
-      molecule.functionalGroups,
-      attachedAtom,
-    );
+    return this.atomsInFunctionalGroup(molecule.functionalGroups, attachedAtom);
   }
 
   static findFunctionalGroupByAtom(
@@ -173,7 +170,7 @@ export class FunctionalGroup {
     const key = functionalGroups.find(
       (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id,
     );
-    return key !== null ? functionalGroups.get(key) : undefined;
+    return key === null ? undefined : functionalGroups.get(key);
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
@@ -192,7 +189,7 @@ export class FunctionalGroup {
         return false;
       }
 
-      return FunctionalGroup.isContractedFunctionalGroup(
+      return this.isContractedFunctionalGroup(
         'item' in sgroup ? sgroup.item : sgroup,
         functionalGroups,
       );
@@ -207,7 +204,7 @@ export class FunctionalGroup {
     return [...sGroups.values()].some((_sGroup) => {
       const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
       const atomsInSGroup = sGroup?.atoms ?? [];
-      const isContracted = FunctionalGroup.isContractedFunctionalGroup(
+      const isContracted = this.isContractedFunctionalGroup(
         sGroup,
         functionalGroups,
       );
@@ -234,22 +231,22 @@ export class FunctionalGroup {
 
   static isContractedFunctionalGroup(sgroup, functionalGroups): boolean {
     let isFunctionalGroup = false;
-    let expanded = false;
+    let isExpanded = false;
 
     if (sgroup instanceof SGroup) {
       if (sgroup.functionalGroup) {
         isFunctionalGroup = true;
-        expanded = sgroup.functionalGroup.isExpanded;
+        isExpanded = sgroup.functionalGroup.isExpanded;
       }
     } else {
       functionalGroups.forEach((fg) => {
         if (fg.relatedSGroupId === sgroup) {
           isFunctionalGroup = true;
-          expanded = fg.isExpanded;
+          isExpanded = fg.isExpanded;
         }
       });
     }
-    return !expanded && isFunctionalGroup;
+    return !isExpanded && isFunctionalGroup;
   }
 
   readonly #sgroup: SGroup;

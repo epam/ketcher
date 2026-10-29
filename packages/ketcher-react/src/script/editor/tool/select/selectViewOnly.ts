@@ -5,7 +5,7 @@ import type { SelectMode } from './select.types';
 import {
   onSelectionEnd,
   onSelectionLeave,
-  onSelectionMove,
+  isSelectionMoveHandled,
   onSelectionStart,
 } from './select.helpers';
 
@@ -31,7 +31,7 @@ export class SelectViewOnlyTool implements Tool {
   }
 
   mousemove(event: PointerEvent) {
-    onSelectionMove(event, this.editor, this.lassoHelper);
+    isSelectionMoveHandled(event, this.editor, this.lassoHelper);
   }
 
   mouseup(event: PointerEvent) {

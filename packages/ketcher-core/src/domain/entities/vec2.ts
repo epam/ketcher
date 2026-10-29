@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ export class Vec2 {
   static readonly UNIT = new Vec2(1, 1);
 
   static dist(a: Vec2, b: Vec2): number {
-    return Vec2.diff(a, b).length();
+    return this.diff(a, b).length();
   }
 
   static max(v1: Vec2, v2: Vec2): Vec2 {
@@ -67,7 +67,7 @@ export class Vec2 {
   }
 
   static angle(v1: Vec2, v2: Vec2): number {
-    return Math.atan2(Vec2.cross(v1, v2), Vec2.dot(v1, v2));
+    return Math.atan2(this.cross(v1, v2), this.dot(v1, v2));
   }
 
   static diff(v1: Vec2, v2: Vec2): Vec2 {
@@ -93,7 +93,7 @@ export class Vec2 {
   }
 
   static centre(v1: Vec2, v2: Vec2) {
-    return Vec2.lc2(v1, 0.5, v2, 0.5);
+    return this.lc2(v1, 0.5, v2, 0.5);
   }
 
   static getLinePoint(lineStart: Vec2, lineEnd: Vec2, length) {
@@ -296,7 +296,7 @@ export class Vec2 {
     // ray-casting algorithm based on
     // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
     const { x, y } = this;
-    let inside = false;
+    let isInside = false;
 
     for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
       const xi = points[i].x || 0;
@@ -304,12 +304,12 @@ export class Vec2 {
       const xj = points[j].x || 0;
       const yj = points[j].y || 0;
 
-      const intersect =
+      const doesIntersect =
         yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-      if (intersect) inside = !inside;
+      if (doesIntersect) isInside = !isInside;
     }
 
-    return inside;
+    return isInside;
   }
 
   calculateDistanceToLine(line: [Vec2, Vec2]): number {

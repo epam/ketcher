@@ -86,7 +86,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions();
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 

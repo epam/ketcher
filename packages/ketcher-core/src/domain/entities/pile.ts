@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,9 +53,9 @@ export class Pile<TValue = unknown> extends Set<TValue> {
 
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
-  find(predicate: (item: TValue) => boolean) {
+  find(isMatchingItem: (item: TValue) => boolean) {
     for (const item of this) {
-      if (predicate(item)) return item;
+      if (isMatchingItem(item)) return item;
     }
 
     return null;
@@ -73,8 +73,8 @@ export class Pile<TValue = unknown> extends Set<TValue> {
     return true;
   }
 
-  filter(expression: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(expression));
+  filter(isMatchingItem: (arg: TValue) => boolean): Pile<TValue> {
+    return new Pile([...this].filter(isMatchingItem));
   }
 
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {

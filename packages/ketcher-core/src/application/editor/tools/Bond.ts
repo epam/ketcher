@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -431,7 +431,7 @@ class PolymerBond implements BaseTool {
       renderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer.monomer;
 
@@ -445,15 +445,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );
@@ -507,7 +507,7 @@ class PolymerBond implements BaseTool {
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && renderer?.monomer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer && renderer?.monomer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer?.monomer;
 
@@ -516,15 +516,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );

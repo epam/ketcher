@@ -36,10 +36,10 @@ export class ReImage extends ReObject {
     super(IMAGE_KEY);
   }
 
-  private setSelectionPointsVisibility(visible: boolean) {
+  private setSelectionPointsVisibility(isVisible: boolean) {
     this.selectionPointsSet?.attr({
-      opacity: visible ? 1 : 0,
-      'pointer-events': visible ? 'all' : 'none',
+      opacity: isVisible ? 1 : 0,
+      'pointer-events': isVisible ? 'all' : 'none',
     });
   }
 

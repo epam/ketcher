@@ -81,7 +81,7 @@ function execute(
   return activeTool;
 }
 
-function selected(
+function isSelected(
   actObj: UiAction,
   activeTool: UiActionAction | null | undefined,
   { editor, server }: Pick<ActionParams, 'editor' | 'server'>,
@@ -93,7 +93,7 @@ function selected(
   return false;
 }
 
-function disabled(
+function isDisabled(
   actObj: UiAction,
   { editor, server, options }: ActionParams,
 ): boolean {
@@ -102,7 +102,7 @@ function disabled(
   return false;
 }
 
-function hidden(
+function isHidden(
   actObj: UiAction,
   { options }: Pick<ActionParams, 'options'>,
 ): boolean {
@@ -117,9 +117,9 @@ function status(
 ): ActionStatus {
   const actObj = actions[actionName];
   return pickBy((x) => x, {
-    selected: selected(actObj, activeTool, params),
-    disabled: disabled(actObj, params),
-    hidden: hidden(actObj, params),
+    selected: isSelected(actObj, activeTool, params),
+    disabled: isDisabled(actObj, params),
+    hidden: isHidden(actObj, params),
   });
 }
 

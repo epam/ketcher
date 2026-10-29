@@ -55,10 +55,10 @@ export class EditorHistory {
     return this.moleculesEditor?.historyPtr ?? this.pointer;
   }
 
-  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+  update(command: Command, shouldMergeWithLatestHistoryCommand?: boolean) {
     const latestCommand = this.previousCommand;
     if (
-      megreWithLatestHistoryCommand &&
+      shouldMergeWithLatestHistoryCommand &&
       latestCommand &&
       this.historyPointer === this.historyStack.length
     ) {

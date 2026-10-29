@@ -29,12 +29,12 @@ type Data = {
 export class AtomMove extends BaseOperation {
   data: Data;
 
-  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(atomId?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
     this.data = {
       aid: atomId ?? null,
       d: d ?? null,
-      noinvalidate: noinvalidate ?? false,
+      noinvalidate: shouldSkipInvalidation ?? false,
     };
   }
 

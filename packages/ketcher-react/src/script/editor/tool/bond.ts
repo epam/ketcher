@@ -596,7 +596,7 @@ class BondTool implements Tool {
           )
         : null;
 
-      if (dragCtx.action && dragEndFailure) {
+      if (dragEndFailure && dragCtx.action) {
         const revertedPreviewAction = dragCtx.action.perform(render.ctab);
         delete dragCtx.action;
         this.hapticBond.showValidationError(dragEndFailure);
@@ -760,10 +760,10 @@ class BondTool implements Tool {
       return [null, null] as const;
     }
     for (const [bondId, bond] of struct.bonds.entries()) {
-      const alreadyHasBondInOtherDirection =
+      const hasBondInEitherDirection =
         (bond.begin === end && bond.end === begin) ||
         (bond.begin === begin && bond.end === end);
-      if (alreadyHasBondInOtherDirection) {
+      if (hasBondInEitherDirection) {
         return [bondId, bond] as const;
       }
     }

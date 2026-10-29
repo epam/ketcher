@@ -1,24 +1,24 @@
-## How the feature works? / How did you fix the issue?
+## Summary
 
-(Screenshots, videos, or GIFs, if applicable)
+<diagram, diff-sketch, or tree>
 
-## PR type
+## Evidence
 
-Tick the row that matches this PR. The full contract is in `.memory-bank/review-workflow.md`.
+- **Before:** <screenshot/output/failing test run>
+  **After:** <screenshot/output/passing test run>
 
-- [ ] Bug fix: linked issue and a regression test
-- [ ] Feature: OpenSpec change in `openspec/changes/<change>/` and tests
-- [ ] Large-scale change: opened with `?template=large-scale-change.md`
-- [ ] Archive of an OpenSpec change: no unchecked tasks
+## Merge Danger
 
-## Check list
+**Door:** <one-way or two-way>
 
-- [ ] unit-tests written
-- [ ] e2e-tests written
-- [ ] memory bank updated (name the file), or not needed
-- [ ] PR name follows the pattern `#1234 - issue name`
-- [ ] branch name doesn't contain '#'
-- [ ] PR is linked with the issue
-- [ ] base branch (master or release/xx) is correct
-- [ ] task status changed to "Code review"
-- [ ] reviewers are notified about the pull request
+<optional: description>
+
+**Blast Radius:** <one-word description>
+
+<optional: potential ramifications of merge>
+
+---
+
+Closes #<issue>
+
+Memory bank: <the file this PR updated, or "not needed">

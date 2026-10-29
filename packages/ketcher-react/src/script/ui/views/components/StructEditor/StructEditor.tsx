@@ -72,7 +72,7 @@ function setupEditor(
   oldProps: Partial<StructEditorProps> = {},
 ) {
   const { struct, tool, toolOpts, options } = props;
-  const optionsChanged = !isEqual(options, oldProps.options);
+  const haveOptionsChanged = !isEqual(options, oldProps.options);
 
   if (struct !== oldProps.struct) editor.struct(struct);
 
@@ -83,7 +83,7 @@ function setupEditor(
     }
   }
 
-  if (oldProps.options && optionsChanged) {
+  if (oldProps.options && haveOptionsChanged) {
     editor.options(options);
     editor.setServerSettings(props.serverSettings);
   } else if (props.serverSettings !== oldProps.serverSettings) {
@@ -104,7 +104,7 @@ function setupEditor(
     }
   });
 
-  if (struct !== oldProps.struct || optionsChanged) {
+  if (struct !== oldProps.struct || haveOptionsChanged) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }
@@ -281,12 +281,12 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           const clientX = csr.cursorPosition.clientX;
           const clientY = csr.cursorPosition.clientY;
 
-          const handShouldBeShown =
+          const shouldShowHand =
             clientX >= left &&
             clientX <= right &&
             clientY >= top &&
             clientX <= bottom;
-          if (!this.state.enableCursor && handShouldBeShown) {
+          if (!this.state.enableCursor && shouldShowHand) {
             this.setState({
               enableCursor: true,
             });

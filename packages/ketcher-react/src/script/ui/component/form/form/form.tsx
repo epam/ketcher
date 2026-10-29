@@ -52,7 +52,7 @@ export interface FormOwnProps {
 interface FormDispatchProps {
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => void;
 }
@@ -132,7 +132,7 @@ export interface CustomQueryFieldProps extends FieldProps {
   labelPos: string;
   checkboxValue?: boolean;
   onCheckboxChange?: (
-    value: boolean,
+    isChecked: boolean,
     formState: Record<string, unknown>,
     onChange: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
@@ -233,10 +233,10 @@ class Form extends Component<FormProps> {
 export default connect(null, (dispatch) => ({
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => {
-    dispatch(updateFormState({ result, valid, errors }));
+    dispatch(updateFormState({ result, valid: isValid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
 }))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
@@ -385,11 +385,13 @@ function Field(props: Readonly<FieldProps>) {
 
     const isSelectableControl =
       rest.type === 'radio' || rest.type === 'checkbox';
-    const showError = Boolean(dataError) && !isSelectableControl;
+    const shouldShowError = Boolean(dataError) && !isSelectableControl;
 
     return (
       <>
-        <span className={clsx({ [classes.dataError]: showError }, className)}>
+        <span
+          className={clsx({ [classes.dataError]: shouldShowError }, className)}
+        >
           <span
             className={classes.inputWrapper}
             onMouseEnter={handlePopoverOpen}
@@ -404,7 +406,7 @@ function Field(props: Readonly<FieldProps>) {
             {formField}
           </span>
         </span>
-        {showError && dataError && anchorEl && (
+        {shouldShowError && dataError && anchorEl && (
           <ErrorPopover
             anchorEl={anchorEl}
             open={!!anchorEl}

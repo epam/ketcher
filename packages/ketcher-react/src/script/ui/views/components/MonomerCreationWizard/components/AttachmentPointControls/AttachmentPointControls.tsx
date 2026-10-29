@@ -14,9 +14,13 @@ type Properties = {
   highlight?: boolean;
   isPopup?: boolean;
   disabled?: boolean;
-  /** Disable only the name select, leaving the leaving-atom select editable */
+  /**
+  Disable only the name select, leaving the leaving-atom select editable
+  */
   disabledName?: boolean;
-  /** Tooltip shown on the name select when it is disabled */
+  /**
+  Tooltip shown on the name select when it is disabled
+  */
   nameTooltip?: string;
 };
 

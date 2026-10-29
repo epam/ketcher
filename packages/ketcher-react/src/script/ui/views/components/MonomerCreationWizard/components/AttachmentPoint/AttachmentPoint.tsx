@@ -71,21 +71,21 @@ const AttachmentPoint = ({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       'highlightAttachmentPointControls',
       handleAttachmentPointHighlight,
     );
-    window.addEventListener(
+    globalThis.addEventListener(
       'resetHighlightAttachmentPointControls',
       handleResetAttachmentPointHighlight,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         'highlightAttachmentPointControls',
         handleAttachmentPointHighlight,
       );
-      window.removeEventListener(
+      globalThis.removeEventListener(
         'resetHighlightAttachmentPointControls',
         handleResetAttachmentPointHighlight,
       );

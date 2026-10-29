@@ -118,7 +118,7 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
+  const usedNumbers = [...assignedAttachmentPoints.keys()].map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
@@ -127,7 +127,7 @@ export const useAttachmentPointSelectsData = (
     maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
   const usedNames = new Set(
-    Array.from(assignedAttachmentPoints.keys()).filter(
+    [...assignedAttachmentPoints.keys()].filter(
       (name) => name !== attachmentPointName,
     ),
   );

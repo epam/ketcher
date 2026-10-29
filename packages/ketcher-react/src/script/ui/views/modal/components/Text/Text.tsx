@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,10 +44,15 @@ import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
 import type { IconName } from 'components';
+import type { FormState } from 'src/script/ui/component/form/form/form';
+
+interface TextFormState {
+  form: FormState;
+}
 
 interface TextProperties extends DialogParameters {
-  formState: any;
-  id?: any;
+  formState: TextFormState;
+  id?: string;
   content: string;
   position?: string;
 }
@@ -118,9 +122,9 @@ function EditorReferencePlugin({
 }
 
 const TextEditorInner = (properties: {
-  formState: any;
+  formState: TextFormState;
   position?: string;
-  id?: any;
+  id?: string;
   params: TextProperties;
 }) => {
   const { formState, position, id, params } = properties;
@@ -297,4 +301,6 @@ const Text = (properties: TextProperties) => {
   );
 };
 
-export default connect((store: any) => ({ formState: store.modal }))(Text);
+export default connect((store: { modal: TextFormState }) => ({
+  formState: store.modal,
+}))(Text);

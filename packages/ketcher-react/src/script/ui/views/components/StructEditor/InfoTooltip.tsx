@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +22,7 @@ import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { TOOLTIP_DELAY } from 'src/script/editor/utils/functionalGroupsTooltip';
 import { debounce } from 'lodash';
+import type { StoreState } from 'src/script/ui/state/store.types';
 
 const HOVER_PANEL_PADDING = 20;
 const tooltipOffset = {
@@ -150,6 +150,6 @@ const InfoTooltip: FC<InfoPanelProperties> = (properties) => {
   );
 };
 
-export default connect((store: any) => ({
+export default connect((store: StoreState) => ({
   render: store.editor?.render?.ctab?.render,
 }))(InfoTooltip);

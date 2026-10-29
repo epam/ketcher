@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,7 +72,7 @@ function setupEditor(
   oldProperties: Partial<StructEditorProperties> = {},
 ) {
   const { struct, tool, toolOpts, options } = properties;
-  const optionsChanged = !isEqual(options, oldProperties.options);
+  const haveOptionsChanged = !isEqual(options, oldProperties.options);
 
   if (struct !== oldProperties.struct) editor.struct(struct);
 
@@ -83,7 +83,7 @@ function setupEditor(
     }
   }
 
-  if (oldProperties.options && optionsChanged) {
+  if (oldProperties.options && haveOptionsChanged) {
     editor.options(options);
     editor.setServerSettings(properties.serverSettings);
   } else if (properties.serverSettings !== oldProperties.serverSettings) {
@@ -104,7 +104,7 @@ function setupEditor(
     }
   });
 
-  if (struct !== oldProperties.struct || optionsChanged) {
+  if (struct !== oldProperties.struct || haveOptionsChanged) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }
@@ -268,8 +268,7 @@ class StructEditor extends Component<
     });
 
     this.editor.event.tooltip.add((data) => {
-      const message = data ? data.message : undefined;
-
+      const message = data ? data.message : '';
       this.setState({
         tooltip: message,
       });
@@ -290,12 +289,12 @@ class StructEditor extends Component<
           const clientX = csr.cursorPosition.clientX;
           const clientY = csr.cursorPosition.clientY;
 
-          const handShouldBeShown =
+          const shouldShowHand =
             clientX >= left &&
             clientX <= right &&
             clientY >= top &&
             clientX <= bottom;
-          if (!this.state.enableCursor && handShouldBeShown) {
+          if (!this.state.enableCursor && shouldShowHand) {
             this.setState({
               enableCursor: true,
             });

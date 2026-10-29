@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -250,13 +250,8 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats = !this.props.server
+    const formats = this.props.server
       ? [
-          SupportedFormat.ket,
-          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-          SupportedFormat.smiles,
-        ]
-      : [
           SupportedFormat.ket,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
@@ -278,6 +273,11 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
           SupportedFormat.cdxml,
           SupportedFormat.cdx,
           SupportedFormat.binaryCdx,
+        ]
+      : [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
         ];
 
     this.saveSchema = saveSchema;
@@ -371,9 +371,9 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
       // temporary check if query properties are used
-      const queryPropertiesAreUsed = !!(
+      const hasQueryProperties = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).some(
+        [...struct.atoms].some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -386,7 +386,7 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
       const service = factory.create(
         type,
         { ...options, ignoreChiralFlag },
-        queryPropertiesAreUsed,
+        hasQueryProperties,
         struct,
       );
       const getStructFromStringByType = () => {
@@ -624,9 +624,9 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
+      !isLoading &&
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 
@@ -691,7 +691,7 @@ class SaveDialog extends Component<SaveDialogProperties, SaveDialogState> {
               : format.name)
           }
           key="save-file-button"
-          type={!this.isValidStringFormat(format) ? format.mime : undefined}
+          type={this.isValidStringFormat(format) ? undefined : format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}

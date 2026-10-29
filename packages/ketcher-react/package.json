@@ -72,7 +72,7 @@
     "ketcher-macromolecules": "*",
     "lexical": "^0.40.0",
     "lodash": "^4.18.1",
-    "miew-react": "0.11.0",
+    "miew-react": "0.12.0",
     "paper": "^0.12.18",
     "react-contexify": "^6.0.0",
     "react-device-detect": "^2.2.2",

@@ -79,6 +79,9 @@
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
   "overrides": {
+    "miew-react": {
+      "miew": "0.12.0"
+    },
     "nth-check": "^2.1.1",
     "eslint": "10.9.0",
     "react-scripts": {

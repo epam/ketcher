@@ -41,18 +41,18 @@ In the first round the hub SHALL review the diff between the pull request base a
 - **THEN** the finder passes receive the full diff between the base and the current head
 
 ### Requirement: Depth selection
-The hub SHALL run a Quick review (the `correctness` lens only) when the `Claude Review: Quick` label started it, or when the diff is at or below the Quick line threshold and touches no sensitive path. Otherwise it SHALL run a Standard review with all finder lenses. The threshold and the sensitive paths SHALL be set in one place in the hub configuration.
+The hub SHALL run a Quick review (the `functional-correctness` lens only) when the `Claude Review: Quick` label started it, or when the diff is at or below the Quick line threshold and touches no sensitive path. Otherwise it SHALL run a Standard review with all finder lenses. The threshold and the sensitive paths SHALL be set in one place in the hub configuration.
 
 #### Scenario: Small change outside sensitive paths
 - **WHEN** a pull request changes 40 lines in a React dialog component and the label is `Run Claude Review`
-- **THEN** only the `correctness` lens runs
+- **THEN** only the `functional-correctness` lens runs
 
 #### Scenario: Sensitive path gets a Standard review
 - **WHEN** a pull request changes 20 lines in `packages/ketcher-core/src/domain/serializers/`
 - **THEN** all finder lenses run
 
 ### Requirement: Finder lenses
-A Standard review SHALL run the `correctness`, `reuse`, `code-quality`, `security`, `performance` and `documentation-accuracy` lenses of the code-review skill as separate finder passes, in parallel with a configurable concurrency limit.
+A Standard review SHALL run the `functional-correctness`, `reuse`, `code-quality`, `security`, `performance` and `documentation-accuracy` lenses of the code-review skill as separate finder passes, in parallel with a configurable concurrency limit.
 
 #### Scenario: Standard review
 - **WHEN** the depth is Standard

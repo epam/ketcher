@@ -8,7 +8,7 @@ Most maintainer change requests on Ketcher PRs fall into a few checkable kinds: 
 
 - Add a review **hub** in `scripts/review/` (JavaScript modules in the style of the existing `scripts/*.mjs`). The hub contains no model. It computes the diff and the scope, picks a depth, selects rules and module docs, runs the finder passes, merges duplicates, sends findings to verification, keeps state between rounds, and posts.
 - Run every finder pass and every verification as a separate `claude -p` process with `--output-format json --json-schema`, so the runtime validates each output against a schema. Each process runs in safe mode with read-only tools; prompts and configuration come from the base branch, and the PR is only read as data.
-- Use the four code-review lenses (`security`, `performance`, `code-quality`, `documentation-accuracy`) as finder passes, and add two lenses to `.agents/skills/code-review/`: `correctness` (bugs, regressions, invariant breaks) and `reuse` (an existing helper, type, constant or mechanism that the new code should use or extend).
+- Use the four code-review lenses (`security`, `performance`, `code-quality`, `documentation-accuracy`) as finder passes, and add two lenses to `.agents/skills/code-review/`: `functional-correctness` (bugs, regressions, invariant breaks) and `reuse` (an existing helper, type, constant or mechanism that the new code should use or extend).
 - Add a verifier role: one fresh pass per finding that sees only the finding and the code, checks the failing scenario, and confirms or drops the finding.
 - Follow the output contract in `.memory-bank/review-workflow.md` unchanged: first pass without the PR description, then the linked-issue question; severities `blocker`, `major`, `nit`; `file:line`, rule or invariant ID and failing scenario on every finding; at most 10 inline comments, blockers first; accepted patterns not raised; no praise and no summary.
 - Start each review round by hand with a label, review only new commits after the first round, never repeat a posted finding, and stop after three rounds.
@@ -30,7 +30,7 @@ Most maintainer change requests on Ketcher PRs fall into a few checkable kinds: 
 
 ## Impact
 
-- New: `scripts/review/**` (hub, schemas, configuration, `node:test` tests, evaluation harness), `.agents/skills/code-review/correctness.md`, `.agents/skills/code-review/reuse.md`, a verifier role file.
+- New: `scripts/review/**` (hub, schemas, configuration, `node:test` tests, evaluation harness), `.agents/skills/code-review/functional-correctness.md`, `.agents/skills/code-review/reuse.md`, a verifier role file.
 - Changed: `.github/workflows/claude-review.yml`, `.agents/skills/review-pr/SKILL.md`, `.agents/skills/code-review/SKILL.md` (the lens list), `.github/workflows/README.md`, `.memory-bank/review-workflow.md` (Phase 5 items move from planned to done when the change is archived).
 - Authentication: the hub uses the existing `CLAUDE_CODE_OAUTH_TOKEN` through `claude -p --safe-mode` (bare mode does not read this token). If the AI secrets move to a protected environment (#12513), the review job uses that environment.
 - Testing: hub logic is covered by `node:test` tests without model calls. The full flow runs first locally in dry-run mode on past PRs, because the CI secret only exists in the main repository and the first CI run happens after merge.

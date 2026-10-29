@@ -1,8 +1,8 @@
 ## 1. Lenses and roles
 
-- [ ] 1.1 Add `.agents/skills/code-review/correctness.md` (bugs, regressions, invariant breaks, undo/redo, serialization round trips, mode and canvas switching), in the format of the existing lens files.
-- [ ] 1.2 Add `.agents/skills/code-review/reuse.md` (existing helper, type, constant or mechanism the change should use or extend; the finding names it by `file:line`).
-- [ ] 1.3 Add the verifier role file: checks one finding against the code, confirms or drops it, may change its severity.
+- [x] 1.1 Add `.agents/skills/code-review/functional-correctness.md` (bugs, regressions, invariant breaks, undo/redo, serialization round trips, mode and canvas switching), in the format of the existing lens files.
+- [x] 1.2 Add `.agents/skills/code-review/reuse.md` (existing helper, type, constant or mechanism the change should use or extend; the finding names it by `file:line`).
+- [x] 1.3 Add the verifier role file `.agents/skills/code-review/verifier.md`: checks one finding against the code, confirms or drops it, may change its severity.
 - [ ] 1.4 Add both lenses to the lens list in `.agents/skills/code-review/SKILL.md`, and remove output-format wording that the schema now carries.
 
 ## 2. Hub foundation

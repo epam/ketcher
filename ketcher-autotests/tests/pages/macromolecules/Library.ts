@@ -232,40 +232,40 @@ export const Library = (page: Page) => {
 
     getMonomerHELMAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.helm ?? null,
+        (element) => element.dataset.helm,
       );
     },
 
     getMonomerAxoLabsAlias(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.axolabs ?? null,
+        (element) => element.dataset.axolabs,
       );
     },
 
     getMonomerIDTAliasBase(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasBase ?? null,
+        (element) => element.dataset.idtaliasBase,
       );
     },
 
     getMonomerIDTAliasEp5(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint5 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint5,
       );
     },
     getMonomerIDTAliasEp3(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsEndpoint3 ?? null,
+        (element) => element.dataset.idtaliasModificationsEndpoint3,
       );
     },
     getMonomerIDTAliasInternal(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.idtaliasModificationsInternal ?? null,
+        (element) => element.dataset.idtaliasModificationsInternal,
       );
     },
     getMonomerModificationTypes(monomer: Monomer | PresetType) {
       return getElement(monomer.testId).evaluate(
-        (element) => element.dataset.modificationtype ?? null,
+        (element) => element.dataset.modificationtype,
       );
     },
 

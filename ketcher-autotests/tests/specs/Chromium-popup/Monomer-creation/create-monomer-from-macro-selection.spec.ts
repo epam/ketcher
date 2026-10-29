@@ -13,6 +13,8 @@
  * - A small molecule bonded to a polymer is auto-grouped into a CHEM fragment monomer
  *   ("F1") when the file opens in flex mode; such fragments are not editable monomers,
  *   so a monomer + fragment selection does NOT offer "Create monomer" (documented here).
+ * - The canvas-replacing submit is NOT an undo entry (Ctrl+Z leaves the canvas
+ *   unchanged — asserted in 1.5a).
  */
 import { Locator, Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
@@ -40,6 +42,7 @@ import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 const BENZENE_FIXTURE = 'KET/Chromium-popup/benzene-ring-with-atoms.ket';
 // A chemically valid five-carbon chain: its atoms can be marked as attachment
@@ -280,8 +283,18 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     const createBox = (await createOption.boundingBox())!;
     const deleteBox = (await deleteOption.boundingBox())!;
     expect(createBox.y).toBeLessThan(deleteBox.y);
-    // The menu renders separator lines between the option groups.
-    expect(await menu.getSeparatorLocator().count()).toBeGreaterThanOrEqual(1);
+    // The menu renders separator lines between the option groups; one of them
+    // separates the "Create monomer" section from Delete.
+    const separators = menu.getSeparatorLocator();
+    const separatorCount = await separators.count();
+    let hasSeparatorBetween = false;
+    for (let i = 0; i < separatorCount; i++) {
+      const box = (await separators.nth(i).boundingBox())!;
+      if (box.y > createBox.y && box.y < deleteBox.y) {
+        hasSeparatorBetween = true;
+      }
+    }
+    expect(hasSeparatorBetween).toBe(true);
   });
 
   test('1.4a: In flex, clicking "Create monomer" opens the wizard with the structure loaded', async () => {
@@ -352,7 +365,9 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      * Scenario:
      * 1. Open the small-chain fixture, select all, open the wizard via the menu
      * 2. Mark a chain atom as a connection point, set type/code/name and submit
-     * 3. Check that flex mode is back, the new monomer exists and no atoms remain
+     * 3. Check that flex mode is back, no atoms remain and the replacement monomer
+     *    carries the created monomer's name
+     * 4. Check that the replacing save is not an undo entry (Ctrl+Z leaves it in place)
      *
      * Version 3.21.0
      */
@@ -376,6 +391,16 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     const newMonomer = getMonomerLocator(page, {
       monomerAlias: NEW_MONOMER_CODE,
     });
+    expect(await newMonomer.count()).toBe(1);
+    expect(await getAtomCount(page)).toBe(0);
+    // The replacement is the created version of the monomer, not just any
+    // monomer with the same code.
+    await newMonomer.hover({ force: true });
+    const preview = MonomerPreviewTooltip(page);
+    await preview.waitForBecomeVisible();
+    expect(await preview.getTitleText()).toBe(NEW_MONOMER_NAME);
+    // The replacing save is not an undo entry (probed): Ctrl+Z leaves it in place.
+    await page.keyboard.press('Control+z');
     expect(await newMonomer.count()).toBe(1);
     expect(await getAtomCount(page)).toBe(0);
   });

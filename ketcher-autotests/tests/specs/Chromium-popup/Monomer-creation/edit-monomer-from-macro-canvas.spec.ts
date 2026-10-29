@@ -12,7 +12,7 @@
  * - "Edit All" opens a confirmation dialog ("You are going to edit N monomers. Are you
  *   sure?") before the wizard (all mode, same "_Copy" pre-fill).
  * - Saving an edit replaces the affected canvas instances with the saved code; the save
- *   is NOT an undo entry (Ctrl+Z leaves the canvas unchanged — verified).
+ *   is NOT an undo entry (Ctrl+Z leaves the canvas unchanged — asserted in 2.3b).
  * - Composite sequence symbols: both options visible but disabled, title "Edit All R (1)".
  */
 import { Page, expect } from '@playwright/test';
@@ -157,17 +157,21 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
   test('2.3b: Saving "Edit Monomer" updates only that canvas instance', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9370 (requirement 2.3)
-     * Description: Saving the wizard with a new code replaces the edited monomer on the
-     * canvas; the other alanine is untouched. The save is not an undo entry (verified).
+     * Description: Saving the wizard with a new code replaces exactly the edited monomer
+     * on the canvas (in place); the other alanine is untouched. The save is not an undo
+     * entry (probed).
      * Scenario:
      * 1. Drag two alanines, open "Edit Monomer" on the selected one
      * 2. Set a new code and submit
-     * 3. Check that exactly one monomer has the new code and one alanine remains
+     * 3. Check that exactly one monomer has the new code at the edited monomer's spot
+     *    and one alanine remains in place
+     * 4. Check that Ctrl+Z does not revert the replacement
      *
      * Version 3.21.0
      */
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
+    const editedPosition = (await monomerA.boundingBox())!;
     await ContextMenu(page, monomerA).click(MacroMonomerOption.EditMonomer);
 
     const dialog = CreateMonomerDialog(page);
@@ -182,6 +186,15 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     const newMonomer = getMonomerLocator(page, {
       monomerAlias: NEW_MONOMER_CODE,
     });
+    expect(await newMonomer.count()).toBe(1);
+    // The edited instance was replaced in place...
+    const newPosition = (await newMonomer.boundingBox())!;
+    expect(newPosition.x).toBeCloseTo(editedPosition.x, 0);
+    expect(newPosition.y).toBeCloseTo(editedPosition.y, 0);
+    // ...and the other alanine remains untouched.
+    expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
+    // The save is not an undo entry (probed): Ctrl+Z leaves the canvas unchanged.
+    await page.keyboard.press('Control+z');
     expect(await newMonomer.count()).toBe(1);
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
   });

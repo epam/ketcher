@@ -113,7 +113,7 @@ POM additions made while normalizing the implemented specs to the updated conven
 
 Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCanvas`/`initSequenceCanvas`, one `describe` per layout mode; switch to Pattern B if state leakage appears. Standard comment block per test (`Test task:` issue link, `Description:`, numbered `Scenario:` steps, `Version` line — Ketcher release from `packages/ketcher-react/package.json` minus any `-rc.N` suffix). Direct coordinate numbers inline in tests (no named coordinate constants). Assertion mechanisms named in the table.
 
-### 5.1 `create-monomer-from-macro-selection.spec.ts` (R1) — IMPLEMENTED, 12/12 passing (2026-10-13)
+### 5.1 `create-monomer-from-macro-selection.spec.ts` (R1) — IMPLEMENTED, 12/12 passing (2026-10-13; assertions strengthened & re-verified 2026-10-16, see §11)
 
 **Implementation deviations from the original design (empirically re-verified while writing the spec):**
 - In macro mode **all** canvas right-clicks open ketcher-macromolecules menus — atom selections included. The create entry is `create_monomer` in the selected-entities menu (`MacroMonomerOption.CreateMonomer`) for every selection type; the micro-menu testids from Phase 0 were not used.
@@ -130,14 +130,14 @@ Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCan
 | 1.2a Flex: monomer + bonded structure → no create (fragment) | Open mixed fixture, select-all, right-click | `create_monomer` absent; `edit_monomer` present (actual behavior — fragment F1 not editable) |
 | 1.2b Flex: two disconnected monomers → hidden | Drag A and C apart, rubber-band both, right-click | `create_monomer` absent |
 | 1.2c Flex: two bonded monomers → visible & enabled | Bond A–C on canvas, select both, right-click | `create_monomer` visible & enabled |
-| 1.3 Menu section layout | Open the small-molecule menu | Create item above Delete; ≥1 `.contexify_separator` in the menu |
+| 1.3 Menu section layout | Open the small-molecule menu | Create item above Delete; a separator line lies vertically between them (position check) |
 | 1.4a Flex: click → wizard opens with structure loaded | Select all, click `create_monomer` | Wizard visible; atom count ≥ 6 (explicit Hs added on mode switch) |
 | 1.4b Snake: same flow | Switch to snake, select-all (re-select after visibility check), click | Same assertions |
-| 1.5a Flex: submit → molecule replaced by new monomer | Chain fixture; mark AP in wizard; set CHEM/ZZ/name; submit | Back in flex; monomer "ZZ" count 1; atom count 0 |
+| 1.5a Flex: submit → molecule replaced by new monomer | Chain fixture; mark AP in wizard; set CHEM/ZZ/name; submit | Back in flex; monomer "ZZ" count 1; atom count 0; ZZ preview tooltip title = entered name (created version); Ctrl+Z leaves the replacement in place (save is not an undo entry) |
 | 1.5b Flex: discard → structure intact | Open via menu, discard | Flex restored; atom count unchanged; no new monomer |
 | 1.5c Snake: submit → back in snake with new monomer | Chain fixture in snake; mark AP; submit | Back in snake; "ZZ" visible; atom count 0 |
 
-### 5.2 `edit-monomer-from-macro-canvas.spec.ts` (R2) — IMPLEMENTED, 11/11 passing (2026-10-13)
+### 5.2 `edit-monomer-from-macro-canvas.spec.ts` (R2) — IMPLEMENTED, 11/11 passing (2026-10-13; assertions strengthened & re-verified 2026-10-16, see §11)
 
 **Implementation deviations from the original design (probed while writing the spec):**
 - "Edit Monomer" opens the wizard directly (no dialog); the code field is pre-filled **`<code>_Copy`** (not the original code), type pre-filled from the monomer. Saving with a new code replaces exactly that instance; saving without changing the code renames it to `_Copy`.
@@ -153,7 +153,7 @@ Conventions: shared-page pattern (Pattern A) with `initFlexCanvas`/`initSnakeCan
 | 2.0c Sequence: composite symbol shows edit options | Open sequence fixture, right-click "A" symbol | Both options visible |
 | 2.2a Composite symbol options disabled | Same | Both `isOptionEnabled` false; title `/^Edit All R \(\d+\)$/` (menu reopened after the enabled checks close it) |
 | 2.3a Edit Monomer opens wizard with properties | Click `edit_monomer` | Wizard visible; code = "A_Copy"; type matches /Amino acid/ |
-| 2.3b Save updates only that instance | Set code ZZ, submit | Back in flex; ZZ count 1; remaining A count 1 |
+| 2.3b Save updates only that instance | Set code ZZ, submit | Back in flex; ZZ count 1 at the edited monomer's original spot (bounding-box match); remaining A count 1; Ctrl+Z leaves the replacement in place (save is not an undo entry) |
 | 2.4a Edit All hover highlights matches only | Drag A, C, A; hover `edit_all_monomers` | Helper: each A +1 child & `cursor: move`; C unchanged |
 | 2.4b Edit All confirm flow | Click `edit_all_monomers` | Dialog "You are going to edit 2 monomers. Are you sure?"; yes → wizard opens |
 | 2.4c Edit All cancel leaves canvas unchanged | Cancel the dialog | Wizard closed; both As at their original bboxes |
@@ -280,3 +280,10 @@ Do **not** use for sequence probes: `KET/dna-AAAAAA-sequence-expected.ket`, `KET
   - [x] 3.2.5: "Edit" save with unchanged type and code overwrites the library entry — FIXED (2026-10-16): test now hovers the replaced canvas monomer and asserts its preview tooltip title shows the edited name ("Edited Cysteine"), proving the instance was replaced with the new version, not just that a card with the same code exists.
   - [x] 3.2.2 (gap): editing a preset-participating monomer shows no entry warning — FIXED (2026-10-16): implemented per ticket — `presetRequirements` (type + union of required attachment points, from the RNA presets referencing the monomer) is now computed for library "Edit" mode and an OK-dismissible entry warning is shown when the wizard opens. Test rewritten to assert the warning text ("...attachment point R1 and R3..."), the pre-filled sugar properties, and dismissal via OK.
   - [x] 3.2.3 (gap): changing a preset sugar type is not blocked on submit — FIXED (2026-10-16): implemented per ticket — submitting an edited library monomer that no longer meets its preset requirements (type changed or required APs removed) shows one and only one OK-dismissible error ("The monomer must be a Sugar and contain R1 and R3 attachment points.") and the save is prohibited. Test rewritten to assert the single error (visible-banner count = 1), the wizard staying open, and that no new library entry is created.
+- create-monomer-from-macro-selection.spec.ts:
+  - [x] 1.3: "Create monomer sits in its own section above Delete" — FIXED (2026-10-16): the separator assertion now verifies a separator line lies vertically *between* the "Create monomer" and "Delete" items (same position check as test 2.1), not just that some separator exists in the menu.
+  - [x] 1.5a: submit test did not check that the replacement monomer carries the created monomer's properties — FIXED (2026-10-16): the test now hovers the replacement and asserts its preview tooltip title equals the entered name ("Monomer from macro selection"), proving the molecule was replaced by the *created* version, not just any monomer with code ZZ.
+  - [x] Cross-cutting (1.5): no undo/redo check after the canvas-replacing submit — FIXED (2026-10-16): probed in the current build — the replacing save is **not** an undo entry (up to 3× Ctrl+Z and a redo leave the canvas unchanged: no atoms reappear, the ZZ monomer stays). 1.5a now asserts Ctrl+Z leaves the replacement in place, documenting the actual behavior per testing.md's cross-cutting undo requirement.
+- edit-monomer-from-macro-canvas.spec.ts:
+  - [x] 2.3b: "Saving 'Edit Monomer' updates only that canvas instance" — FIXED (2026-10-16): the test now captures the edited monomer's bounding box before saving and asserts the new-code monomer appears at that exact spot (in-place replacement), so replacing the wrong alanine would fail the test.
+  - [x] Cross-cutting (2.3/2.4): the header comment claimed "the save is NOT an undo entry (Ctrl+Z leaves the canvas unchanged — verified)", but no test asserted it — FIXED (2026-10-16): re-probed in the current build (unchanged after 2× Ctrl+Z) and 2.3b now asserts Ctrl+Z does not revert the replacement, so the documented behavior is actually covered.

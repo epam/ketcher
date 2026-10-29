@@ -8,6 +8,7 @@ import { AtomList } from 'domain/entities/atomList';
 import type { Atom } from 'domain/entities/CoreAtom';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
+// The singleton needs a live canvas; isLabelVisible only reads its viewModel.
 jest.mock('application/editor/editorSingleton', () => ({
   provideEditorInstance: jest.fn(),
 }));
@@ -112,7 +113,10 @@ describe('AtomRenderer.isLabelVisible', () => {
       AtomRenderer.prototype,
       'isLabelVisible',
     );
-    return descriptor?.get?.call({
+    if (!descriptor?.get) {
+      throw new Error('No getter found for isLabelVisible');
+    }
+    return descriptor.get.call({
       atom,
       isAtomTerminal: neighborCount <= 1,
     });

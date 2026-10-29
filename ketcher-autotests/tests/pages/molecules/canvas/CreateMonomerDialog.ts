@@ -504,10 +504,13 @@ export const CreateMonomerDialog = (page: Page) => {
       await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
-    async submit({ ignoreWarning = false } = {}) {
+    async submit({ ignoreWarning: shouldIgnoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
-        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
+        if (
+          (await WarningMessageDialog(page).isVisible()) &&
+          shouldIgnoreWarning
+        ) {
           await WarningMessageDialog(page).ok();
         }
       });
@@ -540,7 +543,7 @@ export async function createMonomer(
     )[];
     HELMAlias?: string;
   },
-  ignoreWarning = true,
+  shouldIgnoreWarning = true,
 ) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
@@ -558,7 +561,7 @@ export async function createMonomer(
   if (options.HELMAlias) {
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
-  await createMonomerDialog.submit({ ignoreWarning });
+  await createMonomerDialog.submit({ ignoreWarning: shouldIgnoreWarning });
 }
 
 export async function deselectAtomAndBonds(

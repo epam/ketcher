@@ -15,6 +15,7 @@ jobs:
         github.event.issue.type == 'Feature'
       )
     runs-on: ubuntu-latest
+    environment: ai-workflows
     permissions:
       contents: write
       issues: write

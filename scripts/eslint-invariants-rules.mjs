@@ -72,10 +72,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/PreviewAttachmentPoint.ts',
-    imports: ['application/render/util'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts',
     imports: [
       'application/editor/editorSingleton',

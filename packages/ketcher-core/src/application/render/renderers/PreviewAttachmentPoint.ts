@@ -1,4 +1,4 @@
-import { AttachmentPoint } from './AttachmentPoint';
+import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { Coordinates } from 'domain/helpers/attachmentPointCalculations';
 import type { PreviewAttachmentPointConstructorParams } from 'domain/types';
 import type { UsageInMacromolecule } from 'application/render';

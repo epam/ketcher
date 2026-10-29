@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import {
@@ -6,13 +5,21 @@ import {
   getFloatingToolsVisible,
 } from 'src/script/ui/state/floatingTools/selectors';
 import { onAction } from '../../../state';
+import type { FloatingToolsState } from '../../../state/floatingTools';
+import type { RequestState } from '../../../state/request/request.types';
 import {
   FloatingTools,
   type FloatingToolsCallProperties,
   type FloatingToolsProperties,
 } from './FloatingTools';
 
-const mapStateToProperties = (state: any): FloatingToolsProperties => {
+type State = {
+  floatingTools: FloatingToolsState;
+  actionState?: FloatingToolsProperties['status'];
+  requestsStatuses: Pick<RequestState, 'indigoVerification'>;
+};
+
+const mapStateToProperties = (state: State): FloatingToolsProperties => {
   return {
     visible: getFloatingToolsVisible(state),
     rotateHandlePosition: getFloatingToolsRotateHandlePosition(state),

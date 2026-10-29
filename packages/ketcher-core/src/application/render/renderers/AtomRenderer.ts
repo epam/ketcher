@@ -19,6 +19,7 @@ import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -313,7 +314,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias ?? this.atom.label;
   }
 
-  /** True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *). */
+  /**
+  True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *).
+  */
   public get isGenericLabel(): boolean {
     return isGenericAtom(this.atom.label);
   }
@@ -325,7 +328,9 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.label === AtomLabel.H;
   }
 
-  /** The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary. */
+  /**
+  The label text shown on canvas — truncated to MAX_LABEL_LENGTH if necessary.
+  */
   public get displayLabelText() {
     const text = this.labelText;
     if (text.length > MAX_LABEL_LENGTH) {
@@ -334,7 +339,9 @@ export class AtomRenderer extends BaseRenderer {
     return text;
   }
 
-  /** When the label is truncated, this holds the full text for use as a tooltip. */
+  /**
+  When the label is truncated, this holds the full text for use as a tooltip.
+  */
   public get labelTooltipText(): string | null {
     const text = this.labelText;
     return text.length > MAX_LABEL_LENGTH ? text : null;
@@ -358,7 +365,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
-    const visibleTerminal = true;
+    const isTerminalVisible = true;
     const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = !isAtomTerminal;
     const hasCharge = this.atom.hasCharge;
@@ -386,7 +393,7 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
+    if ((isAtomTerminal && isTerminalVisible) || isAtomInMiddleOfChain) {
       return true;
     }
 
@@ -485,12 +492,12 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(
           'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          shouldHydrogenBeOnLeft && this.atom.hasExplicitIsotope ? 4 : 0,
         )
         .text('H');
 
@@ -572,7 +579,7 @@ export class AtomRenderer extends BaseRenderer {
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
-    this.cipLabelElement?.select('rect')?.attr('fill', '#F5F5F5');
+    this.cipLabelElement?.select('rect')?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public drawSelection() {
@@ -761,7 +768,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('height', height + 2)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('fill', '#f5f5f5');
+      .attr('fill', CANVAS_BACKGROUND_COLOR);
 
     this.cipLabelElementBBox = this.cipLabelElement?.node()?.getBBox();
 
@@ -864,13 +871,13 @@ export class AtomRenderer extends BaseRenderer {
       .getKetcher(editor.ketcherId)
       .settingsService?.getSettings();
     const labelStyle = getStereoLabelStyleType(settings?.stereoLabelStyle);
-    const ignoreChiralFlag = settings?.ignoreChiralFlag ?? false;
+    const shouldIgnoreChiralFlag = settings?.ignoreChiralFlag ?? false;
     const enhancedStereoFlag = this.getEnhancedStereoFlag();
 
     return shouldDisplayStereoLabel(
       stereoLabel,
       labelStyle,
-      ignoreChiralFlag,
+      shouldIgnoreChiralFlag,
       enhancedStereoFlag,
     );
   }
@@ -1050,15 +1057,15 @@ function getStereoLabelStyleType(
 function shouldDisplayStereoLabel(
   stereoLabel: string,
   labelStyle: StereoLabelStyleType | undefined,
-  ignoreChiralFlag: boolean,
+  shouldIgnoreChiralFlag: boolean,
   flag: StereoFlag | undefined,
 ): boolean {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
     return true;
   }
 

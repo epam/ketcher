@@ -1,0 +1,6 @@
+{
+  "name": "fixture",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

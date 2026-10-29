@@ -6,17 +6,16 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 const options = {
   microModeScale: 1,
   lineWidth: 1,
-  fontszsubInPx: 13,
-  showCharge: true,
 } as unknown as RenderOptions;
 
 // Measured in the app (issue #12527): at 100% zoom a "CH2" label reaches
 // 20.8px to the right of the atom centre, and a bond is 40px long.
 const BOND_LEN = 40;
 const CH2_RIGHT_EDGE = 21;
+const MARGIN = 3 * options.lineWidth;
 
 describe('ReAtom.getShiftedSegmentPosition', () => {
-  it('starts the bond outside a label that is wider than half the bond', () => {
+  it('starts the bond clear of a label that is wider than half the bond', () => {
     const reatom = new ReAtom(new Atom({ label: 'C', pp: new Vec2(0, 0, 0) }));
     reatom.visel.exts.push(new Box2Abs(-4.7, -7.5, CH2_RIGHT_EDGE, 7.5));
 
@@ -27,6 +26,6 @@ describe('ReAtom.getShiftedSegmentPosition', () => {
       BOND_LEN,
     );
 
-    expect(start.x).toBeGreaterThanOrEqual(CH2_RIGHT_EDGE);
+    expect(start.x).toBeGreaterThanOrEqual(CH2_RIGHT_EDGE + MARGIN);
   });
 });

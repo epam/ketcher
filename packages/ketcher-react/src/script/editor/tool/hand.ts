@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { CoordinateTransformation, Vec2 } from 'ketcher-core';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 
 class HandTool implements Tool {
   private readonly editor: Editor;
@@ -25,7 +25,7 @@ class HandTool implements Tool {
 
   constructor(editor) {
     this.editor = editor;
-    const { clientX, clientY } = this.editor.lastEvent || {
+    const { clientX, clientY } = (this.editor.lastEvent as MouseEvent) || {
       clientX: 0,
       clientY: 0,
     };

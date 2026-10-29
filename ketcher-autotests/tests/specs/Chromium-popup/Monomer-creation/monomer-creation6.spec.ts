@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
@@ -79,7 +76,7 @@ test(`1. Check warning messages on Amino acid monomer if R1 attachment point wit
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
-  await createMonomerDialog.setSymbol('TempAminoAcid1');
+  await createMonomerDialog.setCode('TempAminoAcid1');
   await createMonomerDialog.setName('TempAminoAcid1');
   await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
 
@@ -127,7 +124,7 @@ test(`2. Check warning messages on Amino acid monomer if R2 attachment point wit
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
-  await createMonomerDialog.setSymbol('TempAminoAcid1');
+  await createMonomerDialog.setCode('TempAminoAcid1');
   await createMonomerDialog.setName('TempAminoAcid1');
   await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
 
@@ -171,7 +168,7 @@ test(`3. Check warning messages on Sugar monomer if R1 attachment point with a l
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Sugar);
-  await createMonomerDialog.setSymbol('TempSugar1');
+  await createMonomerDialog.setCode('TempSugar1');
   await createMonomerDialog.setName('TempSugar1');
 
   await RightToolbar(page).clickAtom(Atom.Oxygen);
@@ -220,7 +217,7 @@ test(`4. Check warning messages on Sugar monomer if R2 attachment point with a l
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Sugar);
-  await createMonomerDialog.setSymbol('TempSugar1');
+  await createMonomerDialog.setCode('TempSugar1');
   await createMonomerDialog.setName('TempSugar1');
 
   await RightToolbar(page).clickAtom(Atom.Oxygen);
@@ -268,7 +265,7 @@ test(`5. Check warning messages on Sugar monomer if R3 attachment point with a l
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Sugar);
-  await createMonomerDialog.setSymbol('TempSugar1');
+  await createMonomerDialog.setCode('TempSugar1');
   await createMonomerDialog.setName('TempSugar1');
 
   // (R1 = H, R2 = H, R3 = H)
@@ -310,7 +307,7 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Base);
-  await createMonomerDialog.setSymbol('TempBase1');
+  await createMonomerDialog.setCode('TempBase1');
   await createMonomerDialog.setName('TempBase1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.changeAttachmentPointAtom({
@@ -324,7 +321,7 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
-    'Base monomers typically have a hydroxyl as the leaving group for R1. Do you wish to proceed with the current attachment points?',
+    'Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?',
   );
 
   await WarningMessageDialog(page).cancel();
@@ -361,7 +358,7 @@ test(`7. Check warning messages on Phosphate monomer if R1 attachment point with
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Phosphate);
-  await createMonomerDialog.setSymbol('TempPhosphate1');
+  await createMonomerDialog.setCode('TempPhosphate1');
   await createMonomerDialog.setName('TempPhosphate1');
 
   await RightToolbar(page).clickAtom(Atom.Oxygen);
@@ -409,7 +406,7 @@ test(`8. Check warning messages on Phosphate monomer if R2 attachment point with
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Phosphate);
-  await createMonomerDialog.setSymbol('TempPhosphate1');
+  await createMonomerDialog.setCode('TempPhosphate1');
   await createMonomerDialog.setName('TempPhosphate1');
 
   await RightToolbar(page).clickAtom(Atom.Oxygen);
@@ -457,7 +454,7 @@ test(`9. Check warning messages on Nucleotide monomer if R1 attachment point wit
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('TempNucleotide1');
+  await createMonomerDialog.setCode('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
 
@@ -506,7 +503,7 @@ test(`10. Check warning messages on Nucleotide monomer if R2 attachment point wi
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('TempNucleotide1');
+  await createMonomerDialog.setCode('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
 
@@ -551,7 +548,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('TempNucleotide1');
+  await createMonomerDialog.setCode('TempNucleotide1');
   await createMonomerDialog.setName('TempNucleotide1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
 
@@ -597,7 +594,7 @@ test(`12. Verify that clicking on "Cancel" returns the user to the monomer creat
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('TempNucleotide2');
+  await createMonomerDialog.setCode('TempNucleotide2');
   await createMonomerDialog.setName('TempNucleotide2');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
 
@@ -639,7 +636,7 @@ test(`13. Verify that Clicking on X returns the user to the monomer creation wiz
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('TempNucleotide2');
+  await createMonomerDialog.setCode('TempNucleotide2');
   await createMonomerDialog.setName('TempNucleotide2');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
 
@@ -668,7 +665,9 @@ test(`14. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: true }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: true,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -679,7 +678,7 @@ test(`14. Verify that by default the functionality of saving new monomers from c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
@@ -710,7 +709,9 @@ test(`15. Verify that by default the functionality of saving new monomers from c
    * Version 3.10
    */
   await page.evaluate(() =>
-    window.ketcher.setSettings({ persistMonomerLibraryUpdates: false }),
+    globalThis.window.ketcher.setSettings({
+      persistMonomerLibraryUpdates: false,
+    }),
   );
   await pasteFromClipboardAndOpenAsNewProject(
     page,
@@ -721,7 +722,7 @@ test(`15. Verify that by default the functionality of saving new monomers from c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
@@ -756,8 +757,6 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   const presetSection = NucleotidePresetSection(page);
 
   await LeftToolbar(page).createMonomer();
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await dialog.selectType(MonomerType.NucleotidePreset);
 
@@ -766,14 +765,14 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupSugar({
     atomIds: [2, 3],
     bondIds: [2],
-    symbol: Sugar.Sugar.alias,
+    code: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'SugAlias',
   });
   await presetSection.setupBase({
     atomIds: [0, 1],
     bondIds: [0],
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseAlias',
@@ -781,7 +780,7 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupPhosphate({
     atomIds: [4, 5],
     bondIds: [4],
-    symbol: Phosphate.Phosphate.alias,
+    code: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'PhosAlias',
   });

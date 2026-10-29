@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, HTMLAttributes } from 'react';
+import { type HTMLAttributes, useMemo, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import formClasses from '../form/form.module.less';
+import { ErrorPopover } from '../form/errorPopover';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
+import { usePopoverAnchor } from '../../../../../hooks';
+import { Icon } from 'components';
+import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Schema {
   title?: string;
@@ -32,8 +41,10 @@ interface Schema {
   properties?: Record<string, Schema>;
 }
 
-interface MeasureInputProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+interface MeasureInputProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  'onChange'
+> {
   schema: Schema;
   extraSchema?: Schema;
   value: number | string;
@@ -41,6 +52,8 @@ interface MeasureInputProps
   onChange: (value: number) => void;
   onExtraChange: (value: string) => void;
   name?: string;
+  error?: string;
+  tooltip?: string;
 }
 
 interface GetNewFloatResult {
@@ -48,9 +61,12 @@ interface GetNewFloatResult {
   float?: string;
 }
 
-const selectOptions = getSelectOptionsFromSchema({
-  enum: Object.values(MeasurementUnits),
-});
+const UNIT_ENUM_NAMES = [
+  'settings:units.px',
+  'settings:units.cm',
+  'settings:units.pt',
+  'settings:units.inch',
+];
 
 const getNewFloat = (value: string): GetNewFloatResult => {
   const [int, float] = value.split('.');
@@ -58,7 +74,7 @@ const getNewFloat = (value: string): GetNewFloatResult => {
 
   return {
     isNewFloat,
-    ...(isNewFloat && { float: `${int}.${float[float.length - 1]}` }),
+    ...(isNewFloat && { float: `${int}.${float.at(-1) ?? ''}` }),
   };
 };
 
@@ -96,76 +112,107 @@ const MeasureInput = ({
   onChange,
   onExtraChange,
   name: _name,
+  error,
   className,
+  tooltip,
   ...rest
 }: MeasureInputProps) => {
-  const [internalValue, setInternalValue] = useState(String(value));
+  const stringifiedValue = String(value);
+  const [internalValue, setInternalValue] = useState(stringifiedValue);
+  const [prevPropValue, setPrevPropValue] = useState(stringifiedValue);
+  const {
+    anchorEl,
+    handleOpen: handlePopoverOpen,
+    handleClose: handlePopoverClose,
+  } = usePopoverAnchor();
 
-  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
-  // is mapped to the internal function via constructor
-  // therefore the referencies to the MeasureInput's state are not updated
-  // so we need to sync the props and the internal value through useEffects and use callbacks with
-  // previous state to have the latest value
+  if (prevPropValue !== stringifiedValue) {
+    setPrevPropValue(stringifiedValue);
+    setInternalValue(stringifiedValue);
+  }
 
-  useEffect(() => {
-    setInternalValue((prevValue) => {
-      if (prevValue !== String(value)) {
-        return String(value);
-      }
-
-      return prevValue;
-    });
-  }, [value]);
-
-  useEffect(() => {
-    if (internalValue !== String(value)) {
-      const isNewInternalValueValid = !isNaN(parseFloat(internalValue));
-
-      if (isNewInternalValueValid) {
-        onChange(parseFloat(internalValue));
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [internalValue]);
-
-  const handleChange = (value: number | string) => {
-    const stringifiedValue = String(value);
-    const startsWithZero =
-      stringifiedValue !== '0' && stringifiedValue.startsWith('0');
-    const zeroWithDot = startsWithZero && stringifiedValue.includes('.');
+  const handleChange = (value: unknown) => {
+    const newStringifiedValue = String(value);
+    const hasLeadingZero =
+      newStringifiedValue !== '0' && newStringifiedValue.startsWith('0');
+    const hasLeadingZeroWithDot =
+      hasLeadingZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
-      startsWithZero && !zeroWithDot
-        ? stringifiedValue.replace(/^0/, '')
-        : stringifiedValue || '0';
-    const isNumber = !isNaN(Number(endorcedValue));
+      hasLeadingZero && !hasLeadingZeroWithDot
+        ? newStringifiedValue.replace(/^0/, '')
+        : newStringifiedValue || '0';
+    const isNumber = !Number.isNaN(Number(endorcedValue));
 
-    if (isNumber) {
-      setInternalValue((prevValue) =>
-        getNewInternalValue(prevValue, endorcedValue),
-      );
+    if (!isNumber) {
+      return;
+    }
+
+    const newInternalValue = getNewInternalValue(internalValue, endorcedValue);
+    setInternalValue(newInternalValue);
+
+    if (newInternalValue !== stringifiedValue) {
+      onChange(Number.parseFloat(newInternalValue));
     }
   };
 
   const desc = schema;
+  const { t } = useTranslation();
+  const title = resolveTranslatableText(rest.title || desc?.title, t);
+  const selectOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(
+        { enum: Object.values(MeasurementUnits), enumNames: UNIT_ENUM_NAMES },
+        t,
+      ),
+    [t],
+  );
 
   return (
     <div className={clsx(styles.measureInput, className)} {...rest}>
-      <span>{rest.title || desc?.title}</span>
+      {tooltip ? (
+        <div className={formClasses.divWithTooltipAndAboutIcon}>
+          <span>{title}</span>
+          <Tooltip title={tooltip}>
+            <div>
+              <Icon name="about"></Icon>
+            </div>
+          </Tooltip>
+        </div>
+      ) : (
+        <span>{title}</span>
+      )}
       <div style={{ display: 'flex' }}>
-        <Input
-          schema={schema}
-          value={internalValue}
-          onChange={handleChange}
-          type="text"
-          data-testid={`${desc?.title}-value-input`}
-        />
+        <div className={clsx(error && formClasses.dataError)}>
+          <span
+            className={clsx(formClasses.inputWrapper, styles.errorWrapper)}
+            onMouseEnter={error ? handlePopoverOpen : undefined}
+            onMouseLeave={error ? handlePopoverClose : undefined}
+            role="none"
+          >
+            <Input
+              schema={schema}
+              value={internalValue}
+              onChange={handleChange}
+              type="text"
+              data-testid={`${title}-value-input`}
+            />
+          </span>
+          {error && anchorEl && (
+            <ErrorPopover
+              anchorEl={anchorEl}
+              open={!!anchorEl}
+              error={error}
+              onClose={handlePopoverClose}
+            />
+          )}
+        </div>
         <Select
           onChange={onExtraChange}
           options={selectOptions}
           value={extraValue}
           className={styles.select}
-          data-testid={`${desc?.title}-measure-input`}
+          data-testid={`${title}-measure-input`}
         />
       </div>
     </div>

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
-import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Struct } from 'domain/entities/struct';
+import { assert } from 'utilities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(type: string, public monomer: BaseMonomer) {
+  constructor(
+    type: string,
+    public monomer: BaseMonomer,
+  ) {
     super(type);
     this.data.absolute = false;
     this.data.attached = false;
+    this.data.expanded = Boolean(monomer.monomerItem.expanded);
   }
 
   public get isMonomer() {
     return true;
+  }
+
+  private ensureMonomerItemMutable(): void {
+    if (Object.isFrozen(this.monomer.monomerItem)) {
+      this.monomer.monomerItem = { ...this.monomer.monomerItem };
+    }
+  }
+
+  public setExpanded(isExpanded: boolean): void {
+    this.ensureMonomerItemMutable();
+    this.monomer.monomerItem.expanded = isExpanded;
   }
 
   public override getContractedPosition(struct: Struct) {
@@ -38,7 +53,7 @@ export class MonomerMicromolecule extends SGroup {
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
   ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
@@ -46,11 +61,15 @@ export class MonomerMicromolecule extends SGroup {
     );
     monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
     monomerMicromoleculeClone.atoms = atomIdMap
-      ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
+      ? monomerMicromolecule.atoms.map((elem) => {
+          const mappedAtomId = atomIdMap.get(elem);
+          assert(mappedAtomId !== undefined);
+          return mappedAtomId;
+        })
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
-    if (needCloneAttachmentPoints && atomIdMap) {
+    if (shouldCloneAttachmentPoints && atomIdMap) {
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
         false,

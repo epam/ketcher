@@ -1,12 +1,12 @@
 import { Bond } from 'ketcher-core';
 
 import {
+  type RnaPresetComponentStructures,
+  type RnaPresetValidationStruct,
   findBondBetweenRnaPresetComponents,
   getRnaPresetComponentKeysToSave,
   getRnaPresetStructureValidationResult,
   isValidRnaPresetStructure,
-  RnaPresetComponentStructures,
-  RnaPresetValidationStruct,
 } from './RnaPresetStructureValidation';
 
 const createWizardStruct = (

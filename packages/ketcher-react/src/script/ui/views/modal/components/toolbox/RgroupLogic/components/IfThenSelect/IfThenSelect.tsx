@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,34 @@
  ***************************************************************************/
 
 import { Field } from '../../../../../../../component/form/form/form';
-import { RgroupLogicProps } from '../../RgroupLogic';
+import type { RgroupLogicProps } from '../../RgroupLogic';
 import classes from './IfThenSelect.module.less';
 import { useFormContext } from '../../../../../../../../../hooks';
 import Select from '../../../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../../../utils';
+import { useTranslation } from 'react-i18next';
 
 type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>;
 
 const IfThenSelect = (props: Props) => {
+  const { t } = useTranslation('dialogs');
   const { rgroupLabels, label, name } = props;
   const { schema } = useFormContext();
   const desc = {
     title: schema.properties?.[name ?? '']?.title,
     enum: [0],
-    enumNames: ['Always'],
+    enumNames: [t('toolbox.rgroupLogic.always')],
   };
 
   rgroupLabels.forEach((rgroupLabel) => {
     if (label !== rgroupLabel) {
       desc.enum.push(rgroupLabel);
-      desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`);
+      desc.enumNames.push(
+        t('toolbox.rgroupLogic.ifThenOption', {
+          ifLabel: label,
+          thenLabel: rgroupLabel,
+        }),
+      );
     }
   });
 
@@ -45,7 +52,7 @@ const IfThenSelect = (props: Props) => {
       className={classes.field}
       {...props}
       component={Select}
-      options={getSelectOptionsFromSchema(desc)}
+      options={getSelectOptionsFromSchema(desc, t)}
     />
   );
 };

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Page, test } from '@fixtures';
 import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';

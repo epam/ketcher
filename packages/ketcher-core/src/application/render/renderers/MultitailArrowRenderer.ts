@@ -1,10 +1,10 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
@@ -16,8 +16,7 @@ const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
 export class MultitailArrowRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public arrow: MultitailArrow) {
     super(arrow);
@@ -30,7 +29,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
   getReferencePositionsArray(): Array<Vec2> {
     const { tails, ...positions } = this.getReferencePositions();
-    return Object.values(positions).concat(Array.from(tails.values()));
+    return [...Object.values(positions), ...tails.values()];
   }
 
   private getReferencePositions(): ReturnType<
@@ -96,7 +95,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions();
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 

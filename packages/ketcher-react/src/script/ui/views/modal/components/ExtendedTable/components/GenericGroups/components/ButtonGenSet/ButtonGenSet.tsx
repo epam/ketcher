@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import clsx from 'clsx';
-import { GenItem } from 'ketcher-core';
+import type { GenItem } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 import classes from './ButtonGenSet.module.less';
 
 type ButtonGenSetProps = {
@@ -33,13 +34,20 @@ const ButtonGenSet = ({
   selected,
   disabled,
 }: ButtonGenSetProps) => {
+  const { t } = useTranslation('dialogs');
   const titleText = disabled
-    ? `${button.label} is disabled`
-    : button.description ?? button.label;
+    ? t('shared.disabledSuffix', { label: button.label })
+    : (button.description ?? button.label);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // Blur the button to prevent visual confusion between focus and selection states
+    event.currentTarget.blur();
+    onAtomSelect(button.label);
+  };
 
   return (
     <button
-      onClick={() => onAtomSelect(button.label)}
+      onClick={handleClick}
       onDoubleClick={() => onAtomActivate(button.label)}
       title={titleText}
       disabled={disabled}

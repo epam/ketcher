@@ -1,8 +1,8 @@
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class BackBoneSequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;

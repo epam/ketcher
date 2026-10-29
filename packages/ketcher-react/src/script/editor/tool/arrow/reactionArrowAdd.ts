@@ -1,15 +1,16 @@
 import {
+  type RxnArrowMode,
+  type Action,
   Vec2,
   CoordinateTransformation,
-  RxnArrowMode,
-  Action,
   fromArrowAddition,
   fromArrowDeletion,
   fromArrowResizing,
+  RxnArrowDelete,
+  assert,
 } from 'ketcher-core';
-import { Editor } from '../../Editor';
-import assert from 'assert';
-import { ArrowAddTool } from './arrow.types';
+import type { Editor } from '../../Editor';
+import type { ArrowAddTool } from './arrow.types';
 
 interface BaseDragContext {
   p0: Vec2;
@@ -34,7 +35,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly editor: Editor,
     private readonly mode: RxnArrowMode,
@@ -60,34 +60,45 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     if (!this.dragCtx) return;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const diff = current.sub(this.dragCtx.p0);
-    if (!this.dragCtx.action) {
+    if (this.dragCtx.action) {
+      this.dragCtx.action.perform(this.reStruct);
+    } else {
       const action = fromArrowAddition(
         this.reStruct,
         [this.dragCtx.p0, this.dragCtx.p0],
         this.mode,
       );
       // TODO: need to rework  actions/operations logic
-      this.dragCtx = {
+      const firstOp = action.operations[0];
+      if (!(firstOp instanceof RxnArrowDelete)) {
+        throw new TypeError(
+          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
+        );
+      }
+      const arrowId = firstOp.data.id;
+      assert(arrowId != null);
+      const dragCtx: DragContextInProgress = {
         ...this.dragCtx,
-        itemId: action.operations[0].data.id,
+        itemId: arrowId,
         action,
       };
-      this.editor.update(this.dragCtx.action, true);
-    } else {
-      this.dragCtx.action.perform(this.reStruct);
+      this.dragCtx = dragCtx;
+      this.editor.update(dragCtx.action, true);
     }
 
-    this.updateResizingState(this.dragCtx.itemId, true);
+    const dragCtx = this.dragCtx;
+    assert(dragCtx?.action != null);
+    this.updateResizingState(dragCtx.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
-    this.dragCtx.action = fromArrowResizing(
+    dragCtx.action = fromArrowResizing(
       this.reStruct,
-      this.dragCtx.itemId,
+      dragCtx.itemId,
       diff,
       current,
       null,
       isSnappingEnabled,
     );
-    this.editor.update(this.dragCtx.action, true);
+    this.editor.update(dragCtx.action, true);
   }
 
   mouseup(event: MouseEvent) {

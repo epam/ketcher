@@ -1,5 +1,5 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 
 export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
   readonly #NO_ANALOGUE_SYMBOL = '@';

@@ -1,9 +1,9 @@
-import { BaseRenderer } from 'application/render';
+import type { BaseRenderer } from 'application/render';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
-import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
-import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
+import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 export class RxnArrow extends DrawingEntity {
   public renderer?: RxnArrowRenderer = undefined;

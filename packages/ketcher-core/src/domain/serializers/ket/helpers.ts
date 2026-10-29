@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Axis, Axises } from 'domain/entities/Axis';
-import { Struct } from 'domain/entities/struct';
+import { type Axises, Axis } from 'domain/entities/Axis';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { cloneDeep, cloneDeepWith } from 'lodash';
-import { EditorSelection } from 'application/editor/editor.types';
+import type { EditorSelection } from 'application/editor/editor.types';
 import {
+  type MonomerTransformation,
   KetMonomerClass,
   KetTemplateType,
-  MonomerTransformation,
 } from 'application/formatters/types/ket';
 import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
-import { MonomerItemType } from 'domain/types';
+import type { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 
-const customizer = (value: any) => {
-  if (typeof value === 'object' && value.y) {
+const hasNumericYCoordinate = (value: unknown): value is { y: number } =>
+  typeof value === 'object' &&
+  value !== null &&
+  'y' in value &&
+  typeof value.y === 'number';
+
+const customizer = (value: unknown): unknown => {
+  if (hasNumericYCoordinate(value) && value.y) {
     const clonedValue = cloneDeep(value);
     clonedValue.y = -clonedValue.y;
     return clonedValue;
   }
+
+  return undefined;
 };
 
 export const getNodeWithInvertedYCoord = <T>(node: T): T =>
@@ -144,7 +152,7 @@ export const modifyTransformation = (transformation: MonomerTransformation) => {
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,
-  resetSelection = false,
+  shouldResetSelection = false,
 ) => {
   if (!selection) {
     return populatedStruct;
@@ -153,7 +161,7 @@ export const populateStructWithSelection = (
     const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
-        if (resetSelection) {
+        if (shouldResetSelection) {
           value.setInitiallySelected(
             selectedEntities.includes(key) || undefined,
           );

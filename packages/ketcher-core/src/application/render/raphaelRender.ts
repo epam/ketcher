@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,21 +17,51 @@
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
-import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type EditAllInstancesPresetRequirements = {
+  type: KetMonomerClass;
+  attachmentPoints: AttachmentPointName[];
+};
+
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+  position?: Vec2;
+  editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
+  originalType?: KetMonomerClass;
+  originalSymbol?: string;
+  presetRequirements?: EditAllInstancesPresetRequirements;
+  /**
+   * When editMode is 'all' and the user had multiple monomers of the same
+   * type/symbol selected, this contains the SGroup IDs of those specific
+   * monomers. If provided, only these monomers will be replaced instead of
+   * all canvas instances.
+   */
+  selectedSGroupIds?: number[];
+};
 
 export type RnaComponentAtoms = Map<
   RnaPresetComponentKey,
@@ -41,9 +71,9 @@ export type RnaComponentAtoms = Map<
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
-  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
-  // display to the active RNA component tab). When undefined, all assigned
-  // attachment points are displayed.
+  // Optional restriction: when set to a subset of assignedAttachmentPoints,
+  // only those are drawn on canvas. When undefined, all assigned attachment
+  // points are displayed.
   visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
@@ -57,6 +87,11 @@ export type MonomerCreationState = {
   isRnaPresetMode?: boolean;
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
+  attachmentAtomIdsWithExternalBonds?: Map<
+    AttachmentPointName,
+    [number, number]
+  >;
 } | null;
 
 export class Render {
@@ -68,8 +103,9 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: RenderOptions;
+  private userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -77,9 +113,9 @@ export class Render {
 
   constructor(
     clientArea: HTMLElement,
-    options: RenderOptions,
+    options: Partial<RenderOptions>,
     currentRender?: Render,
-    reuseRestructIfExist?: boolean,
+    shouldReuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
@@ -90,7 +126,7 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && currentRender?.ctab) {
+    if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
@@ -121,15 +157,25 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
   updateOptions(opts: string) {
     try {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
       console.log('Not a valid settings object');
     }
     return false;
@@ -147,7 +193,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }
@@ -224,7 +272,7 @@ export class Render {
     this.scrollbar.update();
   }
 
-  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
+  setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {
     this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
@@ -233,7 +281,7 @@ export class Render {
 
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
-    if (forceUpdateWithTimeout) {
+    if (shouldForceUpdateWithTimeout) {
       setTimeout(() => {
         this.update(true);
       }, 0);
@@ -242,8 +290,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
+  update(shouldForce = false, viewSz: Vec2 | null = null) {
     viewSz =
       viewSz ??
       new Vec2(
@@ -251,9 +298,9 @@ export class Render {
         this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
-    const changes = this.ctab.update(force);
+    const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
+    if (hasChanges) {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)
@@ -264,11 +311,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -292,6 +335,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

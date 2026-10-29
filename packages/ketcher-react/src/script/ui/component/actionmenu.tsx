@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react';
+import {
+  type ComponentProps,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+} from 'react';
 
-import action, { Tools, UiAction, UiActionAction } from '../action';
+import action, {
+  type Tools,
+  type UiAction,
+  type UiActionAction,
+} from '../action';
+import { resolveActionTitle } from '../action/resolveActionTitle';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { hiddenAncestor } from '../state/toolbar';
+import type { VisibleTools } from '../state/toolbar/types';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
-type IconName = React.ComponentProps<typeof Icon>['name'];
+type IconName = ComponentProps<typeof Icon>['name'];
 
 interface ItemStatus {
   selected?: boolean;
@@ -36,16 +49,12 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface VisibleToolsMap {
-  [key: string]: string;
-}
-
 interface SharedActionProps {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
   opened?: string;
-  visibleTools: VisibleToolsMap;
+  visibleTools: VisibleTools;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -67,16 +76,6 @@ interface ActionButtonProps {
   action: UiAction;
   status?: ItemStatus;
   onAction: (action: UiActionAction) => void;
-  disableableButtons?: string[];
-  indigoVerification?: boolean;
-}
-
-interface SharedActionProps {
-  status: StatusMap;
-  onOpen: (id: string | undefined, isSelected: boolean) => void;
-  onAction: (action: UiActionAction) => void;
-  opened?: string;
-  visibleTools: VisibleToolsMap;
   disableableButtons?: string[];
   indigoVerification?: boolean;
 }
@@ -157,13 +156,15 @@ function ActionButton({
   disableableButtons = [],
   indigoVerification,
 }: Readonly<ActionButtonProps>) {
+  const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
+  const title = resolveActionTitle(t, action);
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {
       onAction(action.action);
       event.stopPropagation();
@@ -175,7 +176,8 @@ function ActionButton({
       ref={menuRef}
       disabled={disabled}
       onClick={onClick}
-      title={shortcut ? `${action.title} (${shortcut})` : action.title}
+      role="menuitem"
+      title={shortcut ? `${title} (${shortcut})` : title}
     >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
@@ -268,9 +270,9 @@ function ActionMenu({
     return items;
   }, []);
 
-  const handleMenuItemClick = (event: React.MouseEvent) =>
+  const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
-  const handleMenuItemKeyDown = (event: React.KeyboardEvent) => {
+  const handleMenuItemKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openHandle(event, props.onOpen);
@@ -294,8 +296,7 @@ function ActionMenu({
             })}
             onClick={handleMenuItemClick}
             onKeyDown={handleMenuItemKeyDown}
-            role="menuitem"
-            tabIndex={0}
+            role="none"
           >
             {showMenuOrButton(action, item, props.status[itemKey], props)}
             {isMenuItemWithMenu(item) &&
@@ -312,8 +313,8 @@ function ActionMenu({
 function toolMargin(
   menuName: string,
   menu: MenuItem[],
-  visibleTools: VisibleToolsMap,
-): React.CSSProperties {
+  visibleTools: VisibleTools,
+): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way
   const iconHeight =
@@ -341,11 +342,11 @@ function toolMargin(
     index = tools.indexOf(visibleTools[menuName]); // second level. example: `bond: bond-any`
   }
 
-  return index !== -1 ? { marginTop: -(iconHeight * index) + 'px' } : {};
+  return index === -1 ? {} : { marginTop: -(iconHeight * index) + 'px' };
 }
 
 function openHandle(
-  event: React.MouseEvent | React.KeyboardEvent,
+  event: MouseEvent | KeyboardEvent,
   onOpen: (id: string | undefined, isSelected: boolean) => void,
 ): void {
   const currentTarget = event.currentTarget as HTMLElement;

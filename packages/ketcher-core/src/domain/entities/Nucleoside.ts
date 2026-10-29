@@ -1,21 +1,21 @@
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Sugar } from 'domain/entities/Sugar';
+import { assert } from 'utilities';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
@@ -32,8 +32,8 @@ export class Nucleoside {
     this.monomersCache = [sugar, rnaBase];
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleoside(sugar),
         'Created nucleoside is not valid. Please check nucleotide parts connections.',
@@ -66,8 +66,9 @@ export class Nucleoside {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
@@ -102,7 +103,7 @@ export class Nucleoside {
       ),
     );
 
-    return { modelChanges, node: Nucleoside.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

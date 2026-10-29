@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { Atom } from 'domain/entities/CoreAtom';
-import { Bond as MicromoleculesBond } from 'domain/entities/bond';
-import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import type { Operation } from 'domain/entities/Operation';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { Bond as MicromoleculesBond } from 'domain/entities/bond';
+import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { KetcherLogger } from 'utilities';
 
 interface BondWithIdInMicromolecules {
@@ -150,9 +148,11 @@ export class AtomDeleteOperation implements Operation {
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 
   public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 }

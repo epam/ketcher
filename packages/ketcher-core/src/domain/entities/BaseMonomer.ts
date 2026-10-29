@@ -1,22 +1,22 @@
-import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
+import { type DrawingEntityConfig, DrawingEntity } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
+  type AttachmentPointsToBonds,
+  type MonomerItemType,
+  type MonomerBond,
   AttachmentPointName,
-  AttachmentPointsToBonds,
-  MonomerItemType,
-  MonomerBond,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
-import { IKetAttachmentPoint } from 'application/formatters/types/ket';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import type { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import type { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import type { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -126,7 +126,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     bond: MonomerBond,
   ): AttachmentPointName | undefined {
     if (bond instanceof HydrogenBond) {
-      return this.hydrogenBonds.find((hydrogenBond) => hydrogenBond === bond)
+      return this.hydrogenBonds.some((hydrogenBond) => hydrogenBond === bond)
         ? AttachmentPointName.HYDROGEN
         : undefined;
     }
@@ -176,8 +176,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (const attachmentPoint in this.attachmentPointsToBonds) {
       const match = /R(\d+)/.exec(attachmentPoint);
       if (match) {
-        const pointNumber = parseInt(match[1]);
-        if (!isNaN(pointNumber) && pointNumber > maxAttachmentPointNumber) {
+        const pointNumber = Number.parseInt(match[1]);
+        if (
+          !Number.isNaN(pointNumber) &&
+          pointNumber > maxAttachmentPointNumber
+        ) {
           maxAttachmentPointNumber = pointNumber;
         }
       }
@@ -347,8 +350,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds(clearSelectedPoints = false) {
-    if (clearSelectedPoints) {
+  public removePotentialBonds(shouldClearSelectedPoints = false) {
+    if (shouldClearSelectedPoints) {
       this.chosenFirstAttachmentPointForBond = null;
       this.chosenSecondAttachmentPointForBond = null;
       this.potentialSecondAttachmentPointForBond = null;
@@ -599,15 +602,16 @@ export abstract class BaseMonomer extends DrawingEntity {
       ...(naturalAnalogThreeLettersCode ? [naturalAnalogThreeLettersCode] : []),
       naturalAnalogCode,
     ];
+    const naturalAnaloguesToCompareSet = new Set(naturalAnaloguesToCompare);
 
     return namesToCompareNaturalAnalog.every((nameToCompare) => {
-      if (naturalAnaloguesToCompare.includes(nameToCompare)) {
+      if (naturalAnaloguesToCompareSet.has(nameToCompare)) {
         return false;
       }
       // Check if the name is a variation with asterisk (e.g., D* for D)
       // These are the same monomers with different R groups and should not be marked as modified
       const nameWithoutAsterisk = nameToCompare.replace(/\*$/, '');
-      return !naturalAnaloguesToCompare.includes(nameWithoutAsterisk);
+      return !naturalAnaloguesToCompareSet.has(nameWithoutAsterisk);
     });
   }
 

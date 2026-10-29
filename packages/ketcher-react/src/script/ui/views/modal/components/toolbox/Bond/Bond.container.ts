@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
+import type {
+  CurrentAppState,
+  StoreState,
+} from '../../../../../state/store.types';
 import Bond from './Bond';
 import { connect } from 'react-redux';
 
@@ -22,9 +26,11 @@ type StateProps = Pick<BaseProps, 'formState'> & {
   isMonomerCreationWizardActive?: boolean;
 };
 
-const mapStateToProps = (state: any): StateProps => ({
+type State = Pick<StoreState, 'modal'> & Pick<CurrentAppState, 'editor'>;
+
+const mapStateToProps = (state: State): StateProps => ({
   formState: state.modal.form,
-  isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
+  isMonomerCreationWizardActive: state.editor?.isMonomerCreationWizardActive,
 });
 
 const BondContainer = connect(mapStateToProps)(Bond);

@@ -512,7 +512,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
@@ -761,7 +761,8 @@
                     0.209,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

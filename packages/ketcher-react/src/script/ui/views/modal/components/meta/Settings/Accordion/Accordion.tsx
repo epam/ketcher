@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import classes from './Accordion.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
 
-const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
+const Accordion = ({ tabs, className, changedGroups }): ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General',
+    'general',
   ]);
 
   const handleAccordionChange = (accordion) => () => {
@@ -38,11 +38,11 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {
-        const shouldGroupBeRended = expandedAccordions.includes(label);
+        const shouldGroupBeRended = expandedAccordions.includes(key);
         return (
           <div key={key}>
             <button
-              onClick={handleAccordionChange(label)}
+              onClick={handleAccordionChange(key)}
               className={classes.accordionSummaryWrapper}
               data-testid={`${label}-accordion`}
               type="button"
@@ -59,7 +59,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
                   <Icon name="elements-group" className={classes.groupIcon} />
                   <span>{label}</span>
                 </div>
-                {changedGroups.has(label) && (
+                {changedGroups.has(key) && (
                   <span className={classes.changeMarker}></span>
                 )}
               </div>

@@ -12,6 +12,7 @@ export enum PreviewType {
   Preset = 'preset',
   Bond = 'bond',
   AmbiguousMonomer = 'ambiguousMonomer',
+  Text = 'text',
 }
 
 export interface PreviewStyle {
@@ -61,8 +62,14 @@ export interface AmbiguousMonomerPreviewState extends BasePreviewState {
   readonly presetMonomers?: ReadonlyArray<MonomerItemType | undefined>;
 }
 
+export interface TextPreviewState extends BasePreviewState {
+  readonly type: PreviewType.Text;
+  readonly text: string;
+}
+
 export type EditorStatePreview =
   | MonomerPreviewState
   | PresetPreviewState
   | BondPreviewState
-  | AmbiguousMonomerPreviewState;
+  | AmbiguousMonomerPreviewState
+  | TextPreviewState;

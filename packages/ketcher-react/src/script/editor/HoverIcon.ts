@@ -5,12 +5,13 @@ import {
   CoordinateTransformation,
   getOptionsWithConvertedUnits,
 } from 'ketcher-core';
-import Editor from './Editor';
+import type Editor from './Editor';
+import type { RaphaelElement } from 'raphael';
 
 const HOVER_ICON_OPACITY = 0.7;
 
 export class HoverIcon {
-  element: any;
+  element: RaphaelElement;
   _fill: AtomColor;
   _label: ElementLabel | '';
   isShown: boolean;
@@ -60,7 +61,7 @@ export class HoverIcon {
   }
 
   isOverLoader(event: MouseEvent) {
-    const target = <HTMLDivElement>event?.relatedTarget ?? event.target;
+    const target = (event?.relatedTarget ?? event.target) as Element | null;
     return target?.classList?.contains('loading-spinner');
   }
 
@@ -100,23 +101,23 @@ export class HoverIcon {
     this.shouldBeShownWhenMouseBack = false;
   }
 
-  hide(restShouldBeShownWhenMouseBack?: boolean) {
+  hide(shouldResetVisibilityOnMouseReturn?: boolean) {
     this.element.hide();
     this.isShown = false;
 
-    if (restShouldBeShownWhenMouseBack) {
+    if (shouldResetVisibilityOnMouseReturn) {
       this.shouldBeShownWhenMouseBack = false;
     }
   }
 
   initialize(): {
-    element: any;
+    element: RaphaelElement;
     fill: AtomColor;
     label: ElementLabel | '';
   } {
     const render = this.editor.render;
     const fillColor = this.fill ?? '#000000';
-    const element = render.paper.text(0, 0, this.label ?? '');
+    const element: RaphaelElement = render.paper.text(0, 0, this.label ?? '');
     const options = getOptionsWithConvertedUnits(this.editor.options());
 
     element.attr('fill', fillColor);

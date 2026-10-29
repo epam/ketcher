@@ -1,4 +1,8 @@
-import { Bond, BondAttributes } from 'domain/entities/bond';
+import {
+  type BondAttributes,
+  Bond,
+  StructBondEndpointAccess,
+} from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
 
@@ -58,28 +62,38 @@ describe('Bond', () => {
   describe('getCenter', () => {
     it('should return center of bond', () => {
       const bond = new Bond(bondParams);
-      const struct = { atoms: new Map() };
-      struct.atoms.set(bond.begin, { pp: new Vec2(2, 4, 6) });
-      struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const endpoints = new Map();
+      endpoints.set(bond.begin, { pp: new Vec2(2, 4, 6) });
+      endpoints.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const struct = {
+        getBondEndpoint: (id: number) => endpoints.get(id),
+      };
       const bondCenter = new Vec2(3, 2, 4);
 
-      expect(bond.getCenter(struct)).toStrictEqual(bondCenter);
+      expect(bond.getCenter(struct as StructBondEndpointAccess)).toStrictEqual(
+        bondCenter,
+      );
     });
   });
 
   describe('getDir', () => {
     it('should return direction', () => {
       const bond = new Bond(bondParams);
-      const struct = { atoms: new Map() };
-      struct.atoms.set(bond.begin, { pp: new Vec2(2, 4, 6) });
-      struct.atoms.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const endpoints = new Map();
+      endpoints.set(bond.begin, { pp: new Vec2(2, 4, 6) });
+      endpoints.set(bond.end, { pp: new Vec2(4, 0, 2) });
+      const struct = {
+        getBondEndpoint: (id: number) => endpoints.get(id),
+      };
       const bondDir = new Vec2(
         0.4472135954999579,
         -0.8944271909999159,
         -0.8944271909999159,
       );
 
-      expect(bond.getDir(struct)).toStrictEqual(bondDir);
+      expect(bond.getDir(struct as StructBondEndpointAccess)).toStrictEqual(
+        bondDir,
+      );
     });
   });
 

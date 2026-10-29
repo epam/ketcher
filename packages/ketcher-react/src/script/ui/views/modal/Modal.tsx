@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { BaseCallProps, ModalContainerProps } from './modal.types';
+import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import classes from './Modal.module.less';
 import selectClasses from '../../component/form/Select/Select.module.less';
 import clsx from 'clsx';
 import mediaSizes from './mediaSizes';
 import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
+import { ketcherProvider } from 'ketcher-core';
+import type Editor from '../../../editor';
+import type { ModalState } from '../../state/modal';
 
 interface ModalProps extends BaseCallProps {
-  modal: {
-    name: string;
-    form: any;
-    prop: any;
-  };
+  modal: Pick<ModalState, 'name' | 'form' | 'prop'>;
 }
 
 type Props = ModalProps & BaseCallProps & ModalContainerProps;
@@ -38,13 +37,21 @@ type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
 
-function ModalContent({ modal, ...rest }: ModalContentProps) {
+function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: containerRef,
+    ref: containerRef as React.RefObject<HTMLDivElement>,
   });
 
   const Component = modals[modal.name];
+
+  useEffect(() => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+
+    return () => {
+      setTimeout(() => editor.focusCliparea(), 0);
+    };
+  }, [ketcherId]);
 
   if (!Component)
     throw new Error(`There is no modal window named ${modal.name}`);
@@ -61,6 +68,7 @@ function ModalContent({ modal, ...rest }: ModalContentProps) {
             (height && height <= mediaSizes.smallHeight) ||
             (width && width <= mediaSizes.smallWidth),
         })}
+        ketcherId={ketcherId}
         {...rest}
       />
     </div>

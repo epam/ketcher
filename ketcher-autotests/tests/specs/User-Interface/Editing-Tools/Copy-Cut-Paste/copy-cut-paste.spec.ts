@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -84,8 +82,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await getAtomLocator(page, { atomLabel: 'C', atomId: 41 }).click({
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/query-features.mol',
+    );
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
       force: true,
     });
     await MoleculesTopToolbar(page).cut();

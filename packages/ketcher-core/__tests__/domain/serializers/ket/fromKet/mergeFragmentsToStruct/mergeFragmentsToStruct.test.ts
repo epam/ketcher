@@ -1,5 +1,5 @@
 import { Struct } from 'domain/entities';
-import { KetItem } from 'domain/serializers/ket/fromKet/types';
+import type { KetItem } from 'domain/serializers/ket/fromKet/types';
 import {
   atomToStruct,
   bondToStruct,

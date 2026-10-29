@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +16,12 @@
  ***************************************************************************/
 
 import {
+  type Atom,
+  type Bond,
+  type FlipDirection,
+  type Vec2,
   Action,
-  Atom,
-  Bond,
-  FlipDirection,
   FunctionalGroup,
-  Vec2,
   fromFlip,
   fromItemsFuse,
   fromRotate,
@@ -32,11 +33,11 @@ import {
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 import { intersection, throttle } from 'lodash';
-import Editor, { Selection } from '../Editor';
-import { Tool } from './Tool';
+import type { Editor, Selection } from '../Editor';
+import type { Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
 
 type SnapMode = 'one-bond' | 'multiple-bonds';
@@ -117,6 +118,8 @@ class RotateTool implements Tool {
   }
 
   getCenter() {
+    this.centerAtomId = undefined;
+
     if (!this.selection) {
       return;
     }
@@ -161,13 +164,20 @@ class RotateTool implements Tool {
        */
       const attachmentBondId = attachmentBonds.keys().next().value as number;
       const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond;
-      this.centerAtomId = [attachmentBond.begin, attachmentBond.end].find(
+      const centerAtomId = [attachmentBond.begin, attachmentBond.end].find(
         (atomId) =>
           this.selection?.bonds?.includes(attachmentBondId)
             ? !visibleAtoms.includes(atomId)
             : visibleAtoms.includes(atomId),
-      ) as number;
-      center = this.struct.atoms.get(this.centerAtomId)?.pp;
+      );
+      const centerAtom =
+        centerAtomId === undefined
+          ? undefined
+          : this.struct.atoms.get(centerAtomId);
+      if (centerAtom) {
+        this.centerAtomId = centerAtomId;
+        center = centerAtom.pp;
+      }
     }
 
     const { texts, rxnArrows, rxnPluses } = this.selection;
@@ -190,9 +200,7 @@ class RotateTool implements Tool {
   }
 
   mousemove = throttle((event) => {
-    if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
-    } else {
+    if (this.dragCtx) {
       const dragCtx = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
@@ -238,6 +246,8 @@ class RotateTool implements Tool {
 
         this.editor.update(dragCtx.action, true);
       }
+    } else {
+      this.editor.hover(null, null, event);
     }
     return true;
   }, 40); // 25fps
@@ -283,9 +293,23 @@ class RotateTool implements Tool {
           this.struct,
           this.selection?.atoms,
         );
-        const monomerRotateAction = new Action();
+        const monomerSGroups: MonomerMicromolecule[] = [];
         sGroups.forEach((sGroup) => {
           if (sGroup instanceof MonomerMicromolecule) {
+            monomerSGroups.push(sGroup);
+          }
+        });
+        // If at least one monomer in the selection is expanded, every
+        // monomer (including collapsed ones) gets its rotation metadata
+        // assigned, matching the atom-transform behavior in `fromRotate`.
+        // If none are expanded, no monomer gets a `RotateMonomerOperation`
+        // since their atoms were only rigidly translated, not rotated.
+        const hasExpandedMonomer = monomerSGroups.some((sGroup) =>
+          sGroup.isExpanded(),
+        );
+        const monomerRotateAction = new Action();
+        if (hasExpandedMonomer) {
+          monomerSGroups.forEach((sGroup) => {
             const angleInRadians = (dragCtx.angle * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
@@ -293,10 +317,16 @@ class RotateTool implements Tool {
                 value: angleInRadians,
               }),
             );
-          }
-        });
-        monomerRotateAction.perform(this.reStruct);
-        action = action.mergeWith(monomerRotateAction);
+          });
+        }
+        // `perform` executes the rotation and returns the inverted action
+        // (the one that must go into the undo history). Merging the
+        // un-inverted `monomerRotateAction` here instead would make `undo`
+        // re-apply the rotation instead of reverting it.
+        const invertedMonomerRotateAction = monomerRotateAction.perform(
+          this.reStruct,
+        );
+        action = action.mergeWith(invertedMonomerRotateAction);
       }
 
       delete this.dragCtx;
@@ -328,7 +358,11 @@ class RotateTool implements Tool {
     }
 
     const centerAtom = this.struct.atoms.get(this.centerAtomId);
-    assert(centerAtom != null);
+    if (!centerAtom) {
+      this.centerAtomId = undefined;
+      this.snapInfo = null;
+      return;
+    }
     const {
       rotatableHalfBondIds,
       rotatableHalfBondAngles,

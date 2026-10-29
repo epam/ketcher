@@ -1,5 +1,5 @@
 import { AttachmentPointName } from 'domain/types';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type PolymerBondLike = {
@@ -25,9 +25,9 @@ const getMonomerClass = (monomer?: BaseMonomer) =>
 const isPolymerBondLike = (bond: unknown): bond is PolymerBondLike =>
   Boolean(
     bond &&
-      typeof bond === 'object' &&
-      'getAnotherMonomer' in bond &&
-      !(bond instanceof MonomerToAtomBond),
+    typeof bond === 'object' &&
+    'getAnotherMonomer' in bond &&
+    !(bond instanceof MonomerToAtomBond),
   );
 
 const isRnaBaseOrAmbiguousRnaBase = (monomer?: BaseMonomer): boolean =>
@@ -57,7 +57,7 @@ const getSugarFromRnaBase = (
     ? r3PolymerBond.getAnotherMonomer(r1ConnectedMonomer)
     : undefined;
 
-  return isSugarMonomer(r1ConnectedMonomer) && r3ConnectedMonomer === monomer
+  return r3ConnectedMonomer === monomer && isSugarMonomer(r1ConnectedMonomer)
     ? r1ConnectedMonomer
     : undefined;
 };
@@ -83,9 +83,9 @@ export const isMonomerConnectedToR2RnaBase = (
 
   return Boolean(
     isRnaBaseOrAmbiguousRnaBase(r1ConnectedMonomer) &&
-      getSugarFromRnaBase(r1ConnectedMonomer) &&
-      isPolymerBondLike(r2PolymerBond) &&
-      r2PolymerBond.getAnotherMonomer(r1ConnectedMonomer) === monomer,
+    getSugarFromRnaBase(r1ConnectedMonomer) &&
+    isPolymerBondLike(r2PolymerBond) &&
+    r2PolymerBond.getAnotherMonomer(r1ConnectedMonomer) === monomer,
   );
 };
 

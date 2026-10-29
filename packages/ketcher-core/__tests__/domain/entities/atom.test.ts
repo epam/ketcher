@@ -1,4 +1,5 @@
 import { Atom, AttachmentPoints, radicalElectrons } from 'domain/entities/atom';
+import { SettingsManager } from 'utilities';
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -159,6 +160,19 @@ describe('Atom', () => {
       expect(atom.isQuery()).toBeTruthy();
     });
 
+    it.each([
+      { queryProperties: { ringMembership: 0 } },
+      { queryProperties: { ringSize: 0 } },
+      { queryProperties: { connectivity: 0 } },
+    ])('should return true for zero-valued query properties', (queryParams) => {
+      const atom = new Atom({
+        ...hydrogenParams,
+        ...queryParams,
+      });
+
+      expect(atom.isQuery()).toBe(true);
+    });
+
     it('should return falsy value if it is default atom', () => {
       const atom = new Atom(hydrogenParams);
       expect(atom.isQuery()).toBeFalsy();
@@ -304,7 +318,7 @@ describe('Atom', () => {
     it('should return false if atom has rgLabel', () => {
       const paramsWithRgLabel = {
         ...hydrogenParams,
-        rglabel: 'test',
+        rglabel: 1,
       };
 
       const atom = new Atom(paramsWithRgLabel);
@@ -516,6 +530,99 @@ describe('Atom', () => {
     });
 
     // TODO: Add other test cases for calcValence function
+  });
+
+  describe('calcValence - biovia-2017 valence mode', () => {
+    afterEach(() => {
+      SettingsManager.valenceMode = 'default';
+    });
+
+    it.each(['Al', 'Li', 'Be', 'Sn', 'Bi', 'Pt', 'Fe'])(
+      'should give metal %p zero valence and zero implicit H when unconnected in biovia-2017 mode',
+      (label) => {
+        SettingsManager.valenceMode = 'biovia-2017';
+        const atom = new Atom({ ...hydrogenParams, label, charge: null });
+
+        expect(atom.calcValence(0)).toBe(true);
+        expect(atom.valence).toBe(0);
+        expect(atom.implicitH).toBe(0);
+        expect(atom.badConn).toBe(false);
+      },
+    );
+
+    it.each(['Al', 'Li', 'Be', 'Sn', 'Bi', 'Pt', 'Fe'])(
+      'should give metal %p valence equal to its connection count and zero implicit H in biovia-2017 mode',
+      (label) => {
+        SettingsManager.valenceMode = 'biovia-2017';
+        const atom = new Atom({ ...hydrogenParams, label, charge: null });
+
+        expect(atom.calcValence(1)).toBe(true);
+        expect(atom.valence).toBe(1);
+        expect(atom.implicitH).toBe(0);
+        expect(atom.badConn).toBe(false);
+      },
+    );
+
+    it.each(['Al', 'Li', 'Pt'])(
+      'should keep pre-existing (non-zero) default valence for metal %p when mode is default',
+      (label) => {
+        SettingsManager.valenceMode = 'default';
+        const atom = new Atom({ ...hydrogenParams, label, charge: null });
+
+        expect(atom.calcValence(0)).toBe(true);
+        expect(atom.valence).not.toBe(0);
+      },
+    );
+
+    it.each(['Al', 'Li', 'Pt'])(
+      'should keep pre-existing (non-zero) default valence for metal %p when mode is biovia-2009',
+      (label) => {
+        SettingsManager.valenceMode = 'biovia-2009';
+        const atom = new Atom({ ...hydrogenParams, label, charge: null });
+
+        expect(atom.calcValence(0)).toBe(true);
+        expect(atom.valence).not.toBe(0);
+      },
+    );
+
+    it.each(['C', 'N', 'O', 'Cl', 'Si', 'B'])(
+      'should leave non-metal/metalloid %p valence unaffected by biovia-2017 mode',
+      (label) => {
+        const atomDefault = new Atom({
+          ...hydrogenParams,
+          label,
+          charge: null,
+        });
+        SettingsManager.valenceMode = 'default';
+        atomDefault.calcValence(0);
+        const defaultValence = atomDefault.valence;
+        const defaultImplicitH = atomDefault.implicitH;
+
+        const atomBiovia2017 = new Atom({
+          ...hydrogenParams,
+          label,
+          charge: null,
+        });
+        SettingsManager.valenceMode = 'biovia-2017';
+        atomBiovia2017.calcValence(0);
+
+        expect(atomBiovia2017.valence).toBe(defaultValence);
+        expect(atomBiovia2017.implicitH).toBe(defaultImplicitH);
+      },
+    );
+
+    it('should still honor an explicit implicitHCount override for a metal in biovia-2017 mode', () => {
+      SettingsManager.valenceMode = 'biovia-2017';
+      const atom = new Atom({
+        ...hydrogenParams,
+        label: 'Al',
+        charge: null,
+        implicitHCount: 2,
+      });
+
+      expect(atom.calcValence(0)).toBe(true);
+      expect(atom.implicitH).toBe(2);
+    });
   });
 
   describe('calcValenceMinusHyd', () => {

@@ -1,6 +1,10 @@
-import { AttachmentPointName, KetMonomerClass, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  AttachmentPointName,
+  KetMonomerClass,
+} from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
@@ -261,5 +265,28 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
         ]),
       ),
     ).toEqual(assignedAttachmentPoints);
+  });
+
+  it('keeps an external attachment point visible when it shares the connection atom but keeps its leaving group inside the component', () => {
+    const wizardState = createWizardState();
+    wizardState.sugar.structure = { atoms: [2], bonds: [] };
+    // Atom 3 is the phosphate atom that connects to the sugar; atom 5 is an
+    // external leaving group the user added to that same phosphate atom.
+    wizardState.phosphate.structure = { atoms: [3, 5], bonds: [] };
+    const assignedAttachmentPoints = new Map<
+      AttachmentPointName,
+      [number, number]
+    >([[AttachmentPointName.R1, [3, 5]]]);
+
+    const visibleAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
+      assignedAttachmentPoints,
+      wizardState,
+      createStruct([
+        [2, 3],
+        [3, 5],
+      ]),
+    );
+
+    expect(visibleAttachmentPoints).toEqual(assignedAttachmentPoints);
   });
 });

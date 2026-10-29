@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +33,11 @@ import {
   initSaltsAndSolvents,
   initSaltsAndSolventsTemplates,
 } from '../state/saltsAndSolvents';
-import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
+import {
+  useAppContext,
+  useSubscriptionOnEvents,
+  useSettings,
+} from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
@@ -63,6 +68,10 @@ const App = (props: Props) => {
   const { checkServer } = props;
   const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
 
+  // Enable bidirectional sync between Redux and Core settings
+  // This ensures settings changes in macromolecules mode are reflected in small molecules mode
+  useSettings();
+
   useSubscriptionOnEvents();
   const { ketcherId, prevKetcherId } = useAppContext();
 
@@ -72,13 +81,7 @@ const App = (props: Props) => {
 
   useEffect(() => {
     checkServer();
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initFGTemplates());
-    // TODO suppressed after upgrade to react 19. Need to fix
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
@@ -119,12 +122,7 @@ const App = (props: Props) => {
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
-        {
-          // TODO suppressed after upgrade to react 19. Need to fix
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          <AppClipArea />
-        }
+        <AppClipArea />
         <AppModalContainer ketcherId={ketcherId} />
         <AbbreviationLookupContainer />
         <Snackbar

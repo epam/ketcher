@@ -1,4 +1,4 @@
-import { Operation } from 'domain/entities/Operation';
+import type { Operation } from 'domain/entities/Operation';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class Command {
@@ -28,7 +28,7 @@ export class Command {
 
   public invert(renderersManagers: RenderersManager) {
     const operations = this.undoOperationReverse
-      ? this.operations.slice().reverse()
+      ? [...this.operations].reverse()
       : [...this.operations];
 
     if (this.setUndoOperationByPriority) {

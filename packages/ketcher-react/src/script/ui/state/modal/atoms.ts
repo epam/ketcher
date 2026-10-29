@@ -1,17 +1,19 @@
 import {
+  type AtomPropertiesInContextMenu,
+  type AtomQueryProperties,
   Action,
   Atom,
-  AtomPropertiesInContextMenu,
-  AtomQueryProperties,
   fromAtomsAttrs,
   KetcherLogger,
 } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
-export function isAtomsArray(selectedElements: Atom | Atom[]): boolean {
+export function isAtomsArray(
+  selectedElements: Atom | Atom[],
+): selectedElements is Atom[] {
   return (
     Array.isArray(selectedElements) &&
-    selectedElements?.every((element) => element instanceof Atom)
+    selectedElements.every((element) => element instanceof Atom)
   );
 }
 
@@ -46,8 +48,8 @@ export function updateSelectedAtoms({
         });
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atoms.ts::updateSelectedAtoms', e);
+      .catch((error) => {
+        KetcherLogger.error('atoms.ts::updateSelectedAtoms', error);
       });
   }
 }

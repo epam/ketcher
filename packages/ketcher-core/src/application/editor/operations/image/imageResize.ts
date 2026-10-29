@@ -1,32 +1,32 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { ImageReferenceName } from 'domain/entities/image';
+import type { ImageReferenceName } from 'domain/entities/image';
 import { Vec2 } from 'domain/entities/vec2';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 
-const moveLeftPositions: Array<ImageReferenceName> = [
+const moveLeftPositions = new Set<ImageReferenceName>([
   'topLeftPosition',
   'leftMiddlePosition',
   'bottomLeftPosition',
-];
+]);
 
-const moveRightPositions: Array<ImageReferenceName> = [
+const moveRightPositions = new Set<ImageReferenceName>([
   'topRightPosition',
   'rightMiddlePosition',
   'bottomRightPosition',
-];
+]);
 
-const moveTopPositions: Array<ImageReferenceName> = [
+const moveTopPositions = new Set<ImageReferenceName>([
   'topLeftPosition',
   'topMiddlePosition',
   'topRightPosition',
-];
+]);
 
-const moveBottomPositions: Array<ImageReferenceName> = [
+const moveBottomPositions = new Set<ImageReferenceName>([
   'bottomLeftPosition',
   'bottomMiddlePosition',
   'bottomRightPosition',
-];
+]);
 
 export class ImageResize extends BaseOperation {
   private previousPosition: Vec2 | null = null;
@@ -53,14 +53,14 @@ export class ImageResize extends BaseOperation {
       referencePositions.bottomRightPosition,
     );
 
-    if (moveTopPositions.includes(this.referencePositionName)) {
+    if (moveTopPositions.has(this.referencePositionName)) {
       topLeftPosition.add_(new Vec2(0, diff.y));
-    } else if (moveBottomPositions.includes(this.referencePositionName)) {
+    } else if (moveBottomPositions.has(this.referencePositionName)) {
       bottomRightPosition.add_(new Vec2(0, diff.y));
     }
-    if (moveLeftPositions.includes(this.referencePositionName)) {
+    if (moveLeftPositions.has(this.referencePositionName)) {
       topLeftPosition.add_(new Vec2(diff.x, 0));
-    } else if (moveRightPositions.includes(this.referencePositionName)) {
+    } else if (moveRightPositions.has(this.referencePositionName)) {
       bottomRightPosition.add_(new Vec2(diff.x, 0));
     }
 
@@ -71,11 +71,31 @@ export class ImageResize extends BaseOperation {
   }
 
   invert(): BaseOperation {
+    // `previousPosition` is only null before `execute` has run. `invert` is
+    // only ever called on an operation that has already been executed, so
+    // reaching this with a null value indicates a programming error.
+    if (!this.previousPosition) {
+      throw new Error(
+        'ImageResize: cannot invert an operation that has not been executed yet',
+      );
+    }
+
     return new ImageResize(
       this.id,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.previousPosition!,
+      this.previousPosition,
       this.referencePositionName,
+    );
+  }
+
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) return false;
+    const item = restruct.molecule.images.get(this.id);
+    if (!item) return false;
+    const currentPosition =
+      item.getReferencePositions()[this.referencePositionName];
+    return (
+      this.position.x === currentPosition.x &&
+      this.position.y === currentPosition.y
     );
   }
 }

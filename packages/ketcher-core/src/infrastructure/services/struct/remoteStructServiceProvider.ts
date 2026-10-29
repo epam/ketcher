@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   ServiceMode,
   StructService,
   StructServiceOptions,
@@ -33,7 +33,7 @@ export class RemoteStructServiceProvider implements StructServiceProvider {
     this.customHeaders = customHeaders;
     const params = new URLSearchParams(document.location.search);
     if (params.has('api_path')) {
-      currentApiPath = params.get('api_path')!;
+      currentApiPath = params.get('api_path') ?? currentApiPath;
     }
     this.apiPath =
       !currentApiPath || currentApiPath.endsWith('/')

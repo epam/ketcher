@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,7 @@ const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    paddingRight: withPaddingRight ? '12px' : 0,
+    paddingInlineEnd: withPaddingRight ? '12px' : 0,
     overflow: fullWidth ? 'hidden' : 'initial',
   }),
 );
@@ -101,7 +101,7 @@ const StyledArrowScrollWrapper = styled.div`
   height: 36px;
   display: flex;
   position: relative;
-  right: 0;
+  inset-inline-end: 0;
   cursor: pointer;
   background: white;
   box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
@@ -128,12 +128,7 @@ const DummyDiv = styled.div({
 });
 
 type LayoutSection =
-  | 'Left'
-  | 'Right'
-  | 'Main'
-  | 'Top'
-  | 'Bottom'
-  | 'InsideRoot';
+  'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
 
 const Top = (
   props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
@@ -168,7 +163,7 @@ const Top = (
         </StyledTopInnerDiv>
         <span ref={endRef}></span>
       </StyledTop>
-      {!startInView || !endInView ? (
+      {startInView && endInView ? null : (
         <StyledArrowScrollWrapper>
           <ArrowScroll
             startInView={startInView}
@@ -178,7 +173,7 @@ const Top = (
             isLeftRight
           />
         </StyledArrowScrollWrapper>
-      ) : null}
+      )}
     </div>
   );
 };

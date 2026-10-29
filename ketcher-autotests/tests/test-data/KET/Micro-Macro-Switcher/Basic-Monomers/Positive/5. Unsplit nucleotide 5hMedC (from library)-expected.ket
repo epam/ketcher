@@ -17,8 +17,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 4.590568786805749,
-            "y": -2.6052980326876902
+            "x": 4.5905687868057345,
+            "y": -2.605298032687683
         },
         "alias": "5hMedC",
         "templateId": "5hMedC___5-Hydroxymethyl dC"
@@ -33,7 +33,8 @@
                     -8.096931197906855,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -50,7 +51,8 @@
                     -8.433364320969021,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -67,7 +69,8 @@
                     -9.091433408060443,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",

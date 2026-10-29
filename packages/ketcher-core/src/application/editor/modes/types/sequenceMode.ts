@@ -1,14 +1,15 @@
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { MonomerItemType } from 'domain/types';
-import { IRnaPreset } from 'application/editor/tools/Tool';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { MonomerItemType } from 'domain/types';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
 
 export interface SequenceMode {
   readonly isEditMode: boolean;
   readonly isEditInRNABuilderMode: boolean;
   deleteSelection(): void;
   turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer): void;
+  turnOffEditMode(shouldRemoveSelection?: boolean): void;
   turnOnSequenceEditInRNABuilderMode(): void;
-  turnOffSequenceEditInRNABuilderMode(): void;
+  turnOffSequenceEditInRNABuilderMode(shouldRemoveSelection?: boolean): void;
   turnOnSyncEditMode(): void;
   turnOffSyncEditMode(): void;
   resetEditMode(): void;

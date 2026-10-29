@@ -14,6 +14,7 @@ export enum ErrorMessage {
   rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints = 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
   invalidPhosphatePositionAttachmentPoints = 'invalidPhosphatePositionAttachmentPoints',
   invalidPresetCode = 'invalidPresetCode',
+  rnaPresetInvalidSugarConnectionBonds = 'rnaPresetInvalidSugarConnectionBonds',
 }
 
 export enum InfoMessage {

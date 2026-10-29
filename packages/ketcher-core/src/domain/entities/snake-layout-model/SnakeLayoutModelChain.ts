@@ -1,15 +1,21 @@
-import {
+import type {
   ISnakeLayoutModelRow,
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
-import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
-import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
+import type { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import type { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModelChain {
   private readonly rows: ISnakeLayoutModelRow[] = [];
 
   public get lastRow() {
-    return this.rows[this.rows.length - 1];
+    const lastRow = this.rows.at(-1);
+
+    if (!lastRow) {
+      throw new Error('Cannot get the last row of an empty snake layout chain');
+    }
+
+    return lastRow;
   }
 
   public get lastNode() {
@@ -28,7 +34,7 @@ export class SnakeLayoutModelChain {
 
   public get nodes() {
     return this.rows.reduce(
-      (acc, row) => acc.concat(row.snakeLayoutModelItems),
+      (acc, row) => [...acc, ...row.snakeLayoutModelItems],
       [] as (
         | ITwoStrandedSnakeLayoutNode
         | EmptySnakeLayoutNode

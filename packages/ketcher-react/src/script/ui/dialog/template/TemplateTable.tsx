@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +15,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, KeyboardEvent } from 'react';
-import { Struct } from 'ketcher-core';
+import {
+  type FC,
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+  useLayoutEffect,
+} from 'react';
+import type { Struct } from 'ketcher-core';
+import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
-import { greekify } from '../../utils';
-import { Icon, StructRender } from 'components';
+import TemplateItem from './TemplateItem';
 
 export interface Template {
   struct: Struct;
@@ -33,7 +41,7 @@ export interface Template {
 }
 
 interface TemplateTableProps {
-  templates: Array<Template>;
+  templates: ReadonlyArray<Template>;
   selected: Template | null;
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
@@ -42,40 +50,14 @@ interface TemplateTableProps {
   renderOptions?: any;
 }
 
-const isSaltOrSolventTemplate = (template) =>
-  template.props.group === 'Salts and Solvents';
-const isFunctionalGroupTemplate = (template) =>
-  template.props.group === 'Functional Groups';
+// Render all tiles immediately to keep accordion height stable,
+// then progressively mount heavy SVG previews with low-priority updates.
+const INITIAL_PREVIEW_COUNT = 4;
+const PREVIEW_BATCH_SIZE = 4;
+const PREVIEW_IDLE_TIMEOUT_MS = 100;
 
-function getTemplateTitle(template: Template, index: number): string {
-  if (isSaltOrSolventTemplate(template)) {
-    return template.props.name;
-  }
-  return (
-    template.struct.name || `${template.props.group} template ${index + 1}`
-  );
-}
-
-function tmplName(tmpl: Template, i: number): string {
-  if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation ?? '';
-  }
-  return (
-    tmpl.props.abbreviation ??
-    tmpl.struct.name ??
-    `${tmpl.props.group} template ${i + 1}`
-  );
-}
-
-function createKeyDownHandler(callback: () => void) {
-  return (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      callback();
-    }
-  };
-}
+const getInitialPreviewCount = (templateCount: number) =>
+  Math.min(INITIAL_PREVIEW_COUNT, templateCount);
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
@@ -88,81 +70,112 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     renderOptions,
   } = props;
 
+  const [prevTemplates, setPrevTemplates] = useState(templates);
+  const [previewRenderedCount, setPreviewRenderedCount] = useState(() =>
+    getInitialPreviewCount(templates.length),
+  );
+  const [, startTransition] = useTransition();
+  const [containerSize, setContainerSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  if (templates !== prevTemplates) {
+    setPrevTemplates(templates);
+    setPreviewRenderedCount(getInitialPreviewCount(templates.length));
+  }
+
+  // Calculate container size once to avoid getBoundingClientRect() calls during rendering
+  // This prevents forced reflows when rendering multiple items in a batch
+  useLayoutEffect(() => {
+    if (!containerRef.current) {
+      return;
+    }
+
+    const updateContainerSize = (width: number, height: number) => {
+      setContainerSize((previousSize) => {
+        if (previousSize?.width === width && previousSize.height === height) {
+          return previousSize;
+        }
+
+        return { width, height };
+      });
+    };
+
+    const container = containerRef.current;
+    const initialRect = container.getBoundingClientRect();
+    updateContainerSize(initialRect.width, initialRect.height);
+
+    const resizeObserver = new ResizeObserver(([entry]) => {
+      updateContainerSize(entry.contentRect.width, entry.contentRect.height);
+    });
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (previewRenderedCount >= templates.length) {
+      return;
+    }
+
+    const requestIdle = globalThis.requestIdleCallback;
+    if (typeof requestIdle === 'function') {
+      const callback = requestIdle(
+        () => {
+          startTransition(() => {
+            setPreviewRenderedCount((prev) =>
+              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+            );
+          });
+        },
+        { timeout: PREVIEW_IDLE_TIMEOUT_MS },
+      );
+      return () => {
+        globalThis.cancelIdleCallback?.(callback);
+      };
+    }
+
+    const frameId = globalThis.requestAnimationFrame(() => {
+      startTransition(() => {
+        setPreviewRenderedCount((prev) =>
+          Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+        );
+      });
+    });
+    return () => globalThis.cancelAnimationFrame(frameId);
+  }, [previewRenderedCount, templates.length, startTransition]);
+
+  // Pass container size to StructRender to avoid getBoundingClientRect() calls
+  // This eliminates forced reflows during rendering batches
+  const optimizedRenderOptions = {
+    ...renderOptions,
+    ...(containerSize && { wrapperDimensions: containerSize }),
+  };
+
   return (
     <div
-      className={`${classes.tableContent} ${
-        titleRows === 1 ? classes.oneRowTitleTable : classes.twoRowsTitleTable
-      }`}
-      data-testid="templates-modal"
-    >
-      {templates.map((tmpl, i) => {
-        return (
-          <div
-            role="button"
-            tabIndex={0}
-            className={
-              tmpl.struct !== selected?.struct
-                ? classes.td
-                : `${classes.td} ${classes.selected}`
-            }
-            title={greekify(getTemplateTitle(tmpl, i))}
-            key={
-              tmpl.struct.name !== selected?.struct.name
-                ? `${tmpl.struct.name}_${i}`
-                : `${tmpl.struct.name}_${i}_selected`
-            }
-            onClick={() => onSelect(tmpl)}
-            onKeyDown={createKeyDownHandler(() => onSelect(tmpl))}
-          >
-            <StructRender
-              testId={tmpl.struct.name}
-              struct={tmpl.struct}
-              className={classes.struct}
-              fullsize={true}
-              options={{
-                ...renderOptions,
-                autoScaleMargin: 10,
-                cachePrefix: 'templates',
-                downScale: true,
-              }}
-            />
-            <div
-              className={`${classes.structTitle} ${
-                selected?.struct === tmpl.struct ? classes.selectedTitle : ''
-              }`}
-            >
-              {greekify(tmplName(tmpl, i))}
-            </div>
-            {tmpl.props.group === 'User Templates' && (
-              <button
-                data-testid={'delete-template-button'}
-                className={`${classes.button} ${classes.deleteButton}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete!(tmpl);
-                }}
-                onKeyDown={createKeyDownHandler(() => onDelete!(tmpl))}
-              >
-                <Icon name="delete" />
-              </button>
-            )}
-            {!isFunctionalGroupTemplate(tmpl) &&
-              !isSaltOrSolventTemplate(tmpl) && (
-                <button
-                  data-testid={'edit-template-button'}
-                  className={`${classes.button} ${classes.editButton}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAttach!(tmpl);
-                  }}
-                  onKeyDown={createKeyDownHandler(() => onAttach!(tmpl))}
-                >
-                  <Icon name="edit" />
-                </button>
-              )}
-          </div>
-        );
+      className={clsx(classes.tableContent, {
+        [classes.oneRowTitleTable]: titleRows === 1,
+        [classes.twoRowsTitleTable]: titleRows !== 1,
       })}
+      data-testid="templates-modal"
+      ref={containerRef}
+    >
+      {templates.map((tmpl, i) => (
+        <TemplateItem
+          key={`${tmpl.struct.name}_${i}`}
+          tmpl={tmpl}
+          index={i}
+          isSelected={selected?.struct === tmpl.struct}
+          shouldRenderPreview={i < previewRenderedCount}
+          renderOptions={optimizedRenderOptions}
+          onSelect={onSelect}
+          onDelete={onDelete}
+          onAttach={onAttach}
+        />
+      ))}
     </div>
   );
 };

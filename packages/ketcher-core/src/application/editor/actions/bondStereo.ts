@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from 'domain/entities/bond';
+import type { Bond } from 'domain/entities/bond';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import {
   AtomAttr,
   FragmentAddStereoAtom,
@@ -25,7 +25,12 @@ import {
 import { Action } from './action';
 import { getStereoAtomsMap } from './helpers';
 
-export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse): Action {
+export function fromStereoAtomAttrs(
+  restruct,
+  aid,
+  attrs,
+  shouldReverse,
+): Action {
   const action = new Action();
   const atom = restruct.molecule.atoms.get(aid);
   const sgroup = restruct.molecule.getGroupFromAtomId(aid);
@@ -47,7 +52,7 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse): Action {
         action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct));
       }
     }
-    if (withReverse) action.operations.reverse();
+    if (shouldReverse) action.operations.reverse();
   }
 
   return action;
@@ -56,7 +61,7 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse): Action {
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
-  withReverse?: boolean,
+  shouldReverse?: boolean,
 ): Action {
   const action = new Action();
   const struct = restruct.molecule;
@@ -84,7 +89,7 @@ export function fromBondStereoUpdate(
   stereoAtomsMap.forEach((stereoProp, aId) => {
     if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
       action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse),
+        fromStereoAtomAttrs(restruct, aId, stereoProp, shouldReverse),
       );
     }
   });

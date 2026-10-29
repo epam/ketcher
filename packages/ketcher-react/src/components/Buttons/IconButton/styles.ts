@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@
 import styled from '@emotion/styled';
 import Icon from '../../Icon/Icon';
 import { style } from 'src/components/styles';
-import { IStyledButtonProps } from './types';
+import type { IStyledButtonProps } from './types';
 import { css } from '@emotion/react';
 
 export const StyledButton = styled('button', {

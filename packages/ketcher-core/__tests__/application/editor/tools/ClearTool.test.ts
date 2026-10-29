@@ -1,6 +1,10 @@
 import { CoreEditor, FlexMode } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
-import { polymerEditorTheme, peptideMonomerItem } from '../../../mock-data';
+import {
+  coreEditorTheme,
+  polymerEditorTheme,
+  peptideMonomerItem,
+} from '../../../mock-data';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -63,6 +67,9 @@ jest.mock('d3', () => {
     }),
     zoom() {
       return {
+        extent() {
+          return this;
+        },
         scaleExtent() {
           return this;
         },
@@ -80,7 +87,7 @@ jest.mock('d3', () => {
   };
 });
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -93,7 +100,7 @@ describe('Clear Tool', () => {
   beforeEach(() => {
     canvas = createPolymerEditorCanvas();
     editor = new CoreEditor({
-      theme: polymerEditorTheme,
+      theme: coreEditorTheme,
       canvas,
       renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new FlexMode(),

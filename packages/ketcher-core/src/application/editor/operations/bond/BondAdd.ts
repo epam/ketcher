@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReBond, ReStruct } from '../../../render';
+import { type ReStruct, ReBond } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
-import { Bond, BondAttributes } from 'domain/entities';
+import { type BondAttributes, Bond } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {
@@ -30,13 +30,12 @@ type Data = {
 
 class BondAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (bondId?: number) => BaseOperation;
 
   constructor(
     begin?: number,
     end?: number,
     bond?: Partial<BondAttributes>,
-    needInvalidateAtoms = true,
+    shouldInvalidateAtoms = true,
   ) {
     super(OperationType.BOND_ADD, OperationPriority.BOND_ADD);
     this.data = {
@@ -44,13 +43,13 @@ class BondAdd extends BaseOperation {
       begin: begin ?? null,
       end: end ?? null,
       bid: null,
-      needInvalidateAtoms,
+      needInvalidateAtoms: shouldInvalidateAtoms,
     };
   }
 
   execute(restruct: ReStruct) {
     const { begin, bond, end } = this.data;
-    // eslint-disable-line max-statements
+
     const struct = restruct.molecule;
 
     if (begin === end) {
@@ -66,7 +65,7 @@ class BondAdd extends BaseOperation {
       type: Bond.PATTERN.TYPE.SINGLE,
       begin: begin as number,
       end: end as number,
-      ...(bond ?? {}),
+      ...bond,
     };
     pp.type = pp.type || Bond.PATTERN.TYPE.SINGLE;
     pp.begin = begin as number;
@@ -92,12 +91,6 @@ class BondAdd extends BaseOperation {
     // notifyBondAdded
     restruct.bonds.set(bid, new ReBond(structBond));
     restruct.markBond(bid, 1);
-  }
-
-  invert() {
-    const inverted = new BondAdd.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

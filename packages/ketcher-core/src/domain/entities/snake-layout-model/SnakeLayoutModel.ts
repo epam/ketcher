@@ -1,13 +1,13 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
-  BaseMonomer,
-  Chain,
+  type BaseMonomer,
+  type Chain,
+  type SubChainNode,
   LinkerSequenceNode,
   Nucleoside,
   Nucleotide,
   RNABase,
-  SubChainNode,
 } from 'domain/entities';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
@@ -17,16 +17,16 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { SettingsManager } from 'utilities';
 import {
-  ISnakeLayoutModelRow,
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutModelRow,
+  type ISnakeLayoutMonomersNode,
+  type ITwoStrandedSnakeLayoutNode,
   isTwoStrandedSnakeLayoutNode,
-  ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
 import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
@@ -41,11 +41,11 @@ export class SnakeLayoutModel {
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }
@@ -74,11 +74,15 @@ export class SnakeLayoutModel {
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
+        nodes.push(
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+        );
       } else {
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
+        nodes.push(
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+        );
       }
     } else if (node instanceof Nucleoside) {
       nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
@@ -126,8 +130,7 @@ export class SnakeLayoutModel {
       }
       let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutMonomersNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        | ITwoStrandedSnakeLayoutNode
-        | undefined;
+        ITwoStrandedSnakeLayoutNode | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
         if (handledChainNodes.has(node)) {
@@ -177,14 +180,13 @@ export class SnakeLayoutModel {
                   firstSenseMonomerConnectedByHydrogenBond,
                 )
               : undefined;
-          let twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-            return node === twoStrandedSnakeLayoutNode;
-          });
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          let twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+            ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+            : -1;
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
 
           if (
             firstSenseMonomerConnectedByHydrogenBond &&
@@ -200,10 +202,10 @@ export class SnakeLayoutModel {
               i < nodesBeforeHydrogenConnectionToBase.length;
               i++
             ) {
-              // need to get rid of this findIndex to reduce complexity
-              twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
-                return node === twoStrandedSnakeLayoutNode;
-              });
+              // need to get rid of this repeated index lookup to reduce complexity
+              twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
+                ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
+                : -1;
 
               const currentTwoStrandedSnakeLayoutNodeIndex =
                 twoStrandedSnakeLayoutNodeIndex - i;
@@ -229,8 +231,8 @@ export class SnakeLayoutModel {
 
               if (
                 currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                isNodeInSameChain
+                isNodeInSameChain &&
+                !currentTwoStrandedSnakeLayoutNode.antisenseNode
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
@@ -261,20 +263,19 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
-          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-            (node) => {
-              return node === lastTwoStrandedNodeWithHydrogenBond;
-            },
-          );
+          const lastTwoStrandedNodeWithHydrogenBondIndex =
+            lastTwoStrandedNodeWithHydrogenBond
+              ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
+              : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            | ITwoStrandedSnakeLayoutNode
-            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+            ITwoStrandedSnakeLayoutNode | undefined =
+            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =

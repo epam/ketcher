@@ -2,16 +2,12 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { ErrorsContext } from 'src/contexts';
-import { defaultBondThickness } from 'ketcher-core';
 
 const initialState = {
   server: true,
   options: {
     app: {
       server: true,
-    },
-    settings: {
-      bondThickness: defaultBondThickness,
     },
     check: { checkOptions: '' },
     getServerSettings: () => ({}),
@@ -21,7 +17,7 @@ const initialState = {
       hasRxnArrow: () => false,
       hasMultitailArrow: () => false,
       isBlank: () => true,
-      atoms: { size: 0 },
+      atoms: new Map(),
       bonds: { size: 0 },
       rxnArrows: { size: 0 },
       frags: { values: () => [] },

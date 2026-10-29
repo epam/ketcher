@@ -1,15 +1,15 @@
 import {
+  type FunctionalGroup,
   Action,
   AmbiguousMonomer,
-  FunctionalGroup,
   MonomerMicromolecule,
   setExpandMonomerSGroup,
   ketcherProvider,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
-import {
+import type Editor from 'src/script/editor';
+import type {
   ItemEventParams,
   MacromoleculeContextMenuProps,
 } from '../contextMenu.types';
@@ -28,7 +28,7 @@ const useMonomerExpansionHandlers = () => {
   const { ketcherId } = useAppContext();
 
   const action = useCallback(
-    ({ props }: Params, toExpand: boolean) => {
+    ({ props }: Params, shouldExpand: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
       const molecule = editor.render.ctab;
@@ -42,7 +42,7 @@ const useMonomerExpansionHandlers = () => {
 
         action.mergeWith(
           setExpandMonomerSGroup(molecule, fg.relatedSGroupId, {
-            expanded: toExpand,
+            expanded: shouldExpand,
           }),
         );
       });
@@ -53,10 +53,10 @@ const useMonomerExpansionHandlers = () => {
     [ketcherId],
   );
 
-  const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
+  const hidden = useCallback(({ props }: Params, shouldExpand: boolean) => {
     return Boolean(
       props?.functionalGroups?.every((functionalGroup) =>
-        toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+        shouldExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
       ),
     );
   }, []);

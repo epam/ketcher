@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor/Editor';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/internal';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { ZoomTool } from 'application/editor/tools/Zoom';
 

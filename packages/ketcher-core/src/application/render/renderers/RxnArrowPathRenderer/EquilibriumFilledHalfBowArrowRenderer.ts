@@ -6,7 +6,7 @@ import {
   ARROW_OFFSET,
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { toFixed } from 'utilities';
 
 export class EquilibriumFilledHalfBowArrowRenderer {
@@ -29,10 +29,7 @@ export class EquilibriumFilledHalfBowArrowRenderer {
         `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-    );
-
-    // bottom arrow
-    pathParts.push(
+      // bottom arrow
       `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x + arrowHeadLength)},${toFixed(

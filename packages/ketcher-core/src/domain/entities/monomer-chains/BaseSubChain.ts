@@ -1,5 +1,5 @@
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { PolymerBond } from '../PolymerBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { PolymerBond } from '../PolymerBond';
 
 export class BaseSubChain {
   public nodes: Array<SubChainNode> = [];
@@ -11,7 +11,7 @@ export class BaseSubChain {
   public modified = true;
 
   public get lastNode() {
-    return this.nodes[this.nodes.length - 1];
+    return this.nodes.at(-1);
   }
 
   public get firstNode() {

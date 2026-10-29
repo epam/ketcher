@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +35,8 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  isPasteContentAvailable,
+  DeepPartial,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -56,6 +59,7 @@ import {
   initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
+  setMonomerLibraryLoadError,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -63,14 +67,14 @@ import {
   useAppSelector,
   useSequenceEditInRNABuilderMode,
 } from 'hooks';
-import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
+import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
-import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
   StyledIconButton,
   StyledToast,
+  StyledToastContainer,
   StyledToastContent,
 } from 'components/shared/StyledToast/styles';
 import {
@@ -130,7 +134,6 @@ interface EditorProps {
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: (editor: CoreEditor) => void;
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -189,7 +192,7 @@ function Editor({
 }: Readonly<EditorProps>) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
-  const errorTooltipText = useAppSelector(selectErrorTooltipText);
+  const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
@@ -198,6 +201,13 @@ function Editor({
   const [selections, setSelections] = useState<NodeSelection[][]>();
   const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
+  const [isPasteAvailable, setIsPasteAvailable] = useState(true);
+  const updatePasteAvailability = useCallback(() => {
+    if (!editor) return;
+    isPasteContentAvailable((content) =>
+      editor.mode.isPasteContentValid(content),
+    ).then(setIsPasteAvailable);
+  }, [editor]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -213,6 +223,15 @@ function Editor({
         monomersLibraryUpdate,
         monomersLibraryReplace,
         onInit,
+        onLibraryError: (err) => {
+          dispatch(
+            setMonomerLibraryLoadError(
+              err instanceof Error
+                ? err.message
+                : 'Failed to load monomers library',
+            ),
+          );
+        },
       }),
     );
 
@@ -228,7 +247,8 @@ function Editor({
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       setContextMenuEvent(event);
-      window.dispatchEvent(new Event('hidePreview'));
+      updatePasteAvailability();
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
@@ -257,6 +277,7 @@ function Editor({
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
+        updatePasteAvailability();
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
@@ -266,7 +287,8 @@ function Editor({
     editor?.events.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
-        window.dispatchEvent(new Event('hidePreview'));
+        updatePasteAvailability();
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelectedMonomers(selections);
         showSelectedMonomersContextMenu({
@@ -278,7 +300,8 @@ function Editor({
     editor?.events.rightClickCanvasSequence.add(
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
-        window.dispatchEvent(new Event('hidePreview'));
+        updatePasteAvailability();
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelections(selections);
         showSequenceContextMenu({
@@ -307,21 +330,21 @@ function Editor({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       SetEditorLineLengthAction,
       setEditorLineLengthListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         SetEditorLineLengthAction,
         setEditorLineLengthListener,
       );
     };
   }, [dispatch]);
 
-  const handleCloseErrorTooltip = () => {
-    dispatch(closeErrorTooltip());
+  const handleCloseErrorTooltip = (text: string) => {
+    dispatch(closeErrorTooltip(text));
   };
 
   const toggleLibraryVisibility = useCallback(() => {
@@ -422,29 +445,36 @@ function Editor({
       <SequenceItemContextMenu
         selections={selections}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <SelectedMonomersContextMenu
         selectedMonomers={selectedMonomers}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={Boolean(errorTooltipText)}
-        onClose={handleCloseErrorTooltip}
-        autoHideDuration={6000}
+        open={errorTooltips.length > 0}
       >
-        <StyledToast id="error-tooltip">
-          <StyledToastContent data-testid="error-tooltip">
-            {errorTooltipText}
-          </StyledToastContent>
-          <StyledIconButton
-            testId="error-tooltip-close"
-            iconName="close"
-            onClick={handleCloseErrorTooltip}
-          ></StyledIconButton>
-        </StyledToast>
+        <StyledToastContainer
+          id="error-tooltip-list"
+          data-testid="error-tooltip-list"
+        >
+          {errorTooltips.map((text, index) => (
+            <StyledToast key={text}>
+              <StyledToastContent data-testid={`error-tooltip-${index}`}>
+                {text}
+              </StyledToastContent>
+              <StyledIconButton
+                testId={`error-tooltip-close-${index}`}
+                iconName="close"
+                onClick={() => handleCloseErrorTooltip(text)}
+              ></StyledIconButton>
+            </StyledToast>
+          ))}
+        </StyledToastContainer>
       </Snackbar>
     </>
   );

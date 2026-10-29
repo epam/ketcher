@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from 'react';
+import { type CSSProperties, useMemo } from 'react';
 import {
   Container,
   Content,
@@ -6,7 +6,7 @@ import {
   Header,
   RatioBar,
 } from './AmbiguousMonomerPreview.styles';
-import { AmbiguousMonomerPreviewState } from './types';
+import type { AmbiguousMonomerPreviewState } from './types';
 
 interface Props {
   className?: string;

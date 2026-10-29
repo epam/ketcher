@@ -1,0 +1,24 @@
+schema: spec-driven
+
+context: |
+  ## Project: Ketcher
+
+  Ketcher is an open-source chemical structure editor built with TypeScript and React.
+  It renders molecules, reactions, macromolecules, and monomers using a custom MVC
+  architecture over SVG. It is a TypeScript/React monorepo (npm workspaces) with four
+  packages: ketcher-core, ketcher-react, ketcher-macromolecules, ketcher-standalone.
+
+  ## Knowledge base
+
+  Read `AGENTS.md` before creating any artifact. It maps where project knowledge lives.
+  Current product behavior is in `openspec/specs/`; the feature files in
+  `.memory-bank/features/` point to those specs.
+
+  ### Additional rules for openspec-apply-change
+  - Do not update the memory bank while the change is in progress. Update it when archiving, as AGENTS.md describes.
+  - Mark each task done as soon as it is complete. Do not mark them all at the end.
+  - E2E tests follow the E2E rule in AGENTS.md (read testing.md, ask before writing specs).
+  - For a change a user can see in the editor, run the `verify-ketcher` skill before you report it done, and put its result in the PR under "Verified in the app".
+
+  ### Additional rules for openspec-archive-change
+  - Edit each memory-bank file in the format AGENTS.md gives for it.

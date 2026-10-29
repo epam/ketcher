@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +21,8 @@ import {
   fromAtomsAttrs,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class ReactionMapTool implements Tool {
   private readonly editor: Editor;
@@ -51,7 +52,7 @@ class ReactionMapTool implements Tool {
     const editor = this.editor;
     const rnd = editor.render;
 
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const closestItem = this.editor.findItem(
         event,
         ['atoms'],
@@ -93,7 +94,7 @@ class ReactionMapTool implements Tool {
   }
 
   mouseup(event) {
-    if ('dragCtx' in this) {
+    if (this.dragCtx) {
       const rnd = this.editor.render;
       const closestItem = this.editor.findItem(event, ['atoms']);
 
@@ -107,10 +108,10 @@ class ReactionMapTool implements Tool {
 
         if (!aam1 || aam1 !== aam2) {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
-            // eslint-disable-line no-mixed-operators
             atoms.forEach((atom, aid) => {
               if (
                 aid !== this.dragCtx.item.id &&
+                aid !== closestItem.id && // target is reassigned below; don't also reset it (would leave 2 conflicting aam ops on one atom -> broken undo, #2174)
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
@@ -136,15 +137,23 @@ class ReactionMapTool implements Tool {
                 null,
               ),
             );
-            action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null),
-            );
+            if (closestItem.id !== this.dragCtx.item.id) {
+              // single-atom self-map: source and target are the same atom -> only one op, so undo can revert it (#2174)
+              action.mergeWith(
+                fromAtomsAttrs(
+                  rnd.ctab,
+                  closestItem.id,
+                  { aam: aam + 1 },
+                  null,
+                ),
+              );
+            }
           }
           this.editor.update(action);
         }
       }
       this.updateLine(null, null);
-      delete this.dragCtx;
+      this.dragCtx = undefined;
     }
     this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
   }

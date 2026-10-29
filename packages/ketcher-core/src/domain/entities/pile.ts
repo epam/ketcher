@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export class Pile<TValue = any> extends Set<TValue> {
+export class Pile<TValue = unknown> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
-  find(predicate: (item: TValue) => boolean) {
+  find(isMatchingItem: (item: TValue) => boolean) {
     for (const item of this) {
-      if (predicate(item)) return item;
+      if (isMatchingItem(item)) return item;
     }
 
     return null;
   }
 
-  equals(setB: Pile): boolean {
+  equals(setB: Pile<TValue>): boolean {
     return this.isSuperset(setB) && setB.isSuperset(this);
   }
 
-  isSuperset(subset: Pile): boolean {
+  isSuperset(subset: Pile<TValue>): boolean {
     for (const item of subset) {
       if (!this.has(item)) return false;
     }
@@ -37,21 +37,25 @@ export class Pile<TValue = any> extends Set<TValue> {
     return true;
   }
 
-  filter(expression: (arg: TValue) => boolean): Pile<TValue> {
-    return new Pile(Array.from(this).filter(expression));
+  filter(isMatchingItem: (arg: TValue) => boolean): Pile<TValue> {
+    return new Pile([...this].filter(isMatchingItem));
   }
 
-  union(setB: Pile): Pile<TValue> {
-    const union = new Pile(this);
-
-    for (const item of setB) union.add(item);
-
-    return union;
+  union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {
+    const result = new Pile<TValue | U>();
+    for (const item of this) result.add(item);
+    for (const item of setB as Iterable<U>) result.add(item);
+    return result;
   }
 
-  intersection(setB: Pile): Pile<TValue> {
-    const thisSet = new Pile(this);
-    return new Pile([...thisSet].filter((item) => setB.has(item)));
+  intersection<U>(setB: ReadonlySet<U>): Pile<TValue & U> {
+    const result = new Pile<TValue & U>();
+    for (const item of this) {
+      if ((setB as ReadonlySet<unknown>).has(item)) {
+        result.add(item as TValue & U);
+      }
+    }
+    return result;
   }
 
   /**
@@ -66,7 +70,7 @@ export class Pile<TValue = any> extends Set<TValue> {
    * ```
    */
   static unionIntersections<T>(sets: Array<Pile<T>>): Array<Pile<T>> {
-    let unionized = false;
+    let hasUnionizedSets = false;
 
     // Union two of sets
     const setsToReturn = sets.reduce((prevSets, curSet) => {
@@ -75,7 +79,7 @@ export class Pile<TValue = any> extends Set<TValue> {
       const newSets = prevSets.map((set) => {
         const intersec = set.intersection(curSet);
         if (intersec.size > 0) {
-          unionized = true;
+          hasUnionizedSets = true;
           isCurSetMerged = true;
           return set.union(curSet);
         }
@@ -87,6 +91,8 @@ export class Pile<TValue = any> extends Set<TValue> {
     }, new Array<Pile<T>>());
 
     // Recursively union two of sets === union all sets
-    return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;
+    return hasUnionizedSets
+      ? this.unionIntersections(setsToReturn)
+      : setsToReturn;
   }
 }

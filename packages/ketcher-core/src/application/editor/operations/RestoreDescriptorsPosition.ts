@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,8 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
-import { SGroup, Vec2 } from 'domain/entities';
+import type { ReStruct } from '../../render';
+import type { SGroup, Vec2 } from 'domain/entities';
 
 class RestoreDescriptorsPosition extends BaseOperation {
   readonly history: Record<number, Vec2 | null>;
@@ -30,7 +30,7 @@ class RestoreDescriptorsPosition extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroups: SGroup[] = Array.from(struct.sgroups.values());
+    const sgroups: SGroup[] = [...struct.sgroups.values()];
 
     sgroups.forEach((sgroup) => {
       sgroup.pp = this.history[sgroup.id];

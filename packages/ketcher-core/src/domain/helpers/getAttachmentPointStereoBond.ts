@@ -1,7 +1,7 @@
 import { Bond } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { getAttachmentPointLabel } from './attachmentPointCalculations';
 
 /**

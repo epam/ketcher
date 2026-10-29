@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -84,9 +84,7 @@ export interface CheckResult {
 }
 
 export interface ConvertData
-  extends WithStruct,
-    WithOutputFormat,
-    WithInputFormat {}
+  extends WithStruct, WithOutputFormat, WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -95,9 +93,7 @@ export interface LayoutData extends WithStruct, WithOutputFormat {}
 export interface LayoutResult extends WithStruct, WithFormat {}
 
 export interface CleanData
-  extends WithStruct,
-    WithSelection,
-    WithOutputFormat {}
+  extends WithStruct, WithSelection, WithOutputFormat {}
 
 export interface CleanResult extends WithStruct, WithFormat {}
 
@@ -168,6 +164,22 @@ export interface InfoResult {
 }
 
 export interface RecognizeResult extends WithStruct, WithOutputFormat {}
+
+export interface IndigoInfoResponse {
+  indigo_version: string;
+  imago_versions: Array<string>;
+}
+
+export interface ImagoUploadResponse {
+  upload_id: string;
+}
+
+export interface ImagoStatusResponse {
+  state: 'PENDING' | 'STARTED' | 'SUCCESS' | 'FAILURE' | 'REVOKED' | 'RETRY';
+  metadata?: {
+    mol_str: string;
+  };
+}
 
 export interface StructServiceOptions {
   [key: string]: string | number | boolean | undefined;

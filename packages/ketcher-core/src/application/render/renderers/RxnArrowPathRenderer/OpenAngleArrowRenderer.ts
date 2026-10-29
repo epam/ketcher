@@ -2,7 +2,7 @@ import { PathBuilder } from 'application/render/pathBuilder';
 import svgPath from 'svgpath';
 import { ARROW_HEAD_ATTR, ARROW_HEAD_LENGHT } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export class OpenAngleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {

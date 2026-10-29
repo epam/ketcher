@@ -40,6 +40,44 @@ type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
 
+/**
+ * Dialogs that must not dim or center over the application. The overlay element is
+ * still rendered so it keeps swallowing pointer input to the canvas and the toolbars.
+ */
+const NON_MODAL_DIALOGS = new Set(['settings']);
+
+/**
+ * Dialogs that get drag-to-move and resize-from-border behaviour. The overlay marks
+ * itself with data-draggable="true" so Dialog detects it via parentElement lookup.
+ */
+const DRAGGABLE_DIALOGS = new Set([
+  'open',
+  'analyse',
+  'recognize',
+  'period-table',
+  'extended-table',
+  'rgroup',
+  'attach',
+  'templates',
+  'about',
+  'miew',
+  'atomProps',
+  'attachmentPoints',
+  'automap',
+  'bondProps',
+  'check',
+  'enhancedStereo',
+  'labelEdit',
+  'rgroupLogic',
+  'save',
+  'sgroup',
+  'text',
+  'info-modal',
+]);
+
+// No dialog rendered through this file is resizable — only the Settings panel
+// (which uses SettingsPanel.tsx directly) keeps resize handles.
+
 function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
@@ -61,9 +99,13 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
 
   return (
     <div
-      className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
+      className={clsx(classes.modalOverlay, selectClasses.selectContainer, {
+        [classes.nonModal]: NON_MODAL_DIALOGS.has(modal.name),
+        [classes.draggableModal]: DRAGGABLE_DIALOGS.has(modal.name),
+      })}
       ref={containerRef}
       data-testid={`${modal.name}-dialog`}
+      data-draggable={DRAGGABLE_DIALOGS.has(modal.name) ? 'true' : undefined}
     >
       <Component
         className={clsx({

@@ -201,8 +201,8 @@ export const getEditAllInstancesInitialValues = (
           [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
             const attachmentPointId = endpoint?.attachmentPointId;
             if (
-              isEditedMonomerTemplate(endpoint?.templateId) &&
-              attachmentPointId
+              attachmentPointId &&
+              isEditedMonomerTemplate(endpoint?.templateId)
             ) {
               necessaryAttachmentPoints.add(
                 attachmentPointId as AttachmentPointName,

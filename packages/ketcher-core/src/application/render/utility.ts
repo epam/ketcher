@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -99,7 +99,14 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
     -2;
   const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
-  if (oPos2.x !== 0) {
+  if (oPos2.x === 0) {
+    obj.pos1 = { x: 0, y: 0 };
+    obj.pos2 = { x: 0, y: 0 };
+    obj.pos1.y = c / oPos2.y;
+    obj.pos2.y = c / oPos2.y;
+    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+  } else {
     const b = -2 * oPos2.y * c;
     const equationTerm = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
     const D = b * b - 4 * a * equationTerm;
@@ -111,6 +118,7 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
       object.pos1.x = (c - object.pos1.y * oPos2.y) / oPos2.x;
       object.pos2.x = (c - object.pos2.y * oPos2.y) / oPos2.x;
     }
+<<<<<<< HEAD:packages/ketcher-core/src/application/render/utility.ts
   } else {
     object.pos1 = { x: 0, y: 0 };
     object.pos2 = { x: 0, y: 0 };
@@ -118,6 +126,8 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     object.pos2.y = c / oPos2.y;
     object.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
     object.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+=======
+>>>>>>> origin/master:packages/ketcher-core/src/application/render/util.ts
   }
   if (object.pos1 !== null) {
     object.pos1.x += aPoint.x;
@@ -216,8 +226,8 @@ function escapeHtml(string_) {
 }
 
 function useLabelStyles(
-  attachmentPointSelected: boolean,
-  attachmentPointUsed: boolean,
+  isAttachmentPointSelected: boolean,
+  isAttachmentPointUsed: boolean,
   usageInMacromolecule: UsageInMacromolecule,
 ): {
   color: string;
@@ -231,25 +241,25 @@ function useLabelStyles(
   switch (usageInMacromolecule) {
     case UsageInMacromolecule.MonomerPreview:
       stroke = 'none';
-      if (attachmentPointUsed) {
+      if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.MonomerConnectionsModal:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
         stroke = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.BondPreview:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#CDF1FC';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }

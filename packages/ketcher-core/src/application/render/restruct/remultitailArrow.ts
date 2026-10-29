@@ -110,8 +110,7 @@ export class ReMultitailArrow extends ReObject {
     verticalDirection: -1 | 1,
     horizontalDirection: -1 | 1,
   ): void {
-    const cubicBezierOffset =
-      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const cubicBezierOffset = horizontalDirection * this.CUBIC_BEZIER_OFFSET;
     const start = lineStart.add(
       new Vec2(offset * horizontalDirection, offset * verticalDirection),
     );
@@ -135,7 +134,7 @@ export class ReMultitailArrow extends ReObject {
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions(renderOptions);
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 
@@ -281,9 +280,15 @@ export class ReMultitailArrow extends ReObject {
         'head',
         OFFSET,
       ),
+<<<<<<< HEAD
       ...Array.from(tails.entries()).reduce(
         (accumulator, [key, value]) => ({
           ...accumulator,
+=======
+      ...[...tails.entries()].reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+>>>>>>> origin/master
           ...this.getSelectionPointsFromReferencePoint(
             value,
             topSpine,
@@ -463,13 +468,19 @@ export class ReMultitailArrow extends ReObject {
           ? {
               distance,
               ref:
+<<<<<<< HEAD
                 referenceName !== MultitailArrowReferenceName.SPINE
                   ? {
                       name: referenceName,
+=======
+                refName === MultitailArrowRefName.SPINE
+                  ? null
+                  : {
+                      name: refName,
+>>>>>>> origin/master
                       isLine,
                       tailId,
-                    }
-                  : null,
+                    },
             }
           : accumulator;
       },
@@ -481,7 +492,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   private getTailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {
-    return Array.from(tails.entries()).map(([key, value]) => [
+    return [...tails.entries()].map(([key, value]) => [
       `${MultitailArrow.TAILS_NAME}-${key}`,
       value,
     ]);
@@ -498,9 +509,10 @@ export class ReMultitailArrow extends ReObject {
       referencePositions,
     );
     const { tails, ...rest } = referenceLines;
-    const tailsAndHeadLines: Array<[string, Line]> = Object.entries(
-      rest,
-    ).concat(this.getTailArrayFromPool(tails));
+    const tailsAndHeadLines: Array<[string, Line]> = [
+      ...Object.entries(rest),
+      ...this.getTailArrayFromPool(tails),
+    ];
 
     const lineResult = this.getClosestArrowPartPosition(
       point,
@@ -516,9 +528,10 @@ export class ReMultitailArrow extends ReObject {
         ...validReferencePositions
       } = referencePositions;
 
-      const tailsAnddHeadPoints: Array<[string, Vec2]> = Object.entries(
-        validReferencePositions,
-      ).concat(this.getTailArrayFromPool(tailsPoints));
+      const tailsAnddHeadPoints: Array<[string, Vec2]> = [
+        ...Object.entries(validReferencePositions),
+        ...this.getTailArrayFromPool(tailsPoints),
+      ];
 
       const pointsResult = this.getClosestArrowPartPosition(
         point,

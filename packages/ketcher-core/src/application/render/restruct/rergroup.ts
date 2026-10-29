@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,11 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
+<<<<<<< HEAD
         returnValue = returnValue.concat(frag.fragGetAtoms(render.ctab, fid));
+=======
+        ret = [...ret, ...frag.fragGetAtoms(render.ctab, fid)];
+>>>>>>> origin/master
       }
     });
     return returnValue;
@@ -59,7 +63,11 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
+<<<<<<< HEAD
         returnValue = returnValue.concat(frag.fragGetBonds(render.ctab, fid));
+=======
+        ret = [...ret, ...frag.fragGetBonds(render.ctab, fid)];
+>>>>>>> origin/master
       }
     });
     return returnValue;
@@ -96,14 +104,14 @@ class ReRGroup extends ReObject {
   draw(render: Render, options: RenderOptions): { data: unknown[] } {
     let bb = this.calcBBox(render);
 
-    if (!bb) {
+    if (bb) {
+      // add a little space between the attachment points and brackets
+      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
+    } else {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools',
       );
       return { data: [] };
-    } else {
-      // add a little space between the attachment points and brackets
-      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
     const returnValue: { data: unknown[] } = { data: [] };
@@ -250,14 +258,14 @@ function rGroupdrawBrackets(
 function rLogicToString(id: number | null, rLogic: RGroup): string {
   const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
 
-  const rangeExists =
+  const hasRangeOperator =
     rLogic.range.startsWith('>') ||
     rLogic.range.startsWith('<') ||
     rLogic.range.startsWith('=');
 
   let range: string;
   if (rLogic.range.length > 0) {
-    range = rangeExists ? rLogic.range : '=' + rLogic.range;
+    range = hasRangeOperator ? rLogic.range : '=' + rLogic.range;
   } else {
     range = '>0';
   }

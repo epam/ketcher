@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,13 +54,19 @@ export class RGroup {
   clone(fidMap?: Map<number, number> | null): RGroup {
     const returnValue = new RGroup(this);
     this.frags.forEach((fid) => {
+<<<<<<< HEAD
       if (!fidMap) {
         returnValue.frags.add(fid);
       } else {
+=======
+      if (fidMap) {
+>>>>>>> origin/master
         const mappedFid = fidMap.get(fid);
         if (mappedFid !== undefined) {
           returnValue.frags.add(mappedFid);
         }
+      } else {
+        ret.frags.add(fid);
       }
     });
     return returnValue;

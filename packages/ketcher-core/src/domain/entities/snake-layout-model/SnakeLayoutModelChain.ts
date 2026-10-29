@@ -34,7 +34,11 @@ export class SnakeLayoutModelChain {
 
   public get nodes() {
     return this.rows.reduce(
+<<<<<<< HEAD
       (accumulator, row) => accumulator.concat(row.snakeLayoutModelItems),
+=======
+      (acc, row) => [...acc, ...row.snakeLayoutModelItems],
+>>>>>>> origin/master
       [] as (
         | ITwoStrandedSnakeLayoutNode
         | EmptySnakeLayoutNode

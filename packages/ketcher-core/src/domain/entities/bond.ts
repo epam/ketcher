@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -164,6 +164,7 @@ export class Bond extends BaseMicromoleculeEntity {
   static getAttrHash(
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
+<<<<<<< HEAD
     const attributes: Partial<
       Pick<BondAttributes, keyof typeof Bond.attrlist>
     > = {};
@@ -171,6 +172,13 @@ export class Bond extends BaseMicromoleculeEntity {
       const key = attribute as keyof typeof Bond.attrlist;
       if (bond[key] || key === 'stereo') {
         attributes[key] = bond[key] as never;
+=======
+    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
+    for (const attr in this.attrlist) {
+      const key = attr as keyof typeof Bond.attrlist;
+      if (key === 'stereo' || bond[key]) {
+        attrs[key] = bond[key] as never;
+>>>>>>> origin/master
       }
     }
     return attributes;
@@ -227,7 +235,7 @@ export class Bond extends BaseMicromoleculeEntity {
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd);
+      this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -248,7 +256,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
       isAllSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -271,7 +279,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
       return [3];
@@ -284,9 +292,15 @@ export class Bond extends BaseMicromoleculeEntity {
     return [1, 3];
   }
 
+<<<<<<< HEAD
   static attrGetDefault(attribute: string) {
     if (attribute in Bond.attrlist) {
       return Bond.attrlist[attribute];
+=======
+  static attrGetDefault(attr: string) {
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
+>>>>>>> origin/master
     }
   }
 
@@ -360,7 +374,7 @@ export class Bond extends BaseMicromoleculeEntity {
   public static isBondToHiddenLeavingGroup(
     struct: Struct,
     bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -373,7 +387,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.begin,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
@@ -381,7 +395,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.end,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );

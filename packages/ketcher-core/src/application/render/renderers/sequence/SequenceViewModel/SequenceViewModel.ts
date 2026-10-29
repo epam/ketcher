@@ -205,8 +205,8 @@ export class SequenceViewModel {
 
             if (
               currentTwoStrandedSnakeLayoutNode &&
-              !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-              isNodeInSameChain
+              isNodeInSameChain &&
+              !currentTwoStrandedSnakeLayoutNode.antisenseNode
             ) {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
                 currentNodeBeforeHydrogenConnectionToBase;
@@ -237,8 +237,8 @@ export class SequenceViewModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length
       ) {
         for (
           let index = 0;
@@ -331,13 +331,13 @@ export class SequenceViewModel {
           ? getPreviousConnectedNode(lastHandledSenseNode, monomerToNode)
           : undefined;
 
-        if (!lastHandledSenseNode || !previousConnectedSenseNode) {
-          node.senseNode = new EmptySequenceNode();
-        } else {
+        if (lastHandledSenseNode && previousConnectedSenseNode) {
           node.senseNode = new BackBoneSequenceNode(
             previousConnectedSenseNode,
             lastHandledSenseNode,
           );
+        } else {
+          node.senseNode = new EmptySequenceNode();
         }
       }
 
@@ -346,13 +346,13 @@ export class SequenceViewModel {
           ? getNextConnectedNode(lastHandledAntisenseNode, monomerToNode)
           : undefined;
 
-        if (!lastHandledAntisenseNode || !nextConnectedAntisenseNode) {
-          node.antisenseNode = new EmptySequenceNode();
-        } else {
+        if (lastHandledAntisenseNode && nextConnectedAntisenseNode) {
           node.antisenseNode = new BackBoneSequenceNode(
             lastHandledAntisenseNode,
             nextConnectedAntisenseNode,
           );
+        } else {
+          node.antisenseNode = new EmptySequenceNode();
         }
       } else if (
         !lastHandledAntisenseChain ||

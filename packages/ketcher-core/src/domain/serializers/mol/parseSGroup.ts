@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,18 +25,31 @@ import utilities from './utils';
 import { assert } from 'utilities';
 
 function readKeyValuePairs(
+<<<<<<< HEAD
   string_: string,
   valueString: boolean,
+=======
+  str: string,
+  isStringValue: boolean,
+>>>>>>> origin/master
 ): Pool<string | number> {
   const returnValue = new Pool<string | number>();
   const partition = utilities.partitionLineFixed(string_, 3, true);
   const count = utilities.parseDecimalInt(partition[0]);
 
+<<<<<<< HEAD
   for (let index = 0; index < count; ++index) {
     const key = utilities.parseDecimalInt(partition[2 * index + 1]) - 1;
     const value = valueString
       ? partition[2 * index + 2].trim()
       : utilities.parseDecimalInt(partition[2 * index + 2]);
+=======
+  for (let i = 0; i < count; ++i) {
+    const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
+    const value = isStringValue
+      ? partition[2 * i + 2].trim()
+      : utils.parseDecimalInt(partition[2 * i + 2]);
+>>>>>>> origin/master
 
     returnValue.set(key, value);
   }
@@ -45,6 +58,7 @@ function readKeyValuePairs(
 }
 
 function readKeyMultiValuePairs(
+<<<<<<< HEAD
   string_: string,
   valueString: boolean,
 ): Array<[number, string | number]> {
@@ -57,6 +71,20 @@ function readKeyMultiValuePairs(
       valueString
         ? partition[2 * index + 2].trim()
         : utilities.parseDecimalInt(partition[2 * index + 2]),
+=======
+  str: string,
+  isStringValue: boolean,
+): Array<[number, string | number]> {
+  const ret: Array<[number, string | number]> = [];
+  const partition = utils.partitionLineFixed(str, 3, true);
+  const count = utils.parseDecimalInt(partition[0]);
+  for (let i = 0; i < count; ++i) {
+    ret.push([
+      utils.parseDecimalInt(partition[2 * i + 1]) - 1,
+      isStringValue
+        ? partition[2 * i + 2].trim()
+        : utils.parseDecimalInt(partition[2 * i + 2]),
+>>>>>>> origin/master
     ]);
   }
   return returnValue;
@@ -86,18 +114,18 @@ function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
 
   const bondsToRemove: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const beginIn = bond.begin in atomReductionMap;
-    const endIn = bond.end in atomReductionMap;
-    const endInPatoms = bond.end in patomsMap;
-    const beginInPatoms = bond.begin in patomsMap;
+    const isBeginInReductionMap = bond.begin in atomReductionMap;
+    const isEndInReductionMap = bond.end in atomReductionMap;
+    const isEndInParentAtoms = bond.end in patomsMap;
+    const isBeginInParentAtoms = bond.begin in patomsMap;
     if (
-      (beginIn && endIn) ||
-      (beginIn && endInPatoms) ||
-      (endIn && beginInPatoms)
+      (isBeginInReductionMap && isEndInReductionMap) ||
+      (isBeginInReductionMap && isEndInParentAtoms) ||
+      (isEndInReductionMap && isBeginInParentAtoms)
     ) {
       bondsToRemove.push(bid);
-    } else if (beginIn) bond.begin = atomReductionMap[bond.begin];
-    else if (endIn) bond.end = atomReductionMap[bond.end];
+    } else if (isBeginInReductionMap) bond.begin = atomReductionMap[bond.begin];
+    else if (isEndInReductionMap) bond.end = atomReductionMap[bond.end];
   });
 
   for (const bondId of bondsToRemove) {
@@ -131,7 +159,7 @@ function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
 }
 
 function postLoadDat(sgroup: SGroup, mol?: Struct): void {
-  if (!sgroup.data.absolute && mol) {
+  if (mol && !sgroup.data.absolute) {
     if (!sgroup.pp) {
       throw new Error('SGroup pp is not set');
     }
@@ -232,6 +260,7 @@ function initSGroup(sGroups: SGroupMap, propertyData: string): void {
 
 function applySGroupProperty(
   sGroups: SGroupMap,
+<<<<<<< HEAD
   propertyName: string,
   propertyData: string,
   numeric?: boolean,
@@ -240,6 +269,16 @@ function applySGroupProperty(
   const kv = readKeyValuePairs(propertyData, !numeric);
   for (const key of kv.keys()) {
     (core ? sGroups[key] : sGroups[key].data)[propertyName] = kv.get(key);
+=======
+  propName: string,
+  propData: string,
+  isNumeric?: boolean,
+  isCore?: boolean,
+): void {
+  const kv = readKeyValuePairs(propData, !isNumeric);
+  for (const key of kv.keys()) {
+    (isCore ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
+>>>>>>> origin/master
   }
 }
 
@@ -258,15 +297,19 @@ function applySGroupArrayProperty(
   if (part.length !== number_) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
 
+<<<<<<< HEAD
   sGroups[sid][propertyName] = sGroups[sid][propertyName].concat(part);
+=======
+  sGroups[sid][propName] = [...sGroups[sid][propName], ...part];
+>>>>>>> origin/master
 }
 
 function applyDataSGroupName(sg: SGroup, name: string): void {
   sg.data.fieldName = name;
 }
 
-function applyDataSGroupExpand(sg: SGroup, expanded: boolean): void {
-  sg.data.expanded = expanded;
+function applyDataSGroupExpand(sg: SGroup, isExpanded: boolean): void {
+  sg.data.expanded = isExpanded;
 }
 
 function applyDataSGroupQuery(sg: SGroup, query: string): void {
@@ -310,9 +353,9 @@ function applyDataSGroupInfo(sg: SGroup, propertyData: string): void {
 
   const x = Number.parseFloat(split[0]);
   const y = Number.parseFloat(split[1]);
-  const attached = split[3].trim() === 'A';
-  const absolute = split[4].trim() === 'A';
-  const showUnits = split[5].trim() === 'U';
+  const isAttached = split[3].trim() === 'A';
+  const isAbsolute = split[4].trim() === 'A';
+  const shouldShowUnits = split[5].trim() === 'U';
   const nCharsRaw = split[7].trim();
   const nCharsToDisplay =
     nCharsRaw === 'ALL' ? -1 : utilities.parseDecimalInt(nCharsRaw);
@@ -320,9 +363,9 @@ function applyDataSGroupInfo(sg: SGroup, propertyData: string): void {
   const daspPos = utilities.parseDecimalInt(split[11].trim());
 
   sg.pp = new Vec2(x, -y);
-  sg.data.attached = attached;
-  sg.data.absolute = absolute;
-  sg.data.showUnits = showUnits;
+  sg.data.attached = isAttached;
+  sg.data.absolute = isAbsolute;
+  sg.data.showUnits = shouldShowUnits;
   sg.data.nCharsToDisplay = nCharsToDisplay;
   sg.data.tagChar = tagChar;
   sg.data.daspPos = daspPos;
@@ -340,10 +383,10 @@ function applyDataSGroupInfoLine(
 function applyDataSGroupData(
   sg: SGroup,
   data: string,
-  finalize: boolean,
+  shouldFinalize: boolean,
 ): void {
   sg.data.fieldValue = (sg.data.fieldValue || '') + data;
-  if (finalize) {
+  if (shouldFinalize) {
     sg.data.fieldValue = trimRight(sg.data.fieldValue);
     if (
       sg.data.fieldValue.startsWith('"') &&
@@ -359,13 +402,18 @@ function applyDataSGroupData(
 
 function applyDataSGroupDataLine(
   sGroups: SGroupMap,
+<<<<<<< HEAD
   propertyData: string,
   finalize: boolean,
+=======
+  propData: string,
+  shouldFinalize: boolean,
+>>>>>>> origin/master
 ): void {
   const id = utilities.parseDecimalInt(propertyData.substring(0, 5)) - 1;
   const data = propertyData.substring(5);
   const sg = sGroups[id];
-  applyDataSGroupData(sg, data, finalize);
+  applyDataSGroupData(sg, data, shouldFinalize);
 }
 
 // Utility functions

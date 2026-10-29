@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -231,7 +231,7 @@ export class Struct {
   clone(
     atomSet?: Pile<number> | null,
     bondSet?: Pile<number> | null,
-    dropRxnSymbols?: boolean,
+    shouldDropRxnSymbols?: boolean,
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
@@ -239,14 +239,14 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
     attachmentGroupSet?: Pile<number> | null,
   ): Struct {
     const cloneStruct = this.mergeInto(
       new Struct(),
       atomSet,
       bondSet,
-      dropRxnSymbols,
+      shouldDropRxnSymbols,
       false,
       aidMap,
       simpleObjectsSet,
@@ -255,7 +255,7 @@ export class Struct {
       imagesSet,
       multitailArrowsSet,
       bidMap,
-      needCloneAttachmentPoints,
+      shouldCloneAttachmentPoints,
       attachmentGroupSet,
     );
     cloneStruct.findConnectedComponents();
@@ -333,8 +333,8 @@ export class Struct {
     cp: Struct,
     atomSet?: Pile<number> | null,
     bondSet?: Pile<number> | null,
-    dropRxnSymbols?: boolean,
-    keepAllRGroups?: boolean,
+    shouldDropRxnSymbols?: boolean,
+    shouldKeepAllRGroups?: boolean,
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
@@ -342,7 +342,7 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
     attachmentGroupSet?: Pile<number> | null,
   ): Struct {
     const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
@@ -392,7 +392,7 @@ export class Struct {
 
     const rgroupsIds: Array<number> = [];
     this.rgroups.forEach((rgroup, rgid) => {
-      let keepGroup = keepAllRGroups;
+      let keepGroup = shouldKeepAllRGroups;
       if (!keepGroup) {
         rgroup.frags.forEach((_fnum, fid) => {
           rgroupsIds.push(fid);
@@ -456,7 +456,7 @@ export class Struct {
           ? MonomerMicromolecule.clone(
               oldSgroup,
               aids,
-              needCloneAttachmentPoints,
+              shouldCloneAttachmentPoints,
             )
           : SGroup.clone(sg, aids);
 
@@ -515,7 +515,7 @@ export class Struct {
       cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aids));
     });
 
-    if (!dropRxnSymbols) {
+    if (!shouldDropRxnSymbols) {
       cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
         cp.addRxnArrow(item.clone());
@@ -535,8 +535,8 @@ export class Struct {
   prepareLoopStructure() {
     this.initHalfBonds();
     this.initNeighbors();
-    this.updateHalfBonds(Array.from(this.atoms.keys()));
-    this.sortNeighbors(Array.from(this.atoms.keys()));
+    this.updateHalfBonds([...this.atoms.keys()]);
+    this.sortNeighbors([...this.atoms.keys()]);
     this.findLoops();
   }
 
@@ -550,7 +550,7 @@ export class Struct {
     atom.sgs.add(sgid);
   }
 
-  calcConn(atom, includeAtomsInCollapsedSgroups = false) {
+  calcConn(atom, shouldIncludeAtomsInCollapsedSgroups = false) {
     let conn = 0;
     for (const neighborId of atom.neighbors) {
       const hb = this.halfBonds.get(neighborId);
@@ -562,7 +562,7 @@ export class Struct {
         Bond.isBondToHiddenLeavingGroup(
           this,
           bond,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         )
       ) {
         continue;
@@ -668,7 +668,7 @@ export class Struct {
     let startCoords: Vec2;
     let endCoords: Vec2;
 
-    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup1 instanceof MonomerMicromolecule) {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : beginEndpoint.pp;
@@ -679,7 +679,7 @@ export class Struct {
       startCoords = beginEndpoint.pp;
     }
 
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup2 instanceof MonomerMicromolecule) {
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : endEndpoint.pp;
@@ -783,16 +783,16 @@ export class Struct {
   }
 
   sortNeighbors(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((aid) => {
+        this.atomSortNeighbors(aid);
+      });
+    } else {
       this.atoms.forEach((_atom, aid) => {
         this.atomSortNeighbors(aid);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomSortNeighbors(id);
-      });
-    } else {
-      list.forEach((aid) => {
-        this.atomSortNeighbors(aid);
       });
     }
   }
@@ -809,16 +809,16 @@ export class Struct {
   }
 
   updateHalfBonds(list) {
-    if (!list) {
+    if (list) {
+      list.forEach((atomId) => {
+        this.atomUpdateHalfBonds(atomId);
+      });
+    } else {
       this.atoms.forEach((_atom, atomId) => {
         this.atomUpdateHalfBonds(atomId);
       });
       this.attachmentGroups.forEach((_attachmentGroup, id) => {
         this.atomUpdateHalfBonds(id);
-      });
-    } else {
-      list.forEach((atomId) => {
-        this.atomUpdateHalfBonds(atomId);
       });
     }
   }
@@ -921,12 +921,12 @@ export class Struct {
       });
     }
 
-    const global = !atomSet || atomSet.size === 0;
+    const isGlobal = !atomSet || atomSet.size === 0;
 
     this.atoms.forEach((atom, aid) => {
-      if (global || atomSet.has(aid)) extend(atom.pp);
+      if (isGlobal || atomSet.has(aid)) extend(atom.pp);
     });
-    if (global) {
+    if (isGlobal) {
       this.rxnPluses.forEach((item) => {
         extend(item.pp);
       });
@@ -951,14 +951,14 @@ export class Struct {
   getCoordBoundingBoxObj(): CoordBoundingBox {
     let bb: CoordBoundingBox | null = null;
     function extend(pp: Vec2) {
-      if (!bb) {
+      if (bb) {
+        bb.min = Vec2.min(bb.min, pp);
+        bb.max = Vec2.max(bb.max, pp);
+      } else {
         bb = {
           min: new Vec2(pp),
           max: new Vec2(pp),
         };
-      } else {
-        bb.min = Vec2.min(bb.min, pp);
-        bb.max = Vec2.max(bb.max, pp);
       }
     }
 
@@ -1012,7 +1012,9 @@ export class Struct {
     return lengths;
   }
 
-  /** Median of `values`, or -1 when there is nothing to measure. */
+  /**
+  Median of `values`, or -1 when there is nothing to measure.
+  */
   static median(values: number[]): number {
     if (values.length === 0) {
       return -1;
@@ -1037,16 +1039,23 @@ export class Struct {
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
-      scale >= Struct.MIN_RESCALE &&
-      scale <= Struct.MAX_RESCALE
+      scale >= this.MIN_RESCALE &&
+      scale <= this.MAX_RESCALE
     );
   }
 
   getAvgClosestAtomDistance(): number {
+<<<<<<< HEAD
     let totalDistribution = 0;
     let minDistribution;
     let distribution: number;
     const keys = Array.from(this.atoms.keys());
+=======
+    let totalDist = 0;
+    let minDist;
+    let dist: number;
+    const keys = [...this.atoms.keys()];
+>>>>>>> origin/master
     let k;
     let index;
     for (k = 0; k < keys.length; ++k) {
@@ -1122,7 +1131,7 @@ export class Struct {
     return ids;
   }
 
-  findConnectedComponents(discardExistingFragments?: boolean) {
+  findConnectedComponents(shouldDiscardExistingFragments?: boolean) {
     // NB: this is a hack
     // TODO: need to maintain half-bond and neighbor structure permanently
     if (!this.halfBonds.size) {
@@ -1141,7 +1150,7 @@ export class Struct {
     const components: ConnectedComponent[] = [];
     this.atoms.forEach((atom, aid) => {
       if (
-        (discardExistingFragments || atom.fragment < 0) &&
+        (shouldDiscardExistingFragments || atom.fragment < 0) &&
         !addedAtoms.has(aid) &&
         !this.isAtomFromMacromolecule(aid)
       ) {
@@ -1311,10 +1320,10 @@ export class Struct {
   // TODO: [MK] rewrite the detection algorithm to only find simple ones right away?
   partitionLoop(loop: LoopHalfBondIds) {
     const subloops: LoopHalfBondIds[] = [];
-    let continueFlag = true;
-    while (continueFlag) {
+    let shouldContinue = true;
+    while (shouldContinue) {
       const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-      continueFlag = false;
+      shouldContinue = false;
 
       for (const [index, hbid] of loop.entries()) {
         const hb = this.halfBonds.get(hbid);
@@ -1330,12 +1339,12 @@ export class Struct {
             // remove half-bonds corresponding to the subloop
             loop.splice(s, index - s + 1);
           }
-          continueFlag = true;
+          shouldContinue = true;
           break;
         }
         atomToHalfBond[aid1] = index;
       }
-      if (!continueFlag) subloops.push(loop); // we're done, no more subloops found
+      if (!shouldContinue) subloops.push(loop); // we're done, no more subloops found
     }
     return subloops;
   }
@@ -1393,7 +1402,7 @@ export class Struct {
       if (hb.loop !== -1) return;
 
       for (hbIdNext = hbId, c = 0, loop = []; c <= this.halfBonds.size; ++c) {
-        if (c > 0 && hbIdNext === hbId) {
+        if (hbIdNext === hbId && c > 0) {
           // loop found
           const subloops = this.partitionLoop(loop);
           subloops.forEach((subloop) => {
@@ -1438,11 +1447,14 @@ export class Struct {
 
     return {
       newLoops,
-      bondsToMark: Array.from(bondsToMark),
+      bondsToMark: [...bondsToMark],
     };
   }
 
-  calcImplicitHydrogen(aid: number, includeAtomsInCollapsedSgroups = false) {
+  calcImplicitHydrogen(
+    aid: number,
+    shouldIncludeAtomsInCollapsedSgroups = false,
+  ) {
     if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
       return;
     }
@@ -1452,13 +1464,13 @@ export class Struct {
     const charge = atom.charge ?? 0;
     const [conn, isAromatic] = this.calcConn(
       atom,
-      includeAtomsInCollapsedSgroups,
+      shouldIncludeAtomsInCollapsedSgroups,
     );
     let correctConn = conn;
     atom.badConn = false;
 
     if (isAromatic) {
-      if (atom.label === 'C' && charge === 0) {
+      if (charge === 0 && atom.label === 'C') {
         if (conn === 3) {
           atom.implicitH = -radicalElectrons(atom.radical);
           return;
@@ -1468,10 +1480,10 @@ export class Struct {
           return;
         }
       } else if (
-        (atom.label === 'O' && charge === 0) ||
-        (atom.label === 'N' && charge === 0 && conn === 3) ||
-        (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3) ||
+        (charge === 0 && atom.label === 'O') ||
+        (charge === 0 && conn === 3 && atom.label === 'N') ||
+        (charge === 1 && conn === 3 && atom.label === 'N') ||
+        (charge === 0 && conn === 3 && atom.label === 'S') ||
         !atom.implicitH
       ) {
         atom.implicitH = 0;
@@ -1502,7 +1514,7 @@ export class Struct {
 
   setImplicitHydrogen(
     list?: Array<number>,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     this.sgroups.forEach((item) => {
       if (item.data.fieldName === 'MRV_IMPLICIT_H') {
@@ -1512,24 +1524,21 @@ export class Struct {
       }
     });
 
-    if (!list) {
-      this.atoms.forEach((_atom, aid) => {
-        this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
-      });
-    } else {
+    if (list) {
       list.forEach((aid) => {
         if (this.atoms.get(aid)) {
-          this.calcImplicitHydrogen(aid, includeAtomsInCollapsedSgroups);
+          this.calcImplicitHydrogen(aid, shouldIncludeAtomsInCollapsedSgroups);
         }
+      });
+    } else {
+      this.atoms.forEach((_atom, aid) => {
+        this.calcImplicitHydrogen(aid, shouldIncludeAtomsInCollapsedSgroups);
       });
     }
   }
 
   public setStereoLabelsToAtoms() {
-    const stereAtomsMap = getStereoAtomsMap(
-      this,
-      Array.from(this.bonds.values()),
-    );
+    const stereAtomsMap = getStereoAtomsMap(this, [...this.bonds.values()]);
 
     this.atoms.forEach((atom, id) => {
       if (this?.atomGetNeighbors(id)?.length === 0) {
@@ -1557,7 +1566,9 @@ export class Struct {
   }
 
   getComponents() {
-    /* saver */
+    /*
+    saver
+    */
     const connectedComponents = this.findConnectedComponents(true);
     const barriers: number[] = [];
     let arrowPos: number | null = null;
@@ -1650,7 +1661,7 @@ export class Struct {
     // Search by sgroups is more expensive, but allows to find
     // functional groups for atoms which are not exist in struct already.
     // F.e. if atom already deleted and it needs to find its functional group
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (sgroup.atoms.includes(atomId)) return groupId;
     }
     return null;
@@ -1680,7 +1691,7 @@ export class Struct {
   getGroupIdFromBondId(bondId: number): number | null {
     const bond = this.bonds.get(bondId);
     if (!bond) return null;
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)
@@ -1707,7 +1718,7 @@ export class Struct {
 
     const groupsIds: number[] = [];
 
-    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+    for (const [groupId, sgroup] of [...this.sgroups]) {
       if (
         sgroup.atoms.includes(bond.begin) ||
         sgroup.atoms.includes(bond.end)
@@ -1912,23 +1923,25 @@ export class Struct {
           secondMonomer.getAttachmentPoints();
 
         this.bonds.forEach((bond, bondId) => {
-          const firstMonomerHasBondBegin = firstMonomerAtoms.has(bond.begin);
-          const firstMonomerHasBondEnd = firstMonomerAtoms.has(bond.end);
-          const secondMonomerHasBondBegin = secondMonomerAtoms.has(bond.begin);
-          const secondMonomerHasBondEnd = secondMonomerAtoms.has(bond.end);
+          const hasBondBeginInFirstMonomer = firstMonomerAtoms.has(bond.begin);
+          const hasBondEndInFirstMonomer = firstMonomerAtoms.has(bond.end);
+          const hasBondBeginInSecondMonomer = secondMonomerAtoms.has(
+            bond.begin,
+          );
+          const hasBondEndInSecondMonomer = secondMonomerAtoms.has(bond.end);
 
           const isBondConnectinBothMonomers =
-            (firstMonomerHasBondBegin && secondMonomerHasBondEnd) ||
-            (firstMonomerHasBondEnd && secondMonomerHasBondBegin);
+            (hasBondBeginInFirstMonomer && hasBondEndInSecondMonomer) ||
+            (hasBondEndInFirstMonomer && hasBondBeginInSecondMonomer);
 
           if (!isBondConnectinBothMonomers) {
             return;
           }
 
-          const firstMonomerAtom = firstMonomerHasBondBegin
+          const firstMonomerAtom = hasBondBeginInFirstMonomer
             ? bond.begin
             : bond.end;
-          const secondMonomerAtom = secondMonomerHasBondBegin
+          const secondMonomerAtom = hasBondBeginInSecondMonomer
             ? bond.begin
             : bond.end;
 
@@ -1959,42 +1972,42 @@ export class Struct {
               secondMonomerAttachmentPointInConnection,
             );
 
-          const firstMonomerHasStereoBondOnAttachmentPoint =
+          const hasStereoBondOnFirstMonomerAttachmentPoint =
             firstMonomerAttachmentPointBondStereo !== null &&
             firstMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
-          const secondMonomerHasStereoBondOnAttachmentPoint =
+          const hasStereoBondOnSecondMonomerAttachmentPoint =
             secondMonomerAttachmentPointBondStereo !== null &&
             secondMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
 
           if (
-            firstMonomerHasStereoBondOnAttachmentPoint &&
-            !secondMonomerHasStereoBondOnAttachmentPoint
+            hasStereoBondOnFirstMonomerAttachmentPoint &&
+            !hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
-            if (bond.begin !== firstMonomerAtom) {
+            if (bond.begin === firstMonomerAtom) {
+              bond.stereo = firstMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 firstMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = firstMonomerAttachmentPointBondStereo;
             }
           } else if (
-            !firstMonomerHasStereoBondOnAttachmentPoint &&
-            secondMonomerHasStereoBondOnAttachmentPoint
+            !hasStereoBondOnFirstMonomerAttachmentPoint &&
+            hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
-            if (bond.begin !== secondMonomerAtom) {
+            if (bond.begin === secondMonomerAtom) {
+              bond.stereo = secondMonomerAttachmentPointBondStereo;
+            } else {
               this.flipBondAndSetStereo(
                 bondId,
                 bond,
                 secondMonomerAttachmentPointBondStereo,
               );
-            } else {
-              bond.stereo = secondMonomerAttachmentPointBondStereo;
             }
           } else if (
-            firstMonomerHasStereoBondOnAttachmentPoint &&
-            secondMonomerHasStereoBondOnAttachmentPoint
+            hasStereoBondOnFirstMonomerAttachmentPoint &&
+            hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
             bond.stereo = Bond.PATTERN.STEREO.NONE;
           }

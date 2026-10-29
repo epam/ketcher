@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type { MonomerOrAmbiguousType } from 'domain/types';
 import {
   AmbiguousMonomer,
   Chem,
@@ -61,14 +60,6 @@ export type MonomerEntityClass =
  * domain entity class and KetMonomerClass enum value.
  * This is a pure domain helper — it has no renderer imports.
  */
-export function monomerEntityFactory(
-  monomer: MonomerItemType,
-): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
 export function monomerEntityFactory(
   monomer: MonomerOrAmbiguousType,
 ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {

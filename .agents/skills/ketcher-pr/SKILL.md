@@ -152,7 +152,7 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
-**In Ketcher:** for a change a user can see in the editor, put the `verify-ketcher` result under a `### Verified in the app` subheading: the feature, the mode, the result, and what the exported structure showed. With nothing visible, write `Verified in the app: n/a` and the reason.
+**In Ketcher:** for a change a user can see in the editor, put the `verify-ketcher` result under a `### Verified in the app` subheading: the feature, the mode, the result, and what the exported structure showed. Upload the screenshots the verification took, and any others that show the change, with `--attach '<file>#<alt text>'` on `gh pr create` or `gh pr edit`, and place each one next to the line it proves with `![<alt text>](<file>)` in the body. With nothing visible, write `Verified in the app: n/a` and the reason.
 
 ### Merge Danger
 

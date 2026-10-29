@@ -63,17 +63,28 @@ Review runs from the branch's worktree, against the run's spec (the issue, the r
 
 1. **Cleanup.** An **implementer** reads the diff since the branch point against _Write_ in [QUALITY.md](QUALITY.md) and removes what a careful author would not have written: narrating comments, defensive checks inside trusted code, casts that only silence the compiler, leftover debug output. Behavior stays the same and the checks still pass against the baseline. Done when the cleanup is one commit, or the diff had nothing to clean.
 
-2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, naming who is off the panel and why ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel. Dispatch the panel as fresh **reviewers** in parallel on that diff.
+2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, naming who is off the panel and why ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel, except in the bug kind (_Bug panel_ below). Dispatch the panel as fresh **reviewers** in parallel on that diff.
 
-   | Reviewer                          | On the panel when the diff                                                                                                                                               |
-   | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-   | **spec reviewer**                 | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                             |
-   | [code-quality](../code-review/code-quality.md)                    | changes code, tests included                                                                                                                                             |
-   | [performance](../code-review/performance.md)                      | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
+   | Reviewer                                                           | On the panel when the diff                                                                                                                                               |
+   | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+   | **spec reviewer**                                                  | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                          |
+   | [code-quality](../code-review/code-quality.md)                     | changes code, tests included                                                                                                                                             |
+   | [performance](../code-review/performance.md)                       | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
    | [documentation-accuracy](../code-review/documentation-accuracy.md) | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
-   | [security](../code-review/security.md)               | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
+   | [security](../code-review/security.md)                             | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
 
-   Each reviewer reads the [code-review skill](../code-review/SKILL.md) and the lens file its row links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
+   Each reviewer reads the [code-review skill](../code-review/SKILL.md) and the lens file its row links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold. A **performance** or **security** finding also carries a command and its output (a failing test, a repro script, a measurement): rerun it, and keep the finding when the output shows the failure. A finding with no run goes in the report as an open question, not as a fix.
+
+   **Bug panel.** The fix of a bug already has a red test and a `verify-ketcher` verdict, so its panel starts with the spec reviewer alone. A reviewer joins only when the diff clearly matches its trigger here, and the panel line names each reviewer left off and why:
+
+   | Reviewer               | Joins the bug panel when the diff                                                                                                                        |
+   | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | code-quality           | adds structure that outlives the fix: a new file, helper, parameter, or a branch in shared code                                                          |
+   | performance            | adds work that grows with the structure: a loop over atoms, bonds, or monomers, a call inside one, a call to Indigo, or an import in a published package |
+   | documentation-accuracy | makes a statement false in `openspec/specs/`, an ADR, a `.memory-bank/modules/` doc, or a README example                                                 |
+   | security               | matches the security row of the table above                                                                                                              |
+
+   Feature, refactor, and the other kinds keep the table above as written.
 
 3. **Fix.** Every finding ends fixed in a new commit or declined with a one-line reason. The flow names which implementer fixes. Blockers and majors are fixed. Batch accepted nits into one commit or decline them.
 

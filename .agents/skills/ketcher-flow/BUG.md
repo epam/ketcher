@@ -41,6 +41,8 @@ Checkable statements about behavior after the fix, one per line. The **red** loo
 
 A bug worth a design decision gets one more section between **Why** and **What**, naming the mismatch and resolving it. Say which model wins and why the other would surprise a user.
 
+A fix that crosses a module boundary goes through _Design It Twice_ before **What** is written. It crosses one when it changes an interface other modules call (the public `Ketcher` API, an editor or operation interface, a serializer), or lands in both editor modes. Run it as FEATURE.md step 6 says, with **designers** as the sub-agents: show the user the comparison and your pick, and go on with the pick unless they reply. Put the chosen seam, and the seams you rejected, in the design section.
+
 Done when `report.md` holds all three sections. Start Phase 3 in the same turn.
 
 ## Phase 3: Fix
@@ -58,7 +60,7 @@ Done when the red commit fails on its own, the fix commit turns it green, the br
 
 ## Phase 4: Review
 
-Run _Review_ in SKILL.md, with the report as the spec. You do the cleanup and the fixes yourself. Each round's reviewers stay fresh.
+Run _Review_ in SKILL.md with its _Bug panel_, and the report as the spec. You do the cleanup and the fixes yourself. Each round's reviewers stay fresh.
 
 ## Phase 5: Land
 

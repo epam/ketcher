@@ -46,15 +46,26 @@ When no row fits, ask the user, offering the kinds that fit. Done when you have 
 
 Code on a branch, a draft PR, and files in the run directory are reversible, so a flow goes on without asking. It stops for the user only at a decision that is theirs (product or design) or a write other people see on the tracker, and decides and records everything else. Each flow names its stops, on top of the open-PR stop in _Kinds_:
 
-| Kind          | Stops                                                                                  |
-| ------------- | -------------------------------------------------------------------------------------- |
-| **follow-up** | a comment that needs a product decision, posting the replies (FOLLOW-UP.md)            |
-| **bug**       | the escalations in BUG.md                                                              |
-| **small**     | none                                                                                   |
-| **feature**   | the proposal (FEATURE.md step 3)                                                       |
-| **refactor**  | `target.md` and the worktree choice (REFACTOR.md step 2)                               |
-| **symptoms**  | the issues to file (HUNT.md step 4)                                                    |
-| **batch**     | a large input set, the gate, paused tasks, tracker writes, worktree cleanup (BATCH.md) |
+| Kind          | Stops                                                                         |
+| ------------- | ----------------------------------------------------------------------------- |
+| **follow-up** | a comment that needs a product decision, posting the replies (FOLLOW-UP.md)   |
+| **bug**       | the escalations in BUG.md                                                     |
+| **small**     | none                                                                          |
+| **feature**   | the proposal (FEATURE.md step 3)                                              |
+| **refactor**  | `target.md` and the worktree choice (REFACTOR.md step 2)                      |
+| **symptoms**  | the issues to file (HUNT.md step 4)                                           |
+| **batch**     | a large input set, its tasks' stops in one message, tracker writes (BATCH.md) |
+
+## Dispatched by a batch
+
+A batch dispatches you as a **task orchestrator**: one task, a **task run directory** `<batch run dir>/<id>/`, the baseline path, a port block, and the roles table with the user's overrides. Run the task as one flow:
+
+1. **Triage.** When your tool gives you no way to dispatch a subagent, report `cannot dispatch` and end. Otherwise create the task worktree as [LOCATIONS.md](shared/LOCATIONS.md) says, then follow [TRIAGE.md](roles/TRIAGE.md). An outcome other than `ready` ends the run: remove the worktree, delete its branch, and report the outcome.
+2. **Flow.** Read the flow file of the kind triage named and run it whole, with the task run directory as its run directory. Use the baseline you were given in place of saving one, and take every app port from your block. At a gate, put only the work in `stop.md`: the roles table and the worktree choice come with the dispatch.
+3. **Stops.** At each stop of the flow, write what you would show the user to `<task run dir>/stop.md`, and end with the report `stopped: <step>`. The batch resumes you with the user's answer: go on from that step.
+4. **Report** when the flow ends: the PR, one outcome line for the run report, the paths the branch changed, and the Lessons. Put the brief (_The brief_ in [BATCH.md](flows/BATCH.md)) at the top of the PR body. Draft tracker comments in `<task run dir>/comment.md` in place of posting them.
+
+Done when you have reported `stopped: <step>` or the final report.
 
 ## Checks
 

@@ -10,7 +10,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
 ## Steps
 
-1. **Target.** Create the run directory, slug `refactor-<topic>`. Read the code in scope, with an **explorer** for anything large, and the `modules/` docs that own it. Write `<run dir>/target.md`:
+1. **Target.** Create the run directory, slug `refactor-<topic>`, and the task worktree, as LOCATIONS.md says. Read the code in scope, with an **explorer** for anything large, and the `modules/` docs that own it. Write `<run dir>/target.md`:
    - **Now**: the current shape, and what makes it hard to read: the layers a reader traces, the state a reader holds, the rules repeated across files.
    - **Target**: the shape you would build today, per _Shape first_ in [QUALITY.md](../shared/QUALITY.md): module layout, types, call graph. A target that changes an interface other modules call goes through _Design It Twice_, as [FEATURE.md](FEATURE.md) step 6 says. Use the `codebase-design` vocabulary (module, interface, seam, depth) in `target.md`.
    - **Gain**: how a reader answers "where does X come from?" and "what can change X?" faster in the target.
@@ -18,7 +18,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
    Done when `target.md` exists. When you cannot write the gain, stop and tell the user the code is already in a fair shape: that is a finished run, not a failure.
 
-2. **Gate.** Show the user `target.md` and the roles table from [ROLES.md](../roles/ROLES.md), and ask about worktrees: each implementer in its own worktree (the default, per _Worktrees_ in [LOCATIONS.md](../shared/LOCATIONS.md)), or the shared branch. Then **stop**. On the user's reply, create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline. Done when the branch exists and the baseline is saved.
+2. **Gate.** Show the user `target.md` and the roles table from [ROLES.md](../roles/ROLES.md), and ask about worktrees: each implementer in its own worktree (the default, per _Worktrees_ in [LOCATIONS.md](../shared/LOCATIONS.md)), or the shared branch. Then **stop**. On the user's reply, save the _Checks_ baseline in the task worktree. Done when `<run dir>/baseline/` holds every check's output.
 
 3. **Pin.** Dispatch an **implementer** with [IMPLEMENT.md](../roles/IMPLEMENT.md) and a ticket `<run dir>/tickets/pin.md`: Jest tests through the interface for every behavior `target.md` touches, per _Tests_ in QUALITY.md, passing on today's code. Where the behavior shows only in the editor, record a `verify-ketcher` run on `<base>` as the pin's app half, in `<run dir>/verify/before/`. Done when the pin is one commit and green.
 

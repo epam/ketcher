@@ -16,7 +16,7 @@ Everything else you decide and record: in `report.md` while you work, in the PR 
 
 ## Phase 1: Diagnose
 
-Create the run directory, slug `bug-<issue number>` or `bug-<topic>`. When the bug is an issue, read it with its comments. Follow [RED.md](../shared/RED.md). Done when RED.md's _Done when_ holds, or an escalation applies.
+Create the run directory, slug `bug-<issue number>` or `bug-<topic>`, and the task worktree, as [LOCATIONS.md](../shared/LOCATIONS.md) says. Save the _Checks_ baseline from [SKILL.md](../SKILL.md) there. When the bug is an issue, read it with its comments. Follow [RED.md](../shared/RED.md). Done when RED.md's _Done when_ holds, or an escalation applies.
 
 ## Phase 2: Report
 
@@ -48,8 +48,6 @@ Done when `report.md` holds all three sections. Start Phase 3 in the same turn.
 
 ## Phase 3: Fix
 
-Create the fix branch off `<base>` as _Branches_ in [LOCATIONS.md](../shared/LOCATIONS.md) says, and save the _Checks_ baseline from [SKILL.md](../SKILL.md).
-
 1. **Red commit.** Commit the red test from Phase 1 alone.
 2. **Fix commit.** Turn the red loop green as _Turning it green_ in [RED.md](../shared/RED.md) says. Write the fix per _Fixes_ and _Write_ in QUALITY.md.
 
@@ -65,6 +63,6 @@ Follow [REVIEW.md](../shared/REVIEW.md) with the report as the spec. You do the 
 
 ## Phase 5: Land
 
-Open the PR as _Landing_ in [SKILL.md](../SKILL.md) says. Under "Verified in the app", paste the repro output as it ran: failing before the fix, passing after, plus the fix evidence. Mark it ready once the [SNAPSHOTS.md](../shared/SNAPSHOTS.md) run, when there is one, is green.
+Open the PR as _Landing_ in SKILL.md says. Under "Verified in the app", paste the repro output as it ran: failing before the fix, passing after, plus the fix evidence. Mark it ready once the [SNAPSHOTS.md](../shared/SNAPSHOTS.md) run, when there is one, is green.
 
 Report to the user: what was broken, the root cause, the fix, how you verified it, the PR, what the checks said, and anything left open.

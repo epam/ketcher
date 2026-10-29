@@ -8,11 +8,11 @@ The existing tests and the type check hold the behavior. A small change that nee
 
 ## Steps
 
-1. **Scope.** Create the run directory, slug `small-<issue number>` or `small-<topic>`. Read the issue with its comments. Write the scope in `<run dir>/scope.md`: the reason in one line, the files or the lint rule it covers, and what stays out. For a lint-rule cleanup, list every violation with `npx eslint <paths> --rule '<rule>: error'` or the package's lint script. Done when `scope.md` names every file the change will touch.
+1. **Scope.** Create the run directory, slug `small-<issue number>` or `small-<topic>`, and the task worktree, as LOCATIONS.md says. Read the issue with its comments. Write the scope in `<run dir>/scope.md`: the reason in one line, the files or the lint rule it covers, and what stays out. For a lint-rule cleanup, list every violation with `npx eslint <paths> --rule '<rule>: error'` or the package's lint script. Done when `scope.md` names every file the change will touch.
 
    When the scope qualifies as a large-scale change (_Qualifies_ in the [protocol](../../../../.memory-bank/review-workflow.md#large-scale-change-protocol)), follow the protocol: usually split by package, one PR each.
 
-2. **Branch.** Create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline.
+2. **Baseline.** Save the _Checks_ baseline in the task worktree. Done when `<run dir>/baseline/` holds every check's output.
 
 3. **Change.** Make the change inside `scope.md`, per _Write_ in [QUALITY.md](../shared/QUALITY.md). A fault you find on the way is a new scope: note it for the report. Done when every file in `scope.md` is done and the checks pass against the baseline.
 

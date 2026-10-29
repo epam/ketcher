@@ -23,7 +23,7 @@ When the user asked for issues only ("just file them"), stop after step 5.
 
    Done when every symptom has its line.
 
-6. **Batch.** Read [BATCH.md](BATCH.md) and run it in this run directory from step 1, with the issues filed in step 4 as its input (no large-input ask), minus any whose cause was not found. Done when the batch's step 10 is done.
+6. **Batch.** Read [BATCH.md](BATCH.md) and run it in this run directory from step 1, with the issues filed in step 4 as its input (no large-input ask), minus any whose cause was not found. Done when the batch's step 6 is done.
 
 ## The issue
 

@@ -91,4 +91,5 @@ These are not tested yet. Check each one before you rely on the symlink setup.
 
 - Codex and GitHub Copilot accept SKILL.md frontmatter fields outside the Agent Skills spec, such as `disable-model-invocation`, `argument-hint`, and `user-invocable`.
 - GitHub Copilot lists a skill twice when it exists in `.agents/skills/` and is also reached through a `.claude/skills/` symlink.
+- Codex and GitHub Copilot CLI let a subagent dispatch subagents, which a `ketcher-flow` batch needs for its task orchestrators. Claude Code allows it by default.
 - GitHub Copilot CLI runs the `ketcher-flow` roles as `general-purpose` subagents through its `task` tool, with the model set on each call. GitHub's CLI docs describe this; no run in this repo has tried it.

@@ -12,17 +12,16 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
 ## Steps
 
-1. **Source.** Create the run directory, slug `feature-<topic>`. Find what already exists:
+1. **Source.** Create the run directory, slug `feature-<topic>`, and the task worktree, as [LOCATIONS.md](../shared/LOCATIONS.md) says. Find what already exists:
    - an OpenSpec change named in the conversation or in `openspec/changes/`: read its `proposal.md`, spec deltas, `design.md`, and `tasks.md`, then go to step 3;
    - a `Feature` issue or a goal in the conversation: go to step 2;
-   - a handoff from a batch (`feature handoff <run dir>/<id>`): the user approved the change at the batch's gate, and `<run dir>/<id>/tickets/` holds its tickets. Use that run directory and the task's worktree, and go to step 6.
 
 2. **Propose.** Run the `openspec-propose` skill ([its SKILL.md](../../openspec-propose/SKILL.md)) on the issue or the goal, with the rules in `openspec/config.yaml`. Read the specs the change touches in `openspec/specs/` first, so each delta names the requirement it changes. Done when `npx openspec validate <change> --strict` passes.
 
 3. **Gate.** Show the user the proposal: why, what changes, the spec deltas as WHEN/THEN, and the task list. Ask in the same message:
    - whether to change anything;
    - the roles table from [ROLES.md](../roles/ROLES.md), with the model you run on, taking overrides for any row;
-   - whether implementers each get their own worktree (the default, per _Worktrees_ in [LOCATIONS.md](../shared/LOCATIONS.md)) or share the branch;
+   - whether implementers each get their own worktree (the default, per _Worktrees_ in LOCATIONS.md) or share the branch;
    - when the tasks include E2E tests, whether to write those Playwright specs.
 
    Then **stop**. When the user asks for changes, revise the change and show it again. Done when the user approves: step 4 opens on that reply.
@@ -47,11 +46,11 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
    Done when no two tickets on the same frontier share a path.
 
-8. **Branch and PR.** Create the branch as _Branches_ in LOCATIONS.md says. Commit the change folder as the first commit, and open a draft PR, per TRACKER.md. Done when the draft PR exists and your checkout is its branch.
+8. **Draft PR.** Commit the change folder as the first commit in the task worktree, push, and open a draft PR, per TRACKER.md. Done when the draft PR exists.
 
 9. **Implement.** Save the _Checks_ baseline. Dispatch an **implementer** per ticket on the frontier, each with [IMPLEMENT.md](../roles/IMPLEMENT.md), its ticket file, `<run dir>/notes/`, and its worktree or the shared branch. Done when every ticket on the frontier has an implementer.
 
-10. **Merge.** When an implementer reports, dispatch a **merger** with [MERGE.md](../roles/MERGE.md), the implementer's branch, and the path of your checkout (it holds the PR branch). On a shared branch, skip the merger: the implementer committed there. Then tick the ticket's tasks in `tasks.md` and commit that. When a frontier changes, go to step 9 for the newly ready tickets.
+10. **Merge.** When an implementer reports, dispatch a **merger** with [MERGE.md](../roles/MERGE.md), the implementer's branch, and the path of the task worktree (it holds the PR branch). On a shared branch, skip the merger: the implementer committed there. Then tick the ticket's tasks in `tasks.md` and commit that. When a frontier changes, go to step 9 for the newly ready tickets.
 
     An implementer that reports **shape misfit** merges nothing. Take its ticket back to step 6 with the report as evidence. When two tickets report the same misfit, the shared design is wrong: redesign every ticket built on it.
 

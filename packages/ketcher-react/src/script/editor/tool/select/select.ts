@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -70,7 +70,7 @@ import {
   isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
-  onSelectionMove,
+  isSelectionMoveHandled,
   onSelectionStart,
   selMerge,
 } from './select.helpers';
@@ -195,8 +195,8 @@ class SelectTool implements Tool {
     if (ci.map === 'frags') {
       sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
-      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
-      sgroups
+      sgroups &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups')
     ) {
       const sgroup = sgroups.item;
       sel = {
@@ -281,7 +281,9 @@ class SelectTool implements Tool {
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
 
-      /* handle atoms */
+      /*
+      handle atoms
+      */
       const shouldDisplayDegree =
         selectionDragContext.item.map === 'atoms' &&
         atoms?.get(selectionDragContext.item.id)?.neighbors.length === 1 &&
@@ -294,7 +296,9 @@ class SelectTool implements Tool {
         const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
-      /* end */
+      /*
+      end
+      */
 
       /* handle image resize */
       if (isImageSelectionDragContext(selectionDragContext)) {
@@ -310,7 +314,9 @@ class SelectTool implements Tool {
         editor.update(selectionDragContext.action, true);
         return true;
       }
-      /* end + fullstop */
+      /*
+      end + fullstop
+      */
 
       /* handle simpleObjects */
       if (isSimpleObjectSelectionDragContext(selectionDragContext)) {
@@ -328,16 +334,22 @@ class SelectTool implements Tool {
         editor.update(selectionDragContext.action, true);
         return true;
       }
-      /* end + fullstop */
+      /*
+      end + fullstop
+      */
 
-      /* handle functionalGroups */
+      /*
+      handle functionalGroups
+      */
       if (
         selectionDragContext.item.map === 'functionalGroups' &&
         !selectionDragContext.action
       ) {
         editor.event.showInfo.dispatch(null);
       }
-      /* end */
+      /*
+      end
+      */
 
       if (selectionDragContext.action) {
         selectionDragContext.action.perform(restruct);
@@ -371,7 +383,7 @@ class SelectTool implements Tool {
 
       editor.update(selectionDragContext.action, true);
     } else {
-      const isSelectionRunning = onSelectionMove(
+      const isSelectionRunning = isSelectionMoveHandled(
         event,
         this.editor,
         this.#lassoHelper,
@@ -450,7 +462,9 @@ class SelectTool implements Tool {
 
     if (dragContext?.stopTapping) dragContext.stopTapping();
 
-    /* ignore salts and solvents */
+    /*
+    ignore salts and solvents
+    */
     const lastSelectedSgroupId = selectedSgroups.at(-1);
     const possibleSaltOrSolvent =
       lastSelectedSgroupId === undefined
@@ -824,7 +838,7 @@ function getHoverTarget(
   };
 }
 
-function getMapsForClosestItem(selectFragment: boolean) {
+function getMapsForClosestItem(shouldSelectFragment: boolean) {
   return [
     'sgroups',
     'functionalGroups',
@@ -838,7 +852,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'simpleObjects',
     'texts',
     IMAGE_KEY,
-    ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
+    ...(shouldSelectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }
 

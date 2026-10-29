@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +15,6 @@
  ***************************************************************************/
 
 import {
-  type Dispatch,
   type FC,
   useState,
   useEffect,
@@ -48,7 +46,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer, KetcherLogger } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger, type RenderOptions } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
 import { createSelector } from 'reselect';
@@ -58,6 +56,7 @@ import { functionalGroupsSelector } from '../../state/functionalGroups/selectors
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
 import { showSnackbarNotification } from '../../state/notifications';
+import type { AppDispatch } from '../../state/hooks';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -96,7 +95,7 @@ interface TemplateLibraryProperties {
   selected: Template | null;
   tab: number;
   saltsAndSolvents: Template[];
-  renderOptions?: any;
+  renderOptions?: RenderOptions;
   isMonomerCreationWizardActive?: boolean;
 }
 
@@ -106,13 +105,24 @@ interface TemplateLibraryCallProperties {
   onChangeGroup: (group: string) => void;
   onDelete: (tmpl: Template) => void;
   onFilter: (filter: string) => void;
-  onOk: (result: any) => void;
-  onSelect: (result: any) => void;
+  onOk: (result: unknown) => void;
+  onSelect: (tmpl: Template | null) => void;
   onTabChange: (tab: number) => void;
   functionalGroups: Template[];
 }
 
 type Properties = TemplateLibraryProperties & TemplateLibraryCallProperties;
+
+interface TemplateDialogStoreState {
+  templates: Pick<
+    TemplateLibraryProperties,
+    'filter' | 'group' | 'lib' | 'selected' | 'tab'
+  > & { attach: Record<string, unknown> };
+  editor?: {
+    render?: { options?: RenderOptions };
+    isMonomerCreationWizardActive?: boolean;
+  };
+}
 
 enum TemplateTabs {
   TemplateLibrary = 0,
@@ -459,14 +469,14 @@ const onModalClose = (properties, dispatch) => {
 };
 
 export default connect(
-  (store: any) => ({
+  (store: TemplateDialogStoreState) => ({
     ...omit(['attach'], store.templates),
     renderOptions: store.editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store),
     isMonomerCreationWizardActive: store.editor?.isMonomerCreationWizardActive,
   }),
-  (dispatch: Dispatch<any>, properties: Properties) => ({
+  (dispatch: AppDispatch, properties: Properties) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, properties, dispatch),

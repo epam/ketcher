@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -134,12 +134,13 @@ const MeasureInput = ({
 
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
-    const startsWithZero =
+    const hasLeadingZero =
       newStringifiedValue !== '0' && newStringifiedValue.startsWith('0');
-    const zeroWithDot = startsWithZero && newStringifiedValue.includes('.');
+    const hasLeadingZeroWithDot =
+      hasLeadingZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
-      startsWithZero && !zeroWithDot
+      hasLeadingZero && !hasLeadingZeroWithDot
         ? newStringifiedValue.replace(/^0/, '')
         : newStringifiedValue || '0';
     const isNumber = !Number.isNaN(Number(endorcedValue));

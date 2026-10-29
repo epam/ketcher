@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,7 +52,7 @@ export interface FormOwnProperties {
 interface FormDispatchProperties {
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => void;
 }
@@ -134,7 +134,7 @@ export interface CustomQueryFieldProperties extends FieldProperties {
   labelPos: string;
   checkboxValue?: boolean;
   onCheckboxChange?: (
-    value: boolean,
+    isChecked: boolean,
     formState: Record<string, unknown>,
     onChange: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
@@ -239,10 +239,10 @@ class Form extends Component<FormProperties> {
 export default connect(null, (dispatch) => ({
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => {
-    dispatch(updateFormState({ result, valid, errors }));
+    dispatch(updateFormState({ result, valid: isValid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
 }))(
@@ -391,11 +391,13 @@ function Field(properties: Readonly<FieldProperties>) {
 
     const isSelectableControl =
       rest.type === 'radio' || rest.type === 'checkbox';
-    const showError = Boolean(dataError) && !isSelectableControl;
+    const shouldShowError = Boolean(dataError) && !isSelectableControl;
 
     return (
       <>
-        <span className={clsx({ [classes.dataError]: showError }, className)}>
+        <span
+          className={clsx({ [classes.dataError]: shouldShowError }, className)}
+        >
           <span
             className={classes.inputWrapper}
             onMouseEnter={handlePopoverOpen}
@@ -410,7 +412,7 @@ function Field(properties: Readonly<FieldProperties>) {
             {formField}
           </span>
         </span>
-        {showError && dataError && anchorEl && (
+        {shouldShowError && dataError && anchorEl && (
           <ErrorPopover
             anchorEl={anchorEl}
             open={!!anchorEl}
@@ -698,7 +700,7 @@ function serializeRewrite(
 ): unknown {
   const result: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
-    return instance !== undefined ? instance : schema.default;
+    return instance === undefined ? schema.default : instance;
   }
 
   const instanceObject = instance as Record<string, unknown>;

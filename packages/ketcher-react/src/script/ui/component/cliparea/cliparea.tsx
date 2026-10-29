@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,7 +40,7 @@ const isAsyncClipboardWriteAvailable = (): boolean =>
   isClipboardAPIAvailable() && !isSafariBrowser();
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
-let needSkipCopyEvent = false;
+let shouldSkipCopyEvent = false;
 
 const isUserEditing = (): boolean => {
   const element = document.activeElement;
@@ -149,11 +149,11 @@ class ClipArea extends Component<ClipAreaProperties> {
             }
             event.preventDefault();
           } else {
-            if (needSkipCopyEvent) {
-              needSkipCopyEvent = false;
+            if (shouldSkipCopyEvent) {
+              shouldSkipCopyEvent = false;
               return;
             }
-            needSkipCopyEvent = true;
+            shouldSkipCopyEvent = true;
 
             this.props.onCopy().then((data) => {
               // It is possible to have access to clipboard data through evt.clipboardData
@@ -240,7 +240,7 @@ class ClipArea extends Component<ClipAreaProperties> {
                 this.props.onPaste(data, true);
               }
             } else {
-              window.ketcher?.editor?.errorHandler?.(
+              globalThis.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -419,24 +419,24 @@ async function pasteByKeydown(
 
 export const actions = ['cut', 'copy', 'paste'];
 
-export function exec(action: string): boolean {
-  let enabled = document.queryCommandSupported(action);
-  if (enabled) {
+export function canExecuteClipboardCommand(action: string): boolean {
+  let isEnabled = document.queryCommandSupported(action);
+  if (isEnabled) {
     try {
-      const windowWithClipboardEvent = window as Window & {
+      const windowWithClipboardEvent = globalThis.window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
-      enabled =
+      isEnabled =
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCallback);
     } catch (error) {
       // FF < 41
       KetcherLogger.error('cliparea.tsx::exec', error);
-      enabled = false;
+      isEnabled = false;
     }
   }
-  return enabled;
+  return isEnabled;
 }
 
 export default ClipArea;

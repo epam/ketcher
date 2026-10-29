@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -210,16 +210,15 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
         </div>
         <div className={classes.output}>
           {structStr &&
-            // in Edge 38: instanceof Promise always `false`
-            (structStr instanceof Promise || typeof structStr !== 'string' ? (
-              <div className={classes.messageContainer}>
-                <LoadingCircles />
-              </div>
-            ) : (
+            (typeof structStr === 'string' ? (
               <StructRender
                 className={classes.struct}
                 struct={structStr as unknown as Struct}
               />
+            ) : (
+              <div className={classes.messageContainer}>
+                <LoadingCircles />
+              </div>
             ))}
         </div>
       </div>
@@ -231,7 +230,8 @@ type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
+  const URL =
+    globalThis.URL || (globalThis.window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 

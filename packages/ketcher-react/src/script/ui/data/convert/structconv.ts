@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,7 +41,9 @@ const getSdataDefaultTyped = getSdataDefault as (
   fieldName?: string,
 ) => string | undefined;
 
-/** UI/form representation of an element, atom, or attachment point used in dialogs and tools. */
+/**
+UI/form representation of an element, atom, or attachment point used in dialogs and tools.
+*/
 export interface ElementFormData {
   type?: string;
   values?: (string | number)[];
@@ -71,11 +73,15 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
-  /** Fragment ID included in rlabel element payloads fired by the editor. */
+  /**
+  Fragment ID included in rlabel element payloads fired by the editor.
+  */
   fragId?: number;
 }
 
-/** S-group data as it comes from the editor (pre-dialog). */
+/**
+S-group data as it comes from the editor (pre-dialog).
+*/
 export interface SGroupInput {
   type?: string;
   attrs: {
@@ -102,7 +108,9 @@ export interface SGroupInput {
   };
 }
 
-/** S-group form data returned by the S-group dialog. */
+/**
+S-group form data returned by the S-group dialog.
+*/
 export interface SGroupFormData {
   type?: string;
   context?: string;
@@ -307,7 +315,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
-    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
+    charge: charge !== 0 && restAtom.charge ? Number(charge) : null,
     // Empty string from cleared form field must become null like undefined (not ?? alone).
     alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
@@ -442,7 +450,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : (sbond.customQuery?.toString() ?? ''),
+    customQuery: isCustomQuery ? (sbond.customQuery?.toString() ?? '') : '',
   };
 }
 
@@ -452,7 +460,7 @@ export function toBond(bond: ReturnType<typeof fromBond>) {
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    customQuery: !isCustomQuery ? null : bond.customQuery,
+    customQuery: isCustomQuery ? bond.customQuery : null,
     ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }

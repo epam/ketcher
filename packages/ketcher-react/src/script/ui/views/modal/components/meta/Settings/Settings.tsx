@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -419,6 +419,15 @@ const SettingsDialog = (props: Props) => {
             )}
             data-testid="valence-mode"
           />
+          <Field
+            name="aromatize-skip-superatoms"
+            data-testid="aromatize-skip-superatoms"
+          />
+          <Field
+            name="dearomatize-on-load"
+            tooltip={t('dialogs:meta.settings.dearomatizeOnLoadTooltip')}
+            data-testid="dearomatize-on-load"
+          />
         </fieldset>
       </fieldset>
     ),
@@ -435,10 +444,26 @@ const SettingsDialog = (props: Props) => {
             data-testid="smart-layout"
           />
         </fieldset>
-        <Field name="showAtomIds" data-testid="show-atom-ids" />
-        <Field name="showBondIds" data-testid="show-bond-ids" />
-        <Field name="showHalfBondIds" data-testid="show-half-bond-ids" />
-        <Field name="showLoopIds" data-testid="show-loop-ids" />
+        <Field
+          name="showAtomIds"
+          tooltip={t('dialogs:meta.settings.showAtomIdsTooltip')}
+          data-testid="show-atom-ids"
+        />
+        <Field
+          name="showBondIds"
+          tooltip={t('dialogs:meta.settings.showBondIdsTooltip')}
+          data-testid="show-bond-ids"
+        />
+        <Field
+          name="showHalfBondIds"
+          tooltip={t('dialogs:meta.settings.showHalfBondIdsTooltip')}
+          data-testid="show-half-bond-ids"
+        />
+        <Field
+          name="showLoopIds"
+          tooltip={t('dialogs:meta.settings.showLoopIdsTooltip')}
+          data-testid="show-loop-ids"
+        />
       </fieldset>
     ),
   };
@@ -514,8 +539,8 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
-    } catch (e) {
-      KetcherLogger.error('Settings.tsx::mapDispatchToProps', e);
+    } catch (error) {
+      KetcherLogger.error('Settings.tsx::mapDispatchToProps', error);
       console.info('Bad file');
     }
   },
@@ -526,11 +551,11 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
     dispatch(saveSettings(result, ownProps.ketcherId));
     ownProps.onOk(result);
 
-    const showNotification =
+    const shouldShowNotification =
       initState.reactionComponentMarginSize !==
       result.reactionComponentMarginSize;
 
-    if (showNotification) {
+    if (shouldShowNotification) {
       dispatch(
         onAction({
           dialog: 'info-modal',

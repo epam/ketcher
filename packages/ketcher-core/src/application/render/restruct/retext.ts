@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,7 @@ export interface SerializedTextNode {
   text: string;
   type: string;
   version?: number;
+  font?: string;
 }
 
 export interface SerializedParagraphNode {
@@ -45,6 +46,8 @@ export interface SerializedParagraphNode {
   indent?: number;
   type: string;
   version?: number;
+  textFormat?: number;
+  textStyle?: string;
 }
 
 export interface SerializedRootNode {
@@ -62,10 +65,10 @@ export interface SerializedEditorState {
 
 type TextStyles = RenderOptionStyles & { shiftY?: number };
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 const SCALE = 40; // from ketcher-core
 
@@ -132,12 +135,16 @@ class ReText extends ReObject {
           : widestRow,
       paths[0],
     );
-    const lastElOfWidestRow: RaphaelBaseElement =
-      widestRow[widestRow.length - 1];
+    const lastElOfWidestRow = widestRow.at(-1);
+    const lastRow = paths.at(-1);
+
+    if (!lastElOfWidestRow || !lastRow) {
+      throw new Error('Cannot get the bounds of empty selection paths');
+    }
+
     const rightEdge: number =
       lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
 
-    const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1];
     const bottomEdge: number = Math.max(
       ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
     );
@@ -167,7 +174,7 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!this.paths.length || !paper) return null;
+    if (!paper || !this.paths.length) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
@@ -221,9 +228,8 @@ class ReText extends ReObject {
           'text-anchor': 'start',
           fill: '#000000',
         });
-        path.node.setAttribute('data-testid', 'text-label');
-        path.node.setAttribute(
-          'data-text-id',
+        path.node.dataset.testid = 'text-label';
+        path.node.dataset.textId = String(
           restruct.molecule.texts.keyOf(this.item),
         );
         path.translateAbs(0, shiftY);
@@ -241,9 +247,8 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles,
           });
-          path.node.setAttribute('data-testid', 'text-label');
-          path.node.setAttribute(
-            'data-text-id',
+          path.node.dataset.testid = 'text-label';
+          path.node.dataset.textId = String(
             restruct.molecule.texts.keyOf(this.item),
           );
           path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
@@ -289,23 +294,23 @@ class ReText extends ReObject {
       }
     }
 
-    if (format & IS_BOLD) {
+    if (format & BOLD_FLAG) {
       styles['font-weight'] = 'bold';
     }
 
-    if (format & IS_ITALIC) {
+    if (format & ITALIC_FLAG) {
       styles['font-style'] = 'italic';
     }
 
     const fontsz = customFontSize ?? options.fontszInPx;
     const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
 
-    if (format & IS_SUBSCRIPT) {
+    if (format & SUBSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = fontsz / 4;
     }
 
-    if (format & IS_SUPERSCRIPT) {
+    if (format & SUPERSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = -fontsz / 3;
     }

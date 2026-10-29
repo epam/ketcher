@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,15 +95,17 @@ const FileDrop = ({
     onFileDialogOpen: () => {
       if (document.fullscreenElement) {
         (
-          window as unknown as Record<string, unknown>
+          globalThis as unknown as Record<string, unknown>
         ).isKetcherFullscreenBeforeFilePicker = true;
       }
     },
     onFileDialogCancel: () => {
-      const windowContext = window as unknown as Record<string, unknown>;
+      const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
         document.documentElement.requestFullscreen?.().catch(() => {
-          /* Restore fullscreen silently if failed */
+          /*
+          Restore fullscreen silently if failed
+          */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }

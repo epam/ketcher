@@ -14,6 +14,11 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import testingLibraryPlugin from 'eslint-plugin-testing-library';
 import reactYouMightNotNeedAnEffectPlugin from 'eslint-plugin-react-you-might-not-need-an-effect';
 import globals from 'globals';
+import { readFileSync } from 'node:fs';
+import {
+  rules as invariantRules,
+  ALLOWED_MODEL_MUTATIONS,
+} from './scripts/eslint-invariants-rules.mjs';
 
 const sanitizeGlobals = (source) => {
   if (!source || typeof source !== 'object') {
@@ -27,7 +32,7 @@ const sanitizeGlobals = (source) => {
   );
 };
 
-export default [
+const defaults = [
   {
     ignores: [
       '**/node_modules/**',
@@ -79,6 +84,7 @@ export default [
         console: 'readonly',
         process: 'readonly',
         Buffer: 'readonly',
+        ClipboardItem: 'readonly',
         __dirname: 'readonly',
         __filename: 'readonly',
         JSX: 'readonly',
@@ -347,4 +353,44 @@ export default [
     },
   },
   prettierConfig,
+];
+
+const coreDependencies = Object.keys(
+  JSON.parse(readFileSync(new URL('./packages/ketcher-core/package.json', import.meta.url))).dependencies ?? {},
+);
+
+const invariantsPlugin = { rules: invariantRules };
+
+const invariantsBlocks = [
+  {
+    files: ['packages/ketcher-core/src/domain/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/domain-no-application-imports': 'error',
+      'ketcher-invariants/ui-imports-in-core': 'error',
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/ui-imports-in-core': 'error',
+      'ketcher-invariants/ui-deps-in-core': ['error', { forbiddenDeps: coreDependencies }],
+    },
+  },
+  {
+    files: ['packages/ketcher-core/src/application/render/**/*.{ts,tsx}'],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/renderer-no-model-mutations': [
+        'error',
+        { allowedFiles: ALLOWED_MODEL_MUTATIONS },
+      ],
+    },
+  },
+];
+
+export default [
+  ...defaults,
+  ...invariantsBlocks,
 ];

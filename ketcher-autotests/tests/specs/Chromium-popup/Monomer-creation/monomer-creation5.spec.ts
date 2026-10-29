@@ -6,12 +6,7 @@ import {
   selectAllStructuresOnCanvas,
   takeElementScreenshot,
 } from '@utils/canvas';
-import {
-  clickOnCanvas,
-  dragMouseTo,
-  moveMouseAway,
-  shiftCanvas,
-} from '@utils/index';
+import { clickOnCanvas, dragMouseTo, moveMouseAway } from '@utils/index';
 import {
   createMonomer,
   CreateMonomerDialog,
@@ -120,9 +115,6 @@ test(`1. Check that the user can set one modification type for amino acids by cl
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getModificationTypes()).toEqual(
@@ -178,9 +170,6 @@ test(`2. Check that the user can set few modification types for amino acids by c
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide2);
   await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -376,9 +365,6 @@ test(`6. Check that if the user changes the monomer type after they've entered a
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getModificationTypes()).toBeNull();
@@ -565,9 +551,6 @@ test(`10. Check that the user can set a HELM alias for amino acids by clicking o
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide3);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
@@ -612,9 +595,6 @@ test(`11. Check that the user can set a HELM alias for sugars by clicking on + A
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Sugar.Sugar);
   await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -662,9 +642,6 @@ test(`12. Check that the user can set a HELM alias for bases by clicking on + Ad
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(
@@ -709,9 +686,6 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Phosphate.Phosphate);
   await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -795,9 +769,6 @@ test(`15. Check that the HELM symbol must be a string of uppercase and lowercase
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Phosphate.Phosphate2);
   await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -942,9 +913,6 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
   const monomerOnCanvas = getMonomerLocator(page, Base.Base);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual('1Nal');
@@ -1007,9 +975,6 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
   const monomerOnCanvas = getMonomerLocator(page, Nucleotide.Nucleotide);
   await expect(monomerOnCanvas).toBeVisible();
 
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
-
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
   expect(await MonomerPreviewTooltip(page).getHELMAlias()).toEqual(null);
@@ -1063,9 +1028,6 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, Peptide.Peptide);
   await expect(monomerOnCanvas).toBeVisible();
-
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
 
   await monomerOnCanvas.hover();
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1143,8 +1105,6 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Sugar);
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = getAttachmentPointLocator(
     page,
     AttachmentPoint.R1,
@@ -1200,8 +1160,6 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.Phosphate);
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = getAttachmentPointLocator(
     page,
     AttachmentPoint.R1,
@@ -1257,8 +1215,6 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
 
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  // shifting canvas to make tooltip appear fully
-  await shiftCanvas(page, -150, 50);
   const attachmentPointR1 = getAttachmentPointLocator(
     page,
     AttachmentPoint.R1,

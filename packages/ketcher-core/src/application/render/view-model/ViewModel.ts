@@ -34,20 +34,20 @@ export class ViewModel {
   private setAtomsToHalfEdgesMap(atom: Atom, halfEdge: HalfEdge) {
     const atomHalfEdges = this.atomsToHalfEdges.get(atom);
 
-    if (!atomHalfEdges) {
-      this.atomsToHalfEdges.set(atom, [halfEdge]);
-    } else {
+    if (atomHalfEdges) {
       atomHalfEdges.push(halfEdge);
+    } else {
+      this.atomsToHalfEdges.set(atom, [halfEdge]);
     }
   }
 
   private setBondsToHalfEdgesMap(bond: Bond, halfEdge: HalfEdge) {
     const bondsToHalfEdges = this.bondsToHalfEdges.get(bond);
 
-    if (!bondsToHalfEdges) {
-      this.bondsToHalfEdges.set(bond, [halfEdge]);
-    } else {
+    if (bondsToHalfEdges) {
       bondsToHalfEdges.push(halfEdge);
+    } else {
+      this.bondsToHalfEdges.set(bond, [halfEdge]);
     }
   }
 
@@ -131,11 +131,11 @@ export class ViewModel {
 
   private partitionLoop(halfEdgesInLoop: HalfEdge[]) {
     const subloops: Array<HalfEdge[]> = [];
-    let continueFlag = true;
+    let shouldContinue = true;
 
-    while (continueFlag) {
+    while (shouldContinue) {
       const atomToHalfBond: Record<number, number> = {}; // map from every atom in the loop to the index of the first half-bond starting from that atom in the uniqHb array
-      continueFlag = false;
+      shouldContinue = false;
 
       for (let l = 0; l < halfEdgesInLoop.length; ++l) {
         const halfEdge = halfEdgesInLoop[l];
@@ -150,12 +150,12 @@ export class ViewModel {
             // remove half-bonds corresponding to the subloop
             halfEdgesInLoop.splice(s, l - s + 1);
           }
-          continueFlag = true;
+          shouldContinue = true;
           break;
         }
         atomToHalfBond[firstAtomId] = l;
       }
-      if (!continueFlag) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
+      if (!shouldContinue) subloops.push(halfEdgesInLoop); // we're done, no more subloops found
     }
     return subloops;
   }
@@ -245,7 +245,7 @@ export class ViewModel {
         index <= this.halfEdges.size;
         currentHalfEdge = currentHalfEdge.nextHalfEdge, ++index
       ) {
-        if (!(index > 0 && currentHalfEdge === halfEdge)) {
+        if (index === 0 || currentHalfEdge !== halfEdge) {
           halfEdgesInPotentialLoop.push(currentHalfEdge);
           continue;
         }
@@ -291,7 +291,7 @@ export class ViewModel {
 
     return {
       newLoops,
-      bondsToMark: Array.from(bondsToMark),
+      bondsToMark: [...bondsToMark],
     };
   }
 
@@ -313,7 +313,14 @@ export class ViewModel {
     for (let i = 0; i < angles.length - 1; ++i) {
       largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
     }
-    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    const firstAngle = angles.at(0);
+    const lastAngle = angles.at(-1);
+
+    if (firstAngle === undefined || lastAngle === undefined) {
+      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
+    }
+
+    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
     for (let i = 0; i < angles.length; ++i) {

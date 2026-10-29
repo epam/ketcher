@@ -112,7 +112,7 @@ describe('expanded monomer rendering', () => {
   };
 
   const mockSvgGeometry = () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -146,7 +146,7 @@ describe('expanded monomer rendering', () => {
           return this;
         },
       }) as unknown as DOMPoint;
-    window.SVGElement.prototype.getBBox = () =>
+    globalThis.SVGElement.prototype.getBBox = () =>
       ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
   };
 
@@ -155,7 +155,7 @@ describe('expanded monomer rendering', () => {
   });
 
   it('shows CH3 for an expanded monomer with one visible atom and one leaving group', () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -189,7 +189,7 @@ describe('expanded monomer rendering', () => {
           return this;
         },
       }) as unknown as DOMPoint;
-    window.SVGElement.prototype.getBBox = () =>
+    globalThis.SVGElement.prototype.getBBox = () =>
       ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 
     const struct = new Struct();

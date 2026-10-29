@@ -110,6 +110,10 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
+import {
+  LayoutBoundsProvider,
+  MACROMOLECULES_MAIN_AREA_TEST_ID,
+} from 'components/Layout/Layout';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
@@ -352,7 +356,7 @@ function Editor({
   }, []);
 
   return (
-    <>
+    <LayoutBoundsProvider>
       <Layout>
         <Layout.Top
           shortened={!isMonomerLibraryHidden}
@@ -384,7 +388,7 @@ function Editor({
           <LeftMenuComponent />
         </Layout.Left>
 
-        <Layout.Main>
+        <Layout.Main data-testid={MACROMOLECULES_MAIN_AREA_TEST_ID}>
           <EditorEvents />
           <RulerArea />
           <CanvasWrapper
@@ -476,7 +480,7 @@ function Editor({
           ))}
         </StyledToastContainer>
       </Snackbar>
-    </>
+    </LayoutBoundsProvider>
   );
 }
 

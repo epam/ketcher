@@ -54,7 +54,7 @@ The hub reads only `structured_output`. A non-zero exit, `error_max_structured_o
 
 ### 4. Lenses stay in the code-review skill
 
-The finder prompts are the lens files in `.agents/skills/code-review/`, with the shared part of `SKILL.md`. Two lenses are added: `correctness.md` (bugs, regressions, invariant breaks, undo/redo, serialization round trips, mode and canvas switching) and `reuse.md` (existing code that the change should use or extend; the finding names it by `file:line`). The verifier gets its own role file. Output-format text in the prompts is replaced by the schema; the prompts keep the meaning of each field. `/review-pr` and `ketcher-flow` keep using the same lenses.
+The finder prompts are the lens files in `.agents/skills/code-review/`, with the shared part of `SKILL.md`. Two lenses are added: `functional-correctness.md` (bugs, regressions, invariant breaks, undo/redo, serialization round trips, mode and canvas switching) and `reuse.md` (existing code that the change should use or extend; the finding names it by `file:line`). The verifier gets its own role file. Output-format text in the prompts is replaced by the schema; the prompts keep the meaning of each field. `/review-pr` and `ketcher-flow` keep using the same lenses.
 
 ### 5. Rules come from the existing documents
 
@@ -66,7 +66,7 @@ The brief carries a hidden marker: `<!-- claude-review:v1 {"round":2,"head":"<sh
 
 ### 7. Depth, merging and ranking are pure functions
 
-- Quick (the `correctness` lens only): the Quick label, or at most 100 changed lines with no sensitive path. Standard (all six lenses) otherwise. Sensitive paths: `packages/ketcher-core/src/application/editor/`, `packages/ketcher-core/src/application/formatters/`, `packages/ketcher-core/src/domain/serializers/`.
+- Quick (the `functional-correctness` lens only): the Quick label, or at most 100 changed lines with no sensitive path. Standard (all six lenses) otherwise. Sensitive paths: `packages/ketcher-core/src/application/editor/`, `packages/ketcher-core/src/application/formatters/`, `packages/ketcher-core/src/domain/serializers/`.
 - Merging: same file and rule ID, lines within 3 → one finding with all locations and the count of lenses that reported it.
 - Ranking for verification: `blocker`, then findings from more than one lens, then `major`, then `nit`; at most N = 10 go to verification.
 - The hub computes from the patch whether each cited line is in the diff. Lines outside the diff go in the brief, because GitHub rejects review comments there.

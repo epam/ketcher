@@ -14,7 +14,7 @@ import {
 import { StyledMenu } from 'components/contextMenu/styles';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectIsContextMenuActive, setContextMenuActive } from 'state/common';
+import { isContextMenuActivated, setContextMenuActive } from 'state/common';
 
 export interface MenuItem {
   name: string;
@@ -138,7 +138,7 @@ export const ContextMenu = ({
   onVisibilityChange,
 }: MenuProperties) => {
   const dispatch = useAppDispatch();
-  const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
+  const isContextMenuActive = useAppSelector(isContextMenuActivated);
 
   useEffect(() => {
     const handleContextMenuClose = (event_) => {
@@ -160,7 +160,7 @@ export const ContextMenu = ({
 
   useEffect(() => {
     const handleEscapeKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || !isContextMenuActive) {
+      if (!isContextMenuActive || event.key !== 'Escape') {
         return;
       }
 

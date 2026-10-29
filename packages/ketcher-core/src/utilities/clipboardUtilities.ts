@@ -75,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
@@ -121,7 +121,7 @@ export async function getStructStringFromClipboardData(
  * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
  */
 export async function isPasteContentAvailable(
-  validateContent: (content: string) => Promise<boolean>,
+  isContentValid: (content: string) => Promise<boolean>,
 ): Promise<boolean> {
   if (!isClipboardAPIAvailable()) {
     return true;
@@ -130,7 +130,7 @@ export async function isPasteContentAvailable(
   try {
     const clipboardData = await navigator.clipboard.read();
     const structString = await getStructStringFromClipboardData(clipboardData);
-    return structString?.trim() ? validateContent(structString) : false;
+    return structString?.trim() ? isContentValid(structString) : false;
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

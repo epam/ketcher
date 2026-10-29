@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -102,19 +102,19 @@ function parseDecimalInt(string_: string): number {
  * Partition a line string into parts of varying lengths
  * @param string_ - The string to partition
  * @param parts - Array of lengths for each part
- * @param withspace - Whether there's a space between parts (default: false)
+ * @param hasSpaceBetweenParts - Whether there's a space between parts (default: false)
  * @returns Array of string parts
  */
 function partitionLine(
   string_: string,
   parts: number[],
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
   /* reader */
   const result: string[] = [];
   for (let index = 0, shift = 0; index < parts.length; ++index) {
     result.push(string_.slice(shift, shift + parts[index]));
-    if (withspace) shift++;
+    if (hasSpaceBetweenParts) shift++;
     shift += parts[index];
   }
   return result;
@@ -124,17 +124,17 @@ function partitionLine(
  * Partition a line string into fixed-length parts
  * @param string_ - The string to partition
  * @param itemLength - Length of each item
- * @param withspace - Whether there's a space between items (default: false)
+ * @param hasSpaceBetweenParts - Whether there's a space between items (default: false)
  * @returns Array of string parts
  */
 function partitionLineFixed(
   string_: string,
   itemLength: number,
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
   /* reader */
   const result: string[] = [];
-  const step = withspace ? itemLength + 1 : itemLength;
+  const step = hasSpaceBetweenParts ? itemLength + 1 : itemLength;
   let shift = 0;
   while (shift < string_.length) {
     result.push(string_.slice(shift, shift + itemLength));
@@ -307,7 +307,7 @@ function categorizeMolecules(
  * @param mol - Molecule to shift and merge
  * @param bb - Bounding box of the molecule
  * @param xorig - X origin for shifting
- * @param over - Whether to shift vertically over (true) or center (false)
+ * @param isAboveReactionArrow - Whether to shift vertically over (true) or center (false)
  * @returns Width of the shifted molecule
  */
 function shiftMol(
@@ -315,11 +315,11 @@ function shiftMol(
   mol: Struct,
   bb: BoundingBox,
   xorig: number,
-  over: boolean,
+  isAboveReactionArrow: boolean,
 ): number {
   const d = new Vec2(
     xorig - bb.min.x,
-    over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
+    isAboveReactionArrow ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
   mol.atoms.forEach((atom: Atom) => {
     atom.pp.add_(d);

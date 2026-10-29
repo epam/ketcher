@@ -96,7 +96,7 @@ const MonomerConnection = ({
       initialConnection.secondAttachmentPoint ||
         getDefaultAttachmentPoint(secondMonomer),
     );
-  const [modalExpanded, setModalExpanded] = useState(false);
+  const [isModalExpanded, setIsModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
     if (isReconnectionDialog) {
@@ -156,8 +156,8 @@ const MonomerConnection = ({
       onClose={cancelBondCreationAndClose}
       showExpandButton
       modalWidth="358px"
-      expanded={modalExpanded}
-      setExpanded={setModalExpanded}
+      expanded={isModalExpanded}
+      setExpanded={setIsModalExpanded}
       testId="monomer-connection-modal"
     >
       <Modal.Content>
@@ -165,13 +165,13 @@ const MonomerConnection = ({
           <ConnectionOverview
             firstMonomer={firstMonomer}
             secondMonomer={secondMonomer}
-            expanded={modalExpanded}
+            expanded={isModalExpanded}
             firstMonomerOverview={
               <AttachmentPointSelectionPanel
                 monomer={firstMonomer}
                 selectedAttachmentPoint={firstSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
-                expanded={modalExpanded}
+                expanded={isModalExpanded}
                 position="left"
               />
             }
@@ -180,7 +180,7 @@ const MonomerConnection = ({
                 monomer={secondMonomer}
                 selectedAttachmentPoint={secondSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
-                expanded={modalExpanded}
+                expanded={isModalExpanded}
                 position="right"
               />
             }
@@ -228,7 +228,7 @@ function AttachmentPointSelectionPanel({
   monomer,
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
-  expanded = false,
+  expanded: isExpanded = false,
   position,
 }: Readonly<AttachmentPointSelectionPanelProperties>): React.ReactElement {
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
@@ -265,11 +265,11 @@ function AttachmentPointSelectionPanel({
       connectedAttachmentPoints={connectedAttachmentPoints}
       selectedAttachmentPoint={selectedAttachmentPoint}
       usage={UsageInMacromolecule.MonomerConnectionsModal}
-      update={expanded}
-      expanded={expanded}
+      update={isExpanded}
+      expanded={isExpanded}
       attachmentPoints={monomer.listOfAttachmentPoints.map(
         (attachmentPoint) => {
-          const disabled = Boolean(
+          const isDisabled = Boolean(
             connectedAttachmentPoints.includes(attachmentPoint) &&
             attachmentPoint !== selectedAttachmentPoint,
           );
@@ -285,13 +285,13 @@ function AttachmentPointSelectionPanel({
                 clickHandler={() =>
                   handleSelectAttachmentPoint(attachmentPoint)
                 }
-                disabled={disabled}
+                disabled={isDisabled}
                 data-testid={`${position}-${attachmentPoint}`}
                 data-isactive={attachmentPoint === selectedAttachmentPoint}
               />
               <AttachmentPointNameComponent
                 data-testid={`leaving-group-value`}
-                disabled={disabled}
+                disabled={isDisabled}
               >
                 {getLeavingGroup(attachmentPoint)}
               </AttachmentPointNameComponent>

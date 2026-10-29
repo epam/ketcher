@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
 import {
   closeModal,
   selectAdditionalProps,
-  selectModalIsOpen,
+  isModalOpened,
   selectModalName,
 } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -24,7 +24,7 @@ import { useCallback } from 'react';
 import { modalComponentList } from './modalComponentList';
 
 export const ModalContainer = () => {
-  const isOpen = useAppSelector(selectModalIsOpen);
+  const isOpen = useAppSelector(isModalOpened);
   const modalName = useAppSelector(selectModalName);
   const additionalProperties = useAppSelector(selectAdditionalProps);
   const dispatch = useAppDispatch();

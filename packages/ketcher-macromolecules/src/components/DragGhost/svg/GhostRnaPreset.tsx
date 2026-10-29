@@ -40,15 +40,15 @@ export const GhostRnaPreset = ({ preset }: Properties) => {
   const baseSize = baseRenderer?.monomerSize;
   const phosphatePosition =
     preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
-  const phosphateOnLeft = phosphatePosition === 'left';
+  const isPhosphateOnLeft = phosphatePosition === 'left';
 
   const sugarX =
-    phosphateSize && phosphateOnLeft ? phosphateSize.width + 30 : 0;
+    phosphateSize && isPhosphateOnLeft ? phosphateSize.width + 30 : 0;
   const sugarY = 0;
 
   let phosphateX = 0;
   if (phosphateSize) {
-    phosphateX = phosphateOnLeft ? 0 : sugarX + sugarSize.width + 30;
+    phosphateX = isPhosphateOnLeft ? 0 : sugarX + sugarSize.width + 30;
   }
   const phosphateY = sugarY;
 
@@ -187,13 +187,13 @@ export const GhostRnaPreset = ({ preset }: Properties) => {
           <g>
             <line
               x1={
-                phosphateOnLeft
+                isPhosphateOnLeft
                   ? phosphateX + phosphateSize.width
                   : sugarX + sugarSize.width
               }
               y1={sugarY + sugarSize.height / 2}
               x2={
-                phosphateOnLeft
+                isPhosphateOnLeft
                   ? sugarX + connectorOutlineWidth / 3
                   : phosphateX + connectorOutlineWidth / 3
               }
@@ -204,13 +204,13 @@ export const GhostRnaPreset = ({ preset }: Properties) => {
             />
             <line
               x1={
-                phosphateOnLeft
+                isPhosphateOnLeft
                   ? phosphateX + phosphateSize.width - connectorOutlineWidth / 2
                   : sugarX + sugarSize.width - connectorOutlineWidth / 2
               }
               y1={sugarY + sugarSize.height / 2}
               x2={
-                phosphateOnLeft
+                isPhosphateOnLeft
                   ? sugarX + connectorOutlineWidth / 2
                   : phosphateX + connectorOutlineWidth / 2
               }

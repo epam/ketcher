@@ -41,7 +41,7 @@ export function guardForMacromoleculesEditor<
   handler: (...arguments_: TArguments) => TResult,
 ): (...arguments_: TArguments) => TResult | undefined {
   return (...arguments_: TArguments) => {
-    if (window.isPolymerEditorTurnedOn) {
+    if (globalThis.isPolymerEditorTurnedOn) {
       return handler(...arguments_);
     }
     return undefined;
@@ -69,7 +69,7 @@ export function guardForMicromoleculesEditor<
   handler: (...arguments_: TArguments) => TResult,
 ): (...arguments_: TArguments) => TResult | undefined {
   return (...arguments_: TArguments) => {
-    if (!window.isPolymerEditorTurnedOn) {
+    if (!globalThis.isPolymerEditorTurnedOn) {
       return handler(...arguments_);
     }
     return undefined;

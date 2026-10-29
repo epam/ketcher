@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ export function sanitizeCustomColors(
     uniqueColors.add(normalizedColor);
   }
 
-  return Array.from(uniqueColors).slice(0, MAX_CUSTOM_COLORS);
+  return [...uniqueColors].slice(0, MAX_CUSTOM_COLORS);
 }
 
 export function addCustomColor(

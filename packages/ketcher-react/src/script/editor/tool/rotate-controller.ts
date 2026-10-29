@@ -164,8 +164,12 @@ class RotateController implements RotateControllerContract {
     const { texts, rxnArrows, rxnPluses } = selection || {};
 
     const isMoreThanOneItemBeingSelected =
-      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1;
+      [
+        ...visibleAtoms,
+        ...(texts || []),
+        ...(rxnArrows || []),
+        ...(rxnPluses || []),
+      ].length > 1;
 
     const currentTool = this.editor.tool();
     const enable =

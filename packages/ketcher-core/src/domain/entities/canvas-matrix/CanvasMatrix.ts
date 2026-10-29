@@ -100,8 +100,8 @@ export class CanvasMatrix {
         }
       }
       if (
-        (cell.x === 0 && direction !== 90) ||
-        (cell.y === 0 && direction === 90)
+        (direction !== 90 && cell.x === 0) ||
+        (direction === 90 && cell.y === 0)
       ) {
         currentConnections.clear();
       }

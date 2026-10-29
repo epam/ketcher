@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -43,12 +43,12 @@ const debouncedSetAndHoverMergeItems = debounce(function (
   editor,
   pasteItems,
   pasteToolInstance,
-  needResetTool = false,
+  shouldResetTool = false,
 ) {
   const mergeItems = getItemsToFuse(editor, pasteItems);
   editor.hover(
     getHoverToFuse(mergeItems),
-    needResetTool ? pasteToolInstance : undefined,
+    shouldResetTool ? pasteToolInstance : undefined,
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
@@ -163,7 +163,7 @@ class PasteTool implements Tool {
         this.editor.render,
       );
 
-      const extraBond = true;
+      const hasExtraBond = true;
 
       const struct = this.editor.struct();
       const targetGroup = struct.sgroups.get(this.dragCtx.item.id);
@@ -216,7 +216,7 @@ class PasteTool implements Tool {
         prepareTemplateFromSingleGroup(this.struct),
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
 
       this.dragCtx.action = action;
@@ -246,10 +246,10 @@ class PasteTool implements Tool {
   mouseup() {
     const idsOfItemsMerged = this.mergeItems && {
       ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
+        atoms: [...this.mergeItems.atoms.values()],
       }),
       ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
+        bonds: [...this.mergeItems.bonds.values()],
       }),
     };
 
@@ -307,7 +307,9 @@ class PasteTool implements Tool {
   }
 }
 
-/** Adds position and angle info to the molecule, similar to Template tool native behavior */
+/**
+Adds position and angle info to the molecule, similar to Template tool native behavior
+*/
 function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();

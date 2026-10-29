@@ -43,11 +43,11 @@ const useIDTAliasesTextForMonomer = ({
 
     // For preview in library
 
-    const allModificationsHaveSameBase = Object.values(modifications).every(
+    const hasSameBaseForAllModifications = Object.values(modifications).every(
       (modification) => modification.includes(base),
     );
 
-    if (endpoint3 && endpoint5 && internal && allModificationsHaveSameBase) {
+    if (endpoint3 && endpoint5 && internal && hasSameBaseForAllModifications) {
       return removeSlashesFromIdtAlias(base);
     }
 

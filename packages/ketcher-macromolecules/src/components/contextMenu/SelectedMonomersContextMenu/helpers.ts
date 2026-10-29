@@ -357,7 +357,10 @@ export const isCycleExistsForSelectedMonomers = (
     return neighbors;
   };
 
-  const dfs = (monomer: BaseMonomer, parent: BaseMonomer | null): boolean => {
+  const hasCycleFromMonomer = (
+    monomer: BaseMonomer,
+    parent: BaseMonomer | null,
+  ): boolean => {
     visited.add(monomer);
     inRecursionStack.add(monomer);
 
@@ -373,7 +376,7 @@ export const isCycleExistsForSelectedMonomers = (
       }
 
       if (!visited.has(neighbor)) {
-        if (dfs(neighbor, monomer)) {
+        if (hasCycleFromMonomer(neighbor, monomer)) {
           return true;
         }
       }
@@ -385,7 +388,7 @@ export const isCycleExistsForSelectedMonomers = (
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      if (dfs(monomer, null)) {
+      if (hasCycleFromMonomer(monomer, null)) {
         return true;
       }
     }

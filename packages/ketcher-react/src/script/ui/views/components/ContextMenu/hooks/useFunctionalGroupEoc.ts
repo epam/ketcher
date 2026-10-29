@@ -19,7 +19,7 @@ const useFunctionalGroupEoc = () => {
   const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: Params, toExpand: boolean) => {
+    ({ props }: Params, shouldExpand: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
@@ -28,7 +28,7 @@ const useFunctionalGroupEoc = () => {
       for (const functionalGroup of selectedFunctionalGroups ?? []) {
         action.mergeWith(
           setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
-            expanded: toExpand,
+            expanded: shouldExpand,
           }),
         );
       }
@@ -40,9 +40,9 @@ const useFunctionalGroupEoc = () => {
     [dispatch, ketcherId],
   );
 
-  const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
-    // If trying to contract (toExpand is false), hide the option if any functional group has no name
-    if (!toExpand) {
+  const hidden = useCallback(({ props }: Params, shouldExpand: boolean) => {
+    // If trying to contract, hide the option if any functional group has no name
+    if (!shouldExpand) {
       const hasEmptyName = props?.functionalGroups?.some(
         (functionalGroup) =>
           !(
@@ -57,7 +57,7 @@ const useFunctionalGroupEoc = () => {
 
     return Boolean(
       props?.functionalGroups?.every((functionalGroup) =>
-        toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+        shouldExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
       ),
     );
   }, []);

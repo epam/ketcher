@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -200,9 +200,7 @@ class RotateTool implements Tool {
   }
 
   mousemove = throttle((event) => {
-    if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
-    } else {
+    if (this.dragCtx) {
       const dragCtx = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
@@ -248,6 +246,8 @@ class RotateTool implements Tool {
 
         this.editor.update(dragCtx.action, true);
       }
+    } else {
+      this.editor.hover(null, null, event);
     }
     return true;
   }, 40); // 25fps
@@ -297,9 +297,23 @@ class RotateTool implements Tool {
           this.struct,
           this.selection?.atoms,
         );
-        const monomerRotateAction = new Action();
+        const monomerSGroups: MonomerMicromolecule[] = [];
         for (const sGroup of sGroups) {
           if (sGroup instanceof MonomerMicromolecule) {
+            monomerSGroups.push(sGroup);
+          }
+        }
+        // If at least one monomer in the selection is expanded, every
+        // monomer (including collapsed ones) gets its rotation metadata
+        // assigned, matching the atom-transform behavior in `fromRotate`.
+        // If none are expanded, no monomer gets a `RotateMonomerOperation`
+        // since their atoms were only rigidly translated, not rotated.
+        const hasExpandedMonomer = monomerSGroups.some((sGroup) =>
+          sGroup.isExpanded(),
+        );
+        const monomerRotateAction = new Action();
+        if (hasExpandedMonomer) {
+          for (const sGroup of monomerSGroups) {
             const angleInRadians = (dragCtx.angle * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({

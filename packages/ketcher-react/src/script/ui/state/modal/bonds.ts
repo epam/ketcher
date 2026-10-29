@@ -7,7 +7,7 @@ export function updateSelectedBonds({
   editor,
 }: {
   bonds: number[];
-  changeBondPromise: Promise<Bond>;
+  changeBondPromise: Bond | PromiseLike<Bond>;
   editor;
 }) {
   const action = new Action();
@@ -33,8 +33,8 @@ export function updateSelectedBonds({
         }
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('bonds.ts::updateSelectedBonds', e);
+      .catch((error) => {
+        KetcherLogger.error('bonds.ts::updateSelectedBonds', error);
       });
   }
 }

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -199,24 +199,25 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   }
 
-  const reImages = Array.from(restruct.images.entries()).reduce(
+  const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]): Array<number> => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => point.isInsidePolygon(polygon));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? [...acc, id] : acc;
     },
     [],
   );
 
-  const reMultitailArrows = Array.from(
-    restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]): Array<number> => {
-    const isPointInside = item.multitailArrow
-      .getReferencePositionsArray()
-      .some((point) => point.isInsidePolygon(polygon));
-    return isPointInside ? acc.concat(id) : acc;
-  }, []);
+  const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
+    (acc: Array<number>, [id, item]): Array<number> => {
+      const isPointInside = item.multitailArrow
+        .getReferencePositionsArray()
+        .some((point) => point.isInsidePolygon(polygon));
+      return isPointInside ? [...acc, id] : acc;
+    },
+    [],
+  );
 
   return {
     atoms: atomList,
@@ -378,24 +379,25 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     }
   }
 
-  const reImages = Array.from(restruct.images.entries()).reduce(
+  const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]) => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => isPointInPolygon(r, point));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? [...acc, id] : acc;
     },
     [],
   );
 
-  const reMultitailArrows = Array.from(
-    restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]) => {
-    const isPointInside = item.multitailArrow
-      .getReferencePositionsArray()
-      .some((point) => isPointInPolygon(r, point));
-    return isPointInside ? acc.concat(id) : acc;
-  }, []);
+  const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
+    (acc: Array<number>, [id, item]) => {
+      const isPointInside = item.multitailArrow
+        .getReferencePositionsArray()
+        .some((point) => isPointInPolygon(r, point));
+      return isPointInside ? [...acc, id] : acc;
+    },
+    [],
+  );
 
   return {
     atoms: atomList,
@@ -424,36 +426,40 @@ function isPointInPolygon(r, p) {
   let w0 = new Vec2(0, 0);
   let counter = 0;
   const eps = 1e-5;
-  let flag1;
-  let flag0 = false;
+  let hasCurrentRayCrossing;
+  let hasPreviousRayCrossing = false;
 
   for (const point of r) {
     const v1 = Vec2.diff(point, p);
     const w1 = Vec2.diff(v1, v0);
     const n1 = Vec2.dot(n, v1);
     const d1 = Vec2.dot(d, v1);
-    flag1 = false;
+    hasCurrentRayCrossing = false;
     if (n1 * n0 < 0) {
       if (d1 * d0 > -eps) {
-        if (d0 > -eps) flag1 = true;
+        if (d0 > -eps) hasCurrentRayCrossing = true;
       } else if (
         (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
         0
       ) {
-        flag1 = true;
+        hasCurrentRayCrossing = true;
       }
     }
-    if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
-      flag1 = false;
+    if (
+      hasCurrentRayCrossing &&
+      hasPreviousRayCrossing &&
+      Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0
+    ) {
+      hasCurrentRayCrossing = false;
     }
-    if (flag1) {
+    if (hasCurrentRayCrossing) {
       counter++;
     }
     v0 = v1;
     n0 = n1;
     d0 = d1;
     w0 = w1;
-    flag0 = flag1;
+    hasPreviousRayCrossing = hasCurrentRayCrossing;
   }
   return counter % 2 !== 0;
 }

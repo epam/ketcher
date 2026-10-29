@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -89,7 +89,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
   const errors: KetcherCheckErrors = {};
 
   if (checkParams.includes('chiral_flag')) {
-    const isAbs = Array.from(struct.frags.values()).some(
+    const isAbs = [...struct.frags.values()].some(
       (fr) => (fr?.enhancedStereoFlag as string | undefined) === 'abs',
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
@@ -296,9 +296,9 @@ export async function serverCall<T>(
 
   const request: { struct: string; [key: string]: unknown } = {
     struct: serializedStruct,
-    ...(method !== 'calculate' && method !== 'check'
-      ? { output_format: ChemicalMimeType.KET }
-      : {}),
+    ...(method === 'calculate' || method === 'check'
+      ? {}
+      : { output_format: ChemicalMimeType.KET }),
     ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
     ...(options.data ?? {}),
   };

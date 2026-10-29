@@ -2,7 +2,7 @@ import { saveAs } from 'file-saver';
 import type { FileSaverReturnType } from './saveButton.types';
 
 export const fileSaver = async (server): FileSaverReturnType => {
-  if (global.Blob && saveAs) {
+  if (globalThis.Blob && saveAs) {
     return (data, fn, type) => {
       const blob = new Blob([data], { type });
       saveAs(blob, fn);

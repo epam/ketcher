@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -307,7 +307,9 @@ class TemplateTool implements Tool {
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
-    /* moving when attached to bond */
+    /*
+    moving when attached to bond
+    */
     if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
       if (!bond) {
@@ -343,9 +345,11 @@ class TemplateTool implements Tool {
       }
       return;
     }
-    /* end */
+    /*
+    end
+    */
 
-    let extraBond = false;
+    let hasExtraBond = false;
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -358,7 +362,7 @@ class TemplateTool implements Tool {
         targetPos = atom?.pp ?? null;
 
         if (targetPos) {
-          extraBond = this.isModeFunctionalGroup
+          hasExtraBond = this.isModeFunctionalGroup
             ? true
             : Vec2.dist(targetPos, eventPosition) > 1;
         }
@@ -386,7 +390,7 @@ class TemplateTool implements Tool {
       dragCtx.angle === degrees &&
       // eslint-disable-next-line no-prototype-builtins
       (!dragCtx.hasOwnProperty('extra_bond') ||
-        dragCtx.extra_bond === extraBond)
+        dragCtx.extra_bond === hasExtraBond)
     ) {
       return;
     }
@@ -420,9 +424,9 @@ class TemplateTool implements Tool {
         this.template,
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
-      dragCtx.extra_bond = extraBond;
+      dragCtx.extra_bond = hasExtraBond;
     }
     dragCtx.action = action;
 
@@ -447,7 +451,9 @@ class TemplateTool implements Tool {
     const restruct = this.editor.render.ctab;
     let ci = dragCtx.item;
 
-    /* after moving around bond */
+    /*
+    after moving around bond
+    */
     if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       dragCtx.action.perform(restruct); // revert drag action
 
@@ -465,7 +471,9 @@ class TemplateTool implements Tool {
       this.editor.update(action);
       return;
     }
-    /* end */
+    /*
+    end
+    */
 
     let action, functionalGroupRemoveAction;
 

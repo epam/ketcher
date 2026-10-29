@@ -185,10 +185,10 @@ function handleAtomPropsDialog({
         );
 
         editor.update(updatedAtom);
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'handleHotkeysOverItem.ts::handleAtomPropsDialog',
-          e,
+          error,
         );
       }
     })();
@@ -226,10 +226,10 @@ function handleBondPropsDialog({
       );
 
       editor.update(updatedBond);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'handleHoutkeysOverItem.ts::handleBondPropsDialog',
-        e,
+        error,
       );
     }
   })();
@@ -405,7 +405,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
     } else if (rglabel !== element.rglabel) {
-      if (!element.rglabel && label !== 'R#') {
+      if (label !== 'R#' && !element.rglabel) {
         element.label = label;
       }
 
@@ -413,8 +413,11 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
         fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
       );
     }
-  } catch (e) {
-    KetcherLogger.error('handleHotkeysOverItem.ts::handleRGroupAtomTool', e);
+  } catch (error) {
+    KetcherLogger.error(
+      'handleHotkeysOverItem.ts::handleRGroupAtomTool',
+      error,
+    );
   } // w/o changes
 }
 

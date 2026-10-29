@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,7 +50,7 @@ export const CDXStructuresViewer = ({
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
-  const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
+  const isLoading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
     if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
@@ -101,7 +101,7 @@ export const CDXStructuresViewer = ({
   }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
-    if (loading) {
+    if (isLoading) {
       return (
         <div className={styles.centerWrapper}>
           <LoadingCircles />

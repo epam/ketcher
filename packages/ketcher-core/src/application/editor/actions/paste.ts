@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,9 +72,9 @@ export function fromPaste(
   point: Vec2,
   angle = 0,
   isPreview = false,
-  needMoveFromTopLeftPoint = false,
+  shouldMoveFromTopLeftPoint = false,
 ): [Action, PasteItems, CreatedItems] {
-  const xy0 = needMoveFromTopLeftPoint
+  const xy0 = shouldMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -110,8 +110,8 @@ export function fromPaste(
     if (
       fragmentId !== undefined &&
       fragmentId !== null &&
-      !fridMap.has(fragmentId) &&
-      !isMacromoleculeAtom
+      !isMacromoleculeAtom &&
+      !fridMap.has(fragmentId)
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 

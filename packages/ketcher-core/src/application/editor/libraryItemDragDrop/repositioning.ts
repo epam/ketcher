@@ -94,14 +94,14 @@ export function applyPresetMirroringIfNeeded(
 ): Command {
   const command = new Command();
 
-  const droppedIsFirst =
+  const isDroppedFirst =
     getPreviousMonomerInChain(droppedMonomer) === undefined;
-  const droppedIsLast = getNextMonomerInChain(droppedMonomer) === undefined;
-  const targetIsFirst = getPreviousMonomerInChain(targetMonomer) === undefined;
-  const targetIsLast = getNextMonomerInChain(targetMonomer) === undefined;
+  const isDroppedLast = getNextMonomerInChain(droppedMonomer) === undefined;
+  const isTargetFirst = getPreviousMonomerInChain(targetMonomer) === undefined;
+  const isTargetLast = getNextMonomerInChain(targetMonomer) === undefined;
 
   const shouldMirror =
-    (droppedIsFirst && targetIsFirst) || (droppedIsLast && targetIsLast);
+    (isDroppedFirst && isTargetFirst) || (isDroppedLast && isTargetLast);
 
   if (!shouldMirror) return command;
 

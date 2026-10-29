@@ -77,7 +77,7 @@ function drawConnectedMarker(
   render: Render,
   center: Vec2,
   backgroundColor: string,
-  drawOutline: boolean,
+  shouldDrawOutline: boolean,
 ): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const innerRadius = 6.5 * scale;
@@ -88,7 +88,7 @@ function drawConnectedMarker(
     .circle(center.x, center.y, outerRadius)
     .attr({
       fill: backgroundColor,
-      stroke: drawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
+      stroke: shouldDrawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
       'stroke-width': strokeWidth,
       cursor: 'default',
     });
@@ -125,7 +125,7 @@ function drawHighlightedMarker(
   render: Render,
   center: Vec2,
   backgroundColor: string,
-  drawOutline: boolean,
+  shouldDrawOutline: boolean,
 ): RaphaelSet {
   const scale = getMarkerScale(render, ATTACHMENT_GROUP_MARKER_VIEWBOX_SIZE);
   const outerRadius = 20.5 * scale;
@@ -137,7 +137,7 @@ function drawHighlightedMarker(
   const marker = render.paper.set();
   const background = render.paper.circle(center.x, center.y, outerRadius).attr({
     fill: backgroundColor,
-    stroke: drawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
+    stroke: shouldDrawOutline ? ATTACHMENT_GROUP_MARKER_HOVER_COLOR : 'none',
     'stroke-width': outlineStrokeWidth,
     cursor: 'default',
   });
@@ -210,7 +210,7 @@ export function drawAttachmentGroupMarker(
 function drawGroupAtomsHover(
   host: AttachmentGroupHoverHost,
   render: Render,
-  drawOutline: boolean,
+  shouldDrawOutline: boolean,
 ) {
   const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
   const atomIds = new Set(host.a.atomIds);
@@ -240,7 +240,7 @@ function drawGroupAtomsHover(
   const hoverPath = render.paper.path(combinedPathData).attr({
     ...render.options.hoverStyle,
     fill: 'none',
-    stroke: drawOutline ? render.options.hoverStyle.stroke : 'none',
+    stroke: shouldDrawOutline ? render.options.hoverStyle.stroke : 'none',
     cursor: 'default',
   });
 
@@ -251,16 +251,16 @@ function drawGroupAtomsHover(
 export function drawAttachmentGroupHover(
   host: AttachmentGroupHoverHost,
   render: Render,
-  drawOutline: boolean,
-  showMarker: boolean,
+  shouldDrawOutline: boolean,
+  shouldShowMarker: boolean,
   markerState: Extract<
     AttachmentGroupMarkerState,
     'hovered' | 'connectedHovered'
   > = 'hovered',
   markerBackgroundColor = '#FFFFFF',
 ) {
-  const groupAtomsHover = drawGroupAtomsHover(host, render, drawOutline);
-  if (!showMarker) {
+  const groupAtomsHover = drawGroupAtomsHover(host, render, shouldDrawOutline);
+  if (!shouldShowMarker) {
     return groupAtomsHover;
   }
 

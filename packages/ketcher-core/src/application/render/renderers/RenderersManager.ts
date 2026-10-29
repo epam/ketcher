@@ -141,12 +141,12 @@ export class RenderersManager {
 
   public redrawDrawingEntity(
     drawingEntity: DrawingEntity,
-    force = false,
-    recalculateEnumeration = false,
+    shouldForce = false,
+    shouldRecalculateEnumeration = false,
   ) {
     drawingEntity.baseRenderer?.remove();
-    drawingEntity.baseRenderer?.show(this.theme, force);
-    if (recalculateEnumeration) {
+    drawingEntity.baseRenderer?.show(this.theme, shouldForce);
+    if (shouldRecalculateEnumeration) {
       this.markForReEnumeration();
     }
   }
@@ -171,13 +171,13 @@ export class RenderersManager {
 
   public addPolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
-    redrawAttachmentPoints = true,
+    shouldRedrawAttachmentPoints = true,
   ): void {
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
-    if (redrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     }
     this.markForReEnumeration();
@@ -203,16 +203,16 @@ export class RenderersManager {
 
   public deletePolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
-    recalculateEnumeration = true,
-    redrawAttachmentPoints = true,
+    shouldRecalculateEnumeration = true,
+    shouldRedrawAttachmentPoints = true,
   ) {
     polymerBond.renderer?.remove();
-    if (redrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
       polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
     }
     this.polymerBonds.delete(polymerBond.id);
-    if (recalculateEnumeration) {
+    if (shouldRecalculateEnumeration) {
       this.markForReEnumeration();
     }
   }
@@ -222,7 +222,7 @@ export class RenderersManager {
 
     for (const node of subChain.nodes) {
       const monomerRenderer = node.monomer.renderer;
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+      const shouldDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? currentEnumeration === subChain.length
         : currentEnumeration === 1;
 
@@ -231,7 +231,7 @@ export class RenderersManager {
       }
 
       monomerRenderer.setEnumeration(currentEnumeration);
-      monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
+      monomerRenderer.redrawEnumeration(shouldDrawTerminalIndicator);
       currentEnumeration++;
     }
   }
@@ -282,26 +282,26 @@ export class RenderersManager {
     let currentSegmentLength = 0;
 
     for (const [nodeIndex, node] of subChain.nodes.entries()) {
-      if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
+      if (currentSegmentLength === 0 && this.isRnaEnumerationNode(node)) {
         currentSegmentLength = this.getRnaEnumerationSegmentLength(
           subChain,
           nodeIndex,
         );
       }
 
-      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+      const shouldDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? currentEnumeration === currentSegmentLength
         : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         node.rnaBase.renderer?.setEnumeration(currentEnumeration);
-        node.rnaBase.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.rnaBase.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         node.sugar.renderer?.setEnumeration(currentEnumeration);
-        node.sugar.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.sugar.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         currentEnumeration++;
       } else if (node.monomer instanceof UnsplitNucleotide) {
         node.monomer.renderer?.setEnumeration(currentEnumeration);
-        node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
+        node.monomer.renderer?.redrawEnumeration(shouldDrawTerminalIndicator);
         currentEnumeration++;
       } else if (
         node instanceof MonomerSequenceNode ||
@@ -382,10 +382,10 @@ export class RenderersManager {
 
   public hoverMonomer(
     monomer: BaseMonomer,
-    needRedrawAttachmentPoints: boolean,
+    shouldRedrawAttachmentPoints: boolean,
   ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
-    if (needRedrawAttachmentPoints) {
+    if (shouldRedrawAttachmentPoints) {
       monomer.renderer?.redrawAttachmentPoints();
     }
   }

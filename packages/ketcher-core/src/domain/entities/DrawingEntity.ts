@@ -61,7 +61,7 @@ export abstract class DrawingEntity {
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -71,15 +71,15 @@ export abstract class DrawingEntity {
     let isSelected = false;
 
     for (const point of selectionPoints) {
-      const locatedInRectangle =
+      const isLocatedInRectangle =
         rectangleBottomRightPoint.x > point.x &&
         rectangleBottomRightPoint.y > point.y &&
         rectangleTopLeftPoint.x < point.x &&
         rectangleTopLeftPoint.y < point.y;
-      if (shiftKey) {
-        isSelected = isPreviousSelected || locatedInRectangle;
+      if (isShiftKeyPressed) {
+        isSelected = isPreviousSelected || isLocatedInRectangle;
       } else {
-        isSelected = locatedInRectangle;
+        isSelected = isLocatedInRectangle;
       }
     }
 
@@ -95,7 +95,7 @@ export abstract class DrawingEntity {
   public selectIfLocatedInPolygon(
     polygonPoints: Vec2[],
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -106,7 +106,7 @@ export abstract class DrawingEntity {
 
     for (const point of selectionPoints) {
       const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
-      if (shiftKey) {
+      if (isShiftKeyPressed) {
         isSelected = isPreviousSelected || locatedInPolygon;
       } else {
         isSelected = locatedInPolygon;
@@ -137,36 +137,40 @@ export abstract class DrawingEntity {
     let w0 = new Vec2(0, 0);
     let counter = 0;
     const eps = 1e-5;
-    let flag1: boolean;
-    let flag0 = false;
+    let isCurrentEdgeCrossing: boolean;
+    let isPreviousEdgeCrossing = false;
 
     for (const point of r) {
       const v1 = Vec2.diff(point, p);
       const w1 = Vec2.diff(v1, v0);
       const n1 = Vec2.dot(n, v1);
       const d1 = Vec2.dot(d, v1);
-      flag1 = false;
+      isCurrentEdgeCrossing = false;
       if (n1 * n0 < 0) {
         if (d1 * d0 > -eps) {
-          if (d0 > -eps) flag1 = true;
+          if (d0 > -eps) isCurrentEdgeCrossing = true;
         } else if (
           (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
           0
         ) {
-          flag1 = true;
+          isCurrentEdgeCrossing = true;
         }
       }
-      if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
-        flag1 = false;
+      if (
+        isCurrentEdgeCrossing &&
+        isPreviousEdgeCrossing &&
+        Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0
+      ) {
+        isCurrentEdgeCrossing = false;
       }
-      if (flag1) {
+      if (isCurrentEdgeCrossing) {
         counter++;
       }
       v0 = v1;
       n0 = n1;
       d0 = d1;
       w0 = w1;
-      flag0 = flag1;
+      isPreviousEdgeCrossing = isCurrentEdgeCrossing;
     }
     return counter % 2 !== 0;
   }

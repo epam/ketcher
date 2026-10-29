@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -239,7 +239,7 @@ class ReStruct {
     aid: Array<number> | number,
     adjacentComponents: Pile<number>,
   ): Pile<number> {
-    const list = Array.isArray(aid) ? Array.from(aid) : [aid];
+    const list = Array.isArray(aid) ? [...aid] : [aid];
     const ids = new Pile<number>();
     const visitedEndpoints = new Set<number>();
 
@@ -282,10 +282,7 @@ class ReStruct {
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
     const adjacentComponents = new Pile<number>();
-    const aidSet = this.getConnectedComponent(
-      Array.from(idSet),
-      adjacentComponents,
-    );
+    const aidSet = this.getConnectedComponent([...idSet], adjacentComponents);
 
     adjacentComponents.delete(compId);
 
@@ -347,14 +344,16 @@ class ReStruct {
     visel: Visel,
     path,
     pos: Vec2 | null = null,
-    visible = false,
+    isVisible = false,
   ): void {
     if (!path || !this.layers[group].node.parentNode) return;
     const paths = Array.isArray(path) ? path : [path];
 
     for (const path of paths) {
       const offset = this.render.options.offset;
-      let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
+      let bb = isVisible
+        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+        : null;
       const ext = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
@@ -489,7 +488,7 @@ class ReStruct {
   private getAllElementsAsSelectionMap(): SelectionMap {
     const selection: SelectionMap = {};
     for (const map of Object.keys(ReStruct.maps)) {
-      selection[map] = Array.from(this[map].keys());
+      selection[map] = [...this[map].keys()];
     }
     return selection;
   }
@@ -521,7 +520,9 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
-  /** Visel is a shorthand for VISual ELement */
+  /**
+  Visel is a shorthand for VISual ELement
+  */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
   }
@@ -562,10 +563,10 @@ class ReStruct {
     });
   }
 
-  update(force: boolean): boolean {
-    force = force || !this.initialized;
+  update(shouldForce: boolean): boolean {
+    shouldForce = shouldForce || !this.initialized;
 
-    if (force || this.needRecalculateVisibleAtomsAndBonds) {
+    if (shouldForce || this.needRecalculateVisibleAtomsAndBonds) {
       this.recalculateVisibleAtomsAndBonds();
       this.needRecalculateVisibleAtomsAndBonds = false;
     }
@@ -573,7 +574,7 @@ class ReStruct {
     // check items to update
     for (const map of Object.keys(ReStruct.maps)) {
       const mapChanged = this[map + 'Changed'];
-      if (force) {
+      if (shouldForce) {
         for (const id of this[map].keys()) mapChanged.set(id, 1);
       } else {
         // check if some of the items marked are already gone
@@ -585,7 +586,7 @@ class ReStruct {
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
       if (
-        force ||
+        shouldForce ||
         attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
       ) {
         attachmentGroup.recalculatePosition(this.molecule.atoms);
@@ -639,7 +640,7 @@ class ReStruct {
       this.clearVisel(rgroup.visel);
     });
 
-    if (force) {
+    if (shouldForce) {
       // clear and recreate all half-bonds
       this.clearConnectedComponents();
       this.molecule.initHalfBonds();
@@ -658,13 +659,13 @@ class ReStruct {
     this.initialized = true;
 
     this.verifyLoops();
-    const updLoops = force || this.structChanged;
-    if (updLoops) this.updateLoops();
+    const shouldUpdateLoops = shouldForce || this.structChanged;
+    if (shouldUpdateLoops) this.updateLoops();
     this.showAtoms();
     this.showAttachmentGroups();
     this.showBonds();
     this.showRgroupAttachmentPoints();
-    if (updLoops) this.showLoops();
+    if (shouldUpdateLoops) this.showLoops();
     this.showReactionSymbols();
     this.showSGroups();
 
@@ -1052,12 +1053,12 @@ class ReStruct {
           // item already holds is kept. Any explicit selection - `null`
           // included - describes the complete new state, so a map absent from
           // it no longer has anything selected.
-          const selected =
+          const isSelected =
             selection === undefined
               ? item.selected
               : (selection?.[map]?.includes(id) ?? false);
 
-          this.showItemSelection(item, selected);
+          this.showItemSelection(item, isSelected);
         }
       }
     }
@@ -1070,10 +1071,10 @@ class ReStruct {
     } else {
       item.selected = selected;
     }
-    const exists = isSelectionSvgObjectExists(item);
+    const hasSelectionSvgObject = isSelectionSvgObjectExists(item);
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
     if (selected) {
-      if (!exists) {
+      if (!hasSelectionSvgObject) {
         const render = this.render;
         const options = render.options;
         const paper = render.paper;
@@ -1103,7 +1104,7 @@ class ReStruct {
         });
         item.showPoints?.();
       }
-    } else if (exists && item.selectionPlate) {
+    } else if (hasSelectionSvgObject && item.selectionPlate) {
       item.selectionPlate.hide();
       item.hidePoints?.();
       item.additionalInfo?.hide();
@@ -1130,11 +1131,11 @@ class ReStruct {
 function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true;
 
-  const anySelection = Object.keys(ReStruct.maps).some(
+  const hasAnySelection = Object.keys(ReStruct.maps).some(
     (map) => selection[map] && selection[map].length > 0,
   );
 
-  return !anySelection;
+  return !hasAnySelection;
 }
 
 function scaleRPath(path, scaleFactor: number): void {

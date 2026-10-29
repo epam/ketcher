@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -129,15 +129,15 @@ export class RotationView extends TransientView {
   public static subscribeRotationHandle(
     listener: (payload: RotationHandleEvent) => void,
   ) {
-    RotationView.rotationHandleSubscribers.add(listener);
-    return () => RotationView.rotationHandleSubscribers.delete(listener);
+    this.rotationHandleSubscribers.add(listener);
+    return () => this.rotationHandleSubscribers.delete(listener);
   }
 
   public static subscribeRotationCenter(
     listener: (payload: RotationCenterEvent) => void,
   ) {
-    RotationView.rotationCenterSubscribers.add(listener);
-    return () => RotationView.rotationCenterSubscribers.delete(listener);
+    this.rotationCenterSubscribers.add(listener);
+    return () => this.rotationCenterSubscribers.delete(listener);
   }
 
   public static show(
@@ -153,7 +153,7 @@ export class RotationView extends TransientView {
       startAngle: startAngleParam,
     } = params;
 
-    if (!isRotating || !RotationView.wasRotating) {
+    if (!isRotating || !this.wasRotating) {
       RotationView.lastSnappingRadius = undefined;
     }
     RotationView.wasRotating = isRotating;
@@ -225,13 +225,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousemove', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -269,13 +269,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousedown', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -338,7 +338,7 @@ export class RotationView extends TransientView {
         STYLE.PROTRACTOR_RADIUS_STEP;
       let radius = Math.max(snappedToStep, 0);
 
-      const lastSnappingRadius = RotationView.lastSnappingRadius;
+      const lastSnappingRadius = this.lastSnappingRadius;
       if (radius > 0) {
         if (lastSnappingRadius === undefined) {
           RotationView.lastSnappingRadius = radius;

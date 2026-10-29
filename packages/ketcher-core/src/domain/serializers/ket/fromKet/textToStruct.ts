@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,10 +28,10 @@ import type {
   SerializedTextNode,
 } from 'application/render/restruct/retext';
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 /**
  * Convert KET v2.0 format to internal format (pos array + Lexical content).
@@ -55,10 +55,10 @@ function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
         const paragraphNode: SerializedParagraphNode = {
           children: (para.parts || []).map((part) => {
             let format = 0;
-            if (part.bold) format |= IS_BOLD;
-            if (part.italic) format |= IS_ITALIC;
-            if (part.subscript) format |= IS_SUBSCRIPT;
-            if (part.superscript) format |= IS_SUPERSCRIPT;
+            if (part.bold) format |= BOLD_FLAG;
+            if (part.italic) format |= ITALIC_FLAG;
+            if (part.subscript) format |= SUBSCRIPT_FLAG;
+            if (part.superscript) format |= SUPERSCRIPT_FLAG;
 
             const textNode: SerializedTextNode = {
               detail: 0,

@@ -79,7 +79,7 @@ export function fromMultitailArrowHeadTailMove(
   id: number,
   reference: MultitailArrowReferencePosition,
   offset: number,
-  normalize?: true,
+  shouldNormalize?: true,
 ) {
   const action = new Action();
   action.addOp(
@@ -88,7 +88,7 @@ export function fromMultitailArrowHeadTailMove(
       offset,
       reference.name,
       reference.tailId,
-      normalize,
+      shouldNormalize,
     ),
   );
   return action.perform(reStruct);

@@ -21,7 +21,7 @@ export function isTwoStrandedNodeRestrictedForHydrogenBondCreation(
 ) {
   const senseNodeHydrogenBonds =
     twoStrandedNode?.senseNode?.monomers.reduce((accumulator, monomer) => {
-      return accumulator.concat(monomer.hydrogenBonds);
+      return [...accumulator, ...monomer.hydrogenBonds];
     }, [] as HydrogenBond[]) || [];
 
   return Boolean(

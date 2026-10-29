@@ -1,7 +1,10 @@
 /* eslint-disable no-undef */
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import {
+  CANVAS_BACKGROUND_COLOR,
+  SELECTION_COLOR,
+} from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
@@ -16,7 +19,6 @@ const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
-const DATA_SGROUP_BACKGROUND = '#F5F5F5';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
 const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
@@ -436,7 +438,7 @@ export class SGroupRenderer extends BaseRenderer {
 
     const valueBackgroundColor = this.sgroup.selected
       ? SELECTION_COLOR
-      : DATA_SGROUP_BACKGROUND;
+      : CANVAS_BACKGROUND_COLOR;
 
     valueGroup
       .insert('rect', 'text')

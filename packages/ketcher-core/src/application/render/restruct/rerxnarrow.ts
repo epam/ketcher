@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -124,7 +124,7 @@ class ReRxnArrow extends ReObject {
     const height = item.height;
     referencePoints.push(new Vec2(a.x, a.y), new Vec2(b.x, b.y));
 
-    if (RxnArrow.isElliptical(item) && height !== undefined) {
+    if (height !== undefined && RxnArrow.isElliptical(item)) {
       const middlePoint = findMiddlePoint(height, a, b);
       referencePoints.push(middlePoint);
     }

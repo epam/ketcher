@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -103,17 +103,17 @@ export function getAngleFromEvent(
       ? restruct.molecule.halfBonds.get(atom.neighbors[0])?.end
       : undefined;
     const nei =
-      neiId !== undefined ? restruct.molecule.atoms.get(neiId) : undefined;
+      neiId === undefined ? undefined : restruct.molecule.atoms.get(neiId);
 
-    if (!atom || !nei) {
-      angle = 0;
-    } else {
+    if (atom && nei) {
       angle = event?.ctrlKey
         ? vectorUtilities.calcAngle(nei.pp, atom.pp)
         : vectorUtilities.fracAngle(
             vectorUtilities.calcAngle(nei.pp, atom.pp),
             null,
           );
+    } else {
+      angle = 0;
     }
   } else {
     // on single atom

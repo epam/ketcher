@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ export function fromStereoAtomAttributes(
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
-  withReverse?: boolean,
+  shouldReverse?: boolean,
 ): Action {
   const action = new Action();
   const struct = restruct.molecule;
@@ -93,7 +93,7 @@ export function fromBondStereoUpdate(
   stereoAtomsMap.forEach((stereoProperty, aId) => {
     if (struct.atoms.get(aId)?.stereoLabel !== stereoProperty.stereoLabel) {
       action.mergeWith(
-        fromStereoAtomAttributes(restruct, aId, stereoProperty, withReverse),
+        fromStereoAtomAttributes(restruct, aId, stereoProperty, shouldReverse),
       );
     }
   });

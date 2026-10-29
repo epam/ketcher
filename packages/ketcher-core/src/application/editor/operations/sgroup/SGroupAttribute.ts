@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,7 @@ export class SGroupAttribute extends BaseOperation {
     }
 
     const sgroupData = restruct.sgroupData.get(sgid);
-    if (sgroup.type === 'DAT' && sgroupData) {
+    if (sgroupData && sgroup.type === 'DAT') {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
       restruct.clearVisel(sgroupData.visel);
       restruct.sgroupData.delete(sgid);

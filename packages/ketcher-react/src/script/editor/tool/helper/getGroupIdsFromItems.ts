@@ -24,7 +24,7 @@ function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
     if (groupId !== null) groupsIds.add(groupId);
   });
 
-  return Array.from(groupsIds);
+  return [...groupsIds];
 }
 
 type MergeItems = {
@@ -36,10 +36,8 @@ function getGroupIdsFromItemMaps(
   struct: Struct,
   mergeMaps: MergeItems | null,
 ): number[] {
-  const atoms =
-    mergeMaps?.atoms && Array.from(mergeMapOfItemsToSet(mergeMaps.atoms));
-  const bonds =
-    mergeMaps?.bonds && Array.from(mergeMapOfItemsToSet(mergeMaps.bonds));
+  const atoms = mergeMaps?.atoms && [...mergeMapOfItemsToSet(mergeMaps.atoms)];
+  const bonds = mergeMaps?.bonds && [...mergeMapOfItemsToSet(mergeMaps.bonds)];
 
   return getGroupIdsFromItemArrays(struct, { atoms, bonds });
 }

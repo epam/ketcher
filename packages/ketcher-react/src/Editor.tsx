@@ -91,17 +91,17 @@ export const Editor = (props: Props) => {
   const wizardSessionActive = useRef(false);
   const skipModeConversion = useRef(false);
   const pendingWizardFinish = useRef<boolean | undefined>(undefined);
-  const togglePolymerEditor = useCallback((toggleValue: boolean) => {
+  const togglePolymerEditor = useCallback((isPolymerEditorVisible: boolean) => {
     const captureViewport =
       macromoleculesEditorRef.current?.captureViewportForModeSwitch;
     if (typeof captureViewport === 'function') {
       captureViewport.call(macromoleculesEditorRef.current);
     }
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
+    setShowPolymerEditor(isPolymerEditorVisible);
+    globalThis.isPolymerEditorTurnedOn = isPolymerEditorVisible;
   }, []);
 
-  const togglerComponent = !disableMacromoleculesEditor ? (
+  const togglerComponent = disableMacromoleculesEditor ? undefined : (
     <ModeControl
       toggle={(value) => {
         if (!isMonomerWizardOpen) togglePolymerEditor(value);
@@ -109,11 +109,11 @@ export const Editor = (props: Props) => {
       isPolymerEditor={showPolymerEditor}
       disabled={isMonomerWizardOpen}
     />
-  ) : undefined;
+  );
 
   useEffect(() => {
-    const onWizardStateChange = (active: boolean) => {
-      setIsMonomerWizardOpen(active || wizardSessionActive.current);
+    const onWizardStateChange = (isWizardActive: boolean) => {
+      setIsMonomerWizardOpen(isWizardActive || wizardSessionActive.current);
     };
     moleculesEditor?.event.monomerWizardStateChange.add(onWizardStateChange);
     return () => {
@@ -169,7 +169,7 @@ export const Editor = (props: Props) => {
 
   useEffect(() => {
     return () => {
-      window.isPolymerEditorTurnedOn = false;
+      globalThis.isPolymerEditorTurnedOn = false;
     };
   }, []);
 
@@ -179,16 +179,16 @@ export const Editor = (props: Props) => {
    * and the user never sees the pre-wizard canvas flash.
    */
   useLayoutEffect(() => {
-    const savedCanvas = pendingWizardFinish.current;
+    const hasSavedCanvas = pendingWizardFinish.current;
 
-    if (savedCanvas === undefined || !macromoleculesEditor) {
+    if (hasSavedCanvas === undefined || !macromoleculesEditor) {
       return;
     }
 
     pendingWizardFinish.current = undefined;
 
     try {
-      macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
+      macromoleculesEditor.finishMonomerWizardSession(hasSavedCanvas);
     } catch (error) {
       moleculesEditor?.errorHandler?.(
         error instanceof Error ? error.message : String(error),
@@ -237,10 +237,10 @@ export const Editor = (props: Props) => {
          * that canvas is still hidden until React re-renders in macro mode.
          * The layout effect above performs it once the canvas is on screen.
          */
-        const finishSession = (savedCanvas: boolean) => {
+        const finishSession = (hasSavedCanvas: boolean) => {
           wizardSessionActive.current = false;
           skipModeConversion.current = true;
-          pendingWizardFinish.current = savedCanvas;
+          pendingWizardFinish.current = hasSavedCanvas;
           setIsMonomerWizardOpen(false);
           togglePolymerEditor(true);
         };
@@ -283,7 +283,7 @@ export const Editor = (props: Props) => {
     if (
       !ketcher ||
       !moleculesEditorRef.current ||
-      !(macromoleculesEditorRef.current || disableMacromoleculesEditor)
+      !(disableMacromoleculesEditor || macromoleculesEditorRef.current)
     ) {
       return;
     }

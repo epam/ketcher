@@ -40,6 +40,27 @@ Build the project:
 npm run build
 ```
 
+### Dependency patches
+
+The root `postinstall` runs `patch-package --error-on-fail` before installing
+Git hooks. Keep install scripts enabled so that dependency patches are applied;
+an incompatible patch fails the installation rather than silently losing a fix.
+
+`patches/miew+0.11.1.patch` fixes rendering of aromatic bonds outside fully
+aromatic rings in the Miew 3D viewer (#12382). It patches both the ES module and
+CommonJS/UMD entry points without changing bond types or orders. The root pins
+`miew` to `0.11.1` so the transitive dependency of `miew-react` resolves to the
+patched copy. The patch applies to this workspace, not to independent consumers
+installing the published Ketcher packages.
+
+After updating Miew, check whether the upstream version includes the fix. Remove
+the patch and root pin if it does; otherwise port and regenerate the patch with
+`npx patch-package miew`. Run the bundle-level regression tests:
+
+```sh
+node --test scripts/miew-aromatic-bonds.test.mjs
+```
+
 ## Build instructions
 
 The latest version of Ketcher has been splitted into two packages: component library (see /packages/ketcher-react folder) and React ready-to-run application (see /example folder).

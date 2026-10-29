@@ -13,7 +13,7 @@
     "demo"
   ],
   "scripts": {
-    "postinstall": "husky install",
+    "postinstall": "patch-package --error-on-fail && husky install",
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
     "prepush": "npm run test && npm run test:types",
     "build": "npm run build:packages && npm run build:example",
@@ -59,6 +59,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^16.1.0",
     "npm-run-all2": "^9.0.3",
+    "patch-package": "8.0.1",
     "postcss": "^8.5.23",
     "postcss-less": "^6.0.0",
     "prettier": "^3.9.6",
@@ -86,6 +87,7 @@
   "dependencies": {
     "@playwright/test": "^1.62.1",
     "minimatch": "^10.2.6",
+    "miew": "0.11.1",
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",
     "react-router": "^8.3.0",

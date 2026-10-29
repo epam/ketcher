@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,19 +37,27 @@ function getAtom(mol: Struct, id: number): Atom {
   return atom;
 }
 
-/* Parse Mol */
-function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+/*
+Parse Mol
+*/
+function parseMol(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
-    const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
+    const struct = v2000.parseRg2000(ctabLines, shouldIgnoreChiralFlag);
     struct.name = ctabLines[3].trim();
     return struct;
   }
-  const struct = parseCTab(ctabLines.slice(3), ignoreChiralFlag);
+  const struct = parseCTab(ctabLines.slice(3), shouldIgnoreChiralFlag);
   struct.name = ctabLines[0].trim();
   return struct;
 }
 
-function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+function parseCTab(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   const countsSplit = partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
@@ -57,16 +65,18 @@ function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   const version = countsSplit[11].trim();
   ctabLines = ctabLines.slice(1);
   if (version === 'V2000') {
-    return v2000.parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
+    return v2000.parseCTabV2000(ctabLines, countsSplit, shouldIgnoreChiralFlag);
   }
   throw new Error('Molfile version unknown: ' + version);
 }
 
-/* Parse Rxn */
+/*
+Parse Rxn
+*/
 function parseRxn(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
   const version = ctabLines[0].trim().split(/\s+/)[1];
   if (version && version !== 'V2000') {
@@ -75,13 +85,15 @@ function parseRxn(
   const struct = v2000.parseRxn2000(
     ctabLines,
     shouldReactionRelayout,
-    ignoreChiralFlag,
+    shouldIgnoreChiralFlag,
   );
   struct.name = ctabLines[1].trim();
   return struct;
 }
 
-/* Prepare For Saving */
+/*
+Prepare For Saving
+*/
 const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
   {
     MUL: SGroup.prepareMulForSaving,
@@ -151,7 +163,9 @@ function prepareDatForSaving(sgroup: SGroup, mol: Struct): void {
   sgroup.atoms = SGroup.getAtoms(mol, sgroup);
 }
 
-/* Save To Molfile */
+/*
+Save To Molfile
+*/
 const saveToMolfile: Record<
   string,
   (
@@ -180,26 +194,23 @@ function saveMulToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(
-    makeAtomBondLines(
-      'SAL',
-      idstr,
-      Array.from(sgroup.atomSet.values()),
-      atomMap,
-    ),
-  ); // TODO: check atomSet
-  lines = lines.concat(
-    makeAtomBondLines(
+  lines = [
+    ...lines,
+    ...makeAtomBondLines('SAL', idstr, [...sgroup.atomSet.values()], atomMap),
+  ]; // TODO: check atomSet
+  lines = [
+    ...lines,
+    ...makeAtomBondLines(
       'SPA',
       idstr,
-      Array.from(sgroup.parentAtomSet.values()),
+      [...sgroup.parentAtomSet.values()],
       atomMap,
     ),
-  );
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  ];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
   const smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
   lines.push(smtLine);
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -213,9 +224,9 @@ function saveSruToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
+  lines = [...lines, ...bracketsToMolfile(mol, sgroup, idstr)];
   return lines.join('\n');
 }
 
@@ -240,8 +251,8 @@ function saveSupToMolfile(
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
+  lines = [...lines, ...makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap)];
 
   let sgroupName: string | undefined;
 
@@ -277,7 +288,7 @@ function saveDatToMolfile(
   let pp = sgroup.pp;
   if (!data.absolute) pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
   let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
+  lines = [...lines, ...makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap)];
   let sdtLine =
     'M  SDT ' +
     idstr +
@@ -394,12 +405,12 @@ function normalizeNewlines(str: string): string {
 function partitionLine(
   str: string,
   parts: number[],
-  withspace?: boolean,
+  hasSpaceBetweenParts?: boolean,
 ): string[] {
   const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
-    if (withspace) shift++;
+    if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
   return res;

@@ -65,17 +65,10 @@ export interface SerializedEditorState {
 
 type TextStyles = RenderOptionStyles & { shiftY?: number };
 
-<<<<<<< HEAD
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
-=======
 const BOLD_FLAG = 1;
 const ITALIC_FLAG = 2;
 const SUBSCRIPT_FLAG = 32;
 const SUPERSCRIPT_FLAG = 64;
->>>>>>> origin/master
 
 const SCALE = 40; // from ketcher-core
 
@@ -181,11 +174,7 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-<<<<<<< HEAD
-    if (!this.paths.length || !paper) return null;
-=======
     if (!paper || !this.paths.length) return null;
->>>>>>> origin/master
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 

@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable react-hooks/exhaustive-deps */
-=======
->>>>>>> origin/master
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -101,11 +97,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         globalThis.dispatchEvent(ketcherInitEvent);
       }
     });
-<<<<<<< HEAD
-  };
-=======
   }, []);
->>>>>>> origin/master
 
   useEffect(() => {
     if (initPromiseRef.current === null) {
@@ -122,13 +114,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
-<<<<<<< HEAD
-
-    // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, []);
-=======
   }, [initKetcher]);
->>>>>>> origin/master
 
   return (
     <div

@@ -71,11 +71,7 @@ export function getLibraryItemMonomerClass(
  * A preset is not a library item and has no monomer class of its own; the
  * caller passes `preset.base`, which is an ordinary Base-class item.
  */
-<<<<<<< HEAD
-export function itemCarriesBase(item: MonomerOrAmbiguousType): boolean {
-=======
 export function hasBase(item: MonomerOrAmbiguousType): boolean {
->>>>>>> origin/master
   const monomerClass = getLibraryItemMonomerClass(item);
 
   return (
@@ -85,11 +81,8 @@ export function hasBase(item: MonomerOrAmbiguousType): boolean {
   );
 }
 
-<<<<<<< HEAD
-=======
 export { hasBase as itemCarriesBase };
 
->>>>>>> origin/master
 export function getMonomerNaturalAnalogue(
   monomer?: BaseMonomer,
 ): string | undefined {
@@ -231,13 +224,8 @@ export function resolveMirroredBaseTarget(params: {
 
   if (
     !partner ||
-<<<<<<< HEAD
-    partner.selected ||
-    !editedBaseEligible ||
-=======
     !editedBaseEligible ||
     partner.selected ||
->>>>>>> origin/master
     !isBaseEligibleForDuplexSync(partner)
   ) {
     return undefined;

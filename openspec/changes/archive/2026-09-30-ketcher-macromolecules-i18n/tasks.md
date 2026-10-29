@@ -114,11 +114,7 @@ All 9 sections complete and committed on `4384-language`. Only exception: task 8
 - [x] 8.3 Extend the no-hardcoded-strings guard test to cover the directories touched in Sections 1–6 — zero violations found, no exceptions list needed
 - [x] 8.4 **Code check:** typecheck, unit tests (including the extended guards) all green
 - [x] 8.5 **Visual check:** full walkthrough of Macromolecules mode in both English and Chinese, tracking console for `[i18n] Missing key` warnings — every dialog, menu, panel, and toolbar touched in Sections 1–7; confirmed `process.env.NODE_ENV === 'development'` so the handler was actually live; zero warnings observed
-<<<<<<< HEAD
-- [ ] 8.6 Playwright E2E coverage: ask before proceeding (per project rule) — do not start writing e2e tests without an explicit go-ahead, and read `.memory-bank/testing.md` first if approved. **Asked (2026-09-18) — user chose to skip for now rather than proceed. Deferred indefinitely; not a blocker for Section 9 or archiving this change.**
-=======
 - [x] 8.6 Playwright E2E coverage: ask before proceeding (per project rule) — do not start writing e2e tests without an explicit go-ahead, and read `.memory-bank/testing.md` first if approved. **Asked (2026-09-18) — user chose to skip for now rather than proceed. Deferred indefinitely; not a blocker for Section 9 or archiving this change.** _(dropped: Playwright coverage deferred by project rule (ask first))_
->>>>>>> origin/master
 - [x] 8.7 **Committed** — `cbccc35b61`
 - [x] 8.8 **STOP — report commit hash + diff for review before starting Section 9**
 

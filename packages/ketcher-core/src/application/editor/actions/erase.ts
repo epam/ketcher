@@ -174,25 +174,6 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   });
   selection.bonds = [...new Set(selection.bonds)];
 
-  struct.attachmentGroups.forEach((attachmentGroup, id) => {
-    const remainingAtomIds = attachmentGroup.atomIds.filter(
-      (atomId) => !selection.atoms.includes(atomId),
-    );
-    if (remainingAtomIds.length === attachmentGroup.atomIds.length) return;
-
-    if (remainingAtomIds.length < 2) {
-      selection.attachmentGroups.push(id);
-    } else {
-      action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
-    }
-  });
-  selection.attachmentGroups = Array.from(new Set(selection.attachmentGroups));
-
-  selection.attachmentGroups.forEach((attachmentGroupId) => {
-    selection.bonds.push(...struct.getConnectedBondIds(attachmentGroupId));
-  });
-  selection.bonds = Array.from(new Set(selection.bonds));
-
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
     if (sgroup?.isSuperatomWithoutLabel) {
@@ -215,11 +196,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
       if (!selection.bonds.includes(nei.bid)) {
-<<<<<<< HEAD
-        selection.bonds = selection.bonds.concat([nei.bid]);
-=======
         selection.bonds = [...selection.bonds, nei.bid];
->>>>>>> origin/master
       }
     });
   });

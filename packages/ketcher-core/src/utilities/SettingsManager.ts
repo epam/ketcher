@@ -76,11 +76,7 @@ export class SettingsManager {
       );
       delete settings.selectionTool;
       return settings;
-<<<<<<< HEAD
-    } catch (e) {
-=======
     } catch (error) {
->>>>>>> origin/master
       KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
         error,

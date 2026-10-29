@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-=======
->>>>>>> origin/master
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -83,15 +79,6 @@ export const CDXStructuresViewer = ({
     [server],
   );
 
-<<<<<<< HEAD
-  const currentStructItem = structList[selectedIndex];
-
-  useEffect(() => {
-    if (currentStructItem && !itemsMap[selectedIndex]) {
-      getImage(currentStructItem, selectedIndex);
-    }
-  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
-=======
   const handleSelectStructure = (index: number) => {
     setSelectedIndex(index);
     if (index !== selectedIndex && structList[index] && !itemsMap[index]) {
@@ -108,7 +95,6 @@ export const CDXStructuresViewer = ({
   useEffect(() => {
     loadFirstStructure();
   }, [loadFirstStructure]);
->>>>>>> origin/master
 
   const renderStructure = (structure: item) => {
     if (isLoading) {

@@ -326,17 +326,10 @@ async function copy(data: ClipboardData): Promise<void> {
 
     try {
       clipboardItem = new ClipboardItem(clipboardItemData);
-<<<<<<< HEAD
-    } catch (e) {
-      KetcherLogger.info(
-        'cannot create ClipboardItem, falling back to writeText',
-        e,
-=======
     } catch (error) {
       KetcherLogger.info(
         'cannot create ClipboardItem, falling back to writeText',
         error,
->>>>>>> origin/master
       );
 
       // Fallback for browsers that don't support ClipboardItem constructor or
@@ -349,11 +342,7 @@ async function copy(data: ClipboardData): Promise<void> {
 
         return;
       } else {
-<<<<<<< HEAD
-        KetcherLogger.error('cliparea.tsx::copy', e);
-=======
         KetcherLogger.error('cliparea.tsx::copy', error);
->>>>>>> origin/master
       }
     }
 

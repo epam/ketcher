@@ -171,11 +171,6 @@ class BaseOperation<D = unknown> {
       return;
     }
 
-    if (mapName === 'attachmentGroups') {
-      BaseOperation.invalidateAtom(restruct, id, level);
-      return;
-    }
-
     if (mapName === 'bonds') {
       this.invalidateBond(restruct, id);
 

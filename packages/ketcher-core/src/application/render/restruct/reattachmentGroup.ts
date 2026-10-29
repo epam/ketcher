@@ -40,11 +40,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
       : '#FFFFFF';
   }
 
-<<<<<<< HEAD
-  drawHover(render: Render, drawOutline = true) {
-=======
   drawHover(render: Render, shouldDrawOutline = true) {
->>>>>>> origin/master
     const markerState = this.shouldShowMarker(render)
       ? 'hovered'
       : 'connectedHovered';
@@ -52,11 +48,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     return drawAttachmentGroupHover(
       this,
       render,
-<<<<<<< HEAD
-      drawOutline,
-=======
       shouldDrawOutline,
->>>>>>> origin/master
       true,
       markerState,
       this.getMarkerBackgroundColor(render),
@@ -78,21 +70,12 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     return Scale.modelToCanvas(atomPosition, renderOptions);
   }
 
-<<<<<<< HEAD
-  setSelected(selected: boolean, restruct: ReStruct) {
-    if (this.selected === selected) {
-      return;
-    }
-
-    this.selected = selected;
-=======
   setSelected(isSelected: boolean, restruct: ReStruct) {
     if (this.selected === isSelected) {
       return;
     }
 
     this.selected = isSelected;
->>>>>>> origin/master
     const id = restruct.molecule.attachmentGroups.keyOf(this.a);
     if (id !== null) {
       restruct.markAttachmentGroup(id, 0);
@@ -103,11 +86,7 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     return null;
   }
 
-<<<<<<< HEAD
-  private redrawHover(render: Render, drawOutline = true) {
-=======
   private redrawHover(render: Render, shouldDrawOutline = true) {
->>>>>>> origin/master
     const previousHoverPaths = new Set<unknown>();
     if (this.hovering?.type === 'set') {
       this.hovering.forEach((path) => previousHoverPaths.add(path));
@@ -126,16 +105,6 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     }
 
     render.paper.setStart();
-<<<<<<< HEAD
-    this.drawHover(render, drawOutline);
-    this.hovering = render.paper.setFinish();
-  }
-
-  setHover(hover: boolean, render: Render, drawOutline = true): boolean {
-    this.hover = hover;
-    this.centerMarkerHovered = hover;
-    this.redrawHover(render, drawOutline);
-=======
     this.drawHover(render, shouldDrawOutline);
     this.hovering = render.paper.setFinish();
   }
@@ -148,7 +117,6 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
     this.hover = isHovered;
     this.centerMarkerHovered = isHovered;
     this.redrawHover(render, shouldDrawOutline);
->>>>>>> origin/master
 
     return this.hover;
   }

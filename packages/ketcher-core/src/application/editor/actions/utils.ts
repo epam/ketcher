@@ -293,10 +293,6 @@ export function atomForNewBond(
         if (
           lastNeiNeighborAngle !== undefined &&
           neiNeighborAngles[0] <= Math.PI * 1.01 &&
-<<<<<<< HEAD
-          lastNeiNeighborAngle !== undefined &&
-=======
->>>>>>> origin/master
           lastNeiNeighborAngle <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;

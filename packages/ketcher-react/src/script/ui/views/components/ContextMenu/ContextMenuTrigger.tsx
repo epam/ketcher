@@ -31,11 +31,7 @@ import {
 } from './contextMenu.types';
 import {
   getAttachmentGroupTargetForBondHalf,
-<<<<<<< HEAD
-  getIsItemInSelection,
-=======
   isItemInSelection,
->>>>>>> origin/master
   getMenuPropsForClosestItem,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
@@ -166,17 +162,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         })
       ) {
         if (
-<<<<<<< HEAD
-          !selection.bonds &&
-          !selection.atoms &&
-          !selection.rgroupAttachmentPoints &&
-          !selection.attachmentGroups
-=======
           selection.bonds ||
           selection.atoms ||
           selection.rgroupAttachmentPoints ||
           selection.attachmentGroups
->>>>>>> origin/master
         ) {
           triggerType = ContextMenuTriggerType.Selection;
         } else {

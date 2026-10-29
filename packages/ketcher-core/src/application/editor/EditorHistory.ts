@@ -35,39 +35,16 @@ export class EditorHistory {
   }
 
   static getInstance(editor: CoreEditor): EditorHistory {
-<<<<<<< HEAD
-    let instance = EditorHistory.instances.get(editor);
-    if (!instance) {
-      instance = new EditorHistory(editor);
-      EditorHistory.instances.set(editor, instance);
-=======
     let instance = this.instances.get(editor);
     if (!instance) {
       instance = new EditorHistory(editor);
       this.instances.set(editor, instance);
->>>>>>> origin/master
     }
     return instance;
   }
 
   private get moleculesEditor() {
     return ketcherProvider.getKetcher(this.editor.ketcherId)?.editor;
-<<<<<<< HEAD
-  }
-
-  get historyStack() {
-    return this.moleculesEditor?.historyStack ?? this.commands;
-  }
-
-  get historyPointer() {
-    return this.moleculesEditor?.historyPtr ?? this.pointer;
-  }
-
-  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
-    const latestCommand = this.previousCommand;
-    if (
-      megreWithLatestHistoryCommand &&
-=======
   }
 
   get historyStack() {
@@ -82,7 +59,6 @@ export class EditorHistory {
     const latestCommand = this.previousCommand;
     if (
       shouldMergeWithLatestHistoryCommand &&
->>>>>>> origin/master
       latestCommand &&
       this.historyPointer === this.historyStack.length
     ) {

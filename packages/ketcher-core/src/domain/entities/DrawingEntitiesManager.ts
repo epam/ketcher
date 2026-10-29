@@ -3836,14 +3836,7 @@ export class DrawingEntitiesManager {
         return undefined;
       }
 
-<<<<<<< HEAD
-      return DrawingEntitiesManager.getAntisenseBaseLabel(
-        rnaBase,
-        isDnaAntisense,
-      );
-=======
       return this.getAntisenseBaseLabel(rnaBase, isDnaAntisense);
->>>>>>> origin/master
     }
 
     if (isUnsplitNucleotideNode(node)) {
@@ -3855,14 +3848,7 @@ export class DrawingEntitiesManager {
         node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
 
       return SENSE_NATURAL_ANALOGUES.has(naturalAnalogCode)
-<<<<<<< HEAD
-        ? DrawingEntitiesManager.getAntisenseBaseLabel(
-            naturalAnalogCode,
-            isDnaAntisense,
-          )
-=======
         ? this.getAntisenseBaseLabel(naturalAnalogCode, isDnaAntisense)
->>>>>>> origin/master
         : undefined;
     }
 

@@ -399,11 +399,7 @@ export const selectFilteredMonomers = createSelector(
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
-<<<<<<< HEAD
-    const shortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
-=======
     const isShortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
->>>>>>> origin/master
     const checkMonomerMatch = (
       searchFilter: string,
       {
@@ -579,11 +575,7 @@ export const selectFilteredMonomers = createSelector(
         if (!item.isAmbiguous && (item as MonomerItemType).props?.hidden) {
           return false;
         }
-<<<<<<< HEAD
-        if (shortNameOnly) {
-=======
         if (isShortNameOnly) {
->>>>>>> origin/master
           return item.label.toLowerCase().includes(normalizedSearchFilter);
         }
         if (item.isAmbiguous) {

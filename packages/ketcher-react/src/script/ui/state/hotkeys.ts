@@ -307,11 +307,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-<<<<<<< HEAD
-  if (key?.length === 1 && !hoveredItem) {
-=======
   if (!hoveredItem && key?.length === 1) {
->>>>>>> origin/master
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,

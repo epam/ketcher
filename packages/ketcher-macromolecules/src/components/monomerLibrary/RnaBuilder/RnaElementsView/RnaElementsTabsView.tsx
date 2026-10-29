@@ -81,11 +81,7 @@ const RnaElementsTabsView = ({
             0,
           );
           const label = t(groupNameToTabLabelKey[groupName]);
-<<<<<<< HEAD
-          const caption = selected ? `${label} (${quantity})` : null;
-=======
           const caption = isSelected ? `${label} (${quantity})` : null;
->>>>>>> origin/master
 
           return (
             <RnaTabWrapper
@@ -95,11 +91,7 @@ const RnaElementsTabsView = ({
               <RnaTab
                 label={caption}
                 title={label}
-<<<<<<< HEAD
-                selected={selected}
-=======
                 selected={isSelected}
->>>>>>> origin/master
                 icon={<Icon name={iconName as IconName} />}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
                 data-testid={`summary-${groupName}`}

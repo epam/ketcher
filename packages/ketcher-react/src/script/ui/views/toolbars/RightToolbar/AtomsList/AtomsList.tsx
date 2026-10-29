@@ -80,10 +80,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
     <div ref={ref}>
       {atoms.map((label) => {
         const element = Elements.get(label);
-<<<<<<< HEAD
-=======
         if (!element) return null;
->>>>>>> origin/master
         const shortcut = atoms.includes(label)
           ? shortcutStr(atomCuts[label])
           : null;

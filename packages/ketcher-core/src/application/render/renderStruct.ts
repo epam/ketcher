@@ -75,11 +75,7 @@ export class RenderStruct {
     if (wrapperElement && struct) {
       const {
         cachePrefix = '',
-<<<<<<< HEAD
-        needCache = true,
-=======
         needCache: shouldCache = true,
->>>>>>> origin/master
         wrapperDimensions,
         ...renderOptions
       } = options;
@@ -92,11 +88,7 @@ export class RenderStruct {
 
       const cachedSvg = renderCache.get(cacheKey);
 
-<<<<<<< HEAD
-      if (needCache && cachedSvg !== undefined) {
-=======
       if (shouldCache && cachedSvg !== undefined) {
->>>>>>> origin/master
         wrapperElement.innerHTML = cachedSvg;
         return;
       }

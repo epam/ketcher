@@ -67,17 +67,6 @@ export const valuesToReplace = {
     new Date().toISOString().slice(0, 19),
   ),
   // TODO: add logic to init BUILD_NUMBER
-<<<<<<< HEAD
-  'process.env.BUILD_NUMBER': JSON.stringify(undefined),
-  'process.env.HELP_LINK': JSON.stringify(getTagName()),
-  'process.env.INDIGO_VERSION': JSON.stringify(
-    process.env.INDIGO_VERSION || '',
-  ),
-  'process.env.INDIGO_MACHINE': JSON.stringify(
-    process.env.INDIGO_MACHINE || '',
-  ),
-  'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
-=======
   'import.meta.env.BUILD_NUMBER': JSON.stringify(undefined),
   'import.meta.env.HELP_LINK': JSON.stringify(getTagName()),
   'import.meta.env.INDIGO_VERSION': JSON.stringify(
@@ -90,7 +79,6 @@ export const valuesToReplace = {
     process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true' ? 'true' : 'false',
   ),
   'import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
->>>>>>> origin/master
     process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
   ),
 };

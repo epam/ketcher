@@ -288,15 +288,11 @@ const onOk = async ({
 
   if (isKet) {
     try {
-<<<<<<< HEAD
-      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
-=======
       const hasStructure = hasAddedStructureToCanvas({
         struct,
         ketSerializer,
         editor,
       });
->>>>>>> origin/master
       if (!hasStructure) {
         dispatch(openErrorTooltip('No structure'));
       }
@@ -326,11 +322,7 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-<<<<<<< HEAD
-    const hasStructure = addToCanvas({
-=======
     const hasStructure = hasAddedStructureToCanvas({
->>>>>>> origin/master
       struct: ketStruct.struct,
       ketSerializer,
       editor,

@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
-import type { Editor, Selection } from '../../Editor';
-import SelectTool from './select';
-=======
 import {
   AttachmentGroup,
   Atom,
@@ -267,7 +262,6 @@ describe('SelectTool', () => {
     });
   });
 });
->>>>>>> origin/master
 
 describe('SelectTool Attachment Group selection', () => {
   it('selects only the marker, member atoms, and internal bonds on click', () => {

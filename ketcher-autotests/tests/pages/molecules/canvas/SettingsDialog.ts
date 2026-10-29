@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable no-redeclare */
-=======
->>>>>>> origin/master
 import { Page, Locator } from '@playwright/test';
 import {
   AllSettingsOptions,

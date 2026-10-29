@@ -269,13 +269,6 @@ export function fromTemplateOnBondAction(
   template: EditorTemplate,
   bid: number,
   events: unknown,
-<<<<<<< HEAD
-  flip: boolean,
-  force: boolean,
-  isPreview = false,
-): FromTemplateOnBondResult {
-  if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
-=======
   shouldFlip: boolean,
   shouldForce: boolean,
   isPreview = false,
@@ -283,17 +276,12 @@ export function fromTemplateOnBondAction(
   if (!shouldForce) {
     return fromTemplateOnBond(restruct, template, bid, shouldFlip);
   }
->>>>>>> origin/master
 
   const simpleFusing = (
     restruct: ReStruct,
     template: EditorTemplate,
     bid: number,
-<<<<<<< HEAD
-  ) => fromTemplateOnBond(restruct, template, bid, flip, isPreview);
-=======
   ) => fromTemplateOnBond(restruct, template, bid, shouldFlip, isPreview);
->>>>>>> origin/master
   return fromAromaticTemplateOnBond(
     restruct,
     template,

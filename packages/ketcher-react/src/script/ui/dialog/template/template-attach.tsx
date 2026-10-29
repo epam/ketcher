@@ -413,15 +413,11 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
-<<<<<<< HEAD
-export default connector(withTranslation(['dialogs'])(Attach) as never);
-=======
 const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
   withTranslation(['dialogs'])(Attach),
 );
 
 export default ConnectedAttach;
->>>>>>> origin/master
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

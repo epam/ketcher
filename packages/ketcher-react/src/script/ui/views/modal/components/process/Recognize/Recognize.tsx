@@ -16,11 +16,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-<<<<<<< HEAD
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
-=======
->>>>>>> origin/master
 import { changeImage, changeVersion } from '../../../../../state/options';
 import type { RecognizeImageFile } from '../../../../../state/options/types';
 

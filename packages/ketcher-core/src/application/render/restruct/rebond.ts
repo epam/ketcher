@@ -92,17 +92,10 @@ class ReBond extends ReObject {
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
     const beginAtom = restruct.getBondEndpoint(
-<<<<<<< HEAD
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
-    );
-    const endAtom = restruct.getBondEndpoint(
-      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
-=======
       this.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
     const endAtom = restruct.getBondEndpoint(
       this.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
->>>>>>> origin/master
     );
 
     if (
@@ -825,13 +818,8 @@ function getBondPath(
   let path: RenderPath | null;
   const render = restruct.render;
   const struct = restruct.molecule;
-<<<<<<< HEAD
-  const shiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
-  const shiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
-=======
   const shouldShiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
   const shouldShiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
->>>>>>> origin/master
   let newHalfBonds: [HalfBond, HalfBond];
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;

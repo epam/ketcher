@@ -206,24 +206,14 @@ export function fromBondAddition(
   const beginFragmentAtomId = getFragmentAtomId(beginAtomId);
   const endFragmentAtomId = getFragmentAtomId(endAtomId);
   const mergedFragmentId =
-<<<<<<< HEAD
-    beginFragmentAtomId !== undefined && endFragmentAtomId !== undefined
-      ? mergeFragmentsIfNeeded(
-=======
     beginFragmentAtomId === undefined || endFragmentAtomId === undefined
       ? undefined
       : mergeFragmentsIfNeeded(
->>>>>>> origin/master
           action,
           reStruct,
           beginFragmentAtomId,
           endFragmentAtomId,
-<<<<<<< HEAD
-        )
-      : undefined;
-=======
         );
->>>>>>> origin/master
   if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
     action.addOp(
       new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct),
@@ -252,11 +242,7 @@ export function fromBondsAttrs(
     const resultingType =
       'type' in attrs
         ? attrs.type
-<<<<<<< HEAD
-        : reset
-=======
         : shouldReset
->>>>>>> origin/master
           ? Bond.attrGetDefault('type')
           : bond.type;
     if (

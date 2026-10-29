@@ -55,11 +55,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 function pollDeferred<T>(
   process: () => Promise<T>,
-<<<<<<< HEAD
-  complete: (val: T) => boolean,
-=======
   isComplete: (val: T) => boolean,
->>>>>>> origin/master
   timeGap: number,
   startTimeGap?: number,
 ) {
@@ -107,11 +103,7 @@ function request<T = unknown>(
     fetchResponse = fetch(requestUrl, {
       method,
       headers: mergedHeaders,
-<<<<<<< HEAD
-      body: method !== 'GET' ? (data as string | Blob) : undefined,
-=======
       body: method === 'GET' ? undefined : (data as string | Blob),
->>>>>>> origin/master
       credentials: 'same-origin',
     });
   } catch (error) {

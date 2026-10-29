@@ -22,11 +22,7 @@ import type { RaphaelStatic } from 'raphael';
 type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
 
 const raphaelModule: RaphaelModule | undefined =
-<<<<<<< HEAD
-  typeof window === 'undefined' ? undefined : require('raphael');
-=======
   typeof globalThis.window === 'undefined' ? undefined : require('raphael');
->>>>>>> origin/master
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments

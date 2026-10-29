@@ -18,20 +18,6 @@ export const resetRnaBuilder = (dispatch: Dispatch<AnyAction>) => {
 export const resetRnaBuilderAfterSequenceUpdate = (
   dispatch: Dispatch<AnyAction>,
   editor: CoreEditor | undefined,
-<<<<<<< HEAD
-  needToRemoveSelection = true,
-) => {
-  resetRnaBuilderCommon(dispatch);
-  // Always clear the RNA Builder panel's form state (redux sequenceSelection).
-  // This is distinct from the canvas selection, which needToRemoveSelection
-  // controls below.
-  dispatch(setSequenceSelection([]));
-  editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch(
-    needToRemoveSelection,
-  );
-  if (editor?.mode?.modeName === 'sequence-layout-mode')
-    (editor.mode as SequenceMode).turnOffEditMode(needToRemoveSelection);
-=======
   shouldRemoveSelection = true,
 ) => {
   resetRnaBuilderCommon(dispatch);
@@ -44,5 +30,4 @@ export const resetRnaBuilderAfterSequenceUpdate = (
   );
   if (editor?.mode?.modeName === 'sequence-layout-mode')
     (editor.mode as SequenceMode).turnOffEditMode(shouldRemoveSelection);
->>>>>>> origin/master
 };

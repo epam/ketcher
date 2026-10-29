@@ -47,17 +47,10 @@ const MacromoleculeMenuItems = (
   const collapseText = areMultipleMonomersSelected
     ? 'Collapse monomers'
     : 'Collapse monomer';
-<<<<<<< HEAD
-  const expandLabel = multipleMonomersSelected
-    ? t('components:contextMenu.expandMonomers')
-    : t('components:contextMenu.expandMonomer');
-  const collapseLabel = multipleMonomersSelected
-=======
   const expandLabel = areMultipleMonomersSelected
     ? t('components:contextMenu.expandMonomers')
     : t('components:contextMenu.expandMonomer');
   const collapseLabel = areMultipleMonomersSelected
->>>>>>> origin/master
     ? t('components:contextMenu.collapseMonomers')
     : t('components:contextMenu.collapseMonomer');
 
@@ -87,11 +80,7 @@ const MacromoleculeMenuItems = (
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 
-<<<<<<< HEAD
-    editor.openEditMonomerWizard(sgroupIds, editAllInstances);
-=======
     editor.openEditMonomerWizard(sgroupIds, shouldEditAllInstances);
->>>>>>> origin/master
   };
 
   const handleEditAll = async () => {

@@ -63,11 +63,7 @@ export function getAttachmentGroupIdsSplitByDeletion(
   return splitIds;
 }
 
-<<<<<<< HEAD
-export async function deleteWithAttachmentGroupSplitConfirm(
-=======
 export async function didDeleteWithAttachmentGroupSplitConfirm(
->>>>>>> origin/master
   editor: Editor,
   deletion: DeletionSelection,
   applyDeletion: () => Action,
@@ -102,24 +98,16 @@ export async function didDeleteWithAttachmentGroupSplitConfirm(
   return true;
 }
 
-<<<<<<< HEAD
-/** Sync call sites: confirm/cancel safely, then optionally run a follow-up. */
-=======
 /**
 Sync call sites: confirm/cancel safely, then optionally run a follow-up.
 */
->>>>>>> origin/master
 export function runDeleteWithAttachmentGroupSplitConfirm(
   editor: Editor,
   deletion: DeletionSelection,
   applyDeletion: () => Action,
   onDeleted?: () => void,
 ): void {
-<<<<<<< HEAD
-  void deleteWithAttachmentGroupSplitConfirm(editor, deletion, applyDeletion)
-=======
   void didDeleteWithAttachmentGroupSplitConfirm(editor, deletion, applyDeletion)
->>>>>>> origin/master
     .then((didDelete) => {
       if (didDelete) {
         onDeleted?.();

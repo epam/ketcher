@@ -59,12 +59,6 @@ function updateVisibleTools(
   );
 }
 
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/state/toolbar/index.js
-let resizeListener = null;
-
-export function initResize() {
-  return function (dispatch, getState) {
-=======
 let resizeListener: VoidFunction | null = null;
 
 export function initResize() {
@@ -72,7 +66,6 @@ export function initResize() {
     dispatch: (action: ClearVisibleAction) => void,
     getState: () => ToolbarResizeState,
   ): void {
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/state/toolbar/index.ts
     resizeListener = throttle(250, () => {
       const state = getState();
       if (!state.editor) return;
@@ -83,23 +76,12 @@ export function initResize() {
   };
 }
 
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/state/toolbar/index.js
-export function removeResizeListener() {
-=======
 export function removeResizeListener(): void {
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/state/toolbar/index.ts
   if (resizeListener) {
     removeEventListener('resize', resizeListener);
     resizeListener = null;
   }
 }
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/state/toolbar/index.js
-
-/* REDUCER */
-export default function (state = initial, action) {
-  const { type, data } = action;
-=======
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/state/toolbar/index.ts
 
 /*
 REDUCER

@@ -21,13 +21,6 @@ import {
   KetSerializer,
 } from 'ketcher-core';
 import i18n from '../../../i18n/i18n';
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/action/copyImageToClipboard.js
-
-async function copyImageToClipboard() {
-  const state = globalThis.currentState;
-  const editor = state.editor;
-  const options = state.options;
-=======
 
 async function copyImageToClipboard(): Promise<void> {
   const { editor, options } = (globalThis as typeof globalThis & Window)
@@ -41,7 +34,6 @@ async function copyImageToClipboard(): Promise<void> {
     return;
   }
 
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/action/copyImageToClipboard.ts
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
@@ -55,13 +47,6 @@ async function copyImageToClipboard(): Promise<void> {
       backgroundColor: '255, 255, 255',
       bondThickness: options.settings.bondThickness || defaultBondThickness,
     });
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/action/copyImageToClipboard.js
-    const item = new globalThis.ClipboardItem({ [image.type]: image });
-    await globalThis.navigator.clipboard.write([item]);
-  } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
-    errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
-=======
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
@@ -71,7 +56,6 @@ async function copyImageToClipboard(): Promise<void> {
     if (errorHandler) {
       errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));
     }
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/action/copyImageToClipboard.ts
   }
 }
 

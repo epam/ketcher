@@ -2,11 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useAppSelector } from 'hooks';
-<<<<<<< HEAD
-import { selectIsBaseModificationBlocked } from 'state/rna-builder';
-=======
 import { isRnaBaseModificationBlocked } from 'state/rna-builder';
->>>>>>> origin/master
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
 jest.mock('react-redux', () => ({
@@ -23,11 +19,7 @@ const mockUseAppSelector = jest.mocked(useAppSelector);
 // isSequenceEditInRNABuilderMode: true, isBaseModificationBlocked: false
 const mockAppSelectorsUnblocked = () => {
   mockUseAppSelector.mockImplementation((selector) =>
-<<<<<<< HEAD
-    selector === selectIsBaseModificationBlocked ? false : true,
-=======
     selector === isRnaBaseModificationBlocked ? false : true,
->>>>>>> origin/master
   );
 };
 

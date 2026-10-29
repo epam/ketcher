@@ -242,11 +242,7 @@ class ReStruct {
     aid: Array<number> | number,
     adjacentComponents: Pile<number>,
   ): Pile<number> {
-<<<<<<< HEAD
-    const list = Array.isArray(aid) ? Array.from(aid) : [aid];
-=======
     const list = Array.isArray(aid) ? [...aid] : [aid];
->>>>>>> origin/master
     const ids = new Pile<number>();
     const visitedEndpoints = new Set<number>();
 
@@ -289,14 +285,7 @@ class ReStruct {
   addConnectedComponent(idSet: Pile<number>): number {
     const compId = this.connectedComponents.add(idSet);
     const adjacentComponents = new Pile<number>();
-<<<<<<< HEAD
-    const aidSet = this.getConnectedComponent(
-      Array.from(idSet),
-      adjacentComponents,
-    );
-=======
     const aidSet = this.getConnectedComponent([...idSet], adjacentComponents);
->>>>>>> origin/master
 
     adjacentComponents.delete(compId);
 
@@ -598,11 +587,7 @@ class ReStruct {
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
       if (
-<<<<<<< HEAD
-        force ||
-=======
         shouldForce ||
->>>>>>> origin/master
         attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
       ) {
         attachmentGroup.recalculatePosition(this.molecule.atoms);
@@ -1072,20 +1057,12 @@ class ReStruct {
           // item already holds is kept. Any explicit selection - `null`
           // included - describes the complete new state, so a map absent from
           // it no longer has anything selected.
-<<<<<<< HEAD
-          const selected =
-=======
           const isSelected =
->>>>>>> origin/master
             selection === undefined
               ? item.selected
               : (selection?.[map]?.includes(id) ?? false);
 
-<<<<<<< HEAD
-          this.showItemSelection(item, selected);
-=======
           this.showItemSelection(item, isSelected);
->>>>>>> origin/master
         });
       }
     });
@@ -1098,11 +1075,7 @@ class ReStruct {
     } else {
       item.selected = selected;
     }
-<<<<<<< HEAD
-    const exists = isSelectionSvgObjectExists(item);
-=======
     const hasSelectionSvgObject = isSelectionSvgObjectExists(item);
->>>>>>> origin/master
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
     if (selected) {
       if (!hasSelectionSvgObject) {

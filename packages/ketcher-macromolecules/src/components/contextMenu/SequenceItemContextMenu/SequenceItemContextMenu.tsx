@@ -10,11 +10,7 @@ import {
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
-<<<<<<< HEAD
-  selectIsSequenceEditInRNABuilderMode,
-=======
   isRnaBuilderSequenceEditMode,
->>>>>>> origin/master
   setContextMenuActive,
 } from 'state/common';
 import {

@@ -37,12 +37,6 @@ function getAtom(mol: Struct, id: number): Atom {
   return atom;
 }
 
-<<<<<<< HEAD
-/* Parse Mol */
-function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
-    const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
-=======
 /*
 Parse Mol
 */
@@ -52,7 +46,6 @@ function parseMol(
 ): Struct {
   if (ctabLines[0].search(String.raw`\$MDL`) === 0) {
     const struct = v2000.parseRg2000(ctabLines, shouldIgnoreChiralFlag);
->>>>>>> origin/master
     struct.name = ctabLines[3].trim();
     return struct;
   }

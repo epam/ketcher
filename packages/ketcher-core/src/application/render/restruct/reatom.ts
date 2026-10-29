@@ -2358,11 +2358,7 @@ export function getAtomCustomQuery(
 
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
     if (
-<<<<<<< HEAD
-      includeOnlyQueryAttributes &&
-=======
       shouldIncludeOnlyQueryAttributes &&
->>>>>>> origin/master
       EXCLUDED_QUERY_ATTRIBUTES.has(propertyName)
     ) {
       continue;
@@ -2426,13 +2422,9 @@ function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }
 
-<<<<<<< HEAD
-/** Project an axis-aligned box onto AP-local along/perp axes. */
-=======
 /**
 Project an axis-aligned box onto AP-local along/perp axes.
 */
->>>>>>> origin/master
 function projectBoxOnApAxes(
   W: number,
   H: number,
@@ -2446,13 +2438,9 @@ function projectBoxOnApAxes(
   };
 }
 
-<<<<<<< HEAD
-/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
-=======
 /**
 Count atom-relative visel extents that overlap the candidate canvas-space box.
 */
->>>>>>> origin/master
 function countExtOverlaps(
   exts: Box2Abs[],
   atomPos: Vec2,
@@ -2506,19 +2494,11 @@ function computeLateralApLabelShift(
     apDir,
   );
 
-<<<<<<< HEAD
-  const intersectsAlong =
-    proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
-    proposedAlongDist + halfAlong > 0;
-
-  if (!intersectsAlong || halfPerp === 0) return new Vec2(0, 0);
-=======
   const hasLongitudinalIntersection =
     proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
     proposedAlongDist + halfAlong > 0;
 
   if (!hasLongitudinalIntersection || halfPerp === 0) return new Vec2(0, 0);
->>>>>>> origin/master
 
   const shiftMag = waveHalfPerp + halfPerp + 2;
   const perpDir = new Vec2(-apDir.y, apDir.x);

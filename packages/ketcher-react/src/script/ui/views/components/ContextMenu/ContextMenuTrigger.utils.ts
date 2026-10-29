@@ -122,11 +122,7 @@ export function getAttachmentGroupTargetForBondHalf(
       };
 }
 
-<<<<<<< HEAD
-export const getIsItemInSelection = ({
-=======
 export const isItemInSelection = ({
->>>>>>> origin/master
   item,
   selection,
   selectedSGroupsIds,

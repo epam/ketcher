@@ -57,11 +57,7 @@ interface MenuProps {
   id: CONTEXT_MENU_ID;
   menuItems: MenuItem[];
   handleMenuChange: (params: ItemParams) => void;
-<<<<<<< HEAD
-  onVisibilityChange?: (visible: boolean) => void;
-=======
   onVisibilityChange?: (isVisible: boolean) => void;
->>>>>>> origin/master
 }
 
 const assembleMenuItems = (

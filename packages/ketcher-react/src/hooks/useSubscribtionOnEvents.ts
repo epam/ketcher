@@ -92,11 +92,7 @@ export const useSubscriptionOnEvents = () => {
       if (ketcher) {
         unsubscribe(ketcher);
       }
-<<<<<<< HEAD
-      window.removeEventListener(initEventName, subscribeOnInit);
-=======
       globalThis.removeEventListener(initEventName, subscribeOnInit);
->>>>>>> origin/master
     };
   }, [ketcherId, dispatch]);
 };

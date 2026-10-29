@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable react-hooks/exhaustive-deps */
-=======
->>>>>>> origin/master
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -39,11 +35,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-<<<<<<< HEAD
-import { ReactNode, useEffect, useRef, useState } from 'react';
-=======
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
->>>>>>> origin/master
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -714,11 +706,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
         .attr('stroke-width', 1)
         .attr('d', line);
     }
-<<<<<<< HEAD
-  }, [initialData, containerWidth]);
-=======
   }, [initialData, data.xs, data.ys, containerWidth]);
->>>>>>> origin/master
 
   // rerender the chart when the size of container changes
   useEffect(() => {
@@ -1008,11 +996,7 @@ export const MacromoleculePropertiesWindow = () => {
   );
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-<<<<<<< HEAD
-  const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-=======
   const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
->>>>>>> origin/master
   const {
     debouncedCallback: debouncedRecalculateMacromoleculeProperties,
     invokeImmediately: recalculateMacromoleculePropertiesImmediately,
@@ -1069,19 +1053,11 @@ export const MacromoleculePropertiesWindow = () => {
   // only this immediate calculation actually runs.
   useEffect(() => {
     cancelDebouncedRecalculateMacromoleculeProperties();
-<<<<<<< HEAD
-    recalculateMacromoleculePropertiesImmediately(skipDataFetch);
-  }, [
-    unipositiveIonsMeasurementUnit,
-    oligonucleotidesMeasurementUnit,
-    skipDataFetch,
-=======
     recalculateMacromoleculePropertiesImmediately(shouldSkipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
     shouldSkipDataFetch,
->>>>>>> origin/master
     cancelDebouncedRecalculateMacromoleculeProperties,
     recalculateMacromoleculePropertiesImmediately,
   ]);

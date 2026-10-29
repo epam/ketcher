@@ -304,15 +304,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
 
   const x = Number.parseFloat(split[0]);
   const y = Number.parseFloat(split[1]);
-<<<<<<< HEAD
-  const attached = split[3].trim() === 'A';
-  const absolute = split[4].trim() === 'A';
-  const showUnits = split[5].trim() === 'U';
-=======
   const isAttached = split[3].trim() === 'A';
   const isAbsolute = split[4].trim() === 'A';
   const shouldShowUnits = split[5].trim() === 'U';
->>>>>>> origin/master
   const nCharsRaw = split[7].trim();
   const nCharsToDisplay =
     nCharsRaw === 'ALL' ? -1 : utils.parseDecimalInt(nCharsRaw);

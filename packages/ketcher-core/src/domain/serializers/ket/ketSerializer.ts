@@ -124,27 +124,17 @@ import type {
   KetMoleculeNode,
   KetReactionNode,
   KetSimpleObjectNode,
-<<<<<<< HEAD
-=======
   KetTextNode,
->>>>>>> origin/master
 } from 'domain/serializers/ket/types';
 
 type KetMicromoleculeDefinition =
   | KetSimpleObjectNode
   | KetReactionNode
   | KetMoleculeNode
-<<<<<<< HEAD
-  | {
-      type?:
-        | 'rgroup'
-        | 'text'
-=======
   | KetTextNode
   | {
       type?:
         | 'rgroup'
->>>>>>> origin/master
         | typeof MULTITAIL_ARROW_SERIALIZE_KEY
         | typeof IMAGE_SERIALIZE_KEY;
       stereoFlagPosition?: Point;

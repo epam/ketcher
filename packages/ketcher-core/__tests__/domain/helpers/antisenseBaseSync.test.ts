@@ -3,11 +3,7 @@ import {
   resolveMirroredBaseLabel,
 } from 'domain/helpers/antisenseBaseSync';
 
-<<<<<<< HEAD
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
-=======
 globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
->>>>>>> origin/master
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),

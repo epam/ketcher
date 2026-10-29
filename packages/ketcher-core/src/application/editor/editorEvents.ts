@@ -7,9 +7,6 @@ import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
-<<<<<<< HEAD
-import type { MonomerCreationWizardRequest } from './editor.types';
-=======
 import type {
   CreateBondViaModalPayload,
   SelectLayoutModePayload,
@@ -17,7 +14,6 @@ import type {
 } from './editor.types';
 import type { HistoryOperationType } from './EditorHistory';
 import type { AmbiguousMonomerType, MonomerItemType } from 'domain/types';
->>>>>>> origin/master
 
 export interface IEditorEvents {
   selectMonomer: Subscription<MonomerItemType>;
@@ -101,17 +97,6 @@ export interface IEditorEvents {
 }
 
 export const editorEvents: IEditorEvents = {
-<<<<<<< HEAD
-  selectMonomer: new Subscription(),
-  selectPreset: new Subscription(),
-  selectTool: new Subscription(),
-  selectSelectionTool: new Subscription(),
-  createBondViaModal: new Subscription(),
-  cancelBondCreationViaModal: new Subscription(),
-  selectMode: new Subscription(),
-  layoutModeChange: new Subscription(),
-  selectHistory: new Subscription(),
-=======
   selectMonomer: new Subscription<MonomerItemType>(),
   selectPreset: new Subscription<IRnaPreset>(),
   selectTool: new Subscription(),
@@ -121,7 +106,6 @@ export const editorEvents: IEditorEvents = {
   selectMode: new Subscription<SelectLayoutModePayload>(),
   layoutModeChange: new Subscription(),
   selectHistory: new Subscription<HistoryOperationType>(),
->>>>>>> origin/master
   error: new Subscription(),
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
@@ -170,11 +154,8 @@ export const editorEvents: IEditorEvents = {
   updateMonomersLibrary: new Subscription(),
   createAntisenseChain: new Subscription(),
   copySelectedStructure: new Subscription(),
-<<<<<<< HEAD
-=======
   copySelectedStructureAs: new Subscription(),
   cutSelectedStructure: new Subscription(),
->>>>>>> origin/master
   pasteFromClipboard: new Subscription(),
   deleteSelectedStructure: new Subscription(),
   selectEntities: new Subscription(),
@@ -185,15 +166,10 @@ export const editorEvents: IEditorEvents = {
   toggleLineLengthHighlighting: new Subscription(),
   setLibraryItemDragState: new Subscription(),
   placeLibraryItemOnCanvas: new Subscription(),
-<<<<<<< HEAD
-  autochain: new Subscription(),
-  previewAutochain: new Subscription(),
-=======
   autochain: new Subscription<
     MonomerItemType | AmbiguousMonomerType | IRnaPreset
   >(),
   previewAutochain: new Subscription<MonomerItemType | IRnaPreset>(),
->>>>>>> origin/master
   removeAutochainPreview: new Subscription(),
   switchToMacromoleculesMode: new Subscription(),
   switchToMoleculesMode: new Subscription(),
@@ -203,14 +179,9 @@ export const editorEvents: IEditorEvents = {
   flipVertical: new Subscription(),
 };
 export function resetEditorEvents() {
-<<<<<<< HEAD
-  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
-    editorEvents[key] = new Subscription();
-=======
   const events: Record<keyof IEditorEvents, Subscription> = editorEvents;
   for (const key of Object.keys(events) as Array<keyof IEditorEvents>) {
     events[key] = new Subscription();
->>>>>>> origin/master
   }
 }
 export const renderersEvents: ToolEventHandlerName[] = [

@@ -104,11 +104,7 @@ export function fromAtomsAttrs(
 
     attrNames.forEach((key) => {
       if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
-<<<<<<< HEAD
-      if (!(key in atomAttrs) && !reset) return;
-=======
       if (!reset && !(key in atomAttrs)) return;
->>>>>>> origin/master
 
       const value =
         key in atomAttrs ? atomAttrs[key] : Atom.attrGetDefault(key);
@@ -116,11 +112,7 @@ export function fromAtomsAttrs(
       switch (key) {
         case 'stereoLabel':
         case 'stereoParity':
-<<<<<<< HEAD
-          if (key in atomAttrs && value) {
-=======
           if (value && key in atomAttrs) {
->>>>>>> origin/master
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
           }
           break;

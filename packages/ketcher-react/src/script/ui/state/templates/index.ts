@@ -197,8 +197,6 @@ const attachActions = new Set([
 function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.has(action.type)) return { ...state, ...(action.data || {}) };
 
-<<<<<<< HEAD
-=======
   if (
     action.type === 'MODAL_OPEN' &&
     action.data?.name === 'templates' &&
@@ -207,7 +205,6 @@ function templatesReducer(state = initTmplsState, action) {
     return { ...state, tab: action.data.prop.tab };
   }
 
->>>>>>> origin/master
   if (attachActions.has(action.type)) {
     const attach = { ...state.attach, ...(action.data || {}) };
     return { ...state, attach };

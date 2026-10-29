@@ -21,11 +21,7 @@ export const GroupBlockCompact = ({
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
-<<<<<<< HEAD
-  const isEditMode = useAppSelector(selectIsEditMode);
-=======
   const isEditMode = useAppSelector(isRnaBuilderEditMode);
->>>>>>> origin/master
 
   const isEmpty = !monomerName;
 
@@ -38,13 +34,8 @@ export const GroupBlockCompact = ({
     >
       <>
         <CompactGroupConnection />
-<<<<<<< HEAD
-        <GroupIcon name={iconName} selected={selected} empty={empty} />
-        <CompactGroupText selected={selected} empty={empty}>
-=======
         <GroupIcon name={iconName} selected={isSelected} empty={isEmpty} />
         <CompactGroupText selected={isSelected} empty={isEmpty}>
->>>>>>> origin/master
           {monomerName ?? t(groupNameToRnaEditorItemLabelKey[groupName])}
         </CompactGroupText>
         {children}

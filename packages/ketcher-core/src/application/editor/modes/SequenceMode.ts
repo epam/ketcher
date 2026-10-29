@@ -68,11 +68,7 @@ import {
   getMonomerNaturalAnalogue,
   isBaseEligibleForDuplexSync,
   isSelectedAntisensePair,
-<<<<<<< HEAD
-  itemCarriesBase,
-=======
   hasBase,
->>>>>>> origin/master
   resolveMirroredBaseTarget,
 } from 'domain/helpers/antisenseBaseSync';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -393,20 +389,12 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
-<<<<<<< HEAD
-  public turnOffEditMode(needToRemoveSelection = true) {
-=======
   public turnOffEditMode(shouldRemoveSelection = true) {
->>>>>>> origin/master
     if (!this.isEditMode) return;
     const editor = provideEditorInstance();
 
     this.isEditMode = false;
-<<<<<<< HEAD
-    this.initialize(false, needToRemoveSelection, true);
-=======
     this.initialize(false, shouldRemoveSelection, true);
->>>>>>> origin/master
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -419,19 +407,11 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
-<<<<<<< HEAD
-  public turnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
-    const editor = provideEditorInstance();
-
-    this.isEditInRNABuilderMode = false;
-    this.initialize(false, needToRemoveSelection, false);
-=======
   public turnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
     const editor = provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
     this.initialize(false, shouldRemoveSelection, false);
->>>>>>> origin/master
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
@@ -596,11 +576,7 @@ export class SequenceMode extends BaseMode {
           );
         }
         // Update Base monomerItem object
-<<<<<<< HEAD
-        if (nodeToModify.rnaBase && baseMonomerItem) {
-=======
         if (baseMonomerItem && nodeToModify.rnaBase) {
->>>>>>> origin/master
           const editedBase = nodeToModify.rnaBase;
           const previousNaturalAnalogue = getMonomerNaturalAnalogue(editedBase);
           // Captured before the edit: the ambiguous branch below replaces
@@ -2756,11 +2732,7 @@ export class SequenceMode extends BaseMode {
               !this.checkIfNewMonomerCouldEstablishConnections(
                 selectedNode,
                 monomer,
-<<<<<<< HEAD
-                sideChainConnections,
-=======
                 hasSideChainConnections,
->>>>>>> origin/master
               ),
           );
         }),
@@ -2838,19 +2810,11 @@ export class SequenceMode extends BaseMode {
     selections: TwoStrandedNodesSelection,
     newBaseCarryingItem: MonomerOrAmbiguousType | undefined,
   ): boolean {
-<<<<<<< HEAD
-    if (!this.isSyncEditMode || !newBaseCarryingItem) {
-      return false;
-    }
-
-    if (!itemCarriesBase(newBaseCarryingItem)) {
-=======
     if (!newBaseCarryingItem || !this.isSyncEditMode) {
       return false;
     }
 
     if (!hasBase(newBaseCarryingItem)) {
->>>>>>> origin/master
       return false;
     }
 

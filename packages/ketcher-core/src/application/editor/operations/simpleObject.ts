@@ -139,11 +139,7 @@ interface SimpleObjectMoveData {
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData;
 
-<<<<<<< HEAD
-  constructor(id: number, d: Vec2, noinvalidate: boolean) {
-=======
   constructor(id: number, d: Vec2, shouldSkipInvalidation: boolean) {
->>>>>>> origin/master
     super(OperationType.SIMPLE_OBJECT_MOVE);
     this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
@@ -229,13 +225,8 @@ export class SimpleObjectResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2,
-<<<<<<< HEAD
-    noinvalidate: boolean,
-    toCircle: boolean,
-=======
     shouldSkipInvalidation: boolean,
     shouldConvertToCircle: boolean,
->>>>>>> origin/master
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE);
     this.data = {

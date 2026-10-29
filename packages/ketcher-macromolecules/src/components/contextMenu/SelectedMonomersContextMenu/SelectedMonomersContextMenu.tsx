@@ -125,11 +125,7 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'layout_circular',
       title: t('contextMenu.selectedMonomers.arrangeAsRing'),
-<<<<<<< HEAD
-      disabled: cyclicStructureFormationDisabled,
-=======
       disabled: isCyclicStructureFormationDisabled,
->>>>>>> origin/master
       hidden: !isFlexMode,
     },
     {

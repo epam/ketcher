@@ -60,13 +60,8 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-<<<<<<< HEAD
-  const handleEditMonomer = (editAllInstances = false) => {
-    if (editor.openEditMonomerWizard(fgIds, editAllInstances)) {
-=======
   const handleEditMonomer = (shouldEditAllInstances = false) => {
     if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
->>>>>>> origin/master
       onOk(true);
     }
   };

@@ -5,10 +5,7 @@ import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
-<<<<<<< HEAD
-=======
 import type { Api } from 'src/script/api';
->>>>>>> origin/master
 import BondTool from '../../editor/tool/bond';
 import type Editor from '../../editor/Editor';
 

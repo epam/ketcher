@@ -14,10 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-<<<<<<< HEAD
-import type { Struct } from 'ketcher-core';
-import type { OptionsState } from './options/types';
-=======
 import type { AutomapMode, Struct } from 'ketcher-core';
 import type { Action, compose } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
@@ -28,7 +24,6 @@ import type { Api } from 'src/script/api';
 import type { ToolVariant } from '../action';
 import type { ThunkAction } from 'redux-thunk';
 import type { ToolbarState } from './toolbar/types';
->>>>>>> origin/master
 
 export type {
   AnalyseRoundName,

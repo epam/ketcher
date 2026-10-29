@@ -152,30 +152,18 @@ export class MacromoleculesConverter {
     drawingEntitiesManager: DrawingEntitiesManager,
     struct: Struct,
     reStruct?: ReStruct,
-<<<<<<< HEAD
-    preserveSource = false,
-=======
     shouldPreserveSource = false,
->>>>>>> origin/master
   ) {
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
-<<<<<<< HEAD
-    if (!preserveSource) {
-=======
     if (!shouldPreserveSource) {
->>>>>>> origin/master
       drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     }
     drawingEntitiesManager.monomers.forEach((monomer) => {
       // Preserve atom IDs and explicitly clone Fragment's private stereo state.
-<<<<<<< HEAD
-      const monomerStruct = preserveSource
-=======
       const monomerStruct = shouldPreserveSource
->>>>>>> origin/master
         ? cloneDeepWith(monomer.monomerItem.struct, (entity) =>
             entity instanceof Fragment
               ? entity.clone(new Map(entity.stereoAtoms.map((id) => [id, id])))
@@ -199,11 +187,7 @@ export class MacromoleculesConverter {
       } else {
         const atomIdsMap = new Map<number, number>();
         let convertedMonomer = monomer;
-<<<<<<< HEAD
-        if (preserveSource) {
-=======
         if (shouldPreserveSource) {
->>>>>>> origin/master
           if (monomer instanceof AmbiguousMonomer) {
             convertedMonomer = new AmbiguousMonomer(
               monomer.variantMonomerItem,

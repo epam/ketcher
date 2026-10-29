@@ -36,15 +36,6 @@ export class BondAttr extends BaseOperation {
     bondId?: number,
     attribute?: BondAttributeName,
     value?: unknown,
-<<<<<<< HEAD
-    needInvalidateBond = true,
-  ) {
-    super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
-    this.data =
-      bondId !== undefined && attribute !== undefined
-        ? { bid: bondId, attribute, value, needInvalidateBond }
-        : null;
-=======
     shouldInvalidateBond = true,
   ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
@@ -57,7 +48,6 @@ export class BondAttr extends BaseOperation {
             value,
             needInvalidateBond: shouldInvalidateBond,
           };
->>>>>>> origin/master
     this.data2 = null;
   }
 
@@ -78,11 +68,7 @@ export class BondAttr extends BaseOperation {
         bid,
         attribute,
         value: bond[attribute],
-<<<<<<< HEAD
-        needInvalidateBond,
-=======
         needInvalidateBond: shouldInvalidateBond,
->>>>>>> origin/master
       };
 
       (bond as unknown as Record<BondAttributeName, unknown>)[attribute] =

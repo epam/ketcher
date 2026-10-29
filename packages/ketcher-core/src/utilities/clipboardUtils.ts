@@ -121,11 +121,7 @@ export async function getStructStringFromClipboardData(
  * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
  */
 export async function isPasteContentAvailable(
-<<<<<<< HEAD
-  validateContent: (content: string) => Promise<boolean>,
-=======
   isContentValid: (content: string) => Promise<boolean>,
->>>>>>> origin/master
 ): Promise<boolean> {
   if (!isClipboardAPIAvailable()) {
     return true;
@@ -134,11 +130,7 @@ export async function isPasteContentAvailable(
   try {
     const clipboardData = await navigator.clipboard.read();
     const structStr = await getStructStringFromClipboardData(clipboardData);
-<<<<<<< HEAD
-    return structStr?.trim() ? validateContent(structStr) : false;
-=======
     return structStr?.trim() ? isContentValid(structStr) : false;
->>>>>>> origin/master
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

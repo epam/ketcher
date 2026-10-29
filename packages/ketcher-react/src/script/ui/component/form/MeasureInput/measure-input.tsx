@@ -14,11 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-<<<<<<< HEAD
-import { type HTMLAttributes, useState, useEffect, useMemo } from 'react';
-=======
 import { type HTMLAttributes, useMemo, useState } from 'react';
->>>>>>> origin/master
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -135,19 +131,6 @@ const MeasureInput = ({
     setInternalValue(stringifiedValue);
   }
 
-<<<<<<< HEAD
-  // Input binds onChange once in its constructor, so handleChange is stuck with
-  // the first render's closure and cannot call the current onChange. This effect
-  // is re-created every render, so it always holds the latest onChange/value —
-  // hence the deliberate single-dep list.
-  useEffect(() => {
-    if (internalValue !== stringifiedValue) {
-      onChange(Number.parseFloat(internalValue));
-    }
-  }, [internalValue, stringifiedValue, onChange]);
-
-=======
->>>>>>> origin/master
   const handleChange = (value: unknown) => {
     const newStringifiedValue = String(value);
     const hasLeadingZero =
@@ -156,15 +139,9 @@ const MeasureInput = ({
       hasLeadingZero && newStringifiedValue.includes('.');
 
     const endorcedValue =
-<<<<<<< HEAD
-      startsWithZero && !zeroWithDot
-        ? stringifiedValue.replace(/^0/, '')
-        : stringifiedValue || '0';
-=======
       hasLeadingZero && !hasLeadingZeroWithDot
         ? newStringifiedValue.replace(/^0/, '')
         : newStringifiedValue || '0';
->>>>>>> origin/master
     const isNumber = !Number.isNaN(Number(endorcedValue));
 
     if (!isNumber) {

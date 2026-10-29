@@ -121,15 +121,8 @@ function convertKetV2ToInternal(ketText: KetTextV2Node): TextAttributes {
 /**
  * Check if the ketItem is in KET v2.0 format (has boundingBox and paragraphs directly).
  */
-<<<<<<< HEAD
-function isKetV2Format(ketItem: any): ketItem is KETTextV2 {
-  return (
-    ketItem?.boundingBox !== undefined && ketItem?.paragraphs !== undefined
-  );
-=======
 function isKetV2Format(ketItem: KetTextNode): ketItem is KetTextV2Node {
   return 'boundingBox' in ketItem && 'paragraphs' in ketItem;
->>>>>>> origin/master
 }
 
 export function textToStruct(ketItem: KetTextNode, struct: Struct) {

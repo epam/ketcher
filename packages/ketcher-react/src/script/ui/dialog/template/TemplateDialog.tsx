@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-=======
->>>>>>> origin/master
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -235,14 +230,11 @@ export const TemplateDialog: FC<Props> = (props) => {
 
   const filteredTemplateLib = filterLibSelector(props);
 
-<<<<<<< HEAD
-=======
   const activeTab =
     isMonomerCreationWizardActive && tab === TemplateTabs.FunctionalGroupLibrary
       ? TemplateTabs.TemplateLibrary
       : tab;
 
->>>>>>> origin/master
   useEffect(() => {
     searchInputRef.current?.focus();
     onSelect(null);

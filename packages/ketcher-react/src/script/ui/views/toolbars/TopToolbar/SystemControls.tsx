@@ -57,11 +57,7 @@ export const SystemControls = ({
   className,
 }: SystemControlsProps) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
-<<<<<<< HEAD
-  const [isFullscreen, setIsFullscreen] = useState(getIfFullScreen);
-=======
   const [isFullscreen, setIsFullscreen] = useState(isFullScreen);
->>>>>>> origin/master
 
   useEffect(() => {
     const syncFullscreenMode = () => setIsFullscreen(isFullScreen());

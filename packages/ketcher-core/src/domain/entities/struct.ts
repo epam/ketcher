@@ -239,11 +239,7 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
-<<<<<<< HEAD
-    needCloneAttachmentPoints = false,
-=======
     shouldCloneAttachmentPoints = false,
->>>>>>> origin/master
     attachmentGroupSet?: Pile<number> | null,
   ): Struct {
     const cloneStruct = this.mergeInto(
@@ -259,11 +255,7 @@ export class Struct {
       imagesSet,
       multitailArrowsSet,
       bidMap,
-<<<<<<< HEAD
-      needCloneAttachmentPoints,
-=======
       shouldCloneAttachmentPoints,
->>>>>>> origin/master
       attachmentGroupSet,
     );
     cloneStruct.findConnectedComponents();
@@ -350,11 +342,7 @@ export class Struct {
     imagesSet?: Pile<number> | null,
     multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
-<<<<<<< HEAD
-    needCloneAttachmentPoints = false,
-=======
     shouldCloneAttachmentPoints = false,
->>>>>>> origin/master
     attachmentGroupSet?: Pile<number> | null,
   ): Struct {
     const atoms: Pile<number> = atomSet ?? new Pile<number>(this.atoms.keys());
@@ -691,11 +679,7 @@ export class Struct {
       startCoords = beginEndpoint.pp;
     }
 
-<<<<<<< HEAD
-    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
-=======
     if (sgroup1 !== sgroup2 && sgroup2 instanceof MonomerMicromolecule) {
->>>>>>> origin/master
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : endEndpoint.pp;
@@ -798,9 +782,6 @@ export class Struct {
       list.forEach((aid) => {
         this.atomSortNeighbors(aid);
       });
-      this.attachmentGroups.forEach((_attachmentGroup, id) => {
-        this.atomSortNeighbors(id);
-      });
     } else {
       this.atoms.forEach((_atom, aid) => {
         this.atomSortNeighbors(aid);
@@ -826,9 +807,6 @@ export class Struct {
     if (list) {
       list.forEach((atomId) => {
         this.atomUpdateHalfBonds(atomId);
-      });
-      this.attachmentGroups.forEach((_attachmentGroup, id) => {
-        this.atomUpdateHalfBonds(id);
       });
     } else {
       this.atoms.forEach((_atom, atomId) => {
@@ -1029,13 +1007,9 @@ export class Struct {
     return lengths;
   }
 
-<<<<<<< HEAD
-  /** Median of `values`, or -1 when there is nothing to measure. */
-=======
   /**
   Median of `values`, or -1 when there is nothing to measure.
   */
->>>>>>> origin/master
   static median(values: number[]): number {
     if (values.length === 0) {
       return -1;
@@ -1060,13 +1034,8 @@ export class Struct {
   static isRescaleFactorSane(scale: number): boolean {
     return (
       Number.isFinite(scale) &&
-<<<<<<< HEAD
-      scale >= Struct.MIN_RESCALE &&
-      scale <= Struct.MAX_RESCALE
-=======
       scale >= this.MIN_RESCALE &&
       scale <= this.MAX_RESCALE
->>>>>>> origin/master
     );
   }
 

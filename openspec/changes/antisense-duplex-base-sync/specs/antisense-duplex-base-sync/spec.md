@@ -6,20 +6,12 @@ Whether a position's sense monomer, its antisense monomer, or both are being edi
 
 Gestures differ in what they select, and the rule follows what they select rather than which row the pointer was on:
 
-<<<<<<< HEAD
-=======
 #### Scenario: Dragging over one row in view mode
 
->>>>>>> origin/master
 - Dragging over symbols on one row in view mode selects only the symbols it covers, so it selects one strand.
 - Shift+drag adds the symbols it covers to the existing selection, so it can select unpaired symbols on both rows.
 - Clicking a symbol, shift-clicking, select-all, and every selection made in edit mode (dragging between symbols, or shift with the arrow keys) select both strands of each position they touch.
 
-<<<<<<< HEAD
-#### Scenario: Dragging over one row in view mode
-
-=======
->>>>>>> origin/master
 - **WHEN** the user drags over symbols on the antisense row of a duplex in view mode
 - **THEN** only those antisense monomers are selected
 - **AND** a base modification edits the antisense strand
@@ -44,19 +36,12 @@ Gestures differ in what they select, and the rule follows what they select rathe
 
 ### Requirement: A duplex selection is editable through both replacement paths
 
-<<<<<<< HEAD
-The system SHALL allow a selection that covers part of a double-stranded sequence to be modified through the RNA Builder and through the monomer library. Replacement from the library SHALL include replacing the selection with a preset, on the same terms as replacing it with a single monomer. The presence of an antisense partner SHALL NOT by itself disable the "Modify in RNA Builder..." action, and SHALL NOT by itself cause a library replacement to be refused. Only the selected-pair rule specified below refuses these edits, and it SHALL report its reason rather than failing silently.
-
-#### Scenario: RNA Builder is available on a duplex
-
-=======
 The system SHALL allow a selection that covers part of a double-stranded sequence to be modified through the RNA Builder and through the monomer library. Replacement from the library SHALL include replacing the selection with a preset, on the same terms as replacing it with a single monomer. The presence of an antisense partner SHALL NOT by itself disable the "Modify in RNA Builder..." action, and SHALL NOT by itself cause a library replacement to be refused.
 
 #### Scenario: RNA Builder is available on a duplex
 
 Only the selected-pair rule specified below refuses these edits, and it SHALL report its reason rather than failing silently.
 
->>>>>>> origin/master
 - **WHEN** the user selects one or more nucleotides on one strand of a duplex
 - **AND** opens the sequence context menu
 - **THEN** the "Modify in RNA Builder..." action is enabled
@@ -91,17 +76,10 @@ Only the selected-pair rule specified below refuses these edits, and it SHALL re
 
 When the user modifies a selection through the RNA Builder or the monomer library, the system SHALL apply the modification to the selected monomers, and SHALL NOT apply it to an unselected monomer on the opposite strand except through the propagation specified below.
 
-<<<<<<< HEAD
-When both strands of a position are selected, a modification that is not blocked SHALL apply to both selected monomers, and the RNA Builder and the monomer library SHALL agree on this. Each strand's backbone SHALL be rebuilt in its own chain direction, and the confirmations a replacement raises SHALL take every selected monomer into account.
-
-#### Scenario: An antisense selection edits the antisense strand
-
-=======
 #### Scenario: An antisense selection edits the antisense strand
 
 When both strands of a position are selected, a modification that is not blocked SHALL apply to both selected monomers, and the RNA Builder and the monomer library SHALL agree on this. Each strand's backbone SHALL be rebuilt in its own chain direction, and the confirmations a replacement raises SHALL take every selected monomer into account.
 
->>>>>>> origin/master
 - **WHEN** the user selects a nucleotide on the antisense strand of a duplex, and not its sense partner
 - **AND** modifies its base through the RNA Builder or replaces it through the library
 - **THEN** the antisense nucleotide is the one that changes
@@ -277,17 +255,10 @@ When the system rewrites a paired base that carried a modification, it SHALL rep
 
 Before the RNA Builder applies an update, the confirmation SHALL state how many nucleotides the user is modifying directly (n) and, when propagation will rewrite any unselected opposite bases, how many of those will change (m). m SHALL count only opposite bases that the update will actually rewrite, so it SHALL agree with the result of confirming.
 
-<<<<<<< HEAD
-The confirmation SHALL be shown when n is greater than 1 or m is greater than 0. Otherwise the update SHALL be applied without a confirmation, as before.
-
-#### Scenario: The update will change additional nucleotides
-
-=======
 #### Scenario: The update will change additional nucleotides
 
 The confirmation SHALL be shown when n is greater than 1 or m is greater than 0. Otherwise the update SHALL be applied without a confirmation, as before.
 
->>>>>>> origin/master
 - **WHEN** sync editing is on
 - **AND** the user confirms an RNA Builder edit of n selected nucleotides that will rewrite m unselected opposite bases, with m greater than 0
 - **THEN** the confirmation reads "You are going to modify n nucleotides, and that will change m additional nucleotides. Are you sure?"
@@ -321,16 +292,6 @@ The confirmation SHALL be shown when n is greater than 1 or m is greater than 0.
 
 ### Requirement: Base modification is blocked when the selection holds both bases of a pair
 
-<<<<<<< HEAD
-When sync editing is on and the selection contains at least one pair of H-bonded sense and antisense bases that are both selected, where each such base connects through R1 to R3 to a sugar that has at least one backbone connection, the system SHALL block base modification and SHALL report the reason. The bases do not have to be complementary, only opposite one another. When sync editing is off, base modification SHALL NOT be blocked, since that is the mode the error message directs the user to.
-
-The block SHALL apply to every way of setting a new base, whatever the edit came from: the RNA Builder, and a library replacement with any item that carries a base — a base monomer, an unsplit nucleotide, or a preset that has a base. A library item that sets no base SHALL NOT be blocked. The refusal SHALL be reported before any confirmation dialog the replacement would otherwise raise, and SHALL leave the canvas unchanged.
-
-A selection that holds bases on both strands, none of which has its H-bonded partner selected, SHALL NOT be blocked.
-
-#### Scenario: All selected bases are identical
-
-=======
 When sync editing is on and the selection contains at least one pair of H-bonded sense and antisense bases that are both selected, where each such base connects through R1 to R3 to a sugar that has at least one backbone connection, the system SHALL block base modification and SHALL report the reason.
 
 The bases do not have to be complementary, only opposite one another.
@@ -347,7 +308,6 @@ The refusal SHALL be reported before any confirmation dialog the replacement wou
 
 A selection that holds bases on both strands, none of which has its H-bonded partner selected, SHALL NOT be blocked.
 
->>>>>>> origin/master
 - **WHEN** sync editing is on
 - **AND** the selection contains at least one H-bonded sense/antisense base pair with both bases selected
 - **AND** every selected base is the same symbol

@@ -107,15 +107,6 @@ export function resolveTranslatableText<T>(value: T, t: TFunction): T {
 }
 
 export const getSelectOptionsFromSchema = (
-<<<<<<< HEAD
-  schema,
-  t: TFunction,
-): Array<Option> => {
-  return schema.enum.reduce((options, value, index) => {
-    options.push({
-      value,
-      label: resolveTranslatableText(schema?.enumNames?.[index] ?? value, t),
-=======
   schema: EnumSchemaLike | null | undefined,
   t: TFunction,
 ): Array<Option> => {
@@ -129,7 +120,6 @@ export const getSelectOptionsFromSchema = (
       // stay valid against their numeric schema enums.
       value: value as Option['value'],
       label: typeof label === 'string' ? label : String(label),
->>>>>>> origin/master
     });
 
     return options;

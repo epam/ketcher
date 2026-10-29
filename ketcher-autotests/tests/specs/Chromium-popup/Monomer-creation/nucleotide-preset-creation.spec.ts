@@ -802,10 +802,6 @@ test('Problematic atom is highlighted in red when Phosphate tab is active', asyn
   await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
   await LeftToolbar(page).createMonomer();
-<<<<<<< HEAD
-  await shiftCanvas(page, -150, 50);
-=======
->>>>>>> origin/master
   await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
   await presetSection.setName('Issue 10248 preset');
 

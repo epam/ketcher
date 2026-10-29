@@ -25,10 +25,7 @@ import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
 import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
-<<<<<<< HEAD
-=======
 import type { ModalState } from '../../state/modal';
->>>>>>> origin/master
 
 interface ModalProps extends BaseCallProps {
   modal: Pick<ModalState, 'name' | 'form' | 'prop'>;

@@ -20,11 +20,7 @@ import {
   selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
-<<<<<<< HEAD
-  selectIsSequenceEditInRNABuilderMode,
-=======
   isRnaBuilderSequenceEditMode,
->>>>>>> origin/master
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
@@ -42,10 +38,7 @@ import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { useTranslation } from 'react-i18next';
-<<<<<<< HEAD
-=======
 import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
->>>>>>> origin/master
 
 export function TopMenuComponent() {
   const { t } = useTranslation('macromolecules');
@@ -118,24 +111,7 @@ export function TopMenuComponent() {
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-<<<<<<< HEAD
-    } else if (name === 'undo' || name === 'redo') {
-      editor?.events.selectHistory.dispatch(name);
-    } else if (name === 'clear') {
-      editor?.events.resetSequenceEditMode.dispatch();
-      editor?.events.selectTool.dispatch([name]);
-      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
-      if (isSequenceEditInRNABuilderMode)
-        resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
-    } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
-      editor?.events.createAntisenseChain.dispatch(
-        name === 'antisenseDnaStrand',
-      );
-    } else if (name === 'arrange-ring') {
-      editor?.events.layoutCircular.dispatch();
-=======
       return;
->>>>>>> origin/master
     }
 
     menuItemHandlers[name as MenuItemName]?.();
@@ -164,8 +140,6 @@ export function TopMenuComponent() {
           title={t('topMenu.saveAs')}
           testId="save-file-button"
         />
-<<<<<<< HEAD
-=======
       </Menu.Group>
       <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Submenu
@@ -216,7 +190,6 @@ export function TopMenuComponent() {
           disabled={isDisabled || !selectedEntities?.length}
           testId="macro-cut-button"
         />
->>>>>>> origin/master
       </Menu.Group>
       <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Item
@@ -239,11 +212,7 @@ export function TopMenuComponent() {
             title={t('topMenu.arrangeAsRing', {
               shortcut: hotkeysShortcuts.arrangeRing,
             })}
-<<<<<<< HEAD
-            disabled={cyclicStructureFormationDisabled}
-=======
             disabled={isCyclicStructureFormationDisabled}
->>>>>>> origin/master
             testId="arrange-ring"
           />
         </Menu.Group>

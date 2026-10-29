@@ -30,10 +30,7 @@ import Select from '../../../component/form/Select';
 import {
   useCallback,
   useEffect,
-<<<<<<< HEAD
-=======
   useLayoutEffect,
->>>>>>> origin/master
   useMemo,
   useReducer,
   useRef,
@@ -600,13 +597,8 @@ const autoAssignPropertiesForHiddenMonomer = (
 
 const validateInputs = (
   values: WizardValues,
-<<<<<<< HEAD
-  skipUniquenessChecks = false,
-  skipMandatoryCheck = false,
-=======
   shouldSkipUniquenessChecks = false,
   shouldSkipMandatoryCheck = false,
->>>>>>> origin/master
   originalMonomerItem?: MonomerItemType,
   initialName?: string,
 ) => {
@@ -648,11 +640,7 @@ const validateInputs = (
       }
 
       if (
-<<<<<<< HEAD
-        !skipUniquenessChecks &&
-=======
         !shouldSkipUniquenessChecks &&
->>>>>>> origin/master
         hasMonomerFieldCollision(
           library,
           'symbol',
@@ -693,11 +681,7 @@ const validateInputs = (
       }
 
       if (
-<<<<<<< HEAD
-        !skipUniquenessChecks &&
-=======
         !shouldSkipUniquenessChecks &&
->>>>>>> origin/master
         hasMonomerFieldCollision(
           library,
           'aliasHELM',
@@ -726,11 +710,7 @@ const validateInputs = (
       }
 
       if (
-<<<<<<< HEAD
-        !skipUniquenessChecks &&
-=======
         !shouldSkipUniquenessChecks &&
->>>>>>> origin/master
         hasMonomerFieldCollision(
           library,
           'aliasBILN',
@@ -1124,11 +1104,7 @@ const MonomerCreationWizardInternal = ({
     setModificationTypes([]);
     setPhosphatePosition(undefined);
     editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
-<<<<<<< HEAD
-    if ((type === 'rnaPreset' || newType === 'rnaPreset') && type !== newType) {
-=======
     if (type !== newType && (type === 'rnaPreset' || newType === 'rnaPreset')) {
->>>>>>> origin/master
       wizardStateDispatch({
         type: 'ResetWizard',
       });
@@ -1313,15 +1289,9 @@ const MonomerCreationWizardInternal = ({
       return;
     }
 
-<<<<<<< HEAD
-    const attachmentPointsList = Array.from(
-      attachmentAtomIdsWithExternalBonds.keys(),
-    ).join(' and ');
-=======
     const attachmentPointsList = [
       ...attachmentAtomIdsWithExternalBonds.keys(),
     ].join(' and ');
->>>>>>> origin/master
     const message = t(
       'components:monomerCreationWizard.notifications.usedAttachmentPointsWarning',
       { points: attachmentPointsList },

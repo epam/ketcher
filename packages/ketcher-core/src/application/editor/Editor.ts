@@ -558,11 +558,7 @@ export class CoreEditor {
       : undefined;
     if (
       editedMonomerRef &&
-<<<<<<< HEAD
-      (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
-=======
       (!editedMonomer || newMonomersLibraryChunk.length !== 1)
->>>>>>> origin/master
     ) {
       throw new Error(
         'The original monomer is no longer available for editing.',
@@ -669,9 +665,6 @@ export class CoreEditor {
       }
 
       const hasNewMonomerBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
-        newMonomer.props?.MonomerClass,
-      );
-      const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
       const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
@@ -1462,13 +1455,8 @@ export class CoreEditor {
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(
-<<<<<<< HEAD
-      (needToRemoveSelection?: boolean) =>
-        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
-=======
       (shouldRemoveSelection?: boolean) =>
         this.onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection),
->>>>>>> origin/master
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -2071,21 +2059,13 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-<<<<<<< HEAD
-  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
-=======
   private onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
->>>>>>> origin/master
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
     this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
-<<<<<<< HEAD
-      needToRemoveSelection,
-=======
       shouldRemoveSelection,
->>>>>>> origin/master
     );
   }
 
@@ -2582,20 +2562,12 @@ export class CoreEditor {
     this.mode?.[eventHandlerName]?.(event);
   }
 
-<<<<<<< HEAD
-  public beginMonomerWizardSession(includeCanvas = true) {
-=======
   public beginMonomerWizardSession(shouldIncludeCanvas = true) {
->>>>>>> origin/master
     if (this.isMonomerWizardSessionActive) {
       throw new Error('A monomer wizard session is already active.');
     }
     // Unlike a normal mode switch, keep the live macro model and history.
-<<<<<<< HEAD
-    const result = includeCanvas
-=======
     const result = shouldIncludeCanvas
->>>>>>> origin/master
       ? MacromoleculesConverter.convertDrawingEntitiesToStruct(
           this.drawingEntitiesManager,
           new Struct(),
@@ -2620,30 +2592,18 @@ export class CoreEditor {
     return result;
   }
 
-<<<<<<< HEAD
-  public finishMonomerWizardSession(savedCanvas: boolean) {
-=======
   public finishMonomerWizardSession(isCanvasSaved: boolean) {
->>>>>>> origin/master
     if (!this.monomerWizardMode) {
       return;
     }
     const originalManager = this.drawingEntitiesManager;
-<<<<<<< HEAD
-    let canvasChanged = false;
-=======
     let hasCanvasChanged = false;
->>>>>>> origin/master
     this.mode = this.monomerWizardMode;
     // Read it now so a failed restore cannot leave a stale request behind.
     const instanceReplacement = this.pendingMonomerWizardInstanceReplacement;
     this.pendingMonomerWizardInstanceReplacement = undefined;
     try {
-<<<<<<< HEAD
-      if (savedCanvas) {
-=======
       if (isCanvasSaved) {
->>>>>>> origin/master
         const struct = this.micromoleculesEditor.struct();
         this.rescaleStructForModeTransition(struct, 'microToMacro');
         const manager = new DrawingEntitiesManager();
@@ -2652,11 +2612,7 @@ export class CoreEditor {
             struct,
             manager,
           );
-<<<<<<< HEAD
-        canvasChanged = true;
-=======
         hasCanvasChanged = true;
->>>>>>> origin/master
         originalManager.clearCanvas();
         this.drawingEntitiesManager = manager;
         this.viewModel.initialize([...manager.bonds.values()]);
@@ -2684,11 +2640,7 @@ export class CoreEditor {
         EditorHistory.getInstance(this).update(command);
       }
     } catch (error) {
-<<<<<<< HEAD
-      if (canvasChanged) {
-=======
       if (hasCanvasChanged) {
->>>>>>> origin/master
         this.restoreMonomerWizardCanvas(originalManager);
       }
       throw error;
@@ -2727,11 +2679,7 @@ export class CoreEditor {
     // `replaceMonomer` adds and deletes monomers, so iterate over a snapshot.
     const monomers = [...this.drawingEntitiesManager.monomers.values()];
     const command = new Command();
-<<<<<<< HEAD
-    let replacedAnyMonomer = false;
-=======
     let hasReplacedAnyMonomer = false;
->>>>>>> origin/master
 
     monomers.forEach((monomer) => {
       const monomerItem = monomer.monomerItem;
@@ -2753,17 +2701,10 @@ export class CoreEditor {
         this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
           .command,
       );
-<<<<<<< HEAD
-      replacedAnyMonomer = true;
-    });
-
-    if (!replacedAnyMonomer) {
-=======
       hasReplacedAnyMonomer = true;
     });
 
     if (!hasReplacedAnyMonomer) {
->>>>>>> origin/master
       return;
     }
 
@@ -2853,10 +2794,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
-<<<<<<< HEAD
-=======
     this.micromoleculesEditor.selection(null);
->>>>>>> origin/master
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2952,11 +2890,7 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.mode.destroy();
       this._type = type;
-<<<<<<< HEAD
-      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
-=======
       globalThis.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
->>>>>>> origin/master
       this.drawingEntitiesManager = drawingEntitiesManager;
       this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
       this.mode = new (getModeConstructor(modeName))();
@@ -3058,12 +2992,9 @@ export class CoreEditor {
   }
 
   public destroy() {
-<<<<<<< HEAD
-=======
     if (isBaseTool(this.selectedTool)) {
       this.selectedTool.destroy();
     }
->>>>>>> origin/master
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

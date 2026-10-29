@@ -54,12 +54,6 @@ export type CreateBondViaModalPayload = {
 export type SelectLayoutModePayload =
   LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
-export type MonomerCreationWizardRequest = {
-  mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
-  monomer?: BaseMonomer;
-  libraryItem?: MonomerItemType;
-};
-
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 
 export interface EditMonomerPayload {
@@ -179,11 +173,7 @@ export interface Editor {
   closeMonomerCreationWizard: () => void;
   openMonomerCreationWizardFromMacro: (
     request: MonomerCreationWizardRequest,
-<<<<<<< HEAD
-    onFinish: (savedCanvas: boolean) => void,
-=======
     onFinish: (isCanvasSaved: boolean) => void,
->>>>>>> origin/master
   ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;

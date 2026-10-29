@@ -159,13 +159,8 @@ export class ServerFormatter implements StructFormatter {
           'serverFormatter.ts::getStructureFromStringAsync',
           error,
         );
-<<<<<<< HEAD
-        const details = e instanceof Error ? e.message : String(e);
-        throw new Error(`Convert error!\n${details}`, { cause: e });
-=======
         const details = error instanceof Error ? error.message : String(error);
         throw new Error(`Convert error!\n${details}`, { cause: error });
->>>>>>> origin/master
       }
 
       const formatError =
@@ -178,11 +173,7 @@ export class ServerFormatter implements StructFormatter {
           : getPropertiesByFormat(this.#format).name;
 
       throw new Error(`${formatError} is not supported in standalone mode.`, {
-<<<<<<< HEAD
-        cause: e,
-=======
         cause: error,
->>>>>>> origin/master
       });
     }
   }

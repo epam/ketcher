@@ -31,10 +31,7 @@ import type {
 } from '../../../../../state/options/types';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
-<<<<<<< HEAD
-=======
 import type { AppDispatch } from 'src/script/ui/state/hooks';
->>>>>>> origin/master
 import i18n from 'src/i18n/i18n';
 
 interface MoleculeErrors {

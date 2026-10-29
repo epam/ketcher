@@ -347,13 +347,7 @@ class BondTool implements Tool {
       );
       this.updateHapticAttachmentGroupTarget(attachmentGroupId);
 
-<<<<<<< HEAD
-      if (attachmentGroupId !== null) {
-        endAtom = { map: 'attachmentGroups', id: attachmentGroupId };
-      } else {
-=======
       if (attachmentGroupId === null) {
->>>>>>> origin/master
         const closestAtom = closest.atom(
           editor.render.ctab,
           pointerPosition,
@@ -361,11 +355,8 @@ class BondTool implements Tool {
           null,
         );
         endAtom = closestAtom ? { map: 'atoms', id: closestAtom.id } : null;
-<<<<<<< HEAD
-=======
       } else {
         endAtom = { map: 'attachmentGroups', id: attachmentGroupId };
->>>>>>> origin/master
       }
     } else {
       this.updateHapticAttachmentGroupTarget(null);
@@ -605,11 +596,7 @@ class BondTool implements Tool {
           )
         : null;
 
-<<<<<<< HEAD
-      if (dragCtx.action && dragEndFailure) {
-=======
       if (dragEndFailure && dragCtx.action) {
->>>>>>> origin/master
         const revertedPreviewAction = dragCtx.action.perform(render.ctab);
         delete dragCtx.action;
         this.hapticBond.showValidationError(dragEndFailure);

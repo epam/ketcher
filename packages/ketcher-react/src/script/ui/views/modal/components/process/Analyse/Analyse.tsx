@@ -121,11 +121,7 @@ function renderInputComponent(
       <textarea
         readOnly
         value={
-<<<<<<< HEAD
-          values && !loading && item.round
-=======
           values && !isLoading && item.round
->>>>>>> origin/master
             ? roundOff(
                 values[item.key] as string | number,
                 Number(round[item.round]),
@@ -141,11 +137,7 @@ function renderInputComponent(
     <FrozenInput
       data-testid={item.name + '-input'}
       value={
-<<<<<<< HEAD
-        values && !loading && item.round
-=======
         values && !isLoading && item.round
->>>>>>> origin/master
           ? roundOff(
               values[item.key] as string | number,
               Number(round[item.round]),

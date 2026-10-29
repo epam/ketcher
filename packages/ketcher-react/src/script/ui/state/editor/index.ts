@@ -50,13 +50,10 @@ import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 import { shouldResetToSelect } from './shouldResetToSelect';
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/state/editor/index.js
-=======
 import type { AppDispatch } from '../hooks';
 import type { EditorInitState, RGroupEditParams } from './types';
 import type { InfoPanelData } from '../../../editor/utils/functionalGroupsTooltip';
 import type Editor from '../../../editor/Editor';
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/state/editor/index.ts
 
 type TextEditPayload = { type: 'text' } & Record<string, unknown>;
 
@@ -91,15 +88,6 @@ export default function initEditor(
     async (dispatch: AppDispatch) => {
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
-<<<<<<< HEAD:packages/ketcher-react/src/script/ui/state/editor/index.js
-      const activeTool = activeToolAction?.tool;
-      if (!activeTool || (activeTool === 'select' && !force)) return;
-      const selectMode = state.toolbar.visibleTools.select;
-      const resetOption = state.options.settings.resetToSelect;
-      if (
-        shouldResetToSelect(activeTool, resetOption, activeToolAction.opts) ||
-        force === true
-=======
       const toolAction =
         typeof activeToolAction === 'function' ? null : activeToolAction;
       const activeTool = toolAction?.tool;
@@ -113,7 +101,6 @@ export default function initEditor(
           typeof toolAction?.opts === 'string' ? toolAction.opts : undefined,
         ) ||
         shouldForceReset === true
->>>>>>> origin/master:packages/ketcher-react/src/script/ui/state/editor/index.ts
       )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });

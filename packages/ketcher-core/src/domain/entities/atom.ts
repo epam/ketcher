@@ -29,10 +29,7 @@ import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { BondEndpoint } from './bondEndpoint';
-<<<<<<< HEAD
-=======
 import { SettingsManager } from 'utilities';
->>>>>>> origin/master
 
 /**
  * Return unions of Pick.
@@ -340,11 +337,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
   static getAttrHash(atom: Atom) {
     const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-<<<<<<< HEAD
-    for (const attr in Atom.attrlist) {
-=======
     for (const attr in this.attrlist) {
->>>>>>> origin/master
       if (atom[attr] !== undefined) attrs[attr] = atom[attr];
     }
     return attrs;
@@ -1146,11 +1139,7 @@ export function radicalElectrons(radical: unknown) {
 }
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-<<<<<<< HEAD
-  return value !== undefined ? value : defaultValue;
-=======
   return value === undefined ? defaultValue : value;
->>>>>>> origin/master
 }
 
 function isCorrectPseudo(label) {

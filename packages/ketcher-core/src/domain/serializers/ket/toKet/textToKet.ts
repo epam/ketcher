@@ -158,11 +158,7 @@ export function textToKet(textNode) {
 
             return part;
           })
-<<<<<<< HEAD
-          .filter(Boolean) as KETTextPart[];
-=======
           .filter((part) => part !== null);
->>>>>>> origin/master
 
         return paraObj;
       },

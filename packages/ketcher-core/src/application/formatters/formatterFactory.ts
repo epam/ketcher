@@ -82,11 +82,7 @@ export class FormatterFactory {
     // parser cannot do, so such structures are delegated to it as well.
     const isLoading = struct === undefined;
     const shouldDelegateToIndigo =
-<<<<<<< HEAD
-      Boolean(queryPropertiesAreUsed) ||
-=======
       Boolean(hasQueryProperties) ||
->>>>>>> origin/master
       (isLoading && Boolean(structServiceOptions['dearomatize-on-load']));
 
     switch (format) {

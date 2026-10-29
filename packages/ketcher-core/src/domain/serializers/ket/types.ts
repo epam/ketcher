@@ -129,8 +129,6 @@ export interface KetPlusNode {
 
 export type KetReactionNode = KetArrowNode | KetPlusNode;
 
-<<<<<<< HEAD
-=======
 export interface KetTextFont {
   family?: string;
   size?: number;
@@ -187,7 +185,6 @@ export interface KetLegacyTextNode {
 
 export type KetTextNode = KetTextV2Node | KetLegacyTextNode;
 
->>>>>>> origin/master
 export interface KetFragment {
   atoms?: KetAtomNode[];
   bonds?: KetBondNode[];

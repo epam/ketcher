@@ -215,11 +215,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-<<<<<<< HEAD
-  const showAttachmentGroupCreate = editableAtomIds.length > 1;
-=======
   const shouldShowAttachmentGroupCreate = editableAtomIds.length > 1;
->>>>>>> origin/master
   return (
     <>
       {showMarkAsMenu && (
@@ -283,11 +279,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
       <AttachmentGroupActionMenuItem
         {...props}
-<<<<<<< HEAD
-        showCreate={showAttachmentGroupCreate}
-=======
         showCreate={shouldShowAttachmentGroupCreate}
->>>>>>> origin/master
       />
       <Item
         {...props}

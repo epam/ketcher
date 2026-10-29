@@ -105,13 +105,8 @@ const AttachmentPointEditPopup = ({
         ...atomPair.map((id) => `[data-atom-id="${id}"]`),
         `[data-attachment-point-alias="${attachmentPointName}"]`,
       ].join(',');
-<<<<<<< HEAD
-      const bounds = Array.from(canvas.querySelectorAll(selector)).map(
-        (element) => element.getBoundingClientRect(),
-=======
       const bounds = [...canvas.querySelectorAll(selector)].map((element) =>
         element.getBoundingClientRect(),
->>>>>>> origin/master
       );
       if (!bounds.length) return;
 

@@ -454,13 +454,9 @@ class SelectTool implements Tool {
 
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
-<<<<<<< HEAD
-    /* ignore salts and solvents */
-=======
     /*
     ignore salts and solvents
     */
->>>>>>> origin/master
     const lastSelectedSgroupId = selectedSgroups.at(-1);
     const possibleSaltOrSolvent =
       lastSelectedSgroupId === undefined

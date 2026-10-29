@@ -311,13 +311,9 @@ class TemplateTool implements Tool {
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
-<<<<<<< HEAD
-    /* moving when attached to bond */
-=======
     /*
     moving when attached to bond
     */
->>>>>>> origin/master
     if (ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
       if (!bond) {
@@ -459,13 +455,9 @@ class TemplateTool implements Tool {
     const restruct = this.editor.render.ctab;
     let ci = dragCtx.item;
 
-<<<<<<< HEAD
-    /* after moving around bond */
-=======
     /*
     after moving around bond
     */
->>>>>>> origin/master
     if (dragCtx.action && ci?.map === 'bonds' && !this.isModeFunctionalGroup) {
       dragCtx.action.perform(restruct); // revert drag action
 

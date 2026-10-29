@@ -133,13 +133,9 @@ function createMiewOptions(userOpts) {
 
   return options;
 }
-<<<<<<< HEAD
-/* ---------------- */
-=======
 /*
 ----------------
 */
->>>>>>> origin/master
 const FooterContent = () => {
   const { t } = useTranslation('dialogs');
   return (

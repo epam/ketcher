@@ -53,11 +53,8 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { AnyAction } from 'redux';
-<<<<<<< HEAD
-=======
 import type { StoreState } from 'src/script/ui/state/store.types';
 import type { CheckOption } from 'src/script/ui/state/options/types';
->>>>>>> origin/master
 import i18n from 'src/i18n/i18n';
 
 const saveSchema = {
@@ -371,11 +368,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       // temporary check if query properties are used
       const hasQueryProperties = !!(
         type === SupportedFormat.mol &&
-<<<<<<< HEAD
-        Array.from(struct.atoms).some(
-=======
         [...struct.atoms].some(
->>>>>>> origin/master
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||

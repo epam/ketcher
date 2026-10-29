@@ -15,10 +15,7 @@ import { configureAppStore } from 'state';
 import {
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
-<<<<<<< HEAD
-=======
   RnaBuilderPresetsItem,
->>>>>>> origin/master
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
 import { defaultTheme } from 'theming/defaultTheme';
@@ -217,8 +214,6 @@ describe('Test Rna Editor Expanded component', () => {
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 
-<<<<<<< HEAD
-=======
   it.each([true, false])(
     'selects the preset root when compact view is %s',
     (isCompactView) => {
@@ -255,7 +250,6 @@ describe('Test Rna Editor Expanded component', () => {
     },
   );
 
->>>>>>> origin/master
   it('shows "Not selected" for an empty phosphate slot in sequence edit mode', () => {
     useIsCompactViewMock.mockReturnValue(false);
 

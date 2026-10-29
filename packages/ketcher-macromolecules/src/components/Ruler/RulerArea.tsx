@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable react-hooks/preserve-manual-memoization */
-=======
->>>>>>> origin/master
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
@@ -93,14 +89,7 @@ export const RulerArea = () => {
     const handlePosition = translateValueWithZoomAndDrag + RulerHandleOffsetX;
     let inputPosition = translateValueWithZoomAndDrag + RulerInputOffsetX;
 
-<<<<<<< HEAD
-    const visibleEdges = getVisibleEdges(
-      editor?.canvas.parentElement,
-      rootWidth,
-    );
-=======
     const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
->>>>>>> origin/master
     if (!visibleEdges) {
       return [inputPosition, handlePosition];
     }
@@ -212,40 +201,6 @@ export const RulerArea = () => {
     [editor?.zoomTool, canvasContainer, rootWidth],
   );
 
-  // Scrolls the canvas when the dragged slider would leave the visible area,
-  // so it stays on screen and can be grabbed again (decision in #7199).
-  // The line length does not depend on the scroll, see calculateDragPosition
-  const scrollToKeepHandleVisible = useCallback(
-    (sliderTranslateValue: number, dragDelta = 0) => {
-      const zoomTool = editor?.zoomTool;
-      const visibleEdges = getVisibleEdges(
-        editor?.canvas.parentElement,
-        rootWidth,
-      );
-      if (!zoomTool || !visibleEdges) {
-        return;
-      }
-
-      // The live transform, as the one from useZoomTransform lags behind a scroll
-      const liveTransform = zoomTool.zoomTransform;
-      const position = liveTransform.applyX(sliderTranslateValue) + dragDelta;
-      const rightOvershoot =
-        position + RulerInputOffsetX + RulerInputWidth - visibleEdges.right;
-      // Never scroll the start of the ruler past the left edge
-      const leftOvershoot = Math.min(
-        visibleEdges.left - (position + RulerHandleOffsetX),
-        visibleEdges.left - liveTransform.applyX(0),
-      );
-
-      if (rightOvershoot > 0) {
-        zoomTool.scrollBy(-rightOvershoot, 0);
-      } else if (leftOvershoot > 0) {
-        zoomTool.scrollBy(leftOvershoot, 0);
-      }
-    },
-    [editor?.zoomTool, editor?.canvas.parentElement, rootWidth],
-  );
-
   const handleDrag = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       const [dragDelta, dragPosition] = calculateDragPosition(
@@ -254,17 +209,10 @@ export const RulerArea = () => {
 
       setDragDelta(dragDelta);
       scrollToKeepHandleVisible(translateValue, dragDelta);
-<<<<<<< HEAD
-      editor?.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
-    },
-    [
-      editor?.events?.toggleLineLengthHighlighting,
-=======
       toggleLineLengthHighlighting?.dispatch(true, dragPosition);
     },
     [
       toggleLineLengthHighlighting,
->>>>>>> origin/master
       calculateDragPosition,
       scrollToKeepHandleVisible,
       translateValue,

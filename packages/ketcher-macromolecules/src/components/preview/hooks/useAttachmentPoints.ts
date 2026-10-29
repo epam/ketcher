@@ -61,11 +61,7 @@ export const useAttachmentPoints = ({
       const preparedData: PreparedAttachmentPointData = {
         id,
         label,
-<<<<<<< HEAD
-        connected,
-=======
         connected: isConnected,
->>>>>>> origin/master
       };
 
       preparedAttachmentPointsData.push(preparedData);

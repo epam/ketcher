@@ -249,11 +249,7 @@ test.beforeAll(async ({ initSnakeCanvas }) => {
 
 ## Page Object Model (POM)
 
-<<<<<<< HEAD
-All UI interactions **and assertions** go through POM objects. Never use raw `page.locator` / `page.getByTestId` in test files for reusable UI elements — including state checks like `expect(page.getByTestId('undo')).toBeDisabled()`. Use the locator the POM already exposes (e.g. `expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled()`).
-=======
 All UI interactions **and assertions** go through POM objects and repo helpers. Test files never hold raw locators for reusable UI elements, including state checks. See [Selector Order](#selector-order) for how to pick a locator.
->>>>>>> origin/master
 
 ### POM Style: factory function, not class
 
@@ -457,11 +453,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
 8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
-<<<<<<< HEAD
-   test('Copy action stays enabled after switching to Macro mode', async () => {
-=======
    test('Case 1 - Copy stays enabled in Macro mode', async () => {
->>>>>>> origin/master
      /*
       * Test task: https://github.com/epam/ketcher/issues/9999
       * Description: Copy action stays enabled for selected microstructure after switching to Macro mode

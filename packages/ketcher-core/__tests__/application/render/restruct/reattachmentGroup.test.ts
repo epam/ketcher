@@ -16,11 +16,7 @@ type SvgSvgElementWithRaphaelMethods = SVGSVGElement & {
 };
 
 function mockSvgDomApi() {
-<<<<<<< HEAD
-  const svgSvgElement = window.SVGSVGElement
-=======
   const svgSvgElement = globalThis.SVGSVGElement
->>>>>>> origin/master
     .prototype as unknown as SvgSvgElementWithRaphaelMethods;
 
   svgSvgElement.createSVGMatrix = () =>
@@ -55,11 +51,7 @@ function mockSvgDomApi() {
         return this;
       },
     }) as unknown as DOMPoint;
-<<<<<<< HEAD
-  window.SVGElement.prototype.getBBox = () =>
-=======
   globalThis.SVGElement.prototype.getBBox = () =>
->>>>>>> origin/master
     ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 }
 

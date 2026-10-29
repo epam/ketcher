@@ -512,17 +512,10 @@ export function setExpandMonomerSGroup(
     const attachmentAtom = struct.atoms.get(attachmentAtomsFromInside[index]);
     // S-groups in this branch were already moved by the lines logic above; the
     // plain atoms left over have to follow them, not the attachment point.
-<<<<<<< HEAD
-    const followsMovedSGroups = Boolean(sGroupsToMove.get(index)?.length);
-
-    let moveVector: Vec2;
-    if (attachmentAtom && !followsMovedSGroups) {
-=======
     const shouldFollowMovedSGroups = Boolean(sGroupsToMove.get(index)?.length);
 
     let moveVector: Vec2;
     if (attachmentAtom && !shouldFollowMovedSGroups) {
->>>>>>> origin/master
       /*
        * Expanding moves the anchor of every bond to outside from the contracted
        * label to the attachment atom, and collapsing moves it back. Shifting

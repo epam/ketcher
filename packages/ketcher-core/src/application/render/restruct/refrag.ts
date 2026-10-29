@@ -79,16 +79,6 @@ class ReFrag extends ReObject {
         bba = new Box2Abs(atom.a.pp, atom.a.pp);
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         bba = bba.extend(ext, ext);
-<<<<<<< HEAD
-      } else {
-        if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render;
-        }
-        bba = bba
-          .translate((render.options.offset ?? new Vec2()).negated())
-          .transform(Scale.canvasToModel, render.options);
-=======
->>>>>>> origin/master
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;
     });
@@ -142,11 +132,7 @@ class ReFrag extends ReObject {
 
     render.ctab.bonds.forEach((bond) => {
       if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
-<<<<<<< HEAD
-        bond.setHover(hover, render);
-=======
         bond.setHover(isHovered, render);
->>>>>>> origin/master
       }
     });
   }

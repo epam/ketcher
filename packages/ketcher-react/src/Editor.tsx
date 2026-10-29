@@ -76,24 +76,6 @@ export const Editor = (props: Props) => {
 
   const [ketcherId, setKetcherId] = useState<string>('');
   const initializedKetcherRef = useRef<Ketcher | null>(null);
-<<<<<<< HEAD
-  const prevShowPolymerEditorRef = useRef<boolean>(showPolymerEditor);
-  const editorsReadyRef = useRef<boolean>(false);
-
-  const [isMonomerWizardOpen, setIsMonomerWizardOpen] = useState(false);
-  const pendingWizard = useRef<MonomerCreationWizardRequest | undefined>(
-    undefined,
-  );
-  const wizardSessionActive = useRef(false);
-  const skipModeConversion = useRef(false);
-  const pendingWizardFinish = useRef<boolean | undefined>(undefined);
-  const togglePolymerEditor = useCallback((toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  }, []);
-
-  const togglerComponent = !disableMacromoleculesEditor ? (
-=======
   // Refs (not state) so both init callbacks always see the latest instances,
   // regardless of which render they were created in.
   const ketcherRef = useRef<Ketcher | undefined>(undefined);
@@ -115,7 +97,6 @@ export const Editor = (props: Props) => {
   }, []);
 
   const togglerComponent = disableMacromoleculesEditor ? undefined : (
->>>>>>> origin/master
     <ModeControl
       toggle={(value) => {
         if (!isMonomerWizardOpen) togglePolymerEditor(value);
@@ -128,18 +109,6 @@ export const Editor = (props: Props) => {
   useEffect(() => {
     const onWizardStateChange = (isWizardActive: boolean) => {
       setIsMonomerWizardOpen(isWizardActive || wizardSessionActive.current);
-    };
-    moleculesEditor?.event.monomerWizardStateChange.add(onWizardStateChange);
-    return () => {
-      moleculesEditor?.event.monomerWizardStateChange.remove(
-        onWizardStateChange,
-      );
-    };
-  }, [moleculesEditor]);
-
-  useEffect(() => {
-    const onWizardStateChange = (active: boolean) => {
-      setIsMonomerWizardOpen(active || wizardSessionActive.current);
     };
     moleculesEditor?.event.monomerWizardStateChange.add(onWizardStateChange);
     return () => {
@@ -205,26 +174,16 @@ export const Editor = (props: Props) => {
    * and the user never sees the pre-wizard canvas flash.
    */
   useLayoutEffect(() => {
-<<<<<<< HEAD
-    const savedCanvas = pendingWizardFinish.current;
-
-    if (savedCanvas === undefined || !macromoleculesEditor) {
-=======
     const hasSavedCanvas = pendingWizardFinish.current;
 
     if (hasSavedCanvas === undefined || !macromoleculesEditor) {
->>>>>>> origin/master
       return;
     }
 
     pendingWizardFinish.current = undefined;
 
     try {
-<<<<<<< HEAD
-      macromoleculesEditor.finishMonomerWizardSession(savedCanvas);
-=======
       macromoleculesEditor.finishMonomerWizardSession(hasSavedCanvas);
->>>>>>> origin/master
     } catch (error) {
       moleculesEditor?.errorHandler?.(
         error instanceof Error ? error.message : String(error),
@@ -232,8 +191,6 @@ export const Editor = (props: Props) => {
     }
   }, [showPolymerEditor, macromoleculesEditor, moleculesEditor]);
 
-<<<<<<< HEAD
-=======
   /*
    * This effect is synchronization with the DOM, not event handling.
    * The imperative editors must switch only after React has committed the
@@ -242,7 +199,6 @@ export const Editor = (props: Props) => {
    * into a still-hidden container (zero-size SVG bounding boxes, focus fails),
    * which broke the e2e test that expands monomers in micromolecules mode.
    */
->>>>>>> origin/master
   /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
   useEffect(() => {
     // Guard to prevent running on initial lazy-load mount when editors become ready
@@ -276,17 +232,10 @@ export const Editor = (props: Props) => {
          * that canvas is still hidden until React re-renders in macro mode.
          * The layout effect above performs it once the canvas is on screen.
          */
-<<<<<<< HEAD
-        const finishSession = (savedCanvas: boolean) => {
-          wizardSessionActive.current = false;
-          skipModeConversion.current = true;
-          pendingWizardFinish.current = savedCanvas;
-=======
         const finishSession = (hasSavedCanvas: boolean) => {
           wizardSessionActive.current = false;
           skipModeConversion.current = true;
           pendingWizardFinish.current = hasSavedCanvas;
->>>>>>> origin/master
           setIsMonomerWizardOpen(false);
           togglePolymerEditor(true);
         };
@@ -321,38 +270,6 @@ export const Editor = (props: Props) => {
   ]);
   /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
 
-<<<<<<< HEAD
-  /* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-  useEffect(() => {
-    if (
-      ketcher &&
-      moleculesEditor &&
-      (macromoleculesEditor || disableMacromoleculesEditor)
-    ) {
-      // After analysis, we identified potential risks in removing either check:
-      // 1. Without ID check: Risk of race conditions if onInit is called before the instance is registered in ketcherProvider.
-      // 2. Without Reference check: Risk of system desync if a new instance theoretically reuses an old ID.
-      // We keep both to ensure the consumer is initialized only when the instance is both registered AND uniquely new.
-      if (
-        ketcherProvider.getIndexById(ketcher.id) !== -1 &&
-        initializedKetcherRef.current !== ketcher
-      ) {
-        initializedKetcherRef.current = ketcher;
-        onInit?.(ketcher);
-      }
-    }
-
-    // Note: We intentionally don't reset initializedKetcherRef in cleanup
-    // to avoid duplicate calls when deps change
-  }, [
-    ketcher,
-    moleculesEditor,
-    macromoleculesEditor,
-    onInit,
-    disableMacromoleculesEditor,
-  ]);
-  /* eslint-enable react-you-might-not-need-an-effect/no-event-handler */
-=======
   // Called from both init callbacks. The editors initialize asynchronously in
   // no guaranteed order, so onInit fires on whichever call finds both ready
   // (or only the molecules editor, if macromolecules is disabled).
@@ -378,7 +295,6 @@ export const Editor = (props: Props) => {
       onInit?.(ketcher);
     }
   };
->>>>>>> origin/master
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {
     ketcherRef.current = ketcher;

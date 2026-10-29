@@ -14,11 +14,72 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { RefObject, useRef } from 'react';
+import React, {
+  createContext,
+  RefObject,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { MONOMER_HIDE_LIBRARY_BUTTON_WIDTH } from 'components/monomerLibrary/styles';
 import { useInView } from 'react-intersection-observer';
 import { ArrowScroll } from 'ketcher-react';
+
+interface LayoutBoundsContextValue {
+  /** The canvas area element — used as portal target for the CanvasCaptureLayer
+   *  and as the left/top boundary for floating panels. */
+  canvasElement: HTMLElement | null;
+  /** The full layout root (canvas + monomers library) — used as portal target
+   *  and right/bottom boundary for floating panels. */
+  layoutRootElement: HTMLElement | null;
+  setCanvasElement: (el: HTMLElement | null) => void;
+  setLayoutRootElement: (el: HTMLElement | null) => void;
+}
+
+const LayoutBoundsContext = createContext<LayoutBoundsContextValue>({
+  canvasElement: null,
+  layoutRootElement: null,
+  setCanvasElement: () => undefined,
+  setLayoutRootElement: () => undefined,
+});
+
+/** Wrap the editor root with this provider so both `Layout` and `ModalContainer`
+ *  (which is a sibling of `Layout`) share the same bounds context. */
+export const LayoutBoundsProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [canvasElement, setCanvasElement] = useState<HTMLElement | null>(null);
+  const [layoutRootElement, setLayoutRootElement] =
+    useState<HTMLElement | null>(null);
+
+  const value = useMemo(
+    () => ({
+      canvasElement,
+      layoutRootElement,
+      setCanvasElement,
+      setLayoutRootElement,
+    }),
+    [canvasElement, layoutRootElement],
+  );
+
+  return (
+    <LayoutBoundsContext.Provider value={value}>
+      {children}
+    </LayoutBoundsContext.Provider>
+  );
+};
+
+export function useLayoutBounds(): Pick<
+  LayoutBoundsContextValue,
+  'canvasElement' | 'layoutRootElement'
+> {
+  return useContext(LayoutBoundsContext);
+}
 
 interface LayoutProperties {
   children: JSX.Element | Array<JSX.Element>;
@@ -114,6 +175,12 @@ const Bottom = styled.div`
   }
 `;
 
+/** Used only as the `data-testid` attribute value on the canvas area for E2E tests. */
+export const MACROMOLECULES_MAIN_AREA_TEST_ID = 'macromolecules-main-area';
+
+/** Used only as the `data-testid` attribute value on the layout root for E2E tests. */
+const MACROMOLECULES_LAYOUT_ROOT_TEST_ID = 'macromolecules-layout-root';
+
 const Main = styled.div({
   height: '100%',
   width: '100%',
@@ -179,6 +246,23 @@ const Top = (
 };
 
 export const Layout = ({ children }: LayoutProperties) => {
+  const { setCanvasElement, setLayoutRootElement } =
+    useContext(LayoutBoundsContext);
+
+  const layoutRootCallbackRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      setLayoutRootElement(element);
+    },
+    [setLayoutRootElement],
+  );
+
+  const canvasCallbackRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      setCanvasElement(element);
+    },
+    [setCanvasElement],
+  );
+
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
@@ -203,14 +287,26 @@ export const Layout = ({ children }: LayoutProperties) => {
     }
   });
 
+  const mainWithRef = subcomponents.Main
+    ? React.cloneElement(
+        subcomponents.Main as React.ReactElement<
+          React.RefAttributes<HTMLDivElement>
+        >,
+        { ref: canvasCallbackRef },
+      )
+    : null;
+
   return (
-    <RowMain>
+    <RowMain
+      ref={layoutRootCallbackRef}
+      data-testid={MACROMOLECULES_LAYOUT_ROOT_TEST_ID}
+    >
       <Column fullWidth withPaddingRight>
         {subcomponents.Top}
         <Row>
           {subcomponents.Left}
           <DummyDiv />
-          {subcomponents.Main}
+          {mainWithRef}
         </Row>
         {subcomponents.Bottom}
       </Column>

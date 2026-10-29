@@ -1,16 +1,26 @@
 # Bug
 
-The **bug** kind of [SKILL.md](SKILL.md): the path from one bug, in prose or as one issue, to a PR, with one **gate** in the middle: the user approves the report before anything is filed or changed. You run it yourself, without subagents, until review.
+The **bug** kind of [SKILL.md](SKILL.md): the path from one bug, in prose or as one issue, to a PR. You run it yourself, without subagents, until review. You do not wait for the user: code on a branch is reversible, and the PR is where the user reviews it. You go back to the user only at an **escalation**.
 
-Phases 3 onward live in [BUG-FIX.md](BUG-FIX.md). Read it only once the gate opens.
+## Escalations
+
+Stop, say what you found and what you need, and wait, when:
+
+- **Green everywhere.** The loop stays green everywhere you can reach (RED.md). Show what you ran. Nothing is filed.
+- **Design decision.** The fix needs a choice that `openspec/specs/` and `.memory-bank/adr/` do not make: molecules mode and macromolecules mode model one concept differently, and the bug is the mismatch. Name both models and the one you would pick. The user picks.
+- **Product change.** The fix changes what a user sees beyond the **Acceptance** lines of the report.
+- **Unexplained screenshot.** A reference screenshot changes in a way no **Acceptance** line of the report says (_Snapshots_ in [SKILL.md](SKILL.md)).
+- **Stuck.** A fix attempt fails the same check twice, and the **premise** both attempts shared (_Premise_ in [QUALITY.md](QUALITY.md)) fails when you test it directly.
+
+Everything else you decide and record: in `report.md` while you work, in the PR when it opens.
 
 ## Phase 1: Diagnose
 
-Create the run directory, slug `bug-<issue number>` or `bug-<topic>`. When the bug is an issue, read it with its comments. Follow [RED.md](RED.md). If the loop stays green everywhere you can reach, say so, show what you ran, and stop: nothing is filed.
+Create the run directory, slug `bug-<issue number>` or `bug-<topic>`. When the bug is an issue, read it with its comments. Follow [RED.md](RED.md).
 
 ## Phase 2: Report
 
-Write the report to `<run dir>/report.md` **as the issue body**. On approval it is filed or posted as written, so there is one artifact, not a summary and an issue that drift apart.
+Write the report to `<run dir>/report.md`. It is the spec for the run, and `ketcher-pr` takes its **Why**, **What**, and **Acceptance** as the PR body, so one artifact serves the run and the PR. The flow writes nothing on the tracker before the PR: when the bug is an issue, `Closes #N` links them. A bug that came as prose gets no new issue.
 
 Propose the fix per _Fixes_ in [QUALITY.md](QUALITY.md), which starts with the specs and ADRs.
 
@@ -22,7 +32,7 @@ What the user sees, and the code paths that disagree. Cite `file.ts:line` for ea
 
 ## What
 
-The fix, as the changes it takes: the plan the user is approving. Name the seam each change lands on, and call out anything it makes dead.
+The fix, as the changes it takes. Name the seam each change lands on, and call out anything it makes dead. When the fix has to leave this plan, revise it here and go on, unless an escalation applies.
 
 ## Acceptance
 
@@ -30,13 +40,31 @@ Checkable statements about behavior after the fix, one per line. The **red** loo
 
 </report-template>
 
-A bug worth a design decision gets one more section between **Why** and **What**, naming the mismatch and resolving it. Molecules mode and macromolecules mode modelling one concept differently is the recurring shape: say which model wins and why the other would surprise a user.
+A bug worth a design decision gets one more section between **Why** and **What**, naming the mismatch and resolving it. Say which model wins and why the other would surprise a user.
 
-### Post it and stop
+A fix that crosses a module boundary goes through _Design It Twice_ before **What** is written. It crosses one when it changes an interface other modules call (the public `Ketcher` API, an editor or operation interface, a serializer), or lands in both editor modes. Run it as FEATURE.md step 6 says, with **designers** as the sub-agents: show the user the comparison and your pick, and go on with the pick unless they reply. Put the chosen seam, and the seams you rejected, in the design section.
 
-Show the report to the user with one question that covers the tracker too:
+Done when `report.md` holds all three sections. Start Phase 3 in the same turn.
 
-- the bug came as an issue: "post this as a comment on #N, or keep it in the run directory?";
-- the bug came as prose: "file this as a new `Bug` issue, or fix without an issue?".
+## Phase 3: Fix
 
-Done when the report is shown. Then **stop**. Phase 3 opens on the user's reply. If they want the plan changed, revise and show it again.
+Create the fix branch off `<base>` as _Branches_ in [LOCATIONS.md](LOCATIONS.md) says, and save the _Checks_ baseline from [SKILL.md](SKILL.md).
+
+1. **Red commit.** Commit the red test from Phase 1 alone, so the history shows it failing before the fix exists.
+2. **Fix commit.** Turn the red loop green as _Turning it green_ in [RED.md](RED.md) says. Write the fix per _Fixes_ and _Write_ in QUALITY.md.
+
+**Evidence.** Every changed line traces to the cause in **Why** or to an **Acceptance** line. A guard or retry that "might help" is a hypothesis: leave it out. When a result refutes a hypothesis, revert what it motivated. The smallest change the evidence justifies ships.
+
+Then follow [VERIFY.md](VERIFY.md) yourself, with the report as the spec: when Phase 1 made a repro in `<run dir>/repro/`, run it on the branch and compare. A bug the user saw in the app is proven fixed there too.
+
+Done when the red commit fails on its own, the fix commit turns it green, the branch passes every check, and the verdict is `pass` or `n/a`. A `fail` means the fix is not done: back to the loop. A `could not run` goes in the PR and the Phase 5 report.
+
+## Phase 4: Review
+
+Run _Review_ in SKILL.md with its _Bug panel_, and the report as the spec. You do the cleanup and the fixes yourself. Each round's reviewers stay fresh.
+
+## Phase 5: Land
+
+Open the PR as _Landing_ says, with `Closes #N` when there is an issue. Under "Verified in the app", paste the repro output as it ran: failing before the fix, passing after, plus the fix evidence. When the fix changes what the canvas draws, run _Snapshots_ in SKILL.md now that the PR is open. When review has stopped and the snapshots are green, mark it ready.
+
+Report to the user: what was broken, the root cause, the fix, how you verified it, the PR, what the checks said, and anything left open.

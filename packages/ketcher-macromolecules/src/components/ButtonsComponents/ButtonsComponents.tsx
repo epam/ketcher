@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from 'ketcher-react';
 import { About } from '../modal/About/About';
+import { useAppDispatch } from 'hooks';
+import { openModal } from 'state/modal';
 
 export function ButtonsComponents() {
   const { t } = useTranslation('macromolecules');
+  const dispatch = useAppDispatch();
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const aboutProperties = {
@@ -15,6 +18,12 @@ export function ButtonsComponents() {
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
+        <IconButton
+          iconName="settings"
+          title={t('buttons.settings')}
+          onClick={() => dispatch(openModal('settings'))}
+          testId="settings-button"
+        />
         <IconButton
           iconName="help"
           title={t('buttons.help')}

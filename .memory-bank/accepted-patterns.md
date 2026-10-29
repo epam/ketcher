@@ -64,7 +64,7 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 
 ### react-device-detect in ketcher-core
 
-**Where:** `packages/ketcher-core/src/utilities/shortcutsUtil.ts` and `packages/ketcher-core/src/application/editor/tools/select/SelectBase.ts` import `react-device-detect`, which is declared as a dependency in `packages/ketcher-core/package.json`.
+**Where:** `packages/ketcher-core/src/utilities/shortcutsUtility.ts` and `packages/ketcher-core/src/application/editor/tools/select/SelectBase.ts` import `react-device-detect`, which is declared as a dependency in `packages/ketcher-core/package.json`.
 **Why it is accepted:** The import predates invariant A5, and `react-device-detect` declares `react` as a peer dependency, so the import silently binds ketcher-core to React. The lint rule `ketcher-invariants/ui-imports-in-core` absorbs these two imports and errors on every new one (`ALLOWED_UI_IMPORTS` in scripts/eslint-invariants-rules.mjs). Removing the dependency is a separate refactor.
 **Example:** `import { MOBILE_DETECT } from 'react-device-detect';` at `packages/ketcher-core/src/application/editor/tools/select/SelectBase.ts:30`.
 

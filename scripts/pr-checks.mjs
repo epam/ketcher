@@ -17,6 +17,7 @@ const UNIT_TEST = /^packages\/.*(\.test\.[jt]sx?$|\/__tests__\/)/;
 const E2E_TEST = /^ketcher-autotests\/tests\/.*\.spec\.ts$/;
 const OPENSPEC_CHANGE = /^openspec\/changes\//;
 
+const MEMORY_BANK_LINE = /^\s*(?:[-*]\s*)?memory bank\s*:/im;
 const BACKMERGE = /^Backmerge:\s*/i;
 const TITLE_ISSUES = /^#\d+(\s*,\s*#\d+)*/;
 
@@ -28,6 +29,8 @@ const TITLE_ISSUES = /^#\d+(\s*,\s*#\d+)*/;
  *   body: string,
  *   branch: string,
  *   labels: string[],
+ *   isDraft: boolean,
+ *   requestedReviewers: number,
  *   linkedIssues: LinkedIssue[],
  *   files: ChangedFile[],
  *   lscTemplate: string,
@@ -46,6 +49,8 @@ export function checkPullRequest(pr) {
     ...checkBugFix(pr),
     ...checkFeature(pr),
     ...checkLargeScaleChange(pr),
+    ...checkMemoryBank(pr),
+    ...checkReviewers(pr),
   ];
 }
 
@@ -152,11 +157,44 @@ function checkBugFix({ linkedIssues, files }) {
 function checkFeature({ title, linkedIssues, files }) {
   const feature = linkedIssues.find((issue) => issue.type === 'Feature');
   if (!feature || BACKMERGE.test(title)) return [];
-  if (files.some((file) => OPENSPEC_CHANGE.test(file.path))) return [];
+  const findings = [];
+  if (!files.some((file) => OPENSPEC_CHANGE.test(file.path))) {
+    findings.push(
+      fail(
+        'feature',
+        `#${feature.number} is a Feature, and the PR has no OpenSpec change in \`openspec/changes/\` (PR-type contract, \`.memory-bank/review-workflow.md\`).`,
+      ),
+    );
+  }
+  if (
+    !files.some((file) => UNIT_TEST.test(file.path) || E2E_TEST.test(file.path))
+  ) {
+    findings.push(
+      warn(
+        'feature-test',
+        `#${feature.number} is a Feature, and the PR changes no test. Add a unit or E2E test, or explain in the body why none fits.`,
+      ),
+    );
+  }
+  return findings;
+}
+
+function checkMemoryBank({ title, body }) {
+  if (BACKMERGE.test(title) || MEMORY_BANK_LINE.test(body)) return [];
   return [
-    fail(
-      'feature',
-      `#${feature.number} is a Feature, and the PR has no OpenSpec change in \`openspec/changes/\` (PR-type contract, \`.memory-bank/review-workflow.md\`).`,
+    warn(
+      'memory-bank',
+      'The body has no `Memory bank:` line. Name the memory-bank file the PR updated, or write `Memory bank: not needed`.',
+    ),
+  ];
+}
+
+function checkReviewers({ isDraft, requestedReviewers }) {
+  if (isDraft || requestedReviewers > 0) return [];
+  return [
+    warn(
+      'reviewers',
+      'No reviewer is requested. Request a review before you ask for one in chat.',
     ),
   ];
 }

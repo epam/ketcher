@@ -28,7 +28,12 @@ interface LinkedIssuesResponse {
 }
 
 schedule(async () => {
-  const { pr, api, thisPR } = danger.github;
+  const { api, thisPR } = danger.github;
+  // Danger's PR type omits the reviewer lists that GitHub sends.
+  const pr = danger.github.pr as typeof danger.github.pr & {
+    requested_reviewers?: unknown[];
+    requested_teams?: unknown[];
+  };
   const { owner, repo } = thisPR;
 
   const files = await api.paginate(api.rest.pulls.listFiles, {
@@ -47,6 +52,9 @@ schedule(async () => {
     title: pr.title,
     body: pr.body ?? '',
     branch: pr.head.ref,
+    isDraft: pr.draft ?? false,
+    requestedReviewers:
+      (pr.requested_reviewers?.length ?? 0) + (pr.requested_teams?.length ?? 0),
     labels: danger.github.issue.labels.map((label) => label.name),
     linkedIssues:
       linked.repository.pullRequest.closingIssuesReferences.nodes.map(

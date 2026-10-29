@@ -5,7 +5,18 @@ name: Danger
 # below is the base branch, and dangerfile.ts reads the PR through the API.
 on:
   pull_request_target:
-    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+    types:
+      [
+        opened,
+        edited,
+        synchronize,
+        reopened,
+        labeled,
+        unlabeled,
+        ready_for_review,
+        review_requested,
+        review_request_removed,
+      ]
     branches:
       - master
       - 'release/**'

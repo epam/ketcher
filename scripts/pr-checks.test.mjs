@@ -18,9 +18,11 @@ function file(path, lines = 10, status = 'modified') {
 function pr(overrides = {}) {
   return {
     title: '#100 - Atom labels break at 20% zoom',
-    body: '',
+    body: 'Memory bank: not needed',
     branch: '100-atom-labels-break',
     labels: [],
+    isDraft: false,
+    requestedReviewers: 1,
     linkedIssues: [{ number: 100, type: 'Task' }],
     files: [file('packages/ketcher-react/src/a.ts')],
     lscTemplate: LSC_TEMPLATE,
@@ -205,13 +207,18 @@ test('large-scale change: a missing section fails, filled sections pass', () => 
     .join('\n\n');
   const findings = checkPullRequest(pr({ labels: [LSC_LABEL], body: filled }));
   assert.deepEqual(
-    findings.map((f) => f.message),
+    findings
+      .filter((f) => f.rule === 'large-scale-change')
+      .map((f) => f.message),
     ['Section `review map` is missing.'],
   );
 });
 
 test('large-scale change: without the label, the body is not checked', () => {
-  assert.deepEqual(checkPullRequest(pr({ body: '' })), []);
+  assert.deepEqual(
+    checkPullRequest(pr({ body: 'Memory bank: not needed' })),
+    [],
+  );
 });
 
 test('sections: splits at ## and ###, drops comments, lowercases headings', () => {
@@ -225,4 +232,54 @@ test('sections: splits at ## and ###, drops comments, lowercases headings', () =
       ['revert plan', 'Roll back.'],
     ],
   );
+});
+
+test('memory bank: a missing line warns, any line passes', () => {
+  assert.deepEqual(rules(checkPullRequest(pr({ body: '' })), 'warn'), [
+    'memory-bank',
+  ]);
+  for (const body of [
+    'Memory bank: not needed',
+    '- Memory bank: `.memory-bank/domain.md`',
+    'memory bank:updated',
+  ]) {
+    assert.deepEqual(checkPullRequest(pr({ body })), [], body);
+  }
+});
+
+test('memory bank: a backmerge is skipped', () => {
+  const title = 'Backmerge: release/3.0 into master';
+  assert.deepEqual(
+    rules(checkPullRequest(pr({ title, body: '' })), 'warn'),
+    [],
+  );
+});
+
+test('reviewers: no reviewer warns, a draft is skipped', () => {
+  assert.deepEqual(
+    rules(checkPullRequest(pr({ requestedReviewers: 0 })), 'warn'),
+    ['reviewers'],
+  );
+  assert.deepEqual(
+    checkPullRequest(pr({ requestedReviewers: 0, isDraft: true })),
+    [],
+  );
+});
+
+test('feature: no test warns, a unit or E2E test passes', () => {
+  const linkedIssues = [{ number: 100, type: 'Feature' }];
+  const change = file('openspec/changes/x/proposal.md');
+  assert.deepEqual(
+    rules(checkPullRequest(pr({ linkedIssues, files: [change] })), 'warn'),
+    ['feature-test'],
+  );
+  for (const test of [
+    'packages/ketcher-core/src/a.test.ts',
+    'ketcher-autotests/tests/a/b.spec.ts',
+  ]) {
+    const findings = checkPullRequest(
+      pr({ linkedIssues, files: [change, file(test)] }),
+    );
+    assert.deepEqual(findings, [], test);
+  }
 });

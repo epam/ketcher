@@ -96,4 +96,16 @@ A finding that reveals a new bug is a new scope of kind bug, not work added here
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. A change that alters what the canvas draws runs _Snapshots_ once the PR is open. You never merge.
+
+## Snapshots
+
+A change that alters what the canvas draws also alters reference screenshots, the PNGs in the `-snapshots` folder beside each spec under `ketcher-autotests/tests`. They exist only as Linux PNGs made in Docker ([testing.md](../../../.memory-bank/testing/testing.md), _Docker_), so a local run on macOS cannot see them, and the Playwright shards in CI fail after the PR opens. Treat those failures as part of the run, and judge each one before you update anything.
+
+1. **Wide blast first.** When the report says the change touches every drawing of something (a label rule, a color, a bond length), run the screenshot specs of that area in Docker before you open the PR. The whole suite is too heavy: CI splits it into ten shards.
+2. **Wait for CI.** Once the PR is open, wait for the Playwright shards (`part (n, 10)`, `popup-part`) with your tool's way to wait on a PR's checks. Read each failed test from its job log (`gh run view <run> --job <id> --log-failed`) or the merged report.
+3. **Judge each failing screenshot.** Look at the expected and actual PNGs. A difference that is exactly what an **Acceptance** line of the report says is intended: update it. Any other difference is a regression: fix the code, or stop and ask when the cause is a product choice. A shard that fails the same way on `<base>` is a pre-existing failure: name it.
+4. **Regenerate.** From `ketcher-autotests`, run `npm run docker:update <spec file>:<line>` (`docker:update-popup` for the popup project). It sets `GENERATE_DATA=true`, which rewrites many files under `tests/test-data/`: run `git status`, and restore everything but the PNGs you meant to change with `git checkout`. Commit them as `#<issue> - Update <area> snapshots for <change>`, push, and wait again. Regenerating a PNG writes no spec, so it needs no ask (`AGENTS.md`, E2E tests). Changing a spec does.
+5. **Prove each one.** Under "Verified in the app", list one line per updated snapshot: the file, what changed, and the **Acceptance** line it matches.
+
+Done when every Playwright shard that passes on `<base>` passes on the branch, or the failure is named as pre-existing. After two rounds that still fail, stop and report the failing specs and what you tried.

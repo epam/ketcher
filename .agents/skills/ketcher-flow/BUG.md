@@ -9,6 +9,7 @@ Stop, say what you found and what you need, and wait, when:
 - **Green everywhere.** The loop stays green everywhere you can reach (RED.md). Show what you ran. Nothing is filed.
 - **Design decision.** The fix needs a choice that `openspec/specs/` and `.memory-bank/adr/` do not make: molecules mode and macromolecules mode model one concept differently, and the bug is the mismatch. Name both models and the one you would pick. The user picks.
 - **Product change.** The fix changes what a user sees beyond the **Acceptance** lines of the report.
+- **Unexplained screenshot.** A reference screenshot changes in a way no **Acceptance** line of the report says (_Snapshots_ in [SKILL.md](SKILL.md)).
 - **Stuck.** A fix attempt fails the same check twice, and the **premise** both attempts shared (_Premise_ in [QUALITY.md](QUALITY.md)) fails when you test it directly.
 
 Everything else you decide and record: in `report.md` while you work, in the PR when it opens.
@@ -64,6 +65,6 @@ Run _Review_ in SKILL.md with its _Bug panel_, and the report as the spec. You d
 
 ## Phase 5: Land
 
-Open the PR as _Landing_ says, with `Closes #N` when there is an issue. Under "Verified in the app", paste the repro output as it ran: failing before the fix, passing after, plus the fix evidence. When review has stopped, mark it ready.
+Open the PR as _Landing_ says, with `Closes #N` when there is an issue. Under "Verified in the app", paste the repro output as it ran: failing before the fix, passing after, plus the fix evidence. When the fix changes what the canvas draws, run _Snapshots_ in SKILL.md now that the PR is open. When review has stopped and the snapshots are green, mark it ready.
 
 Report to the user: what was broken, the root cause, the fix, how you verified it, the PR, what the checks said, and anything left open.

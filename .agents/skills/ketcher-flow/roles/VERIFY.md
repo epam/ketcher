@@ -16,7 +16,7 @@ You change no code and commit nothing: your output is the evidence in the run di
 
 ## Parallel runs
 
-When several agents drive the app at once (verifiers, or diagnosers reproducing bugs), each one runs in its own worktree, starts `server.mjs` with its own `--port` (4002, 4012, 4022, ..., or the next free port of the block a batch gave the run), and gives `drive.mjs` its own `--dir`. Each writes evidence under its own folder in the run directory.
+When several agents drive the app at once (verifiers, or task orchestrators reproducing a bug in triage), each one runs in its own worktree, starts `server.mjs` with its own `--port` (4002, 4012, 4022, ..., or the next free port of the block a batch gave the run), and gives `drive.mjs` its own `--dir`. Each writes evidence under its own folder in the run directory.
 
 ## Report
 

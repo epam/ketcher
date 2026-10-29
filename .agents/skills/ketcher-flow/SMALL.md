@@ -1,6 +1,6 @@
 # Small change
 
-The **small** kind of [SKILL.md](SKILL.md): one reason, one PR, and no user sees a difference. Most Ketcher `Task` issues are this kind: a lint-rule cleanup, an `any` removal, a rename, copy, config, a dependency bump, docs. _Checks_, _Review_, and _Landing_ in SKILL.md, with [LOCATIONS.md](LOCATIONS.md) and [TRACKER.md](TRACKER.md), apply here as written.
+The **small** kind of [SKILL.md](SKILL.md): one reason, one PR, and no user sees a difference. Most Ketcher `Task` issues are this kind: a lint-rule cleanup, an `any` removal, a rename, copy, config, a dependency bump, docs.
 
 You run it yourself, without subagents, until review. There is no gate: the PR review is the checkpoint.
 
@@ -18,6 +18,6 @@ The existing tests and the type check hold the behavior. A small change that nee
 
 4. **Verify.** When the change can reach the editor (a component, a dependency the app loads, a style), follow [VERIFY.md](VERIFY.md) yourself on the features it touches. Otherwise the verdict is `n/a` with the reason.
 
-5. **Review.** Run _Review_ from SKILL.md with `scope.md` and the issue as the spec. You do the cleanup and the fixes yourself. One round is often enough: stop when a round has nothing to act on.
+5. **Review.** Follow [REVIEW.md](REVIEW.md) with `scope.md` and the issue as the spec. You do the cleanup and the fixes yourself. One round is often enough: stop when a round has nothing to act on.
 
-6. **Land** as SKILL.md says, with `Closes #N` when there is an issue. Report: the PR, the checks, the verify verdict, and any new scopes found.
+6. **Land** as SKILL.md says. Report: the PR, the checks, the verify verdict, and any new scopes found.

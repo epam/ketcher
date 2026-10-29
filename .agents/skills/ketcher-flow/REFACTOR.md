@@ -1,6 +1,6 @@
 # Refactor
 
-The **refactor** kind of [SKILL.md](SKILL.md): a change to the structure of code that keeps its behavior. _Checks_, _Review_, and _Landing_ in SKILL.md, with [LOCATIONS.md](LOCATIONS.md) and [ROLES.md](ROLES.md), apply here as written.
+The **refactor** kind of [SKILL.md](SKILL.md): a change to the structure of code that keeps its behavior.
 
 The behavior is held by a **pin**: tests that capture what the code does today, through its interface, written before any structure moves. Type check and lint are not a pin. The run ends on one branch whose commits read as an argument: the pin, then the subtraction, then the reshape.
 
@@ -18,7 +18,7 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
    Done when `target.md` exists. When you cannot write the gain, stop and tell the user the code is already in a fair shape: that is a finished run, not a failure.
 
-2. Show the user `target.md` and the roles table from [ROLES.md](ROLES.md), and ask about worktrees: each implementer in its own worktree by default (parallel implementers on one branch collide), or the shared branch. Then create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline.
+2. Show the user `target.md` and the roles table from [ROLES.md](ROLES.md), and ask about worktrees: each implementer in its own worktree by default (parallel implementers on one branch collide), or the shared branch. Then **stop**: step 3 opens on the user's reply. Create the branch as _Branches_ in LOCATIONS.md says, and save the _Checks_ baseline.
 
 3. **Pin.** Dispatch an **implementer** with [IMPLEMENT.md](IMPLEMENT.md) and a ticket `<run dir>/tickets/pin.md`: Jest tests through the interface for every behavior `target.md` touches, per _Tests_ in QUALITY.md, passing on today's code. Where the behavior shows only in the editor, record a `verify-ketcher` run on `<base>` as the pin's app half, in `<run dir>/verify/before/`. Done when the pin is one commit and green.
 
@@ -30,6 +30,6 @@ A refactor that turns up a real bug keeps going against the pin. The bug becomes
 
 7. **Keep or revert.** Read the diff against `target.md`'s gain. When the reshape does not make the answer to its two questions faster, revert the reshape commits and keep the pin and the subtraction. Done when you have decided, with one line of why.
 
-8. Run _Review_ from SKILL.md with `target.md` as the spec. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
+8. Follow [REVIEW.md](REVIEW.md) with `target.md` as the spec. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
 
 9. **Land** as SKILL.md says, with the issue when there is one. Report: the structure that changed, the pin it held against, the verify verdict, what was reverted and why, and any bugs found on the way.

@@ -53,7 +53,7 @@ The expected value comes from the requirement or the issue, never from a run of 
 - **The pattern, not the instance.** Search for every place with the same fault and fix them together. Molecules and macromolecules modes often hold two copies of one concept: check both.
 - **Premise.** When two fixes built on one belief have failed the same check, write that belief as one sentence and test it directly before a third fix.
 
-## Review lens
+## Review ranking
 
 Reviewers apply the sections above, then rank structural findings in this order:
 

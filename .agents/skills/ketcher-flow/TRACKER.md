@@ -17,5 +17,5 @@ Filing an issue, commenting, and closing are visible to every Ketcher contributo
 
 ## Pull requests
 
-- **Title and body:** write them with the `ketcher-pr` skill ([its SKILL.md](../ketcher-pr/SKILL.md)). "Verified in the app" carries the verdict and evidence from [VERIFY.md](VERIFY.md).
-- **Open**: `git push -u origin <branch>`, then `gh pr create --base <base branch> --title <title> --body-file <file>`. Add `--draft` when review is still to come, and mark it ready (`gh pr ready <N>`) when review has stopped.
+- **Title and body:** write them with the `ketcher-pr` skill ([its SKILL.md](../ketcher-pr/SKILL.md)).
+- **Open**: `git push -u origin <branch>`, then `gh pr create --base <base branch> --title <title> --body-file <file>`, with the `--attach` flags `ketcher-pr` gives for screenshots. Add `--draft` when review is still to come, and mark it ready (`gh pr ready <N>`) when review has stopped.

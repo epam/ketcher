@@ -29,6 +29,6 @@ If the loop stays green everywhere you can reach, the behavior is by design (che
 
 ## Turning it green
 
-Fix test-first with the vendored `tdd` skill ([its SKILL.md](../tdd/SKILL.md)), starting from this red. Its seams count as confirmed when the flow already agreed them: the report's **What** for a bug, the ticket's shape for a task, the triage outcome in a sweep. Ask about seams only outside those. The refactoring it leaves out of the loop happens in _Review_ in [SKILL.md](SKILL.md).
+Fix test-first with the vendored `tdd` skill ([its SKILL.md](../tdd/SKILL.md)), starting from this red. Its seams count as confirmed when the flow already agreed them: the report's **What** for a bug, the ticket's shape for a task, the triage outcome in a batch. Ask about seams only outside those. The refactoring it leaves out of the loop happens in the cleanup, step 1 of [REVIEW.md](REVIEW.md).
 
 Change the code at the root cause (_Fixes_ in [QUALITY.md](QUALITY.md)) until the red test passes, then run the package's whole suite (`cd packages/<name> && npm run test:unit`). Mock only what [testing.md](../../../.memory-bank/testing/testing.md) allows. Done when the red test and the suite pass, and the `[DEBUG-...]` probes from the diagnosis are gone (`git grep -n "DEBUG-"`).

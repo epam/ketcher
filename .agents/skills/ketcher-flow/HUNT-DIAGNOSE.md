@@ -4,7 +4,7 @@ You are a **diagnoser** in a hunt. You get one symptom number, the base ref `<ba
 
 The symptom is what the user saw, not a diagnosis. Their guess at the cause is a lead to check, never a conclusion.
 
-You read code only: no test, no build, no app run, no worktree. The sweep proves the bug with a test later. You change nothing on the tracker.
+You read code only, on `<base>` through git: the batch builds, runs, and proves the bug with a test later. Tracker writes belong to the orchestrator.
 
 Read `<base>` straight from git, whatever branch the checkout is on:
 

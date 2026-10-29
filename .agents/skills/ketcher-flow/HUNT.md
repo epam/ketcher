@@ -1,8 +1,8 @@
 # Hunt
 
-The **symptoms** kind of [SKILL.md](SKILL.md). The user tested the editor by hand and sends their **symptoms**: what looked wrong, one per line, in their own words. You turn each real bug behind them into a diagnosed issue, then run the sweep on those issues. [ROLES.md](ROLES.md), [LOCATIONS.md](LOCATIONS.md), and [TRACKER.md](TRACKER.md) apply here as written.
+The **symptoms** kind of [SKILL.md](SKILL.md). The user tested the editor by hand and sends their **symptoms**: what looked wrong, one per line, in their own words. You turn each real bug behind them into a diagnosed issue, then run a batch on those issues.
 
-The hunt itself (steps 1 to 5) is **fast**: its only output is issues. No worktree, no build, no test, no app run. Everything reads `<base>` straight from git. Tests, worktrees, and fixes belong to the sweep.
+The hunt itself (steps 1 to 5) is **fast**: it reads `<base>` straight from git, and its only output is issues. Worktrees, builds, tests, app runs, and fixes belong to the batch.
 
 When the user asked for issues only ("just file them"), stop after step 5.
 
@@ -14,7 +14,7 @@ A symptom is what the user saw. It is evidence, not a diagnosis.
 
 2. **Diagnose.** Run `git fetch origin` once, and note the commit it diagnoses against: `git rev-parse <base>`. Every issue this run files carries that sha. Dispatch one **diagnoser** per symptom, all in parallel, each with [HUNT-DIAGNOSE.md](HUNT-DIAGNOSE.md), its symptom number, `<base>`, and the run directory. Done when every symptom has `<run dir>/symptom-<k>.md`.
 
-3. **Merge causes.** Read every symptom file. Symptoms whose `Cause` names the same code and the same wrong behavior become one issue that lists all of them. Duplicates and by-design symptoms get no issue. A wrong merge is the one error here that survives to the sweep, where it reads as a bug that was never diagnosed. Done when every symptom maps to exactly one of: a new issue, `duplicate of #N`, or `by design`.
+3. **Merge causes.** Read every symptom file. Symptoms whose `Cause` names the same code and the same wrong behavior become one issue that lists all of them. Duplicates and by-design symptoms get no issue. A wrong merge is the one error here that survives to the batch, where it reads as a bug that was never diagnosed. Done when every symptom maps to exactly one of: a new issue, `duplicate of #N`, or `by design`.
 
 4. **File.** Write each issue to `<run dir>/issues/<k>.md` with the title, labels, and body from _The issue_ below. Show the user the list (title and labels, one line each) and ask once whether to file them all. On yes, create each through TRACKER.md's command. Done when every approved issue exists and you hold its number.
 
@@ -23,7 +23,7 @@ A symptom is what the user saw. It is evidence, not a diagnosis.
    - `→ duplicate of #N`;
    - `→ by design: <the spec requirement or ADR>`.
 
-6. **Sweep.** Read [SWEEP.md](SWEEP.md) and save its _Checks_ baseline as its step 1 says (skip the PR follow-ups), then run its steps 3 to 10 in this run directory, with the issues filed in step 4 as its input, minus any whose cause was not found. Triage finds these issues **fresh** from their `Diagnosed against:` stamp. Done when the sweep's step 10 is done.
+6. **Batch.** Read [BATCH.md](BATCH.md) and run it in this run directory from step 1, with the issues filed in step 4 as its input (no large-input ask), minus any whose cause was not found. Triage finds these issues **fresh** from their `Diagnosed against:` stamp. Done when the batch's step 10 is done.
 
 ## The issue
 
@@ -64,6 +64,6 @@ Reported: <the user's words; one line per symptom when several merged>
 Diagnosed against: <the sha from step 2>
 ```
 
-The `Diagnosed against:` line is always the last line. It is how a later sweep knows the diagnosis still holds (see _Freshness_ in [SWEEP-TRIAGE.md](SWEEP-TRIAGE.md)), so the work survives a hunt stopped before step 6.
+The `Diagnosed against:` line is always the last line. It is how a later batch knows the diagnosis still holds (see _Freshness_ in [TRIAGE.md](TRIAGE.md)), so the work survives a hunt stopped before step 6.
 
 For a cause that was not found: _Where_ lists the places searched and what each one does, and _Unknown_ says the cause was not found and names what would settle it.

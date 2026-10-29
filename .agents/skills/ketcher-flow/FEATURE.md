@@ -1,6 +1,6 @@
 # Feature
 
-The **feature** kind of [SKILL.md](SKILL.md). New behavior runs through OpenSpec: the change folder in `openspec/changes/<change>/` is the spec, its `tasks.md` is the task graph, and archiving it updates `openspec/specs/`. _Checks_, _Review_, and _Landing_ in SKILL.md, with [LOCATIONS.md](LOCATIONS.md), [TRACKER.md](TRACKER.md), and [ROLES.md](ROLES.md), apply here as written.
+The **feature** kind of [SKILL.md](SKILL.md). New behavior runs through OpenSpec: the change folder in `openspec/changes/<change>/` is the spec, its `tasks.md` is the task graph, and archiving it updates `openspec/specs/`.
 
 The goal is one PR that implements the whole change on one branch, with one **gate**: the user approves the proposal before any code is written.
 
@@ -14,7 +14,8 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
 1. **Source.** Create the run directory, slug `feature-<topic>`. Find what already exists:
    - an OpenSpec change named in the conversation or in `openspec/changes/`: read its `proposal.md`, spec deltas, `design.md`, and `tasks.md`, then go to step 3;
-   - a `Feature` issue or a goal in the conversation: go to step 2.
+   - a `Feature` issue or a goal in the conversation: go to step 2;
+   - a handoff from a batch (`feature handoff <run dir>/<id>`): the user approved the change at the batch's gate, and `<run dir>/<id>/tickets/` holds its tickets. Use that run directory and the task's worktree, and go to step 6.
 
 2. **Propose.** Run the `openspec-propose` skill ([its SKILL.md](../openspec-propose/SKILL.md)) on the issue or the goal, with the rules in `openspec/config.yaml`. Read the specs the change touches in `openspec/specs/` first, so each delta names the requirement it changes. Done when `npx openspec validate <change> --strict` passes.
 
@@ -60,6 +61,6 @@ A ticket whose work is a wrong behavior, not new behavior, starts with the line 
 
 12. **Archive.** Run the `openspec-archive-change` skill ([its SKILL.md](../openspec-archive-change/SKILL.md)). Then update the memory bank, as `AGENTS.md` says: the feature summary in `.memory-bank/features/`, and the `modules/`, `domain.md`, or `glossary.md` entries the change made true. Done when `npx openspec validate --all --strict` and `npm run check:agent-docs` pass, and the archive is one commit.
 
-13. **Review.** Run _Review_ from SKILL.md with the archived change folder as the spec, so the archive and the memory-bank edits are reviewed with the code. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
+13. **Review.** Follow [REVIEW.md](REVIEW.md) with the archived change folder as the spec, so the archive and the memory-bank edits are reviewed with the code. A fresh implementer does the cleanup, and a fresh one fixes each round's findings.
 
 14. **Ready.** Update the PR body (the memory-bank files, "Verified in the app"), mark it ready, and remove this run's worktrees. Report: the PR, the verify verdict, the review outcome, and anything left open.

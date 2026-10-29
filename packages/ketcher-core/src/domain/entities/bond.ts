@@ -164,7 +164,6 @@ export class Bond extends BaseMicromoleculeEntity {
   static getAttrHash(
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
-<<<<<<< HEAD
     const attributes: Partial<
       Pick<BondAttributes, keyof typeof Bond.attrlist>
     > = {};
@@ -172,13 +171,6 @@ export class Bond extends BaseMicromoleculeEntity {
       const key = attribute as keyof typeof Bond.attrlist;
       if (bond[key] || key === 'stereo') {
         attributes[key] = bond[key] as never;
-=======
-    const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in this.attrlist) {
-      const key = attr as keyof typeof Bond.attrlist;
-      if (key === 'stereo' || bond[key]) {
-        attrs[key] = bond[key] as never;
->>>>>>> origin/master
       }
     }
     return attributes;
@@ -292,15 +284,9 @@ export class Bond extends BaseMicromoleculeEntity {
     return [1, 3];
   }
 
-<<<<<<< HEAD
   static attrGetDefault(attribute: string) {
     if (attribute in Bond.attrlist) {
       return Bond.attrlist[attribute];
-=======
-  static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
-      return this.attrlist[attr];
->>>>>>> origin/master
     }
   }
 

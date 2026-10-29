@@ -412,19 +412,11 @@ function partitionLine(
   parts: number[],
   hasSpaceBetweenParts?: boolean,
 ): string[] {
-<<<<<<< HEAD
   const result: string[] = [];
   for (let index = 0, shift = 0; index < parts.length; ++index) {
     result.push(string_.slice(shift, shift + parts[index]));
-    if (withspace) shift++;
-    shift += parts[index];
-=======
-  const res: string[] = [];
-  for (let i = 0, shift = 0; i < parts.length; ++i) {
-    res.push(str.slice(shift, shift + parts[i]));
     if (hasSpaceBetweenParts) shift++;
-    shift += parts[i];
->>>>>>> origin/master
+    shift += parts[index];
   }
   return result;
 }

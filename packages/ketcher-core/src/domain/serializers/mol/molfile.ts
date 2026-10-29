@@ -262,7 +262,6 @@ export class Molfile {
     this.writeCR();
   }
 
-<<<<<<< HEAD
   write(string_: string) {
     /* saver */
     this.molfile += string_;
@@ -270,19 +269,6 @@ export class Molfile {
 
   writeCR(string_?: string) {
     /* saver */
-=======
-  write(str: string) {
-    /*
-    saver
-    */
-    this.molfile += str;
-  }
-
-  writeCR(str?: string) {
-    /*
-    saver
-    */
->>>>>>> origin/master
     if (arguments.length === 0) {
       string_ = '';
     }
@@ -301,7 +287,6 @@ export class Molfile {
     this.write(' '.repeat(Math.max(length, 0)));
   }
 
-<<<<<<< HEAD
   writePadded(string_: string, width: number) {
     /* saver */
     this.write(string_);
@@ -311,36 +296,14 @@ export class Molfile {
   writePaddedNumber(number: number, width: number) {
     /* saver */
     const string_ = (number - 0).toString();
-=======
-  writePadded(str: string, width: number) {
-    /*
-    saver
-    */
-    this.write(str);
-    this.writeWhiteSpace(width - str.length);
-  }
-
-  writePaddedNumber(number: number, width: number) {
-    /*
-    saver
-    */
-    const str = (number - 0).toString();
->>>>>>> origin/master
 
     this.writeWhiteSpace(width - string_.length);
     this.write(string_);
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
-<<<<<<< HEAD
     /* saver */
     this.write(utilities.paddedNum(number, width, precision));
-=======
-    /*
-    saver
-    */
-    this.write(utils.paddedNum(number, width, precision));
->>>>>>> origin/master
   }
 
   writeCTab2000Header() {

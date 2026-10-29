@@ -48,11 +48,7 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-<<<<<<< HEAD
         returnValue = returnValue.concat(frag.fragGetAtoms(render.ctab, fid));
-=======
-        ret = [...ret, ...frag.fragGetAtoms(render.ctab, fid)];
->>>>>>> origin/master
       }
     });
     return returnValue;
@@ -63,11 +59,7 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-<<<<<<< HEAD
         returnValue = returnValue.concat(frag.fragGetBonds(render.ctab, fid));
-=======
-        ret = [...ret, ...frag.fragGetBonds(render.ctab, fid)];
->>>>>>> origin/master
       }
     });
     return returnValue;

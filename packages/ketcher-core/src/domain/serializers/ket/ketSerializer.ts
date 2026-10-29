@@ -230,18 +230,13 @@ export class KetSerializer implements Serializer<Struct> {
     KetSerializer._monomerFactory = factory;
   }
 
-<<<<<<< HEAD
   private static getMonomerFactory(): MonomerFactoryFunction {
     if (!KetSerializer._monomerFactory) {
-=======
-  private static getMonomerFactory(): MonomerFactoryFn {
-    if (!this._monomerFactory) {
->>>>>>> origin/master
       throw new Error(
         'KetSerializer: monomerFactory has not been initialized. Call KetSerializer.setMonomerFactory() before using serializer features that require it.',
       );
     }
-    return this._monomerFactory;
+    return KetSerializer._monomerFactory;
   }
 
   deserializeMicromolecules(content: string): Struct {

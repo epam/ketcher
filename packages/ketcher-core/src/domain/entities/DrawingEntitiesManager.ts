@@ -2919,11 +2919,7 @@ export class DrawingEntitiesManager {
         result.drawingEntities.forEach((entity) =>
           command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
-<<<<<<< HEAD
         return selectedDrawingEntities.concat(result.drawingEntities);
-=======
-        return [...selectedDrawingEntities, ...res.drawingEntities];
->>>>>>> origin/master
       },
       [],
     );

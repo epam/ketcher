@@ -66,13 +66,8 @@ export class AttachmentPoint {
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
-<<<<<<< HEAD
     constructorParameters: AttachmentPointConstructorParameters,
-    skipInit?: boolean,
-=======
-    constructorParams: AttachmentPointConstructorParams,
     shouldSkipInit?: boolean,
->>>>>>> origin/master
   ) {
     this.rootElement = constructorParameters.rootElement;
     this.monomer = constructorParameters.monomer;

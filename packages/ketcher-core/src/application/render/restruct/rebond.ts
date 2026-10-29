@@ -148,17 +148,10 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
-<<<<<<< HEAD
-  drawHover(render: Render, drawOutline = true) {
-    const returnValue = this.makeHoverPlate(render, drawOutline);
+  drawHover(render: Render, shouldDrawOutline = true) {
+    const returnValue = this.makeHoverPlate(render, shouldDrawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
     return returnValue;
-=======
-  drawHover(render: Render, shouldDrawOutline = true) {
-    const ret = this.makeHoverPlate(render, shouldDrawOutline);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
->>>>>>> origin/master
   }
 
   getSelectionPoints(render: Render, isHighlight = false) {
@@ -1636,14 +1629,10 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   if (tooltip) {
-<<<<<<< HEAD
-    path.node.childNodes[0].setAttribute(
+    path.node.firstChild.setAttribute(
       'data-tooltip',
       utility.escapeHtml(tooltip),
     );
-=======
-    path.node.firstChild.setAttribute('data-tooltip', util.escapeHtml(tooltip));
->>>>>>> origin/master
   }
 
   return path;

@@ -280,15 +280,9 @@ export class ReMultitailArrow extends ReObject {
         'head',
         OFFSET,
       ),
-<<<<<<< HEAD
-      ...Array.from(tails.entries()).reduce(
+      ...[...tails.entries()].reduce(
         (accumulator, [key, value]) => ({
           ...accumulator,
-=======
-      ...[...tails.entries()].reduce(
-        (acc, [key, value]) => ({
-          ...acc,
->>>>>>> origin/master
           ...this.getSelectionPointsFromReferencePoint(
             value,
             topSpine,
@@ -468,16 +462,10 @@ export class ReMultitailArrow extends ReObject {
           ? {
               distance,
               ref:
-<<<<<<< HEAD
-                referenceName !== MultitailArrowReferenceName.SPINE
-                  ? {
-                      name: referenceName,
-=======
-                refName === MultitailArrowRefName.SPINE
+                referenceName === MultitailArrowReferenceName.SPINE
                   ? null
                   : {
-                      name: refName,
->>>>>>> origin/master
+                      name: referenceName,
                       isLine,
                       tailId,
                     },

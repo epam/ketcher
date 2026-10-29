@@ -354,17 +354,10 @@ class ReStruct {
 
     paths.forEach((path) => {
       const offset = this.render.options.offset;
-<<<<<<< HEAD
-      let bb = visible
+      let bb = isVisible
         ? Box2Abs.fromRelBox(utility.relBox(path.getBBox()))
         : null;
       const extension = pos && bb ? bb.translate(pos.negated()) : null;
-=======
-      let bb = isVisible
-        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
-        : null;
-      const ext = pos && bb ? bb.translate(pos.negated()) : null;
->>>>>>> origin/master
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
         bb = bb ? bb.translate(offset) : null;

@@ -227,13 +227,8 @@ export class TransientDrawingView {
 
   public showRotation(parameters: RotationViewParameters) {
     this.addView(RotationView.viewName, {
-<<<<<<< HEAD
       show: RotationView.show,
       params: parameters,
-=======
-      show: (layer, viewParams) => RotationView.show(layer, viewParams),
-      params,
->>>>>>> origin/master
       topLayer: true,
     });
   }
@@ -246,14 +241,8 @@ export class TransientDrawingView {
     parameters: ReplacementHighlightViewParameters,
   ) {
     this.addView(ReplacementHighlightView.viewName, {
-<<<<<<< HEAD
       show: ReplacementHighlightView.show,
       params: parameters,
-=======
-      show: (layer, viewParams) =>
-        ReplacementHighlightView.show(layer, viewParams),
-      params,
->>>>>>> origin/master
       topLayer: true,
     });
   }

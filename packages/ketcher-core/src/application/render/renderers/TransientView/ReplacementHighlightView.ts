@@ -15,15 +15,8 @@ type UnitedPaperPath = {
   pathData: string;
 };
 
-<<<<<<< HEAD
 export type ReplacementHighlightViewParameters = {
   /** The canvas monomers that will be replaced on drop. */
-=======
-export type ReplacementHighlightViewParams = {
-  /**
-  The canvas monomers that will be replaced on drop.
-  */
->>>>>>> origin/master
   monomers: BaseMonomer[];
 };
 

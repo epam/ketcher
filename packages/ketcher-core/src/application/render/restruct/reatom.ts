@@ -135,14 +135,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return new Box2Abs(this.a.pp, this.a.pp);
   }
 
-<<<<<<< HEAD
-  drawHover(render: Render, drawOutline = true) {
-    const returnValue = this.makeHoverPlate(render, drawOutline);
-=======
   drawHover(render: Render, shouldDrawOutline = true) {
-    const ret = this.makeHoverPlate(render, shouldDrawOutline);
->>>>>>> origin/master
-
+    const returnValue = this.makeHoverPlate(render, shouldDrawOutline);
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, returnValue);
     this.attachHighlightTriggerForAttachmentPointAtom(returnValue, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -455,17 +449,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const DEFAULT_BOND_LENGTH = 40;
     const DEFAULT_SUB_FONT_SIZE = 13;
     const subFontSize = renderOptions.fontszsubInPx ?? DEFAULT_SUB_FONT_SIZE;
-<<<<<<< HEAD
     if (!bondLength) return 1;
     const showCharge = renderOptions.showCharge;
 
     const isNeedShift = this.isNeedShiftForCharge(showCharge, bondLength);
-=======
-    if (!bondLen) return 1;
-    const shouldShowCharge = renderOptions.showCharge;
-
-    const isNeedShift = this.isNeedShiftForCharge(shouldShowCharge, bondLen);
->>>>>>> origin/master
 
     if (!isNeedShift) {
       return 1;
@@ -789,17 +776,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       const aid = struct.atoms.keyOf(this.a);
 
       if (aid !== null) {
-<<<<<<< HEAD
-        const [attachmentAtoms, leavingGroups] = Array.from(
-          assignedAttachmentPoints.values(),
-        ).reduce(
-          (accumulator, currentPair) => {
-=======
         const [attachmentAtoms, leavingGroups] = [
           ...assignedAttachmentPoints.values(),
         ].reduce(
-          (acc, currentPair) => {
->>>>>>> origin/master
+          (accumulator, currentPair) => {
             const attachmentAtomId = currentPair[0];
             accumulator[0].add(attachmentAtomId);
 
@@ -1140,11 +1120,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill:
-<<<<<<< HEAD
           options.atomColoring && element
-=======
-          elem && options.atomColoring
->>>>>>> origin/master
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
       });
@@ -2039,13 +2015,8 @@ function showHydrogen(
   rightMargin: number;
   leftMargin: number;
 } {
-<<<<<<< HEAD
   let hydroIndex: ElementAttribute | null = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
-=======
-  let hydroIndex: ElemAttr | null = data.hydroIndex;
-  const isHydrogenOnLeft = atom.hydrogenOnTheLeft;
->>>>>>> origin/master
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -2057,7 +2028,7 @@ function showHydrogen(
   });
   const hydrogenRbb = utility.relBox(hydrogenPath.getBBox());
   draw.recenterText(hydrogenPath, hydrogenRbb);
-  if (!isHydrogenOnLeft) {
+  if (!hydrogenLeft) {
     pathAndRBoxTranslate(
       hydrogenPath,
       hydrogenRbb,
@@ -2080,7 +2051,7 @@ function showHydrogen(
       path: hydroIndexPath,
       rbb: hydroIndexRbb,
     };
-    if (!isHydrogenOnLeft) {
+    if (!hydrogenLeft) {
       pathAndRBoxTranslate(
         hydroIndexPath,
         hydroIndexRbb,
@@ -2092,7 +2063,7 @@ function showHydrogen(
       data.rightMargin += hydroIndexRbb.width + delta;
     }
   }
-  if (isHydrogenOnLeft) {
+  if (hydrogenLeft) {
     if (hydroIndex != null) {
       pathAndRBoxTranslate(
         hydroIndex.path,
@@ -2479,17 +2450,9 @@ function projectBoxOnApAxes(
   };
 }
 
-<<<<<<< HEAD
 /** Count atom-relative visel extents that overlap the candidate canvas-space box. */
 function countExtensionOverlaps(
   extensions: Box2Abs[],
-=======
-/**
-Count atom-relative visel extents that overlap the candidate canvas-space box.
-*/
-function countExtOverlaps(
-  exts: Box2Abs[],
->>>>>>> origin/master
   atomPos: Vec2,
   centerX: number,
   centerY: number,
@@ -2541,17 +2504,11 @@ function computeLateralApLabelShift(
     apDirection,
   );
 
-<<<<<<< HEAD
   const intersectsAlong =
     proposedAlongDistribution - halfAlong < nominalLength + waveFarAlong &&
     proposedAlongDistribution + halfAlong > 0;
-=======
-  const hasLongitudinalIntersection =
-    proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
-    proposedAlongDist + halfAlong > 0;
->>>>>>> origin/master
 
-  if (!hasLongitudinalIntersection || halfPerp === 0) return new Vec2(0, 0);
+  if (!intersectsAlong || halfPerp === 0) return new Vec2(0, 0);
 
   const shiftMag = waveHalfPerp + halfPerp + 2;
   const perpDirection = new Vec2(-apDirection.y, apDirection.x);

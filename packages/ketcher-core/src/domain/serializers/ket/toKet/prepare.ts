@@ -28,13 +28,8 @@ export function prepareStructForKet(struct: Struct) {
     // RGroups writing
     rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
-<<<<<<< HEAD
-    const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
-      (accumulator, frid) => accumulator.union(struct.getFragmentIds(frid)),
-=======
     const fragsAtoms = [...rgroup.frags.values()].reduce(
-      (res, frid) => res.union(struct.getFragmentIds(frid)),
->>>>>>> origin/master
+      (accumulator, frid) => accumulator.union(struct.getFragmentIds(frid)),
       new Pile<number>(),
     );
 

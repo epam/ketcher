@@ -68,15 +68,7 @@ class ReFrag extends ReObject {
 
       // TODO ReObject.calcBBox to be used instead
       let bba = atom.visel.boundingBox;
-<<<<<<< HEAD
-      if (!bba) {
-        bba = new Box2Abs(atom.a.pp, atom.a.pp);
-        const extension = new Vec2(0.05 * 3, 0.05 * 3);
-        bba = bba.extend(extension, extension);
-      } else {
-=======
       if (bba) {
->>>>>>> origin/master
         if (!render) {
           render = (globalThis as Record<string, unknown>)._ui_editor as Render;
         }
@@ -85,8 +77,8 @@ class ReFrag extends ReObject {
           .transform(Scale.canvasToModel, render.options);
       } else {
         bba = new Box2Abs(atom.a.pp, atom.a.pp);
-        const ext = new Vec2(0.05 * 3, 0.05 * 3);
-        bba = bba.extend(ext, ext);
+        const extension = new Vec2(0.05 * 3, 0.05 * 3);
+        bba = bba.extend(extension, extension);
       }
       returnValue = returnValue ? Box2Abs.union(returnValue, bba) : bba;
     });

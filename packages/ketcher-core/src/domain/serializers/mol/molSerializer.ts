@@ -69,13 +69,8 @@ export class MolSerializer implements Serializer<Struct> {
           // check for a missing first line
           // this sometimes happens when pasting
           return molfile.parseCTFile({
-<<<<<<< HEAD
             ...parseCTFileParameters,
             molfileLines: [''].concat(lines),
-=======
-            ...parseCTFileParams,
-            molfileLines: ['', ...lines],
->>>>>>> origin/master
           });
         } catch (missingFirstLineError) {
           KetcherLogger.error(

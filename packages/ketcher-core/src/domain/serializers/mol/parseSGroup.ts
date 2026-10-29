@@ -25,31 +25,18 @@ import utilities from './utils';
 import { assert } from 'utilities';
 
 function readKeyValuePairs(
-<<<<<<< HEAD
   string_: string,
   valueString: boolean,
-=======
-  str: string,
-  isStringValue: boolean,
->>>>>>> origin/master
 ): Pool<string | number> {
   const returnValue = new Pool<string | number>();
   const partition = utilities.partitionLineFixed(string_, 3, true);
   const count = utilities.parseDecimalInt(partition[0]);
 
-<<<<<<< HEAD
   for (let index = 0; index < count; ++index) {
     const key = utilities.parseDecimalInt(partition[2 * index + 1]) - 1;
     const value = valueString
       ? partition[2 * index + 2].trim()
       : utilities.parseDecimalInt(partition[2 * index + 2]);
-=======
-  for (let i = 0; i < count; ++i) {
-    const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
-    const value = isStringValue
-      ? partition[2 * i + 2].trim()
-      : utils.parseDecimalInt(partition[2 * i + 2]);
->>>>>>> origin/master
 
     returnValue.set(key, value);
   }
@@ -58,7 +45,6 @@ function readKeyValuePairs(
 }
 
 function readKeyMultiValuePairs(
-<<<<<<< HEAD
   string_: string,
   valueString: boolean,
 ): Array<[number, string | number]> {
@@ -71,20 +57,6 @@ function readKeyMultiValuePairs(
       valueString
         ? partition[2 * index + 2].trim()
         : utilities.parseDecimalInt(partition[2 * index + 2]),
-=======
-  str: string,
-  isStringValue: boolean,
-): Array<[number, string | number]> {
-  const ret: Array<[number, string | number]> = [];
-  const partition = utils.partitionLineFixed(str, 3, true);
-  const count = utils.parseDecimalInt(partition[0]);
-  for (let i = 0; i < count; ++i) {
-    ret.push([
-      utils.parseDecimalInt(partition[2 * i + 1]) - 1,
-      isStringValue
-        ? partition[2 * i + 2].trim()
-        : utils.parseDecimalInt(partition[2 * i + 2]),
->>>>>>> origin/master
     ]);
   }
   return returnValue;
@@ -260,7 +232,6 @@ function initSGroup(sGroups: SGroupMap, propertyData: string): void {
 
 function applySGroupProperty(
   sGroups: SGroupMap,
-<<<<<<< HEAD
   propertyName: string,
   propertyData: string,
   numeric?: boolean,
@@ -269,16 +240,6 @@ function applySGroupProperty(
   const kv = readKeyValuePairs(propertyData, !numeric);
   for (const key of kv.keys()) {
     (core ? sGroups[key] : sGroups[key].data)[propertyName] = kv.get(key);
-=======
-  propName: string,
-  propData: string,
-  isNumeric?: boolean,
-  isCore?: boolean,
-): void {
-  const kv = readKeyValuePairs(propData, !isNumeric);
-  for (const key of kv.keys()) {
-    (isCore ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
->>>>>>> origin/master
   }
 }
 
@@ -297,11 +258,7 @@ function applySGroupArrayProperty(
   if (part.length !== number_) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
 
-<<<<<<< HEAD
   sGroups[sid][propertyName] = sGroups[sid][propertyName].concat(part);
-=======
-  sGroups[sid][propName] = [...sGroups[sid][propName], ...part];
->>>>>>> origin/master
 }
 
 function applyDataSGroupName(sg: SGroup, name: string): void {
@@ -402,18 +359,13 @@ function applyDataSGroupData(
 
 function applyDataSGroupDataLine(
   sGroups: SGroupMap,
-<<<<<<< HEAD
   propertyData: string,
   finalize: boolean,
-=======
-  propData: string,
-  shouldFinalize: boolean,
->>>>>>> origin/master
 ): void {
   const id = utilities.parseDecimalInt(propertyData.substring(0, 5)) - 1;
   const data = propertyData.substring(5);
   const sg = sGroups[id];
-  applyDataSGroupData(sg, data, shouldFinalize);
+  applyDataSGroupData(sg, data, finalize);
 }
 
 // Utility functions

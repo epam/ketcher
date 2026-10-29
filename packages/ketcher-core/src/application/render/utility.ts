@@ -100,12 +100,12 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     -2;
   const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
   if (oPos2.x === 0) {
-    obj.pos1 = { x: 0, y: 0 };
-    obj.pos2 = { x: 0, y: 0 };
-    obj.pos1.y = c / oPos2.y;
-    obj.pos2.y = c / oPos2.y;
-    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    object.pos1 = { x: 0, y: 0 };
+    object.pos2 = { x: 0, y: 0 };
+    object.pos1.y = c / oPos2.y;
+    object.pos2.y = c / oPos2.y;
+    object.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    object.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   } else {
     const b = -2 * oPos2.y * c;
     const equationTerm = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
@@ -118,16 +118,6 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
       object.pos1.x = (c - object.pos1.y * oPos2.y) / oPos2.x;
       object.pos2.x = (c - object.pos2.y * oPos2.y) / oPos2.x;
     }
-<<<<<<< HEAD:packages/ketcher-core/src/application/render/utility.ts
-  } else {
-    object.pos1 = { x: 0, y: 0 };
-    object.pos2 = { x: 0, y: 0 };
-    object.pos1.y = c / oPos2.y;
-    object.pos2.y = c / oPos2.y;
-    object.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-    object.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-=======
->>>>>>> origin/master:packages/ketcher-core/src/application/render/util.ts
   }
   if (object.pos1 !== null) {
     object.pos1.x += aPoint.x;

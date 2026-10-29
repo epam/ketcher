@@ -1045,17 +1045,10 @@ export class Struct {
   }
 
   getAvgClosestAtomDistance(): number {
-<<<<<<< HEAD
     let totalDistribution = 0;
     let minDistribution;
     let distribution: number;
-    const keys = Array.from(this.atoms.keys());
-=======
-    let totalDist = 0;
-    let minDist;
-    let dist: number;
     const keys = [...this.atoms.keys()];
->>>>>>> origin/master
     let k;
     let index;
     for (k = 0; k < keys.length; ++k) {

@@ -336,29 +336,17 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   static getAttrHash(atom: Atom) {
-<<<<<<< HEAD
     const attributes: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attribute in Atom.attrlist) {
       if (atom[attribute] !== undefined)
         attributes[attribute] = atom[attribute];
-=======
-    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in this.attrlist) {
-      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
->>>>>>> origin/master
     }
     return attributes;
   }
 
-<<<<<<< HEAD
   static attrGetDefault(attribute: string) {
     if (attribute in Atom.attrlist) {
       return Atom.attrlist[attribute];
-=======
-  static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
-      return this.attrlist[attr];
->>>>>>> origin/master
     }
   }
 

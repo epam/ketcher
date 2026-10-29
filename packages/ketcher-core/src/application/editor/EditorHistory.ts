@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,16 +35,24 @@ export class EditorHistory {
   }
 
   static getInstance(editor: CoreEditor): EditorHistory {
+<<<<<<< HEAD
     let instance = EditorHistory.instances.get(editor);
     if (!instance) {
       instance = new EditorHistory(editor);
       EditorHistory.instances.set(editor, instance);
+=======
+    let instance = this.instances.get(editor);
+    if (!instance) {
+      instance = new EditorHistory(editor);
+      this.instances.set(editor, instance);
+>>>>>>> origin/master
     }
     return instance;
   }
 
   private get moleculesEditor() {
     return ketcherProvider.getKetcher(this.editor.ketcherId)?.editor;
+<<<<<<< HEAD
   }
 
   get historyStack() {
@@ -59,6 +67,22 @@ export class EditorHistory {
     const latestCommand = this.previousCommand;
     if (
       megreWithLatestHistoryCommand &&
+=======
+  }
+
+  get historyStack() {
+    return this.moleculesEditor?.historyStack ?? this.commands;
+  }
+
+  get historyPointer() {
+    return this.moleculesEditor?.historyPtr ?? this.pointer;
+  }
+
+  update(command: Command, shouldMergeWithLatestHistoryCommand?: boolean) {
+    const latestCommand = this.previousCommand;
+    if (
+      shouldMergeWithLatestHistoryCommand &&
+>>>>>>> origin/master
       latestCommand &&
       this.historyPointer === this.historyStack.length
     ) {

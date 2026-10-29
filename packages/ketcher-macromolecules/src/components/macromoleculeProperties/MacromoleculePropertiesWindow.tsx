@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 /* eslint-disable react-hooks/exhaustive-deps */
+=======
+>>>>>>> origin/master
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,7 +39,11 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
+<<<<<<< HEAD
 import { ReactNode, useEffect, useRef, useState } from 'react';
+=======
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+>>>>>>> origin/master
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -479,7 +486,7 @@ function lttb(xs, ys, threshold) {
   // Largest Triangle Three Buckets algorithm
   const dataLength = xs.length;
 
-  if (threshold >= dataLength || threshold === 0) {
+  if (threshold === 0 || threshold >= dataLength) {
     return { xs, ys };
   }
 
@@ -568,10 +575,14 @@ const roundToMinNiceNumber = (number: number) => {
 
 const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const { data: initialData } = props;
-  const data = lttb(
-    initialData.map((_item, index) => index + 1),
-    initialData,
-    100,
+  const data = useMemo(
+    () =>
+      lttb(
+        initialData.map((_item, index) => index + 1),
+        initialData,
+        100,
+      ),
+    [initialData],
   );
   const [containerWidth, setContainerWidth] = useState(0);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -703,27 +714,33 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
         .attr('stroke-width', 1)
         .attr('d', line);
     }
+<<<<<<< HEAD
   }, [initialData, containerWidth]);
+=======
+  }, [initialData, data.xs, data.ys, containerWidth]);
+>>>>>>> origin/master
 
   // rerender the chart when the size of container changes
-  const resizeObserver = new ResizeObserver(
-    debounce((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width !== containerWidth) {
-          setContainerWidth(entry.contentRect.width);
-        }
-      }
-    }, 100),
-  );
-
   useEffect(() => {
-    if (svgRef.current) {
-      resizeObserver.observe(svgRef.current);
-    }
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const debouncedResize = debounce((entries: ResizeObserverEntry[]) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setContainerWidth((currentWidth) =>
+          currentWidth === width ? currentWidth : width,
+        );
+      }
+    }, 100);
+    const resizeObserver = new ResizeObserver(debouncedResize);
+    resizeObserver.observe(svg);
+
     return () => {
       resizeObserver.disconnect();
+      debouncedResize.cancel();
     };
-  }, [svgRef, containerWidth]);
+  }, []);
 
   return (
     <StyledHydrophobicityChartSvg
@@ -818,7 +835,7 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
   );
 };
 
-const containOnlyPartOfNumber = (value: number) => {
+const hasOnlyZeroDigitsAndSeparators = (value: number) => {
   return !/[^0.,]/.test(String(value));
 };
 
@@ -889,7 +906,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(unipositiveIonsValue)
+              !hasOnlyZeroDigitsAndSeparators(unipositiveIonsValue)
             }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
@@ -902,7 +919,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesValue)
+              !hasOnlyZeroDigitsAndSeparators(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
@@ -991,7 +1008,11 @@ export const MacromoleculePropertiesWindow = () => {
   );
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
+<<<<<<< HEAD
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+=======
+  const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+>>>>>>> origin/master
   const {
     debouncedCallback: debouncedRecalculateMacromoleculeProperties,
     invokeImmediately: recalculateMacromoleculePropertiesImmediately,
@@ -1011,7 +1032,7 @@ export const MacromoleculePropertiesWindow = () => {
     }
 
     recalculatePropertiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+      debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
     };
 
     // selectEntities covers recalculation when the selection changes;
@@ -1024,14 +1045,18 @@ export const MacromoleculePropertiesWindow = () => {
       editor?.events.selectEntities.remove(recalculatePropertiesHandler);
       editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
-  }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
+  }, [
+    debouncedRecalculateMacromoleculeProperties,
+    editor,
+    shouldSkipDataFetch,
+  ]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
   }, [
     unipositiveIonsValue,
     oligonucleotidesValue,
-    skipDataFetch,
+    shouldSkipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);
 
@@ -1039,16 +1064,24 @@ export const MacromoleculePropertiesWindow = () => {
   // debounced), the measurement unit is a single discrete dropdown
   // selection, so recalculating immediately here avoids an unnecessary
   // 500ms delay on top of the actual recalculation time (#7316). Both
-  // effects share `skipDataFetch`, so opening the properties window also
+  // effects share `shouldSkipDataFetch`, so opening the properties window also
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
     cancelDebouncedRecalculateMacromoleculeProperties();
+<<<<<<< HEAD
     recalculateMacromoleculePropertiesImmediately(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
     skipDataFetch,
+=======
+    recalculateMacromoleculePropertiesImmediately(shouldSkipDataFetch);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
+    shouldSkipDataFetch,
+>>>>>>> origin/master
     cancelDebouncedRecalculateMacromoleculeProperties,
     recalculateMacromoleculePropertiesImmediately,
   ]);

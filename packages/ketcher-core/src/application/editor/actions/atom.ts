@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -104,7 +104,11 @@ export function fromAtomsAttrs(
 
     attrNames.forEach((key) => {
       if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
+<<<<<<< HEAD
       if (!(key in atomAttrs) && !reset) return;
+=======
+      if (!reset && !(key in atomAttrs)) return;
+>>>>>>> origin/master
 
       const value =
         key in atomAttrs ? atomAttrs[key] : Atom.attrGetDefault(key);
@@ -112,7 +116,11 @@ export function fromAtomsAttrs(
       switch (key) {
         case 'stereoLabel':
         case 'stereoParity':
+<<<<<<< HEAD
           if (key in atomAttrs && value) {
+=======
+          if (value && key in atomAttrs) {
+>>>>>>> origin/master
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
           }
           break;

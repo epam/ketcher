@@ -59,14 +59,15 @@ const getTagName = () => {
 };
 
 export const valuesToReplace = {
-  'process.env.NODE_ENV': JSON.stringify(
+  'import.meta.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
-  'process.env.VERSION': JSON.stringify(pkg.version),
-  'process.env.BUILD_DATE': JSON.stringify(
+  'import.meta.env.VERSION': JSON.stringify(pkg.version),
+  'import.meta.env.BUILD_DATE': JSON.stringify(
     new Date().toISOString().slice(0, 19),
   ),
   // TODO: add logic to init BUILD_NUMBER
+<<<<<<< HEAD
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),
   'process.env.HELP_LINK': JSON.stringify(getTagName()),
   'process.env.INDIGO_VERSION': JSON.stringify(
@@ -76,6 +77,20 @@ export const valuesToReplace = {
     process.env.INDIGO_MACHINE || '',
   ),
   'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
+=======
+  'import.meta.env.BUILD_NUMBER': JSON.stringify(undefined),
+  'import.meta.env.HELP_LINK': JSON.stringify(getTagName()),
+  'import.meta.env.INDIGO_VERSION': JSON.stringify(
+    process.env.INDIGO_VERSION || '',
+  ),
+  'import.meta.env.INDIGO_MACHINE': JSON.stringify(
+    process.env.INDIGO_MACHINE || '',
+  ),
+  'import.meta.env.KETCHER_ENABLE_REDUX_LOGGER': JSON.stringify(
+    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true' ? 'true' : 'false',
+  ),
+  'import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
+>>>>>>> origin/master
     process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
   ),
 };
@@ -112,18 +127,19 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolvePlugin({ extensions }),
     commonjs(),
+    json(),
+    typescript({
+      tsconfig: './tsconfig.build.json',
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
     }),
-    json(),
-    typescript({
-      tsconfig: './tsconfig.build.json',
-    }),
     babelPlugin({
       extensions,
       babelHelpers: 'runtime',
+      inputSourceMap: false,
       include: includePattern,
     }),
     copy({

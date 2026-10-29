@@ -6,11 +6,11 @@ When a user applies an editing tool (bond, eraser, charge, atom, S-group tool, p
 
 The dialog SHALL have:
 
+#### Scenario: Bond tool clicks atom inside a single monomer
+
 - Title: **"Edit Monomer"**
 - Body text: `"Edit Monomer" will open the Monomer Creation Wizard and allow editing of this instance of the monomer. "Remove Grouping" will turn the monomer into a purely chemical structure. How do you wish to proceed?`
 - Buttons (left-to-right): **Edit Monomer**, **Remove Grouping**, **Cancel** (default / focused)
-
-#### Scenario: Bond tool clicks atom inside a single monomer
 
 - **WHEN** the user activates the bond tool and clicks an atom that belongs to a single MonomerMicromolecule S-group in molecules mode
 - **THEN** the "Edit Monomer" dialog is displayed with title "Edit Monomer", the single-monomer body text, and buttons "Edit Monomer", "Remove Grouping", and "Cancel"
@@ -74,11 +74,11 @@ When a user activates the S-group tool while multiple MonomerMicromolecule S-gro
 
 The dialog SHALL have:
 
+#### Scenario: S-group tool activated with multiple non-identical monomers selected
+
 - Title: **"Edit Monomer"**
 - Body text: `"Remove Grouping" will turn the monomers into a purely chemical structures. How do you wish to proceed?`
 - Buttons: **Remove Grouping**, **Cancel** (default / focused)
-
-#### Scenario: S-group tool activated with multiple non-identical monomers selected
 
 - **WHEN** the user activates the S-group tool while two or more MonomerMicromolecule S-groups with different monomer template identities are selected
 - **THEN** the "Edit Monomer" dialog is shown with the non-identical-monomers body text and only "Remove Grouping" and "Cancel" buttons
@@ -99,11 +99,11 @@ When a user activates the S-group tool while multiple MonomerMicromolecule S-gro
 
 The dialog SHALL have:
 
+#### Scenario: S-group tool activated with multiple identical monomers selected
+
 - Title: **"Edit Monomer"**
 - Body text: `"Edit All Monomers" will open the Monomer Creation Wizard and allow editing of all selected instances of the monomer. "Remove Grouping" will turn the monomers into a purely chemical structure. How do you wish to proceed?`
 - Buttons: **Edit All Monomers**, **Remove Grouping**, **Cancel** (default / focused)
-
-#### Scenario: S-group tool activated with multiple identical monomers selected
 
 - **WHEN** the user activates the S-group tool while two or more MonomerMicromolecule S-groups with the same monomer template identity are selected
 - **THEN** the "Edit Monomer" dialog is shown with the identical-monomers body text and buttons "Edit All Monomers", "Remove Grouping", and "Cancel"

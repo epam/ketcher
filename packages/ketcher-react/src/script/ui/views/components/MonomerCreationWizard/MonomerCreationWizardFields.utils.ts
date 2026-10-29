@@ -15,23 +15,23 @@ export const isNaturalAnalogueRequired = (
 export const getMonomerPropertyVisibility = (
   type: KetMonomerClass | 'rnaPreset' | undefined,
 ) => {
-  const displayNaturalAnalogue = isNaturalAnalogueRequired(type);
-  const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const displayHelmAlias =
+  const shouldDisplayNaturalAnalogue = isNaturalAnalogueRequired(type);
+  const shouldDisplayModificationTypes = type === KetMonomerClass.AminoAcid;
+  const shouldDisplayHelmAlias =
     type === KetMonomerClass.AminoAcid ||
     type === KetMonomerClass.Base ||
     type === KetMonomerClass.Sugar ||
     type === KetMonomerClass.Phosphate ||
     type === KetMonomerClass.CHEM;
-  const displayBilnAlias =
+  const shouldDisplayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
 
   return {
-    displayNaturalAnalogue,
-    displayModificationTypes,
-    displayAliases: displayHelmAlias || displayBilnAlias,
-    displayHelmAlias,
-    displayBilnAlias,
+    displayNaturalAnalogue: shouldDisplayNaturalAnalogue,
+    displayModificationTypes: shouldDisplayModificationTypes,
+    displayAliases: shouldDisplayHelmAlias || shouldDisplayBilnAlias,
+    displayHelmAlias: shouldDisplayHelmAlias,
+    displayBilnAlias: shouldDisplayBilnAlias,
   };
 };
 
@@ -46,10 +46,17 @@ export const getOtherLibraryMonomers = (
     if (!original) {
       return true;
     }
+<<<<<<< HEAD
     return original.props.id !== undefined
       ? item.props.id !== original.props.id
       : item.props.MonomerName !== original.props.MonomerName ||
           item.props.MonomerClass !== original.props.MonomerClass;
+=======
+    return original.props.id === undefined
+      ? item.props.MonomerName !== original.props.MonomerName ||
+          item.props.MonomerClass !== original.props.MonomerClass
+      : item.props.id !== original.props.id;
+>>>>>>> origin/master
   });
 
 /*
@@ -87,13 +94,21 @@ export const hasMonomerFieldCollision = (
     field === 'symbol'
       ? (original?.props.MonomerCode ?? original?.props.MonomerName)
       : original?.props[field];
+<<<<<<< HEAD
   const scopeUnchanged =
+=======
+  const isScopeUnchanged =
+>>>>>>> origin/master
     field === 'symbol'
       ? original?.props.MonomerClass === type
       : field === 'aliasBILN' ||
         getHelmNamespace(original?.props.MonomerClass) ===
           getHelmNamespace(type);
+<<<<<<< HEAD
   if (originalValue === value && scopeUnchanged) {
+=======
+  if (originalValue === value && isScopeUnchanged) {
+>>>>>>> origin/master
     return false;
   }
   const helmNamespace = getHelmNamespace(type);

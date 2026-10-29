@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +42,7 @@ import actions from '../action';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,
-  selectIsAbbreviationLookupOpen,
+  isAbbreviationLookupOpen,
 } from './abbreviationLookup/selectors';
 import {
   closeAbbreviationLookup,
@@ -101,10 +101,10 @@ const shortcutKeys = new Set([
 ]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
-  if (window.isPolymerEditorTurnedOn) {
+  if (globalThis.isPolymerEditorTurnedOn) {
     return true;
   }
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+  if (state.modal || isAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
@@ -116,7 +116,7 @@ function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
   const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -134,7 +134,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     return true;
   }
 
-  abbreviationLookupTimeoutId = window.setTimeout(() => {
+  abbreviationLookupTimeoutId = globalThis.window.setTimeout(() => {
     dispatch(closeAbbreviationLookup());
     abbreviationLookupTimeoutId = undefined;
   }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
@@ -241,7 +241,7 @@ function handleHotkeyGroup(
   event,
 ) {
   const index = checkGroupOnTool(group, actionTool);
-  const groupLength = group !== null ? group.length : 1;
+  const groupLength = group === null ? 1 : group.length;
   const newIndex = (index + 1) % groupLength;
   const actName = group[newIndex];
 
@@ -286,11 +286,13 @@ function handleHotkeyGroup(
 
     event.preventDefault();
   } else if (isIE) {
-    clipArea.exec(event);
+    clipArea.canExecuteClipboardCommand(event);
   }
 }
 
-/* HotKeys */
+/*
+HotKeys
+*/
 function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState();
 
@@ -305,7 +307,11 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
+<<<<<<< HEAD
   if (key?.length === 1 && !hoveredItem) {
+=======
+  if (!hoveredItem && key?.length === 1) {
+>>>>>>> origin/master
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -322,7 +328,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }
@@ -387,7 +393,9 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
-/* ClipArea */
+/*
+ClipArea
+*/
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
@@ -402,7 +410,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal && !window.isPolymerEditorTurnedOn;
+      return !state.modal && !globalThis.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();
@@ -496,10 +504,10 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const simpleObjectOrText = Boolean(
+  const hasSimpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
-  if (simpleObjectOrText && isIE && errorHandler) {
+  if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
@@ -541,10 +549,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 
@@ -573,10 +581,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 

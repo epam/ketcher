@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -130,7 +130,7 @@ export const Save = ({
       }
       if (
         !isHelmCompatible(
-          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          [...editor.drawingEntitiesManager.monomers.values()],
           editor.monomersLibrary,
         )
       ) {
@@ -151,6 +151,17 @@ export const Save = ({
           throw new Error(t('save.sequenceTypeRecognitionError'));
         }
       }
+<<<<<<< HEAD
+=======
+      // FASTA cannot represent a mix of RNA and DNA (both collapse to the same
+      // letter codes). IDT can, so this check is intentionally FASTA-only.
+      if (
+        fileFormat === 'fasta' &&
+        editor.drawingEntitiesManager.hasRnaAndDnaMix()
+      ) {
+        throw new Error(t('save.sequenceTypeRecognitionError'));
+      }
+>>>>>>> origin/master
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
       // to ensure correct format version is used during conversion
@@ -210,8 +221,13 @@ export const Save = ({
       return;
     }
 
+<<<<<<< HEAD
     navigator.clipboard.writeText(struct).catch((e) => {
       KetcherLogger.error('copyAs.js::copyAs', e);
+=======
+    navigator.clipboard.writeText(struct).catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
+>>>>>>> origin/master
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });
   };

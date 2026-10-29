@@ -11,8 +11,13 @@ import {
   EXTRA_LOCALE_RESOURCES,
 } from './localeResources.generated';
 
+<<<<<<< HEAD
 const MULTI_LANGUAGE_BUILD =
   process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+=======
+const IS_MULTI_LANGUAGE_BUILD =
+  import.meta.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true';
+>>>>>>> origin/master
 
 /**
  * ketcher-macromolecules renders inside ketcher-react's <I18nextProvider>
@@ -29,7 +34,11 @@ i18n.addResourceBundle(
   BASE_RESOURCES.macromoleculesDialogs,
 );
 
+<<<<<<< HEAD
 if (MULTI_LANGUAGE_BUILD) {
+=======
+if (IS_MULTI_LANGUAGE_BUILD) {
+>>>>>>> origin/master
   for (const [locale, resources] of Object.entries(EXTRA_LOCALE_RESOURCES)) {
     i18n.addResourceBundle(locale, 'macromolecules', resources.macromolecules);
     i18n.addResourceBundle(

@@ -16,9 +16,14 @@ export class SequenceEventDelegationManager {
     new Map();
 
   public static get instance() {
+<<<<<<< HEAD
     SequenceEventDelegationManager._instance ??=
       new SequenceEventDelegationManager();
     return SequenceEventDelegationManager._instance;
+=======
+    this._instance ??= new SequenceEventDelegationManager();
+    return this._instance;
+>>>>>>> origin/master
   }
 
   public attachDelegatedEvents(

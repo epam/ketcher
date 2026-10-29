@@ -92,7 +92,11 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
   });
 
   height = 90;
+<<<<<<< HEAD
   window.dispatchEvent(new Event('resize'));
+=======
+  globalThis.dispatchEvent(new Event('resize'));
+>>>>>>> origin/master
   await waitFor(() => expect(popup.style.top).toBe('152px'));
 
   // The portal's positioned parent can be offset, bordered, and scrolled.
@@ -104,7 +108,11 @@ it('keeps the popup above both atoms and the R-label as the canvas moves', async
   jest.spyOn(document.body, 'clientTop', 'get').mockReturnValue(3);
   document.body.scrollLeft = 10;
   document.body.scrollTop = 20;
+<<<<<<< HEAD
   window.dispatchEvent(new Event('resize'));
+=======
+  globalThis.dispatchEvent(new Event('resize'));
+>>>>>>> origin/master
   await waitFor(() => {
     expect(popup.style.left).toBe('178px');
     expect(popup.style.top).toBe('129px');

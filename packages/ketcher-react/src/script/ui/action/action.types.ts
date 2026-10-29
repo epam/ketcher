@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,9 @@
 import type { Dispatch } from 'redux';
 import type { Struct } from 'ketcher-core';
 import type Editor from '../../editor/Editor';
+import type { StoreState } from '../state/store.types';
 
-type ToolVariant =
+export type ToolVariant =
   | 'any-atom'
   | 'about'
   | 'analyse'
@@ -130,13 +131,9 @@ type ActionStateOptions = {
   buttons?: Record<string, { hidden?: boolean }>;
 };
 
-type ActionThunkState = {
-  editor: ActionStateEditor;
-  toolbar: {
-    visibleTools: {
-      select: ToolVariant;
-    };
-  };
+// Specific action option types
+type AtomActionOpts = {
+  label: string;
 };
 
 // Specific action option types
@@ -150,7 +147,11 @@ type ActionObj = {
   opts?: unknown;
   dialog?: string;
   prop?: Record<string, unknown>;
+<<<<<<< HEAD
   thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
+=======
+  thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
+>>>>>>> origin/master
 };
 type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
@@ -176,9 +177,19 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
+<<<<<<< HEAD
   /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
   title?: string;
   /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+=======
+  /**
+  Translation key (namespace:key) resolved by the consuming component via t(), not display text.
+  */
+  title?: string;
+  /**
+  Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }.
+  */
+>>>>>>> origin/master
   titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
@@ -198,5 +209,9 @@ export type {
   Tools,
   UiAction,
   UiActionAction,
+<<<<<<< HEAD
+=======
+  ActionStateEditor,
+>>>>>>> origin/master
   AtomActionOpts,
 };

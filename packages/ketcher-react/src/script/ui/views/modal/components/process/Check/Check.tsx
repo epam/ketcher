@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,6 @@
 import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import type { AnyAction } from 'redux';
-import type { ThunkDispatch } from 'redux-thunk';
 import Form, {
   type FormState,
   Field,
@@ -33,6 +31,10 @@ import type {
 } from '../../../../../state/options/types';
 import style from './Check.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+<<<<<<< HEAD
+=======
+import type { AppDispatch } from 'src/script/ui/state/hooks';
+>>>>>>> origin/master
 import i18n from 'src/i18n/i18n';
 
 interface MoleculeErrors {
@@ -254,7 +256,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               {t('toolbar:menu.settings')}
             </span>
             <div
-              className={!isStructureChecking ? style.checkBoxesDisabled : ''}
+              className={isStructureChecking ? '' : style.checkBoxesDisabled}
             >
               <Field
                 name="checkOptions"
@@ -273,9 +275,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </span>
             <div
               className={
-                !Object.keys(moleculeErrors).length || !isStructureChecking
-                  ? style.centeredContainer
-                  : style.warnings
+                isStructureChecking && Object.keys(moleculeErrors).length
+                  ? style.warnings
+                  : style.centeredContainer
               }
               data-testid={'checkInfo-messages'}
             >
@@ -318,7 +320,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<State, undefined, AnyAction>,
+  dispatch: AppDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>

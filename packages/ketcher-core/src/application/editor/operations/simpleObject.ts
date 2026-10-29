@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,11 +36,11 @@ export class SimpleObjectAdd extends Base<SimpleObjectAddData> {
   constructor(
     pos: Array<Vec2> = [],
     mode: SimpleObjectMode = SimpleObjectMode.line,
-    toCircle = false,
+    shouldConvertToCircle = false,
     id?: number,
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD);
-    this.data = { pos, mode, toCircle, id };
+    this.data = { pos, mode, toCircle: shouldConvertToCircle, id };
   }
 
   execute(restruct: ReStruct): void {
@@ -139,9 +139,13 @@ interface SimpleObjectMoveData {
 export class SimpleObjectMove extends Base {
   data: SimpleObjectMoveData;
 
+<<<<<<< HEAD
   constructor(id: number, d: Vec2, noinvalidate: boolean) {
+=======
+  constructor(id: number, d: Vec2, shouldSkipInvalidation: boolean) {
+>>>>>>> origin/master
     super(OperationType.SIMPLE_OBJECT_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct): void {
@@ -225,11 +229,23 @@ export class SimpleObjectResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2,
+<<<<<<< HEAD
     noinvalidate: boolean,
     toCircle: boolean,
+=======
+    shouldSkipInvalidation: boolean,
+    shouldConvertToCircle: boolean,
+>>>>>>> origin/master
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE);
-    this.data = { id, d, current, anchor, noinvalidate, toCircle };
+    this.data = {
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate: shouldSkipInvalidation,
+      toCircle: shouldConvertToCircle,
+    };
   }
 
   execute(restruct: ReStruct): void {
@@ -258,7 +274,7 @@ export class SimpleObjectResize extends Base {
         item.pos[1].y = current.y;
         this.data.current = previousPos1;
       }
-    } else if (item.mode === SimpleObjectMode.line && anchor) {
+    } else if (anchor && item.mode === SimpleObjectMode.line) {
       const previousPos0 = item.pos[0].get_xy0();
       const previousPos1 = item.pos[1].get_xy0();
 
@@ -281,7 +297,7 @@ export class SimpleObjectResize extends Base {
         item.pos[0].y = anchor.y = current.y;
         current.y = previousPos0.y;
       }
-    } else if (item.mode === SimpleObjectMode.rectangle && anchor) {
+    } else if (anchor && item.mode === SimpleObjectMode.rectangle) {
       handleRectangleChangeWithAnchor(item, anchor, current);
     } else item.pos[1].add_(d);
 

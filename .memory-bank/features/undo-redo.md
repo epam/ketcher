@@ -1,9 +1,8 @@
 # Undo / Redo
 
-## Problem
-
 Editing is iterative and error-prone. Users must be able to reliably reverse a mistaken action and re-apply it, restoring both the chemical model and its on-screen rendering.
 
+<<<<<<< HEAD
 ## User interaction
 
 - **Undo** — Top Toolbar button or `Mod+z`.
@@ -47,6 +46,9 @@ Every user action that changes the canvas is recorded as one atomic history entr
 - The editors share one undo/redo history bounded to **32 steps**, including mode switches.
 - Each user action is exactly one atomic history entry, implemented via the command pattern.
 - Undo/redo restores both the domain model and its rendered view together.
+=======
+Spec: [openspec/specs/undo-redo/spec.md](../../openspec/specs/undo-redo/spec.md)
+>>>>>>> origin/master
 
 ## Limitations
 
@@ -55,4 +57,3 @@ Every user action that changes the canvas is recorded as one atomic history entr
 ## Related
 
 - Engine: [operations-history](../modules/operations-history.md), [editor-engine](../modules/editor-engine.md)
-- Implementation: `HISTORY_SIZE = 32` in the molecules editor and the macromolecules `EditorHistory`.

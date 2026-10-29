@@ -25,7 +25,11 @@ describe('History across molecule and macromolecule modes', () => {
   let macro: CoreEditor;
   let history: EditorHistory;
   const ketcherId = 'mode-history-test';
+<<<<<<< HEAD
   const originalGetBBox = SVGElement.prototype.getBBox;
+=======
+  const originalGetBBox = Reflect.get(SVGElement.prototype, 'getBBox');
+>>>>>>> origin/master
   const theme = {
     ketcher: {
       peptide: { color: {} },
@@ -76,10 +80,17 @@ describe('History across molecule and macromolecule modes', () => {
   afterEach(() => {
     macro.destroy();
     ketcherProvider.removeKetcherInstance(ketcherId);
+<<<<<<< HEAD
     window.isPolymerEditorTurnedOn = false;
     document.body.innerHTML = '';
     if (originalGetBBox) {
       SVGElement.prototype.getBBox = originalGetBBox;
+=======
+    globalThis.isPolymerEditorTurnedOn = false;
+    document.body.innerHTML = '';
+    if (originalGetBBox) {
+      Reflect.set(SVGElement.prototype, 'getBBox', originalGetBBox);
+>>>>>>> origin/master
     } else {
       Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
     }

@@ -1,9 +1,8 @@
 # Templates, Functional Groups & Structural Groups
 
-## Problem
-
 Drawing common rings, reusable fragments, functional groups, Markush (R-Group) structures, and structural (S-Group) annotations atom-by-atom is slow and error-prone. Ketcher provides libraries and grouping tools so users insert and annotate these constructs directly.
 
+<<<<<<< HEAD
 ## User interaction
 
 - **Templates** — the _Templates_ toolbar and the _Structure Library_ (`Shift+t`) provide rings and predefined structures. Click canvas to place, click an atom for a fused structure, or click/drag on a bond for bond-to-bond fusion. Users can save custom templates (name + default attachment atom/bond) into _User Templates_.
@@ -51,6 +50,9 @@ Inserting a template or group produces a well-formed structure; abbreviated grou
 - Functional groups and Superatom S-Groups can only be selected/moved/deleted as a whole; their chemical meaning is preserved when contracted.
 - Templates keep the initial structure's bond lengths on fusion.
 - Functional groups are treated as super atoms when opening/saving `.mol` files.
+=======
+Spec: [openspec/specs/templates-and-groups/spec.md](../../openspec/specs/templates-and-groups/spec.md)
+>>>>>>> origin/master
 
 ## Limitations
 

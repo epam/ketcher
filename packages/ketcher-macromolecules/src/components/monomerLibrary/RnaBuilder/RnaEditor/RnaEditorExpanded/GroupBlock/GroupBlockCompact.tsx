@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { IGroupBlockProps } from './types';
 import { useAppSelector } from 'hooks';
-import { selectIsEditMode } from 'state/rna-builder';
+import { isRnaBuilderEditMode } from 'state/rna-builder';
 import {
   CompactGroupBlockContainer,
   CompactGroupConnection,
@@ -15,27 +15,36 @@ export const GroupBlockCompact = ({
   groupName,
   iconName,
   monomerName,
-  selected,
+  selected: isSelected,
   onClick,
   testid,
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
+<<<<<<< HEAD
   const isEditMode = useAppSelector(selectIsEditMode);
+=======
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
+>>>>>>> origin/master
 
-  const empty = !monomerName;
+  const isEmpty = !monomerName;
 
   return (
     <CompactGroupBlockContainer
-      selected={selected}
+      selected={isSelected}
       onClick={onClick}
       isEditMode={isEditMode}
       data-testid={testid}
     >
       <>
         <CompactGroupConnection />
+<<<<<<< HEAD
         <GroupIcon name={iconName} selected={selected} empty={empty} />
         <CompactGroupText selected={selected} empty={empty}>
+=======
+        <GroupIcon name={iconName} selected={isSelected} empty={isEmpty} />
+        <CompactGroupText selected={isSelected} empty={isEmpty}>
+>>>>>>> origin/master
           {monomerName ?? t(groupNameToRnaEditorItemLabelKey[groupName])}
         </CompactGroupText>
         {children}

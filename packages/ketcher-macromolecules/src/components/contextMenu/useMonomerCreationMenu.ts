@@ -96,8 +96,13 @@ export const useMonomerCreationMenu = (
   return {
     menuItems,
     handleMenuChange,
+<<<<<<< HEAD
     onVisibilityChange: (visible: boolean) => {
       if (!visible) clearHighlight();
+=======
+    onVisibilityChange: (isVisible: boolean) => {
+      if (!isVisible) clearHighlight();
+>>>>>>> origin/master
     },
   };
 };

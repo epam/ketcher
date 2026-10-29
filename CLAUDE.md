@@ -1,5 +1,6 @@
 # CLAUDE.md
 
+<<<<<<< HEAD
 This file provides guidance to AI assistants (Claude, Copilot, Cursor, etc.) when working with this repository.
 
 ## What is Ketcher
@@ -113,3 +114,6 @@ When archiving a change, also update the memory bank as described above.
 
 ### Additional rules for opsx:archive
 - When updating any of the memory bank files, use the format described in the "File format details" section above.
+=======
+@AGENTS.md
+>>>>>>> origin/master

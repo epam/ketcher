@@ -1,5 +1,6 @@
 # Localization (i18n)
 
+<<<<<<< HEAD
 ## Problem
 
 Ketcher's UI text was originally hardcoded in English throughout `ketcher-react`. Users who prefer another language had no way to see menus, dialogs, tooltips, and settings in their own language, and there was no infrastructure to add one safely (no key convention, no guard against new hardcoded strings, no way to know a translation was incomplete).
@@ -49,6 +50,11 @@ Ketcher's UI text was originally hardcoded in English throughout `ketcher-react`
 - Chemistry vocabulary (element symbols, bond-type names in the bond toolbar/context menu, MDL/SDF codes, valence/reacting-center notation) is deliberately never translated, even where a translated field sits right next to it — this keeps structures and their on-screen labels consistent with chemistry file formats regardless of UI language.
 - Every language shipped with Ketcher covers the full set of UI strings for **both** `ketcher-react` and `ketcher-macromolecules` — there is no language that only partially translates a dialog, and no package that only some languages cover.
 - The default (English-only) build and the multi-language build are functionally identical in English — the flag controls bundle content and the presence of the switcher, never English text or behavior.
+=======
+Ketcher's UI text was originally hardcoded in English throughout `ketcher-react`. Users who prefer another language had no way to see menus, dialogs, tooltips, and settings in their own language, and there was no infrastructure to add one safely (no key convention, no guard against new hardcoded strings, no way to know a translation was incomplete).
+
+Spec: [openspec/specs/localization/spec.md](../../openspec/specs/localization/spec.md)
+>>>>>>> origin/master
 
 ## Limitations
 

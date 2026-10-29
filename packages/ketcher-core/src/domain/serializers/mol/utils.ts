@@ -5,7 +5,11 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
+<<<<<<< HEAD
  *    http://www.apache.org/licenses/LICENSE-2.0
+=======
+ *    https://www.apache.org/licenses/LICENSE-2.0
+>>>>>>> origin/master
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +96,13 @@ function paddedNum(
  * @returns The parsed integer, or 0 if parsing fails
  */
 function parseDecimalInt(str: string): number {
+<<<<<<< HEAD
   /* reader */
+=======
+  /*
+  reader
+  */
+>>>>>>> origin/master
   const val = Number.parseInt(str, 10);
 
   return Number.isNaN(val) ? 0 : val;
@@ -102,12 +112,17 @@ function parseDecimalInt(str: string): number {
  * Partition a line string into parts of varying lengths
  * @param str - The string to partition
  * @param parts - Array of lengths for each part
+<<<<<<< HEAD
  * @param withspace - Whether there's a space between parts (default: false)
+=======
+ * @param hasSpaceBetweenParts - Whether there's a space between parts (default: false)
+>>>>>>> origin/master
  * @returns Array of string parts
  */
 function partitionLine(
   str: string,
   parts: number[],
+<<<<<<< HEAD
   withspace: boolean = false,
 ): string[] {
   /* reader */
@@ -115,6 +130,17 @@ function partitionLine(
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
     if (withspace) shift++;
+=======
+  hasSpaceBetweenParts: boolean = false,
+): string[] {
+  /*
+  reader
+  */
+  const res: string[] = [];
+  for (let i = 0, shift = 0; i < parts.length; ++i) {
+    res.push(str.slice(shift, shift + parts[i]));
+    if (hasSpaceBetweenParts) shift++;
+>>>>>>> origin/master
     shift += parts[i];
   }
   return res;
@@ -124,17 +150,31 @@ function partitionLine(
  * Partition a line string into fixed-length parts
  * @param str - The string to partition
  * @param itemLength - Length of each item
+<<<<<<< HEAD
  * @param withspace - Whether there's a space between items (default: false)
+=======
+ * @param hasSpaceBetweenParts - Whether there's a space between items (default: false)
+>>>>>>> origin/master
  * @returns Array of string parts
  */
 function partitionLineFixed(
   str: string,
   itemLength: number,
+<<<<<<< HEAD
   withspace: boolean = false,
 ): string[] {
   /* reader */
   const res: string[] = [];
   const step = withspace ? itemLength + 1 : itemLength;
+=======
+  hasSpaceBetweenParts: boolean = false,
+): string[] {
+  /*
+  reader
+  */
+  const res: string[] = [];
+  const step = hasSpaceBetweenParts ? itemLength + 1 : itemLength;
+>>>>>>> origin/master
   let shift = 0;
   while (shift < str.length) {
     res.push(str.slice(shift, shift + itemLength));
@@ -300,7 +340,11 @@ function categorizeMolecules(
  * @param mol - Molecule to shift and merge
  * @param bb - Bounding box of the molecule
  * @param xorig - X origin for shifting
+<<<<<<< HEAD
  * @param over - Whether to shift vertically over (true) or center (false)
+=======
+ * @param isAboveReactionArrow - Whether to shift vertically over (true) or center (false)
+>>>>>>> origin/master
  * @returns Width of the shifted molecule
  */
 function shiftMol(
@@ -308,11 +352,19 @@ function shiftMol(
   mol: Struct,
   bb: BoundingBox,
   xorig: number,
+<<<<<<< HEAD
   over: boolean,
 ): number {
   const d = new Vec2(
     xorig - bb.min.x,
     over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
+=======
+  isAboveReactionArrow: boolean,
+): number {
+  const d = new Vec2(
+    xorig - bb.min.x,
+    isAboveReactionArrow ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
+>>>>>>> origin/master
   );
   mol.atoms.forEach((atom: Atom) => {
     atom.pp.add_(d);
@@ -487,7 +539,13 @@ function rxnMerge(
   _nAgents: number,
   shouldReactionRelayout?: boolean,
 ): Struct {
+<<<<<<< HEAD
   /* reader */
+=======
+  /*
+  reader
+  */
+>>>>>>> origin/master
   const ret = new Struct();
 
   if (SHOULD_RESCALE_MOLECULES) {
@@ -531,7 +589,13 @@ function rxnMerge(
  * @returns Merged R-group structure
  */
 function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
+<<<<<<< HEAD
   /* reader */
+=======
+  /*
+  reader
+  */
+>>>>>>> origin/master
   const ret = new Struct();
 
   scaffold.mergeInto(ret, null, null, false, true);

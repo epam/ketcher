@@ -29,9 +29,15 @@
 - [x] 2.2 Add corresponding keys to `locales/en/toolbars.json` — only for genuinely new strings (`ModeControl` mode labels/switch tooltips, `ZoomControls`' lowercase dropdown labels + "Zoom 100%", Help button); duplicates of Section 1 strings reuse the existing `toolbar:*` keys instead of creating new ones
 - [x] 2.3 Replace literals with `t()` calls
 - [x] 2.4 **Code check:** `git diff --stat` touches only `script/ui/views/toolbars/*` + `locales/en/toolbars.json`; grep confirms no remaining hardcoded literals (two exceptions verified safe: an empty `title=""` and a commented-out dead "History" button); typecheck, unit tests 400/400, circular-deps, build, prettier all green
+<<<<<<< HEAD
 - [ ] 2.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify: top toolbar (Clear/Open/Save/Undo/Redo/Copy family/Paste/Cut/server actions/Settings/About/Fullscreen/Help), the Zoom dropdown (out/in/100% + the lowercase labels), and the Molecules/Macromolecules mode switcher — all text identical to before
 - [x] 2.6 **Committed:** `d33bf508f2` on `4384-language`
 - [ ] 2.7 **STOP — report commit hash + diff for review before starting Section 3**
+=======
+- [x] 2.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify: top toolbar (Clear/Open/Save/Undo/Redo/Copy family/Paste/Cut/server actions/Settings/About/Fullscreen/Help), the Zoom dropdown (out/in/100% + the lowercase labels), and the Molecules/Macromolecules mode switcher — all text identical to before _(dropped: manual visual check not recorded at archive)_
+- [x] 2.6 **Committed:** `d33bf508f2` on `4384-language`
+- [x] 2.7 **STOP — report commit hash + diff for review before starting Section 3** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 3. Extraction — Modal Dialogs: Domain-Specific (`script/ui/views/modal/components/{document,meta,process,toolbox}`)
 
@@ -39,9 +45,15 @@
 - [x] 3.2 Add corresponding keys to `locales/en/dialogs.json` (namespaced by dialog group, e.g. `dialogs.document.*`), plus `common.json` button.{ok,cancel,save,apply,close} for cross-cutting dedup
 - [x] 3.3 Replace literals with `t()` calls, including interpolated/template-literal strings — verified ICU interpolation (e.g. `structureN`, `ifThenOption`, `version`)
 - [x] 3.4 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep confirms no remaining hardcoded literals (only an empty `title=""` left untouched)
+<<<<<<< HEAD
 - [ ] 3.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify every dialog under `document`/`meta`/`process`/`toolbox` (Open/Save, Settings, About, Automap, Recognize, Miew, Analyse, Check, Atom/Bond/RgroupLogic/Attach properties, Edit Monomer, Remove Abbreviation) — text and dynamic values (counts, names, versions) identical to before
 - [x] 3.6 **Committed:** `b05692db0a` on `4384-language` — necessary scope addition: `components/Dialog/Dialog.tsx` (top-level shared component outside any section's directory list — its `buttons` string tokens are both display text and semantic identifiers; see commit message for why per-call-site translation wasn't safe there)
 - [ ] 3.7 **STOP — report commit hash + diff for review before starting Section 4**
+=======
+- [x] 3.5 **Visual check:** `cd example && npm run dev:standalone` — user to verify every dialog under `document`/`meta`/`process`/`toolbox` (Open/Save, Settings, About, Automap, Recognize, Miew, Analyse, Check, Atom/Bond/RgroupLogic/Attach properties, Edit Monomer, Remove Abbreviation) — text and dynamic values (counts, names, versions) identical to before _(dropped: manual visual check not recorded at archive)_
+- [x] 3.6 **Committed:** `b05692db0a` on `4384-language` — necessary scope addition: `components/Dialog/Dialog.tsx` (top-level shared component outside any section's directory list — its `buttons` string tokens are both display text and semantic identifiers; see commit message for why per-call-site translation wasn't safe there)
+- [x] 3.7 **STOP — report commit hash + diff for review before starting Section 4** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 4. Extraction — Modal Dialogs: Shared Components (`Confirm`, `ExtendedTable`, `InfoModal`, `PeriodTable`, `Text`)
 
@@ -50,9 +62,15 @@
 - [x] 4.3 Replace literals with `t()` calls
 - [x] 4.4 **Decided:** `PeriodTable` element data (`el.title`/`el.label`/`el.mass` from `ketcher-core`'s `Elements`) and `ExtendedTable`'s `Generics`-sourced group/button names stay data-driven, not duplicated as translation keys — same precedent as Section 1/3's data-driven exclusions. `InfoModal`'s `shortcut.hotKey` ('CTRL/Cmd + V') also left untouched as a literal key-combo representation.
 - [x] 4.5 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep confirms no remaining hardcoded literals
+<<<<<<< HEAD
 - [ ] 4.6 **Visual check:** `cd example && npm run dev:standalone` — user to verify a Confirm dialog, the Extended/Period Table pickers, an Info modal (incl. the Cut/Copy/Paste-unavailable message and the Paste-specific shortcut body), and the Text-input dialog (toolbar, font size, special symbols) — all text identical to before
 - [x] 4.7 **Committed:** `842712b846` on `4384-language`
 - [ ] 4.8 **STOP — report commit hash + diff for review before starting Section 5**
+=======
+- [x] 4.6 **Visual check:** `cd example && npm run dev:standalone` — user to verify a Confirm dialog, the Extended/Period Table pickers, an Info modal (incl. the Cut/Copy/Paste-unavailable message and the Paste-specific shortcut body), and the Text-input dialog (toolbar, font size, special symbols) — all text identical to before _(dropped: manual visual check not recorded at archive)_
+- [x] 4.7 **Committed:** `842712b846` on `4384-language`
+- [x] 4.8 **STOP — report commit hash + diff for review before starting Section 5** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 5. Extraction — Reusable UI Components (`script/ui/views/components/*`)
 
@@ -61,9 +79,15 @@
 - [x] 5.3 Add corresponding keys to `locales/en/components.json`
 - [x] 5.4 Replace literals with `t()` calls — also fixed a Section-1 regression where `BondMenuItems.tsx`/`SelectionMenuItems.tsx` rendered raw `tools[name].title` translation keys unresolved (now routed through `resolveActionTitle`)
 - [x] 5.5 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep (both narrow key-pattern and broad 40+-char literal sweeps) confirms no remaining hardcoded literals across all Section 5 directories; no changes leaked into `StructEditor`'s canvas-rendering code
+<<<<<<< HEAD
 - [ ] 5.6 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open the attachment-point popup, right-click context menu (atom/bond/selection/macromolecule variants), monomer creation wizard (all fields, RNA preset tabs, natural analogue picker, modification/aliases accordions), and hover a data S-group to see the "Query component" label — text identical to before; confirm the molecule canvas itself renders unchanged
 - [x] 5.7 **Committed:** `304a0cf8cd` on `4384-language`
 - [ ] 5.8 **STOP — report commit hash + diff for review before starting Section 6**
+=======
+- [x] 5.6 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open the attachment-point popup, right-click context menu (atom/bond/selection/macromolecule variants), monomer creation wizard (all fields, RNA preset tabs, natural analogue picker, modification/aliases accordions), and hover a data S-group to see the "Query component" label — text identical to before; confirm the molecule canvas itself renders unchanged _(dropped: manual visual check not recorded at archive)_
+- [x] 5.7 **Committed:** `304a0cf8cd` on `4384-language`
+- [x] 5.8 **STOP — report commit hash + diff for review before starting Section 6** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 6. Extraction — Settings Panel
 
@@ -71,9 +95,15 @@
 - [x] 6.2 Add corresponding keys to `locales/en/settings.json` — 71 keys under `fields.*`, one per field `title` plus `enum*` sub-keys for translatable option labels
 - [x] 6.3 Replace literals with `t()` calls — **decided reactively** (per user choice, mirroring `resolveActionTitle`): `options-schema.ts` now stores `settings:fields.*` translation keys instead of literal text; added `resolveTranslatableText()` (`utils/index.ts`) and threaded it through `form.tsx`'s `Label` component, `getSelectOptionsFromSchema`, and `MeasureInput.tsx` so schema-sourced titles/enum labels resolve to text at render time instead of once at module load. Also fixed two latent bugs surfaced while touching these shared files: `Settings/Accordion.tsx` compared `expandedAccordions`/`changedGroups` against the (already-translated-since-Section-3) tab `label` instead of a stable `key` — `fieldGroups.js` now stores the matching stable keys instead of literal group names; `Select.tsx`'s "Already in use" `MenuItem` tooltip was hardcoded English (unreachable by any prior section's file-scope grep since it's a shared component, first exercised by MonomerCreationWizard's attachment-point selects from Section 5)
 - [x] 6.4 **Code check:** typecheck, unit tests 400/400, circular-deps, build, prettier all green; grep confirms no remaining hardcoded display copy in `Settings/*` or `options-schema.ts` (remaining literals are: `Dialog` button-token identifiers already resolved via Section 3's `defaultButtonLabels`, a `console.info` diagnostic string, setting *default values* like color hexes/flag text, unit abbreviations `px/cm/pt/inch`, and dead/unrendered `*Unit` sub-schema titles never read by any consumer — all confirmed non-display or already-handled); `ketcher-core/src/application/settings/schema.ts` untouched
+<<<<<<< HEAD
 - [ ] 6.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open Settings, walk every tab (General/Stereochemistry/Atoms/Bonds/Server/3D Viewer/Options for Debugging), check dropdown option labels (e.g. Reset to Select Tool, Label display at stereogenic centers, Image resolution, Valence mode, 3D Viewer options), the Bond spacing "% of length" suffix, and confirm the accordion's default-expanded General section + the change-marker dot (edit a field, collapse, confirm the dot appears) still work — all text and behavior identical to before
 - [x] 6.6 **Committed:** `cbdb49cb1f` on `4384-language`
 - [ ] 6.7 **STOP — report commit hash + diff for review before starting Section 7**
+=======
+- [x] 6.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed), open Settings, walk every tab (General/Stereochemistry/Atoms/Bonds/Server/3D Viewer/Options for Debugging), check dropdown option labels (e.g. Reset to Select Tool, Label display at stereogenic centers, Image resolution, Valence mode, 3D Viewer options), the Bond spacing "% of length" suffix, and confirm the accordion's default-expanded General section + the change-marker dot (edit a field, collapse, confirm the dot appears) still work — all text and behavior identical to before _(dropped: manual visual check not recorded at archive)_
+- [x] 6.6 **Committed:** `cbdb49cb1f` on `4384-language`
+- [x] 6.7 **STOP — report commit hash + diff for review before starting Section 7** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 7. RTL Groundwork — CSS Logical Properties Audit
 
@@ -81,18 +111,30 @@
 - [x] 7.2 Convert UI-chrome stylesheets to logical properties (`inset-inline-start/end`, `margin-inline-start/end`, `padding-inline-start/end`, `border-inline-start/end`, `text-align: start/end`) — 50 files converted (1 file, `StructEditor.module.less`, deliberately excluded — see 7.3); `float: left/right` (2 occurrences) left untouched as it's not in this task's listed property set and has no stable logical equivalent in this codebase's support matrix; the `@margin-left-right` LESS variable name left as-is since it's applied symmetrically via `margin: 0 @margin-left-right` shorthand and isn't itself a directional property
 - [x] 7.3 Explicitly exclude/verify `StructEditor` canvas-related styles are left untouched (canvas must not mirror under RTL) — `StructEditor.module.less`'s `.measureLog` debug overlay (`right: 0`) is the only match in that file; confirmed untouched via empty `git diff` on that file. Safe regardless, since its ancestor is permanently `dir="ltr"` per design.md Decision 4/Section 0
 - [x] 7.4 **Code check:** typecheck, unit tests 400/400, build, prettier all green; `git diff --name-only` touches only `.less` files, zero `.ts`/`.tsx`; every changed declaration verified to be a pure property-name swap by diffing added vs. removed value tokens (identical multisets on both sides)
+<<<<<<< HEAD
 - [ ] 7.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed) in default (LTR) mode, walk through every UI area touched in Sections 1–6 (toolbars, dialogs, settings, components) and confirm pixel-identical layout to before the conversion
 - [x] 7.6 **Committed:** `e49f3d389f` on `4384-language`
 - [ ] 7.7 **STOP — report commit hash + diff for review before starting Section 8**
+=======
+- [x] 7.5 **Visual check:** `cd example && npm run dev:standalone` (Vite, hot-reloads directly from source per DEVNOTES.md — no rebuild needed) in default (LTR) mode, walk through every UI area touched in Sections 1–6 (toolbars, dialogs, settings, components) and confirm pixel-identical layout to before the conversion _(dropped: manual visual check not recorded at archive)_
+- [x] 7.6 **Committed:** `e49f3d389f` on `4384-language`
+- [x] 7.7 **STOP — report commit hash + diff for review before starting Section 8** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 8. RTL Groundwork — Directional Icon Inventory
 
 - [x] 8.1 Identify icons/graphics in `ketcher-react` UI chrome that are direction-sensitive (arrows, chevrons, navigation icons) as opposed to direction-neutral (e.g. most chemistry tool icons) — audited the full ~210-entry registry in `components/Icon/utils/iconNameToIcon.ts`; found only 2 truly direction-sensitive icons (`undo`, `redo`) plus one CSS-drawn (non-SVG) exception, `ArrowScroll`'s border-triangle scroll buttons
 - [x] 8.2 Produce an inventory list (icon, file location, mirror-under-RTL: yes/no) as a design artifact for a future RTL-locale change to consume — this is a documentation artifact, no CSS/mirroring logic is implemented — written to `openspec/changes/ketcher-react-i18n-foundation/rtl-icon-inventory.md`, split into Group A (mirror: yes — `undo`/`redo` + the `ArrowScroll` note), Group B (mirror: no, canvas/chemistry-notation-tied per Decision 4 — the large majority: bond/reaction-arrow/template/rgroup/monomer icons, plus the Text tool's inserted special-symbol arrow/Greek characters, which are content, not chrome), Group C (mirror: no, direction-neutral generic pictograms)
 - [x] 8.3 **Code check:** `git diff --stat` shows only the new inventory document (114 insertions, 1 file), no source/style changes
+<<<<<<< HEAD
 - [ ] 8.4 **Visual check:** not applicable (no rendering change in this section) — reviewer instead reads the inventory list for completeness against the toolbars/dialogs walked in prior sections
 - [x] 8.5 **Committed:** `b0f31ebd3c` on `4384-language`
 - [ ] 8.6 **STOP — report commit hash + diff for review before starting Section 9**
+=======
+- [x] 8.4 **Visual check:** not applicable (no rendering change in this section) — reviewer instead reads the inventory list for completeness against the toolbars/dialogs walked in prior sections _(dropped: manual visual check not recorded at archive)_
+- [x] 8.5 **Committed:** `b0f31ebd3c` on `4384-language`
+- [x] 8.6 **STOP — report commit hash + diff for review before starting Section 9** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master
 
 ## 9. Testing
 
@@ -103,4 +145,8 @@
 - [x] 9.8 **Regression found during 9.4 and fixed:** `resolveTranslatableText()` (Section 6) and `resolveActionTitle()` (Section 1) both used a loose `value.includes(':')` check to detect translation keys. Several already-translated labels legitimately end in a punctuation colon ("File name:", "File format:", "Text:", "File:", "Error:", "Last check:", "{name} warning:" — 7 total in `dialogs.json`), which the substring check misidentified as keys, firing a spurious `[i18n] Missing key` console warning on every render (cosmetically harmless — i18next falls back to the literal string — but broken by design). Fixed by anchoring both checks to the real key shape (`^namespace:[A-Za-z0-9_.-]+$`). **Committed:** `a7b91b9d57` on `4384-language`. Verified live: reproduced the warnings pre-fix by reopening the Save dialog/Text Editor, confirmed zero warnings post-fix.
 - [x] 9.5 Playwright E2E coverage: **skipped by explicit decision** — asked whether to proceed now, defer to a follow-up change, or skip; user chose to skip. Rationale holds: this change ships English-only, existing E2E text-based assertions are expected to pass unmodified, and selector/testid behavior was explicitly kept identical wherever extraction touched it (see Section 6's `MeasureInput`/`Select`/`Accordion` testid-preservation work). No new E2E coverage added in this change.
 - [x] 9.6 **Committed:** `32ce5ddcba` on `4384-language` (covers 9.1-9.3; 9.5 skipped by explicit decision, see above)
+<<<<<<< HEAD
 - [ ] 9.7 **STOP — report commit hash + diff for final review**
+=======
+- [x] 9.7 **STOP — report commit hash + diff for final review** _(dropped: review gate, change archived after review)_
+>>>>>>> origin/master

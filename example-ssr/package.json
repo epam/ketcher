@@ -14,7 +14,11 @@
     "ketcher-macromolecules": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
+<<<<<<< HEAD
     "next": "16.4.3",
+=======
+    "next": "16.4.1",
+>>>>>>> origin/master
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
@@ -24,7 +28,11 @@
     "@types/react-dom": "^19.2.3",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
+<<<<<<< HEAD
     "eslint-config-next": "16.4.3",
+=======
+    "eslint-config-next": "16.4.2",
+>>>>>>> origin/master
     "typescript": "^6.0.3"
   }
 }

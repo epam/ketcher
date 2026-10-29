@@ -37,6 +37,7 @@ export const saveLibraryMonomer = async (
    * the original stays visible and usable — including its identity, its id and
    * the properties (aliases) that have no control in the attributes panel.
    */
+<<<<<<< HEAD
   const supersedesOriginal =
     Boolean(editedMonomerTemplate) &&
     createdTemplate.class === editedMonomerTemplate?.class &&
@@ -45,6 +46,16 @@ export const saveLibraryMonomer = async (
     ? editedMonomerTemplate
     : undefined;
   const originalRef = supersedesOriginal ? editedRef : undefined;
+=======
+  const shouldSupersedeOriginal =
+    Boolean(editedMonomerTemplate) &&
+    createdTemplate.class === editedMonomerTemplate?.class &&
+    createdTemplate.alias === editedMonomerTemplate?.alias;
+  const originalMonomerTemplate = shouldSupersedeOriginal
+    ? editedMonomerTemplate
+    : undefined;
+  const originalRef = shouldSupersedeOriginal ? editedRef : undefined;
+>>>>>>> origin/master
 
   const template = {
     ...originalMonomerTemplate,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -155,7 +155,13 @@ export function appUpdate(data: Partial<OptionsState['app']>) {
   };
 }
 
+<<<<<<< HEAD
 /* SETTINGS */
+=======
+/*
+SETTINGS
+*/
+>>>>>>> origin/master
 export function saveSettings(
   newSettings: SettingsFormValue,
   ketcherId?: string,
@@ -211,7 +217,13 @@ export function syncSettingsFromCore(coreSettings: Partial<Settings>) {
   };
 }
 
+<<<<<<< HEAD
 /* ANALYZE */
+=======
+/*
+ANALYZE
+*/
+>>>>>>> origin/master
 export function changeRound(
   roundName: AnalyseRoundName,
   value: number | string,
@@ -222,7 +234,13 @@ export function changeRound(
   };
 }
 
+<<<<<<< HEAD
 /* RECOGNIZE */
+=======
+/*
+RECOGNIZE
+*/
+>>>>>>> origin/master
 const recognizeActions: readonly RecognizeActionType[] = [
   'SET_RECOGNIZE_STRUCT',
   'CHANGE_RECOGNIZE_FILE',
@@ -254,14 +272,24 @@ export function changeImage(file: RecognizeImageFile) {
   };
 }
 
+<<<<<<< HEAD
 export function shouldFragment(isFrag: boolean) {
+=======
+export function setFragmentRecognition(isFrag: boolean) {
+>>>>>>> origin/master
   return {
     type: 'IS_FRAGMENT_RECOGNIZE',
     data: { fragment: isFrag },
   };
 }
 
+<<<<<<< HEAD
 /* CHECK */
+=======
+/*
+CHECK
+*/
+>>>>>>> origin/master
 export function checkOpts(data: OptionsState['check']) {
   return {
     type: 'SAVE_CHECK_OPTS',
@@ -269,7 +297,13 @@ export function checkOpts(data: OptionsState['check']) {
   };
 }
 
+<<<<<<< HEAD
 /* REDUCER */
+=======
+/*
+REDUCER
+*/
+>>>>>>> origin/master
 function isOptionsAction<T extends OptionsAction['type']>(
   action: UnknownAction,
   type: T,

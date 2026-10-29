@@ -312,12 +312,6 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       bondIds: [7, 8, 9],
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
       bondIds: [2, 3, 4, 5],
@@ -531,7 +525,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+<<<<<<< HEAD
     await CommonTopRightToolbar(page).setZoomInputValue('50');
+=======
+>>>>>>> origin/master
     await LeftToolbar(page).createMonomer();
 
     const dialog = CreateMonomerDialog(page);
@@ -540,10 +537,13 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await dialog.selectType(MonomerType.NucleotidePreset);
     await presetSection.setName('sugarPhosphateOnly');
 
+<<<<<<< HEAD
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
     await dragMouseTo(page, 450, 250);
 
+=======
+>>>>>>> origin/master
     await presetSection.setupSugar({
       atomIds: [0, 1, 2],
       bondIds: [0, 1],
@@ -749,8 +749,13 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     // Simulate focus loss and return by dispatching blur/focus events
     await page.evaluate(() => {
+<<<<<<< HEAD
       window.dispatchEvent(new Event('blur'));
       window.dispatchEvent(new Event('focus'));
+=======
+      globalThis.dispatchEvent(new Event('blur'));
+      globalThis.dispatchEvent(new Event('focus'));
+>>>>>>> origin/master
     });
 
     // After regaining focus, the rotation handle should still be visible

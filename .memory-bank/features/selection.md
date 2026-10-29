@@ -1,9 +1,8 @@
 # Selection & Manipulation
 
-## Problem
-
 Before editing, moving, deleting, or transforming parts of a drawing, the user must be able to select exactly the atoms, bonds, structures, or other objects they intend to act on — and then move, rotate, flip, or erase them.
 
+<<<<<<< HEAD
 ## User interaction
 
 - **Selection tools** — _Rectangle Selection_, _Lasso_, _Structure (whole-object) Selection_, and _Fragment Selection_. Cycle between them with `Escape`.
@@ -70,6 +69,9 @@ Selection is reversible and non-destructive; manipulation acts only on the curre
 
 - Deleting a bond does not delete its atoms unless they become disconnected fragments per the tool's rules; each manipulation is one atomic undo entry.
 - Selection state is purely a view concern and never alters the chemical model.
+=======
+Spec: [openspec/specs/selection/spec.md](../../openspec/specs/selection/spec.md)
+>>>>>>> origin/master
 
 ## Limitations
 

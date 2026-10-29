@@ -5,6 +5,15 @@
     "saveAs": "Save as...",
     "undo": "Undo ({shortcut})",
     "redo": "Redo ({shortcut})",
+<<<<<<< HEAD
+=======
+    "copy": "Copy ({shortcut})",
+    "copyAsKet": "Copy as KET ({shortcut})",
+    "copyAsMol": "Copy as MOL ({shortcut})",
+    "copyImage": "Copy Image ({shortcut})",
+    "cut": "Cut ({shortcut})",
+    "paste": "Paste ({shortcut})",
+>>>>>>> origin/master
     "arrangeAsRing": "Arrange as a Ring ({shortcut})",
     "createAntisenseStrand": "Create Antisense Strand",
     "createRnaAntisenseStrand": "Create RNA Antisense Strand ({shortcut})",
@@ -38,7 +47,12 @@
   },
   "buttons": {
     "help": "Help (?)",
+<<<<<<< HEAD
     "about": "About"
+=======
+    "about": "About",
+    "fullscreen": "Fullscreen mode"
+>>>>>>> origin/master
   },
   "sequenceType": {
     "rnaTooltip": "RNA ({shortcut})",

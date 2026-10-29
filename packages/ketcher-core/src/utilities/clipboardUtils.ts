@@ -49,8 +49,8 @@ export function legacyCopy(
         clipboardData.setData(fmt, value);
       }
     });
-  } catch (e) {
-    console.error('clipboardUtils.ts::legacyCopy', e);
+  } catch (error) {
+    console.error('clipboardUtils.ts::legacyCopy', error);
     console.info(`Could not write exact type ${curFmt}`);
   }
 }
@@ -75,7 +75,7 @@ export function legacyPaste(
 
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }
 
 function hasClipboardItemAPI(item?: ClipboardItem): item is ClipboardItem {
@@ -121,7 +121,11 @@ export async function getStructStringFromClipboardData(
  * pasted onto the canvas. Used to enable/disable the "Paste" context-menu item.
  */
 export async function isPasteContentAvailable(
+<<<<<<< HEAD
   validateContent: (content: string) => Promise<boolean>,
+=======
+  isContentValid: (content: string) => Promise<boolean>,
+>>>>>>> origin/master
 ): Promise<boolean> {
   if (!isClipboardAPIAvailable()) {
     return true;
@@ -130,7 +134,11 @@ export async function isPasteContentAvailable(
   try {
     const clipboardData = await navigator.clipboard.read();
     const structStr = await getStructStringFromClipboardData(clipboardData);
+<<<<<<< HEAD
     return structStr?.trim() ? validateContent(structStr) : false;
+=======
+    return structStr?.trim() ? isContentValid(structStr) : false;
+>>>>>>> origin/master
   } catch (error) {
     return error instanceof DOMException && error.name === 'NotAllowedError';
   }

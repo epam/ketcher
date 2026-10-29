@@ -67,7 +67,11 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   error,
 }) => {
   const { t } = useTranslation('components');
+<<<<<<< HEAD
   const disabled = !isNaturalAnalogueRequired(monomerType);
+=======
+  const isDisabled = !isNaturalAnalogueRequired(monomerType);
+>>>>>>> origin/master
 
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;
@@ -122,7 +126,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       MenuProps={menuProps}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
-      disabled={disabled}
+      disabled={isDisabled}
       error={error}
     >
       {options.map((option) => (

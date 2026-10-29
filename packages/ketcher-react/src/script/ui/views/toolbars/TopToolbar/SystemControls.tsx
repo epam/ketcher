@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,7 +30,7 @@ interface SystemControlsProps {
   onHelp: () => void;
 }
 
-const getIfFullScreen = () => {
+const isFullScreen = () => {
   return !!(
     document.fullscreenElement ||
     document.mozFullScreenElement ||
@@ -57,10 +57,14 @@ export const SystemControls = ({
   className,
 }: SystemControlsProps) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
+<<<<<<< HEAD
   const [isFullscreen, setIsFullscreen] = useState(getIfFullScreen);
+=======
+  const [isFullscreen, setIsFullscreen] = useState(isFullScreen);
+>>>>>>> origin/master
 
   useEffect(() => {
-    const syncFullscreenMode = () => setIsFullscreen(getIfFullScreen());
+    const syncFullscreenMode = () => setIsFullscreen(isFullScreen());
 
     document.addEventListener('fullscreenchange', syncFullscreenMode);
     document.addEventListener('webkitfullscreenchange', syncFullscreenMode);

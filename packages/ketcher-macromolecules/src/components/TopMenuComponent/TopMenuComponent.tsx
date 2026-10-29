@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,12 +20,15 @@ import {
   selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
+<<<<<<< HEAD
   selectIsSequenceEditInRNABuilderMode,
+=======
+  isRnaBuilderSequenceEditMode,
+>>>>>>> origin/master
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
-import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { BaseMonomer } from 'ketcher-core';
+import { BaseMonomer, shortcutStr } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -39,6 +42,10 @@ import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { useTranslation } from 'react-i18next';
+<<<<<<< HEAD
+=======
+import { createMenuItemHandlers, MenuItemName } from './menuItemHandlers';
+>>>>>>> origin/master
 
 export function TopMenuComponent() {
   const { t } = useTranslation('macromolecules');
@@ -47,10 +54,10 @@ export function TopMenuComponent() {
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const [selectedEntities, setSelectedEntities] = useState<BaseMonomer[]>([]);
-  const [needOpenByMenuItemClick, setNeedOpenByMenuItemClick] =
+  const [shouldOpenByMenuItemClick, setShouldOpenByMenuItemClick] =
     useState<boolean>(false);
   const [antisenseActiveOption, setAntisenseActiveOption] =
     useState<IconName>();
@@ -65,7 +72,7 @@ export function TopMenuComponent() {
     (entity) => entity && typeof entity.forEachBond === 'function',
   );
 
-  const cyclicStructureFormationDisabled =
+  const isCyclicStructureFormationDisabled =
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
       0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
@@ -76,7 +83,7 @@ export function TopMenuComponent() {
         selectedEntities.length &&
         !isAntisenseCreationDisabled(selectedEntities)
       ) {
-        setNeedOpenByMenuItemClick(false);
+        setShouldOpenByMenuItemClick(false);
         if (
           !hasUnsplitNucleotide(selectedEntities) &&
           hasOnlyDeoxyriboseSugars(selectedEntities)
@@ -89,7 +96,7 @@ export function TopMenuComponent() {
           setAntisenseActiveOption('antisenseRnaStrand');
         } else {
           setAntisenseActiveOption('antisenseStrand');
-          setNeedOpenByMenuItemClick(true);
+          setShouldOpenByMenuItemClick(true);
         }
       }
     };
@@ -101,9 +108,17 @@ export function TopMenuComponent() {
     };
   }, [editor]);
 
+  const menuItemHandlers = createMenuItemHandlers({
+    editor,
+    dispatch,
+    lastSelectedSelectionMenuItem,
+    isSequenceEditInRNABuilderMode,
+  });
+
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
+<<<<<<< HEAD
     } else if (name === 'undo' || name === 'redo') {
       editor?.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
@@ -118,7 +133,12 @@ export function TopMenuComponent() {
       );
     } else if (name === 'arrange-ring') {
       editor?.events.layoutCircular.dispatch();
+=======
+      return;
+>>>>>>> origin/master
     }
+
+    menuItemHandlers[name as MenuItemName]?.();
   };
 
   return (
@@ -144,6 +164,59 @@ export function TopMenuComponent() {
           title={t('topMenu.saveAs')}
           testId="save-file-button"
         />
+<<<<<<< HEAD
+=======
+      </Menu.Group>
+      <Menu.Group isHorizontal={true} divider={true}>
+        <Menu.Submenu
+          disabled={isDisabled || !selectedEntities?.length}
+          testId="copy-dropdown-button"
+          activeItem="copy"
+        >
+          <Menu.Item
+            itemId="copy"
+            title={t('topMenu.copy', { shortcut: shortcutStr('Mod+c') })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="macro-copy-button"
+          />
+          <Menu.Item
+            itemId="copy-mol"
+            title={t('topMenu.copyAsMol', {
+              shortcut: shortcutStr('Mod+Shift+m'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="macro-copy-mol-button"
+          />
+          <Menu.Item
+            itemId="copy-ket"
+            title={t('topMenu.copyAsKet', {
+              shortcut: shortcutStr('Mod+Shift+k'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="macro-copy-ket-button"
+          />
+          <Menu.Item
+            itemId="copy-image"
+            title={t('topMenu.copyImage', {
+              shortcut: shortcutStr('Mod+Shift+f'),
+            })}
+            disabled={isDisabled || !selectedEntities?.length}
+            testId="macro-copy-image-button"
+          />
+        </Menu.Submenu>
+        <Menu.Item
+          itemId="paste"
+          title={t('topMenu.paste', { shortcut: shortcutStr('Mod+v') })}
+          disabled={isDisabled}
+          testId="macro-paste-button"
+        />
+        <Menu.Item
+          itemId="cut"
+          title={t('topMenu.cut', { shortcut: shortcutStr('Mod+x') })}
+          disabled={isDisabled || !selectedEntities?.length}
+          testId="macro-cut-button"
+        />
+>>>>>>> origin/master
       </Menu.Group>
       <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Item
@@ -166,7 +239,11 @@ export function TopMenuComponent() {
             title={t('topMenu.arrangeAsRing', {
               shortcut: hotkeysShortcuts.arrangeRing,
             })}
+<<<<<<< HEAD
             disabled={cyclicStructureFormationDisabled}
+=======
+            disabled={isCyclicStructureFormationDisabled}
+>>>>>>> origin/master
             testId="arrange-ring"
           />
         </Menu.Group>
@@ -178,7 +255,7 @@ export function TopMenuComponent() {
             !isAntisenseOptionVisible(selectedEntities) ||
             isAntisenseCreationDisabled(selectedEntities)
           }
-          needOpenByMenuItemClick={needOpenByMenuItemClick}
+          needOpenByMenuItemClick={shouldOpenByMenuItemClick}
           vertical={true}
           autoSize={true}
           layoutModeButton={true}

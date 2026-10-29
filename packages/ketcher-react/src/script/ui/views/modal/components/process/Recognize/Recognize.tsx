@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+<<<<<<< HEAD
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
+=======
+>>>>>>> origin/master
 import { changeImage, changeVersion } from '../../../../../state/options';
 import type { RecognizeImageFile } from '../../../../../state/options/types';
 
@@ -34,6 +37,7 @@ import { DialogActionButton } from 'src/script/ui/views/modal/components/documen
 import { Icon, StructRender } from 'components';
 import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+import type { AppDispatch } from 'src/script/ui/state/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
 function isImage(file: File | null): boolean {
@@ -211,16 +215,15 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
         </div>
         <div className={classes.output}>
           {structStr &&
-            // in Edge 38: instanceof Promise always `false`
-            (structStr instanceof Promise || typeof structStr !== 'string' ? (
-              <div className={classes.messageContainer}>
-                <LoadingCircles />
-              </div>
-            ) : (
+            (typeof structStr === 'string' ? (
               <StructRender
                 className={classes.struct}
                 struct={structStr as unknown as Struct}
               />
+            ) : (
+              <div className={classes.messageContainer}>
+                <LoadingCircles />
+              </div>
             ))}
         </div>
       </div>
@@ -232,7 +235,8 @@ type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
+  const URL =
+    globalThis.URL || (globalThis.window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
@@ -259,9 +263,7 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-const mapDispatchToProps = (
-  dispatch: ThunkDispatch<RecognizeState, undefined, AnyAction>,
-) => ({
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),

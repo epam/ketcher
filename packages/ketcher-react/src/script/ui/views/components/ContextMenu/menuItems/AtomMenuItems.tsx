@@ -171,7 +171,7 @@ const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
     }
   };
 
-  const onlyOneAtomSelected =
+  const isOnlyOneAtomSelected =
     properties_.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = properties_.propsFromTrigger?.atomIds?.[0];
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
@@ -195,7 +195,7 @@ const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
     editor,
   });
 
-  if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
+  if (isAtomSuperatomLeavingGroup && isOnlyOneAtomSelected) {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
@@ -222,7 +222,7 @@ const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
-  const showAttachmentGroupCreate = editableAtomIds.length > 1;
+  const shouldShowAttachmentGroupCreate = editableAtomIds.length > 1;
   return (
     <>
       {showMarkAsMenu && (
@@ -286,7 +286,7 @@ const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
 
       <AttachmentGroupActionMenuItem
         {...properties_}
-        showCreate={showAttachmentGroupCreate}
+        showCreate={shouldShowAttachmentGroupCreate}
       />
       <Item
         {...properties_}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,9 @@ import { storage } from '../../storage-extension';
 
 export { default as initTmplLib } from './init-library';
 
-/* TEMPLATES */
+/*
+TEMPLATES
+*/
 export function selectTmpl(tmpl) {
   return {
     type: 'TMPL_SELECT',
@@ -53,7 +55,9 @@ export function changeTab(tab) {
   };
 }
 
-/* TEMPLATE-ATTACH-EDIT */
+/*
+TEMPLATE-ATTACH-EDIT
+*/
 export function initAttach(name, attach) {
   return {
     type: 'INIT_ATTACH',
@@ -124,7 +128,9 @@ export function deleteTmpl(tmpl) {
   };
 }
 
-/* SAVE */
+/*
+SAVE
+*/
 export function saveUserTmpl(struct) {
   // TODO: structStr can be not in mol format => structformat.toString ...
   const tmpl = { struct: struct.clone(), props: {} };
@@ -161,7 +167,9 @@ function updateLocalStore(library) {
   storage.setItem('ketcher-tmpls', userLibrary);
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export const initTmplsState = {
   lib: [],
   selected: null,

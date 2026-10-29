@@ -66,9 +66,13 @@ export interface FunctionalGroupsContextMenuProperties extends BaseContextMenuPr
 export interface MacromoleculeContextMenuProperties extends BaseContextMenuProperties {
   id: string;
   functionalGroups: FunctionalGroup[];
-  /** Total count of monomers on canvas with the same code as the primary monomer */
+  /**
+  Total count of monomers on canvas with the same code as the primary monomer
+  */
   totalMonomerCount?: number;
-  /** True when the selection contains at least one non-monomer chemical structure element */
+  /**
+  True when the selection contains at least one non-monomer chemical structure element
+  */
   hasNonMonomerStructure?: boolean;
 }
 

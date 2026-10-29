@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -210,8 +210,8 @@ export default function (
 
   const middleware: Middleware[] = [thunk];
   if (
-    process.env.NODE_ENV !== 'production' &&
-    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
+    import.meta.env.NODE_ENV !== 'production' &&
+    import.meta.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
   ) {
     middleware.push(logger);
   }
@@ -222,10 +222,10 @@ export default function (
   // `@redux-devtools/extension` keeps it a development-only concern: rollup
   // externalises every entry of `dependencies`, so a package added here would
   // become a runtime dependency of every ketcher-react consumer. The
-  // `process.env.NODE_ENV` value is inlined at build time, so production
+  // `import.meta.env.NODE_ENV` value is inlined at build time, so production
   // builds collapse this to plain `compose`.
   const composeEnhancers =
-    (process.env.NODE_ENV !== 'production' &&
+    (import.meta.env.NODE_ENV !== 'production' &&
       (
         globalThis as DevelopmentToolsGlobal
       ).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({

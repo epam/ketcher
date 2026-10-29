@@ -417,7 +417,7 @@ async function handleRGroupAtomTool({
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
       editor.update(fromAtomAddition(editor.render.ctab, null, element));
     } else if (rglabel !== element.rglabel) {
-      if (!element.rglabel && label !== 'R#') {
+      if (label !== 'R#' && !element.rglabel) {
         element.label = label;
       }
 

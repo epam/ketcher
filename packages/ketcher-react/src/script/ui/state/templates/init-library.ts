@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,7 @@ import templatesRawData from '../../../../templates/library.sdf';
 import type { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
-let needReinitializeTemplateLibrary = false;
+let shouldReinitializeTemplateLibrary = false;
 
 interface TemplateLibrary {
   type: string;
@@ -80,9 +80,9 @@ export default async function initTmplLibrary(
       const library = resource.concat(userTmpls());
       dispatch(initLibrary(library));
       dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
-      if (needReinitializeTemplateLibrary) {
+      if (shouldReinitializeTemplateLibrary) {
         reinitializeTemplateLibrary();
-        needReinitializeTemplateLibrary = false;
+        shouldReinitializeTemplateLibrary = false;
       }
     },
   );
@@ -90,7 +90,7 @@ export default async function initTmplLibrary(
 
 export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
-    needReinitializeTemplateLibrary = true;
+    shouldReinitializeTemplateLibrary = true;
     return;
   }
 

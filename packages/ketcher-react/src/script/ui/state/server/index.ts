@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -283,9 +283,9 @@ export function serverCall<T>(
 
   const request: { struct: string; [key: string]: unknown } = {
     struct: serializedStruct,
-    ...(method !== 'calculate' && method !== 'check'
-      ? { output_format: ChemicalMimeType.KET }
-      : {}),
+    ...(method === 'calculate' || method === 'check'
+      ? {}
+      : { output_format: ChemicalMimeType.KET }),
     ...(selectedAtoms.length > 0 ? { selected: selectedAtoms } : {}),
     ...(options.data ?? {}),
   };

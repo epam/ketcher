@@ -63,7 +63,7 @@ const AtomElement = ({ formState }: Pick<BaseProperties, 'formState'>) => {
               'period-table',
               {
                 type: notList ? 'not-list' : 'list',
-                values: atomList !== '' ? atomList.split(',') : [],
+                values: atomList === '' ? [] : atomList.split(','),
               },
               onChange,
             )

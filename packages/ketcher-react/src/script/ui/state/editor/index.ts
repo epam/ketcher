@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -84,14 +84,14 @@ export default function initEditor(
   };
 
   const resetToSelect =
-    (force = false) =>
+    (shouldForceReset = false) =>
     async (dispatch: AppDispatch) => {
       const state = getState();
       const activeToolAction = state.actionState?.activeTool;
       const toolAction =
-        typeof activeToolAction !== 'function' ? activeToolAction : null;
+        typeof activeToolAction === 'function' ? null : activeToolAction;
       const activeTool = toolAction?.tool;
-      if (!activeTool || (activeTool === 'select' && !force)) return;
+      if (!activeTool || (activeTool === 'select' && !shouldForceReset)) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (
@@ -100,7 +100,7 @@ export default function initEditor(
           resetOption,
           typeof toolAction?.opts === 'string' ? toolAction.opts : undefined,
         ) ||
-        force === true
+        shouldForceReset === true
       )
         // example: 'paste'
         dispatch({ type: 'ACTION', action: acts[selectMode].action });
@@ -204,7 +204,7 @@ export default function initEditor(
       const struct = getState().editor.struct();
 
       if (Object.keys(rgroup).length > 2) {
-        const rgroupLabels = Array.from(struct.rgroups.keys());
+        const rgroupLabels = [...struct.rgroups.keys()];
         if (!rgroup.range) rgroup.range = '>0';
 
         return openDialog(dispatch, 'rgroupLogic', {

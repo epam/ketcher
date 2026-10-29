@@ -291,8 +291,8 @@ export function atomForNewBond(
         const lastNeiNeighborAngle = neiNeighborAngles.at(-1);
 
         if (
-          neiNeighborAngles[0] <= Math.PI * 1.01 &&
           lastNeiNeighborAngle !== undefined &&
+          neiNeighborAngles[0] <= Math.PI * 1.01 &&
           lastNeiNeighborAngle <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
@@ -300,7 +300,7 @@ export function atomForNewBond(
       }
     }
 
-    const shallBe180DegToPrevBond =
+    const shouldBe180DegToPrevBond =
       neighbours.length === 1 &&
       ((prevBondType === bond?.type &&
         (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
@@ -310,7 +310,7 @@ export function atomForNewBond(
         (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
           bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
-    if (shallBe180DegToPrevBond) {
+    if (shouldBe180DegToPrevBond) {
       const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI;

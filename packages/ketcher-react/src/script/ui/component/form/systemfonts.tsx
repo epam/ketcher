@@ -74,7 +74,7 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
   );
 
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
     checkInSystem().then((results) => {
       const fonts = results
         .filter((i): i is string => i !== null)
@@ -82,13 +82,13 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
           // TODO remove font-size from here
           return { value: `30px ${font}`, label: font };
         });
-      if (mounted) {
+      if (isMounted) {
         setAvailableFonts(fonts);
       }
     });
 
     return () => {
-      mounted = false;
+      isMounted = false;
     };
   }, []);
 

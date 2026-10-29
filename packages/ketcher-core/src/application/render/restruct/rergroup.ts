@@ -250,14 +250,14 @@ function rGroupdrawBrackets(
 function rLogicToString(id: number | null, rLogic: RGroup): string {
   const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
 
-  const rangeExists =
+  const hasRangeOperator =
     rLogic.range.startsWith('>') ||
     rLogic.range.startsWith('<') ||
     rLogic.range.startsWith('=');
 
   let range: string;
   if (rLogic.range.length > 0) {
-    range = rangeExists ? rLogic.range : '=' + rLogic.range;
+    range = hasRangeOperator ? rLogic.range : '=' + rLogic.range;
   } else {
     range = '>0';
   }

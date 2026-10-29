@@ -16,7 +16,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 1
 
@@ -25,22 +25,22 @@ jobs:
       # restructure, .agents/skills lacks review-pr, so the symlink that the
       # restore brings in is broken, /review-pr does not load, and the run
       # ends green with no review posted. Replace .agents with master's copy
-      # so the skill set matches what .claude points at. This copies files
-      # only; nothing from the PR head is executed.
-      - name: Align agent skills with master
+      # so the skill set matches what .claude points at. CLAUDE.md, which the
+      # action also restores, imports AGENTS.md, so take AGENTS.md from master
+      # too; otherwise a PR could change the instructions of its own review.
+      # This copies files only; nothing from the PR head is executed.
+      - name: Align agent config with master
         run: |
           git fetch origin master --depth 1
-          rm -rf .agents
-          git checkout origin/master -- .agents
+          rm -rf .agents AGENTS.md
+          git checkout origin/master -- .agents AGENTS.md
 
       - name: PR Review with Progress Tracking
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
         env:
           CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          show_full_output: true
-
           prompt: "/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}"
           claude_args: |
             --allowedTools "mcp__github_inline_comment__create_inline_comment" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh issue view:*)" "Bash(gh pr comment:*)"

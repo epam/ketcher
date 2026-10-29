@@ -582,7 +582,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return proposedPosition;
   }
 
-  moveTail(offset: number, id: number, normalize?: true): number;
+  moveTail(offset: number, id: number, shouldNormalize?: true): number;
   moveTail(
     offset: number,
     name:
@@ -590,7 +590,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       | typeof MultitailArrow.BOTTOM_TAIL_NAME,
   ): number;
 
-  moveTail(offset: number, second: number | string, normalize?: true): number {
+  moveTail(
+    offset: number,
+    second: number | string,
+    shouldNormalize?: true,
+  ): number {
     const offsetFixedPrecision =
       FixedPrecisionCoordinates.fromFloatingPrecision(offset);
     const minHeight = new FixedPrecisionCoordinates(
@@ -631,7 +635,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
           ),
         ),
       );
-      if (normalize) {
+      if (shouldNormalize) {
         const result = this.normalizeTailPosition(updatedHeight, second);
         if (result === null) {
           return originalValue.getFloatingPrecision();

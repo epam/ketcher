@@ -16,20 +16,36 @@
 
 import { findIndex, findLastIndex } from 'lodash/fp';
 import isHidden from './isHidden';
+import type { UiAction, ActionStateEditor } from './action.types';
 
-export const zoomList = [
+export const zoomList: number[] = [
   0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 2,
   2.5, 3, 3.5, 4,
 ];
 
-export default {
+type ZoomStepAction = Omit<UiAction, 'action'> & {
+  action: (event?: WheelEvent) => (editor: ActionStateEditor) => void;
+};
+
+interface ZoomActions {
+  zoom: UiAction;
+  'zoom-out': ZoomStepAction;
+  'zoom-in': ZoomStepAction;
+  'zoom-list': Omit<UiAction, 'action'>;
+}
+
+const refreshToolHover = (editor: ActionStateEditor) => {
+  if (editor.lastEvent) editor.tool()?.mousemove?.(editor.lastEvent);
+};
+
+const zoom: ZoomActions = {
   zoom: {
     shortcut: ['Mod+0'],
     enabledInViewOnly: true,
-    selected: (editor) => editor.zoom(),
+    selected: (editor) => editor.zoom() === 1,
     action: (editor) => {
       editor.zoom(1);
-      editor.tool()?.mousemove(editor.lastEvent);
+      refreshToolHover(editor);
     },
     hidden: (options) => isHidden(options, 'zoom'),
   },
@@ -37,12 +53,12 @@ export default {
     shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     title: 'toolbar:zoom.out',
     enabledInViewOnly: true,
-    disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
+    disabled: (editor) => editor.zoom() <= zoomList[0],
     action: (event) => (editor) => {
       const zoom = editor.zoom();
       const i = findLastIndex((z) => z <= zoom, zoomList);
       editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i], event);
-      editor.tool()?.mousemove(editor.lastEvent);
+      refreshToolHover(editor);
     },
     hidden: (options) => isHidden(options, 'zoom-out'),
   },
@@ -58,7 +74,7 @@ export default {
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
         event,
       );
-      editor.tool()?.mousemove(editor.lastEvent);
+      refreshToolHover(editor);
     },
     hidden: (options) => isHidden(options, 'zoom-in'),
   },
@@ -67,3 +83,5 @@ export default {
     hidden: (options) => isHidden(options, 'zoom-list'),
   },
 };
+
+export default zoom;

@@ -5,7 +5,6 @@ import {
   BondsSetting,
   ComboBoxOptionEntry,
   comboBoxOptions,
-  ComboBoxValue,
   EditboxOptionEntry,
   editboxOptions,
   GeneralSetting,
@@ -482,7 +481,9 @@ export async function setSettingsOptions(
   const sortedOptions = [...options];
   sortedOptions.sort((a, b) => a.option.localeCompare(b.option));
 
-  for (const { option, value } of sortedOptions) {
+  for (const entry of sortedOptions) {
+    const { option } = entry;
+    const value = 'value' in entry ? entry.value : undefined;
     const section = optionsToSectionMap.get(option) ?? SettingsSection.General;
     if (openedSection !== section) {
       await SettingsDialog(page).openSection(openedSection);

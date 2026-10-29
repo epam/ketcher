@@ -16,7 +16,7 @@ For features and high-risk changes. Only those need a spec.
 2. **Implement.** Tick each task when it is done, one at a time.
 3. **Archive.** Move the change to `openspec/changes/archive/`. Archiving also updates the owner of current behavior, `openspec/specs/`.
 
-Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI does not run `openspec validate` yet (planned: Phase 3, task 3.10).
+Agents run this flow with the `ketcher-flow` skill, which calls the `openspec-*` skills. Using the skills is optional for people. OpenSpec is pinned in the root `devDependencies`, so `npm install` provides them. CI runs `openspec validate --all --strict` and `openspec validate --archived` on every PR.
 
 ### Ticket flow
 
@@ -30,14 +30,14 @@ For changes too large to read line by line. Follow the [large-scale change proto
 
 Checked for every PR, whatever flow the author used. The author ticks nothing: the AI review names the type in the brief, from the diff and the linked issue. A linked issue of type `Bug` makes a bug fix. A new folder in `openspec/changes/` makes a feature, and a move into `openspec/changes/archive/` an archive. A structure change with no behavior change is a refactor when it adds tests that pin the behavior, and a small change when it adds none. A large-scale change also has one of the other types. A PR that matches no row has no contract beyond review.
 
-| PR type                       | Must contain                                                     | Checked by                                                                                                                                                                                      |
-| ----------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Danger warns when the PR changes no unit or E2E test                                                                                                                           |
-| Feature                       | An OpenSpec change (or a spec in the same format), tests         | Danger fails the PR without a file in `openspec/changes/`, and warns when it changes no unit or E2E test (backmerges skipped). Planned: `openspec validate --all --strict` (Phase 3, task 3.10) |
-| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                                                                                                 |
-| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                                                                                                 |
-| Large-scale change            | The large-scale change protocol sections                         | Danger fails the PR when a section is missing or still holds the template text. Planned: the codemod replay check (Phase 3, task 3.8)                                                           |
-| Archive of an OpenSpec change | No unchecked tasks                                               | Planned: `openspec validate --archived` (Phase 3, task 3.10)                                                                                                                                    |
+| PR type                       | Must contain                                                     | Checked by                                                                                                                                                              |
+| ----------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bug fix                       | Linked issue, a regression test                                  | AI review brief. Danger warns when the PR changes no unit or E2E test                                                                                                   |
+| Feature                       | An OpenSpec change (or a spec in the same format), tests         | `openspec validate --all --strict` in CI. Danger fails the PR without a file in `openspec/changes/`, and warns when it changes no unit or E2E test (backmerges skipped) |
+| Refactor                      | Tests that pin today's behavior, committed before the code moves | AI review brief                                                                                                                                                         |
+| Small change                  | No behavior change; existing tests and the type check hold it    | AI review brief                                                                                                                                                         |
+| Large-scale change            | The large-scale change protocol sections                         | Danger fails the PR when a section is missing or still holds the template text. Planned: the codemod replay check (Phase 3, task 3.8)                                   |
+| Archive of an OpenSpec change | No unchecked tasks                                               | `openspec validate --archived` in CI                                                                                                                                    |
 
 ## Review pipeline
 
@@ -45,7 +45,7 @@ The stages run in this order: gates, risk tier, AI review, human review.
 
 ### Gates
 
-Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, and the example-ssr build, lint, and test. `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
+Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `npm test`, `openspec validate`, the example-ssr build, lint, and test, and `check:autotests` (type check and lint of `ketcher-autotests`). `run-tests.yml` and `run-tests-popup.yml` run the Playwright suite. `sonar.yml` runs the SonarQube quality gate, and `codeql-analysis.yml` runs CodeQL.
 
 `danger.yml` runs Danger on every PR to `master` and `release/**`. The rules are in `scripts/pr-checks.mjs`. A fail blocks the PR; a warning only shows in Danger's comment.
 
@@ -63,9 +63,7 @@ Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `np
 Planned:
 
 - `check:agent-docs` in CI. It runs locally today: `npm run check:agent-docs`.
-- `check:autotests` in CI (Phase 3, task 3.5).
 - Codemod replay check and compare scripts, on large-scale change PRs only (Phase 3, tasks 3.8, 3.9).
-- `openspec validate` in CI (Phase 3, task 3.10).
 
 ### Risk tier (planned: Phase 4)
 

@@ -353,7 +353,7 @@ class TemplateTool implements Tool {
     end
     */
 
-    let extraBond = false;
+    let hasExtraBond = false;
     // calc initial pos and is extra bond needed
     if (!ci) {
       //  ci.type == 'Canvas'
@@ -366,7 +366,7 @@ class TemplateTool implements Tool {
         targetPos = atom?.pp ?? null;
 
         if (targetPos) {
-          extraBond = this.isModeFunctionalGroup
+          hasExtraBond = this.isModeFunctionalGroup
             ? true
             : Vec2.dist(targetPos, eventPosition) > 1;
         }
@@ -394,7 +394,7 @@ class TemplateTool implements Tool {
       dragCtx.angle === degrees &&
       // eslint-disable-next-line no-prototype-builtins
       (!dragCtx.hasOwnProperty('extra_bond') ||
-        dragCtx.extra_bond === extraBond)
+        dragCtx.extra_bond === hasExtraBond)
     ) {
       return;
     }
@@ -428,9 +428,9 @@ class TemplateTool implements Tool {
         this.template,
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
-      dragCtx.extra_bond = extraBond;
+      dragCtx.extra_bond = hasExtraBond;
     }
     dragCtx.action = action;
 

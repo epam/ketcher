@@ -361,7 +361,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
-    const visibleTerminal = true;
+    const isTerminalVisible = true;
     const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
     const hasCharge = this.atom.hasCharge;
@@ -389,7 +389,7 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
+    if ((isAtomTerminal && isTerminalVisible) || isAtomInMiddleOfChain) {
       return true;
     }
 
@@ -488,12 +488,12 @@ export class AtomRenderer extends BaseRenderer {
         .text(this.displayLabelText);
     }
 
-    if (!this.atom.hasAlias && hydrogenAmount > 0 && !isHydrogenLabel) {
+    if (!isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias) {
       textElement
         ?.append('tspan')
         .attr(
           'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          shouldHydrogenBeOnLeft && this.atom.hasExplicitIsotope ? 4 : 0,
         )
         .text('H');
 
@@ -867,13 +867,13 @@ export class AtomRenderer extends BaseRenderer {
       .getKetcher(editor.ketcherId)
       .settingsService?.getSettings();
     const labelStyle = getStereoLabelStyleType(settings?.stereoLabelStyle);
-    const ignoreChiralFlag = settings?.ignoreChiralFlag ?? false;
+    const shouldIgnoreChiralFlag = settings?.ignoreChiralFlag ?? false;
     const enhancedStereoFlag = this.getEnhancedStereoFlag();
 
     return shouldDisplayStereoLabel(
       stereoLabel,
       labelStyle,
-      ignoreChiralFlag,
+      shouldIgnoreChiralFlag,
       enhancedStereoFlag,
     );
   }
@@ -1053,15 +1053,15 @@ function getStereoLabelStyleType(
 function shouldDisplayStereoLabel(
   stereoLabel: string,
   labelStyle: StereoLabelStyleType | undefined,
-  ignoreChiralFlag: boolean,
+  shouldIgnoreChiralFlag: boolean,
   flag: StereoFlag | undefined,
 ): boolean {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
     return true;
   }
 

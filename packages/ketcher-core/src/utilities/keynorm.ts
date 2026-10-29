@@ -151,19 +151,19 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
  * String and event inputs return a normalized shortcut key, while map inputs
  * return a copy with normalized shortcut keys.
  */
-type KeyNormBaseResult<T> = T extends HotKeyMap ? HotKeyMap : string;
-
-function keyNormBase<T extends string | KeyboardEvent | HotKeyMap>(
-  obj: T,
-): KeyNormBaseResult<T> {
+const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
-    return normalizeShortcut(obj) as KeyNormBaseResult<T>;
+    return normalizeShortcut(obj);
   }
 
-  return (
-    typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeShortcut(obj)
-  ) as KeyNormBaseResult<T>;
-}
+  return typeof obj === 'object'
+    ? normalizeKeyMap(obj)
+    : normalizeShortcut(obj);
+}) as {
+  (obj: KeyboardEvent): string;
+  (obj: string): string;
+  (obj: HotKeyMap): HotKeyMap;
+};
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];

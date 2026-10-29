@@ -8,4 +8,4 @@ You are the **merger** in [FEATURE.md](FEATURE.md), [REFACTOR.md](REFACTOR.md), 
 
 3. **Merge** in the target's checkout: `git -C <target checkout> merge --ff-only <implementer branch>`, then push from there. Done when the pushed commit is the commit the checks ran on.
 
-4. **Report** the one line, and nothing else.
+4. **Report** the one line.

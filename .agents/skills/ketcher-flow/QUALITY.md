@@ -48,7 +48,7 @@ The expected value comes from the requirement or the issue, never from a run of 
 
 ## Fixes
 
-- **Spec first.** A fix that contradicts a requirement in `openspec/specs/` or an ADR in `.memory-bank/adr/` is the wrong fix: the argument already lives there, so read both before choosing one.
+- **Spec first.** A fix that contradicts a requirement in `openspec/specs/` or an ADR in `.memory-bank/adr/` is the wrong fix: read both before choosing one.
 - **Root cause.** Fix the first place the system did something wrong, not the place the symptom showed. A guard is a fix only when the state it handles is legitimate. When the state should never exist, find what produced it.
 - **The pattern, not the instance.** Search for every place with the same fault and fix them together. Molecules and macromolecules modes often hold two copies of one concept: check both.
 - **Premise.** When two fixes built on one belief have failed the same check, write that belief as one sentence and test it directly before a third fix.

@@ -1,6 +1,6 @@
 # Roles
 
-The roles a flow dispatches, and the model each one runs on. This file is the single place any flow reads a model from.
+The roles a flow dispatches, and the model each one runs on.
 
 | Role               | Does                                                                                  | Claude Code         | Codex                            | GitHub Copilot CLI                     |
 | ------------------ | ------------------------------------------------------------------------------------- | ------------------- | -------------------------------- | -------------------------------------- |
@@ -13,7 +13,7 @@ The roles a flow dispatches, and the model each one runs on. This file is the si
 | **merger**         | rebases, re-runs checks, merges a branch into the run's branch                        | `sonnet`            | the default model, medium effort | `general-purpose`, the default model   |
 | **reviewer**       | reads a diff it did not write                                                         | `opus`              | the strongest model, high effort | `general-purpose`, the strongest model |
 
-- **Claude Code**: dispatch with the Agent tool and set its `model` from the row. Reviewers are not named agents: each reviews one lens of the [code-review skill](../code-review/SKILL.md), as a generic subagent whose prompt names that skill, the lens file, and the diff or branch point, with read-only file tools.
+- **Claude Code**: dispatch with the Agent tool and set its `model` from the row. Each reviewer is a generic subagent with read-only file tools that reviews one lens of the [code-review skill](../code-review/SKILL.md): its prompt names that skill, the lens file, and the diff or branch point.
 - **Codex**: dispatch with `spawn_agent`, setting `model` and `reasoning_effort` from the row. Pick the model names from the session's model list. A reviewer runs on the default agent, with the skill and lens paths in its prompt. Review runs on a different model from the implementers.
 - **GitHub Copilot CLI**: dispatch through the `task` tool with the agent named in the row, and set the model on the call. Pick the model names from `/model`. A reviewer runs on `general-purpose`, with the skill and lens paths in its prompt.
 - **No subagents** (a tool or mode that cannot dispatch, such as an IDE chat without agent mode): you play each role yourself, in the order the flow gives. For each reviewer, start from the diff and the spec alone, as if you had not written the code, and finish one role's report before you start the next.
@@ -29,4 +29,4 @@ Send **context pointers**, not text: a flow file's path, a ticket file, an issue
 - run `git diff --stat` before `git diff`;
 - read files by line range.
 
-Split a ticket that will not finish in about 100K tokens of context before dispatch.
+Before dispatch, split any ticket that needs more than about 100K tokens of context.

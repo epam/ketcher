@@ -23,7 +23,7 @@ A run's branch is named `<issue number>-<kebab-case title>` (`12365-atom-labels-
 
 ## Worktrees
 
-Parallel implementers each work in their own worktree, so their edits do not collide. A worktree branches off the last commit, not the working tree, so commit a checkpoint first.
+Parallel implementers each work in their own worktree. A worktree branches off the last commit, not the working tree, so commit a checkpoint first.
 
 - When the tool isolates a subagent in a worktree itself (Claude Code's `isolation: "worktree"`), use that.
 - Otherwise: `git worktree add -b <branch> <root>/.ketcher-flow/worktrees/<name> <start commit>`.

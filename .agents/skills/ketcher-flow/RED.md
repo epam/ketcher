@@ -2,7 +2,7 @@
 
 How every flow proves a bug before fixing it. You end with a **red** loop: a **tight** loop that goes red on this bug and that you can run on demand.
 
-The bug's description is evidence, not diagnosis: it says what someone saw, never what is wrong. A guess at the cause is a lead to check.
+The bug's description is evidence of what someone saw, not a diagnosis. A guess at the cause is a lead to check.
 
 ## Steps
 

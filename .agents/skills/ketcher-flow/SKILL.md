@@ -38,13 +38,13 @@ A feature scope that names bugs in the behavior it adds or changes stays one fea
 
 A scope whose diff will qualify as a large-scale change (the _Qualifies_ rule in [review-workflow.md](../../../.memory-bank/review-workflow.md#large-scale-change-protocol)) runs its flow and also follows that protocol: the split decision comes before the first branch.
 
-When the scope is an issue, check that no open PR already closes it before the first branch: `gh pr list --state open --json number,title,closingIssuesReferences`. When one does, name the PR to the user and stop: the work is in flight. A batch drops such issues itself (BATCH.md step 1).
+When the scope is an issue, check that no open PR already closes it before the first branch: `gh pr list --state open --json number,title,closingIssuesReferences`. When one does, name the PR to the user and stop. A batch drops such issues itself (BATCH.md step 1).
 
 When no row fits, ask the user, offering the kinds that fit. Done when you have told the user the kind in one line ("Kind: bug, #12365") and read its flow file. Then run the flow.
 
 ## Where a flow stops
 
-Code on a branch, a draft PR, and files in the run directory are reversible, so a flow goes on without asking. It stops for the user only at a decision that is theirs (product or design) or a write other people see on the tracker, and decides and records everything else. Each flow names its stops, and every flow whose scope is an issue also stops when an open PR already closes it (_Kinds_):
+Code on a branch, a draft PR, and files in the run directory are reversible, so a flow goes on without asking. It stops for the user only at a decision that is theirs (product or design) or a write other people see on the tracker, and decides and records everything else. Each flow names its stops, on top of the open-PR stop in _Kinds_:
 
 | Kind          | Stops                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------- |
@@ -77,6 +77,6 @@ Every change a user can see in the editor is proven with the `verify-ketcher` sk
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. A change that alters what the canvas draws also runs [SNAPSHOTS.md](SNAPSHOTS.md) once the PR is open. You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). A change that alters what the canvas draws also runs [SNAPSHOTS.md](SNAPSHOTS.md) once the PR is open. You never merge.
 
 Every flow's final report ends with **Lessons**: each blocker or major that review found and that a rule could have caught before review (a lint rule, a rule in [review-rules.md](../../../.memory-bank/review-rules.md), a line in [QUALITY.md](QUALITY.md)), with the rule you would add. Propose it only: a new rule is a scope of its own, not part of this PR. Write `Lessons: none` when no finding fits.

@@ -6,9 +6,9 @@ A change that alters what the canvas draws also alters reference screenshots, th
 
    When the report says the change touches every drawing of something (a label rule, a color, a bond length), run that area's screenshot specs in Docker before you open the PR, to find the failures early.
 
-2. **Judge each failing screenshot.** Look at the expected and actual PNGs. A difference that is exactly what an **Acceptance** line of the report says is intended: update it. Any other difference is a regression: fix the code, or stop and ask when the cause is a product choice. A failure that also happens on `<base>` is pre-existing: name it.
+2. **Judge each failing screenshot.** Look at the expected and actual PNGs. A difference that is exactly what an **Acceptance** line of the report says is intended: update it. Any other difference is a regression: fix the code, or stop and ask when the cause is a product choice. A failure that also happens on `<base>` is pre-existing: name it. Done when each failure is marked intended, regression, or pre-existing.
 
-3. **Docker.** Run `docker info`. When it fails, set Docker up as _Docker_ in testing.md says: ask the user once before you install anything, hand them any step that needs `sudo` or an administrator, and note whether you started the daemon. The worktree needs `ketcher-autotests/.env` made from `.env.example` and `example/dist` built from the branch (`npm run build`). Then run `npm run docker:build` in its `ketcher-autotests`.
+3. **Docker.** Run `docker info`. When it fails, set Docker up as _Docker_ in testing.md says: ask the user once before you install anything, hand them any step that needs `sudo` or an administrator, and note whether you started the daemon. The worktree needs `ketcher-autotests/.env` made from `.env.example` and `example/dist` built from the branch (`npm run build`). Then run `npm run docker:build` in its `ketcher-autotests`. Done when `docker info` and the build succeed.
 
 4. **Prove Docker draws what CI draws.** Take one failing spec. Run it with `docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --retries=0 "<file>:<line>"` on a `<base>` build (a detached worktree), then on the branch. Done when it passes on `<base>` and fails on the branch with the pixel counts CI printed. Other counts mean other images: stop and report.
 

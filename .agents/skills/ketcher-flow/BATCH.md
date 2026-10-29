@@ -70,7 +70,7 @@ Subagents draft every comment in `<run dir>/comments/` and write nothing on GitH
 
 10. **Tracker writes and cleanup.** Do this step yourself.
     - **Tracker.** `<run dir>/comments/` holds a draft for each `already-done`, `stale`, and `handed-to-human` task. Show them, one line each, and ask once whether to post them, and whether to close the `already-done` ones. Post and close what the user approved.
-    - **Worktrees.** List this run's triage worktrees, its ticket worktrees, and the task worktrees whose PR is merged (`gh pr list --state merged --head <branch>`). Ask once whether to remove them. On yes: `git worktree remove --force` for the triage and baseline worktrees (red tests are saved as patches), `git worktree remove` for ticket worktrees, and `git worktree remove`, then `git branch -D <branch>`, for merged ones. Keep a task worktree whose branch is not merged, and a handed-off feature's.
+    - **Worktrees.** List this run's baseline and triage worktrees, its ticket worktrees, the worktrees of tasks that ended without a PR, and the task worktrees whose PR is merged (`gh pr list --state merged --head <branch>`). Ask once whether to remove them. On yes: `git worktree remove --force` for the baseline, triage, and no-PR worktrees (red tests are saved as patches), then `git branch -D <branch>` for each no-PR task; `git worktree remove` for ticket worktrees; and `git worktree remove`, then `git branch -D <branch>`, for merged ones. Keep a task worktree whose PR is open, and a handed-off feature's.
 
     Done when every approved draft is posted and every approved worktree is removed.
 

@@ -28,7 +28,7 @@ Exit code 0 means fresh. A fresh task skips steps 4 and 5. A task with no stamp,
 
 6. **Prepare by kind.**
    - **bug**: follow [RED.md](RED.md) in your triage worktree. Red → outcome `ready`, and save the test as a patch: `git -C <worktree> add -N .` then `git -C <worktree> diff --binary > <run dir>/triage/<id>.patch`. When the loop stays green everywhere you can reach, or the bug needs remote mode with no Indigo service, a product decision, or an answer only the issue's author has → outcome `handed-to-human`, with a draft comment on why and what you ran.
-   - **small**: list what the change covers, as SMALL.md step 1 says: the files, and for a lint rule every violation. A small task that needs new tests to hold its behavior is a refactor: name it so. → outcome `ready`.
+   - **small**: list what the change covers, as SMALL.md step 1 says: the files, and for a lint rule every violation. A small task that needs new tests to hold its behavior is a refactor: write `Kind: refactor` and prepare it as the next bullet says. → outcome `ready`.
    - **feature** and **refactor**: write no code. List the specs, the modules, and the files the work will likely change, so the plan can find shared files. → outcome `ready`.
 
 ## Outcome file

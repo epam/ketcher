@@ -8,7 +8,7 @@ The tickets carry the task graph's blocking edges, and the **frontier** is the t
 
 ## Bug tasks
 
-A ticket whose work is a wrong behavior, not new behavior, starts with the line `Kind: bug`. Its implementer follows [RED.md](RED.md) first. If the loop stays green everywhere it reaches, the implementer commits nothing and reports what it ran. Carry that to the user at the end.
+A ticket whose work is a wrong behavior, not new behavior, starts with the line `Kind: bug`. Its implementer follows [RED.md](RED.md) first, as IMPLEMENT.md says. Carry a bug the implementer reports green everywhere to the user at the end.
 
 ## Steps
 

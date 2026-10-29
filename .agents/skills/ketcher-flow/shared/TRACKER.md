@@ -6,7 +6,7 @@ Ketcher tracks work in GitHub issues on `epam/ketcher`, through the `gh` CLI.
 
 - **Type.** A bug is an issue of type `Bug`, set with `--type` (not a label). Features are type `Feature`, other work type `Task`. List open bugs: `gh issue list --state open --search "type:Bug" --limit 500`. File one: `gh issue create --type Bug --title <title> --label <area label> --body-file <file>` (one `--label` per label).
 - **Area labels.** Pick from `gh label list` the labels for the area the fix lands in (`Macromolecules`, `Sequence mode`, `Monomer Library`, `Export to KET`, and so on). Leave `Priority:` and `Severity:` labels to the maintainers.
-- **Titles.** A bug title states the wrong behavior as a plain sentence, in the terms of [glossary.md](../../../.memory-bank/glossary.md). Read the titles of recent bugs first and match them.
+- **Titles.** A bug title states the wrong behavior as a plain sentence, in the terms of [glossary.md](../../../../.memory-bank/glossary.md). Read the titles of recent bugs first and match them.
 - **Read** an issue with its comments: `gh issue view <N> --comments`.
 
 A run records each issue's triage outcome in its run directory.
@@ -17,5 +17,5 @@ Filing an issue, commenting, and closing: a flow does them only at the step that
 
 ## Pull requests
 
-- **Title and body:** write them with the `ketcher-pr` skill ([its SKILL.md](../ketcher-pr/SKILL.md)).
+- **Title and body:** write them with the `ketcher-pr` skill ([its SKILL.md](../../ketcher-pr/SKILL.md)).
 - **Open**: `git push -u origin <branch>`, then `gh pr create --base <base branch> --title <title> --body-file <file>`, with the `--attach` flags `ketcher-pr` gives for screenshots. Add `--draft` when review is still to come, and mark it ready (`gh pr ready <N>`) when review has stopped.

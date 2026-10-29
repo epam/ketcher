@@ -83,7 +83,7 @@ Each rule lives in one owner file. Read the owner before you change code in its 
 - **Workflow**: `/ketcher-flow <scope>` ([SKILL.md](.agents/skills/ketcher-flow/SKILL.md)) takes a feature, a bug, a refactor, a small change, a list of symptoms, a batch of tasks of any kinds, or review comments on open PRs to a reviewed PR. Features go through the OpenSpec skills. When you take on a task with code changes and your tool cannot run the skill, read that file and follow the flow it picks.
 - **E2E tests**: before you write Playwright specs, read [testing.md](.memory-bank/testing/testing.md) and ask the user to proceed. For a new spec file or folder, follow its E2E Test Plans section.
 - **Copilot** reads skills from `.agents/skills/` and `.claude/skills/`. `.github/instructions/*.instructions.md` are generated from `review-rules.md`; do not edit them by hand.
-- **Subagents**: the repo defines no named agent files. A subagent's instructions live in a skill under `.agents/skills/`, dispatched as [ROLES.md](.agents/skills/ketcher-flow/ROLES.md) says: the prompt names the skill and, where one exists, the lens or role file. Codex and Copilot get the same paths — no generated agent files to maintain.
+- **Subagents**: the repo defines no named agent files. A subagent's instructions live in a skill under `.agents/skills/`, dispatched as [ROLES.md](.agents/skills/ketcher-flow/roles/ROLES.md) says: the prompt names the skill and, where one exists, the lens or role file. Codex and Copilot get the same paths — no generated agent files to maintain.
 
 ## Unverified tool behaviors
 

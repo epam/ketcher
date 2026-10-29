@@ -1,6 +1,6 @@
 # Snapshots
 
-A change that alters what the canvas draws also alters reference screenshots, the PNGs beside each spec under `ketcher-autotests/tests`. They exist only as Linux PNGs made in Docker ([testing.md](../../../.memory-bank/testing/testing.md), _Docker_), so the Playwright shards in CI fail after the PR opens. Judge each failure before you update anything. Run this from the branch's worktree.
+A change that alters what the canvas draws also alters reference screenshots, the PNGs beside each spec under `ketcher-autotests/tests`. They exist only as Linux PNGs made in Docker ([testing.md](../../../../.memory-bank/testing/testing.md), _Docker_), so the Playwright shards in CI fail after the PR opens. Judge each failure before you update anything. Run this from the branch's worktree.
 
 1. **List the failures.** Wait for the Playwright shards with your tool's way to wait on a PR's checks, and read the failed jobs' logs. Done when you hold the failing tests as `file:line`, one list per project (`chromium`, `chromium-popup`).
 

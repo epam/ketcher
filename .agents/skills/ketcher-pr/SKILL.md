@@ -13,7 +13,7 @@ Write the PR body as `.github/pull_request_template.md`, filled in. `gh pr creat
 
 A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
 
-A PR from a batch starts its body with the brief, then a `---` rule, then these sections. _The brief_ in [BATCH.md](../ketcher-flow/BATCH.md) says what it holds.
+A PR from a batch starts its body with the brief, then a `---` rule, then these sections. _The brief_ in [BATCH.md](../ketcher-flow/flows/BATCH.md) says what it holds.
 
 ## Title
 

@@ -10,29 +10,29 @@ You have a **scope**: whatever the user wants done. First you name its **kind**.
 
 ## Reference
 
-Read these when the step you are on needs them:
+A file named without a link lives in `flows/` (one per kind), `roles/` (what a dispatched subagent follows), or `shared/` (what flows and roles both read). Read these when the step you are on needs them:
 
-- [LOCATIONS.md](LOCATIONS.md): the run directory, worktrees, `<base>`, branches. Read before the first run directory or worktree.
-- [TRACKER.md](TRACKER.md): GitHub issues, the PR title and body, comments. Read when a flow reads, files, or comments on issues, or opens a PR.
-- [REVIEW.md](REVIEW.md): the cleanup, the reviewer panel, and the review rounds. Read when the flow reaches its review step.
-- [ROLES.md](ROLES.md): the roles a flow dispatches and the model each one runs on, per tool. Read before the first dispatch.
-- [QUALITY.md](QUALITY.md): how code is shaped, written, tested, fixed, and reviewed. Every implementer and reviewer dispatch carries its path.
+- [LOCATIONS.md](shared/LOCATIONS.md): the run directory, worktrees, `<base>`, branches. Read before the first run directory or worktree.
+- [TRACKER.md](shared/TRACKER.md): GitHub issues, the PR title and body, comments. Read when a flow reads, files, or comments on issues, or opens a PR.
+- [REVIEW.md](shared/REVIEW.md): the cleanup, the reviewer panel, and the review rounds. Read when the flow reaches its review step.
+- [ROLES.md](roles/ROLES.md): the roles a flow dispatches and the model each one runs on, per tool. Read before the first dispatch.
+- [QUALITY.md](shared/QUALITY.md): how code is shaped, written, tested, fixed, and reviewed. Every implementer and reviewer dispatch carries its path.
 
-The flows call three vendored skills at fixed steps: `diagnosing-bugs` and `tdd` (from [RED.md](RED.md)) and `codebase-design` (for _Design It Twice_). The Ketcher specifics live in the flow file that calls them, and win where the two differ. Call them with your tool's skill command, or read their `SKILL.md` when it has none.
+The flows call three vendored skills at fixed steps: `diagnosing-bugs` and `tdd` (from [RED.md](shared/RED.md)) and `codebase-design` (for _Design It Twice_). The Ketcher specifics live in the flow file that calls them, and win where the two differ. Call them with your tool's skill command, or read their `SKILL.md` when it has none.
 
 ## Kinds
 
 Read the request and the conversation. Take the first row that fits:
 
-| The scope is                                                                                                                                     | Kind          | Flow                         |
-| ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
-| open PRs with review comments to address: PR numbers, or "follow up on my PRs"                                                                   | **follow-up** | [FOLLOW-UP.md](FOLLOW-UP.md) |
-| two or more **symptoms**: what the user saw go wrong while testing by hand, one per line, in their words                                         | **symptoms**  | [HUNT.md](HUNT.md)           |
-| two or more tasks, of any kinds: issue numbers, a list, or a query such as "fix the open bugs"                                                   | **batch**     | [BATCH.md](BATCH.md)         |
-| one wrong behavior, in prose or as one issue                                                                                                     | **bug**       | [BUG.md](BUG.md)             |
-| new or changed product behavior: a feature request, an OpenSpec change, or a goal in the conversation, including one that also names bugs        | **feature**   | [FEATURE.md](FEATURE.md)     |
-| a change to structure that keeps behavior and moves an interface or spans modules: extract, move, dedupe, simplify, rewrite a file in TypeScript | **refactor**  | [REFACTOR.md](REFACTOR.md)   |
-| one reason, one PR, and no user sees a difference: a lint-rule cleanup, an `any` removal, copy, config, a dependency bump, docs                  | **small**     | [SMALL.md](SMALL.md)         |
+| The scope is                                                                                                                                     | Kind          | Flow                               |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------------- |
+| open PRs with review comments to address: PR numbers, or "follow up on my PRs"                                                                   | **follow-up** | [FOLLOW-UP.md](flows/FOLLOW-UP.md) |
+| two or more **symptoms**: what the user saw go wrong while testing by hand, one per line, in their words                                         | **symptoms**  | [HUNT.md](flows/HUNT.md)           |
+| two or more tasks, of any kinds: issue numbers, a list, or a query such as "fix the open bugs"                                                   | **batch**     | [BATCH.md](flows/BATCH.md)         |
+| one wrong behavior, in prose or as one issue                                                                                                     | **bug**       | [BUG.md](flows/BUG.md)             |
+| new or changed product behavior: a feature request, an OpenSpec change, or a goal in the conversation, including one that also names bugs        | **feature**   | [FEATURE.md](flows/FEATURE.md)     |
+| a change to structure that keeps behavior and moves an interface or spans modules: extract, move, dedupe, simplify, rewrite a file in TypeScript | **refactor**  | [REFACTOR.md](flows/REFACTOR.md)   |
+| one reason, one PR, and no user sees a difference: a lint-rule cleanup, an `any` removal, copy, config, a dependency bump, docs                  | **small**     | [SMALL.md](flows/SMALL.md)         |
 
 A feature scope that names bugs in the behavior it adds or changes stays one feature run. Each such bug becomes a task with `Kind: bug`, as FEATURE.md says. A bug elsewhere is a second task, and the scope is a batch.
 
@@ -73,10 +73,10 @@ A test that times out only while several builds run at once is load, not code. A
 
 ## Proof in the app
 
-Every change a user can see in the editor is proven with the `verify-ketcher` skill ([its SKILL.md](../verify-ketcher/SKILL.md)) before review: the **verifier** role follows [VERIFY.md](VERIFY.md). The verdict and its evidence go in the PR body, as `ketcher-pr` says.
+Every change a user can see in the editor is proven with the `verify-ketcher` skill ([its SKILL.md](../verify-ketcher/SKILL.md)) before review: the **verifier** role follows [VERIFY.md](roles/VERIFY.md). The verdict and its evidence go in the PR body, as `ketcher-pr` says.
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). A change that alters what the canvas draws also runs [SNAPSHOTS.md](SNAPSHOTS.md) once the PR is open. You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](shared/TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). A change that alters what the canvas draws also runs [SNAPSHOTS.md](shared/SNAPSHOTS.md) once the PR is open. You never merge.
 
-Every flow's final report ends with **Lessons**: each blocker or major that review found and that a rule could have caught before review (a lint rule, a rule in [review-rules.md](../../../.memory-bank/review-rules.md), a line in [QUALITY.md](QUALITY.md)), with the rule you would add. Propose it only: a new rule is a scope of its own, not part of this PR. Write `Lessons: none` when no finding fits.
+Every flow's final report ends with **Lessons**: each blocker or major that review found and that a rule could have caught before review (a lint rule, a rule in [review-rules.md](../../../.memory-bank/review-rules.md), a line in [QUALITY.md](shared/QUALITY.md)), with the rule you would add. Propose it only: a new rule is a scope of its own, not part of this PR. Write `Lessons: none` when no finding fits.

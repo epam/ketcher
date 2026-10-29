@@ -2,11 +2,11 @@
 
 How code is written and reviewed in every flow. **Implementers** apply it while writing. **Reviewers** apply it beside the repo's own rules. The repo's rules come first and win where they differ:
 
-- [invariants.md](../../../.memory-bank/invariants.md): rules that must never break.
-- [review-rules.md](../../../.memory-bank/review-rules.md): rules a reviewer checks, by ID.
-- [coding-standards.md](../../../.memory-bank/coding-standards.md): conventions that hold today.
-- [accepted-patterns.md](../../../.memory-bank/accepted-patterns.md): patterns nobody raises.
-- [testing.md](../../../.memory-bank/testing/testing.md): unit and E2E test rules.
+- [invariants.md](../../../../.memory-bank/invariants.md): rules that must never break.
+- [review-rules.md](../../../../.memory-bank/review-rules.md): rules a reviewer checks, by ID.
+- [coding-standards.md](../../../../.memory-bank/coding-standards.md): conventions that hold today.
+- [accepted-patterns.md](../../../../.memory-bank/accepted-patterns.md): patterns nobody raises.
+- [testing.md](../../../../.memory-bank/testing/testing.md): unit and E2E test rules.
 
 The next contributor is an agent that opens one file, copies the nearest example, and takes the shortest path that compiles. Write so that a change which looks right from one file is right for the whole repo.
 

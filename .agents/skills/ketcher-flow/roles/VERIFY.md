@@ -10,7 +10,7 @@ You change no code and commit nothing: your output is the evidence in the run di
 
 2. **Map** each line to a feature file in `verify-ketcher`'s `features/`. A line no feature file covers is driven from the closest file's conventions, and named in the report as unmapped. Done when every listed line has a feature file or is marked unmapped.
 
-3. **Drive** each line as [verify-ketcher](../verify-ketcher/SKILL.md) says: launch from the worktree, doctor, drive, export before and after, screenshot, console errors, cleanup. Use standalone mode unless the change touches the remote Indigo service. Save evidence to `<run dir>/verify/<feature-id>/` by giving each `--out` a path there: this replaces verify-ketcher's default evidence folder, which is removed with the worktree. Done when every listed line has evidence or a reason it has none.
+3. **Drive** each line as [verify-ketcher](../../verify-ketcher/SKILL.md) says: launch from the worktree, doctor, drive, export before and after, screenshot, console errors, cleanup. Use standalone mode unless the change touches the remote Indigo service. Save evidence to `<run dir>/verify/<feature-id>/` by giving each `--out` a path there: this replaces verify-ketcher's default evidence folder, which is removed with the worktree. Done when every listed line has evidence or a reason it has none.
 
 4. **Stop** every process you started. Done when none of them runs and the evidence is still in `<run dir>/verify/`.
 

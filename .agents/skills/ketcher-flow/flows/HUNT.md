@@ -1,6 +1,6 @@
 # Hunt
 
-The **symptoms** kind of [SKILL.md](SKILL.md). The user tested the editor by hand and sends their **symptoms**: what looked wrong, one per line, in their own words. You turn each real bug behind them into a diagnosed issue, then run a batch on those issues.
+The **symptoms** kind of [SKILL.md](../SKILL.md). The user tested the editor by hand and sends their **symptoms**: what looked wrong, one per line, in their own words. You turn each real bug behind them into a diagnosed issue, then run a batch on those issues.
 
 Steps 1 to 5 read `<base>` straight from git, and their only output is issues. Leave worktrees, builds, tests, app runs, and fixes to the batch (step 6).
 
@@ -10,7 +10,7 @@ When the user asked for issues only ("just file them"), stop after step 5.
 
 1. **Split.** Create the run directory, slug `hunt-<YYYY-MM-DD-HHMM>`. Number the symptoms from the user's message, one per line or one per distinct observation, keeping their exact words. Keep two lines that may share a cause separate: step 3 merges them. Done when `<run dir>/symptoms.md` lists every symptom with its number.
 
-2. **Diagnose.** Run `git fetch origin` once, and note the commit it diagnoses against: `git rev-parse <base>`. Every issue this run files carries that sha. Dispatch one **diagnoser** per symptom, all in parallel, each with [HUNT-DIAGNOSE.md](HUNT-DIAGNOSE.md), its symptom number, `<base>`, and the run directory. Done when every symptom has `<run dir>/symptom-<k>.md`.
+2. **Diagnose.** Run `git fetch origin` once, and note the commit it diagnoses against: `git rev-parse <base>`. Every issue this run files carries that sha. Dispatch one **diagnoser** per symptom, all in parallel, each with [HUNT-DIAGNOSE.md](../roles/HUNT-DIAGNOSE.md), its symptom number, `<base>`, and the run directory. Done when every symptom has `<run dir>/symptom-<k>.md`.
 
 3. **Merge causes.** Read every symptom file. Merge only symptoms whose `Cause` names the same code and the same wrong behavior: they become one issue that lists all of them. Duplicates and by-design symptoms get no issue. Done when every symptom maps to exactly one of: a new issue, `duplicate of #N`, or `by design`.
 
@@ -64,6 +64,6 @@ Reported: <the user's words; one line per symptom when several merged>
 Diagnosed against: <the sha from step 2>
 ```
 
-Keep the `Diagnosed against:` line last: _Freshness_ in [TRIAGE.md](TRIAGE.md) reads it.
+Keep the `Diagnosed against:` line last: _Freshness_ in [TRIAGE.md](../roles/TRIAGE.md) reads it.
 
 For a cause that was not found: _Where_ lists the places searched and what each one does, and _Unknown_ says the cause was not found and names what would settle it.

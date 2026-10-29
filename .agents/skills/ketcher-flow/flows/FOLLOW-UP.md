@@ -1,6 +1,6 @@
 # Follow-up
 
-The **follow-up** kind of [SKILL.md](SKILL.md): open PRs whose reviewers left comments to address. You address each unresolved comment on the PR's own branch, review the fixes, push, and draft a reply per comment. You run it yourself, without subagents, until review.
+The **follow-up** kind of [SKILL.md](../SKILL.md): open PRs whose reviewers left comments to address. You address each unresolved comment on the PR's own branch, review the fixes, push, and draft a reply per comment. You run it yourself, without subagents, until review.
 
 Take the whole state from the PR: its branch, its threads, its reviews, and its linked issue. The run that opened it plays no part.
 
@@ -19,17 +19,17 @@ Take the whole state from the PR: its branch, its threads, its reviews, and its 
 3. **Worktree.** `git fetch origin`, then `git worktree add <root>/.ketcher-flow/worktrees/pr-<PR> <head branch>`, installed as LOCATIONS.md says. Save the _Checks_ baseline. Done when the worktree is at the PR's head commit and `<run dir>/baseline/` holds every check's output.
 
 4. **Address.** For each comment, one of:
-   - **Change**: a new commit, per _Write_ in [QUALITY.md](QUALITY.md), naming what the comment asked.
+   - **Change**: a new commit, per _Write_ in [QUALITY.md](../shared/QUALITY.md), naming what the comment asked.
    - **No change**: the comment is already met, or following it would break the spec. Note one line of reason.
    - **Stop**: the comment asks for a product or design decision that the spec and the ADRs do not make. Show the user the comment and the options, and wait.
 
-   When a commit changes code that reaches the editor, follow [VERIFY.md](VERIFY.md) yourself on the behavior it changes. Done when every comment has a commit or a reason, and the branch passes the checks against the baseline.
+   When a commit changes code that reaches the editor, follow [VERIFY.md](../roles/VERIFY.md) yourself on the behavior it changes. Done when every comment has a commit or a reason, and the branch passes the checks against the baseline.
 
-5. **Review.** Follow [REVIEW.md](REVIEW.md) with the commit before step 4 as the branch point and `comments.md` with the linked issue as the spec. You do the cleanup and the fixes yourself. Done when the review rounds have stopped.
+5. **Review.** Follow [REVIEW.md](../shared/REVIEW.md) with the commit before step 4 as the branch point and `comments.md` with the linked issue as the spec. You do the cleanup and the fixes yourself. Done when the review rounds have stopped.
 
-6. **Push** to the same branch. A change that alters what the canvas draws runs [SNAPSHOTS.md](SNAPSHOTS.md) after the push. Done when the PR's head is your last commit.
+6. **Push** to the same branch. A change that alters what the canvas draws runs [SNAPSHOTS.md](../shared/SNAPSHOTS.md) after the push. Done when the PR's head is your last commit.
 
-7. **Draft the replies.** One per comment, in `<run dir>/<PR>/replies/<thread id>.md` (a review body gets `review-<n>.md`): the commit that addresses it, or the reason nothing changed. Start each with the line from [TRACKER.md](TRACKER.md). Leave threads unresolved for the reviewer to resolve. Done when every entry in `comments.md` has its reply file.
+7. **Draft the replies.** One per comment, in `<run dir>/<PR>/replies/<thread id>.md` (a review body gets `review-<n>.md`): the commit that addresses it, or the reason nothing changed. Start each with the line from [TRACKER.md](../shared/TRACKER.md). Leave threads unresolved for the reviewer to resolve. Done when every entry in `comments.md` has its reply file.
 
 8. **Post.** Show every reply, one line each, and ask once whether to post them. Post what the user approved: a thread reply with
 

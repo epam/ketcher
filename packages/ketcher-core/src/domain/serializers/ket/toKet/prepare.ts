@@ -148,7 +148,7 @@ function addMolecules(
     const sourceAtomIdMap = new Map<number, number>();
     ketNodes.push({
       type: 'molecule',
-      fragment: struct.clone(atomSet, null, false, sourceAtomIdMap),
+      fragment: struct.clone(atomSet, undefined, false, sourceAtomIdMap),
       sourceAtomIdMap,
       center: getFragmentCenter(struct, atomSet),
     });
@@ -194,7 +194,12 @@ function generateSGroupFragmentsMap(
       const sourceAtomIdMap = new Map<number, number>();
       ketNodes.push({
         type: 'molecule',
-        fragment: struct.clone(atomsInFragment, null, false, sourceAtomIdMap),
+        fragment: struct.clone(
+          atomsInFragment,
+          undefined,
+          false,
+          sourceAtomIdMap,
+        ),
         sourceAtomIdMap,
         center: getFragmentCenter(struct, atomsInFragment),
       });

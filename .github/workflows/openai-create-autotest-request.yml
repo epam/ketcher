@@ -15,13 +15,14 @@ jobs:
         github.event.issue.type == 'Feature'
       )
     runs-on: ubuntu-latest
+    environment: ai-workflows
     permissions:
       contents: write
       issues: write
       pull-requests: read
     steps:
       - name: Generate test scenarios and create Autotest Request
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:

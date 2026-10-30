@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -545,10 +544,10 @@ async function clipData(editor: Editor) {
     resource[type] = data;
 
     return resource;
-  } catch (error: any) {
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -577,10 +576,10 @@ function legacyClipData(editor: Editor) {
     resource[type] = data;
 
     return resource;
-  } catch (error: any) {
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 

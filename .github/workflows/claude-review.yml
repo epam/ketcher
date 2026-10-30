@@ -29,20 +29,23 @@ jobs:
       # so the skill set matches what .claude points at. CLAUDE.md, which the
       # action also restores, imports AGENTS.md, so take AGENTS.md from master
       # too; otherwise a PR could change the instructions of its own review.
-      # This copies files only; nothing from the PR head is executed.
+      # /review-pr runs scripts/review-panel.mjs to pick its lenses, so take
+      # that script from master as well: nothing from the PR head is executed,
+      # and a PR cannot choose the panel of its own review.
       - name: Align agent config with master
         run: |
           git fetch origin master --depth 1
-          rm -rf .agents AGENTS.md
+          rm -rf .agents AGENTS.md scripts/review-panel.mjs
           git checkout origin/master -- .agents AGENTS.md
+          git checkout origin/master -- scripts/review-panel.mjs || echo "::warning::scripts/review-panel.mjs is not on master yet; /review-pr cannot pick its panel"
 
       - name: PR Review with Progress Tracking
         uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
         env:
-          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
+          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          prompt: "/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}"
+          prompt: '/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}'
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh issue view:*)" "Bash(gh pr comment:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment" "Bash(node scripts/review-panel.mjs:*)" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh issue view:*)" "Bash(gh pr comment:*)"
             --model "claude-opus-5-5"

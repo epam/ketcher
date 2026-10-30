@@ -4,7 +4,7 @@
 // about the PR is read through the GitHub API.
 import { danger, fail, schedule, warn } from 'danger';
 import { readFileSync } from 'node:fs';
-import { checkPullRequest } from './scripts/pr-checks.mjs';
+import { checkPullRequest, MAX_FILE_LINES } from './scripts/pr-checks.mjs';
 
 const LINKED_ISSUES = `
   query ($owner: String!, $repo: String!, $number: Int!) {
@@ -48,6 +48,31 @@ schedule(async () => {
     number: pr.number,
   });
 
+  // R16 needs the line count after the change. Read it only for source files
+  // that grow, since a file that shrinks cannot cross the limit.
+  const lineCounts = new Map<string, number>();
+  for (const file of files) {
+    const grows = file.additions > file.deletions;
+    if (
+      !/^packages\/[^/]+\/src\//.test(file.filename) ||
+      file.status === 'removed' ||
+      !grows
+    ) {
+      continue;
+    }
+    const { data } = await api.rest.repos.getContent({
+      owner,
+      repo,
+      path: file.filename,
+      ref: pr.head.sha,
+    });
+    if (!Array.isArray(data) && data.type === 'file' && data.content) {
+      const text = Buffer.from(data.content, 'base64').toString('utf8');
+      const lines = text.split('\n').length - (text.endsWith('\n') ? 1 : 0);
+      if (lines > MAX_FILE_LINES) lineCounts.set(file.filename, lines);
+    }
+  }
+
   const findings = checkPullRequest({
     title: pr.title,
     body: pr.body ?? '',
@@ -68,6 +93,7 @@ schedule(async () => {
       status: file.status,
       additions: file.additions,
       deletions: file.deletions,
+      lines: lineCounts.get(file.filename),
     })),
     lscTemplate: readFileSync(
       '.github/PULL_REQUEST_TEMPLATE/large-scale-change.md',

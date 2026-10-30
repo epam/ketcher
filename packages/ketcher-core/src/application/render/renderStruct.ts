@@ -160,9 +160,9 @@ export class RenderStruct {
       if (shouldCache) {
         renderCache.set(struct, rnd.clientArea.innerHTML);
       }
-     }
-   }
- }
+    }
+  }
+}
 
 /**
  * Why?

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -93,10 +93,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE ?? '',
-    indigoVersion: process.env.INDIGO_VERSION ?? '',
-    indigoMachine: process.env.INDIGO_MACHINE ?? '',
-    version: process.env.VERSION ?? '',
+    buildDate: import.meta.env.BUILD_DATE ?? '',
+    indigoVersion: import.meta.env.INDIGO_VERSION ?? '',
+    indigoMachine: import.meta.env.INDIGO_MACHINE ?? '',
+    version: import.meta.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };
@@ -278,14 +278,13 @@ export const selectMonomerLibraryLoadError = (
   state: RootState,
 ): string | null => state.editor.monomerLibraryLoadError;
 
-export const selectIsSequenceEditInRNABuilderMode = (
-  state: RootState,
-): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
+export const isRnaBuilderSequenceEditMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceEditInRNABuilderMode;
 
-export const selectIsSequenceMode = (state: RootState): boolean =>
+export const isSequenceModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
 
-export const selectIsSequenceSyncEditMode = (state: RootState): boolean =>
+export const isSequenceSyncEditModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceSyncEditMode;
 
 export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
@@ -298,10 +297,10 @@ export const selectIsHandToolSelected = (state: RootState) =>
 export const hasAntisenseChains = (state: RootState): CoreEditor =>
   state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
 
-export const selectIsContextMenuActive = (state: RootState): boolean =>
+export const isContextMenuActivated = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
 
-export const selectIsDragging = (state: RootState): boolean =>
+export const isEditorDragging = (state: RootState): boolean =>
   state.editor.isDragging;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (

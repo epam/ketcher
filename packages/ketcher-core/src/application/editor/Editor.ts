@@ -2796,7 +2796,7 @@ export class CoreEditor {
     struct.applyMonomersTransformations(scaleFactor);
     this.micromoleculesEditor.render.setMolecule(struct);
 
-    if (isFlexLayoutMode) {
+    if (isFlexLayoutMode && !struct.isBlank()) {
       this.keepStructurePositionInMicroViewport(macroZoomTransform);
     }
     this.viewportBeforeModeSwitch = undefined;

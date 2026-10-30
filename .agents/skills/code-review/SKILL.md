@@ -1,9 +1,9 @@
 ---
 name: code-review
-description: Review a Ketcher diff for security, performance, code-quality, or documentation-accuracy defects, one lens per reviewer. Run via /review-pr, a ketcher-flow review round, or directly when asked for one of these reviews of changed code.
+description: Review a Ketcher diff for correctness, security, performance, code-quality, or documentation-accuracy defects, one lens per reviewer. Run via /review-pr, a ketcher-flow review round, or directly when asked for one of these reviews of changed code.
 ---
 
-Review a diff through one of four **lenses**, each its own file: [security](security.md), [performance](performance.md), [code-quality](code-quality.md), [documentation-accuracy](documentation-accuracy.md). One lens per reviewer, on a diff the reviewer did not write.
+Review a diff through one **lens**. Each lens is its own file: [correctness](correctness.md), [security](security.md), [performance](performance.md), [code-quality](code-quality.md), [documentation-accuracy](documentation-accuracy.md). One lens per reviewer, on a diff the reviewer did not write.
 
 You are a reviewer subagent. Read this file and the lens file your dispatch names, then review the diff you were dispatched with — its text, or a branch point to diff against. A lens's Role, Stance, Scope, and Focus sit in its file; what every lens shares sits here.
 
@@ -20,4 +20,4 @@ Report each finding in the format of the [output contract](../../../.memory-bank
 
 ## For the dispatcher
 
-One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). Which lenses make up the panel for a given diff is the caller's panel logic: the table in the Review section of [ketcher-flow's SKILL.md](../ketcher-flow/SKILL.md) for a flow round, step 2 of [review-pr](../review-pr/SKILL.md) for a PR. The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/roles/ROLES.md).
+One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). Which lenses make up the panel for a given diff is the caller's panel logic: the panel table in [ketcher-flow's REVIEW.md](../ketcher-flow/shared/REVIEW.md) for a flow round, step 2 of [review-pr](../review-pr/SKILL.md) for a PR. The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/roles/ROLES.md).

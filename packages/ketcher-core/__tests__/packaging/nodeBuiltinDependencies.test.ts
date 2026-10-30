@@ -21,7 +21,7 @@ function listSourceFiles(): string[] {
 function listImportedNodeBuiltins(): string[] {
   const typeOnlyStatements = [
     /^\s*(?:import|export)\s+type\b[^;]*;/gm,
-    /^\s*import\s*\{(?:\s*type\s+[^,}]+,?)+\s*\}\s*from\s*['"][^'"]+['"];/gm,
+    /^\s*import\s*\{\s*type\s+[^,}]+(?:\s*,\s*type\s+[^,}]+)*\s*,?\s*\}\s*from\s*['"][^'"]+['"];/gm,
   ];
   const specifier =
     /\bfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(?\s*['"]([^'"]+)['"]/g;

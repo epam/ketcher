@@ -58,13 +58,13 @@ const getImporterPackageName = (importer) => {
 
 const resolvePackageAlias = (source, importer) => {
   if (!importer || source.startsWith('.') || source.startsWith('\0')) {
-    return null;
+    return undefined;
   }
 
   const packageName = getImporterPackageName(importer);
 
   if (!packageName) {
-    return null;
+    return undefined;
   }
 
   const packageDirectory = PACKAGE_DIRECTORIES[packageName];
@@ -88,7 +88,7 @@ const resolvePackageAlias = (source, importer) => {
     const replacement = alias.replacements[0];
 
     if (!replacement) {
-      return null;
+      return undefined;
     }
 
     const replacementPath =
@@ -99,7 +99,7 @@ const resolvePackageAlias = (source, importer) => {
     return resolve(packageDirectory, replacementPath);
   }
 
-  return null;
+  return undefined;
 };
 
 const PackageScopedAliasesPlugin = () => {
@@ -109,7 +109,7 @@ const PackageScopedAliasesPlugin = () => {
       const updatedId = resolvePackageAlias(source, importer);
 
       if (!updatedId) {
-        return null;
+        return undefined;
       }
 
       const resolved = await this.resolve(updatedId, importer, {

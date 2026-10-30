@@ -70,7 +70,7 @@ import {
   isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
-  onSelectionMove,
+  isSelectionMoveHandled,
   onSelectionStart,
   selMerge,
 } from './select.helpers';
@@ -195,8 +195,8 @@ class SelectTool implements Tool {
     if (ci.map === 'frags') {
       sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
-      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
-      sgroups
+      sgroups &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups')
     ) {
       const sgroup = sgroups.item;
       sel = {
@@ -375,7 +375,7 @@ class SelectTool implements Tool {
 
       editor.update(selectionDragCtx.action, true);
     } else {
-      const isSelectionRunning = onSelectionMove(
+      const isSelectionRunning = isSelectionMoveHandled(
         event,
         this.editor,
         this.#lassoHelper,
@@ -663,8 +663,8 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch((e) => {
-          KetcherLogger.error('select.ts::SelectTool::dblclick', e);
+        .catch((error) => {
+          KetcherLogger.error('select.ts::SelectTool::dblclick', error);
         });
     }
     return true;
@@ -693,9 +693,9 @@ class SelectTool implements Tool {
     let isDraggingOnSaltOrSolventAtom;
     let isDraggingOnSaltOrSolventBond;
     if (dragCtx?.mergeItems) {
-      const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
-      const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
-      const sgroupsOnCanvas = Array.from(sgroups.values())
+      const mergeAtoms = [...dragCtx.mergeItems.atoms.values()];
+      const mergeBonds = [...dragCtx.mergeItems.bonds.values()];
+      const sgroupsOnCanvas = [...sgroups.values()]
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
@@ -825,7 +825,7 @@ function getHoverTarget(
   };
 }
 
-function getMapsForClosestItem(selectFragment: boolean) {
+function getMapsForClosestItem(shouldSelectFragment: boolean) {
   return [
     'sgroups',
     'functionalGroups',
@@ -839,7 +839,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'simpleObjects',
     'texts',
     IMAGE_KEY,
-    ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
+    ...(shouldSelectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }
 

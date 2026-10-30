@@ -33,8 +33,8 @@ import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
-  selectIsSequenceMode,
-  selectIsDragging,
+  isSequenceModeEnabled,
+  isEditorDragging,
   setContextMenuActive,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
@@ -62,8 +62,8 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_MONOMER_LIBRARY });
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
-  const isDragging = useAppSelector(selectIsDragging);
+  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -169,7 +169,7 @@ const MonomerItem = ({
         onAutochainIconClick(e);
         onAutochainIconMouseOut();
       }}
-      {...(!isDisabled ? { onClick } : {})}
+      {...(isDisabled ? {} : { onClick })}
       ref={cardRef}
       data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
       data-idtalias-modifications-endpoint5={

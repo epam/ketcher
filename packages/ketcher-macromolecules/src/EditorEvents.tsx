@@ -18,7 +18,7 @@ import {
   hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
-  selectIsContextMenuActive,
+  isContextMenuActivated,
   selectLastSelectedSelectionMenuItem,
   selectTool,
 } from 'state/common';
@@ -70,7 +70,7 @@ const noPreviewTools = new Set([ToolName.bondSingle, ToolName.selectRectangle]);
 export const EditorEvents = () => {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
-  const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
+  const isContextMenuActive = useAppSelector(isContextMenuActivated);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
@@ -298,11 +298,11 @@ export const EditorEvents = () => {
         if (sequenceNode instanceof Nucleoside) {
           position = PresetPosition.ChainEnd;
         } else if (
-          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
+          sequenceNode.firstMonomerInNode.R1AttachmentPoint === undefined
         ) {
-          position = PresetPosition.ChainStart;
-        } else {
           position = PresetPosition.ChainMiddle;
+        } else {
+          position = PresetPosition.ChainStart;
         }
 
         const presetPreviewData: PresetPreviewState = {

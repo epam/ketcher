@@ -72,9 +72,9 @@ export function fromPaste(
   point: Vec2,
   angle = 0,
   isPreview = false,
-  needMoveFromTopLeftPoint = false,
+  shouldMoveFromTopLeftPoint = false,
 ): [Action, PasteItems, CreatedItems] {
-  const xy0 = needMoveFromTopLeftPoint
+  const xy0 = shouldMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -110,8 +110,8 @@ export function fromPaste(
     if (
       fragmentId !== undefined &&
       fragmentId !== null &&
-      !fridMap.has(fragmentId) &&
-      !isMacromoleculeAtom
+      !isMacromoleculeAtom &&
+      !fridMap.has(fragmentId)
     ) {
       const fragment = pstruct.frags.get(fragmentId);
 

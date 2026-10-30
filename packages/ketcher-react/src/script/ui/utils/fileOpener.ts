@@ -49,9 +49,11 @@ export function fileOpener(server?: unknown): Promise<OpenerFunction> {
       try {
         const fso = new ActiveXObject('Scripting.FileSystemObject');
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
-      } catch (e) {
+      } catch (error) {
         reject(
-          e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
+          error instanceof Error
+            ? error
+            : new Error('Failed to open file via ActiveX'),
         );
       }
     } else if (isThenable(server)) {

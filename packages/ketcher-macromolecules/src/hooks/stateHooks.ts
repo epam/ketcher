@@ -20,13 +20,13 @@ import { AppDispatch, RootState } from 'state';
 import {
   selectEditor,
   selectEditorLayoutMode,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
   selectKetcherId,
 } from 'state/common';
 import {
   LayoutMode,
   DEFAULT_LAYOUT_MODE,
-  HAS_CONTENT_LAYOUT_MODE,
+  CONTENT_LAYOUT_MODE,
   ketcherProvider,
   KetcherLogger,
   Ketcher,
@@ -54,7 +54,7 @@ export function useLayoutMode() {
   }
 
   const isBlank = ketcher?.editor?.struct().isBlank();
-  const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
+  const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(
     previousLayoutMode || fallbackMode,
   );
@@ -77,14 +77,17 @@ export function useLayoutMode() {
 export function useSequenceEditInRNABuilderMode() {
   const editor = useAppSelector(selectEditor);
   const isSequenceEditInRNABuilderModeInitial = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const [isSequenceEditInRNABuilderMode, setIsSequenceEditInRNABuilderMode] =
     useState(isSequenceEditInRNABuilderModeInitial);
 
-  const onSequenceEditInRNABuilderModeChange = useCallback((value: boolean) => {
-    setIsSequenceEditInRNABuilderMode(value);
-  }, []);
+  const onSequenceEditInRNABuilderModeChange = useCallback(
+    (isSequenceEditInRNABuilderMode: boolean) => {
+      setIsSequenceEditInRNABuilderMode(isSequenceEditInRNABuilderMode);
+    },
+    [],
+  );
 
   useEffect(() => {
     editor?.events.toggleSequenceEditInRNABuilderMode.add(

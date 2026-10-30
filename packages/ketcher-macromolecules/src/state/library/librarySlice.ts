@@ -78,7 +78,7 @@ type MonomerMatchData = {
   isAminoAcid: boolean;
 };
 
-const matchesAminoAcidThreeLetterCode = (
+const isAminoAcidThreeLetterCodeMatch = (
   oneLetterCode: string | undefined,
   isAminoAcid: boolean,
   searchFilter: string,
@@ -399,7 +399,7 @@ export const selectFilteredMonomers = createSelector(
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
-    const shortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
+    const isShortNameOnly = isShortNameOnlySearch(normalizedSearchFilter);
     const checkMonomerMatch = (
       searchFilter: string,
       {
@@ -447,25 +447,25 @@ export const selectFilteredMonomers = createSelector(
         if (parts.length === 3 && parts[1] !== '') {
           const textBetweenSlashes = parts[1];
 
-          const matchesIdtBase =
+          const isIdtBaseMatch =
             idtBase?.length === textBetweenSlashes.length &&
-            Array.from(idtBase).every(
+            [...idtBase].every(
               (char, index) => char === textBetweenSlashes[index],
             );
 
-          const matchesIdtModifications = idtModifications
+          const hasIdtModificationMatch = idtModifications
             ? idtModifications
                 .split(' ')
                 .some(
                   (mod) =>
                     mod.length === textBetweenSlashes.length &&
-                    Array.from(mod).every(
+                    [...mod].every(
                       (char, index) => char === textBetweenSlashes[index],
                     ),
                 )
             : false;
 
-          return matchesIdtBase || matchesIdtModifications;
+          return isIdtBaseMatch || hasIdtModificationMatch;
         }
 
         const searchBeforeSlash = parts[0];
@@ -496,14 +496,14 @@ export const selectFilteredMonomers = createSelector(
           const modificationAlias =
             idtAliases?.modifications?.[modificationKey]?.toLowerCase();
           const aliasWithoutIndicator = searchFilter.slice(2);
-          const matchesBase = aliasWithoutIndicator
+          const isBaseMatch = aliasWithoutIndicator
             ? Boolean(idtBase?.startsWith(aliasWithoutIndicator))
             : Boolean(modificationAlias);
-          const matchesModification = modificationAlias
+          const isModificationMatch = modificationAlias
             ? modificationAlias.includes(searchFilter)
             : false;
 
-          return matchesBase || matchesModification;
+          return isBaseMatch || isModificationMatch;
         }
 
         if (searchFilter.endsWith('/') && searchFilter.length > 1) {
@@ -515,10 +515,10 @@ export const selectFilteredMonomers = createSelector(
           );
         }
 
-        const matchesIdtBase =
+        const isIdtBaseMatch =
           idtBase?.startsWith(searchAfterSlash) &&
           idtBase?.endsWith(searchBeforeSlash);
-        const matchesIdtModifications = idtModifications
+        const hasIdtModificationMatch = idtModifications
           ? idtModifications
               .split(' ')
               .some(
@@ -528,45 +528,45 @@ export const selectFilteredMonomers = createSelector(
               )
           : false;
 
-        return matchesIdtBase || matchesIdtModifications;
+        return isIdtBaseMatch || hasIdtModificationMatch;
       }
 
-      const matchesIdtBase = idtBase ? idtBase.includes(searchFilter) : false;
-      const matchesIdtModifications = idtModifications
+      const isIdtBaseMatch = idtBase ? idtBase.includes(searchFilter) : false;
+      const hasIdtModificationMatch = idtModifications
         ? idtModifications.includes(searchFilter)
         : false;
 
-      const matchesHelmAlias = helmAliasLower
+      const isHelmAliasMatch = helmAliasLower
         ? helmAliasLower.includes(searchFilter)
         : false;
-      const matchesBilnAlias = bilnAliasLower
+      const isBilnAliasMatch = bilnAliasLower
         ? bilnAliasLower.includes(searchFilter)
         : false;
-      const matchesAxoLabsAlias = axoLabsAliasLower
+      const isAxoLabsAliasMatch = axoLabsAliasLower
         ? axoLabsAliasLower.includes(searchFilter)
         : false;
-      const matchesModificationTypes = modificationTypesLower
+      const hasModificationTypeMatch = modificationTypesLower
         ? modificationTypesLower.includes(searchFilter)
         : false;
 
-      const matchesThreeLetterCode = matchesAminoAcidThreeLetterCode(
+      const isThreeLetterCodeMatch = isAminoAcidThreeLetterCodeMatch(
         oneLetterCode,
         isAminoAcid,
         searchFilter,
       );
 
-      const cond =
+      const isMonomerMatch =
         monomerName.includes(searchFilter) ||
         monomerNameFull.includes(searchFilter) ||
-        matchesIdtBase ||
-        matchesIdtModifications ||
-        matchesHelmAlias ||
-        matchesBilnAlias ||
-        matchesAxoLabsAlias ||
-        matchesModificationTypes ||
-        matchesThreeLetterCode;
+        isIdtBaseMatch ||
+        hasIdtModificationMatch ||
+        isHelmAliasMatch ||
+        isBilnAliasMatch ||
+        isAxoLabsAliasMatch ||
+        hasModificationTypeMatch ||
+        isThreeLetterCodeMatch;
 
-      return cond;
+      return isMonomerMatch;
     };
 
     return monomers
@@ -575,7 +575,7 @@ export const selectFilteredMonomers = createSelector(
         if (!item.isAmbiguous && (item as MonomerItemType).props?.hidden) {
           return false;
         }
-        if (shortNameOnly) {
+        if (isShortNameOnly) {
           return item.label.toLowerCase().includes(normalizedSearchFilter);
         }
         if (item.isAmbiguous) {

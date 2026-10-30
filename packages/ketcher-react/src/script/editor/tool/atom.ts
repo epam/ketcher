@@ -269,11 +269,11 @@ class AtomTool implements Tool {
     const struct = editor.struct();
     const action = new Action();
 
-    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+    if (!dragCtx || struct.isTargetFromMacromolecule(ci)) {
       return;
     }
 
-    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
+    if (!ci && (!dragCtx.item || dragCtx?.isSaltOrSolvent)) {
       action.mergeWith(
         fromAtomAddition(
           reStruct,
@@ -281,7 +281,7 @@ class AtomTool implements Tool {
           atomProps,
         ),
       );
-    } else if (dragCtx.item && ci) {
+    } else if (ci && dragCtx.item) {
       if (dragCtx.item.id === ci.id) {
         if (
           ci.map === 'functionalGroups' &&
@@ -353,9 +353,9 @@ export function atomLongtapEvent(tool, render) {
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom
   const atom =
-    atomid !== undefined && atomid !== null
-      ? render.ctab.molecule.atoms.get(atomid)
-      : new Atom({ label: '' });
+    atomid === undefined || atomid === null
+      ? new Atom({ label: '' })
+      : render.ctab.molecule.atoms.get(atomid);
   const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid);
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
@@ -373,8 +373,8 @@ export function atomLongtapEvent(tool, render) {
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
+      .catch((error) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', error);
       }); // w/o changes
   }, 750);
 

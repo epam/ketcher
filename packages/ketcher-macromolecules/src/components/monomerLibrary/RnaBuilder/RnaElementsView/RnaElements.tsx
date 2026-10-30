@@ -10,9 +10,12 @@ import {
   isRnaBuilderEditMode,
   RnaBuilderPresetsItem,
   setActiveMonomerKey,
+  setSequenceSelection,
+  selectSequenceSelection,
+  monomerGroupToPresetGroup,
 } from 'state/rna-builder';
 import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
-import { LibraryNameType } from 'src/constants';
+import { LibraryNameType, MonomerGroups } from 'src/constants';
 import {
   IRnaPreset,
   isAmbiguousMonomerLibraryItem,
@@ -25,6 +28,7 @@ import { useGroupsData } from './hooks/useGroupsData';
 import RnaElementsTabsView from './RnaElementsTabsView';
 import RnaElementsAccordionView from './RnaElementsAccordionView';
 import { getMonomerUniqueKey } from 'state/library';
+import { applyMonomerToSequenceSelection } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 interface RnaUnifiedViewProps {
   view: 'tabs' | 'accordion';
@@ -49,6 +53,7 @@ export const RnaElements = ({
   const isSequenceEditInRNABuilderMode = useAppSelector(
     isRnaBuilderSequenceEditMode,
   );
+  const sequenceSelection = useAppSelector(selectSequenceSelection);
 
   const [newPreset, setNewPreset] = useState(activePreset);
   // The RNA builder is reset through redux, which cannot reach this local copy
@@ -106,8 +111,32 @@ export const RnaElements = ({
       setNewPreset(currentPreset);
       dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
       dispatch(setActiveRnaBuilderItem(groupName));
+
+      // Applying the picked monomer to the current sequence selection belongs in
+      // this event handler rather than in an effect reacting to the redux update
+      // (react-you-might-not-need-an-effect/no-event-handler).
+      if (isSequenceEditInRNABuilderMode && sequenceSelection) {
+        const field = `${monomerGroupToPresetGroup[groupName]}Label`;
+        dispatch(
+          setSequenceSelection(
+            applyMonomerToSequenceSelection(
+              sequenceSelection,
+              field,
+              monomer,
+              groupName === MonomerGroups.BASES,
+            ),
+          ),
+        );
+      }
     },
-    [dispatch, editor, isEditMode, isSequenceEditInRNABuilderMode, newPreset],
+    [
+      dispatch,
+      editor,
+      isEditMode,
+      isSequenceEditInRNABuilderMode,
+      newPreset,
+      sequenceSelection,
+    ],
   );
 
   return (

@@ -11,7 +11,7 @@ metadata:
 
 The Ketcher adaptation of `pr` from `mattpocock/skills`. The _Sections_ text is upstream, word for word; each **In Ketcher** paragraph adds what this repo needs.
 
-Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order.
+Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order. Replace the guidance text under each heading with your content, and leave out the opening `<!-- -->` note.
 
 A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
 
@@ -152,7 +152,7 @@ Screenshots are S-tier - when the environment is set up for it and the change is
 
 Execution-based evidence is A-tier. Test results, console output. Show the exact test that now fails and passes, using pseudocode.
 
-**In Ketcher:** for a change a user can see in the editor, put the `verify-ketcher` result under a `### Verified in the app` subheading: the feature, the mode, the result, and what the exported structure showed. With nothing visible, write `Verified in the app: n/a` and the reason.
+**In Ketcher:** for a change a user can see in the editor, put the `verify-ketcher` result under a `### Verified in the app` subheading: the feature, the mode, the result, and what the exported structure showed. Upload the screenshots the verification took, and any others that show the change, with `--attach '<file>#<alt text>'` on `gh pr create` or `gh pr edit`, and place each one next to the line it proves with `![<alt text>](<file>)` in the body. With nothing visible, write `Verified in the app: n/a` and the reason.
 
 ### Merge Danger
 

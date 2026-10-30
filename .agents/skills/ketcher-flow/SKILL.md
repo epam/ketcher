@@ -63,17 +63,28 @@ Review runs from the branch's worktree, against the run's spec (the issue, the r
 
 1. **Cleanup.** An **implementer** reads the diff since the branch point against _Write_ in [QUALITY.md](QUALITY.md) and removes what a careful author would not have written: narrating comments, defensive checks inside trusted code, casts that only silence the compiler, leftover debug output. Behavior stays the same and the checks still pass against the baseline. Done when the cleanup is one commit, or the diff had nothing to clean.
 
-2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, naming who is off the panel and why ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel. Dispatch the panel as fresh **reviewers** in parallel on that diff.
+2. **Round 1.** Pick the round's **panel** from the table below by reading `git diff <branch point>...HEAD`, and tell the user the panel in one line, naming who is off the panel and why ("Panel: spec, code-quality. No render or tool code, no input parsing, no public API"). When a trigger might match, the reviewer is on the panel, except in the bug kind (_Bug panel_ below). Dispatch the panel as fresh **reviewers** in parallel on that diff.
 
-   | Reviewer                          | On the panel when the diff                                                                                                                                               |
-   | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-   | **spec reviewer**                 | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                             |
-   | [code-quality](../code-review/code-quality.md)                    | changes code, tests included                                                                                                                                             |
-   | [performance](../code-review/performance.md)                      | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
+   | Reviewer                                                           | On the panel when the diff                                                                                                                                               |
+   | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+   | **spec reviewer**                                                  | always. Its dispatch is the spec path and _Review lens_ in QUALITY.md: does the diff do what the spec asks, all of it, and nothing it does not?                          |
+   | [code-quality](../code-review/code-quality.md)                     | changes code, tests included                                                                                                                                             |
+   | [performance](../code-review/performance.md)                       | changes rendering, a tool or pointer handler, a loop over atoms, bonds, or monomers, a call to Indigo, or an import in a published package                               |
    | [documentation-accuracy](../code-review/documentation-accuracy.md) | changes behavior a user can see, a package's exports, a public interface named in a `.memory-bank/modules/` doc, KET reading or writing, or a README example             |
-   | [security](../code-review/security.md)               | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
+   | [security](../code-review/security.md)                             | changes an HTML sink, code built from a string, the reading of opened, pasted, or dropped text, a handler on the Indigo worker boundary, or a service URL, key, or token |
 
-   Each reviewer reads the [code-review skill](../code-review/SKILL.md) and the lens file its row links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold.
+   Each reviewer reads the [code-review skill](../code-review/SKILL.md) and the lens file its row links. Every finding follows the [output contract](../../../.memory-bank/review-workflow.md#output-contract). Check each one against the code and drop those whose failing scenario does not hold. A **performance** or **security** finding also carries a command and its output (a failing test, a repro script, a measurement): rerun it, and keep the finding when the output shows the failure. A finding with no run goes in the report as an open question, not as a fix.
+
+   **Bug panel.** The fix of a bug already has a red test and a `verify-ketcher` verdict, so its panel starts with the spec reviewer alone. A reviewer joins only when the diff clearly matches its trigger here, and the panel line names each reviewer left off and why:
+
+   | Reviewer               | Joins the bug panel when the diff                                                                                                                        |
+   | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | code-quality           | adds structure that outlives the fix: a new file, helper, parameter, or a branch in shared code                                                          |
+   | performance            | adds work that grows with the structure: a loop over atoms, bonds, or monomers, a call inside one, a call to Indigo, or an import in a published package |
+   | documentation-accuracy | makes a statement false in `openspec/specs/`, an ADR, a `.memory-bank/modules/` doc, or a README example                                                 |
+   | security               | matches the security row of the table above                                                                                                              |
+
+   Feature, refactor, and the other kinds keep the table above as written.
 
 3. **Fix.** Every finding ends fixed in a new commit or declined with a one-line reason. The flow names which implementer fixes. Blockers and majors are fixed. Batch accepted nits into one commit or decline them.
 
@@ -85,4 +96,16 @@ A finding that reveals a new bug is a new scope of kind bug, not work added here
 
 ## Landing
 
-Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. You never merge.
+Every flow ends in a PR on its own branch, per [TRACKER.md](TRACKER.md): you commit, push, and open it without asking (`AGENTS.md`, Git and commits). The `ketcher-pr` skill writes its title and body. A change that alters what the canvas draws runs _Snapshots_ once the PR is open. You never merge.
+
+## Snapshots
+
+A change that alters what the canvas draws also alters reference screenshots, the PNGs in the `-snapshots` folder beside each spec under `ketcher-autotests/tests`. They exist only as Linux PNGs made in Docker ([testing.md](../../../.memory-bank/testing/testing.md), _Docker_), so a local run on macOS cannot see them, and the Playwright shards in CI fail after the PR opens. Treat those failures as part of the run, and judge each one before you update anything.
+
+1. **Wide blast first.** When the report says the change touches every drawing of something (a label rule, a color, a bond length), run the screenshot specs of that area in Docker before you open the PR. The whole suite is too heavy: CI splits it into ten shards.
+2. **Wait for CI.** Once the PR is open, wait for the Playwright shards (`part (n, 10)`, `popup-part`) with your tool's way to wait on a PR's checks. Read each failed test from its job log (`gh run view <run> --job <id> --log-failed`) or the merged report.
+3. **Judge each failing screenshot.** Look at the expected and actual PNGs. A difference that is exactly what an **Acceptance** line of the report says is intended: update it. Any other difference is a regression: fix the code, or stop and ask when the cause is a product choice. A shard that fails the same way on `<base>` is a pre-existing failure: name it.
+4. **Regenerate.** From `ketcher-autotests`, run `npm run docker:update <spec file>:<line>` (`docker:update-popup` for the popup project). It sets `GENERATE_DATA=true`, which rewrites many files under `tests/test-data/`: run `git status`, and restore everything but the PNGs you meant to change with `git checkout`. Commit them as `#<issue> - Update <area> snapshots for <change>`, push, and wait again. Regenerating a PNG writes no spec, so it needs no ask (`AGENTS.md`, E2E tests). Changing a spec does.
+5. **Prove each one.** Under "Verified in the app", list one line per updated snapshot: the file, what changed, and the **Acceptance** line it matches.
+
+Done when every Playwright shard that passes on `<base>` passes on the branch, or the failure is named as pre-existing. After two rounds that still fail, stop and report the failing specs and what you tried.

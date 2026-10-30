@@ -63,7 +63,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private path = '';
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
-  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
+  declare public bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
@@ -181,7 +181,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
       cells
     ) {
-      this.appendSideConnectionBond(rootElement, cells);
+      const maxHorizontalOffset = Math.max(
+        matrix?.getMaxHorizontalOffsetForRow(cells[0].y) ?? 0,
+        matrix?.getMaxHorizontalOffsetForRow(cells[cells.length - 1].y) ?? 0,
+      );
+      this.appendSideConnectionBond(rootElement, cells, maxHorizontalOffset);
     } else if (
       this.isSnakeBond &&
       this.polymerBond.finished &&
@@ -230,7 +234,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   // TODO: Specify the types.
-  private appendSideConnectionBond(rootElement, cells: Cell[]) {
+  private appendSideConnectionBond(
+    rootElement,
+    cells: Cell[],
+    maxHorizontalOffset: number,
+  ) {
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find(
       (connection: Connection): boolean => {
@@ -341,8 +349,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.sideConnectionBondTurnPoint = result.turnPoint;
     }
 
-    let maxHorizontalOffset = 0;
-
     cells.forEach((cell: Cell, cellIndex: number): void => {
       const cellConnection = cell.connections.find(
         (connection: Connection): boolean => {
@@ -355,18 +361,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         _xDirection =
           endPosition.x < this.sideConnectionBondTurnPoint ? 180 : 0;
       }
-      const maxXOffset = cell.connections.reduce(
-        (max: number, connection: Connection): number => {
-          return connection.isVertical || max > connection.xOffset
-            ? max
-            : connection.xOffset;
-        },
-        0,
-      );
-
-      maxHorizontalOffset =
-        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
-
       if (isLastCell) {
         if (isStraightVerticalConnection) {
           return;

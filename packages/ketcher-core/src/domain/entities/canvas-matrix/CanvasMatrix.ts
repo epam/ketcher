@@ -15,6 +15,7 @@ interface MatrixConfig {
 export class CanvasMatrix {
   private readonly matrix: Matrix<Cell>;
   private readonly initialMatrixWidth: number;
+  private readonly rowToMaxHorizontalOffset = new Map<number, number>();
   private readonly monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
@@ -28,6 +29,10 @@ export class CanvasMatrix {
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
+  }
+
+  public getMaxHorizontalOffsetForRow(row: number): number {
+    return this.rowToMaxHorizontalOffset.get(row) ?? 0;
   }
 
   private fillConnectionsOffset(
@@ -353,5 +358,14 @@ export class CanvasMatrix {
       },
       (connection: Connection): number => connection.yOffset,
     );
+
+    this.matrix.forEach((cell) => {
+      const maxOffset = cell.connections.reduce(
+        (max, connection) =>
+          connection.isVertical ? max : Math.max(max, connection.xOffset),
+        this.getMaxHorizontalOffsetForRow(cell.y),
+      );
+      this.rowToMaxHorizontalOffset.set(cell.y, maxOffset);
+    });
   }
 }

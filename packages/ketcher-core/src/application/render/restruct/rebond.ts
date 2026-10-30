@@ -147,13 +147,13 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1?.isContracted() && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup1?.isContracted()) {
       p1 = sgroup1.getContractedPosition(restruct.molecule).position;
     } else {
       p1 = beginAtom.a.pp;
     }
 
-    if (sgroup2?.isContracted() && sgroup1 !== sgroup2) {
+    if (sgroup1 !== sgroup2 && sgroup2?.isContracted()) {
       p2 = sgroup2.getContractedPosition(restruct.molecule).position;
     } else {
       p2 = endAtom.a.pp;
@@ -185,8 +185,8 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
-  drawHover(render: Render, drawOutline = true) {
-    const ret = this.makeHoverPlate(render, drawOutline);
+  drawHover(render: Render, shouldDrawOutline = true) {
+    const ret = this.makeHoverPlate(render, shouldDrawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -340,7 +340,7 @@ class ReBond extends ReObject {
     return paper.path(pathString);
   }
 
-  makeHoverPlate(render: Render, drawOutline = true) {
+  makeHoverPlate(render: Render, shouldDrawOutline = true) {
     const restruct = render.ctab;
     const options = render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
@@ -351,7 +351,7 @@ class ReBond extends ReObject {
     if (!rect) return null;
 
     return rect.attr(
-      drawOutline
+      shouldDrawOutline
         ? { ...options.hoverStyle }
         : { fill: options.hoverStyle.fill, stroke: 'none' },
     );
@@ -562,20 +562,20 @@ class ReBond extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
-    let highlightOutline = false;
+    let hasHighlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
-        highlightOutline = highlight.outline;
+        hasHighlightOutline = highlight.outline;
       }
     });
 
     // Drawing highlight. Outline highlights (#9441) are drawn as a single
     // merged contour by ReStruct.showHighlightOutlines, so skip them here;
     // only filled (active-tab) highlights are drawn per-bond.
-    if (isHighlighted && !highlightOutline) {
+    if (isHighlighted && !hasHighlightOutline) {
       const style: RenderOptionStyles = {
         fill: highlightColor,
         stroke: 'none',
@@ -772,7 +772,7 @@ class ReBond extends ReObject {
 function findIncomingStereoUpBond(
   atom: BondEndpoint,
   bid0: number,
-  includeBoldStereoBond: boolean,
+  shouldIncludeBoldStereoBond: boolean,
   restruct: ReStruct,
 ): number {
   return atom.neighbors.findIndex((hbid) => {
@@ -784,24 +784,24 @@ function findIncomingStereoUpBond(
 
     if (!neibond) return false;
 
-    const singleUp =
+    const isSingleUp =
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
-    if (singleUp) {
+    if (isSingleUp) {
       if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
         return false;
       }
       return (
         neibond.b.end === hb.begin ||
-        (neibond.boldStereo && includeBoldStereoBond)
+        (neibond.boldStereo && shouldIncludeBoldStereoBond)
       );
     }
 
     if (
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
-      includeBoldStereoBond &&
+      shouldIncludeBoldStereoBond &&
       neibond.boldStereo
     ) {
       return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
@@ -855,8 +855,8 @@ function getBondPath(
   let path: RenderPath | null;
   const render = restruct.render;
   const struct = restruct.molecule;
-  const shiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
-  const shiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
+  const shouldShiftA = !restruct.getBondEndpoint(hb1.begin)?.showLabel;
+  const shouldShiftB = !restruct.getBondEndpoint(hb2.begin)?.showLabel;
   let newHalfBonds: [HalfBond, HalfBond];
   const xShiftMinus1 = -1;
   const xShiftPlus1 = 1;
@@ -930,8 +930,8 @@ function getBondPath(
           hb2,
           bond,
           struct,
-          shiftA,
-          shiftB,
+          shouldShiftA,
+          shouldShiftB,
           isSnapping,
         );
       } else
@@ -940,8 +940,8 @@ function getBondPath(
           hb1,
           hb2,
           bond,
-          shiftA,
-          shiftB,
+          shouldShiftA,
+          shouldShiftB,
           isSnapping,
         );
       break;
@@ -955,18 +955,18 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.AROMATIC: {
-      const inAromaticLoop =
+      const isInAromaticLoop =
         (hb1.loop >= 0 && struct.loops.get(hb1.loop)?.aromatic) ||
         (hb2.loop >= 0 && struct.loops.get(hb2.loop)?.aromatic);
-      path = inAromaticLoop
+      path = isInAromaticLoop
         ? draw.bondSingle(render.paper, hb1, hb2, render.options, isSnapping)
         : getBondAromaticPath(
             render,
             hb1,
             hb2,
             bond,
-            shiftA,
-            shiftB,
+            shouldShiftA,
+            shouldShiftB,
             isSnapping,
           );
       break;
@@ -986,8 +986,8 @@ function getBondPath(
         hb1,
         hb2,
         bond,
-        shiftA,
-        shiftB,
+        shouldShiftA,
+        shouldShiftB,
         isSnapping,
       );
       break;
@@ -998,8 +998,8 @@ function getBondPath(
         newHalfBonds[0],
         newHalfBonds[1],
         bond,
-        shiftA,
-        shiftB,
+        shouldShiftA,
+        shouldShiftB,
         isSnapping,
       );
       break;
@@ -1180,8 +1180,8 @@ function getBondDoubleStereoBoldPath(
   hb2: HalfBond,
   bond: ReBond,
   struct: Struct,
-  shiftA: boolean,
-  shiftB: boolean,
+  shouldShiftA: boolean,
+  shouldShiftB: boolean,
   isSnapping: boolean,
 ) {
   const a = hb1.p;
@@ -1192,26 +1192,26 @@ function getBondDoubleStereoBoldPath(
   let b1 = a.addScaled(n, bsp * shift);
   let b2 = b.addScaled(n, bsp * shift);
   if (shift > 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       b1 = b1.addScaled(
         hb1.dir,
         bsp * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       b1 = b1.addScaled(
         hb1.dir,
         bsp * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin),
@@ -1360,16 +1360,16 @@ function getBondDoublePath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  shiftA: boolean,
-  shiftB: boolean,
+  shouldShiftA: boolean,
+  shouldShiftB: boolean,
   isSnapping: boolean,
 ) {
-  const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
+  const isCisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
 
   const a = hb1.p;
   const b = hb2.p;
   const n = hb1.norm;
-  const shift = cisTrans ? 0 : bond.doubleBondShift;
+  const shift = isCisTrans ? 0 : bond.doubleBondShift;
 
   const options = render.options;
   const bsp = options.bondSpace / 2;
@@ -1382,26 +1382,26 @@ function getBondDoublePath(
   let b2 = b.addScaled(n, s2);
 
   if (shift > 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       a1 = a1.addScaled(
         hb1.dir,
         options.bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b1 = b1.addScaled(
         hb1.dir,
         -options.bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       a2 = a2.addScaled(
         hb1.dir,
         options.bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -options.bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin),
@@ -1415,7 +1415,7 @@ function getBondDoublePath(
     a2,
     b1,
     b2,
-    cisTrans,
+    isCisTrans,
     options,
     isSnapping,
   );
@@ -1449,8 +1449,8 @@ function getBondAromaticPath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  shiftA: boolean,
-  shiftB: boolean,
+  shouldShiftA: boolean,
+  shouldShiftB: boolean,
   isSnapping: boolean,
 ) {
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
@@ -1471,8 +1471,8 @@ function getBondAromaticPath(
     hb1,
     hb2,
     bondShift,
-    shiftA,
-    shiftB,
+    shouldShiftA,
+    shouldShiftB,
     options.bondSpace,
     mask,
     dash,
@@ -1484,8 +1484,8 @@ function getAromaticBondPaths(
   hb1: HalfBond,
   hb2: HalfBond,
   shift: number,
-  shiftA: boolean,
-  shiftB: boolean,
+  shouldShiftA: boolean,
+  shouldShiftB: boolean,
   bondSpace: number,
   mask: number,
   dash: number[] | null,
@@ -1501,26 +1501,26 @@ function getAromaticBondPaths(
   let a3 = a.addScaled(n, s2);
   let b3 = b.addScaled(n, s2);
   if (shift > 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       a2 = a2.addScaled(
         hb1.dir,
         bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b2 = b2.addScaled(
         hb1.dir,
         -bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
-    if (shiftA) {
+    if (shouldShiftA) {
       a3 = a3.addScaled(
         hb1.dir,
         bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
-    if (shiftB) {
+    if (shouldShiftB) {
       b3 = b3.addScaled(
         hb1.dir,
         -bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin),
@@ -1721,8 +1721,8 @@ function selectDoubleBondShift(
   d1: number,
   d2: number,
 ): number {
-  if (n1 === 6 && n2 !== 6 && (d1 > 1 || d2 === 1)) return -1;
-  if (n2 === 6 && n1 !== 6 && (d2 > 1 || d1 === 1)) return 1;
+  if (n1 === 6 && n2 !== 6 && (d2 === 1 || d1 > 1)) return -1;
+  if (n2 === 6 && n1 !== 6 && (d1 === 1 || d2 > 1)) return 1;
   if (n2 * d1 > n1 * d2) return -1;
   if (n2 * d1 < n1 * d2) return 1;
   if (n2 > n1) return -1;

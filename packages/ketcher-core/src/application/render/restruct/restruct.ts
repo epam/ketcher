@@ -347,14 +347,16 @@ class ReStruct {
     visel: Visel,
     path,
     pos: Vec2 | null = null,
-    visible = false,
+    isVisible = false,
   ): void {
     if (!path || !this.layers[group].node.parentNode) return;
     const paths = Array.isArray(path) ? path : [path];
 
     paths.forEach((path) => {
       const offset = this.render.options.offset;
-      let bb = visible ? Box2Abs.fromRelBox(util.relBox(path.getBBox())) : null;
+      let bb = isVisible
+        ? Box2Abs.fromRelBox(util.relBox(path.getBBox()))
+        : null;
       const ext = pos && bb ? bb.translate(pos.negated()) : null;
       if (offset !== null) {
         path.translateAbs(offset.x, offset.y);
@@ -562,10 +564,10 @@ class ReStruct {
     });
   }
 
-  update(force: boolean): boolean {
-    force = force || !this.initialized;
+  update(shouldForce: boolean): boolean {
+    shouldForce = shouldForce || !this.initialized;
 
-    if (force || this.needRecalculateVisibleAtomsAndBonds) {
+    if (shouldForce || this.needRecalculateVisibleAtomsAndBonds) {
       this.recalculateVisibleAtomsAndBonds();
       this.needRecalculateVisibleAtomsAndBonds = false;
     }
@@ -573,7 +575,7 @@ class ReStruct {
     // check items to update
     Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed'];
-      if (force) {
+      if (shouldForce) {
         this[map].forEach((_item, id) => mapChanged.set(id, 1));
       } else {
         // check if some of the items marked are already gone
@@ -585,7 +587,7 @@ class ReStruct {
 
     this.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
       if (
-        force ||
+        shouldForce ||
         attachmentGroup.atomIds.some((atomId) => this.atomsChanged.has(atomId))
       ) {
         attachmentGroup.recalculatePosition(this.molecule.atoms);
@@ -639,7 +641,7 @@ class ReStruct {
       this.clearVisel(rgroup.visel);
     });
 
-    if (force) {
+    if (shouldForce) {
       // clear and recreate all half-bonds
       this.clearConnectedComponents();
       this.molecule.initHalfBonds();
@@ -658,14 +660,14 @@ class ReStruct {
     this.initialized = true;
 
     this.verifyLoops();
-    const updLoops = force || this.structChanged;
-    if (updLoops) this.updateLoops();
+    const shouldUpdateLoops = shouldForce || this.structChanged;
+    if (shouldUpdateLoops) this.updateLoops();
     this.showAtoms();
     this.showAttachmentGroups();
     this.showBonds();
     this.showCIPLabels();
     this.showRgroupAttachmentPoints();
-    if (updLoops) this.showLoops();
+    if (shouldUpdateLoops) this.showLoops();
     this.showReactionSymbols();
     this.showSGroups();
 
@@ -1084,12 +1086,12 @@ class ReStruct {
           // item already holds is kept. Any explicit selection - `null`
           // included - describes the complete new state, so a map absent from
           // it no longer has anything selected.
-          const selected =
+          const isSelected =
             selection === undefined
               ? item.selected
               : (selection?.[map]?.includes(id) ?? false);
 
-          this.showItemSelection(item, selected);
+          this.showItemSelection(item, isSelected);
         });
       }
     });
@@ -1102,10 +1104,10 @@ class ReStruct {
     } else {
       item.selected = selected;
     }
-    const exists = isSelectionSvgObjectExists(item);
+    const hasSelectionSvgObject = isSelectionSvgObjectExists(item);
     if (item instanceof ReDataSGroupData) item.sgroup.selected = selected;
     if (selected) {
-      if (!exists) {
+      if (!hasSelectionSvgObject) {
         const render = this.render;
         const options = render.options;
         const paper = render.paper;
@@ -1135,7 +1137,7 @@ class ReStruct {
         });
         item.showPoints?.();
       }
-    } else if (exists && item.selectionPlate) {
+    } else if (hasSelectionSvgObject && item.selectionPlate) {
       item.selectionPlate.hide();
       item.hidePoints?.();
       item.additionalInfo?.hide();
@@ -1162,11 +1164,11 @@ class ReStruct {
 function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true;
 
-  const anySelection = Object.keys(ReStruct.maps).some(
+  const hasAnySelection = Object.keys(ReStruct.maps).some(
     (map) => selection[map] && selection[map].length > 0,
   );
 
-  return !anySelection;
+  return !hasAnySelection;
 }
 
 function scaleRPath(path, scaleFactor: number): void {

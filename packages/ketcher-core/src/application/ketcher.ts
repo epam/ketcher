@@ -492,12 +492,14 @@ export class Ketcher {
     );
   }
 
-  getInchi(withAuxInfo = false): Promise<string> {
+  getInchi(shouldIncludeAuxInfo = false): Promise<string> {
     return getStructure(
       this.id,
       this.#formatterFactory,
       this.editor.struct(),
-      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
+      shouldIncludeAuxInfo
+        ? SupportedFormat.inChIAuxInfo
+        : SupportedFormat.inChI,
     );
   }
 
@@ -579,9 +581,10 @@ export class Ketcher {
           this,
         );
 
-        const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+        const shouldPreserveCanvasPosition =
+          options?.preserveCanvasPosition === true;
 
-        if (!preserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition) {
           struct.rescale();
         }
 
@@ -596,10 +599,10 @@ export class Ketcher {
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
 
-        if (!preserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition) {
           this.editor.zoomAccordingContent(struct);
         }
-        if (x == null && y == null && !preserveCanvasPosition) {
+        if (x == null && y == null && !shouldPreserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }

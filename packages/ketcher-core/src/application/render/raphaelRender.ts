@@ -115,7 +115,7 @@ export class Render {
     clientArea: HTMLElement,
     options: Partial<RenderOptions>,
     currentRender?: Render,
-    reuseRestructIfExist?: boolean,
+    shouldReuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
@@ -132,7 +132,7 @@ export class Render {
       width: this.sz.x,
       height: this.sz.y,
     };
-    if (reuseRestructIfExist && currentRender?.ctab) {
+    if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
@@ -287,7 +287,7 @@ export class Render {
     }
   }
 
-  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
+  setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {
     this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
@@ -296,7 +296,7 @@ export class Render {
 
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
-    if (forceUpdateWithTimeout) {
+    if (shouldForceUpdateWithTimeout) {
       setTimeout(() => {
         this.update(true);
       }, 0);
@@ -305,7 +305,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
+  update(shouldForce = false, viewSz: Vec2 | null = null) {
     viewSz =
       viewSz ??
       new Vec2(
@@ -313,9 +313,9 @@ export class Render {
         this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
-    const changes = this.ctab.update(force);
+    const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
+    if (hasChanges) {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)

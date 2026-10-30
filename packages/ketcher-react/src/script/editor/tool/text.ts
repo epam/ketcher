@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,23 +25,20 @@ import {
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
-import type { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { MoveDragContext, Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
-interface Result {
-  content: string;
-}
-
 class TextTool implements Tool {
-  private readonly editor: any;
-  private dragCtx: any;
+  private readonly editor: Editor;
+  private dragCtx: MoveDragContext | null = null;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     this.editor = editor;
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const render = this.editor.render;
     const closestItem = this.editor.findItem(event, ['texts']);
 
@@ -58,7 +54,7 @@ class TextTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const render = this.editor.render;
 
     if (this.dragCtx) {
@@ -88,13 +84,15 @@ class TextTool implements Tool {
 
   mouseup() {
     if (this.dragCtx) {
-      this.editor.update(this.dragCtx.action);
-      delete this.dragCtx;
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action);
+      }
+      this.dragCtx = null;
     }
     return true;
   }
 
-  click(event) {
+  click(event: PointerEvent) {
     const render = this.editor.render;
     const closestItem = this.editor.findItem(event, ['texts']);
     this.editor.hover(null);
@@ -111,17 +109,12 @@ class TextTool implements Tool {
     return true;
   }
 
-  dblclick(event) {
+  dblclick(event: PointerEvent) {
     const closestItem = this.editor.findItem(event, ['texts']);
     this.editor.hover(null);
 
-    if (closestItem.map === 'texts') {
-      propsDialog(
-        this.editor,
-        closestItem.id,
-        closestItem.position,
-        closestItem.pos,
-      );
+    if (closestItem?.map === 'texts') {
+      propsDialog(this.editor, closestItem.id);
     }
 
     return true;
@@ -129,13 +122,14 @@ class TextTool implements Tool {
 }
 
 function propsDialog(
-  editor: any,
+  editor: Editor,
   id: number | null,
-  position: Vec2,
-  pos: Array<Vec2>,
+  position?: Vec2,
+  pos?: Array<Vec2>,
 ) {
   const struct = editor.render.ctab.molecule;
-  const text: Text | null = id || id === 0 ? struct.texts.get(id) : null;
+  const text: Text | null =
+    id || id === 0 ? (struct.texts.get(id) ?? null) : null;
   const origilContent = text ? text.content : '';
 
   const res = editor.event.elementEdit.dispatch({
@@ -147,8 +141,8 @@ function propsDialog(
   });
 
   res
-    .then(({ content }: Result) => {
-      if (!id && id !== 0 && content) {
+    .then(({ content }) => {
+      if (!id && id !== 0 && content && position && pos) {
         editor.update(
           fromTextCreation(editor.render.ctab, content, position, pos),
         );

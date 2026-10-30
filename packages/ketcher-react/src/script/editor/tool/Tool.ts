@@ -1,3 +1,4 @@
+import type { Action, Vec2 } from 'ketcher-core';
 import type Editor from '../Editor';
 
 interface ToolEventHandler {
@@ -21,6 +22,11 @@ interface ToolEventHandler {
 export type HoverTarget =
   | { id: number; map: string }
   | { id: string; map: 'merge'; items: Record<string, number[]> };
+
+export interface MoveDragContext {
+  xy0: Vec2;
+  action?: Action;
+}
 
 export interface Tool extends ToolEventHandler {
   cancel?(): void;

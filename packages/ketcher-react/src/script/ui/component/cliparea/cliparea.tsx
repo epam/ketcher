@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -83,6 +82,8 @@ interface ClipAreaProps {
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
   target?: HTMLElement;
 }
+
+type DomEventListener = Parameters<HTMLElement['addEventListener']>[1];
 
 interface ClipAreaListeners {
   mouseup: (event: MouseEvent) => void;
@@ -255,7 +256,7 @@ class ClipArea extends Component<ClipAreaProps> {
       if (this.target && this.listeners) {
         this.target.addEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });
@@ -273,7 +274,7 @@ class ClipArea extends Component<ClipAreaProps> {
       if (this.target && this.listeners) {
         this.target.removeEventListener(
           eventName,
-          this.listeners[eventName] as EventListener,
+          this.listeners[eventName] as DomEventListener,
         );
       }
     });

@@ -26,21 +26,16 @@ import {
   CoordinateTransformation,
 } from 'ketcher-core';
 import type Editor from '../Editor';
-import type { Tool } from './Tool';
+import type { MoveDragContext, Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
 interface Result {
   content: string;
 }
 
-interface DragContext {
-  xy0: Vec2;
-  action: Action;
-}
-
 class TextTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: DragContext | null = null;
+  private dragCtx: MoveDragContext | null = null;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -93,7 +88,9 @@ class TextTool implements Tool {
 
   mouseup() {
     if (this.dragCtx) {
-      this.editor.update(this.dragCtx.action);
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action);
+      }
       this.dragCtx = null;
     }
     return true;

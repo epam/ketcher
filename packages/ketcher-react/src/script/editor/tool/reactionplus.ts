@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -21,12 +20,12 @@ import {
   CoordinateTransformation,
 } from 'ketcher-core';
 import type Editor from '../Editor';
-import type { Tool } from './Tool';
+import type { MoveDragContext, Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx: MoveDragContext | undefined;
 
   constructor(editor) {
     this.editor = editor;

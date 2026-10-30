@@ -18,18 +18,29 @@ function listSourceFiles(): string[] {
     .map((file) => path.join(sourceRoot, file));
 }
 
+function removeTypeOnlyImports(code: string): string {
+  return code
+    .replace(/^\s*(?:import|export)\s+type\b[^;]*;/gm, '')
+    .replace(
+      /^\s*import\s*\{([^}]*)\}\s*from\s*['"][^'"]+['"];/gm,
+      (statement, specifiers: string) => {
+        const names = specifiers
+          .split(',')
+          .map((specifier) => specifier.trim())
+          .filter(Boolean);
+        const isTypeOnly =
+          names.length > 0 && names.every((name) => name.startsWith('type '));
+
+        return isTypeOnly ? '' : statement;
+      },
+    );
+}
+
 function listImportedNodeBuiltins(): string[] {
-  const typeOnlyStatements = [
-    /^\s*(?:import|export)\s+type\b[^;]*;/gm,
-    /^\s*import\s*\{\s*type\s+[^,}]+(?:\s*,\s*type\s+[^,}]+)*\s*,?\s*\}\s*from\s*['"][^'"]+['"];/gm,
-  ];
   const specifier =
     /\bfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(?\s*['"]([^'"]+)['"]/g;
   const names = listSourceFiles().flatMap((file) => {
-    const code = typeOnlyStatements.reduce(
-      (text, pattern) => text.replace(pattern, ''),
-      fs.readFileSync(file, 'utf8'),
-    );
+    const code = removeTypeOnlyImports(fs.readFileSync(file, 'utf8'));
 
     return [...code.matchAll(specifier)].map(([, fromName, callName]) => {
       const name = fromName ?? callName;

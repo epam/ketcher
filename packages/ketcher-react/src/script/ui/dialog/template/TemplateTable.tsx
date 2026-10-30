@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -121,7 +121,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const requestIdle = window.requestIdleCallback;
+    const requestIdle = globalThis.requestIdleCallback;
     if (typeof requestIdle === 'function') {
       const callback = requestIdle(
         () => {
@@ -134,18 +134,18 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
         { timeout: PREVIEW_IDLE_TIMEOUT_MS },
       );
       return () => {
-        window.cancelIdleCallback?.(callback);
+        globalThis.cancelIdleCallback?.(callback);
       };
     }
 
-    const frameId = window.requestAnimationFrame(() => {
+    const frameId = globalThis.requestAnimationFrame(() => {
       startTransition(() => {
         setPreviewRenderedCount((prev) =>
           Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
         );
       });
     });
-    return () => window.cancelAnimationFrame(frameId);
+    return () => globalThis.cancelAnimationFrame(frameId);
   }, [previewRenderedCount, templates.length, startTransition]);
 
   // For each template, compute how many times its name appears in this group array

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -130,7 +130,7 @@ export const Save = ({
       }
       if (
         !isHelmCompatible(
-          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          [...editor.drawingEntitiesManager.monomers.values()],
           editor.monomersLibrary,
         )
       ) {
@@ -218,8 +218,8 @@ export const Save = ({
       return;
     }
 
-    navigator.clipboard.writeText(struct).catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    navigator.clipboard.writeText(struct).catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });
   };
@@ -230,6 +230,8 @@ export const Save = ({
       isOpen={isModalOpen}
       onClose={onClose}
       testId="save-structure-dialog"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">

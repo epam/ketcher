@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import type {
   RenderOptions,
 } from 'application/render';
 import type { Struct } from 'domain/entities/struct';
+import type { AtomAttributes } from 'domain/entities/atom';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
@@ -30,12 +31,28 @@ import type {
   MonomerItemType,
 } from 'domain/types';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { LayoutMode } from 'application/editor/modes/types';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 
 export type MonomerCreationWizardRequest = {
   mode: 'create' | 'instance' | 'all' | 'library' | 'duplicate';
   monomer?: BaseMonomer;
   libraryItem?: MonomerItemType;
 };
+
+export type CreateBondViaModalPayload = {
+  firstMonomer: BaseMonomer;
+  secondMonomer: BaseMonomer;
+  firstSelectedAttachmentPoint: AttachmentPointName;
+  secondSelectedAttachmentPoint: AttachmentPointName;
+  polymerBond?: PolymerBond;
+  isReconnection?: boolean;
+  initialFirstMonomerAttachmentPoint?: AttachmentPointName;
+  initialSecondMonomerAttachmentPoint?: AttachmentPointName;
+};
+
+export type SelectLayoutModePayload =
+  LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean };
 
 export type EditMonomerVariant = 'single' | 'identical' | 'non-identical';
 
@@ -82,7 +99,7 @@ export interface Editor {
   setOrigin: () => void;
   struct: (
     struct?: Struct,
-    needToCenterStruct?: boolean,
+    shouldCenterStruct?: boolean,
     x?: number,
     y?: number,
   ) => Struct;
@@ -115,7 +132,10 @@ export interface Editor {
   event: {
     message: Subscription;
     tooltip: Subscription;
-    elementEdit: PipelineSubscription;
+    elementEdit: PipelineSubscription<
+      unknown,
+      Promise<Partial<AtomAttributes>>
+    >;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
@@ -140,7 +160,7 @@ export interface Editor {
   };
   update: (
     action: Action | true,
-    ignoreHistory?: boolean,
+    shouldIgnoreHistory?: boolean,
     options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
@@ -153,7 +173,7 @@ export interface Editor {
   closeMonomerCreationWizard: () => void;
   openMonomerCreationWizardFromMacro: (
     request: MonomerCreationWizardRequest,
-    onFinish: (savedCanvas: boolean) => void,
+    onFinish: (isCanvasSaved: boolean) => void,
   ) => void;
   ketcherId: string;
   isMonomerCreationWizardActive: boolean;

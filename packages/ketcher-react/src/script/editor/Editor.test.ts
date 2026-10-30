@@ -247,6 +247,74 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
 
     expect(() => editor.openMonomerCreationWizard()).not.toThrow();
   });
+
+  describe('openMonomerCreationWizardWhenLibraryLoaded', () => {
+    const setUp = () => {
+      let resolveLoad!: () => void;
+      const libraryLoad = new Promise<void>((resolve) => {
+        resolveLoad = resolve;
+      });
+      const coreEditor = {
+        ensureDefaultMonomersLibraryLoaded: jest.fn(() => libraryLoad),
+      };
+      setEditorInstance(coreEditor as unknown as CoreEditor);
+      const editor = Object.create(Editor.prototype) as Editor;
+      let isWizardActive = false;
+      Object.defineProperty(editor, 'isMonomerCreationWizardEnabled', {
+        get: () => !isWizardActive,
+      });
+      const openMonomerCreationWizard = jest.fn(() => {
+        isWizardActive = true;
+      });
+      editor.openMonomerCreationWizard = openMonomerCreationWizard;
+      return {
+        editor,
+        openMonomerCreationWizard,
+        resolveLoad,
+      };
+    };
+
+    afterEach(() => {
+      window.isPolymerEditorTurnedOn = false;
+      resetEditorInstance();
+    });
+
+    it('opens the wizard only after the default monomers library has loaded', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const opening = editor.openMonomerCreationWizardWhenLibraryLoaded();
+      await Promise.resolve();
+      expect(openMonomerCreationWizard).not.toHaveBeenCalled();
+
+      resolveLoad();
+      await opening;
+      expect(openMonomerCreationWizard).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens the wizard once when it is requested twice during the load', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const openings = [
+        editor.openMonomerCreationWizardWhenLibraryLoaded(),
+        editor.openMonomerCreationWizardWhenLibraryLoaded(),
+      ];
+      resolveLoad();
+      await Promise.all(openings);
+
+      expect(openMonomerCreationWizard).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not open the wizard when macromolecules mode is turned on during the load', async () => {
+      const { editor, openMonomerCreationWizard, resolveLoad } = setUp();
+
+      const opening = editor.openMonomerCreationWizardWhenLibraryLoaded();
+      window.isPolymerEditorTurnedOn = true;
+      resolveLoad();
+      await opening;
+
+      expect(openMonomerCreationWizard).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('Editor.hover', () => {

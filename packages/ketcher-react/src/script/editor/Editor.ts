@@ -1520,6 +1520,23 @@ class Editor implements KetcherEditor {
     }
   }
 
+  /**
+   * The wizard's uniqueness checks read the default monomers library, which
+   * loads lazily. The selection can change, another request can open the
+   * wizard, or the user can switch to macromolecules mode while it loads, so
+   * the wizard is checked again before it opens.
+   */
+  async openMonomerCreationWizardWhenLibraryLoaded() {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
+    if (
+      !window.isPolymerEditorTurnedOn &&
+      this.isMonomerCreationWizardEnabled
+    ) {
+      this.openMonomerCreationWizard();
+    }
+  }
+
   openMonomerCreationWizard(
     selectionOverride?: Selection,
     editInstanceInitialValues?: MonomerCreationInitialValues,

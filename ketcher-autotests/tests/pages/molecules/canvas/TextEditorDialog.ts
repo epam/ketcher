@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
@@ -149,10 +148,10 @@ export async function addTextToCanvas(
   y?: number,
 ) {
   await LeftToolbar(page).text();
-  if (x !== undefined && y !== undefined) {
-    await page.mouse.click(x, y);
-  } else {
+  if (x === undefined || y === undefined) {
     await clickInTheMiddleOfTheCanvas(page);
+  } else {
+    await page.mouse.click(x, y);
   }
   await TextEditorDialog(page).setText(text);
   await TextEditorDialog(page).apply();

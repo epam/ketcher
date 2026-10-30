@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { ClickAwayListener } from '@mui/material';
 import { MenuItem } from '../menuItem';
 import { useMenuContext } from '../../../hooks/useMenuContext';
@@ -31,11 +31,8 @@ import {
   usePortalStyle,
 } from 'ketcher-react';
 import { createPortal } from 'react-dom';
-import {
-  selectSelectedMenuGroupItem,
-  setSelectedMenuGroupItem,
-} from 'state/common';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { selectSelectedMenuGroupItem } from 'state/common';
+import { useAppSelector } from 'hooks';
 
 type SubMenuProps = {
   vertical?: boolean;
@@ -49,6 +46,10 @@ type SubMenuProps = {
   subMenuId?: string;
 };
 
+type MenuItemElement = React.ReactElement<
+  React.ComponentProps<typeof MenuItem>
+>;
+
 const SubMenu = ({
   children,
   vertical = false,
@@ -61,7 +62,6 @@ const SubMenu = ({
   activeItem,
   subMenuId,
 }: React.PropsWithChildren<SubMenuProps>) => {
-  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -73,9 +73,6 @@ const SubMenu = ({
   ]);
 
   const selectedMenuGroupItem = useAppSelector(
-    // Need to fix typing for selectors with parameters
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     selectSelectedMenuGroupItem(subMenuId),
   );
   const lastActiveOption = subMenuId ? selectedMenuGroupItem : null;
@@ -90,29 +87,15 @@ const SubMenu = ({
     }
   };
 
-  const subComponents = React.Children.map(
-    children as JSX.Element[],
-    (child) => {
-      return child.type === MenuItem ? child : null;
-    },
+  const subComponents = React.Children.toArray(children).filter(
+    (child): child is MenuItemElement =>
+      React.isValidElement(child) && child.type === MenuItem,
   );
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item);
-  const activeOptions = options.filter((itemKey) => isActive(itemKey));
-  const activeOption = activeOptions[0];
-
-  useEffect(() => {
-    if (subMenuId && activeOption && activeOption !== lastActiveOption) {
-      dispatch(
-        setSelectedMenuGroupItem({
-          groupName: subMenuId,
-          activeItemName: activeOption,
-        }),
-      );
-    }
-  }, [dispatch, subMenuId, activeOption, lastActiveOption]);
+    .filter(Boolean);
+  const activeOption = options.find((itemKey) => isActive(itemKey));
 
   const visibleItemId =
     activeItem ?? (activeOption || lastActiveOption || options[0]);

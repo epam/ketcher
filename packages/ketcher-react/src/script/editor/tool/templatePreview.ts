@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -134,12 +134,12 @@ class TemplatePreview {
         this.showConnectedPreview(event, previewTarget);
       }, PREVIEW_DELAY);
     } else if (shouldHidePreview) {
-      if (!this.floatingPreview) {
+      if (this.floatingPreview) {
+        this.moveFloatingPreview();
+      } else {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
         this.editor.render.update(false, null);
-      } else {
-        this.moveFloatingPreview();
       }
     }
   }
@@ -166,7 +166,7 @@ class TemplatePreview {
         fragmentIds.add(atom.fragment);
       }
     });
-    return Array.from(fragmentIds);
+    return [...fragmentIds];
   }
 
   private showFloatingPreview(position: Vec2) {
@@ -212,7 +212,7 @@ class TemplatePreview {
       const sign2 = this.template.sign;
       const shouldFlip = sign1 * sign2 > 0;
 
-      const promise = fromTemplateOnBondAction(
+      let [action, pasteItems] = fromTemplateOnBondAction(
         this.restruct,
         this.template,
         ci.id,
@@ -222,14 +222,10 @@ class TemplatePreview {
         true,
       );
 
-      promise.then(([action, pasteItems]) => {
-        if (!this.isModeFunctionalGroup) {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems);
-          action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
-          this.editor.update(action, true);
-          this.connectedPreviewAction = action;
-        }
-      });
+      const mergeItems = getItemsToFuse(this.editor, pasteItems);
+      action = fromItemsFuse(this.restruct, mergeItems).mergeWith(action);
+      this.editor.update(action, true);
+      this.connectedPreviewAction = action;
     } else if (ci.map === 'atoms') {
       const angle = getAngleFromEvent(event, ci, this.restruct);
 

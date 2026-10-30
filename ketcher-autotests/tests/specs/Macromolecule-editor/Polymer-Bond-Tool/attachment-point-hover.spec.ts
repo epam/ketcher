@@ -38,7 +38,7 @@ test.describe('Check attachment point hover', () => {
     const bondLine = page
       .locator('g[class="drawn-structures"]')
       .locator('g')
-      // eslint-disable-next-line no-magic-numbers
+
       .nth(2);
     const loopHoverCount = 10;
     const delta = 100;

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
@@ -42,19 +42,41 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
-  private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
+  private _bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
+
+  private get bondRenderer() {
+    return this._bondRenderer;
+  }
+
+  private set bondRenderer(
+    renderer: FlexModeOrSnakeModePolymerBondRenderer | undefined,
+  ) {
+    const isStartingConnection = !this._bondRenderer && Boolean(renderer);
+    this._bondRenderer = renderer;
+    this.editor.canvas.toggleAttribute(
+      'data-drawing-connection',
+      Boolean(renderer),
+    );
+    if (isStartingConnection) {
+      // Hover contours live outside bond groups and must be cleared explicitly.
+      this.editor.drawingEntitiesManager.bonds.forEach((bond) => {
+        bond.turnOffHover();
+        bond.renderer?.redrawHover();
+      });
+    }
+  }
   private isBondConnectionModalOpen = false;
   private readonly history: EditorHistory;
   private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
   constructor(
     private readonly editor: CoreEditor,
-    options: { toolName: ToolName },
+    ...args: unknown[]
   ) {
+    const [options] = args as [{ toolName: ToolName }];
     this.editor = editor;
     this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
@@ -84,17 +106,13 @@ class PolymerBond implements BaseTool {
   }
 
   private removeBond() {
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+    const modelChanges = this.bondRenderer
+      ? this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
           this.bondRenderer.polymerBond,
-        );
-      this.bondRenderer = undefined;
-
-      return modelChanges;
-    } else {
-      return new Command();
-    }
+        )
+      : new Command();
+    this.bondRenderer = undefined;
+    return modelChanges;
   }
 
   public mousedown(event: MouseEvent) {
@@ -138,8 +156,7 @@ class PolymerBond implements BaseTool {
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
@@ -153,8 +170,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) return;
 
     const renderer = event.target?.__data__ as
-      | FlexModeOrSnakeModePolymerBondRenderer
-      | undefined;
+      FlexModeOrSnakeModePolymerBondRenderer | undefined;
     if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -237,8 +253,7 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event: MouseEvent) {
     const eventToElementData = event.relatedTarget?.__data__;
     const eventFromElementData = event.target?.__data__ as
-      | BaseMonomerRenderer
-      | undefined;
+      BaseMonomerRenderer | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
       eventToElementData.monomer === eventFromElementData?.monomer
@@ -292,7 +307,7 @@ class PolymerBond implements BaseTool {
       renderer.monomer.renderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer.monomer;
 
@@ -306,15 +321,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );
@@ -428,7 +443,7 @@ class PolymerBond implements BaseTool {
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (this.bondRenderer && renderer?.monomer && !isFirstMonomerHovered) {
+    if (!isFirstMonomerHovered && this.bondRenderer && renderer?.monomer) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer?.monomer;
 
@@ -437,15 +452,15 @@ class PolymerBond implements BaseTool {
         if (!bond) {
           continue;
         }
-        const alreadyHasBond =
+        const hasBondAlready =
           (bond.firstMonomer === firstMonomer &&
             bond.secondMonomer === secondMonomer) ||
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
-        if (alreadyHasBond) {
+        if (hasBondAlready) {
           // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
-          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
-          if (existingBondIsSingleBond && this.isHydrogenBond) {
+          const isExistingBondSingleBond = !(bond instanceof HydrogenBond);
+          if (isExistingBondSingleBond && this.isHydrogenBond) {
             this.editor.events.error.dispatch(
               'Unable to establish a hydrogen bond between two monomers connected with a single bond',
             );
@@ -603,6 +618,7 @@ class PolymerBond implements BaseTool {
 
   public destroy() {
     const modelChanges = this.removeBond();
+    this.isBondConnectionModalOpen = false;
     modelChanges.merge(
       this.editor.drawingEntitiesManager.removeHoverForAllMonomers(),
     );
@@ -613,12 +629,12 @@ class PolymerBond implements BaseTool {
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
-    checkForPotentialBonds = true,
+    shouldCheckForPotentialBonds = true,
   ) {
     return shouldInvokeConnectionModal(
       firstMonomer,
       secondMonomer,
-      checkForPotentialBonds,
+      shouldCheckForPotentialBonds,
       this.isHydrogenBond,
     );
   }

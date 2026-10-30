@@ -1,5 +1,5 @@
 // <reference types="react-scripts" />
-/* eslint-disable no-var, no-use-before-define */
+
 declare module '*.module.less' {
   const classes: { [key: string]: string };
   export default classes;
@@ -8,8 +8,7 @@ declare module '*.module.less' {
 declare module '*.less';
 
 declare namespace JSX {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type Element = React.ReactElement<any, any>;
+  type Element = React.ReactElement;
 }
 
 declare namespace NodeJS {
@@ -18,6 +17,21 @@ declare namespace NodeJS {
     BUILD_DATE: string;
     BUILD_NUMBER: string;
   }
+}
+
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly INDIGO_VERSION?: string;
+  readonly INDIGO_MACHINE?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }
 
 declare module '*.svg' {
@@ -57,20 +71,9 @@ interface Document {
 interface Window {
   isPolymerEditorTurnedOn: boolean;
   ketcher?: {
-    settingsService?: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      getSettings: () => any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      updateSettings: (settings: any) => Promise<any>;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      resetToDefaults: () => Promise<any>;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      importSettings: (json: string) => Promise<any>;
-      exportSettings: () => string;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      subscribe: (listener: (settings: any) => void) => () => void;
-    };
+    settingsService?: import('ketcher-core').ISettingsService;
   };
+  _ketcher_isChainLengthRulerDisabled?: boolean;
 }
 
 interface HTMLElement {

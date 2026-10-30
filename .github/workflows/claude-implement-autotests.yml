@@ -24,14 +24,14 @@ jobs:
       )
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract and check data
         id: issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const issue = context.payload.issue;
@@ -49,12 +49,13 @@ jobs:
             core.setOutput('issue_body', issueBody);
 
       - name: Implement autotests with Claude
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@28f83620103c48a57093dcc2837eec89e036bb9f # v0.0.63
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          model: claude-sonnet-4-6
           direct_prompt: |
-            1. Use autotests-generator agent to generate Playwright autotests based on Autotest Request issue.
+            1. Use the generate-autotests skill (.claude/skills/generate-autotests/SKILL.md) to generate Playwright autotests based on Autotest Request issue.
                AUTOTEST_REQUEST_NUMBER: ${{ github.event.issue.number }}.
                AUTOTEST_REQUEST_TITLE: ${{ github.event.issue.title }}.
                AUTOTEST_REQUEST_URL: ${{ github.event.issue.html_url }}.
@@ -81,19 +82,24 @@ jobs:
 
       - name: Create pull request
         id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          BRANCH_NAME: ${{ steps.vars.outputs.branch_name }}
         run: |
           PR_URL=$(gh pr create \
-            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
-            --body "Closes #${{ github.event.issue.number }}" \
-            --head "${{ steps.vars.outputs.branch_name }}" \
+            --title "#${ISSUE_NUMBER} - ${ISSUE_TITLE}" \
+            --body "Closes #${ISSUE_NUMBER}" \
+            --head "${BRANCH_NAME}" \
             --base master)
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on issue
-        run: |
-          gh issue comment ${{ github.event.issue.number }} \
-            --body "Generated Playwright test: ${{ steps.create_pr.outputs.pr_url }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_URL: ${{ steps.create_pr.outputs.pr_url }}
+        run: |
+          gh issue comment "${ISSUE_NUMBER}" \
+            --body "Generated Playwright test: ${PR_URL}"

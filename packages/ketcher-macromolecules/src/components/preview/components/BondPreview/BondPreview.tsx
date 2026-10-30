@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
@@ -19,18 +18,6 @@ const BondPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as BondPreviewState;
 
   const { polymerBond, style } = preview;
-
-  const ContainerDynamic = useMemo(() => {
-    if (!style) {
-      return styled(Container)``;
-    }
-
-    return styled(Container)`
-      top: ${style?.top ?? ''};
-      left: ${style?.left ?? ''};
-      right: ${style?.right ?? ''};
-    `;
-  }, [style]);
 
   const {
     firstMonomer,
@@ -60,9 +47,10 @@ const BondPreview = ({ className }: Props) => {
   }
 
   return (
-    <ContainerDynamic
+    <Container
       className={className}
       data-testid="polymer-library-preview"
+      style={{ top: style?.top, left: style?.left, right: style?.right }}
     >
       <ConnectionOverview
         firstMonomer={firstMonomer}
@@ -96,7 +84,7 @@ const BondPreview = ({ className }: Props) => {
           />
         }
       />
-    </ContainerDynamic>
+    </Container>
   );
 };
 

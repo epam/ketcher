@@ -10,9 +10,8 @@ export async function getStructServiceProvider() {
     );
 
   if (process.env.MODE === 'standalone') {
-    const { StandaloneStructServiceProvider } = await import(
-      'ketcher-standalone'
-    );
+    const { StandaloneStructServiceProvider } =
+      await import('ketcher-standalone');
     structServiceProvider =
       new StandaloneStructServiceProvider() as StructServiceProvider;
   }

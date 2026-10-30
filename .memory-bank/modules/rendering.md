@@ -70,6 +70,10 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 - A factory maps each sequence node to a concrete sequence-item renderer (nucleotide, nucleoside, peptide, CHEM, phosphate, empty, backbone, ambiguous, …).
 - A base sequence-item renderer draws one monospaced symbol plus background, counter, caret, and spacer.
 
+### Transient overlays
+
+On top of the persistent D3 drawing, the macro editor draws **transient views** — ephemeral, read-only SVG overlays for selection, snapping, rotation, insertion previews, and the drag-drop replacement highlight. They live in their own layers inside the zoom canvas and are never part of the model or undo history. See [transient-views](./transient-views.md).
+
 ## Assumptions & constraints
 
 - Renderers never mutate the model.

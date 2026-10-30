@@ -16,8 +16,7 @@ const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
 export class MultitailArrowRenderer extends BaseRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(public arrow: MultitailArrow) {
     super(arrow);
@@ -30,7 +29,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
   getReferencePositionsArray(): Array<Vec2> {
     const { tails, ...positions } = this.getReferencePositions();
-    return Object.values(positions).concat(Array.from(tails.values()));
+    return [...Object.values(positions), ...tails.values()];
   }
 
   private getReferencePositions(): ReturnType<
@@ -96,7 +95,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions();
     const builder = new PathBuilder();
-    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+    const tailsPoints = [...tails.values()].sort((a, b) => a.y - b.y);
 
     const start = topSpine.add(new Vec2(offset, offset));
 

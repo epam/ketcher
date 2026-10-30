@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,18 @@
 import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import { useTranslation } from 'react-i18next';
 
 export function LeftMenuComponent() {
+  const { t } = useTranslation('macromolecules');
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
+  const isDisabled = isSequenceMode || isSettingsPanelOpen;
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {
@@ -39,56 +44,67 @@ export function LeftMenuComponent() {
       <Menu.Group divider={true}>
         <Menu.Item
           itemId="hand"
-          title={`Hand Tool (${hotkeysShortcuts.hand})`}
+          title={t('leftMenu.handTool', { shortcut: hotkeysShortcuts.hand })}
           testId="hand"
+          disabled={isSettingsPanelOpen}
         />
         <Menu.Group>
           <Menu.Submenu
             testId="select-drop-down-button"
+            disabled={isSettingsPanelOpen}
             subMenuId={SELECT_SUBMENU_ID}
             needOpenByMenuItemClick={true}
           >
             <Menu.Item
               itemId="select-rectangle"
-              title={`Select Rectangle (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.selectRectangle', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-rectangle"
+              disabled={isSettingsPanelOpen}
             />
             <Menu.Item
               itemId="select-lasso"
-              title={`Lasso selection (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.lassoSelection', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-lasso"
+              disabled={isSettingsPanelOpen}
             />
             <Menu.Item
               itemId="select-structure"
-              title={`Structure Selection (${hotkeysShortcuts.switchSelectTool})`}
+              title={t('leftMenu.structureSelection', {
+                shortcut: hotkeysShortcuts.switchSelectTool,
+              })}
               testId="select-structure"
+              disabled={isSettingsPanelOpen}
             />
           </Menu.Submenu>
         </Menu.Group>
         <Menu.Item
           itemId="erase"
-          title={`Erase (${hotkeysShortcuts.erase})`}
+          title={t('leftMenu.erase', { shortcut: hotkeysShortcuts.erase })}
           testId="erase"
-          disabled={isSequenceMode}
+          disabled={isDisabled}
         />
       </Menu.Group>
       <Menu.Group>
         <Menu.Submenu
-          disabled={isSequenceMode}
+          disabled={isDisabled}
           testId="bonds-drop-down-button"
           needOpenByMenuItemClick={false}
         >
           <Menu.Item
             itemId="bond-single"
-            title="Single Bond (1)"
+            title={t('leftMenu.singleBond')}
             testId="single-bond"
-            disabled={isSequenceMode}
+            disabled={isDisabled}
           />
           <Menu.Item
             itemId="bond-hydrogen"
-            title="Hydrogen Bond (2)"
+            title={t('leftMenu.hydrogenBond')}
             testId="hydrogen-bond"
-            disabled={isSequenceMode}
+            disabled={isDisabled}
           />
         </Menu.Submenu>
       </Menu.Group>

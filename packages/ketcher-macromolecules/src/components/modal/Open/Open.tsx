@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,8 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
@@ -42,7 +44,7 @@ import {
 } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
-import { openErrorModal } from 'state/modal';
+import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -82,8 +84,9 @@ const StyledDropdown = styled(SaveDropdown)({
   '& .MuiSelect-select': {
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px 0 8px',
-    paddingRight: '20px !important', // override MUI styles
+    paddingBlock: 0,
+    paddingInlineStart: '8px',
+    paddingInlineEnd: '20px !important', // override MUI styles
     height: '100%',
   },
 
@@ -98,12 +101,12 @@ const FooterFormatSelector = styled(StyledDropdown)(() => ({
 
 const FooterSequenceSelector = styled(StyledDropdown)({
   width: '76px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterPeptideLettersSelector = styled(StyledDropdown)({
   width: '105px',
-  marginLeft: '8px',
+  marginInlineStart: '8px',
 });
 
 const FooterButtonContainer = styled('div')({
@@ -170,7 +173,7 @@ const positionStructureOnNextSequenceLine = (
   });
 };
 
-const addToCanvas = ({
+const hasAddedStructureToCanvas = ({
   ketSerializer,
   editor,
   struct,
@@ -178,13 +181,17 @@ const addToCanvas = ({
   ketSerializer: KetSerializer;
   editor: CoreEditor;
   struct: string;
-}) => {
+}): boolean => {
   const isCanvasEmptyBeforeOpenStructure =
     !editor.drawingEntitiesManager.hasDrawingEntities;
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
 
   if (!deserialisedKet) {
     throw new Error('Error during parsing file');
+  }
+
+  if (!deserialisedKet.drawingEntitiesManager.hasDrawingEntities) {
+    return false;
   }
 
   const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
@@ -237,6 +244,8 @@ const addToCanvas = ({
   editor.calculateAndStoreNextAutochainPosition(
     deserialisedKet.drawingEntitiesManager,
   );
+
+  return true;
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -248,6 +257,7 @@ const onOk = async ({
   onCloseCallback,
   setIsLoading,
   dispatch,
+  t,
 }: {
   struct: string;
   formatSelection: string;
@@ -256,6 +266,7 @@ const onOk = async ({
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
+  t: TFunction;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
@@ -265,22 +276,29 @@ const onOk = async ({
   let inputFormat;
   let fileData = struct;
 
-  const showParsingError = (stringError) => {
-    const errorMessage = 'Convert error! ' + stringError;
+  const showParsingError = (stringError: string) => {
+    const errorMessage = t('open.convertError', { error: stringError });
     dispatch(
       openErrorModal({
         errorMessage,
-        errorTitle: isSeq || isFasta ? 'Unsupported symbols' : '',
+        errorTitle: isSeq || isFasta ? t('open.unsupportedSymbols') : '',
       }),
     );
   };
 
   if (isKet) {
     try {
-      addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = hasAddedStructureToCanvas({
+        struct,
+        ketSerializer,
+        editor,
+      });
+      if (!hasStructure) {
+        dispatch(openErrorTooltip('No structure'));
+      }
       onCloseCallback();
-    } catch (_e) {
-      showParsingError('Error during file parsing.');
+    } catch {
+      showParsingError(t('open.fileParsingError'));
     }
     return;
   } else if (
@@ -304,7 +322,14 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    const hasStructure = hasAddedStructureToCanvas({
+      struct: ketStruct.struct,
+      ketSerializer,
+      editor,
+    });
+    if (!hasStructure) {
+      dispatch(openErrorTooltip('No structure'));
+    }
     onCloseCallback();
   } catch (error) {
     const stringError = normalizeError(error).message;
@@ -315,9 +340,10 @@ const onOk = async ({
   }
 };
 const isAnalyzingFile = false;
-const errorHandler = (error) => console.log(error);
+const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -348,16 +374,18 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
-    const windowContext = window as unknown as Record<string, unknown>;
+    const windowContext = globalThis as unknown as Record<string, unknown>;
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
-        /* Fullscreen restoration failed or was denied by the browser */
+        /*
+        Fullscreen restoration failed or was denied by the browser
+        */
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
-    const onLoad = (fileContent) => {
+    const onLoad = (fileContent: string) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
@@ -365,8 +393,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     const fileName = files[0].name;
     const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+    const fileExtension = splittedFilenameByDot.at(-1);
 
     setFileName(fileName);
     if (fileExtension) {
@@ -387,6 +414,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -407,6 +435,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onCloseCallback,
       setIsLoading,
       dispatch,
+      t,
     });
   };
 
@@ -444,7 +473,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="openButton"
           disabled={!structStr.trim()}
           clickHandler={openHandler}
-          label="Open as New"
+          label={t('open.openAsNew')}
           styleType="secondary"
           data-testid="open-as-new-button"
         />
@@ -452,8 +481,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           key="copyButton"
           disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('open.addToCanvas')}
+          title={t('open.addToCanvasTooltip')}
           data-testid="add-to-canvas-button"
         />
       </FooterButtonContainer>
@@ -463,10 +492,12 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   return (
     <OpenModal
       isOpen={isModalOpen}
-      title="Open Structure"
+      title={t('open.title')}
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>
@@ -488,7 +519,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      {currentState === MODAL_STATES.textEditor && !isAnalyzingFile ? (
+      {!isAnalyzingFile && currentState === MODAL_STATES.textEditor ? (
         <Modal.Footer withborder="true">{renderFooter()}</Modal.Footer>
       ) : (
         <></>

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 import type { Struct } from '../entities';
 
 export class FunctionalGroupsProvider {
-  // eslint-disable-next-line no-use-before-define
   private static instance: FunctionalGroupsProvider;
   functionalGroupsList: Struct[];
   constructor() {
@@ -24,10 +23,10 @@ export class FunctionalGroupsProvider {
   }
 
   public static getInstance(): FunctionalGroupsProvider {
-    if (!FunctionalGroupsProvider.instance) {
+    if (!this.instance) {
       FunctionalGroupsProvider.instance = new FunctionalGroupsProvider();
     }
-    return FunctionalGroupsProvider.instance;
+    return this.instance;
   }
 
   public getFunctionalGroupsList() {

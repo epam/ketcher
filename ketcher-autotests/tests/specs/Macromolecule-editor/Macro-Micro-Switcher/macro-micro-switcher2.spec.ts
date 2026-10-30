@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 /*
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"

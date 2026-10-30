@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,20 +15,33 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type SimpleObjectMode,
+  type Vec2,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
   CoordinateTransformation,
+  SimpleObjectDelete,
 } from 'ketcher-core';
 import type Editor from '../Editor';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import type { Tool } from './Tool';
+
+interface SimpleObjectDragContext {
+  p0: Vec2;
+  previous?: Vec2;
+  ci?: ClosestItemWithMap;
+  isNew?: boolean;
+  action?: Action;
+  itemId?: number;
+}
 
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx?: SimpleObjectDragContext;
 
   constructor(editor: Editor, mode: SimpleObjectMode) {
     this.mode = mode;
@@ -36,14 +49,14 @@ class SimpleObjectTool implements Tool {
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const rnd = this.editor.render;
     const p0 = CoordinateTransformation.pageToModel(event, rnd);
     this.dragCtx = { p0 };
 
     const ci = this.editor.findItem(event, ['simpleObjects']);
 
-    if (ci && ci.map === 'simpleObjects') {
+    if (ci?.map === 'simpleObjects') {
       this.editor.hover(null);
       this.editor.selection({ simpleObjects: [ci.id] });
       this.dragCtx.ci = ci;
@@ -53,7 +66,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const rnd = this.editor.render;
 
     if (this.dragCtx) {
@@ -66,13 +79,7 @@ class SimpleObjectTool implements Tool {
           this.dragCtx.action.perform(rnd.ctab);
         }
 
-        if (!this.dragCtx.ci.ref) {
-          this.dragCtx.action = fromMultipleMove(
-            rnd.ctab,
-            this.editor.selection() ?? {},
-            diff,
-          );
-        } else {
+        if (this.dragCtx.ci.ref) {
           this.dragCtx.action = fromSimpleObjectResizing(
             rnd.ctab,
             this.dragCtx.ci.id,
@@ -81,10 +88,18 @@ class SimpleObjectTool implements Tool {
             this.dragCtx.ci.ref,
             event.shiftKey,
           );
+        } else {
+          this.dragCtx.action = fromMultipleMove(
+            rnd.ctab,
+            this.editor.selection() ?? {},
+            diff,
+          );
         }
         this.editor.update(this.dragCtx.action, true);
       } else {
-        if (!this.dragCtx.action) {
+        if (this.dragCtx.action) {
+          this.dragCtx.action.perform(rnd.ctab);
+        } else {
           const action = fromSimpleObjectAddition(
             rnd.ctab,
             [this.dragCtx.p0, this.dragCtx.p0],
@@ -93,11 +108,14 @@ class SimpleObjectTool implements Tool {
           );
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
+          if (!(addOperation instanceof SimpleObjectDelete)) {
+            throw new TypeError(
+              'Expected SimpleObjectDelete as the first operation of fromSimpleObjectAddition',
+            );
+          }
           this.dragCtx.itemId = addOperation.data.id;
           this.dragCtx.action = action;
           this.editor.update(this.dragCtx.action, true);
-        } else {
-          this.dragCtx.action.perform(rnd.ctab);
         }
 
         this.dragCtx.action = fromSimpleObjectResizing(
@@ -116,7 +134,7 @@ class SimpleObjectTool implements Tool {
     }
   }
 
-  mouseup(event) {
+  mouseup(event: PointerEvent) {
     if (!this.dragCtx) {
       return;
     }

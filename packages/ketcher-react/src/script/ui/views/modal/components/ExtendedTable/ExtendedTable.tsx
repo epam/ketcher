@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,7 @@ import type { Dispatch } from 'redux';
 import type { Editor } from 'ketcher-core';
 import { onAction } from '../../../../state';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface GenericElement {
   type: 'gen';
@@ -44,11 +45,12 @@ interface TableProps {
 }
 
 const Table = (props: TableProps) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? props.label ?? null : null,
+    props.pseudo ? (props.label ?? null) : null,
   );
 
-  const selected = (label: string): boolean => value === label;
+  const isSelected = (label: string): boolean => value === label;
 
   const result = (): GenericElement | null => {
     if (!value?.length) {
@@ -68,17 +70,17 @@ const Table = (props: TableProps) => {
 
   return (
     <Dialog
-      title="Extended Table"
+      title={t('dialogs:extendedTable.dialogTitle')}
       withDivider
       className={classes.extendedTable}
       params={props}
       result={result}
       buttons={['Cancel', 'OK']}
-      buttonsNameMap={{ OK: 'Add' }}
+      buttonsNameMap={{ OK: t('dialogs:shared.addButton') }}
       needMargin={false}
     >
       <GenericGroups
-        selected={selected}
+        selected={isSelected}
         onAtomSelect={onAtomSelect}
         onAtomActivate={onAtomActivate}
         disabledQueryElements={props.disabledQueryElements ?? null}

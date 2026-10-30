@@ -3,48 +3,51 @@ import {
   type BaseMonomer,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
+  type MonomerItemType,
   KetMonomerClass,
   KetTemplateType,
+  type MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
+import {
+  getMonomerPropertyVisibility,
+  isNaturalAnalogueRequired,
+} from './MonomerCreationWizardFields.utils';
 
 const COPY_SUFFIX = '_Copy';
 
 const getCopiedValue = (value?: string) =>
   value ? `${value}${COPY_SUFFIX}` : '';
 
-const isNaturalAnalogueSupported = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) =>
-  monomerType === KetMonomerClass.AminoAcid ||
-  monomerType === KetMonomerClass.Base ||
-  monomerType === KetMonomerClass.RNA;
-
 const getInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
   shouldAppendCopySuffix: boolean,
 ): MonomerCreationInitialValues => {
-  const { label, props } = monomer.monomerItem;
+  const { label, props } =
+    'monomerItem' in monomer ? monomer.monomerItem : monomer;
   const type = props.MonomerClass ?? KetMonomerClass.CHEM;
   const symbol = props.MonomerCode ?? label;
   const name = props.MonomerFullName ?? props.Name ?? symbol;
-  const naturalAnalogue = isNaturalAnalogueSupported(type)
+  const naturalAnalogue = isNaturalAnalogueRequired(type)
     ? props.MonomerNaturalAnalogCode
     : '';
   const getValue = shouldAppendCopySuffix
     ? getCopiedValue
     : (value?: string) => value ?? '';
-  const position = monomer.position
-    ? { position: new Vec2(monomer.position) }
-    : {};
+  const position =
+    'position' in monomer && monomer.position
+      ? { position: new Vec2(monomer.position) }
+      : {};
+  const { displayHelmAlias, displayBilnAlias } =
+    getMonomerPropertyVisibility(type);
 
   return {
     type,
     symbol: getValue(symbol),
     name: getValue(name),
     naturalAnalogue,
-    aliasHELM: getValue(props.aliasHELM),
-    aliasBILN: getValue(props.aliasBILN),
+    aliasHELM: displayHelmAlias ? getValue(props.aliasHELM) : '',
+    aliasBILN: displayBilnAlias ? getValue(props.aliasBILN) : '',
     originalType: type,
     originalSymbol: symbol,
     ...position,
@@ -52,13 +55,22 @@ const getInitialValues = (
 };
 
 export const getEditInstanceInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
 ): MonomerCreationInitialValues => {
   return {
     ...getInitialValues(monomer, true),
     editMode: 'instance',
   };
 };
+
+export const getLibraryEditInitialValues = (
+  libraryItem: MonomerItemType,
+): MonomerCreationInitialValues => ({
+  ...getInitialValues(libraryItem, false),
+  libraryOnly: true,
+  originalMonomerItem: libraryItem,
+  modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
+});
 
 const sortAttachmentPoints = (attachmentPoints: AttachmentPointName[]) =>
   [...attachmentPoints].sort((firstAttachmentPoint, secondAttachmentPoint) => {
@@ -94,8 +106,7 @@ const getTemplateClass = (
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-    | MonomerTemplate
-    | undefined;
+    MonomerTemplate | undefined;
 
   return templateRef.class ?? template?.class;
 };
@@ -151,8 +162,7 @@ export const getEditAllInstancesInitialValues = (
     monomersLibraryParsedJson?.root?.templates?.forEach(
       (templateRef: { $ref?: string }) => {
         const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          | RnaPresetTemplate
-          | undefined;
+          RnaPresetTemplate | undefined;
         const isRnaPreset =
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template?.class === KetMonomerClass.RNA;
@@ -187,8 +197,8 @@ export const getEditAllInstancesInitialValues = (
           [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
             const attachmentPointId = endpoint?.attachmentPointId;
             if (
-              isEditedMonomerTemplate(endpoint?.templateId) &&
-              attachmentPointId
+              attachmentPointId &&
+              isEditedMonomerTemplate(endpoint?.templateId)
             ) {
               necessaryAttachmentPoints.add(
                 attachmentPointId as AttachmentPointName,
@@ -214,4 +224,25 @@ export const getEditAllInstancesInitialValues = (
         }
       : {}),
   };
+};
+
+/**
+ * Returns true when the given `MonomerMicromolecule` sgroup represents the
+ * same monomer type and symbol as `primaryMonomer`.
+ *
+ * Use this to scope "edit all instances" to the sgroups the user selected.
+ */
+export const isSameMonomerType = (
+  sgroup: MonomerMicromolecule,
+  primaryMonomer: BaseMonomer,
+): boolean => {
+  const { props, label } = sgroup.monomer.monomerItem;
+  const symbol = props.MonomerCode ?? label;
+  const primarySymbol =
+    primaryMonomer.monomerItem.props.MonomerCode ??
+    primaryMonomer.monomerItem.label;
+  return (
+    props.MonomerClass === primaryMonomer.monomerItem.props.MonomerClass &&
+    symbol === primarySymbol
+  );
 };

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,7 +66,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
         const hbbAtom = struct.atoms.get(halfBondBegin);
 
         if (hbbAtom) {
-          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle
+          xy0.add_(hbbAtom.pp);
           count++;
         }
       }
@@ -76,7 +76,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
       const atomById = struct.atoms.get(id);
 
       if (atomById) {
-        xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
+        xy0.add_(atomById.pp);
         count++;
       }
     });
@@ -103,14 +103,14 @@ export function getAngleFromEvent(
       ? restruct.molecule.halfBonds.get(atom.neighbors[0])?.end
       : undefined;
     const nei =
-      neiId !== undefined ? restruct.molecule.atoms.get(neiId) : undefined;
+      neiId === undefined ? undefined : restruct.molecule.atoms.get(neiId);
 
-    if (!atom || !nei) {
-      angle = 0;
-    } else {
+    if (atom && nei) {
       angle = event?.ctrlKey
         ? vectorUtils.calcAngle(nei.pp, atom.pp)
         : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
+    } else {
+      angle = 0;
     }
   } else {
     // on single atom

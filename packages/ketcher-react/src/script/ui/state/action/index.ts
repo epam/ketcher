@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,23 +15,13 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import {
-  type Struct,
-  type PersistedSelectionTool,
-  SettingsManager,
-} from 'ketcher-core';
+import { type Struct, SettingsManager } from 'ketcher-core';
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
-
-function isPersistedSelectionTool(
-  tool: UiActionAction | null | undefined,
-): tool is PersistedSelectionTool {
-  return (
-    typeof tool === 'object' &&
-    tool !== null &&
-    (tool as { tool?: string }).tool === 'select'
-  );
-}
+import {
+  normalizeSelectionToolForPersistence,
+  restorePersistedSelectionTool,
+} from '../selectionToolPersistence';
 
 type ActionParams = {
   editor: Editor & {
@@ -47,6 +37,11 @@ type ActionParams = {
     };
     buttons?: Record<string, { hidden?: boolean }>;
   };
+  /**
+   * The Settings window is non-modal: the canvas stays visible, so every toolbar
+   * button has to be reported disabled for as long as the window is open.
+   */
+  isSettingsPanelOpen?: boolean;
 };
 
 type ExecuteParams = ActionParams & {
@@ -91,7 +86,7 @@ function execute(
   return activeTool;
 }
 
-function selected(
+function isSelected(
   actObj: UiAction,
   activeTool: UiActionAction | null | undefined,
   { editor, server }: Pick<ActionParams, 'editor' | 'server'>,
@@ -103,7 +98,7 @@ function selected(
   return false;
 }
 
-function disabled(
+function isDisabled(
   actObj: UiAction,
   { editor, server, options }: ActionParams,
 ): boolean {
@@ -112,7 +107,7 @@ function disabled(
   return false;
 }
 
-function hidden(
+function isHidden(
   actObj: UiAction,
   { options }: Pick<ActionParams, 'options'>,
 ): boolean {
@@ -127,9 +122,9 @@ function status(
 ): ActionStatus {
   const actObj = actions[actionName];
   return pickBy((x) => x, {
-    selected: selected(actObj, activeTool, params),
-    disabled: disabled(actObj, params),
-    hidden: hidden(actObj, params),
+    selected: isSelected(actObj, activeTool, params),
+    disabled: params.isSettingsPanelOpen || isDisabled(actObj, params),
+    hidden: isHidden(actObj, params),
   });
 }
 
@@ -160,15 +155,18 @@ export default function (
   let activeTool: UiActionAction | null | undefined;
   switch (type) {
     case 'INIT': {
-      const savedSelectedTool = SettingsManager.selectionTool;
+      const savedSelectedTool = SettingsManager.getSelectionTool('micro');
       const resolvedAction =
-        savedSelectedTool || actions['select-rectangle'].action;
+        restorePersistedSelectionTool(savedSelectedTool) ||
+        actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.selectionTool = activeTool;
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -181,8 +179,10 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if (isPersistedSelectionTool(activeTool)) {
-        SettingsManager.selectionTool = activeTool;
+      const persistedSelectionTool =
+        normalizeSelectionToolForPersistence(activeTool);
+      if (persistedSelectionTool) {
+        SettingsManager.setSelectionTool('micro', persistedSelectionTool);
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -195,6 +195,13 @@ export default function (
         activeTool || state?.activeTool,
         params as ActionParams,
       );
+
+    // Opening or closing a dialog flips `isSettingsPanelOpen`, so the statuses
+    // have to be recomputed on those actions as well.
+    case 'MODAL_OPEN':
+    case 'MODAL_CLOSE':
+      if (!state) return state;
+      return buildStateWithStatuses(state.activeTool, params as ActionParams);
 
     default:
       return state;

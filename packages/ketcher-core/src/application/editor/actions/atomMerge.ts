@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import {
   AtomAttr,
+  AttachmentGroupAttr,
   AtomDelete,
   BondAdd,
   BondAttr,
@@ -30,6 +31,36 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
 import type ReStruct from 'application/render/restruct/restruct';
+import { isAtomMergeAllowedByHapticBonds } from 'domain/helpers/hapticBond';
+
+function replaceAttachmentGroupAtomId(
+  atomIds: number[],
+  srcId: number,
+  dstId: number,
+) {
+  return [
+    ...new Set(atomIds.map((atomId) => (atomId === srcId ? dstId : atomId))),
+  ];
+}
+
+function updateAttachmentGroupsAfterAtomMerge(
+  action: Action,
+  restruct: ReStruct,
+  srcId: number,
+  dstId: number,
+) {
+  restruct.molecule.attachmentGroups.forEach((attachmentGroup, id) => {
+    if (!attachmentGroup.atomIds.includes(srcId)) return;
+
+    action.addOp(
+      new AttachmentGroupAttr(
+        id,
+        'atomIds',
+        replaceAttachmentGroupAtomId(attachmentGroup.atomIds, srcId, dstId),
+      ),
+    );
+  });
+}
 
 export function fromAtomMerge(
   restruct: ReStruct,
@@ -37,6 +68,26 @@ export function fromAtomMerge(
   dstId: number,
 ): Action {
   if (srcId === dstId) return new Action();
+  if (!restruct.molecule.atoms.has(dstId)) return new Action();
+
+  const srcAtom = restruct.molecule.atoms.get(srcId);
+  const dstAtom = restruct.molecule.atoms.get(dstId);
+  if (srcAtom && dstAtom) {
+    const mergedAtomLabel =
+      atomGetDegree(restruct, srcId) === 1 && srcAtom.label === '*'
+        ? 'C'
+        : srcAtom.label;
+    if (
+      !isAtomMergeAllowedByHapticBonds(
+        restruct.molecule,
+        srcId,
+        dstId,
+        mergedAtomLabel,
+      )
+    ) {
+      return new Action();
+    }
+  }
 
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
@@ -65,14 +116,14 @@ export function fromAtomMerge(
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
       Object.keys(attrs).forEach((key) => {
-        action.addOp(new BondAttr(mergeBondId, key, attrs[key]));
+        const attrKey = key as keyof typeof attrs;
+        action.addOp(new BondAttr(mergeBondId, attrKey, attrs[attrKey]));
       });
     }
 
     action.addOp(new BondDelete(nei.bid));
   });
 
-  const srcAtom = restruct.molecule.atoms.get(srcId);
   if (!srcAtom) {
     return action.perform(restruct).mergeWith(fragAction);
   }
@@ -87,6 +138,8 @@ export function fromAtomMerge(
       action.addOp(new AtomAttr(dstId, key, attrs[key]));
     }
   });
+
+  updateAttachmentGroupsAfterAtomMerge(action, restruct, srcId, dstId);
 
   const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 

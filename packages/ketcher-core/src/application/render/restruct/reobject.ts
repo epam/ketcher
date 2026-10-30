@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@
 import type { Box2Abs } from 'domain/entities/box2Abs';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
+import type { Element, RaphaelPaper, RaphaelSet } from 'raphael';
 import { Scale } from 'domain/helpers';
 import Visel from './visel';
 import { IMAGE_KEY } from 'domain/constants';
@@ -24,15 +26,15 @@ import { IMAGE_KEY } from 'domain/constants';
 class ReObject {
   public visel: Visel;
   public hover = false;
-  public hovering: any = null;
+  public hovering: RaphaelSet | Element | null = null;
   public selected = false;
-  public selectionPlate: any = null;
+  public selectionPlate: RaphaelSet | Element | null = null;
 
   constructor(viselType: string) {
     this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: any, drawOutline = true) {
+  changeSelectionStyle(options: RenderOptions, shouldDrawOutline = true) {
     const { hoverStyle } = options;
     if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
@@ -42,7 +44,7 @@ class ReObject {
       this.hovering?.attr({
         fill: hoverStyle.fill,
         'fill-opacity': this.selected ? 1 : 0,
-        stroke: drawOutline ? hoverStyle.stroke : 'none',
+        stroke: shouldDrawOutline ? hoverStyle.stroke : 'none',
       });
     }
   }
@@ -56,40 +58,47 @@ class ReObject {
     return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render, drawOutline = true): void {
+  setHover(isHovered: boolean, render: Render, shouldDrawOutline = true): void {
     // TODO render should be field
     const { options } = render;
-    if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null;
-      if (noredraw) {
+    if (isHovered) {
+      let canReuseHover = 'hovering' in this && this.hovering !== null;
+      if (canReuseHover) {
         if (this.hovering.type === 'set') {
           if (!this.hovering[0]) return;
-          noredraw = !this.hovering[0].removed;
+          canReuseHover = !this.hovering[0].removed;
         } else {
-          noredraw = !this.hovering.removed;
+          canReuseHover = !this.hovering.removed;
         }
       }
-      if (noredraw) {
-        this.changeSelectionStyle(options, drawOutline);
+      if (canReuseHover) {
+        this.changeSelectionStyle(options, shouldDrawOutline);
         this.hovering.show();
       } else {
         render.paper.setStart();
-        this.drawHover(render, drawOutline);
+        this.drawHover(render, shouldDrawOutline);
         this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(options, drawOutline);
+      this.changeSelectionStyle(options, shouldDrawOutline);
       this.hovering.hide();
     }
 
-    this.hover = hover;
+    this.hover = isHovered;
   }
 
-  drawHover(_render: Render, _drawOutline?: boolean): any {
+  drawHover(
+    _render: Render,
+    _shouldDrawOutline?: boolean,
+  ): RaphaelSet | Element | void {
     throw new Error('ReObject.drawHover is not overridden.');
   }
 
-  makeSelectionPlate(_restruct: ReStruct, _paper: any, _styles: any): any {
+  makeSelectionPlate(
+    _restruct: ReStruct,
+    _paper: RaphaelPaper,
+    _styles: RenderOptions,
+  ): RaphaelSet | Element | null {
     throw new Error('ReObject.makeSelectionPlate is not overridden');
   }
 }

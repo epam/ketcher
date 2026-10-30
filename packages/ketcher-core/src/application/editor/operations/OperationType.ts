@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,9 @@ export const OperationType = Object.freeze({
   ATOM_DELETE: 'Delete atom',
   ATOM_ATTR: 'Set atom attribute',
   ATOM_MOVE: 'Move atom',
+  ATTACHMENT_GROUP_ADD: 'Add attachment group',
+  ATTACHMENT_GROUP_DELETE: 'Delete attachment group',
+  ATTACHMENT_GROUP_ATTR: 'Set attachment group attribute',
   CALC_IMPLICIT_H: 'Calculate implicit hydrogen',
   BOND_ADD: 'Add bond',
   BOND_DELETE: 'Delete bond',
@@ -106,9 +109,9 @@ export const OperationType = Object.freeze({
     'Monomer creation :: Mark as RNA component',
 });
 
-/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum OperationPriority {
   ATOM_ATTR = 1,
+  ATTACHMENT_GROUP_ATTR = 1,
   BOND_ADD = 1,
   R_GROUP_ATTACHMENT_POINT_REMOVE = 1,
   ATOM_MOVE = 2,
@@ -118,8 +121,10 @@ export enum OperationPriority {
   S_GROUP_ATOM_ADD = 3,
   S_GROUP_ATTACHMENT_POINT_ADD = 3,
   R_GROUP_ATTACHMENT_POINT_ADD = 3,
+  S_GROUP_ATOM_REMOVE = 4,
   S_GROUP_ATTR = 4,
   ATOM_DELETE = 5,
+  ATTACHMENT_GROUP_DELETE = 5,
   FRAGMENT_STEREO_FLAG = 6,
   CALC_IMPLICIT_H = 10,
   FRAGMENT_DELETE_STEREO_ATOM = 90,
@@ -127,4 +132,3 @@ export enum OperationPriority {
   S_GROUP_ADD_TO_HIERACHY = 100,
   FRAGMENT_ADD_STEREO_ATOM = 100,
 }
-/* eslint-enable @typescript-eslint/no-duplicate-enum-values */

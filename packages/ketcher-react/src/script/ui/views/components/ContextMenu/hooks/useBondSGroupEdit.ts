@@ -16,22 +16,30 @@ const useBondSGroupEdit = () => {
 
   const handler = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const sGroups = Array.from(sGroupsRef.current);
+    const sGroups = [...sGroupsRef.current];
     SGroupTool.sgroupDialog(editor, sGroups[0]);
   }, [ketcherId]);
 
   // In react-contexify, `disabled` is executed before `hidden`
   const disabled = useCallback(
     ({ props }: Params) => {
+      const bondIds = props?.bondIds;
+      if (!bondIds) {
+        return true;
+      }
+
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
-      const bondIds = props!.bondIds!;
 
       if (bondIds.length > 1) {
         return true;
       }
 
-      const bond = struct.bonds.get(bondIds[0])!;
+      const bond = struct.bonds.get(bondIds[0]);
+      if (!bond) {
+        return true;
+      }
+
       sGroupsRef.current = bond.b.getAttachedSGroups(struct.molecule);
 
       return sGroupsRef.current.size > 1;

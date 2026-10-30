@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 import { IconButton, getFullscreenElement } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const requestFullscreen = (element: HTMLElement) => {
   if (element.requestFullscreen) {
@@ -66,6 +67,7 @@ const ButtonContainer = styled.div`
 `;
 
 export const FullscreenButton = (props) => {
+  const { t } = useTranslation('macromolecules');
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen);
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export const FullscreenButton = (props) => {
     const fullscreenElement = getFullscreenElement();
     if (isFullScreen()) {
       exitFullscreen();
-    } else {
+    } else if (fullscreenElement) {
       requestFullscreen(fullscreenElement);
     }
   };
@@ -100,6 +102,7 @@ export const FullscreenButton = (props) => {
       <IconButton
         onClick={toggleFullscreen}
         iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}
+        title={t('buttons.fullscreen')}
         testId="fullscreen-mode-button"
       />
     </ButtonContainer>

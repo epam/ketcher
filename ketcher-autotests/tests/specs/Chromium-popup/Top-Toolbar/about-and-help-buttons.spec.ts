@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -65,11 +61,11 @@ test.describe('Top toolbar Macro mode', () => {
     await page.bringToFront();
     await clickByLink(
       page,
-      'http://lifescience.opensource.epam.com/ketcher/#feedback',
+      'https://lifescience.opensource.epam.com/ketcher/#feedback',
     );
     await page.bringToFront();
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/');
     await page.bringToFront();
-    await clickByLink(page, 'http://lifescience.opensource.epam.com/indigo/');
+    await clickByLink(page, 'https://lifescience.opensource.epam.com/indigo/');
   });
 });

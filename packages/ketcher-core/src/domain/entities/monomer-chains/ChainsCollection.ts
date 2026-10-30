@@ -17,6 +17,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  isLinearChem,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
@@ -236,10 +237,10 @@ export class ChainsCollection {
 
         handledMonomers.add(previousMonomerInChain);
 
-        if (!previousMonomer) {
-          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
-        } else {
+        if (previousMonomer) {
           previousMonomerInChain = previousMonomer;
+        } else {
+          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
         }
       }
     });
@@ -269,11 +270,22 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
-      return (
+      const isStart =
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&
-        !isRnaBaseConnectedToSugar
-      );
+        !isRnaBaseConnectedToSugar;
+      if (isStart && !isMonomerConnectedToR2RnaBase(monomer)) {
+        const previousMonomer = getPreviousMonomerInChain(monomer);
+
+        if (
+          previousMonomer &&
+          (isLinearChem(monomer) || isLinearChem(previousMonomer))
+        ) {
+          return false;
+        }
+      }
+
+      return isStart;
     });
 
     return firstMonomersInRegularChains;
@@ -302,7 +314,7 @@ export class ChainsCollection {
       }
 
       if (monomer === nextMonomerInChain) {
-        cyclicChains.push(Array.from(monomersInSameChain));
+        cyclicChains.push([...monomersInSameChain]);
       }
     });
 
@@ -316,7 +328,7 @@ export class ChainsCollection {
   private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerListShallowCopy = monomerList.slice();
+    const monomerListShallowCopy = [...monomerList];
 
     monomerListShallowCopy.sort((monomer1, monomer2) => {
       if (
@@ -335,7 +347,13 @@ export class ChainsCollection {
   }
 
   public get lastNode() {
-    return this.chains[0].lastSubChain.lastNode;
+    const lastNode = this.chains[0]?.lastSubChain?.lastNode;
+
+    if (!lastNode) {
+      throw new Error('Cannot get the last node of an empty chains collection');
+    }
+
+    return lastNode;
   }
 
   public get length() {
@@ -443,9 +461,6 @@ export class ChainsCollection {
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
   ) {
-    let complimentaryChain: Chain | undefined;
-    let complimentaryNode: SubChainNode | undefined;
-
     for (const monomerToCheck of node.monomers) {
       const { monomer, complimentaryMonomer } =
         this.getFirstComplimentaryMonomer(monomerToCheck) || {};
@@ -473,7 +488,7 @@ export class ChainsCollection {
       };
     }
 
-    return { complimentaryChain, complimentaryNode };
+    return { complimentaryChain: undefined, complimentaryNode: undefined };
   }
 
   private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {
@@ -521,9 +536,7 @@ export class ChainsCollection {
               ) ?? {};
             if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
               const curChainIdx =
-                reorderedSenseForSequentialAntisenseChains.findIndex(
-                  (v) => v === chain,
-                );
+                reorderedSenseForSequentialAntisenseChains.indexOf(chain);
               let last = anotherSenseChain;
               for (
                 let i = curChainIdx;

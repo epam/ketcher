@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,12 +36,13 @@ import {
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,
-  selectIsAbbreviationLookupOpen,
+  isAbbreviationLookupOpen,
 } from './abbreviationLookup/selectors';
 import {
   closeAbbreviationLookup,
@@ -51,6 +53,8 @@ import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+const affectedTools = new Set(['paste', 'template']);
+const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -70,15 +74,15 @@ export function removeKeydownListener(element) {
 }
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
-  const affectedTools = ['paste', 'template'];
-  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  if (affectedTools.has(actionTool.tool) && group?.includes('save')) {
     dispatch(removeStructAction());
   }
 }
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = [
+const shortcutKeys = new Set([
+  '0',
   '1',
   '2',
   '3',
@@ -94,23 +98,25 @@ const shortcutKeys = [
   'b',
   '+',
   '-',
-];
+]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+  if (globalThis.isPolymerEditorTurnedOn) {
+    return true;
+  }
+  if (state.modal || isAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
   // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
-  // Ideally x2 – create a common event interception layer for both micro and macro editors
   return isEditableInputTarget(event.target);
 }
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -119,14 +125,16 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     clearTimeout(abbreviationLookupTimeoutId);
     abbreviationLookupTimeoutId = undefined;
 
-    const resetAction = SettingsManager.getSettings().selectionTool;
+    const resetAction = restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
     dispatch(onAction(resetAction));
 
     event.preventDefault();
     return true;
   }
 
-  abbreviationLookupTimeoutId = window.setTimeout(() => {
+  abbreviationLookupTimeoutId = globalThis.window.setTimeout(() => {
     dispatch(closeAbbreviationLookup());
     abbreviationLookupTimeoutId = undefined;
   }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
@@ -169,13 +177,13 @@ function handleRotateEscape(editor) {
 
 function isActionDisabledOrHidden(actionState, actName): boolean {
   return (
-    (actionState[actName] && actionState[actName].disabled === true) ||
+    actionState[actName]?.disabled === true ||
     actionState[actName]?.hidden === true
   );
 }
 
 function getNextAction(actName) {
-  return ['zoom-in', 'zoom-out'].includes(actName)
+  return zoomActionNames.has(actName)
     ? actions[actName].action()
     : actions[actName].action;
 }
@@ -186,19 +194,40 @@ function shouldHandleItemDirectly(
 ): hoveredItem is Record<string, number> {
   return Boolean(
     hoveredItem &&
-      newAction.tool !== 'select' &&
-      newAction.dialog !== 'templates',
+    newAction.tool !== 'select' &&
+    newAction.dialog !== 'templates',
   );
 }
 
 function handleSelectTool(newAction, key: string, index: number) {
   if (key === 'Escape') {
-    return SettingsManager.getSettings().selectionTool;
+    return restorePersistedSelectionTool(
+      SettingsManager.getSelectionTool('micro'),
+    );
   }
   if (index === -1) {
     return {};
   }
   return newAction;
+}
+
+// While hovering a bond, cycling through a shared shortcut (e.g. '1' for
+// single/up/down/updown) must advance from the bond's own current type/stereo,
+// not from the active toolbar tool (which doesn't change just from hovering,
+// so re-pressing the key would otherwise always land on the same entry) (#3705).
+function getNextBondTypeAction(hoveredItem, group, render) {
+  const hoveredBondId = hoveredItem.bonds;
+  if (hoveredBondId === undefined) return null;
+
+  const bond = render.ctab.bonds.get(hoveredBondId)?.b;
+  if (!bond) return null;
+
+  const currentIndex = group.findIndex((actName) => {
+    const opts = actions[actName]?.action?.opts;
+    return opts?.type === bond.type && opts?.stereo === bond.stereo;
+  });
+
+  return getNextAction(group[(currentIndex + 1) % group.length]);
 }
 
 function handleHotkeyGroup(
@@ -212,7 +241,7 @@ function handleHotkeyGroup(
   event,
 ) {
   const index = checkGroupOnTool(group, actionTool);
-  const groupLength = group !== null ? group.length : 1;
+  const groupLength = group === null ? 1 : group.length;
   const newIndex = (index + 1) % groupLength;
   const actName = group[newIndex];
 
@@ -221,9 +250,14 @@ function handleHotkeyGroup(
     return;
   }
 
+  if (actName === 'undo' || actName === 'redo') {
+    // A history entry can switch editors while this key event is still bubbling.
+    event.stopImmediatePropagation();
+  }
+
   removeNotRenderedStruct(actionTool, group, dispatch);
 
-  if (clipArea.actions.indexOf(actName) === -1) {
+  if (!clipArea.actions.includes(actName)) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
     const { atoms, bonds } = editor.selection() ?? {};
@@ -233,7 +267,10 @@ function handleHotkeyGroup(
     if (actName === 'erase' && hasSelection) {
       dispatch(onAction(newAction));
     } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
-      newAction = getCurrentAction(group[index]) || newAction;
+      newAction =
+        getNextBondTypeAction(hoveredItem, group, render) ||
+        getCurrentAction(group[index]) ||
+        newAction;
       handleHotkeyOverItem({
         hoveredItem,
         newAction,
@@ -249,11 +286,13 @@ function handleHotkeyGroup(
 
     event.preventDefault();
   } else if (isIE) {
-    clipArea.exec(event);
+    clipArea.canExecuteClipboardCommand(event);
   }
 }
 
-/* HotKeys */
+/*
+HotKeys
+*/
 function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState();
 
@@ -268,7 +307,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key && key.length === 1 && !hoveredItem) {
+  if (!hoveredItem && key?.length === 1) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -285,7 +324,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }
@@ -350,7 +389,9 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
-/* ClipArea */
+/*
+ClipArea
+*/
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
@@ -365,7 +406,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal;
+      return !state.modal && !globalThis.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();
@@ -459,10 +500,10 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const simpleObjectOrText = Boolean(
+  const hasSimpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
-  if (simpleObjectOrText && isIE && errorHandler) {
+  if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
@@ -504,10 +545,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 
@@ -536,10 +577,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+  } catch (error: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error.message);
     }
   }
 

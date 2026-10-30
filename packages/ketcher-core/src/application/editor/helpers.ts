@@ -25,8 +25,7 @@ export enum MonomerNameValidationErrorType {
 }
 
 export type MonomerNameValidationResult =
-  | { isValid: true }
-  | { isValid: false; error: MonomerNameValidationErrorType };
+  { isValid: true } | { isValid: false; error: MonomerNameValidationErrorType };
 
 const MONOMER_NAME_ALLOWED_CHARACTERS_REGEXP = /^[A-Za-z0-9_*-]+$/;
 

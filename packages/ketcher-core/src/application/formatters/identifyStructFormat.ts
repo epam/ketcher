@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,9 +36,9 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (e) {
-    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
-  } // eslint-disable-line
+  } catch (error) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', error);
+  }
 
   const isRXN = sanitizedString.includes('$RXN');
   const isSDF = sanitizedString.includes('\n$$$$');
@@ -79,7 +79,7 @@ export function identifyStructFormat(
 
   if (
     sanitizedString.startsWith('<') &&
-    sanitizedString.indexOf('<molecule') !== -1
+    sanitizedString.includes('<molecule')
   ) {
     return SupportedFormat.cml;
   }
@@ -87,13 +87,13 @@ export function identifyStructFormat(
   const clearStr = sanitizedString
     .replace(/\s/g, '')
     .replace(/(\\r)|(\\n)/g, '');
-  const isBase64String =
+  const base64StringPattern =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';
   if (
     clearStr.length % 4 === 0 &&
-    isBase64String.test(clearStr) &&
-    window.atob(clearStr).startsWith(cdxHeader)
+    base64StringPattern.test(clearStr) &&
+    globalThis.atob(clearStr).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx;
   }
@@ -102,7 +102,7 @@ export function identifyStructFormat(
     return SupportedFormat.inChI;
   }
 
-  if (sanitizedString.indexOf('<CDXML') !== -1) {
+  if (sanitizedString.includes('<CDXML')) {
     return SupportedFormat.cdxml;
   }
 
@@ -114,7 +114,7 @@ export function identifyStructFormat(
     return SupportedFormat.idt;
   }
 
-  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
+  if (!isMacromolecules && !sanitizedString.includes('\n')) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }

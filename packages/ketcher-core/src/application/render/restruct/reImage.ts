@@ -1,6 +1,7 @@
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
+import type { RaphaelPath } from './raphaelTypes';
 import type {
   Image,
   ImageReferenceName,
@@ -27,10 +28,10 @@ export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
   private selectionHitTargetsSet: RaphaelSet;
 
-  private setSelectionPointsVisibility(visible: boolean) {
+  private setSelectionPointsVisibility(isVisible: boolean) {
     this.selectionPointsSet?.attr({
-      opacity: visible ? 1 : 0,
-      'pointer-events': visible ? 'all' : 'none',
+      opacity: isVisible ? 1 : 0,
+      'pointer-events': isVisible ? 'all' : 'none',
     });
   }
 
@@ -190,8 +191,8 @@ export class ReImage extends ReObject {
         element.node.setAttribute('pointer-events', 'none');
       }
       if (hitTarget.node?.setAttribute) {
-        hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
-        hitTarget.node.setAttribute('data-image-id', imageId);
+        hitTarget.node.dataset.testid = `imageResize-${key}`;
+        hitTarget.node.dataset.imageId = String(imageId);
         hitTarget.node.setAttribute('pointer-events', 'all');
       }
 
@@ -211,8 +212,11 @@ export class ReImage extends ReObject {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: any) {
+  show(
+    restruct: ReStruct,
+    renderOptions: RenderOptions,
+    nextPath?: RaphaelPath,
+  ) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.image.getTopLeftPosition(),
       renderOptions,
@@ -227,9 +231,8 @@ export class ReImage extends ReObject {
       dimensions.x,
       dimensions.y,
     );
-    image.node.setAttribute('data-testid', 'image');
-    image.node.setAttribute(
-      'data-image-id',
+    image.node.dataset.testid = 'image';
+    image.node.dataset.imageId = String(
       restruct.molecule.images.keyOf(this.image),
     );
     restruct.addReObjectPath(LayerMap.images, this.visel, image);

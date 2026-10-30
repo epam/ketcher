@@ -7,8 +7,8 @@ import {
   CoordinateTransformation,
   fromArrowResizing,
   fromMultipleMove,
+  assert,
 } from 'ketcher-core';
-import assert from 'assert';
 import { ArrowTool } from './arrowTool';
 
 export class ReactionArrowMoveTool
@@ -44,13 +44,7 @@ export class ReactionArrowMoveTool
     const { closestItem, originalPosition } = dragContext;
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const offset = this.getOffset(event, originalPosition);
-    if (!closestItem.ref) {
-      return fromMultipleMove(
-        this.reStruct,
-        this.editor.selection() ?? {},
-        offset,
-      );
-    } else {
+    if (closestItem.ref) {
       this.updateResizingState(closestItem, true);
       const isSnappingEnabled = !event.ctrlKey;
       return fromArrowResizing(
@@ -60,6 +54,12 @@ export class ReactionArrowMoveTool
         current,
         closestItem.ref,
         isSnappingEnabled,
+      );
+    } else {
+      return fromMultipleMove(
+        this.reStruct,
+        this.editor.selection() ?? {},
+        offset,
       );
     }
   }

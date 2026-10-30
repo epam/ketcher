@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -104,6 +103,15 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
+function getEnumKeyByValue<T extends Record<string, string>>(
+  enumObj: T,
+  value: string,
+): keyof T | undefined {
+  return (Object.keys(enumObj) as Array<keyof T>).find(
+    (key) => enumObj[key] === value,
+  );
+}
+
 test.describe('RNA Library', () => {
   let page: Page;
 
@@ -178,15 +186,6 @@ test.describe('RNA Library', () => {
         'After clicking on the arrow, the Phosphates component expanded.',
     },
   ];
-
-  function getEnumKeyByValue<T extends Record<string, string>>(
-    enumObj: T,
-    value: string,
-  ): keyof T | undefined {
-    return (Object.keys(enumObj) as Array<keyof T>).find(
-      (key) => enumObj[key] === value,
-    );
-  }
 
   for (const [index, data] of testData.entries()) {
     const enumKey = getEnumKeyByValue(RNASection, data.component);

@@ -20,25 +20,20 @@ Provides the React component tree that hosts the Raphael-based 2D small molecule
 
 ## Internal Structure
 
-```
-src/
-├── Editor.tsx              # Top-level: toggles micro ↔ macro, lazy-loads macro package
-├── MicromoleculesEditor.tsx # Redux Provider + Raphael canvas mount
-├── script/
-│   ├── api.ts             # ketcherBuilder entry point (creates Ketcher + Editor instances)
-│   ├── editor/
-│   │   ├── Editor.ts      # Micromolecules editor controller (wraps Raphael, tools, selection)
-│   │   └── tool/          # 30+ tool implementations (atom, bond, sgroup, template, erase, etc.)
-│   ├── ui/
-│   │   ├── views/
-│   │   │   ├── toolbars/  # LeftToolbar, TopToolbar, BottomToolbar, RightToolbar, FloatingTools
-│   │   │   ├── modal/     # All dialog windows (settings, templates, sgroup, etc.)
-│   │   │   └── Editor.jsx # Legacy JSX editor view
-│   │   ├── state/         # Redux slices (editor, options, modal, server, templates, hotkeys, …)
-│   │   └── dialog/        # Dialog-specific logic
-│   └── providers/         # React context providers
-└── components/            # Shared React components (toolbar items, icons, etc.)
-```
+| Path                             | Purpose                                                              |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `src/Editor.tsx`                 | Top-level: toggles micro ↔ macro, lazy-loads macro package           |
+| `src/MicromoleculesEditor.tsx`   | Redux Provider + Raphael canvas mount                                |
+| `src/script/api.ts`              | `ketcherBuilder` entry point (creates Ketcher + Editor instances)    |
+| `src/script/editor/Editor.ts`    | Micromolecules editor controller (wraps Raphael, tools, selection)   |
+| `src/script/editor/tool/`        | 30+ tool implementations (atom, bond, sgroup, template, erase, etc.) |
+| `src/script/ui/views/toolbars/`  | LeftToolbar, TopToolbar, BottomToolbar, RightToolbar, FloatingTools  |
+| `src/script/ui/views/modal/`     | All dialog windows (settings, templates, sgroup, etc.)               |
+| `src/script/ui/views/Editor.jsx` | Legacy JSX editor view                                               |
+| `src/script/ui/state/`           | Redux slices: editor, options, modal, server, templates, hotkeys, …  |
+| `src/script/ui/dialog/`          | Dialog-specific logic                                                |
+| `src/script/providers/`          | React context providers                                              |
+| `src/components/`                | Shared React components (toolbar items, icons, etc.)                 |
 
 ## State Management
 
@@ -64,6 +59,8 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 - End-user applications (embed the `Editor` component)
 
 ## Assumptions & Constraints
+
+- The paste tool and S-Group dialog do not run a canvas-wide S-Group expansion pass. Non-SUP groups are always expanded according to `SGroup.isExpanded()`; these UI paths do not normalize the raw `data.expanded` flag of unrelated groups.
 
 - The `Editor.tsx` file manages the `window.isPolymerEditorTurnedOn` global flag. This is used to turn on/off some functionality in ketcher (f.e. some api methods, events). It is bad practice and should be refactored in the future to get rid of this flag.
 - `ketcher-macromolecules` is imported dynamically (`React.lazy`) to avoid a circular dependency. If changed to a static import, the circular dependency must be resolved first.

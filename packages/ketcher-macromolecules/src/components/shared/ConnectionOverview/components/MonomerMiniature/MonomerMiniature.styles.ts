@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+export const DEFAULT_MINIATURE_SIZE = 150;
+
 export const Container = styled.div<{ expanded?: boolean }>(
   ({ theme, expanded }) => ({
     display: 'flex',
@@ -7,9 +9,9 @@ export const Container = styled.div<{ expanded?: boolean }>(
     borderRadius: '6px',
     padding: 5,
     maxHeight: '100%',
-    minHeight: '150px',
-    height: expanded ? 'auto' : '150px',
-    width: expanded ? 'auto' : '150px',
+    minHeight: `${DEFAULT_MINIATURE_SIZE}px`,
+    height: expanded ? 'auto' : `${DEFAULT_MINIATURE_SIZE}px`,
+    width: expanded ? 'auto' : `${DEFAULT_MINIATURE_SIZE}px`,
     alignSelf: 'stretch',
     '& svg': {
       maxWidth: 'fit-content',

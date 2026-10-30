@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import { test } from '@fixtures';
 import {
   waitForPageInit,

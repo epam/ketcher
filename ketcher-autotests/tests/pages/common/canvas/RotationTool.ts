@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 
@@ -42,13 +41,13 @@ export const RotationTool = (page: Page) => {
 
     async moveRotationHandleTo(
       coordinates: { x: number; y: number },
-      performMouseUp = true,
+      shouldPerformMouseUp = true,
     ) {
       await locators.rotationHandle.hover();
       await waitForRender(page, async () => {
         await page.mouse.down();
         await page.mouse.move(coordinates.x, coordinates.y);
-        if (performMouseUp) {
+        if (shouldPerformMouseUp) {
           await page.mouse.up();
         }
       });

@@ -39,7 +39,7 @@ interface LabelEditFormState {
   };
 }
 
-interface LabelEditProps extends AtomLabelData {
+interface LabelEditProperties extends AtomLabelData {
   letter?: string;
   formState: LabelEditFormState;
   onCancel: () => void;
@@ -63,12 +63,12 @@ const VALID_GENERIC_LABELS = new Set(['A', 'Q', 'X', 'M']);
 
 const isValidLabel = (value: string): boolean => deserialize(value) !== null;
 
-function parseCharge(chargeStr: string): number {
-  let charge = Number.parseInt(chargeStr, 10);
+function parseCharge(chargeString: string): number {
+  let charge = Number.parseInt(chargeString, 10);
   if (Number.isNaN(charge)) {
     charge = 1;
   }
-  if (chargeStr.endsWith('-')) {
+  if (chargeString.endsWith('-')) {
     charge = -charge;
   }
   return charge;
@@ -94,9 +94,9 @@ export function deserialize(value: string): AtomLabelData | null {
   return null;
 }
 
-function LabelEdit(props: Readonly<LabelEditProps>) {
-  const init = { label: props.letter ?? serialize(props) };
-  const { formState, ...prop } = props;
+function LabelEdit(properties: Readonly<LabelEditProperties>) {
+  const init = { label: properties.letter ?? serialize(properties) };
+  const { formState, ...property } = properties;
   const { result, valid } = formState;
   const { t } = useTranslation(['common', 'dialogs']);
 
@@ -111,7 +111,7 @@ function LabelEdit(props: Readonly<LabelEditProps>) {
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       focusable={false}
-      params={prop}
+      params={property}
     >
       <Form
         schema={labelEditSchema}

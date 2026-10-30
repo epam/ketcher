@@ -15,13 +15,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
+type StateProps = Pick<BaseProperties, 'formState'>;
 type DispatchProps = Pick<BaseCallProps, 'onOk'>;
 
 const mapStateToProps = (state: any): StateProps => ({

@@ -46,14 +46,15 @@ function updateVisibleTools(
   const menuHeight = globalThis.innerHeight;
 
   return Object.keys(visibleTool).reduce<VisibleTools>(
-    (res, key) => {
-      if (key === 'bond' && menuHeight > 700) return res; // TODO remove me after update styles
-      if (key === 'transform' && menuHeight > 800) return res;
-      if (key === 'rgroup' && menuHeight > 850) return res;
-      if (key === 'shape' && menuHeight > 900) return res;
+    (resource, key) => {
+      if (key === 'bond' && menuHeight > 700) return resource; // TODO remove me after update styles
+      if (key === 'transform' && menuHeight > 800) return resource;
+      if (key === 'rgroup' && menuHeight > 850) return resource;
+      if (key === 'shape' && menuHeight > 900) return resource;
       const matchesBondGroup = regExp.exec(key);
-      if (!matchesBondGroup || menuHeight > 700) res[key] = visibleTool[key];
-      return res;
+      if (!matchesBondGroup || menuHeight > 700)
+        resource[key] = visibleTool[key];
+      return resource;
     },
     { ...activeTool },
   );
@@ -169,20 +170,20 @@ function toolInMenu(action: ActiveTool): VisibleTools | null {
 }
 
 export function hiddenAncestor(
-  el: HTMLElement | null,
+  element: HTMLElement | null,
   base?: HTMLElement,
 ): HTMLElement | null {
   base = base || document.body;
-  let findEl = el;
+  let findElement = element;
 
   while (
-    findEl &&
-    globalThis.getComputedStyle(findEl).overflow !== 'hidden' &&
-    !findEl.classList.contains('opened')
+    findElement &&
+    globalThis.getComputedStyle(findElement).overflow !== 'hidden' &&
+    !findElement.classList.contains('opened')
   ) {
-    if (findEl === base) return null;
-    findEl = findEl.parentElement;
+    if (findElement === base) return null;
+    findElement = findElement.parentElement;
   }
 
-  return findEl;
+  return findElement;
 }

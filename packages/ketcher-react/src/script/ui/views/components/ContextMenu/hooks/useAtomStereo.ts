@@ -4,20 +4,20 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo';
 import type {
-  AtomContextMenuProps,
-  ItemEventParams,
+  AtomContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { noOperation } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
+type Parameters_ = ItemEventParameters<AtomContextMenuProperties>;
 
 const useAtomStereo = () => {
   const { ketcherId } = useAppContext();
-  const stereoAtomIdsRef = useRef<number[] | undefined>(undefined);
+  const stereoAtomIdsReference = useRef<number[] | undefined>(undefined);
 
   const handler = useCallback(
-    async ({ props }: Params) => {
-      if (!props || !stereoAtomIdsRef.current) {
+    async ({ props }: Parameters_) => {
+      if (!props || !stereoAtomIdsReference.current) {
         return;
       }
 
@@ -26,7 +26,7 @@ const useAtomStereo = () => {
       try {
         const action = await EnhancedStereoTool.changeAtomsStereoAction(
           editor,
-          stereoAtomIdsRef.current,
+          stereoAtomIdsReference.current,
         );
 
         if (action) {
@@ -41,13 +41,13 @@ const useAtomStereo = () => {
   );
 
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),
         props?.atomIds,
       );
-      stereoAtomIdsRef.current = stereoAtomIds;
+      stereoAtomIdsReference.current = stereoAtomIds;
 
       if (Array.isArray(stereoAtomIds) && stereoAtomIds.length !== 0) {
         return false;

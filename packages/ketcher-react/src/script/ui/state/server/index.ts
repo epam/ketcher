@@ -47,12 +47,12 @@ export function checkServer() {
     const { editor, server } = getState();
 
     server.then(
-      (res) =>
+      (resource) =>
         dispatch(
           appUpdate({
-            indigoVersion: res?.indigoVersion,
-            imagoVersions: res?.imagoVersions,
-            server: res?.isAvailable,
+            indigoVersion: resource?.indigoVersion,
+            imagoVersions: resource?.imagoVersions,
+            server: resource?.isAvailable,
           }),
         ),
       (error: unknown) => {
@@ -68,8 +68,8 @@ export function recognize(file: File | null, version: string) {
     const rec = server.recognize;
 
     const process = rec(file as Blob, version).then(
-      (res) => {
-        dispatch(setStruct(res.struct));
+      (resource) => {
+        dispatch(setStruct(resource.struct));
       },
       (error) => {
         dispatch(setStruct(null));
@@ -80,26 +80,26 @@ export function recognize(file: File | null, version: string) {
   };
 }
 
-function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
+function ketcherCheck(struct: Struct, checkParameters: CheckOption[]) {
   const errors: KetcherCheckErrors = {};
 
-  if (checkParams.includes('chiral_flag')) {
-    const isAbs = [...struct.frags.values()].some(
+  if (checkParameters.includes('chiral_flag')) {
+    const isAbs = Array.from(struct.frags.values()).some(
       (fr) => (fr?.enhancedStereoFlag as string | undefined) === 'abs',
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }
 
-  if (checkParams.includes('valence')) {
-    let badVal = 0;
+  if (checkParameters.includes('valence')) {
+    let badValue = 0;
     struct.atoms.forEach((atom) => {
       if (atom.badConn) {
-        badVal++;
+        badValue++;
       }
     });
-    if (badVal > 0) {
-      errors.valence = `Structure contains ${badVal} atom${
-        badVal === 1 ? '' : 's'
+    if (badValue > 0) {
+      errors.valence = `Structure contains ${badValue} atom${
+        badValue === 1 ? '' : 's'
       } with bad valence`;
     }
   }
@@ -107,7 +107,7 @@ function ketcherCheck(struct: Struct, checkParams: CheckOption[]) {
   return errors;
 }
 
-export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
+export function check(optionsTypes: CheckOption[]): AppThunk<Promise<void>> {
   return (dispatch: AppDispatch, getState: () => StoreState) => {
     const { editor, server } = getState();
     const struct = editor.struct();
@@ -116,15 +116,15 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
     // because for atoms in collapsed sgroups it can be not calculated
     struct.setImplicitHydrogen(undefined, true);
 
-    const ketcherErrors = ketcherCheck(struct, optsTypes);
+    const ketcherErrors = ketcherCheck(struct, optionsTypes);
 
     const options = getState().options.getServerSettings();
-    options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
+    options.data = { types: without(['valence', 'chiral_flag'], optionsTypes) };
 
     return serverCall<CheckResult>(editor, server, 'check', options)
-      .then((res) => {
-        res = Object.assign(res, ketcherErrors); // merge Indigo check with Ketcher check
-        dispatch(checkErrors(res));
+      .then((resource) => {
+        resource = Object.assign(resource, ketcherErrors); // merge Indigo check with Ketcher check
+        dispatch(checkErrors(resource));
       })
       .catch((error) => {
         KetcherLogger.error('index.js::check', error);
@@ -133,8 +133,8 @@ export function check(optsTypes: CheckOption[]): AppThunk<Promise<void>> {
   };
 }
 
-export function automap(res: AutomapRequest) {
-  return serverTransform('automap', res);
+export function automap(resource: AutomapRequest) {
+  return serverTransform('automap', resource);
 }
 
 export function analyse(): AppThunk {
@@ -176,14 +176,20 @@ export function serverTransform(
 ) {
   return (dispatch: AppDispatch, getState: () => StoreState): void => {
     const state = getState();
-    const opts = state.options.getServerSettings();
+    const options = state.options.getServerSettings();
 
-    opts.data = data;
+    options.data = data;
     dispatch(indigoVerification(true));
 
-    serverCall<LayoutResult>(state.editor, state.server, method, opts, struct)
-      .then((res) => {
-        const loadedStruct = new KetSerializer().deserialize(res.struct);
+    serverCall<LayoutResult>(
+      state.editor,
+      state.server,
+      method,
+      options,
+      struct,
+    )
+      .then((resource) => {
+        const loadedStruct = new KetSerializer().deserialize(resource.struct);
 
         return dispatch(
           load(loadedStruct, {

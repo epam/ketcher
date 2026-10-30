@@ -5,12 +5,14 @@ import {
   useMultitailArrowTailsRemove,
 } from '../hooks/useMultitailArrowTails';
 import type {
-  MenuItemsProps,
-  MultitailArrowContextMenuProps,
+  MenuItemsProperties,
+  MultitailArrowContextMenuProperties,
 } from '../contextMenu.types';
 
 export function MultitailArrowMenuItems(
-  props: Readonly<MenuItemsProps<MultitailArrowContextMenuProps>>,
+  properties: Readonly<
+    MenuItemsProperties<MultitailArrowContextMenuProperties>
+  >,
 ) {
   const { t } = useTranslation('components');
   const { addTail, isAddTailDisabled } = useMultitailArrowTailsAdd();
@@ -18,7 +20,7 @@ export function MultitailArrowMenuItems(
   return (
     <>
       <Item
-        {...props}
+        {...properties}
         data-testid="Remove tail-option"
         onClick={removeTail}
         hidden={removeTailHidden}
@@ -26,7 +28,7 @@ export function MultitailArrowMenuItems(
         {t('contextMenu.removeTail')}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid="Add new tail-option"
         onClick={addTail}
         disabled={isAddTailDisabled}

@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const templatesLibSelector = (state) => {
+export const templatesLibrarySelector = (state) => {
   return state.templates.lib;
 };

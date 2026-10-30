@@ -15,4 +15,4 @@
  ***************************************************************************/
 
 export { Dialog } from './Dialog';
-export type { DialogParams } from './Dialog';
+export type { DialogParameters } from './Dialog';

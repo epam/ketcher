@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
@@ -50,7 +50,7 @@ import { onAction } from 'src/script/ui/state/shared';
 import i18n from 'src/i18n/i18n';
 import { saveAs } from 'file-saver';
 
-interface SettingsProps extends BaseProps {
+interface SettingsProps extends BaseProperties {
   ketcherId: string;
   initState: SettingsFormValue;
   appOpts: {

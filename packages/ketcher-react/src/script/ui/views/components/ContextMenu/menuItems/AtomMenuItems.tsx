@@ -8,8 +8,8 @@ import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import useMarkAs from '../hooks/useMarkAs';
 import type {
-  AtomContextMenuProps,
-  MenuItemsProps,
+  AtomContextMenuProperties,
+  MenuItemsProperties,
 } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
@@ -112,7 +112,9 @@ function getAtomPropertiesForSubMenu(t: TFunction): {
   ];
 }
 
-const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
+const AtomMenuItems: FC<MenuItemsProperties<AtomContextMenuProperties>> = (
+  properties_,
+) => {
   const { t } = useTranslation(['components', 'common']);
   const atomPropertiesForSubMenu = useMemo(
     () => getAtomPropertiesForSubMenu(t),
@@ -132,7 +134,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const struct = editor.struct();
   const editableAtomIds = getEditableAtomIds(
     struct,
-    props.propsFromTrigger?.atomIds ?? [],
+    properties_.propsFromTrigger?.atomIds ?? [],
   );
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
@@ -169,15 +171,16 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     }
   };
 
-  const isOnlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
-  const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
+  const isOnlyOneAtomSelected =
+    properties_.propsFromTrigger?.atomIds?.length === 1;
+  const selectedAtomId = properties_.propsFromTrigger?.atomIds?.[0];
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
   );
 
   const highlightAtomWithColor = (color: string) => {
-    const atomIds = props.propsFromTrigger?.atomIds || [];
+    const atomIds = properties_.propsFromTrigger?.atomIds || [];
     editor.highlights.create({
       atoms: atomIds,
       rgroupAttachmentPoints: [],
@@ -187,7 +190,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   };
 
   const makeAttachmentPointMenuItems = useMakeAttachmentPointMenuItems({
-    props,
+    props: properties_,
     selectedAtomId,
     editor,
   });
@@ -197,7 +200,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
         <MenuSeparator />
-        <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+        <Item
+          {...properties_}
+          data-testid="Delete-option"
+          onClick={handleDelete}
+        >
           <Icon name="deleteMenu" className={styles.icon} />
           <span className={styles.contextMenuText}>{t('common:delete')}</span>
         </Item>
@@ -205,10 +212,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     );
   }
 
-  const editMenuItemTitle = props.propsFromTrigger?.extraItemsSelected
+  const editMenuItemTitle = properties_.propsFromTrigger?.extraItemsSelected
     ? 'Edit selected atoms...'
     : 'Edit...';
-  const editMenuItemLabel = props.propsFromTrigger?.extraItemsSelected
+  const editMenuItemLabel = properties_.propsFromTrigger?.extraItemsSelected
     ? t('components:contextMenu.editSelectedAtomsEllipsis')
     : t('components:contextMenu.editEllipsis');
 
@@ -220,14 +227,14 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     <>
       {showMarkAsMenu && (
         <Submenu
-          {...props}
+          {...properties_}
           data-testid="Mark as a...-option"
           label={t('components:contextMenu.markAsMenu')}
           disabled={markAsDisabled}
           className={styles.subMenu}
         >
           <Item
-            {...props}
+            {...properties_}
             data-testid="Mark as Base-option"
             onClick={handleMarkAs('base')}
           >
@@ -238,7 +245,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             <span>{t('common:monomerType.base')}</span>
           </Item>
           <Item
-            {...props}
+            {...properties_}
             data-testid="Mark as Sugar-option"
             onClick={handleMarkAs('sugar')}
           >
@@ -249,7 +256,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             <span>{t('common:monomerType.sugar')}</span>
           </Item>
           <Item
-            {...props}
+            {...properties_}
             data-testid="Mark as Phosphate-option"
             onClick={handleMarkAs('phosphate')}
           >
@@ -268,7 +275,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         </>
       )}
       <Item
-        {...props}
+        {...properties_}
         data-testid={editMenuItemTitle.concat('-option')}
         onClick={handleEdit}
         disabled={editDisabled}
@@ -278,11 +285,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       </Item>
 
       <AttachmentGroupActionMenuItem
-        {...props}
+        {...properties_}
         showCreate={shouldShowAttachmentGroupCreate}
       />
       <Item
-        {...props}
+        {...properties_}
         data-testid="Enhanced stereochemistry...-option"
         disabled={stereoDisabled}
         onClick={handleStereo}
@@ -290,7 +297,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         {t('components:contextMenu.enhancedStereochemistryEllipsis')}
       </Item>
       <Submenu
-        {...props}
+        {...properties_}
         label={t('components:contextMenu.queryPropertiesMenu')}
         data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
@@ -299,7 +306,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
             <Submenu
-              {...props}
+              {...properties_}
               label={title}
               data-testid={`${title}-option`}
               key={key}
@@ -322,7 +329,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         disabled={disabledForMonomerCreation}
       />
       <MenuSeparator />
-      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+      <Item {...properties_} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>{t('common:delete')}</span>
       </Item>

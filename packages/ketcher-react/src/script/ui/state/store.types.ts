@@ -94,19 +94,19 @@ export interface SetServerAction extends Action<'SET_SERVER'> {
   server?: Api;
 }
 
-export type DevToolsSanitizer = (value: unknown) => unknown;
+export type DevelopmentToolsSanitizer = (value: unknown) => unknown;
 
-export interface ReduxDevToolsOptions {
-  stateSanitizer?: DevToolsSanitizer;
-  actionSanitizer?: DevToolsSanitizer;
+export interface ReduxDevelopmentToolsOptions {
+  stateSanitizer?: DevelopmentToolsSanitizer;
+  actionSanitizer?: DevelopmentToolsSanitizer;
 }
 
-export type ReduxDevToolsCompose = (
-  options?: ReduxDevToolsOptions,
+export type ReduxDevelopmentToolsCompose = (
+  options?: ReduxDevelopmentToolsOptions,
 ) => typeof compose;
 
-export type DevToolsGlobal = typeof globalThis & {
-  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevToolsCompose;
+export type DevelopmentToolsGlobal = typeof globalThis & {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ReduxDevelopmentToolsCompose;
 };
 
 export interface KetcherCheckErrors {

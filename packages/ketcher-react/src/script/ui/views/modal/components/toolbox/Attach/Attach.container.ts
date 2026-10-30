@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import AttachPoints from './Attach';
-import type { BaseProps } from '../../../modal.types';
+import type { BaseProperties } from '../../../modal.types';
 import type { StoreState } from '../../../../../state/store.types';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
+type StateProps = Pick<BaseProperties, 'formState'>;
 
 const mapStateToProps = (state: Pick<StoreState, 'modal'>): StateProps => ({
   formState: state.modal.form,

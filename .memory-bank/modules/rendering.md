@@ -66,6 +66,11 @@ content box does not create overflow, even when the viewport transfer has
 translated the empty drawing group. Content extending beyond either edge
 still enables the scrollbar for that axis.
 
+After creating a new Sequence row, the mode checks the active caret against
+the canvas's page-relative bounds and scrolls vertically only if the caret
+would be clipped. This is independent of scrollbar visibility and does not
+scroll to unrelated content at the bottom of the document.
+
 ## Macromolecules rendering (D3)
 
 Each drawing-entity subclass gets a renderer subclass that draws D3 selections into the SVG canvas. A renderers manager orchestrates create/update/delete in response to a Command.

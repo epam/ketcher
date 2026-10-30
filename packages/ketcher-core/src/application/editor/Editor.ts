@@ -504,6 +504,16 @@ export class CoreEditor {
         err,
       );
       this.clearMonomersLibrary();
+      // User-saved monomers live in localStorage and do not depend on the
+      // defaults, so keep them available on top of the empty library.
+      try {
+        this.applyStoredMonomerLibraryUpdates();
+      } catch (storedUpdatesErr) {
+        KetcherLogger.error(
+          'Editor::initializeDefaultMonomersLibrary failed to apply stored updates:',
+          storedUpdatesErr,
+        );
+      }
       this.events.openErrorModal.dispatch({
         errorMessage: 'Failed to load default monomers library',
         errorTitle: 'Monomer library load failed',
@@ -536,6 +546,12 @@ export class CoreEditor {
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
 
+    this.applyStoredMonomerLibraryUpdates();
+    persistentMonomersLibrary = this._monomersLibrary;
+    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
+  }
+
+  private applyStoredMonomerLibraryUpdates() {
     const storedMonomerLibraryUpdates = SettingsManager.monomerLibraryUpdates;
     storedMonomerLibraryUpdates.forEach((update) => {
       const parsedUpdate = JSON.parse(update);
@@ -570,8 +586,6 @@ export class CoreEditor {
         );
       }
     });
-    persistentMonomersLibrary = this._monomersLibrary;
-    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
   /**

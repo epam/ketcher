@@ -122,6 +122,10 @@ npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 
 ### Local run caveats
 
+- Flex canvas tests reuse a worker page. Their fixture resets both the active
+  Macro viewport and the inactive Molecules viewport before each test, because
+  mode switching preserves pan and zoom. Resetting only the active editor can
+  make subsequent imports and coordinate-based exports depend on test order.
 - **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
 - **Screenshot/snapshot tests only pass where Linux baselines exist.** On macOS they fail with `A snapshot doesn't exist … -darwin.png` because baselines are generated via Docker. Run the screenshot suite through Docker (or CI); don't treat local `-darwin.png` misses as real regressions.
 - **`GENERATE_DATA=true` rewrites many expected files** under `tests/test-data/`. If that was unintended, restore them with `git checkout`.

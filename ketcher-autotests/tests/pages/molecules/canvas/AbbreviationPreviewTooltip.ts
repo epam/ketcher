@@ -1,4 +1,5 @@
 import { Page, Locator } from '@playwright/test';
+import { getVisibleCanvas } from '@utils/canvas/helpers';
 
 type AbbreviationPreviewTooltipLocators = {
   window: Locator;
@@ -33,7 +34,8 @@ export const AbbreviationPreviewTooltip = (page: Page) => {
     },
 
     async hide() {
-      await page.mouse.move(9999, 9999);
+      const canvas = await getVisibleCanvas(page);
+      await canvas.hover({ position: { x: 1, y: 1 } });
       await this.waitForBecomeHidden();
     },
   };

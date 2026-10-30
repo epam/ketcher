@@ -60,6 +60,12 @@ maps plus the other rendered entities. Hidden atoms inside contracted monomers
 must not create scrollable overflow; visible content outside the viewport must
 still enable scrolling. Selection and transformation bounds remain unchanged.
 
+Macro scrollbars compare content and viewport bounds in page coordinates,
+including the viewport's left and top offsets. A zero-width, zero-height
+content box does not create overflow, even when the viewport transfer has
+translated the empty drawing group. Content extending beyond either edge
+still enables the scrollbar for that axis.
+
 ## Macromolecules rendering (D3)
 
 Each drawing-entity subclass gets a renderer subclass that draws D3 selections into the SVG canvas. A renderers manager orchestrates create/update/delete in response to a Command.

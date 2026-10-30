@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -251,11 +250,11 @@ export function load(struct: string | Struct, options?) {
       editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (error: any) {
+    } catch (error) {
       KetcherLogger.error('shared.ts::load', error);
       dispatch(setAnalyzingFile(false));
       if (error) {
-        errorHandler?.(error.message);
+        errorHandler?.(error instanceof Error ? error.message : String(error));
       }
     } finally {
       notifyRequestCompleted();

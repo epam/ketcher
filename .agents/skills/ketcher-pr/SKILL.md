@@ -9,7 +9,9 @@ metadata:
     note: "Summary visuals come from Dex Horthy's show-me (HumanLayer), as credited upstream. The Sections text is upstream word for word: edit only the In Ketcher paragraphs."
 ---
 
-Write the PR body as `.github/pull_request_template.md`, filled in. `gh pr create --body-file` leaves the template out, so copy every heading in order.
+The Ketcher adaptation of `pr` from `mattpocock/skills`. The _Sections_ text is upstream, word for word; each **In Ketcher** paragraph adds what this repo needs.
+
+Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order. Replace the guidance text under each heading with your content, and leave out the opening `<!-- -->` note.
 
 A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
 

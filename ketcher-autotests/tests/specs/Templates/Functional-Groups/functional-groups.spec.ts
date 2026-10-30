@@ -47,6 +47,46 @@ import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbrev
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
 
+test.describe('Expanded abbreviation atom hotkeys #12361', () => {
+  for (const key of ['h', 'c', 'p', 'i']) {
+    test(`${key.toUpperCase()} opens Edit Abbreviation after expanding Cbz`, async ({
+      initMoleculesCanvas,
+      closePage,
+    }) => {
+      const page = await initMoleculesCanvas();
+      try {
+        await BottomToolbar(page).structureLibrary();
+        await StructureLibraryDialog(page).selectFunctionalGroup(
+          FunctionalGroupsTabItems.Cbz,
+        );
+        await clickInTheMiddleOfTheCanvas(page);
+        await CommonLeftToolbar(page).areaSelectionTool();
+
+        await ContextMenu(
+          page,
+          getAbbreviationLocator(page, { name: 'Cbz' }),
+        ).open();
+        await page.getByTestId(SuperatomOption.ExpandAbbreviation).click();
+        await expect(page.getByRole('menu')).toBeHidden();
+
+        const expandedStructure = await getKet(page);
+        // Preserve the focus left by expansion: only hover before the shortcut.
+        await getAtomLocator(page, { atomLabel: 'C' }).first().hover();
+        await page.keyboard.press(key);
+
+        const dialog = EditAbbreviationDialog(page);
+        await expect(dialog.window).toBeVisible();
+        expect(await getKet(page)).toBe(expandedStructure);
+        await dialog.cancel();
+        await expect(dialog.window).toBeHidden();
+        expect(await getKet(page)).toBe(expandedStructure);
+      } finally {
+        await closePage();
+      }
+    });
+  }
+});
+
 test.describe('Abbreviation action hotkeys #2591', () => {
   let page: Page;
 

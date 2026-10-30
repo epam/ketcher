@@ -665,6 +665,7 @@ class ReStruct {
     this.showAtoms();
     this.showAttachmentGroups();
     this.showBonds();
+    this.showCIPLabels();
     this.showRgroupAttachmentPoints();
     if (shouldUpdateLoops) this.showLoops();
     this.showReactionSymbols();
@@ -971,6 +972,34 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  refreshCIPLabels(): void {
+    const atomsWithCIP = Array.from(this.atoms.entries()).filter(
+      ([, atom]) => atom.a.cip || atom.cip,
+    );
+    atomsWithCIP.forEach(([, atom]) => {
+      if (atom.cip) {
+        const path = atom.cip.path;
+        path.remove();
+        atom.visel.paths = atom.visel.paths.filter(
+          (viselPath) => viselPath !== path,
+        );
+        atom.cip = undefined;
+      }
+    });
+    atomsWithCIP.forEach(([aid, atom]) => {
+      atom.showCIPLabel(this, aid, this.render.options);
+    });
+    this.setSelection();
+  }
+
+  private showCIPLabels(): void {
+    const options = this.render.options;
+    this.atomsChanged.forEach((_value, aid) => {
+      const atom = this.atoms.get(aid);
+      if (atom) atom.showCIPLabel(this, aid, options);
     });
   }
 

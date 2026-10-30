@@ -12,6 +12,67 @@ import {
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Peptide } from 'domain/entities/Peptide';
 import { peptideMonomerItem } from '../../../mock-data';
+import { AtomCIP } from 'domain/entities/types';
+
+describe('CIP viewport lifecycle', () => {
+  it('initializes viewport bounds before redrawing a reused structure', () => {
+    const options = { width: 100, height: 100 };
+    const render = new Render(document as unknown as HTMLElement, options);
+    const update = jest.spyOn(render.ctab, 'update').mockImplementation(() => {
+      expect(render.ctab.render.viewBox).toEqual({
+        minX: 0,
+        minY: 0,
+        width: 100,
+        height: 100,
+      });
+      return false;
+    });
+
+    try {
+      new Render(document as unknown as HTMLElement, options, render, true);
+      expect(update).toHaveBeenCalledWith(true);
+    } finally {
+      update.mockRestore();
+    }
+  });
+
+  it.each(['pan', 'zoom', 'resize'])(
+    'refreshes only CIP paths after %s without leaving stale labels',
+    (change) => {
+      const options = { width: 100, height: 100 };
+      const render = new Render(document as unknown as HTMLElement, options);
+      const struct = new Struct();
+      const atomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(), cip: AtomCIP.S }),
+      );
+      render.ctab = new ReStruct(struct, render);
+      const atom = render.ctab.atoms.get(atomId)!;
+      const path = { remove: jest.fn() };
+      atom.cip = { path } as unknown as NonNullable<typeof atom.cip>;
+      atom.visel.paths.push(atom.cip.path);
+      const showCIP = jest
+        .spyOn(atom, 'showCIPLabel')
+        .mockImplementation(() => {
+          expect(atom.cip).toBeUndefined();
+          expect(atom.visel.paths).not.toContain(path);
+        });
+      const update = jest.spyOn(render.ctab, 'update');
+
+      if (change === 'pan') {
+        render.setViewBox({ minX: 10, minY: 20, width: 100, height: 100 });
+      } else if (change === 'zoom') {
+        render.setZoom(2);
+      } else {
+        options.width = 80;
+        render.resizeViewBox();
+      }
+
+      expect(path.remove).toHaveBeenCalledTimes(1);
+      expect(showCIP).toHaveBeenCalledTimes(1);
+      expect(update).not.toHaveBeenCalled();
+    },
+  );
+});
 
 describe('show selection', () => {
   const ellipse = {
@@ -46,6 +107,64 @@ describe('show selection', () => {
   it('should show selection simple objects correctly when unselected', () => {
     restruct.showItemSelection(reSimpleObject, false);
     expect(reSimpleObject.hidePoints).toHaveBeenCalled();
+  });
+});
+
+describe('atom, bond, and CIP label rendering order', () => {
+  const options = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
+
+  it('renders atom labels and bonds before positioning CIP labels', () => {
+    const struct = new Struct();
+    const firstAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+    );
+    const secondAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const firstAtom = restruct.atoms.get(firstAtomId)!;
+    const secondAtom = restruct.atoms.get(secondAtomId)!;
+    const calls: string[] = [];
+
+    jest.spyOn(firstAtom, 'show').mockImplementation(() => {
+      calls.push('first atom');
+    });
+    jest.spyOn(secondAtom, 'show').mockImplementation(() => {
+      calls.push('second atom');
+    });
+    jest.spyOn(restruct, 'showBonds').mockImplementation(() => {
+      calls.push('bonds');
+    });
+    jest.spyOn(firstAtom, 'showCIPLabel').mockImplementation(() => {
+      calls.push('first CIP');
+    });
+    jest.spyOn(secondAtom, 'showCIPLabel').mockImplementation(() => {
+      calls.push('second CIP');
+    });
+
+    const internalRestruct = restruct as unknown as {
+      atomsChanged: Map<number, 1>;
+      showAtoms: () => void;
+      showCIPLabels: () => void;
+    };
+    internalRestruct.atomsChanged.set(firstAtomId, 1);
+    internalRestruct.atomsChanged.set(secondAtomId, 1);
+    internalRestruct.showAtoms();
+    restruct.showBonds();
+    internalRestruct.showCIPLabels();
+
+    expect(calls).toEqual([
+      'first atom',
+      'second atom',
+      'bonds',
+      'first CIP',
+      'second CIP',
+    ]);
   });
 });
 

@@ -30,6 +30,8 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+import Raphael from '../raphael-ext';
+import type { Box2Abs } from 'domain/entities/box2Abs';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type {
   RelativeBox,
@@ -71,6 +73,41 @@ class ReBond extends ReObject {
 
   static isSelectable() {
     return true;
+  }
+
+  getCIPCollisionBoxes(options: RenderOptions, gap: number): Box2Abs[] {
+    const clearance = new Vec2(gap, gap);
+    const fallback = () =>
+      this.visel.boxes.map((box) =>
+        box.translate(options.offset.negated()).extend(clearance, clearance),
+      );
+    if (
+      !this.visel.boxes.length ||
+      !this.path ||
+      'items' in this.path ||
+      !Raphael
+    )
+      return fallback();
+
+    const segments = Raphael.parsePathString(this.path.attr('path'));
+    if (
+      !segments ||
+      segments.some((segment) => !['M', 'L', 'Z', 'z'].includes(segment[0]))
+    )
+      return fallback();
+
+    const polygons: Vec2[][] = [];
+    for (const segment of segments) {
+      if (segment[0] === 'M') polygons.push([]);
+      if (segment[0] === 'M' || segment[0] === 'L') {
+        polygons[polygons.length - 1].push(
+          new Vec2(Number(segment[1]), Number(segment[2])),
+        );
+      }
+    }
+    return polygons.flatMap((points) =>
+      util.getPolygonCollisionBoxes(points, gap + options.lineWidth / 2),
+    );
   }
 
   private static getAtomPositionForBond(

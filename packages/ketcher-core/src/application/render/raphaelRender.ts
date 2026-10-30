@@ -126,6 +126,12 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
+    this.viewBox = {
+      minX: 0,
+      minY: 0,
+      width: this.sz.x,
+      height: this.sz.y,
+    };
     if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
@@ -263,6 +269,7 @@ export class Render {
   setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
   setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const previousViewBox = this.viewBox;
     const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
     this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
@@ -270,6 +277,14 @@ export class Render {
       `${newViewBox.minX} ${newViewBox.minY} ${newViewBox.width} ${newViewBox.height}`,
     );
     this.scrollbar.update();
+    if (
+      previousViewBox.minX !== newViewBox.minX ||
+      previousViewBox.minY !== newViewBox.minY ||
+      previousViewBox.width !== newViewBox.width ||
+      previousViewBox.height !== newViewBox.height
+    ) {
+      this.ctab.refreshCIPLabels();
+    }
   }
 
   setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {

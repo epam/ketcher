@@ -73,6 +73,7 @@ const StereoLabelMinOpacity = 0.3;
 const DEFAULT_ATOM_COLOR = '#000';
 const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
+const CIP_LABEL_GAP = 1;
 const monomerAttachmentPointNames = new Set(attachmentPointNames);
 
 export enum ShowHydrogenLabelNames {
@@ -515,6 +516,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   }
 
   show(restruct: ReStruct, aid: number, options: RenderOptions): void {
+    this.cip = undefined;
     const struct = restruct.molecule;
     const atom = struct.atoms.get(aid);
     if (!atom) {
@@ -1204,67 +1206,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 
-    if (atom.cip) {
-      const paper = render.paper;
-      const options = render.options;
-      const ps = Scale.modelToCanvas(this.a.pp, options);
-
-      const cipText = paper.text(ps.x, ps.y, `(${this.a.cip})`).attr({
-        font: options.font,
-        'font-size': Math.floor(options.fontszInPx * 0.8),
-        'pointer-events': 'none',
-      });
-      const cipTextBBox = cipText.getBBox();
-
-      const rect = paper
-        .rect(
-          cipTextBBox.x - 1,
-          cipTextBBox.y - 1,
-          cipTextBBox.width + 2,
-          cipTextBBox.height + 2,
-          3,
-          3,
-        )
-        .attr({ stroke: 'none' });
-
-      const cipGroup = paper.set();
-      cipGroup.push(rect, cipText);
-      const cipGroupRelBox = util.relBox(cipGroup.getBBox());
-
-      let baseDistance = 3;
-      const direction = this.bisectLargestSector(render.ctab.molecule);
-      for (const ext of this.visel.exts) {
-        baseDistance = Math.max(
-          baseDistance,
-          util.shiftRayBox(ps, direction, ext.translate(ps)),
-        );
-      }
-      const shiftDistance =
-        baseDistance +
-        util.shiftRayBox(
-          ps,
-          direction.negated(),
-          Box2Abs.fromRelBox(cipTextBBox),
-        );
-      const shiftVector = direction.scaled(3 + shiftDistance);
-      pathAndRBoxTranslate(
-        cipGroup,
-        cipGroupRelBox,
-        shiftVector.x,
-        shiftVector.y,
-      );
-
-      render.ctab.addReObjectPath(
-        LayerMap.additionalInfo,
-        this.visel,
-        cipGroup,
-        ps,
-        false,
-      );
-
-      this.cip = { path: cipGroup, text: cipText, rectangle: rect };
-    }
-
     if (this.showLabel && this.showInfoLabel) {
       const path = render.paper.text(ps.x, ps.y, this.infoLabel).attr({
         font: options.font,
@@ -1389,6 +1330,139 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     );
   }
 
+  showCIPLabel(restruct: ReStruct, aid: number, options: RenderOptions): void {
+    const atom = restruct.molecule.atoms.get(aid);
+    if (!atom?.cip) {
+      return;
+    }
+
+    const render = restruct.render;
+    const ps = Scale.modelToCanvas(this.a.pp, options);
+    const cipText = render.paper.text(ps.x, ps.y, `(${atom.cip})`).attr({
+      font: options.font,
+      'font-size': Math.floor(options.fontszInPx * 0.8),
+      'pointer-events': 'none',
+    });
+    const cipTextBBox = cipText.getBBox();
+
+    const rect = render.paper
+      .rect(
+        cipTextBBox.x - 1,
+        cipTextBBox.y - 1,
+        cipTextBBox.width + 2,
+        cipTextBBox.height + 2,
+        3,
+        3,
+      )
+      .attr({ stroke: 'none' });
+
+    const cipGroup = render.paper.set();
+    cipGroup.push(rect, cipText);
+    const cipGroupRelBox = util.relBox(cipGroup.getBBox());
+
+    const cipLabelBox = Box2Abs.fromRelBox(cipGroupRelBox);
+    const gap = new Vec2(CIP_LABEL_GAP, CIP_LABEL_GAP);
+    const occupiedAtomLabelBoxes = Array.from(
+      render.ctab.atoms.values(),
+    ).flatMap((atomRenderer) => {
+      if (atomRenderer === this) {
+        return [];
+      }
+
+      const atomPosition = Scale.modelToCanvas(atomRenderer.a.pp, options);
+      const atomLabelBoxes = atomRenderer.visel.exts.map((box) =>
+        box.translate(atomPosition),
+      );
+
+      if (!atomRenderer.cip) {
+        return atomLabelBoxes;
+      }
+
+      return [
+        ...atomLabelBoxes,
+        Box2Abs.fromRelBox(util.relBox(atomRenderer.cip.path.getBBox())).extend(
+          gap,
+          gap,
+        ),
+      ];
+    });
+    const occupiedBondBoxes = Array.from(render.ctab.bonds.values()).flatMap(
+      (bondRenderer) => {
+        return bondRenderer.getCIPCollisionBoxes(options, CIP_LABEL_GAP);
+      },
+    );
+    const occupiedLabelBoxes = [
+      ...occupiedAtomLabelBoxes,
+      ...occupiedBondBoxes,
+    ];
+    const { minX, minY, width, height } = render.viewBox;
+    const viewport = new Box2Abs(minX, minY, minX + width, minY + height);
+    const visibleBox = viewport.contains(ps) ? viewport : undefined;
+    const labelCollisionBox = cipLabelBox.extend(gap, gap);
+    const getShiftVector = (direction: Vec2) => {
+      let baseDistance = 3;
+      for (const ext of this.visel.exts) {
+        baseDistance = Math.max(
+          baseDistance,
+          util.shiftRayBox(ps, direction, ext.translate(ps)),
+        );
+      }
+      const shiftDistance =
+        baseDistance +
+        util.shiftRayBox(
+          ps,
+          direction.negated(),
+          Box2Abs.fromRelBox(cipTextBBox),
+        );
+      const shift = direction.scaled(2 + shiftDistance);
+      if (!visibleBox) {
+        return shift;
+      }
+      return new Vec2(
+        Math.max(
+          visibleBox.p0.x - labelCollisionBox.p0.x,
+          Math.min(shift.x, visibleBox.p1.x - labelCollisionBox.p1.x),
+        ),
+        Math.max(
+          visibleBox.p0.y - labelCollisionBox.p0.y,
+          Math.min(shift.y, visibleBox.p1.y - labelCollisionBox.p1.y),
+        ),
+      );
+    };
+    const placement = util.chooseNonOverlappingLabelPlacement(
+      this.getLabelDirections(render.ctab.molecule),
+      (candidateDirection, additionalDistance) =>
+        labelCollisionBox.translate(
+          getShiftVector(candidateDirection).add(
+            candidateDirection.scaled(additionalDistance),
+          ),
+        ),
+      (candidateDirection, additionalDistance) =>
+        getShiftVector(candidateDirection).length() + additionalDistance,
+      occupiedLabelBoxes,
+      visibleBox,
+    );
+    const shiftVector = getShiftVector(placement.direction).add(
+      placement.direction.scaled(placement.additionalDistance),
+    );
+    pathAndRBoxTranslate(
+      cipGroup,
+      cipGroupRelBox,
+      shiftVector.x,
+      shiftVector.y,
+    );
+
+    render.ctab.addReObjectPath(
+      LayerMap.additionalInfo,
+      this.visel,
+      cipGroup,
+      ps,
+      false,
+    );
+
+    this.cip = { path: cipGroup, text: cipText, rectangle: rect };
+  }
+
   getLargestSectorFromNeighbors(struct: Struct): {
     neighborAngle: number;
     largestAngle: number;
@@ -1425,6 +1499,32 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     return { neighborAngle, largestAngle };
+  }
+
+  private getLabelDirections(struct: Struct): Vec2[] {
+    const angles = this.a.neighbors
+      .map((halfBondId) => struct.halfBonds.get(halfBondId)?.ang)
+      .filter((angle): angle is number => angle !== undefined)
+      .sort((firstAngle, secondAngle) => firstAngle - secondAngle);
+
+    if (angles.length === 0) {
+      return [newVectorFromAngle(-Math.PI / 2)];
+    }
+
+    return angles
+      .map((angle, index) => {
+        const nextAngle =
+          index === angles.length - 1
+            ? angles[0] + 2 * Math.PI
+            : angles[index + 1];
+        const sectorSize = nextAngle - angle;
+        return {
+          direction: newVectorFromAngle(angle + sectorSize / 2),
+          sectorSize,
+        };
+      })
+      .sort((first, second) => second.sectorSize - first.sectorSize)
+      .map(({ direction }) => direction);
   }
 
   bisectLargestSector(struct: Struct): Vec2 {

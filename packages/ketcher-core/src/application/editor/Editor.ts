@@ -257,7 +257,8 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
+  private _monomersLibraryParsedJson: IKetMacromoleculesContent =
+    getEmptyMonomersLibraryJson();
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public ketcherRootElement: HTMLDivElement | null;
@@ -333,7 +334,6 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
-    this.clearMonomersLibrary();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -524,7 +524,7 @@ export class CoreEditor {
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
       persistentMonomersLibrary.length !== 0 &&
-      persistentMonomersLibraryParsedJson !== undefined
+      persistentMonomersLibraryParsedJson !== null
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
@@ -584,17 +584,9 @@ export class CoreEditor {
     editedMonomerRef?: string,
     isUserCreated?: boolean,
   ) {
-    // The constructor initializes an empty library before defaults are loaded,
-    // so synchronous consumers can update it immediately.
-    // A `null` value here would indicate a programming error (e.g. calling
-    // this method before the editor finished constructing), not a normal
-    // runtime case, so we fail loudly instead of silently no-op-ing.
+    // The library starts empty before defaults are loaded, so synchronous
+    // consumers can update it immediately.
     const monomersLibraryParsedJson = this._monomersLibraryParsedJson;
-    if (!monomersLibraryParsedJson) {
-      throw new Error(
-        'Editor::updateMonomersLibrary: monomers library parsed JSON is not initialized',
-      );
-    }
 
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,

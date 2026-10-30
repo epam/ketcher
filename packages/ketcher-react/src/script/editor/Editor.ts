@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -4550,7 +4549,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       paperjs.setup(document.createElement('canvas')); // Paper.js works on an offscreen canvas
 
       // Generate Paper.js paths from all SVG elements
-      let combinedPath: paper.PathItem | null = null;
+      let combinedPath: InstanceType<typeof paperjs.PathItem> | null = null;
       const options = render.options;
       const hoverVisel = new Visel('mergedHover');
       const elements: SVGElement[] = [];
@@ -4563,8 +4562,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
       });
 
       for (const element of elements) {
-        const paperPath = paperPathFromSVGElement(element) as
-          paper.Path | paper.CompoundPath | undefined;
+        const paperPath = paperPathFromSVGElement(element);
 
         if (!paperPath) {
           continue;

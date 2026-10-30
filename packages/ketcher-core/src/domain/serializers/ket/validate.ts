@@ -15,10 +15,12 @@
  ***************************************************************************/
 
 import compiledSchema from './compiledSchema';
-import { validateMultitailArrows } from './multitailArrowsValidator';
+import { areMultitailArrowsValid } from './multitailArrowsValidator';
 import type { KetFileRootContent } from 'domain/serializers/serializers.types';
 
-export function validate(ket: KetFileRootContent): boolean {
+export function isValidKet(ket: KetFileRootContent): boolean {
   const result = compiledSchema(ket);
-  return result ? validateMultitailArrows(ket) : result;
+  return result ? areMultitailArrowsValid(ket) : result;
 }
+
+export { isValidKet as validate };

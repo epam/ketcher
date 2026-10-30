@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,21 +18,28 @@ import {
   fromMultipleMove,
   fromPlusAddition,
   CoordinateTransformation,
+  type Vec2,
+  type Action,
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
+interface ReactionPlusDragContext {
+  xy0: Vec2;
+  action?: Action;
+}
+
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx: ReactionPlusDragContext | undefined;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     this.editor = editor;
     this.editor.selection(null);
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 
@@ -44,7 +50,7 @@ class ReactionPlusTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const editor = this.editor;
     const rnd = editor.render;
 
@@ -83,7 +89,7 @@ class ReactionPlusTool implements Tool {
     return true;
   }
 
-  click(event) {
+  click(event: PointerEvent) {
     const rnd = this.editor.render;
     const ci = this.editor.findItem(event, ['rxnPluses']);
 

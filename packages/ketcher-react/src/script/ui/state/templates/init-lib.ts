@@ -28,7 +28,7 @@ import templatesRawData from '../../../../templates/library.sdf';
 import type { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
-let needReinitializeTemplateLibrary = false;
+let shouldReinitializeTemplateLibrary = false;
 
 interface TemplateLibrary {
   type: string;
@@ -76,19 +76,19 @@ export default async function initTmplLib(
   const fileName = 'library.sdf';
 
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls());
+    const lib = [...res, ...userTmpls()];
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
-    if (needReinitializeTemplateLibrary) {
+    if (shouldReinitializeTemplateLibrary) {
       reinitializeTemplateLibrary();
-      needReinitializeTemplateLibrary = false;
+      shouldReinitializeTemplateLibrary = false;
     }
   });
 }
 
 export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
-    needReinitializeTemplateLibrary = true;
+    shouldReinitializeTemplateLibrary = true;
     return;
   }
 
@@ -109,8 +109,8 @@ function userTmpls(): SdfItem[] {
           struct: ketSerializer.deserialize(tmpl.struct),
           props: tmpl.props,
         };
-      } catch (e) {
-        KetcherLogger.error('init-lib.ts::userTmpls', e);
+      } catch (error) {
+        KetcherLogger.error('init-lib.ts::userTmpls', error);
         return null;
       }
     })
@@ -148,8 +148,8 @@ function prefetchRender(
   }, [] as string[]);
   const fetch = Promise.all(
     files.map((fn) =>
-      prefetchStatic(baseUrl + fn).catch((e) => {
-        KetcherLogger.error('init-lib.ts::prefetchRender', e);
+      prefetchStatic(baseUrl + fn).catch((error) => {
+        KetcherLogger.error('init-lib.ts::prefetchRender', error);
       }),
     ),
   );

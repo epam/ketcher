@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -61,17 +60,9 @@ export type MonomerEntityClass =
  * domain entity class and KetMonomerClass enum value.
  * This is a pure domain helper — it has no renderer imports.
  */
-export function monomerEntityFactory(
-  monomer: MonomerItemType,
-): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-
-export function monomerEntityFactory(
-  monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
+export const monomerEntityFactory = ((
+  monomer: MonomerOrAmbiguousType | MonomerItemType,
+) => {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [
       AmbiguousMonomer,
@@ -116,4 +107,14 @@ export function monomerEntityFactory(
   }
 
   return [Chem, KetMonomerClass.CHEM];
-}
+}) as {
+  (
+    monomer: MonomerItemType,
+  ): [
+    EntityClass: ConcreteMonomerEntityClass,
+    ketMonomerClass: KetMonomerClass,
+  ];
+  (
+    monomer: MonomerOrAmbiguousType,
+  ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
+};

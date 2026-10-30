@@ -2,11 +2,11 @@
 
 How code is written and reviewed in every flow. **Implementers** apply it while writing. **Reviewers** apply it beside the repo's own rules. The repo's rules come first and win where they differ:
 
-- [invariants.md](../../../.memory-bank/invariants.md): rules that must never break.
-- [review-rules.md](../../../.memory-bank/review-rules.md): rules a reviewer checks, by ID.
-- [coding-standards.md](../../../.memory-bank/coding-standards.md): conventions that hold today.
-- [accepted-patterns.md](../../../.memory-bank/accepted-patterns.md): patterns nobody raises.
-- [testing.md](../../../.memory-bank/testing/testing.md): unit and E2E test rules.
+- [invariants.md](../../../../.memory-bank/invariants.md): rules that must never break.
+- [review-rules.md](../../../../.memory-bank/review-rules.md): rules a reviewer checks, by ID.
+- [coding-standards.md](../../../../.memory-bank/coding-standards.md): conventions that hold today.
+- [accepted-patterns.md](../../../../.memory-bank/accepted-patterns.md): patterns nobody raises.
+- [testing.md](../../../../.memory-bank/testing/testing.md): unit and E2E test rules.
 
 The next contributor is an agent that opens one file, copies the nearest example, and takes the shortest path that compiles. Write so that a change which looks right from one file is right for the whole repo.
 
@@ -48,12 +48,12 @@ The expected value comes from the requirement or the issue, never from a run of 
 
 ## Fixes
 
-- **Spec first.** A fix that contradicts a requirement in `openspec/specs/` or an ADR in `.memory-bank/adr/` is the wrong fix: the argument already lives there, so read both before choosing one.
+- **Spec first.** A fix that contradicts a requirement in `openspec/specs/` or an ADR in `.memory-bank/adr/` is the wrong fix: read both before choosing one.
 - **Root cause.** Fix the first place the system did something wrong, not the place the symptom showed. A guard is a fix only when the state it handles is legitimate. When the state should never exist, find what produced it.
 - **The pattern, not the instance.** Search for every place with the same fault and fix them together. Molecules and macromolecules modes often hold two copies of one concept: check both.
 - **Premise.** When two fixes built on one belief have failed the same check, write that belief as one sentence and test it directly before a third fix.
 
-## Review lens
+## Review ranking
 
 Reviewers apply the sections above, then rank structural findings in this order:
 

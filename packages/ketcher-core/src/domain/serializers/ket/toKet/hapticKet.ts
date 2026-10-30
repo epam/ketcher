@@ -52,7 +52,7 @@ export function prepareStructForHapticKetSerialization(struct: Struct) {
   });
 
   const structForKet = struct.clone(
-    null,
+    undefined,
     bondIds,
     false,
     originalToKetStructAtomIdMap,

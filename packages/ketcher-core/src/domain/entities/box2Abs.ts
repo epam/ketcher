@@ -83,13 +83,13 @@ export class Box2Abs {
   }
 
   include(p: Vec2): Box2Abs {
-    assert(p != null);
+    assert(p != undefined);
 
     return new Box2Abs(this.p0.min(p), this.p1.max(p));
   }
 
   contains(p: Vec2, ext = 0): boolean {
-    assert(p != null);
+    assert(p != undefined);
 
     return (
       p.x >= this.p0.x - ext &&

@@ -180,7 +180,6 @@ const Open: FC<Props> = (props) => {
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />;
   }
-
   return (
     <Dialog
       title={t('dialogs:document.open.dialogTitle')}

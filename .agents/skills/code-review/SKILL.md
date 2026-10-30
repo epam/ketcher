@@ -20,4 +20,4 @@ Report each finding in the format of the [output contract](../../../.memory-bank
 
 ## For the dispatcher
 
-One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). Which lenses make up the panel for a given diff is the caller's panel logic: the table in the Review section of [ketcher-flow's SKILL.md](../ketcher-flow/SKILL.md) for a flow round, step 2 of [review-pr](../review-pr/SKILL.md) for a PR. The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/ROLES.md).
+One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). Which lenses make up the panel for a given diff is the caller's panel logic: the table in the Review section of [ketcher-flow's SKILL.md](../ketcher-flow/SKILL.md) for a flow round, step 2 of [review-pr](../review-pr/SKILL.md) for a PR. The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/roles/ROLES.md).

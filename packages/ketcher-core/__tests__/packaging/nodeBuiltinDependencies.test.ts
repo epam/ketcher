@@ -20,9 +20,9 @@ function listSourceFiles(): string[] {
 
 function removeTypeOnlyImports(code: string): string {
   return code
-    .replace(/^\s*(?:import|export)\s+type\b[^;]*;/gm, '')
+    .replace(/^[ \t]*(?:import|export)\s+type\b[^;]*;/gm, '')
     .replace(
-      /^\s*import\s*\{([^}]*)\}\s*from\s*['"][^'"]+['"];/gm,
+      /^[ \t]*import\s*\{([^}]*)\}\s*from\s*['"][^'"]+['"];/gm,
       (statement, specifiers: string) => {
         const names = specifiers
           .split(',')
@@ -38,7 +38,7 @@ function removeTypeOnlyImports(code: string): string {
 
 function listImportedNodeBuiltins(): string[] {
   const specifier =
-    /\bfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(?\s*['"]([^'"]+)['"]/g;
+    /\bfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*(?:\(\s*)?['"]([^'"]+)['"]/g;
   const names = listSourceFiles().flatMap((file) => {
     const code = removeTypeOnlyImports(fs.readFileSync(file, 'utf8'));
 

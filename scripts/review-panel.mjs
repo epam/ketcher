@@ -11,7 +11,7 @@
 //   git diff <ref>...HEAD | node scripts/review-panel.mjs
 
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const SOURCE = /^packages\/[^/]+\/src\/.*\.(ts|tsx|js|jsx)$/;
@@ -143,7 +143,7 @@ function readDiff(args) {
   return readFileSync(0, 'utf8');
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const panel = pickPanel(parseDiff(readDiff(process.argv.slice(2))));
   if (panel.length === 0) {
     console.log('No lens applies.');

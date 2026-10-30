@@ -96,7 +96,7 @@ jest.mock('d3', () => {
   };
 });
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -151,7 +151,7 @@ describe('Select Rectangle Tool', () => {
       .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
       .mockImplementation(() => {});
     const fn = jest
-      .spyOn(window, 'requestAnimationFrame')
+      .spyOn(globalThis, 'requestAnimationFrame')
       .mockImplementation((func) => {
         func(0);
         return 0;

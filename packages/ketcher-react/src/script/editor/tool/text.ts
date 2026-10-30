@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,10 +28,6 @@ import {
 import type Editor from '../Editor';
 import type { MoveDragContext, Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
-
-interface Result {
-  content: string;
-}
 
 class TextTool implements Tool {
   private readonly editor: Editor;
@@ -136,7 +132,7 @@ function propsDialog(
     id || id === 0 ? (struct.texts.get(id) ?? null) : null;
   const origilContent = text ? text.content : '';
 
-  const res: Promise<Result> = editor.event.elementEdit.dispatch({
+  const res = editor.event.elementEdit.dispatch({
     content: origilContent,
     id,
     position,
@@ -145,7 +141,7 @@ function propsDialog(
   });
 
   res
-    .then(({ content }: Result) => {
+    .then(({ content }) => {
       if (!id && id !== 0 && content && position && pos) {
         editor.update(
           fromTextCreation(editor.render.ctab, content, position, pos),
@@ -158,8 +154,8 @@ function propsDialog(
         }
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('text.ts::propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('text.ts::propsDialog', error);
     });
 }
 

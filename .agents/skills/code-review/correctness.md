@@ -14,6 +14,7 @@ Scope: Structure that only costs the next contributor belongs to code-quality; s
 Focus:
 
 - Invariants: a change that breaks D1–D4, A2, A3, or B1–B3 in [invariants.md](../../../.memory-bank/invariants.md). An `invert()` that does not restore what `execute()` changed, and a macro operation that skips `EditorHistory.update`, are the common shapes. Name the undo or redo sequence that leaves the canvas inconsistent.
+- Non-atomic edits: a model change applied in steps where a throw between steps leaves the structure half-updated.
 - Callers: a changed return value, parameter, default, or thrown error in an existing function. Grep its callers and name one that relies on the old behavior.
 - Both editor modes: shared code that the diff changes for one mode. Check the path through the other mode: `Struct` for molecules, `DrawingEntitiesManager` for macromolecules, and the mode switch between them.
 - Id zero: entity ids from `Pool` start at 0. A truthy check (`if (atomId)`, `id || fallback`, `&&` on an id) fails on the first atom, bond, or monomer.

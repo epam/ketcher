@@ -17,6 +17,7 @@ import globals from 'globals';
 import { readFileSync } from 'node:fs';
 import {
   rules as invariantRules,
+  ALLOWED_HTML_SINKS,
   ALLOWED_MODEL_MUTATIONS,
 } from './scripts/eslint-invariants-rules.mjs';
 
@@ -356,12 +357,34 @@ const defaults = [
 ];
 
 const coreDependencies = Object.keys(
-  JSON.parse(readFileSync(new URL('./packages/ketcher-core/package.json', import.meta.url))).dependencies ?? {},
+  JSON.parse(
+    readFileSync(
+      new URL('./packages/ketcher-core/package.json', import.meta.url),
+    ),
+  ).dependencies ?? {},
 );
 
 const invariantsPlugin = { rules: invariantRules };
 
 const invariantsBlocks = [
+  {
+    files: ['packages/*/src/**/*.{ts,tsx,js,jsx}'],
+    ignores: [
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+    ],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/no-html-sinks': [
+        'error',
+        { allowedFiles: ALLOWED_HTML_SINKS },
+      ],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+    },
+  },
   {
     files: ['packages/ketcher-core/src/domain/**/*.{ts,tsx}'],
     plugins: { 'ketcher-invariants': invariantsPlugin },
@@ -375,7 +398,10 @@ const invariantsBlocks = [
     plugins: { 'ketcher-invariants': invariantsPlugin },
     rules: {
       'ketcher-invariants/ui-imports-in-core': 'error',
-      'ketcher-invariants/ui-deps-in-core': ['error', { forbiddenDeps: coreDependencies }],
+      'ketcher-invariants/ui-deps-in-core': [
+        'error',
+        { forbiddenDeps: coreDependencies },
+      ],
     },
   },
   {
@@ -390,7 +416,4 @@ const invariantsBlocks = [
   },
 ];
 
-export default [
-  ...defaults,
-  ...invariantsBlocks,
-];
+export default [...defaults, ...invariantsBlocks];

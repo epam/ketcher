@@ -283,3 +283,17 @@ test('feature: no test warns, a unit or E2E test passes', () => {
     assert.deepEqual(findings, [], test);
   }
 });
+
+test('file length: a source file pushed past 1,000 lines warns; one already over does not', () => {
+  const pushed = { ...file('packages/ketcher-core/src/a.ts', 20), lines: 1010 };
+  const alreadyOver = {
+    ...file('packages/ketcher-core/src/b.ts', 20),
+    lines: 1500,
+  };
+  const notRead = file('packages/ketcher-core/src/c.ts', 2000);
+  const findings = checkPullRequest(
+    pr({ files: [pushed, alreadyOver, notRead] }),
+  ).filter((finding) => finding.rule === 'file-length');
+  assert.equal(findings.length, 1);
+  assert.match(findings[0].message, /src\/a\.ts/);
+});

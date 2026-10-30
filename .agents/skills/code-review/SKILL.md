@@ -20,4 +20,15 @@ Report each finding in the format of the [output contract](../../../.memory-bank
 
 ## For the dispatcher
 
-One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). Which lenses make up the panel for a given diff is the caller's panel logic: the panel table in [ketcher-flow's REVIEW.md](../ketcher-flow/shared/REVIEW.md) for a flow round, step 2 of [review-pr](../review-pr/SKILL.md) for a PR. The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/roles/ROLES.md).
+### Panel
+
+The **panel** is the lenses a diff needs. `scripts/review-panel.mjs` picks it from the changed paths and the lines added to source code:
+
+- `node scripts/review-panel.mjs --pr <N> [--repo <owner/repo>]` for a pull request.
+- `node scripts/review-panel.mjs --base <branch point>` for a branch.
+
+It prints one line per lens with the file that triggered it, or `No lens applies.` The triggers live in that script. You may add a lens the script left out when the diff clearly needs it: name it and the reason in one line. The panel the script prints stays whole.
+
+### Dispatch
+
+One lens per fresh subagent, with read-only file tools (Glob, Grep, Read). The per-tool dispatch melodies are in the reviewer row of [ROLES.md](../ketcher-flow/roles/ROLES.md).

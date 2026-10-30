@@ -107,9 +107,9 @@ describe('Ketcher monomer library ordering vs. the lazy default load', () => {
     jest
       .spyOn(
         coreEditor as unknown as {
-          initializeDefaultMonomersLibrary: () => Promise<void>;
+          initializeMonomersLibrary: () => Promise<void>;
         },
-        'initializeDefaultMonomersLibrary',
+        'initializeMonomersLibrary',
       )
       .mockImplementation(async () => {
         await gate;

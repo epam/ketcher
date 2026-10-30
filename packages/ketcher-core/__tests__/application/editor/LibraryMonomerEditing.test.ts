@@ -256,6 +256,7 @@ describe('editing monomer library entries by identity', () => {
         editor,
         libraryData(template('original', 'A'), template('other', 'B')),
       );
+      Reflect.get(editor, 'applyStoredMonomerLibraryUpdates').call(editor);
       expect(editor.monomersLibrary).toHaveLength(1);
       expect(editor.monomersLibrary[0].props).toMatchObject({
         id: 'original',

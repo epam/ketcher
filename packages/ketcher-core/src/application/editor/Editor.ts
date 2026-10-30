@@ -484,71 +484,86 @@ export class CoreEditor {
    */
   public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
     if (!this.defaultMonomersLibraryReady) {
-      this.defaultMonomersLibraryReady =
-        this.initializeDefaultMonomersLibrary();
+      this.defaultMonomersLibraryReady = this.initializeMonomersLibrary();
     }
 
     await this.defaultMonomersLibraryReady;
   }
 
-  private async initializeDefaultMonomersLibrary(): Promise<void> {
-    try {
-      const monomersDataRaw = await loadDefaultMonomersData();
-      // Stored updates applied by setMonomersLibrary are already ordered after
-      // defaults; only direct writes made before this point need replaying.
-      this.defaultMonomersLibraryInitialized = true;
-      this.setMonomersLibrary(monomersDataRaw);
-    } catch (err) {
-      KetcherLogger.error(
-        'Editor::initializeDefaultMonomersLibrary failed:',
-        err,
-      );
-      this.clearMonomersLibrary();
-      // User-saved monomers live in localStorage and do not depend on the
-      // defaults, so keep them available on top of the empty library.
+  private async initializeMonomersLibrary(): Promise<void> {
+    const loadResult = await this.loadDefaultMonomersLibrary();
+
+    // Set before applying stored updates so they are not queued as pending.
+    this.defaultMonomersLibraryInitialized = true;
+
+    // A cached library already contains the stored updates.
+    if (loadResult !== 'cached') {
       try {
         this.applyStoredMonomerLibraryUpdates();
-      } catch (storedUpdatesErr) {
+        // Cache only a complete library, so that after a failed load the next
+        // editor retries the defaults.
+        if (loadResult === 'loaded') {
+          persistentMonomersLibrary = this._monomersLibrary;
+          persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
+        }
+      } catch (err) {
         KetcherLogger.error(
-          'Editor::initializeDefaultMonomersLibrary failed to apply stored updates:',
-          storedUpdatesErr,
+          'Editor::initializeMonomersLibrary failed to apply stored updates:',
+          err,
         );
       }
+    }
+
+    // Preserve direct caller updates even when the default chunk failed to load.
+    this.replayPendingMonomerLibraryUpdates();
+
+    this.events.updateMonomersLibrary.dispatch();
+  }
+
+  /**
+   * Installs the default library. On failure the library is left empty and an
+   * error modal opens.
+   */
+  private async loadDefaultMonomersLibrary(): Promise<
+    'loaded' | 'cached' | 'failed'
+  > {
+    try {
+      const monomersDataRaw = await loadDefaultMonomersData();
+      return this.setMonomersLibrary(monomersDataRaw);
+    } catch (err) {
+      KetcherLogger.error('Editor::loadDefaultMonomersLibrary failed:', err);
+      this.clearMonomersLibrary();
       this.events.openErrorModal.dispatch({
         errorMessage: 'Failed to load default monomers library',
         errorTitle: 'Monomer library load failed',
       });
+      return 'failed';
     }
+  }
 
-    // Preserve direct caller updates even when the default chunk failed to load.
-    this.defaultMonomersLibraryInitialized = true;
+  private replayPendingMonomerLibraryUpdates() {
     const pendingUpdates = this.pendingMonomerLibraryUpdates;
     this.pendingMonomerLibraryUpdates = [];
     for (const { data, editedMonomerRef, isUserCreated } of pendingUpdates) {
       this.updateMonomersLibrary(data, editedMonomerRef, isUserCreated);
     }
-
-    this.events.updateMonomersLibrary.dispatch();
   }
 
-  private setMonomersLibrary(monomersDataRaw: string) {
+  private setMonomersLibrary(monomersDataRaw: string): 'loaded' | 'cached' {
     if (
       persistentMonomersLibrary.length !== 0 &&
       persistentMonomersLibraryParsedJson !== null
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
-      return;
+      return 'cached';
     }
 
     const { monomersLibraryParsedJson, monomersLibrary } =
       parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
-
-    this.applyStoredMonomerLibraryUpdates();
-    persistentMonomersLibrary = this._monomersLibrary;
-    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
+    return 'loaded';
   }
 
   private applyStoredMonomerLibraryUpdates() {

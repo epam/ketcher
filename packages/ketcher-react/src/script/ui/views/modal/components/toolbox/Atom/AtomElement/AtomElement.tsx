@@ -74,7 +74,7 @@ const AtomElement = ({
               'period-table',
               {
                 type: notList ? 'not-list' : 'list',
-                values: atomList !== '' ? atomList.split(',') : [],
+                values: atomList === '' ? [] : atomList.split(','),
               },
               onChange,
             )

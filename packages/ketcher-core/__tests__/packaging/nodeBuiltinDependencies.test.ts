@@ -13,20 +13,29 @@ function listSourceFiles(): string[] {
       (file) =>
         /\.(ts|tsx|js)$/.test(file) &&
         !file.endsWith('.d.ts') &&
-        !/(^|\/)__tests__\/|\.test\./.test(file),
+        !/(^|[\\/])__tests__[\\/]|\.test\./.test(file),
     )
     .map((file) => path.join(sourceRoot, file));
 }
 
 function listImportedNodeBuiltins(): string[] {
-  const typeOnlyStatement = /^\s*(?:import|export)\s+type\b[^;]*;/gm;
-  const specifier = /\b(?:from|import|require)\s*\(?\s*['"]([^'"]+)['"]/g;
+  const typeOnlyStatements = [
+    /^\s*(?:import|export)\s+type\b[^;]*;/gm,
+    /^\s*import\s*\{(?:\s*type\s+[^,}]+,?)+\s*\}\s*from\s*['"][^'"]+['"];/gm,
+  ];
+  const specifier =
+    /\bfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(?\s*['"]([^'"]+)['"]/g;
   const names = listSourceFiles().flatMap((file) => {
-    const code = fs.readFileSync(file, 'utf8').replace(typeOnlyStatement, '');
-
-    return [...code.matchAll(specifier)].map(([, name]) =>
-      name.startsWith('node:') ? name : name.split('/')[0],
+    const code = typeOnlyStatements.reduce(
+      (text, pattern) => text.replace(pattern, ''),
+      fs.readFileSync(file, 'utf8'),
     );
+
+    return [...code.matchAll(specifier)].map(([, fromName, callName]) => {
+      const name = fromName ?? callName;
+
+      return name.startsWith('node:') ? name : name.split('/')[0];
+    });
   });
 
   // `domain` is both a Node builtin and a path alias for src/domain.

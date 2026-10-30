@@ -6,14 +6,16 @@ metadata:
     skill: pr
     author: Matt Pocock
     url: 'https://github.com/mattpocock/skills/blob/main/skills/engineering/pr/SKILL.md'
-    note: "Summary visuals come from Dex Horthy's show-me (HumanLayer), as credited upstream."
+    note: "Summary visuals come from Dex Horthy's show-me (HumanLayer), as credited upstream. The Sections text is upstream word for word: edit only the In Ketcher paragraphs."
 ---
 
 The Ketcher adaptation of `pr` from `mattpocock/skills`. The _Sections_ text is upstream, word for word; each **In Ketcher** paragraph adds what this repo needs.
 
-Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order.
+Write the PR body as `.github/pull_request_template.md`, filled in. Its three sections are the upstream template; the `Closes` and `Memory bank` lines follow. `gh pr create --body-file` leaves the template out, so copy every heading in order. Replace the guidance text under each heading with your content, and leave out the opening `<!-- -->` note.
 
 A large-scale change uses `.github/PULL_REQUEST_TEMPLATE/large-scale-change.md` instead. There, Evidence of equivalence takes the place of Evidence, and the Revert plan describes the door.
+
+A PR from a batch starts its body with the brief, then a `---` rule, then these sections. _The brief_ in [BATCH.md](../ketcher-flow/flows/BATCH.md) says what it holds.
 
 ## Title
 
@@ -25,116 +27,7 @@ Skip all preambles and keep prose brief. Use the user's domain language from `.m
 
 ### Summary
 
-Pick the smallest view that makes the key point clear.
-
-- Show logic or an algorithm as pseudocode:
-
-```text
-on(save)
-  if content is unchanged
-    return cached result
-  write new content
-  return fresh result
-```
-
-- Show runtime control flow as a call tree:
-
-```text
-submitForm
-  createSession
-    persistPrompt
-    launchAgent
-  navigateToSession
-```
-
-- Show UI structure as a component tree, including state and module boundaries that matter:
-
-```text
-<SessionPage> (apps/example/src/routes/session.tsx)
-  useSessionEvents()
-  <SessionToolbar>
-    <RunSkillButton> (packages/ui)
-```
-
-- Show file responsibility or a broad refactor as a shallow file tree:
-
-```text
-src/
-├── commands/       # parses user actions
-├── sessions/       # owns session state
-└── transport/      # sends API requests
-```
-
-- Show component interaction, control flow, or data flow with Mermaid:
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant UI
-    participant Daemon
-    User->>UI: choose command
-    UI->>Daemon: send expanded prompt
-    Daemon-->>UI: stream result
-```
-
-- Use `diff` when the point is what changes and the surrounding shape already exists. Match the diff shape to the topic.
-
-For a component change:
-
-```diff
- <SessionPage>
-   useSessionEvents()
-   <SessionToolbar>
-+    <RunSkillButton />
-   <SessionTimeline>
-+    <SkillResultCard />
-```
-
-For a file-layout change:
-
-```diff
- src/
- ├── commands/
-+│   └── show-me.ts       # expands the slash command
- ├── sessions/
--└── transport.ts
-+└── transport/
-+    ├── client.ts
-+    └── stream.ts
-```
-
-For a call-tree or call-stack change:
-
-```diff
- submitForm
-   createSession
-     persistPrompt
-+    expandSkillMention
-     launchAgent
--  navigateToSession
-+  navigateToSession
-+    subscribeToEvents
-```
-
-For a state or control-flow change:
-
-```diff
- on(save)
--  write content
-+  if content is unchanged
-+    return cached result
-+  write new content
-+  invalidate cache
-```
-
-- Show the whole block when most of it is new, when omitted context would hide ownership or order, or when the user needs a copyable target shape:
-
-```ts
-function expandSkill(command: string): string {
-  const skillName = command.slice(1);
-  return `use the ${skillName} skill`;
-}
-```
+Pick the smallest view that makes the key point clear. [VISUALS.md](VISUALS.md) lists the views, each with an example.
 
 #### Guidance
 

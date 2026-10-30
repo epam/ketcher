@@ -6,7 +6,11 @@ import { SnakeModePolymerBondRenderer } from 'application/render/renderers/Polym
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import type { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
+import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
+import { AttachmentPointName } from 'domain/types';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
@@ -76,7 +80,7 @@ describe('Snake-mode side-chain destination lanes', () => {
       );
       const matrix = mock<CanvasMatrix>();
       matrix.polymerBondToCells = cellsByBond;
-      matrix.getMaxHorizontalOffsetForRow.mockReturnValue(5);
+      matrix.getMaxHorizontalOffsetForBond.mockReturnValue(5);
       const manager = mock<DrawingEntitiesManager>();
       manager.canvasMatrix = matrix;
       const editor = mock<CoreEditor>();
@@ -94,4 +98,62 @@ describe('Snake-mode side-chain destination lanes', () => {
       expect(paths[1]).toContain('V 166 ');
     },
   );
+});
+
+describe('Snake-mode inter-row routing groups', () => {
+  function createMatrix(routes: number[][]) {
+    const chains = new ChainsCollection();
+    const initialMatrix = new Matrix<Cell>();
+    const bonds = routes.map(([x1, y1, x2, y2]) => {
+      const bond = getFinishedPolymerBond(x1, y1, x2, y2);
+      const first = bond.firstMonomer;
+      const second = bond.secondMonomer;
+      if (!second) {
+        throw new Error('Expected a finished bond');
+      }
+      first.setBond(AttachmentPointName.R3, bond);
+      second.setBond(AttachmentPointName.R3, bond);
+      chains.chains.push(new Chain(first), new Chain(second));
+      initialMatrix.set(
+        y1,
+        x1,
+        new Cell(new MonomerSequenceNode(first), [], x1, y1, first),
+      );
+      initialMatrix.set(
+        y2,
+        x2,
+        new Cell(new MonomerSequenceNode(second), [], x2, y2, second),
+      );
+      return bond;
+    });
+    return { matrix: new CanvasMatrix(chains, { initialMatrix }), bonds };
+  }
+
+  it('keeps a distant corridor independent of a busier one on the same rows', () => {
+    const { matrix, bonds } = createMatrix([
+      [0, 0, 2, 1],
+      [4, 0, 8, 1],
+      [5, 0, 7, 1],
+      [6, 0, 9, 1],
+    ]);
+    expect(matrix.getMaxHorizontalOffsetForBond(bonds[0])).toBe(1);
+    const sharedOffsets = bonds
+      .slice(1)
+      .map((bond) => matrix.getMaxHorizontalOffsetForBond(bond));
+    expect(new Set(sharedOffsets).size).toBe(1);
+    expect(sharedOffsets[0]).toBeGreaterThan(1);
+  });
+
+  it('does not use offsets from connections in another row gap', () => {
+    const alone = createMatrix([[0, 1, 2, 2]]);
+    const busy = createMatrix([
+      [0, 1, 2, 2],
+      [3, 0, 7, 1],
+      [4, 0, 6, 1],
+      [5, 0, 8, 1],
+    ]);
+    expect(busy.matrix.getMaxHorizontalOffsetForBond(busy.bonds[0])).toBe(
+      alone.matrix.getMaxHorizontalOffsetForBond(alone.bonds[0]),
+    );
+  });
 });

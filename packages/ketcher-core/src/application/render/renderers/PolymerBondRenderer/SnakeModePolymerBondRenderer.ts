@@ -181,10 +181,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         this.isSideChainLikeBackbone) &&
       (!this.isHydrogenBond || editor.mode instanceof SnakeMode)
     ) {
-      const maxHorizontalOffset = Math.max(
-        matrix?.getMaxHorizontalOffsetForRow(cells[0].y) ?? 0,
-        matrix?.getMaxHorizontalOffsetForRow(cells[cells.length - 1].y) ?? 0,
-      );
+      const maxHorizontalOffset =
+        matrix?.getMaxHorizontalOffsetForBond(this.polymerBond) ?? 0;
       this.appendSideConnectionBond(rootElement, cells, maxHorizontalOffset);
     } else if (
       this.isSnakeBond &&

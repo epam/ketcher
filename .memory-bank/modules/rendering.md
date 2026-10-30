@@ -63,6 +63,7 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 
 - The Flex renderer draws a straight line/path.
 - The Snake renderer draws orthogonal "snake" paths and also renders hydrogen bonds (dashed). There is **no standalone hydrogen-bond renderer**.
+- For side-chain bonds between neighboring Snake rows, `CanvasMatrix` shares the routing baseline only within groups of overlapping horizontal spans in the same row gap. Local connection offsets remain obstacles; disconnected corridors and other row gaps do not set the group baseline.
 
 ### Sequence rendering
 

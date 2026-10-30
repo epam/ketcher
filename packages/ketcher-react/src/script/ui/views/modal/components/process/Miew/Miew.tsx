@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type ComponentType,
-  lazy,
-  Suspense,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { useTranslation } from 'react-i18next';
@@ -54,18 +45,14 @@ import {
   shouldPreserveStructure as hasStructureToPreserve,
 } from './miewStructMerge';
 
-const Viewer = lazy(() =>
-  import('miew-react').then((module) => ({
-    default: module.default as unknown as ComponentType<any>,
-  })),
-);
+const Viewer = lazy(() => import('miew-react'));
 
 type MiewDialogProperties = {
-  miewOpts: any;
+  miewOpts: ReturnType<typeof createMiewOptions>;
   server: StructService;
   struct: Struct;
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: unknown) => void;
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProperties = {

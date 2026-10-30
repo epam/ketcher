@@ -2,6 +2,12 @@
 name: create-verification-skill
 description: 'Generate a project-local verification skill that drives your app the way a user does — any language, framework, or platform. Use for /create-verification-skill, "make a control skill for this repo", or when a project has no scripted way to prove UI/CLI/service behavior.'
 disable-model-invocation: true
+metadata:
+  credits:
+    skill: pstack
+    author: Lauren Tan
+    url: 'https://github.com/cursor/plugins/tree/main/harness/pstack'
+    note: 'MIT License. Maintained in this repo.'
 ---
 
 # Create a verification skill
@@ -42,5 +48,3 @@ Run its own instructions end to end once: launch, doctor, drive ONE mapped featu
 ## 5. Offer the maintenance loop
 
 Point the user at `/maintain-verification-skill` for keeping the map honest as the app changes. Suggest a cadence only if they ask.
-
-Adapted from pstack by Lauren Tan (https://github.com/cursor/plugins/tree/main/harness/pstack, MIT License). Maintained in this repo.

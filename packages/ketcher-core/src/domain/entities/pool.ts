@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 interface WithResetInitiallySelected {
-  resetInitiallySelected(invalidate?: boolean): void;
+  resetInitiallySelected(shouldInvalidate?: boolean): void;
 }
 
 function hasResetInitiallySelected(
@@ -55,23 +55,27 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
     return null;
   }
 
-  find(predicate: (key: number, value: TValue) => boolean): number | null {
+  find(
+    isMatchingEntry: (key: number, value: TValue) => boolean,
+  ): number | null {
     for (const [key, value] of this.entries()) {
-      if (predicate(key, value)) return key;
+      if (isMatchingEntry(key, value)) return key;
     }
 
     return null;
   }
 
-  filter(predicate: (key: number, value: TValue) => boolean): Pool<TValue> {
+  filter(
+    isMatchingEntry: (key: number, value: TValue) => boolean,
+  ): Pool<TValue> {
     return new Pool<TValue>(
-      Array.from(this).filter(([key, value]) => predicate(key, value)),
+      [...this].filter(([key, value]) => isMatchingEntry(key, value)),
     );
   }
 
-  some(predicate: (value: TValue) => boolean): boolean {
+  some(isMatchingEntry: (value: TValue) => boolean): boolean {
     for (const value of this.values()) {
-      if (predicate(value)) {
+      if (isMatchingEntry(value)) {
         return true;
       }
     }
@@ -79,10 +83,10 @@ export class Pool<TValue = unknown> extends Map<number, TValue> {
     return false;
   }
 
-  changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
+  changeInitiallySelectedPropertiesForPool(shouldInvalidate?: boolean): void {
     this.forEach((value, key) => {
       if (hasResetInitiallySelected(value)) {
-        value.resetInitiallySelected(invalidate);
+        value.resetInitiallySelected(shouldInvalidate);
         this.set(key, value);
       }
     });

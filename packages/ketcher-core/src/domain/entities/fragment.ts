@@ -133,7 +133,7 @@ export class Fragment {
     if (
       !isAdd &&
       (struct.atoms.get(aid)?.fragment !== frId ||
-        !Array.from(struct.bonds.values())
+        ![...struct.bonds.values()]
           .filter(
             (bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE,
           )
@@ -160,7 +160,7 @@ export class Fragment {
   ): boolean {
     if (
       struct.atoms.get(atomId)?.fragment !== fragmentId ||
-      !Array.from(struct.bonds.values())
+      ![...struct.bonds.values()]
         .filter((bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE)
         .some((bond) => bond.begin === atomId)
     ) {

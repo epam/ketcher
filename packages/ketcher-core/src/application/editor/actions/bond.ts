@@ -162,14 +162,14 @@ export function fromBondAddition(
 
   let beginAtomId: number, endAtomId: number;
 
-  const startsOnAtom = typeof begin === 'number';
-  const endsOnAtom = typeof end === 'number';
+  const isStartOnAtom = typeof begin === 'number';
+  const isEndOnAtom = typeof end === 'number';
 
-  if (!startsOnAtom && !endsOnAtom) {
+  if (!isStartOnAtom && !isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownNothingAndUpNothing(begin, end);
-  } else if (!startsOnAtom && endsOnAtom) {
+  } else if (!isStartOnAtom && isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownNothingAndUpAtom(begin, end);
-  } else if (startsOnAtom && !endsOnAtom) {
+  } else if (isStartOnAtom && !isEndOnAtom) {
     [beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end);
   } else {
     [beginAtomId, endAtomId] = [begin as number, end as number];
@@ -206,14 +206,14 @@ export function fromBondAddition(
   const beginFragmentAtomId = getFragmentAtomId(beginAtomId);
   const endFragmentAtomId = getFragmentAtomId(endAtomId);
   const mergedFragmentId =
-    beginFragmentAtomId !== undefined && endFragmentAtomId !== undefined
-      ? mergeFragmentsIfNeeded(
+    beginFragmentAtomId === undefined || endFragmentAtomId === undefined
+      ? undefined
+      : mergeFragmentsIfNeeded(
           action,
           reStruct,
           beginFragmentAtomId,
           endFragmentAtomId,
-        )
-      : undefined;
+        );
   if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
     action.addOp(
       new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct),
@@ -227,7 +227,7 @@ export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: Partial<Bond>,
-  reset?: boolean,
+  shouldReset?: boolean,
 ): Action {
   const struct = restruct.molecule;
   const action = new Action();
@@ -242,7 +242,7 @@ export function fromBondsAttrs(
     const resultingType =
       'type' in attrs
         ? attrs.type
-        : reset
+        : shouldReset
           ? Bond.attrGetDefault('type')
           : bond.type;
     if (
@@ -256,7 +256,7 @@ export function fromBondsAttrs(
     let shouldUpdateStereo = false;
 
     Object.keys(Bond.attrlist).forEach((key) => {
-      if (!(key in attrs) && !reset) return;
+      if (!(key in attrs) && !shouldReset) return;
 
       const value = key in attrs ? attrs[key] : Bond.attrGetDefault(key);
 
@@ -438,10 +438,10 @@ export function bondChangingAction(
       ? plainBondTypes
       : null;
   if (
+    loop &&
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&
-    bond.stereo === Bond.PATTERN.STEREO.NONE &&
-    loop
+    bond.stereo === Bond.PATTERN.STEREO.NONE
   ) {
     // if `Single bond` tool is chosen and bond for change in `plainBondTypes`
     bondProps.type = loop[(loop.indexOf(bond.type) + 1) % loop.length];

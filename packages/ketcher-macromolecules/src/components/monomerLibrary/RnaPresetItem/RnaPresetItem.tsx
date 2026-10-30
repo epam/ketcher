@@ -31,8 +31,8 @@ import {
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
 import {
   selectEditor,
-  selectIsSequenceMode,
-  selectIsDragging,
+  isSequenceModeEnabled,
+  isEditorDragging,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
@@ -50,8 +50,8 @@ const RnaPresetItem = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
-  const isDragging = useAppSelector(selectIsDragging);
+  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 

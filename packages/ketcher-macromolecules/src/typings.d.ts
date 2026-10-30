@@ -19,6 +19,21 @@ declare namespace NodeJS {
   }
 }
 
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly INDIGO_VERSION?: string;
+  readonly INDIGO_MACHINE?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 declare module '*.svg' {
   import * as React from 'react';
 

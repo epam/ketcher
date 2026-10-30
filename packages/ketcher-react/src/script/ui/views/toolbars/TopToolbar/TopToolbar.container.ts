@@ -36,7 +36,7 @@ type State = {
   actionState?: Record<string, Omit<ActionStatus, 'selected'> | undefined> & {
     zoom?: { selected?: number };
   };
-  editor?: Pick<Editor, 'isMonomerCreationWizardActive'> | null;
+  editor?: Pick<Editor, 'zoom' | 'isMonomerCreationWizardActive'> | null;
   options?: { customButtons?: CustomButton[] };
   toolbar: Pick<ToolbarState, 'opened'>;
   requestsStatuses: Pick<RequestState, 'indigoVerification'>;
@@ -79,7 +79,7 @@ const shortcuts = generateMenuShortcuts<typeof action>(action);
 
 const mapStateToProps = (state: State) => {
   return {
-    currentZoom: Math.round((state.actionState?.zoom?.selected ?? NaN) * 100),
+    currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
     isModeSwitcherDisabled: Boolean(

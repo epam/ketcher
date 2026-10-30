@@ -45,4 +45,27 @@
     max-width: 90%;
     max-height: 90%;
   }
+
+  // Non-modal dialogs keep the overlay element — so canvas and toolbars still get no
+  // pointer input — but drop the dimming and the centering layout.
+  &.nonModal {
+    display: block;
+    background-image: none;
+    background-color: transparent;
+    filter: none;
+
+    &::after {
+      content: none;
+    }
+  }
+
+  // Draggable dialogs keep the dimming backdrop but switch off flex centering so
+  // the absolutely-positioned dialog can place itself freely within the overlay.
+  &.draggableModal {
+    display: block;
+
+    &::after {
+      content: none;
+    }
+  }
 }

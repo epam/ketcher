@@ -98,6 +98,11 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
       atom.a.pp.y > y0 &&
       atom.a.pp.y < y1
     ) {
+      // Skip if part of contracted sgroup - will be selected via label position
+      if (sGroup?.isContracted()) {
+        return;
+      }
+
       atomList.push(aid);
     }
   });
@@ -168,6 +173,28 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
+  // Select contracted functional groups by their label position
+  const sgroupList: Array<number> = [];
+  restruct.sgroups.forEach((sgroup, id) => {
+    const sGroupItem = sgroup.item;
+
+    if (sGroupItem?.isContracted()) {
+      const contractedPos = sGroupItem.getContractedPosition(struct);
+      const pos = contractedPos.position;
+      const labelInRect = pos.x > x0 && pos.x < x1 && pos.y > y0 && pos.y < y1;
+
+      if (labelInRect) {
+        sgroupList.push(id);
+        // Add all atoms of this sgroup for downstream operations
+        sGroupItem.atoms.forEach((aid) => {
+          if (!atomList.includes(aid)) {
+            atomList.push(aid);
+          }
+        });
+      }
+    }
+  });
+
   const textsList: Array<number> = [];
   restruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints();
@@ -220,6 +247,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     rxnPluses: rxnPlusesList,
     enhancedFlags: enhancedFlagList,
     sgroupData: sgroupDataList,
+    sgroups: sgroupList,
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,

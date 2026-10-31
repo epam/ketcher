@@ -317,36 +317,35 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
-    async ({ SnakeCanvas: _ }) => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/6947
-       * Bug: https://github.com/epam/ketcher/issues/5634
-       * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
-       * Scenario:
-       * 1. Go to Macro - Snake mode
-       * 2. Load from file
-       * 3. Save to MOL V3000
-       */
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
-      );
-      await takeEditorScreenshot(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
+    SnakeCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5634
+     * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from file
+     * 3. Save to MOL V3000
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
     MoleculesCanvas: _,
@@ -519,6 +518,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await drawBenzeneRing(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.Bonds);
     await SettingsDialog(page).setOptionValue(BondsSetting.BondLength, '50');
     await SettingsDialog(page).setOptionValue(BondsSetting.BondSpacing, '50');
     await SettingsDialog(page).apply();
@@ -632,27 +632,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'OU');
     await takeEditorScreenshot(page);
-  });
-
-  test('Case 23: Set a new name for the button ACS style', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5561
-     * Description: Set a new name for the button ACS style. A new name for button should be "Set ACS Settings"
-     * Scenario:
-     * 1. Toggle to Micro
-     * 2. Press Settings
-     * 3. Check that the button name is "Set ACS Settings"
-     */
-    const setACSSettings = SettingsDialog(page).setACSSettingsButton;
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
-    await expect(setACSSettings).toBeVisible();
-    await expect(setACSSettings).toHaveText('Set ACS Settings');
-    await takeEditorScreenshot(page, {
-      mask: [SettingsDialog(page).resetButton],
-    });
-    await SettingsDialog(page).cancel();
   });
 
   test('Case 24: Bond/monomer tooltip preview placed correct in on edge cases', async ({
@@ -1286,6 +1265,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await TopRightToolbar(page).Settings();
+    await SettingsDialog(page).openSection(SettingsSection.General);
+    await SettingsDialog(page).openSection(SettingsSection.Atoms);
     await SettingsDialog(page).setOptionValue(GeneralSetting.AtomColoring);
     await SettingsDialog(page).apply();
     await takeEditorScreenshot(page);

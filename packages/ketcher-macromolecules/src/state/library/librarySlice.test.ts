@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +24,11 @@ import {
 import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
 import { selectFilteredMonomers } from './librarySlice';
+
+const sortLabels = (labels: string[]) =>
+  labels.sort((firstLabel, secondLabel) =>
+    firstLabel.localeCompare(secondLabel),
+  );
 
 const createAminoAcid = (oneLetter: string, name: string): MonomerItemType => ({
   label: oneLetter,
@@ -128,11 +133,14 @@ const allMonomers: MonomerOrAmbiguousType[] = [
   ambiguousNucleotideB,
 ];
 
-const buildState = (searchFilter: string): RootState =>
+const buildState = (
+  searchFilter: string,
+  monomers: MonomerOrAmbiguousType[] = allMonomers,
+): RootState =>
   ({
     library: {
       searchFilter,
-      monomers: allMonomers,
+      monomers,
       favorites: {},
       defaultRnaPresets: [],
       selectedTabIndex: 0,
@@ -183,8 +191,8 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   ])(
     'returns expected amino-acid monomers for code %s → %j',
     (code, expectedLabels) => {
-      expect(getMatchedAminoAcidLabels(code).sort()).toEqual(
-        [...expectedLabels].sort(),
+      expect(sortLabels(getMatchedAminoAcidLabels(code))).toEqual(
+        sortLabels([...expectedLabels]),
       );
     },
   );
@@ -192,16 +200,20 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   it.each(['ala', 'ALA', 'aLa'])(
     'matches alanine case-insensitively for %s (including ambiguous X)',
     (query) => {
-      expect(getMatchedAminoAcidLabels(query).sort()).toEqual(['A', 'X']);
+      expect(sortLabels(getMatchedAminoAcidLabels(query))).toEqual(['A', 'X']);
     },
   );
 
   it('matches partial three-letter code Tr → Trp (including ambiguous X)', () => {
-    expect(getMatchedAminoAcidLabels('Tr').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Tr'))).toEqual(['W', 'X']);
   });
 
   it('Gln returns Q plus ambiguous monomers that contain glutamine', () => {
-    expect(getMatchedAminoAcidLabels('Gln').sort()).toEqual(['Q', 'X', 'Z']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Gln'))).toEqual([
+      'Q',
+      'X',
+      'Z',
+    ]);
   });
 
   it('Glx returns only Z, not Gln/Q', () => {
@@ -271,7 +283,10 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
 
   it('still matches single-letter A and full name Tryptophan', () => {
     expect(getMatchedAminoAcidLabels('A')).toContain('A');
-    expect(getMatchedAminoAcidLabels('Tryptophan').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Tryptophan'))).toEqual([
+      'W',
+      'X',
+    ]);
   });
 
   it.each(['Xyz', 'Al@', 'Al1'])(
@@ -309,6 +324,39 @@ describe('selectFilteredMonomers — three-letter amino-acid codes', () => {
   });
 
   it('ambiguous X matches Trp via its tryptophan component', () => {
-    expect(getMatchedAminoAcidLabels('Trp').sort()).toEqual(['W', 'X']);
+    expect(sortLabels(getMatchedAminoAcidLabels('Trp'))).toEqual(['W', 'X']);
+  });
+});
+
+describe('selectFilteredMonomers — hyphen and underscore (isShortNameOnlySearch)', () => {
+  const makeMonomer = (
+    label: string,
+    monomerName: string,
+    name: string,
+  ): MonomerItemType => ({
+    label,
+    struct: {} as MonomerItemType['struct'],
+    props: {
+      MonomerName: monomerName,
+      Name: name,
+      MonomerNaturalAnalogCode: '',
+      MonomerType: 'RNA',
+      MonomerClass: KetMonomerClass.Sugar,
+    },
+  });
+
+  it.each(['-', '_'])('filters on label only for "%s"', (char) => {
+    const monomers: MonomerOrAmbiguousType[] = [
+      makeMonomer(`label${char}match`, 'noChar', 'No Char'), // label → matches
+      makeMonomer('noChar', `name${char}only`, 'No Char'), // MonomerName only → no match
+      makeMonomer('noChar2', 'testName', `full${char}name`), // Name only → no match
+      createAmbiguous(`amb${char}match`, [createComponent('A', 'Alanine')]), // ambiguous label → matches
+      createAmbiguous('ambNoMatch', [
+        createComponent(`comp${char}name`, 'Alanine'),
+      ]), // component only → no match
+    ];
+    expect(
+      selectFilteredMonomers(buildState(char, monomers)).map((m) => m.label),
+    ).toEqual([`label${char}match`, `amb${char}match`]);
   });
 });

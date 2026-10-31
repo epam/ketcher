@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,10 +30,9 @@ import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import type { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName, MonomerItemType } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditAllInstancesPresetRequirements = {
   type: KetMonomerClass;
@@ -49,6 +48,9 @@ export type MonomerCreationInitialValues = {
   aliasBILN: string;
   position?: Vec2;
   editMode?: 'instance' | 'all';
+  libraryOnly?: boolean;
+  originalMonomerItem?: MonomerItemType;
+  modificationTypes?: string[];
   originalType?: KetMonomerClass;
   originalSymbol?: string;
   presetRequirements?: EditAllInstancesPresetRequirements;
@@ -90,9 +92,6 @@ export type MonomerCreationState = {
     AttachmentPointName,
     [number, number]
   >;
-  // Reference to the BaseMonomer entity on the macromolecules canvas being
-  // edited. Populated only when editing an existing monomer.
-  editingMonomer?: BaseMonomer;
 } | null;
 
 export class Render {
@@ -106,7 +105,7 @@ export class Render {
   public options: RenderOptions;
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
-  private readonly userOpts: Partial<RenderOptions>;
+  private userOpts: Partial<RenderOptions>;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
@@ -116,7 +115,7 @@ export class Render {
     clientArea: HTMLElement,
     options: Partial<RenderOptions>,
     currentRender?: Render,
-    reuseRestructIfExist?: boolean,
+    shouldReuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
@@ -127,7 +126,7 @@ export class Render {
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && currentRender?.ctab) {
+    if (shouldReuseRestructIfExist && currentRender?.ctab) {
       this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
@@ -158,15 +157,25 @@ export class Render {
     this.resizeObserver = null;
   };
 
+  /**
+   * The options this render was asked for, without the values defaultOptions
+   * derives from them. This is the right base for building a render with
+   * changed options: the derived values get recomputed instead of carried over.
+   */
+  get userOptions(): Partial<RenderOptions> {
+    return this.userOpts;
+  }
+
   updateOptions(opts: string) {
     try {
       const passedOptions = JSON.parse(opts);
       if (passedOptions && typeof passedOptions === 'object') {
+        this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
         return this.options;
       }
-    } catch (e) {
-      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
+    } catch (error) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', error);
       console.log('Not a valid settings object');
     }
     return false;
@@ -184,7 +193,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
+  /**
+  @deprecated recommend using `CoordinateTransformation.pageToModel` instead
+  */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageToModel(event, this);
   }
@@ -261,7 +272,7 @@ export class Render {
     this.scrollbar.update();
   }
 
-  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
+  setMolecule(struct: Struct, shouldForceUpdateWithTimeout = false) {
     this.paper.clear(); // removes scrollbar rects also
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
@@ -270,7 +281,7 @@ export class Render {
 
     // need to use force update with timeout to have ability select bonds in case of usage:
     // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
-    if (forceUpdateWithTimeout) {
+    if (shouldForceUpdateWithTimeout) {
       setTimeout(() => {
         this.update(true);
       }, 0);
@@ -279,7 +290,7 @@ export class Render {
     }
   }
 
-  update(force = false, viewSz: Vec2 | null = null) {
+  update(shouldForce = false, viewSz: Vec2 | null = null) {
     viewSz =
       viewSz ??
       new Vec2(
@@ -287,9 +298,9 @@ export class Render {
         this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
-    const changes = this.ctab.update(force);
+    const hasChanges = this.ctab.update(shouldForce);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
-    if (changes) {
+    if (hasChanges) {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)
@@ -300,11 +311,7 @@ export class Render {
       }
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
-      if (!isAutoScale) {
-        if (!this.oldCb) this.oldCb = new Box2Abs();
-        this.scrollbar.update();
-        this.options.offset = this.options.offset ?? new Vec2();
-      } else {
+      if (isAutoScale) {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
         const mv = new Vec2(marg, marg);
@@ -328,6 +335,10 @@ export class Render {
           csz.x * rescale,
           csz.y * rescale,
         );
+      } else {
+        if (!this.oldCb) this.oldCb = new Box2Abs();
+        this.scrollbar.update();
+        this.options.offset = this.options.offset ?? new Vec2();
       }
 
       notifyRenderComplete();

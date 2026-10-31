@@ -19,20 +19,20 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.14.1]
+        node-version: [24.20.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Get npm cache directory path
         id: npm-cache-dir-path
         run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v6
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: npm-cache # use this to check for `cache-hit` (`steps.npm-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.npm-cache-dir-path.outputs.dir }}
@@ -42,6 +42,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Run lint
+        run: npm run lint
 
       - name: Run audit
         run: npm audit --all --audit-level=critical
@@ -54,6 +57,13 @@ jobs:
         env:
           CI: true
 
+      - name: Validate OpenSpec
+        run: |
+          npx openspec validate --all --strict --no-interactive
+          npx openspec validate --archived --no-interactive
+        env:
+          OPENSPEC_TELEMETRY: 0
+
       - name: Run build example-ssr
         run: npm run build
         working-directory: example-ssr
@@ -65,3 +75,6 @@ jobs:
       - name: Run test example-ssr
         run: npm run test:types
         working-directory: example-ssr
+
+      - name: Check autotests code
+        run: npm run check:autotests

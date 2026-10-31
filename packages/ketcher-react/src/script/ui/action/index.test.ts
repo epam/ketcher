@@ -4,7 +4,7 @@ jest.mock('./copyAs', () => jest.fn());
 jest.mock('./copyImageToClipboard', () => jest.fn());
 jest.mock('./debug', () => ({}));
 jest.mock('../component/cliparea/cliparea', () => ({
-  exec: jest.fn(),
+  canExecuteClipboardCommand: jest.fn(),
 }));
 jest.mock('./isHidden', () => jest.fn(() => false));
 jest.mock('./server', () => ({}));

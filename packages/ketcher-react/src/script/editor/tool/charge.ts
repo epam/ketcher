@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,25 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import { Atom, assert, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class ChargeTool implements Tool {
   private readonly editor: Editor;
-  private readonly charge: any;
+  private readonly charge: number;
 
-  constructor(editor, charge) {
+  constructor(editor: Editor, charge: unknown) {
+    assert(typeof charge === 'number', 'Charge tool requires a numeric charge');
     this.editor = editor;
     this.editor.selection(null);
     this.charge = charge;
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    const atom = ci?.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
     if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
@@ -42,7 +42,7 @@ class ChargeTool implements Tool {
     return true;
   }
 
-  click(event) {
+  click(event: PointerEvent) {
     const editor = this.editor;
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
@@ -87,7 +87,7 @@ class ChargeTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       const atom = molecule.atoms.get(ci.id);
       if (atom && this.isChargeableAtom(atom)) {
         this.editor.hover(ci);

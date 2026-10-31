@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Check from './Check';
-import Analyse from './Analyse';
-import Recognize from './Recognize';
-import Miew from './Miew';
-
-export { Check, Analyse, Recognize, Miew };
+export { default as Check } from './Check';
+export { default as Analyse } from './Analyse';
+export { default as Recognize } from './Recognize';
+export { default as Miew } from './Miew';

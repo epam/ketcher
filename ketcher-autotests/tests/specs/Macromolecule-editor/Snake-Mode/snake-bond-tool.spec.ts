@@ -124,12 +124,15 @@ test.describe('Snake Bond Tool', () => {
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
     */
-    await Library(page).switchToPeptidesTab();
-
     await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 50, 25, 18);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
+
+    const banner = NotificationBannerOnMacro(page);
+    if (await banner.isVisible()) {
+      await banner.close();
+    }
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -276,6 +279,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -494,6 +498,7 @@ test.describe('Snake Bond Tool', () => {
     });
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -711,6 +716,7 @@ test.describe('Snake Bond Tool', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -920,6 +926,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, -400);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -941,6 +948,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -968,6 +976,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

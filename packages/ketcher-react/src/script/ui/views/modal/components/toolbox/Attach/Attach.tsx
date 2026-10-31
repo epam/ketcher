@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
+import { useTranslation } from 'react-i18next';
 
 import { Dialog } from '../../../../components';
 import { attachmentPoints as attachmentPointsSchema } from '../../../../../data/schema/struct-schema';
@@ -29,15 +30,16 @@ interface AttachPointsProps extends BaseProps {
 type Props = AttachPointsProps & BaseCallProps;
 
 const AttachPoints = (props: Props) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   const { formState, ...rest } = props;
   return (
     <Dialog
-      title="Attachment Points"
+      title={t('dialogs:toolbox.attach.dialogTitle')}
       className={classes.attachPoints}
       result={() => formState.result}
       valid={() => formState.valid}
       params={rest}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >

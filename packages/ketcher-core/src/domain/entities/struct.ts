@@ -47,6 +47,10 @@ import {
   rotateDelta,
 } from 'application/editor/shared/utils';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+import {
+  findAttachmentPointForBond,
+  getOppositeAttachmentPointStereoBond,
+} from 'domain/helpers/monomerAttachmentPointStereo';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 
 export type Neighbor = {
@@ -1930,12 +1934,16 @@ export class Struct {
             : bond.end;
 
           const firstMonomerAttachmentPointInConnection =
-            firstMonomerAttachmentPoints.find(
-              (attachmentPoint) => attachmentPoint.atomId === firstMonomerAtom,
+            findAttachmentPointForBond(
+              firstMonomerAttachmentPoints,
+              bond,
+              firstMonomerAtom,
             );
           const secondMonomerAttachmentPointInConnection =
-            secondMonomerAttachmentPoints.find(
-              (attachmentPoint) => attachmentPoint.atomId === secondMonomerAtom,
+            findAttachmentPointForBond(
+              secondMonomerAttachmentPoints,
+              bond,
+              secondMonomerAtom,
             );
 
           if (
@@ -1963,37 +1971,64 @@ export class Struct {
             secondMonomerAttachmentPointBondStereo !== null &&
             secondMonomerAttachmentPointBondStereo !== Bond.PATTERN.STEREO.NONE;
 
+          const setStereoWithNarrowEndAtAtom = (
+            atomId: number,
+            stereo: number,
+          ) => {
+            if (bond.begin !== atomId) {
+              this.flipBondAndSetStereo(bondId, bond, stereo);
+            } else {
+              bond.stereo = stereo;
+            }
+          };
+
           if (
             hasStereoBondOnFirstMonomerAttachmentPoint &&
             !hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
-            if (bond.begin === firstMonomerAtom) {
-              bond.stereo = firstMonomerAttachmentPointBondStereo;
-            } else {
-              this.flipBondAndSetStereo(
-                bondId,
-                bond,
-                firstMonomerAttachmentPointBondStereo,
-              );
-            }
+            setStereoWithNarrowEndAtAtom(
+              firstMonomerAtom,
+              firstMonomerAttachmentPointBondStereo,
+            );
           } else if (
             !hasStereoBondOnFirstMonomerAttachmentPoint &&
             hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
-            if (bond.begin === secondMonomerAtom) {
-              bond.stereo = secondMonomerAttachmentPointBondStereo;
-            } else {
-              this.flipBondAndSetStereo(
-                bondId,
-                bond,
-                secondMonomerAttachmentPointBondStereo,
-              );
-            }
+            setStereoWithNarrowEndAtAtom(
+              secondMonomerAtom,
+              secondMonomerAttachmentPointBondStereo,
+            );
           } else if (
             hasStereoBondOnFirstMonomerAttachmentPoint &&
             hasStereoBondOnSecondMonomerAttachmentPoint
           ) {
             bond.stereo = Bond.PATTERN.STEREO.NONE;
+          } else {
+            // Neither attachment point is marked, but a chiral phosphate marks
+            // only one of the two attachment points it keeps on the same atom,
+            // so the other bond is drawn with the opposite wedge.
+            const firstMonomerOppositeStereo =
+              getOppositeAttachmentPointStereoBond(
+                firstMonomer,
+                firstMonomerAttachmentPointInConnection,
+              );
+            const secondMonomerOppositeStereo =
+              getOppositeAttachmentPointStereoBond(
+                secondMonomer,
+                secondMonomerAttachmentPointInConnection,
+              );
+
+            if (firstMonomerOppositeStereo !== null) {
+              setStereoWithNarrowEndAtAtom(
+                firstMonomerAtom,
+                firstMonomerOppositeStereo,
+              );
+            } else if (secondMonomerOppositeStereo !== null) {
+              setStereoWithNarrowEndAtAtom(
+                secondMonomerAtom,
+                secondMonomerOppositeStereo,
+              );
+            }
           }
         });
       }

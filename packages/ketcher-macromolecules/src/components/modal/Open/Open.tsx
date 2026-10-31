@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -173,7 +173,7 @@ const positionStructureOnNextSequenceLine = (
   });
 };
 
-const addToCanvas = ({
+const hasAddedStructureToCanvas = ({
   ketSerializer,
   editor,
   struct,
@@ -288,7 +288,11 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      const hasStructure = addToCanvas({ struct, ketSerializer, editor });
+      const hasStructure = hasAddedStructureToCanvas({
+        struct,
+        ketSerializer,
+        editor,
+      });
       if (!hasStructure) {
         dispatch(openErrorTooltip('No structure'));
       }
@@ -323,7 +327,7 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    const hasStructure = addToCanvas({
+    const hasStructure = hasAddedStructureToCanvas({
       struct: ketStruct.struct,
       ketSerializer,
       editor,
@@ -375,11 +379,13 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
-    const windowContext = window as unknown as Record<string, unknown>;
+    const windowContext = globalThis as unknown as Record<string, unknown>;
 
     if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
-        /* Fullscreen restoration failed or was denied by the browser */
+        /*
+        Fullscreen restoration failed or was denied by the browser
+        */
       });
       windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
@@ -495,6 +501,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>
@@ -516,7 +524,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      {currentState === MODAL_STATES.textEditor && !isAnalyzingFile ? (
+      {!isAnalyzingFile && currentState === MODAL_STATES.textEditor ? (
         <Modal.Footer withborder="true">{renderFooter()}</Modal.Footer>
       ) : (
         <></>

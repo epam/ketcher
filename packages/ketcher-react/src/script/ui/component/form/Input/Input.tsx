@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, {
-  type ComponentType,
-  PureComponent,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { type ComponentType, PureComponent } from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
@@ -66,20 +60,6 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(innerRef);
-
-  useEffect(() => {
-    if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current;
-    }
-  }, [innerRef]);
-
-  useEffect(() => {
-    if (inputRef.current && isFocused) {
-      inputRef.current.focus();
-    }
-  }, [inputRef, isFocused]);
-
   return (
     <>
       <input
@@ -87,7 +67,8 @@ export function GenericInput({
         value={value ?? ''}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
-        ref={inputRef}
+        ref={innerRef}
+        autoFocus={isFocused}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}
@@ -182,9 +163,9 @@ Select.val = function (ev, schema) {
 
   const options = select.options;
 
-  return Array.from(options).reduce(
+  return [...options].reduce(
     (res, o: HTMLOptionElement, i) =>
-      !o.selected ? res : [enumSchema(schema, i), ...res],
+      o.selected ? [enumSchema(schema, i), ...res] : res,
     [] as HTMLOptionElement[],
   );
 };
@@ -247,9 +228,9 @@ FieldSet.val = function (ev, schema) {
   let result;
 
   if (inputCollection?.length) {
-    result = Array.from(inputCollection).reduce(
+    result = [...inputCollection].reduce(
       (res, inp: HTMLInputElement, i) =>
-        !inp.checked ? res : [enumSchema(schema, i), ...res],
+        inp.checked ? [enumSchema(schema, i), ...res] : res,
 
       [] as HTMLInputElement[],
     );
@@ -288,8 +269,8 @@ function enumSchema(schema, cbOrIndex) {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
       const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
-        title !== undefined ? title : item,
-        item?.value !== undefined ? item.value : item,
+        title === undefined ? item : title,
+        item?.value === undefined ? item : item.value,
       );
     });
   }
@@ -297,7 +278,7 @@ function enumSchema(schema, cbOrIndex) {
   if (!isTypeValue) return schema.enum[cbOrIndex];
 
   const res = schema[cbOrIndex];
-  return res.value !== undefined ? res.value : res;
+  return res.value === undefined ? res : res.value;
 }
 
 function inputCtrl(component, schema, onChange) {
@@ -310,7 +291,7 @@ function inputCtrl(component, schema, onChange) {
 
   return {
     onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       onChange(val);
     },
     ...props,
@@ -321,7 +302,7 @@ function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
     onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       if (val !== undefined) onChange(val);
     },
   };
@@ -428,19 +409,11 @@ class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
   component: ComponentType<InputComponentProps>;
-  ctrl: {
-    type?: string;
-    onChange?: (val: unknown) => void;
-    onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
-    selected?: (testVal: unknown, value: unknown) => boolean;
-    multiple?: boolean;
-  };
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props);
     this.component = (props.component ||
       componentMap(props)) as ComponentType<InputComponentProps>;
-    this.ctrl = ctrlMap(this.component, props);
   }
 
   render() {
@@ -450,11 +423,12 @@ class Input extends PureComponent<
       innerRef,
       ...restProps
     } = this.props;
+    const ctrl = ctrlMap(this.component, this.props);
     return (
       <AnyComponentWithRef
         Component={this.component}
         ref={innerRef}
-        {...this.ctrl}
+        {...ctrl}
         {...restProps}
       />
     );

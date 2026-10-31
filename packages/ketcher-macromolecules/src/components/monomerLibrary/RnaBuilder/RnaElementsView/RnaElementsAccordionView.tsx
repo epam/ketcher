@@ -12,8 +12,8 @@ import {
   RnaBuilderPresetsItem,
   selectActiveMonomerKey,
   selectFilteredPresets,
-  selectIsActivePresetNewAndEmpty,
-  selectIsEditMode,
+  isActiveRnaPresetNewAndEmpty,
+  isRnaBuilderEditMode,
   selectPresetPhosphateFilter,
 } from 'state/rna-builder';
 import {
@@ -54,9 +54,9 @@ const RnaElementsAccordionView = ({
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isActivePresetNewAndEmpty = useAppSelector(
-    selectIsActivePresetNewAndEmpty,
+    isActiveRnaPresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
@@ -93,7 +93,7 @@ const RnaElementsAccordionView = ({
   return (
     <>
       {groupsData.map((groupData) => {
-        const expanded = expandedAccordion === groupData.groupName;
+        const isExpanded = expandedAccordion === groupData.groupName;
         const variantMonomers = selectAmbiguousMonomersInCategory(
           monomers,
           groupData.groupName as MonomerGroups,
@@ -108,7 +108,7 @@ const RnaElementsAccordionView = ({
             groupName={groupData.groupName}
             label={t(groupNameToTabLabelKey[groupData.groupName])}
             quantity={quantity}
-            expanded={expanded}
+            expanded={isExpanded}
           />
         );
         const details =
@@ -189,14 +189,14 @@ const RnaElementsAccordionView = ({
             </DetailsContainer>
           );
         return groupData.groupName === RnaBuilderPresetsItem.Presets &&
-          expanded ? (
+          isExpanded ? (
           <StyledAccordionWrapper key={groupData.groupName}>
             <StyledAccordion
               data-testid="styled-accordion"
               dataTestIdDetails={`rna-accordion-details-${groupData.groupName}`}
               summary={summary}
               details={details}
-              expanded={expanded}
+              expanded={isExpanded}
               onSummaryClick={() =>
                 handleAccordionSummaryClick(groupData.groupName)
               }
@@ -209,7 +209,7 @@ const RnaElementsAccordionView = ({
             dataTestIdDetails={`rna-accordion-details-${groupData.groupName}`}
             summary={summary}
             details={details}
-            expanded={expanded}
+            expanded={isExpanded}
             onSummaryClick={() =>
               handleAccordionSummaryClick(groupData.groupName)
             }

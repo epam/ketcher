@@ -7,6 +7,9 @@ module.exports = {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
         diagnostics: {
           warnOnly: true,
         },

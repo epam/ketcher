@@ -43,8 +43,7 @@ jest.mock('ketcher-core', () => {
 
 const mockWorker = {
   postMessage: jest.fn(),
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
+  onmessage: jest.fn(),
   terminate: jest.fn(),
 };
 
@@ -62,13 +61,7 @@ describe('StandaloneStructService parallel requests (issue #2485)', () => {
     service.addKetcherId('test-ketcher-id');
 
     // Capture the message handler registered by the service
-    const addEventListenerCalls = mockWorker.addEventListener.mock.calls;
-    const messageCall = addEventListenerCalls.find(
-      (call) => call[0] === 'message',
-    );
-    if (messageCall) {
-      messageHandler = messageCall[1];
-    }
+    messageHandler = mockWorker.onmessage;
   });
 
   afterEach(() => {

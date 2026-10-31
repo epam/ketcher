@@ -13,9 +13,10 @@ import {
   fromFragmentDeletion,
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
+  KetcherFunctionality,
   MonomerMicromolecule,
 } from 'ketcher-core';
-import { useAppContext } from 'src/hooks';
+import { useAppContext, useIsFunctionalityDisabled } from 'src/hooks';
 import type Editor from 'src/script/editor';
 
 const MacromoleculeMenuItems = (
@@ -25,6 +26,9 @@ const MacromoleculeMenuItems = (
   const { ketcherId } = useAppContext();
   const [action, hidden] = useMonomerExpansionHandlers();
   const removeGroupingHandler = useRemoveGrouping();
+  const isExpandMonomersDisabled = useIsFunctionalityDisabled(
+    KetcherFunctionality.ExpandMonomers,
+  );
 
   const functionalGroups = props.propsFromTrigger?.functionalGroups;
   const totalMonomerCount = props.propsFromTrigger?.totalMonomerCount ?? 0;
@@ -32,21 +36,21 @@ const MacromoleculeMenuItems = (
     props.propsFromTrigger?.hasNonMonomerStructure ?? false;
 
   const sgroup = functionalGroups?.[0]?.relatedSGroup;
-  const multipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
+  const areMultipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
 
   const expandingDisabled =
     functionalGroups?.every((fg) => !canExpandMonomer(fg)) ?? false;
 
-  const expandText = multipleMonomersSelected
+  const expandText = areMultipleMonomersSelected
     ? 'Expand monomers'
     : 'Expand monomer';
-  const collapseText = multipleMonomersSelected
+  const collapseText = areMultipleMonomersSelected
     ? 'Collapse monomers'
     : 'Collapse monomer';
-  const expandLabel = multipleMonomersSelected
+  const expandLabel = areMultipleMonomersSelected
     ? t('components:contextMenu.expandMonomers')
     : t('components:contextMenu.expandMonomer');
-  const collapseLabel = multipleMonomersSelected
+  const collapseLabel = areMultipleMonomersSelected
     ? t('components:contextMenu.collapseMonomers')
     : t('components:contextMenu.collapseMonomer');
 
@@ -58,14 +62,14 @@ const MacromoleculeMenuItems = (
   // "Edit Monomer" is disabled when more than one monomer is in context, or the
   // sgroup is invalid/ambiguous/unresolved.
   const editMonomerDisabled =
-    multipleMonomersSelected || unknownOrAmbiguousMonomer;
+    areMultipleMonomersSelected || unknownOrAmbiguousMonomer;
 
   // "Create Monomer" is visible only when the selection is continuous and
   // contains multiple monomers, or exactly one monomer plus a non-monomer chemical structure.
   const isContinuous = props.propsFromTrigger?.isContinuous ?? false;
   const createMonomerVisible =
     isContinuous &&
-    (multipleMonomersSelected ||
+    (areMultipleMonomersSelected ||
       ((functionalGroups?.length ?? 0) === 1 && hasNonMonomerStructure));
 
   // Monomer code for "Edit All [code] (n)" label.
@@ -87,7 +91,7 @@ const MacromoleculeMenuItems = (
     const selectedAtoms = selection.atoms ?? [];
     const finalBonds: number[] = [];
 
-    editor.struct().bonds.forEach((bond: Bond, bondId: number) => {
+    editor.struct().bonds.forEach((bond, bondId) => {
       if (
         selectedAtoms.includes(bond.begin) &&
         selectedAtoms.includes(bond.end)
@@ -106,11 +110,11 @@ const MacromoleculeMenuItems = (
     });
   };
 
-  const handleEdit = (editAllInstances = false) => {
+  const handleEdit = (shouldEditAllInstances = false) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 
-    editor.openEditMonomerWizard(sgroupIds, editAllInstances);
+    editor.openEditMonomerWizard(sgroupIds, shouldEditAllInstances);
   };
 
   const handleEditAll = async () => {
@@ -148,7 +152,9 @@ const MacromoleculeMenuItems = (
     editor.focusCliparea();
   };
 
-  /** Apply / remove hover highlight on all canvas instances of the same monomer code. */
+  /**
+  Apply / remove hover highlight on all canvas instances of the same monomer code.
+  */
   const setEditAllHover = (isHovering: boolean) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const render = editor.render;
@@ -169,7 +175,7 @@ const MacromoleculeMenuItems = (
       <Item
         {...props}
         data-testid={`${expandText}-option`}
-        hidden={(params) => hidden(params, true)}
+        hidden={(params) => isExpandMonomersDisabled || hidden(params, true)}
         onClick={(params) => action(params, true)}
         disabled={expandingDisabled}
       >

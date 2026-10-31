@@ -721,7 +721,7 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
         props: { ...item.props },
       });
     });
-    if (group.groupItems.length) {
+    if (group.groupItems.length > 0) {
       result.push(group);
     }
     return result;

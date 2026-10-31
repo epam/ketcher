@@ -74,7 +74,7 @@ class ChainTool implements Tool {
     const bondResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -85,7 +85,7 @@ class ChainTool implements Tool {
       }
     }
 
-    if (ci && functionalGroups.size && ci.map === 'bonds') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
@@ -108,7 +108,7 @@ class ChainTool implements Tool {
           result.push(fgId);
         }
       }
-      if (result.length) {
+      if (result.length > 0) {
         this.editor.event.removeFG.dispatch({ fgIds: result });
         return;
       }
@@ -124,7 +124,7 @@ class ChainTool implements Tool {
           result.push(fgId);
         }
       }
-      if (result.length) {
+      if (result.length > 0) {
         this.editor.event.removeFG.dispatch({ fgIds: result });
         return;
       }
@@ -233,7 +233,7 @@ class ChainTool implements Tool {
     removeInfoLabelFromAtoms(struct);
     this.editor.render.update(true, null);
 
-    if (this.dragCtx?.mergeItems && functionalGroups.size) {
+    if (this.dragCtx?.mergeItems && functionalGroups.size > 0) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;
     }
     if (atom) {

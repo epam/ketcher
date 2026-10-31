@@ -32,12 +32,12 @@ function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
 
 export function shouldPreserveMeta(struct: Struct): boolean {
   return !!(
-    struct.rxnArrows.size ||
-    struct.rxnPluses.size ||
-    struct.texts.size ||
-    struct.simpleObjects.size ||
-    struct.images.size ||
-    struct.multitailArrows.size
+    struct.rxnArrows.size > 0 ||
+    struct.rxnPluses.size > 0 ||
+    struct.texts.size > 0 ||
+    struct.simpleObjects.size > 0 ||
+    struct.images.size > 0 ||
+    struct.multitailArrows.size > 0
   );
 }
 
@@ -137,7 +137,7 @@ export function collapseExpandedSuperatoms(struct: Struct): void {
 }
 
 export function mergeMetaObjects(result: Struct, original: Struct): void {
-  if (original.rxnArrows.size || original.rxnPluses.size) {
+  if (original.rxnArrows.size > 0 || original.rxnPluses.size > 0) {
     result.isReaction = true;
   }
 

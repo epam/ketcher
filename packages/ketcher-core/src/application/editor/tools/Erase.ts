@@ -26,7 +26,7 @@ class EraserTool implements BaseTool {
     this.editor = editor;
     this.history = EditorHistory.getInstance(editor);
     if (
-      this.editor.drawingEntitiesManager.selectedEntities.length &&
+      this.editor.drawingEntitiesManager.selectedEntities.length > 0 &&
       this.editor.mode.modeName !== 'sequence-layout-mode'
     ) {
       const modelChanges =

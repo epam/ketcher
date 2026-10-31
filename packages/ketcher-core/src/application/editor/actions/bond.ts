@@ -193,7 +193,7 @@ export function fromBondAddition(
     const atomIds = [newBond.begin, newBond.end].filter((id) =>
       struct.atoms.has(id),
     );
-    if (atomIds.length) {
+    if (atomIds.length > 0) {
       action.addOp(new CalcImplicitH(atomIds).perform(reStruct));
     }
     if (atomIds.length === 2) {

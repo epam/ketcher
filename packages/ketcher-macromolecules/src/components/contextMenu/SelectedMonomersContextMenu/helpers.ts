@@ -306,7 +306,7 @@ export const getMonomersForAminoAcidModification = (
   const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
   let monomerCandidates: BaseMonomer[] = [];
 
-  if (selectedMonomers.length) {
+  if (selectedMonomers.length > 0) {
     monomerCandidates = selectedMonomers;
   } else if (clickedMonomer) {
     monomerCandidates = [clickedMonomer];

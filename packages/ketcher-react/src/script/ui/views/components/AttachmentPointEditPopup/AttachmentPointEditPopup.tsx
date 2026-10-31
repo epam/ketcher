@@ -108,7 +108,7 @@ const AttachmentPointEditPopup = ({
       const bounds = [...canvas.querySelectorAll(selector)].map((element) =>
         element.getBoundingClientRect(),
       );
-      if (!bounds.length) return;
+      if (bounds.length === 0) return;
 
       const parentBounds = parent.getBoundingClientRect();
       const canvasBounds = canvas.getBoundingClientRect();

@@ -96,11 +96,11 @@ class ComboBox extends Component<ComboBoxProps, ComboBoxState> {
           onChange={this.updateInput}
           autoComplete="off"
         />
-        {suggestList.length === 0 ? null : (
+        {suggestList.length > 0 ? (
           <ul className={classes.suggestList} style={suggestListStyles}>
             {suggestList}
           </ul>
-        )}
+        ) : null}
       </div>
     );
   }

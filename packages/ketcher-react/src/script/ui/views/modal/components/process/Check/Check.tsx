@@ -272,7 +272,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </span>
             <div
               className={
-                isStructureChecking && Object.keys(moleculeErrors).length
+                isStructureChecking && Object.keys(moleculeErrors).length > 0
                   ? style.warnings
                   : style.centeredContainer
               }
@@ -281,7 +281,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               {isStructureChecking ? (
                 <div
                   className={
-                    Object.keys(moleculeErrors).length
+                    Object.keys(moleculeErrors).length > 0
                       ? style.warningsContainer
                       : style.centeredContainer
                   }

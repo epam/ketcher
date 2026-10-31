@@ -61,7 +61,7 @@ export default function copyAs(type: SerializationType): void {
     }
 
     const hasSimpleObjectsOrTexts = Boolean(
-      struct.simpleObjects.size || struct.texts.size,
+      struct.simpleObjects.size > 0 || struct.texts.size > 0,
     );
 
     // MOL format doesn't support simple objects and text objects

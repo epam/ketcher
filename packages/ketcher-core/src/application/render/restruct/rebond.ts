@@ -278,7 +278,7 @@ class ReBond extends ReObject {
   getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
     const selectionPoints = this.getSelectionPoints(render, isHighlight);
-    if (!selectionPoints.length) return null;
+    if (selectionPoints.length === 0) return null;
     const [
       startPadTop,
       startTop,

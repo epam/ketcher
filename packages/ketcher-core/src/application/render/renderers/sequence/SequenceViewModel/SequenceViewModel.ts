@@ -234,7 +234,7 @@ export class SequenceViewModel {
 
       if (
         lastTwoStrandedNodeWithHydrogenBond &&
-        nodesBeforeHydrogenConnectionToBase.length
+        nodesBeforeHydrogenConnectionToBase.length > 0
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
@@ -265,8 +265,7 @@ export class SequenceViewModel {
             currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
-                  monomer instanceof RNABase &&
-                  monomer.hydrogenBonds.length !== 0
+                  monomer instanceof RNABase && monomer.hydrogenBonds.length > 0
                 );
               },
             );

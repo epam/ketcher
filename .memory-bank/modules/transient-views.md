@@ -8,7 +8,7 @@ Cross-cutting deep-dive within the macromolecules render layer. Complements [ren
 
 Render ephemeral interaction feedback on top of (or beneath) the live drawing without touching the model. Every transient view is **read-only**: it recomputes its geometry from parameters and current renderer positions, draws SVG, and disappears when dismissed. Nothing it draws is ever persisted, undoable, or exported.
 
-Current feedback drawn this way includes: the selection rectangle/lasso, bond / angle / distance / group-center snapping guides, the rotation handle, the autochain insertion preview (a ghost of the item that would be added), the amino-acid modification highlight, the line-length highlight, and the **replacement highlight** used by monomer drag-drop replacement.
+Current feedback drawn this way includes: the selection rectangle/lasso, bond / angle / distance / group-center snapping guides, the rotation handle, the autochain insertion preview (a ghost of the item that would be added), the **monomers highlight** (marks the monomers an action is about to change: amino-acid modification, "Edit All" in the context menu), the line-length highlight, and the **replacement highlight** used by monomer drag-drop replacement.
 
 ## Structure
 
@@ -30,7 +30,7 @@ Because `update()` fully redraws, views hold no state between frames — they re
 ## Public interface (conceptual)
 
 - **`TransientView`** — abstract base (`viewName` + static `show`).
-- **`TransientDrawingView`** — the manager, held on the macro editor as `transientDrawingView`. It exposes paired `showX` / `hideX` methods (selection, rotation, the snap guides, autochain preview, modify-amino-acids, line-length highlight, replacement highlight) plus `update()` and `clear()`.
+- **`TransientDrawingView`** — the manager, held on the macro editor as `transientDrawingView`. It exposes paired `showX` / `hideX` methods (selection, rotation, the snap guides, autochain preview, monomers highlight, line-length highlight, replacement highlight) plus `update()` and `clear()`.
 - Concrete views are added by (a) creating a `TransientView` subclass, (b) exporting it from the transient-view barrel, and (c) adding a `showX` / `hideX` pair on the manager.
 
 ## Dependencies

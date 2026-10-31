@@ -441,6 +441,13 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
   - **Flex & Snake:** drag from the library with `Library(page).dragMonomerOnCanvas(monomer, { x, y })`.
   - **Sequence:** dragging from the library is not available. Add monomers by clicking on monomer card in library.
 
+### Macro-mode interaction gotchas
+
+- **The monomer hover preview can cover the chain.** After a click or hover on a canvas monomer, a large preview card (`polymer-library-preview`, see `MonomerPreviewTooltip`) can be drawn over the neighbouring monomers. `locator.click({ force: true })` (used by the `ContextMenu` POM) does not wait for actionability, so the click lands on the card — you get the canvas menu or no reaction. Between two interactions, `moveMouseAway(page)` and `MonomerPreviewTooltip(page).waitForBecomeHidden()`.
+- **Two context menus live in the macro page** (monomers and sequence items, both with an `edit_all_monomers` item). A menu that is still fading out makes `getByTestId(...)` match two elements (strict-mode violation). Close with Escape and wait for `page.locator('[role="menu"]:visible')` to have count 0 before opening the next one.
+- **A forced right-click on a selected monomer can hit the selection frame** and open the generic selection menu (Copy/Paste/Arrange as a Ring/Edit Attachment Points/Delete) instead of the monomer menu. Do not rely on right-clicking inside a multi-selection to reach monomer-specific items.
+- **Overlay marks for hovered menu items** ("Edit All", "Modify amino acids") are drawn in the transient layer and carry `data-testid="monomer-highlight"` — use `getMonomerHighlightLocator(page)` and count them; to tie a mark to a monomer, check that the mark's bounding box contains the monomer's center.
+
 ---
 
 ## Good Practices to Follow

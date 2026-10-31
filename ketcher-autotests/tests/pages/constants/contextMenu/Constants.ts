@@ -10,6 +10,8 @@ export enum MonomerOption {
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',
   EditAttachmentPoints = 'edit_attachment_points',
+  EditMonomer = 'edit_monomer',
+  EditAllMonomers = 'edit_all_monomers',
   Delete = 'delete',
 }
 
@@ -55,6 +57,8 @@ export enum SequenceSymbolOption {
   CreateDNAAntisenseStrand = 'create_antisense_dna_chain',
   ModifyInRNABuilder = 'modify_in_rna_builder',
   ModifyAminoAcids = 'modify_amino_acids',
+  EditMonomer = 'edit_monomer',
+  EditAllMonomers = 'edit_all_monomers',
   EditSequence = 'edit_sequence',
   StartNewSequence = 'start_new_sequence',
   EstablishHydrogenBonds = 'establish_hydrogen_bond',

@@ -15,9 +15,9 @@ import {
   DistanceSnapView,
 } from './DistanceSnapView';
 import {
-  type ModifyAminoAcidsViewParams,
-  ModifyAminoAcidsView,
-} from './ModifyAminoAcidsView';
+  type MonomersHighlightViewParams,
+  MonomersHighlightView,
+} from './MonomersHighlightView';
 import {
   type LineLengthHighlightViewParams,
   LineLengthHighlightView,
@@ -170,16 +170,16 @@ export class TransientDrawingView {
     this.removeView(GroupCentersnapView.viewName);
   }
 
-  public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
-    this.addView(ModifyAminoAcidsView.viewName, {
-      show: ModifyAminoAcidsView.show,
+  public showMonomersHighlight(params: MonomersHighlightViewParams) {
+    this.addView(MonomersHighlightView.viewName, {
+      show: MonomersHighlightView.show,
       topLayer: true,
       params,
     });
   }
 
-  public hideModifyAminoAcidsView() {
-    this.removeView(ModifyAminoAcidsView.viewName);
+  public hideMonomersHighlight() {
+    this.removeView(MonomersHighlightView.viewName);
   }
 
   public showLineLengthHighlight(params: LineLengthHighlightViewParams) {

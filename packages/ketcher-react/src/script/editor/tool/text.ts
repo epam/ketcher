@@ -146,7 +146,7 @@ function propsDialog(
     type: 'text',
   });
 
-  res
+  void res
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
         editor.update(

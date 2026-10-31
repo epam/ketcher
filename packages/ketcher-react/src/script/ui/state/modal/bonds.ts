@@ -14,7 +14,7 @@ export function updateSelectedBonds({
   const struct = editor.render.ctab;
   const { molecule } = struct;
   if (bonds) {
-    Promise.resolve(changeBondPromise)
+    void Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
         bonds.forEach((bondId) => {
           const unchangedBond = molecule.bonds.get(bondId);

@@ -1,21 +1,16 @@
 import { saveAs } from 'file-saver';
 import type { FileSaverReturnType } from './saveButton.types';
 
-export const fileSaver = (server): FileSaverReturnType => {
-  return new Promise((resolve, reject) => {
-    if (saveAs && globalThis.Blob) {
-      resolve((data, fn, type) => {
-        const blob = new Blob([data], { type });
-        saveAs(blob, fn);
-      });
-    } else if (server) {
-      resolve(
-        server.then(() => {
-          throw new Error("Server doesn't still support echo method");
-        }),
-      );
-    } else {
-      reject(new Error('Your browser does not support opening files locally'));
-    }
-  });
+export const fileSaver = async (server): FileSaverReturnType => {
+  if (globalThis.Blob && saveAs) {
+    return (data, fn, type) => {
+      const blob = new Blob([data], { type });
+      saveAs(blob, fn);
+    };
+  }
+  if (server) {
+    await server;
+    throw new Error("Server doesn't still support echo method");
+  }
+  throw new Error('Your browser does not support opening files locally');
 };

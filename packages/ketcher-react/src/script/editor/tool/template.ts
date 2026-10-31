@@ -197,14 +197,10 @@ class TemplateTool implements Tool {
     return targetId;
   }
 
-  private showRemoveAbbreviationPopup(): Promise<void> {
-    return this.editor.event.removeFG
-      .dispatch({ fgIds: this.targetGroupsIds })
-      .then(() => {
-        // case when we remove abbreviation group, click on benzene ring and try to add it
-        this.targetGroupsIds.length = 0;
-        return Promise.resolve();
-      });
+  private async showRemoveAbbreviationPopup(): Promise<void> {
+    await this.editor.event.removeFG.dispatch({ fgIds: this.targetGroupsIds });
+    // case when we remove abbreviation group, click on benzene ring and try to add it
+    this.targetGroupsIds.length = 0;
   }
 
   async mousedown(event: MouseEvent) {

@@ -18,13 +18,17 @@ const DuoApp = () => {
   const [structServiceProvider1, setStructServiceProvider1] =
     useState<StructServiceProvider | null>(null);
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider1);
+    void (async () => {
+      setStructServiceProvider1(await getStructServiceProvider());
+    })();
   }, []);
 
   const [structServiceProvider2, setStructServiceProvider2] =
     useState<StructServiceProvider | null>(null);
   useEffect(() => {
-    getStructServiceProvider().then(setStructServiceProvider2);
+    void (async () => {
+      setStructServiceProvider2(await getStructServiceProvider());
+    })();
   }, []);
 
   if (!structServiceProvider1 || !structServiceProvider2) {

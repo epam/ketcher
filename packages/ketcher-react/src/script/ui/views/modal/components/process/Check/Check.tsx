@@ -208,11 +208,12 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
 
   const handleCheck = () => {
     setIsStructureChecking(false);
-    onCheck(result.checkOptions).then(() => {
+    void (async () => {
+      await onCheck(result.checkOptions);
       setIsStructureChecking(true);
       setLastCheckDate(new Date());
       setIsCheckedWithNewSettings(true);
-    });
+    })();
   };
 
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
@@ -320,8 +321,13 @@ const mapDispatchToProps = (
   dispatch: AppDispatch,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
-  onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts)).catch(ownProps.onCancel),
+  onCheck: async (opts: CheckOption[]) => {
+    try {
+      await dispatch(check(opts));
+    } catch {
+      ownProps.onCancel();
+    }
+  },
   onApply: (res: CheckState) => {
     dispatch(checkOpts(res));
     ownProps.onOk(res);

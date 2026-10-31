@@ -32,7 +32,7 @@ export function updateSelectedAtoms({
   const struct = editor.render.ctab;
   const { molecule } = struct;
   if (atoms) {
-    Promise.resolve(changeAtomPromise)
+    void Promise.resolve(changeAtomPromise)
       .then((userChangedAtom) => {
         // TODO: deep compare to not produce dummy, e.g.
         // atom.label != attrs.label || !atom.atomList.equals(attrs.atomList)

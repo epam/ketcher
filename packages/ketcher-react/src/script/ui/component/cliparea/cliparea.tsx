@@ -133,15 +133,15 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          this.props.onCopy().then((data) => {
+          void (async () => {
+            const data = await this.props.onCopy();
             if (!data) {
               return;
             }
-            copy(data).then(() => {
-              event.preventDefault();
-              notifyCopyCut();
-            });
-          });
+            await copy(data);
+            event.preventDefault();
+            notifyCopyCut();
+          })();
         } else {
           if (isSafariBrowser()) {
             const data = this.props.onLegacyCopy();
@@ -156,7 +156,8 @@ class ClipArea extends Component<ClipAreaProps> {
             }
             shouldSkipCopyEvent = true;
 
-            this.props.onCopy().then((data) => {
+            void (async () => {
+              const data = await this.props.onCopy();
               // It is possible to have access to clipboard data through evt.clipboardData
               // only in synchronous code. That's why we dispatch 'copy' event here after server call.
               // It will not work with long operations which time > 5 sec, because browser will close access
@@ -173,7 +174,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 { once: true },
               );
               document.execCommand('copy');
-            });
+            })();
 
             event.preventDefault();
           }
@@ -188,7 +189,7 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isAsyncClipboardWriteAvailable()) {
-          (async () => {
+          void (async () => {
             const data = await this.props.onCut();
             if (!data) return;
             await copy(data);
@@ -208,15 +209,15 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isClipboardAPIAvailable()) {
-          navigator.clipboard.read().then((data: ClipboardItem[]) => {
+          void (async () => {
+            const data: ClipboardItem[] = await navigator.clipboard.read();
             if (!data) {
               return;
             }
-            this.props.onPaste(data).then(() => {
-              event.preventDefault();
-              notifyRequestCompleted();
-            });
-          });
+            await this.props.onPaste(data);
+            event.preventDefault();
+            notifyRequestCompleted();
+          })();
         } else {
           if (event.clipboardData) {
             const data = legacyPaste(event.clipboardData, this.props.formats);

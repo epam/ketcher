@@ -53,36 +53,38 @@ import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
-function pollDeferred<T>(
+async function pollDeferred<T>(
   process: () => Promise<T>,
   isComplete: (val: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
-) {
-  return new Promise<T>((resolve, reject) => {
-    function iterate() {
-      process().then(
-        (val) => {
-          try {
-            if (isComplete(val)) resolve(val);
-            else setTimeout(iterate, timeGap);
-          } catch (error) {
-            KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(normalizeError(error));
-          }
-        },
-        (error) => reject(normalizeError(error)),
-      );
+): Promise<T> {
+  await new Promise<void>((resolve) => setTimeout(resolve, startTimeGap ?? 0));
+
+  while (true) {
+    let value: T;
+    try {
+      value = await process();
+    } catch (error) {
+      throw normalizeError(error);
     }
-    setTimeout(iterate, startTimeGap ?? 0);
-  });
+
+    try {
+      if (isComplete(value)) return value;
+    } catch (error) {
+      KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
+      throw normalizeError(error);
+    }
+
+    await new Promise<void>((resolve) => setTimeout(resolve, timeGap));
+  }
 }
 
 function parametrizeUrl(url: string, params: Record<string, string>) {
   return url.replace(/:(\w+)/g, (_, val) => params[val]);
 }
 
-function request<T = unknown>(
+async function request<T = unknown>(
   method: string,
   url: string,
   data?: string | Blob | Record<string, string>,
@@ -115,29 +117,28 @@ function request<T = unknown>(
     );
   }
 
-  let response: Promise<T>;
   if (responseHandler) {
-    response = responseHandler(fetchResponse);
-  } else {
-    response = fetchResponse.then((res) =>
-      // Error responses (e.g. a 413 from a reverse proxy rejecting an
-      // oversized body) are not guaranteed to have a JSON body, so parsing
-      // must not be the thing that decides whether the request succeeded.
-      res
-        .json()
-        .catch(() => null)
-        .then((json) => {
-          if (res.ok) return json as T;
-          const message =
-            json?.error ||
-            res.statusText ||
-            `Request failed with status ${res.status}`;
-          return Promise.reject(new Error(message));
-        }),
-    );
+    return responseHandler(fetchResponse);
   }
 
-  return response;
+  const res = await fetchResponse;
+  let json: unknown;
+  try {
+    // Error responses (e.g. a 413 from a reverse proxy rejecting an
+    // oversized body) are not guaranteed to have a JSON body, so parsing
+    // must not be the thing that decides whether the request succeeded.
+    json = await res.json();
+  } catch {
+    json = null;
+  }
+
+  if (res.ok) return json as T;
+
+  const message =
+    (json as { error?: string } | null)?.error ||
+    res.statusText ||
+    `Request failed with status ${res.status}`;
+  throw new Error(message);
 }
 
 function indigoCall<TData extends object, TResult>(
@@ -429,7 +430,7 @@ export class RemoteStructService implements StructService {
     )(data, this.getStandardServerOptions(options));
   }
 
-  recognize(blob: Blob, version: string): Promise<RecognizeResult> {
+  async recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
     const req = request<ImagoUploadResponse>(
       'POST',
@@ -444,28 +445,25 @@ export class RemoteStructService implements StructService {
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
-    return req
-      .then((data) =>
-        pollDeferred(
-          status.bind(null, { id: data.upload_id }),
-          (response: ImagoStatusResponse) => {
-            if (response.state === 'FAILURE')
-              throw new Error(JSON.stringify(response));
-            return response.state === 'SUCCESS';
-          },
-          500,
-          300,
-        ),
-      )
-      .then((response) => {
-        if (!response.metadata?.mol_str) {
-          throw new Error('Image recognition succeeded but mol_str is missing');
-        }
-        return {
-          struct: response.metadata.mol_str,
-          output_format: ChemicalMimeType.Mol,
-        };
-      });
+    const data = await req;
+    const response = await pollDeferred(
+      status.bind(null, { id: data.upload_id }),
+      (statusResponse: ImagoStatusResponse) => {
+        if (statusResponse.state === 'FAILURE')
+          throw new Error(JSON.stringify(statusResponse));
+        return statusResponse.state === 'SUCCESS';
+      },
+      500,
+      300,
+    );
+
+    if (!response.metadata?.mol_str) {
+      throw new Error('Image recognition succeeded but mol_str is missing');
+    }
+    return {
+      struct: response.metadata.mol_str,
+      output_format: ChemicalMimeType.Mol,
+    };
   }
 
   generateImageAsBase64(
@@ -508,7 +506,7 @@ export class RemoteStructService implements StructService {
           ? getLabelRenderModeForIndigo(this.ketcherId)
           : undefined,
       },
-      (response) => response.then((resp) => resp.text()),
+      async (response) => (await response).text(),
     );
   }
 

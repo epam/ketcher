@@ -655,7 +655,7 @@ class SelectTool implements Tool {
         type: 'text',
       });
 
-      dialog
+      void dialog
         .then(({ content }) => {
           if (!content) {
             editor.update(fromTextDeletion(struct, ci.id));

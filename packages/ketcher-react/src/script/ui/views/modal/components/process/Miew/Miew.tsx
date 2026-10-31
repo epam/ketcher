@@ -161,18 +161,17 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
       const moleculeOnlyStruct = struct.clone(null, null, true);
 
-      service
-        .getStringFromStructureAsync(moleculeOnlyStruct)
-        .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
-        )
-        .then(() => {
+      void (async () => {
+        try {
+          const res =
+            await service.getStringFromStructureAsync(moleculeOnlyStruct);
+          await miew.load(res, { sourceType: 'immediate', fileType: 'cml' });
           miew.setOptions(miewOpts);
           setIsInitialized(true);
-        })
-        .catch((error) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
-        });
+        } catch (e) {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        }
+      })();
     },
     [miewOpts, server, struct],
   );

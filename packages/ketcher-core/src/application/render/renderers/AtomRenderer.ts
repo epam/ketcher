@@ -1,3 +1,4 @@
+import { formatRGroupLabels } from 'domain/helpers/rGroupLabels';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
@@ -45,6 +46,7 @@ export type AtomHoverContour =
     };
 
 export class AtomRenderer extends BaseRenderer {
+  public attachmentPointBoxes: Box2Abs[] = [];
   private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -284,6 +286,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
+    if (this.atom.label === 'R#') {
+      return false;
+    }
+
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -309,6 +315,13 @@ export class AtomRenderer extends BaseRenderer {
   public get labelText() {
     if (this.atom.properties.atomList) {
       return this.atom.properties.atomList.label();
+    }
+    if (
+      this.atom.label === 'R#' &&
+      !this.atom.properties.alias &&
+      this.atom.properties.rglabel
+    ) {
+      return formatRGroupLabels(this.atom.properties.rglabel);
     }
     return this.atom.properties.alias ?? this.atom.label;
   }
@@ -361,6 +374,14 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
+    if (
+      isCarbon &&
+      this.atom.monomer?.monomerItem.struct.rgroupAttachmentPoints.some(
+        (point) => point.atomId === this.atom.atomIdInMicroMode,
+      )
+    ) {
+      return false;
+    }
     const isTerminalVisible = true;
     const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length ?? 0) >= 2;
@@ -448,6 +469,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get shouldDisplayHydrogen() {
+    const points = this.atom.monomer.monomerItem.struct.rgroupAttachmentPoints;
+    if (points.some((point) => point.atomId === this.atom.atomIdInMicroMode)) {
+      return false;
+    }
     // Remove when rules for displaying hydrogen are implemented same as in molecules mode
     return this.atom.label !== AtomLabel.C || this.isAtomTerminal;
   }
@@ -476,9 +501,9 @@ export class AtomRenderer extends BaseRenderer {
       .attr('fill', this.labelColor)
       .attr(
         'style',
-        `user-select: none; font-family: Arial; letter-spacing: 1.2px;${
-          this.isGenericLabel ? ' font-style: italic;' : ''
-        }`,
+        `user-select: none; font-family: Arial; letter-spacing: ${
+          this.atom.label === 'R#' ? '0' : '1.2px'
+        };${this.isGenericLabel ? ' font-style: italic;' : ''}`,
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');

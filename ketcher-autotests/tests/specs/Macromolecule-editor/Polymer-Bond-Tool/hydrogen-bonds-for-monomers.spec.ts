@@ -1,4 +1,5 @@
 import { Page, test, expect } from '@fixtures';
+import { errors } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -493,18 +494,28 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondTool.Hydrogen,
       );
 
+      let notificationText: string | null;
       try {
-        await errorTooltip.waitForBecomeVisible(10000);
-        expect(await errorTooltip.message.textContent()).toContain(
-          'Unable to establish a hydrogen bond between two monomers connected with a single bond',
-        );
-
-        if (await errorTooltip.isVisible()) {
-          await errorTooltip.close();
-          await errorTooltip.waitForBecomeHidden();
+        // Read the auto-dismissed toast in one operation: it can disappear
+        // between waiting for visibility and a separate textContent call.
+        notificationText = await errorTooltip.message.textContent({
+          timeout: 10000,
+        });
+      } catch (error) {
+        if (!(error instanceof errors.TimeoutError)) {
+          throw error;
         }
-      } catch {
         // Notification did not appear for this monomer pair; known issue #5934
+        return;
+      }
+
+      expect(notificationText).toContain(
+        'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+      );
+
+      if (await errorTooltip.isVisible()) {
+        await errorTooltip.close();
+        await errorTooltip.waitForBecomeHidden();
       }
     });
   });

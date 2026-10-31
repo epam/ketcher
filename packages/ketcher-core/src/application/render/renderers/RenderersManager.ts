@@ -50,6 +50,12 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { RGroupRenderer } from './RGroupRenderer';
+import { RGroupAttachmentPointRenderer } from './RGroupAttachmentPointRenderer';
+import { RGroupAttachmentPointDrawingEntity } from 'domain/entities/RGroupAttachmentPointDrawingEntity';
+import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
+import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
+import { getRGroupDefinitions } from 'domain/helpers/rGroupDefinitions';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -71,6 +77,11 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
+  public rgroups = new Map<number, RGroupRenderer>();
+  public rgroupAttachmentPoints = new Map<
+    string,
+    RGroupAttachmentPointRenderer
+  >();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -152,6 +163,7 @@ export class RenderersManager {
   }
 
   public deleteAllDrawingEntities() {
+    this.clearRGroups();
     this.monomers.forEach((monomerRenderer) => {
       monomerRenderer.remove();
     });
@@ -731,6 +743,94 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
+    this.rerenderRGroupAttachmentPoints();
+    this.rerenderRGroups();
+  }
+
+  public clearRGroups(): void {
+    this.rgroupAttachmentPoints.forEach((renderer) => renderer.remove());
+    this.rgroupAttachmentPoints.clear();
+    this.rgroups.forEach((renderer) => renderer.remove());
+    this.rgroups.clear();
+  }
+
+  public rerenderRGroups(): void {
+    const definitions = getRGroupDefinitions(
+      [...this.atoms.values()].map(({ atom }) => atom),
+      [...this.bonds.values()].map(({ bond }) => bond),
+    );
+
+    this.rgroups.forEach((renderer, id) => {
+      if (!definitions.has(id)) {
+        renderer.remove();
+        this.rgroups.delete(id);
+      }
+    });
+    definitions.forEach((definition, id) => {
+      let renderer = this.rgroups.get(id);
+      if (!renderer) {
+        renderer = new RGroupRenderer(
+          new RGroupDrawingEntity(
+            id,
+            definition.rgroup,
+            definition.atoms,
+            definition.bonds,
+          ),
+        );
+        this.rgroups.set(id, renderer);
+      } else {
+        renderer.rgroupDrawingEntity.atoms = definition.atoms;
+        renderer.rgroupDrawingEntity.bonds = definition.bonds;
+        renderer.rgroupDrawingEntity.rgroup = definition.rgroup;
+      }
+      renderer.refresh();
+    });
+  }
+
+  public rerenderRGroupAttachmentPoints(): void {
+    const points = new Map<
+      string,
+      { atom: Atom; point: RGroupAttachmentPoint }
+    >();
+    this.atoms.forEach((atomRenderer) => {
+      const { atom } = atomRenderer;
+      atomRenderer.attachmentPointBoxes = [];
+      atom.monomer.monomerItem.struct.rgroupAttachmentPoints.forEach(
+        (point, id) => {
+          if (point.atomId === atom.atomIdInMicroMode) {
+            points.set(`${atom.id}:${id}`, { atom, point });
+          }
+        },
+      );
+    });
+    const showNumbers = [...points.values()].some(
+      ({ point }) => point.type === 'secondary',
+    );
+    this.rgroupAttachmentPoints.forEach((renderer, id) => {
+      if (!points.has(id)) {
+        renderer.remove();
+        this.rgroupAttachmentPoints.delete(id);
+      }
+    });
+    points.forEach((entity, id) => {
+      let renderer = this.rgroupAttachmentPoints.get(id);
+      if (!renderer || renderer.attachmentPoint.point !== entity.point) {
+        renderer?.remove();
+        renderer = new RGroupAttachmentPointRenderer(
+          new RGroupAttachmentPointDrawingEntity(entity.atom, entity.point),
+        );
+        this.rgroupAttachmentPoints.set(id, renderer);
+      }
+      renderer.both =
+        entity.atom.monomer.monomerItem.struct.rgroupAttachmentPoints.some(
+          (point) =>
+            point.atomId === entity.point.atomId &&
+            point.type !== entity.point.type,
+        );
+      renderer.showNumber = showNumbers;
+      renderer.refresh();
+      entity.atom.renderer?.attachmentPointBoxes.push(renderer.relativeBox);
+    });
   }
 
   public rerenderSideConnectionPolymerBonds() {

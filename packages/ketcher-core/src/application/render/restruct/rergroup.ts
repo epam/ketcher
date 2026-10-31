@@ -23,6 +23,7 @@ import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
+import { rGroupLogicToString } from 'domain/helpers/rGroupLogic';
 import draw from '../draw';
 import util from '../util';
 
@@ -134,7 +135,7 @@ class ReRGroup extends ReObject {
       fill: 'black',
     };
 
-    const logic = [rLogicToString(key, this.item)];
+    const logic = [rGroupLogicToString(key, this.item)];
 
     let shift = labelBox.height / 2 + options.lineWidth / 2;
     for (const logicItem of logic) {
@@ -245,27 +246,6 @@ function rGroupdrawBrackets(
   );
 
   set.push(leftBracket, rightBracket);
-}
-
-function rLogicToString(id: number | null, rLogic: RGroup): string {
-  const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
-
-  const hasRangeOperator =
-    rLogic.range.startsWith('>') ||
-    rLogic.range.startsWith('<') ||
-    rLogic.range.startsWith('=');
-
-  let range: string;
-  if (rLogic.range.length > 0) {
-    range = hasRangeOperator ? rLogic.range : '=' + rLogic.range;
-  } else {
-    range = '>0';
-  }
-
-  const restH = rLogic.resth ? ' (RestH)' : '';
-  const nextRg = rLogic.ifthen > 0 ? '\nTHEN R' + rLogic.ifthen.toString() : '';
-
-  return `${ifThen}R${String(id)}${range}${restH}${nextRg}`;
 }
 
 export default ReRGroup;

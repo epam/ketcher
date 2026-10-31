@@ -1,3 +1,4 @@
+import { findLargestSector } from 'application/render/geometry/atomGeometry';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import type { Bond } from 'domain/entities/CoreBond';
 import { KetcherLogger } from 'utilities';
@@ -307,30 +308,7 @@ export class ViewModel {
       return { neighborAngle: 0, largestAngle: 0 };
     }
 
-    const angles = atomHalfEdges.map((halfEdge) => halfEdge.angle);
-    angles.sort((a, b) => a - b);
-    const largeAngles: number[] = [];
-    for (let i = 0; i < angles.length - 1; ++i) {
-      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
-    }
-    const firstAngle = angles.at(0);
-    const lastAngle = angles.at(-1);
-
-    if (firstAngle === undefined || lastAngle === undefined) {
-      return { neighborAngle: -Math.PI / 2, largestAngle: 0 };
-    }
-
-    largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
-    let largestAngle = 0;
-    let neighborAngle = -Math.PI / 2;
-    for (let i = 0; i < angles.length; ++i) {
-      if (largeAngles[i] > largestAngle) {
-        largestAngle = largeAngles[i];
-        neighborAngle = angles[i];
-      }
-    }
-
-    return { neighborAngle, largestAngle };
+    return findLargestSector(atomHalfEdges.map((halfEdge) => halfEdge.angle));
   }
 
   private clearState() {

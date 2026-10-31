@@ -19,6 +19,7 @@ import utils from '../editor/shared/utils';
 import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
 import type { RenderOptions } from './render.types';
 import {
+  GROUP_BRACKET_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
   SELECTION_OUTLINE_COLOR,
@@ -113,7 +114,7 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
       'stroke-width': (4.6 * scaleFactorMicro) / 20,
     },
     sgroupBracketStyle: {
-      stroke: 'darkgray',
+      stroke: GROUP_BRACKET_COLOR,
       'stroke-width': (0.5 * scaleFactorMicro) / 20,
     },
     lassoStyle: {

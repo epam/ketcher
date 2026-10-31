@@ -143,6 +143,13 @@ import {
   StereoFlagDeleteOperation,
 } from 'application/editor/operations/stereoFlag';
 import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import { RGroupDrawingEntity } from 'domain/entities/RGroupDrawingEntity';
+import { RGroupAttachmentPointDrawingEntity } from 'domain/entities/RGroupAttachmentPointDrawingEntity';
+import type { RGroup } from 'domain/entities/rgroup';
+import {
+  RGroupPropertiesOperation,
+  type RGroupProperties,
+} from 'domain/entities/RGroupPropertiesOperation';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,
@@ -1096,6 +1103,14 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.selectAttachmentPointAtoms(command, (point) => {
+      point.selectIfLocatedInRectangle(
+        rectangleTopLeftPoint,
+        rectangleBottomRightPoint,
+        previousSelectedEntities.some(([, entity]) => entity === point.atom),
+        isShiftKeyPressed,
+      );
+    });
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
@@ -1143,10 +1158,33 @@ export class DrawingEntitiesManager {
       }
     });
 
+    this.selectAttachmentPointAtoms(command, (point) => {
+      point.selectIfLocatedInPolygon(
+        polygonPoints,
+        previousSelectedEntities.some(([, entity]) => entity === point.atom),
+        isShiftKeyPressed,
+      );
+    });
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
     return command;
+  }
+
+  private selectAttachmentPointAtoms(
+    command: Command,
+    select: (point: RGroupAttachmentPointDrawingEntity) => void,
+  ): void {
+    provideEditorInstance().renderersContainer?.rgroupAttachmentPoints?.forEach(
+      (renderer) => {
+        const point = renderer.attachmentPoint;
+        select(point);
+        if (point.selected && !point.atom.selected) {
+          point.atom.turnOnSelection();
+          command.addOperation(new DrawingEntitySelectOperation(point.atom));
+        }
+      },
+    );
   }
 
   /**
@@ -2384,6 +2422,7 @@ export class DrawingEntitiesManager {
     this.clearMicromoleculesHiddenEntities();
     struct.mergeInto(this.micromoleculesHiddenEntities);
     this.micromoleculesHiddenEntities.atoms = new Pool();
+    this.micromoleculesHiddenEntities.rgroupAttachmentPoints = new Pool();
     this.micromoleculesHiddenEntities.bonds = new Pool();
     this.micromoleculesHiddenEntities.halfBonds = new Pool();
     this.micromoleculesHiddenEntities.sgroups = new Pool();
@@ -2581,6 +2620,9 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+    command.merge(
+      targetDrawingEntitiesManager.overwritePastedRGroupProperties(this),
+    );
 
     // Merge stereo flags
     this.stereoFlags.forEach((stereoFlag) => {
@@ -2604,6 +2646,34 @@ export class DrawingEntitiesManager {
     });
 
     return { command, mergedDrawingEntities };
+  }
+
+  private overwritePastedRGroupProperties(
+    source: DrawingEntitiesManager,
+  ): Command {
+    const incoming = new Map<number, RGroupProperties>();
+    source.monomers.forEach((monomer) => {
+      monomer.monomerItem.struct.rgroups.forEach((group, id) => {
+        // A reference atom alone must not overwrite an existing definition.
+        if (!group.frags.size) return;
+        const { range, resth, ifthen } = group;
+        incoming.set(id, { range, resth, ifthen });
+      });
+    });
+    const command = new Command();
+    incoming.forEach((properties, id) => {
+      const groups = new Set<RGroup>();
+      const hiddenGroup = this.micromoleculesHiddenEntities.rgroups.get(id);
+      if (hiddenGroup) groups.add(hiddenGroup);
+      this.monomers.forEach((monomer) => {
+        const group = monomer.monomerItem.struct.rgroups.get(id);
+        if (group) groups.add(group);
+      });
+      command.addOperation(
+        new RGroupPropertiesOperation([...groups], properties),
+      );
+    });
+    return command;
   }
 
   public filterSelection() {
@@ -2775,6 +2845,8 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteStereoFlag(flag);
       editor.renderersContainer.addStereoFlag(flag);
     });
+    editor.renderersContainer.rerenderRGroupAttachmentPoints();
+    editor.renderersContainer.rerenderRGroups();
   }
 
   public applyMonomersSequenceLayout() {
@@ -2791,6 +2863,7 @@ export class DrawingEntitiesManager {
 
   public clearCanvas() {
     const editor = provideEditorInstance();
+    editor.renderersContainer.clearRGroups();
 
     // TODO rewrite to work with base class (drawingEntity)
 
@@ -2975,6 +3048,26 @@ export class DrawingEntitiesManager {
     shouldSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof RGroupAttachmentPointDrawingEntity) {
+      return this.getAllSelectedEntitiesForSingleEntity(
+        drawingEntity.atom,
+        shouldSelectConnectedBonds,
+        selectedDrawingEntities,
+      );
+    }
+    if (drawingEntity instanceof RGroupDrawingEntity) {
+      const command = new Command();
+      const drawingEntities = [
+        ...drawingEntity.atoms,
+        ...drawingEntity.bonds,
+      ].filter((entity) => !selectedDrawingEntities?.includes(entity));
+      drawingEntities.forEach((entity) => {
+        entity.turnOnSelection();
+        command.addOperation(new DrawingEntitySelectOperation(entity));
+      });
+      return { command, drawingEntities };
+    }
+
     if (drawingEntity instanceof SGroupDrawingEntity) {
       return this.getAllSelectedEntitiesForSGroup(
         drawingEntity,

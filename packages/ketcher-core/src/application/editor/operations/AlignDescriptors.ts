@@ -41,13 +41,13 @@ class AlignDescriptors extends BaseOperation {
       new Vec2(2, -1),
     );
 
-    sgroups.forEach((sgroup) => {
+    for (const sgroup of sgroups) {
       this.history[sgroup.id] = sgroup.pp ? new Vec2(sgroup.pp) : null;
       alignPoint = alignPoint.add(new Vec2(0, 0.5));
       sgroup.pp = alignPoint;
       struct.sgroups.set(sgroup.id, sgroup);
       BaseOperation.invalidateItem(restruct, 'sgroupData', sgroup.id, 1);
-    });
+    }
   }
 
   invert() {

@@ -64,21 +64,21 @@ export class SequenceViewModel {
 
     this.nodes.push(twoStrandedNode);
 
-    senseNode.monomers.forEach((monomer) => {
+    for (const monomer of senseNode.monomers) {
       this.monomerToTwoStrandedSnakeLayoutNode.set(monomer, twoStrandedNode);
-    });
+    }
   }
 
   private fillSenseNodes(chainsCollection: ChainsCollection) {
-    chainsCollection.chains.forEach((chain) => {
+    for (const chain of chainsCollection.chains) {
       if (chain.isAntisense) {
-        return;
+        continue;
       }
 
       chain.forEachNode(({ node, nodeIndex }) => {
         this.addNode(node, nodeIndex, chain);
       });
-    });
+    }
   }
 
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
@@ -86,9 +86,9 @@ export class SequenceViewModel {
     const monomerToChain = chainsCollection.monomerToChain;
     const editor = provideEditorInstance();
 
-    chainsCollection.chains.forEach((chain) => {
+    for (const chain of chainsCollection.chains) {
       if (!chain.isAntisense) {
-        return;
+        continue;
       }
       let nodesBeforeHydrogenConnectionToBase: SubChainNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
@@ -301,7 +301,7 @@ export class SequenceViewModel {
 
         lastTwoStrandedNodeWithHydrogenBond = undefined;
       }
-    });
+    }
   }
 
   private postProcessNodes(chainsCollection: ChainsCollection) {
@@ -387,7 +387,7 @@ export class SequenceViewModel {
     const nodesToInsert: Array<{ index: number; node: ITwoStrandedChainItem }> =
       [];
 
-    this.nodes.forEach((node, nodeIndex) => {
+    for (const [nodeIndex, node] of this.nodes.entries()) {
       if (
         previousTwoStrandedNode?.antisenseNode &&
         node.antisenseNode &&
@@ -418,7 +418,7 @@ export class SequenceViewModel {
       previousTwoStrandedNode = node;
       previousHandledSenseNode =
         (node.senseNode as SubChainNode) || previousHandledSenseNode;
-    });
+    }
 
     // Insert from the highest index down so the remaining indices stay valid.
     for (let i = nodesToInsert.length - 1; i >= 0; i--) {
@@ -439,9 +439,9 @@ export class SequenceViewModel {
     let currentSequenceModelRow: ISequenceViewModelRow = {
       sequenceViewModelItems: [],
     };
-    let previousSenseNodeChain: Chain;
+    let previousSenseNodeChain: Chain | undefined;
 
-    this.nodes.forEach((sequenceModelItem) => {
+    for (const sequenceModelItem of this.nodes) {
       const currentSenseChain = sequenceModelItem.chain;
 
       if (previousSenseNodeChain !== currentSenseChain) {
@@ -461,9 +461,9 @@ export class SequenceViewModel {
 
       previousSenseNodeChain = currentSenseChain;
       currentIndexInSequenceModelChain++;
-    });
+    }
 
-    this.chains.forEach((sequenceViewModelChain) => {
+    for (const sequenceViewModelChain of this.chains) {
       const hasAntisense = sequenceViewModelChain.hasAntisense;
 
       if (hasAntisense) {
@@ -493,7 +493,7 @@ export class SequenceViewModel {
         senseNodeIndex: length,
         chain: lastNode?.chain,
       });
-    });
+    }
   }
 
   public get firstTwoStrandedNode() {
@@ -535,7 +535,7 @@ export class SequenceViewModel {
   public forEachNode(callback: (params: IForEachNodeParams) => void) {
     let nodeIndexOverall = 0;
 
-    this.chains.forEach((chain, chainIndex) => {
+    for (const [chainIndex, chain] of this.chains.entries()) {
       chain.forEachNode((twoStrandedNode, nodeIndex) => {
         callback({
           twoStrandedNode,
@@ -546,7 +546,7 @@ export class SequenceViewModel {
         });
         nodeIndexOverall++;
       });
-    });
+    }
   }
 
   public getNodeIndex(node: ITwoStrandedChainItem) {

@@ -245,16 +245,16 @@ class ReSGroup extends ReObject {
         otherHovers.push(sGroupItem.hovering);
       }
 
-      SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+      for (const aid of SGroup.getAtoms(render.ctab.molecule, sGroupItem)) {
         const atom = render?.ctab?.atoms?.get(aid);
 
         hoversToCombine.push(atom?.makeHoverPlate(render));
-      });
-      SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+      }
+      for (const bid of SGroup.getBonds(render.ctab.molecule, sGroupItem)) {
         hoversToCombine.push(
           render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render),
         );
-      });
+      }
 
       const combinedPathData = uniteHoverPaths(hoversToCombine);
       if (!combinedPathData) {
@@ -300,11 +300,11 @@ class ReSGroup extends ReObject {
 
       render.paper.setStart();
 
-      SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+      for (const aid of SGroup.getAtoms(render.ctab.molecule, sGroupItem)) {
         const atom = render?.ctab?.atoms?.get(aid);
 
         set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
-      });
+      }
 
       render.ctab.addReObjectPath(LayerMap.atom, this.visel, set);
       this.expandedMonomerAttachmentPoints = render.paper.setFinish();
@@ -555,7 +555,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
   const paper = render.paper;
   const set = paper.set();
 
-  SGroup.getAtoms(restruct.molecule, sgroup).forEach((aid) => {
+  for (const aid of SGroup.getAtoms(restruct.molecule, sgroup)) {
     const atom = restruct.atoms.get(aid);
     if (atom) {
       const p = Scale.modelToCanvas(atom.a.pp, options);
@@ -570,7 +570,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): RaphaelSet {
       sboxI = sboxI.transform(Scale.canvasToModel, render.options);
       sgroup.areas.push(sboxI);
     }
-  });
+  }
 
   return set;
 }

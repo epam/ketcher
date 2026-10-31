@@ -17,7 +17,7 @@ export function fromSgroupAttachmentPointRemove(
     ?.getAttachmentPoints()
     .filter((attachmentPoint) => attachmentPoint.atomId === atomId);
 
-  atomAttachmentPoints?.forEach((attachmentPoint) => {
+  for (const attachmentPoint of atomAttachmentPoints ?? []) {
     if (
       sgroup &&
       (!isNumber(attachmentPoint.leaveAtomId) ||
@@ -25,7 +25,7 @@ export function fromSgroupAttachmentPointRemove(
     ) {
       action.addOp(new SGroupAttachmentPointRemove(sgroupId, attachmentPoint));
     }
-  });
+  }
 
   if (shouldPerform) {
     action = action.perform(restruct);

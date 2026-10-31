@@ -173,7 +173,7 @@ export function structSelection(struct: Struct): EditorSelection {
 export function getSelectionFromStruct(struct: Struct): EditorSelection {
   const selection: EditorSelection = {};
 
-  selectionKeys.forEach((entityType) => {
+  for (const entityType of selectionKeys) {
     if (struct?.[entityType]) {
       const selected: number[] = [];
       struct[entityType].forEach((value, key) => {
@@ -188,7 +188,7 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
         selection[entityType] = selected;
       }
     }
-  });
+  }
   return selection;
 }
 
@@ -225,13 +225,13 @@ export function atomForNewBond(
     prevBondType = bond.type ?? DEFAULT_BOND_TYPE;
   }
 
-  getAtomNeighbors(restruct.molecule, id).forEach((nei) => {
+  for (const nei of getAtomNeighbors(restruct.molecule, id)) {
     const neiPos = atomGetPos(restruct, nei.aid);
 
-    if (Vec2.dist(pos, neiPos) < 0.1) return;
+    if (Vec2.dist(pos, neiPos) < 0.1) continue;
 
     neighbours.push({ id: nei.aid, v: Vec2.diff(neiPos, pos) });
-  });
+  }
 
   neighbours.sort(
     (nei1, nei2) =>
@@ -273,11 +273,11 @@ export function atomForNewBond(
         const neiV = Vec2.diff(pos, neiPos);
         const neiAngle = Math.atan2(neiV.y, neiV.x);
 
-        getAtomNeighbors(restruct.molecule, nei.aid).forEach((neiNei) => {
+        for (const neiNei of getAtomNeighbors(restruct.molecule, nei.aid)) {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
-            return;
+            continue;
           }
 
           const vDiff = Vec2.diff(neiNeiPos, neiPos);
@@ -286,7 +286,7 @@ export function atomForNewBond(
           if (ang < 0) ang += 2 * Math.PI;
 
           neiNeighborAngles.push(ang);
-        });
+        }
         neiNeighborAngles.sort((nei1, nei2) => nei1 - nei2);
         const lastNeiNeighborAngle = neiNeighborAngles.at(-1);
 
@@ -342,14 +342,14 @@ export function getRelSGroupsBySelection(
 ) {
   const sgroups = new Set<SGroup>();
 
-  selectedAtoms.forEach((atom) => {
+  for (const atom of selectedAtoms) {
     struct.atoms.get(atom)?.sgs.forEach((sgid) => {
       const sgroup = struct.sgroups.get(sgid);
       if (sgroup && !sgroup.data.attached && !sgroup.data.absolute) {
         sgroups.add(sgroup);
       }
     });
-  });
+  }
 
   return sgroups;
 }

@@ -266,26 +266,26 @@ function notifyChanged(
   const reRgroupAttachmentPoints = restruct.rgroupAttachmentPoints;
 
   if (atoms) {
-    atoms.forEach((atomId) => {
+    for (const atomId of atoms) {
       if (reAtoms.get(atomId) !== undefined) {
         restruct.markAtom(atomId, 1);
       }
-    });
+    }
   }
 
   if (bonds) {
-    bonds.forEach((bondId) => {
+    for (const bondId of bonds) {
       if (reBonds.get(bondId) !== undefined) {
         restruct.markBond(bondId, 1);
       }
-    });
+    }
   }
 
   if (rgroupAttachmentPoints) {
-    rgroupAttachmentPoints.forEach((rgroupAPid) => {
+    for (const rgroupAPid of rgroupAttachmentPoints) {
       if (reRgroupAttachmentPoints.get(rgroupAPid) !== undefined) {
         restruct.markRgroupAttachmentPoint(rgroupAPid, 1);
       }
-    });
+    }
   }
 }

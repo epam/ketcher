@@ -136,49 +136,49 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   const struct = restruct.molecule;
   const selection = formatSelection(rawSelection);
 
-  selection.sgroups.forEach((sgroupId) => {
+  for (const sgroupId of selection.sgroups) {
     const sgroup = restruct.sgroups.get(sgroupId);
     const sgroupAtoms = sgroup.item.atoms;
 
     selection.atoms = [...selection.atoms, ...sgroupAtoms];
 
-    restruct.molecule.bonds.forEach((bond, bondId) => {
+    for (const [bondId, bond] of restruct.molecule.bonds) {
       if (
         sgroupAtoms.indexOf(bond.begin) >= 0 &&
         sgroupAtoms.indexOf(bond.end) >= 0
       ) {
         selection.bonds.push(bondId);
       }
-    });
-  });
+    }
+  }
 
   selection.atoms = [...new Set(selection.atoms)];
   selection.bonds = [...new Set(selection.bonds)];
 
-  struct.attachmentGroups.forEach((attachmentGroup, id) => {
+  for (const [id, attachmentGroup] of struct.attachmentGroups) {
     const remainingAtomIds = attachmentGroup.atomIds.filter(
       (atomId) => !selection.atoms.includes(atomId),
     );
-    if (remainingAtomIds.length === attachmentGroup.atomIds.length) return;
+    if (remainingAtomIds.length === attachmentGroup.atomIds.length) continue;
 
     if (remainingAtomIds.length < 2) {
       selection.attachmentGroups.push(id);
     } else {
       action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
     }
-  });
+  }
   selection.attachmentGroups = [...new Set(selection.attachmentGroups)];
 
-  selection.attachmentGroups.forEach((attachmentGroupId) => {
+  for (const attachmentGroupId of selection.attachmentGroups) {
     selection.bonds.push(...struct.getConnectedBondIds(attachmentGroupId));
-  });
+  }
   selection.bonds = [...new Set(selection.bonds)];
 
-  selection.atoms.forEach((atomId) => {
+  for (const atomId of selection.atoms) {
     const sgroup = struct.getGroupFromAtomId(atomId);
     if (sgroup?.isSuperatomWithoutLabel) {
       const attachmentPoints = sgroup.getAttachmentPoints();
-      attachmentPoints.forEach((attachmentPoint) => {
+      for (const attachmentPoint of attachmentPoints) {
         if (
           attachmentPoint.atomId === atomId &&
           isNumber(attachmentPoint.leaveAtomId) &&
@@ -189,34 +189,34 @@ export function fromFragmentDeletion(restruct, rawSelection) {
           );
           action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
         }
-      });
+      }
     }
-  });
+  }
 
-  selection.atoms.forEach((aid) => {
-    restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
+  for (const aid of selection.atoms) {
+    for (const nei of restruct.molecule.atomGetNeighbors(aid)) {
       if (!selection.bonds.includes(nei.bid)) {
         selection.bonds = [...selection.bonds, nei.bid];
       }
-    });
-  });
+    }
+  }
 
-  selection.attachmentGroups.forEach((id) => {
+  for (const id of selection.attachmentGroups) {
     action.addOp(new AttachmentGroupDelete(id));
-  });
+  }
 
   const actionRemoveBonds = new Action();
-  selection.bonds.forEach((bid) => {
+  for (const bid of selection.bonds) {
     const frid = restruct.molecule.getBondFragment(bid);
     if (frids.indexOf(frid) < 0) frids.push(frid);
 
     actionRemoveBonds.mergeWith(
       fromBondDeletion(restruct, bid, selection.atoms),
     );
-  });
+  }
 
   const removedRGroupAttachmentPoints: number[] = [];
-  selection.atoms.forEach((aid) => {
+  for (const aid of selection.atoms) {
     const frid3 = restruct.molecule.atoms.get(aid).fragment;
     if (frids.indexOf(frid3) < 0) frids.push(frid3);
 
@@ -228,46 +228,46 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
     const attachmentPointsToDelete =
       restruct.molecule.getRGroupAttachmentPointsByAtomId(aid);
-    attachmentPointsToDelete.forEach((id) => {
+    for (const id of attachmentPointsToDelete) {
       action.addOp(new RGroupAttachmentPointRemove(id));
       removedRGroupAttachmentPoints.push(id);
-    });
-  });
+    }
+  }
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove);
 
-  selection.rxnArrows.forEach((id) => {
+  for (const id of selection.rxnArrows) {
     action.addOp(new RxnArrowDelete(id));
-  });
+  }
 
-  selection.rxnPluses.forEach((id) => {
+  for (const id of selection.rxnPluses) {
     action.addOp(new RxnPlusDelete(id));
-  });
+  }
 
-  selection.simpleObjects.forEach((id) => {
+  for (const id of selection.simpleObjects) {
     action.addOp(new SimpleObjectDelete(id));
-  });
+  }
 
-  selection.texts.forEach((id) => {
+  for (const id of selection.texts) {
     action.addOp(new TextDelete(id));
-  });
+  }
 
-  selection[IMAGE_KEY].forEach((id) => {
+  for (const id of selection[IMAGE_KEY]) {
     action.addOp(new ImageDelete(id));
-  });
+  }
 
-  selection[MULTITAIL_ARROW_KEY].forEach((id) => {
+  for (const id of selection[MULTITAIL_ARROW_KEY]) {
     action.addOp(new MultitailArrowDelete(id));
-  });
+  }
 
   const actionToDeleteRGroupAttachmentPoints = new Action();
-  selection.rgroupAttachmentPoints.forEach((id) => {
+  for (const id of selection.rgroupAttachmentPoints) {
     if (!removedRGroupAttachmentPoints.includes(id)) {
       actionToDeleteRGroupAttachmentPoints.mergeWith(
         fromRGroupAttachmentPointDeletion(restruct, id),
       );
     }
-  });
+  }
 
   action = action.perform(restruct);
   action

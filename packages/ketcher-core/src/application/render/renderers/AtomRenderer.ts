@@ -958,7 +958,7 @@ export class AtomRenderer extends BaseRenderer {
     // Forward shift: clearance past the atom label in the placement direction.
     // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
     let forwardShift = 0;
-    this.labelBBoxes.forEach((labelSymbolBBox) => {
+    for (const labelSymbolBBox of this.labelBBoxes) {
       const absoluteBox = new Box2Abs(
         labelSymbolBBox.x,
         labelSymbolBBox.y,
@@ -969,7 +969,7 @@ export class AtomRenderer extends BaseRenderer {
         forwardShift,
         util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
       );
-    });
+    }
 
     const stereoLabelBox = {
       x: this.scaledPosition.x - width / 2,

@@ -810,15 +810,18 @@ export class LibraryItemDragDropHandler {
       const { freeAttachmentPointsByMonomer, rolePresent } =
         this.computeNewPresetFreeAPs(item);
       const allFreeAPs = new Set<AttachmentPointName>();
-      (['sugar', 'phosphate', 'base'] as PresetComponentRole[]).forEach(
-        (role) => {
-          if (rolePresent[role]) {
-            freeAttachmentPointsByMonomer[role].forEach((ap) =>
-              allFreeAPs.add(ap),
-            );
-          }
-        },
-      );
+      for (const role of [
+        'sugar',
+        'phosphate',
+        'base',
+      ] as PresetComponentRole[]) {
+        if (rolePresent[role]) {
+          freeAttachmentPointsByMonomer[role].forEach((ap) =>
+            allFreeAPs.add(ap),
+          );
+        }
+      }
+
       return computeLostBondsForMonomerReplacement(
         replaceTarget.monomer,
         allFreeAPs,

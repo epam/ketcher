@@ -28,11 +28,11 @@ export class Loop {
   }
 
   private calculateDoubleBondsAmount() {
-    this.halfEdges.forEach((halfEdge) => {
+    for (const halfEdge of this.halfEdges) {
       if (halfEdge.bond.type !== Bond.PATTERN.TYPE.AROMATIC)
         this.aromatic = false;
       if (halfEdge.bond.type === Bond.PATTERN.TYPE.DOUBLE)
         this.doubleBondsAmount++;
-    });
+    }
   }
 }

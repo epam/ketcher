@@ -95,14 +95,14 @@ export function fromAtomMerge(
   const action = new Action();
 
   const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId) ?? [];
-  atomNeighbors.forEach((nei) => {
+  for (const nei of atomNeighbors) {
     const bond = restruct.molecule.bonds.get(nei.bid);
-    if (!bond) return;
+    if (!bond) continue;
 
     if (dstId === bond.begin || dstId === bond.end) {
       // src & dst have one nei
       action.addOp(new BondDelete(nei.bid));
-      return;
+      continue;
     }
 
     const begin = bond.begin === nei.aid ? nei.aid : dstId;
@@ -115,14 +115,14 @@ export function fromAtomMerge(
     } else {
       // replace old bond with new bond
       const attrs = Bond.getAttrHash(bond);
-      Object.keys(attrs).forEach((key) => {
+      for (const key of Object.keys(attrs)) {
         const attrKey = key as keyof typeof attrs;
         action.addOp(new BondAttr(mergeBondId, attrKey, attrs[attrKey]));
-      });
+      }
     }
 
     action.addOp(new BondDelete(nei.bid));
-  });
+  }
 
   if (!srcAtom) {
     return action.perform(restruct).mergeWith(fragAction);
@@ -133,11 +133,11 @@ export function fromAtomMerge(
     attrs.label = 'C';
   }
 
-  Object.keys(attrs).forEach((key) => {
+  for (const key of Object.keys(attrs)) {
     if (key !== 'stereoLabel' && key !== 'stereoParity') {
       action.addOp(new AtomAttr(dstId, key, attrs[key]));
     }
-  });
+  }
 
   updateAttachmentGroupsAfterAtomMerge(action, restruct, srcId, dstId);
 
@@ -146,18 +146,18 @@ export function fromAtomMerge(
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId]);
 
   const sgroups = atomGetSGroups(restruct, srcId);
-  sgroups.forEach((sgroupId: number) => {
+  for (const sgroupId of sgroups) {
     const sgroup = restruct.sgroups.get(sgroupId)?.item;
-    if (!sgroup) return;
+    if (!sgroup) continue;
     for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       if (attachmentPoint.atomId === srcId) {
         action.addOp(
           new SGroupAttachmentPointRemove(sgroupId, attachmentPoint),
         );
-        return;
+        break;
       }
     }
-  });
+  }
 
   action.addOp(new AtomDelete(srcId));
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId) ?? [];

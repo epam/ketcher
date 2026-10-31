@@ -47,10 +47,10 @@ export class Action {
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority,
     );
-    sortedOperations.forEach((operation) => {
+    for (const operation of sortedOperations) {
       const invertedOperation = operation.perform(restruct);
       action.addOp(invertedOperation);
-    });
+    }
 
     return action;
   }

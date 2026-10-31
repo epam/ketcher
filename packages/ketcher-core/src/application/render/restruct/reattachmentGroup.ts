@@ -89,7 +89,11 @@ export class ReAttachmentGroup extends ReObject implements ReBondEndpoint {
   private redrawHover(render: Render, shouldDrawOutline = true) {
     const previousHoverPaths = new Set<unknown>();
     if (this.hovering?.type === 'set') {
-      this.hovering.forEach((path) => previousHoverPaths.add(path));
+      for (const path of Array.from(
+        this.hovering as unknown as ArrayLike<unknown>,
+      )) {
+        previousHoverPaths.add(path);
+      }
     } else if (this.hovering) {
       previousHoverPaths.add(this.hovering);
     }

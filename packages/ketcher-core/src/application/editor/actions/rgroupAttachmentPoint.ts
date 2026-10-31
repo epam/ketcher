@@ -75,9 +75,9 @@ function fromRGroupAttachmentPointsDeletionByAtom(
   const action = new Action();
   const attachmentPointsToDelete =
     restruct.molecule.getRGroupAttachmentPointsByAtomId(atomId);
-  attachmentPointsToDelete.forEach((rgroupAttachmentPointId) => {
+  for (const rgroupAttachmentPointId of attachmentPointsToDelete) {
     action.addOp(new RGroupAttachmentPointRemove(rgroupAttachmentPointId));
-  });
+  }
   return action.perform(restruct);
 }
 

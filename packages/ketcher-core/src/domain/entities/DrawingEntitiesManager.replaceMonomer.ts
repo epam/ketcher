@@ -28,7 +28,7 @@ export function replaceMonomer(
     secondMonomerAttachmentPoint?: AttachmentPointName;
     bondType: MACROMOLECULES_BOND_TYPES;
     bond?: PolymerBond;
-  }[] = Array.from(drawingEntitiesManager.polymerBonds)
+  }[] = [...drawingEntitiesManager.polymerBonds]
     .filter(([_id, bond]) => {
       return bond.firstMonomer === monomer || bond.secondMonomer === monomer;
     })
@@ -52,7 +52,7 @@ export function replaceMonomer(
     attachmentPoint: AttachmentPointName;
     atom: Atom;
     bond?: MonomerToAtomBond;
-  }[] = Array.from(drawingEntitiesManager.monomerToAtomBonds)
+  }[] = [...drawingEntitiesManager.monomerToAtomBonds]
     .filter(([_id, bond]) => {
       return bond.monomer === monomer;
     })

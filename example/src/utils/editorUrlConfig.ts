@@ -5,25 +5,25 @@ import {
 } from 'ketcher-core';
 
 export const getHiddenButtonsConfig = (): ButtonsConfig => {
-  const searchParams = new URLSearchParams(globalThis.location.search);
-  const hiddenButtons = searchParams.get('hiddenControls');
+  const searchParameters = new URLSearchParams(globalThis.location.search);
+  const hiddenButtons = searchParameters.get('hiddenControls');
 
   if (!hiddenButtons) return {};
 
   return hiddenButtons.split(',').reduce(
-    (acc, button) => {
-      if (button) acc[button] = { hidden: true };
+    (accumulator, button) => {
+      if (button) accumulator[button] = { hidden: true };
 
-      return acc;
+      return accumulator;
     },
     {} as { [val: string]: { hidden: boolean } },
   );
 };
 
 export const isMacromoleculesEditorDisabled = (): boolean => {
-  const searchParams = new URLSearchParams(globalThis.location.search);
+  const searchParameters = new URLSearchParams(globalThis.location.search);
 
-  return searchParams.get('disableMacromoleculesEditor') === 'true';
+  return searchParameters.get('disableMacromoleculesEditor') === 'true';
 };
 
 /**

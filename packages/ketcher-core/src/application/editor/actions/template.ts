@@ -19,17 +19,17 @@ import { Bond } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
-import { atomForNewBond, atomGetAttr } from './utils';
-import { fromAtomsAttrs, mergeSgroups } from './atom';
-import { fromBondsAttrs, fromBondAddition } from './bond';
+import { AtomAdd, BondAdd, BondAttribute, CalcImplicitH } from '../operations';
+import { atomForNewBond, atomGetAttribute } from './utilities';
+import { fromAtomsAttributes, mergeSgroups } from './atom';
+import { fromBondsAttributes, fromBondAddition } from './bond';
 import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import closest from '../shared/closest';
 import { fromAromaticTemplateOnBond } from './aromaticFusing';
 import { fromPaste, type CreatedItems } from './paste';
-import utils from '../shared/utils';
+import utilities from '../shared/utilities';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
 import { KetcherLogger } from 'utilities';
@@ -68,12 +68,12 @@ function extraBondAction(
   angle: number | null,
 ) {
   let action = new Action();
-  const frid = atomGetAttr(restruct, aid, 'fragment') as number;
+  const frid = atomGetAttribute(restruct, aid, 'fragment') as number;
   let additionalAtom: number | null;
 
   if (angle === null) {
     const middleAtom = atomForNewBond(restruct, aid);
-    const actionRes = fromBondAddition(
+    const actionResult = fromBondAddition(
       restruct,
       { type: 1 },
       aid,
@@ -81,9 +81,9 @@ function extraBondAction(
       undefined,
       middleAtom.pos.get_xy0(),
     );
-    action = actionRes[0];
+    action = actionResult[0];
     action.operations.reverse();
-    additionalAtom = actionRes[2];
+    additionalAtom = actionResult[2];
   } else {
     const pivotAtom = restruct.molecule.atoms.get(aid);
     if (!pivotAtom) {
@@ -143,9 +143,9 @@ export function fromTemplateOnAtom(
 
   if (hasExtraBond) {
     // create extra bond after click on atom
-    const extraRes = extraBondAction(restruct, aid, angle);
-    action = extraRes.action;
-    aid1 = extraRes.aid1;
+    const extraResult = extraBondAction(restruct, aid, angle);
+    action = extraResult.action;
+    aid1 = extraResult.aid1;
 
     const atom1 = struct.atoms.get(aid1);
     if (!atom1) {
@@ -155,10 +155,11 @@ export function fromTemplateOnAtom(
       return [action, { atoms: [], bonds: [] }];
     }
     atom = atom1;
-    delta = utils.calcAngle(clickedAtom.pp, atom.pp) - template.angle0;
+    delta = utilities.calcAngle(clickedAtom.pp, atom.pp) - template.angle0;
   } else {
     delta =
-      (angle ?? utils.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)) -
+      (angle ??
+        utilities.calcAngle(atom.pp, atomForNewBond(restruct, aid).pos)) -
       template.angle0;
   }
 
@@ -171,7 +172,7 @@ export function fromTemplateOnAtom(
     return [action, { atoms: [], bonds: [] }];
   }
   const xy0 = tmplAttachAtom.pp;
-  const frid = atomGetAttr(restruct, aid, 'fragment');
+  const frid = atomGetAttribute(restruct, aid, 'fragment');
 
   /*
   For merge
@@ -186,17 +187,17 @@ export function fromTemplateOnAtom(
   */
 
   tmpl.atoms.forEach((a, id) => {
-    const attrs = Atom.getAttrHash(a) as Record<string, unknown>;
-    attrs.fragment = frid;
+    const attributes = Atom.getAttrHash(a) as Record<string, unknown>;
+    attributes.fragment = frid;
 
     if (id === template.aid) {
-      action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true));
+      action.mergeWith(fromAtomsAttributes(restruct, aid1, attributes, true));
       map.set(id, aid1);
       pasteItems.atoms.push(aid1);
     } else {
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
-      const operation = new AtomAdd(attrs, v.get_xy0()).perform(
+      const operation = new AtomAdd(attributes, v.get_xy0()).perform(
         restruct,
       ) as AtomAdd;
       action.addOp(operation);
@@ -214,9 +215,11 @@ export function fromTemplateOnAtom(
       bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
-    new BondAttr(operation.data.bid as number, 'isPreview', isPreview).perform(
-      restruct,
-    );
+    new BondAttribute(
+      operation.data.bid as number,
+      'isPreview',
+      isPreview,
+    ).perform(restruct);
 
     pasteItems.bonds.push(operation.data.bid as number);
   });
@@ -352,8 +355,8 @@ function placeTemplateAtoms(
   }
 
   tmpl.atoms.forEach((atom, id) => {
-    const attrs = Atom.getAttrHash(atom) as Record<string, unknown>;
-    attrs.fragment = frid;
+    const attributes = Atom.getAttrHash(atom) as Record<string, unknown>;
+    attributes.fragment = frid;
     if (id === tmplBond.begin || id === tmplBond.end) {
       const mappedAtomId = atomsMap.get(id);
       if (mappedAtomId === undefined) {
@@ -362,7 +365,9 @@ function placeTemplateAtoms(
         );
         return;
       }
-      action.mergeWith(fromAtomsAttrs(restruct, mappedAtomId, attrs, true));
+      action.mergeWith(
+        fromAtomsAttributes(restruct, mappedAtomId, attributes, true),
+      );
       return;
     }
 
@@ -373,7 +378,7 @@ function placeTemplateAtoms(
     const mergeA = closest.atom(restruct, v, null, 0.1);
 
     if (mergeA === null) {
-      const operation = new AtomAdd(attrs, v).perform(restruct) as AtomAdd;
+      const operation = new AtomAdd(attributes, v).perform(restruct) as AtomAdd;
       action.addOp(operation);
       atomsMap.set(id, operation.data.aid as number);
       pasteItems.atoms.push(operation.data.aid as number);
@@ -387,7 +392,9 @@ function placeTemplateAtoms(
         return;
       }
 
-      action.mergeWith(fromAtomsAttrs(restruct, mappedAtomId, attrs, true));
+      action.mergeWith(
+        fromAtomsAttributes(restruct, mappedAtomId, attributes, true),
+      );
       // TODO [RB] need to merge fragments?
     }
   });
@@ -438,7 +445,7 @@ function placeTemplateBonds(
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(
-            new BondAttr(newBondId, 'type', newBondType).perform(restruct),
+            new BondAttribute(newBondId, 'type', newBondType).perform(restruct),
           );
         }
         if (isCyclopentadieneTemplate) {
@@ -455,7 +462,7 @@ function placeTemplateBonds(
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(
-            new BondAttr(newBondId, 'type', newBondType).perform(restruct),
+            new BondAttribute(newBondId, 'type', newBondType).perform(restruct),
           );
         }
       }
@@ -463,19 +470,23 @@ function placeTemplateBonds(
       pasteItems.bonds.push(newBondId);
     } else {
       const commonBond = bond.type > tmplBond.type ? bond : tmplBond;
-      action.mergeWith(fromBondsAttrs(restruct, existId, commonBond, true));
+      action.mergeWith(
+        fromBondsAttributes(restruct, existId, commonBond, true),
+      );
 
       if (isFusingBenzeneBySpecialRules && fusingBondType) {
         action.addOp(
-          new BondAttr(bid, 'type', fusingBondType).perform(restruct),
+          new BondAttribute(bid, 'type', fusingBondType).perform(restruct),
         );
       }
       previewBondId = bid;
     }
     action.addOp(
-      new BondAttr(previewBondId as number, 'isPreview', isPreview).perform(
-        restruct,
-      ),
+      new BondAttribute(
+        previewBondId as number,
+        'isPreview',
+        isPreview,
+      ).perform(restruct),
     );
   });
 }
@@ -545,9 +556,14 @@ function fromTemplateOnBond(
     begin: shouldFlip ? tmplBond.end : tmplBond.begin,
     end: shouldFlip ? tmplBond.begin : tmplBond.end,
   };
-  const mergeParams = utils.mergeBondsParams(struct, bond, tmpl, bondAtoms);
-  if (!mergeParams) return [action, { atoms: [], bonds: [] }];
-  const { angle, scale } = mergeParams;
+  const mergeParameters = utilities.mergeBondsParameters(
+    struct,
+    bond,
+    tmpl,
+    bondAtoms,
+  );
+  if (!mergeParameters) return [action, { atoms: [], bonds: [] }];
+  const { angle, scale } = mergeParameters;
 
   const frid = struct.getBondFragment(bid);
 

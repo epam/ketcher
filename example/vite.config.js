@@ -11,12 +11,12 @@ import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.j
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config.mjs';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
-import { envVariables as exampleEnv } from './config/webpack.config';
+import { envVariables as exampleEnvironment } from './config/webpack.config';
 import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
 import commonjs from 'vite-plugin-commonjs';
 
-const dotEnv = loadEnv('development', '.', '');
-Object.assign(process.env, dotEnv, exampleEnv);
+const dotEnvironment = loadEnv('development', '.', '');
+Object.assign(process.env, dotEnvironment, exampleEnvironment);
 
 const PACKAGE_DIRECTORIES = {
   'ketcher-core': resolve(__dirname, '../packages/ketcher-core'),
@@ -196,16 +196,16 @@ const normalizeHtmlTransformHook = (plugin) => {
 
 const logger = createLogger();
 const loggerWarn = logger.warn;
-logger.warn = (msg, options) => {
+logger.warn = (message, options) => {
   if (
     // This warning occurs when entry html is not at the root path
-    msg
+    message
       .toLowerCase()
       .includes('files in the public directory are served at the root path.')
   ) {
     return;
   }
-  loggerWarn(msg, options);
+  loggerWarn(message, options);
 };
 
 export default defineConfig({

@@ -8,7 +8,7 @@ import {
   zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { verticalFlipByKeyboard, horizontalFlipByKeyboard } from './utils';
+import { verticalFlipByKeyboard, horizontalFlipByKeyboard } from './utilities';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

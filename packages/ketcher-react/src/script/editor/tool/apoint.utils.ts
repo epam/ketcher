@@ -1,7 +1,7 @@
 import {
   type Atom,
   type Editor,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromRGroupAttachmentPointUpdate,
   KetcherLogger,
 } from 'ketcher-core';
@@ -19,7 +19,7 @@ export async function editRGroupAttachmentPoint(
     const previousAttachmentPoints = atom?.attachmentPoints;
     const currentAttachmentPoints = newAtom.attachmentPoints;
     if (previousAttachmentPoints !== currentAttachmentPoints) {
-      const actionFromAtomsAttrs = fromAtomsAttrs(
+      const actionFromAtomsAttrs = fromAtomsAttributes(
         editor.render.ctab,
         atomId,
         newAtom,

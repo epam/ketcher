@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Vec2 } from 'domain/entities/vec2';
-import utils from '../editor/shared/utils';
+import utilities from '../editor/shared/utilities';
 import { ShowHydrogenLabels } from './restruct/showHydrogenLabels';
 import type { RenderOptions } from './render.types';
 import {
@@ -31,7 +31,7 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
   const scaleFactorMacro = options.macroModeScale || 200;
 
   if (options.rotationStep) {
-    utils.setFracAngle(options.rotationStep);
+    utilities.setFracAngle(options.rotationStep);
   }
 
   const labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6));

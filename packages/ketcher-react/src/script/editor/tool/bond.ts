@@ -24,11 +24,11 @@ import {
   Vec2,
   bondChangingAction,
   fromBondAddition,
-  fromBondsAttrs,
+  fromBondsAttributes,
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion,
-  vectorUtils,
+  vectorUtilities,
   Atom,
   CoordinateTransformation,
   entityNotFoundMessage,
@@ -124,7 +124,7 @@ class BondTool implements Tool {
         return;
       }
 
-      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
+      const action = fromBondsAttributes(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;
@@ -266,10 +266,10 @@ class BondTool implements Tool {
     const hasItem = 'item' in dragCtx;
 
     const pos = CoordinateTransformation.pageToModel(event, rnd);
-    let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
-    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    let angle = vectorUtilities.calcAngle(dragCtx.xy0, pos);
+    if (!event.ctrlKey) angle = vectorUtilities.fracAngle(angle, null);
 
-    const degrees = vectorUtils.degrees(angle);
+    const degrees = vectorUtilities.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
     if (!hasItem || this.isBondEndpoint(dragCtx.item)) {
@@ -507,7 +507,7 @@ class BondTool implements Tool {
       startPos = atom.pp.get_xy0();
     }
 
-    endPos = vectorUtils.calcNewAtomPos(startPos, xy1, event.ctrlKey);
+    endPos = vectorUtilities.calcNewAtomPos(startPos, xy1, event.ctrlKey);
     endPos = this.hapticBond.getNewAtomPosition(startPos, endPos);
 
     return { endAtom: newEndAtom, endPos };

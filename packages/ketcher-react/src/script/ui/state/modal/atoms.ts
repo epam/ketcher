@@ -3,7 +3,7 @@ import {
   type AtomQueryProperties,
   Action,
   Atom,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   KetcherLogger,
 } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
@@ -43,7 +43,12 @@ export function updateSelectedAtoms({
             userChangedAtom,
           );
           action.mergeWith(
-            fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false),
+            fromAtomsAttributes(
+              struct,
+              atomId,
+              atomWithChangedProperties,
+              false,
+            ),
           );
         });
         editor.update(action);

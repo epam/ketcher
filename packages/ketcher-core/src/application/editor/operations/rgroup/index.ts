@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './RGroupAttr';
+export * from './RGroupAttribute';
 export * from './RGroupFragment';

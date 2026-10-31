@@ -408,31 +408,31 @@ function createOptionToSectionMap(): Map<string, SettingsSection> {
   if (cachedMap) return cachedMap;
   const map = new Map<string, SettingsSection>();
 
-  Object.values(GeneralSetting).forEach((val) =>
-    map.set(val, SettingsSection.General),
+  Object.values(GeneralSetting).forEach((value) =>
+    map.set(value, SettingsSection.General),
   );
-  Object.values(StereochemistrySetting).forEach((val) =>
-    map.set(val, SettingsSection.Stereochemistry),
+  Object.values(StereochemistrySetting).forEach((value) =>
+    map.set(value, SettingsSection.Stereochemistry),
   );
-  Object.values(AtomsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Atoms),
+  Object.values(AtomsSetting).forEach((value) =>
+    map.set(value, SettingsSection.Atoms),
   );
-  Object.values(BondsSetting).forEach((val) =>
-    map.set(val, SettingsSection.Bonds),
+  Object.values(BondsSetting).forEach((value) =>
+    map.set(value, SettingsSection.Bonds),
   );
   // ServerSetting fields are now split across the Reactions & Components,
   // Validation & Calculation, and Debugging sections; see SECTION_OVERRIDES.
-  Object.values(ServerSetting).forEach((val) =>
-    map.set(val, SettingsSection.Validation),
+  Object.values(ServerSetting).forEach((value) =>
+    map.set(value, SettingsSection.Validation),
   );
-  Object.values(ThreeDViewerSetting).forEach((val) =>
-    map.set(val, SettingsSection.ThreeDViewer),
+  Object.values(ThreeDViewerSetting).forEach((value) =>
+    map.set(value, SettingsSection.ThreeDViewer),
   );
-  Object.values(OptionsForDebuggingSetting).forEach((val) =>
-    map.set(val, SettingsSection.Debugging),
+  Object.values(OptionsForDebuggingSetting).forEach((value) =>
+    map.set(value, SettingsSection.Debugging),
   );
 
-  SECTION_OVERRIDES.forEach((section, val) => map.set(val, section));
+  SECTION_OVERRIDES.forEach((section, value) => map.set(value, section));
 
   cachedMap = map;
   return cachedMap;

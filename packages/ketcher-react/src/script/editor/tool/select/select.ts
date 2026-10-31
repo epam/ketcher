@@ -32,7 +32,7 @@ import {
   MULTITAIL_ARROW_KEY,
   isControlKey,
   SGroup,
-  vectorUtils,
+  vectorUtilities,
   isHapticBondWithAttachmentGroup,
 } from 'ketcher-core';
 
@@ -286,8 +286,8 @@ class SelectTool implements Tool {
       if (shouldDisplayDegree) {
         // moving selected objects
         const pos = CoordinateTransformation.pageToModel(event, rnd);
-        const angle = vectorUtils.calcAngle(selectionDragCtx.xy0, pos);
-        const degrees = vectorUtils.degrees(angle);
+        const angle = vectorUtilities.calcAngle(selectionDragCtx.xy0, pos);
+        const degrees = vectorUtilities.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /*

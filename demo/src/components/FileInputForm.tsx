@@ -31,8 +31,8 @@ const parseFile = (file): Promise<string> =>
 
     reader.readAsText(file, 'UTF-8');
 
-    reader.onload = function (evt) {
-      const fileContent = evt?.target?.result;
+    reader.onload = function (event_) {
+      const fileContent = event_?.target?.result;
       if (typeof fileContent === 'string') {
         resolve(fileContent);
       }
@@ -47,24 +47,24 @@ const submitHandler = (event) => {
   event.preventDefault();
   let file = event.target[0].files[0];
 
-  parseFile(file).then((str) => {
-    KetcherFunctions.renderFromCtab(str);
+  parseFile(file).then((string_) => {
+    KetcherFunctions.renderFromCtab(string_);
   });
 };
 
-interface FileInputProps {
-  printToTerminal: (str: string) => void;
+interface FileInputProperties {
+  printToTerminal: (string_: string) => void;
 }
 
-export const FileInputForm = ({ printToTerminal }: FileInputProps) => {
+export const FileInputForm = ({ printToTerminal }: FileInputProperties) => {
   const [chosenFile, setChosenFile] = useState('');
 
   const chooseFileHandler = (event) => {
     const file: File = event.target.files[0];
     setChosenFile(file.name);
 
-    parseFile(file).then((str) => {
-      let message = 'Selected file content:' + str;
+    parseFile(file).then((string_) => {
+      let message = 'Selected file content:' + string_;
       printToTerminal(message);
     });
   };

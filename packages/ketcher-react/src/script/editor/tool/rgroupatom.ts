@@ -17,7 +17,7 @@
 import {
   Atom,
   fromAtomAddition,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   FunctionalGroup,
   KetcherLogger,
   CoordinateTransformation,
@@ -143,7 +143,7 @@ function propsDialog(editor, id, pos) {
           elem.label = label;
         }
 
-        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
+        editor.update(fromAtomsAttributes(editor.render.ctab, id, elem, false));
       }
     })
     .catch((error) => {

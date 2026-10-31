@@ -44,7 +44,7 @@ const defaultTypes: Array<CheckTypes> = [
   'chiral',
   '3d',
 ];
-const defaultCalcProps: Array<CalculateProps> = [
+const defaultCalcProperties: Array<CalculateProps> = [
   'molecular-weight',
   'most-abundant-mass',
   'monoisotopic-mass',
@@ -201,7 +201,7 @@ export class Indigo {
     struct: StructOrString,
     options?: CalculateOptions,
   ): Promise<CalculateResult> {
-    const properties = options?.properties ?? defaultCalcProps;
+    const properties = options?.properties ?? defaultCalcProperties;
 
     return this.#structService.calculate({
       struct: convertStructToString(struct, this.#ketSerializer),

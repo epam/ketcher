@@ -45,7 +45,7 @@ import type { MultitailArrow } from './multitailArrow';
 import {
   flipPointByCenter,
   rotateDelta,
-} from 'application/editor/shared/utils';
+} from 'application/editor/shared/utilities';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 

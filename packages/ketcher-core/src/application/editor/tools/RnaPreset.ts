@@ -52,9 +52,9 @@ class RnaPresetTool implements Tool {
 
   constructor(
     private readonly editor: CoreEditor,
-    ...args: unknown[]
+    ...arguments_: unknown[]
   ) {
-    const [preset] = args as [IRnaPreset];
+    const [preset] = arguments_ as [IRnaPreset];
     this.editor = editor;
     if (preset?.base) {
       this.rnaBase = preset?.base;

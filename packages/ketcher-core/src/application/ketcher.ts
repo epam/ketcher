@@ -59,13 +59,13 @@ import {
 } from './utils';
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
+  type ExportImageParameters,
   type DisabledFunctionalityConfig,
-  type ExportImageParams,
   type KetcherApiSettings,
   type KetcherFunctionality,
   type SupportedImageFormats,
   type SupportedModes,
-  type UpdateMonomersLibraryParams,
+  type UpdateMonomersLibraryParameters,
   BlobTypes,
   ModeTypes,
 } from 'application/ketcher.types';
@@ -557,18 +557,21 @@ export class Ketcher {
   }
 
   async setMolecule(
-    structStr: string,
+    structString: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     await runAsyncAction<void>(async () => {
-      assert(typeof structStr === 'string');
+      assert(typeof structString === 'string');
 
       if (globalThis.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        await parseAndAddMacromoleculesOnCanvas(
+          structString,
+          this.structService,
+        );
 
         if (options?.needZoom !== false) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();
@@ -576,7 +579,7 @@ export class Ketcher {
         }
       } else {
         const struct: Struct = await prepareStructToRender(
-          structStr,
+          structString,
           this.structService,
           this,
         );
@@ -609,11 +612,11 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async setHelm(helmStr: string): Promise<void | undefined> {
+  async setHelm(helmString: string): Promise<void | undefined> {
     await runAsyncAction<void>(async () => {
-      assert(typeof helmStr === 'string');
+      assert(typeof helmString === 'string');
       const struct: Struct = await prepareStructToRender(
-        helmStr,
+        helmString,
         this.structService,
         this,
       );
@@ -625,7 +628,7 @@ export class Ketcher {
   }
 
   async addFragment(
-    structStr: string,
+    structString: string,
     options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = provideEditorInstance();
@@ -633,20 +636,23 @@ export class Ketcher {
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     await runAsyncAction<void>(async () => {
-      assert(typeof structStr === 'string');
+      assert(typeof structString === 'string');
 
       if (globalThis.isPolymerEditorTurnedOn) {
         const isCanvasEmptyBeforeOpenStructure =
           !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
 
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        await parseAndAddMacromoleculesOnCanvas(
+          structString,
+          this.structService,
+        );
 
         if (isCanvasEmptyBeforeOpenStructure) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();
         }
       } else {
         const struct: Struct = await prepareStructToRender(
-          structStr,
+          structString,
           this.structService,
           this,
         );
@@ -766,7 +772,10 @@ export class Ketcher {
     }
   }
 
-  exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
+  exportImage(
+    format: SupportedImageFormats,
+    parameters?: ExportImageParameters,
+  ) {
     const editor = provideEditorInstance();
     const fileName = 'ketcher';
     let blobPart: string | undefined;
@@ -775,7 +784,7 @@ export class Ketcher {
       blobPart = getSvgFromDrawnStructures(
         editor.canvas,
         'file',
-        params?.margin,
+        parameters?.margin,
       );
     }
     if (!blobPart) {
@@ -821,8 +830,8 @@ export class Ketcher {
     });
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    for (let index = 0; index < byteCharacters.length; index++) {
+      byteNumbers[index] = byteCharacters.charCodeAt(index);
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: meta });
@@ -847,12 +856,12 @@ export class Ketcher {
    */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParameters,
   ) {
     const serverSettings = this.editor.serverSettings;
     const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
-      params?.format ?? identifyStructFormat(rawMonomersDataString);
+      parameters?.format ?? identifyStructFormat(rawMonomersDataString);
     let dataInKetFormat: string | JSON;
 
     if (format === SupportedFormat.ket) {
@@ -887,11 +896,11 @@ export class Ketcher {
 
   public async ensureMonomersLibraryDataInSdfFormat(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParameters,
   ) {
     const rawMonomersDataString = ensureString(rawMonomersData);
     const format =
-      params?.format ?? identifyStructFormat(rawMonomersDataString);
+      parameters?.format ?? identifyStructFormat(rawMonomersDataString);
 
     if (format === SupportedFormat.sdf || format === SupportedFormat.sdfV3000) {
       return rawMonomersDataString;
@@ -908,7 +917,7 @@ export class Ketcher {
 
   public async updateMonomersLibrary(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParameters,
   ) {
     const editor = provideEditorInstance();
 
@@ -922,31 +931,34 @@ export class Ketcher {
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     editor.updateMonomersLibrary(
       dataInKetFormat,
       undefined,
-      params?.shouldPersist,
+      parameters?.shouldPersist,
     );
-    if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
+    if (
+      SettingsManager.persistMonomerLibraryUpdates &&
+      parameters?.shouldPersist
+    ) {
       const updateString = ensureString(dataInKetFormat);
       SettingsManager.addMonomerLibraryUpdate(updateString);
     }
-    if (params?.needDispatchLibraryUpdateEvent) {
+    if (parameters?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     }
   }
 
   public async replaceMonomersLibrary(
     rawMonomersData: string | JSON,
-    params?: UpdateMonomersLibraryParams,
+    parameters?: UpdateMonomersLibraryParameters,
   ) {
     const editor = provideEditorInstance();
 
@@ -960,18 +972,18 @@ export class Ketcher {
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
       rawMonomersData,
-      params,
+      parameters,
     );
 
     editor.clearMonomersLibrary();
     editor.updateMonomersLibrary(dataInKetFormat);
 
-    if (params?.needDispatchLibraryUpdateEvent) {
+    if (parameters?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     }
 

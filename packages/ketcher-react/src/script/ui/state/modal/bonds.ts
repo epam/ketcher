@@ -1,4 +1,9 @@
-import { type Bond, Action, fromBondsAttrs, KetcherLogger } from 'ketcher-core';
+import {
+  type Bond,
+  Action,
+  fromBondsAttributes,
+  KetcherLogger,
+} from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
 export function updateSelectedBonds({
@@ -23,7 +28,7 @@ export function updateSelectedBonds({
             userChangedBond,
           );
           action.mergeWith(
-            fromBondsAttrs(
+            fromBondsAttributes(
               struct,
               bondId,
               bondWithChangedProperties as Bond,

@@ -21,8 +21,8 @@ function isIdtString(s: string): boolean {
   // Phosphorothioate nucleotide sequence: A, C, G, T, U joined by *
   const idtBaseSeq = /^[ACGTUacgtu](\*[ACGTUacgtu])+$/;
   // IDT modification token: /3Name/, /5Name/, /iName/, /rName/
-  const idtModToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
-  return idtBaseSeq.test(s) || idtModToken.test(s);
+  const idtModuleToken = /\/[35ir][A-Za-z0-9][A-Za-z0-9-]*\/?/;
+  return idtBaseSeq.test(s) || idtModuleToken.test(s);
 }
 
 export function identifyStructFormat(
@@ -84,16 +84,16 @@ export function identifyStructFormat(
     return SupportedFormat.cml;
   }
 
-  const clearStr = sanitizedString
+  const clearString = sanitizedString
     .replace(/\s/g, '')
     .replace(/(\\r)|(\\n)/g, '');
   const base64StringPattern =
     /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
   const cdxHeader = 'VjCD0100';
   if (
-    clearStr.length % 4 === 0 &&
-    base64StringPattern.test(clearStr) &&
-    globalThis.atob(clearStr).startsWith(cdxHeader)
+    clearString.length % 4 === 0 &&
+    base64StringPattern.test(clearString) &&
+    globalThis.atob(clearString).startsWith(cdxHeader)
   ) {
     return SupportedFormat.cdx;
   }

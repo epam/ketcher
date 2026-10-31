@@ -19,7 +19,7 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import type { RaphaelPaper } from 'raphael';
 
-import Raphael from './raphael-ext';
+import Raphael from './raphael-extension';
 import ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
@@ -166,9 +166,9 @@ export class Render {
     return this.userOpts;
   }
 
-  updateOptions(opts: string) {
+  updateOptions(options: string) {
     try {
-      const passedOptions = JSON.parse(opts);
+      const passedOptions = JSON.parse(options);
       if (passedOptions && typeof passedOptions === 'object') {
         this.userOpts = { ...this.userOpts, ...passedOptions };
         this.options = { ...this.options, ...passedOptions };
@@ -226,8 +226,8 @@ export class Render {
     this.sz = this.getCanvasSizeVector();
     const newWidth = this.sz.x / this.options.zoom;
     const newHeight = this.sz.y / this.options.zoom;
-    this.setViewBox((prev) => ({
-      ...prev,
+    this.setViewBox((previous) => ({
+      ...previous,
       width: newWidth,
       height: newHeight,
     }));
@@ -260,10 +260,11 @@ export class Render {
   /**
    * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
    */
-  setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
+  setViewBox(function_: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;
-  setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
-    const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
+  setViewBox(argument: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const newViewBox =
+      typeof argument === 'function' ? argument(this.viewBox) : argument;
     this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
       'viewBox',

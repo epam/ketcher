@@ -64,12 +64,12 @@ export function fromMultitailArrowTailRemove(
 export function fromMultitailArrowHeadTailsResize(
   reStruct: ReStruct,
   id: number,
-  ref: MultitailArrowReferencePosition,
+  reference: MultitailArrowReferencePosition,
   offset: number,
 ) {
   const action = new Action();
   action.addOp(
-    new MultitailArrowResizeTailHead(id, offset, ref.name === 'head'),
+    new MultitailArrowResizeTailHead(id, offset, reference.name === 'head'),
   );
   return action.perform(reStruct);
 }
@@ -77,7 +77,7 @@ export function fromMultitailArrowHeadTailsResize(
 export function fromMultitailArrowHeadTailMove(
   reStruct: ReStruct,
   id: number,
-  ref: MultitailArrowReferencePosition,
+  reference: MultitailArrowReferencePosition,
   offset: number,
   shouldNormalize?: true,
 ) {
@@ -86,8 +86,8 @@ export function fromMultitailArrowHeadTailMove(
     new MultitailArrowMoveHeadTail(
       id,
       offset,
-      ref.name,
-      ref.tailId,
+      reference.name,
+      reference.tailId,
       shouldNormalize,
     ),
   );

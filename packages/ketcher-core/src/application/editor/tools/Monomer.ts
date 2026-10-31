@@ -41,9 +41,9 @@ class MonomerTool implements BaseTool {
   private readonly monomer: MonomerOrAmbiguousType;
   constructor(
     private readonly editor: CoreEditor,
-    ...args: unknown[]
+    ...arguments_: unknown[]
   ) {
-    const [monomer] = args as [MonomerOrAmbiguousType];
+    const [monomer] = arguments_ as [MonomerOrAmbiguousType];
     this.monomer = monomer;
     this.history = EditorHistory.getInstance(this.editor);
   }

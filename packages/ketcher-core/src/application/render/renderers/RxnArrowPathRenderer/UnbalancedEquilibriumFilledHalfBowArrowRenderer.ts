@@ -15,9 +15,9 @@ export class UnbalancedEquilibriumFilledHalfBowArrowRenderer {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
-    const arrowHeadAttr = ARROW_HEAD_ATTR * macroModeScale;
+    const arrowHeadAttribute = ARROW_HEAD_ATTR * macroModeScale;
     const arrowOffset = ARROW_OFFSET * macroModeScale;
-    const unbalanceVal = ARROW_UNBALANCED_OFFSET * macroModeScale;
+    const unbalanceValue = ARROW_UNBALANCED_OFFSET * macroModeScale;
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
@@ -28,18 +28,18 @@ export class UnbalancedEquilibriumFilledHalfBowArrowRenderer {
         `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
-        `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+        `L${toFixed(endX - arrowHeadLength + arrowHeadAttribute)},${toFixed(
           start.y - arrowOffset,
         )}Z`,
-      `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
-        `L${toFixed(start.x + unbalanceVal)},${toFixed(
+      `M${toFixed(endX - unbalanceValue)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x + unbalanceValue)},${toFixed(
           start.y + arrowOffset,
         )}` +
-        `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
+        `L${toFixed(start.x + unbalanceValue + arrowHeadLength)},${toFixed(
           start.y + arrowHeadWidth + arrowOffset,
         )}` +
         `L${toFixed(
-          start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr,
+          start.x + unbalanceValue + arrowHeadLength - arrowHeadAttribute,
         )},${start.y + arrowOffset}Z`,
     );
 

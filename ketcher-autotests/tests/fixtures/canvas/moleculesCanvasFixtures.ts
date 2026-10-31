@@ -1,11 +1,11 @@
-import { test as utils } from '../utilsFixtures';
+import { test as utilities } from '../utilitiesFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { waitForIndigoToLoad, waitForKetcherInit } from '@utils';
 import { mergeTests, Page } from '@playwright/test';
 import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
-export const test = mergeTests(utils, pageObjects).extend<
+export const test = mergeTests(utilities, pageObjects).extend<
   { MoleculesCanvas: void },
   { initMoleculesCanvas: () => Promise<Page> }
 >({

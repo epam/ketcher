@@ -17,7 +17,7 @@
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { inRange } from 'lodash';
-import type { BondAtoms, FlipDirection } from './utils.types';
+import type { BondAtoms, FlipDirection } from './utilities.types';
 
 let FRAC = Math.PI / 12; // '15º'
 
@@ -57,7 +57,7 @@ function degrees(angle: number): number {
 const BONDS_MERGE_ANGLE = 10; // 'º'
 const BONDS_MERGE_SCALE = 0.2;
 
-function mergeBondsParams(
+function mergeBondsParameters(
   struct1: Struct,
   bond1: BondAtoms,
   struct2: Struct,
@@ -117,6 +117,6 @@ export default {
   fracAngle,
   degrees,
   setFracAngle,
-  mergeBondsParams,
+  mergeBondsParameters,
   calcNewAtomPos,
 };

@@ -8,6 +8,9 @@ import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';
 import { Icon } from 'components';
 import { KetMonomerClass } from 'ketcher-core';
 import { useTranslation } from 'react-i18next';
+import { isNaturalAnalogueRequired } from '../../MonomerCreationWizardFields.utils';
+
+export { isNaturalAnalogueRequired };
 
 interface ChipGridSelectProps {
   monomerType: KetMonomerClass | 'rnaPreset' | undefined;
@@ -56,16 +59,6 @@ const rnaOptions = [
   { value: 'X', label: 'X', color: '#CCCBD6' },
 ];
 
-export const isNaturalAnalogueRequired = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) => {
-  return (
-    monomerType === KetMonomerClass.AminoAcid ||
-    monomerType === KetMonomerClass.Base ||
-    monomerType === KetMonomerClass.RNA
-  );
-};
-
 const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   monomerType,
   value,
@@ -74,7 +67,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
   error,
 }) => {
   const { t } = useTranslation('components');
-  const disabled = !isNaturalAnalogueRequired(monomerType);
+  const isDisabled = !isNaturalAnalogueRequired(monomerType);
 
   const options =
     monomerType === KetMonomerClass.AminoAcid ? aminoAcidOptions : rnaOptions;
@@ -129,7 +122,7 @@ const NaturalAnaloguePicker: FC<ChipGridSelectProps> = ({
       MenuProps={menuProps}
       IconComponent={ChevronIcon}
       data-testid="natural-analogue-picker"
-      disabled={disabled}
+      disabled={isDisabled}
       error={error}
     >
       {options.map((option) => (

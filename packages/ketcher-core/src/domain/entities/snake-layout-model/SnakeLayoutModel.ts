@@ -41,11 +41,11 @@ export class SnakeLayoutModel {
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }
@@ -74,11 +74,15 @@ export class SnakeLayoutModel {
 
     if (node instanceof Nucleotide) {
       if (isAntisense) {
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
+        nodes.push(
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+        );
       } else {
-        nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
-        nodes.push(new SingleMonomerSnakeLayoutNode(node.phosphate));
+        nodes.push(
+          new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase),
+          new SingleMonomerSnakeLayoutNode(node.phosphate),
+        );
       }
     } else if (node instanceof Nucleoside) {
       nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
@@ -297,8 +301,8 @@ export class SnakeLayoutModel {
 
                 if (
                   currentTwoStrandedSnakeLayoutNode &&
-                  !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                  isNodeInSameChain
+                  isNodeInSameChain &&
+                  !currentTwoStrandedSnakeLayoutNode.antisenseNode
                 ) {
                   currentTwoStrandedSnakeLayoutNode.antisenseNode =
                     currentNodeBeforeHydrogenConnectionToBase;
@@ -330,8 +334,8 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =

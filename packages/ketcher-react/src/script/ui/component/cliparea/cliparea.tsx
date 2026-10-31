@@ -41,7 +41,7 @@ const isAsyncClipboardWriteAvailable = (): boolean =>
   isClipboardAPIAvailable() && !isSafariBrowser();
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
-let needSkipCopyEvent = false;
+let shouldSkipCopyEvent = false;
 
 const isUserEditing = (): boolean => {
   const el = document.activeElement;
@@ -150,11 +150,11 @@ class ClipArea extends Component<ClipAreaProps> {
             }
             event.preventDefault();
           } else {
-            if (needSkipCopyEvent) {
-              needSkipCopyEvent = false;
+            if (shouldSkipCopyEvent) {
+              shouldSkipCopyEvent = false;
               return;
             }
-            needSkipCopyEvent = true;
+            shouldSkipCopyEvent = true;
 
             this.props.onCopy().then((data) => {
               // It is possible to have access to clipboard data through evt.clipboardData
@@ -165,7 +165,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 'copy',
                 (evt: Event) => {
                   const clipboardEvent = evt as ClipboardEvent;
-                  if (clipboardEvent.clipboardData && data) {
+                  if (data && clipboardEvent.clipboardData) {
                     legacyCopy(clipboardEvent.clipboardData, data);
                   }
                   evt.preventDefault();
@@ -417,24 +417,24 @@ async function pasteByKeydown(
 
 export const actions = ['cut', 'copy', 'paste'];
 
-export function exec(action: string): boolean {
-  let enabled = document.queryCommandSupported(action);
-  if (enabled) {
+export function canExecuteClipboardCommand(action: string): boolean {
+  let isEnabled = document.queryCommandSupported(action);
+  if (isEnabled) {
     try {
       const windowWithClipboardEvent = globalThis.window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
-      enabled =
+      isEnabled =
         document.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
     } catch (error) {
       // FF < 41
       KetcherLogger.error('cliparea.tsx::exec', error);
-      enabled = false;
+      isEnabled = false;
     }
   }
-  return enabled;
+  return isEnabled;
 }
 
 export default ClipArea;

@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -152,12 +151,7 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
  * String and event inputs return a normalized shortcut key, while map inputs
  * return a copy with normalized shortcut keys.
  */
-function keyNormBase(obj: KeyboardEvent): string;
-function keyNormBase(obj: string): string;
-function keyNormBase(obj: HotKeyMap): HotKeyMap;
-function keyNormBase(
-  obj: string | KeyboardEvent | HotKeyMap,
-): string | HotKeyMap {
+const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -165,7 +159,11 @@ function keyNormBase(
   return typeof obj === 'object'
     ? normalizeKeyMap(obj)
     : normalizeShortcut(obj);
-}
+}) as {
+  (obj: KeyboardEvent): string;
+  (obj: string): string;
+  (obj: HotKeyMap): HotKeyMap;
+};
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];

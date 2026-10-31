@@ -11,7 +11,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
  * Is used to improve search and opening tab performance in Template Dialog
  * Rendering a lot of structures causes great delay
  */
-type RenderStructOptions = Partial<RenderOptions> & {
+export type RenderStructOptions = Partial<RenderOptions> & {
   cachePrefix?: string;
   needCache?: boolean;
   wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;
@@ -75,7 +75,7 @@ export class RenderStruct {
     if (wrapperElement && struct) {
       const {
         cachePrefix = '',
-        needCache = true,
+        needCache: shouldCache = true,
         wrapperDimensions,
         ...renderOptions
       } = options;
@@ -88,7 +88,7 @@ export class RenderStruct {
 
       const cachedSvg = renderCache.get(cacheKey);
 
-      if (needCache && cachedSvg !== undefined) {
+      if (shouldCache && cachedSvg !== undefined) {
         wrapperElement.innerHTML = cachedSvg;
         return;
       }
@@ -158,7 +158,7 @@ export class RenderStruct {
 
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
-      if (needCache) {
+      if (shouldCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);
       }
     }

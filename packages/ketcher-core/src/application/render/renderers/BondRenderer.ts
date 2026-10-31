@@ -131,13 +131,13 @@ export class BondRenderer extends BaseRenderer {
     if (
       loop1HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop2HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop1DoubleBondsAmount > 1 || loop2DoubleBondsAmount === 1)
+      (loop2DoubleBondsAmount === 1 || loop1DoubleBondsAmount > 1)
     )
       return -1;
     if (
       loop2HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop1HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop2DoubleBondsAmount > 1 || loop1DoubleBondsAmount === 1)
+      (loop1DoubleBondsAmount === 1 || loop2DoubleBondsAmount > 1)
     )
       return 1;
     if (
@@ -669,13 +669,13 @@ export class BondRenderer extends BaseRenderer {
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
             : null;
-        const inConvexAromaticLoop =
+        const isInConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (inConvexAromaticLoop) {
+        if (isInConvexAromaticLoop) {
           bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
         } else {
           bondSVGPaths = DoubleBondPathRenderer.preparePaths(

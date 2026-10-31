@@ -16,7 +16,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
   DEFAULT_LAYOUT_MODE,
-  HAS_CONTENT_LAYOUT_MODE,
+  CONTENT_LAYOUT_MODE,
 } from 'application/editor/modes/types';
 import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
@@ -474,8 +474,8 @@ export class CoreEditor {
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
-      persistentMonomersLibrary.length !== 0 &&
-      persistentMonomersLibraryParsedJson !== undefined
+      persistentMonomersLibraryParsedJson !== undefined &&
+      persistentMonomersLibrary.length !== 0
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
@@ -559,7 +559,7 @@ export class CoreEditor {
       : undefined;
     if (
       editedMonomerRef &&
-      (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
+      (!editedMonomer || newMonomersLibraryChunk.length !== 1)
     ) {
       throw new Error(
         'The original monomer is no longer available for editing.',
@@ -665,7 +665,7 @@ export class CoreEditor {
         return;
       }
 
-      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+      const hasNewMonomerBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
       const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
@@ -744,7 +744,7 @@ export class CoreEditor {
             getHelmAliasUniquenessScope(monomer.props?.MonomerClass) ===
               newMonomerHelmAliasUniquenessScope &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
-          (newMonomerHasBilnAliasUniquenessScope &&
+          (hasNewMonomerBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
             hasChangedBilnAlias &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
@@ -1274,8 +1274,8 @@ export class CoreEditor {
       const target = event.target as Node | null;
       // Guard: only handle events whose target is inside this editor's root element
       if (
-        !this.ketcherRootElement ||
         !target ||
+        !this.ketcherRootElement ||
         !this.ketcherRootElement.contains(target)
       ) {
         return;
@@ -1311,7 +1311,7 @@ export class CoreEditor {
             const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
 
             // Add sense node if it's selected
-            if (senseNode?.monomer.selected && senseNode) {
+            if (senseNode && senseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: senseNode as SubChainNode,
@@ -1320,7 +1320,7 @@ export class CoreEditor {
             }
 
             // Add antisense node if it's selected
-            if (antisenseNode?.monomer.selected && antisenseNode) {
+            if (antisenseNode && antisenseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: antisenseNode as SubChainNode,
@@ -1456,8 +1456,8 @@ export class CoreEditor {
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(
-      (needToRemoveSelection?: boolean) =>
-        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
+      (shouldRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1532,13 +1532,13 @@ export class CoreEditor {
     );
 
     this.events.toggleLineLengthHighlighting.add(
-      (value: boolean, currentPosition: number = 0) => {
+      (shouldHighlightLineLength: boolean, currentPosition: number = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
         if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
-        if (value) {
+        if (shouldHighlightLineLength) {
           this.transientDrawingView.showLineLengthHighlight({
             currentPosition,
           });
@@ -1675,7 +1675,7 @@ export class CoreEditor {
       isLibraryItemRnaPreset(monomerOrRnaItem),
     );
 
-    const canvasWasEmptyBeforeAutochain =
+    const isCanvasEmptyBeforeAutochain =
       this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
     const history = EditorHistory.getInstance(this);
@@ -1734,7 +1734,7 @@ export class CoreEditor {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
-    if (canvasWasEmptyBeforeAutochain) {
+    if (isCanvasEmptyBeforeAutochain) {
       modelChanges.merge(
         this.drawingEntitiesManager.selectDrawingEntities(
           monomersAddResult.drawingEntities,
@@ -1793,13 +1793,13 @@ export class CoreEditor {
         isAddedMonomerHorizontallyOutOfCanvas ||
         isAddedMonomerVerticallyOutOfCanvas
       ) {
-        const needToScrollToBeginningOfChain =
+        const shouldScrollToBeginningOfChain =
           Boolean(selectedMonomerToConnect) &&
           isStructureWithAutochainOffsetFitCanvas;
 
         turnOnScrollAnimation(this.zoomTool.canvas);
         this.zoomTool.scrollTo(
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? Coordinates.modelToCanvas(
                 chainsCollection.firstNode.firstMonomerInNode.position,
               )
@@ -1813,7 +1813,7 @@ export class CoreEditor {
                 ),
               ),
           isAddedMonomerOutBelowCanvas,
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? oneLayoutCellInAngstroms * editorSettings.macroModeScale
             : 0,
           isAddedMonomerOutBelowCanvas
@@ -2060,13 +2060,13 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
+  private onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
     this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
-      needToRemoveSelection,
+      shouldRemoveSelection,
     );
   }
 
@@ -2597,12 +2597,12 @@ export class CoreEditor {
     this.mode?.[eventHandlerName]?.(event);
   }
 
-  public beginMonomerWizardSession(includeCanvas = true) {
+  public beginMonomerWizardSession(shouldIncludeCanvas = true) {
     if (this.isMonomerWizardSessionActive) {
       throw new Error('A monomer wizard session is already active.');
     }
     // Unlike a normal mode switch, keep the live macro model and history.
-    const result = includeCanvas
+    const result = shouldIncludeCanvas
       ? MacromoleculesConverter.convertDrawingEntitiesToStruct(
           this.drawingEntitiesManager,
           new Struct(),
@@ -2627,18 +2627,18 @@ export class CoreEditor {
     return result;
   }
 
-  public finishMonomerWizardSession(savedCanvas: boolean) {
+  public finishMonomerWizardSession(isCanvasSaved: boolean) {
     if (!this.monomerWizardMode) {
       return;
     }
     const originalManager = this.drawingEntitiesManager;
-    let canvasChanged = false;
+    let hasCanvasChanged = false;
     this.mode = this.monomerWizardMode;
     // Read it now so a failed restore cannot leave a stale request behind.
     const instanceReplacement = this.pendingMonomerWizardInstanceReplacement;
     this.pendingMonomerWizardInstanceReplacement = undefined;
     try {
-      if (savedCanvas) {
+      if (isCanvasSaved) {
         const struct = this.micromoleculesEditor.struct();
         this.rescaleStructForModeTransition(struct, 'microToMacro');
         const manager = new DrawingEntitiesManager();
@@ -2647,7 +2647,7 @@ export class CoreEditor {
             struct,
             manager,
           );
-        canvasChanged = true;
+        hasCanvasChanged = true;
         originalManager.clearCanvas();
         this.drawingEntitiesManager = manager;
         this.viewModel.initialize([...manager.bonds.values()]);
@@ -2675,7 +2675,7 @@ export class CoreEditor {
         EditorHistory.getInstance(this).update(command);
       }
     } catch (error) {
-      if (canvasChanged) {
+      if (hasCanvasChanged) {
         this.restoreMonomerWizardCanvas(originalManager);
       }
       throw error;
@@ -2714,7 +2714,7 @@ export class CoreEditor {
     // `replaceMonomer` adds and deletes monomers, so iterate over a snapshot.
     const monomers = [...this.drawingEntitiesManager.monomers.values()];
     const command = new Command();
-    let replacedAnyMonomer = false;
+    let hasReplacedAnyMonomer = false;
 
     monomers.forEach((monomer) => {
       const monomerItem = monomer.monomerItem;
@@ -2736,10 +2736,10 @@ export class CoreEditor {
         this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
           .command,
       );
-      replacedAnyMonomer = true;
+      hasReplacedAnyMonomer = true;
     });
 
-    if (!replacedAnyMonomer) {
+    if (!hasReplacedAnyMonomer) {
       return;
     }
 
@@ -2842,9 +2842,7 @@ export class CoreEditor {
       const ketcher = ketcherProvider.getKetcher();
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
-      const newModeName = isBlank
-        ? DEFAULT_LAYOUT_MODE
-        : HAS_CONTENT_LAYOUT_MODE;
+      const newModeName = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
 
       if (oldModeName === newModeName) {
         return;

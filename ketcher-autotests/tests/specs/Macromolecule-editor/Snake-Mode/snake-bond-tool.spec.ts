@@ -279,6 +279,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -497,6 +498,7 @@ test.describe('Snake Bond Tool', () => {
     });
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -714,6 +716,7 @@ test.describe('Snake Bond Tool', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Snake,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -924,6 +927,7 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.wheel(0, -400);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -945,6 +949,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -972,6 +977,7 @@ test.describe('Snake Bond Tool', () => {
     await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

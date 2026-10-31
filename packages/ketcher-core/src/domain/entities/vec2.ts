@@ -266,7 +266,7 @@ export class Vec2 {
     // ray-casting algorithm based on
     // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
     const { x, y } = this;
-    let inside = false;
+    let isInside = false;
 
     for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
       const xi = points[i].x || 0;
@@ -274,12 +274,12 @@ export class Vec2 {
       const xj = points[j].x || 0;
       const yj = points[j].y || 0;
 
-      const intersect =
+      const doesIntersect =
         yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-      if (intersect) inside = !inside;
+      if (doesIntersect) isInside = !isInside;
     }
 
-    return inside;
+    return isInside;
   }
 
   calculateDistanceToLine(line: [Vec2, Vec2]): number {

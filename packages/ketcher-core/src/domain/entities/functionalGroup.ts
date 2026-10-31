@@ -256,21 +256,21 @@ export class FunctionalGroup {
 
   static isContractedFunctionalGroup(sgroup, functionalGroups): boolean {
     let isFunctionalGroup = false;
-    let expanded = false;
+    let isExpanded = false;
 
     if (sgroup instanceof SGroup) {
       if (sgroup.functionalGroup) {
         isFunctionalGroup = true;
-        expanded = sgroup.functionalGroup.isExpanded;
+        isExpanded = sgroup.functionalGroup.isExpanded;
       }
     } else {
       functionalGroups.forEach((fg) => {
         if (fg.relatedSGroupId === sgroup) {
           isFunctionalGroup = true;
-          expanded = fg.isExpanded;
+          isExpanded = fg.isExpanded;
         }
       });
     }
-    return !expanded && isFunctionalGroup;
+    return !isExpanded && isFunctionalGroup;
   }
 }

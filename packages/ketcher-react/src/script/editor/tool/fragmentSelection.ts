@@ -431,10 +431,10 @@ export default class FragmentSelectionTool implements Tool {
 
     if (componentAtoms.size) {
       for (const [bondId, bond] of struct.bonds.entries()) {
-        const beginComponent = componentAtoms.has(bond.begin);
-        const endComponent = componentAtoms.has(bond.end);
-        if (beginComponent || endComponent) {
-          if (!beginComponent || !endComponent) {
+        const isBeginInComponent = componentAtoms.has(bond.begin);
+        const isEndInComponent = componentAtoms.has(bond.end);
+        if (isBeginInComponent || isEndInComponent) {
+          if (!isBeginInComponent || !isEndInComponent) {
             connectingBonds.add(bondId);
           }
         }

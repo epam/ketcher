@@ -69,7 +69,7 @@ export function moleculeToKet(
   const body: Omit<KetMoleculeNode, 'type'> = {
     atoms: [...struct.atoms.values()].map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
-      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      if (!monomer && atom.label === 'R#') return rglabelToKet(atom);
       return atomToKet(atom, monomer);
     }),
   };
@@ -104,7 +104,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
     ifDef(
       result,
       'label',
-      source.label === 'R#' && monomer
+      monomer && source.label === 'R#'
         ? monomer.monomerItem.props.MonomerCaps?.[
             getAttachmentPointLabelWithBinaryShift(source.rglabel ?? 0)
           ]

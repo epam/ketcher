@@ -3,6 +3,8 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css';
+
 declare namespace JSX {
   type Element = React.JSX.Element;
 }
@@ -32,6 +34,20 @@ declare namespace NodeJS {
     BUILD_DATE: string;
     BUILD_NUMBER: string;
   }
+}
+
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly KETCHER_ENABLE_REDUX_LOGGER?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
 }
 
 interface Document {

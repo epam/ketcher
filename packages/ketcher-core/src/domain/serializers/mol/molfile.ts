@@ -93,7 +93,10 @@ export class Molfile {
     return ret;
   }
 
-  prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
+  prepareSGroups(
+    shouldSkipErrors: boolean,
+    shouldPreserveIndigoDesc?: boolean,
+  ) {
     const mol = this.molecule;
     if (!mol) return;
 
@@ -106,13 +109,13 @@ export class Molfile {
       .forEach((id) => {
         const sgroup = mol.sgroups.get(id);
         if (!sgroup) return;
-        let errorIgnore = false;
+        let shouldIgnoreError = false;
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
         } catch (error: unknown) {
           KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
-          if (!skipErrors || !isErrorWithNumericId(error)) {
+          if (!shouldSkipErrors || !isErrorWithNumericId(error)) {
             throw new Error(
               `Error: ${
                 isErrorWithMessage(error) ? error.message : String(error)
@@ -120,15 +123,15 @@ export class Molfile {
               { cause: error },
             );
           }
-          errorIgnore = true;
+          shouldIgnoreError = true;
         }
 
         if (
-          errorIgnore ||
-          (!preserveIndigoDesc &&
+          shouldIgnoreError ||
+          (!shouldPreserveIndigoDesc &&
             /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          errors += +errorIgnore;
+          errors += +shouldIgnoreError;
           toRemove.push(sgroup.id);
         }
       });
@@ -160,9 +163,9 @@ export class Molfile {
 
   saveMolecule(
     molecule: Struct,
-    skipSGroupErrors: boolean,
-    norgroups?: boolean,
-    preserveIndigoDesc?: boolean,
+    shouldSkipSGroupErrors: boolean,
+    shouldOmitRGroups?: boolean,
+    shouldPreserveIndigoDesc?: boolean,
   ) {
     /*
     saver
@@ -198,7 +201,7 @@ export class Molfile {
     }
 
     if (molecule.rgroups.size > 0) {
-      if (norgroups) {
+      if (shouldOmitRGroups) {
         molecule = molecule.getScaffold();
       } else {
         const scaffold = new Molfile().getCTab(
@@ -228,7 +231,7 @@ export class Molfile {
     this.molecule = molecule.clone();
     this.centerMonomerMicromoleculeAtoms();
 
-    this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
+    this.prepareSGroups(shouldSkipSGroupErrors, shouldPreserveIndigoDesc);
 
     this.writeHeader();
     this.writeCTab2000();

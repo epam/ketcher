@@ -173,7 +173,7 @@ const positionStructureOnNextSequenceLine = (
   });
 };
 
-const addToCanvas = ({
+const hasAddedStructureToCanvas = ({
   ketSerializer,
   editor,
   struct,
@@ -299,7 +299,7 @@ const onOk = async ({
 
   if (isKet) {
     try {
-      const hasStructure = addToCanvas({
+      const hasStructure = hasAddedStructureToCanvas({
         struct,
         ketSerializer,
         editor,
@@ -334,7 +334,7 @@ const onOk = async ({
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
-    const hasStructure = addToCanvas({
+    const hasStructure = hasAddedStructureToCanvas({
       struct: ketStruct.struct,
       ketSerializer,
       editor,
@@ -511,6 +511,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
       testId="openStructureModal"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>
@@ -532,7 +534,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      {currentState === MODAL_STATES.textEditor && !isAnalyzingFile ? (
+      {!isAnalyzingFile && currentState === MODAL_STATES.textEditor ? (
         <Modal.Footer withborder="true">{renderFooter()}</Modal.Footer>
       ) : (
         <></>

@@ -10,13 +10,14 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'Run Claude Review') &&
       !contains(github.event.pull_request.title, 'Autotests')
     runs-on: ubuntu-latest
+    environment: ai-workflows
     permissions:
       contents: read
       pull-requests: write
       id-token: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 1
 
@@ -25,23 +26,26 @@ jobs:
       # restructure, .agents/skills lacks review-pr, so the symlink that the
       # restore brings in is broken, /review-pr does not load, and the run
       # ends green with no review posted. Replace .agents with master's copy
-      # so the skill set matches what .claude points at. This copies files
-      # only; nothing from the PR head is executed.
-      - name: Align agent skills with master
+      # so the skill set matches what .claude points at. CLAUDE.md, which the
+      # action also restores, imports AGENTS.md, so take AGENTS.md from master
+      # too; otherwise a PR could change the instructions of its own review.
+      # /review-pr runs scripts/review-panel.mjs to pick its lenses, so take
+      # that script from master as well: nothing from the PR head is executed,
+      # and a PR cannot choose the panel of its own review.
+      - name: Align agent config with master
         run: |
           git fetch origin master --depth 1
-          rm -rf .agents
-          git checkout origin/master -- .agents
+          rm -rf .agents AGENTS.md scripts/review-panel.mjs
+          git checkout origin/master -- .agents AGENTS.md
+          git checkout origin/master -- scripts/review-panel.mjs || echo "::warning::scripts/review-panel.mjs is not on master yet; /review-pr cannot pick its panel"
 
       - name: PR Review with Progress Tracking
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
         env:
-          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
+          CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: '1'
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          show_full_output: true
-
-          prompt: "/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}"
+          prompt: '/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}'
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh issue view:*)" "Bash(gh pr comment:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment" "Bash(node scripts/review-panel.mjs:*)" "Bash(gh pr view:*)" "Bash(gh pr diff:*)" "Bash(gh issue view:*)" "Bash(gh pr comment:*)"
             --model "claude-opus-5-5"

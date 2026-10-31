@@ -114,7 +114,7 @@ class ReFrag extends ReObject {
     // Do nothing. This method shouldn't actually be called.
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(isHovered: boolean, render: Render): void {
     let fid = render.ctab.frags.keyOf(this);
 
     if (!fid && fid !== 0) {
@@ -126,13 +126,13 @@ class ReFrag extends ReObject {
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {
-        atom.setHover(hover, render);
+        atom.setHover(isHovered, render);
       }
     });
 
     render.ctab.bonds.forEach((bond) => {
       if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
-        bond.setHover(hover, render);
+        bond.setHover(isHovered, render);
       }
     });
   }

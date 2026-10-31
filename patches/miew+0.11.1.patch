@@ -1,0 +1,324 @@
+diff --git a/node_modules/miew/dist/Miew.js b/node_modules/miew/dist/Miew.js
+index 69e5fc9..719124b 100644
+--- a/node_modules/miew/dist/Miew.js
++++ b/node_modules/miew/dist/Miew.js
+@@ -18557,11 +18557,14 @@ class ResiduesTraceGroup extends groups_ChemGroup {
+ ;// CONCATENATED MODULE: ./src/gfx/modes/groups/BondsGroup.js
+ 
+ 
++const AROMATIC_DASH_COUNT = 3;
+ function getCylinderCount(bondOrder) {
+   return bondOrder < 2 ? 1 : bondOrder;
+ }
+ class BondsGroup extends groups_ChemGroup {
+   _makeGeoArgs() {
++    this._segmentLeft = new external_module_three_commonjs_three_commonjs2_three_amd_three_root_THREE_.Vector3();
++    this._segmentRight = new external_module_three_commonjs_three_commonjs2_three_amd_three_root_THREE_.Vector3();
+     const drawMultiple = this._mode.drawMultiorderBonds();
+     const showAromatic = this._mode.showAromaticLoops();
+     const bondsIdc = this._selection.chunks;
+@@ -18570,16 +18573,29 @@ class BondsGroup extends groups_ChemGroup {
+     } = this._selection;
+     let bondsCount = 0;
+     for (let i = 0, n = bondsIdc.length; i < n; ++i) {
+-      bondsCount += this.getBondOrder(bonds[bondsIdc[i]], drawMultiple, showAromatic);
++      bondsCount += this.getBondLayout(bonds[bondsIdc[i]], drawMultiple, showAromatic).count;
+     }
+     return [bondsCount, this._polyComplexity];
+   }
+-  getBondOrder(bond, drawMultiple, showAromatic) {
+-    let bondOrder = 1;
++  getBondLayout(bond, drawMultiple, showAromatic) {
++    const dashed = drawMultiple && showAromatic
++      && bond._type === chem_Bond.BondType.AROMATIC
++      && !this._selection.aromaticLoopBonds.has(bond);
++    let order = dashed ? 2 : 1;
+     if (drawMultiple && (!showAromatic || bond._type !== chem_Bond.BondType.AROMATIC)) {
+-      bondOrder = getCylinderCount(bond._order);
++      order = getCylinderCount(bond._order);
+     }
+-    return bondOrder;
++    return { order, count: dashed ? 1 + AROMATIC_DASH_COUNT : order, dashed };
++  }
++  setBondItem(index, left, right, dash, radius) {
++    if (dash === 0) {
++      this._geo.setItem(index, left, right, radius);
++      return;
++    }
++    const intervals = 2 * AROMATIC_DASH_COUNT + 1;
++    this._segmentLeft.lerpVectors(left, right, (2 * dash - 1) / intervals);
++    this._segmentRight.lerpVectors(left, right, 2 * dash / intervals);
++    this._geo.setItem(index, this._segmentLeft, this._segmentRight, radius);
+   }
+   raycast(raycaster, intersects) {
+     const {
+@@ -18652,18 +18668,19 @@ class BondsCylinderGroup extends groups_BondsGroup {
+       const a1Pos = atom1.position;
+       const a2Pos = atom2.position;
+       normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
+       const minRad = Math.min(mode.calcAtomRadius(atom1), mode.calcAtomRadius(atom2));
+       const dist = 2 * minRad / order;
+       const currStickRad = drawMultiple ? Math.min(stickRad, dist * 0.5 * (1.0 - emptyOffset)) : stickRad;
+-      for (let j = 0; j < order; ++j) {
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         const scale = dist * (order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2)));
+         chunksToIdx[currBondIdx] = bond._index;
+         leftPos.copy(a1Pos);
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.copy(a2Pos);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos, currStickRad);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0, currStickRad);
+         geo.setColor(currBondIdx++, colorer.getAtomColor(atom1, parent), colorer.getAtomColor(atom2, parent));
+       }
+     }
+@@ -18694,17 +18711,18 @@ class BondsCylinderGroup extends groups_BondsGroup {
+       const a1Pos = frameData.getAtomPos(atom1.index).clone();
+       const a2Pos = frameData.getAtomPos(atom2.index);
+       normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
+       const minRad = Math.min(mode.calcAtomRadius(atom1), mode.calcAtomRadius(atom2));
+       const dist = 2 * minRad / order;
+       const currStickRad = drawMultiple ? Math.min(stickRad, dist * 0.5 * (1.0 - emptyOffset)) : stickRad;
+-      for (let j = 0; j < order; ++j) {
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         const scale = dist * (order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2)));
+         leftPos.copy(a1Pos);
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.copy(a2Pos);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos, currStickRad);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0, currStickRad);
+         if (updateColor) {
+           geo.setColor(currBondIdx, frameData.getAtomColor(colorer, atom1), frameData.getAtomColor(colorer, atom2));
+         }
+@@ -18747,8 +18765,9 @@ class BondsLinesGroup extends groups_BondsGroup {
+       bondDir.subVectors(a2Pos, a1Pos);
+       const len = bondDir.length();
+       const normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
+-      for (let j = 0; j < order; ++j) {
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         leftPos.copy(a1Pos);
+         rightPos.copy(a2Pos);
+         let scale = order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2));
+@@ -18764,7 +18783,7 @@ class BondsLinesGroup extends groups_BondsGroup {
+         scale *= STEP_SIZE;
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0);
+         geo.setColor(currBondIdx++, colorer.getAtomColor(atom1, parent), colorer.getAtomColor(atom2, parent));
+       }
+     }
+@@ -18799,8 +18818,9 @@ class BondsLinesGroup extends groups_BondsGroup {
+       bondDir.subVectors(a2Pos, a1Pos);
+       const len = bondDir.length();
+       const normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
+-      for (let j = 0; j < order; ++j) {
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         leftPos.copy(a1Pos);
+         rightPos.copy(a2Pos);
+         let scale = order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2));
+@@ -18815,7 +18835,7 @@ class BondsLinesGroup extends groups_BondsGroup {
+         scale *= STEP_SIZE;
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0);
+         if (updateColor) {
+           geo.setColor(currBondIdx, frameData.getAtomColor(colorer, atom1), frameData.getAtomColor(colorer, atom2));
+         }
+@@ -19051,6 +19071,10 @@ class BondsProcessor extends gfx_RCGroup {
+     const transforms = complex.getTransforms();
+     complex.forEachComponent(component => {
+       const bondsIdc = [];
++      const aromaticLoopBonds = new Set();
++      component.forEachCycle(cycle => {
++        cycle.forEachBond(bond => aromaticLoopBonds.add(bond));
++      });
+       let bondsCount = 0;
+       component.forEachBond(bond => {
+         const atom1 = bond._left;
+@@ -19066,7 +19090,8 @@ class BondsProcessor extends gfx_RCGroup {
+       const bondsGroup = new BondsGroup(geoParams, {
+         bonds,
+         chunks: bondsIdc,
+-        parent: complex
++        parent: complex,
++        aromaticLoopBonds
+       }, colorer, mode, transforms, polyComplexity, material);
+       bondsGroup._component = component;
+       self.add(bondsGroup);
+diff --git a/node_modules/miew/dist/Miew.module.js b/node_modules/miew/dist/Miew.module.js
+index 9910fd8..f1c5ba8 100644
+--- a/node_modules/miew/dist/Miew.module.js
++++ b/node_modules/miew/dist/Miew.module.js
+@@ -18532,11 +18532,14 @@ class ResiduesTraceGroup extends groups_ChemGroup {
+ ;// CONCATENATED MODULE: ./src/gfx/modes/groups/BondsGroup.js
+ 
+ 
++const AROMATIC_DASH_COUNT = 3;
+ function getCylinderCount(bondOrder) {
+   return bondOrder < 2 ? 1 : bondOrder;
+ }
+ class BondsGroup extends groups_ChemGroup {
+   _makeGeoArgs() {
++    this._segmentLeft = new external_module_three_commonjs_three_commonjs2_three_amd_three_root_THREE_namespaceObject.Vector3();
++    this._segmentRight = new external_module_three_commonjs_three_commonjs2_three_amd_three_root_THREE_namespaceObject.Vector3();
+     const drawMultiple = this._mode.drawMultiorderBonds();
+     const showAromatic = this._mode.showAromaticLoops();
+     const bondsIdc = this._selection.chunks;
+@@ -18545,16 +18548,29 @@ class BondsGroup extends groups_ChemGroup {
+     } = this._selection;
+     let bondsCount = 0;
+     for (let i = 0, n = bondsIdc.length; i < n; ++i) {
+-      bondsCount += this.getBondOrder(bonds[bondsIdc[i]], drawMultiple, showAromatic);
++      bondsCount += this.getBondLayout(bonds[bondsIdc[i]], drawMultiple, showAromatic).count;
+     }
+     return [bondsCount, this._polyComplexity];
+   }
+-  getBondOrder(bond, drawMultiple, showAromatic) {
+-    let bondOrder = 1;
++  getBondLayout(bond, drawMultiple, showAromatic) {
++    const dashed = drawMultiple && showAromatic
++      && bond._type === chem_Bond.BondType.AROMATIC
++      && !this._selection.aromaticLoopBonds.has(bond);
++    let order = dashed ? 2 : 1;
+     if (drawMultiple && (!showAromatic || bond._type !== chem_Bond.BondType.AROMATIC)) {
+-      bondOrder = getCylinderCount(bond._order);
++      order = getCylinderCount(bond._order);
+     }
+-    return bondOrder;
++    return { order, count: dashed ? 1 + AROMATIC_DASH_COUNT : order, dashed };
++  }
++  setBondItem(index, left, right, dash, radius) {
++    if (dash === 0) {
++      this._geo.setItem(index, left, right, radius);
++      return;
++    }
++    const intervals = 2 * AROMATIC_DASH_COUNT + 1;
++    this._segmentLeft.lerpVectors(left, right, (2 * dash - 1) / intervals);
++    this._segmentRight.lerpVectors(left, right, 2 * dash / intervals);
++    this._geo.setItem(index, this._segmentLeft, this._segmentRight, radius);
+   }
+   raycast(raycaster, intersects) {
+     const {
+@@ -18627,18 +18643,19 @@ class BondsCylinderGroup extends groups_BondsGroup {
+       const a1Pos = atom1.position;
+       const a2Pos = atom2.position;
+       normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
+       const minRad = Math.min(mode.calcAtomRadius(atom1), mode.calcAtomRadius(atom2));
+       const dist = 2 * minRad / order;
+       const currStickRad = drawMultiple ? Math.min(stickRad, dist * 0.5 * (1.0 - emptyOffset)) : stickRad;
+-      for (let j = 0; j < order; ++j) {
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         const scale = dist * (order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2)));
+         chunksToIdx[currBondIdx] = bond._index;
+         leftPos.copy(a1Pos);
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.copy(a2Pos);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos, currStickRad);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0, currStickRad);
+         geo.setColor(currBondIdx++, colorer.getAtomColor(atom1, parent), colorer.getAtomColor(atom2, parent));
+       }
+     }
+@@ -18669,17 +18686,18 @@ class BondsCylinderGroup extends groups_BondsGroup {
+       const a1Pos = frameData.getAtomPos(atom1.index).clone();
+       const a2Pos = frameData.getAtomPos(atom2.index);
+       normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
+       const minRad = Math.min(mode.calcAtomRadius(atom1), mode.calcAtomRadius(atom2));
+       const dist = 2 * minRad / order;
+       const currStickRad = drawMultiple ? Math.min(stickRad, dist * 0.5 * (1.0 - emptyOffset)) : stickRad;
+-      for (let j = 0; j < order; ++j) {
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         const scale = dist * (order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2)));
+         leftPos.copy(a1Pos);
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.copy(a2Pos);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos, currStickRad);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0, currStickRad);
+         if (updateColor) {
+           geo.setColor(currBondIdx, frameData.getAtomColor(colorer, atom1), frameData.getAtomColor(colorer, atom2));
+         }
+@@ -18722,8 +18740,9 @@ class BondsLinesGroup extends groups_BondsGroup {
+       bondDir.subVectors(a2Pos, a1Pos);
+       const len = bondDir.length();
+       const normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
+-      for (let j = 0; j < order; ++j) {
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         leftPos.copy(a1Pos);
+         rightPos.copy(a2Pos);
+         let scale = order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2));
+@@ -18739,7 +18758,7 @@ class BondsLinesGroup extends groups_BondsGroup {
+         scale *= STEP_SIZE;
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0);
+         geo.setColor(currBondIdx++, colorer.getAtomColor(atom1, parent), colorer.getAtomColor(atom2, parent));
+       }
+     }
+@@ -18774,8 +18793,9 @@ class BondsLinesGroup extends groups_BondsGroup {
+       bondDir.subVectors(a2Pos, a1Pos);
+       const len = bondDir.length();
+       const normDir = bond.calcNormalDir();
+-      const order = this.getBondOrder(bond, drawMultiple, showAromatic);
+-      for (let j = 0; j < order; ++j) {
++      const { order, count, dashed } = this.getBondLayout(bond, drawMultiple, showAromatic);
++      for (let segment = 0; segment < count; ++segment) {
++        const j = dashed && segment > 0 ? 1 : segment;
+         leftPos.copy(a1Pos);
+         rightPos.copy(a2Pos);
+         let scale = order % 2 === 0 ? ((j / 2 | 0) + 0.5) * (1 - 2 * (j % 2)) : ((j + 1) / 2 | 0) * (-1 + 2 * (j % 2));
+@@ -18790,7 +18810,7 @@ class BondsLinesGroup extends groups_BondsGroup {
+         scale *= STEP_SIZE;
+         leftPos.addScaledVector(normDir, scale);
+         rightPos.addScaledVector(normDir, scale);
+-        geo.setItem(currBondIdx, leftPos, rightPos);
++        this.setBondItem(currBondIdx, leftPos, rightPos, dashed ? segment : 0);
+         if (updateColor) {
+           geo.setColor(currBondIdx, frameData.getAtomColor(colorer, atom1), frameData.getAtomColor(colorer, atom2));
+         }
+@@ -19026,6 +19046,10 @@ class BondsProcessor extends gfx_RCGroup {
+     const transforms = complex.getTransforms();
+     complex.forEachComponent(component => {
+       const bondsIdc = [];
++      const aromaticLoopBonds = new Set();
++      component.forEachCycle(cycle => {
++        cycle.forEachBond(bond => aromaticLoopBonds.add(bond));
++      });
+       let bondsCount = 0;
+       component.forEachBond(bond => {
+         const atom1 = bond._left;
+@@ -19041,7 +19065,8 @@ class BondsProcessor extends gfx_RCGroup {
+       const bondsGroup = new BondsGroup(geoParams, {
+         bonds,
+         chunks: bondsIdc,
+-        parent: complex
++        parent: complex,
++        aromaticLoopBonds
+       }, colorer, mode, transforms, polyComplexity, material);
+       bondsGroup._component = component;
+       self.add(bondsGroup);

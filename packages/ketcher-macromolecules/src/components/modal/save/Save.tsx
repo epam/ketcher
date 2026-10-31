@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -153,6 +153,14 @@ export const Save = ({
           editor.events.error.dispatch(t('save.fastaPhosphateLossNotice'));
         }
       }
+      // FASTA cannot represent a mix of RNA and DNA (both collapse to the same
+      // letter codes). IDT can, so this check is intentionally FASTA-only.
+      if (
+        fileFormat === 'fasta' &&
+        editor.drawingEntitiesManager.hasRnaAndDnaMix()
+      ) {
+        throw new Error(t('save.sequenceTypeRecognitionError'));
+      }
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
       // to ensure correct format version is used during conversion
@@ -212,8 +220,8 @@ export const Save = ({
       return;
     }
 
-    navigator.clipboard.writeText(struct).catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    navigator.clipboard.writeText(struct).catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       dispatch(openErrorModal(t('common:errors.featureNotAvailableInBrowser')));
     });
   };
@@ -224,6 +232,8 @@ export const Save = ({
       isOpen={isModalOpen}
       onClose={onClose}
       testId="save-structure-dialog"
+      isDraggable
+      isResizable={false}
     >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">

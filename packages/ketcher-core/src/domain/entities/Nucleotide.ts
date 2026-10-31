@@ -40,8 +40,8 @@ export class Nucleotide {
     );
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleotide(sugar),
         'Nucleotide is not valid. Please check nucleotide parts connections.',
@@ -109,7 +109,7 @@ export class Nucleotide {
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
-    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

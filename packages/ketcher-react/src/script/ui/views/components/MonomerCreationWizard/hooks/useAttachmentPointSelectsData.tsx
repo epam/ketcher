@@ -125,7 +125,7 @@ export const useAttachmentPointSelectsData = (
     ...assignedAttachmentPoints.keys(),
     ...connectionPointNames,
   ]);
-  const usedNumbers = Array.from(allNames).map((name) =>
+  const usedNumbers = [...allNames].map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);

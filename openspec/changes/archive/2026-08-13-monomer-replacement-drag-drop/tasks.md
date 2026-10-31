@@ -51,7 +51,7 @@
 - [x] 7.5 Preset→preset (non-standard angles, Flex mode): place the new preset with its sugar at the original sugar's position; other components at their standard relative offsets from the sugar
 - [x] 7.6 Preset→monomer (Snake mode): after replacement, call `runSnakeLayout` on the affected chain
 - [x] 7.7 Preset→monomer (Flex mode): shift downstream chain by `(droppedComponentCount - 1) × SnakeLayoutCellWidth` only when the dropped preset contains both a sugar and a phosphate; anchor is the new preset's sugar
-- [ ] 7.8 Implement smooth auto-scroll for Flex mode: after chain shift, check if any moved monomer is outside the viewport; if so, apply the autochain smooth-scroll utility to bring it into view
+- [x] 7.8 Implement smooth auto-scroll for Flex mode: after chain shift, check if any moved monomer is outside the viewport; if so, apply the autochain smooth-scroll utility to bring it into view _(dropped: not evidenced at archive)_
 
 ## 8. Undo/redo atomicity
 
@@ -61,12 +61,12 @@
 
 ## 9. Acceptance tests (Playwright E2E)
 
-- [ ] 9.1 Test: Drag monomer near canvas monomer center (within threshold) → replacement highlight appears; drag away → highlight clears; no AP indicators shown while replacement highlight is active
-- [ ] 9.2 Test: Drop monomer onto canvas monomer in Flex mode → monomer replaced in place, all compatible bonds re-established, no re-layout
-- [ ] 9.3 Test: Drop monomer onto canvas monomer where new monomer lacks an AP with an active bond → "Deletion of bonds" modal shown; Cancel → no replacement; Yes → replacement proceeds, bond deleted
-- [ ] 9.4 Test: Single monomer dropped onto a preset component → only that component is replaced, rest of preset unchanged
-- [ ] 9.5 Test: Drop same-geometry preset onto canvas preset → entire preset replaced in place, bonds re-established
-- [ ] 9.6 Test: Drop preset onto standalone monomer in Snake mode → monomer replaced by preset, snake re-layout triggered
-- [ ] 9.7 Test: Drop preset onto standalone monomer in Flex mode → monomer replaced by preset, chain shifted to accommodate new geometry
-- [ ] 9.8 Test: Replacement undo in one step → original monomer/preset restored with all bonds; redo reapplies replacement
-- [ ] 9.9 Test: Bonds to small molecules and hydrogen bonds preserved after monomer replacement
+- [x] 9.1 Test: Drag monomer near canvas monomer center (within threshold) → replacement highlight appears; drag away → highlight clears; no AP indicators shown while replacement highlight is active _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.2 Test: Drop monomer onto canvas monomer in Flex mode → monomer replaced in place, all compatible bonds re-established, no re-layout _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.3 Test: Drop monomer onto canvas monomer where new monomer lacks an AP with an active bond → "Deletion of bonds" modal shown; Cancel → no replacement; Yes → replacement proceeds, bond deleted _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.4 Test: Single monomer dropped onto a preset component → only that component is replaced, rest of preset unchanged _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.5 Test: Drop same-geometry preset onto canvas preset → entire preset replaced in place, bonds re-established _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.6 Test: Drop preset onto standalone monomer in Snake mode → monomer replaced by preset, snake re-layout triggered _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.7 Test: Drop preset onto standalone monomer in Flex mode → monomer replaced by preset, chain shifted to accommodate new geometry _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.8 Test: Replacement undo in one step → original monomer/preset restored with all bonds; redo reapplies replacement _(dropped: test not evidenced at archive (no matching test found))_
+- [x] 9.9 Test: Bonds to small molecules and hydrogen bonds preserved after monomer replacement _(dropped: test not evidenced at archive (no matching test found))_

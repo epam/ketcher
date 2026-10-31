@@ -73,15 +73,24 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
-    // Always center the pasted element initially. The mousemove handler will
-    // update the position as the user moves the mouse. Using lastEvent here
-    // would place the element at the position of a previous mouse event,
-    // which could be over an existing element and cause unwanted movement.
+    // Under the cursor if it is over the canvas, otherwise in the center.
+    // lastCursorPosition is {0, 0} before any mouse event.
+    const { x: cursorX, y: cursorY } = this.editor.lastCursorPosition;
+    const isCursorOverCanvas =
+      cursorX > 0 &&
+      cursorY > 0 &&
+      cursorX < clientWidth &&
+      cursorY < clientHeight;
     const point = CoordinateTransformation.pageToModel(
-      {
-        clientX: clientAreaRect.left + clientWidth / 2,
-        clientY: clientAreaRect.top + clientHeight / 2,
-      },
+      isCursorOverCanvas
+        ? {
+            clientX: clientAreaRect.left + cursorX,
+            clientY: clientAreaRect.top + cursorY,
+          }
+        : {
+            clientX: clientAreaRect.left + clientWidth / 2,
+            clientY: clientAreaRect.top + clientHeight / 2,
+          },
       rnd,
     );
 

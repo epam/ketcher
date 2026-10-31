@@ -3,7 +3,11 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import {
+  clickOnCanvas,
+  openFileAndAddToCanvasAtOffset,
+  waitForPageInit,
+} from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -135,7 +139,16 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1958
-    await openFileAndAddToCanvas(page, 'KET/lines-EPMLSOPKET-1958.ket');
+    // The content is centered under the click: this offset puts the first
+    // line where the drag points below expect it.
+    await openFileAndAddToCanvasAtOffset(
+      page,
+      'KET/lines-EPMLSOPKET-1958.ket',
+      {
+        x: -163,
+        y: 60,
+      },
+    );
     await separetingAndMovingLines(page);
     await takeEditorScreenshot(page);
   });

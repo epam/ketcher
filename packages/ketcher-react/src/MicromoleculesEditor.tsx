@@ -17,7 +17,13 @@
 import './index.less';
 
 import init, { type Config } from './script';
-import { type RefObject, useCallback, useEffect, useRef } from 'react';
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
 import type { Ketcher } from 'ketcher-core';
@@ -46,10 +52,14 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
-  const ketcherRef = useRef<Ketcher | null>(null);
 
   const setServerRef = useRef<(structService: Api) => void>(() => {});
-  const structServiceProvider = props.structServiceProvider;
+  const { structServiceProvider, ketcherId } = props;
+
+  const ketcherIdRef = useRef(ketcherId);
+  useLayoutEffect(() => {
+    ketcherIdRef.current = ketcherId;
+  }, [ketcherId]);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -58,14 +68,12 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   });
 
   useEffect(() => {
-    const ketcherId = ketcherRef.current?.id;
-
-    if (!ketcherId) {
+    if (!ketcherIdRef.current) {
       return;
     }
 
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherId,
+      ketcherIdRef.current,
       structServiceProvider,
       setServerRef.current,
     );
@@ -87,7 +95,6 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
     initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
-      ketcherRef.current = ketcher;
       setServerRef.current = setServer;
       initialProps.onSetKetcherId?.(ketcher.id);
 

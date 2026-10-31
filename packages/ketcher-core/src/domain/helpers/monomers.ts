@@ -692,6 +692,18 @@ export const isHelmCompatible = (
     .every((monomer) => Boolean(monomer?.props.aliasHELM));
 };
 
+/**
+ * Whether any chain starts or ends with a phosphate (incl. ambiguous ones).
+ * FASTA format cannot represent such phosphates.
+ */
+export const hasTerminalPhosphate = (monomers: BaseMonomer[]) => {
+  return monomers.some(
+    (monomer) =>
+      isPhosphateOrAmbiguousPhosphate(monomer) &&
+      (!getPreviousMonomerInChain(monomer) || !getNextMonomerInChain(monomer)),
+  );
+};
+
 export const normalizeMonomerAtomsPositions = (
   atoms: KetMonomerTemplateAtom[],
 ) => {

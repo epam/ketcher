@@ -81,7 +81,6 @@
       "bondsTab": "Bonds",
       "stereochemistryTab": "Stereochemistry",
       "reactionsTab": "Reactions & Components",
-      "viewer3dTab": "3D Viewer",
       "validationTab": "Validation & Calculation",
       "debuggingTab": "Debugging",
       "setAcsSettings": "Set ACS Settings",
@@ -100,11 +99,16 @@
       "showValenceWarningsTooltip": "Red underline on atoms with exceeded valence",
       "ignoreStereochemistryErrorsTooltip": "Allow format conversion for structures with invalid stereochemistry",
       "smartLayoutTooltip": "Regular polygons for rings when on; irregular when off",
-      "dearomatizeOnLoadTooltip": "Dearomatize structures when loading from molfiles.",
       "showAtomIdsTooltip": "Internal atom index numbers, for troubleshooting structure files",
       "showBondIdsTooltip": "Internal bond index numbers, for troubleshooting structure files",
       "showHalfBondIdsTooltip": "Internal directional bond-half index numbers, rarely needed outside debugging",
-      "showLoopIdsTooltip": "Internal ring (loop) index numbers, for troubleshooting structure files"
+      "showLoopIdsTooltip": "Internal ring (loop) index numbers, for troubleshooting structure files",
+      "manageSettings": "Manage Settings",
+      "resetTo": "Reset to ...",
+      "resetToDefault": "Default",
+      "resetToACS": "ACS",
+      "saveSettings": "Save Settings",
+      "loadSettings": "Load Settings"
     },
     "about": {
       "ok": "Ok",
@@ -352,7 +356,8 @@
           "enumSingleDouble": "Single/Double",
           "enumSingleAromatic": "Single/Aromatic",
           "enumDoubleAromatic": "Double/Aromatic",
-          "enumDative": "Dative"
+          "enumDative": "Dative",
+          "enumHaptic": "Haptic"
         },
         "topology": {
           "title": "Topology",

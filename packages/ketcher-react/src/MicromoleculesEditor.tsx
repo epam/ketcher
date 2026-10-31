@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,17 +19,18 @@ import './index.less';
 import init, { type Config } from './script';
 import {
   type RefObject,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
 } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
-import type { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
+import type { Api } from './script/api';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -52,9 +53,8 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const cleanupRef = useRef<(() => unknown) | null>(null);
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
 
-  const setServerRef = useRef<(structService: StructService) => void>(() => {});
+  const setServerRef = useRef<(structService: Api) => void>(() => {});
   const { structServiceProvider, ketcherId } = props;
-  const [initialProps] = useState(props);
 
   const ketcherIdRef = useRef(ketcherId);
   useLayoutEffect(() => {
@@ -78,34 +78,35 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       setServerRef.current,
     );
   }, [structServiceProvider]);
+
+  // Editor is initialized once on mount with the props of the first render
+  const initialPropsRef = useRef(props);
+
+  const initKetcher = useCallback(async () => {
+    const initialProps = initialPropsRef.current;
+    appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
+
+    initPromiseRef.current = init({
+      ...initialProps,
+      element: rootElRef.current,
+      appRoot: appRootRef.current,
+    });
+
+    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
+      cleanupRef.current = cleanup;
+      ketcherBuilderRef.current = builder;
+      setServerRef.current = setServer;
+      initialProps.onSetKetcherId?.(ketcher.id);
+
+      if (ketcher && typeof initialProps.onInit === 'function') {
+        initialProps.onInit(ketcher);
+        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
+        globalThis.dispatchEvent(ketcherInitEvent);
+      }
+    });
+  }, []);
+
   useEffect(() => {
-    const initKetcher = async () => {
-      appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
-
-      initPromiseRef.current = init({
-        ...initialProps,
-        element: rootElRef.current,
-        appRoot: appRootRef.current,
-      });
-
-      initPromiseRef.current?.then(
-        ({ ketcher, cleanup, builder, setServer }) => {
-          cleanupRef.current = cleanup;
-          ketcherBuilderRef.current = builder;
-          setServerRef.current = setServer;
-          initialProps.onSetKetcherId?.(ketcher.id);
-
-          if (typeof initialProps.onInit === 'function' && ketcher) {
-            initialProps.onInit(ketcher);
-            const ketcherInitEvent = new Event(
-              ketcherInitEventName(ketcher.id),
-            );
-            window.dispatchEvent(ketcherInitEvent);
-          }
-        },
-      );
-    };
-
     if (initPromiseRef.current === null) {
       initKetcher();
     } else {
@@ -120,7 +121,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
         appRootRef.current?.unmount();
       });
     };
-  }, [initialProps]);
+  }, [initKetcher]);
 
   return (
     <div

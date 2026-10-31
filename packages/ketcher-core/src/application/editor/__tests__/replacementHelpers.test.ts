@@ -2,14 +2,14 @@
  * Unit tests for replacementHelpers.ts
  *
  * Tests cover:
- *  - presetsHaveSameGeometry (task 3.2)
+ *  - hasSamePresetGeometry (task 3.2)
  *  - collectMonomerBonds (task 4.4)
  *  - computeReestablishableBonds (task 4.4)
  *  - mapPresetBonds (task 4.4)
  */
 
 import {
-  presetsHaveSameGeometry,
+  hasSamePresetGeometry,
   collectMonomerBonds,
   computeReestablishableBonds,
   mapPresetBonds,
@@ -140,60 +140,60 @@ function makePreset(
 }
 
 // ---------------------------------------------------------------------------
-// presetsHaveSameGeometry
+// hasSamePresetGeometry
 // ---------------------------------------------------------------------------
 
-describe('presetsHaveSameGeometry', () => {
+describe('hasSamePresetGeometry', () => {
   it('returns true for identical full presets (sugar+base+phosphate, default position)', () => {
-    expect(presetsHaveSameGeometry(makePreset(), makePreset())).toBe(true);
+    expect(hasSamePresetGeometry(makePreset(), makePreset())).toBe(true);
   });
 
   it('returns true when both presets have explicit left phosphate position', () => {
     const a = makePreset({ phosphatePosition: 'left' });
     const b = makePreset({ phosphatePosition: 'left' });
-    expect(presetsHaveSameGeometry(a, b)).toBe(true);
+    expect(hasSamePresetGeometry(a, b)).toBe(true);
   });
 
   it('returns true when both presets have explicit right phosphate position', () => {
     const a = makePreset({ phosphatePosition: 'right' });
     const b = makePreset({ phosphatePosition: 'right' });
-    expect(presetsHaveSameGeometry(a, b)).toBe(true);
+    expect(hasSamePresetGeometry(a, b)).toBe(true);
   });
 
   it('returns false when presets differ in phosphate position (left vs right)', () => {
     const a = makePreset({ phosphatePosition: 'left' });
     const b = makePreset({ phosphatePosition: 'right' });
-    expect(presetsHaveSameGeometry(a, b)).toBe(false);
+    expect(hasSamePresetGeometry(a, b)).toBe(false);
   });
 
   it('returns false when one has a phosphate and the other does not', () => {
     const a = makePreset({ hasPhosphate: true });
     const b = makePreset({ hasPhosphate: false });
-    expect(presetsHaveSameGeometry(a, b)).toBe(false);
+    expect(hasSamePresetGeometry(a, b)).toBe(false);
   });
 
   it('returns true for nucleoside presets (no phosphate)', () => {
     const a = makePreset({ hasPhosphate: false });
     const b = makePreset({ hasPhosphate: false });
-    expect(presetsHaveSameGeometry(a, b)).toBe(true);
+    expect(hasSamePresetGeometry(a, b)).toBe(true);
   });
 
   it('returns false when one has a base and the other does not', () => {
     const a = makePreset({ hasBase: true });
     const b = makePreset({ hasBase: false });
-    expect(presetsHaveSameGeometry(a, b)).toBe(false);
+    expect(hasSamePresetGeometry(a, b)).toBe(false);
   });
 
   it('returns false when one has a sugar and the other does not', () => {
     const a = makePreset({ hasSugar: true });
     const b = makePreset({ hasSugar: false });
-    expect(presetsHaveSameGeometry(a, b)).toBe(false);
+    expect(hasSamePresetGeometry(a, b)).toBe(false);
   });
 
   it('treats undefined phosphatePosition the same as "left"', () => {
     const a = makePreset({ phosphatePosition: undefined });
     const b = makePreset({ phosphatePosition: 'left' });
-    expect(presetsHaveSameGeometry(a, b)).toBe(true);
+    expect(hasSamePresetGeometry(a, b)).toBe(true);
   });
 });
 

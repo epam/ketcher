@@ -44,5 +44,5 @@
 
 ## 6. End-to-end tests (ask before starting)
 
-- [ ] 6.1 Before writing any Playwright test, read `.memory-bank/testing.md` and ask the user to confirm scope, per project rules.
+- [ ] 6.1 Before writing any Playwright test, read `.memory-bank/testing/testing.md` and ask the user to confirm scope, per project rules.
 - [ ] 6.2 Add Playwright coverage for the four delete flows (no-modal, canvas-only, preset-only, combined) once scope is confirmed.

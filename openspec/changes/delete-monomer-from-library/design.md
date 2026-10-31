@@ -71,4 +71,4 @@ No stored-data migration is required. The `persistentUserCreatedMonomerRefs` set
 
 ## Open Questions
 
-- Playwright e2e coverage: per project rules, confirm scope and get explicit go-ahead before writing e2e tests, after reading `.memory-bank/testing.md`.
+- Playwright e2e coverage: per project rules, confirm scope and get explicit go-ahead before writing e2e tests, after reading `.memory-bank/testing/testing.md`.

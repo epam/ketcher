@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  ***************************************************************************/
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -54,7 +54,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as Node | null;
-      if (popupRef.current && target && popupRef.current.contains(target)) {
+      if (target && popupRef.current && popupRef.current.contains(target)) {
         return;
       }
       // Ignore clicks on the trigger button so its own onClick can toggle the

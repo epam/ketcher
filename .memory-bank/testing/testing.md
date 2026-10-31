@@ -120,6 +120,15 @@ npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
 
+Install Docker Desktop for the host OS as the [autotests README](../../ketcher-autotests/README.md) says (macOS, Windows, Linux), and create `ketcher-autotests/.env` from `.env.example`, which has `DOCKER=true`. Where Docker Desktop cannot run (it needs an admin password and a window, and a headless agent session has neither), Colima gives the same Docker on macOS: `brew install colima docker docker-compose`, then `colima start --vm-type vz --cpu 6 --memory 12 --disk 60`. The scripts call the `docker-compose` binary.
+
+Containers run on the host's architecture, and Chromium does not survive amd64 emulation on an arm64 host: QEMU crashes it (`rcu_read_unlock` assertion), and Rosetta may be missing (`arch -x86_64` fails with "Bad CPU type"). CI runners are amd64. Leave `DOCKER_DEFAULT_PLATFORM` unset.
+
+- On an amd64 host the images should match CI's.
+- On an arm64 host (Apple Silicon) the images are arm64. On the spec checked they drew the same differing-pixel counts as CI (36 and 19 pixels). Run one failing spec on `<base>` and on the branch before you regenerate a batch.
+
+`npm run docker:update file_name:N` regenerates one spec. To regenerate a list, call `docker-compose run --rm autotests bash /app/test_run.sh --project=<project> --update-snapshots=changed` with the specs as arguments, and check the count first with `--list`. This avoids `GENERATE_DATA=true`, which `npm run docker:update` sets and which rewrites files under `tests/test-data/`.
+
 ### Local run caveats
 
 - Flex canvas tests reuse a worker page. Their fixture resets both the active

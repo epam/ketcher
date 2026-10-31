@@ -55,6 +55,7 @@ Today, `.github/workflows/ci.yml` runs on every PR: dependency audit, build, `np
 | Branch       | Its name contains `#`                                                                                |                                                                                             |
 | Linked issue |                                                                                                      | The PR links no issue (`Closes #N`)                                                         |
 | Size         |                                                                                                      | Over 400 changed lines, lockfiles and snapshots not counted. Skipped on large-scale changes |
+| File length  |                                                                                                      | A package source file grows past 1,000 lines (R16). A file already over it is skipped       |
 | Unit test    |                                                                                                      | `ketcher-core` domain or operations code changed with no unit test change                   |
 | PR type      | The PR-type contract above: Feature without an OpenSpec change; a large-scale change section missing | Bug fix or Feature without a test change                                                    |
 | Memory bank  |                                                                                                      | The body has no `Memory bank:` line (`not needed` is a valid answer). Backmerges skipped    |
@@ -71,23 +72,28 @@ Planned:
 - A `large-scale-change` PR is at least `high` (planned: task 4.6).
 - Code owners per module, so that high-tier PRs need one (planned: task 4.3; decision D3).
 
-### AI review (planned rebuild: Phase 5)
+### AI review
 
-Today, the `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill with the code-review skill's four lenses. The rebuild replaces that with these steps:
+The `Run Claude Review` label starts `claude-review.yml`, which runs the `/review-pr` skill:
 
-1. **Inputs.** The diff. On the first pass, the PR description is withheld. Then the linked issue. Rules from `.memory-bank/review-rules.md`, `.memory-bank/invariants.md`, and the module docs whose `paths:` match the diff (planned: `paths:` lists from Phase 1).
-2. **Finders.** Separate passes that read the diff with a suspicion stance (planned: task 5.4).
-3. **Verifier.** A second pass checks each finding against the code before it is posted (planned: task 5.4).
-4. **Output.** Verified inline comments with suggestion blocks, and the review brief as one top-level comment (planned: task 5.4). Every finding follows the [output contract](#output-contract).
+1. **Panel.** `scripts/review-panel.mjs` picks the code-review lenses the diff needs from its changed paths and the lines it adds to source code. A diff that no lens applies to gets only the linked-issue check and the brief.
+2. **Finders.** One subagent per lens on the panel reads the diff, without the PR description, with a suspicion stance.
+3. **Verifier.** Each finding is checked against the code before it is posted.
+4. **Output.** Verified inline comments, and the review brief as one top-level comment. Every finding follows the [output contract](#output-contract).
 
-AI review may raise a risk tier, never lower it (planned: task 5.5).
+Planned (Phase 5):
+
+- Run on every PR instead of by label, with full history to the merge base (task 5.3).
+- Module docs loaded by their `paths:` lists from Phase 1 (task 5.3).
+- Suggestion blocks in inline comments, and a second, independent verifier pass (task 5.4).
+- AI review may raise a risk tier, never lower it (task 5.5).
 
 ### Human review
 
 - The reviewer reads the review brief first (planned: Phase 5), then, for large-scale change PRs, the review map.
 - Today, `.github/auto_assign.yml` assigns one reviewer from the `core` group.
 - Large-scale change PRs need two reviewers, one of them a code owner (planned: task 4.3; decision D9). A 30-minute walkthrough call replaces the first async review round.
-- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
+- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
 
 ## Output contract
 
@@ -99,9 +105,10 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
    - `major`: breaks a rule in `.memory-bank/review-rules.md` or a PR-type requirement, with no change in behavior. Fix before merge.
    - `nit`: style or wording. Optional, never blocks.
 3. **Content.** Each finding gives `file:line`, the rule or invariant ID, and a failing scenario: the input or sequence that gives the wrong result. The ID is `R<n>` for a rule, `D1`, `A1`, `B1`, and so on for an invariant (see `.memory-bank/invariants.md`), or `none` for a finding no rule covers. A finding without a failing scenario is dropped. For a structural finding, the failing scenario is the concrete change it makes harder, named: "adding a fourth bond type needs edits in these three switches".
-4. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
-5. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
-6. **No praise, and no summary** of what the diff does.
+4. **Evidence.** A performance or security finding also carries a command and its output (a failing test, a repro script, a measurement) that show the failure. Without one, it is an open question: it goes in the brief or the report, not in an inline comment or a fix.
+5. **Comment cap.** At most 10 inline comments per pass, blockers first. Other findings go in the brief, one line each.
+6. **Accepted patterns.** Patterns listed in `.memory-bank/accepted-patterns.md` are not raised.
+7. **No praise, and no summary** of what the diff does.
 
 ## Feedback loop and rule life cycle
 

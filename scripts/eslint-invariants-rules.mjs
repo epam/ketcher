@@ -12,6 +12,9 @@
  * - A1 `renderer-no-model-mutations`: renderers must never call mutating
  *   methods of DrawingEntitiesManager and must not build a Command of
  *   BaseOperation objects themselves.
+ * - R18 `no-html-sinks`: source code must not write HTML from a string
+ *   (`innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`,
+ *   `dangerouslySetInnerHTML`). Clearing with `innerHTML = ''` passes.
  *
  * Known violations that predate the rules are allowlisted per file in the
  * ALLOWED_* lists below instead of eslint-disable comments (rule R7). The unit
@@ -192,6 +195,24 @@ export const ALLOWED_MODEL_MUTATIONS = [
  * A1 says renderers never call these. The list mirrors the mutation surface of
  * packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts.
  */
+/**
+ * Files that wrote HTML from a string before R18. Each one is a known sink the
+ * security lens traces; a new sink anywhere else fails lint.
+ */
+export const ALLOWED_HTML_SINKS = [
+  'packages/ketcher-core/src/utilities/getSvgFromDrawnStructures.ts',
+  'packages/ketcher-core/src/application/render/renderStruct.ts',
+  'packages/ketcher-macromolecules/src/components/modal/save/Save.tsx',
+  'packages/ketcher-react/src/script/ui/views/components/StructEditor/StructEditor.tsx',
+  'packages/ketcher-react/src/script/ui/views/components/StructEditor/InfoTooltip.tsx',
+  'packages/ketcher-react/src/script/ui/state/templates/init-lib.ts',
+];
+
+const HTML_PROPERTIES = ['innerHTML', 'outerHTML'];
+const HTML_METHODS = ['insertAdjacentHTML'];
+const R18_MESSAGE =
+  'R18: do not write HTML from a string. Build DOM nodes or React elements, or set textContent.';
+
 export const MODEL_MUTATING_METHODS = [
   'addDrawingEntitiesToSelection',
   'addMonomer',
@@ -536,6 +557,60 @@ export const rules = {
       return {
         NewExpression: checkNewCommand,
         CallExpression: checkMemberCall,
+      };
+    },
+  },
+  'no-html-sinks': {
+    meta: {
+      docs: { description: 'R18 — no HTML written from a string' },
+      schema: [
+        {
+          type: 'object',
+          properties: {
+            allowedFiles: { type: 'array', items: { type: 'string' } },
+          },
+        },
+      ],
+    },
+    create(context) {
+      const allowedFiles =
+        context.options?.[0]?.allowedFiles ?? ALLOWED_HTML_SINKS;
+      const filename = context.filename.replace(/\\/g, '/');
+      if (allowedFiles.some((file) => filename.endsWith(file))) {
+        return {};
+      }
+      const propertyName = (member) =>
+        member.type === 'MemberExpression' &&
+        member.property.type === 'Identifier'
+          ? member.property.name
+          : null;
+      const isEmptyString = (node) =>
+        node.type === 'Literal' && node.value === '';
+
+      return {
+        AssignmentExpression(node) {
+          if (
+            HTML_PROPERTIES.includes(propertyName(node.left)) &&
+            !isEmptyString(node.right)
+          ) {
+            context.report({ node, message: R18_MESSAGE });
+          }
+        },
+        CallExpression(node) {
+          const name = propertyName(node.callee);
+          const isDocumentWrite =
+            name === 'write' &&
+            node.callee.object.type === 'Identifier' &&
+            node.callee.object.name === 'document';
+          if (HTML_METHODS.includes(name) || isDocumentWrite) {
+            context.report({ node, message: R18_MESSAGE });
+          }
+        },
+        JSXAttribute(node) {
+          if (node.name.name === 'dangerouslySetInnerHTML') {
+            context.report({ node, message: R18_MESSAGE });
+          }
+        },
       };
     },
   },

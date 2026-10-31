@@ -46,6 +46,7 @@ import { assert, SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { select } from 'd3';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
@@ -80,6 +81,7 @@ export class SequenceRenderer {
   private static lastChainStartPositionValue: Vec2;
 
   private static newSequenceButtons: NewSequenceButton[] = [];
+  private static chainElements: D3SvgElementSelection<SVGGElement, void>[] = [];
   private static readonly sequenceBondRenderers =
     new Set<SequenceBondRenderer>();
 
@@ -189,6 +191,7 @@ export class SequenceRenderer {
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
+      const chainElement = this.appendChainElement();
       chain.forEachRow((row) => {
         hasAntisenseInRow = false;
 
@@ -218,7 +221,7 @@ export class SequenceRenderer {
               previousRowsWithAntisense,
             );
 
-            antisenseNodeRenderer.show();
+            antisenseNodeRenderer.show(chainElement);
             chainItem.antisenseNode.monomers?.forEach((monomer) =>
               monomer.setRenderer(
                 antisenseNodeRenderer as BaseSequenceItemRenderer,
@@ -255,7 +258,7 @@ export class SequenceRenderer {
             previousRowsWithAntisense,
           );
 
-          renderer.show();
+          renderer.show(chainElement);
           node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
           currentMonomerIndexInChain++;
           currentMonomerIndexOverall++;
@@ -305,6 +308,7 @@ export class SequenceRenderer {
               chain.lastRow.sequenceViewModelItems.length,
               nextChain?.firstRow?.sequenceViewModelItems.length ?? 0,
             ),
+            chainElement,
           );
         }
       }
@@ -1464,9 +1468,13 @@ export class SequenceRenderer {
     return false;
   }
 
-  public static showNewSequenceButton(indexOfRowBefore: number, width = 0) {
+  public static showNewSequenceButton(
+    indexOfRowBefore: number,
+    width = 0,
+    chainElement?: D3SvgElementSelection<SVGGElement, void>,
+  ) {
     const newSequenceButton = new NewSequenceButton(indexOfRowBefore);
-    newSequenceButton.show();
+    newSequenceButton.show(chainElement);
     newSequenceButton.setWidth(width);
     this.newSequenceButtons.push(newSequenceButton);
   }
@@ -1477,6 +1485,27 @@ export class SequenceRenderer {
 
   public static get isCaretAtChainEnd() {
     return this.currentEdittingNode?.senseNode instanceof EmptySequenceNode;
+  }
+
+  // Groups sequence items of a chain with its "plus" button,
+  // so hovering the sequence makes the button visible
+  private static appendChainElement() {
+    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const chainElement = canvas
+      .append('g')
+      .attr('data-testid', 'sequence-chain') as never as D3SvgElementSelection<
+      SVGGElement,
+      void
+    >;
+
+    this.chainElements.push(chainElement);
+
+    return chainElement;
+  }
+
+  private static removeChainElements() {
+    this.chainElements.forEach((chainElement) => chainElement.remove());
+    this.chainElements = [];
   }
 
   private static clearBondRenderers() {
@@ -1505,6 +1534,7 @@ export class SequenceRenderer {
       });
     }
     this.removeNewSequenceButtons();
+    this.removeChainElements();
     this.removeDelegatedEvents();
   }
 

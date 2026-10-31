@@ -11,7 +11,7 @@ export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
     // intentional no-op: this monomer type does not have a modification glyph
   }
 
-  public show() {
+  public show(parentElement?: D3SvgElementSelection<SVGGElement, void>) {
     if (
       this.node.monomer.monomerItem.props.isMicromoleculeFragment &&
       !isMonomerSgroupWithAttachmentPoints(this.node.monomer)
@@ -19,11 +19,13 @@ export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
       return;
     }
 
-    super.show();
+    super.show(parentElement);
   }
 
-  protected appendRootElement() {
-    this.rootElement = super.appendRootElement();
+  protected appendRootElement(
+    parentElement?: D3SvgElementSelection<SVGGElement, void>,
+  ) {
+    this.rootElement = super.appendRootElement(parentElement);
     this.rootElement?.attr('data-symbol-type', 'CHEM');
 
     return this.rootElement as never as D3SvgElementSelection<

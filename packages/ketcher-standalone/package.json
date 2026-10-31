@@ -64,6 +64,7 @@
     "eslint": "10.9.0",
     "eslint-plugin-jest": "^29.16.0",
     "jest": "^29.7.0",
+    "ts-jest": "^29.4.11",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
     "rollup": "^2.80.0",

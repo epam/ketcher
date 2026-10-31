@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -88,7 +88,7 @@ export class Box2Abs {
     return new Box2Abs(this.p0.min(p), this.p1.max(p));
   }
 
-  contains(p: Vec2, ext = 0.0): boolean {
+  contains(p: Vec2, ext = 0): boolean {
     assert(p != null);
 
     return (

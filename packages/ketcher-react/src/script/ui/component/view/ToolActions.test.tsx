@@ -1,13 +1,13 @@
 import toolActions from '../../action/tools';
 
-const toolsWithoutTitles = [
+const toolsWithoutTitles = new Set([
   'bonds',
   'arrows',
   'reaction-mapping-tools',
   'rgroup',
   'shapes',
-];
-const isToolWithTitle = (tool) => !toolsWithoutTitles.includes(tool);
+]);
+const isToolWithTitle = (tool) => !toolsWithoutTitles.has(tool);
 const toolsWithTitles = Object.keys(toolActions).filter(isToolWithTitle);
 
 describe('ToolActions', () => {

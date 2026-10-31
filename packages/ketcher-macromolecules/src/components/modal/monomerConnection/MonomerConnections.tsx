@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { useAppSelector } from 'hooks';
@@ -66,6 +67,7 @@ const MonomerConnection = ({
   polymerBond,
   isReconnectionDialog,
 }: Readonly<MonomerConnectionProps>): React.ReactElement => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   // Selecting an attachment point mutates the bond and monomers. Preserve the
   // values from the render that opened the dialog so Cancel and Reconnect can
@@ -92,7 +94,7 @@ const MonomerConnection = ({
       initialConnection.secondAttachmentPoint ||
         getDefaultAttachmentPoint(secondMonomer),
     );
-  const [modalExpanded, setModalExpanded] = useState(false);
+  const [isModalExpanded, setIsModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
     if (isReconnectionDialog) {
@@ -145,15 +147,17 @@ const MonomerConnection = ({
     <StyledModal
       title={
         isReconnectionDialog
-          ? 'Edit Attachment Points'
-          : 'Select Attachment Points'
+          ? t('monomerConnection.editTitle')
+          : t('monomerConnection.selectTitle')
       }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
       showExpandButton
       modalWidth="358px"
-      expanded={modalExpanded}
-      setExpanded={setModalExpanded}
+      isDraggable
+      isResizable={false}
+      expanded={isModalExpanded}
+      setExpanded={setIsModalExpanded}
       testId="monomer-connection-modal"
     >
       <Modal.Content>
@@ -161,13 +165,13 @@ const MonomerConnection = ({
           <ConnectionOverview
             firstMonomer={firstMonomer}
             secondMonomer={secondMonomer}
-            expanded={modalExpanded}
+            expanded={isModalExpanded}
             firstMonomerOverview={
               <AttachmentPointSelectionPanel
                 monomer={firstMonomer}
                 selectedAttachmentPoint={firstSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
-                expanded={modalExpanded}
+                expanded={isModalExpanded}
                 position="left"
               />
             }
@@ -176,7 +180,7 @@ const MonomerConnection = ({
                 monomer={secondMonomer}
                 selectedAttachmentPoint={secondSelectedAttachmentPoint}
                 onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
-                expanded={modalExpanded}
+                expanded={isModalExpanded}
                 position="right"
               />
             }
@@ -186,13 +190,17 @@ const MonomerConnection = ({
 
       <Modal.Footer>
         <ActionButtonLeft
-          label="Cancel"
+          label={t('common:button.cancel')}
           data-testid={'cancel-button'}
           styleType="secondary"
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
-          label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
+          label={
+            isReconnectionDialog
+              ? t('monomerConnection.reconnect')
+              : t('monomerConnection.connect')
+          }
           data-testid={
             isReconnectionDialog ? 'Reconnect-button' : 'Connect-button'
           }
@@ -220,7 +228,7 @@ function AttachmentPointSelectionPanel({
   monomer,
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
-  expanded = false,
+  expanded: isExpanded = false,
   position,
 }: Readonly<AttachmentPointSelectionPanelProps>): React.ReactElement {
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
@@ -257,11 +265,11 @@ function AttachmentPointSelectionPanel({
       connectedAttachmentPoints={connectedAttachmentPoints}
       selectedAttachmentPoint={selectedAttachmentPoint}
       usage={UsageInMacromolecule.MonomerConnectionsModal}
-      update={expanded}
-      expanded={expanded}
+      update={isExpanded}
+      expanded={isExpanded}
       attachmentPoints={monomer.listOfAttachmentPoints.map(
         (attachmentPoint) => {
-          const disabled = Boolean(
+          const isDisabled = Boolean(
             connectedAttachmentPoints.includes(attachmentPoint) &&
             attachmentPoint !== selectedAttachmentPoint,
           );
@@ -277,13 +285,13 @@ function AttachmentPointSelectionPanel({
                 clickHandler={() =>
                   handleSelectAttachmentPoint(attachmentPoint)
                 }
-                disabled={disabled}
+                disabled={isDisabled}
                 data-testid={`${position}-${attachmentPoint}`}
                 data-isactive={attachmentPoint === selectedAttachmentPoint}
               />
               <AttachmentPointNameComponent
                 data-testid={`leaving-group-value`}
-                disabled={disabled}
+                disabled={isDisabled}
               >
                 {getLeavingGroup(attachmentPoint)}
               </AttachmentPointNameComponent>

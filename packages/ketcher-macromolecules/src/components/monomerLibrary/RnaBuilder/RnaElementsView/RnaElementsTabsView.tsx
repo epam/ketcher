@@ -1,4 +1,5 @@
 import { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   RnaTabContent,
   DetailsContainer,
@@ -12,6 +13,7 @@ import {
   CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -23,8 +25,8 @@ import {
   RnaBuilderPresetsItem,
   selectActiveMonomerKey,
   selectFilteredPresets,
-  selectIsActivePresetNewAndEmpty,
-  selectIsEditMode,
+  isActiveRnaPresetNewAndEmpty,
+  isRnaBuilderEditMode,
   selectPresetPhosphateFilter,
   setActiveRnaBuilderItem,
 } from 'state/rna-builder';
@@ -43,12 +45,13 @@ const RnaElementsTabsView = ({
   editPreset,
   libraryName,
 }: RnaElementsViewProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isActivePresetNewAndEmpty = useAppSelector(
-    selectIsActivePresetNewAndEmpty,
+    isActiveRnaPresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
@@ -68,7 +71,7 @@ const RnaElementsTabsView = ({
       <RnaTabsContainer>
         {groupsData.map((groupData) => {
           const { groupName, groups, iconName } = groupData;
-          const selected = groupName === activeRnaBuilderItem;
+          const isSelected = groupName === activeRnaBuilderItem;
           const variantMonomers = selectAmbiguousMonomersInCategory(
             monomers,
             groupName as MonomerGroups,
@@ -77,17 +80,18 @@ const RnaElementsTabsView = ({
             (acc, group) => acc + (group.groupItems.length || 0),
             0,
           );
-          const caption = selected ? `${groupName} (${quantity})` : null;
+          const label = t(groupNameToTabLabelKey[groupName]);
+          const caption = isSelected ? `${label} (${quantity})` : null;
 
           return (
             <RnaTabWrapper
               key={groupName}
-              className={clsx(selected && 'rna-tab--selected')}
+              className={clsx(isSelected && 'rna-tab--selected')}
             >
               <RnaTab
                 label={caption}
-                title={groupName}
-                selected={selected}
+                title={label}
+                selected={isSelected}
                 icon={<Icon name={iconName as IconName} />}
                 onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
                 data-testid={`summary-${groupName}`}
@@ -114,7 +118,7 @@ const RnaElementsTabsView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  Add new
+                  {t('monomerLibrary.addNewPreset')}
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
@@ -124,7 +128,7 @@ const RnaElementsTabsView = ({
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);
                   }}
-                  aria-label="Filter presets by phosphate position"
+                  aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"
                 >
                   <Icon name="filter" />
@@ -176,16 +180,16 @@ const RnaElementsTabsView = ({
             </DetailsContainer>
           );
 
-        const firstTabSelected =
+        const isFirstTabSelected =
           activeRnaBuilderItem === RnaBuilderPresetsItem.Presets;
-        const lastTabSelected =
+        const isLastTabSelected =
           activeRnaBuilderItem === MonomerGroups.NUCLEOTIDES;
 
         return (
           <RnaTabContent
             className={clsx(
-              firstTabSelected && 'first-tab',
-              lastTabSelected && 'last-tab',
+              isFirstTabSelected && 'first-tab',
+              isLastTabSelected && 'last-tab',
             )}
             key={groupName}
           >

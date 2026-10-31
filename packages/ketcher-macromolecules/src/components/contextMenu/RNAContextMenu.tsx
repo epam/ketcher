@@ -1,4 +1,5 @@
 import { ItemParams } from 'react-contexify';
+import { useTranslation } from 'react-i18next';
 import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { CONTEXT_MENU_ID } from './types';
@@ -6,11 +7,12 @@ import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import { LIBRARY_TAB_INDEX } from '../../constants';
 
 export const RNAContextMenu = () => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const RNA_TAB_INDEX = LIBRARY_TAB_INDEX.RNA;
   const dispatch = useAppDispatch();
   const activePresetForContextMenu = useAppSelector(
@@ -18,23 +20,23 @@ export const RNAContextMenu = () => {
   );
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const RNAMenus = [
     {
       name: 'duplicateandedit',
-      title: 'Duplicate and Edit...',
+      title: t('contextMenu.rnaContextMenu.duplicateAndEdit'),
       disabled: false,
     },
     {
       name: 'edit',
-      title: 'Edit...',
+      title: t('contextMenu.rnaContextMenu.edit'),
       separator: true,
       disabled: activePresetForContextMenu?.default,
     },
     {
       name: 'deletepreset',
-      title: 'Delete Preset',
+      title: t('contextMenu.rnaContextMenu.deletePreset'),
       disabled: activePresetForContextMenu?.default,
     },
   ];

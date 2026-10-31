@@ -1,18 +1,24 @@
 import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 import { useSelector } from 'react-redux';
-import { selectIsSequenceFirstsOnlyNucleotidesSelected } from 'state/rna-builder';
+import {
+  hasOnlyFirstNucleotidesSelected,
+  isRnaBaseModificationBlocked,
+} from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 
 const useDisabledForSequenceMode = (
   item: MonomerItemType,
   groupName?: MonomerGroups,
 ) => {
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const isSequenceFirstsOnlyNucleoelementsSelected = useSelector(
-    selectIsSequenceFirstsOnlyNucleotidesSelected,
+    hasOnlyFirstNucleotidesSelected,
+  );
+  const isBaseModificationBlocked = useAppSelector(
+    isRnaBaseModificationBlocked,
   );
 
   if (!isSequenceEditInRNABuilderMode) return false;
@@ -20,9 +26,8 @@ const useDisabledForSequenceMode = (
   // Ambiguous monomers don't have MonomerCaps; they are handled separately and
   // must not be disabled by this hook (they lack MonomerCaps by design).
   if (!item?.props?.MonomerCaps) return false;
-
   if (groupName === MonomerGroups.BASES) {
-    return !item?.props?.MonomerCaps?.R1;
+    return isBaseModificationBlocked || !item?.props?.MonomerCaps?.R1;
   } else if (groupName === MonomerGroups.PHOSPHATES) {
     return !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2);
   } else if (groupName === MonomerGroups.SUGARS) {

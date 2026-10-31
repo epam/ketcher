@@ -3,12 +3,12 @@
 - [x] 1.1 Add `.agents/skills/code-review/functional-correctness.md` (bugs, regressions, invariant breaks, undo/redo, serialization round trips, mode and canvas switching), in the format of the existing lens files.
 - [x] 1.2 Add `.agents/skills/code-review/reuse.md` (existing helper, type, constant or mechanism the change should use or extend; the finding names it by `file:line`).
 - [x] 1.3 Add the verifier role file `.agents/skills/code-review/verifier.md`: checks one finding against the code, confirms or drops it, may change its severity.
-- [ ] 1.4 Add both lenses to the lens list in `.agents/skills/code-review/SKILL.md`, and remove output-format wording that the schema now carries.
+- [x] 1.4 Add both lenses to the lens list in `.agents/skills/code-review/SKILL.md`, and remove output-format wording that the schema now carries.
 
 ## 2. Hub foundation
 
-- [ ] 2.1 `scripts/review/config.mjs`: Quick threshold, sensitive paths, N, concurrency, model IDs per role, stronger model, budgets, turn limits, label names, skip globs, `authMode`.
-- [ ] 2.2 `scripts/review/schemas.mjs`: JSON Schemas (draft-07) for findings, verdicts and the linked-issue answer, matching the output contract.
+- [x] 2.1 `scripts/review/config.mjs`: Quick threshold, sensitive paths, N, concurrency, model IDs per role, stronger model, budgets, turn limits, label names, skip globs, `authMode`.
+- [x] 2.2 `scripts/review/schemas.mjs`: JSON Schemas (draft-07) for findings, verdicts and the linked-issue answer, matching the output contract.
 - [ ] 2.3 `scripts/review/diff.mjs`: parse a unified diff into files, hunks and changed line sets; changed line count; "is line in diff".
 - [ ] 2.4 Tests for 2.3 with fixture patches (added, deleted, renamed, binary files).
 

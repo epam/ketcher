@@ -6,10 +6,10 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
   "baseElement": <body>
     <div>
       <dialog
-        class="dialog infoModal draggable"
+        class="dialog infoModal"
         data-testid="info-modal-window"
         open=""
-        style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
+        style="position: absolute; left: 0px; top: 0px;"
         tabindex="-1"
       >
         <header
@@ -78,10 +78,10 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
   </body>,
   "container": <div>
     <dialog
-      class="dialog infoModal draggable"
+      class="dialog infoModal"
       data-testid="info-modal-window"
       open=""
-      style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
+      style="position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <header
@@ -214,10 +214,10 @@ exports[`InfoModal should be rendered correctly should render default error mess
   "baseElement": <body>
     <div>
       <dialog
-        class="dialog infoModal draggable"
+        class="dialog infoModal"
         data-testid="info-modal-window"
         open=""
-        style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
+        style="position: absolute; left: 0px; top: 0px;"
         tabindex="-1"
       >
         <header
@@ -262,10 +262,10 @@ exports[`InfoModal should be rendered correctly should render default error mess
   </body>,
   "container": <div>
     <dialog
-      class="dialog infoModal draggable"
+      class="dialog infoModal"
       data-testid="info-modal-window"
       open=""
-      style="transform: translate(512px, 384px); left: 0px; top: 0px; margin: 0px;"
+      style="position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <header

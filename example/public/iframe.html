@@ -133,13 +133,13 @@
       }
 
       button.onclick = createModal;
-      window.onclick = function (event) {
+      globalThis.onclick = function (event) {
         if (event.target == modal) {
           closeModal();
         }
       };
 
-      window.addEventListener('message', (event) => {
+      globalThis.addEventListener('message', (event) => {
         if (event.data.eventType === 'init') {
           iframe.contentWindow.ketcher.setMolecule(textarea.value);
         }

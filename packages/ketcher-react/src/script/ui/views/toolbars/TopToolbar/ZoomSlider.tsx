@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ const sliderMarks = zoomList.map((zoomValue) => {
 
 export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
   const handleChange = (event) => {
-    const parsedValue = parseFloat(event.target.value);
+    const parsedValue = Number.parseFloat(event.target.value);
     const zoomValue = scaleTransformer.getZoomValue(parsedValue);
 
     if (zoom !== zoomValue) {

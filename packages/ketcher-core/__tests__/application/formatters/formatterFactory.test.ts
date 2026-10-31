@@ -1,5 +1,5 @@
 import {
-  exceedsMolfileV2000Limit,
+  isMolfileV2000LimitExceeded,
   MOLFILE_V2000_ATOM_BOND_LIMIT,
 } from 'application/formatters/constants';
 import { FormatterFactory } from 'application/formatters/formatterFactory';
@@ -27,17 +27,17 @@ function createStructServiceMock() {
   };
 }
 
-describe('exceedsMolfileV2000Limit', () => {
+describe('isMolfileV2000LimitExceeded', () => {
   it('returns false at the V2000 limit boundary', () => {
     const struct = createStruct(MOLFILE_V2000_ATOM_BOND_LIMIT);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(false);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(false);
   });
 
   it('returns true when the atom count exceeds the limit', () => {
     const struct = createStruct(MOLFILE_V2000_ATOM_BOND_LIMIT + 1);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(true);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(true);
   });
 
   it('returns true when the bond count exceeds the limit', () => {
@@ -47,7 +47,7 @@ describe('exceedsMolfileV2000Limit', () => {
       .spyOn(struct.bonds, 'size', 'get')
       .mockReturnValue(MOLFILE_V2000_ATOM_BOND_LIMIT + 1);
 
-    expect(exceedsMolfileV2000Limit(struct)).toBe(true);
+    expect(isMolfileV2000LimitExceeded(struct)).toBe(true);
   });
 });
 
@@ -84,6 +84,43 @@ describe('FormatterFactory: MDL Molfile V2000', () => {
     expect(convert.mock.calls[0][1]).toMatchObject({
       'molfile-saving-mode': 'auto',
     });
+  });
+
+  it('delegates loading to the server when dearomatize-on-load is set', () => {
+    const { structService } = createStructServiceMock();
+
+    // no struct is passed when loading
+    const formatter = new FormatterFactory(structService).create(
+      SupportedFormat.mol,
+      { 'dearomatize-on-load': true },
+    );
+
+    expect(formatter).not.toBeInstanceOf(MolfileV2000Formatter);
+  });
+
+  it('keeps the JS V2000 formatter for saving when dearomatize-on-load is set', () => {
+    const { structService } = createStructServiceMock();
+
+    // dearomatize-on-load only applies to loading, and saving passes a struct
+    const formatter = new FormatterFactory(structService).create(
+      SupportedFormat.mol,
+      { 'dearomatize-on-load': true },
+      false,
+      createStruct(MOLFILE_V2000_ATOM_BOND_LIMIT),
+    );
+
+    expect(formatter).toBeInstanceOf(MolfileV2000Formatter);
+  });
+
+  it('keeps the JS V2000 formatter for loading when dearomatize-on-load is not set', () => {
+    const { structService } = createStructServiceMock();
+
+    const formatter = new FormatterFactory(structService).create(
+      SupportedFormat.mol,
+      {},
+    );
+
+    expect(formatter).toBeInstanceOf(MolfileV2000Formatter);
   });
 
   it('keeps the plain V2000 server formatter when query properties are used', async () => {

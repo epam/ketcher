@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
@@ -24,19 +25,20 @@ import {
   recalculateRnaBuilderValidations,
   RnaBuilderPresetsItem,
   selectActivePreset,
-  selectIsEditMode,
+  isRnaBuilderEditMode,
   selectPresetFullName,
   setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 import clsx from 'clsx';
 
 export const RnaEditor = ({ duplicatePreset }) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const activePresetFullName = selectPresetFullName(activePreset);
 
@@ -88,7 +90,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
         onClick={expandEditor}
         data-testid="rna-builder-expand-button"
       >
-        RNA Builder
+        {t('monomerLibrary.rnaBuilderHeader')}
         <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
       {activePreset &&

@@ -4,6 +4,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
@@ -26,7 +27,9 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
+import { editorEvents } from 'application/editor/editorEvents';
 import {
+  CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
@@ -51,6 +54,28 @@ export class BondRenderer extends BaseRenderer {
   constructor(public bond: Bond) {
     super(bond);
     bond.setRenderer(this);
+  }
+
+  public get labelTooltipText(): string | null {
+    const struct = this.bond.firstAtom.monomer.monomerItem.struct;
+    if (!struct) {
+      return null;
+    }
+
+    let tooltipText: string | null = null;
+    struct.sgroups.forEach((sgroup) => {
+      if (
+        tooltipText ||
+        sgroup.type !== SGroup.TYPES.DAT ||
+        !SGroup.getBonds(struct, sgroup).includes(this.bond.bondIdInMicroMode)
+      ) {
+        return;
+      }
+
+      tooltipText = `${sgroup.data.fieldName}=${sgroup.data.fieldValue}`;
+    });
+
+    return tooltipText;
   }
 
   private get scaledPosition() {
@@ -107,13 +132,13 @@ export class BondRenderer extends BaseRenderer {
     if (
       loop1HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop2HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop1DoubleBondsAmount > 1 || loop2DoubleBondsAmount === 1)
+      (loop2DoubleBondsAmount === 1 || loop1DoubleBondsAmount > 1)
     )
       return -1;
     if (
       loop2HalfEdgesAmount === BENZENE_RING_BONDS_AMOUNT &&
       loop1HalfEdgesAmount !== BENZENE_RING_BONDS_AMOUNT &&
-      (loop2DoubleBondsAmount > 1 || loop1DoubleBondsAmount === 1)
+      (loop1DoubleBondsAmount === 1 || loop2DoubleBondsAmount > 1)
     )
       return 1;
     if (
@@ -234,7 +259,7 @@ export class BondRenderer extends BaseRenderer {
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#f5f5f5');
+      ?.attr('fill', CANVAS_BACKGROUND_COLOR);
   }
 
   public appendHover() {
@@ -297,6 +322,7 @@ export class BondRenderer extends BaseRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'atomic-bond')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', this.bond.type)
       .attr('data-bondstereo', this.bond.stereo)
@@ -535,11 +561,11 @@ export class BondRenderer extends BaseRenderer {
 
     hoverPath
       .on('mouseenter', (event) => {
-        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }
@@ -647,13 +673,13 @@ export class BondRenderer extends BaseRenderer {
           secondHalfEdge && secondHalfEdge.loopId >= 0
             ? viewModel.loops.get(secondHalfEdge.loopId)
             : null;
-        const inConvexAromaticLoop =
+        const isInConvexAromaticLoop =
           (firstLoop?.aromatic && firstLoop?.isConvex) ||
           (secondLoop?.aromatic && secondLoop?.isConvex);
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (inConvexAromaticLoop) {
+        if (isInConvexAromaticLoop) {
           bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
         } else {
           bondSVGPaths = DoubleBondPathRenderer.preparePaths(
@@ -836,7 +862,7 @@ export class BondRenderer extends BaseRenderer {
     const alongIntMadeBroken = 2 * lw;
     const alongSz = 1.5 * bs;
     const acrossInt = 1.5 * bs;
-    const acrossSz = 3.0 * bs;
+    const acrossSz = 3 * bs;
     const tiltTan = 0.2;
 
     const points: Vec2[] = [];
@@ -847,18 +873,12 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -tiltTan * acrossSz),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, tiltTan * acrossSz),
@@ -870,35 +890,21 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -tiltTan * acrossSz)
             .addScaled(direction, -alongIntRc),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
-        );
-        points.push(
           center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
-        );
-        points.push(
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
@@ -907,50 +913,40 @@ export class BondRenderer extends BaseRenderer {
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
       case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
+        points.push(
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
+        );
         break;
       case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
-        );
-        points.push(
           center
             .addScaled(normal, -acrossSz)
             .addScaled(direction, -alongIntMadeBroken),
+          center.addScaled(normal, acrossSz),
+          center.addScaled(normal, -acrossSz),
         );
-        points.push(center.addScaled(normal, acrossSz));
-        points.push(center.addScaled(normal, -acrossSz));
         break;
       default:
         return;
@@ -1013,7 +1009,7 @@ export class BondRenderer extends BaseRenderer {
         .attr('height', rectHeight)
         .attr('rx', 3)
         .attr('ry', 3)
-        .attr('fill', '#f5f5f5');
+        .attr('fill', CANVAS_BACKGROUND_COLOR);
 
       cipGroup?.attr(
         'transform',

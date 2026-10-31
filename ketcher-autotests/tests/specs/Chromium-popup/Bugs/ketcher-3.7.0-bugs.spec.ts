@@ -329,7 +329,9 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       page,
       'KET/Bugs/reaction-file-with-substituent.ket',
     );
-    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Structure,
+    );
     await CommonTopRightToolbar(page).setZoomInputValue('80');
     await clickOnCanvas(page, 400, 310, { from: 'pageTopLeft' });
     await MacromoleculesTopToolbar(page).calculateProperties();

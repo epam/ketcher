@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -11,8 +12,8 @@ import {
   RnaBuilderPresetsItem,
   selectActiveMonomerKey,
   selectFilteredPresets,
-  selectIsActivePresetNewAndEmpty,
-  selectIsEditMode,
+  isActiveRnaPresetNewAndEmpty,
+  isRnaBuilderEditMode,
   selectPresetPhosphateFilter,
 } from 'state/rna-builder';
 import {
@@ -26,6 +27,7 @@ import {
   FilterIconButton,
 } from './styles';
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
+import { groupNameToTabLabelKey } from './groupNameToTabLabelKey';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
@@ -48,12 +50,13 @@ const RnaElementsAccordionView = ({
   editPreset,
   libraryName,
 }: Props) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
   const monomers = useAppSelector(selectFilteredMonomers);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isActivePresetNewAndEmpty = useAppSelector(
-    selectIsActivePresetNewAndEmpty,
+    isActiveRnaPresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
@@ -90,7 +93,7 @@ const RnaElementsAccordionView = ({
   return (
     <>
       {groupsData.map((groupData) => {
-        const expanded = expandedAccordion === groupData.groupName;
+        const isExpanded = expandedAccordion === groupData.groupName;
         const variantMonomers = selectAmbiguousMonomersInCategory(
           monomers,
           groupData.groupName as MonomerGroups,
@@ -103,8 +106,9 @@ const RnaElementsAccordionView = ({
           <Summary
             iconName={groupData.iconName as IconName}
             groupName={groupData.groupName}
+            label={t(groupNameToTabLabelKey[groupData.groupName])}
             quantity={quantity}
-            expanded={expanded}
+            expanded={isExpanded}
           />
         );
         const details =
@@ -115,7 +119,7 @@ const RnaElementsAccordionView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  Add new
+                  {t('monomerLibrary.addNewPreset')}
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
@@ -125,7 +129,7 @@ const RnaElementsAccordionView = ({
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);
                   }}
-                  aria-label="Filter presets by phosphate position"
+                  aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"
                 >
                   <Icon name="filter" />
@@ -173,6 +177,7 @@ const RnaElementsAccordionView = ({
                     key={group.groupTitle}
                     title={group.groupTitle}
                     items={group.groupItems}
+                    groupName={groupData.groupName as MonomerGroups}
                     libraryName={libraryName}
                     selectedMonomerUniqueKey={activeMonomerKey}
                     onItemClick={(monomer) =>
@@ -184,14 +189,14 @@ const RnaElementsAccordionView = ({
             </DetailsContainer>
           );
         return groupData.groupName === RnaBuilderPresetsItem.Presets &&
-          expanded ? (
+          isExpanded ? (
           <StyledAccordionWrapper key={groupData.groupName}>
             <StyledAccordion
               data-testid="styled-accordion"
               dataTestIdDetails={`rna-accordion-details-${groupData.groupName}`}
               summary={summary}
               details={details}
-              expanded={expanded}
+              expanded={isExpanded}
               onSummaryClick={() =>
                 handleAccordionSummaryClick(groupData.groupName)
               }
@@ -204,7 +209,7 @@ const RnaElementsAccordionView = ({
             dataTestIdDetails={`rna-accordion-details-${groupData.groupName}`}
             summary={summary}
             details={details}
-            expanded={expanded}
+            expanded={isExpanded}
             onSummaryClick={() =>
               handleAccordionSummaryClick(groupData.groupName)
             }

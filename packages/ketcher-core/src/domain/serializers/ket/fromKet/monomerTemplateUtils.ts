@@ -166,6 +166,34 @@ export function convertMonomerTemplateToStruct(
   });
 }
 
+/**
+ * Builds a display label for a leaving group atom, appending implicit
+ * hydrogens computed from the atom's standard valence and the number of
+ * bonds it has within the monomer template structure (e.g. an "N" atom
+ * with a single bond becomes "NH2", an "O" atom with a single bond
+ * becomes "OH").
+ * @internal Exported for testing purposes
+ */
+export function getLeavingGroupLabelWithHydrogens(
+  struct: Struct,
+  atomId: number,
+): string {
+  const atom = struct.atoms.get(atomId);
+  assert(atom);
+
+  struct.calcImplicitHydrogen(atomId);
+  const implicitHydrogenCount = atom.implicitH;
+
+  if (implicitHydrogenCount <= 0) {
+    return atom.label;
+  }
+
+  const hydrogenCountSuffix =
+    implicitHydrogenCount > 1 ? String(implicitHydrogenCount) : '';
+
+  return `${atom.label}H${hydrogenCountSuffix}`;
+}
+
 export function fillStructRgLabelsByMonomerTemplate(
   template: IKetMonomerTemplate,
   monomerItem: MonomerItemType,
@@ -179,18 +207,20 @@ export function fillStructRgLabelsByMonomerTemplate(
   const { attachmentPointsList } =
     BaseMonomer.getAttachmentPointDictFromMonomerDefinition(attachmentPoints);
 
+  // Initialize halfBonds and neighbors for calcImplicitHydrogen to work properly
+  monomerItem.struct.initHalfBonds();
+  monomerItem.struct.initNeighbors();
+
   attachmentPoints?.forEach((attachmentPoint, attachmentPointIndex) => {
     const firstAtomInLeavingGroup = attachmentPoint.leavingGroup?.atoms[0];
-    const leavingGroupAtom = monomerItem.struct.atoms.get(
-      isNumber(firstAtomInLeavingGroup)
-        ? firstAtomInLeavingGroup
-        : attachmentPoint.attachmentAtom,
-    );
+    const leavingGroupAtomId = isNumber(firstAtomInLeavingGroup)
+      ? firstAtomInLeavingGroup
+      : attachmentPoint.attachmentAtom;
+    const leavingGroupAtom = monomerItem.struct.atoms.get(leavingGroupAtomId);
 
     if (!leavingGroupAtom) {
       return;
     }
-
     leavingGroupAtom.rglabel =
       0 |
       (1 <<
@@ -203,7 +233,10 @@ export function fillStructRgLabelsByMonomerTemplate(
           1));
     assert(monomerItem.props.MonomerCaps);
     monomerItem.props.MonomerCaps[
-      getAttachmentPointLabelWithBinaryShift(leavingGroupAtom.rglabel)
-    ] = leavingGroupAtom.label;
+      getAttachmentPointLabelWithBinaryShift(Number(leavingGroupAtom.rglabel))
+    ] = getLeavingGroupLabelWithHydrogens(
+      monomerItem.struct,
+      leavingGroupAtomId,
+    );
   });
 }

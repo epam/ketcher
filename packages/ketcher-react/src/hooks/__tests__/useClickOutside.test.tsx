@@ -3,7 +3,7 @@ import { render, fireEvent, cleanup, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { useClickOutside } from '../useClickOutside';
 
-function HookHarness({ onOutside }: { onOutside: () => void }) {
+function HookHarness({ onOutside }: Readonly<{ onOutside: () => void }>) {
   const ref = useRef<HTMLDivElement | null>(null);
   useClickOutside(ref, onOutside);
   return (
@@ -91,7 +91,9 @@ describe('useClickOutside', () => {
   });
 
   test('handles null ref without throwing', () => {
-    function NullRefHarness({ onOutside }: { onOutside: () => void }) {
+    function NullRefHarness({
+      onOutside,
+    }: Readonly<{ onOutside: () => void }>) {
       const ref = { current: null } as RefObject<HTMLDivElement | null>;
       useClickOutside(ref, onOutside);
       return <div data-testid="outside" />;

@@ -60,6 +60,8 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 
 ## Assumptions & Constraints
 
+- The paste tool and S-Group dialog do not run a canvas-wide S-Group expansion pass. Non-SUP groups are always expanded according to `SGroup.isExpanded()`; these UI paths do not normalize the raw `data.expanded` flag of unrelated groups.
+
 - The `Editor.tsx` file manages the `window.isPolymerEditorTurnedOn` global flag. This is used to turn on/off some functionality in ketcher (f.e. some api methods, events). It is bad practice and should be refactored in the future to get rid of this flag.
 - `ketcher-macromolecules` is imported dynamically (`React.lazy`) to avoid a circular dependency. If changed to a static import, the circular dependency must be resolved first.
 - The Redux store in `ketcher-react` is **separate** from the Redux store in `ketcher-macromolecules` — they do not share state.

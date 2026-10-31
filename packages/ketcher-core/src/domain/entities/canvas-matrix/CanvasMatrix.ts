@@ -56,9 +56,7 @@ export class CanvasMatrix {
     iterationMethod((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(
         (biggestOffset: number, connection: Connection): number => {
-          return getOffset(connection) > biggestOffset
-            ? getOffset(connection)
-            : biggestOffset;
+          return Math.max(getOffset(connection), biggestOffset);
         },
         0,
       );
@@ -92,7 +90,7 @@ export class CanvasMatrix {
         if (currentConnections.has(connection.polymerBond)) {
           currentConnections.delete(connection.polymerBond);
           currentConnections.forEach((connections: Set<Connection>): void => {
-            Array.from(connections.values()).forEach(
+            [...connections.values()].forEach(
               (currentConnection: Connection): void => {
                 increaseOffset(currentConnection);
               },
@@ -106,12 +104,12 @@ export class CanvasMatrix {
         }
       });
       if (
-        (cell.x === 0 && direction !== 90) ||
-        (cell.y === 0 && direction === 90)
+        (direction !== 90 && cell.x === 0) ||
+        (direction === 90 && cell.y === 0)
       ) {
         currentConnections.clear();
       }
-      Array.from(currentConnections.keys()).forEach((polymerBond) => {
+      [...currentConnections.keys()].forEach((polymerBond) => {
         const polymerBondConnections =
           this.polymerBondToConnections.get(polymerBond);
         if (
@@ -133,9 +131,7 @@ export class CanvasMatrix {
     this.matrix.forEach((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(
         (biggestOffset: number, connection: Connection): number => {
-          return connection.xOffset > biggestOffset
-            ? connection.xOffset
-            : biggestOffset;
+          return Math.max(connection.xOffset, biggestOffset);
         },
         0,
       );

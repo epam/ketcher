@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,13 @@ describe('DropDown component', () => {
   it('should render an element with current selection displayed', () => {
     render(withThemeProvider(<DropDown {...mockProps} />));
     expect(screen.getByText(INITIAL_SELECTION.label)).toBeInTheDocument();
+  });
+
+  it('should render without crashing when current selection is missing', () => {
+    render(withThemeProvider(<DropDown {...mockProps} currentSelection="" />));
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.queryByText(INITIAL_SELECTION.label)).not.toBeInTheDocument();
   });
 
   it('should render dropdown with all options when clicked', async () => {

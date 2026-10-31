@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ import type { Struct } from 'domain/entities/struct';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
-import { exceedsMolfileV2000Limit } from './constants';
+import { isMolfileV2000LimitExceeded } from './constants';
 
 export class FormatterFactory {
   readonly #structService: StructService;
@@ -70,27 +70,35 @@ export class FormatterFactory {
   create(
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
-    queryPropertiesAreUsed?: boolean,
+    hasQueryProperties?: boolean,
     struct?: Struct,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options);
 
     let formatter: StructFormatter;
+    // `struct` is provided only when saving, so its absence means we are loading.
+    // Dearomatizing on load has to be done by Indigo, which the JS molfile
+    // parser cannot do, so such structures are delegated to it as well.
+    const isLoading = struct === undefined;
+    const shouldDelegateToIndigo =
+      Boolean(hasQueryProperties) ||
+      (isLoading && Boolean(structServiceOptions['dearomatize-on-load']));
+
     switch (format) {
       case SupportedFormat.ket:
         formatter = new KetFormatter(new KetSerializer());
         break;
 
       case SupportedFormat.mol:
-        if (queryPropertiesAreUsed) {
+        if (shouldDelegateToIndigo) {
           formatter = new ServerFormatter(
             this.#structService,
             new KetSerializer(),
             format,
             structServiceOptions,
           );
-        } else if (struct && exceedsMolfileV2000Limit(struct)) {
+        } else if (struct && isMolfileV2000LimitExceeded(struct)) {
           // V2000 cannot address more than 999 atoms/bonds, so oversized
           // structures are delegated to Indigo, which upgrades them to V3000.
           formatter = new ServerFormatter(

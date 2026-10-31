@@ -69,6 +69,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return rootNode.getBoundingClientRect();
   }
 
+  public get labelTooltipText(): string | null {
+    return null;
+  }
+
   public get width() {
     return this.rootBBox?.width ?? 0;
   }
@@ -89,7 +93,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return undefined;
   }
 
-  public abstract show(theme, force?: boolean): void;
+  public abstract show(theme, shouldForce?: boolean): void;
   public abstract drawSelection(): void;
   public abstract moveSelection(): void;
   protected abstract appendHover(

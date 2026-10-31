@@ -9,10 +9,11 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
         class="dialog infoModal"
         data-testid="info-modal-window"
         open=""
+        style="position: absolute; left: 0px; top: 0px;"
         tabindex="-1"
       >
         <header
-          class="header"
+          class="header draggableHeader"
         >
           <div>
             Error Message
@@ -80,10 +81,11 @@ exports[`InfoModal should be rendered correctly should render Paste shortcut mes
       class="dialog infoModal"
       data-testid="info-modal-window"
       open=""
+      style="position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <header
-        class="header"
+        class="header draggableHeader"
       >
         <div>
           Error Message
@@ -215,10 +217,11 @@ exports[`InfoModal should be rendered correctly should render default error mess
         class="dialog infoModal"
         data-testid="info-modal-window"
         open=""
+        style="position: absolute; left: 0px; top: 0px;"
         tabindex="-1"
       >
         <header
-          class="header"
+          class="header draggableHeader"
         >
           <div>
             Error Message
@@ -262,10 +265,11 @@ exports[`InfoModal should be rendered correctly should render default error mess
       class="dialog infoModal"
       data-testid="info-modal-window"
       open=""
+      style="position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <header
-        class="header"
+        class="header draggableHeader"
       >
         <div>
           Error Message

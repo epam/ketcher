@@ -41,6 +41,7 @@ interface DialogParamsCallProps {
 export interface DialogParams extends DialogParamsCallProps {
   className?: string;
   isNestedModal?: boolean;
+  draggable?: boolean;
 }
 
 interface DialogProps {
@@ -111,7 +112,9 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     setOverlayElement(parent instanceof HTMLElement ? parent : null);
   }, []);
 
-  const isDraggable = overlayElement?.dataset?.draggable === 'true';
+  const isDraggable =
+    params?.draggable ??
+    (overlayElement !== null && overlayElement.dataset.draggable !== 'false');
   const isResizable = overlayElement?.dataset?.resizable === 'true';
 
   const {

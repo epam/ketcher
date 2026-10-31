@@ -9,8 +9,8 @@
 
 - [x] 2.1 `scripts/review/config.mjs`: Quick threshold, sensitive paths, N, concurrency, model IDs per role, stronger model, budgets, turn limits, label names, skip globs, `authMode`.
 - [x] 2.2 `scripts/review/schemas.mjs`: JSON Schemas (draft-07) for findings, verdicts and the linked-issue answer, matching the output contract.
-- [ ] 2.3 `scripts/review/diff.mjs`: parse a unified diff into files, hunks and changed line sets; changed line count; "is line in diff".
-- [ ] 2.4 Tests for 2.3 with fixture patches (added, deleted, renamed, binary files).
+- [x] 2.3 `scripts/review/diff.mjs`: parse a unified diff into files, hunks and changed line sets; changed line count; "is line in diff".
+- [x] 2.4 Tests for 2.3 with fixture patches (added, deleted, renamed, binary files).
 
 ## 3. Pure hub logic
 

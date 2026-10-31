@@ -1,0 +1,84 @@
+diff --git a/added.ts b/added.ts
+new file mode 100644
+index 0000000..6bc6a59
+--- /dev/null
++++ b/added.ts
+@@ -0,0 +1,2 @@
++added1
++added2
+diff --git a/dashes.ts b/dashes.ts
+index 03f2917..2fa992c 100644
+--- a/dashes.ts
++++ b/dashes.ts
+@@ -1,2 +1 @@
+--- dashes
+ keep
+diff --git a/deleted.ts b/deleted.ts
+deleted file mode 100644
+index 988cd72..0000000
+--- a/deleted.ts
++++ /dev/null
+@@ -1,2 +0,0 @@
+-gone1
+-gone2
+diff --git a/dir with space/f.ts b/dir with space/f.ts
+index 5626abf..f719efd 100644
+--- a/dir with space/f.ts	
++++ b/dir with space/f.ts	
+@@ -1 +1 @@
+-one
++two
+diff --git a/img.bin b/img.bin
+index bdc955b..8835708 100644
+Binary files a/img.bin and b/img.bin differ
+diff --git a/mod.ts b/mod.ts
+index b3c5a95..4c773a5 100644
+--- a/mod.ts
++++ b/mod.ts
+@@ -1,5 +1,6 @@
+ line1
+-line2
++LINE2
+ line3
+ line4
+ line5
++line6
+diff --git a/nonl.ts b/nonl.ts
+index c1b0730..e25f181 100644
+--- a/nonl.ts
++++ b/nonl.ts
+@@ -1 +1 @@
+-x
+\ No newline at end of file
++y
+\ No newline at end of file
+diff --git a/renamed-old.ts b/renamed-new.ts
+similarity index 87%
+rename from renamed-old.ts
+rename to renamed-new.ts
+index 71ac1b5..1877275 100644
+--- a/renamed-old.ts
++++ b/renamed-new.ts
+@@ -2,7 +2,7 @@ a
+ b
+ c
+ d
+-e
++E
+ f
+ g
+ h
+diff --git "a/\303\251kezet.ts" "b/\303\251kezet.ts"
+index 072d593..c600332 100644
+--- "a/\303\251kezet.ts"
++++ "b/\303\251kezet.ts"
+@@ -1 +1 @@
+-á
++é
+diff --git a/mod.ts b/moved.ts
+similarity index 100%
+rename from mod.ts
+rename to moved.ts
+diff --git a/run.sh b/run.sh
+old mode 100644
+new mode 100755

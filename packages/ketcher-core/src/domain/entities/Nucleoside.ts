@@ -32,8 +32,8 @@ export class Nucleoside {
     this.monomersCache = [sugar, rnaBase];
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleoside(sugar),
         'Created nucleoside is not valid. Please check nucleotide parts connections.',
@@ -103,7 +103,7 @@ export class Nucleoside {
       ),
     );
 
-    return { modelChanges, node: Nucleoside.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

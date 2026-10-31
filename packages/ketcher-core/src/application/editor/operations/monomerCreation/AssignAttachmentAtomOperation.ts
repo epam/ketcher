@@ -42,7 +42,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
 
     this.attachmentPointName =
       this._attachmentPointName ??
-      getNextFreeAttachmentPoint(Array.from(occupiedAttachmentPointNames));
+      getNextFreeAttachmentPoint([...occupiedAttachmentPointNames]);
 
     this.assignedAttachmentPoints.set(this.attachmentPointName, [
       this.attachmentAtomId,

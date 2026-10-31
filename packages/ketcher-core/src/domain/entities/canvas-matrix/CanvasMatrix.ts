@@ -15,6 +15,7 @@ interface MatrixConfig {
 export class CanvasMatrix {
   private readonly matrix: Matrix<Cell>;
   private readonly initialMatrixWidth: number;
+  private readonly bondToMaxHorizontalOffset = new Map<PolymerBond, number>();
   private readonly monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
@@ -28,6 +29,10 @@ export class CanvasMatrix {
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
+  }
+
+  public getMaxHorizontalOffsetForBond(bond: PolymerBond): number {
+    return this.bondToMaxHorizontalOffset.get(bond) ?? 0;
   }
 
   private fillConnectionsOffset(
@@ -349,5 +354,63 @@ export class CanvasMatrix {
       },
       (connection: Connection): number => connection.yOffset,
     );
+
+    this.fillNeighborRowConnectionOffsets();
+  }
+
+  private fillNeighborRowConnectionOffsets(): void {
+    const gaps = new Map<
+      number,
+      { bond: PolymerBond; left: number; right: number; maxOffset: number }[]
+    >();
+
+    this.polymerBondToCells.forEach((cells, bond) => {
+      const firstCell = cells[0];
+      const lastCell = cells[cells.length - 1];
+      if (lastCell.y !== firstCell.y + 1 || firstCell.x === lastCell.x) {
+        return;
+      }
+      const gap = gaps.get(firstCell.y) ?? [];
+      gap.push({
+        bond,
+        left: Math.min(firstCell.x, lastCell.x),
+        right: Math.max(firstCell.x, lastCell.x),
+        maxOffset: cells.reduce(
+          (max, cell) =>
+            cell.connections.reduce(
+              (cellMax, connection) =>
+                connection.isVertical
+                  ? cellMax
+                  : Math.max(cellMax, connection.xOffset),
+              max,
+            ),
+          0,
+        ),
+      });
+      gaps.set(firstCell.y, gap);
+    });
+
+    gaps.forEach((connections) => {
+      connections.sort((a, b) => a.left - b.left);
+      let start = 0;
+      while (start < connections.length) {
+        let end = start + 1;
+        let right = connections[start].right;
+        let maxOffset = connections[start].maxOffset;
+        while (end < connections.length && connections[end].left <= right) {
+          right = Math.max(right, connections[end].right);
+          maxOffset = Math.max(maxOffset, connections[end].maxOffset);
+          end++;
+        }
+        // Only bonds sharing this inter-row corridor need a common baseline.
+        for (let index = start; index < end; index++) {
+          this.bondToMaxHorizontalOffset.set(
+            connections[index].bond,
+            maxOffset,
+          );
+        }
+        start = end;
+      }
+    });
   }
 }

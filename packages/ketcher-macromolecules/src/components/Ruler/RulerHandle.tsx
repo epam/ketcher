@@ -5,25 +5,30 @@ import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
 
-type Props = {
+type Properties = {
   offsetX: number;
   onDragStart: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
   onDrag: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
   onDragEnd: (event: D3DragEvent<SVGGElement, unknown, unknown>) => void;
 };
 
-const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const handleRef = useRef<SVGGElement>(null);
+const RulerHandle = ({
+  offsetX,
+  onDragStart,
+  onDrag,
+  onDragEnd,
+}: Properties) => {
+  const svgReference = useRef<SVGSVGElement>(null);
+  const handleReference = useRef<SVGGElement>(null);
 
-  useTranslateAlongXAxis(svgRef, offsetX);
+  useTranslateAlongXAxis(svgReference, offsetX);
 
   useEffect(() => {
-    if (!handleRef.current) {
+    if (!handleReference.current) {
       return;
     }
 
-    const handle = select(handleRef.current);
+    const handle = select(handleReference.current);
 
     const dragBehavior = drag<SVGGElement, unknown>()
       .on('start', onDragStart)
@@ -44,10 +49,10 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
       viewBox="0 0 16 13"
       fill="none"
       pointerEvents="none"
-      ref={svgRef}
+      ref={svgReference}
       data-testid="ruler-handle"
     >
-      <g cursor="pointer" pointerEvents="all" ref={handleRef}>
+      <g cursor="pointer" pointerEvents="all" ref={handleReference}>
         <mask id="ruler-handle-mask" fill="#fff">
           <path
             fillRule="evenodd"

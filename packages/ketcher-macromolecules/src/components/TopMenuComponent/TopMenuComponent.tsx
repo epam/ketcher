@@ -24,7 +24,7 @@ import {
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal, selectIsSettingsPanelOpen } from 'state/modal';
-import { BaseMonomer, shortcutStr } from 'ketcher-core';
+import { BaseMonomer, shortcutString } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
@@ -158,14 +158,14 @@ export function TopMenuComponent() {
         >
           <Menu.Item
             itemId="copy"
-            title={t('topMenu.copy', { shortcut: shortcutStr('Mod+c') })}
+            title={t('topMenu.copy', { shortcut: shortcutString('Mod+c') })}
             disabled={isDisabled || !selectedEntities?.length}
             testId="macro-copy-button"
           />
           <Menu.Item
             itemId="copy-mol"
             title={t('topMenu.copyAsMol', {
-              shortcut: shortcutStr('Mod+Shift+m'),
+              shortcut: shortcutString('Mod+Shift+m'),
             })}
             disabled={isDisabled || !selectedEntities?.length}
             testId="macro-copy-mol-button"
@@ -173,7 +173,7 @@ export function TopMenuComponent() {
           <Menu.Item
             itemId="copy-ket"
             title={t('topMenu.copyAsKet', {
-              shortcut: shortcutStr('Mod+Shift+k'),
+              shortcut: shortcutString('Mod+Shift+k'),
             })}
             disabled={isDisabled || !selectedEntities?.length}
             testId="macro-copy-ket-button"
@@ -181,7 +181,7 @@ export function TopMenuComponent() {
           <Menu.Item
             itemId="copy-image"
             title={t('topMenu.copyImage', {
-              shortcut: shortcutStr('Mod+Shift+f'),
+              shortcut: shortcutString('Mod+Shift+f'),
             })}
             disabled={isDisabled || !selectedEntities?.length}
             testId="macro-copy-image-button"
@@ -189,13 +189,13 @@ export function TopMenuComponent() {
         </Menu.Submenu>
         <Menu.Item
           itemId="paste"
-          title={t('topMenu.paste', { shortcut: shortcutStr('Mod+v') })}
+          title={t('topMenu.paste', { shortcut: shortcutString('Mod+v') })}
           disabled={isDisabled}
           testId="macro-paste-button"
         />
         <Menu.Item
           itemId="cut"
-          title={t('topMenu.cut', { shortcut: shortcutStr('Mod+x') })}
+          title={t('topMenu.cut', { shortcut: shortcutString('Mod+x') })}
           disabled={isDisabled || !selectedEntities?.length}
           testId="macro-cut-button"
         />

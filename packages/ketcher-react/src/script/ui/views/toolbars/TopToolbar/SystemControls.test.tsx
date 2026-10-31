@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { SystemControls } from './SystemControls';
 
 jest.mock('ketcher-core', () => ({
-  shortcutStr: () => 'Shift+/',
+  shortcutString: () => 'Shift+/',
 }));
 
 jest.mock('./TopToolbarIconButton', () => ({

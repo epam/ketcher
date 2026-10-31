@@ -22,7 +22,7 @@ const shortcutAliasMap = {
   Alt: isMacOs ? 'Option' : 'Alt',
 };
 
-export function shortcutStr(shortcut?: string | string[]) {
+export function shortcutString(shortcut?: string | string[]) {
   if (!shortcut) {
     return '';
   }
@@ -34,12 +34,12 @@ export function shortcutStr(shortcut?: string | string[]) {
   );
 }
 
-export const generateMenuShortcuts = <T>(obj) =>
-  Object.keys(obj).reduce((acc, key) => {
-    if (obj[key]?.shortcut) {
-      const shortcut = obj[key].shortcut;
-      const processedShortcut = shortcutStr(shortcut);
-      acc[key] = processedShortcut;
+export const generateMenuShortcuts = <T>(object) =>
+  Object.keys(object).reduce((accumulator, key) => {
+    if (object[key]?.shortcut) {
+      const shortcut = object[key].shortcut;
+      const processedShortcut = shortcutString(shortcut);
+      accumulator[key] = processedShortcut;
     }
-    return acc;
+    return accumulator;
   }, {}) as { [key in keyof T]: string };

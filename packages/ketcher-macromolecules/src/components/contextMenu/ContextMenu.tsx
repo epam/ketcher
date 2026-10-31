@@ -50,16 +50,16 @@ export interface MenuItem {
   onMouseOut?: (itemId: string) => void;
 }
 
-interface MenuProps {
+interface MenuProperties {
   id: CONTEXT_MENU_ID;
   menuItems: MenuItem[];
-  handleMenuChange: (params: ItemParams) => void;
-  onVisibilityChange?: (isVisible: boolean) => void;
+  handleMenuChange: (parameters: ItemParams) => void;
+  onVisibilityChange?: (visible: boolean) => void;
 }
 
 const assembleMenuItems = (
   menuItems: MenuItem[],
-  handleMenuChange: (params: ItemParams) => void,
+  handleMenuChange: (parameters: ItemParams) => void,
 ) => {
   const MENU_CLOSING_TIME = 500;
   let isMouseOverThrottling = false;
@@ -86,12 +86,12 @@ const assembleMenuItems = (
       ) : (
         <Item
           id={name}
-          onClick={(params) => {
+          onClick={(parameters) => {
             isMouseOverThrottling = true;
             setTimeout(() => {
               isMouseOverThrottling = false;
             }, MENU_CLOSING_TIME);
-            handleMenuChange(params);
+            handleMenuChange(parameters);
           }}
           key={name}
           data-testid={name}
@@ -136,16 +136,16 @@ export const ContextMenu = ({
   handleMenuChange,
   menuItems,
   onVisibilityChange,
-}: MenuProps) => {
+}: MenuProperties) => {
   const dispatch = useAppDispatch();
   const isContextMenuActive = useAppSelector(isContextMenuActivated);
 
   useEffect(() => {
-    const handleContextMenuClose = (e) => {
+    const handleContextMenuClose = (event_) => {
       const isClickOnNucleotide =
-        e.target?.__data__?.node || e.target?.__data__?.monomer;
+        event_.target?.__data__?.node || event_.target?.__data__?.monomer;
       if (isClickOnNucleotide) {
-        e.stopPropagation();
+        event_.stopPropagation();
         return;
       }
       dispatch(setContextMenuActive(false));

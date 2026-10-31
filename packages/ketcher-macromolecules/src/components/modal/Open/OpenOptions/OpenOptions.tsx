@@ -25,9 +25,9 @@ const ICON_NAMES: Record<string, IconName> = {
   IMAGE: 'image-frame',
 } as const;
 
-export type OpenOptionsProps = {
+export type OpenOptionsProperties = {
   selectClipboard: () => void;
-  errorHandler: (err: string) => void;
+  errorHandler: (error: string) => void;
   fileLoadHandler: (files: File[]) => void;
 };
 
@@ -75,7 +75,7 @@ const OpenOptions = ({
   selectClipboard,
   fileLoadHandler,
   errorHandler,
-}: OpenOptionsProps) => {
+}: OpenOptionsProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   return (
     <RootContainer>
@@ -89,7 +89,9 @@ const OpenOptions = ({
       <DropContainer data-testid="open-from-file-button">
         <FileDrop
           onDropAccepted={fileLoadHandler}
-          onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
+          onDropRejected={(error) =>
+            errorHandler(`Unable to accept file(s). ${error}`)
+          }
           buttonLabel={t('open.openFromFile')}
           textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.FILE}
@@ -99,7 +101,9 @@ const OpenOptions = ({
         <FileDrop
           accept="image/*"
           onDropAccepted={fileLoadHandler}
-          onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
+          onDropRejected={(error) =>
+            errorHandler(`Unable to accept file(s). ${error}`)
+          }
           buttonLabel={t('open.openFromImage')}
           textLabel={t('open.orDragFileHere')}
           iconName={ICON_NAMES.IMAGE}

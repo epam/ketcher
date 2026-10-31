@@ -1,28 +1,28 @@
 import { RefObject, useLayoutEffect, useRef } from 'react';
 
 const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
-  ref: RefObject<T | null>,
+  reference: RefObject<T | null>,
   offsetX: number,
 ) => {
-  const animateRef = useRef<number | null>(null);
+  const animateReference = useRef<number | null>(null);
 
   useLayoutEffect(() => {
-    const element = ref.current;
+    const element = reference.current;
     if (!element) {
       return;
     }
 
-    animateRef.current = requestAnimationFrame(() => {
+    animateReference.current = requestAnimationFrame(() => {
       element.style.transform = `translateX(${offsetX}px)`;
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+      if (animateReference.current) {
+        cancelAnimationFrame(animateReference.current);
+        animateReference.current = null;
       }
     };
-  }, [ref, offsetX]);
+  }, [reference, offsetX]);
 };
 
 export default useTranslateAlongXAxis;

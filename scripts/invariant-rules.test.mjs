@@ -164,7 +164,7 @@ test('A5 flags React imports in ketcher-core, unless the file is allowlisted', (
   ].join('\n');
   const allowlisted = path.join(
     REPO_ROOT,
-    'packages/ketcher-core/src/utilities/shortcutsUtil.ts',
+    'packages/ketcher-core/src/utilities/shortcutsUtility.ts',
   );
   assert.deepEqual(
     lint(code, toRuleConfig('ui-imports-in-core'), allowlisted),

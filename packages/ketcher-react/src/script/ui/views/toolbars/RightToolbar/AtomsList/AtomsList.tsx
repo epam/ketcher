@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
+import { ElementColor, Elements, shortcutString } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
@@ -82,7 +82,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const element = Elements.get(label);
         if (!element) return null;
         const shortcut = atoms.includes(label)
-          ? shortcutStr(atomCuts[label])
+          ? shortcutString(atomCuts[label])
           : null;
         const isSelected = isAtom && active?.opts.label === label;
         const id = `atom-${label.toLowerCase()}`;

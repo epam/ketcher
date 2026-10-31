@@ -40,11 +40,11 @@ export const deleteMonomerWithPresets = (
   const parsedJson = editor.monomersLibraryParsedJson;
 
   referencingPresets.forEach((presetTemplate) => {
-    const presetRef = parsedJson?.root.templates.find(
+    const presetReference = parsedJson?.root.templates.find(
       ({ $ref }) => parsedJson[$ref] === presetTemplate,
     )?.$ref;
-    if (presetRef) {
-      editor.removePresetFromLibrary(presetRef);
+    if (presetReference) {
+      editor.removePresetFromLibrary(presetReference);
     }
 
     const customPreset = customPresets.find(
@@ -67,7 +67,7 @@ export const getReferencingCustomPresets = (
   monomer: MonomerItemType,
   customPresets: IRnaPreset[],
 ): IRnaPreset[] => {
-  const ref = setMonomerTemplatePrefix(
+  const reference = setMonomerTemplatePrefix(
     monomer.props.id || getMonomerUniqueKey(monomer),
   );
   return customPresets.filter((preset) =>
@@ -76,7 +76,7 @@ export const getReferencingCustomPresets = (
       return (
         setMonomerTemplatePrefix(
           component.props.id || getMonomerUniqueKey(component),
-        ) === ref
+        ) === reference
       );
     }),
   );

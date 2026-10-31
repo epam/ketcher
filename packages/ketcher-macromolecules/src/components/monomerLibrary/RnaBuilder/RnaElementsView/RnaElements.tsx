@@ -26,7 +26,7 @@ import RnaElementsTabsView from './RnaElementsTabsView';
 import RnaElementsAccordionView from './RnaElementsAccordionView';
 import { getMonomerUniqueKey } from 'state/library';
 
-interface RnaUnifiedViewProps {
+interface RnaUnifiedViewProperties {
   view: 'tabs' | 'accordion';
   libraryName: LibraryNameType;
   duplicatePreset: (preset?: IRnaPreset) => void;
@@ -38,7 +38,7 @@ export const RnaElements = ({
   libraryName,
   duplicatePreset,
   editPreset,
-}: RnaUnifiedViewProps) => {
+}: RnaUnifiedViewProperties) => {
   const dispatch = useDispatch();
 
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
@@ -55,16 +55,16 @@ export const RnaElements = ({
   // of the preset being built. Re-syncing it whenever the active preset or the
   // edit mode changes keeps a cancelled preset's monomers from constraining the
   // library the next time a group is expanded (#9690).
-  const [prevBuilderState, setPrevBuilderState] = useState({
+  const [previousBuilderState, setPreviousBuilderState] = useState({
     activePreset,
     isEditMode,
   });
 
   if (
-    prevBuilderState.activePreset !== activePreset ||
-    prevBuilderState.isEditMode !== isEditMode
+    previousBuilderState.activePreset !== activePreset ||
+    previousBuilderState.isEditMode !== isEditMode
   ) {
-    setPrevBuilderState({ activePreset, isEditMode });
+    setPreviousBuilderState({ activePreset, isEditMode });
     setNewPreset(activePreset);
   }
 

@@ -55,16 +55,16 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 function pollDeferred<T>(
   process: () => Promise<T>,
-  isComplete: (val: T) => boolean,
+  complete: (value: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
 ) {
   return new Promise<T>((resolve, reject) => {
     function iterate() {
       process().then(
-        (val) => {
+        (value) => {
           try {
-            if (isComplete(val)) resolve(val);
+            if (complete(value)) resolve(value);
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
@@ -78,8 +78,8 @@ function pollDeferred<T>(
   });
 }
 
-function parametrizeUrl(url: string, params: Record<string, string>) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+function parametrizeUrl(url: string, parameters: Record<string, string>) {
+  return url.replace(/:(\w+)/g, (_, value) => parameters[value]);
 }
 
 function request<T = unknown>(
@@ -119,19 +119,19 @@ function request<T = unknown>(
   if (responseHandler) {
     response = responseHandler(fetchResponse);
   } else {
-    response = fetchResponse.then((res) =>
+    response = fetchResponse.then((response) =>
       // Error responses (e.g. a 413 from a reverse proxy rejecting an
       // oversized body) are not guaranteed to have a JSON body, so parsing
       // must not be the thing that decides whether the request succeeded.
-      res
+      response
         .json()
         .catch(() => null)
         .then((json) => {
-          if (res.ok) return json as T;
+          if (response.ok) return json as T;
           const message =
             json?.error ||
-            res.statusText ||
-            `Request failed with status ${res.status}`;
+            response.statusText ||
+            `Request failed with status ${response.status}`;
           return Promise.reject(new Error(message));
         }),
     );
@@ -431,7 +431,7 @@ export class RemoteStructService implements StructService {
 
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
     const parVersion = version ? `?version=${version}` : '';
-    const req = request<ImagoUploadResponse>(
+    const request_ = request<ImagoUploadResponse>(
       'POST',
       this.apiPath + `imago/uploads${parVersion}`,
       blob,
@@ -444,7 +444,7 @@ export class RemoteStructService implements StructService {
     const { customHeaders } = this;
     const status = (data: { id: string }) =>
       request<ImagoStatusResponse>('GET', statusUrl, data, customHeaders);
-    return req
+    return request_
       .then((data) =>
         pollDeferred(
           status.bind(null, { id: data.upload_id }),

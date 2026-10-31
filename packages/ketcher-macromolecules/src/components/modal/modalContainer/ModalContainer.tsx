@@ -26,7 +26,7 @@ import { modalComponentList } from './modalComponentList';
 export const ModalContainer = () => {
   const isOpen = useAppSelector(isModalOpened);
   const modalName = useAppSelector(selectModalName);
-  const additionalProps = useAppSelector(selectAdditionalProps);
+  const additionalProperties = useAppSelector(selectAdditionalProps);
   const dispatch = useAppDispatch();
 
   const handleClose = useCallback(() => {
@@ -40,11 +40,11 @@ export const ModalContainer = () => {
   if (!Component)
     throw new Error(`There is no modal window named ${modalName}`);
 
-  return additionalProps ? (
+  return additionalProperties ? (
     <Component
       onClose={handleClose}
       isModalOpen={isOpen}
-      {...additionalProps}
+      {...additionalProperties}
     />
   ) : (
     <Component onClose={handleClose} isModalOpen={isOpen} />

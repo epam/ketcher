@@ -10,7 +10,7 @@ import {
   AttachmentPointName as AttachmentPointNameComponent,
   ModalContent,
 } from './styledComponents';
-import { MonomerConnectionProps } from '../modalContainer/types';
+import { MonomerConnectionProperties } from '../modalContainer/types';
 import {
   AmbiguousMonomer,
   BaseMonomer,
@@ -21,7 +21,7 @@ import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
 
-interface IStyledButtonProps {
+interface IStyledButtonProperties {
   disabled: boolean;
 }
 
@@ -39,25 +39,27 @@ export const ActionButtonLeft = styled(ActionButton)(() => ({
   width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
-  (props) => ({
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProperties>(
+  (properties) => ({
     width: '97px !important',
-    color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
-    background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
+    color: properties.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
+    background: properties.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
     opacity: '1 !important',
     minHeight: '0',
   }),
 );
 
-export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
-  borderRadius: 5,
-  minWidth: '45px !important',
-  padding: '4px',
-  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
-  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
-  background: props.disabled ? 'rgba(225, 229, 234)' : '',
-  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
-}));
+export const ActionButtonAttachmentPoint = styled(ActionButton)(
+  (properties) => ({
+    borderRadius: 5,
+    minWidth: '45px !important',
+    padding: '4px',
+    border: `1px solid ${properties.theme.ketcher.color.border.secondary}`,
+    color: properties.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+    background: properties.disabled ? 'rgba(225, 229, 234)' : '',
+    borderColor: properties.disabled ? 'rgba(225, 229, 234) !important' : '',
+  }),
+);
 
 const MonomerConnection = ({
   onClose,
@@ -66,7 +68,7 @@ const MonomerConnection = ({
   secondMonomer,
   polymerBond,
   isReconnectionDialog,
-}: Readonly<MonomerConnectionProps>): React.ReactElement => {
+}: Readonly<MonomerConnectionProperties>): React.ReactElement => {
   const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   // Selecting an attachment point mutates the bond and monomers. Preserve the
@@ -216,7 +218,7 @@ const MonomerConnection = ({
   );
 };
 
-interface AttachmentPointSelectionPanelProps {
+interface AttachmentPointSelectionPanelProperties {
   monomer: BaseMonomer;
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
@@ -230,7 +232,7 @@ function AttachmentPointSelectionPanel({
   onSelectAttachmentPoint,
   expanded: isExpanded = false,
   position,
-}: Readonly<AttachmentPointSelectionPanelProps>): React.ReactElement {
+}: Readonly<AttachmentPointSelectionPanelProperties>): React.ReactElement {
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
     () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );

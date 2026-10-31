@@ -24,8 +24,8 @@ import {
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
 import {
-  ConfirmationDialogOnlyProps,
-  MonomerConnectionOnlyProps,
+  ConfirmationDialogOnlyProperties,
+  MonomerConnectionOnlyProperties,
 } from 'components/modal/modalContainer';
 import { useAppDispatch, useAppSelector, useDebouncedShowPreview } from 'hooks';
 
@@ -127,11 +127,23 @@ export const EditorEvents = () => {
       dispatch(openErrorModal(errorData));
     };
     const handleOpenMonomerConnectionModal = (
-      additionalProps: MonomerConnectionOnlyProps,
-    ) => dispatch(openModal({ name: 'monomerConnection', additionalProps }));
+      additionalProperties: MonomerConnectionOnlyProperties,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'monomerConnection',
+          additionalProps: additionalProperties,
+        }),
+      );
     const handleOpenConfirmationDialog = (
-      additionalProps: ConfirmationDialogOnlyProps,
-    ) => dispatch(openModal({ name: 'confirmationDialog', additionalProps }));
+      additionalProperties: ConfirmationDialogOnlyProperties,
+    ) =>
+      dispatch(
+        openModal({
+          name: 'confirmationDialog',
+          additionalProps: additionalProperties,
+        }),
+      );
 
     if (editor) {
       editor.events.error.add(handleError);
@@ -184,22 +196,22 @@ export const EditorEvents = () => {
   );
 
   const handleOpenPreview = useCallback(
-    (e) => {
-      if (e.buttons === 1) {
+    (event_) => {
+      if (event_.buttons === 1) {
         return;
       }
 
-      if (e.buttons === 2) {
+      if (event_.buttons === 2) {
         return;
       }
 
       if (isContextMenuActive) {
-        e.preventDefault();
-        e.stopPropagation();
+        event_.preventDefault();
+        event_.stopPropagation();
         return;
       }
 
-      const polymerBond = e.target.__data__?.polymerBond;
+      const polymerBond = event_.target.__data__?.polymerBond;
 
       if (
         (polymerBond && !polymerBond.finished) ||
@@ -211,7 +223,7 @@ export const EditorEvents = () => {
       if (polymerBond) {
         const style = calculateBondPreviewPosition(
           polymerBond,
-          e.target.getBoundingClientRect(),
+          event_.target.getBoundingClientRect(),
         );
 
         handleOpenBondPreview(polymerBond, style);
@@ -219,9 +231,9 @@ export const EditorEvents = () => {
       }
 
       // TODO: Split to separate functions for monomers and presets
-      const sequenceNode = e.target.__data__?.node;
+      const sequenceNode = event_.target.__data__?.node;
       const monomer: BaseMonomer | AmbiguousMonomer =
-        e.target.__data__?.monomer || sequenceNode?.monomer;
+        event_.target.__data__?.monomer || sequenceNode?.monomer;
 
       if (sequenceNode && sequenceNode instanceof BackBoneSequenceNode) {
         return;
@@ -231,7 +243,7 @@ export const EditorEvents = () => {
         const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
           type: PreviewType.AmbiguousMonomer,
           monomer: monomer.variantMonomerItem,
-          target: e.target,
+          target: event_.target,
         };
 
         debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -254,7 +266,7 @@ export const EditorEvents = () => {
             type: PreviewType.Preset,
             monomers: monomers.map((m) => m.monomerItem),
             position: PresetPosition.ChainMiddle,
-            target: e.target,
+            target: event_.target,
           };
 
           debouncedShowPreview(chemChainPreviewData);
@@ -280,7 +292,7 @@ export const EditorEvents = () => {
             type: PreviewType.AmbiguousMonomer,
             monomer: sequenceNode.rnaBase.variantMonomerItem,
             presetMonomers: monomers,
-            target: e.target,
+            target: event_.target,
           };
 
           debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -314,7 +326,7 @@ export const EditorEvents = () => {
           phosphatePosition:
             sequenceNode instanceof Nucleotide ? 'right' : undefined,
           position,
-          target: e.target,
+          target: event_.target,
         };
 
         debouncedShowPreview(presetPreviewData);
@@ -325,7 +337,7 @@ export const EditorEvents = () => {
         type: PreviewType.Monomer,
         monomer: monomerItem,
         attachmentPointsToBonds,
-        target: e.target,
+        target: event_.target,
       };
 
       debouncedShowPreview(monomerPreviewData);
@@ -334,8 +346,8 @@ export const EditorEvents = () => {
   );
 
   const handleOpenDrawingEntityTooltip = useCallback(
-    (e) => {
-      const renderer: BaseRenderer = e.target.__data__;
+    (event_) => {
+      const renderer: BaseRenderer = event_.target.__data__;
 
       if (
         !(renderer instanceof AtomRenderer) &&
@@ -352,7 +364,7 @@ export const EditorEvents = () => {
       const textPreviewData: TextPreviewState = {
         type: PreviewType.Text,
         text: tooltipText,
-        target: e.target,
+        target: event_.target,
       };
       debouncedShowPreview(textPreviewData);
     },
@@ -371,11 +383,11 @@ export const EditorEvents = () => {
     editor?.events.mouseOverDrawingEntity.add(handleOpenDrawingEntityTooltip);
     editor?.events.mouseLeaveDrawingEntity.add(handleClosePreview);
 
-    const onMoveHandler = (e) => {
+    const onMoveHandler = (event_) => {
       handleClosePreview();
-      const isLeftClick = e.buttons === 1;
+      const isLeftClick = event_.buttons === 1;
       if (!isLeftClick || !noPreviewTools.has(activeTool)) {
-        handleOpenPreview(e);
+        handleOpenPreview(event_);
       }
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);

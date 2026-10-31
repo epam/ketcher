@@ -34,7 +34,7 @@ import {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
 import {
-  generateSequenceContextMenuProps,
+  generateSequenceContextMenuProperties,
   isEstablishHydrogenBondDisabled,
   isNodeContainHydrogenBonds,
 } from 'components/contextMenu/SequenceItemContextMenu/helpers';
@@ -79,7 +79,7 @@ export const SequenceItemContextMenu = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
-  const menuProps = generateSequenceContextMenuProps(selections, t);
+  const menuProperties = generateSequenceContextMenuProperties(selections, t);
   const selectedMonomers: BaseMonomer[] =
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
@@ -121,7 +121,7 @@ export const SequenceItemContextMenu = ({
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
-      title: menuProps?.title,
+      title: menuProperties?.title,
       isMenuTitle: true,
       disabled: true,
       hidden: ({
@@ -131,7 +131,7 @@ export const SequenceItemContextMenu = ({
       }) => {
         return (
           !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleoelement
+          !menuProperties?.isSelectedAtLeastOneNucleoelement
         );
       },
     },
@@ -223,7 +223,7 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
       title: t('contextMenu.sequenceItem.modifyInRnaBuilder'),
-      disabled: !menuProps?.isSelectedOnlyNucleoelements,
+      disabled: !menuProperties?.isSelectedOnlyNucleoelements,
       hidden: ({
         props,
       }: {
@@ -231,7 +231,7 @@ export const SequenceItemContextMenu = ({
       }) => {
         return (
           !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleoelement
+          !menuProperties?.isSelectedAtLeastOneNucleoelement
         );
       },
     },
@@ -270,16 +270,16 @@ export const SequenceItemContextMenu = ({
         dispatch(setActivePreset({}));
         dispatch(setActiveRnaBuilderItem(null));
         if (
-          menuProps?.selectedSequenceLabeledNodes?.length &&
-          menuProps?.title
+          menuProperties?.selectedSequenceLabeledNodes?.length &&
+          menuProperties?.title
         ) {
-          dispatch(setSequenceSelectionName(menuProps?.title));
+          dispatch(setSequenceSelectionName(menuProperties?.title));
           dispatch(
-            setSequenceSelection(menuProps?.selectedSequenceLabeledNodes),
+            setSequenceSelection(menuProperties?.selectedSequenceLabeledNodes),
           );
           dispatch(
             setIsSequenceFirstsOnlyNucleoelementsSelected(
-              menuProps?.isSequenceFirstsOnlyNucleoelementsSelected,
+              menuProperties?.isSequenceFirstsOnlyNucleoelementsSelected,
             ),
           );
         }
@@ -313,7 +313,10 @@ export const SequenceItemContextMenu = ({
           selections?.length
             ? selections
                 .reduce(
-                  (acc, selectionRange) => [...acc, ...selectionRange],
+                  (accumulator, selectionRange) => [
+                    ...accumulator,
+                    ...selectionRange,
+                  ],
                   [],
                 )
                 .map((nodeSelection) => nodeSelection.twoStrandedNode)

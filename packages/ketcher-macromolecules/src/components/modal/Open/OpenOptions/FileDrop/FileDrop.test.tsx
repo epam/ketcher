@@ -17,14 +17,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IconName } from 'ketcher-react';
 
-import { FileDrop, FileDropProps } from './FileDrop';
+import { FileDrop, FileDropProperties } from './FileDrop';
 
 const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
   iconName: 'arrow-upward' as IconName,
   onDropAccepted: jest.fn(),
-} as FileDropProps;
+} as FileDropProperties;
 
 const mockOptionalProps = {
   disabled: true,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,13 +25,10 @@ import modals from '../../dialog';
 import useResizeObserver from 'use-resize-observer/polyfilled';
 import { ketcherProvider } from 'ketcher-core';
 import type Editor from '../../../editor';
+import type { ModalState } from '../../state/modal';
 
 interface ModalProps extends BaseCallProps {
-  modal: {
-    name: string;
-    form: any;
-    prop: any;
-  };
+  modal: Pick<ModalState, 'name' | 'form' | 'prop'>;
 }
 
 type Props = ModalProps & BaseCallProps & ModalContainerProps;
@@ -40,6 +36,46 @@ type Props = ModalProps & BaseCallProps & ModalContainerProps;
 type ModalContentProps = Omit<Props, 'modal'> & {
   modal: NonNullable<Props['modal']>;
 };
+
+/**
+ * Dialogs that must not dim or center over the application. The overlay element is
+ * still rendered so it keeps swallowing pointer input to the canvas and the toolbars.
+ */
+const NON_MODAL_DIALOGS = new Set(['settings']);
+
+/**
+ * Dialogs that get drag-to-move and resize-from-border behaviour. The overlay marks
+ * itself with data-draggable="true" so Dialog detects it via parentElement lookup.
+ */
+const DRAGGABLE_DIALOGS = new Set([
+  'open',
+  'analyse',
+  'recognize',
+  'period-table',
+  'extended-table',
+  'rgroup',
+  'attach',
+  'templates',
+  'miew',
+  'atomProps',
+  'attachmentPoints',
+  'automap',
+  'bondProps',
+  'check',
+  'enhancedStereo',
+  'labelEdit',
+  'rgroupLogic',
+  'removeFG',
+  'editMonomer',
+  'save',
+  'sgroup',
+  'text',
+  'confirm',
+  'info-modal',
+]);
+
+// No dialog rendered through this file is resizable — only the Settings panel
+// (which uses SettingsPanel.tsx directly) keeps resize handles.
 
 function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,9 +98,13 @@ function ModalContent({ modal, ketcherId, ...rest }: ModalContentProps) {
 
   return (
     <div
-      className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
+      className={clsx(classes.modalOverlay, selectClasses.selectContainer, {
+        [classes.nonModal]: NON_MODAL_DIALOGS.has(modal.name),
+        [classes.draggableModal]: DRAGGABLE_DIALOGS.has(modal.name),
+      })}
       ref={containerRef}
       data-testid={`${modal.name}-dialog`}
+      data-draggable={DRAGGABLE_DIALOGS.has(modal.name) ? 'true' : undefined}
     >
       <Component
         className={clsx({

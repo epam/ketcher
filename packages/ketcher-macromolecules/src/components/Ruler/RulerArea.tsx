@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { D3DragEvent } from 'd3';
+import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
@@ -52,6 +51,12 @@ const getTranslateValue = (layoutMode: LayoutMode, lineLength: number) => {
   return 0;
 };
 
+const getDragPosition = (
+  transform: ZoomTransform,
+  translateValue: number,
+  dragDelta: number,
+): number => transform.invertX(transform.applyX(translateValue) + dragDelta);
+
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
   const { width: rootWidth } = useContext(RootSizeContext);
@@ -59,6 +64,11 @@ export const RulerArea = () => {
   const lineLengthValue = editorLineLength[layoutMode];
 
   const editor = useSelector(selectEditor);
+
+  const canvasContainer = editor?.canvas.parentElement;
+  const setEditorLineLength = editor?.events.setEditorLineLength;
+  const toggleLineLengthHighlighting =
+    editor?.events.toggleLineLengthHighlighting;
 
   const dragStartX = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
@@ -79,10 +89,7 @@ export const RulerArea = () => {
     const handlePosition = translateValueWithZoomAndDrag + RulerHandleOffsetX;
     let inputPosition = translateValueWithZoomAndDrag + RulerInputOffsetX;
 
-    const visibleEdges = getVisibleEdges(
-      editor?.canvas.parentElement,
-      rootWidth,
-    );
+    const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
     if (!visibleEdges) {
       return [inputPosition, handlePosition];
     }
@@ -98,19 +105,13 @@ export const RulerArea = () => {
     }
 
     return [inputPosition, handlePosition];
-  }, [
-    editor?.canvas.parentElement,
-    rootWidth,
-    transform,
-    translateValue,
-    dragDelta,
-  ]);
+  }, [canvasContainer, rootWidth, transform, translateValue, dragDelta]);
 
   const updateSettings = useCallback(
     (value: number) => {
-      editor?.events.setEditorLineLength.dispatch({ [layoutMode]: value });
+      setEditorLineLength?.dispatch({ [layoutMode]: value });
     },
-    [editor?.events?.setEditorLineLength, layoutMode],
+    [setEditorLineLength, layoutMode],
   );
 
   const calculateLineLength = useCallback(
@@ -121,9 +122,11 @@ export const RulerArea = () => {
             indentsInSequenceMode * SequenceModeIndentWidth -
             SequenceModeStartOffset) /
           SequenceModeItemWidth;
+
         return Math.max(10, Math.round(rawCount / 10) * 10);
       } else if (layoutMode === 'snake-layout-mode') {
         const rawCount = (position - SnakeModeStartOffset) / SnakeModeItemWidth;
+
         return Math.max(1, Math.round(rawCount));
       }
 
@@ -135,8 +138,7 @@ export const RulerArea = () => {
   const calculateDragPosition = useCallback(
     (initialScreenX: number) => {
       const dragDelta = initialScreenX - dragStartX.current;
-      const screenX = transform.applyX(translateValue) + dragDelta;
-      return [dragDelta, transform.invertX(screenX)];
+      return [dragDelta, getDragPosition(transform, translateValue, dragDelta)];
     },
     [transform, translateValue],
   );
@@ -146,15 +148,14 @@ export const RulerArea = () => {
       return lineLengthValue;
     }
 
-    const [, dragPosition] = calculateDragPosition(
-      dragStartX.current + dragDelta,
+    return calculateLineLength(
+      getDragPosition(transform, translateValue, dragDelta),
     );
-    return calculateLineLength(dragPosition);
   }, [
     isDragging,
     lineLengthValue,
-    calculateDragPosition,
-    dragStartX,
+    transform,
+    translateValue,
     dragDelta,
     calculateLineLength,
   ]);
@@ -163,12 +164,10 @@ export const RulerArea = () => {
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       setIsDragging(true);
       dragStartX.current = event.sourceEvent.clientX;
-      editor?.events.toggleLineLengthHighlighting.dispatch(
-        true,
-        translateValue,
-      );
+
+      toggleLineLengthHighlighting?.dispatch(true, translateValue);
     },
-    [editor?.events?.toggleLineLengthHighlighting, translateValue],
+    [toggleLineLengthHighlighting, translateValue],
   );
 
   // Scrolls the canvas when the dragged slider would leave the visible area,
@@ -177,10 +176,7 @@ export const RulerArea = () => {
   const scrollToKeepHandleVisible = useCallback(
     (sliderTranslateValue: number, dragDelta = 0) => {
       const zoomTool = editor?.zoomTool;
-      const visibleEdges = getVisibleEdges(
-        editor?.canvas.parentElement,
-        rootWidth,
-      );
+      const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
       if (!zoomTool || !visibleEdges) {
         return;
       }
@@ -202,7 +198,7 @@ export const RulerArea = () => {
         zoomTool.scrollBy(leftOvershoot, 0);
       }
     },
-    [editor?.zoomTool, editor?.canvas.parentElement, rootWidth],
+    [editor?.zoomTool, canvasContainer, rootWidth],
   );
 
   const handleDrag = useCallback(
@@ -210,12 +206,13 @@ export const RulerArea = () => {
       const [dragDelta, dragPosition] = calculateDragPosition(
         event.sourceEvent.clientX,
       );
+
       setDragDelta(dragDelta);
       scrollToKeepHandleVisible(translateValue, dragDelta);
-      editor?.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
+      toggleLineLengthHighlighting?.dispatch(true, dragPosition);
     },
     [
-      editor?.events?.toggleLineLengthHighlighting,
+      toggleLineLengthHighlighting,
       calculateDragPosition,
       scrollToKeepHandleVisible,
       translateValue,
@@ -238,13 +235,14 @@ export const RulerArea = () => {
 
       setDragDelta(0);
       dragStartX.current = 0;
-      editor?.events.toggleLineLengthHighlighting.dispatch(false);
+
+      toggleLineLengthHighlighting?.dispatch(false);
     },
     [
       calculateDragPosition,
       calculateLineLength,
       lineLengthValue,
-      editor?.events.toggleLineLengthHighlighting,
+      toggleLineLengthHighlighting,
       updateSettings,
       scrollToKeepHandleVisible,
       layoutMode,
@@ -270,12 +268,14 @@ export const RulerArea = () => {
         layoutMode={layoutMode}
         onCommitValue={updateSettings}
       />
+
       <RulerHandle
         offsetX={handleOffsetX}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
       />
+
       <RulerScale transform={transform} layoutMode={layoutMode} />
     </div>
   ) : null;

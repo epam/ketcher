@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,11 @@ import {
   type FC,
   type PropsWithChildren,
   type ReactElement,
+  useCallback,
   useEffect,
   useLayoutEffect,
+  useRef,
+  useState,
 } from 'react';
 
 import clsx from 'clsx';
@@ -28,7 +31,7 @@ import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
-import { useDraggable } from '../../hooks/useDraggable';
+import { useSettingsPanelDrag } from '../../script/ui/views/modal/components/meta/Settings/useSettingsPanelDrag';
 
 interface DialogParamsCallProps {
   onCancel?: () => void;
@@ -82,11 +85,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const draggable = params?.draggable !== false; // Default to true unless explicitly set to false
-  const { position, isDragging, handleRef, targetRef } =
-    useDraggable<HTMLDialogElement>({
-      enabled: draggable,
-    });
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const { t } = useTranslation('common');
   // `button` values are also semantic identifiers (see isButtonOk/exit below)
   // and testids — only their *displayed* text is translated here, by default,
@@ -98,8 +97,83 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     Save: t('button.save'),
   };
 
+  // ---------------------------------------------------------------------------
+  // Drag & resize — reuses useSettingsPanelDrag so the behaviour is identical
+  // to the Settings floating panel. Enabled when the dialog is mounted inside a
+  // [data-draggable="true"] overlay (set by Modal.tsx for opted-in dialogs).
+  // parentElement check (not closest) so nested inline dialogs don't inherit it.
+  // ---------------------------------------------------------------------------
+  const [overlayElement, setOverlayElement] = useState<HTMLElement | null>(
+    null,
+  );
+
   useLayoutEffect(() => {
-    const dialogElement = targetRef.current;
+    const parent = dialogRef.current?.parentElement;
+    setOverlayElement(parent instanceof HTMLElement ? parent : null);
+  }, []);
+
+  const isDraggable =
+    params?.draggable ??
+    (overlayElement !== null && overlayElement.dataset.draggable !== 'false');
+  const isResizable = overlayElement?.dataset?.resizable === 'true';
+
+  const {
+    rect,
+    setRect,
+    startDrag,
+    startResizeTop,
+    startResizeBottom,
+    getBounds,
+    setPreferredHeight,
+  } = useSettingsPanelDrag({
+    panelRef: dialogRef,
+    boundsElement: isDraggable ? overlayElement : null,
+    gutter: 0,
+  });
+
+  // Centre the dialog inside the overlay on first show. Fires when overlayElement
+  // is detected (once per mount).
+  useLayoutEffect(() => {
+    if (!isDraggable) return;
+    const dialog = dialogRef.current;
+    const bounds = getBounds();
+    if (!dialog || !bounds) return;
+
+    const width = dialog.offsetWidth;
+    const naturalHeight = dialog.scrollHeight;
+    const height = Math.min(naturalHeight, bounds.bottom - bounds.top);
+
+    setPreferredHeight(naturalHeight);
+    setRect({
+      left: bounds.left + (bounds.right - bounds.left - width) / 2,
+      top: bounds.top + (bounds.bottom - bounds.top - height) / 2,
+      width,
+      height,
+    });
+    // Only re-run when the overlay element reference changes (i.e., on mount).
+  }, [
+    overlayElement,
+    children,
+    isDraggable,
+    getBounds,
+    setPreferredHeight,
+    setRect,
+  ]);
+
+  // Wrap startDrag to skip interactive elements inside the header.
+  const handleHeaderPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (
+        (e.target as Element).closest('button,input,select,a,[role="button"]')
+      )
+        return;
+      startDrag(e);
+    },
+    [startDrag],
+  );
+
+  useLayoutEffect(() => {
+    const dialogElement = dialogRef.current;
 
     // Use document.querySelector rather than dialogElement.closest() because
     // in popup mode the native <dialog> lives inside a MUI portal appended to
@@ -134,7 +208,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
         clipArea?.focus();
       }, 0);
     };
-  }, [focusable, targetRef]);
+  }, [focusable]);
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save';
@@ -156,7 +230,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const isFocusInsideDialog = targetRef.current?.contains(
+      const isFocusInsideDialog = dialogRef.current?.contains(
         document.activeElement,
       );
 
@@ -166,8 +240,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
       const { key } = event;
       const active = document.activeElement;
-      const activeTextarea = active?.tagName === 'TEXTAREA';
-      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+      const isActiveTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !isActiveTextarea)) {
         exit(key === 'Enter' ? 'OK' : 'Cancel');
         event.preventDefault();
         event.stopPropagation();
@@ -183,39 +257,39 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   return (
     <dialog
-      ref={targetRef}
+      ref={dialogRef}
       open
       data-testid={'info-modal-window'}
       tabIndex={-1}
-      className={clsx(
-        styles.dialog,
-        className,
-        params?.className,
-        draggable && styles.draggable,
-        isDragging && styles.dragging,
-      )}
+      className={clsx(styles.dialog, className, params?.className)}
       style={
-        draggable
-          ? {
-              transform: `translate(${position.x}px, ${position.y}px)`,
-              left: 0,
-              top: 0,
-              margin: 0,
-            }
+        isDraggable
+          ? rect
+            ? {
+                position: 'absolute',
+                left: rect.left,
+                top: rect.top,
+                ...(isResizable && { height: rect.height }),
+              }
+            : { visibility: 'hidden' }
           : undefined
       }
       {...rest}
     >
+      {isDraggable && isResizable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeTop}
+          data-testid="dialog-resize-top"
+        />
+      )}
       <header
-        ref={
-          handleRef as React.RefObject<HTMLElement> &
-            React.RefObject<HTMLDivElement>
-        }
         className={clsx(
           styles.header,
           withDivider && styles.withDivider,
-          draggable && styles.draggableHeader,
+          isDraggable && styles.draggableHeader,
         )}
+        onPointerDown={isDraggable ? handleHeaderPointerDown : undefined}
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
@@ -240,9 +314,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           {footerContent}
           {buttons.length > 0 &&
             buttons.map((button) =>
-              typeof button !== 'string' ? (
-                button
-              ) : (
+              typeof button === 'string' ? (
                 <input
                   key={button}
                   type="button"
@@ -259,9 +331,18 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
+              ) : (
+                button
               ),
             )}
         </footer>
+      )}
+      {isDraggable && isResizable && (
+        <div
+          className={styles.resizeHandle}
+          onPointerDown={startResizeBottom}
+          data-testid="dialog-resize-bottom"
+        />
       )}
     </dialog>
   );

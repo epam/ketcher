@@ -8,7 +8,7 @@ import {
 } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
 
-export const validateMultitailArrows = (json: KetFileRootContent): boolean => {
+export const areMultitailArrowsValid = (json: KetFileRootContent): boolean => {
   const nodes: Array<KetFileNode<unknown>> = json.root.nodes;
   return nodes.every((node) => {
     if (node.type === MULTITAIL_ARROW_SERIALIZE_KEY) {
@@ -23,3 +23,5 @@ export const validateMultitailArrows = (json: KetFileRootContent): boolean => {
     return true;
   });
 };
+
+export { areMultitailArrowsValid as validateMultitailArrows };

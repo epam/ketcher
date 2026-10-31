@@ -93,12 +93,17 @@ describe('BondTool rejected drag preview', () => {
         xy0: new Vec2(),
         pageX0: 0,
         pageY0: 0,
+        pointerDownTimeStamp: 0,
         hasStartedDragging: true,
         hapticValidationFailed: false,
         attachmentGroupValidationFailed: false,
         action: previewAction,
       };
-      const event = { clientX: 0, clientY: 0 } as PointerEvent;
+      const event = {
+        clientX: 0,
+        clientY: 0,
+        timeStamp: 301,
+      } as PointerEvent;
       const rejectBondOperation = Reflect.get(tool, 'rejectBondOperation') as (
         event: PointerEvent,
         dragContext: BondToolDragContext,
@@ -149,12 +154,17 @@ describe('BondTool rejected drag preview', () => {
       xy0: new Vec2(),
       pageX0: 0,
       pageY0: 0,
+      pointerDownTimeStamp: 0,
       hasStartedDragging: true,
       hapticValidationFailed: false,
       attachmentGroupValidationFailed: false,
       item: { map: 'atoms', id: beginAtomId },
     };
-    const event = { clientX: 0, clientY: 0 } as PointerEvent;
+    const event = {
+      clientX: 0,
+      clientY: 0,
+      timeStamp: 301,
+    } as PointerEvent;
     const applyBondAction = Reflect.get(tool, 'applyBondAction') as (
       event: PointerEvent,
       dragContext: BondToolDragContext,

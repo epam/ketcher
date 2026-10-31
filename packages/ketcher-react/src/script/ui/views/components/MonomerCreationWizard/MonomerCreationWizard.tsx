@@ -95,7 +95,7 @@ import {
   getOtherLibraryMonomers,
   hasMonomerFieldCollision,
   isValidMonomerName,
-} from './MonomerCreationWizardFields.utils';
+} from './MonomerCreationWizardFields.utilities';
 import { saveLibraryMonomer } from './MonomerCreationWizard.library';
 
 const getInitialWizardState = (
@@ -757,8 +757,8 @@ const validateAttachmentPoints = (attachmentPoints: AttachmentPointName[]) => {
   }
 
   const expectedSequence: number[] = [];
-  for (let i = 3; i < 3 + sideAttachmentPoints.length; i++) {
-    expectedSequence.push(i);
+  for (let index = 3; index < 3 + sideAttachmentPoints.length; index++) {
+    expectedSequence.push(index);
   }
 
   const actualNumbers = sideAttachmentPoints
@@ -879,26 +879,26 @@ const validateModificationTypes = (
   return { notifications, errors };
 };
 
-type MonomerCreationWizardInternalProps = {
+type MonomerCreationWizardInternalProperties = {
   monomerCreationState: NonNullable<MonomerCreationState>;
 };
 
 const MonomerCreationWizardInternal = ({
   monomerCreationState,
-}: MonomerCreationWizardInternalProps) => {
+}: MonomerCreationWizardInternalProperties) => {
   const { t } = useTranslation(['components', 'common']);
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
   const dispatch = useDispatch();
 
-  const leftColumnRef = useRef<HTMLDivElement>(null);
+  const leftColumnReference = useRef<HTMLDivElement>(null);
 
   // Fit the structure into the area left free by the wizard's panels once,
   // when the wizard opens. Exiting the wizard does not adjust zoom/position.
   useLayoutEffect(() => {
-    if (leftColumnRef.current) {
-      editor.fitStructToMonomerCreationViewport(leftColumnRef.current);
+    if (leftColumnReference.current) {
+      editor.fitStructToMonomerCreationViewport(leftColumnReference.current);
     }
   }, [editor]);
 
@@ -967,8 +967,8 @@ const MonomerCreationWizardInternal = ({
       newLeavingAtomLabel: AtomLabel,
       componentKey: RnaPresetComponentKey,
     ) => {
-      setConnectionLeavingAtoms((prev) => {
-        const next = new Map(prev);
+      setConnectionLeavingAtoms((previous) => {
+        const next = new Map(previous);
         next.set(`${componentKey}:${apName}`, newLeavingAtomLabel);
         return next;
       });
@@ -1273,7 +1273,7 @@ const MonomerCreationWizardInternal = ({
   // Capture the attachment-point-in-use data once at mount so the effect below
   // can read it without adding it as a reactive dep (the notification is only
   // relevant when the wizard opens, not on subsequent state changes).
-  const attachmentAtomIdsAtOpenRef = useRef(
+  const attachmentAtomIdsAtOpenReference = useRef(
     monomerCreationState?.attachmentAtomIdsWithExternalBonds,
   );
 
@@ -1281,7 +1281,7 @@ const MonomerCreationWizardInternal = ({
   // existing monomer whose attachment points are currently in use by canvas bonds.
   useEffect(() => {
     const attachmentAtomIdsWithExternalBonds =
-      attachmentAtomIdsAtOpenRef.current;
+      attachmentAtomIdsAtOpenReference.current;
     if (
       !attachmentAtomIdsWithExternalBonds ||
       attachmentAtomIdsWithExternalBonds.size === 0
@@ -2126,7 +2126,7 @@ const MonomerCreationWizardInternal = ({
       className={styles.monomerCreationWizard}
       data-testid="monomer-creation-wizard"
     >
-      <div className={styles.leftColumn} ref={leftColumnRef}>
+      <div className={styles.leftColumn} ref={leftColumnReference}>
         <p className={styles.wizardTitle}>
           <Icon name={CREATE_MONOMER_TOOL_NAME} />
           {originalMonomerItem

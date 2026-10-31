@@ -134,8 +134,8 @@ export const useAttachmentPointSelectsData = (
 
   const nameOptions: Option[] = Array.from({
     length: attachmentPointNameOptionsLength,
-  }).map((_, i) => {
-    const name = `R${i + 1}`;
+  }).map((_, index) => {
+    const name = `R${index + 1}`;
     return {
       value: name,
       label: name,

@@ -36,7 +36,7 @@ interface GenericElement {
   pseudo: string;
 }
 
-interface TableProps {
+interface TableProperties {
   pseudo?: string;
   label?: string;
   disabledQueryElements: Array<string> | null | undefined;
@@ -44,10 +44,10 @@ interface TableProps {
   onCancel: () => void;
 }
 
-const Table = (props: TableProps) => {
+const Table = (properties: TableProperties) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const [value, setValue] = useState<string | null>(
-    props.pseudo ? (props.label ?? null) : null,
+    properties.pseudo ? (properties.label ?? null) : null,
   );
 
   const isSelected = (label: string): boolean => value === label;
@@ -65,7 +65,7 @@ const Table = (props: TableProps) => {
 
   const onAtomActivate = (label: string): void => {
     setValue(label);
-    props.onOk(result());
+    properties.onOk(result());
   };
 
   return (
@@ -73,7 +73,7 @@ const Table = (props: TableProps) => {
       title={t('dialogs:extendedTable.dialogTitle')}
       withDivider
       className={classes.extendedTable}
-      params={props}
+      params={properties}
       result={result}
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: t('dialogs:shared.addButton') }}
@@ -83,7 +83,7 @@ const Table = (props: TableProps) => {
         selected={isSelected}
         onAtomSelect={onAtomSelect}
         onAtomActivate={onAtomActivate}
-        disabledQueryElements={props.disabledQueryElements ?? null}
+        disabledQueryElements={properties.disabledQueryElements ?? null}
       ></GenericGroups>
     </Dialog>
   );
@@ -93,46 +93,46 @@ interface State {
   editor: Editor;
 }
 
-interface OwnProps {
+interface OwnProperties {
   isNestedModal?: boolean;
   onOk: (result: unknown) => void;
 }
 
-interface StateProps {
+interface StateProperties {
   disabledQueryElements: Array<string> | null | undefined;
   pseudo?: string;
   label?: string;
 }
 
-interface DispatchProps {
+interface DispatchProperties {
   onOk: (result: unknown) => void;
 }
 
-function mapSelectionToProps(editor: Editor): Partial<StateProps> {
+function mapSelectionToProperties(editor: Editor): Partial<StateProperties> {
   const selection = editor.selection();
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
     if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<StateProps>;
+    return { ...fromElement(atom) } as Partial<StateProperties>;
   }
 
   return {};
 }
 
-const mapStateToProps = (state: State): StateProps => {
+const mapStateToProperties = (state: State): StateProperties => {
   const editor = state.editor;
   const disabledQueryElements = editor.render.options.disableQueryElements;
-  return { disabledQueryElements, ...mapSelectionToProps(editor) };
+  return { disabledQueryElements, ...mapSelectionToProperties(editor) };
 };
 
-const mapDispatchToProps = (
+const mapDispatchToProperties = (
   dispatch: Dispatch,
-  ownProps: OwnProps,
-): DispatchProps => {
+  ownProperties: OwnProperties,
+): DispatchProperties => {
   return {
     onOk: (result: unknown) => {
-      if (!ownProps.isNestedModal) {
+      if (!ownProperties.isNestedModal) {
         dispatch(
           onAction({
             tool: 'atom',
@@ -140,11 +140,14 @@ const mapDispatchToProps = (
           }),
         );
       }
-      ownProps.onOk(result);
+      ownProperties.onOk(result);
     },
   };
 };
 
-const ExtendedTable = connect(mapStateToProps, mapDispatchToProps)(Table);
+const ExtendedTable = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(Table);
 
 export default ExtendedTable;

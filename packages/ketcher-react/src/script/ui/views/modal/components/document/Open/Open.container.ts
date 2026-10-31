@@ -14,29 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { type OpenProps } from './Open';
+import Open, { type OpenProperties } from './Open';
 
-import type { BaseCallProps } from '../../../modal.types';
+import type { BaseCallProperties } from '../../../modal.types';
 import { connect } from 'react-redux';
 import { canExecuteClipboardCommand } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';
 import { changeImage } from '../../../../../state/options';
 
-type StateProps = OpenProps;
+type StateProperties = OpenProperties;
 
-type DispatchProps = {
-  onOk: BaseCallProps['onOk'];
+type DispatchProperties = {
+  onOk: BaseCallProperties['onOk'];
   onImageUpload: (file: File) => void;
 };
 
-const mapStateToProps = (state): StateProps => ({
+const mapStateToProperties = (state): StateProperties => ({
   server: state.server,
   errorHandler: state.editor.errorHandler,
   isRecognizeDisabled: state.actionState.recognize?.disabled,
   isAnalyzingFile: state.requestsStatuses.isAnalyzingFile,
 });
 
-const mapDispatchToProps = (dispatch): DispatchProps => ({
+const mapDispatchToProperties = (dispatch): DispatchProperties => ({
   onOk: (result) => {
     if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
@@ -54,5 +54,8 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(Open);
+const OpenContainer = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(Open);
 export default OpenContainer;

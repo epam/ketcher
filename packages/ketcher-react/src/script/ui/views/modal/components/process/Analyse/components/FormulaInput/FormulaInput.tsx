@@ -20,28 +20,28 @@ import styles from './FormulaInput.module.less';
 const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
 const errorRegexp = /error:.*/g;
 
-interface FormulaInputMarkdownProps {
+interface FormulaInputMarkdownProperties {
   content: ReactNode;
   contentEditable: boolean;
 }
 
-interface FormulaInputProps {
+interface FormulaInputProperties {
   value: string;
   contentEditable: boolean;
 }
 
-function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
+function formulaInputMarkdown(contentData: FormulaInputMarkdownProperties) {
   const { content, contentEditable } = contentData;
-  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.keyCode === 8) {
-      e.preventDefault();
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.keyCode === 8) {
+      event.preventDefault();
     }
   };
   return (
     <div
       className={styles.chem_input}
-      onKeyPress={(e) => e.preventDefault()}
-      onPaste={(e) => e.preventDefault()}
+      onKeyPress={(event) => event.preventDefault()}
+      onPaste={(event) => event.preventDefault()}
       onKeyDown={onKeyDown}
       contentEditable={contentEditable}
       suppressContentEditableWarning={true}
@@ -51,7 +51,7 @@ function formulaInputMarkdown(contentData: FormulaInputMarkdownProps) {
   );
 }
 
-function FormulaInput({ value, contentEditable }: FormulaInputProps) {
+function FormulaInput({ value, contentEditable }: FormulaInputProperties) {
   if (errorRegexp.test(value)) {
     return formulaInputMarkdown({ content: value, contentEditable });
   }

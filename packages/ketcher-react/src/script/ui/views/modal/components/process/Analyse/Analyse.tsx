@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { range } from 'lodash/fp';
 import { Dialog } from '../../../../components';
-import type { DialogParams } from '../../../../../../../components/Dialog/Dialog';
+import type { DialogParameters } from '../../../../../../../components/Dialog/Dialog';
 import { analyse } from '../../../../../state/server';
 import { changeRound } from '../../../../../state/options';
 import Select from '../../../../../component/form/Select';
@@ -49,22 +49,22 @@ interface AnalyseItem {
   withSelector: boolean;
 }
 
-interface AnalyseDialogProps extends DialogParams {
+interface AnalyseDialogProperties extends DialogParameters {
   values: AnalyseValues | null;
   round: RoundSettings;
   loading: boolean;
 }
 
-interface AnalyseDialogCallProps {
+interface AnalyseDialogCallProperties {
   onAnalyse: () => void;
   onChangeRound: (roundName: AnalyseRoundName, value: string) => void;
 }
 
-type Props = AnalyseDialogProps & AnalyseDialogCallProps;
+type Properties = AnalyseDialogProperties & AnalyseDialogCallProperties;
 
 function roundOff(value: string | number, round: number): string {
   if (typeof value === 'number') return value.toFixed(round);
-  return value.replace(/\d*\.\d+/g, (str) => (+str).toFixed(round));
+  return value.replace(/\d*\.\d+/g, (string_) => (+string_).toFixed(round));
 }
 
 const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(
@@ -154,8 +154,8 @@ function AnalyseDialog({
   loading,
   onAnalyse,
   onChangeRound,
-  ...props
-}: Props) {
+  ...properties
+}: Properties) {
   const { t } = useTranslation(['common', 'dialogs']);
   useEffect(() => {
     onAnalyse();
@@ -178,7 +178,7 @@ function AnalyseDialog({
       valid={() => true}
       buttons={['OK']}
       buttonsNameMap={{ OK: t('common:button.close') }}
-      params={props}
+      params={properties}
     >
       <ul>
         {analyseItems.map((item) => (
@@ -197,9 +197,9 @@ function AnalyseDialog({
                 <Select
                   options={selectOptions}
                   value={round[item.round]}
-                  onChange={(val) => {
+                  onChange={(value) => {
                     if (item.round) {
-                      onChangeRound(item.round, val);
+                      onChangeRound(item.round, value);
                     }
                   }}
                   className={classes.select}
@@ -214,7 +214,7 @@ function AnalyseDialog({
   );
 }
 
-const mapStateToProps = (state: StoreState) => ({
+const mapStateToProperties = (state: StoreState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -226,12 +226,15 @@ const mapStateToProps = (state: StoreState) => ({
 
 type AppDispatch = ThunkDispatch<StoreState, unknown, Action<string>>;
 
-const mapDispatchToProps = (dispatch: AppDispatch) => ({
+const mapDispatchToProperties = (dispatch: AppDispatch) => ({
   onAnalyse: () => dispatch(analyse()),
-  onChangeRound: (roundName: AnalyseRoundName, val: string) =>
-    dispatch(changeRound(roundName, val)),
+  onChangeRound: (roundName: AnalyseRoundName, value: string) =>
+    dispatch(changeRound(roundName, value)),
 });
 
-const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
+const Analyse = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(AnalyseDialog);
 
 export default Analyse;

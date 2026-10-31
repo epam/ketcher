@@ -7,7 +7,7 @@ import type {
   AtomContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
-import { noOperation } from '../utils';
+import { noOperation } from '../utilities';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
 

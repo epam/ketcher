@@ -30,7 +30,7 @@ import { xor } from 'lodash/fp';
 import { Icon } from 'components';
 import i18n from 'src/i18n/i18n';
 
-interface TableOwnProps {
+interface TableOwnProperties {
   type?: PeriodTableType;
   values?: string[];
   label?: string;
@@ -39,7 +39,7 @@ interface TableOwnProps {
   onOk: (result: PeriodTableResult) => void;
 }
 
-interface TableStateProps {
+interface TableStateProperties {
   isMonomerCreationWizardActive: boolean;
   type?: PeriodTableType;
   values?: string[];
@@ -47,11 +47,13 @@ interface TableStateProps {
   pseudo?: string;
 }
 
-interface TableDispatchProps {
+interface TableDispatchProperties {
   onOk: (result: PeriodTableResult) => void;
 }
 
-type TableProps = TableOwnProps & TableStateProps & TableDispatchProps;
+type TableProperties = TableOwnProperties &
+  TableStateProperties &
+  TableDispatchProperties;
 
 interface TableState {
   type: PeriodTableType;
@@ -60,20 +62,20 @@ interface TableState {
   isInfo: boolean;
 }
 
-class Table extends Component<TableProps, TableState> {
-  constructor(props: TableProps) {
-    super(props);
+class Table extends Component<TableProperties, TableState> {
+  constructor(properties: TableProperties) {
+    super(properties);
     const heliumElement = Elements.get(2);
 
     let initialValue: string | string[] | null = null;
-    if (props.values) {
-      initialValue = props.values;
-    } else if (!props.pseudo && props.label) {
-      initialValue = props.label;
+    if (properties.values) {
+      initialValue = properties.values;
+    } else if (!properties.pseudo && properties.label) {
+      initialValue = properties.label;
     }
 
     this.state = {
-      type: props.type ?? 'atom',
+      type: properties.type ?? 'atom',
       value: initialValue,
       current: heliumElement || ({} as Element),
       isInfo: false,
@@ -157,7 +159,7 @@ class Table extends Component<TableProps, TableState> {
 
     // Cast props to satisfy the Dialog component's expectations
     // The Dialog component expects a looser type for onOk
-    const dialogParams = this.props as unknown as {
+    const dialogParameters = this.props as unknown as {
       onCancel: () => void;
       onOk: (result: unknown) => void;
       isNestedModal?: boolean;
@@ -167,7 +169,7 @@ class Table extends Component<TableProps, TableState> {
       <Dialog
         headerContent={<HeaderContent />}
         className={classes.elementsTable}
-        params={dialogParams}
+        params={dialogParameters}
         result={this.result}
         buttons={['Cancel', 'OK']}
         buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
@@ -198,13 +200,17 @@ class Table extends Component<TableProps, TableState> {
 }
 
 // Helps react-redux connect with this legacy class component under the current React typings.
-const PeriodTableWrapper: FC<TableProps> = (props) => <Table {...props} />;
+const PeriodTableWrapper: FC<TableProperties> = (properties) => (
+  <Table {...properties} />
+);
 
 interface RootState {
   editor: Editor;
 }
 
-function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
+function mapSelectionToProperties(
+  editor: Editor,
+): Partial<TableStateProperties> {
   const selection = editor.selection();
 
   if (
@@ -216,33 +222,33 @@ function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
     if (!atom) return {};
-    return { ...fromElement(atom) } as Partial<TableStateProps>;
+    return { ...fromElement(atom) } as Partial<TableStateProperties>;
   }
 
   return {};
 }
 
-const mapStateToProps = (
+const mapStateToProperties = (
   state: RootState,
-  ownProps: TableOwnProps,
-): TableStateProps => {
-  const result: TableStateProps = {
+  ownProperties: TableOwnProperties,
+): TableStateProperties => {
+  const result: TableStateProperties = {
     isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
   };
 
-  if (ownProps.values || ownProps.label) {
+  if (ownProperties.values || ownProperties.label) {
     return result;
   }
 
-  const selectionProps = mapSelectionToProps(state.editor);
+  const selectionProperties = mapSelectionToProperties(state.editor);
 
-  return { ...selectionProps, ...result };
+  return { ...selectionProperties, ...result };
 };
 
-const mapDispatchToProps = (
+const mapDispatchToProperties = (
   dispatch: Dispatch,
-  ownProps: TableOwnProps,
-): TableDispatchProps => {
+  ownProperties: TableOwnProperties,
+): TableDispatchProperties => {
   return {
     onOk: (result: PeriodTableResult) => {
       if (!result) return;
@@ -250,7 +256,7 @@ const mapDispatchToProps = (
       if (!hasType) {
         dispatch(addAtoms(result.label));
       }
-      if (!ownProps.isNestedModal) {
+      if (!ownProperties.isNestedModal) {
         dispatch(
           onAction({
             tool: 'atom',
@@ -258,14 +264,14 @@ const mapDispatchToProps = (
           }),
         );
       }
-      ownProps.onOk(result);
+      ownProperties.onOk(result);
     },
   };
 };
 
 const PeriodTable = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(PeriodTableWrapper);
 
 export default PeriodTable;

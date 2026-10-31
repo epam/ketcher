@@ -6,7 +6,7 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 import { fromAttachmentGroupAddition, ketcherProvider } from 'ketcher-core';
-import { isAttachmentGroupCreationSelectionValid } from '../utils';
+import { isAttachmentGroupCreationSelectionValid } from '../utilities';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
 

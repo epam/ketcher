@@ -38,7 +38,7 @@ import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizar
 import MonomerCreationWizardBackdrop from '../MonomerCreationWizard/MonomerCreationWizardBackdrop';
 import { Tooltip } from '../Tooltip';
 
-interface StructEditorProps {
+interface StructEditorProperties {
   ketcherId: string;
   prevKetcherId?: string;
   struct?: Struct;
@@ -68,63 +68,69 @@ interface StructEditorState {
 // TODO: need to update component after making refactoring of store
 function setupEditor(
   editor: Editor,
-  props: StructEditorProps,
-  oldProps: Partial<StructEditorProps> = {},
+  properties: StructEditorProperties,
+  oldProperties: Partial<StructEditorProperties> = {},
 ) {
-  const { struct, tool, toolOpts, options } = props;
-  const haveOptionsChanged = !isEqual(options, oldProps.options);
+  const { struct, tool, toolOpts, options } = properties;
+  const haveOptionsChanged = !isEqual(options, oldProperties.options);
 
-  if (struct !== oldProps.struct) editor.struct(struct);
+  if (struct !== oldProperties.struct) editor.struct(struct);
 
-  if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts) {
+  if (tool !== oldProperties.tool || toolOpts !== oldProperties.toolOpts) {
     editor.tool(tool, toolOpts);
-    if (toolOpts !== oldProps.toolOpts) {
+    if (toolOpts !== oldProperties.toolOpts) {
       editor.event.message.dispatch({ info: JSON.stringify(toolOpts) });
     }
   }
 
-  if (oldProps.options && haveOptionsChanged) {
+  if (oldProperties.options && haveOptionsChanged) {
     editor.options(options);
-    editor.setServerSettings(props.serverSettings);
-  } else if (props.serverSettings !== oldProps.serverSettings) {
-    editor.setServerSettings(props.serverSettings);
+    editor.setServerSettings(properties.serverSettings);
+  } else if (properties.serverSettings !== oldProperties.serverSettings) {
+    editor.setServerSettings(properties.serverSettings);
   }
 
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName] !== oldProps[eventName]) {
-      if (oldProps[eventName]) {
-        editor.event[name].remove(oldProps[eventName]);
+    if (properties[eventName] !== oldProperties[eventName]) {
+      if (oldProperties[eventName]) {
+        editor.event[name].remove(oldProperties[eventName]);
       }
 
-      if (props[eventName]) {
-        editor.event[name].add(props[eventName]);
+      if (properties[eventName]) {
+        editor.event[name].add(properties[eventName]);
       }
     }
   });
 
-  if (struct !== oldProps.struct || haveOptionsChanged) {
+  if (struct !== oldProperties.struct || haveOptionsChanged) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }
 }
 
-function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
+function removeEditorHandlers(
+  editor: Editor,
+  properties: StructEditorProperties,
+) {
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName]) editor.event[name].remove(props[eventName]);
+    if (properties[eventName]) editor.event[name].remove(properties[eventName]);
   });
 }
 
-class StructEditor extends Component<StructEditorProps, StructEditorState> {
+class StructEditor extends Component<
+  StructEditorProperties,
+  StructEditorState
+> {
   editor!: Editor;
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
 
-  constructor(props: StructEditorProps) {
-    super(props);
+  constructor(properties: StructEditorProperties) {
+    super(properties);
     this.state = {
       enableCursor: false,
       tooltip: '',
@@ -170,10 +176,10 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
    * @param {WheelEvent} event
    */
   handleHorizontalScroll(event: WheelEvent) {
-    this.editor.render.setViewBox((prev) => ({
-      ...prev,
+    this.editor.render.setViewBox((previous) => ({
+      ...previous,
       minX:
-        prev.minX -
+        previous.minX -
         getSmoothScrollDelta(
           (event as WheelEvent & { wheelDelta: number }).wheelDelta,
           this.editor.zoom(),
@@ -186,19 +192,21 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
    * @param {WheelEvent} event
    */
   handleScroll(event: WheelEvent) {
-    this.editor.render.setViewBox((prev) => ({
-      ...prev,
-      minX: prev.minX + getSmoothScrollDelta(event.deltaX, this.editor.zoom()),
-      minY: prev.minY + getSmoothScrollDelta(event.deltaY, this.editor.zoom()),
+    this.editor.render.setViewBox((previous) => ({
+      ...previous,
+      minX:
+        previous.minX + getSmoothScrollDelta(event.deltaX, this.editor.zoom()),
+      minY:
+        previous.minY + getSmoothScrollDelta(event.deltaY, this.editor.zoom()),
     }));
   }
 
   shouldComponentUpdate(
-    nextProps: StructEditorProps,
+    nextProperties: StructEditorProperties,
     nextState: StructEditorState,
   ) {
     return (
-      this.props.indigoVerification !== nextProps.indigoVerification ||
+      this.props.indigoVerification !== nextProperties.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor ||
       nextState.tooltip !== this.state.tooltip
     );
@@ -206,13 +214,13 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
 
   // NOSONAR - canvas editor must be updated before React renders to prevent
   // white-screen states during struct changes; componentDidUpdate fires too late.
-  UNSAFE_componentWillReceiveProps(props: StructEditorProps) {
+  UNSAFE_componentWillReceiveProps(properties: StructEditorProperties) {
     // NOSONAR
-    setupEditor(this.editor, props, this.props);
+    setupEditor(this.editor, properties, this.props);
   }
 
   componentDidMount() {
-    const prevKetcher = this.props.prevKetcherId
+    const previousKetcher = this.props.prevKetcherId
       ? ketcherProvider.getKetcher(this.props.prevKetcherId)
       : undefined;
 
@@ -225,7 +233,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         ...this.props.options,
       },
       { ...this.props.serverSettings },
-      prevKetcher?.editor,
+      previousKetcher?.editor,
     );
 
     ketcher.addEditor(this.editor);
@@ -239,23 +247,23 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 
-    this.editor.event.message.add((msg) => {
-      const el = this.logRef.current;
-      if (!el) return;
-      if (msg.info && this.props.showAttachmentPoints) {
+    this.editor.event.message.add((message) => {
+      const element = this.logRef.current;
+      if (!element) return;
+      if (message.info && this.props.showAttachmentPoints) {
         try {
-          const parsedInfo = JSON.parse(msg.info);
-          el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
+          const parsedInfo = JSON.parse(message.info);
+          element.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
         } catch (error) {
           KetcherLogger.error(
             'StructEditor.tsx::StructEditor::componentDidMount',
             error,
           );
-          el.innerHTML = msg.info;
+          element.innerHTML = message.info;
         }
-        el.classList.add(classes.visible);
+        element.classList.add(classes.visible);
       } else {
-        el.classList.remove(classes.visible);
+        element.classList.remove(classes.visible);
       }
     });
 
@@ -332,7 +340,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   render() {
-    const omittedProps = [
+    const omittedProperties = [
       'ketcherId',
       'prevKetcherId',
       'struct',
@@ -366,8 +374,16 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       'serverSettings',
     ];
 
-    const remaining = omit(this.props, omittedProps) as StructEditorProps;
-    const { Tag = 'div', className, indigoVerification, ...props } = remaining;
+    const remaining = omit(
+      this.props,
+      omittedProperties,
+    ) as StructEditorProperties;
+    const {
+      Tag = 'div',
+      className,
+      indigoVerification,
+      ...properties
+    } = remaining;
 
     const { tooltip } = this.state;
     const lastCursorPosition = this.editor?.lastCursorPosition;
@@ -389,7 +405,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     return (
       <TagComponent
         className={clsx(classes.canvas, className)}
-        {...props}
+        {...properties}
         dir="ltr"
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"

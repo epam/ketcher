@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,9 @@ export interface HighlightAttributes {
   bonds: Array<number>;
   rgroupAttachmentPoints: Array<number>;
   color: string;
+  // When true, the highlight is drawn as a stroked outline instead of a filled
+  // shading. Used for RNA preset components whose tab is not currently active.
+  outline?: boolean;
 }
 
 export class Highlight {
@@ -26,12 +29,14 @@ export class Highlight {
   bonds: Array<number>;
   rgroupAttachmentPoints: Array<number>;
   color: string;
+  outline: boolean;
 
   constructor(attributes: HighlightAttributes) {
-    const { atoms, bonds, rgroupAttachmentPoints, color } = attributes;
+    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = attributes;
     this.color = color;
     this.atoms = atoms;
     this.bonds = bonds;
     this.rgroupAttachmentPoints = rgroupAttachmentPoints;
+    this.outline = outline ?? false;
   }
 }

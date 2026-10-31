@@ -69,6 +69,7 @@ export const DEFAULT_SETTINGS: Settings = {
   'aromatize-skip-superatoms': true,
   'dearomatize-on-load': false,
   'gross-formula-add-isotopes': true,
+  'valence-mode': 'default',
 
   // Debug settings
   showAtomIds: false,
@@ -89,6 +90,9 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   disableCustomQuery: false,
   monomerLibraryUpdates: [],
+
+  // Color picker
+  colorPickerCustomColors: [],
 };
 
 /**
@@ -200,6 +204,7 @@ export const SCHEMA = {
     'aromatize-skip-superatoms': { type: 'boolean' },
     'dearomatize-on-load': { type: 'boolean' },
     'gross-formula-add-isotopes': { type: 'boolean' },
+    'valence-mode': { enum: ['biovia-2009', 'biovia-2017', 'default'] },
 
     // Debug settings
     showAtomIds: { type: 'boolean' },
@@ -217,5 +222,8 @@ export const SCHEMA = {
     editorLineLength: { type: 'object' },
     disableCustomQuery: { type: 'boolean' },
     monomerLibraryUpdates: { type: 'array', items: { type: 'string' } },
+
+    // Color picker
+    colorPickerCustomColors: { type: 'array', items: { type: 'string' } },
   },
 };

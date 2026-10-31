@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { waitForRender } from '@utils/common';

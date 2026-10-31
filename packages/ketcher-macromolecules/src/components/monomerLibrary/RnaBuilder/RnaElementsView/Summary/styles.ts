@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,9 @@ export const SummaryText = styled.span((props) => ({
   fontSize: props.theme.ketcher.font.size.regular,
 }));
 
-export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
+export const StyledIcon = styled(Icon, {
+  shouldForwardProp: (prop) => prop !== 'expanded',
+})<IStyledIconProps>((props) => ({
   width: '16px',
   height: '16px',
   color: props.theme.ketcher.color.icon.grey,

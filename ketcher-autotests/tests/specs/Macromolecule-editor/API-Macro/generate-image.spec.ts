@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { waitForPageInit } from '@utils';
@@ -76,10 +75,10 @@ test.describe('getKet', () => {
       },
     });
 
-    await page.waitForFunction(() => window.ketcher);
+    await page.waitForFunction(() => globalThis.window.ketcher);
 
     const image = await page.evaluate(async (jsonString) => {
-      const result = await window.ketcher.generateImage(jsonString);
+      const result = await globalThis.window.ketcher.generateImage(jsonString);
       return result;
     }, jsonString);
 

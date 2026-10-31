@@ -5,7 +5,6 @@ import type { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
-// eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
   coordinatesOnCanvas: Coordinates,
   centerOFMonomer: Coordinates,
@@ -104,7 +103,7 @@ export function getSearchFunction(
   return function findPointOnMonomerBorder(
     coordStart: Coordinates,
     length: number,
-    applyZoomForPositionCalculation: boolean,
+    shouldApplyZoomForPositionCalculation: boolean,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -124,7 +123,7 @@ export function getSearchFunction(
     const newLength = Math.round(diff.length() / 1.4);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
-    const zoomedCoordinateOfSecondPoint = applyZoomForPositionCalculation
+    const zoomedCoordinateOfSecondPoint = shouldApplyZoomForPositionCalculation
       ? CoordinatesTool.canvasToView(new Vec2(secondPoint))
       : new Vec2(secondPoint);
 
@@ -138,9 +137,9 @@ export function getSearchFunction(
       newPointCoord.y,
     );
 
-    const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
-      (element) => element === monomer.renderer?.bodyElement?.node(),
-    );
+    const monomerBodyElement = monomer.renderer?.bodyElement?.node();
+    const isCurrentMonomerAtNewPoint =
+      !!monomerBodyElement && elementsAtPoint.includes(monomerBodyElement);
 
     let newAngle: number;
     if (isCurrentMonomerAtNewPoint) {
@@ -152,7 +151,7 @@ export function getSearchFunction(
     return findPointOnMonomerBorder(
       newCoordStart,
       newLength,
-      applyZoomForPositionCalculation,
+      shouldApplyZoomForPositionCalculation,
       newAngle,
     );
   };
@@ -207,14 +206,14 @@ export const anglesToSector = {
 };
 
 export enum attachmentPointNumberToAngle {
-  'R1' = 0,
-  'R2' = 180,
-  'R3' = 90,
-  'R4' = 270,
-  'R5' = 45,
-  'R6' = 135,
-  'R7' = 315,
-  'R8' = 225,
+  R1 = 0,
+  R2 = 180,
+  R3 = 270,
+  R4 = 90,
+  R5 = 45,
+  R6 = 135,
+  R7 = 315,
+  R8 = 225,
 }
 
 export const sectorsList = [45, 90, 135, 180, 225, 270, 315, 0, 360];
@@ -273,13 +272,13 @@ export function getAttachmentPointNumberFromLabel(
 
 export const getNextFreeAttachmentPoint = (
   attachmentPoints: AttachmentPointName[],
-  skipR1AndR2 = false,
+  shouldSkipR1AndR2 = false,
 ) => {
   const orderedAttachmentPointNumbers = attachmentPoints
     .map(getAttachmentPointNumberFromLabel)
     .sort((a, b) => a - b);
 
-  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
+  let nextFreeAttachmentPointNumber = shouldSkipR1AndR2 ? 3 : 1;
   for (const number of orderedAttachmentPointNumbers) {
     if (number === nextFreeAttachmentPointNumber) {
       nextFreeAttachmentPointNumber++;

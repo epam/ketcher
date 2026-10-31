@@ -6,7 +6,7 @@
 import type { ISettingsStorage, Settings } from './types';
 
 export class MemoryStorageAdapter implements ISettingsStorage {
-  private storage: Map<string, Settings> = new Map();
+  private readonly storage: Map<string, Settings> = new Map();
 
   /**
    * Load settings from memory
@@ -19,7 +19,7 @@ export class MemoryStorageAdapter implements ISettingsStorage {
    * Save settings to memory
    */
   async save(key: string, settings: Settings): Promise<void> {
-    this.storage.set(key, JSON.parse(JSON.stringify(settings)));
+    this.storage.set(key, globalThis.structuredClone(settings));
   }
 
   /**

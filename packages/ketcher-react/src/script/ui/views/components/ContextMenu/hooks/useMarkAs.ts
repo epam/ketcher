@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
+import { isStructureContinuous } from 'src/script/editor/utils/structureContinuity';
 import type {
   SelectionContextMenuProps,
   ItemEventParams,
@@ -18,7 +19,7 @@ const useMarkAs = () => {
 
   const handler = useCallback(
     (componentType: RnaPresetComponentType) => (_params: Params) => {
-      window.dispatchEvent(
+      globalThis.dispatchEvent(
         new CustomEvent<RnaPresetComponentType>(
           MonomerCreationMarkAsComponentAction,
           { detail: componentType },
@@ -48,7 +49,7 @@ const useMarkAs = () => {
     }
 
     // Check if selection is continuous
-    const isContinuous = Editor.isStructureContinuous(struct, selection);
+    const isContinuous = isStructureContinuous(struct, selection);
     return !isContinuous;
   }, [ketcherId]);
 

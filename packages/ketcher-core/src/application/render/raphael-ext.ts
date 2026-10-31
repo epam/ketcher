@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +17,16 @@
 // Single entry point to Raphaël library
 
 import { Vec2 } from 'domain/entities/vec2';
+import type { RaphaelStatic } from 'raphael';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const raphaelModule: any =
-  typeof window !== 'undefined' ? require('raphael') : undefined;
+type RaphaelModule = RaphaelStatic | { default: RaphaelStatic };
+
+const raphaelModule: RaphaelModule | undefined =
+  typeof globalThis.window === 'undefined' ? undefined : require('raphael');
 
 // Some environments (vite, webpack etc) might resolve this import differently
 // this is a workaround to make it work in all environments
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function resolveRaphael(): any {
+function resolveRaphael(): RaphaelStatic | undefined {
   if (!raphaelModule) {
     return undefined;
   }

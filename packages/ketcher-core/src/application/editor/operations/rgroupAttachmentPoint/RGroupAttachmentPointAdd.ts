@@ -1,5 +1,5 @@
 import { type ReStruct, ReRGroupAttachmentPoint } from 'application/render';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   type RGroupAttachmentPointType,
   RGroupAttachmentPoint,
@@ -21,7 +21,6 @@ const INITIAL_DATA: Data = {
 
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(data: Data = INITIAL_DATA) {
     super(
@@ -40,7 +39,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
 
     const struct = restruct.molecule;
     const revertedId = this.data.attachmentPointId;
-    let attachmentPointId = 0;
+    let attachmentPointId: number;
     if (revertedId === undefined) {
       const newId = struct.rgroupAttachmentPoints.add(newAttachmentPoint);
       attachmentPointId = newId;
@@ -60,7 +59,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
 
   invert() {
     if (this.data.attachmentPointId === undefined) {
-      throw Error(`Inverted attachmentPointId doesn't exist`);
+      throw new Error(`Inverted attachmentPointId doesn't exist`);
     }
     const inverted = new RGroupAttachmentPointAdd.InverseConstructor();
     inverted.data = this.data;

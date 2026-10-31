@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,9 @@ import {
   getRnaPresetPhosphatePosition,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
-  MonomerItemType,
+  MonomerOrAmbiguousType,
   RnaPhosphatePosition,
+  RnaPresetWithOptionalFields,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import {
@@ -38,9 +39,11 @@ import {
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
+  isShortNameOnlySearch,
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
+import { castDraft } from 'immer';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -49,9 +52,7 @@ export enum RnaBuilderPresetsItem {
 export type RnaBuilderNucleotidesItem = 'Nucleotides';
 
 export type RnaBuilderItem =
-  | RnaBuilderPresetsItem
-  | MonomerGroups
-  | RnaBuilderNucleotidesItem;
+  RnaBuilderPresetsItem | MonomerGroups | RnaBuilderNucleotidesItem;
 
 // Filter applied to RNA presets in the library based on the position of the
 // phosphate group in the preset. Each flag enables one of three buckets:
@@ -89,7 +90,7 @@ interface IRnaBuilderState {
   isSequenceFirstsOnlyNucleoelementsSelected: boolean | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
-    groupItem: MonomerItemType;
+    groupItem: MonomerOrAmbiguousType;
   } | null;
   groupItemValidations: {
     [MonomerGroups.BASES]: string[];
@@ -103,6 +104,7 @@ interface IRnaBuilderState {
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
+  invalidPresetNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
   presetPhosphateFilter: PresetPhosphateFilter;
 }
@@ -125,6 +127,7 @@ const initialState: IRnaBuilderState = {
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
+  invalidPresetNameError: '',
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
@@ -187,7 +190,8 @@ export const rnaBuilderSlice = createSlice({
       );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
-      state.activePreset!.name = action.payload;
+      if (!state.activePreset) return;
+      state.activePreset.name = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,
@@ -208,7 +212,12 @@ export const rnaBuilderSlice = createSlice({
           action.payload.rnaPreset,
           action.payload.isEditMode,
           action.payload.selectedPhosphatePosition ??
-            getRnaPresetPhosphatePosition(action.payload.rnaPreset),
+            getRnaPresetPhosphatePosition(
+              action.payload.rnaPreset as Pick<
+                IRnaPreset,
+                'sugar' | 'phosphate' | 'connections'
+              >,
+            ),
         );
 
       state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
@@ -220,10 +229,13 @@ export const rnaBuilderSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: MonomerGroups;
-        groupItem: MonomerItemType;
+        groupItem: MonomerOrAmbiguousType;
       } | null>,
     ) => {
-      state.activePresetMonomerGroup = action.payload;
+      state.activePresetMonomerGroup = action.payload
+        ? // use castDraft to bypass the Immer draft type checking, allowing us to assign a possibly non-draft value to the state. This is necessary because the groupItem can be either a MonomerItemType or an AmbiguousMonomerType, and Immer's type checking can be too strict in this case.
+          castDraft(action.payload)
+        : null;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -237,9 +249,11 @@ export const rnaBuilderSlice = createSlice({
           (presetInList) => presetInList.name === newPreset.nameInList,
         );
         newPreset.nameInList = newPreset.name;
-        presetIndexInList === -1
-          ? state.presetsCustom.push(newPreset)
-          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        if (presetIndexInList === -1) {
+          state.presetsCustom.push(newPreset);
+        } else {
+          state.presetsCustom.splice(presetIndexInList, 1, newPreset);
+        }
       } else {
         state.presetsCustom.push(newPreset);
       }
@@ -270,6 +284,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setInvalidPresetError: (state, action: PayloadAction<string>) => {
       state.invalidPresetError = action.payload;
+    },
+    setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -358,9 +375,8 @@ export const rnaBuilderSlice = createSlice({
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) ?? []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === uniquePresetKey,
-      );
+      const isKeyAlreadyExisted: boolean =
+        favoriteItemsUniqueKeys.includes(uniquePresetKey);
 
       if (isKeyAlreadyExisted) {
         localStorageWrapper.setItem(
@@ -399,15 +415,21 @@ export const selectSequenceSelection = (
 export const selectSequenceSelectionName = (state: RootState): string =>
   state.rnaBuilder.sequenceSelectionName;
 
-export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
-  state: RootState,
-): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
+export const hasOnlyFirstNucleotidesSelected = (state: RootState): boolean =>
+  state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
+
+export const isRnaBaseModificationBlocked = (state: RootState): boolean =>
+  Boolean(
+    state.rnaBuilder.sequenceSelection?.some(
+      (labeledNode) => labeledNode.isInSelectedAntisensePair,
+    ),
+  );
 
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
 ) => {
-  if (!monomerGroupToPresetGroup[groupName] || !preset) return;
+  if (!preset || !monomerGroupToPresetGroup[groupName]) return;
 
   return preset[monomerGroupToPresetGroup[groupName]];
 };
@@ -415,13 +437,13 @@ export const selectCurrentMonomerGroup = (
 export const selectActivePresetMonomerGroup = (state: RootState) =>
   state.rnaBuilder.activePresetMonomerGroup;
 
-export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
+export const isRnaPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
     preset.name && preset.sugar && (preset.base || preset.phosphate),
   );
 };
 
-export const selectIsEditMode = (state: RootState): boolean => {
+export const isRnaBuilderEditMode = (state: RootState): boolean => {
   return state.rnaBuilder.isEditMode;
 };
 
@@ -431,22 +453,21 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(preset);
   let fullName = sugar;
 
   if (sugar && phosphate) {
     fullName += `(${base})`;
-  } else if ((sugar || phosphate) && base) {
+  } else if (base && (sugar || phosphate)) {
     fullName += `(${base})`;
   } else {
     fullName += base;
   }
 
+  // The phosphate is always appended, whatever position the picker holds:
+  // prefixing it for 5' leaves no cue where the phosphate label ends and the
+  // sugar label begins, so the name would become ambiguous (#9693).
   if (phosphate) {
-    fullName =
-      phosphatePosition === 'left'
-        ? `${phosphate}${fullName}`
-        : `${fullName}${phosphate}`;
+    fullName += phosphate;
   }
 
   return fullName;
@@ -460,7 +481,11 @@ export const selectInvalidPresetError = (state: RootState) => {
   return state.rnaBuilder.invalidPresetError;
 };
 
-export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
+export const selectInvalidPresetNameError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetNameError;
+};
+
+export const isActiveRnaPresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
   return (
     activePreset &&
@@ -507,10 +532,15 @@ export const selectFilteredPresets = createSelector(
     phosphateFilter,
   ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
+    // See isShortNameOnlySearch for why '-' and '_' bypass multi-field matching.
+    const shortNameOnly = isShortNameOnlySearch(searchText);
 
     return presetsAll
       .filter((item: IRnaPreset) => {
         const name = item.name?.toLowerCase();
+        if (shortNameOnly) {
+          return name?.includes(searchText) ?? false;
+        }
         const sugarName = item.sugar?.label?.toLowerCase();
         const phosphateName = item.phosphate?.label?.toLowerCase();
         const baseName = item.base?.label?.toLowerCase();
@@ -520,6 +550,11 @@ export const selectFilteredPresets = createSelector(
           (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
           '';
         const modifications = item.idtAliases?.modifications;
+        const modificationAliases = modifications
+          ? Object.values(modifications).filter(
+              (mod): mod is string => typeof mod === 'string',
+            )
+          : [];
         let transformedIdtText = idtName;
 
         if (idtName && item.name?.includes('MOE')) {
@@ -540,29 +575,26 @@ export const selectFilteredPresets = createSelector(
           return (
             transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
             idtName?.startsWith(aliasRest) ||
-            (modifications &&
-              Object.values(modifications).some((mod) =>
-                mod?.toLowerCase().startsWith(aliasRest),
-              ))
+            modificationAliases.some((mod) =>
+              mod.toLowerCase().startsWith(aliasRest),
+            )
           );
         }
 
         if (searchText.endsWith('/') && searchText.length > 1) {
           const aliasRest = searchText.slice(0, -1);
-          const aliasLastSymbol = searchText[searchText.length - 2];
+          const aliasLastSymbol = searchText.at(-2);
 
           return (
             (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-              transformedIdtText[transformedIdtText.length - 1] ===
-                aliasLastSymbol) ||
+              transformedIdtText.at(-1) === aliasLastSymbol) ||
             (idtName?.endsWith(aliasRest) &&
-              idtName[idtName.length - 1] === aliasLastSymbol) ||
-            (modifications &&
-              Object.values(modifications).some(
-                (mod) =>
-                  mod?.toLowerCase().endsWith(aliasRest) &&
-                  mod[mod.length - 1] === aliasLastSymbol,
-              ))
+              idtName.at(-1) === aliasLastSymbol) ||
+            modificationAliases.some(
+              (mod) =>
+                mod.toLowerCase().endsWith(aliasRest) &&
+                mod.at(-1) === aliasLastSymbol,
+            )
           );
         }
 
@@ -588,17 +620,31 @@ export const selectFilteredPresets = createSelector(
         if (!phosphateFilter) {
           return true;
         }
-        const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
-        const allOn = fivePrime && threePrime && noPhosphate;
-        const allOff = !fivePrime && !threePrime && !noPhosphate;
-        if (allOn || allOff) {
+        const {
+          fivePrime: shouldIncludeFivePrime,
+          threePrime: shouldIncludeThreePrime,
+          noPhosphate: shouldIncludeNoPhosphate,
+        } = phosphateFilter;
+        const isAllOn =
+          shouldIncludeFivePrime &&
+          shouldIncludeThreePrime &&
+          shouldIncludeNoPhosphate;
+        const isAllOff =
+          !shouldIncludeFivePrime &&
+          !shouldIncludeThreePrime &&
+          !shouldIncludeNoPhosphate;
+        if (isAllOn || isAllOff) {
           return true;
         }
         if (!item.phosphate) {
-          return noPhosphate;
+          return shouldIncludeNoPhosphate;
         }
-        const position = getRnaPresetPhosphatePosition(item);
-        return position === 'left' ? fivePrime : threePrime;
+        const position = getRnaPresetPhosphatePosition(
+          item as RnaPresetWithOptionalFields,
+        );
+        return position === 'left'
+          ? shouldIncludeFivePrime
+          : shouldIncludeThreePrime;
       });
   },
 );
@@ -619,6 +665,7 @@ export const {
   setIsEditMode,
   setUniqueNameError,
   setInvalidPresetError,
+  setInvalidPresetNameError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

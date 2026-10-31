@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +25,8 @@ import {
   type InfoResult,
   type OutputFormatType,
   type StructService,
-  ChemicalMimeType,
 } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { StructOrString } from 'application/indigo.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { SequenceType } from 'domain/entities/monomer-chains/types';
@@ -222,14 +222,16 @@ export class Indigo {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat = options?.outputFormat ?? 'png';
-    const backgroundColor = options?.backgroundColor ?? '';
     const bondThickness = options?.bondThickness ?? defaultBondThickness;
+
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {
         outputFormat,
-        backgroundColor,
         bondThickness,
+        ...(options?.backgroundColor === undefined
+          ? {}
+          : { backgroundColor: options.backgroundColor }),
       },
     );
   }

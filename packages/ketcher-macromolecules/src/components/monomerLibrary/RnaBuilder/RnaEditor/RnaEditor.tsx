@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
@@ -24,41 +25,52 @@ import {
   recalculateRnaBuilderValidations,
   RnaBuilderPresetsItem,
   selectActivePreset,
-  selectIsEditMode,
+  isRnaBuilderEditMode,
   selectPresetFullName,
   setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
-import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { isRnaBuilderSequenceEditMode } from 'state/common';
 import clsx from 'clsx';
 
 export const RnaEditor = ({ duplicatePreset }) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const activePresetFullName = selectPresetFullName(activePreset);
 
   const dispatch = useAppDispatch();
 
-  const [expanded, setExpanded] = useState(false);
+  const shouldExpand = Boolean(activePreset?.name) || isEditMode;
+  const [expanded, setExpanded] = useState(shouldExpand);
+  const [prevActivePreset, setPrevActivePreset] = useState(activePreset);
+
+  // Activating a preset opens the editor. isEditMode is read to decide whether
+  // it should open, but it is deliberately not a trigger: expandEditor turns
+  // edit mode on while collapsing an unsaved preset, so reacting to that would
+  // immediately re-expand the panel the user just closed.
+  if (activePreset !== prevActivePreset) {
+    setPrevActivePreset(activePreset);
+    if (activePreset && shouldExpand) {
+      setExpanded(true);
+    }
+  }
 
   useEffect(() => {
-    if (activePreset) {
-      if (activePreset.name || isEditMode) setExpanded(true);
-      return;
+    if (!activePreset) {
+      dispatch(createNewPreset());
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     }
-
-    dispatch(createNewPreset());
-    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-  }, [activePreset]);
+  }, [activePreset, dispatch]);
 
   useEffect(() => {
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
     );
-  }, [isEditMode]);
+  }, [isEditMode, dispatch, activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);
@@ -78,7 +90,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
         onClick={expandEditor}
         data-testid="rna-builder-expand-button"
       >
-        RNA Builder
+        {t('monomerLibrary.rnaBuilderHeader')}
         <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
       {activePreset &&

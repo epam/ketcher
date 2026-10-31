@@ -41,7 +41,8 @@
                     -0.586,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -50,7 +51,8 @@
                     0.365,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -59,7 +61,8 @@
                     0.365,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -68,7 +71,8 @@
                     -0.586,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -222,7 +226,7 @@
         "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "Ribose (2,5 connectivity)",
         "alias": "25R",
-        "aliasHELM": "25r",
+        "aliasHELM": "25R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,

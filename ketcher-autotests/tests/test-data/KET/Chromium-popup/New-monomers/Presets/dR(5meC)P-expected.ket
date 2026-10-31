@@ -219,7 +219,7 @@
         "id": "5meC___5-methylcytosine",
         "fullName": "5-methylcytosine",
         "alias": "5meC",
-        "aliasHELM": "m5C",
+        "aliasHELM": "5meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -253,7 +253,8 @@
                     -1.026,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",
@@ -270,7 +271,8 @@
                     0.513,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -279,7 +281,8 @@
                     0.513,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "O",
@@ -425,7 +428,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
-        "aliasHELM": "d",
+        "aliasHELM": "dR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,
@@ -546,7 +549,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

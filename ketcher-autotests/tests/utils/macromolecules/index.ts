@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { moveMouseToTheMiddleOfTheScreen } from '../clicks';
 import { waitForRender } from '../common/loaders/waitForRender';

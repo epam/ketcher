@@ -34,6 +34,13 @@ describe('EditorHistory', () => {
     expect(history).not.toBe(historyInstance2);
   });
 
+  it('keeps histories scoped to their editor', () => {
+    const otherHistory = EditorHistory.getInstance({} as CoreEditor);
+    expect(otherHistory).not.toBe(history);
+    expect(EditorHistory.getInstance(editor)).toBe(history);
+    otherHistory.destroy();
+  });
+
   it('should add commands into history stack', () => {
     history.update(new Command());
     history.update(new Command());

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,14 @@ interface Schema {
   enumNames?: string[];
 }
 
-interface SelectListProps
-  extends Omit<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    'onSelect' | 'value' | 'onChange' | 'size'
-  > {
+interface SelectListProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  'onSelect' | 'value' | 'onChange' | 'size'
+> {
   schema: Schema;
   value: string;
   onSelect: (opt: string, index: number) => void;
   splitIndexes?: number[];
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  selected?: string;
-  component?: React.ComponentType<unknown>;
-  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes: {
     selected?: string;
     split?: string;
@@ -46,10 +41,6 @@ function SelectList({
   value,
   onSelect,
   splitIndexes,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  selected,
-  component,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
 }: Readonly<SelectListProps>) {

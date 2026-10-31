@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -62,5 +62,11 @@ export class ShiftMonomerOperation extends BaseOperation {
       id: this.data.id,
       value: this.previousValue,
     });
+  }
+
+  isDummy() {
+    const { value } = this.data;
+    if (value === null) return false;
+    return (value.x ?? 0) === 0 && (value.y ?? 0) === 0;
   }
 }

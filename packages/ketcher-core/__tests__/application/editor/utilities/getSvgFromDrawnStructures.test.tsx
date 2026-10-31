@@ -1,8 +1,8 @@
-jest.mock('utilities', () => ({
+jest.mock('../../../../src/utilities/KetcherLogger', () => ({
   KetcherLogger: { error: jest.fn() },
 }));
 
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger } from '../../../../src/utilities/KetcherLogger';
 import { getSvgFromDrawnStructures } from '../../../../src/utilities/getSvgFromDrawnStructures';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -59,18 +59,20 @@ describe('getSvgFromDrawnStructures', () => {
       'drawn-structures',
     )[0] as Element & { getBoundingClientRect?: () => any };
     drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    // mock the canvas offset - the viewBox origin is relative to the canvas
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
 
     const result = getSvgFromDrawnStructures(canvas, 'preview', 5);
     expect(typeof result).toBe('string');
 
-    // Expected viewBox calculations using constants from implementation
-    // viewBoxX = 100 - 50 - 5 = 45
-    // viewBoxY = 200 - 54 - 5 = 141
+    // Expected viewBox calculations relative to the canvas offset (10, 20)
+    // viewBoxX = 100 - 10 - 5 = 85
+    // viewBoxY = 200 - 20 - 5 = 175
     // width = 300 + 5*2 = 310
     // height = 400 + 5*2 = 410
     expect(result).toContain("width='100%'");
     expect(result).toContain("height='100%'");
-    expect(result).toContain("viewBox='45 141 310 410'");
+    expect(result).toContain("viewBox='85 175 310 410'");
 
     // rectangle-selection-area and dynamic-element should be removed
     expect(result).not.toContain('rectangle-selection-area');
@@ -86,7 +88,7 @@ describe('getSvgFromDrawnStructures', () => {
     expect(result).not.toContain('cursor: pointer;');
   });
 
-  test('returns file SVG with margins object and includes xmlns', () => {
+  test('returns file SVG with numeric margin and includes xmlns', () => {
     const canvas = document.createElementNS(
       SVG_NS,
       'svg',
@@ -102,24 +104,21 @@ describe('getSvgFromDrawnStructures', () => {
       'drawn-structures',
     )[0] as Element & { getBoundingClientRect?: () => any };
     drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
 
-    // Pass margins object - implementation adds DEFAULT_MARGIN to each component
-    const result = getSvgFromDrawnStructures(canvas, 'file', {
-      horizontal: 2,
-      vertical: 3,
-    });
+    const result = getSvgFromDrawnStructures(canvas, 'file', 2);
     expect(typeof result).toBe('string');
 
-    // For margins {2,3} implementation uses DEFAULT_MARGIN (10) + provided => horizontal=12 vertical=13
-    // viewBoxX = 100 - 50 - 12 = 38
-    // viewBoxY = 200 - 54 - 13 = 133
-    // width = 300 + 12*2 = 324
-    // height = 400 + 13*2 = 426
-    expect(result).toContain("viewBox='38 133 324 426'");
+    // viewBox is relative to the canvas offset (10, 20) with margin 2
+    // viewBoxX = 100 - 10 - 2 = 88
+    // viewBoxY = 200 - 20 - 2 = 178
+    // width = 300 + 2*2 = 304
+    // height = 400 + 2*2 = 404
+    expect(result).toContain("viewBox='88 178 304 404'");
 
     // width/height attributes in file output should be numeric
-    expect(result).toContain("width='324'");
-    expect(result).toContain("height='426'");
+    expect(result).toContain("width='304'");
+    expect(result).toContain("height='404'");
 
     // xmlns must be present for file export
     expect(result).toContain("xmlns='http://www.w3.org/2000/svg'");
@@ -155,5 +154,67 @@ describe('getSvgFromDrawnStructures', () => {
     // call with unknown type string casted to any
     const result = getSvgFromDrawnStructures(canvas, 'unknown' as any);
     expect(result).toBe("<svg xmlns='http://www.w3.org/2000/svg' />");
+  });
+
+  test('leaves transient views (e.g. the rotation frame) out of the SVG', () => {
+    const canvas = document.createElementNS(
+      SVG_NS,
+      'svg',
+    ) as unknown as SVGSVGElement;
+
+    canvas.innerHTML = `
+      <g class="drawn-structures">
+        <g class="structure"><text>Structure</text></g>
+        <g class="transient-views-layer"><rect id="rotation-frame"></rect></g>
+        <g class="transient-views-top-layer"><g id="rotation-handle"></g></g>
+      </g>
+    `;
+
+    const drawn = canvas.getElementsByClassName(
+      'drawn-structures',
+    )[0] as Element & { getBoundingClientRect?: () => any };
+    drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
+
+    const result = getSvgFromDrawnStructures(canvas, 'file', 5);
+
+    expect(result).toContain('Structure');
+    expect(result).not.toContain('transient-views-layer');
+    expect(result).not.toContain('transient-views-top-layer');
+    expect(result).not.toContain('rotation-frame');
+    expect(result).not.toContain('rotation-handle');
+  });
+
+  test('does not count transient views into the image size', () => {
+    const canvas = document.createElementNS(
+      SVG_NS,
+      'svg',
+    ) as unknown as SVGSVGElement;
+
+    canvas.innerHTML = `
+      <g class="drawn-structures">
+        <g class="structure"><text>Structure</text></g>
+        <g class="transient-views-top-layer"><g id="rotation-handle"></g></g>
+      </g>
+    `;
+
+    const drawn = canvas.getElementsByClassName('drawn-structures')[0];
+    const [structure, transientLayer] = Array.from(drawn.children) as Array<
+      Element & { getBoundingClientRect: () => any }
+    >;
+    // the structure itself
+    structure.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    // the rotation handle sits 100px above the structure
+    transientLayer.getBoundingClientRect = () => makeRect(100, 100, 300, 500);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
+
+    const result = getSvgFromDrawnStructures(canvas, 'file', 5);
+
+    // Only the structure is measured, relative to the canvas offset (10, 20):
+    // viewBoxX = 100 - 10 - 5 = 85
+    // viewBoxY = 200 - 20 - 5 = 175
+    // width = 300 + 5*2 = 310
+    // height = 400 + 5*2 = 410
+    expect(result).toContain("viewBox='85 175 310 410'");
   });
 });

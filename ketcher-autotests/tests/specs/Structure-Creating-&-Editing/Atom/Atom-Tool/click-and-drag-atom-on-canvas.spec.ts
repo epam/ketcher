@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';

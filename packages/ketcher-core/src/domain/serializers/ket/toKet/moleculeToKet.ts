@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { AtomQueryProperties } from 'domain/entities/atom';
+import type { Atom } from 'domain/entities/atom';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Bond } from 'domain/entities/bond';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
-
-import { ifDef } from 'utilities';
+import { CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
+import type {
+  KetAtomNode,
+  KetBondNode,
+  KetMoleculeNode,
+  KetRgLabelNode,
+  KetSGroupAttachmentPointNode,
+  KetSGroupNode,
+} from './types';
 
-function fromRlabel(rg) {
-  const res: Array<any> = [];
+import { ifDef } from 'utilities';
+
+function assertCustomQueryLength(customQuery: string, context: string): void {
+  if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+    throw new Error(
+      `${context} custom query exceeds the maximum allowed length of ${CUSTOM_QUERY_MAX_LENGTH} characters (got ${customQuery.length})`,
+    );
+  }
+}
+
+function fromRlabel(rg: number): number[] {
+  const res: number[] = [];
   let rgi;
   let val;
   for (rgi = 0; rgi < 32; rgi++) {
@@ -44,21 +62,24 @@ export interface MoleculesSelection {
   bonds: Set<number>;
 }
 
-export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
-  const body: any = {
-    atoms: Array.from(struct.atoms.values()).map((atom) => {
+export function moleculeToKet(
+  struct: Struct,
+  monomer?: BaseMonomer,
+): KetMoleculeNode {
+  const body: Omit<KetMoleculeNode, 'type'> = {
+    atoms: [...struct.atoms.values()].map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
-      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      if (!monomer && atom.label === 'R#') return rglabelToKet(atom);
       return atomToKet(atom, monomer);
     }),
   };
 
   if (struct.bonds.size !== 0) {
-    body.bonds = Array.from(struct.bonds.values()).map(bondToKet);
+    body.bonds = [...struct.bonds.values()].map(bondToKet);
   }
 
   if (struct.sgroups.size !== 0) {
-    body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
+    body.sgroups = [...struct.sgroups.values()].map((sGroup) =>
       sgroupToKet(struct, sGroup),
     );
   }
@@ -76,22 +97,21 @@ export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
   };
 }
 
-function atomToKet(source, monomer?: BaseMonomer) {
-  const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
-    {};
+function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
+  const result: KetAtomNode = {};
 
   if (source.label !== 'L#') {
     ifDef(
       result,
       'label',
-      source.label === 'R#' && monomer
+      monomer && source.label === 'R#'
         ? monomer.monomerItem.props.MonomerCaps?.[
-            getAttachmentPointLabelWithBinaryShift(source.rglabel)
+            getAttachmentPointLabelWithBinaryShift(source.rglabel ?? 0)
           ]
         : source.label,
     );
     // reaction
-    ifDef(result, 'mapping', parseInt(source.aam), 0);
+    ifDef(result, 'mapping', source.aam, 0);
   } else if (source.atomList) {
     result.type = 'atom-list';
     ifDef(result, 'elements', source.atomList.labelList());
@@ -112,8 +132,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
   ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
-  ifDef(result, 'stereoParity', source.stereoCare, 0);
-  ifDef(result, 'weight', source.weight, 0);
+  ifDef(result, 'stereoParity', source.stereoParity, 0);
   // query
   ifDef(result, 'ringBondCount', source.ringBondCount, 0);
   ifDef(result, 'substitutionCount', source.substitutionCount, 0);
@@ -123,9 +142,13 @@ function atomToKet(source, monomer?: BaseMonomer) {
   if (
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
+    if (typeof source.queryProperties.customQuery === 'string') {
+      assertCustomQueryLength(source.queryProperties.customQuery, 'Atom');
+    }
     result.queryProperties = {};
+    const queryProperties = result.queryProperties;
     Object.keys(source.queryProperties).forEach((name) => {
-      ifDef(result.queryProperties, name, source.queryProperties[name]);
+      ifDef(queryProperties, name, source.queryProperties[name]);
     });
   }
   ifDef(result, 'invRet', source.invRet, 0);
@@ -134,8 +157,8 @@ function atomToKet(source, monomer?: BaseMonomer) {
   return result;
 }
 
-function rglabelToKet(source) {
-  const result = {
+function rglabelToKet(source: Atom): KetRgLabelNode {
+  const result: KetRgLabelNode = {
     type: 'rg-label',
   };
   const position: Vec2 = switchIntoChemistryCoordSystem(
@@ -144,7 +167,7 @@ function rglabelToKet(source) {
   ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
-  const refsToRGroups = fromRlabel(source.rglabel).map(
+  const refsToRGroups = fromRlabel(source.rglabel ?? 0).map(
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
@@ -153,9 +176,10 @@ function rglabelToKet(source) {
   return result;
 }
 
-function bondToKet(source) {
-  const result = {};
+function bondToKet(source: Bond): KetBondNode {
+  const result: KetBondNode = {};
   if (source.customQuery) {
+    assertCustomQueryLength(source.customQuery, 'Bond');
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
   } else {
@@ -170,8 +194,8 @@ function bondToKet(source) {
   return result;
 }
 
-function sgroupToKet(struct: Struct, source: SGroup) {
-  const result = {};
+function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
+  const result: KetSGroupNode = {};
 
   ifDef(result, 'type', source.type);
   ifDef(result, 'atoms', source.atoms);
@@ -235,8 +259,10 @@ function sgroupToKet(struct: Struct, source: SGroup) {
   return result;
 }
 
-function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
-  const result = {};
+function sgroupAttachmentPointToKet(
+  source: SGroupAttachmentPoint,
+): KetSGroupAttachmentPointNode {
+  const result: KetSGroupAttachmentPointNode = {};
 
   ifDef(result, 'attachmentAtom', source.atomId);
   ifDef(result, 'leavingAtom', source.leaveAtomId);

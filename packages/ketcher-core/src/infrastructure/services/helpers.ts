@@ -11,6 +11,14 @@ enum IndigoShowHydrogenLabelsMode {
 export function getLabelRenderModeForIndigo(ketcherId: string) {
   // Terminal does not supported by indigo so TERMINAL_HETERO used
   // Off removing all labels in indigo so HETERO used
+  const editorOptions = ketcherProvider.getKetcher(ketcherId).editor.options();
+
+  // carbonExplicitly requires all atom labels (including internal C) to be visible.
+  // Indigo's only mode that shows internal carbons is 'all'.
+  if (editorOptions.carbonExplicitly) {
+    return IndigoShowHydrogenLabelsMode.ALL;
+  }
+
   const renderModeMapping = {
     [ShowHydrogenLabels.Off]: IndigoShowHydrogenLabelsMode.HETERO,
     [ShowHydrogenLabels.Hetero]: IndigoShowHydrogenLabelsMode.HETERO,
@@ -21,8 +29,7 @@ export function getLabelRenderModeForIndigo(ketcherId: string) {
   };
 
   return (
-    renderModeMapping[
-      ketcherProvider.getKetcher(ketcherId).editor.options().showHydrogenLabels
-    ] || IndigoShowHydrogenLabelsMode.OFF
+    renderModeMapping[editorOptions.showHydrogenLabels] ||
+    IndigoShowHydrogenLabelsMode.OFF
   );
 }

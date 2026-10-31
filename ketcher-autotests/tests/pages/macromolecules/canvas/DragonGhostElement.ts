@@ -1,11 +1,11 @@
 import { Page, Locator } from '@playwright/test';
 
-type DragoGhostElement = {
+type DragonGhostElementLocators = {
   dragonGhostElement: Locator;
 };
 
-export const DragoGhostElement = (page: Page) => {
-  const locators: DragoGhostElement = {
+export const DragonGhostElement = (page: Page) => {
+  const locators: DragonGhostElementLocators = {
     dragonGhostElement: page.getByTestId('drag-ghost'),
   };
   return {
@@ -16,4 +16,4 @@ export const DragoGhostElement = (page: Page) => {
     },
   };
 };
-export type DragoGhostElementType = ReturnType<typeof DragoGhostElement>;
+export type DragonGhostElementType = ReturnType<typeof DragonGhostElement>;

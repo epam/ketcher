@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
@@ -101,9 +99,11 @@ export class BondDeleteOperation implements Operation {
 
   public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteBond(this.bond);
+    renderersManager.rerenderSGroups();
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addBond(this.bond);
+    renderersManager.rerenderSGroups();
   }
 }

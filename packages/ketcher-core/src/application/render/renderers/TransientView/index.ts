@@ -4,3 +4,4 @@ export * from './AngleSnapView';
 export * from './TransientDrawingView';
 export * from './SelectionView';
 export * from './RotationView';
+export * from './ReplacementHighlightView';

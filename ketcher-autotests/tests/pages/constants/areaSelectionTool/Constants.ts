@@ -1,5 +1,6 @@
 export enum SelectionToolType {
   Rectangle = 'select-rectangle',
   Lasso = 'select-lasso',
-  Fragment = 'select-structure',
+  Structure = 'select-structure',
+  Fragment = 'select-fragment',
 }

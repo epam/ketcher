@@ -5,6 +5,9 @@ import { BaseBond } from 'domain/entities/BaseBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { Atom } from 'domain/entities/CoreAtom';
+import { Bond } from 'domain/entities/CoreBond';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private readonly drawingEntity: DrawingEntity) {}
 
@@ -47,9 +50,11 @@ export class DrawingEntityMoveOperation implements Operation {
   ) {}
 
   public execute() {
-    this.wasInverted
-      ? this.redoDrawingEntityChangeModel()
-      : this.moveDrawingEntityChangeModel();
+    if (this.wasInverted) {
+      this.redoDrawingEntityChangeModel();
+    } else {
+      this.moveDrawingEntityChangeModel();
+    }
   }
 
   public invert() {
@@ -66,25 +71,24 @@ export class DrawingEntityMoveOperation implements Operation {
       this.drawingEntity instanceof BaseBond ||
       this.drawingEntity instanceof RxnArrow ||
       this.drawingEntity instanceof MultitailArrow ||
-      this.drawingEntity instanceof RxnPlus
+      this.drawingEntity instanceof RxnPlus ||
+      this.drawingEntity instanceof CoreStereoFlag
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);
+    }
+
+    if (
+      this.drawingEntity instanceof Atom ||
+      this.drawingEntity instanceof Bond
+    ) {
+      renderersManager.rerenderSGroups();
     }
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
-    if (
-      this.drawingEntity instanceof BaseBond ||
-      this.drawingEntity instanceof RxnArrow ||
-      this.drawingEntity instanceof MultitailArrow ||
-      this.drawingEntity instanceof RxnPlus
-    ) {
-      renderersManager.redrawDrawingEntity(this.drawingEntity);
-    } else {
-      renderersManager.moveDrawingEntity(this.drawingEntity);
-    }
+    this.executeAfterAllOperations(renderersManager);
   }
 }
 

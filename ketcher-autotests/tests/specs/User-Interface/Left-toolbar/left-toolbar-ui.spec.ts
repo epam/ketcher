@@ -6,6 +6,19 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { takeLeftToolbarScreenshot, waitForPageInit } from '@utils';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
+async function takeDropdownScreenshot(page: Page, width: number) {
+  const bodyHeight = await page.evaluate(() => document.body.clientHeight);
+  const screenshot = await page.screenshot({
+    clip: {
+      x: 0,
+      y: 0,
+      width,
+      height: bodyHeight,
+    },
+  });
+  expect(screenshot).toMatchSnapshot();
+}
+
 test.describe('Left toolbar UI tests', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -15,19 +28,6 @@ test.describe('Left toolbar UI tests', () => {
     // Test case: EPMLSOPKET-4268
     await takeLeftToolbarScreenshot(page);
   });
-
-  async function takeDropdownScreenshot(page: Page, width: number) {
-    const bodyHeight = await page.evaluate(() => document.body.clientHeight);
-    const screenshot = await page.screenshot({
-      clip: {
-        x: 0,
-        y: 0,
-        width,
-        height: bodyHeight,
-      },
-    });
-    expect(screenshot).toMatchSnapshot();
-  }
 
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268

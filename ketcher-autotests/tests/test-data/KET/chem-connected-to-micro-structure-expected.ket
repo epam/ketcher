@@ -155,7 +155,8 @@
             "y": -7.174999907078703
         },
         "alias": "A6OH",
-        "templateId": "A6OH___6-amino-hexanol"
+        "templateId": "A6OH___6-amino-hexanol",
+        "expanded": false
     },
     "monomerTemplate-A6OH___6-amino-hexanol": {
         "type": "monomerTemplate",
@@ -311,6 +312,7 @@
         "id": "A6OH___6-amino-hexanol",
         "fullName": "6-amino-hexanol",
         "alias": "A6OH",
+        "aliasBILN": "A6OH",
         "aliasAxoLabs": "(NHC6)",
         "attachmentPoints": [
             {

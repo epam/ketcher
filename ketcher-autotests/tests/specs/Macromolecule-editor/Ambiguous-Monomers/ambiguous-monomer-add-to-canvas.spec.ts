@@ -7,6 +7,8 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -22,6 +24,7 @@ interface IAmbiguousMonomerName {
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 const AmbiguousMonomers: IAmbiguousMonomerName[] = [

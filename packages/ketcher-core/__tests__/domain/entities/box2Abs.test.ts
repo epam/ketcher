@@ -15,4 +15,21 @@ describe('clone', () => {
 
     expect(isClone).toBeTruthy();
   });
+
+  it('should create a zero-area box from a single point', () => {
+    const point = new Vec2(1, 2);
+    const box2Abs = new Box2Abs(point);
+
+    expect(box2Abs.p0).toBe(point);
+    expect(box2Abs.p1).toBe(point);
+  });
+
+  it('should create a box from min/max bounds', () => {
+    const min = new Vec2(1, 2);
+    const max = new Vec2(3, 4);
+    const box2Abs = new Box2Abs({ min, max });
+
+    expect(box2Abs.p0).toBe(min);
+    expect(box2Abs.p1).toBe(max);
+  });
 });

@@ -5,7 +5,10 @@ import type { ReStruct } from 'application/render';
 import BaseOperation from 'application/editor/operations/BaseOperation';
 
 export class MultitailArrowMove extends BaseOperation {
-  constructor(private readonly id: number, private readonly offset: Vec2) {
+  constructor(
+    private readonly id: number,
+    private readonly offset: Vec2,
+  ) {
     super(OperationType.MULTITAIL_ARROW_MOVE);
   }
 
@@ -27,5 +30,9 @@ export class MultitailArrowMove extends BaseOperation {
 
   invert() {
     return new MultitailArrowMove(this.id, this.offset.negated());
+  }
+
+  isDummy() {
+    return this.offset.x === 0 && this.offset.y === 0;
   }
 }

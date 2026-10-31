@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,13 @@
 
 import { syncSettingsFromCore } from '../index';
 import { getDefaultOptions } from '../../../data/schema/options-schema';
-import { getDefaultSettings, normalizeSettingsForForm } from 'ketcher-core';
+import { getDefaultSettings } from 'ketcher-core';
 
 describe('syncSettingsFromCore', () => {
   it('should keep React initial defaults equal to normalized Core defaults', () => {
-    expect(getDefaultOptions()).toEqual(
-      normalizeSettingsForForm(getDefaultSettings(), {
-        removeCoreOnlyFields: true,
-      }),
-    );
+    const action = syncSettingsFromCore(getDefaultSettings());
+
+    expect(action.data).toEqual(getDefaultOptions());
   });
 
   it('should create SYNC_SETTINGS_FROM_CORE action', () => {
@@ -150,7 +148,7 @@ describe('syncSettingsFromCore', () => {
 
 describe('Redux reducer - SYNC_SETTINGS_FROM_CORE', () => {
   // Import the reducer
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+
   const optionsReducer = require('../index').default;
 
   it('should handle SYNC_SETTINGS_FROM_CORE action', () => {

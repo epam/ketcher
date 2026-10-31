@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,13 +31,17 @@ import sGroup from './parseSGroup';
 import utils from './utils';
 import type { AtomMap, SGroupMap } from './mol.types';
 
-const loadRGroupFragments = true; // TODO: set to load the fragments
+const shouldLoadRGroupFragments = true; // TODO: set to load the fragments
 
-/** M-property block: string keys (CHG, alias, …) map to per-atom pools */
+/**
+M-property block: string keys (CHG, alias, …) map to per-atom pools
+*/
 type MPropertyProps = Map<string, Pool<string | number | AtomList>>;
 
 function parseAtomLine(atomLine: string): Atom {
-  /* reader */
+  /*
+  reader
+  */
   const atomSplit = utils.partitionLine(
     atomLine,
     utils.fmtInfo.atomLinePartition,
@@ -72,7 +76,9 @@ function parseAtomLine(atomLine: string): Atom {
 }
 
 function parseBondLine(bondLine: string): Bond {
-  /* reader */
+  /*
+  reader
+  */
   const bondSplit = utils.partitionLine(
     bondLine,
     utils.fmtInfo.bondLinePartition,
@@ -96,14 +102,16 @@ function parseAtomListLine(atomListLine: string): {
   aid: number;
   atomList: AtomList;
 } {
-  /* reader */
+  /*
+  reader
+  */
   const split = utils.partitionLine(
     atomListLine,
     utils.fmtInfo.atomListHeaderPartition,
   );
 
   const number = utils.parseDecimalInt(split[0]) - 1;
-  const notList = split[2].trim() === 'T';
+  const isNotList = split[2].trim() === 'T';
   const count = utils.parseDecimalInt(split[4].trim());
 
   const ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength);
@@ -118,7 +126,7 @@ function parseAtomListLine(atomListLine: string): {
   return {
     aid: number,
     atomList: new AtomList({
-      notList,
+      notList: isNotList,
       ids: list,
     }),
   };
@@ -312,7 +320,7 @@ function handleSGroupAttachmentProperty(
 /**
  * Processes M-type property line
  */
-function processMPropertyLine(
+function shouldStopAfterProcessingMPropertyLine(
   type: string,
   propertyData: string,
   props: MPropertyProps,
@@ -420,7 +428,9 @@ function parsePropertyLines(
   sGroups: SGroupMap,
   rLogic: Record<number, RGroupAttributes>,
 ): MPropertyProps {
-  /* reader */
+  /*
+  reader
+  */
   const props = new Map<string, Pool<string | number | AtomList>>();
 
   while (shift < end) {
@@ -431,7 +441,7 @@ function parsePropertyLines(
     } else if (line.startsWith('M')) {
       const type = line.slice(3, 6);
       const propertyData = line.slice(6);
-      const shouldBreak = processMPropertyLine(
+      const shouldBreak = shouldStopAfterProcessingMPropertyLine(
         type,
         propertyData,
         props,
@@ -460,7 +470,9 @@ function applyAtomProp(
   values: Pool<string | number | AtomList>,
   propId: string,
 ): void {
-  /* reader */
+  /*
+  reader
+  */
   values.forEach((propVal, aid) => {
     const atom = atoms.get(aid);
     if (atom) {
@@ -504,17 +516,20 @@ function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
 function parseCTabV2000(
   ctabLines: string[],
   countsSplit: string[],
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ctab = new Struct();
   let i: number;
   const atomCount = utils.parseDecimalInt(countsSplit[0]);
   const bondCount = utils.parseDecimalInt(countsSplit[1]);
   const atomListCount = utils.parseDecimalInt(countsSplit[2]);
-  const isAbs = utils.parseDecimalInt(countsSplit[4]) === 1 || ignoreChiralFlag;
+  const isAbs =
+    utils.parseDecimalInt(countsSplit[4]) === 1 || shouldIgnoreChiralFlag;
   const isAnd =
-    utils.parseDecimalInt(countsSplit[4]) === 0 && !ignoreChiralFlag;
+    utils.parseDecimalInt(countsSplit[4]) === 0 && !shouldIgnoreChiralFlag;
   const stextLinesCount = utils.parseDecimalInt(countsSplit[5]);
   const propertyLinesCount = utils.parseDecimalInt(countsSplit[10]);
   let shift = 0;
@@ -532,10 +547,10 @@ function parseCTabV2000(
   bonds.forEach((bond) => {
     const beginAtom = ctab.atoms.get(bond.begin);
     if (beginAtom) {
-      if (bond.stereo && isAbs) {
+      if (isAbs && bond.stereo) {
         beginAtom.stereoLabel = StereoLabel.Abs;
       }
-      if (bond.stereo && isAnd) {
+      if (isAnd && bond.stereo) {
         beginAtom.stereoLabel = `${StereoLabel.And}1`;
       }
     }
@@ -602,7 +617,10 @@ function parseCTabV2000(
   return ctab;
 }
 
-function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
+function parseRg2000(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
@@ -642,14 +660,14 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     }
   }
 
-  const core = parseCTab(coreLines, ignoreChiralFlag);
+  const core = parseCTab(coreLines, shouldIgnoreChiralFlag);
   const frag: Record<number, Struct[]> = {};
-  if (loadRGroupFragments) {
+  if (shouldLoadRGroupFragments) {
     for (const strId in fragmentLines) {
       const id = Number.parseInt(strId, 10);
       frag[id] = [];
       for (const fragmentLine of fragmentLines[id]) {
-        frag[id].push(parseCTab(fragmentLine, ignoreChiralFlag));
+        frag[id].push(parseCTab(fragmentLine, shouldIgnoreChiralFlag));
       }
     }
   }
@@ -659,9 +677,11 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
 function parseRxn2000(
   ctabLines: string[],
   shouldReactionRelayout?: boolean,
-  ignoreChiralFlag?: boolean,
+  shouldIgnoreChiralFlag?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -680,9 +700,9 @@ function parseRxn2000(
     const lines = ctabLines.slice(0, n);
     let struct: Struct;
     if (lines[0].startsWith('$MDL')) {
-      struct = parseRg2000(lines, ignoreChiralFlag);
+      struct = parseRg2000(lines, shouldIgnoreChiralFlag);
     } else {
-      struct = parseCTab(lines.slice(3), ignoreChiralFlag);
+      struct = parseCTab(lines.slice(3), shouldIgnoreChiralFlag);
       struct.name = lines[0].trim();
     }
     mols.push(struct);
@@ -697,18 +717,25 @@ function parseRxn2000(
   );
 }
 
-function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
-  /* reader */
+function parseCTab(
+  ctabLines: string[],
+  shouldIgnoreChiralFlag?: boolean,
+): Struct {
+  /*
+  reader
+  */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
   );
   ctabLines = ctabLines.slice(1);
-  return parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
+  return parseCTabV2000(ctabLines, countsSplit, shouldIgnoreChiralFlag);
 }
 
 function labelsListToIds(labels: string[]): number[] {
-  /* reader */
+  /*
+  reader
+  */
   const ids: number[] = [];
   for (const label of labels) {
     const element = Elements.get(label.trim());
@@ -729,16 +756,18 @@ function parsePropertyLineAtomList(
   hdr: string[],
   lst: string[],
 ): Pool<AtomList> {
-  /* reader */
+  /*
+  reader
+  */
   const aid = utils.parseDecimalInt(hdr[1]) - 1;
   const count = utils.parseDecimalInt(hdr[2]);
-  const notList = hdr[4].trim() === 'T';
+  const isNotList = hdr[4].trim() === 'T';
   const ids = labelsListToIds(lst.slice(0, count));
   const ret = new Pool<AtomList>();
   ret.set(
     aid,
     new AtomList({
-      notList,
+      notList: isNotList,
       ids,
     }),
   );

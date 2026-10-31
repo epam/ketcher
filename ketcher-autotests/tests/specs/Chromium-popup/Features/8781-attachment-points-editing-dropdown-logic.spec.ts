@@ -1,7 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   AttachmentPointOption,
@@ -9,19 +8,11 @@ import {
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import {
-  clickOnCanvas,
-  dragMouseTo,
-  selectAllStructuresOnCanvas,
-} from '@utils';
+import { clickOnCanvas, selectAllStructuresOnCanvas } from '@utils';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
-const dragStartX = 600;
-const dragStartY = 200;
-const dragEndX = 500;
-const dragEndY = 250;
 
 async function openCreateMonomerDialogWithChemType(smiles: string) {
   await pasteFromClipboardAndOpenAsNewProject(page, smiles);
@@ -35,11 +26,6 @@ async function openCreateMonomerDialogWithChemType(smiles: string) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await expect(createMonomerDialog.window).toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
-
-  // Keep structure clear of the attributes panel before atom interactions.
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(dragStartX, dragStartY);
-  await dragMouseTo(page, dragEndX, dragEndY);
 
   return createMonomerDialog;
 }
@@ -394,7 +380,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
 
     // Create first and second attachment points
     await markAtomAsConnectionPoint('C', 0);
-    await markAtomAsConnectionPoint('C', 1);
+    await markAtomAsLeavingGroup('C', 5);
 
     // Change second attachment point to a non-H/OH LGA.
     await createMonomerDialog.changeAttachmentPointAtom({

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ import BondDative from '../../../assets/icons/files/bond-dative.svg';
 import BondDoubleAromaticIcon from '../../../assets/icons/files/bond-doublearomatic.svg';
 import BondDoubleIcon from '../../../assets/icons/files/bond-double.svg';
 import BondDownIcon from '../../../assets/icons/files/bond-down.svg';
+import BondHapticIcon from '../../../assets/icons/files/bond-haptic.svg';
 import BondHydrogenIcon from '../../../assets/icons/files/bond-hydrogen.svg';
 import BondSingleAromaticIcon from '../../../assets/icons/files/bond-singlearomatic.svg';
 import BondSingleDoubleIcon from '../../../assets/icons/files/bond-singledouble.svg';
@@ -316,6 +317,7 @@ export const iconNameToIcon = {
   'bond-double': BondDoubleIcon,
   'bond-doublearomatic': BondDoubleAromaticIcon,
   'bond-down': BondDownIcon,
+  'bond-haptic': BondHapticIcon,
   'bond-single': BondSingleIcon,
   'bond-singlearomatic': BondSingleAromaticIcon,
   'bond-singledouble': BondSingleDoubleIcon,

@@ -21,6 +21,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import { compareStrings } from 'utilities';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -40,7 +41,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.subtype ===
@@ -64,7 +65,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
-      { generateId },
+      { generateId: shouldGenerateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
@@ -76,13 +77,13 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public static getMonomerClass(monomers: BaseMonomer[]) {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
-    const containDifferentMonomerTypes = monomers.some((monomer) => {
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
       const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
       return monomerClass !== monomerClassToCompare;
     });
 
-    if (containDifferentMonomerTypes) {
+    if (hasDifferentMonomerTypes) {
       return KetMonomerClass.CHEM;
     }
 
@@ -118,9 +119,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
     this.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.MonomerCaps) {
-        if (!monomerCaps) {
-          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
-        } else {
+        if (monomerCaps) {
           for (const [attachmentPointName, label] of Object.entries(
             monomer.monomerItem.props.MonomerCaps,
           )) {
@@ -130,6 +129,8 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
               monomerCaps[attachmentPointName] = '';
             }
           }
+        } else {
+          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
         }
       }
     });
@@ -141,7 +142,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options
       .map((option) => option.templateId)
-      .sort();
+      .sort(compareStrings);
 
     const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
 
@@ -155,7 +156,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
       const libraryTemplateIds = libraryItem.options
         .map((option) => option.templateId)
-        .sort();
+        .sort(compareStrings);
 
       return (
         libraryTemplateIds.length === ownTemplateIds.length &&

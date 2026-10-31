@@ -336,9 +336,10 @@ export class CoreEditor {
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
+    const editor = this;
     this.dragDropHandler = new LibraryItemDragDropHandler({
       get drawingEntitiesManager() {
-        return this.getEditor().drawingEntitiesManager;
+        return editor.drawingEntitiesManager;
       },
       renderersContainer: this.renderersContainer,
       events: this.events,

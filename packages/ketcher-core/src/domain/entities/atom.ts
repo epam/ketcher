@@ -302,10 +302,10 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
-      get() {
+      get: () => {
         return getPseudo(this.label);
       },
-      set(value) {
+      set: (value) => {
         if (isCorrectPseudo(value)) {
           this.label = value;
         }

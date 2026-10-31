@@ -82,7 +82,7 @@ export const CalculateVariablesPanel = (page: Page) => {
     closeButton: page.getByTestId('macromolecule-properties-close'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -181,7 +181,7 @@ export const CalculateVariablesPanel = (page: Page) => {
       const counts: string[] = [];
 
       for (const value of enumValues) {
-        const count = await this.getNaturalAnalogCount(value);
+        const count = await pageObject.getNaturalAnalogCount(value);
         counts.push(count);
       }
 
@@ -193,13 +193,15 @@ export const CalculateVariablesPanel = (page: Page) => {
       const counts: string[] = [];
 
       for (const value of enumValues) {
-        const count = await this.getNaturalAnalogCount(value);
+        const count = await pageObject.getNaturalAnalogCount(value);
         counts.push(count);
       }
 
       return counts;
     },
   };
+
+  return pageObject;
 };
 
 export type CalculateVariablesPanelLocatorsType = ReturnType<

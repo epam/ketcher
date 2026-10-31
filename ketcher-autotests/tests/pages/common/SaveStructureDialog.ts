@@ -35,7 +35,7 @@ export const SaveStructureDialog = (page: Page) => {
     closeWindowButton: page.getByTestId('close-window-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async chooseFileFormat(
@@ -98,12 +98,12 @@ export const SaveStructureDialog = (page: Page) => {
 
     async save() {
       await locators.saveButton.click();
-      await this.window.waitFor({ state: 'hidden' });
+      await pageObject.window.waitFor({ state: 'hidden' });
     },
 
     async cancel() {
       await locators.cancelButton.click();
-      await this.window.waitFor({ state: 'hidden' });
+      await pageObject.window.waitFor({ state: 'hidden' });
     },
 
     async saveToTemplates() {
@@ -112,9 +112,11 @@ export const SaveStructureDialog = (page: Page) => {
 
     async closeWindow() {
       await locators.closeWindowButton.click();
-      await this.window.waitFor({ state: 'hidden' });
+      await pageObject.window.waitFor({ state: 'hidden' });
     },
   };
+
+  return pageObject;
 };
 
 export type SaveStructureDialogType = ReturnType<typeof SaveStructureDialog>;

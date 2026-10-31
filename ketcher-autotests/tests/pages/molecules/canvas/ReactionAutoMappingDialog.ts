@@ -28,7 +28,7 @@ export const ReactionAutoMappingDialog = (page: Page) => {
     await option.waitFor({ state: 'hidden' });
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async close() {
@@ -50,10 +50,12 @@ export const ReactionAutoMappingDialog = (page: Page) => {
     },
 
     async setModeAndApply(mode: AutoMapModeOption) {
-      await this.selectMode(mode);
-      await this.apply();
+      await pageObject.selectMode(mode);
+      await pageObject.apply();
     },
   };
+
+  return pageObject;
 };
 
 export type ReactionAutoMappingDialogType = ReturnType<

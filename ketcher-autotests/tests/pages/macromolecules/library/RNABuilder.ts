@@ -30,7 +30,7 @@ export const RNABuilder = (page: Page) => {
     editButton: page.getByTestId('edit-btn'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async expand() {
@@ -53,64 +53,66 @@ export const RNABuilder = (page: Page) => {
 
     async setCustomPresetName(name: string) {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.nameYourStructureEditbox).toBeInViewport();
       await locators.nameYourStructureEditbox.fill(name);
     },
 
     async selectSugarSlot() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.sugarSlot).toBeInViewport();
       await locators.sugarSlot.click();
     },
 
     async selectBaseSlot() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.baseSlot).toBeInViewport();
       await locators.baseSlot.click();
     },
 
     async selectPhosphateSlot() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.phosphateSlot).toBeInViewport();
       await locators.phosphateSlot.click();
     },
 
     async addToPresets() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.addToPresetsButton).toBeInViewport();
       await locators.addToPresetsButton.click();
     },
 
     async save() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await expect(locators.saveButton).toBeInViewport();
       await locators.saveButton.click();
     },
 
     async cancel() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await locators.cancelButton.click();
     },
 
     async duplicateAndEdit() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await locators.duplicateAndEditButton.click();
     },
 
     async edit() {
       await moveMouseAway(page);
-      await this.expand();
+      await pageObject.expand();
       await locators.editButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type RNABuilderType = ReturnType<typeof RNABuilder>;

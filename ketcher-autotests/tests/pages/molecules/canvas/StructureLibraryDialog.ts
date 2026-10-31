@@ -74,7 +74,7 @@ export const StructureLibraryDialog = (page: Page) => {
     deleteTemplateButton: page.getByTestId('delete-template-button'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async closeWindow() {
@@ -83,7 +83,7 @@ export const StructureLibraryDialog = (page: Page) => {
 
     async switchToTab(tabLocator: Locator, tabSection: TabSection) {
       if ((await tabLocator.getAttribute('aria-selected')) !== 'true') {
-        await this.openTab(tabSection);
+        await pageObject.openTab(tabSection);
       }
     },
 
@@ -100,16 +100,16 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async openSection(sectionName: TemplateLibraryTab) {
-      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
-        await this.switchToTemplateLibraryTab();
+      if (!(await pageObject.isTabOpened(TabSection.TemplateLibrary))) {
+        await pageObject.switchToTemplateLibraryTab();
       }
-      if (!(await this.isSectionOpened(sectionName))) {
+      if (!(await pageObject.isSectionOpened(sectionName))) {
         await getElement(sectionName).click();
       }
     },
 
     async openTab(tabSection: TabSection) {
-      if (!(await this.isTabOpened(tabSection))) {
+      if (!(await pageObject.isTabOpened(tabSection))) {
         await getElement(tabSection).click();
         // Wait for the content to load after switching tabs
         await page.waitForTimeout(250);
@@ -117,21 +117,21 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async switchToTemplateLibraryTab() {
-      await this.switchToTab(
+      await pageObject.switchToTab(
         locators.templateLibraryTab,
         TabSection.TemplateLibrary,
       );
     },
 
     async switchToFunctionalGroupTab() {
-      await this.switchToTab(
+      await pageObject.switchToTab(
         locators.functionalGroupTab,
         TabSection.FunctionalGroups,
       );
     },
 
     async switchToSaltsAndSolventsTab() {
-      await this.switchToTab(
+      await pageObject.switchToTab(
         locators.saltsAndSalventsTab,
         TabSection.SaltsAndSolvents,
       );
@@ -146,7 +146,7 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async openTemplateLibrarySection(sectionName: TemplateLibraryTab) {
-      if (!(await this.isSectionOpened(sectionName))) {
+      if (!(await pageObject.isSectionOpened(sectionName))) {
         await page.getByTestId(sectionName).click();
       }
     },
@@ -155,11 +155,11 @@ export const StructureLibraryDialog = (page: Page) => {
       sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate | string,
     ) {
-      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
-        await this.switchToTemplateLibraryTab();
+      if (!(await pageObject.isTabOpened(TabSection.TemplateLibrary))) {
+        await pageObject.switchToTemplateLibraryTab();
       }
-      if (!(await this.isSectionOpened(sectionName))) {
-        await this.openTemplateLibrarySection(sectionName);
+      if (!(await pageObject.isSectionOpened(sectionName))) {
+        await pageObject.openTemplateLibrarySection(sectionName);
       }
       await page.getByTestId(templateName).click();
     },
@@ -168,10 +168,10 @@ export const StructureLibraryDialog = (page: Page) => {
       sectionName: TemplateLibraryTab,
       templateName: LibraryTemplate,
     ) {
-      if (!(await this.isTabOpened(TabSection.TemplateLibrary))) {
-        await this.switchToTemplateLibraryTab();
+      if (!(await pageObject.isTabOpened(TabSection.TemplateLibrary))) {
+        await pageObject.switchToTemplateLibraryTab();
       }
-      await this.openTemplateLibrarySection(sectionName);
+      await pageObject.openTemplateLibrarySection(sectionName);
       await page
         .getByTestId(templateName)
         .locator('..')
@@ -184,15 +184,15 @@ export const StructureLibraryDialog = (page: Page) => {
     },
 
     async selectFunctionalGroup(cardName: FunctionalGroupsTabItems) {
-      if (!(await this.isTabOpened(TabSection.FunctionalGroups))) {
-        await this.switchToFunctionalGroupTab();
+      if (!(await pageObject.isTabOpened(TabSection.FunctionalGroups))) {
+        await pageObject.switchToFunctionalGroupTab();
       }
       await page.getByTestId(cardName).click();
     },
 
     async selectSaltsAndSolvents(cardName: SaltsAndSolventsTabItems) {
-      if (!(await this.isTabOpened(TabSection.SaltsAndSolvents))) {
-        await this.switchToSaltsAndSolventsTab();
+      if (!(await pageObject.isTabOpened(TabSection.SaltsAndSolvents))) {
+        await pageObject.switchToSaltsAndSolventsTab();
       }
       await page.getByTestId(cardName).click();
     },
@@ -201,6 +201,8 @@ export const StructureLibraryDialog = (page: Page) => {
       await locators.saveToSdfButton.click();
     },
   };
+
+  return pageObject;
 };
 
 export type StructureLibraryDialogType = ReturnType<

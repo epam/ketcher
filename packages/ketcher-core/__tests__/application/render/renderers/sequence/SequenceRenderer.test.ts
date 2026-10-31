@@ -9,6 +9,7 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { getSvgFromDrawnStructures } from '../../../../../src/utilities/getSvgFromDrawnStructures';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Vec2 } from 'domain/entities';
+import { Nucleotide } from 'domain/entities/Nucleotide';
 import { AttachmentPointName } from 'domain/types';
 import {
   coreEditorTheme,
@@ -123,6 +124,104 @@ describe('SequenceRenderer', () => {
 
     expect(getSequenceBondPaths()).toHaveLength(1);
   });
+
+  it.each([9, 10, 11])(
+    'hides upper counters for a %i-symbol duplex independently of the sync caret (#8960)',
+    (length) => {
+      for (const dimension of ['width', 'height']) {
+        Object.defineProperty(canvas, dimension, {
+          configurable: true,
+          value: { baseVal: { value: 500 } },
+        });
+      }
+      const nucleotides = Array.from({ length }, (_, index) => {
+        const created = Nucleotide.createOnCanvas(
+          'A',
+          new Vec2(index * 1.6, 0),
+        );
+        if (!created) throw new Error('Failed to create nucleotide');
+        return created.node;
+      });
+      nucleotides.slice(1).forEach((node, index) => {
+        editor.drawingEntitiesManager.createPolymerBond(
+          nucleotides[index].phosphate,
+          node.sugar,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+      });
+      editor.drawingEntitiesManager.selectDrawingEntities([
+        ...editor.drawingEntitiesManager.monomers.values(),
+      ]);
+      editor.drawingEntitiesManager.createAntisenseChain(false);
+      editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      const mode = editor.mode as SequenceMode;
+      mode.turnOnEditMode();
+
+      const renderer = nucleotides[length - 1].rnaBase
+        .renderer as unknown as BaseSequenceItemRenderer;
+      const firstRenderer = nucleotides[0].rnaBase
+        .renderer as unknown as BaseSequenceItemRenderer;
+      for (const position of [0, length - 1, length, 0]) {
+        SequenceRenderer.setCaretPosition(position);
+        expect(renderer.counterElement?.text()).toBe(
+          length > 9 ? undefined : String(length),
+        );
+        expect(
+          firstRenderer.antisenseNodeRenderer?.counterElement?.text(),
+        ).toBe(String(length));
+      }
+
+      const terminalRenderer = () =>
+        nucleotides[length - 1].rnaBase
+          .renderer as unknown as BaseSequenceItemRenderer;
+      mode.turnOffSyncEditMode();
+      expect(terminalRenderer().counterElement?.text()).toBe(String(length));
+      mode.turnOnSyncEditMode();
+      expect(terminalRenderer().counterElement?.text()).toBe(
+        length > 9 ? undefined : String(length),
+      );
+      mode.turnOffEditMode();
+      expect(terminalRenderer().counterElement?.text()).toBe(String(length));
+      const viewFirstRenderer = nucleotides[0].rnaBase
+        .renderer as unknown as BaseSequenceItemRenderer;
+      expect(
+        viewFirstRenderer.antisenseNodeRenderer?.counterElement?.text(),
+      ).toBe(String(length));
+
+      if (length === 10) {
+        // A terminal symbol without a partner belongs to the same duplex.
+        const terminalBase = nucleotides[length - 1].rnaBase;
+        editor.drawingEntitiesManager.deletePolymerBond(
+          terminalBase.hydrogenBonds[0],
+        );
+        mode.turnOnEditMode();
+        expect(terminalRenderer().counterElement).toBeUndefined();
+      }
+
+      if (length === 9) {
+        mode.turnOnEditMode();
+        const added = Nucleotide.createOnCanvas('A', new Vec2(length * 1.6, 0));
+        if (!added) throw new Error('Failed to create nucleotide');
+        editor.drawingEntitiesManager.createPolymerBond(
+          nucleotides[length - 1].phosphate,
+          added.node.sugar,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        );
+        showCurrentMonomersInSequenceLayout();
+        const addedRenderer = added.node.rnaBase
+          .renderer as unknown as BaseSequenceItemRenderer;
+        expect(addedRenderer.counterElement).toBeUndefined();
+
+        for (const monomer of added.node.monomers) {
+          editor.drawingEntitiesManager.deleteMonomer(monomer);
+        }
+        showCurrentMonomersInSequenceLayout();
+        expect(terminalRenderer().counterElement?.text()).toBe('9');
+      }
+    },
+  );
 
   it('removes sequence bond paths created across multiple renders when ClearTool runs', () => {
     setupCyclicTwoPeptideStructure();

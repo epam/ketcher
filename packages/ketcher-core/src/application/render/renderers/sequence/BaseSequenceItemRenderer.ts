@@ -19,12 +19,41 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
+import type { SequenceViewModel } from './SequenceViewModel/SequenceViewModel';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  // Rebuilding the view model after an edit invalidates chain metadata;
+  // moving the caret reuses it.
+  private static readonly counterChainInfo = new WeakMap<
+    SequenceViewModel,
+    WeakMap<Chain, { length: number; hasAntisense: boolean }>
+  >();
+
+  private get counterChainInfo() {
+    const viewModel = sequenceRendererStore.sequenceViewModel;
+    let chains = BaseSequenceItemRenderer.counterChainInfo.get(viewModel);
+    if (!chains) {
+      chains = new WeakMap();
+      BaseSequenceItemRenderer.counterChainInfo.set(viewModel, chains);
+    }
+    let info = chains.get(this.chain);
+    if (!info) {
+      info = {
+        length: this.chain.nodes.filter((node) => !this.inIgnoreList(node))
+          .length,
+        hasAntisense: this.chain.nodes.some((node) =>
+          node.monomers.some((monomer) => monomer.hydrogenBonds.length > 0),
+        ),
+      };
+      chains.set(this.chain, info);
+    }
+    return info;
+  }
+
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -375,7 +404,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('fill', '#7C7C7F');
   }
 
-  public redrawCounter(editingNodeIndexOverall?: number) {
+  public redrawCounter() {
     if (!this.rootElement) {
       return;
     }
@@ -383,12 +412,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.counterElement?.remove();
     this.counterElement = undefined;
 
-    if (this.needDisplayCounter(editingNodeIndexOverall)) {
+    if (this.needDisplayCounter()) {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
   }
 
-  private needDisplayCounter(editingNodeIndexOverall?: number) {
+  private needDisplayCounter() {
     return (
       !this.inIgnoreList(this.node) &&
       // don't display counters for first node in chain even if it is last node
@@ -396,20 +425,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       //     3   1     4
       // A A A @ A A A A
       !this.isSubChainNodeBeginningOfChain &&
+      // In synchronized duplex editing, long sense strands have no counters.
+      (!this.isSequenceEditModeTurnedOn ||
+        !this.isSyncEditMode ||
+        this.isAntisenseNode ||
+        !this.counterChainInfo.hasAntisense ||
+        this.counterChainInfo.length <= 9) &&
       // display for first and last in subchain (except last MonomerSequenceNode)
       // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
       // for every nth node in row (10th) in chain
       (this.isBeginningOfSubChain ||
         this.isLastInSubChain ||
         this.currentNodeNearBreakingNode ||
-        ((!this.isSyncEditMode ||
-          !this.hasAntisenseInChain ||
-          !(
-            this.counterNumber > 9 &&
-            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
-              this.isEditingSymbol(editingNodeIndexOverall))
-          )) &&
-          (this.isNthNodeInChain || this.isLastMonomerInChain)))
+        this.isNthNodeInChain ||
+        this.isLastMonomerInChain)
     );
   }
 
@@ -473,7 +502,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       node instanceof EmptySequenceNode ||
       node instanceof BackBoneSequenceNode ||
       // Ambiguous monomer not peptide
-      this.checkIfNodeIsAmbiguousMonomerNotPeptide(this.node) ||
+      this.checkIfNodeIsAmbiguousMonomerNotPeptide(node) ||
       // Phosphate
       // for example, subChain:
       //  1   3

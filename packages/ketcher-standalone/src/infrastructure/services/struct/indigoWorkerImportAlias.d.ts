@@ -23,4 +23,5 @@
  */
 declare module '_indigo-worker-import-alias_' {
   export function getIndigoWorker(): Worker;
+  export function terminateIndigoWorker(): void;
 }

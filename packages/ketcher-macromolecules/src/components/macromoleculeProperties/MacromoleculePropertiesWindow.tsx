@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +15,7 @@
  ***************************************************************************/
 
 import { useAppDispatch, useAppSelector, useDebouncedCallback } from 'hooks';
+import { useTranslation } from 'react-i18next';
 import {
   MolarMeasurementUnit,
   selectEditor,
@@ -39,7 +39,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
-  SingleChainMacromoleculeProperties,
+  type SingleChainMacromoleculeProperties,
 } from 'ketcher-core';
 import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
@@ -50,6 +50,7 @@ import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
+const NO_DATA_VALUE = '-';
 
 const hasSpecificProperty = (
   macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
@@ -113,7 +114,7 @@ const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   height: '24px',
-  borderLeft: '1px solid #CAD3DD',
+  borderInlineStart: '1px solid #CAD3DD',
   color: '#585858',
 }));
 
@@ -228,7 +229,7 @@ const HydrophobicityHintHeader = styled('div')(() => ({
 
 const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
-  paddingRight: '5px',
+  paddingInlineEnd: '5px',
   whiteSpace: 'nowrap',
 }));
 
@@ -311,7 +312,7 @@ const StyledMonomersCountPanelItem = styled('div')<{
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
     width: 15px;
     height: 2px;
     background: ${({ theme, monomerShortName, isPeptide }) => {
@@ -345,24 +346,24 @@ interface BasicPropertyProps {
 }
 
 interface MonomersCountPanelProps {
-  monomerCount: Record<string, number>;
+  monomerCount?: Record<string, number>;
   isPeptide?: boolean;
 }
 
 const MonomersCountPanel = (props: MonomersCountPanelProps) => {
+  const { t } = useTranslation('macromolecules');
   const naturalAnaloguesArray = props.isPeptide
     ? peptideNaturalAnalogues
     : rnaDnaNaturalAnalogues;
-  const countsEntries: [string, number][] = naturalAnaloguesArray.map(
-    (peptideNaturalAnalogues) => [
+  const countsEntries: [string, number | undefined][] =
+    naturalAnaloguesArray.map((peptideNaturalAnalogues) => [
       peptideNaturalAnalogues,
-      props.monomerCount[peptideNaturalAnalogues] || 0,
-    ],
-  );
+      props.monomerCount?.[peptideNaturalAnalogues],
+    ]);
 
   countsEntries.push([
     OTHER_MONOMER_COUNT_NAME,
-    props.monomerCount[OTHER_MONOMER_COUNT_NAME] || 0,
+    props.monomerCount?.[OTHER_MONOMER_COUNT_NAME],
   ]);
   countsEntries.sort((a, b) => {
     return a[0] === OTHER_MONOMER_COUNT_NAME ? 1 : a[0].localeCompare(b[0]);
@@ -376,13 +377,15 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
             monomerShortName={monomerShortName}
             data-testid={monomerShortName + '-option'}
             isPeptide={props.isPeptide}
-            disabled={count === 0}
+            disabled={!count}
             key={monomerShortName}
           >
             <StyledMonomersCountPanelItemName>
-              {monomerShortName}
+              {monomerShortName === OTHER_MONOMER_COUNT_NAME
+                ? t('macromoleculeProperties.otherMonomerCount')
+                : monomerShortName}
             </StyledMonomersCountPanelItemName>
-            <div>{count}</div>
+            <div>{count === undefined ? NO_DATA_VALUE : count}</div>
           </StyledMonomersCountPanelItem>
         );
       })}
@@ -475,7 +478,7 @@ function lttb(xs, ys, threshold) {
   // Largest Triangle Three Buckets algorithm
   const dataLength = xs.length;
 
-  if (threshold >= dataLength || threshold === 0) {
+  if (threshold === 0 || threshold >= dataLength) {
     return { xs, ys };
   }
 
@@ -564,16 +567,20 @@ const roundToMinNiceNumber = (number: number) => {
 
 const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const { data: initialData } = props;
-  const data = lttb(
-    initialData.map((_item, index) => index + 1),
-    initialData,
-    100,
+  const data = useMemo(
+    () =>
+      lttb(
+        initialData.map((_item, index) => index + 1),
+        initialData,
+        100,
+      ),
+    [initialData],
   );
   const [containerWidth, setContainerWidth] = useState(0);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    if (!data.xs.length || !svgRef.current) return;
+    if (!svgRef.current) return;
 
     const width = svgRef.current.width.baseVal.value;
     const height = svgRef.current.height.baseVal.value;
@@ -583,7 +590,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 
     const xScale = d3
       .scaleLinear()
-      .domain([0, data.xs.length - 1])
+      .domain([0, Math.max(data.xs.length - 1, 1)])
       .range([margin.left, width - margin.right]);
 
     const yScale = d3
@@ -644,25 +651,27 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       finalDistanceBetweenTicks = distanceBetweenTicksWithMaximumCoverage;
     } else {
       tickValues = [
-        ...Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
+        ...new Array(Math.min(maximumNumberOfTicks, data.xs.length)).keys(),
       ];
       finalDistanceBetweenTicks = 1;
     }
 
-    const xAxis = d3
-      .axisBottom(xScale)
-      .tickValues(tickValues)
-      .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
+    if (data.xs.length) {
+      const xAxis = d3
+        .axisBottom(xScale)
+        .tickValues(tickValues)
+        .tickFormat((_, i) => ((i + 1) * finalDistanceBetweenTicks).toString());
 
-    svgContainer
-      .append('g')
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(xAxis)
-      .call((g) => g.select('.domain').remove()) // remove baseline
-      .call((g) =>
-        g.selectAll('line').attr('stroke', '#CAD3DD').attr('y1', -height),
-      )
-      .call((g) => g.selectAll('text').attr('font-size', '8px'));
+      svgContainer
+        .append('g')
+        .attr('transform', `translate(0,${height - margin.bottom})`)
+        .call(xAxis)
+        .call((g) => g.select('.domain').remove()) // remove baseline
+        .call((g) =>
+          g.selectAll('line').attr('stroke', '#CAD3DD').attr('y1', -height),
+        )
+        .call((g) => g.selectAll('text').attr('font-size', '8px'));
+    }
 
     const yAxis = d3
       .axisLeft(yScale)
@@ -688,34 +697,38 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
       })
       .call((g) => g.selectAll('text').attr('font-size', '8px'));
 
-    svgContainer
-      .append('path')
-      .datum(data.ys)
-      .attr('fill', 'none')
-      .attr('stroke', '#167782')
-      .attr('stroke-width', 1)
-      .attr('d', line);
-  }, [initialData, containerWidth]);
+    if (data.ys.length) {
+      svgContainer
+        .append('path')
+        .datum(data.ys)
+        .attr('fill', 'none')
+        .attr('stroke', '#167782')
+        .attr('stroke-width', 1)
+        .attr('d', line);
+    }
+  }, [initialData, data.xs, data.ys, containerWidth]);
 
   // rerender the chart when the size of container changes
-  const resizeObserver = new ResizeObserver(
-    debounce((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width !== containerWidth) {
-          setContainerWidth(entry.contentRect.width);
-        }
-      }
-    }, 100),
-  );
-
   useEffect(() => {
-    if (svgRef.current) {
-      resizeObserver.observe(svgRef.current);
-    }
+    const svg = svgRef.current;
+    if (!svg) return;
+
+    const debouncedResize = debounce((entries: ResizeObserverEntry[]) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setContainerWidth((currentWidth) =>
+          currentWidth === width ? currentWidth : width,
+        );
+      }
+    }, 100);
+    const resizeObserver = new ResizeObserver(debouncedResize);
+    resizeObserver.observe(svg);
+
     return () => {
       resizeObserver.disconnect();
+      debouncedResize.cancel();
     };
-  }, [svgRef, containerWidth]);
+  }, []);
 
   return (
     <StyledHydrophobicityChartSvg
@@ -726,11 +739,14 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
 };
 
 const PeptideProperties = (props: PeptidePropertiesProps) => {
+  const { t } = useTranslation('macromolecules');
   return props.isError ? (
     <TabContentErrorWrapper>
-      <TabContentErrorTitle>No Data Available</TabContentErrorTitle>
+      <TabContentErrorTitle>
+        {t('macromoleculeProperties.noDataAvailable')}
+      </TabContentErrorTitle>
       <TabContentErrorDescription>
-        Select monomer, chain or part of a chain
+        {t('macromoleculeProperties.selectMonomerForPeptides')}
       </TabContentErrorDescription>
     </TabContentErrorWrapper>
   ) : (
@@ -738,63 +754,63 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
       <PeptideBasicPropertiesWrapper>
         <BasicPropertiesWrapper>
           <BasicProperty
-            name="Isoelectric Point"
+            name={t('macromoleculeProperties.isoelectricPoint')}
             testId="Isoelectric Point"
             value={
               isNumber(props.macromoleculesProperties.pKa)
                 ? _round(props.macromoleculesProperties.pKa, 2)
-                : '–'
+                : NO_DATA_VALUE
             }
             hint={
               <div>
-                The isoelectric point is calculated as the median of all pKa
-                values for amino acids (values from{' '}
-                <i>Miclotte et. al. (2020))</i>. Only amino acid natural
-                analogues are used in the calculation.
+                {t('macromoleculeProperties.isoelectricPointHintBefore')}
+                <i>Miclotte et. al. (2020))</i>
+                {t('macromoleculeProperties.isoelectricPointHintAfter')}
               </div>
             }
           />
           <BasicProperty
-            name="Extinction Coef.(1/Mcm)"
+            name={t('macromoleculeProperties.extinctionCoefficient')}
             testId="Extinction Coefficient"
             value={
               isNumber(props.macromoleculesProperties.extinctionCoefficient)
                 ? _round(props.macromoleculesProperties.extinctionCoefficient)
-                : '–'
+                : NO_DATA_VALUE
             }
             hint={
               <div>
-                The extinction coefficient for wavelength of 280nm is calculated
-                using the method from{' '}
-                <i>Gill, S.C. and von Hippel, P.H. (1989).</i> Natural analogue
-                is used in place of a modified amino acid.
+                {t('macromoleculeProperties.extinctionCoefficientHintBefore')}
+                <i>Gill, S.C. and von Hippel, P.H. (1989).</i>
+                {t('macromoleculeProperties.extinctionCoefficientHintAfter')}
               </div>
             }
           ></BasicProperty>
         </BasicPropertiesWrapper>
         <BasicProperty
-          name="Hydrophobicity"
+          name={t('macromoleculeProperties.hydrophobicity')}
           testId="Hydrophobicity"
           hint={
             <div>
               <HydrophobicityHintHeader>
-                <div>y = Hydrophobicity score</div>
-                <div>x = Position of the amino acid residue</div>
+                <div>
+                  {t('macromoleculeProperties.hydrophobicityHintYAxis')}
+                </div>
+                <div>
+                  {t('macromoleculeProperties.hydrophobicityHintXAxis')}
+                </div>
               </HydrophobicityHintHeader>
-              The hydrophobicity is calculated using the method from{' '}
-              <i>Black S.D. and Mould D.R. (1991).</i> Natural analogue is used
-              in place of a modified amino acid.
+              {t('macromoleculeProperties.hydrophobicityHintBefore')}
+              <i>Black S.D. and Mould D.R. (1991).</i>
+              {t('macromoleculeProperties.hydrophobicityHintAfter')}
             </div>
           }
         />
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
-        {props.macromoleculesProperties.monomerCount.peptides && (
-          <MonomersCountPanel
-            monomerCount={props.macromoleculesProperties.monomerCount.peptides}
-            isPeptide
-          />
-        )}
+        <MonomersCountPanel
+          monomerCount={props.macromoleculesProperties.monomerCount.peptides}
+          isPeptide
+        />
         <HydrophobicityChartWrapper>
           {props.macromoleculesProperties.hydrophobicity && (
             <HydrophobicityChart
@@ -807,11 +823,12 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
   );
 };
 
-const containOnlyPartOfNumber = (value: number) => {
+const hasOnlyZeroDigitsAndSeparators = (value: number) => {
   return !/[^0.,]/.test(String(value));
 };
 
 const RnaProperties = (props: DnaRnaPropertiesProps) => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const unipositiveIonsMeasurementUnit = useAppSelector(
     selectUnipositiveIonsMeasurementUnit,
@@ -842,65 +859,64 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
 
   return props.isError ? (
     <TabContentErrorWrapper>
-      <TabContentErrorTitle>No Data Available</TabContentErrorTitle>
+      <TabContentErrorTitle>
+        {t('macromoleculeProperties.noDataAvailable')}
+      </TabContentErrorTitle>
       <TabContentErrorDescription>
-        Select a nucleotide/nucleoside, chain or part of a chain containing
-        nucleotides/nucleosides
+        {t('macromoleculeProperties.selectMonomerForNucleotides')}
       </TabContentErrorDescription>
     </TabContentErrorWrapper>
   ) : (
     <TabContentWrapper>
       <RnaBasicPropertiesWrapper>
-        {isNumber(props.macromoleculesProperties.Tm) ? (
-          <BasicProperty
-            name="Melting Temp. (°C)"
-            value={_round(props.macromoleculesProperties.Tm, 1)}
-            testId="Melting-Temperature"
-            hint={
-              <div>
-                The melting temperature is calculated using the method from{' '}
-                <i>Khandelwal G. and Bhyravabhotla J. (2010).</i> Natural
-                analogue is used in place of a modified base.
-              </div>
-            }
-          />
-        ) : (
-          <div></div>
-        )}
+        <BasicProperty
+          name={t('macromoleculeProperties.meltingTemp')}
+          value={
+            isNumber(props.macromoleculesProperties.Tm)
+              ? _round(props.macromoleculesProperties.Tm, 1)
+              : NO_DATA_VALUE
+          }
+          testId="Melting-Temperature"
+          hint={
+            <div>
+              {t('macromoleculeProperties.meltingTempHintBefore')}
+              <i>Khandelwal G. and Bhyravabhotla J. (2010).</i>
+              {t('macromoleculeProperties.meltingTempHintAfter')}
+            </div>
+          }
+        />
         <BasicPropertiesWrapper>
           <BasicProperty
-            name="[Unipositive Ions]"
+            name={t('macromoleculeProperties.unipositiveIons')}
             value={unipositiveIonsValue}
             options={['nM', 'μM', 'mM']}
             testId="Unipositive Ions"
             selectedOption={unipositiveIonsMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(unipositiveIonsValue)
+              !hasOnlyZeroDigitsAndSeparators(unipositiveIonsValue)
             }
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
             onChangeValue={onChangeUnipositiveIonsValue}
           />
           <BasicProperty
-            name="[Oligonucleotides]"
+            name={t('macromoleculeProperties.oligonucleotides')}
             value={oligonucleotidesValue}
             options={['nM', 'μM', 'mM']}
             testId="Oligonucleotides"
             selectedOption={oligonucleotidesMeasurementUnit}
             disabled={
               !isNumber(props.macromoleculesProperties.Tm) &&
-              !containOnlyPartOfNumber(oligonucleotidesValue)
+              !hasOnlyZeroDigitsAndSeparators(oligonucleotidesValue)
             }
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
             onChangeValue={onChangeOligonucleotidesValue}
           />
         </BasicPropertiesWrapper>
       </RnaBasicPropertiesWrapper>
-      {props.macromoleculesProperties.monomerCount.nucleotides && (
-        <MonomersCountPanel
-          monomerCount={props.macromoleculesProperties.monomerCount.nucleotides}
-        />
-      )}
+      <MonomersCountPanel
+        monomerCount={props.macromoleculesProperties.monomerCount.nucleotides}
+      />
     </TabContentWrapper>
   );
 };
@@ -949,6 +965,7 @@ const calculateDefaultTabIndex = (
 let recalculatePropertiesHandler: () => void;
 
 export const MacromoleculePropertiesWindow = () => {
+  const { t } = useTranslation('macromolecules');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const macromoleculesProperties = useAppSelector(
@@ -979,7 +996,7 @@ export const MacromoleculePropertiesWindow = () => {
   );
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-  const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+  const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
   const {
     debouncedCallback: debouncedRecalculateMacromoleculeProperties,
     invokeImmediately: recalculateMacromoleculePropertiesImmediately,
@@ -999,7 +1016,7 @@ export const MacromoleculePropertiesWindow = () => {
     }
 
     recalculatePropertiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+      debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
     };
 
     // selectEntities covers recalculation when the selection changes;
@@ -1012,14 +1029,18 @@ export const MacromoleculePropertiesWindow = () => {
       editor?.events.selectEntities.remove(recalculatePropertiesHandler);
       editor?.events.modelChange.remove(recalculatePropertiesHandler);
     };
-  }, [debouncedRecalculateMacromoleculeProperties, editor, skipDataFetch]);
+  }, [
+    debouncedRecalculateMacromoleculeProperties,
+    editor,
+    shouldSkipDataFetch,
+  ]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    debouncedRecalculateMacromoleculeProperties(shouldSkipDataFetch);
   }, [
     unipositiveIonsValue,
     oligonucleotidesValue,
-    skipDataFetch,
+    shouldSkipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);
 
@@ -1027,16 +1048,16 @@ export const MacromoleculePropertiesWindow = () => {
   // debounced), the measurement unit is a single discrete dropdown
   // selection, so recalculating immediately here avoids an unnecessary
   // 500ms delay on top of the actual recalculation time (#7316). Both
-  // effects share `skipDataFetch`, so opening the properties window also
+  // effects share `shouldSkipDataFetch`, so opening the properties window also
   // re-runs the effect above and schedules a debounced call; cancel it so
   // only this immediate calculation actually runs.
   useEffect(() => {
     cancelDebouncedRecalculateMacromoleculeProperties();
-    recalculateMacromoleculePropertiesImmediately(skipDataFetch);
+    recalculateMacromoleculePropertiesImmediately(shouldSkipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
-    skipDataFetch,
+    shouldSkipDataFetch,
     cancelDebouncedRecalculateMacromoleculeProperties,
     recalculateMacromoleculePropertiesImmediately,
   ]);
@@ -1081,42 +1102,34 @@ export const MacromoleculePropertiesWindow = () => {
     hasCommonError ||
     !hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides');
 
-  const grossFormula = useMemo(() => {
-    if (!firstMacromoleculesProperties?.grossFormula) {
-      return null;
-    }
+  const grossFormula = (
+    <GrossFormula data-testid="Gross-formula">
+      {(firstMacromoleculesProperties?.grossFormula || NO_DATA_VALUE)
+        .split(' ')
+        .map((atomNameWithAmount, index, array) => (
+          <span key={`${atomNameWithAmount}-${index}`}>
+            <GrossFormulaPart part={atomNameWithAmount} />
+            {index < array.length - 1 ? ' ' : ''}
+          </span>
+        ))}
+    </GrossFormula>
+  );
 
-    return (
-      <GrossFormula data-testid="Gross-formula">
-        {firstMacromoleculesProperties?.grossFormula
-          .split(' ')
-          .map((atomNameWithAmount, index, array) => (
-            <span key={`${atomNameWithAmount}-${index}`}>
-              <GrossFormulaPart part={atomNameWithAmount} />
-              {index < array.length - 1 ? ' ' : ''}
-            </span>
-          ))}
-      </GrossFormula>
-    );
-  }, [firstMacromoleculesProperties?.grossFormula]);
-
-  const molecularMassValue = useMemo(() => {
-    if (!firstMacromoleculesProperties?.mass) {
-      return null;
-    }
-
-    return (
-      <>
-        <MolecularMassAmount data-testid="Molecular-Mass-Value">
-          {_round(
-            firstMacromoleculesProperties?.mass /
-              massMeasurementUnitToNumber[massMeasurementUnit],
-            3,
-          )}
-        </MolecularMassAmount>{' '}
-      </>
-    );
-  }, [firstMacromoleculesProperties?.mass, massMeasurementUnit]);
+  const molecularMassValue = isNumber(firstMacromoleculesProperties?.mass) ? (
+    <>
+      <MolecularMassAmount data-testid="Molecular-Mass-Value">
+        {_round(
+          firstMacromoleculesProperties.mass /
+            massMeasurementUnitToNumber[massMeasurementUnit],
+          3,
+        )}
+      </MolecularMassAmount>{' '}
+    </>
+  ) : (
+    <MolecularMassAmount data-testid="Molecular-Mass-Value">
+      {NO_DATA_VALUE}
+    </MolecularMassAmount>
+  );
 
   return isMacromoleculesPropertiesWindowOpened ? (
     <StyledWrapper
@@ -1139,19 +1152,21 @@ export const MacromoleculePropertiesWindow = () => {
         {molecularMassValue && (
           <MolecularMass>
             {molecularMassValue}
-            <BasicPropertyDropdown
-              testId="Molecular Mass Unit"
-              options={[
-                MassMeasurementUnit.Da,
-                MassMeasurementUnit.kDa,
-                MassMeasurementUnit.MDa,
-              ].map((unit) => ({
-                id: unit,
-                label: unit,
-              }))}
-              currentSelection={massMeasurementUnit}
-              selectionHandler={onMassMeasurementUnitChange}
-            />
+            {isNumber(firstMacromoleculesProperties?.mass) && (
+              <BasicPropertyDropdown
+                testId="Molecular Mass Unit"
+                options={[
+                  MassMeasurementUnit.Da,
+                  MassMeasurementUnit.kDa,
+                  MassMeasurementUnit.MDa,
+                ].map((unit) => ({
+                  id: unit,
+                  label: unit,
+                }))}
+                currentSelection={massMeasurementUnit}
+                selectionHandler={onMassMeasurementUnitChange}
+              />
+            )}
           </MolecularMass>
         )}
       </Header>
@@ -1162,7 +1177,7 @@ export const MacromoleculePropertiesWindow = () => {
           isLayoutToRight
           tabs={[
             {
-              caption: 'Peptides',
+              caption: t('macromoleculeProperties.peptidesTab'),
               testId: 'peptides-properties-tab',
               component: PeptideProperties,
               props: {
@@ -1171,7 +1186,7 @@ export const MacromoleculePropertiesWindow = () => {
               },
             },
             {
-              caption: 'RNA/DNA',
+              caption: t('macromoleculeProperties.rnaDnaTab'),
               component: RnaProperties,
               testId: 'rna-properties-tab',
               props: {

@@ -17,7 +17,7 @@ const initialState = {
       hasRxnArrow: () => false,
       hasMultitailArrow: () => false,
       isBlank: () => true,
-      atoms: { size: 0 },
+      atoms: new Map(),
       bonds: { size: 0 },
       rxnArrows: { size: 0 },
       frags: { values: () => [] },

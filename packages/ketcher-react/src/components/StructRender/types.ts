@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,15 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Struct, RenderOptions } from 'ketcher-core';
+import type { Struct, RenderStructOptions } from 'ketcher-core';
 
-interface CasheOptions {
-  cachePrefix?: string;
-  needCache?: boolean;
-}
 export interface IStructRenderProps {
   struct: Struct;
-  options?: (RenderOptions & CasheOptions) | CasheOptions;
+  options?: RenderStructOptions;
   className?: string;
   update?: boolean;
   fullsize?: boolean;

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
+import { useTranslation } from 'react-i18next';
 import { OpenOptionText, DisabledText } from '../sharedStyles';
 
 export type FileDropProps = {
@@ -86,6 +87,7 @@ const FileDrop = ({
   disabledText,
   ...rest
 }: FileDropProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
     noClick: true,
@@ -93,15 +95,17 @@ const FileDrop = ({
     onFileDialogOpen: () => {
       if (document.fullscreenElement) {
         (
-          window as unknown as Record<string, unknown>
+          globalThis as unknown as Record<string, unknown>
         ).isKetcherFullscreenBeforeFilePicker = true;
       }
     },
     onFileDialogCancel: () => {
-      const windowContext = window as unknown as Record<string, unknown>;
+      const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
         document.documentElement.requestFullscreen?.().catch(() => {
-          /* Restore fullscreen silently if failed */
+          /*
+          Restore fullscreen silently if failed
+          */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }
@@ -145,7 +149,7 @@ const FileDrop = ({
           <ButtonContainer>
             {textLabel && <span>{textLabel}</span>}
           </ButtonContainer>
-          <OpenOptionText>Open from file</OpenOptionText>
+          <OpenOptionText>{t('open.openFromFile')}</OpenOptionText>
         </>
       )}
     </DropzoneButton>

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,10 @@
 
 import styled from '@emotion/styled';
 
-export const Container = styled.div`
-  padding: 16px;
-  max-height: 600px;
-  overflow-y: auto;
-`;
-
-export const HeaderContent = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-`;
-
-export const HeaderTitle = styled.span`
-  padding-right: 4px;
-`;
-
-export const HeaderButton = styled.button`
+export const HeaderIconButton = styled.button`
   background-color: transparent;
   border: none;
-  color: #167782;
+  color: ${({ theme }) => theme.ketcher.color.icon.active};
   padding: 0;
   font-size: 0;
   cursor: pointer;
@@ -44,64 +28,50 @@ export const HeaderButton = styled.button`
   justify-content: center;
 
   &:hover {
-    color: #005662;
+    color: ${({ theme }) => theme.ketcher.color.icon.hover};
   }
 
   &:disabled {
-    color: #cad3dd;
+    color: ${({ theme }) => theme.ketcher.color.icon.disabled};
     cursor: not-allowed;
   }
-
-  input[type='file'] {
-    display: none;
-  }
 `;
 
-export const FooterLeft = styled.div`
-  display: flex;
-  gap: 8px;
-  flex: 1;
-`;
-
-export const FooterRight = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-left: auto;
-`;
-
-export const FieldsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 8px 0;
-`;
-
-export const FieldWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-size: 12px;
+/** Set ACS Settings sits in the title row next to the icon controls */
+export const HeaderTextButton = styled.button`
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+  border: 1px solid #585858;
+  border-radius: 4px;
+  color: #585858;
+  height: 20px;
+  min-width: 0;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 400;
   line-height: 14px;
-  margin-bottom: 12px;
-  color: #333333;
-  height: 24px;
+  text-transform: none;
+  white-space: nowrap;
+  cursor: pointer;
 
-  label {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
+  &:hover {
+    border-color: #333333;
+    color: #333333;
   }
 
-  label > span:first-of-type {
-    width: 168px;
-    margin-right: 8px;
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
+`;
 
-  label > input,
-  label > select,
-  label > div {
-    width: 120px;
-    margin-right: auto;
-  }
+/**
+ * Covers the canvas area while the Settings window is open. It is fully
+ * transparent, so the structure stays visible, but it swallows every pointer
+ * event so the canvas cannot be modified.
+ */
+export const CanvasCaptureLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
 `;

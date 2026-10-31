@@ -3,6 +3,7 @@ import {
   BondsSetting,
   GeneralSetting,
   MeasurementUnit,
+  SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
@@ -31,7 +32,7 @@ test('Open KET file with properties and check properties are saved in struct', a
   await openFileAndAddToCanvas(page, 'KET/ket-with-properties.ket');
 
   const fragments = await page.evaluate(() => {
-    const editor = window.ketcher?.editor;
+    const editor = globalThis.window.ketcher?.editor;
     const struct =
       typeof editor?.struct === 'function' ? editor.struct() : null;
     const fragsIterator = struct?.frags?.values();
@@ -405,6 +406,7 @@ test.describe('Ket files', () => {
   */
       await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
       await TopRightToolbar(page).Settings();
+      await SettingsDialog(page).openSection(SettingsSection.Reactions);
       await SettingsDialog(page).setOptionValue(
         GeneralSetting.ReactionComponentMarginSize,
         '47.8',

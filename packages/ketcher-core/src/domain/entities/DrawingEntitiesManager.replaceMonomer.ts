@@ -8,6 +8,8 @@ import { Command } from 'domain/entities/Command';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { Atom } from 'domain/entities/CoreAtom';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { assert } from 'utilities';
 
 import type { DrawingEntitiesManager } from './DrawingEntitiesManager';
@@ -24,8 +26,9 @@ export function replaceMonomer(
     firstMonomerAttachmentPoint?: AttachmentPointName;
     secondMonomer?: BaseMonomer;
     secondMonomerAttachmentPoint?: AttachmentPointName;
+    bondType: MACROMOLECULES_BOND_TYPES;
     bond?: PolymerBond;
-  }[] = Array.from(drawingEntitiesManager.polymerBonds)
+  }[] = [...drawingEntitiesManager.polymerBonds]
     .filter(([_id, bond]) => {
       return bond.firstMonomer === monomer || bond.secondMonomer === monomer;
     })
@@ -36,6 +39,10 @@ export function replaceMonomer(
         firstMonomerAttachmentPoint: bond.firstMonomerAttachmentPoint,
         secondMonomer: bond.secondMonomer,
         secondMonomerAttachmentPoint: bond.secondMonomerAttachmentPoint,
+        bondType:
+          bond instanceof HydrogenBond
+            ? MACROMOLECULES_BOND_TYPES.HYDROGEN
+            : MACROMOLECULES_BOND_TYPES.SINGLE,
         bond,
       };
     });
@@ -45,7 +52,7 @@ export function replaceMonomer(
     attachmentPoint: AttachmentPointName;
     atom: Atom;
     bond?: MonomerToAtomBond;
-  }[] = Array.from(drawingEntitiesManager.monomerToAtomBonds)
+  }[] = [...drawingEntitiesManager.monomerToAtomBonds]
     .filter(([_id, bond]) => {
       return bond.monomer === monomer;
     })
@@ -126,6 +133,7 @@ export function replaceMonomer(
           : polymerBondInfo.secondMonomer,
         polymerBondInfo.firstMonomerAttachmentPoint,
         polymerBondInfo.secondMonomerAttachmentPoint,
+        polymerBondInfo.bondType,
       ),
     );
   }

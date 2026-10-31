@@ -56,7 +56,7 @@ const PENTAGON_SIDE_DY_RATIO = -4.815 / 42;
 // Flat-bottom corner |x| from center: 11.706 / 42 ≈ 0.2787
 const PENTAGON_FLAT_DX_RATIO = 11.706 / 42;
 // Flat-bottom corner y from center: 15.0 / 42 ≈ 0.3571
-const PENTAGON_FLAT_DY_RATIO = 15.0 / 42;
+const PENTAGON_FLAT_DY_RATIO = 15 / 42;
 
 const formatCoordinate = (value: number): string => {
   const roundedValue = Number(value.toFixed(2));
@@ -325,7 +325,9 @@ export const createDiamondHighlightPath = (
   );
 };
 
-/** A capsule path used to bridge two monomers along an internal polymer bond. */
+/**
+A capsule path used to bridge two monomers along an internal polymer bond.
+*/
 export const createSegmentHighlightPath = (
   start: Point,
   end: Point,

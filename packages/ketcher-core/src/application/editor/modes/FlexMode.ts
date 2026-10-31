@@ -26,6 +26,7 @@ export class FlexMode extends BaseMode {
 
     modelChanges.merge(antisenseChanges);
     editor.renderersContainer.update(modelChanges);
+    editor.zoomTool.restoreRememberedZoomTransform();
 
     return command;
   }

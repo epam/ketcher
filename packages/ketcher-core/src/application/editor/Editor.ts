@@ -1,5 +1,10 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { type Editor, EditorType } from 'application/editor/editor.types';
+import {
+  type CreateBondViaModalPayload,
+  type Editor,
+  EditorType,
+  type SelectLayoutModePayload,
+} from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   editorEvents,
@@ -10,9 +15,8 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
-  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
-  HAS_CONTENT_LAYOUT_MODE,
+  CONTENT_LAYOUT_MODE,
 } from 'application/editor/modes/types';
 import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
@@ -274,7 +278,9 @@ export class CoreEditor {
   private libraryItemDragCancelled = false;
 
   public theme: CoreEditorTheme;
-  /** Handles all drag-and-drop attachment-point logic for library items. */
+  /**
+  Handles all drag-and-drop attachment-point logic for library items.
+  */
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
@@ -437,23 +443,23 @@ export class CoreEditor {
           monomersLibraryUpdateData,
         );
       this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-    } catch (err) {
+    } catch (error) {
       KetcherLogger.error(
         'Editor::initializeMonomersLibraryFromKetcher failed:',
-        err,
+        error,
       );
 
       let errorMessage: string;
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'string') {
-        errorMessage = err;
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
       } else {
         errorMessage = 'Failed to load monomers library';
       }
 
       const errorTitle =
-        err instanceof MonomerLibraryConvertError
+        error instanceof MonomerLibraryConvertError
           ? 'Monomer library conversion failed'
           : 'Monomer library update failed';
 
@@ -461,14 +467,14 @@ export class CoreEditor {
         errorMessage,
         errorTitle,
       });
-      onError?.(err);
+      onError?.(error);
     }
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
-      persistentMonomersLibrary.length !== 0 &&
-      persistentMonomersLibraryParsedJson !== undefined
+      persistentMonomersLibraryParsedJson !== undefined &&
+      persistentMonomersLibrary.length !== 0
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
@@ -552,7 +558,7 @@ export class CoreEditor {
       : undefined;
     if (
       editedMonomerRef &&
-      (newMonomersLibraryChunk.length !== 1 || !editedMonomer)
+      (!editedMonomer || newMonomersLibraryChunk.length !== 1)
     ) {
       throw new Error(
         'The original monomer is no longer available for editing.',
@@ -658,7 +664,7 @@ export class CoreEditor {
         return;
       }
 
-      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+      const hasNewMonomerBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
       const newMonomerHelmAliasUniquenessScope = getHelmAliasUniquenessScope(
@@ -737,7 +743,7 @@ export class CoreEditor {
             getHelmAliasUniquenessScope(monomer.props?.MonomerClass) ===
               newMonomerHelmAliasUniquenessScope &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
-          (newMonomerHasBilnAliasUniquenessScope &&
+          (hasNewMonomerBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
             hasChangedBilnAlias &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
@@ -1267,8 +1273,8 @@ export class CoreEditor {
       const target = event.target as Node | null;
       // Guard: only handle events whose target is inside this editor's root element
       if (
-        !this.ketcherRootElement ||
         !target ||
+        !this.ketcherRootElement ||
         !this.ketcherRootElement.contains(target)
       ) {
         return;
@@ -1304,7 +1310,7 @@ export class CoreEditor {
             const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
 
             // Add sense node if it's selected
-            if (senseNode?.monomer.selected && senseNode) {
+            if (senseNode && senseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: senseNode as SubChainNode,
@@ -1313,7 +1319,7 @@ export class CoreEditor {
             }
 
             // Add antisense node if it's selected
-            if (antisenseNode?.monomer.selected && antisenseNode) {
+            if (antisenseNode && antisenseNode.monomer.selected) {
               result.push({
                 ...twoStrandedNodeSelection,
                 node: antisenseNode as SubChainNode,
@@ -1449,8 +1455,8 @@ export class CoreEditor {
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(
-      (needToRemoveSelection?: boolean) =>
-        this.onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection),
+      (shouldRemoveSelection?: boolean) =>
+        this.onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -1469,6 +1475,15 @@ export class CoreEditor {
       this.mode.onCopy();
       this.clearSelectionAfterCopy();
     });
+    this.events.cutSelectedStructure.add(() => {
+      this.mode.onCut();
+    });
+    this.events.copySelectedStructureAs.add(
+      (format: 'ket' | 'mol' | 'image') => {
+        this.mode.onCopyAs(format);
+        this.clearSelectionAfterCopy();
+      },
+    );
     this.events.pasteFromClipboard.add(() => {
       this.mode.onPaste();
     });
@@ -1499,7 +1514,7 @@ export class CoreEditor {
     this.events.setEditorLineLength.add(
       (lineLengthUpdate: Partial<EditorLineLength>) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
@@ -1516,13 +1531,13 @@ export class CoreEditor {
     );
 
     this.events.toggleLineLengthHighlighting.add(
-      (value: boolean, currentPosition = 0) => {
+      (shouldHighlightLineLength: boolean, currentPosition: number = 0) => {
         // Temporary solution to disablechain length  ruler for the macro editor in e2e tests
-        if (window._ketcher_isChainLengthRulerDisabled) {
+        if (globalThis._ketcher_isChainLengthRulerDisabled) {
           return;
         }
 
-        if (value) {
+        if (shouldHighlightLineLength) {
           this.transientDrawingView.showLineLengthHighlight({
             currentPosition,
           });
@@ -1659,7 +1674,7 @@ export class CoreEditor {
       isLibraryItemRnaPreset(monomerOrRnaItem),
     );
 
-    const canvasWasEmptyBeforeAutochain =
+    const isCanvasEmptyBeforeAutochain =
       this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
     const history = EditorHistory.getInstance(this);
@@ -1718,7 +1733,7 @@ export class CoreEditor {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
-    if (canvasWasEmptyBeforeAutochain) {
+    if (isCanvasEmptyBeforeAutochain) {
       modelChanges.merge(
         this.drawingEntitiesManager.selectDrawingEntities(
           monomersAddResult.drawingEntities,
@@ -1777,13 +1792,13 @@ export class CoreEditor {
         isAddedMonomerHorizontallyOutOfCanvas ||
         isAddedMonomerVerticallyOutOfCanvas
       ) {
-        const needToScrollToBeginningOfChain =
+        const shouldScrollToBeginningOfChain =
           Boolean(selectedMonomerToConnect) &&
           isStructureWithAutochainOffsetFitCanvas;
 
         turnOnScrollAnimation(this.zoomTool.canvas);
         this.zoomTool.scrollTo(
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? Coordinates.modelToCanvas(
                 chainsCollection.firstNode.firstMonomerInNode.position,
               )
@@ -1797,7 +1812,7 @@ export class CoreEditor {
                 ),
               ),
           isAddedMonomerOutBelowCanvas,
-          needToScrollToBeginningOfChain
+          shouldScrollToBeginningOfChain
             ? oneLayoutCellInAngstroms * editorSettings.macroModeScale
             : 0,
           isAddedMonomerOutBelowCanvas
@@ -2044,13 +2059,13 @@ export class CoreEditor {
     this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
-  private onTurnOffSequenceEditInRNABuilderMode(needToRemoveSelection = true) {
+  private onTurnOffSequenceEditInRNABuilderMode(shouldRemoveSelection = true) {
     if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
     this.sequenceMode.turnOffSequenceEditInRNABuilderMode(
-      needToRemoveSelection,
+      shouldRemoveSelection,
     );
   }
 
@@ -2129,16 +2144,7 @@ export class CoreEditor {
     this.selectTool(tool, options);
   }
 
-  private onCreateBond(payload: {
-    firstMonomer: BaseMonomer;
-    secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: AttachmentPointName;
-    secondSelectedAttachmentPoint: AttachmentPointName;
-    polymerBond?: PolymerBond;
-    isReconnection?: boolean;
-    initialFirstMonomerAttachmentPoint?: AttachmentPointName;
-    initialSecondMonomerAttachmentPoint?: AttachmentPointName;
-  }) {
+  private onCreateBond(payload: CreateBondViaModalPayload) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
       const history = EditorHistory.getInstance(this);
@@ -2198,10 +2204,7 @@ export class CoreEditor {
     }
   }
 
-  private onSelectMode(
-    data:
-      LayoutMode | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
-  ) {
+  private onSelectMode(data: SelectLayoutModePayload) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);
@@ -2259,7 +2262,7 @@ export class CoreEditor {
     // Convert sets to sorted arrays, with 'Natural amino acid' first if present
     const result: Record<string, string[]> = {};
     Object.entries(grouped).forEach(([analogue, typesSet]) => {
-      const types = Array.from(typesSet).sort((a, b) => {
+      const types = [...typesSet].sort((a, b) => {
         const aTitle = a.toLowerCase();
         const bTitle = b.toLowerCase();
         const naturalType = NATURAL_AMINO_ACID_MODIFICATION_TYPE.toLowerCase();
@@ -2559,12 +2562,12 @@ export class CoreEditor {
     this.mode?.[eventHandlerName]?.(event);
   }
 
-  public beginMonomerWizardSession(includeCanvas = true) {
+  public beginMonomerWizardSession(shouldIncludeCanvas = true) {
     if (this.isMonomerWizardSessionActive) {
       throw new Error('A monomer wizard session is already active.');
     }
     // Unlike a normal mode switch, keep the live macro model and history.
-    const result = includeCanvas
+    const result = shouldIncludeCanvas
       ? MacromoleculesConverter.convertDrawingEntitiesToStruct(
           this.drawingEntitiesManager,
           new Struct(),
@@ -2589,18 +2592,18 @@ export class CoreEditor {
     return result;
   }
 
-  public finishMonomerWizardSession(savedCanvas: boolean) {
+  public finishMonomerWizardSession(isCanvasSaved: boolean) {
     if (!this.monomerWizardMode) {
       return;
     }
     const originalManager = this.drawingEntitiesManager;
-    let canvasChanged = false;
+    let hasCanvasChanged = false;
     this.mode = this.monomerWizardMode;
     // Read it now so a failed restore cannot leave a stale request behind.
     const instanceReplacement = this.pendingMonomerWizardInstanceReplacement;
     this.pendingMonomerWizardInstanceReplacement = undefined;
     try {
-      if (savedCanvas) {
+      if (isCanvasSaved) {
         const struct = this.micromoleculesEditor.struct();
         this.rescaleStructForModeTransition(struct, 'microToMacro');
         const manager = new DrawingEntitiesManager();
@@ -2609,7 +2612,7 @@ export class CoreEditor {
             struct,
             manager,
           );
-        canvasChanged = true;
+        hasCanvasChanged = true;
         originalManager.clearCanvas();
         this.drawingEntitiesManager = manager;
         this.viewModel.initialize([...manager.bonds.values()]);
@@ -2637,7 +2640,7 @@ export class CoreEditor {
         EditorHistory.getInstance(this).update(command);
       }
     } catch (error) {
-      if (canvasChanged) {
+      if (hasCanvasChanged) {
         this.restoreMonomerWizardCanvas(originalManager);
       }
       throw error;
@@ -2676,7 +2679,7 @@ export class CoreEditor {
     // `replaceMonomer` adds and deletes monomers, so iterate over a snapshot.
     const monomers = [...this.drawingEntitiesManager.monomers.values()];
     const command = new Command();
-    let replacedAnyMonomer = false;
+    let hasReplacedAnyMonomer = false;
 
     monomers.forEach((monomer) => {
       const monomerItem = monomer.monomerItem;
@@ -2698,10 +2701,10 @@ export class CoreEditor {
         this.drawingEntitiesManager.replaceMonomer(monomer, newMonomerItem)
           .command,
       );
-      replacedAnyMonomer = true;
+      hasReplacedAnyMonomer = true;
     });
 
-    if (!replacedAnyMonomer) {
+    if (!hasReplacedAnyMonomer) {
       return;
     }
 
@@ -2791,6 +2794,7 @@ export class CoreEditor {
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
+    this.micromoleculesEditor.selection(null);
     this.micromoleculesEditor.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2801,9 +2805,7 @@ export class CoreEditor {
       const ketcher = ketcherProvider.getKetcher();
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
-      const newModeName = isBlank
-        ? DEFAULT_LAYOUT_MODE
-        : HAS_CONTENT_LAYOUT_MODE;
+      const newModeName = isBlank ? DEFAULT_LAYOUT_MODE : CONTENT_LAYOUT_MODE;
 
       if (oldModeName === newModeName) {
         return;
@@ -2888,7 +2890,7 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.mode.destroy();
       this._type = type;
-      window.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
+      globalThis.isPolymerEditorTurnedOn = type === EditorType.Macromolecules;
       this.drawingEntitiesManager = drawingEntitiesManager;
       this.zoomTool.drawingEntitiesManager = drawingEntitiesManager;
       this.mode = new (getModeConstructor(modeName))();
@@ -2962,9 +2964,11 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
+    ZoomTool.instance.forgetRememberedZoomTransform();
+
     if (
       // Temporary solution to disable autozoom for the polymer editor in e2e tests
-      window._ketcher_isAutozoomDisabled ||
+      globalThis._ketcher_isAutozoomDisabled ||
       !this.isCurrentModeWithAutozoom() ||
       !this.drawingEntitiesManager.hasMonomers
     ) {
@@ -2988,6 +2992,9 @@ export class CoreEditor {
   }
 
   public destroy() {
+    if (isBaseTool(this.selectedTool)) {
+      this.selectedTool.destroy();
+    }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();

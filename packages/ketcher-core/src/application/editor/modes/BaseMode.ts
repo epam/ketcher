@@ -68,10 +68,10 @@ export abstract class BaseMode {
   }
 
   public initialize(
-    needRemoveSelection = true,
+    shouldRemoveSelection = true,
     _isUndo = false,
-    _needReArrangeChains = false,
-    _forceRecalculateAntisense = false,
+    _shouldReArrangeChains = false,
+    _shouldForceRecalculateAntisense = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
@@ -85,7 +85,7 @@ export abstract class BaseMode {
       ),
     );
 
-    if (needRemoveSelection) {
+    if (shouldRemoveSelection) {
       editor.events.selectSelectionTool.dispatch();
     }
 

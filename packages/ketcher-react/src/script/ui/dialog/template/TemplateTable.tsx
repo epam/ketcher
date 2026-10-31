@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,6 +23,7 @@ import {
   useLayoutEffect,
 } from 'react';
 import type { Struct } from 'ketcher-core';
+import type { IStructRenderProps } from 'components';
 import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
 import TemplateItem from './TemplateItem';
@@ -47,7 +47,7 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;
   titleRows?: 1 | 2;
-  renderOptions?: any;
+  renderOptions?: IStructRenderProps['options'];
 }
 
 // Render all tiles immediately to keep accordion height stable,
@@ -120,7 +120,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       return;
     }
 
-    const requestIdle = window.requestIdleCallback;
+    const requestIdle = globalThis.requestIdleCallback;
     if (typeof requestIdle === 'function') {
       const callback = requestIdle(
         () => {
@@ -133,18 +133,18 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
         { timeout: PREVIEW_IDLE_TIMEOUT_MS },
       );
       return () => {
-        window.cancelIdleCallback?.(callback);
+        globalThis.cancelIdleCallback?.(callback);
       };
     }
 
-    const frameId = window.requestAnimationFrame(() => {
+    const frameId = globalThis.requestAnimationFrame(() => {
       startTransition(() => {
         setPreviewRenderedCount((prev) =>
           Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
         );
       });
     });
-    return () => window.cancelAnimationFrame(frameId);
+    return () => globalThis.cancelAnimationFrame(frameId);
   }, [previewRenderedCount, templates.length, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls

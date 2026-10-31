@@ -118,12 +118,6 @@ export class SGroupRenderer extends BaseRenderer {
     this.sgroup.bracketDirection = new Vec2(1, 0);
     this.sgroup.areas = [bracketBox];
 
-    if (this.sgroup.isContracted()) {
-      this.drawContractedSGroupLabel();
-
-      return;
-    }
-
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
       case SGroup.TYPES.MUL:
@@ -155,59 +149,36 @@ export class SGroupRenderer extends BaseRenderer {
     this.drawBrackets(bracketBox, options);
   }
 
-  private drawContractedSGroupLabel(): void {
-    const label = this.sgroup.superatomLabel;
-
-    if (!label) {
-      return;
-    }
-
-    const { position } = this.sgroup.getContractedPosition(this.struct);
-
-    this.appendText(Scale.modelToCanvas(position, this.editorSettings), label, {
-      'font-weight': 'bold',
-    });
-  }
-
   private getSGroupAtomIds(): Set<number> {
     return new Set(SGroup.getAtoms(this.struct, this.sgroup));
   }
 
-  public applyExpandedStateToStructure(
+  private getLiveAtomPositions(): Vec2[] | null {
+    if (this.atomRenderers.size === 0) {
+      return null;
+    }
+
+    const sgroupAtomIds = this.getSGroupAtomIds();
+    const positions: Vec2[] = [];
+
+    this.atomRenderers.forEach((atomRenderer) => {
+      if (
+        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode)
+      ) {
+        positions.push(atomRenderer.atom.position);
+      }
+    });
+
+    return positions.length > 0 ? positions : null;
+  }
+
+  public setStructureRenderers(
     atomRenderers: Map<number, AtomRenderer>,
     bondRenderers: Map<number, BondRenderer>,
   ): void {
     this.atomRenderers = atomRenderers;
     this.bondRenderers = bondRenderers;
-
-    if (this.sgroup.isExpanded()) {
-      return;
-    }
-
-    const sgroupAtomIds = this.getSGroupAtomIds();
-
-    atomRenderers.forEach((atomRenderer) => {
-      if (
-        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
-        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode)
-      ) {
-        atomRenderer.setVisibility(false);
-      }
-    });
-
-    bondRenderers.forEach((bondRenderer) => {
-      const { firstAtom, secondAtom } = bondRenderer.bond;
-      const isSameMonomer =
-        firstAtom.monomer === this.sgroupDrawingEntity.monomer &&
-        secondAtom.monomer === this.sgroupDrawingEntity.monomer;
-      const isBondInsideSGroup =
-        sgroupAtomIds.has(firstAtom.atomIdInMicroMode) &&
-        sgroupAtomIds.has(secondAtom.atomIdInMicroMode);
-
-      if (isSameMonomer && isBondInsideSGroup) {
-        bondRenderer.setVisibility(false);
-      }
-    });
   }
 
   private drawDataSGroup(): void {
@@ -251,18 +222,27 @@ export class SGroupRenderer extends BaseRenderer {
 
   private calculateBracketBox(): Box2Abs | null {
     const contentBoxes: Box2Abs[] = [];
+    const livePositions = this.getLiveAtomPositions();
 
-    SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
-      const atom = this.struct.atoms.get(atomId);
+    if (livePositions) {
+      livePositions.forEach((position) => {
+        contentBoxes.push(
+          new Box2Abs(position, position).extend(BORDER_EXT, BORDER_EXT),
+        );
+      });
+    } else {
+      SGroup.getAtoms(this.struct, this.sgroup).forEach((atomId) => {
+        const atom = this.struct.atoms.get(atomId);
 
-      if (!atom) {
-        return;
-      }
+        if (!atom) {
+          return;
+        }
 
-      contentBoxes.push(
-        new Box2Abs(atom.pp, atom.pp).extend(BORDER_EXT, BORDER_EXT),
-      );
-    });
+        contentBoxes.push(
+          new Box2Abs(atom.pp, atom.pp).extend(BORDER_EXT, BORDER_EXT),
+        );
+      });
+    }
 
     const bracketBox = contentBoxes.reduce<Box2Abs | null>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),

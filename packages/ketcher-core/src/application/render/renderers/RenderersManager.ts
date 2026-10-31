@@ -488,8 +488,8 @@ export class RenderersManager {
     const sgroupRenderer = new SGroupRenderer(sgroupDrawingEntity);
 
     this.sgroups.set(sgroupDrawingEntity.id, sgroupRenderer);
+    sgroupRenderer.setStructureRenderers(this.atoms, this.bonds);
     sgroupRenderer.show();
-    sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
     sgroupRenderer.moveLabelsToFront();
   }
 
@@ -499,17 +499,10 @@ export class RenderersManager {
   }
 
   public rerenderSGroups() {
-    this.atoms.forEach((atomRenderer) => {
-      atomRenderer.setVisibility(true);
-    });
-    this.bonds.forEach((bondRenderer) => {
-      bondRenderer.setVisibility(true);
-    });
-
     this.sgroups.forEach((sgroupRenderer) => {
       sgroupRenderer.remove();
+      sgroupRenderer.setStructureRenderers(this.atoms, this.bonds);
       sgroupRenderer.show();
-      sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
       sgroupRenderer.moveLabelsToFront();
     });
   }

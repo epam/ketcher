@@ -58,17 +58,19 @@ export async function openPPTXFile(
   page: Page,
   filePath: string,
   action: Action,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   if (action === Action.AddToCanvas) {
     await openPPTXFileDialog.addToCanvas();

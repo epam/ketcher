@@ -89,7 +89,7 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
     V,
   ];
   const code = getMonomersCode((monomer as AmbiguousMonomer).monomers);
-  return ambigues.some((v) => v === code);
+  return ambigues.includes(code);
 };
 
 /**
@@ -207,7 +207,7 @@ export const getModifyAminoAcidsMenuItems = (
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
 
-    if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
+    if (!monomerNaturalAnalogCode || !(selectedMonomer instanceof Peptide)) {
       return;
     }
 
@@ -226,7 +226,7 @@ export const getModifyAminoAcidsMenuItems = (
         monomerLibraryItem.props?.MonomerNaturalAnalogCode,
       );
 
-    if (!monomerLibraryItem.props || !monomersWithSameNaturalAnalogCode) {
+    if (!monomersWithSameNaturalAnalogCode || !monomerLibraryItem.props) {
       return;
     }
 
@@ -357,7 +357,10 @@ export const isCycleExistsForSelectedMonomers = (
     return neighbors;
   };
 
-  const dfs = (monomer: BaseMonomer, parent: BaseMonomer | null): boolean => {
+  const hasCycleFromMonomer = (
+    monomer: BaseMonomer,
+    parent: BaseMonomer | null,
+  ): boolean => {
     visited.add(monomer);
     inRecursionStack.add(monomer);
 
@@ -373,7 +376,7 @@ export const isCycleExistsForSelectedMonomers = (
       }
 
       if (!visited.has(neighbor)) {
-        if (dfs(neighbor, monomer)) {
+        if (hasCycleFromMonomer(neighbor, monomer)) {
           return true;
         }
       }
@@ -385,7 +388,7 @@ export const isCycleExistsForSelectedMonomers = (
 
   for (const monomer of selectedMonomers) {
     if (!visited.has(monomer)) {
-      if (dfs(monomer, null)) {
+      if (hasCycleFromMonomer(monomer, null)) {
         return true;
       }
     }

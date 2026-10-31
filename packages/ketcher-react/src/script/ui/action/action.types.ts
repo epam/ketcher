@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,9 @@
 import type { Dispatch } from 'redux';
 import type { Struct } from 'ketcher-core';
 import type Editor from '../../editor/Editor';
+import type { StoreState } from '../state/store.types';
 
-type ToolVariant =
+export type ToolVariant =
   | 'any-atom'
   | 'about'
   | 'analyse'
@@ -29,6 +30,7 @@ type ToolVariant =
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
@@ -120,22 +122,13 @@ type ActionStateEditor = Editor & {
   struct(value: Struct | null): Struct;
 };
 
-export type ActionStateOptions = {
+type ActionStateOptions = {
   app: {
     server?: unknown;
     templates?: unknown;
     functionalGroups?: unknown;
   };
   buttons?: Record<string, { hidden?: boolean }>;
-};
-
-type ActionThunkState = {
-  editor: ActionStateEditor;
-  toolbar: {
-    visibleTools: {
-      select: ToolVariant;
-    };
-  };
 };
 
 // Specific action option types
@@ -149,7 +142,7 @@ type ActionObj = {
   opts?: unknown;
   dialog?: string;
   prop?: Record<string, unknown>;
-  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
+  thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
 };
 type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
@@ -175,9 +168,13 @@ type IsDisabledState = boolean | GetDisabledState;
 type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
-  /** Translation key (namespace:key) resolved by the consuming component via t(), not display text. */
+  /**
+  Translation key (namespace:key) resolved by the consuming component via t(), not display text.
+  */
   title?: string;
-  /** Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }. */
+  /**
+  Interpolation values for ICU placeholders in the title key, e.g. { symbol: 'H' }.
+  */
   titleParams?: Record<string, string>;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
@@ -192,4 +189,11 @@ type Tools = {
   [key in ToolVariant]: UiAction;
 };
 
-export type { Tools, UiAction, UiActionAction, AtomActionOpts };
+export type {
+  ActionStateOptions,
+  Tools,
+  UiAction,
+  UiActionAction,
+  ActionStateEditor,
+  AtomActionOpts,
+};

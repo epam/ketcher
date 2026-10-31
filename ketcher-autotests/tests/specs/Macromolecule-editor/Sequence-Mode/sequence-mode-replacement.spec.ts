@@ -1730,6 +1730,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1775,6 +1776,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1863,6 +1865,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1905,6 +1908,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
@@ -1947,6 +1951,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         LayoutMode.Flex,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists

@@ -1,0 +1,42 @@
+name: Danger
+
+# pull_request_target, so the token can comment on PRs from forks.
+# Safe only while no step checks out or runs code from the PR: the checkout
+# below is the base branch, and dangerfile.ts reads the PR through the API.
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+    branches:
+      - master
+      - 'release/**'
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  statuses: write
+
+concurrency:
+  group: danger-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  danger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+
+      - name: Install Danger
+        run: npm ci --ignore-scripts
+
+      - name: Run Danger
+        run: npx danger ci --failOnErrors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

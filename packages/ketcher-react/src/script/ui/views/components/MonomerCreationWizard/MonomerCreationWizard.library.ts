@@ -37,14 +37,14 @@ export const saveLibraryMonomer = async (
    * the original stays visible and usable — including its identity, its id and
    * the properties (aliases) that have no control in the attributes panel.
    */
-  const supersedesOriginal =
+  const shouldSupersedeOriginal =
     Boolean(editedMonomerTemplate) &&
     createdTemplate.class === editedMonomerTemplate?.class &&
     createdTemplate.alias === editedMonomerTemplate?.alias;
-  const originalMonomerTemplate = supersedesOriginal
+  const originalMonomerTemplate = shouldSupersedeOriginal
     ? editedMonomerTemplate
     : undefined;
-  const originalRef = supersedesOriginal ? editedRef : undefined;
+  const originalRef = shouldSupersedeOriginal ? editedRef : undefined;
 
   const template = {
     ...originalMonomerTemplate,
@@ -74,7 +74,7 @@ export const saveLibraryMonomer = async (
   ) {
     throw new Error('A monomer with this code already exists.');
   }
-  editor.updateMonomersLibrary(ket, originalRef);
+  editor.updateMonomersLibrary(ket, originalRef, true);
 
   /*
    * Submitting after "Edit" replaces every instance of that monomer on the

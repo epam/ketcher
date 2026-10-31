@@ -1,6 +1,6 @@
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { createLogger, defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
@@ -92,7 +92,7 @@ const resolvePackageAlias = (source, importer) => {
     }
 
     const replacementPath =
-      replacement.hasWildcard && suffix
+      suffix && replacement.hasWildcard
         ? `${replacement.value}/${suffix}`
         : replacement.value;
 
@@ -126,7 +126,7 @@ const getDefineValue = (value) => {
   return value === undefined ? 'undefined' : JSON.stringify(value);
 };
 
-const PROCESS_ENV_DEFINE_KEYS = [
+const ENV_DEFINE_KEYS = [
   'API_PATH',
   'KETCHER_ENABLE_REDUX_LOGGER',
   'MODE',
@@ -136,10 +136,10 @@ const PROCESS_ENV_DEFINE_KEYS = [
   'SEPARATE_INDIGO_RENDER',
 ];
 
-const processEnvDefines = Object.fromEntries(
-  PROCESS_ENV_DEFINE_KEYS.map((key) => [
-    `process.env.${key}`,
-    getDefineValue(process.env[key]),
+const envDefines = Object.fromEntries(
+  ENV_DEFINE_KEYS.flatMap((key) => [
+    [`import.meta.env.${key}`, getDefineValue(process.env[key])],
+    [`process.env.${key}`, getDefineValue(process.env[key])],
   ]),
 );
 
@@ -151,7 +151,7 @@ const HtmlReplaceVitePlugin = () => {
         .replaceAll('%PUBLIC_URL%/', process.env.PUBLIC_URL)
         .replaceAll(
           '@@version',
-          JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
+          JSON.parse(ketcherReactValues['import.meta.env.HELP_LINK']).split(
             '-',
           )[0] + ' (Vite)',
         );
@@ -307,7 +307,7 @@ export default defineConfig({
     commonjs(),
   ],
   define: {
-    ...processEnvDefines,
+    ...envDefines,
   },
   resolve: {
     alias: [
@@ -348,7 +348,9 @@ export default defineConfig({
         ),
       },
 
-      /** Web worker in ketcher-standalone */
+      /**
+      Web worker in ketcher-standalone
+      */
       {
         find: 'web-worker:./../indigoWorker',
         replacement: './../indigoWorker?worker',

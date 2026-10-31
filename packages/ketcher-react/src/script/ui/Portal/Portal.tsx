@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,13 +35,13 @@ class Portal extends Component<Props> {
   private readonly element: HTMLDivElement;
   private isElementInDom: boolean;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.element = document.createElement('div');
     this.isElementInDom = false;
 
     if (this.props.testId) {
-      this.element.setAttribute('data-testid', this.props.testId);
+      this.element.dataset.testid = this.props.testId;
     }
   }
 
@@ -140,8 +139,7 @@ class Portal extends Component<Props> {
 
   render() {
     const { children } = this.props;
-    const component = ReactDOM.createPortal(children, this.element);
-    return component as any;
+    return ReactDOM.createPortal(children, this.element);
   }
 }
 

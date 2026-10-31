@@ -51,10 +51,10 @@
       "enumOff": "Off"
     },
     "autoFadeOfStereoLabels": {
-      "title": "Auto fade And/Or center labels"
+      "title": "Auto fade AND/OR center labels"
     },
     "absFlagLabel": {
-      "title": "Text of Absolute flag"
+      "title": "Text of ABS flag"
     },
     "andFlagLabel": {
       "title": "Text of AND flag"
@@ -117,7 +117,7 @@
       "enumLow": "low"
     },
     "dearomatize-on-load": {
-      "title": "dearomatize-on-load"
+      "title": "Dearomatize on file load"
     },
     "valence-mode": {
       "title": "Valence mode",
@@ -132,7 +132,7 @@
       "title": "Ignore stereochemistry errors"
     },
     "mass-skip-error-on-pseudoatoms": {
-      "title": "Ignore pseudoatoms at mass"
+      "title": "Ignore pseudoatoms at mass calculation"
     },
     "gross-formula-add-rsites": {
       "title": "Add R sites at mass calculation"
@@ -147,10 +147,10 @@
       "title": "Show atom IDs"
     },
     "showBondIds": {
-      "title": "Show bonds IDs"
+      "title": "Show bond IDs"
     },
     "showHalfBondIds": {
-      "title": "Show half bonds IDs"
+      "title": "Show half-bond IDs"
     },
     "showLoopIds": {
       "title": "Show loop IDs"

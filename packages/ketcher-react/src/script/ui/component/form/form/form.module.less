@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,24 @@
   margin-top: 12px;
 }
 
+// A field with an inline description: the control keeps its own row and the
+// description sits directly underneath it as static text.
+.fieldWithHint {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fieldHint {
+  font-size: 10px;
+  line-height: 12px;
+  color: #7c7c7f;
+}
+
+.fieldHintRight {
+  text-align: right;
+}
+
 .dataError {
   .inputWrapper {
     position: relative;
@@ -44,7 +62,6 @@
   input[type='text'],
   input[type='number'],
   input[type='search'] {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
     border: 1px solid @color-secondary-red !important;
 
     &:hover,

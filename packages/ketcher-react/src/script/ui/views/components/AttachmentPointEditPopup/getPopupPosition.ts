@@ -3,7 +3,9 @@ type Size = Pick<DOMRect, 'width' | 'height'>;
 
 const GAP = 8;
 
-/** Prefer above the entire attachment point; keep controls reachable at edges. */
+/**
+Prefer above the entire attachment point; keep controls reachable at edges.
+*/
 export const getPopupPosition = (
   elements: Bounds[],
   size: Size,

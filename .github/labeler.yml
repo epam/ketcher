@@ -1,0 +1,13 @@
+# Labels that .github/workflows/label-workflow-changes.yml adds to pull requests.
+
+# A PR with this label changes CI workflows or AI agent configuration. Read
+# these changes before you approve an AI workflow run on it.
+workflows-changed:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
+          - '.claude/**'
+          - '.agents/**'
+          - 'AGENTS.md'
+          - 'CLAUDE.md'
+          - '.mcp.json'

@@ -15,6 +15,7 @@ import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Command } from 'domain/entities/Command';
+import type { DrawingEntityMoveOperation } from 'application/editor/operations/drawingEntity';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
@@ -408,6 +409,18 @@ export class RenderersManager {
   public update(modelChanges?: Command) {
     this.reinitializeViewModel();
     modelChanges?.execute(this);
+    this.runPostRenderMethods();
+    notifyRenderComplete();
+  }
+
+  // Drag operations have already applied their model changes synchronously.
+  public renderAppliedDragMovement(
+    operations: Iterable<DrawingEntityMoveOperation>,
+  ) {
+    this.reinitializeViewModel();
+    for (const operation of operations) {
+      operation.executeAfterAllOperations(this);
+    }
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

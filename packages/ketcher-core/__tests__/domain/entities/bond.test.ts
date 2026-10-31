@@ -1,4 +1,8 @@
-import { type BondAttributes, Bond } from 'domain/entities/bond';
+import {
+  type BondAttributes,
+  Bond,
+  StructBondEndpointAccess,
+} from 'domain/entities/bond';
 
 import { Vec2 } from 'domain/entities/vec2';
 
@@ -66,7 +70,9 @@ describe('Bond', () => {
       };
       const bondCenter = new Vec2(3, 2, 4);
 
-      expect(bond.getCenter(struct)).toStrictEqual(bondCenter);
+      expect(bond.getCenter(struct as StructBondEndpointAccess)).toStrictEqual(
+        bondCenter,
+      );
     });
   });
 
@@ -85,7 +91,9 @@ describe('Bond', () => {
         -0.8944271909999159,
       );
 
-      expect(bond.getDir(struct)).toStrictEqual(bondDir);
+      expect(bond.getDir(struct as StructBondEndpointAccess)).toStrictEqual(
+        bondDir,
+      );
     });
   });
 

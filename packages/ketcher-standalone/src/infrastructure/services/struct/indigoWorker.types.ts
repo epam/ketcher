@@ -169,7 +169,7 @@ export interface DearomatizeCommandData
 export interface CalculateCipCommandData
   extends CommandData, WithStruct, WithFormat {}
 
-export type CalculateProps =
+export type CalculateProperties =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'

@@ -19,7 +19,7 @@ import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useRequestAnimationFrame } from '../../../../../hooks';
 
-interface ArrowScrollProps {
+interface ArrowScrollProperties {
   startInView: boolean;
   endInView: boolean;
   scrollForward: (dtMs: number) => void;
@@ -33,7 +33,7 @@ const ArrowScroll = ({
   scrollForward,
   scrollBack,
   isLeftRight,
-}: ArrowScrollProps) => {
+}: ArrowScrollProperties) => {
   const [isScrollDown, setIsScrollDown] = useState(false);
   const [isScrollUp, setIsScrollUp] = useState(false);
   useRequestAnimationFrame(isScrollDown, (dt) => scrollForward(dt));
@@ -62,8 +62,8 @@ const ArrowScroll = ({
         <></>
       ) : (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={(event) => {
+            event.stopPropagation();
             scrollForward(100);
           }}
           onMouseUp={() => setIsScrollDown(false)}
@@ -81,8 +81,8 @@ const ArrowScroll = ({
         <></>
       ) : (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
+          onClick={(event) => {
+            event.stopPropagation();
             scrollBack(100);
           }}
           onMouseUp={() => setIsScrollUp(false)}

@@ -22,7 +22,7 @@ import {
 } from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
-type HookParams = [
+type HookParameters = [
   RefObject<HTMLDivElement | null>,
   boolean,
   boolean?,
@@ -30,22 +30,22 @@ type HookParams = [
 ];
 
 function usePortalStyle([
-  ref,
+  reference,
   isOpen,
   isTop,
   rootElementSelector,
-]: HookParams): [CSSProperties] {
+]: HookParameters): [CSSProperties] {
   const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
   useLayoutEffect(() => {
-    if (!ref.current) {
+    if (!reference.current) {
       return;
     }
 
     const editorRect = document
       .querySelector(rootElementSelector ?? KETCHER_ROOT_NODE_CSS_SELECTOR)
       ?.getBoundingClientRect() ?? { top: 0, left: 0 };
-    const menuItemRect = ref.current.getBoundingClientRect();
+    const menuItemRect = reference.current.getBoundingClientRect();
 
     const spaceBetween = 4;
     const alignmentOffset = 2;
@@ -60,8 +60,9 @@ function usePortalStyle([
       (isTop ? 0 : spaceBetween + menuItemRect.width) -
       (isTop ? alignmentOffset : 0);
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPortalStyle({ top: `${top}px`, left: `${left}px` });
-  }, [ref, isOpen, isTop, rootElementSelector]);
+  }, [reference, isOpen, isTop, rootElementSelector]);
 
   return [portalStyle];
 }

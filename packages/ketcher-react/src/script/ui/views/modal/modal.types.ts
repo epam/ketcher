@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-interface BaseProps {
+interface BaseProperties {
   className: string;
   formState: {
     errors: Record<string, string>;
@@ -24,13 +24,13 @@ interface BaseProps {
   };
 }
 
-interface BaseCallProps {
+interface BaseCallProperties {
   onCancel: () => void;
   onOk: (result: any) => void;
 }
 
-interface ModalContainerProps {
+interface ModalContainerProperties {
   ketcherId: string;
 }
 
-export type { BaseProps, BaseCallProps, ModalContainerProps };
+export type { BaseProperties, BaseCallProperties, ModalContainerProperties };

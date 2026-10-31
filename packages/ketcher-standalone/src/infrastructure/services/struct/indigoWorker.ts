@@ -66,10 +66,10 @@ function handle(
   module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     setOptions(indigoOptions, options ?? {});
-    let msg: OutputMessage<string>;
+    let message: OutputMessage<string>;
     try {
       const payload = handler(indigo, indigoOptions);
-      msg = {
+      message = {
         type: messageType,
         payload,
         hasError: false,
@@ -77,7 +77,7 @@ function handle(
       };
     } catch (error) {
       const errorMessage = normalizeError(error).message;
-      msg = {
+      message = {
         type: messageType,
         hasError: true,
         error: errorMessage,
@@ -85,7 +85,7 @@ function handle(
       };
     }
 
-    globalThis.postMessage(msg);
+    globalThis.postMessage(message);
   });
 }
 
@@ -96,8 +96,8 @@ function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   }
 }
 
-globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
-  const message = e.data;
+globalThis.onmessage = (event: MessageEvent<InputMessage<CommandData>>) => {
+  const message = event.data;
 
   switch (message.type) {
     case Command.GenerateImageAsBase64: {

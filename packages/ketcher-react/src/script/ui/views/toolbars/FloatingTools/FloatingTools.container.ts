@@ -9,17 +9,17 @@ import type { FloatingToolsState } from '../../../state/floatingTools';
 import type { RequestState } from '../../../state/request/request.types';
 import {
   FloatingTools,
-  type FloatingToolsCallProps,
-  type FloatingToolsProps,
+  type FloatingToolsCallProperties,
+  type FloatingToolsProperties,
 } from './FloatingTools';
 
 type State = {
   floatingTools: FloatingToolsState;
-  actionState?: FloatingToolsProps['status'];
+  actionState?: FloatingToolsProperties['status'];
   requestsStatuses: Pick<RequestState, 'indigoVerification'>;
 };
 
-const mapStateToProps = (state: State): FloatingToolsProps => {
+const mapStateToProperties = (state: State): FloatingToolsProperties => {
   return {
     visible: getFloatingToolsVisible(state),
     rotateHandlePosition: getFloatingToolsRotateHandlePosition(state),
@@ -28,13 +28,15 @@ const mapStateToProps = (state: State): FloatingToolsProps => {
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): FloatingToolsCallProps => ({
+const mapDispatchToProperties = (
+  dispatch: Dispatch,
+): FloatingToolsCallProperties => ({
   onAction: (action) => dispatch(onAction(action)),
 });
 
 const FloatingToolContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(FloatingTools);
 
 export { FloatingToolContainer };

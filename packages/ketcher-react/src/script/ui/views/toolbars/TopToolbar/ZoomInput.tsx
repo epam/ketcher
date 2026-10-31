@@ -23,7 +23,7 @@ import {
   useCallback,
 } from 'react';
 import styled from '@emotion/styled';
-import { isTouchDevice } from '../../../../../utils';
+import { isTouchDevice } from '../../../../../utilities';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
@@ -52,8 +52,8 @@ const StyledInput = styled('input')`
 `;
 
 const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
-  const el = event.target;
-  el.select();
+  const element = event.target;
+  element.select();
 };
 
 export const updateInputString = (
@@ -64,7 +64,7 @@ export const updateInputString = (
   inputElement.value = `${zoom}%`;
 };
 
-export interface ZoomInputProps {
+export interface ZoomInputProperties {
   onZoomSubmit: () => void;
   currentZoom: number;
   inputRef: RefObject<HTMLInputElement>;
@@ -76,19 +76,19 @@ export const ZoomInput = ({
   currentZoom,
   inputRef,
   shortcuts,
-}: ZoomInputProps) => {
+}: ZoomInputProperties) => {
   useEffect(() => {
-    const inputEl = inputRef.current;
-    updateInputString(currentZoom, inputEl);
-    if (document.activeElement === inputEl) {
-      inputEl?.select();
+    const inputElement = inputRef.current;
+    updateInputString(currentZoom, inputElement);
+    if (document.activeElement === inputElement) {
+      inputElement?.select();
     }
   }, [currentZoom, inputRef]);
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      const inputEl = inputRef.current;
-      if (!inputEl) {
+      const inputElement = inputRef.current;
+      if (!inputElement) {
         return;
       }
 
@@ -100,7 +100,7 @@ export const ZoomInput = ({
 
       if (event.key === 'Enter') {
         onZoomSubmit();
-        inputEl.select();
+        inputElement.select();
       }
     },
     [onZoomSubmit, inputRef, shortcuts],
@@ -108,10 +108,10 @@ export const ZoomInput = ({
 
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
-    const inputEl = inputRef.current;
+    const inputElement = inputRef.current;
     if (!isTouchDevice) {
-      inputEl?.focus();
-      inputEl?.select();
+      inputElement?.focus();
+      inputElement?.select();
     }
   }, [inputRef]);
 

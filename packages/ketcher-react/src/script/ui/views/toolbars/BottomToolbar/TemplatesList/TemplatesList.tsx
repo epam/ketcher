@@ -25,7 +25,7 @@ import { ActionButton } from '../../ToolbarGroupItem/ActionButton';
 import templates from '../../../../data/templates';
 import { getIconName } from 'components';
 
-interface TemplatesListProps {
+interface TemplatesListProperties {
   active?: {
     tool?: string;
     opts: {
@@ -37,15 +37,15 @@ interface TemplatesListProps {
   status: Tools;
 }
 
-interface TemplatesListCallProps {
+interface TemplatesListCallProperties {
   onAction: (action: UiActionAction) => void;
 }
 
-type Props = TemplatesListProps & TemplatesListCallProps;
+type Properties = TemplatesListProperties & TemplatesListCallProperties;
 
-const TemplatesList = (props: Props) => {
+const TemplatesList = (properties: Properties) => {
   const { active, disableableButtons, indigoVerification, onAction, status } =
-    props;
+    properties;
 
   const isTemplate = active?.tool === 'template';
 
@@ -78,5 +78,5 @@ const TemplatesList = (props: Props) => {
   );
 };
 
-export type { TemplatesListProps, TemplatesListCallProps };
+export type { TemplatesListProperties, TemplatesListCallProperties };
 export { TemplatesList };

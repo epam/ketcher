@@ -19,8 +19,8 @@ import {
   classes as defaultClasses,
 } from './DefaultMultiTool';
 import type {
-  MultiToolCallProps,
-  MultiToolProps,
+  MultiToolCallProperties,
+  MultiToolProperties,
   MultiToolVariant,
 } from './variants.types';
 
@@ -29,7 +29,7 @@ import { GroupedMultiTool } from './GroupedMultiTool';
 
 export function chooseMultiTool(
   variant: MultiToolVariant = 'default',
-): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
+): [ComponentType<MultiToolProperties & MultiToolCallProperties>, string?] {
   switch (variant) {
     case 'default':
       return [

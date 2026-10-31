@@ -71,7 +71,17 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
 }
 
 function parametrizeUrl(url, params) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+  return url.replace(/:([A-Za-z_]\w*)/g, (match, key) => {
+    if (
+      params &&
+      Object.prototype.hasOwnProperty.call(params, key) &&
+      params[key] !== undefined &&
+      params[key] !== null
+    ) {
+      return String(params[key]);
+    }
+    return match;
+  });
 }
 
 function request(

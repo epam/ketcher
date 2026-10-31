@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IconButton } from 'ketcher-react';
 import { About } from '../modal/About/About';
+import { useAppDispatch } from 'hooks';
+import { openModal } from 'state/modal';
 
 export function ButtonsComponents() {
   const { t } = useTranslation('macromolecules');
+  const dispatch = useAppDispatch();
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const aboutProps = {
@@ -16,10 +19,16 @@ export function ButtonsComponents() {
     <>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <IconButton
+          iconName="settings"
+          title={t('buttons.settings')}
+          onClick={() => dispatch(openModal('settings'))}
+          testId="settings-button"
+        />
+        <IconButton
           iconName="help"
           title={t('buttons.help')}
           onClick={() => {
-            const HELP_LINK = (process.env.HELP_LINK as string) || 'master';
+            const HELP_LINK = (import.meta.env.HELP_LINK as string) || 'master';
             window.open(
               `https://github.com/epam/ketcher/blob/${HELP_LINK}/documentation/help.md#ketcher-macromolecules-mode`,
               '_blank',

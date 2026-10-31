@@ -318,6 +318,7 @@ class Editor implements KetcherEditor {
     cursor: Subscription<EditorCursor>;
     updateFloatingTools: Subscription<FloatingToolsParams>;
     monomerWizardStateChange: Subscription<boolean>;
+    dropImage: Subscription<Struct>;
   };
 
   public serverSettings: Record<string, unknown> = {};
@@ -390,6 +391,7 @@ class Editor implements KetcherEditor {
       apiSettings: new PipelineSubscription(),
       updateFloatingTools: new Subscription(),
       monomerWizardStateChange: new Subscription<boolean>(),
+      dropImage: new Subscription<Struct>(),
     };
 
     domEventSetup(this, clientArea);

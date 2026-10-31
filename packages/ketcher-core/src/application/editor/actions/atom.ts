@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -104,7 +104,7 @@ export function fromAtomsAttrs(
 
     attrNames.forEach((key) => {
       if (key === 'attachmentPoints' && !(key in atomAttrs)) return;
-      if (!(key in atomAttrs) && !reset) return;
+      if (!reset && !(key in atomAttrs)) return;
 
       const value =
         key in atomAttrs ? atomAttrs[key] : Atom.attrGetDefault(key);
@@ -112,7 +112,7 @@ export function fromAtomsAttrs(
       switch (key) {
         case 'stereoLabel':
         case 'stereoParity':
-          if (key in atomAttrs && value) {
+          if (value && key in atomAttrs) {
             action.addOp(new AtomAttr(atomId, key, value).perform(restruct));
           }
           break;
@@ -193,9 +193,9 @@ export function mergeFragmentsIfNeeded(
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
   assert(isNumber(frid), `Fragment of atom ${srcId} was not found`);
 
-  if (frid2 !== frid && isNumber(frid2)) {
-    const struct = restruct.molecule;
+  const struct = restruct.molecule;
 
+  if (frid2 !== frid && isNumber(frid2) && struct.frags.has(frid2)) {
     const rgid = RGroup.findRGroupByFragment(struct.rgroups, frid2);
     if (rgid !== undefined) {
       action

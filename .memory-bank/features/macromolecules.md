@@ -1,7 +1,5 @@
 # Macromolecules (Polymers)
 
-## Problem
-
 Beyond small molecules, users work with biopolymers — peptides and nucleic acids built from monomers. Ketcher's macromolecules mode lets users assemble, view, and edit these polymers at monomer granularity and as sequences, create antisense strands, compute polymer properties, and bridge to molecules mode.
 
 ## User interaction
@@ -160,6 +158,8 @@ Monomers connect through defined attachment points, sequences render as single-l
 - The macromolecules editor keeps its own 32-step undo history, separate from molecules mode (see [undo-redo](./undo-redo.md)).
 - A drag-drop that places a monomer/preset **and** creates a bond is undoable as a single atomic step (both the placed entity and the bond are removed together on undo).
 
+Spec: [openspec/specs/macromolecules/spec.md](../../openspec/specs/macromolecules/spec.md)
+
 ## Limitations
 
 - The eraser is disabled in sequence layout mode.
@@ -170,4 +170,4 @@ Monomers connect through defined attachment points, sequences render as single-l
 ## Related
 
 - Library: [monomer-library](../modules/monomer-library.md) · UI: [ketcher-macromolecules](../modules/ketcher-macromolecules.md) · Bridge: [editor-engine](../modules/editor-engine.md)
-- See also: [import-export](./import-export.md), [clipboard](./clipboard.md), [monomer-replacement-drag-drop](./monomer-replacement-drag-drop.md)
+- See also: [import-export](./import-export.md), [clipboard](./clipboard.md), [monomer-replacement-drag-drop](../../openspec/changes/archive/2026-08-13-monomer-replacement-drag-drop/)

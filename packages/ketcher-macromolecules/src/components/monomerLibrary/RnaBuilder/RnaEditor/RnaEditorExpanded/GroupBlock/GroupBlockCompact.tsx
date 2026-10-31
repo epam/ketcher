@@ -9,6 +9,7 @@ import {
 } from './styles';
 import { groupNameToRnaEditorItemLabelKey } from './utils';
 import GroupIcon from './GroupIcon';
+import { MULTIPLE_MONOMERS_LABEL } from '../helpers/sequenceEdit';
 import { PropsWithChildren } from 'react';
 
 export const GroupBlockCompact = ({
@@ -34,7 +35,12 @@ export const GroupBlockCompact = ({
     >
       <>
         <CompactGroupConnection />
-        <GroupIcon name={iconName} selected={isSelected} empty={isEmpty} />
+        <GroupIcon
+          name={iconName}
+          selected={isSelected}
+          empty={isEmpty}
+          multiple={monomerName === MULTIPLE_MONOMERS_LABEL}
+        />
         <CompactGroupText selected={isSelected} empty={isEmpty}>
           {monomerName ?? t(groupNameToRnaEditorItemLabelKey[groupName])}
         </CompactGroupText>

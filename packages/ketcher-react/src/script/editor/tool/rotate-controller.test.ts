@@ -6,6 +6,7 @@ import {
   Struct,
   Vec2,
 } from 'ketcher-core';
+import type { RaphaelSet } from 'raphael';
 import Editor from '../Editor';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -13,7 +14,7 @@ import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as any;
+    globalThis.window.PointerEvent = MouseEvent as any;
   });
 
   /**
@@ -123,7 +124,7 @@ describe('Rotate controller', () => {
     const changeCrossColor = jest.fn();
     controller.cross = {
       attr: changeCrossColor,
-    };
+    } as unknown as RaphaelSet;
 
     controller.dragStart({
       buttons: 2, // Right button

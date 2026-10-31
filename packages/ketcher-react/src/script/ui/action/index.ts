@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ import atoms from './atoms';
 import copyAs from './copyAs';
 import copyImageToClipboard from './copyImageToClipboard';
 import debug from './debug';
-import { exec } from '../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../component/cliparea/cliparea';
 import isHidden from './isHidden';
 import server from './server';
 import templates from './templates';
@@ -33,7 +33,7 @@ import type Editor from '../../editor/Editor';
 
 export * from './action.types';
 
-const disableIfViewOnly = (editor: Editor): boolean =>
+const isViewOnly = (editor: Editor): boolean =>
   !!editor.render.options.viewOnlyMode;
 
 const updateConfigItem = (item: UiAction): UiAction => {
@@ -44,12 +44,12 @@ const updateConfigItem = (item: UiAction): UiAction => {
     return {
       ...item,
       disabled: (...props) =>
-        disableIfViewOnly(props[0]) || originalDisabled(...props),
+        isViewOnly(props[0]) || originalDisabled(...props),
     };
   } else {
     return {
       ...item,
-      disabled: disableIfViewOnly,
+      disabled: isViewOnly,
     };
   }
 };
@@ -64,7 +64,7 @@ const config: Record<string, UiAction> = {
 
         dispatch(removeStructAction());
 
-        if (!editor.struct().isBlank()) editor.struct(null);
+        if (!editor.struct().isBlank()) editor.struct(undefined);
       },
     },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
@@ -125,7 +125,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.cut',
     action: {
       thunk: (dispatch, _) => {
-        const isCutSupported = exec('cut');
+        const isCutSupported = canExecuteClipboardCommand('cut');
 
         if (!isCutSupported) {
           dispatch(openInfoModal('Cut'));
@@ -148,7 +148,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.copy',
     action: {
       thunk: (dispatch, _) => {
-        const isCopySupported = exec('copy');
+        const isCopySupported = canExecuteClipboardCommand('copy');
 
         if (!isCopySupported) {
           dispatch(openInfoModal('Copy'));
@@ -193,7 +193,7 @@ const config: Record<string, UiAction> = {
     title: 'toolbar:menu.paste',
     action: {
       thunk: (dispatch, _) => {
-        const isPasteSupported = exec('paste');
+        const isPasteSupported = canExecuteClipboardCommand('paste');
 
         if (!isPasteSupported) {
           dispatch(openInfoModal('Paste'));

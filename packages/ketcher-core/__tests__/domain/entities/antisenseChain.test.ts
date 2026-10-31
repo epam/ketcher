@@ -3,6 +3,7 @@ import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { AttachmentPointName } from 'domain/types';
+import { compareStrings } from 'utilities';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
@@ -15,7 +16,9 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+const sortLabels = (labels: string[]) => labels.sort(compareStrings);
+
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -215,9 +218,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     ].filter((monomer) => monomer.monomerItem.isAntisense);
 
     expect(antisenseMonomers).toHaveLength(3);
-    expect(antisenseMonomers.map((monomer) => monomer.label).sort()).toEqual(
-      ['P', 'R', 'U'].sort(),
-    );
+    expect(
+      sortLabels(antisenseMonomers.map((monomer) => monomer.label)),
+    ).toEqual(sortLabels(['P', 'R', 'U']));
     expect(unsplit.hydrogenBonds.length).toBe(1);
   });
 

@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -107,11 +107,11 @@ const Open: FC<Props> = (props) => {
   );
 
   const onFileLoad = (files) => {
-    if ((window as any).isKetcherFullscreenBeforeFilePicker) {
+    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (window as any).isKetcherFullscreenBeforeFilePicker = false;
+      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);
@@ -162,7 +162,7 @@ const Open: FC<Props> = (props) => {
     }, 0);
   };
 
-  const withFooterContent =
+  const hasFooterContent =
     (currentState === MODAL_STATES.textEditor ||
       currentState === MODAL_STATES.presentationViewer) &&
     !isAnalyzingFile;
@@ -172,7 +172,6 @@ const Open: FC<Props> = (props) => {
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />;
   }
-
   return (
     <Dialog
       title={t('dialogs:document.open.dialogTitle')}
@@ -181,7 +180,7 @@ const Open: FC<Props> = (props) => {
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
-        withFooterContent ? (
+        hasFooterContent ? (
           <FooterContent
             structStr={structStr}
             openHandler={openHandler}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,21 +16,6 @@
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
 
-import ReObject from './reobject';
-import ReAtom from './reatom';
-import { ReAttachmentGroup } from './reattachmentGroup';
-import ReBond from './rebond';
-import ReEnhancedFlag from './reenhancedFlag';
-import ReFrag from './refrag';
-import ReRGroup from './rergroup';
-import ReRxnArrow from './rerxnarrow';
-import ReRxnPlus from './rerxnplus';
-import ReSGroup, { paperPathFromSVGElement } from './resgroup';
-import ReSimpleObject from './resimpleObject';
-import ReStruct from './restruct';
-import ReText from './retext';
-import Visel from './visel';
-
 export * from './generalEnumTypes';
 export * from './reatom';
 export * from './reattachmentGroup';
@@ -39,20 +24,16 @@ export * from './rergroupAttachmentPoint';
 export * from './reImage';
 export * from './remultitailArrow';
 export * from './draftToLexical';
-export {
-  ReObject,
-  ReAtom,
-  ReAttachmentGroup,
-  ReBond,
-  ReRxnPlus,
-  ReRxnArrow,
-  ReFrag,
-  ReRGroup,
-  ReEnhancedFlag,
-  ReSGroup,
-  ReSimpleObject,
-  ReText,
-  ReStruct,
-  Visel,
-  paperPathFromSVGElement,
-};
+export { default as ReObject } from './reobject';
+export { default as ReAtom } from './reatom';
+export { default as ReBond } from './rebond';
+export { default as ReRxnPlus } from './rerxnplus';
+export { default as ReRxnArrow } from './rerxnarrow';
+export { default as ReFrag } from './refrag';
+export { default as ReRGroup } from './rergroup';
+export { default as ReEnhancedFlag } from './reenhancedFlag';
+export { default as ReSGroup, paperPathFromSVGElement } from './resgroup';
+export { default as ReSimpleObject } from './resimpleObject';
+export { default as ReText } from './retext';
+export { default as ReStruct } from './restruct';
+export { default as Visel } from './visel';

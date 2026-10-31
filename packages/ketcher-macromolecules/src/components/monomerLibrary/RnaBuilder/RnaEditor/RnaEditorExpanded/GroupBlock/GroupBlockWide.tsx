@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import {
 import { IGroupBlockProps } from './types';
 import { groupNameToRnaEditorItemLabelKey } from './utils';
 import { useAppSelector } from 'hooks';
-import { selectIsEditMode } from 'state/rna-builder';
+import { isRnaBuilderEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
 import { MULTIPLE_MONOMERS_LABEL } from '../helpers/sequenceEdit';
 import { PropsWithChildren } from 'react';
@@ -33,19 +33,19 @@ export const GroupBlockWide = ({
   groupName,
   iconName,
   monomerName,
-  selected,
+  selected: isSelected,
   onClick,
   testid,
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
 
-  const empty = !monomerName;
+  const isEmpty = !monomerName;
 
   return (
     <GroupBlockContainer
-      selected={selected}
+      selected={isSelected}
       onClick={onClick}
       isEditMode={isEditMode}
       data-testid={testid}
@@ -53,15 +53,15 @@ export const GroupBlockWide = ({
       <>
         <GroupIcon
           name={iconName}
-          selected={selected}
-          empty={empty}
+          selected={isSelected}
+          empty={isEmpty}
           multiple={monomerName === MULTIPLE_MONOMERS_LABEL}
         />
         <TextContainer>
-          <GroupName selected={selected}>
+          <GroupName selected={isSelected}>
             {t(groupNameToRnaEditorItemLabelKey[groupName])}
           </GroupName>
-          <MonomerName empty={empty} selected={selected}>
+          <MonomerName empty={isEmpty} selected={isSelected}>
             {monomerName ?? t('monomerLibrary.notSelected')}
           </MonomerName>
         </TextContainer>

@@ -83,7 +83,7 @@ import {
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { validate } from 'domain/serializers/ket/validate';
+import { isValidKet } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { isNumber } from 'lodash';
 import {
@@ -241,7 +241,7 @@ export class KetSerializer implements Serializer<Struct> {
 
   deserializeMicromolecules(content: string): Struct {
     const ket = JSON.parse(content);
-    if (!validate(ket)) {
+    if (!isValidKet(ket)) {
       throw new Error('Cannot deserialize input JSON.');
     }
 
@@ -438,19 +438,19 @@ export class KetSerializer implements Serializer<Struct> {
       );
       return { error: true };
     }
-    let error = false;
+    let hasError = false;
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       if (nodeDefinition?.type === 'monomer') {
-        error = this.validateMonomerNodeTemplate(
+        hasError = this.validateMonomerNodeTemplate(
           nodeDefinition,
           parsedFileContent,
           editor,
         );
       }
     });
-    if (error) {
+    if (hasError) {
       return { error: true };
     }
     parsedFileContent.root.connections?.forEach(
@@ -459,7 +459,7 @@ export class KetSerializer implements Serializer<Struct> {
       },
     );
     return {
-      error,
+      error: hasError,
       parsedFileContent,
     };
   }
@@ -894,7 +894,7 @@ export class KetSerializer implements Serializer<Struct> {
   serializeMacromolecules(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needSetSelection = false,
+    shouldSetSelection = false,
   ) {
     const fileContent: IKetMacromoleculesContentRootProperty = {
       root: {
@@ -990,7 +990,7 @@ export class KetSerializer implements Serializer<Struct> {
           ...(isTransformationDefined && {
             transformation: modifyTransformation(transformation),
           }),
-          selected: (needSetSelection && monomer.selected) || undefined,
+          selected: (shouldSetSelection && monomer.selected) || undefined,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 
@@ -1041,7 +1041,7 @@ export class KetSerializer implements Serializer<Struct> {
               polymerBond,
               monomerIdMap,
             ) as IKetConnectionEndPoint),
-        selected: (needSetSelection && polymerBond.selected) || undefined,
+        selected: (shouldSetSelection && polymerBond.selected) || undefined,
       });
     });
 
@@ -1070,11 +1070,12 @@ export class KetSerializer implements Serializer<Struct> {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
           atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
-        selected: (needSetSelection && monomerToAtomBond.selected) || undefined,
+        selected:
+          (shouldSetSelection && monomerToAtomBond.selected) || undefined,
       });
     });
 
-    if (needSetSelection) {
+    if (shouldSetSelection) {
       drawingEntitiesManager.atoms.forEach((atom) => {
         if (atom.selected) {
           const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
@@ -1197,7 +1198,7 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager = new DrawingEntitiesManager(),
     selection?: EditorSelection,
     isBeautified = true, // TODO make false by default
-    needSetSelectionToMacromolecules = false,
+    shouldSetSelectionToMacromolecules = false,
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
@@ -1218,7 +1219,7 @@ export class KetSerializer implements Serializer<Struct> {
     } = this.serializeMacromolecules(
       new Struct(),
       drawingEntitiesManager,
-      needSetSelectionToMacromolecules,
+      shouldSetSelectionToMacromolecules,
     );
 
     if (selection === undefined) {
@@ -1229,7 +1230,7 @@ export class KetSerializer implements Serializer<Struct> {
     }
 
     // need for selection population to atoms and bonds from macromolecules mode
-    if (needSetSelectionToMacromolecules) {
+    if (shouldSetSelectionToMacromolecules) {
       populateStructWithSelection(micromoleculesStruct, moleculesSelection);
     }
 

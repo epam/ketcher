@@ -55,7 +55,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 function pollDeferred<T>(
   process: () => Promise<T>,
-  complete: (val: T) => boolean,
+  isComplete: (val: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
 ) {
@@ -64,7 +64,7 @@ function pollDeferred<T>(
       process().then(
         (val) => {
           try {
-            if (complete(val)) resolve(val);
+            if (isComplete(val)) resolve(val);
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);

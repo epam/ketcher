@@ -65,10 +65,10 @@ export interface SerializedEditorState {
 
 type TextStyles = RenderOptionStyles & { shiftY?: number };
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 const SCALE = 40; // from ketcher-core
 
@@ -174,7 +174,7 @@ class ReText extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ): Element | null {
-    if (!this.paths.length || !paper) return null;
+    if (!paper || !this.paths.length) return null;
     return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
@@ -294,23 +294,23 @@ class ReText extends ReObject {
       }
     }
 
-    if (format & IS_BOLD) {
+    if (format & BOLD_FLAG) {
       styles['font-weight'] = 'bold';
     }
 
-    if (format & IS_ITALIC) {
+    if (format & ITALIC_FLAG) {
       styles['font-style'] = 'italic';
     }
 
     const fontsz = customFontSize ?? options.fontszInPx;
     const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
 
-    if (format & IS_SUBSCRIPT) {
+    if (format & SUBSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = fontsz / 4;
     }
 
-    if (format & IS_SUPERSCRIPT) {
+    if (format & SUPERSCRIPT_FLAG) {
       styles['font-size'] = fontszsub + 'px';
       styles.shiftY = -fontsz / 3;
     }

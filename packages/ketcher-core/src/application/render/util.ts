@@ -216,8 +216,8 @@ function escapeHtml(str) {
 }
 
 function useLabelStyles(
-  attachmentPointSelected: boolean,
-  attachmentPointUsed: boolean,
+  isAttachmentPointSelected: boolean,
+  isAttachmentPointUsed: boolean,
   usageInMacromolecule: UsageInMacromolecule,
 ): {
   color: string;
@@ -231,25 +231,25 @@ function useLabelStyles(
   switch (usageInMacromolecule) {
     case UsageInMacromolecule.MonomerPreview:
       stroke = 'none';
-      if (attachmentPointUsed) {
+      if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.MonomerConnectionsModal:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
         stroke = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.BondPreview:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#CDF1FC';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }

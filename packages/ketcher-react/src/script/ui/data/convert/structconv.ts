@@ -313,7 +313,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
-    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
+    charge: charge !== 0 && restAtom.charge ? Number(charge) : null,
     // Empty string from cleared form field must become null like undefined (not ?? alone).
     alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),

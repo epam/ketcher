@@ -139,7 +139,7 @@ function propsDialog(editor, id, pos) {
         elem.aam = atom.aam; // WTF??
         elem.attachmentPoints = atom.attachmentPoints;
 
-        if (!elem.rglabel && label !== 'R#') {
+        if (label !== 'R#' && !elem.rglabel) {
           elem.label = label;
         }
 

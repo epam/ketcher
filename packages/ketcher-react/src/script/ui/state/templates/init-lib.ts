@@ -28,7 +28,7 @@ import templatesRawData from '../../../../templates/library.sdf';
 import type { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
-let needReinitializeTemplateLibrary = false;
+let shouldReinitializeTemplateLibrary = false;
 
 interface TemplateLibrary {
   type: string;
@@ -79,16 +79,16 @@ export default async function initTmplLib(
     const lib = [...res, ...userTmpls()];
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
-    if (needReinitializeTemplateLibrary) {
+    if (shouldReinitializeTemplateLibrary) {
       reinitializeTemplateLibrary();
-      needReinitializeTemplateLibrary = false;
+      shouldReinitializeTemplateLibrary = false;
     }
   });
 }
 
 export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
-    needReinitializeTemplateLibrary = true;
+    shouldReinitializeTemplateLibrary = true;
     return;
   }
 

@@ -56,7 +56,7 @@ import { KetMonomerClass } from 'application/formatters';
 export function shouldInvokeConnectionModal(
   firstMonomer: BaseMonomer,
   secondMonomer: BaseMonomer,
-  checkForPotentialBonds = true,
+  shouldCheckForPotentialBonds = true,
   isHydrogenBond = false,
 ): boolean | undefined {
   if (isHydrogenBond) {
@@ -78,7 +78,7 @@ export function shouldInvokeConnectionModal(
 
   // Modal: either of the monomers doesn't have any potential APs
   if (
-    checkForPotentialBonds &&
+    shouldCheckForPotentialBonds &&
     (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
   ) {
     return true;

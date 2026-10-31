@@ -12,20 +12,20 @@ Severity levels are defined in the [output contract](review-workflow.md#output-c
 
 Scope: packages/ketcher-core/src/domain/**
 Severity: major
-Enforced by: AI
+Enforced by: lint(ketcher-invariants/domain-no-application-imports)
 Status: active
-Why: Invariant A4 keeps the domain layer free of rendering, editor, and UI imports. Existing violations are listed in accepted-patterns.md. Only new imports are flagged.
+Why: Invariant A4 keeps the domain layer free of rendering, editor, and UI imports. Runtime (non-type-only) imports are lint errors; type-only imports pass. The imports that predate the rule are allowlisted in scripts/eslint-invariants-rules.mjs (`ALLOWED_DOMAIN_IMPORTS`), and the unit tests keep that list from going stale. A change may remove a violation but must not add one.
 Source: agent-docs
 Bad: a new `import { provideEditorInstance } from 'application/editor/editorSingleton';` in a file under domain/
 Good: move the logic into application/ and pass the domain value into it
 
 ### R2: Renderers do not mutate the domain model
 
-Scope: packages/*/src/**
+Scope: packages/ketcher-core/src/application/render/**
 Severity: major
-Enforced by: AI
+Enforced by: lint(ketcher-invariants/renderer-no-model-mutations)
 Status: active
-Why: Invariant A1. Renderers are read-only consumers of the model. A mutation in a render path skips the Command history, so undo and redo cannot reverse it.
+Why: Invariant A1. Renderers are read-only consumers of the model. The lint rule flags `new Command` and mutating DrawingEntitiesManager method calls in `packages/ketcher-core/src/application/render/**`. The SequenceRenderer violations that predate the rule are allowlisted in `ALLOWED_MODEL_MUTATIONS` (scripts/eslint-invariants-rules.mjs), and the unit tests keep that list from going stale. UI and controller code outside the render directory is not a renderer, so it stays with the invariant A1 review lens rather than this rule.
 Source: agent-docs
 
 ### R3: Model changes go through a Command of BaseOperation objects
@@ -116,10 +116,21 @@ Good: `const newAtomId = ...`
 
 Scope: packages/*/src/**
 Severity: major
-Enforced by: AI
+Enforced by: Danger
 Status: proposed
-Why: A file past 1,000 lines carries several responsibilities and resists focused review. The rule flags only a file the diff pushes past the threshold; files already over it are not findings.
+Why: A file past 1,000 lines carries several responsibilities and resists focused review. The rule flags only a file the diff pushes past the threshold; files already over it are not findings. Danger warns on it (`file-length` in scripts/pr-checks.mjs).
 Source: agent-docs
+
+### R18: Source code does not write HTML from a string
+
+Scope: packages/*/src/**
+Severity: major
+Enforced by: lint(ketcher-invariants/no-html-sinks)
+Status: proposed
+Why: Ketcher opens files, pasted text, and Indigo replies that it does not control. HTML written from such text runs as markup. The rule flags `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and `dangerouslySetInnerHTML`; clearing with `innerHTML = ''` passes. The sinks that predate the rule are allowlisted in scripts/eslint-invariants-rules.mjs (`ALLOWED_HTML_SINKS`), and the security lens traces what reaches them. ESLint's `no-eval`, `no-implied-eval`, and `no-new-func` cover code built from a string.
+Source: PR #12548
+Bad: `el.innerHTML = msg.info;`
+Good: `el.textContent = msg.info;`, or a React element
 
 ## React and UI
 
@@ -175,3 +186,14 @@ Why: Page objects own the selectors, so specs read as user steps and a selector 
 Source: PR #9651, PR #10466, PR #10320
 Bad: `await page.getByTestId('zoom-out').click();` in a spec file
 Good: call the method on the page object that owns the zoom control
+
+### R17: ketcher-core stays a framework-agnostic library
+
+Scope: packages/ketcher-core/src/**
+Severity: major
+Enforced by: lint(ketcher-invariants/ui-imports-in-core)
+Status: active
+Why: Invariant A5. ketcher-core is consumed by React packages and must not import React or UI-framework modules nor declare them as dependencies; `ui-deps-in-core` adds the package.json check. The existing `react-device-detect` import is allowlisted in scripts/eslint-invariants-rules.mjs (`ALLOWED_UI_IMPORTS`); new ones are flagged.
+Source: agent-docs
+Bad: `import * as React from 'react';` anywhere under packages/ketcher-core/src/
+Good: keep React bindings in ketcher-react and pass plain data across the package boundary

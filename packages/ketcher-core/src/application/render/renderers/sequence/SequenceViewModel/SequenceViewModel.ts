@@ -201,8 +201,8 @@ export class SequenceViewModel {
 
             if (
               currentTwoStrandedSnakeLayoutNode &&
-              !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-              isNodeInSameChain
+              isNodeInSameChain &&
+              !currentTwoStrandedSnakeLayoutNode.antisenseNode
             ) {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
                 currentNodeBeforeHydrogenConnectionToBase;
@@ -233,8 +233,8 @@ export class SequenceViewModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =

@@ -14,32 +14,32 @@ import {
 import {
   alignToCentroid,
   collapseExpandedSuperatoms,
-  mergeCoordinatesFromResult,
+  didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  needsMetaPreservation,
-  needsStructurePreservation,
+  shouldPreserveMeta,
+  shouldPreserveStructure,
 } from './miewStructMerge';
 
 describe('miewStructMerge', () => {
-  describe('needsMetaPreservation', () => {
+  describe('shouldPreserveMeta', () => {
     it('returns false for a plain molecule', () => {
       const struct = new Struct();
       struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
-      expect(needsMetaPreservation(struct)).toBe(false);
+      expect(shouldPreserveMeta(struct)).toBe(false);
     });
 
     it('returns true when reaction symbols are present', () => {
       const struct = new Struct();
       struct.rxnPluses.add(new RxnPlus({ pp: new Vec2(1, 1) }));
-      expect(needsMetaPreservation(struct)).toBe(true);
+      expect(shouldPreserveMeta(struct)).toBe(true);
     });
   });
 
-  describe('needsStructurePreservation', () => {
+  describe('shouldPreserveStructure', () => {
     it('returns false for a plain molecule with no S-groups or R-groups', () => {
       const struct = new Struct();
       struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
-      expect(needsStructurePreservation(struct)).toBe(false);
+      expect(shouldPreserveStructure(struct)).toBe(false);
     });
 
     it('returns true for a structure with a nucleotide-component SUP S-group', () => {
@@ -47,7 +47,7 @@ describe('miewStructMerge', () => {
       const sgroup = new SGroup('SUP');
       sgroup.data.class = 'SUGAR';
       struct.sgroups.add(sgroup);
-      expect(needsStructurePreservation(struct)).toBe(true);
+      expect(shouldPreserveStructure(struct)).toBe(true);
     });
 
     it('returns true for a structure with a regular named SUP S-group', () => {
@@ -55,11 +55,11 @@ describe('miewStructMerge', () => {
       const sgroup = new SGroup('SUP');
       sgroup.data.name = 'Boc';
       struct.sgroups.add(sgroup);
-      expect(needsStructurePreservation(struct)).toBe(true);
+      expect(shouldPreserveStructure(struct)).toBe(true);
     });
   });
 
-  describe('mergeCoordinatesFromResult', () => {
+  describe('didMergeCoordinatesFromResult', () => {
     it('copies result atom coordinates onto the original struct while preserving its S-groups/class/name', () => {
       const original = new Struct();
       const a0 = new Atom({ label: 'C', pp: new Vec2(0, 0) });
@@ -77,7 +77,7 @@ describe('miewStructMerge', () => {
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(5, 5, 1) }));
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(6, 5, 1) }));
 
-      const merged = mergeCoordinatesFromResult(result, original);
+      const merged = didMergeCoordinatesFromResult(result, original);
 
       expect(merged).toBe(true);
 
@@ -105,7 +105,7 @@ describe('miewStructMerge', () => {
       const result = new Struct();
       result.atoms.add(new Atom({ label: 'C', pp: new Vec2(9, 9) }));
 
-      const merged = mergeCoordinatesFromResult(result, original);
+      const merged = didMergeCoordinatesFromResult(result, original);
 
       expect(merged).toBe(false);
       const atoms = Array.from(original.atoms.values());
@@ -265,7 +265,7 @@ describe('miewStructMerge', () => {
 
       const firstPreserved = struct.clone();
       firstPreserved.enableInitiallySelected();
-      const firstMerged = mergeCoordinatesFromResult(
+      const firstMerged = didMergeCoordinatesFromResult(
         firstResult,
         firstPreserved,
       );
@@ -315,7 +315,7 @@ describe('miewStructMerge', () => {
         });
       }).not.toThrow();
 
-      const secondMerged = mergeCoordinatesFromResult(
+      const secondMerged = didMergeCoordinatesFromResult(
         secondResult,
         secondPreserved,
       );
@@ -362,7 +362,7 @@ describe('miewStructMerge', () => {
       const preserved = struct.clone();
       preserved.enableInitiallySelected();
 
-      const merged = mergeCoordinatesFromResult(result, preserved);
+      const merged = didMergeCoordinatesFromResult(result, preserved);
 
       expect(merged).toBe(false);
 
@@ -434,7 +434,7 @@ describe('miewStructMerge', () => {
         );
       });
 
-      expect(mergeCoordinatesFromResult(result, preserved)).toBe(true);
+      expect(didMergeCoordinatesFromResult(result, preserved)).toBe(true);
 
       collapseExpandedSuperatoms(preserved);
 

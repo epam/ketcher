@@ -73,7 +73,7 @@ const findMaps: Record<string, FindMapFn> = {
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
 type RefPoint = Vec2 | null;
 
-function rectangleContainsPoint(
+function isPointInRectangle(
   startX: number,
   startY: number,
   width: number,
@@ -281,10 +281,10 @@ function findClosestBond(
     const dir = hb.dir;
     const norm = hb.norm;
 
-    const inStripe =
+    const isInStripe =
       Vec2.dot(pos.sub(p1), dir) * Vec2.dot(pos.sub(p2), dir) < 0;
 
-    if (inStripe) {
+    if (isInStripe) {
       const dist = Math.abs(Vec2.dot(pos.sub(p1), norm));
 
       if (dist < effectiveMinDist) {
@@ -355,7 +355,7 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
       if (!box) {
         return;
       }
-      const inBox =
+      const isInBox =
         box.p0.y < pos.y &&
         box.p1.y > pos.y &&
         box.p0.x < pos.x &&
@@ -365,7 +365,7 @@ function findClosestDataSGroupData(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pos.x),
       );
 
-      if (inBox && (ret === null || xDist < minDist)) {
+      if (isInBox && (ret === null || xDist < minDist)) {
         ret = { id, dist: xDist };
         minDist = xDist;
       }
@@ -552,7 +552,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 
     sg.areas.forEach((box) => {
-      const inBox =
+      const isInBox =
         box.p0.y < pg.y &&
         box.p1.y > pg.y &&
         box.p0.x < pg.x &&
@@ -562,7 +562,7 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
         Math.abs(box.p1.x - pg.x),
       );
 
-      if (inBox && (ret === null || xDist < minDist)) {
+      if (isInBox && (ret === null || xDist < minDist)) {
         ret = sgid;
         minDist = xDist;
       }
@@ -588,7 +588,7 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip: SkipItem | null) {
     const { startX, startY, width, height } =
       reSGroup.getTextHighlightDimensions(restruct.render, 0);
     const { x, y } = Scale.modelToCanvas(pos, restruct.render.options);
-    if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
+    if (isPointInRectangle(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;
       const centerY = startY + height / 2;
       const rectangleCenter = new Vec2(centerX, centerY);
@@ -710,7 +710,7 @@ function findCloseMerge(
           result,
         );
         if (!merged) {
-          mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
+          didMergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
         }
       });
     } else {
@@ -760,7 +760,7 @@ function mergeAtomToAtom(
  * @param result { Object } Mutating arguments!!!
  * @return {boolean}
  */
-function mergeAtomToFunctionalGroup(
+function didMergeAtomToFunctionalGroup(
   atomId: number,
   restruct: ReStruct,
   atomPosition: Vec2,
@@ -806,11 +806,11 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
           canvasScaledPosition,
           renderOptions,
         );
-        const includeRef = closestPosition.distance < maxDistance;
+        const shouldIncludeRef = closestPosition.distance < maxDistance;
         return {
           id,
           dist: dist / renderOptions.microModeScale,
-          ref: includeRef ? closestPosition.ref : null,
+          ref: shouldIncludeRef ? closestPosition.ref : null,
         };
       }
       return acc;

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -7,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +24,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { HAPTIC_BOND_TYPE } from 'domain/constants/bonds';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -51,6 +50,8 @@ export interface BondAttributes {
   hb2?: number;
 }
 
+export type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+export type StructBondEndpointAccess = Pick<Struct, 'getBondEndpoint'>;
 export class Bond extends BaseMicromoleculeEntity {
   static readonly PATTERN = {
     TYPE: {
@@ -64,6 +65,7 @@ export class Bond extends BaseMicromoleculeEntity {
       ANY: 8,
       DATIVE: 9,
       HYDROGEN: 10,
+      HAPTIC: HAPTIC_BOND_TYPE,
     },
 
     STEREO: {
@@ -163,9 +165,9 @@ export class Bond extends BaseMicromoleculeEntity {
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
     const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in Bond.attrlist) {
+    for (const attr in this.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      if (bond[key] || key === 'stereo') {
+      if (key === 'stereo' || bond[key]) {
         attrs[key] = bond[key] as never;
       }
     }
@@ -223,7 +225,7 @@ export class Bond extends BaseMicromoleculeEntity {
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd);
+      this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -244,7 +246,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
       isAllSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -267,7 +269,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
       return [3];
@@ -281,8 +283,8 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Bond.attrlist) {
-      return Bond.attrlist[attr];
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
     }
   }
 
@@ -306,15 +308,16 @@ export class Bond extends BaseMicromoleculeEntity {
     return !!this.reactingCenterStatus;
   }
 
-  getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp;
-    const p2 = struct.atoms.get(this.end).pp;
+  getCenter(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
+    if (!p1 || !p2) return new Vec2();
     return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
-  getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)?.pp;
-    const p2 = struct.atoms.get(this.end)?.pp;
+  getDir(struct: StructBondEndpointAccess): Vec2 {
+    const p1 = struct.getBondEndpoint(this.begin)?.pp;
+    const p2 = struct.getBondEndpoint(this.end)?.pp;
     if (!p1 || !p2) return new Vec2();
     return p2.sub(p1).normalized();
   }
@@ -355,7 +358,7 @@ export class Bond extends BaseMicromoleculeEntity {
   public static isBondToHiddenLeavingGroup(
     struct: Struct,
     bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -368,7 +371,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.begin,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
@@ -376,7 +379,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.end,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );

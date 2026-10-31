@@ -309,4 +309,41 @@ describe('expanded monomer rendering', () => {
     expect(centralStereoBond).not.toBeNull();
     expect(lineCommandsAmount).toBe(3);
   });
+
+  it.each([
+    { rglabel: 2, expectedText: 'R2', isItalic: false },
+    { rglabel: null, expectedText: 'OH', isItalic: true },
+  ])(
+    'labels a pseudo atom "OH" with rglabel $rglabel as $expectedText',
+    ({ rglabel, expectedText, isItalic }) => {
+      mockSvgGeometry();
+
+      // A leaving atom of a monomer template carries its attachment point
+      // number as rglabel, so it is labelled by the attachment point (#5551)
+      const struct = new Struct();
+      const carbonAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+      );
+      const pseudoAtomId = struct.atoms.add(
+        new Atom({ label: 'OH', rglabel, pp: new Vec2(1, 0) }),
+      );
+      addBond(struct, carbonAtomId, pseudoAtomId);
+
+      struct.initNeighbors();
+      struct.setImplicitHydrogen();
+
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const render = new Render(container, option);
+      const restruct = new ReStruct(struct, render);
+      restruct.update(true);
+
+      const label = Array.from(container.querySelectorAll('text')).find(
+        (element) => element.textContent === expectedText,
+      );
+
+      expect(label).toBeDefined();
+      expect(label?.getAttribute('font-style') === 'italic').toBe(isItalic);
+    },
+  );
 });

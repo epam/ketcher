@@ -30,6 +30,7 @@ import {
   type CleanData,
   type CleanResult,
   type ConvertData,
+  type ConvertContext,
   type ConvertResult,
   type DearomatizeData,
   type DearomatizeResult,
@@ -281,10 +282,11 @@ export class RemoteStructService implements StructService {
   convert(
     data: ConvertData,
     options?: StructServiceOptions,
+    context?: ConvertContext,
   ): Promise<ConvertResult> {
-    const monomerLibrary = JSON.stringify(
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
+    const monomerLibrary = context?.skipMonomerLibraryTransfer
+      ? undefined
+      : JSON.stringify(provideEditorInstance()?.monomersLibraryParsedJson);
     const expandedOptions = {
       monomerLibrary,
       ...this.getStandardServerOptions(options),

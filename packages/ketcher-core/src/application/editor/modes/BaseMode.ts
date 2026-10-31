@@ -244,6 +244,9 @@ export abstract class BaseMode {
     const result = await ketcher.structService.convert(
       { struct: ket, output_format: ChemicalMimeType.Mol },
       { 'molfile-saving-mode': '3000' },
+      {
+        skipMonomerLibraryTransfer: !editor.drawingEntitiesManager.hasMonomers,
+      },
     );
 
     return result.struct;

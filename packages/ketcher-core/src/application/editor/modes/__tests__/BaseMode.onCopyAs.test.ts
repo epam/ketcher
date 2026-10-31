@@ -85,6 +85,7 @@ describe('BaseMode.onCopyAs', () => {
       drawingEntitiesManager: {
         selectedEntities,
         filterSelection: jest.fn(() => ({})),
+        hasMonomers: false,
       },
       events: { openErrorModal: { dispatch: openErrorModalDispatch } },
     });
@@ -122,6 +123,7 @@ describe('BaseMode.onCopyAs', () => {
     expect(convert).toHaveBeenCalledWith(
       { struct: 'KET_STRING', output_format: ChemicalMimeType.Mol },
       { 'molfile-saving-mode': '3000' },
+      { skipMonomerLibraryTransfer: true },
     );
     expect(writeText).toHaveBeenCalledWith('MOL_STRING');
   });

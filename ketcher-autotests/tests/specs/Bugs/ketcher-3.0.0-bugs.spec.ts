@@ -65,6 +65,7 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import { SequenceCanvas } from '@tests/pages/macromolecules/canvas/SequenceCanvas';
 
 let page: Page;
 
@@ -127,6 +128,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     for (const sequence of sequences) {
       await keyboardTypeOnCanvas(page, sequence);
       await keyboardPressOnCanvas(page, 'Enter');
+      await SequenceCanvas(page).expectCaretInViewport();
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

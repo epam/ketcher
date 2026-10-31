@@ -30,6 +30,7 @@ import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { ViewBox } from 'application/render/render.types';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -66,6 +67,90 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  describe('mode viewport transfer', () => {
+    const methods = CoreEditor.prototype as unknown as {
+      keepStructurePositionInMicroViewport: (transform: {
+        k: number;
+        x: number;
+        y: number;
+      }) => void;
+      getMicroViewport: () => { zoom: number; x: number; y: number };
+      keepStructurePositionInMacroViewport: (viewport: {
+        zoom: number;
+        x: number;
+        y: number;
+      }) => void;
+    };
+
+    it.each([0.5, 1, 2])(
+      'preserves all screen points and zoom %s across repeated round trips',
+      (zoom) => {
+        const viewport = { zoom, x: 110.06, y: 97.52 };
+        const render = {
+          options: { zoom: 1 },
+          viewBox: { minX: 0, minY: 0, width: 0, height: 0 },
+          clientArea: {
+            getBoundingClientRect: () => ({ left: 52, top: 40 }),
+          },
+          resizeViewBox: jest.fn(),
+          setViewBox: (update: (box: ViewBox) => ViewBox) => {
+            render.viewBox = update(render.viewBox);
+          },
+        };
+        const zoomTool = {
+          zoomTransform: { k: 1, x: 0, y: 0 },
+          zoomTo: (value: number) => {
+            zoomTool.zoomTransform.k = value;
+          },
+          scrollBy: (offsetX: number, offsetY: number) => {
+            zoomTool.zoomTransform.x += offsetX;
+            zoomTool.zoomTransform.y += offsetY;
+          },
+        };
+        const context = {
+          viewportBeforeModeSwitch: viewport,
+          canvas: {
+            getBoundingClientRect: () => ({ left: 50, top: 54 }),
+          },
+          micromoleculesEditor: {
+            render,
+            event: { zoomChanged: { dispatch: jest.fn() } },
+          },
+          zoomTool,
+        };
+
+        for (let cycle = 0; cycle < 3; cycle++) {
+          methods.keepStructurePositionInMicroViewport.call(context, {
+            k: zoom,
+            x: viewport.x - 50,
+            y: viewport.y - 54,
+          });
+          const microViewport = methods.getMicroViewport.call(context);
+          expect(microViewport).toEqual(viewport);
+          expect(render.options.zoom).toBe(zoom);
+
+          methods.keepStructurePositionInMacroViewport.call(
+            context,
+            microViewport,
+          );
+          const transform = zoomTool.zoomTransform;
+          expect(transform.k).toBe(zoom);
+          for (const point of [new Vec2(0, 0), new Vec2(300, 60)]) {
+            expect(50 + transform.x + point.x * transform.k).toBeCloseTo(
+              viewport.x + point.x * zoom,
+            );
+            expect(54 + transform.y + point.y * transform.k).toBeCloseTo(
+              viewport.y + point.y * zoom,
+            );
+          }
+        }
+        expect(
+          context.micromoleculesEditor.event.zoomChanged.dispatch,
+        ).toHaveBeenCalledTimes(3);
+      },
+    );
+  });
+
   it('uses the current canvas for library drag/drop after manager swaps', () => {
     const canvas = createPolymerEditorCanvas();
     const editor = new CoreEditor({

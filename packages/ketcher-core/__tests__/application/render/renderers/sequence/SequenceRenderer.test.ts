@@ -108,6 +108,46 @@ describe('SequenceRenderer', () => {
     });
   });
 
+  it.each([
+    ['below the canvas', 723, -25],
+    ['above the canvas', 40, 14],
+    ['inside the canvas', 400, 0],
+  ])(
+    'keeps the new sequence caret visible when it is %s',
+    (_, caretTop, expectedOffset) => {
+      showCurrentMonomersInSequenceLayout();
+      const mode = editor.mode;
+      expect(mode).toBeInstanceOf(SequenceMode);
+      if (!(mode instanceof SequenceMode)) {
+        throw new Error('Expected Sequence mode');
+      }
+      const scroll = jest
+        .spyOn(editor.zoomTool, 'scrollBy')
+        .mockImplementation();
+      const bounds = jest
+        .spyOn(SVGElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: SVGElement) {
+          if (this === canvas) {
+            return new DOMRect(50, 54, 952, 666);
+          }
+          return new DOMRect(88.5, caretTop, 0, 22);
+        });
+
+      mode.startNewSequence();
+
+      const caret = canvas.querySelector('[data-testid="sequence-caret"]');
+      expect(caret).not.toBeNull();
+      if (expectedOffset === 0) {
+        expect(scroll).not.toHaveBeenCalled();
+      } else {
+        expect(scroll).toHaveBeenCalledTimes(1);
+        expect(scroll).toHaveBeenCalledWith(0, expectedOffset);
+      }
+      bounds.mockRestore();
+      scroll.mockRestore();
+    },
+  );
+
   afterEach(() => {
     SequenceRenderer.clear();
     document.body.innerHTML = '';

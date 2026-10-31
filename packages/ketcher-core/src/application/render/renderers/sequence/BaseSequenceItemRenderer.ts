@@ -633,6 +633,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('x2', xOffset)
         .attr('y2', 21)
         .attr('stroke', '#333')
+        .attr('data-testid', 'sequence-caret')
         .attr('class', 'blinking');
     }
   }

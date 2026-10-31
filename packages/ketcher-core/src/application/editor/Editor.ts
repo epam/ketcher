@@ -276,6 +276,7 @@ export class CoreEditor {
   public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragCancelled = false;
+  private viewportBeforeModeSwitch?: { zoom: number; x: number; y: number };
 
   public theme: CoreEditorTheme;
   /**
@@ -2754,11 +2755,15 @@ export class CoreEditor {
     // Snake layout is a temporary macro-mode presentation. Follow the same
     // path used when leaving Snake for another macro layout, so its generated
     // positions are not exported to the molecules editor.
+    // Only flex-layout positions are exported as they are drawn, so only then
+    // the macro viewport describes where the exported structure is on screen.
+    const isFlexLayoutMode = this.mode.modeName === 'flex-layout-mode';
     this.undoLatestSnakeLayout();
 
     const restorePreviousMode = this.captureModeState();
     const struct = new Struct();
     const zoomTool = ZoomTool.instance;
+    const macroZoomTransform = zoomTool.zoomTransform;
 
     this.clearTransientViews();
     this.clearSelection();
@@ -2790,6 +2795,11 @@ export class CoreEditor {
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
     this.micromoleculesEditor.render.setMolecule(struct);
+
+    if (isFlexLayoutMode && !struct.isBlank()) {
+      this.keepStructurePositionInMicroViewport(macroZoomTransform);
+    }
+    this.viewportBeforeModeSwitch = undefined;
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -2837,6 +2847,8 @@ export class CoreEditor {
     this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct().clone() ?? new Struct();
+    const microViewport =
+      this.viewportBeforeModeSwitch ?? this.getMicroViewport();
 
     // Rescale coords from micro to macro so the visual position is preserved
     // when microModeScale (ACS bond length) differs from macroModeScale.
@@ -2866,6 +2878,11 @@ export class CoreEditor {
     } else {
       this.renderersContainer.update(modelChanges);
     }
+
+    if (this.mode.modeName === 'flex-layout-mode' && microViewport) {
+      this.keepStructurePositionInMacroViewport(microViewport);
+    }
+    this.viewportBeforeModeSwitch = undefined;
 
     this.micromoleculesEditor?.render.setMolecule(new Struct());
     this.micromoleculesEditor?.zoom(1);
@@ -2923,6 +2940,86 @@ export class CoreEditor {
       this.events.layoutModeChange.dispatch(modeName);
       this.events.modelChange.dispatch();
     };
+  }
+
+  private keepStructurePositionInMicroViewport(macroZoomTransform: {
+    k: number;
+    x: number;
+    y: number;
+  }) {
+    const render = this.micromoleculesEditor.render;
+    const { k, x: tx, y: ty } = macroZoomTransform;
+    const viewport = this.viewportBeforeModeSwitch ?? {
+      zoom: k,
+      x: this.canvasOffset.left + tx,
+      y: this.canvasOffset.top + ty,
+    };
+    const getBounds = render.clientArea?.getBoundingClientRect;
+    const bounds =
+      typeof getBounds === 'function'
+        ? getBounds.call(render.clientArea)
+        : undefined;
+    const left = bounds?.left ?? 0;
+    const top = bounds?.top ?? 0;
+    const zoom = viewport.zoom;
+
+    render.options.zoom = zoom;
+    render.resizeViewBox();
+
+    render.setViewBox((viewBox) => ({
+      ...viewBox,
+      minX: (left - viewport.x) / zoom,
+      minY: (top - viewport.y) / zoom,
+    }));
+    this.micromoleculesEditor.event.zoomChanged.dispatch();
+  }
+
+  private getMicroViewport() {
+    const render = this.micromoleculesEditor?.render;
+
+    if (!render?.viewBox) {
+      return null;
+    }
+
+    const { minX, minY } = render.viewBox;
+    const zoom = render.options.zoom;
+    const getBounds = render.clientArea?.getBoundingClientRect;
+    const bounds =
+      typeof getBounds === 'function'
+        ? getBounds.call(render.clientArea)
+        : undefined;
+    const left = bounds?.left ?? 0;
+    const top = bounds?.top ?? 0;
+
+    return {
+      zoom,
+      x: left - minX * zoom,
+      y: top - minY * zoom,
+    };
+  }
+
+  private keepStructurePositionInMacroViewport(viewport: {
+    zoom: number;
+    x: number;
+    y: number;
+  }) {
+    const { left, top } = this.canvas.getBoundingClientRect();
+    this.zoomTool.zoomTo(viewport.zoom);
+    const transform = this.zoomTool.zoomTransform;
+    this.zoomTool.scrollBy(
+      viewport.x - left - transform.x,
+      viewport.y - top - transform.y,
+    );
+  }
+
+  public captureViewportForModeSwitch() {
+    if (this._type === EditorType.Macromolecules) {
+      const { left, top } = this.canvas.getBoundingClientRect();
+      const { k, x, y } = this.zoomTool.zoomTransform;
+      this.viewportBeforeModeSwitch = { zoom: k, x: left + x, y: top + y };
+    } else {
+      this.viewportBeforeModeSwitch = this.getMicroViewport() ?? undefined;
+    }
   }
 
   private rescaleStructForModeTransition(

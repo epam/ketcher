@@ -440,6 +440,27 @@ export class SequenceMode extends BaseMode {
         SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
       }
     }
+
+    const node = this.isAntisenseEditMode
+      ? SequenceRenderer.currentEdittingNode?.antisenseNode
+      : SequenceRenderer.currentEdittingNode?.senseNode;
+    const renderer = node?.renderer;
+    const caretBounds =
+      renderer instanceof BaseSequenceItemRenderer
+        ? renderer.caretElement?.node()?.getBoundingClientRect()
+        : undefined;
+    const zoom = ZoomTool.instance;
+    const canvasBounds = zoom.canvasWrapper.node()?.getBoundingClientRect();
+
+    if (caretBounds && canvasBounds) {
+      const offset =
+        caretBounds.top < canvasBounds.top
+          ? canvasBounds.top - caretBounds.top
+          : Math.min(0, canvasBounds.bottom - caretBounds.bottom);
+      if (offset !== 0) {
+        zoom.scrollBy(0, offset);
+      }
+    }
   }
 
   private resolveRnaBuilderEntry(

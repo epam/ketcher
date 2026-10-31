@@ -42,6 +42,35 @@ Selection is drawn on dedicated selection/info layers. The layer map fixes z-ord
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.
 
+### Mode viewport handoff
+
+Switching between Flex and Molecules preserves zoom and the screen positions
+of corresponding structure coordinates. The React wrapper captures the source
+viewport through `CoreEditor.captureViewportForModeSwitch()` before hiding it.
+The transfer uses page-relative translation, including the different origins
+of the two canvases, and applies it once the destination canvas is visible.
+The wrapper retains the current core editor in a ref because the Molecules
+toolbar can retain an earlier toggle callback.
+
+Snake and Sequence still use their own layout rules rather than this Flex
+viewport transfer. Mode-coordinate rescaling remains independent of zoom.
+
+Molecules scrollbars use `ReStruct.getVisibleVBoxObj()`: visible atom and bond
+maps plus the other rendered entities. Hidden atoms inside contracted monomers
+must not create scrollable overflow; visible content outside the viewport must
+still enable scrolling. Selection and transformation bounds remain unchanged.
+
+Macro scrollbars compare content and viewport bounds in page coordinates,
+including the viewport's left and top offsets. A zero-width, zero-height
+content box does not create overflow, even when the viewport transfer has
+translated the empty drawing group. Content extending beyond either edge
+still enables the scrollbar for that axis.
+
+After creating a new Sequence row, the mode checks the active caret against
+the canvas's page-relative bounds and scrolls vertically only if the caret
+would be clipped. This is independent of scrollbar visibility and does not
+scroll to unrelated content at the bottom of the document.
+
 ## Macromolecules rendering (D3)
 
 Each drawing-entity subclass gets a renderer subclass that draws D3 selections into the SVG canvas. A renderers manager orchestrates create/update/delete in response to a Command.

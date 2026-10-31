@@ -23,6 +23,17 @@ export const test = mergeTests(utils, pageObjects).extend<
     const page = ketcher.page as Page;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await resetZoomLevelToDefault(page);
+    // Mode switching preserves the inactive Molecules viewport too.
+    await page.evaluate(() => {
+      const editor = window.ketcher.editor;
+      editor.zoom(1);
+      editor.render.setViewBox((viewBox) => ({
+        ...viewBox,
+        minX: 0,
+        minY: 0,
+      }));
+    });
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
     await page.keyboard.press('Escape');

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -81,10 +81,10 @@ class Table extends Component<TableProps, TableState> {
   }
 
   changeType = (type: PeriodTableType) => {
-    const prevChoice =
+    const isPreviousListChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
-    const currentChoice = type === 'list' || type === 'not-list';
-    if (prevChoice && currentChoice) {
+    const isCurrentListChoice = type === 'list' || type === 'not-list';
+    if (isPreviousListChoice && isCurrentListChoice) {
       this.setState({ type });
     } else {
       this.setState({
@@ -173,13 +173,13 @@ class Table extends Component<TableProps, TableState> {
         buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
-          !this.props.isNestedModal ? (
+          this.props.isNestedModal ? undefined : (
             <TypeChoice
               value={this.state.type}
               onChange={this.changeType}
               disabled={this.props.isMonomerCreationWizardActive}
             />
-          ) : undefined
+          )
         }
       >
         <div className={classes.periodTable}>

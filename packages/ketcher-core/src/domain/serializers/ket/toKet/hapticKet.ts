@@ -45,11 +45,11 @@ export function prepareStructForHapticKetSerialization(struct: Struct) {
   const bondIds = new Pile<number>();
   const originalToKetStructAtomIdMap = new Map<number, number>();
 
-  struct.bonds.forEach((bond, bondId) => {
+  for (const [bondId, bond] of struct.bonds.entries()) {
     if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
       bondIds.add(bondId);
     }
-  });
+  }
 
   const structForKet = struct.clone(
     null,
@@ -93,9 +93,12 @@ export function buildAttachmentGroupsForKet(
 ) {
   const attachmentGroupLocations = new Map<number, AttachmentGroupLocation>();
 
-  struct.attachmentGroups.forEach((attachmentGroup, attachmentGroupId) => {
+  for (const [
+    attachmentGroupId,
+    attachmentGroup,
+  ] of struct.attachmentGroups.entries()) {
     if (attachmentGroup.atomIds.length < 2) {
-      return;
+      continue;
     }
 
     const attachmentAtomLocations = attachmentGroup.atomIds.map(
@@ -109,12 +112,12 @@ export function buildAttachmentGroupsForKet(
         (location) => location?.moleculeId === moleculeId,
       )
     ) {
-      return;
+      continue;
     }
 
     const molecule = fileContent[moleculeId];
     if (typeof molecule !== 'object' || molecule === null) {
-      return;
+      continue;
     }
 
     const ketAttachmentGroupId = getOrCreateAttachmentGroup(
@@ -125,7 +128,7 @@ export function buildAttachmentGroupsForKet(
       moleculeId,
       attachmentGroupId: ketAttachmentGroupId,
     });
-  });
+  }
 
   return attachmentGroupLocations;
 }
@@ -137,9 +140,9 @@ export function buildHapticConnectionsForKet(
 ) {
   const connections: IKetConnection[] = [];
 
-  struct.bonds.forEach((bond) => {
+  for (const bond of struct.bonds.values()) {
     if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
-      return;
+      continue;
     }
 
     const beginAtom = struct.atoms.get(bond.begin);
@@ -148,7 +151,7 @@ export function buildHapticConnectionsForKet(
     const endIsAttachmentGroup = struct.attachmentGroups.has(bond.end);
 
     if (beginIsAttachmentGroup || endIsAttachmentGroup) {
-      if (beginIsAttachmentGroup === endIsAttachmentGroup) return;
+      if (beginIsAttachmentGroup === endIsAttachmentGroup) continue;
       const attachmentGroupId = beginIsAttachmentGroup ? bond.begin : bond.end;
       const centralAtomId = beginIsAttachmentGroup ? bond.end : bond.begin;
       const attachmentGroupLocation =
@@ -156,7 +159,7 @@ export function buildHapticConnectionsForKet(
       const centralAtomLocation = originalAtomToKetLocation.get(centralAtomId);
 
       if (!centralAtomLocation || !attachmentGroupLocation) {
-        return;
+        continue;
       }
 
       connections.push({
@@ -171,14 +174,14 @@ export function buildHapticConnectionsForKet(
         } as IKetConnectionEndPoint,
       });
 
-      return;
+      continue;
     }
 
     const beginAtomLocation = originalAtomToKetLocation.get(bond.begin);
     const endAtomLocation = originalAtomToKetLocation.get(bond.end);
 
     if (!beginAtomLocation || !endAtomLocation) {
-      return;
+      continue;
     }
 
     const beginAtomIsMetal =
@@ -200,7 +203,7 @@ export function buildHapticConnectionsForKet(
         atomId: endpoint2.atomId,
       } as IKetConnectionEndPoint,
     });
-  });
+  }
 
   return connections;
 }

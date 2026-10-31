@@ -81,18 +81,18 @@ function arrayBufferToBase64(buffer: ArrayLike<number>): string {
 function readPPTXStructures(buffer: ArrayBuffer): string[] {
   const cfb = CFB.read(new Uint8Array(buffer), { type: 'array' });
   const structures: string[] = [];
-  cfb.FullPaths.forEach((path) => {
+  for (const path of cfb.FullPaths) {
     if (path.endsWith('.bin')) {
       const ole = CFB.find(cfb, path);
-      if (!ole) return;
+      if (!ole) continue;
       const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
-      if (!sdf) return;
+      if (!sdf) continue;
       const base64String = arrayBufferToBase64(sdf.content);
       if (base64String.startsWith('VmpDRDAxMDAEAw')) {
         structures.push(base64String);
       }
     }
-  });
+  }
   return structures;
 }
 

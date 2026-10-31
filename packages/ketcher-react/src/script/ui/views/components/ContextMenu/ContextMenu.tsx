@@ -176,9 +176,9 @@ const ContextMenu: FC = () => {
         }
 
         if (submenuElements.length) {
-          submenuElements.forEach((submenuElement) => {
+          for (const submenuElement of submenuElements) {
             adjustSubmenuPosition(submenuElement);
-          });
+          }
         }
       }
       editor.contextMenu[id] = isVisible;

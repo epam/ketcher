@@ -31,19 +31,19 @@ export function sanitizeCustomColors(
 ): string[] {
   const uniqueColors = new Set<string>();
 
-  colors.forEach((color) => {
+  for (const color of colors) {
     const normalizedColor = normalizeHexColor(color);
 
     if (!/^#[0-9A-F]{6}$/.test(normalizedColor)) {
-      return;
+      continue;
     }
 
     if (isPresetColor(normalizedColor)) {
-      return;
+      continue;
     }
 
     uniqueColors.add(normalizedColor);
-  });
+  }
 
   return [...uniqueColors].slice(0, MAX_CUSTOM_COLORS);
 }

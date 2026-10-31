@@ -159,55 +159,58 @@ export const getEditAllInstancesInitialValues = (
     initialValues.type === KetMonomerClass.Base ||
     initialValues.type === KetMonomerClass.Phosphate
   ) {
-    monomersLibraryParsedJson?.root?.templates?.forEach(
-      (templateRef: { $ref?: string }) => {
-        const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
-        const isRnaPreset =
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template?.class === KetMonomerClass.RNA;
-        const participatesInPreset = template?.templates?.some(
-          (presetMonomerRef: { $ref?: string }) =>
-            isEditedMonomerTemplate(presetMonomerRef.$ref),
+    for (const templateRef of monomersLibraryParsedJson?.root?.templates ??
+      []) {
+      if (!monomersLibraryParsedJson) {
+        continue;
+      }
+
+      const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
+        RnaPresetTemplate | undefined;
+      const isRnaPreset =
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template?.class === KetMonomerClass.RNA;
+      const participatesInPreset = template?.templates?.some(
+        (presetMonomerRef: { $ref?: string }) =>
+          isEditedMonomerTemplate(presetMonomerRef.$ref),
+      );
+
+      if (!isRnaPreset || !participatesInPreset) {
+        continue;
+      }
+
+      if (!template.connections?.length) {
+        const componentTypes = new Set(
+          template.templates?.map((presetMonomerRef) =>
+            isEditedMonomerTemplate(presetMonomerRef.$ref)
+              ? initialValues.type
+              : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
+          ),
         );
 
-        if (!isRnaPreset || !participatesInPreset) {
-          return;
+        addDefaultRnaPresetAttachmentPoints(
+          componentTypes,
+          initialValues.type,
+          necessaryAttachmentPoints,
+        );
+
+        continue;
+      }
+
+      for (const connection of template.connections) {
+        for (const endpoint of [connection.endpoint1, connection.endpoint2]) {
+          const attachmentPointId = endpoint?.attachmentPointId;
+          if (
+            isEditedMonomerTemplate(endpoint?.templateId) &&
+            attachmentPointId
+          ) {
+            necessaryAttachmentPoints.add(
+              attachmentPointId as AttachmentPointName,
+            );
+          }
         }
-
-        if (!template.connections?.length) {
-          const componentTypes = new Set(
-            template.templates?.map((presetMonomerRef) =>
-              isEditedMonomerTemplate(presetMonomerRef.$ref)
-                ? initialValues.type
-                : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
-            ),
-          );
-
-          addDefaultRnaPresetAttachmentPoints(
-            componentTypes,
-            initialValues.type,
-            necessaryAttachmentPoints,
-          );
-
-          return;
-        }
-
-        template.connections.forEach((connection) => {
-          [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
-            const attachmentPointId = endpoint?.attachmentPointId;
-            if (
-              attachmentPointId &&
-              isEditedMonomerTemplate(endpoint?.templateId)
-            ) {
-              necessaryAttachmentPoints.add(
-                attachmentPointId as AttachmentPointName,
-              );
-            }
-          });
-        });
-      },
-    );
+      }
+    }
   }
 
   return {

@@ -77,7 +77,7 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
 ): T {
   const defaultsApplied: Record<string, unknown> = { ...state };
 
-  Object.entries(schema.properties ?? {}).forEach(([name, property]) => {
+  for (const [name, property] of Object.entries(schema.properties ?? {})) {
     if (property !== null && typeof property === 'object') {
       const defaultValue = (property as SchemaProperty).default;
       // Only set default if key is completely missing from state
@@ -85,7 +85,7 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
         defaultsApplied[name] = defaultValue;
       }
     }
-  });
+  }
 
   return defaultsApplied as T;
 }
@@ -632,12 +632,12 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   };
 
   if (schema) {
-    Object.keys(schema).forEach((item) => {
+    for (const item of Object.keys(schema)) {
       selectDesc.enum.push(item);
       selectDesc.enumNames.push(
         (schema as Record<string, SchemaProperty>)[item]?.title ?? item,
       );
-    });
+    }
   }
 
   return (
@@ -667,12 +667,12 @@ function propSchema(
   const validator = new Validator();
   const schemaCopy = cloneDeep(schema);
   if (customValid) {
-    Object.entries(customValid).forEach(([formatName, formatValidator]) => {
+    for (const [formatName, formatValidator] of Object.entries(customValid)) {
       validator.customFormats[formatName] = (value: string) =>
         Boolean(formatValidator(value));
 
       if (!schemaCopy.properties) {
-        return;
+        continue;
       }
 
       const rest = omit(schemaCopy.properties[formatName], [
@@ -686,7 +686,7 @@ function propSchema(
         ...rest,
         format: formatName,
       };
-    });
+    }
   }
 
   return {
@@ -725,10 +725,10 @@ function serializeRewrite(
   }
 
   const instanceObj = instance as Record<string, unknown>;
-  Object.keys(schema.properties).forEach((p) => {
+  for (const p of Object.keys(schema.properties)) {
     if (p in instanceObj)
       res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
-  });
+  }
 
   return res;
 }
@@ -750,11 +750,11 @@ function getInvalidMessage(item: FormValidationError): string {
 function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   const errs: Record<string, string> = {};
 
-  errors.forEach((item) => {
+  for (const item of errors) {
     // jsonschema uses "instance.fieldName"; strip the "instance." prefix
     const field = item.property.replace(/^instance\./, '');
     if (!errs[field]) errs[field] = getInvalidMessage(item);
-  });
+  }
 
   return errs;
 }

@@ -432,10 +432,10 @@ function fromRlabel(rg: number) {
 
 function toRlabel(values: number[]) {
   let res = 0;
-  values.forEach((val) => {
+  for (const val of values) {
     const rgi = val - 1;
     res |= 1 << rgi;
-  });
+  }
   return res;
 }
 

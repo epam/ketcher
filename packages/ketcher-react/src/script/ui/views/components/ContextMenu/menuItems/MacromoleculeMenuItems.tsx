@@ -124,7 +124,7 @@ const MacromoleculeMenuItems = (
   const setEditAllHover = (isHovering: boolean) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const render = editor.render;
-    render.ctab.sgroups.forEach((reSGroup, sgId) => {
+    for (const [sgId, reSGroup] of render.ctab.sgroups.entries()) {
       const sg = render.ctab.molecule.sgroups.get(sgId);
       if (
         sg instanceof MonomerMicromolecule &&
@@ -132,7 +132,7 @@ const MacromoleculeMenuItems = (
       ) {
         reSGroup.setHover(isHovering, render);
       }
-    });
+    }
   };
 
   return (

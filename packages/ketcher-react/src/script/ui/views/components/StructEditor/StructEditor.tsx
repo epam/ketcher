@@ -90,7 +90,7 @@ function setupEditor(
     editor.setServerSettings(props.serverSettings);
   }
 
-  Object.keys(editor.event).forEach((name) => {
+  for (const name of Object.keys(editor.event)) {
     const eventName = `on${upperFirst(name)}`;
 
     if (props[eventName] !== oldProps[eventName]) {
@@ -102,7 +102,7 @@ function setupEditor(
         editor.event[name].add(props[eventName]);
       }
     }
-  });
+  }
 
   if (struct !== oldProps.struct || haveOptionsChanged) {
     editor.render.unobserveCanvasResize();
@@ -111,11 +111,11 @@ function setupEditor(
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
-  Object.keys(editor.event).forEach((name) => {
+  for (const name of Object.keys(editor.event)) {
     const eventName = `on${upperFirst(name)}`;
 
     if (props[eventName]) editor.event[name].remove(props[eventName]);
-  });
+  }
 }
 
 class StructEditor extends Component<StructEditorProps, StructEditorState> {

@@ -253,7 +253,7 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
     const moleculeAtomIdMaps = new Map<string, Map<number, number>>();
 
-    Object.keys(nodes).forEach((i) => {
+    for (const i of Object.keys(nodes)) {
       const node = nodes[i];
       const nodeReference = '$ref' in node ? node.$ref : undefined;
       const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
@@ -269,14 +269,14 @@ export class KetSerializer implements Serializer<Struct> {
       } else if (nodeDefinition) {
         parseNode(nodeDefinition, resultingStruct);
       }
-    });
+    }
 
-    ket.root.connections?.forEach((connection: IKetConnection) => {
+    for (const connection of ket.root.connections ?? []) {
       if (getConnectionType(connection) !== KetConnectionType.HAPTIC) {
-        return;
+        continue;
       }
 
-      getHapticConnectionMoleculeIds(connection).forEach((moleculeId) => {
+      for (const moleculeId of getHapticConnectionMoleculeIds(connection)) {
         const nodeDefinition = ket[moleculeId] as
           KetMicromoleculeDefinition | undefined;
         if (nodeDefinition?.type === 'molecule') {
@@ -287,8 +287,8 @@ export class KetSerializer implements Serializer<Struct> {
             moleculeAtomIdMaps,
           );
         }
-      });
-    });
+      }
+    }
 
     const attachmentGroupEntityIdMap = addAttachmentGroupsToStruct(
       ket,
@@ -318,21 +318,27 @@ export class KetSerializer implements Serializer<Struct> {
     const { structForKet, originalToKetStructAtomIdMap } =
       prepareStructForHapticKetSerialization(struct);
     const ketStructAtomIdToOriginalAtomIdMap = new Map<number, number>();
-    originalToKetStructAtomIdMap.forEach((ketStructAtomId, originalAtomId) => {
+    for (const [
+      originalAtomId,
+      ketStructAtomId,
+    ] of originalToKetStructAtomIdMap.entries()) {
       ketStructAtomIdToOriginalAtomIdMap.set(ketStructAtomId, originalAtomId);
-    });
+    }
     const originalAtomToKetLocation = new Map<number, KetAtomLocation>();
     const ketNodes = prepareStructForKet(structForKet);
 
     let moleculeId = 0;
-    ketNodes.forEach((item) => {
+    for (const item of ketNodes) {
       switch (item.type) {
         case 'molecule': {
           if (!item.fragment) break;
           const moleculeKey = `mol${moleculeId}`;
           result.root.nodes.push({ $ref: moleculeKey });
           result[moleculeKey] = moleculeToKet(item.fragment, monomer);
-          item.sourceAtomIdMap?.forEach((moleculeAtomId, ketStructAtomId) => {
+          for (const [
+            ketStructAtomId,
+            moleculeAtomId,
+          ] of item.sourceAtomIdMap?.entries() ?? []) {
             const originalAtomId =
               ketStructAtomIdToOriginalAtomIdMap.get(ketStructAtomId) ??
               ketStructAtomId;
@@ -340,7 +346,7 @@ export class KetSerializer implements Serializer<Struct> {
               moleculeId: moleculeKey,
               atomId: moleculeAtomId.toString(),
             });
-          });
+          }
           moleculeId++;
           break;
         }
@@ -377,7 +383,7 @@ export class KetSerializer implements Serializer<Struct> {
         default:
           break;
       }
-    });
+    }
 
     const attachmentGroupLocations = buildAttachmentGroupsForKet(
       struct,
@@ -439,7 +445,7 @@ export class KetSerializer implements Serializer<Struct> {
       return { error: true };
     }
     let hasError = false;
-    parsedFileContent.root.nodes.forEach((node) => {
+    for (const node of parsedFileContent.root.nodes) {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       if (nodeDefinition?.type === 'monomer') {
@@ -449,15 +455,13 @@ export class KetSerializer implements Serializer<Struct> {
           editor,
         );
       }
-    });
+    }
     if (hasError) {
       return { error: true };
     }
-    parsedFileContent.root.connections?.forEach(
-      (connection: IKetConnection) => {
-        this.validateConnectionTypeAndEndpoints(connection, editor);
-      },
-    );
+    for (const connection of parsedFileContent.root.connections ?? []) {
+      this.validateConnectionTypeAndEndpoints(connection, editor);
+    }
     return {
       error: hasError,
       parsedFileContent,
@@ -498,7 +502,7 @@ export class KetSerializer implements Serializer<Struct> {
         ),
       },
     };
-    parsedFileContent.root.nodes.forEach((node) => {
+    for (const node of parsedFileContent.root.nodes) {
       const nodeDefinition = parsedFileContent[node.$ref];
       if (
         nodeDefinition?.type === KetNodeType.MONOMER ||
@@ -506,19 +510,19 @@ export class KetSerializer implements Serializer<Struct> {
       ) {
         fileContentForMicromolecules[node.$ref] = undefined;
       }
-    });
+    }
 
-    parsedFileContent.root.templates?.forEach((template) => {
+    for (const template of parsedFileContent.root.templates ?? []) {
       fileContentForMicromolecules[template.$ref] = undefined;
-    });
+    }
 
-    Object.entries(
+    for (const [key, value] of Object.entries(
       fileContentForMicromolecules as IKetMacromoleculesContent,
-    ).forEach(([key, value]) => {
+    )) {
       if (value?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE) {
         fileContentForMicromolecules[key] = undefined;
       }
-    });
+    }
 
     return fileContentForMicromolecules;
   }
@@ -575,7 +579,7 @@ export class KetSerializer implements Serializer<Struct> {
     const command = new Command();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const monomerIdsMap = {};
-    parsedFileContent.root.nodes.forEach((node) => {
+    for (const node of parsedFileContent.root.nodes) {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       switch (nodeDefinition?.type) {
@@ -625,7 +629,7 @@ export class KetSerializer implements Serializer<Struct> {
         default:
           break;
       }
-    });
+    }
     const fileContentForMicromolecules =
       this.filterMacromoleculesContent(parsedFileContent);
 
@@ -642,26 +646,25 @@ export class KetSerializer implements Serializer<Struct> {
 
     command.merge(structToDrawingEntitiesConversionResult.modelChanges);
 
-    structToDrawingEntitiesConversionResult.fragmentIdToMonomer.forEach(
-      (monomer, fragmentId) => {
-        monomerIdsMap[`mol${fragmentId}`] = monomer.id;
-      },
-    );
+    for (const [
+      fragmentId,
+      monomer,
+    ] of structToDrawingEntitiesConversionResult.fragmentIdToMonomer.entries()) {
+      monomerIdsMap[`mol${fragmentId}`] = monomer.id;
+    }
 
-    structToDrawingEntitiesConversionResult.fragmentIdToAtomIdMap.forEach(
-      (_atomIdsMap) => {
-        _atomIdsMap.forEach((globalAtomId, localAtomId) => {
-          localAtomIdToGlobalAtomId.set(localAtomId, globalAtomId);
-        });
-      },
-    );
+    for (const _atomIdsMap of structToDrawingEntitiesConversionResult.fragmentIdToAtomIdMap.values()) {
+      for (const [localAtomId, globalAtomId] of _atomIdsMap.entries()) {
+        localAtomIdToGlobalAtomId.set(localAtomId, globalAtomId);
+      }
+    }
 
     const superatomMonomerToUsedAttachmentPoint = new Map<
       BaseMonomer,
       Set<string>
     >();
 
-    parsedFileContent.root.connections?.forEach((connection) => {
+    for (const connection of parsedFileContent.root.connections ?? []) {
       switch (getConnectionType(connection)) {
         case KetConnectionType.SINGLE: {
           const firstMonomer = drawingEntitiesManager.monomers.get(
@@ -682,7 +685,7 @@ export class KetSerializer implements Serializer<Struct> {
           );
 
           if (!firstMonomer || !secondMonomer) {
-            return;
+            continue;
           }
 
           if (
@@ -707,7 +710,7 @@ export class KetSerializer implements Serializer<Struct> {
               connection.endpoint2.attachmentPointId;
 
             if (!atom || !attachmentPointName) {
-              return;
+              continue;
             }
 
             const bondAdditionCommand =
@@ -754,7 +757,7 @@ export class KetSerializer implements Serializer<Struct> {
           );
 
           if (!firstMonomer || !secondMonomer) {
-            return;
+            continue;
           }
 
           command.merge(
@@ -772,7 +775,7 @@ export class KetSerializer implements Serializer<Struct> {
         default:
           break;
       }
-    });
+    }
 
     return { modelChanges: command, drawingEntitiesManager };
   }
@@ -882,13 +885,13 @@ export class KetSerializer implements Serializer<Struct> {
 
     fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
 
-    variantMonomer.monomers.forEach((monomer) => {
+    for (const monomer of variantMonomer.monomers) {
       const monomerTemplateId =
         monomer.monomerItem.props.id ??
         getMonomerUniqueKey(monomer.monomerItem);
 
       this.serializeMonomerTemplate(monomerTemplateId, monomer, fileContent);
-    });
+    }
   }
 
   serializeMacromolecules(
@@ -912,7 +915,7 @@ export class KetSerializer implements Serializer<Struct> {
     const monomerIdMap = new Map<number, number>();
     let nextMonomerId = 0;
 
-    drawingEntitiesManager.monomers.forEach((monomer) => {
+    for (const monomer of drawingEntitiesManager.monomers.values()) {
       const monomerItem = monomer.monomerItem;
 
       if (
@@ -1006,9 +1009,9 @@ export class KetSerializer implements Serializer<Struct> {
           this.serializeMonomerTemplate(templateId, monomer, fileContent);
         }
       }
-    });
+    }
 
-    drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+    for (const polymerBond of drawingEntitiesManager.polymerBonds.values()) {
       assert(polymerBond.secondMonomer);
       fileContent.root.connections.push({
         connectionType:
@@ -1043,9 +1046,9 @@ export class KetSerializer implements Serializer<Struct> {
             ) as IKetConnectionEndPoint),
         selected: (shouldSetSelection && polymerBond.selected) || undefined,
       });
-    });
+    }
 
-    drawingEntitiesManager.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+    for (const monomerToAtomBond of drawingEntitiesManager.monomerToAtomBonds.values()) {
       const monomer = monomerToAtomBond.monomer;
       const atomIdMap = monomerToAtomIdMap.get(monomerToAtomBond.atom.monomer);
       const globalAtomId = atomIdMap?.get(
@@ -1054,7 +1057,7 @@ export class KetSerializer implements Serializer<Struct> {
       const monomerId = monomerIdMap.get(monomer.id);
 
       if (!isNumber(globalAtomId) || !isNumber(monomerId)) {
-        return;
+        continue;
       }
 
       fileContent.root.connections.push({
@@ -1073,10 +1076,10 @@ export class KetSerializer implements Serializer<Struct> {
         selected:
           (shouldSetSelection && monomerToAtomBond.selected) || undefined,
       });
-    });
+    }
 
     if (shouldSetSelection) {
-      drawingEntitiesManager.atoms.forEach((atom) => {
+      for (const atom of drawingEntitiesManager.atoms.values()) {
         if (atom.selected) {
           const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
           const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
@@ -1085,9 +1088,9 @@ export class KetSerializer implements Serializer<Struct> {
             moleculesSelection.atoms.push(globalAtomId);
           }
         }
-      });
+      }
 
-      drawingEntitiesManager.bonds.forEach((bond) => {
+      for (const bond of drawingEntitiesManager.bonds.values()) {
         if (bond.selected) {
           const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
           const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
@@ -1096,10 +1099,10 @@ export class KetSerializer implements Serializer<Struct> {
             moleculesSelection.bonds.push(globalBondId);
           }
         }
-      });
+      }
     }
 
-    drawingEntitiesManager.rxnArrows.forEach((rxnArrow) => {
+    for (const rxnArrow of drawingEntitiesManager.rxnArrows.values()) {
       const arrow = new MicromoleculeRxnArrow({
         mode: rxnArrow.type,
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
@@ -1109,25 +1112,25 @@ export class KetSerializer implements Serializer<Struct> {
       });
 
       struct.addRxnArrow(arrow);
-    });
+    }
 
-    drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
+    for (const multitailArrow of drawingEntitiesManager.multitailArrows.values()) {
       const arrow = MicromoleculeMultitailArrow.fromKetNode(
         multitailArrow.toKetNode(),
       );
       arrow.arrowId = multitailArrow.arrowId;
 
       struct.addMultitailArrow(arrow);
-    });
+    }
 
-    drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {
+    for (const rxnPlus of drawingEntitiesManager.rxnPluses.values()) {
       const micromoleculeRxnPlus = new MicromoleculeRxnPlus({
         pp: rxnPlus.position,
         initiallySelected: rxnPlus.initiallySelected,
       });
 
       struct.rxnPluses.add(micromoleculeRxnPlus);
-    });
+    }
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
@@ -1141,25 +1144,25 @@ export class KetSerializer implements Serializer<Struct> {
   public static removeLeavingGroupsFromConnectedAtoms(_struct: Struct) {
     const struct = _struct.clone();
 
-    struct.atoms.forEach((_atom, atomId) => {
+    for (const [atomId, _atom] of struct.atoms.entries()) {
       if (Atom.isHiddenLeavingGroupAtom(struct, atomId, false, true)) {
         struct.atoms.delete(atomId);
       }
-    });
+    }
 
-    struct.bonds.forEach((bond, bondId) => {
+    for (const [bondId, bond] of struct.bonds.entries()) {
       if (Bond.isBondToHiddenLeavingGroup(struct, bond)) {
         struct.bonds.delete(bondId);
       }
-    });
+    }
 
-    struct.sgroups.forEach((sgroup) => {
+    for (const sgroup of struct.sgroups.values()) {
       const attachmentPoints = sgroup.getAttachmentPoints();
       const attachmentPointsToReplace: Map<
         SGroupAttachmentPoint,
         SGroupAttachmentPoint
       > = new Map();
-      attachmentPoints.forEach((attachmentPoint) => {
+      for (const attachmentPoint of attachmentPoints) {
         if (
           isNumber(attachmentPoint.leaveAtomId) &&
           Atom.isHiddenLeavingGroupAtom(
@@ -1181,14 +1184,14 @@ export class KetSerializer implements Serializer<Struct> {
             1,
           );
         }
-      });
+      }
       attachmentPointsToReplace.forEach(
         (attachmentPointToAdd, attachmentPointToDelete) => {
           sgroup.removeAttachmentPoint(attachmentPointToDelete);
           sgroup.addAttachmentPoint(attachmentPointToAdd, false);
         },
       );
-    });
+    }
 
     return struct;
   }
@@ -1262,7 +1265,7 @@ export class KetSerializer implements Serializer<Struct> {
   convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {
     const library: MonomerItemType[] & AmbiguousMonomerType[] = [];
 
-    monomersLibrary.root.templates.forEach((templateRef) => {
+    for (const templateRef of monomersLibrary.root.templates) {
       const template = monomersLibrary[templateRef.$ref];
 
       if (!template) {
@@ -1270,7 +1273,7 @@ export class KetSerializer implements Serializer<Struct> {
           `There is a ref for monomer template ${templateRef.$ref}, but template definition is not found`,
         );
 
-        return;
+        continue;
       }
 
       switch (template.type) {
@@ -1305,7 +1308,7 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
       }
-    });
+    }
 
     return library;
   }

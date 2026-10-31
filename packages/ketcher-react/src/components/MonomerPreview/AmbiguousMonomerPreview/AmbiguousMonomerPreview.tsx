@@ -64,9 +64,9 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
         0,
       );
 
-      sortedData.forEach((entry) => {
+      for (const entry of sortedData) {
         entry.ratio = Math.round(((entry.ratio ?? 1) / overallRatio) * 100);
-      });
+      }
 
       sortedData.sort((a, b) => {
         const ratioDiff = (b.ratio ?? 0) - (a.ratio ?? 0);

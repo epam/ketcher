@@ -72,7 +72,7 @@ function isCloseToTheEdgeOfCanvas(
   let theMostRightAtom = restruct.atoms.get(selectedItems?.atoms[0]);
   let theMostLeftAtom = restruct.atoms.get(selectedItems?.atoms[0]);
 
-  selectedItems.atoms.forEach((atomId) => {
+  for (const atomId of selectedItems.atoms) {
     const atom = restruct.atoms.get(atomId);
     const position = atom?.a.pp;
     if (position && theMostTopAtom) {
@@ -91,7 +91,7 @@ function isCloseToTheEdgeOfCanvas(
       theMostLeftAtom =
         position.x < theMostLeftAtom.a.pp.x ? atom : theMostLeftAtom;
     }
-  });
+  }
   if (
     theMostTopAtom &&
     theMostBottomAtom &&

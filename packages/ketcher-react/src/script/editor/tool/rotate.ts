@@ -139,9 +139,9 @@ class RotateTool implements Tool {
        *             / | \  (bonds)
        */
       const bondPoints: [number, number][] = [];
-      attachmentBonds.forEach((bond) => {
+      for (const bond of attachmentBonds.values()) {
         bondPoints.push([bond.begin, bond.end]);
-      });
+      }
       const intersectionAtoms = intersection(...bondPoints);
       if (
         intersectionAtoms.length === 1 &&
@@ -263,22 +263,26 @@ class RotateTool implements Tool {
 
       const { atoms, bonds } = dragCtx.mergeItems ?? {};
 
-      atoms?.forEach((dst: number, src: number) => {
+      for (const [src, dst] of (atoms?.entries() ?? []) as Iterable<
+        [number, number]
+      >) {
         if (
           this.struct.isAtomFromMacromolecule(src) ||
           this.struct.isAtomFromMacromolecule(dst)
         ) {
           isMergingSGroup = true;
         }
-      });
-      bonds?.forEach((dst: number, src: number) => {
+      }
+      for (const [src, dst] of (bonds?.entries() ?? []) as Iterable<
+        [number, number]
+      >) {
         if (
           this.struct.isBondFromMacromolecule(src) ||
           this.struct.isBondFromMacromolecule(dst)
         ) {
           isMergingSGroup = true;
         }
-      });
+      }
 
       let action: Action = dragCtx.action;
 
@@ -294,11 +298,11 @@ class RotateTool implements Tool {
           this.selection?.atoms,
         );
         const monomerSGroups: MonomerMicromolecule[] = [];
-        sGroups.forEach((sGroup) => {
+        for (const sGroup of sGroups) {
           if (sGroup instanceof MonomerMicromolecule) {
             monomerSGroups.push(sGroup);
           }
-        });
+        }
         // If at least one monomer in the selection is expanded, every
         // monomer (including collapsed ones) gets its rotation metadata
         // assigned, matching the atom-transform behavior in `fromRotate`.
@@ -309,7 +313,7 @@ class RotateTool implements Tool {
         );
         const monomerRotateAction = new Action();
         if (hasExpandedMonomer) {
-          monomerSGroups.forEach((sGroup) => {
+          for (const sGroup of monomerSGroups) {
             const angleInRadians = (dragCtx.angle * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
@@ -317,7 +321,7 @@ class RotateTool implements Tool {
                 value: angleInRadians,
               }),
             );
-          });
+          }
         }
         // `perform` executes the rotation and returns the inverted action
         // (the one that must go into the undo history). Merging the
@@ -430,14 +434,14 @@ class RotateTool implements Tool {
   ) {
     const absoluteSnapAngles: number[] = [];
     const snapAngleToHalfBonds: Map<number, number[]> = new Map();
-    SNAP_ANGLES_RELATIVE_TO_FIXED_BOND.forEach((angle) => {
+    for (const angle of SNAP_ANGLES_RELATIVE_TO_FIXED_BOND) {
       const snapAngle = normalizeAngle(fixedHalfBondAngle + angle);
       absoluteSnapAngles.push(snapAngle);
       snapAngleToHalfBonds.set(snapAngle, [
         rotatableHalfBondId,
         fixedHalfBondId,
       ]);
-    });
+    }
     return [absoluteSnapAngles, snapAngleToHalfBonds] as const;
   }
 
@@ -483,7 +487,7 @@ class RotateTool implements Tool {
     const fixedHalfBondIds: number[] = [];
     const fixedHalfBondAngles: number[] = [];
 
-    atom.neighbors.forEach((halfBondId) => {
+    for (const halfBondId of atom.neighbors) {
       const halfBond = this.struct.halfBonds.get(halfBondId);
       assert(halfBond != null);
       const neighborAtomId = halfBond.end;
@@ -501,7 +505,7 @@ class RotateTool implements Tool {
         fixedHalfBondIds.push(halfBondId);
         fixedHalfBondAngles.push(halfBond.ang);
       }
-    });
+    }
 
     return {
       rotatableHalfBondIds,
@@ -559,9 +563,9 @@ class RotateTool implements Tool {
       assert(bondId != null);
       return bondId;
     });
-    bondIds?.forEach((bondId) => {
+    for (const bondId of bondIds ?? []) {
       this.reStruct.addSnappingBonds(bondId);
-    });
+    }
   }
 }
 

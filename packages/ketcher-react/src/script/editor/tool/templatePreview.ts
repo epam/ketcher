@@ -160,13 +160,13 @@ class TemplatePreview {
 
   private getFloatingPreviewFragmentIds(): number[] {
     const fragmentIds = new Set<number>();
-    this.floatingPreview?.atoms.forEach((atomId) => {
+    for (const atomId of this.floatingPreview?.atoms ?? []) {
       const atom = this.struct.atoms.get(atomId);
       if (atom) {
         fragmentIds.add(atom.fragment);
       }
-    });
-    return [...fragmentIds];
+    }
+    return Array.from(fragmentIds);
   }
 
   private showFloatingPreview(position: Vec2) {

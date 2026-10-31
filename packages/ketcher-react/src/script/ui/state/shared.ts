@@ -155,12 +155,12 @@ export function load(struct: string | Struct, options?) {
       if (editor.struct().atoms.size) {
         // NB: reset id
         const oldStruct = editor.struct().clone();
-        parsedStruct.sgroups.forEach((sg, sgId) => {
+        for (const [sgId, sg] of parsedStruct.sgroups.entries()) {
           const sgroup = oldStruct.sgroups.get(sgId);
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
           SGroup.bracketPos(sg, parsedStruct);
           if (offset) sg.updateOffset(offset);
-        });
+        }
       }
 
       if (
@@ -206,13 +206,13 @@ export function load(struct: string | Struct, options?) {
 
         // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count.
         // Atom ids may diverge after Indigo transformations, so skip stale ids defensively.
-        leavingGroupAtoms.forEach((_, atomId) => {
+        for (const [atomId, _] of leavingGroupAtoms.entries()) {
           const originalAtom = currentStruct.atoms.get(atomId);
           if (!originalAtom || !parsedStruct.atoms.has(atomId)) {
-            return;
+            continue;
           }
           parsedStruct.atoms.set(atomId, originalAtom);
-        });
+        }
       }
 
       parsedStruct.findConnectedComponents();

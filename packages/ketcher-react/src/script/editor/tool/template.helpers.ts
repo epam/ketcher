@@ -59,7 +59,7 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
 
   if (loop && loop >= 0) {
     const loopHbs = struct.loops.get(loop)?.hbs;
-    loopHbs?.forEach((hb) => {
+    for (const hb of loopHbs ?? []) {
       const halfBondBegin = struct.halfBonds.get(hb)?.begin;
 
       if (halfBondBegin) {
@@ -70,16 +70,16 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
           count++;
         }
       }
-    });
+    }
   } else {
-    frIds.forEach((id) => {
+    for (const id of frIds) {
       const atomById = struct.atoms.get(id);
 
       if (atomById) {
         xy0.add_(atomById.pp);
         count++;
       }
-    });
+    }
   }
 
   const v0 = xy0.scaled(1 / count);

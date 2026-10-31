@@ -151,11 +151,11 @@ export function getBondIdsConnectingSelectedAtoms(
   const atomIdSet = new Set(atomIds);
   const bondIds: number[] = [];
 
-  struct.bonds.forEach((bond, bondId) => {
+  for (const [bondId, bond] of struct.bonds.entries()) {
     if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
       bondIds.push(bondId);
     }
-  });
+  }
 
   return bondIds;
 }
@@ -279,11 +279,11 @@ export function getRemovableAttachmentGroupId(
     }
 
     const matchingAttachmentGroupIds: number[] = [];
-    struct.attachmentGroups.forEach((attachmentGroup, id) => {
+    for (const [id, attachmentGroup] of struct.attachmentGroups.entries()) {
       if (attachmentGroup.atomIds.includes(selectedAtomIds[0])) {
         matchingAttachmentGroupIds.push(id);
       }
-    });
+    }
 
     if (matchingAttachmentGroupIds.length !== 1) {
       return null;

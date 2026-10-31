@@ -138,41 +138,40 @@ export function addAttachmentGroupsToStruct(
   const attachmentGroupEntityIdMap = new Map<string, number>();
 
   moleculeAtomIdMaps.forEach((atomIdMap, moleculeId) => {
-    getKetMolecule(ket, moleculeId)?.attachmentGroups?.forEach(
-      (attachmentGroup) => {
-        const attachmentGroupId = attachmentGroup.id?.toString();
-        const atomIds = attachmentGroup.atoms?.map((atomId) =>
-          atomIdMap.get(Number(atomId)),
-        );
+    for (const attachmentGroup of getKetMolecule(ket, moleculeId)
+      ?.attachmentGroups ?? []) {
+      const attachmentGroupId = attachmentGroup.id?.toString();
+      const atomIds = attachmentGroup.atoms?.map((atomId) =>
+        atomIdMap.get(Number(atomId)),
+      );
 
-        if (
-          attachmentGroupId === undefined ||
-          !atomIds ||
-          atomIds.length < 2 ||
-          atomIds.some((atomId) => atomId === undefined)
-        ) {
-          return;
-        }
+      if (
+        attachmentGroupId === undefined ||
+        !atomIds ||
+        atomIds.length < 2 ||
+        atomIds.some((atomId) => atomId === undefined)
+      ) {
+        continue;
+      }
 
-        const resolvedAtomIds = atomIds as number[];
-        const key = getAttachmentGroupKey(moleculeId, attachmentGroupId);
-        if (attachmentGroupEntityIdMap.has(key)) {
-          return;
-        }
+      const resolvedAtomIds = atomIds as number[];
+      const key = getAttachmentGroupKey(moleculeId, attachmentGroupId);
+      if (attachmentGroupEntityIdMap.has(key)) {
+        continue;
+      }
 
-        const fragment = struct.atoms.get(resolvedAtomIds[0])?.fragment ?? -1;
-        const attachmentGroupEntity = new AttachmentGroup({
-          atomIds: resolvedAtomIds,
-          fragment,
-        });
-        attachmentGroupEntity.recalculatePosition(struct.atoms);
-        const attachmentGroupEntityId = struct.addAttachmentGroup(
-          attachmentGroupEntity,
-        );
+      const fragment = struct.atoms.get(resolvedAtomIds[0])?.fragment ?? -1;
+      const attachmentGroupEntity = new AttachmentGroup({
+        atomIds: resolvedAtomIds,
+        fragment,
+      });
+      attachmentGroupEntity.recalculatePosition(struct.atoms);
+      const attachmentGroupEntityId = struct.addAttachmentGroup(
+        attachmentGroupEntity,
+      );
 
-        attachmentGroupEntityIdMap.set(key, attachmentGroupEntityId);
-      },
-    );
+      attachmentGroupEntityIdMap.set(key, attachmentGroupEntityId);
+    }
   });
 
   return attachmentGroupEntityIdMap;
@@ -203,9 +202,9 @@ export function addHapticConnectionsToStruct(
 ) {
   let hasHapticConnections = false;
 
-  ket.root.connections?.forEach((connection: IKetConnection) => {
+  for (const connection of ket.root.connections ?? []) {
     if (getConnectionType(connection) !== KetConnectionType.HAPTIC) {
-      return;
+      continue;
     }
 
     const endpoint1 = resolveHapticConnectionEndpoint(
@@ -222,7 +221,7 @@ export function addHapticConnectionsToStruct(
     );
 
     if (!endpoint1 || !endpoint2) {
-      return;
+      continue;
     }
 
     if (endpoint1.type === 'atom' && endpoint2.type === 'atom') {
@@ -234,20 +233,20 @@ export function addHapticConnectionsToStruct(
         }),
       );
       hasHapticConnections = true;
-      return;
+      continue;
     }
 
     if (endpoint1.type === 'atom' && endpoint2.type === 'attachmentGroup') {
       addHapticBondToStruct(struct, endpoint1, endpoint2);
       hasHapticConnections = true;
-      return;
+      continue;
     }
 
     if (endpoint1.type === 'attachmentGroup' && endpoint2.type === 'atom') {
       addHapticBondToStruct(struct, endpoint2, endpoint1);
       hasHapticConnections = true;
     }
-  });
+  }
 
   if (hasHapticConnections) {
     struct.clearFragments();

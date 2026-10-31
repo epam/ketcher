@@ -1,8 +1,8 @@
 # Atom Editing
 
-## Problem
-
 Chemists need to place, replace, and annotate atoms in a 2D structure — choosing any element, adjusting charge, and setting atom-level properties (isotope, valence, radical, query attributes) — without editing raw file formats.
+
+Spec: [openspec/specs/atom-editing/spec.md](../../openspec/specs/atom-editing/spec.md)
 
 ## User interaction
 

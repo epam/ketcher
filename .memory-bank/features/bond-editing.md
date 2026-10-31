@@ -1,8 +1,8 @@
 # Bond Editing
 
-## Problem
-
 Structures are defined by the bonds between atoms. Chemists need to draw bonds of many types (single, double, triple, aromatic, stereo, dative, query, hydrogen), build carbon chains quickly, and change bond type or geometry after the fact.
+
+Spec: [openspec/specs/bond-editing/spec.md](../../openspec/specs/bond-editing/spec.md)
 
 ## User interaction
 

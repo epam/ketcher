@@ -1,8 +1,8 @@
 # Import, Export & Structure Checking
 
-## Problem
-
 Structures must move in and out of Ketcher in the many chemical file formats used across cheminformatics, and users need to validate a structure and inspect its computed properties before saving.
+
+Spec: [openspec/specs/import-export/spec.md](../../openspec/specs/import-export/spec.md)
 
 ## User interaction
 

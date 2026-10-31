@@ -46,12 +46,12 @@ function useSetRnaPresets() {
       // If preset with the same name already exists:
       //   add '_Copy' (again and again) to custom preset, and update in LocalStorage
       for (const customLabeledPreset of customLabeledPresets) {
-        let i = 0;
+        let index = 0;
         let presetUniqName = customLabeledPreset.name;
 
         while (presetsDefaultNames.has(presetUniqName)) {
-          i++;
-          presetUniqName = `${customLabeledPreset.name}${'_Copy'.repeat(i)}`;
+          index++;
+          presetUniqName = `${customLabeledPreset.name}${'_Copy'.repeat(index)}`;
         }
 
         if (presetUniqName !== customLabeledPreset.name) {

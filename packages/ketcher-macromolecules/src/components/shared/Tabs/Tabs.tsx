@@ -31,18 +31,18 @@ const a11yProps = (index: number) => {
   };
 };
 
-type Props = {
+type Properties = {
   tabs: TabsData;
   isLayoutToRight?: boolean;
   selectedTabIndex: number;
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 };
 
-const Tabs = (props: Props) => {
-  const { tabs, selectedTabIndex, isLayoutToRight, onChange } = props;
+const Tabs = (properties: Properties) => {
+  const { tabs, selectedTabIndex, isLayoutToRight, onChange } = properties;
   const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component as FC<Record<string, unknown>>;
-  const componentProps = tabPanel?.props;
+  const componentProperties = tabPanel?.props;
 
   return (
     <>
@@ -67,7 +67,7 @@ const Tabs = (props: Props) => {
       {tabPanel && (
         <TabPanel value={selectedTabIndex} index={selectedTabIndex}>
           <TabPanelContent>
-            <Component {...componentProps} />
+            <Component {...componentProperties} />
           </TabPanelContent>
         </TabPanel>
       )}

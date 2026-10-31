@@ -421,7 +421,7 @@ export const selectFilteredMonomers = createSelector(
 
       const idtModifications = idtAliases?.modifications
         ? Object.values(idtAliases.modifications)
-            .map((mod) => mod.toLowerCase())
+            .map((module_) => module_.toLowerCase())
             .join(' ')
         : '';
 
@@ -457,9 +457,9 @@ export const selectFilteredMonomers = createSelector(
             ? idtModifications
                 .split(' ')
                 .some(
-                  (mod) =>
-                    mod.length === textBetweenSlashes.length &&
-                    [...mod].every(
+                  (module_) =>
+                    module_.length === textBetweenSlashes.length &&
+                    Array.from(module_).every(
                       (char, index) => char === textBetweenSlashes[index],
                     ),
                 )
@@ -489,7 +489,7 @@ export const selectFilteredMonomers = createSelector(
               idtBase?.startsWith(aliasRest) ||
               idtModifications
                 ?.split(' ')
-                .some((mod) => mod.startsWith(aliasRest))
+                .some((module_) => module_.startsWith(aliasRest))
             );
           }
 
@@ -511,7 +511,9 @@ export const selectFilteredMonomers = createSelector(
 
           return (
             idtBase?.endsWith(aliasRest) ||
-            idtModifications?.split(' ').some((mod) => mod.endsWith(aliasRest))
+            idtModifications
+              ?.split(' ')
+              .some((module_) => module_.endsWith(aliasRest))
           );
         }
 
@@ -522,9 +524,9 @@ export const selectFilteredMonomers = createSelector(
           ? idtModifications
               .split(' ')
               .some(
-                (mod) =>
-                  mod.startsWith(searchAfterSlash) &&
-                  mod.endsWith(searchBeforeSlash),
+                (module_) =>
+                  module_.startsWith(searchAfterSlash) &&
+                  module_.endsWith(searchBeforeSlash),
               )
           : false;
 

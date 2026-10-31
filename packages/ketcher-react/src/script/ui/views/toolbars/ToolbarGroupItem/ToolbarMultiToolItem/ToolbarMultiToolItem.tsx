@@ -16,7 +16,7 @@
 
 import {
   type ActionButtonCallProps,
-  type ActionButtonProps,
+  type ActionButtonProperties,
   ActionButton,
 } from '../ActionButton';
 import type {
@@ -127,7 +127,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   };
 
   const actionButtonProps: Omit<
-    ActionButtonProps & ActionButtonCallProps,
+    ActionButtonProperties & ActionButtonCallProps,
     'name' | 'status' | 'action'
   > = {
     disableableButtons,
@@ -150,7 +150,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         className={className}
         name={iconName}
         action={action[currentId]}
-        status={currentStatus as ActionButtonProps['status']}
+        status={currentStatus as ActionButtonProperties['status']}
         selected={isSelected}
         dataTestId={dataTestId ?? iconName}
       />

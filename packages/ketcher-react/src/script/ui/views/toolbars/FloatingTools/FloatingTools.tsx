@@ -1,6 +1,6 @@
 import action, { type UiActionAction } from '../../../action';
 import {
-  type ActionButtonProps,
+  type ActionButtonProperties,
   ActionButton,
 } from '../ToolbarGroupItem/ActionButton';
 import { type ToolbarItemVariant } from '../toolbar.types';
@@ -53,7 +53,7 @@ export const FloatingTools: React.FC<Props> = ({
               // Note: erase button's icon is 'delete'
               name={iconName}
               action={action[name]}
-              status={status[name] as ActionButtonProps['status']}
+              status={status[name] as ActionButtonProperties['status']}
               selected={false}
               indigoVerification={indigoVerification}
               onAction={onAction}

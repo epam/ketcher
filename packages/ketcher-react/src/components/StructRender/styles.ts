@@ -17,8 +17,8 @@
 import styled from '@emotion/styled';
 
 export const Container = styled.div<{ fullsize?: boolean }>`
-  ${(props) => {
-    if (props.fullsize) {
+  ${(properties) => {
+    if (properties.fullsize) {
       return `
           > svg {
             height: 100%;

@@ -81,7 +81,7 @@ const SecondaryButton = styled(MuiButton)(
   baseButtonStyle,
 );
 
-type ActionButtonProps = {
+type ActionButtonProperties = {
   label: string;
   clickHandler: () => void;
   styleType?: string;
@@ -93,7 +93,7 @@ export const ActionButton = ({
   children,
   styleType,
   ...rest
-}: ActionButtonProps) => {
+}: ActionButtonProperties) => {
   return styleType === 'secondary' ? (
     <SecondaryButton
       onClick={clickHandler}

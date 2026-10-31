@@ -10,11 +10,11 @@ import { UsageInMacromolecule } from 'ketcher-core';
 import { BondPreviewState } from 'state';
 import { preview } from 'ketcher-react';
 
-interface Props {
+interface Properties {
   className?: string;
 }
 
-const BondPreview = ({ className }: Props) => {
+const BondPreview = ({ className }: Properties) => {
   const preview = useAppSelector(selectShowPreview) as BondPreviewState;
 
   const { polymerBond, style } = preview;

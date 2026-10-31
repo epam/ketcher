@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import type { IIconProps, SvgComponent } from './types';
+import type { IIconProperties, SvgComponent } from './types';
 import { iconNameToIcon } from './utils/iconNameToIcon';
 
 const Icon = ({
@@ -25,7 +25,7 @@ const Icon = ({
   onMouseOut,
   onDoubleClick,
   dataTestId,
-}: IIconProps) => {
+}: IIconProperties) => {
   const Component: SvgComponent = iconNameToIcon[name];
 
   return (

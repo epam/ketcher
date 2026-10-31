@@ -71,7 +71,7 @@ interface MenuItemWithMenu {
 
 type MenuItem = string | MenuItemWithMenu | MenuItemWithComponent;
 
-interface ActionButtonProps {
+interface ActionButtonProperties {
   name: IconName;
   action: UiAction;
   status?: ItemStatus;
@@ -155,7 +155,7 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: Readonly<ActionButtonProps>) {
+}: Readonly<ActionButtonProperties>) {
   const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);

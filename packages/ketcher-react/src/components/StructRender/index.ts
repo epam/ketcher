@@ -16,4 +16,4 @@
 
 export { default as StructRender } from './StructRender';
 export { default as MemoizedStructRender } from './MemoizedStructRender';
-export type { IStructRenderProps } from './types';
+export type { IStructRenderProperties } from './types';

@@ -58,25 +58,25 @@ class EnhancedStereoTool implements Tool {
     const hasAnotherLabel = stereoLabels.some(
       (stereoLabel) => stereoLabel !== stereoLabels[0],
     );
-    const res = editor.event.enhancedStereoEdit.dispatch({
+    const result = editor.event.enhancedStereoEdit.dispatch({
       stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
     });
 
-    return res.then((stereoLabel) => {
+    return result.then((stereoLabel) => {
       if (!stereoLabel) {
         return null;
       }
 
       const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
+        (accumulator, stereoAtom) => {
           const frid = struct.atoms.get(stereoAtom)?.fragment;
           const frag =
             frid === undefined ? null : restruct.molecule.frags.get(frid);
 
           if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+            return accumulator.mergeWith(fromStereoFlagUpdate(restruct, frid));
           }
-          return acc;
+          return accumulator;
         },
         fromAtomsAttrs(
           restruct,

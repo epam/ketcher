@@ -12,7 +12,7 @@ import {
 import UnresolvedMonomerPreview from 'components/preview/components/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
 import MonomerMiniature from 'components/shared/ConnectionOverview/components/MonomerMiniature/MonomerMiniature';
 
-interface Props {
+interface Properties {
   monomer: BaseMonomer;
   attachmentPoints: ReactNode;
   usage: UsageInMacromolecule;
@@ -34,7 +34,7 @@ const MonomerOverview = ({
   update,
   expanded,
   testId,
-}: Props) => {
+}: Properties) => {
   const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
   const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
 

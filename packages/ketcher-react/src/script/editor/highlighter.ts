@@ -46,11 +46,11 @@ export class Highlighter {
     return highlightsArray;
   }
 
-  create(...args: HighlightAttributes[]) {
+  create(...arguments_: HighlightAttributes[]) {
     const createdHighlights: HighlightAttributes[] = [];
 
-    args.forEach((arg) => {
-      const { atoms, bonds, rgroupAttachmentPoints, color, outline } = arg;
+    arguments_.forEach((argument) => {
+      const { atoms, bonds, rgroupAttachmentPoints, color, outline } = argument;
       if (typeof color !== 'string') {
         return;
       }

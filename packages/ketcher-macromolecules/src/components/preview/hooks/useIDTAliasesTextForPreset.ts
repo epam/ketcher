@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { PresetPosition } from 'state';
 import { removeSlashesFromIdtAlias } from 'helpers';
 
-type Props = {
+type Properties = {
   presetName: string | undefined;
   position: PresetPosition;
   idtAliases: IKetIdtAliases | undefined;
@@ -13,7 +13,7 @@ const useIDTAliasesTextForPreset = ({
   presetName,
   position,
   idtAliases,
-}: Props) => {
+}: Properties) => {
   return useMemo(() => {
     if (!presetName || !idtAliases) {
       return null;

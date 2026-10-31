@@ -33,7 +33,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   static readonly MIN_LENGTH = 0.5;
   static readonly DEFAULT_LENGTH = 1;
 
-  private dragCtx: ReactionArrowDragContext | null = null;
+  private dragContext: ReactionArrowDragContext | null = null;
 
   constructor(
     private readonly editor: Editor,
@@ -49,7 +49,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   }
 
   mousedown(event: MouseEvent) {
-    this.dragCtx = {
+    this.dragContext = {
       p0: CoordinateTransformation.pageToModel(event, this.render),
       action: null,
       itemId: null,
@@ -57,15 +57,15 @@ export class ReactionArrowAddTool implements ArrowAddTool {
   }
 
   mousemove(event: MouseEvent) {
-    if (!this.dragCtx) return;
+    if (!this.dragContext) return;
     const current = CoordinateTransformation.pageToModel(event, this.render);
-    const diff = current.sub(this.dragCtx.p0);
-    if (this.dragCtx.action) {
-      this.dragCtx.action.perform(this.reStruct);
+    const diff = current.sub(this.dragContext.p0);
+    if (this.dragContext.action) {
+      this.dragContext.action.perform(this.reStruct);
     } else {
       const action = fromArrowAddition(
         this.reStruct,
-        [this.dragCtx.p0, this.dragCtx.p0],
+        [this.dragContext.p0, this.dragContext.p0],
         this.mode,
       );
       // TODO: need to rework  actions/operations logic
@@ -77,39 +77,39 @@ export class ReactionArrowAddTool implements ArrowAddTool {
       }
       const arrowId = firstOp.data.id;
       assert(arrowId != null);
-      const dragCtx: DragContextInProgress = {
-        ...this.dragCtx,
+      const dragContext: DragContextInProgress = {
+        ...this.dragContext,
         itemId: arrowId,
         action,
       };
-      this.dragCtx = dragCtx;
-      this.editor.update(dragCtx.action, true);
+      this.dragContext = dragContext;
+      this.editor.update(dragContext.action, true);
     }
 
-    const dragCtx = this.dragCtx;
-    assert(dragCtx?.action != null);
-    this.updateResizingState(dragCtx.itemId, true);
+    const dragContext = this.dragContext;
+    assert(dragContext?.action != null);
+    this.updateResizingState(dragContext.itemId, true);
     const isSnappingEnabled = !event.ctrlKey;
-    dragCtx.action = fromArrowResizing(
+    dragContext.action = fromArrowResizing(
       this.reStruct,
-      dragCtx.itemId,
+      dragContext.itemId,
       diff,
       current,
       null,
       isSnappingEnabled,
     );
-    this.editor.update(dragCtx.action, true);
+    this.editor.update(dragContext.action, true);
   }
 
   mouseup(event: MouseEvent) {
-    if (!this.dragCtx) return;
-    if (this.dragCtx.action) {
-      this.dragCtx = this.addNewArrowWithDragging(this.dragCtx);
-      this.editor.update(this.dragCtx.action);
+    if (!this.dragContext) return;
+    if (this.dragContext.action) {
+      this.dragContext = this.addNewArrowWithDragging(this.dragContext);
+      this.editor.update(this.dragContext.action);
     } else {
       this.addNewArrowWithClicking(event);
     }
-    this.dragCtx = null;
+    this.dragContext = null;
   }
 
   private getArrowWithMinimalLengthEnd(start: Vec2, end: Vec2 | null): Vec2 {

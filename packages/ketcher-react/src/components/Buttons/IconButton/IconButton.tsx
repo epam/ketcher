@@ -15,12 +15,15 @@
  ***************************************************************************/
 
 import { StyledIcon } from './styles';
-import type { IIconButtonProps } from './types';
+import type { IIconButtonProperties } from './types';
 import { IconButtonBase } from './IconButtonBase';
 
-export const IconButton = ({ iconName, ...props }: IIconButtonProps) => {
+export const IconButton = ({
+  iconName,
+  ...properties
+}: IIconButtonProperties) => {
   return (
-    <IconButtonBase {...props}>
+    <IconButtonBase {...properties}>
       <StyledIcon name={iconName} />
     </IconButtonBase>
   );

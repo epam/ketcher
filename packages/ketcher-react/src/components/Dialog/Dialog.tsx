@@ -33,19 +33,19 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
 import { useSettingsPanelDrag } from '../../script/ui/views/modal/components/meta/Settings/useSettingsPanelDrag';
 
-interface DialogParamsCallProps {
+interface DialogParametersCallProperties {
   onCancel?: () => void;
   onOk?: (result: unknown) => void;
 }
 
-export interface DialogParams extends DialogParamsCallProps {
+export interface DialogParameters extends DialogParametersCallProperties {
   className?: string;
   isNestedModal?: boolean;
 }
 
-interface DialogProps {
+interface DialogProperties {
   title?: string;
-  params?: DialogParams;
+  params?: DialogParameters;
   buttons?: Array<string | ReactElement>;
   className?: string;
   needMargin?: boolean;
@@ -59,14 +59,14 @@ interface DialogProps {
   primaryButtons?: string[];
 }
 
-interface DialogCallProps {
+interface DialogCallProperties {
   result?: () => unknown;
   valid?: () => boolean;
 }
 
-type Props = DialogProps & DialogCallProps;
+type Properties = DialogProperties & DialogCallProperties;
 
-export const Dialog: FC<PropsWithChildren & Props> = (props) => {
+export const Dialog: FC<PropsWithChildren & Properties> = (properties) => {
   const {
     children,
     title,
@@ -83,8 +83,8 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     focusable = true,
     primaryButtons,
     ...rest
-  } = props;
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  } = properties;
+  const dialogReference = useRef<HTMLDialogElement>(null);
   const { t } = useTranslation('common');
   // `button` values are also semantic identifiers (see isButtonOk/exit below)
   // and testids — only their *displayed* text is translated here, by default,
@@ -107,7 +107,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   );
 
   useLayoutEffect(() => {
-    const parent = dialogRef.current?.parentElement;
+    const parent = dialogReference.current?.parentElement;
     setOverlayElement(parent instanceof HTMLElement ? parent : null);
   }, []);
 
@@ -123,7 +123,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     getBounds,
     setPreferredHeight,
   } = useSettingsPanelDrag({
-    panelRef: dialogRef,
+    panelRef: dialogReference,
     boundsElement: isDraggable ? overlayElement : null,
     gutter: 0,
   });
@@ -132,7 +132,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   // is detected (once per mount).
   useLayoutEffect(() => {
     if (!isDraggable) return;
-    const dialog = dialogRef.current;
+    const dialog = dialogReference.current;
     const bounds = getBounds();
     if (!dialog || !bounds) return;
 
@@ -170,7 +170,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   );
 
   useLayoutEffect(() => {
-    const dialogElement = dialogRef.current;
+    const dialogElement = dialogReference.current;
 
     // Use document.querySelector rather than dialogElement.closest() because
     // in popup mode the native <dialog> lives inside a MUI portal appended to
@@ -227,7 +227,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useEffect(() => {
     const keyDown = (event: KeyboardEvent) => {
-      const isFocusInsideDialog = dialogRef.current?.contains(
+      const isFocusInsideDialog = dialogReference.current?.contains(
         document.activeElement,
       );
 
@@ -254,7 +254,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   return (
     <dialog
-      ref={dialogRef}
+      ref={dialogReference}
       open
       data-testid={'info-modal-window'}
       tabIndex={-1}

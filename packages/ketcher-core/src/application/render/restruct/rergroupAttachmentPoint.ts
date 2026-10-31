@@ -201,8 +201,8 @@ class ReRGroupAttachmentPoint extends ReObject {
     );
     this.addTestAttributes(attachmentPointShape);
 
-    const showLabel = isAttachmentPointLabelRequired(restruct);
-    if (showLabel) {
+    const shouldShowLabel = isAttachmentPointLabelRequired(restruct);
+    if (shouldShowLabel) {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
       const labelText = this.item.type === 'primary' ? '1' : '2';
       showAttachmentPointLabel(

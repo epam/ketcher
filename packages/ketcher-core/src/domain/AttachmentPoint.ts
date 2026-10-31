@@ -67,7 +67,7 @@ export class AttachmentPoint {
 
   constructor(
     constructorParams: AttachmentPointConstructorParams,
-    skipInit?: boolean,
+    shouldSkipInit?: boolean,
   ) {
     this.rootElement = constructorParams.rootElement;
     this.monomer = constructorParams.monomer;
@@ -89,7 +89,7 @@ export class AttachmentPoint {
     this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
-    if (!skipInit) {
+    if (!shouldSkipInit) {
       this.appendAttachmentPoint();
     }
   }
@@ -274,7 +274,7 @@ export class AttachmentPoint {
       polymerBond instanceof MonomerToAtomBond
         ? polymerBond.monomer
         : polymerBond?.firstMonomer;
-    const flip = this.monomer.id === firstMonomer?.id;
+    const shouldFlip = this.monomer.id === firstMonomer?.id;
     const isAttachmentpointR1 =
       this.attachmentPointName === AttachmentPointName.R1;
     const isAttachmentpointR2 =
@@ -301,11 +301,11 @@ export class AttachmentPoint {
       } else if (isNumber(sideConnectionEndpointDirection)) {
         angleRadians = sideConnectionEndpointDirection;
       } else {
-        angleRadians = this.rotateToAngle(polymerBond, flip);
+        angleRadians = this.rotateToAngle(polymerBond, shouldFlip);
       }
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
-      angleRadians = this.rotateToAngle(polymerBond, flip);
+      angleRadians = this.rotateToAngle(polymerBond, shouldFlip);
 
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     }
@@ -357,10 +357,10 @@ export class AttachmentPoint {
 
   public rotateToAngle(
     polymerBond: PolymerBond | MonomerToAtomBond,
-    flip = false,
+    shouldFlip = false,
   ) {
     let angleRadians: number;
-    if (flip) {
+    if (shouldFlip) {
       angleRadians = Vec2.oxAngleForVector(
         polymerBond.endPosition,
         polymerBond.position,
@@ -415,9 +415,9 @@ export class AttachmentPoint {
       return;
     }
 
-    const flip = this.monomer.id === polymerBond?.firstMonomer?.id;
+    const shouldFlip = this.monomer.id === polymerBond?.firstMonomer?.id;
 
-    const angleRadians = this.rotateToAngle(polymerBond, flip);
+    const angleRadians = this.rotateToAngle(polymerBond, shouldFlip);
     const angleDegrees = Vec2.radiansToDegrees(angleRadians);
 
     const [

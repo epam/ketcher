@@ -14,7 +14,7 @@ function isSingleUpBond(bond: Bond): boolean {
 
 // A bond is "bold stereo" when both of its atoms are the wide end of a
 // neighboring Single Up bond. Mirrors micro-mode checkStereoBold in rebond.ts
-// (includeBoldStereoBond = false: only the wide-end match counts here).
+// (shouldIncludeBoldStereoBond = false: only the wide-end match counts here).
 function isBoldStereoBond(bond: Bond, viewModel: ViewModel): boolean {
   const halfEdges = viewModel.bondsToHalfEdges.get(bond);
   if (!halfEdges) {
@@ -32,13 +32,13 @@ function isBoldStereoBond(bond: Bond, viewModel: ViewModel): boolean {
 }
 
 // Find a neighboring half-edge (at the same atom) belonging to a Single Up bond
-// whose wide end (secondAtom) meets this atom. With includeBold, a neighboring
+// whose wide end (secondAtom) meets this atom. With shouldIncludeBold, a neighboring
 // bold-stereo bond also qualifies even if its wide end points elsewhere — this
-// mirrors the includeBoldStereoBond branch of micro-mode findIncomingStereoUpBond.
+// mirrors the shouldIncludeBoldStereoBond branch of micro-mode findIncomingStereoUpBond.
 function findIncomingStereoUpHalfEdge(
   halfEdge: HalfEdge,
   currentBond: Bond,
-  includeBold: boolean,
+  shouldIncludeBold: boolean,
   viewModel: ViewModel,
 ): HalfEdge | undefined {
   for (const neighbor of [
@@ -54,7 +54,7 @@ function findIncomingStereoUpHalfEdge(
     }
     if (
       neighborBond.secondAtom === halfEdge.firstAtom ||
-      (includeBold && isBoldStereoBond(neighborBond, viewModel))
+      (shouldIncludeBold && isBoldStereoBond(neighborBond, viewModel))
     ) {
       return neighbor;
     }
@@ -94,7 +94,7 @@ class SingleUpBondPathRenderer {
     const currentBond = firstHalfEdge.bond;
 
     // Neighbors used to align each end's wide edge. Mirrors micro-mode
-    // neihbid1/neihbid2 (findIncomingUpBonds, includeBoldStereoBond = true):
+    // neihbid1/neihbid2 (findIncomingUpBonds, shouldIncludeBoldStereoBond = true):
     // a wide end shared with an adjacent up/bold bond is snapped to that
     // bond's edge so the join is seamless rather than leaving a sliver.
     const startNeighbor = findIncomingStereoUpHalfEdge(

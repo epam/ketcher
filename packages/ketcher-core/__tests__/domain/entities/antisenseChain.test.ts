@@ -18,7 +18,7 @@ import {
 
 const sortLabels = (labels: string[]) => labels.sort(compareStrings);
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),

@@ -2647,8 +2647,7 @@ export class CoreEditor {
     } finally {
       this.monomerWizardMode = undefined;
       this._type = EditorType.Macromolecules;
-      this.micromoleculesEditor.clear();
-      this.micromoleculesEditor.clearHistory();
+      this.micromoleculesEditor.clear(true);
     }
 
     if (instanceReplacement) {

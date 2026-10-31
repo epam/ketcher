@@ -6,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -110,6 +110,10 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
+import {
+  LayoutBoundsProvider,
+  MACROMOLECULES_MAIN_AREA_TEST_ID,
+} from 'components/Layout/Layout';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
@@ -248,7 +252,7 @@ function Editor({
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
-      window.dispatchEvent(new Event('hidePreview'));
+      globalThis.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
@@ -288,7 +292,7 @@ function Editor({
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelectedMonomers(selections);
         showSelectedMonomersContextMenu({
@@ -301,7 +305,7 @@ function Editor({
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
-        window.dispatchEvent(new Event('hidePreview'));
+        globalThis.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelections(selections);
         showSequenceContextMenu({
@@ -330,13 +334,13 @@ function Editor({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       SetEditorLineLengthAction,
       setEditorLineLengthListener,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         SetEditorLineLengthAction,
         setEditorLineLengthListener,
       );
@@ -352,7 +356,7 @@ function Editor({
   }, []);
 
   return (
-    <>
+    <LayoutBoundsProvider>
       <Layout>
         <Layout.Top
           shortened={!isMonomerLibraryHidden}
@@ -384,7 +388,7 @@ function Editor({
           <LeftMenuComponent />
         </Layout.Left>
 
-        <Layout.Main>
+        <Layout.Main data-testid={MACROMOLECULES_MAIN_AREA_TEST_ID}>
           <EditorEvents />
           <RulerArea />
           <CanvasWrapper
@@ -476,7 +480,7 @@ function Editor({
           ))}
         </StyledToastContainer>
       </Snackbar>
-    </>
+    </LayoutBoundsProvider>
   );
 }
 

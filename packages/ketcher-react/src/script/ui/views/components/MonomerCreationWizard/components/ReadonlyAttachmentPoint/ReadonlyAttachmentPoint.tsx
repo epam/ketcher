@@ -42,18 +42,18 @@ const ReadonlyAttachmentPoint = ({
     if (!element) return;
 
     const mouseOverHandler = () => {
-      if (atomId !== undefined) {
-        editor.highlightAtomById(atomId);
-      } else {
+      if (atomId === undefined) {
         editor.highlightConnectionAttachmentPoint(name);
+      } else {
+        editor.highlightAtomById(atomId);
       }
     };
 
     const mouseLeaveHandler = () => {
-      if (atomId !== undefined) {
-        editor.highlightAtomById(null);
-      } else {
+      if (atomId === undefined) {
         editor.highlightConnectionAttachmentPoint(null);
+      } else {
+        editor.highlightAtomById(null);
       }
     };
 
@@ -81,21 +81,21 @@ const ReadonlyAttachmentPoint = ({
       }
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       'highlightAttachmentPointControls',
       handleHighlight,
     );
-    window.addEventListener(
+    globalThis.addEventListener(
       'resetHighlightAttachmentPointControls',
       handleReset,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         'highlightAttachmentPointControls',
         handleHighlight,
       );
-      window.removeEventListener(
+      globalThis.removeEventListener(
         'resetHighlightAttachmentPointControls',
         handleReset,
       );

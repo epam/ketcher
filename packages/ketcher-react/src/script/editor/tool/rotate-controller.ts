@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   type Action,
   type RotateController as RotateControllerContract,
@@ -8,6 +7,7 @@ import {
   vectorUtils,
 } from 'ketcher-core';
 import { throttle } from 'lodash';
+import type { RaphaelElement, RaphaelSet } from 'raphael';
 import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
@@ -15,10 +15,6 @@ import SelectTool from './select/select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
 import { normalizeAngle } from '../utils/normalizeAngle';
 import FragmentSelectionTool from './fragmentSelection';
-
-type RaphaelElement = {
-  [key: string]: any;
-};
 
 type LinkState = 'long' | 'short' | 'moveCenter' | 'moveHandle';
 type CrossState = 'active' | 'inactive' | 'offset' | 'move';
@@ -49,13 +45,13 @@ class RotateController implements RotateControllerContract {
   private initialRadius!: number;
   private isMovingCenter!: boolean;
 
-  private handle?: RaphaelElement;
+  private handle?: RaphaelSet;
   private boundingRect?: RaphaelElement;
-  private cross?: RaphaelElement;
+  private cross?: RaphaelSet;
   private link?: RaphaelElement;
-  private protractor?: RaphaelElement;
-  private rotateArc?: RaphaelElement;
-  private snapAngleIndicator?: RaphaelElement;
+  private protractor?: RaphaelSet;
+  private rotateArc?: RaphaelSet;
+  private snapAngleIndicator?: RaphaelSet;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -397,12 +393,12 @@ class RotateController implements RotateControllerContract {
         const rightArrow = this.paper
           .path(RIGHT_ARROW_PATH)
           .attr({ fill: 'white', stroke: 'none' });
-        const arrowSet: RaphaelElement = this.paper.set();
+        const arrowSet: RaphaelSet = this.paper.set();
         arrowSet.push(leftArrow, rightArrow);
         const { x, y, width, height } = arrowSet.getBBox();
         arrowSet.translate(-(x + width / 2), -(y + height / 2));
 
-        this.handle = this.paper.set() as RaphaelElement;
+        this.handle = this.paper.set();
         this.handle.push(circle, arrowSet);
         this.handle.translate(this.handleCenter.x, this.handleCenter.y);
         break;
@@ -475,7 +471,7 @@ class RotateController implements RotateControllerContract {
         stroke: PROTRACTOR_COLOR,
       });
 
-    this.protractor = this.paper.set() as RaphaelElement;
+    this.protractor = this.paper.set();
     this.protractor.push(circle);
 
     const predefinedDegrees = [
@@ -537,7 +533,7 @@ class RotateController implements RotateControllerContract {
       const arc = this.paper.path();
       const text = this.paper.text(0, 0, '');
 
-      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement;
+      this.rotateArc = this.paper.set().push(arc, text);
     }
 
     const rotateArcEnd = rotatePoint(
@@ -869,7 +865,7 @@ class RotateController implements RotateControllerContract {
     relativeSnapAngle: number,
   ) {
     this.snapAngleIndicator?.remove();
-    this.snapAngleIndicator = this.paper.set() as RaphaelElement;
+    this.snapAngleIndicator = this.paper.set();
     const LINE_LENGTH = 30;
     const TEXT_FONT_SIZE = 12;
     const relativeSnapAngleInDegrees = vectorUtils.degrees(relativeSnapAngle);

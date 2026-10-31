@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,16 +32,16 @@ export abstract class BaseMicromoleculeEntity {
     return this.initiallySelected;
   }
 
-  setInitiallySelected(value?: boolean): void {
+  setInitiallySelected(isInitiallySelected?: boolean): void {
     if (this.initiallySelected === INVALID) {
       throw new Error(
         'this field is used only for serialization/deserialization',
       );
     }
-    this.initiallySelected = value;
+    this.initiallySelected = isInitiallySelected;
   }
 
-  resetInitiallySelected(invalidate?: boolean): void {
-    this.initiallySelected = invalidate ? INVALID : undefined;
+  resetInitiallySelected(shouldInvalidate?: boolean): void {
+    this.initiallySelected = shouldInvalidate ? INVALID : undefined;
   }
 }

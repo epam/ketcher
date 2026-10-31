@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,6 +53,8 @@ import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import type { ThunkDispatch } from 'redux-thunk';
 import type { AnyAction } from 'redux';
+import type { StoreState } from 'src/script/ui/state/store.types';
+import type { CheckOption } from 'src/script/ui/state/options/types';
 import i18n from 'src/i18n/i18n';
 
 const saveSchema = {
@@ -116,7 +118,7 @@ interface FormState {
 }
 
 interface CheckState {
-  checkOptions: unknown;
+  checkOptions: CheckOption[];
 }
 
 interface Editor {
@@ -138,7 +140,7 @@ interface SaveDialogProps {
   checkState: CheckState;
   ignoreChiralFlag: boolean;
   editor: Editor;
-  onCheck: (checkOptions: unknown) => void;
+  onCheck: (checkOptions: CheckOption[]) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
   onOk: (result?: unknown) => void;
@@ -247,13 +249,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
-    const formats = !this.props.server
+    const formats = this.props.server
       ? [
-          SupportedFormat.ket,
-          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
-          SupportedFormat.smiles,
-        ]
-      : [
           SupportedFormat.ket,
           this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
           this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
@@ -275,6 +272,11 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           SupportedFormat.cdxml,
           SupportedFormat.cdx,
           SupportedFormat.binaryCdx,
+        ]
+      : [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
         ];
 
     this.saveSchema = saveSchema;
@@ -354,19 +356,19 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             isLoading: false,
           });
         })
-        .catch((e) => {
-          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
+        .catch((error) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', error);
+          errorHandler(error);
           this.props.onResetForm(formState);
-          return e;
+          return error;
         });
     } else {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
       // temporary check if query properties are used
-      const queryPropertiesAreUsed = !!(
+      const hasQueryProperties = !!(
         type === SupportedFormat.mol &&
-        Array.from(struct.atoms).some(
+        [...struct.atoms].some(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
             atom.queryProperties.connectivity ||
@@ -379,7 +381,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       const service = factory.create(
         type,
         { ...options, ignoreChiralFlag },
-        queryPropertiesAreUsed,
+        hasQueryProperties,
         struct,
       );
       const getStructFromStringByType = () => {
@@ -406,10 +408,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               structStr,
             });
           },
-          (e) => {
-            errorHandler(e.message);
+          (error) => {
+            errorHandler(error.message);
             this.props.onResetForm(formState);
-            return e;
+            return error;
           },
         )
         .finally(() => {
@@ -547,8 +549,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return;
     }
 
-    navigator.clipboard.writeText(structStr || '').catch((e) => {
-      KetcherLogger.error('copyAs.js::copyAs', e);
+    navigator.clipboard.writeText(structStr || '').catch((error) => {
+      KetcherLogger.error('copyAs.js::copyAs', error);
       this.props.editor.errorHandler(
         i18n.t('common:errors.featureNotAvailableInBrowser'),
       );
@@ -617,9 +619,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
+      !isLoading &&
       this.isValidStringFormat(format) &&
-      this.isBinaryCdxFormat(format) &&
-      !isLoading
+      this.isBinaryCdxFormat(format)
         ? b64toBlob(structStr || '')
         : structStr;
 
@@ -684,7 +686,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               : format.name)
           }
           key="save-file-button"
-          type={!this.isValidStringFormat(format) ? format.mime : undefined}
+          type={this.isValidStringFormat(format) ? undefined : format.mime}
           server={this.props.server}
           onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
@@ -734,12 +736,26 @@ const mapStateToProps = (state: AppState) => ({
   editor: state.editor,
 });
 
+type SaveDialogDispatchProps = {
+  onCheck: (checkOptions: CheckOption[]) => void;
+  onTmplSave: (struct: Struct) => void;
+  onResetForm: (prevState: FormState) => void;
+};
+
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<AppState, undefined, AnyAction>,
-) => ({
-  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions)),
-  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct)),
-  onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
+  dispatch: ThunkDispatch<StoreState, undefined, AnyAction>,
+): SaveDialogDispatchProps => ({
+  onCheck: (checkOptions: CheckOption[]) => {
+    dispatch(check(checkOptions));
+  },
+
+  onTmplSave: (struct: Struct) => {
+    dispatch(saveUserTmpl(struct));
+  },
+
+  onResetForm: (prevState: FormState) => {
+    dispatch(updateFormState(prevState));
+  },
 });
 
 export default connect(

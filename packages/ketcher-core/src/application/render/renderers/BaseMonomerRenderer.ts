@@ -36,11 +36,18 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
+  static isSelectable() {
+    return true;
+  }
+
+  static get selectionCircleRadius() {
+    return 21;
+  }
+
   private readonly editorEvents: typeof editorEvents;
   private readonly editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
@@ -49,26 +56,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private _dragCircleHoverAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
-  public readonly monomerSize: { width: number; height: number };
-
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public enumeration: number | null = null;
-
   private terminalIndicatorElement?: D3SvgElementSelection<
     SVGTextElement,
     void
   >;
 
+  declare public bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
+  public readonly monomerSize: { width: number; height: number };
+  public enumeration: number | null = null;
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '';
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '';
-
-  static isSelectable() {
-    return true;
-  }
-
-  static get selectionCircleRadius() {
-    return 21;
-  }
 
   protected constructor(
     public monomer: BaseMonomer,

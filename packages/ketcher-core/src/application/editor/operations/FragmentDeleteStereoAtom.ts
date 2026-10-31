@@ -19,11 +19,11 @@ import { OperationPriority, OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class FragmentDeleteStereoAtom extends BaseOperation {
-  readonly data: { frid: number; aid: number };
   static InverseConstructor: new (
     fragmentId: number,
     atomId: number,
   ) => BaseOperation;
+  readonly data: { frid: number; aid: number };
 
   constructor(fragmentId: number, atomId: number) {
     super(

@@ -24,14 +24,6 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleoside {
-  private readonly monomersCache: BaseMonomer[] = [];
-  constructor(
-    public readonly sugar: Sugar | AmbiguousMonomer,
-    public readonly rnaBase: RNABase | AmbiguousMonomer,
-  ) {
-    this.monomersCache = [sugar, rnaBase];
-  }
-
   static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
     if (shouldValidate) {
       assert(
@@ -104,6 +96,14 @@ export class Nucleoside {
     );
 
     return { modelChanges, node: this.fromSugar(sugar, false) };
+  }
+
+  private readonly monomersCache: BaseMonomer[] = [];
+  constructor(
+    public readonly sugar: Sugar | AmbiguousMonomer,
+    public readonly rnaBase: RNABase | AmbiguousMonomer,
+  ) {
+    this.monomersCache = [sugar, rnaBase];
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

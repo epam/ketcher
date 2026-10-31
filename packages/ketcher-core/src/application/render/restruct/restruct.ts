@@ -68,6 +68,33 @@ class ReStruct {
     [MULTITAIL_ARROW_KEY]: ReMultitailArrow,
   } as const;
 
+  private initialized = false;
+  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
+    LayerMap,
+    RaphaelPath
+  >;
+  private readonly ccFragmentType: Pool<number> = new Pool();
+  private structChanged = false;
+
+  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
+  private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
+  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
+    new Map();
+  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
+  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
+  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
+    new Map();
+  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
+  private readonly textsChanged: Map<number, ReText> = new Map();
+  private readonly imagesChanged = new Map<number, ReImage>();
+  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
+  private snappingBonds: number[] = [];
+
+  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
+  // are not visel-bound; we track them here to clear and rebuild each render.
+  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
+
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
@@ -91,38 +118,8 @@ class ReStruct {
   public images = new Map<number, ReImage>();
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
-  private initialized = false;
-  private layers: Record<LayerMap, RaphaelPath> = {} as Record<
-    LayerMap,
-    RaphaelPath
-  >;
-
   public connectedComponents: Pool<Pile<number>> = new Pool();
-  private readonly ccFragmentType: Pool<number> = new Pool();
-
-  private structChanged = false;
   public needRecalculateVisibleAtomsAndBonds = false;
-
-  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
-  private readonly atomsChanged: Map<number, 1> = new Map();
-  private readonly attachmentGroupsChanged: Map<number, 1> = new Map();
-  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
-    new Map();
-
-  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
-  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
-  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
-    new Map();
-
-  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private readonly textsChanged: Map<number, ReText> = new Map();
-  private readonly imagesChanged = new Map<number, ReImage>();
-  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
-  private snappingBonds: number[] = [];
-
-  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
-  // are not visel-bound; we track them here to clear and rebuild each render.
-  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
 
   constructor(
     molecule,

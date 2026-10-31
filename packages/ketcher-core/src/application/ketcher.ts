@@ -103,52 +103,17 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
 } as const;
 
 export class Ketcher {
+  readonly #formatterFactory: FormatterFactory;
+  #editor: Editor | null = null;
+  readonly #eventBus: EventEmitter;
+  readonly #settingsService?: ISettingsService;
   _id: string;
   logging: LogSettings;
   structService: StructService;
-  readonly #formatterFactory: FormatterFactory;
-  #editor: Editor | null = null;
   _indigo: Indigo;
-  readonly #eventBus: EventEmitter;
-  readonly #settingsService?: ISettingsService;
   readonly #disabledFunctionality: ReadonlySet<KetcherFunctionality>;
   changeEvent: Subscription;
   libraryUpdateEvent: Subscription;
-
-  get editor(): Editor {
-    // we should assign editor exactly after ketcher creation, so #editor
-    // being null here would indicate a programming error (accessing the
-    // editor before Ketcher has finished initializing), not a normal
-    // runtime case
-    if (!this.#editor) {
-      throw new Error(
-        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
-      );
-    }
-    return this.#editor;
-  }
-
-  get eventBus(): EventEmitter {
-    return this.#eventBus;
-  }
-
-  /**
-   * Get settings service for managing application settings
-   * Returns undefined if settings service was not provided during construction
-   */
-  get settingsService(): ISettingsService | undefined {
-    return this.#settingsService;
-  }
-
-  /**
-   * Checks whether a given piece of functionality was disabled via the
-   * `disabledFunctionality` configuration option. Any UI entry point that
-   * can trigger that functionality (context menu item, toolbar button,
-   * etc.) should consult this method and hide/disable itself accordingly.
-   */
-  isFunctionalityDisabled(functionality: KetcherFunctionality): boolean {
-    return this.#disabledFunctionality.has(functionality);
-  }
 
   constructor(
     structService: StructService,
@@ -190,6 +155,41 @@ export class Ketcher {
     // The editor will need to be updated with new settings
     // For now, this is a placeholder for Phase 2 integration
     KetcherLogger.info('Settings changed', settings);
+  }
+
+  get editor(): Editor {
+    // we should assign editor exactly after ketcher creation, so #editor
+    // being null here would indicate a programming error (accessing the
+    // editor before Ketcher has finished initializing), not a normal
+    // runtime case
+    if (!this.#editor) {
+      throw new Error(
+        'Editor is not initialized yet. It should be assigned right after Ketcher creation.',
+      );
+    }
+    return this.#editor;
+  }
+
+  get eventBus(): EventEmitter {
+    return this.#eventBus;
+  }
+
+  /**
+   * Get settings service for managing application settings
+   * Returns undefined if settings service was not provided during construction
+   */
+  get settingsService(): ISettingsService | undefined {
+    return this.#settingsService;
+  }
+
+  /**
+   * Checks whether a given piece of functionality was disabled via the
+   * `disabledFunctionality` configuration option. Any UI entry point that
+   * can trigger that functionality (context menu item, toolbar button,
+   * etc.) should consult this method and hide/disable itself accordingly.
+   */
+  isFunctionalityDisabled(functionality: KetcherFunctionality): boolean {
+    return this.#disabledFunctionality.has(functionality);
   }
 
   get id() {

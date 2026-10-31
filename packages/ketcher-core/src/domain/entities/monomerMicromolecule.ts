@@ -19,37 +19,6 @@ import { assert } from 'utilities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(
-    type: string,
-    public monomer: BaseMonomer,
-  ) {
-    super(type);
-    this.data.absolute = false;
-    this.data.attached = false;
-    this.data.expanded = Boolean(monomer.monomerItem.expanded);
-  }
-
-  public get isMonomer() {
-    return true;
-  }
-
-  private ensureMonomerItemMutable(): void {
-    if (Object.isFrozen(this.monomer.monomerItem)) {
-      this.monomer.monomerItem = { ...this.monomer.monomerItem };
-    }
-  }
-
-  public setExpanded(isExpanded: boolean): void {
-    this.ensureMonomerItemMutable();
-    this.monomer.monomerItem.expanded = isExpanded;
-  }
-
-  public override getContractedPosition(struct: Struct) {
-    assert(this.pp);
-    const sgroupContractedPosition = super.getContractedPosition(struct);
-    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
-  }
-
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
@@ -77,5 +46,36 @@ export class MonomerMicromolecule extends SGroup {
     }
 
     return monomerMicromoleculeClone;
+  }
+
+  constructor(
+    type: string,
+    public monomer: BaseMonomer,
+  ) {
+    super(type);
+    this.data.absolute = false;
+    this.data.attached = false;
+    this.data.expanded = Boolean(monomer.monomerItem.expanded);
+  }
+
+  private ensureMonomerItemMutable(): void {
+    if (Object.isFrozen(this.monomer.monomerItem)) {
+      this.monomer.monomerItem = { ...this.monomer.monomerItem };
+    }
+  }
+
+  public get isMonomer() {
+    return true;
+  }
+
+  public setExpanded(expanded: boolean): void {
+    this.ensureMonomerItemMutable();
+    this.monomer.monomerItem.expanded = expanded;
+  }
+
+  public override getContractedPosition(struct: Struct) {
+    assert(this.pp);
+    const sgroupContractedPosition = super.getContractedPosition(struct);
+    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }
 }

@@ -185,6 +185,55 @@ export class SequenceMode extends BaseMode {
     super('sequence-layout-mode', previousMode);
   }
 
+  private async getSequenceForClipboard(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    serializedKet: string,
+  ): Promise<string | undefined> {
+    if (
+      drawingEntitiesManager.monomers.size === 0 ||
+      !drawingEntitiesManager.validateIfApplicableForFasta()
+    ) {
+      return undefined;
+    }
+
+    try {
+      const editor = provideEditorInstance();
+      const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+      const result = await indigo.convert(serializedKet, {
+        outputFormat: ChemicalMimeType.SEQUENCE,
+      });
+
+      return result.struct;
+    } catch (error) {
+      KetcherLogger.error('SequenceMode.ts::getSequenceForClipboard', error);
+
+      return undefined;
+    }
+  }
+
+  private get needToEditSense() {
+    return this.isSyncEditMode || !this.isAntisenseEditMode;
+  }
+
+  private get needToEditAntisense() {
+    return this.isSyncEditMode || this.isAntisenseEditMode;
+  }
+
+  private turnOnAntisenseEditMode() {
+    this._isAntisenseEditMode = true;
+    this.initialize(false, false, false);
+  }
+
+  private turnOffAntisenseEditMode() {
+    this._isAntisenseEditMode = false;
+    this.initialize(false, false, false);
+  }
+
+  private setAntisenseEditMode(isAntisenseEditMode) {
+    this._isAntisenseEditMode = isAntisenseEditMode;
+    this.initialize(false, false, false);
+  }
+
   protected async writeToClipboard(
     serializedKet: string,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -221,32 +270,6 @@ export class SequenceMode extends BaseMode {
     }
   }
 
-  private async getSequenceForClipboard(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    serializedKet: string,
-  ): Promise<string | undefined> {
-    if (
-      drawingEntitiesManager.monomers.size === 0 ||
-      !drawingEntitiesManager.validateIfApplicableForFasta()
-    ) {
-      return undefined;
-    }
-
-    try {
-      const editor = provideEditorInstance();
-      const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
-      const result = await indigo.convert(serializedKet, {
-        outputFormat: ChemicalMimeType.SEQUENCE,
-      });
-
-      return result.struct;
-    } catch (error) {
-      KetcherLogger.error('SequenceMode.ts::getSequenceForClipboard', error);
-
-      return undefined;
-    }
-  }
-
   public get isEditMode() {
     return this._isEditMode;
   }
@@ -269,29 +292,6 @@ export class SequenceMode extends BaseMode {
 
   public get isSyncEditMode() {
     return this._isSyncEditMode;
-  }
-
-  private get needToEditSense() {
-    return this.isSyncEditMode || !this.isAntisenseEditMode;
-  }
-
-  private get needToEditAntisense() {
-    return this.isSyncEditMode || this.isAntisenseEditMode;
-  }
-
-  private turnOnAntisenseEditMode() {
-    this._isAntisenseEditMode = true;
-    this.initialize(false, false, false);
-  }
-
-  private turnOffAntisenseEditMode() {
-    this._isAntisenseEditMode = false;
-    this.initialize(false, false, false);
-  }
-
-  private setAntisenseEditMode(isAntisenseEditMode) {
-    this._isAntisenseEditMode = isAntisenseEditMode;
-    this.initialize(false, false, false);
   }
 
   public turnOnSyncEditMode() {

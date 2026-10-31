@@ -45,48 +45,6 @@ class Portal extends Component<Props> {
     }
   }
 
-  componentDidMount() {
-    if (!this.isElementInDom && this.props.isOpen) {
-      this.addElementInDOM();
-    }
-
-    const { className, style } = this.props;
-    if (className) {
-      this.addClassName(className);
-    }
-    if (style) {
-      this.updateStyle(style);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.isElementInDom) {
-      this.removeElementFromDOM();
-    }
-  }
-
-  componentDidUpdate(prevProps: Readonly<Props>) {
-    const { isOpen, className, style } = this.props;
-    if (className !== prevProps.className) {
-      this.removeClassNames(prevProps.className);
-      this.addClassName(className);
-    }
-
-    if (style !== prevProps.style) {
-      this.updateStyle(style, prevProps.style);
-    }
-
-    if (isOpen === prevProps.isOpen) {
-      return;
-    }
-
-    if (isOpen && !this.isElementInDom) {
-      this.addElementInDOM();
-    } else if (this.isElementInDom) {
-      this.removeElementFromDOM();
-    }
-  }
-
   private addElementInDOM() {
     document
       .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
@@ -135,6 +93,48 @@ class Portal extends Component<Props> {
     Object.keys(style).forEach((property) => {
       this.element.style[property] = style[property];
     });
+  }
+
+  componentDidMount() {
+    if (!this.isElementInDom && this.props.isOpen) {
+      this.addElementInDOM();
+    }
+
+    const { className, style } = this.props;
+    if (className) {
+      this.addClassName(className);
+    }
+    if (style) {
+      this.updateStyle(style);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>) {
+    const { isOpen, className, style } = this.props;
+    if (className !== prevProps.className) {
+      this.removeClassNames(prevProps.className);
+      this.addClassName(className);
+    }
+
+    if (style !== prevProps.style) {
+      this.updateStyle(style, prevProps.style);
+    }
+
+    if (isOpen === prevProps.isOpen) {
+      return;
+    }
+
+    if (isOpen && !this.isElementInDom) {
+      this.addElementInDOM();
+    } else if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
   }
 
   render() {

@@ -38,9 +38,23 @@ export class SGroupForest {
     this.atomSets = new Map();
   }
 
-  /**
-  returns an array or s-group ids in the order of breadth-first search
-  */
+  private resetParentLink(childId: number, id: number) {
+    const parentId = this.parent.get(childId);
+    if (parentId === undefined) {
+      return;
+    }
+
+    const childs = this.children.get(parentId);
+    if (!childs) {
+      return;
+    }
+
+    const childIndex = childs.indexOf(childId);
+    childs.splice(childIndex, 1);
+    this.parent.set(childId, id);
+  }
+
+  /** returns an array or s-group ids in the order of breadth-first search */
   getSGroupsBFS(): number[] {
     const order: number[] = [];
     const queue = [...(this.children.get(-1) as Array<number>)];
@@ -142,22 +156,6 @@ export class SGroupForest {
     this.atomSets.set(id, new Pile(atoms));
 
     return { parent, children };
-  }
-
-  private resetParentLink(childId: number, id: number) {
-    const parentId = this.parent.get(childId);
-    if (parentId === undefined) {
-      return;
-    }
-
-    const childs = this.children.get(parentId);
-    if (!childs) {
-      return;
-    }
-
-    const childIndex = childs.indexOf(childId);
-    childs.splice(childIndex, 1);
-    this.parent.set(childId, id);
   }
 
   remove(id: number): void {

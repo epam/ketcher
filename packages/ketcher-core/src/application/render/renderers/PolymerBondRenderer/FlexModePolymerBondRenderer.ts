@@ -38,21 +38,6 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
-  public get rootBBox(): DOMRect | undefined {
-    const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
-  }
-
-  public get width(): number {
-    return this.rootBBox?.width ?? 0;
-  }
-
-  public get height(): number {
-    return this.rootBBox?.height ?? 0;
-  }
-
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
@@ -68,6 +53,21 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  public get rootBBox(): DOMRect | undefined {
+    const rootNode = this.rootElement?.node();
+    if (!rootNode) return undefined;
+
+    return rootNode.getBBox();
+  }
+
+  public get width(): number {
+    return this.rootBBox?.width ?? 0;
+  }
+
+  public get height(): number {
+    return this.rootBBox?.height ?? 0;
   }
 
   public moveSelection(): void {

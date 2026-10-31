@@ -50,6 +50,21 @@ export interface ImageReferencePositionInfo {
 }
 
 export class Image extends BaseMicromoleculeEntity {
+  static fromKetNode(ketFileNode: KetFileImageNode): Image {
+    const { width, height, ...point } = getNodeWithInvertedYCoord(
+      ketFileNode.boundingBox,
+    );
+    const halfSize = new Vec2(width / 2, height / 2);
+    const topLeftCorner = new Vec2(point);
+    const center = topLeftCorner.add(halfSize);
+    const imageSrc = `data:${ketFileNode.format};base64,${ketFileNode.data}`;
+
+    // Should be validated already
+    const image = new Image(imageSrc, center, halfSize);
+    image.setInitiallySelected(ketFileNode.selected);
+    return image;
+  }
+
   constructor(
     public bitmap: string,
     private _center: Vec2,
@@ -155,20 +170,5 @@ export class Image extends BaseMicromoleculeEntity {
       data: base64Data,
       selected: this.getInitiallySelected(),
     };
-  }
-
-  static fromKetNode(ketFileNode: KetFileImageNode): Image {
-    const { width, height, ...point } = getNodeWithInvertedYCoord(
-      ketFileNode.boundingBox,
-    );
-    const halfSize = new Vec2(width / 2, height / 2);
-    const topLeftCorner = new Vec2(point);
-    const center = topLeftCorner.add(halfSize);
-    const imageSrc = `data:${ketFileNode.format};base64,${ketFileNode.data}`;
-
-    // Should be validated already
-    const image = new Image(imageSrc, center, halfSize);
-    image.setInitiallySelected(ketFileNode.selected);
-    return image;
   }
 }

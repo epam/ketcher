@@ -149,7 +149,7 @@ import type { RGroup } from 'domain/entities/rgroup';
 import {
   RGroupPropertiesOperation,
   type RGroupProperties,
-} from 'application/editor/operations/coreRGroup/RGroupPropertiesOperation';
+} from 'domain/entities/RGroupPropertiesOperation';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,

@@ -142,6 +142,13 @@ The system SHALL ensure that monomers and small molecules on the canvas are auto
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
 
+#### Scenario: Moving a selection with arrow keys
+
+- **WHEN** the user presses an arrow key with a selection in flex or snake mode
+- **THEN** the selection moves 1 px in that direction; holding `Shift` moves it 10 px
+- **AND** each key press is a single undo step
+- **AND** in sequence mode the selection does not move
+
 ### Requirement: Chain enumeration
 
 The system SHALL ensure that Ketcher numbers each eligible monomer sequentially along the chain, including a lone sugar-base-phosphate unit; and if no monomer in the chain satisfies that starting condition, no enumeration is shown.

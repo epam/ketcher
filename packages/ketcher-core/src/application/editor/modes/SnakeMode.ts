@@ -9,6 +9,7 @@ import { Vec2 } from 'domain/entities';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
 import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
+import { moveSelectionByArrowKeysHandlers } from './moveSelectionByArrowKeys';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -91,6 +92,10 @@ export class SnakeMode extends BaseMode {
 
   isPasteAvailable(): boolean {
     return true;
+  }
+
+  get keyboardEventHandlers() {
+    return moveSelectionByArrowKeysHandlers;
   }
 }
 

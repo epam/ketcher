@@ -502,3 +502,4 @@ export class AttachmentPoint {
     return this.initialAngle;
   }
 }
+// danger self-test: touched with no unit test

@@ -4296,8 +4296,6 @@ class Editor implements KetcherEditor {
         dst.rxnPluses.add(item.clone());
     });
 
-    dst.isReaction = struct.isReaction && struct.isRxn();
-
     return dst;
   }
 

@@ -2,8 +2,9 @@ import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
 import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
 import createStore from '../state';
-import { initKeydownListener } from './hotkeys';
+import { initClipboard, initKeydownListener } from './hotkeys';
 import { act } from 'react';
+import { ChemicalMimeType, KetSerializer, MolSerializer } from 'ketcher-core';
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import type { Api } from 'src/script/api';
 import BondTool from '../../editor/tool/bond';
@@ -18,6 +19,10 @@ jest.mock('react-intersection-observer', () => {
 });
 
 describe('Hot keys', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it('should select last chosen selected tool when user press ESC', async () => {
     renderWithMockStore(<LeftToolbarContainer />);
     const text = screen.getByTestId('text');
@@ -51,7 +56,6 @@ describe('Hot keys', () => {
   // Lookup, unlike the equivalent '1'-'4' bond shortcuts.
   it('should not open Abbreviation lookup when pressing "0" (Any Bond) several times', async () => {
     const { store } = renderWithMockStore(<LeftToolbarContainer />);
-    // eslint-disable-next-line testing-library/no-unnecessary-act
     act(() => {
       fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
       fireEvent.keyDown(document, { code: 'Digit0', key: '0' });
@@ -59,6 +63,38 @@ describe('Hot keys', () => {
     });
     expect(store.getState().abbreviationLookup.isOpen).toBe(false);
   });
+
+  it.each([
+    [true, ChemicalMimeType.Rxn],
+    [false, ChemicalMimeType.Mol],
+  ])(
+    'should use %s reaction clipboard MIME mapping during legacy copy',
+    (isReaction, expectedMimeType) => {
+      jest.spyOn(KetSerializer.prototype, 'serialize').mockReturnValue('ket');
+      jest.spyOn(MolSerializer.prototype, 'serialize').mockReturnValue('mol');
+
+      const selection = jest.fn();
+      const clipboard = initClipboard(jest.fn(), () => ({
+        modal: null,
+        editor: {
+          selection,
+          structSelected: () => ({
+            isReaction,
+            isBlank: () => false,
+            simpleObjects: { size: 0 },
+            texts: { size: 0 },
+          }),
+        },
+      }));
+
+      expect(clipboard.onLegacyCopy()).toEqual({
+        [ChemicalMimeType.KET]: 'ket',
+        'text/plain': 'mol',
+        [expectedMimeType]: 'mol',
+      });
+      expect(selection).toHaveBeenCalledWith(null);
+    },
+  );
 
   it('does not apply a numeric bond shortcut to a haptic bond with an attachment group', () => {
     const struct = new Struct();

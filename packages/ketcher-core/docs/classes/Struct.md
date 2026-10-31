@@ -16,7 +16,6 @@
 - [functionalGroups](Struct.md#functionalgroups)
 - [halfBonds](Struct.md#halfbonds)
 - [highlights](Struct.md#highlights)
-- [isReaction](Struct.md#isreaction)
 - [loops](Struct.md#loops)
 - [name](Struct.md#name)
 - [rgroups](Struct.md#rgroups)
@@ -26,6 +25,10 @@
 - [sgroups](Struct.md#sgroups)
 - [simpleObjects](Struct.md#simpleobjects)
 - [texts](Struct.md#texts)
+
+### Accessors
+
+- [isReaction](Struct.md#isreaction)
 
 ### Methods
 
@@ -159,16 +162,6 @@ ___
 
 ___
 
-### isReaction
-
-• **isReaction**: `boolean`
-
-#### Defined in
-
-[packages/ketcher-core/src/domain/entities/struct.ts:57](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L57)
-
-___
-
 ### loops
 
 • **loops**: [`Pool`](Pool.md)<[`Loop`](Loop.md)\>
@@ -256,6 +249,20 @@ ___
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/struct.ts:65](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L65)
+
+## Accessors
+
+### isReaction
+
+• `get` **isReaction**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[packages/ketcher-core/src/domain/entities/struct.ts:176](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/struct.ts#L176)
 
 ## Methods
 

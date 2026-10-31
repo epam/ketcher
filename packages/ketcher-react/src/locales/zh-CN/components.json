@@ -117,6 +117,7 @@
       "sugarLeavingGroupWarning": "糖单体通常以氢作为 R1 和 R2 的离去基团，以羟基作为 R3 的离去基团。是否要继续使用当前的连接点？",
       "baseLeavingGroupWarning": "碱基单体通常以氢作为 R1 的离去基团。是否要继续使用当前的连接点？",
       "phosphateLeavingGroupWarning": "磷酸单体通常以羟基作为 R1 和 R2 的离去基团。是否要继续使用当前的连接点？",
+      "sugarPhosphateLeavingGroupWarning": "糖单体通常以氢作为 R1 和 R2 的离去基团，以羟基作为 R3 的离去基团。磷酸单体通常以羟基作为 R1 和 R2 的离去基团。是否要继续使用当前的连接点？",
       "nucleotideLeavingGroupWarning": "核苷酸单体通常以氢作为 R1 的离去基团，以羟基作为 R2 的离去基团。是否要继续使用当前的连接点？"
     }
   }

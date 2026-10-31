@@ -248,6 +248,9 @@ const MonomerCreationWizardFields = (
               <AttachmentPoint
                 name={name}
                 editor={editor}
+                connectionPointNames={readonlyAttachmentPoints.map(
+                  ({ name }) => name,
+                )}
                 onNameChange={handleAttachmentPointNameChange}
                 onLeavingAtomChange={handleLeavingAtomChange}
                 onRemove={handleAttachmentPointRemove}

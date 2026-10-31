@@ -97,8 +97,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 8.9,
-            "y": -8.325000000000001
+            "x": 9.03355178833008,
+            "y": -8.4
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -284,8 +284,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 14.9,
-            "y": -8.325000000000001
+            "x": 15.03355178833008,
+            "y": -8.4
         },
         "alias": "dC",
         "templateId": "dC___D-Cysteine"
@@ -471,8 +471,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 10.4,
-            "y": -8.325000000000001
+            "x": 10.53355178833008,
+            "y": -8.4
         },
         "alias": "Hcy",
         "templateId": "Hcy___homocysteine"
@@ -670,8 +670,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 13.4,
-            "y": -8.325000000000001
+            "x": 13.53355178833008,
+            "y": -8.4
         },
         "alias": "meC",
         "templateId": "meC___N-Methyl-Cysteine"
@@ -872,8 +872,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 11.9,
-            "y": -8.325000000000001
+            "x": 12.03355178833008,
+            "y": -8.4
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"

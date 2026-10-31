@@ -19,6 +19,7 @@ import {
   keyboardTypeOnCanvas,
   MacroFileType,
   MolFileFormat,
+  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -265,6 +266,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

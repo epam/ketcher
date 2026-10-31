@@ -4,6 +4,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   MacroFileType,
   MolFileFormat,
+  moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   readFileContent,
@@ -923,6 +924,7 @@ test.describe('Arrow button on Library cards', () => {
       ],
       fileContent,
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

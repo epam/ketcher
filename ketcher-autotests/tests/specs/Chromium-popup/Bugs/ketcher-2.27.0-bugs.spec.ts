@@ -10,6 +10,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 
@@ -19,7 +20,10 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 
-import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondTool,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   FileType,
@@ -43,7 +47,11 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import {
+  bondMonomerPointToMoleculeAtom,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
+import { commitPastePreviewInFlexMode } from '@utils/macromolecules/pastePreview';
 import {
   AttachmentPointType,
   getAtomAttachmentPointLocator,
@@ -493,9 +501,19 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
     );
+    const hydrogenBonds = getBondLocator(page, {
+      bondType: MacroBondType.Hydrogen,
+    });
+    const originalHydrogenBondCount = await hydrogenBonds.count();
+    expect(originalHydrogenBondCount).toBeGreaterThan(0);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await pasteFromClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page, { commitPreview: false });
+    await commitPastePreviewInFlexMode(page, async () => {
+      await clickOnCanvas(page, 236, 480, { from: 'canvasTopLeft' });
+    });
+    await expect(hydrogenBonds).toHaveCount(originalHydrogenBondCount * 2);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

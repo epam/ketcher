@@ -87,6 +87,7 @@ test.describe('Import-Saving .seq Files', () => {
       fileContent,
     );
     await page.waitForTimeout(0.2 * 1000);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

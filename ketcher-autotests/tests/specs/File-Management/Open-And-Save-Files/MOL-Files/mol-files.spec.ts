@@ -14,6 +14,7 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   deleteByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -717,6 +718,7 @@ test.describe('Open and Save file', () => {
       await InfoMessageDialog(page).ok();
     }
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/Original Peptide.mol');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,

@@ -69,8 +69,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 3.6500000000000004,
-            "y": -7.825
+            "x": 3.7835521697998047,
+            "y": -7.9
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -218,8 +218,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 5.15,
-            "y": -7.825
+            "x": 5.283552169799805,
+            "y": -7.9
         },
         "alias": "SerPO3",
         "templateId": "SerPO3___O-phospho-L-serine"
@@ -442,8 +442,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 6.65,
-            "y": -7.825
+            "x": 6.783552169799805,
+            "y": -7.9
         },
         "alias": "Cit",
         "templateId": "Cit___Citrulline"
@@ -681,8 +681,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 8.15,
-            "y": -7.825
+            "x": 8.283552169799805,
+            "y": -7.9
         },
         "alias": "meC",
         "templateId": "meC___N-Methyl-Cysteine"

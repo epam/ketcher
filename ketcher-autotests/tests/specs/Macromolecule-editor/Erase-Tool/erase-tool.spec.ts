@@ -376,6 +376,7 @@ test.describe('Erase Tool', () => {
       page,
       'KET/peptides-flex-chain-expected.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -404,6 +405,7 @@ test.describe('Erase Tool', () => {
       page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

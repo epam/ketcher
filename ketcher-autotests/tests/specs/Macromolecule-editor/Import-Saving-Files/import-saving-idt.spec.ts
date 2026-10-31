@@ -1459,6 +1459,7 @@ test.describe('Import correct IDT sequence: ', () => {
         MacroFileType.IDT,
         correctIDTString.IDTString,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

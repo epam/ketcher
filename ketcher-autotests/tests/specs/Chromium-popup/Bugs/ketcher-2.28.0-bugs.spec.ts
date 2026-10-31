@@ -95,6 +95,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

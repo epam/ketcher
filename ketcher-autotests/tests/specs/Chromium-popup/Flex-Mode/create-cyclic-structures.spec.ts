@@ -10,7 +10,7 @@ import {
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
-import { openFileAndAddToCanvasMacro } from '@utils/index';
+import { moveMouseAway, openFileAndAddToCanvasMacro } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
@@ -39,6 +39,7 @@ test.describe('Cyclic structures', () => {
       page,
       'KET/three-sugar-connected-to-each-other.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await MacromoleculesTopToolbar(page).arrangeAsARing();
@@ -122,6 +123,7 @@ test.describe('Cyclic structures', () => {
       page,
       'KET/three-sugar-connected-to-each-other.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, sugar).open();

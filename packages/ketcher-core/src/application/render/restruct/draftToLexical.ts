@@ -46,44 +46,9 @@ export function convertDraftToLexical(
     };
   }
 
-  const children: SerializedParagraphNode[] = draftState.blocks.map((block) => {
-    const textChildren: (SerializedTextNode | { type: string })[] = [];
-
-    if (block.text.length === 0) {
-      // Empty block — Lexical doesn't have a 'br' node type in serialized state.
-      // Emit an empty text node instead so Lexical can parse it and
-      // the renderer will treat it as an empty paragraph.
-      textChildren.push({
-        type: 'text',
-        text: '',
-        format: 0,
-        style: '',
-        version: 1,
-      });
-    } else {
-      // Build text segments with their respective styles
-      const segments = buildTextSegments(
-        block.text,
-        block.inlineStyleRanges || [],
-      );
-
-      segments.forEach((segment) => {
-        textChildren.push({
-          type: 'text',
-          text: segment.text,
-          format: segment.format,
-          style: segment.style,
-          version: 1,
-        });
-      });
-    }
-
-    return {
-      type: 'paragraph',
-      children: textChildren,
-      version: 1,
-    };
-  });
+  const children: SerializedParagraphNode[] = draftState.blocks.flatMap(
+    (block) => blockToParagraphs(block),
+  );
 
   return {
     root: {
@@ -94,16 +59,52 @@ export function convertDraftToLexical(
   };
 }
 
+function createTextNode(
+  text: string,
+  format: number,
+  style: string,
+): SerializedTextNode {
+  return { type: 'text', text, format, style, version: 1 };
+}
+
+/**
+ * A Draft.js block may contain line breaks ("\n") inside its text, e.g. a
+ * multi-line caption converted from CDXML by Indigo. The renderer places the
+ * text nodes of a paragraph in one row, so every line has to be its own
+ * paragraph; otherwise the text after a line break overlaps the other lines.
+ * An empty line becomes a paragraph with an empty text node.
+ */
+function blockToParagraphs(block: DraftBlock): SerializedParagraphNode[] {
+  return buildTextLines(block.text, block.inlineStyleRanges || []).map(
+    (segments) => ({
+      type: 'paragraph',
+      // Lexical doesn't have a 'br' node type in serialized state. Emit an
+      // empty text node instead so Lexical can parse it and the renderer will
+      // treat it as an empty paragraph.
+      children:
+        segments.length > 0
+          ? segments.map(({ text, format, style }) =>
+              createTextNode(text, format, style),
+            )
+          : [createTextNode('', 0, '')],
+      version: 1,
+    }),
+  );
+}
+
 interface TextSegment {
   text: string;
   format: number;
   style: string;
 }
 
-function buildTextSegments(
+// Splits the text into lines, each one a list of segments of identical style.
+// A line break is "\n", "\r" or "\r\n"; the pair counts once even when the
+// two characters have different styles.
+function buildTextLines(
   text: string,
   styleRanges: Array<{ offset: number; length: number; style: string }>,
-): TextSegment[] {
+): TextSegment[][] {
   // Create an array of style info for each character position
   const charStyles: Array<{ format: number; style: string }> = Array.from(
     { length: text.length },
@@ -121,38 +122,41 @@ function buildTextSegments(
   });
 
   // Group consecutive characters with identical styles into segments
-  const segments: TextSegment[] = [];
+  const lines: TextSegment[][] = [[]];
   let currentSegment: TextSegment | null = null;
 
   for (let i = 0; i < text.length; i++) {
     const charStyle = charStyles[i];
     const char = text[i];
 
+    if (char === '\n' || char === '\r') {
+      // The "\n" of a "\r\n" pair ends the line, the "\r" before it is skipped
+      if (!(char === '\r' && text[i + 1] === '\n')) {
+        lines.push([]);
+        currentSegment = null;
+      }
+      continue;
+    }
+
     // Check if we need to start a new segment
     if (
-      currentSegment &&
-      currentSegment.format === charStyle.format &&
-      currentSegment.style === charStyle.style
+      !currentSegment ||
+      currentSegment.format !== charStyle.format ||
+      currentSegment.style !== charStyle.style
     ) {
-      // Continue current segment
-      currentSegment.text += char;
-    } else {
-      if (currentSegment) {
-        segments.push(currentSegment);
-      }
       currentSegment = {
         text: char,
         format: charStyle.format,
         style: charStyle.style,
       };
+      lines[lines.length - 1].push(currentSegment);
+    } else {
+      // Continue current segment
+      currentSegment.text += char;
     }
   }
 
-  if (currentSegment) {
-    segments.push(currentSegment);
-  }
-
-  return segments;
+  return lines;
 }
 
 function applyStyleToChar(

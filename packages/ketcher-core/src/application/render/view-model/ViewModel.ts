@@ -172,8 +172,8 @@ export class ViewModel {
 
   private loopIsInner(halfEdgesInLoop: HalfEdge[]): boolean {
     let totalAngle = 2 * Math.PI;
-    halfEdgesInLoop.forEach((halfEdge, i, loopArr) => {
-      const nextHalfEdge = loopArr[(i + 1) % loopArr.length];
+    halfEdgesInLoop.forEach((halfEdge, index, loopArray) => {
+      const nextHalfEdge = loopArray[(index + 1) % loopArray.length];
       const angle = this.getAngleBetweenHalfEdges(halfEdge, nextHalfEdge);
       totalAngle +=
         nextHalfEdge.oppositeHalfEdge === halfEdge ? Math.PI : angle; // back and forth along the same edge
@@ -182,12 +182,12 @@ export class ViewModel {
   }
 
   private loopHasSelfIntersections(halfEdges: Array<HalfEdge>) {
-    for (let i = 0; i < halfEdges.length; ++i) {
-      const halfEdge = halfEdges[i];
+    for (let index = 0; index < halfEdges.length; ++index) {
+      const halfEdge = halfEdges[index];
       const set = new Pile([halfEdge.firstAtom, halfEdge.secondAtom]);
 
-      for (let j = i + 2; j < halfEdges.length; ++j) {
-        const nextNextHalfEdge = halfEdges[j];
+      for (let index_ = index + 2; index_ < halfEdges.length; ++index_) {
+        const nextNextHalfEdge = halfEdges[index_];
         if (
           set.has(nextNextHalfEdge.firstAtom) ||
           set.has(nextNextHalfEdge.secondAtom)
@@ -210,10 +210,10 @@ export class ViewModel {
   }
 
   private loopIsConvex(loop: HalfEdge[]): boolean {
-    return loop.every((halfEdge, k, loopArr) => {
+    return loop.every((halfEdge, k, loopArray) => {
       const angle = this.getAngleBetweenHalfEdges(
         halfEdge,
-        loopArr[(k + 1) % loopArr.length],
+        loopArray[(k + 1) % loopArray.length],
       );
       return angle <= 0;
     });
@@ -310,8 +310,8 @@ export class ViewModel {
     const angles = atomHalfEdges.map((halfEdge) => halfEdge.angle);
     angles.sort((a, b) => a - b);
     const largeAngles: number[] = [];
-    for (let i = 0; i < angles.length - 1; ++i) {
-      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
+    for (let index = 0; index < angles.length - 1; ++index) {
+      largeAngles.push(angles[(index + 1) % angles.length] - angles[index]);
     }
     const firstAngle = angles.at(0);
     const lastAngle = angles.at(-1);
@@ -323,10 +323,10 @@ export class ViewModel {
     largeAngles.push(firstAngle - lastAngle + 2 * Math.PI);
     let largestAngle = 0;
     let neighborAngle = -Math.PI / 2;
-    for (let i = 0; i < angles.length; ++i) {
-      if (largeAngles[i] > largestAngle) {
-        largestAngle = largeAngles[i];
-        neighborAngle = angles[i];
+    for (let index = 0; index < angles.length; ++index) {
+      if (largeAngles[index] > largestAngle) {
+        largestAngle = largeAngles[index];
+        neighborAngle = angles[index];
       }
     }
 

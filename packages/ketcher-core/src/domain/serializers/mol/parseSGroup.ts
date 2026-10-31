@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,45 +21,45 @@ import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
 
 import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
-import utils from './utils';
+import utilities from './utils';
 import { assert } from 'utilities';
 
 function readKeyValuePairs(
-  str: string,
-  isStringValue: boolean,
+  string_: string,
+  valueString: boolean,
 ): Pool<string | number> {
-  const ret = new Pool<string | number>();
-  const partition = utils.partitionLineFixed(str, 3, true);
-  const count = utils.parseDecimalInt(partition[0]);
+  const returnValue = new Pool<string | number>();
+  const partition = utilities.partitionLineFixed(string_, 3, true);
+  const count = utilities.parseDecimalInt(partition[0]);
 
-  for (let i = 0; i < count; ++i) {
-    const key = utils.parseDecimalInt(partition[2 * i + 1]) - 1;
-    const value = isStringValue
-      ? partition[2 * i + 2].trim()
-      : utils.parseDecimalInt(partition[2 * i + 2]);
+  for (let index = 0; index < count; ++index) {
+    const key = utilities.parseDecimalInt(partition[2 * index + 1]) - 1;
+    const value = valueString
+      ? partition[2 * index + 2].trim()
+      : utilities.parseDecimalInt(partition[2 * index + 2]);
 
-    ret.set(key, value);
+    returnValue.set(key, value);
   }
 
-  return ret;
+  return returnValue;
 }
 
 function readKeyMultiValuePairs(
-  str: string,
-  isStringValue: boolean,
+  string_: string,
+  valueString: boolean,
 ): Array<[number, string | number]> {
-  const ret: Array<[number, string | number]> = [];
-  const partition = utils.partitionLineFixed(str, 3, true);
-  const count = utils.parseDecimalInt(partition[0]);
-  for (let i = 0; i < count; ++i) {
-    ret.push([
-      utils.parseDecimalInt(partition[2 * i + 1]) - 1,
-      isStringValue
-        ? partition[2 * i + 2].trim()
-        : utils.parseDecimalInt(partition[2 * i + 2]),
+  const returnValue: Array<[number, string | number]> = [];
+  const partition = utilities.partitionLineFixed(string_, 3, true);
+  const count = utilities.parseDecimalInt(partition[0]);
+  for (let index = 0; index < count; ++index) {
+    returnValue.push([
+      utilities.parseDecimalInt(partition[2 * index + 1]) - 1,
+      valueString
+        ? partition[2 * index + 2].trim()
+        : utilities.parseDecimalInt(partition[2 * index + 2]),
     ]);
   }
-  return ret;
+  return returnValue;
 }
 
 function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
@@ -156,7 +156,7 @@ function postLoadCro(_sgroup: SGroup): void {
   // TODO: Implement after adding CRO type support
 }
 
-function postLoadMod(_sgroup: SGroup): void {
+function postLoadModule(_sgroup: SGroup): void {
   // TODO: Implement after adding MOD type support
 }
 
@@ -188,7 +188,7 @@ const postLoadMap: Record<string, PostLoadHandler> = {
   MER: postLoadMer,
   COP: postLoadCop,
   CRO: postLoadCro,
-  MOD: postLoadMod,
+  MOD: postLoadModule,
   GRA: postLoadGra,
   COM: postLoadCom,
   MIX: postLoadMix,
@@ -221,8 +221,8 @@ function loadSGroup(mol: Struct, sg: SGroup, atomMap: AtomMap): number {
   return sg.id;
 }
 
-function initSGroup(sGroups: SGroupMap, propData: string): void {
-  const kv = readKeyValuePairs(propData, true);
+function initSGroup(sGroups: SGroupMap, propertyData: string): void {
+  const kv = readKeyValuePairs(propertyData, true);
   for (const [key, type] of kv) {
     const sg = new SGroup(type as string);
     (sg as SGroup & { number: number }).number = key;
@@ -230,33 +230,35 @@ function initSGroup(sGroups: SGroupMap, propData: string): void {
   }
 }
 
-function applySGroupProp(
+function applySGroupProperty(
   sGroups: SGroupMap,
-  propName: string,
-  propData: string,
-  isNumeric?: boolean,
-  isCore?: boolean,
+  propertyName: string,
+  propertyData: string,
+  numeric?: boolean,
+  core?: boolean,
 ): void {
-  const kv = readKeyValuePairs(propData, !isNumeric);
+  const kv = readKeyValuePairs(propertyData, !numeric);
   for (const key of kv.keys()) {
-    (isCore ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
+    (core ? sGroups[key] : sGroups[key].data)[propertyName] = kv.get(key);
   }
 }
 
-function applySGroupArrayProp(
+function applySGroupArrayProperty(
   sGroups: SGroupMap,
-  propName: string,
-  propData: string,
+  propertyName: string,
+  propertyData: string,
   shift: number,
 ): void {
-  const sid = utils.parseDecimalInt(propData.slice(1, 4)) - 1;
-  const num = utils.parseDecimalInt(propData.slice(4, 8));
-  let part = toIntArray(utils.partitionLineFixed(propData.slice(8), 3, true));
+  const sid = utilities.parseDecimalInt(propertyData.slice(1, 4)) - 1;
+  const number_ = utilities.parseDecimalInt(propertyData.slice(4, 8));
+  let part = toIntArray(
+    utilities.partitionLineFixed(propertyData.slice(8), 3, true),
+  );
 
-  if (part.length !== num) throw new Error('File format invalid');
+  if (part.length !== number_) throw new Error('File format invalid');
   if (shift) part = part.map((v) => v + shift);
 
-  sGroups[sid][propName] = [...sGroups[sid][propName], ...part];
+  sGroups[sid][propertyName] = sGroups[sid][propertyName].concat(part);
 }
 
 function applyDataSGroupName(sg: SGroup, name: string): void {
@@ -275,9 +277,13 @@ function applyDataSGroupQueryOp(sg: SGroup, queryOp: string): void {
   sg.data.queryOp = queryOp;
 }
 
-function applyDataSGroupDesc(sGroups: SGroupMap, propData: string): void {
-  const split = utils.partitionLine(propData, [4, 31, 2, 20, 2, 3], false);
-  const id = utils.parseDecimalInt(split[0]) - 1;
+function applyDataSGroupDesc(sGroups: SGroupMap, propertyData: string): void {
+  const split = utilities.partitionLine(
+    propertyData,
+    [4, 31, 2, 20, 2, 3],
+    false,
+  );
+  const id = utilities.parseDecimalInt(split[0]) - 1;
   const fieldName = split[1].trim();
   const fieldType = split[2].trim();
   const units = split[3].trim();
@@ -291,9 +297,9 @@ function applyDataSGroupDesc(sGroups: SGroupMap, propData: string): void {
   sGroup.data.queryOp = queryOp;
 }
 
-function applyDataSGroupInfo(sg: SGroup, propData: string): void {
-  const split = utils.partitionLine(
-    propData,
+function applyDataSGroupInfo(sg: SGroup, propertyData: string): void {
+  const split = utilities.partitionLine(
+    propertyData,
     [
       10 /* x.x */, 10 /* y.y */, 4 /* eee */, 1 /* f */, 1 /* g */, 1 /* h */,
       3 /* i */, 3 /* jjj */, 3 /* kkk */, 3 /* ll */, 2 /* m */, 3 /* n */,
@@ -309,9 +315,9 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
   const shouldShowUnits = split[5].trim() === 'U';
   const nCharsRaw = split[7].trim();
   const nCharsToDisplay =
-    nCharsRaw === 'ALL' ? -1 : utils.parseDecimalInt(nCharsRaw);
+    nCharsRaw === 'ALL' ? -1 : utilities.parseDecimalInt(nCharsRaw);
   const tagChar = split[10].trim();
-  const daspPos = utils.parseDecimalInt(split[11].trim());
+  const daspPos = utilities.parseDecimalInt(split[11].trim());
 
   sg.pp = new Vec2(x, -y);
   sg.data.attached = isAttached;
@@ -322,10 +328,13 @@ function applyDataSGroupInfo(sg: SGroup, propData: string): void {
   sg.data.daspPos = daspPos;
 }
 
-function applyDataSGroupInfoLine(sGroups: SGroupMap, propData: string): void {
-  const id = utils.parseDecimalInt(propData.substring(0, 4)) - 1;
+function applyDataSGroupInfoLine(
+  sGroups: SGroupMap,
+  propertyData: string,
+): void {
+  const id = utilities.parseDecimalInt(propertyData.substring(0, 4)) - 1;
   const sg = sGroups[id];
-  applyDataSGroupInfo(sg, propData.substring(5));
+  applyDataSGroupInfo(sg, propertyData.substring(5));
 }
 
 function applyDataSGroupData(
@@ -350,27 +359,27 @@ function applyDataSGroupData(
 
 function applyDataSGroupDataLine(
   sGroups: SGroupMap,
-  propData: string,
-  shouldFinalize: boolean,
+  propertyData: string,
+  finalize: boolean,
 ): void {
-  const id = utils.parseDecimalInt(propData.substring(0, 5)) - 1;
-  const data = propData.substring(5);
+  const id = utilities.parseDecimalInt(propertyData.substring(0, 5)) - 1;
+  const data = propertyData.substring(5);
   const sg = sGroups[id];
-  applyDataSGroupData(sg, data, shouldFinalize);
+  applyDataSGroupData(sg, data, finalize);
 }
 
 // Utility functions
 
-function toIntArray(strArray: string[]): number[] {
-  const ret: number[] = [];
-  for (let j = 0; j < strArray.length; ++j) {
-    ret[j] = utils.parseDecimalInt(strArray[j]);
+function toIntArray(stringArray: string[]): number[] {
+  const returnValue: number[] = [];
+  for (let index = 0; index < stringArray.length; ++index) {
+    returnValue[index] = utilities.parseDecimalInt(stringArray[index]);
   }
-  return ret;
+  return returnValue;
 }
 
-function trimRight(str: string): string {
-  return str.trimEnd();
+function trimRight(string_: string): string {
+  return string_.trimEnd();
 }
 
 function identityMap(array: number[]): Record<number, number> {
@@ -391,28 +400,28 @@ function parseSGroupSAPLineV2000(ctabString: string): {
   sGroupId: number;
   attachmentPoints: SGroupAttachmentPoint[];
 } {
-  const [, sss, nn6] = utils.partitionLine(
+  const [, sss, nn6] = utilities.partitionLine(
     ctabString.slice(0, 7),
     [1, 3, 3],
     false,
   );
-  const chunksNumberInLine = utils.parseDecimalInt(nn6);
+  const chunksNumberInLine = utilities.parseDecimalInt(nn6);
   assert(chunksNumberInLine <= 6);
-  const sGroupId = utils.parseDecimalInt(sss) - 1;
-  const attachmentPointsStr = ctabString.slice(7);
+  const sGroupId = utilities.parseDecimalInt(sss) - 1;
+  const attachmentPointsString = ctabString.slice(7);
   const attachmentPoints: SGroupAttachmentPoint[] = [];
-  for (let i = 0; i < chunksNumberInLine; i++) {
+  for (let index = 0; index < chunksNumberInLine; index++) {
     const CHUNK_SIZE = 11;
-    const stringForParse = attachmentPointsStr.slice(i * CHUNK_SIZE);
+    const stringForParse = attachmentPointsString.slice(index * CHUNK_SIZE);
     const CHUNK_PARTS_LENGTHS = [1, 3, 1, 3, 1, 2];
-    const [, iii, , ooo, , cc] = utils.partitionLine(
+    const [, iii, , ooo, , cc] = utilities.partitionLine(
       stringForParse,
       CHUNK_PARTS_LENGTHS,
       false,
     );
-    const atomId = utils.parseDecimalInt(iii) - 1;
+    const atomId = utilities.parseDecimalInt(iii) - 1;
     assert(atomId >= 0);
-    const leaveAtomParsedId = utils.parseDecimalInt(ooo);
+    const leaveAtomParsedId = utilities.parseDecimalInt(ooo);
     const leaveAtomId =
       leaveAtomParsedId > 0 ? leaveAtomParsedId - 1 : undefined;
     attachmentPoints.push(new SGroupAttachmentPoint(atomId, leaveAtomId, cc));
@@ -425,8 +434,8 @@ export default {
   readKeyMultiValuePairs,
   loadSGroup,
   initSGroup,
-  applySGroupProp,
-  applySGroupArrayProp,
+  applySGroupProp: applySGroupProperty,
+  applySGroupArrayProp: applySGroupArrayProperty,
   applyDataSGroupName,
   applyDataSGroupQuery,
   applyDataSGroupQueryOp,

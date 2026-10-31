@@ -99,13 +99,13 @@ export function getMonomerNaturalAnalogue(
  * Rule 1.1 and rule 1.2 of epam/ketcher#6595. Returns the label the paired
  * base must become, or undefined when the pair must be left alone.
  */
-export function resolveMirroredBaseLabel(params: {
+export function resolveMirroredBaseLabel(parameters: {
   previousNaturalAnalogue?: string;
   newNaturalAnalogue?: string;
   oppositeSugarLabel?: string;
 }): string | undefined {
   const { previousNaturalAnalogue, newNaturalAnalogue, oppositeSugarLabel } =
-    params;
+    parameters;
 
   if (!newNaturalAnalogue) {
     return undefined;
@@ -195,7 +195,7 @@ export interface MirroredBaseTarget {
  * SequenceMode.countMirroredBaseChanges so the confirmation's count and the
  * edit cannot disagree.
  */
-export function resolveMirroredBaseTarget(params: {
+export function resolveMirroredBaseTarget(parameters: {
   editedBase: BaseMonomer;
   previousNaturalAnalogue?: string;
   newBaseMonomerItem: MonomerOrAmbiguousType;
@@ -210,7 +210,7 @@ export function resolveMirroredBaseTarget(params: {
     isSyncEditMode,
     partner: partnerCapturedBeforeEdit,
     wasEditedBaseEligible,
-  } = params;
+  } = parameters;
 
   // Rule 2.1: non-sync mode never touches the opposite strand.
   if (!isSyncEditMode) {
@@ -255,7 +255,7 @@ export function resolveMirroredBaseTarget(params: {
  * analogue did not change), so the caller can tell "no-op" apart from a real
  * command to merge into its own.
  */
-export function createMirroredBaseCommand(params: {
+export function createMirroredBaseCommand(parameters: {
   drawingEntitiesManager: DrawingEntitiesManager;
   editedBase: BaseMonomer;
   previousNaturalAnalogue?: string;
@@ -300,8 +300,8 @@ export function createMirroredBaseCommand(params: {
    */
   wasEditedBaseEligible?: boolean;
 }): Command | undefined {
-  const { drawingEntitiesManager, resolveBaseLibraryItem } = params;
-  const target = resolveMirroredBaseTarget(params);
+  const { drawingEntitiesManager, resolveBaseLibraryItem } = parameters;
+  const target = resolveMirroredBaseTarget(parameters);
 
   if (!target) {
     return undefined;

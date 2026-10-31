@@ -154,8 +154,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(
-          (acc, monomer) =>
-            acc +
+          (accumulator, monomer) =>
+            accumulator +
             monomer.covalentBonds.filter(
               (bond) =>
                 bond instanceof PolymerBond && bond.isSideChainConnection,
@@ -174,7 +174,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr(
         'data-hydrogen-connection-number',
         this.node.monomers.reduce(
-          (acc, monomer) => acc + monomer.hydrogenBonds.length,
+          (accumulator, monomer) => accumulator + monomer.hydrogenBonds.length,
           0,
         ),
       )

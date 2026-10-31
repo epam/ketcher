@@ -738,16 +738,21 @@ export class Struct {
     const atom = this.getBondEndpoint(hb.begin);
     assert(atom, `Bond endpoint ${hb.begin} not found`);
 
-    let i;
-    for (i = 0; i < atom.neighbors.length; ++i) {
-      const neighborHb = this.halfBonds.get(atom.neighbors[i]);
-      assert(neighborHb, `Neighbor half-bond ${atom.neighbors[i]} not found`);
+    let index;
+    for (index = 0; index < atom.neighbors.length; ++index) {
+      const neighborHb = this.halfBonds.get(atom.neighbors[index]);
+      assert(
+        neighborHb,
+        `Neighbor half-bond ${atom.neighbors[index]} not found`,
+      );
       if (neighborHb.ang > hb.ang) break;
     }
-    atom.neighbors.splice(i, 0, hbid);
-    const ir = atom.neighbors[(i + 1) % atom.neighbors.length];
+    atom.neighbors.splice(index, 0, hbid);
+    const ir = atom.neighbors[(index + 1) % atom.neighbors.length];
     const il =
-      atom.neighbors[(i + atom.neighbors.length - 1) % atom.neighbors.length];
+      atom.neighbors[
+        (index + atom.neighbors.length - 1) % atom.neighbors.length
+      ];
     this.setHbNext(il, hbid);
     this.setHbNext(hbid, ir);
     this.halfBondSetAngle(hbid, il);
@@ -766,8 +771,8 @@ export class Struct {
       assert(hb2, `HalfBond ${nei2} not found`);
       return hb1.ang - hb2.ang;
     });
-    atom.neighbors.forEach((nei, i) => {
-      const nextNei = atom.neighbors[(i + 1) % atom.neighbors.length];
+    atom.neighbors.forEach((nei, index) => {
+      const nextNei = atom.neighbors[(index + 1) % atom.neighbors.length];
       const hb = this.halfBonds.get(nei);
       assert(hb, `HalfBond ${nei} not found`);
       const contraHb = this.halfBonds.get(hb.contra);
@@ -1040,27 +1045,28 @@ export class Struct {
   }
 
   getAvgClosestAtomDistance(): number {
-    let totalDist = 0;
-    let minDist;
-    let dist: number;
+    let totalDistribution = 0;
+    let minDistribution;
+    let distribution: number;
     const keys = [...this.atoms.keys()];
     let k;
-    let j;
+    let index;
     for (k = 0; k < keys.length; ++k) {
-      minDist = -1;
-      for (j = 0; j < keys.length; ++j) {
-        if (j === k) continue;
-        const atomJ = this.atoms.get(keys[j]);
+      minDistribution = -1;
+      for (index = 0; index < keys.length; ++index) {
+        if (index === k) continue;
+        const atomJ = this.atoms.get(keys[index]);
         const atomK = this.atoms.get(keys[k]);
-        assert(atomJ, `Atom ${keys[j]} not found`);
+        assert(atomJ, `Atom ${keys[index]} not found`);
         assert(atomK, `Atom ${keys[k]} not found`);
-        dist = Vec2.dist(atomJ.pp, atomK.pp);
-        if (minDist < 0 || minDist > dist) minDist = dist;
+        distribution = Vec2.dist(atomJ.pp, atomK.pp);
+        if (minDistribution < 0 || minDistribution > distribution)
+          minDistribution = distribution;
       }
-      totalDist += minDist;
+      totalDistribution += minDistribution;
     }
 
-    return keys.length > 0 ? totalDist / keys.length : -1;
+    return keys.length > 0 ? totalDistribution / keys.length : -1;
   }
 
   checkBondExists(begin: number, end: number): boolean {
@@ -1273,7 +1279,7 @@ export class Struct {
   }
 
   loopHasSelfIntersections(hbs: Array<number>) {
-    for (const [i, halfBondId] of hbs.entries()) {
+    for (const [index, halfBondId] of hbs.entries()) {
       const hbi = this.halfBonds.get(halfBondId);
       assert(hbi, `HalfBond ${halfBondId} not found`);
       const atomI1 = this.getBondEndpoint(hbi.begin);
@@ -1284,7 +1290,7 @@ export class Struct {
       const bi = atomI2.pp;
       const set = new Pile([hbi.begin, hbi.end]);
 
-      for (const hbjId of hbs.slice(i + 2)) {
+      for (const hbjId of hbs.slice(index + 2)) {
         const hbj = this.halfBonds.get(hbjId);
         assert(hbj, `HalfBond ${hbjId} not found`);
         if (set.has(hbj.begin) || set.has(hbj.end)) continue; // skip edges sharing an atom
@@ -1345,8 +1351,11 @@ export class Struct {
   }
 
   loopIsConvex(loop: LoopHalfBondIds): boolean {
-    return loop.every((item, k, loopArr) => {
-      const angle = this.halfBondAngle(item, loopArr[(k + 1) % loopArr.length]);
+    return loop.every((item, k, loopArray) => {
+      const angle = this.halfBondAngle(
+        item,
+        loopArray[(k + 1) % loopArray.length],
+      );
       return angle <= 0;
     });
   }
@@ -1355,8 +1364,8 @@ export class Struct {
   //  by measuring the total angle between bonds
   loopIsInner(loop: LoopHalfBondIds): boolean {
     let totalAngle = 2 * Math.PI;
-    loop.forEach((hbida, k, loopArr) => {
-      const hbidb = loopArr[(k + 1) % loopArr.length];
+    loop.forEach((hbida, k, loopArray) => {
+      const hbidb = loopArray[(k + 1) % loopArray.length];
       const hbb = this.halfBonds.get(hbidb);
       assert(hbb, `HalfBond ${hbidb} not found`);
       const angle = this.halfBondAngle(hbida, hbidb);
@@ -1483,8 +1492,8 @@ export class Struct {
     }
 
     if (atom.explicitValence >= 0) {
-      const elem = Elements.get(atom.label);
-      atom.implicitH = elem
+      const element = Elements.get(atom.label);
+      atom.implicitH = element
         ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
         : 0;
       if (atom.implicitH < 0) {
@@ -1529,10 +1538,10 @@ export class Struct {
         atom.stereoLabel = null;
         atom.stereoParity = 0;
       } else {
-        const stereoProp = stereAtomsMap.get(id);
-        if (stereoProp) {
-          atom.stereoLabel = stereoProp.stereoLabel;
-          atom.stereoParity = stereoProp.stereoParity;
+        const stereoProperty = stereAtomsMap.get(id);
+        if (stereoProperty) {
+          atom.stereoLabel = stereoProperty.stereoLabel;
+          atom.stereoParity = stereoProperty.stereoParity;
         }
       }
     });
@@ -1575,12 +1584,12 @@ export class Struct {
     connectedComponents.forEach((component) => {
       const bb = this.getCoordBoundingBox(component);
       const c = Vec2.lc2(bb.min, 0.5, bb.max, 0.5);
-      let j = 0;
+      let index = 0;
 
-      while (c.x > barriers[j]) ++j;
+      while (c.x > barriers[index]) ++index;
 
-      const existingComponent = components[j] ?? new Pile<number>();
-      components[j] = existingComponent.union(component);
+      const existingComponent = components[index] ?? new Pile<number>();
+      components[index] = existingComponent.union(component);
     });
 
     const reactants: ConnectedComponent[] = [];
@@ -1893,13 +1902,13 @@ export class Struct {
       return;
     }
 
-    for (let i = 0; i < expandedMonomers.length; i++) {
-      const firstMonomer = expandedMonomers[i];
+    for (let index = 0; index < expandedMonomers.length; index++) {
+      const firstMonomer = expandedMonomers[index];
       const firstMonomerAtoms = new Set(SGroup.getAtoms(this, firstMonomer));
       const firstMonomerAttachmentPoints = firstMonomer.getAttachmentPoints();
 
-      for (let j = i + 1; j < expandedMonomers.length; j++) {
-        const secondMonomer = expandedMonomers[j];
+      for (let index_ = index + 1; index_ < expandedMonomers.length; index_++) {
+        const secondMonomer = expandedMonomers[index_];
         const secondMonomerAtoms = new Set(
           SGroup.getAtoms(this, secondMonomer),
         );
@@ -2021,15 +2030,15 @@ export class Struct {
     this.bonds.set(bondId, newBond);
 
     this.bondInitHalfBonds(bondId);
-    const newBondObj = this.bonds.get(bondId);
-    if (newBondObj?.hb1 && newBondObj?.hb2) {
+    const newBondObject = this.bonds.get(bondId);
+    if (newBondObject?.hb1 && newBondObject?.hb2) {
       // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
       // by hb.ang — inserting with ang=0 (the HalfBond default) would place
       // the half-bond in the wrong position in the neighbor list.
-      this.halfBondUpdate(newBondObj.hb1);
-      this.halfBondUpdate(newBondObj.hb2);
-      this.atomAddNeighbor(newBondObj.hb1);
-      this.atomAddNeighbor(newBondObj.hb2);
+      this.halfBondUpdate(newBondObject.hb1);
+      this.halfBondUpdate(newBondObject.hb2);
+      this.atomAddNeighbor(newBondObject.hb1);
+      this.atomAddNeighbor(newBondObject.hb2);
     }
   }
 }

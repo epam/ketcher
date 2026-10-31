@@ -13,12 +13,12 @@ import { KetSerializer } from 'domain/serializers';
 import { assert } from 'utilities';
 
 export async function prepareStructToRender(
-  structStr: string,
+  structString: string,
   structService: StructService,
   ketcherInstance: Ketcher,
 ): Promise<Struct> {
   const struct: Struct = await parseStruct(
-    structStr,
+    structString,
     structService,
     ketcherInstance,
   );
@@ -32,11 +32,11 @@ export async function prepareStructToRender(
 }
 
 export function parseStruct(
-  structStr: string,
+  structString: string,
   structService: StructService,
   ketcherInstance: Ketcher,
 ) {
-  const format = identifyStructFormat(structStr);
+  const format = identifyStructFormat(structString);
   const factory = new FormatterFactory(structService);
   const options = ketcherInstance.editor.options();
 
@@ -44,7 +44,7 @@ export function parseStruct(
     'dearomatize-on-load': options['dearomatize-on-load'],
     ignoreChiralFlag: options.ignoreChiralFlag,
   });
-  return service.getStructureFromStringAsync(structStr);
+  return service.getStructureFromStringAsync(structString);
 }
 
 export function deleteAllEntitiesOnCanvas() {

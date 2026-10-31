@@ -57,10 +57,10 @@ import { Command } from 'domain/entities/Command';
 import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
-  type MonomerFactoryFn,
+  type MonomerFactoryFunction,
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
-  templateToMonomerProps,
+  templateToMonomerProperties,
   variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
@@ -69,12 +69,12 @@ import {
   convertMonomerTemplateToStruct,
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
-} from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+} from 'domain/serializers/ket/fromKet/monomerTemplateUtilities';
 import { assert, KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
-  getKetRef,
+  getKetReference,
   modifyTransformation,
   populateStructWithSelection,
   setAmbiguousMonomerTemplatePrefix,
@@ -224,19 +224,19 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | null = null;
+  private static _monomerFactory: MonomerFactoryFunction | null = null;
 
-  public static setMonomerFactory(factory: MonomerFactoryFn): void {
+  public static setMonomerFactory(factory: MonomerFactoryFunction): void {
     KetSerializer._monomerFactory = factory;
   }
 
-  private static getMonomerFactory(): MonomerFactoryFn {
-    if (!this._monomerFactory) {
+  private static getMonomerFactory(): MonomerFactoryFunction {
+    if (!KetSerializer._monomerFactory) {
       throw new Error(
         'KetSerializer: monomerFactory has not been initialized. Call KetSerializer.setMonomerFactory() before using serializer features that require it.',
       );
     }
-    return this._monomerFactory;
+    return KetSerializer._monomerFactory;
   }
 
   deserializeMicromolecules(content: string): Struct {
@@ -253,8 +253,8 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
     const moleculeAtomIdMaps = new Map<string, Map<number, number>>();
 
-    Object.keys(nodes).forEach((i) => {
-      const node = nodes[i];
+    Object.keys(nodes).forEach((index) => {
+      const node = nodes[index];
       const nodeReference = '$ref' in node ? node.$ref : undefined;
       const nodeDefinition = (nodeReference ? ket[nodeReference] : node) as
         KetMicromoleculeDefinition | undefined;
@@ -263,7 +263,7 @@ export class KetSerializer implements Serializer<Struct> {
         parseMoleculeNode(
           nodeDefinition,
           resultingStruct,
-          nodeReference ?? `inline-${i}`,
+          nodeReference ?? `inline-${index}`,
           moleculeAtomIdMaps,
         );
       } else if (nodeDefinition) {
@@ -560,7 +560,7 @@ export class KetSerializer implements Serializer<Struct> {
     const monomerLibraryItem = {
       label: template.alias ?? template.id,
       struct: convertMonomerTemplateToStruct(template),
-      props: templateToMonomerProps(template),
+      props: templateToMonomerProperties(template),
       attachmentPoints: getTemplateAttachmentPoints(template),
     };
     fillStructRgLabelsByMonomerTemplate(template, monomerLibraryItem);
@@ -856,7 +856,7 @@ export class KetSerializer implements Serializer<Struct> {
         monomer.monomerItem.props.MonomerNaturalAnalogCode;
     }
 
-    fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
+    fileContent.root.templates.push(getKetReference(templateNameWithPrefix));
   }
 
   private serializeVariantMonomerTemplate(
@@ -880,7 +880,7 @@ export class KetSerializer implements Serializer<Struct> {
       options: variantMonomer.variantMonomerItem.options,
     };
 
-    fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
+    fileContent.root.templates.push(getKetReference(templateNameWithPrefix));
 
     variantMonomer.monomers.forEach((monomer) => {
       const monomerTemplateId =
@@ -992,7 +992,7 @@ export class KetSerializer implements Serializer<Struct> {
           }),
           selected: (shouldSetSelection && monomer.selected) || undefined,
         };
-        fileContent.root.nodes.push(getKetRef(monomerKey));
+        fileContent.root.nodes.push(getKetReference(monomerKey));
 
         nextMonomerId++;
 
@@ -1262,12 +1262,12 @@ export class KetSerializer implements Serializer<Struct> {
   convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {
     const library: MonomerItemType[] & AmbiguousMonomerType[] = [];
 
-    monomersLibrary.root.templates.forEach((templateRef) => {
-      const template = monomersLibrary[templateRef.$ref];
+    monomersLibrary.root.templates.forEach((templateReference) => {
+      const template = monomersLibrary[templateReference.$ref];
 
       if (!template) {
         KetcherLogger.error(
-          `There is a ref for monomer template ${templateRef.$ref}, but template definition is not found`,
+          `There is a ref for monomer template ${templateReference.$ref}, but template definition is not found`,
         );
 
         return;

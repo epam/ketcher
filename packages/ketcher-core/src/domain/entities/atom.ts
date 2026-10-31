@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type AtomListParams, AtomList } from './atomList';
+import { type AtomListParameters, AtomList } from './atomList';
 import { type Point, Vec2 } from './vec2';
 
 import { Elements, isMetalElementType } from 'domain/constants';
@@ -99,7 +99,7 @@ export interface AtomAttributes {
   isotope?: number | null;
   alias?: string | null;
   pseudo?: string;
-  atomList?: AtomListParams | null;
+  atomList?: AtomListParameters | null;
   label: string;
   fragment?: number;
   pp?: Point;
@@ -336,16 +336,17 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in this.attrlist) {
-      if (atom[attr] !== undefined) attrs[attr] = atom[attr];
+    const attributes: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
+    for (const attribute in Atom.attrlist) {
+      if (atom[attribute] !== undefined)
+        attributes[attribute] = atom[attribute];
     }
-    return attrs;
+    return attributes;
   }
 
-  static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
-      return this.attrlist[attr];
+  static attrGetDefault(attribute: string) {
+    if (attribute in Atom.attrlist) {
+      return Atom.attrlist[attribute];
     }
   }
 
@@ -374,13 +375,13 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   clone(fidMap?: Map<number, number>): Atom {
-    const ret = new Atom(this);
+    const returnValue = new Atom(this);
     const fragmentId = fidMap?.get(this.fragment);
 
     if (fragmentId !== undefined) {
-      ret.fragment = fragmentId;
+      returnValue.fragment = fragmentId;
     }
-    return ret;
+    return returnValue;
   }
 
   isQuery(): boolean {

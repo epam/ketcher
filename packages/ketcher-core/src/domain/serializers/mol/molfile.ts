@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
-import utils from './utils';
+import utilities from './utils';
 import { assert, KetcherLogger } from 'utilities';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
@@ -31,7 +31,7 @@ const END_V2000 = '2D 1   1.00000     0.00000     0';
 const NO_PARENT_SGROUP_ID = -1;
 type NumberTuple = [number, number];
 
-interface ParseCTFileProps {
+interface ParseCTFileProperties {
   molfileLines: string[];
   shouldReactionRelayout?: boolean;
   ignoreChiralFlag?: boolean;
@@ -73,24 +73,25 @@ export class Molfile {
     this.bondMapping = {};
   }
 
-  parseCTFile(props: ParseCTFileProps): Struct {
-    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
-    let ret: Struct;
+  parseCTFile(properties: ParseCTFileProperties): Struct {
+    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } =
+      properties;
+    let returnValue: Struct;
     if (molfileLines[0].search(String.raw`\$RXN`) === 0) {
-      ret = common.parseRxn(
+      returnValue = common.parseRxn(
         molfileLines,
         shouldReactionRelayout,
         ignoreChiralFlag,
       );
     } else {
-      ret = common.parseMol(molfileLines, ignoreChiralFlag);
+      returnValue = common.parseMol(molfileLines, ignoreChiralFlag);
     }
-    ret.initHalfBonds();
-    ret.initNeighbors();
-    ret.bindSGroupsToFunctionalGroups();
-    ret.markFragments();
+    returnValue.initHalfBonds();
+    returnValue.initNeighbors();
+    returnValue.bindSGroupsToFunctionalGroups();
+    returnValue.markFragments();
 
-    return ret;
+    return returnValue;
   }
 
   prepareSGroups(
@@ -187,9 +188,9 @@ export class Molfile {
         '$RXN\n' +
         molecule.name +
         '\n\n\n' +
-        utils.paddedNum(reactants.length, 3) +
-        utils.paddedNum(products.length, 3) +
-        utils.paddedNum(0, 3) +
+        utilities.paddedNum(reactants.length, 3) +
+        utilities.paddedNum(products.length, 3) +
+        utilities.paddedNum(0, 3) +
         '\n';
       for (const component of all) {
         const saver = new Molfile();
@@ -261,22 +262,18 @@ export class Molfile {
     this.writeCR();
   }
 
-  write(str: string) {
-    /*
-    saver
-    */
-    this.molfile += str;
+  write(string_: string) {
+    /* saver */
+    this.molfile += string_;
   }
 
-  writeCR(str?: string) {
-    /*
-    saver
-    */
+  writeCR(string_?: string) {
+    /* saver */
     if (arguments.length === 0) {
-      str = '';
+      string_ = '';
     }
 
-    this.molfile += str + '\n';
+    this.molfile += string_ + '\n';
   }
 
   writeWhiteSpace(length = 0) {
@@ -290,29 +287,23 @@ export class Molfile {
     this.write(' '.repeat(Math.max(length, 0)));
   }
 
-  writePadded(str: string, width: number) {
-    /*
-    saver
-    */
-    this.write(str);
-    this.writeWhiteSpace(width - str.length);
+  writePadded(string_: string, width: number) {
+    /* saver */
+    this.write(string_);
+    this.writeWhiteSpace(width - string_.length);
   }
 
   writePaddedNumber(number: number, width: number) {
-    /*
-    saver
-    */
-    const str = (number - 0).toString();
+    /* saver */
+    const string_ = (number - 0).toString();
 
-    this.writeWhiteSpace(width - str.length);
-    this.write(str);
+    this.writeWhiteSpace(width - string_.length);
+    this.write(string_);
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
-    /*
-    saver
-    */
-    this.write(utils.paddedNum(number, width, precision));
+    /* saver */
+    this.write(utilities.paddedNum(number, width, precision));
   }
 
   writeCTab2000Header() {
@@ -350,10 +341,10 @@ export class Molfile {
     this.writeCTab2000Header();
 
     this.mapping = {};
-    let i = 1;
+    let index = 1;
 
     const atomsIds: number[] = [];
-    const atomsProps: {
+    const atomsProperties: {
       id: number;
       value: string;
     }[] = [];
@@ -365,34 +356,34 @@ export class Molfile {
       } else if (atom.pseudo) {
         if (atom.pseudo.length > 3) {
           label = 'A';
-          atomsProps.push({ id, value: `'${atom.pseudo}'` });
+          atomsProperties.push({ id, value: `'${atom.pseudo}'` });
         }
       } else if (atom.alias) {
-        atomsProps.push({ id, value: atom.alias });
+        atomsProperties.push({ id, value: atom.alias });
       } else if (
         !Elements.get(atom.label) &&
         !['A', 'Q', 'X', '*', 'R#'].includes(atom.label)
       ) {
         // search in generics?
         label = 'C';
-        atomsProps.push({ id, value: atom.label });
+        atomsProperties.push({ id, value: atom.label });
       }
 
       this.writeAtom(atom, label);
 
-      this.mapping[id] = i++;
+      this.mapping[id] = index++;
     });
 
     this.bondMapping = {};
-    i = 1;
+    index = 1;
     molecule.bonds.forEach((bond, id) => {
-      this.bondMapping[id] = i++;
+      this.bondMapping[id] = index++;
       this.writeBond(bond);
     });
 
-    while (atomsProps.length > 0) {
-      this.writeAtomProps(atomsProps[0]);
-      atomsProps.splice(0, 1);
+    while (atomsProperties.length > 0) {
+      this.writeAtomProps(atomsProperties[0]);
+      atomsProperties.splice(0, 1);
     }
 
     const chargeList: NumberTuple[] = [];
@@ -442,11 +433,11 @@ export class Molfile {
         if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
           const line =
             '  1 ' +
-            utils.paddedNum(rgid, 3) +
+            utilities.paddedNum(rgid, 3) +
             ' ' +
-            utils.paddedNum(rg.ifthen, 3) +
+            utilities.paddedNum(rg.ifthen, 3) +
             ' ' +
-            utils.paddedNum(rg.resth ? 1 : 0, 3) +
+            utilities.paddedNum(rg.resth ? 1 : 0, 3) +
             '   ' +
             rg.range;
           rglogicList.push(line);
@@ -705,14 +696,14 @@ export class Molfile {
     this.writeCR();
   }
 
-  private writeAtomProps(props) {
+  private writeAtomProps(properties) {
     this.write('A  ');
-    this.writePaddedNumber(props.id + 1, 3);
+    this.writePaddedNumber(properties.id + 1, 3);
     this.writeCR();
-    this.writeCR(props.value);
+    this.writeCR(properties.value);
   }
 
-  private writeAtomPropList(propId: string, values: NumberTuple[]) {
+  private writeAtomPropList(propertyId: string, values: NumberTuple[]) {
     while (values.length > 0) {
       const part: NumberTuple[] = [];
 
@@ -721,7 +712,7 @@ export class Molfile {
         values.splice(0, 1);
       }
 
-      this.write(propId);
+      this.write(propertyId);
       this.writePaddedNumber(part.length, 3);
 
       part.forEach((value) => {

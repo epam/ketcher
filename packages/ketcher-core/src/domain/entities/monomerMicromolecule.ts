@@ -61,8 +61,8 @@ export class MonomerMicromolecule extends SGroup {
     );
     monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
     monomerMicromoleculeClone.atoms = atomIdMap
-      ? monomerMicromolecule.atoms.map((elem) => {
-          const mappedAtomId = atomIdMap.get(elem);
+      ? monomerMicromolecule.atoms.map((element) => {
+          const mappedAtomId = atomIdMap.get(element);
           assert(mappedAtomId !== undefined);
           return mappedAtomId;
         })

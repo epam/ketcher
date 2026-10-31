@@ -8,35 +8,38 @@ import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { Vec2 } from 'domain/entities/vec2';
 import { BondSnapView } from './BondSnapView';
-import { type AngleSnapViewParams, AngleSnapView } from './AngleSnapView';
+import { type AngleSnapViewParameters, AngleSnapView } from './AngleSnapView';
 import type { BaseMonomerRenderer } from 'application/render';
 import {
-  type DistanceSnapViewParams,
+  type DistanceSnapViewParameters,
   DistanceSnapView,
 } from './DistanceSnapView';
 import {
-  type ModifyAminoAcidsViewParams,
+  type ModifyAminoAcidsViewParameters,
   ModifyAminoAcidsView,
 } from './ModifyAminoAcidsView';
 import {
-  type LineLengthHighlightViewParams,
+  type LineLengthHighlightViewParameters,
   LineLengthHighlightView,
 } from './LineLengthHighlightView';
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
 import type { MonomerItemType } from 'domain/types';
-import { type SelectionViewParams, SelectionView } from './SelectionView';
+import { type SelectionViewParameters, SelectionView } from './SelectionView';
 import {
-  type GroupCenterSnapViewParams,
+  type GroupCenterSnapViewParameters,
   GroupCentersnapView,
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
-import { type RotationViewParams, RotationView } from './RotationView';
+import { type RotationViewParameters, RotationView } from './RotationView';
 import {
-  type ReplacementHighlightViewParams,
+  type ReplacementHighlightViewParameters,
   ReplacementHighlightView,
 } from './ReplacementHighlightView';
 
 type ViewData<P> = {
-  show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
+  show: (
+    layer: D3SvgElementSelection<SVGGElement, void>,
+    parameters: P,
+  ) => void;
   params: P;
   onShow?: VoidFunction;
   onHide?: VoidFunction;
@@ -128,12 +131,12 @@ export class TransientDrawingView {
     this.removeView(BondSnapView.viewName);
   }
 
-  public showAngleSnap(params: AngleSnapViewParams) {
-    const { polymerBond } = params;
+  public showAngleSnap(parameters: AngleSnapViewParameters) {
+    const { polymerBond } = parameters;
 
     this.addView(AngleSnapView.viewName, {
       show: AngleSnapView.show,
-      params,
+      params: parameters,
       onShow: () => {
         polymerBond.renderer?.setVisibility(false);
       },
@@ -147,10 +150,10 @@ export class TransientDrawingView {
     this.removeView(AngleSnapView.viewName);
   }
 
-  public showDistanceSnap(params: DistanceSnapViewParams) {
+  public showDistanceSnap(parameters: DistanceSnapViewParameters) {
     this.addView(DistanceSnapView.viewName, {
       show: DistanceSnapView.show,
-      params,
+      params: parameters,
     });
   }
 
@@ -158,10 +161,10 @@ export class TransientDrawingView {
     this.removeView(DistanceSnapView.viewName);
   }
 
-  public showGroupCenterSnap(params: GroupCenterSnapViewParams) {
+  public showGroupCenterSnap(parameters: GroupCenterSnapViewParameters) {
     this.addView(GroupCentersnapView.viewName, {
       show: GroupCentersnapView.show,
-      params,
+      params: parameters,
       topLayer: true,
     });
   }
@@ -170,11 +173,11 @@ export class TransientDrawingView {
     this.removeView(GroupCentersnapView.viewName);
   }
 
-  public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
+  public showModifyAminoAcidsView(parameters: ModifyAminoAcidsViewParameters) {
     this.addView(ModifyAminoAcidsView.viewName, {
       show: ModifyAminoAcidsView.show,
       topLayer: true,
-      params,
+      params: parameters,
     });
   }
 
@@ -182,10 +185,12 @@ export class TransientDrawingView {
     this.removeView(ModifyAminoAcidsView.viewName);
   }
 
-  public showLineLengthHighlight(params: LineLengthHighlightViewParams) {
+  public showLineLengthHighlight(
+    parameters: LineLengthHighlightViewParameters,
+  ) {
     this.addView(LineLengthHighlightView.viewName, {
       show: LineLengthHighlightView.show,
-      params,
+      params: parameters,
       topLayer: true,
     });
   }
@@ -209,10 +214,10 @@ export class TransientDrawingView {
     this.removeView(AutochainPreviewView.viewName);
   }
 
-  public showSelection(params: SelectionViewParams) {
+  public showSelection(parameters: SelectionViewParameters) {
     this.addView(SelectionView.viewName, {
       show: SelectionView.show,
-      params,
+      params: parameters,
     });
   }
 
@@ -220,10 +225,10 @@ export class TransientDrawingView {
     this.removeView(SelectionView.viewName);
   }
 
-  public showRotation(params: RotationViewParams) {
+  public showRotation(parameters: RotationViewParameters) {
     this.addView(RotationView.viewName, {
-      show: (layer, viewParams) => RotationView.show(layer, viewParams),
-      params,
+      show: RotationView.show,
+      params: parameters,
       topLayer: true,
     });
   }
@@ -232,11 +237,12 @@ export class TransientDrawingView {
     this.removeView(RotationView.viewName);
   }
 
-  public showReplacementHighlight(params: ReplacementHighlightViewParams) {
+  public showReplacementHighlight(
+    parameters: ReplacementHighlightViewParameters,
+  ) {
     this.addView(ReplacementHighlightView.viewName, {
-      show: (layer, viewParams) =>
-        ReplacementHighlightView.show(layer, viewParams),
-      params,
+      show: ReplacementHighlightView.show,
+      params: parameters,
       topLayer: true,
     });
   }

@@ -397,14 +397,14 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     ];
     allTailsOffsets.sort((a, b) => a.sub(b).getFloatingPrecision());
     return allTailsOffsets.reduce(
-      (acc: Array<TailDistance>, item, index, array) => {
+      (accumulator: Array<TailDistance>, item, index, array) => {
         if (index === 0) {
-          return acc;
+          return accumulator;
         }
         const distance = item.sub(array[index - 1]);
         const centerFloatingPoint = item.sub(distance.divide(2));
         return [
-          ...acc,
+          ...accumulator,
           {
             distance: distance.getFloatingPrecision(),
             center: centerFloatingPoint.getFloatingPrecision(),
@@ -417,8 +417,8 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   getTailsMaxDistance(): TailDistance {
     return this.getTailsDistance([...this.tailsYOffset.values()]).reduce(
-      (acc: TailDistance, item) => {
-        return item.distance > acc.distance ? item : acc;
+      (accumulator: TailDistance, item) => {
+        return item.distance > accumulator.distance ? item : accumulator;
       },
       { distance: 0, center: 0 },
     );

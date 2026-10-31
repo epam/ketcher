@@ -52,9 +52,9 @@ class ReEnhancedFlag extends ReObject {
   drawHover(render: Render): Element | null {
     // TODO: after the enhanced flag stops being displayed, need to remove the reEnhancedflag object from ctab
     if (!this.#path?.attrs) return null;
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
-    return ret;
+    const returnValue = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, returnValue);
+    return returnValue;
   }
 
   makeSelectionPlate(

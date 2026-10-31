@@ -1,5 +1,5 @@
 import { HalfBond } from 'domain/entities';
-import util from './../../../src/application/render/util';
+import util from './../../../src/application/render/utility';
 
 describe('util', () => {
   describe('updateHalfBondCoordinates()', () => {

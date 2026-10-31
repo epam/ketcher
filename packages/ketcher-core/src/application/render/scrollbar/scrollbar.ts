@@ -1,6 +1,6 @@
 import type { Render } from '../raphaelRender';
 import type { ViewBox } from '../render.types';
-import type { RaphaelElement, RaphaelRectAttr } from './types';
+import type { RaphaelElement, RaphaelRectAttribute } from './types';
 
 export abstract class Scrollbar {
   protected bar: RaphaelElement | null = null;
@@ -33,8 +33,8 @@ export abstract class Scrollbar {
   protected updateAttr(): RaphaelElement {
     if (!this.bar) throw new Error('Unexpected state no bar');
 
-    const attr = this.getDynamicAttr();
-    return this.bar.attr(attr);
+    const attribute = this.getDynamicAttr();
+    return this.bar.attr(attribute);
   }
 
   protected hide(): null {
@@ -76,7 +76,7 @@ export abstract class Scrollbar {
 
   abstract hasOffset(): boolean;
 
-  abstract getDynamicAttr(): RaphaelRectAttr;
+  abstract getDynamicAttr(): RaphaelRectAttribute;
 
   abstract onDragMove(
     dx: number,

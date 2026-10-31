@@ -60,7 +60,7 @@ class ReFrag extends ReObject {
     fid: number,
     render?: Render,
   ): Box2Abs | undefined {
-    let ret: Box2Abs | undefined;
+    let returnValue: Box2Abs | undefined;
     restruct.atoms.forEach((atom) => {
       if (atom.a.fragment !== fid) {
         return;
@@ -77,16 +77,16 @@ class ReFrag extends ReObject {
           .transform(Scale.canvasToModel, render.options);
       } else {
         bba = new Box2Abs(atom.a.pp, atom.a.pp);
-        const ext = new Vec2(0.05 * 3, 0.05 * 3);
-        bba = bba.extend(ext, ext);
+        const extension = new Vec2(0.05 * 3, 0.05 * 3);
+        bba = bba.extend(extension, extension);
       }
-      ret = ret ? Box2Abs.union(ret, bba) : bba;
+      returnValue = returnValue ? Box2Abs.union(returnValue, bba) : bba;
     });
 
-    return ret;
+    return returnValue;
   }
 
-  _draw(render: Render, fid: number, attrs: Record<string, unknown>) {
+  _draw(render: Render, fid: number, attributes: Record<string, unknown>) {
     const bb = this.calcBBox(render.ctab, fid, render);
 
     if (bb) {
@@ -100,7 +100,7 @@ class ReFrag extends ReObject {
       );
       return render.paper
         .rect(p0.x, p0.y, p1.x - p0.x, p1.y - p0.y, 0)
-        .attr(attrs);
+        .attr(attributes);
     }
 
     // TODO abnormal situation, empty fragments must be destroyed by tools

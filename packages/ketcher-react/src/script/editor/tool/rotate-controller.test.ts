@@ -1,4 +1,4 @@
-import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
+import { AttachmentGroup, Atom, Bond, Pool, Struct, Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -321,5 +321,92 @@ describe('Rotate controller', () => {
     expect(selectTool.isMouseDown).toBe(false);
 
     expect(editor.historyStack).toHaveLength(0);
+  });
+
+  describe('when only bonds are selected', () => {
+    // Clicking bonds selects the bonds alone, without their atoms;
+    // the explicit selection adds the atoms each bond connects
+    const bondAtoms = (bonds: number[]) =>
+      bonds.flatMap((bondId) => [bondId * 10, bondId * 10 + 1]);
+    const getSelectedVisibleAtoms = (selection: { atoms?: number[] } | null) =>
+      selection?.atoms ?? [];
+
+    const createController = (bonds: number[]) => {
+      const updateFloatingTools = jest.fn();
+      const editor = {
+        selection: () => ({ bonds }),
+        explicitSelected: () => ({ bonds, atoms: bondAtoms(bonds) }),
+        // @ts-ignore
+        tool: () => new SelectTool(),
+        event: { updateFloatingTools: { dispatch: updateFloatingTools } },
+        render: {
+          options: { microModeScale: 1, offset: new Vec2(), zoom: 1 },
+          viewBox: { minX: 0, minY: 0 },
+          ctab: { molecule: { getSelectedVisibleAtoms } },
+        },
+      };
+      const controller = new RotateController(editor as any);
+      // @ts-ignore
+      controller.rotateTool.getCenter = () => new Vec2(1, 1);
+      // @ts-ignore
+      controller.drawBoundingRect = jest.fn(() => 0);
+      // @ts-ignore
+      controller.drawHandle = jest.fn();
+
+      return { controller, updateFloatingTools };
+    };
+
+    it('frames the atoms of the bonds without the rotation handle (#4152)', () => {
+      const { controller, updateFloatingTools } = createController([0, 6]);
+
+      // @ts-ignore
+      controller.show();
+
+      // @ts-ignore
+      expect(controller.drawBoundingRect).toHaveBeenCalledWith(
+        bondAtoms([0, 6]),
+        undefined,
+        undefined,
+        undefined,
+        [0, 6],
+        undefined,
+      );
+      expect(updateFloatingTools).toHaveBeenCalledWith(
+        expect.objectContaining({ visible: true }),
+      );
+      // @ts-ignore
+      expect(controller.drawHandle).not.toHaveBeenCalled();
+    });
+
+    it('hides for only one bond, like for only one atom', () => {
+      const { controller, updateFloatingTools } = createController([0]);
+
+      // @ts-ignore
+      controller.show();
+
+      // @ts-ignore
+      expect(controller.drawBoundingRect).not.toHaveBeenCalled();
+      expect(updateFloatingTools).not.toHaveBeenCalled();
+    });
+
+    it('centers the rotation on the atoms of the bonds', () => {
+      const atomsCenter = new Vec2(2, 3);
+      const getSelectionBoxCenter = jest.fn(() => atomsCenter);
+      const rotateTool = new RotateTool({
+        selection: () => ({ bonds: [0, 6] }),
+        explicitSelected: () => ({ bonds: [0, 6], atoms: bondAtoms([0, 6]) }),
+        render: {
+          ctab: {
+            getSelectionBoxCenter,
+            molecule: { getSelectedVisibleAtoms, bonds: new Pool() },
+          },
+        },
+      } as any);
+
+      expect(rotateTool.getCenter()).toBe(atomsCenter);
+      expect(getSelectionBoxCenter).toHaveBeenCalledWith(
+        expect.objectContaining({ atoms: bondAtoms([0, 6]) }),
+      );
+    });
   });
 });

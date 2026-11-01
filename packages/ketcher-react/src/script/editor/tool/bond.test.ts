@@ -68,6 +68,45 @@ describe('Haptic bond Attachment Group target', () => {
 });
 
 describe('BondTool rejected drag preview', () => {
+  it('keeps a short drag preview when it ends on the canvas', () => {
+    const update = jest.fn();
+    const editor = {
+      selection: () => null,
+      update,
+      render: { ctab: { molecule: new Struct() } },
+      event: { message: { dispatch: jest.fn() } },
+      hover: jest.fn(),
+      findItem: jest.fn().mockReturnValue(null),
+    } as unknown as Editor;
+    const tool = new BondTool(editor, {
+      type: Bond.PATTERN.TYPE.SINGLE,
+    });
+    const previewAction = {
+      perform: jest.fn(),
+    } as unknown as Action;
+    const dragContext: BondToolDragContext = {
+      xy0: new Vec2(),
+      pageX0: 0,
+      pageY0: 0,
+      pointerDownTimeStamp: 0,
+      hasStartedDragging: true,
+      hapticValidationFailed: false,
+      attachmentGroupValidationFailed: false,
+      action: previewAction,
+      item: { map: 'atoms', id: 1 },
+    };
+    Reflect.set(tool, 'dragCtx', dragContext);
+
+    tool.mouseup({
+      clientX: 100,
+      clientY: 100,
+      timeStamp: 100,
+    } as PointerEvent);
+
+    expect(previewAction.perform).not.toHaveBeenCalled();
+    expect(update).toHaveBeenCalledWith(previewAction);
+  });
+
   it.each([
     ['haptic', HAPTIC_BOND_ERROR_MESSAGE],
     ['attachmentGroup', ATTACHMENT_GROUP_HAPTIC_BOND_ERROR_MESSAGE],

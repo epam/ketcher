@@ -79,8 +79,9 @@ function isClickOnInitialAtom(
   }
 
   return (
+    !dragContext.hasStartedDragging &&
     pointerUpTimeStamp - dragContext.pointerDownTimeStamp <=
-    BOND_CLICK_MAX_DURATION_MS
+      BOND_CLICK_MAX_DURATION_MS
   );
 }
 

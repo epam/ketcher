@@ -23,7 +23,7 @@ import {
   FragmentDeleteStereoAtom,
 } from '../operations';
 import { Action } from './action';
-import { getStereoAtomsMap } from './helpers';
+import { getStereoAtomsMap } from 'domain/helpers/getStereoAtomsMap';
 
 export function fromStereoAtomAttrs(
   restruct,

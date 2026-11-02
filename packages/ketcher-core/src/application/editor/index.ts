@@ -26,6 +26,7 @@ export const vectorUtils = {
 export * from './operations';
 export * from './actions';
 export * from './shared/constants';
+export { SgContexts } from 'domain/constants/sgroup';
 export * from './shared/coordinates';
 export * from './shared/customEvents';
 export * from './editor.types';
@@ -39,5 +40,6 @@ export * from './editorSettings';
 export * from './tools';
 export * from './MacromoleculesConverter';
 export * from './tools/types';
+export { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 export type { FlipDirection } from './shared/utils.types';
 export type { LibraryItemDragState } from './editor.types';

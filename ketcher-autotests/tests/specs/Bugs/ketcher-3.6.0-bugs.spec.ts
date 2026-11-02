@@ -172,8 +172,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 3. Set zoom level to 400%
      * 4. Drag "ghost image" on the canvas
      * 5. Take a screenshot
-     * We have a bug https://github.com/epam/ketcher/issues/7371 when it will be fixed need to update
-     * the screenshot
+     * The ghost stays anchored to the cursor at high zoom.
      */
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(Preset.A);

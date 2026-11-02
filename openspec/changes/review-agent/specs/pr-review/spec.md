@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Review runs only on a manual trigger
-The review SHALL start only when a person adds one of the review labels to a pull request: `Run Claude Review`, `Claude Review: Quick`, or `Claude Review: Opus`. Opening a pull request or pushing commits SHALL NOT start a review. Pull requests whose title contains `Autotests` SHALL be skipped. When the run ends, successfully or not, the hub SHALL remove the label that started it, so that adding it again starts the next round.
+The review SHALL start only when a person adds one of the review labels to a pull request: `Run Claude Review` or `Claude Review: Opus`. Opening a pull request or pushing commits SHALL NOT start a review. Pull requests whose title contains `Autotests` SHALL be skipped. When the run ends, successfully or not, the hub SHALL remove the label that started it, so that adding it again starts the next round.
 
 #### Scenario: Label starts a review
 - **WHEN** a maintainer adds `Run Claude Review` to an open pull request
@@ -16,18 +16,26 @@ The review SHALL start only when a person adds one of the review labels to a pul
 - **THEN** the label that started it is no longer on the pull request
 
 ### Requirement: Hub orchestrates without judging
-The hub SHALL be code without a model. It SHALL compute scope, depth, rule selection, merging, ranking, round state and the posted output itself, and SHALL use separate model runs only to find and to verify. A finding SHALL never be verified by the run that produced it.
+The hub SHALL be code without a model. It SHALL compute scope, the panel, rule selection, merging, ranking, round state and the posted output itself, and SHALL use separate model runs only to find and to verify. A finding SHALL never be verified by the run that produced it.
 
 #### Scenario: Verification runs in a separate process
 - **WHEN** a finder pass reports a finding
 - **THEN** a new model run verifies it, and that run receives the finding and access to the code, not the finder's prompt or reasoning
 
 ### Requirement: Model runs are isolated from the pull request
-Every model run SHALL start in safe mode, so that it loads no `CLAUDE.md`, hooks, skills, plugins, MCP servers or settings from the checked-out tree, and SHALL have only read-only file tools. Prompts, rules and configuration SHALL come from the base branch. These options SHALL be fixed in code, not in configuration.
+Every model run SHALL start in safe mode and restricted mode, so that it loads no `CLAUDE.md`, hooks, skills, plugins, MCP servers, agents or settings files from the checked-out tree, and SHALL have only read-only file tools. No model run SHALL have a tool that writes to GitHub: only the hub posts comments and changes labels. Prompts, rules, the panel script and configuration SHALL come from the base branch. These options SHALL be fixed in code, not in configuration.
 
 #### Scenario: Pull request adds a hook
 - **WHEN** a pull request adds a hook to `.claude/settings.json` and the review runs on it
 - **THEN** no model run loads or executes that hook
+
+#### Scenario: Pull request adds a settings file
+- **WHEN** a pull request adds `.claude/settings.json` with environment variables or permission rules, and the review runs on it
+- **THEN** no model run reads that file
+
+#### Scenario: Pull request text asks the reviewer to post
+- **WHEN** a changed file contains text that tells the reviewer to post a comment or approve the pull request
+- **THEN** no model run can post, and the hub posts only verified findings
 
 ### Requirement: Review scope
 In the first round the hub SHALL review the diff between the pull request base and head. In later rounds it SHALL review only the diff between the head reviewed in the previous round and the current head, and the full diff again when that head is no longer an ancestor. Files under `ketcher-autotests/`, test snapshots, lockfiles, generated files and build output SHALL be excluded from the finder passes.
@@ -40,23 +48,21 @@ In the first round the hub SHALL review the diff between the pull request base a
 - **WHEN** the previously reviewed commit is not an ancestor of the current head
 - **THEN** the finder passes receive the full diff between the base and the current head
 
-### Requirement: Depth selection
-The hub SHALL run a Quick review (the `functional-correctness` lens only) when the `Claude Review: Quick` label started it, or when the diff is at or below the Quick line threshold and touches no sensitive path. Otherwise it SHALL run a Standard review with all finder lenses. The threshold and the sensitive paths SHALL be set in one place in the hub configuration.
+### Requirement: Panel selection
+The hub SHALL run one finder pass per lens that `scripts/review-panel.mjs` picks for the reviewed diff, each in its own model run, in parallel with a configurable concurrency limit. The panel script SHALL pick the `reuse` lens for any change to source code. When the panel script picks no lens, the hub SHALL run no finder pass and SHALL still post the brief.
 
-#### Scenario: Small change outside sensitive paths
-- **WHEN** a pull request changes 40 lines in a React dialog component and the label is `Run Claude Review`
-- **THEN** only the `functional-correctness` lens runs
+#### Scenario: Panel decides the finder passes
+- **WHEN** the panel script picks `correctness` and `code-quality` for the reviewed diff
+- **THEN** exactly those two finder passes run, each in its own model run
 
-#### Scenario: Sensitive path gets a Standard review
-- **WHEN** a pull request changes 20 lines in `packages/ketcher-core/src/domain/serializers/`
-- **THEN** all finder lenses run
+#### Scenario: Source change gets the reuse lens
+- **WHEN** a pull request changes a source file under `packages/ketcher-react/src/`
+- **THEN** the panel includes the `reuse` lens
 
-### Requirement: Finder lenses
-A Standard review SHALL run the `functional-correctness`, `reuse`, `code-quality`, `security`, `performance` and `documentation-accuracy` lenses of the code-review skill as separate finder passes, in parallel with a configurable concurrency limit.
-
-#### Scenario: Standard review
-- **WHEN** the depth is Standard
-- **THEN** exactly the six lenses run, each in its own model run
+#### Scenario: No lens applies
+- **WHEN** the panel script prints `No lens applies.`
+- **THEN** no finder pass runs
+- **AND** the brief is posted with the linked-issue answer and the pull request type
 
 ### Requirement: First pass without the description
 The finder passes SHALL receive the diff, the changed file list and the selected rules, but not the pull request title or description. After the finder passes, the hub SHALL fetch the linked issue and ask one model run whether the diff fixes it; the answer goes in the brief.
@@ -128,7 +134,11 @@ The brief SHALL state whether the diff fixes the linked issue, the pull request 
 - **THEN** a brief is still posted, with the linked-issue answer, the pull request type and zero findings
 
 ### Requirement: Round limit
-The hub SHALL read the round number from the marker of the previous brief. After three rounds it SHALL NOT run any model, SHALL post a short comment that the round limit is reached, and SHALL remove the label.
+The hub SHALL read the round number from the marker of the previous brief, and SHALL read markers only from comments by the account that runs the review workflow. After three rounds it SHALL NOT run any model, SHALL post a short comment that the round limit is reached, and SHALL remove the label.
+
+#### Scenario: Marker from another account is ignored
+- **WHEN** another account posts a comment that contains a review marker
+- **THEN** the hub ignores that marker when it counts rounds and posted findings
 
 #### Scenario: Fourth trigger
 - **WHEN** a review label is added to a pull request that already has three review rounds

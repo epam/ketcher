@@ -404,5 +404,89 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
           .mergedDrawingEntities.clearCanvas(),
       ).toThrow(MissingEditorError);
     });
+
+    it('lets a sibling carry the deps, so the view model of the editor is re-initialized', () => {
+      const { editor } = open(new FlexMode());
+      const initialize = jest.spyOn(editor.viewModel, 'initialize');
+      deserializeKet(ETHANE_KET).mergeInto(editor.drawingEntitiesManager);
+      initialize.mockClear();
+
+      const sibling = editor.drawingEntitiesManager.createEmptySibling();
+      const { mergedDrawingEntities } =
+        editor.drawingEntitiesManager.mergeInto(sibling);
+
+      expect(initialize).toHaveBeenCalledTimes(1);
+      expect(initialize).toHaveBeenCalledWith([...sibling.bonds.values()]);
+      expect(sibling.atoms.size).toBe(2);
+      expect(mergedDrawingEntities.atoms.size).toBe(2);
+    });
+
+    it('lets the sibling of a bare manager merge without a view model', () => {
+      const { editor } = open(new FlexMode());
+      const initialize = jest.spyOn(editor.viewModel, 'initialize');
+      const bare = new DrawingEntitiesManager();
+      deserializeKet(ETHANE_KET).mergeInto(bare);
+
+      const sibling = bare.createEmptySibling();
+      const { mergedDrawingEntities } = bare.mergeInto(sibling);
+
+      expect(initialize).not.toHaveBeenCalled();
+      expect(sibling.atoms.size).toBe(2);
+      expect(mergedDrawingEntities.atoms.size).toBe(2);
+    });
+  });
+
+  describe('merging into a target with no editor', () => {
+    it('merges and leaves the view model of any editor alone', () => {
+      const { editor } = open(new FlexMode());
+      const initialize = jest.spyOn(editor.viewModel, 'initialize');
+      const target = new DrawingEntitiesManager();
+
+      const { mergedDrawingEntities } =
+        deserializeKet(ETHANE_KET).mergeInto(target);
+
+      expect(initialize).not.toHaveBeenCalled();
+      expect(target.monomers.size).toBe(1);
+      expect(target.atoms.size).toBe(2);
+      expect(target.bonds.size).toBe(1);
+      expect(mergedDrawingEntities.bonds.size).toBe(1);
+    });
+  });
+
+  describe('the viewport of the caller', () => {
+    it('takes the center of the canvas from the viewport that is passed', () => {
+      const bare = new DrawingEntitiesManager();
+
+      const center = bare.getCurrentCenterPointOfCanvas({
+        width: 800,
+        height: 600,
+      });
+
+      expect([center.x, center.y]).toEqual([400, 300]);
+    });
+
+    it('moves a bare structure to the center of the viewport that is passed', () => {
+      const detached = deserializeKet(ETHANE_KET);
+
+      detached.centerMacroStructure({ width: 800, height: 600 });
+
+      expect(
+        detached.monomersArray.map((monomer) => [
+          monomer.position.x,
+          monomer.position.y,
+        ]),
+      ).toEqual([[10, 7.5]]);
+    });
+
+    it('needs an editor when no viewport is passed to a bare manager', () => {
+      const bare = new DrawingEntitiesManager();
+
+      expect(() => bare.getCurrentCenterPointOfCanvas()).toThrow(
+        MissingEditorError,
+      );
+      expect(() => deserializeKet(ETHANE_KET).centerMacroStructure()).toThrow(
+        MissingEditorError,
+      );
+    });
   });
 });

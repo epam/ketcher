@@ -1,8 +1,8 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   type DrawingEntitiesManagerDeps,
   type EditorPort,
   MissingEditorError,
+  type Viewport,
 } from 'domain/entities/EditorPort';
 import {
   type AmbiguousMonomerType,
@@ -2414,6 +2414,11 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities = new Struct();
   }
 
+  // An empty manager that shares this one's editor, so it can be a merge target.
+  public createEmptySibling(): DrawingEntitiesManager {
+    return new DrawingEntitiesManager(this.deps);
+  }
+
   public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
     const command = new Command();
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
@@ -2421,9 +2426,6 @@ export class DrawingEntitiesManager {
     const mergedDrawingEntities = new DrawingEntitiesManager(
       targetDrawingEntitiesManager.deps,
     );
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
-
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
         monomer instanceof AmbiguousMonomer
@@ -2515,7 +2517,9 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.bonds.set(addedBond.id, addedBond);
     });
 
-    viewModel.initialize([...targetDrawingEntitiesManager.bonds.values()]);
+    targetDrawingEntitiesManager.editor?.viewModel.initialize([
+      ...targetDrawingEntitiesManager.bonds.values(),
+    ]);
 
     this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
       const bondAddCommand = targetDrawingEntitiesManager.addMonomerToAtomBond(
@@ -2716,9 +2720,9 @@ export class DrawingEntitiesManager {
     return filteredDrawingEntitiesManager;
   }
 
-  public centerMacroStructure() {
+  public centerMacroStructure(viewport?: Viewport) {
     const centerPointOfModel = Coordinates.canvasToModel(
-      this.getCurrentCenterPointOfCanvas(),
+      this.getCurrentCenterPointOfCanvas(viewport),
     );
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
@@ -2728,11 +2732,13 @@ export class DrawingEntitiesManager {
     });
   }
 
-  public getCurrentCenterPointOfCanvas() {
-    const editor = provideEditorInstance();
+  public getCurrentCenterPointOfCanvas(
+    viewport: Viewport = this.requireEditor('getCurrentCenterPointOfCanvas')
+      .canvasOffset,
+  ) {
     const originalCenterPointOfCanvas = new Vec2(
-      editor.canvasOffset.width / 2,
-      editor.canvasOffset.height / 2,
+      viewport.width / 2,
+      viewport.height / 2,
     );
     return Coordinates.viewToCanvas(originalCenterPointOfCanvas);
   }

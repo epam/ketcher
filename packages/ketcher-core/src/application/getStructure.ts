@@ -2,7 +2,7 @@ import type { EditorSelection } from './editor/editor.types';
 import { ketcherProvider } from './ketcherProvider';
 import { type FormatterFactory, SupportedFormat } from './formatters';
 import type { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export function getStructure(
   ketcherId: string,
@@ -21,7 +21,7 @@ export function getStructure(
     struct,
   );
   const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
-    new DrawingEntitiesManager(),
+    drawingEntitiesManager.createEmptySibling(),
   );
 
   return formatter.getStringFromStructureAsync(

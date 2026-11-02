@@ -560,7 +560,7 @@ describe('DrawingEntitiesManager reads of the editor', () => {
       const a = addPeptide(editor, 'A', 0, 5);
       const b = addPeptide(editor, 'A', 3, 5);
       bondPeptides(editor, a, b);
-      const clone = makeDetachedManager();
+      const clone = makeDetachedManager(editor);
       const initialize = jest.spyOn(editor.viewModel, 'initialize');
 
       const { mergedDrawingEntities } = dem.mergeInto(clone);

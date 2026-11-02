@@ -61,16 +61,17 @@ export const createEditor = (mode?: BaseMode) => {
   return { canvas, editor };
 };
 
-// The one line that builds a manager that no editor owns. The refactor
-// changes this construction and nothing else about these tests.
-export const makeDetachedManager = () => new DrawingEntitiesManager();
+// The one line that builds an empty clone to merge the editor's manager into.
+// The refactor changes this construction and nothing else about these tests.
+export const makeDetachedManager = (editor: CoreEditor) =>
+  editor.drawingEntitiesManager.createEmptySibling();
 
 // The one line that centers a detached manager on the canvas of an editor.
 // The refactor changes this signature and nothing else about these tests.
 export const centerDetached = (
   dem: DrawingEntitiesManager,
-  _editor: CoreEditor,
-) => dem.centerMacroStructure();
+  editor: CoreEditor,
+) => dem.centerMacroStructure(editor.canvasOffset);
 
 export const deserializeKet = (ketText: string) => {
   const deserialized = new KetSerializer().deserializeToDrawingEntities(

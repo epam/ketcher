@@ -201,7 +201,9 @@ const hasAddedStructureToCanvas = ({
   if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
     positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
   } else {
-    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure(
+      editor.canvasOffset,
+    );
   }
 
   const { command: modelChanges } =

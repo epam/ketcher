@@ -51,17 +51,17 @@ function isVertical(angleDeg: number): boolean {
 
 /**
  * Converts a model direction (y points down) into a visual angle in
- * [0, 360), where 0 is right and 90 is up. Renderers call this once so the
- * y flip lives in one place.
+ * [0, 360), where 0 is right and 90 is up. The y flip lives here only.
  */
-export function bondAngleDeg(dir: { x: number; y: number }): number {
+function bondAngleDeg(dir: { x: number; y: number }): number {
   const angleDeg = (Math.atan2(-dir.y, dir.x) * 180) / Math.PI;
   return (angleDeg + FULL_TURN_DEG) % FULL_TURN_DEG;
 }
 
 /**
  * Picks the side of the atom symbol where implicit hydrogens are drawn.
- * Angles are visual: 0 is right, 90 is up.
+ * Each bond is a direction from the atom in model coordinates, where y points
+ * down, so an up bond is { x: 0, y: -1 }.
  *
  * A terminal atom (at most one bond) puts them opposite its bond, and on the
  * right for no bond or a vertical bond. An internal atom puts them in the
@@ -69,10 +69,10 @@ export function bondAngleDeg(dir: { x: number; y: number }): number {
  * no radical (a radical occupies top), and on the right when none is free.
  */
 export function getImplicitHydrogenSide(
-  bondAnglesDeg: readonly number[],
+  bondDirections: ReadonlyArray<{ x: number; y: number }>,
   hasRadical: boolean,
 ): ImplicitHydrogenSide {
-  const angles = bondAnglesDeg.map(normalizeAngle);
+  const angles = bondDirections.map(bondAngleDeg).map(normalizeAngle);
 
   if (angles.length <= 1) {
     const [angle] = angles;

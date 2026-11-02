@@ -1,12 +1,21 @@
 import {
-  bondAngleDeg,
   getImplicitHydrogenSide,
   ImplicitHydrogenSide,
 } from '../implicitHydrogenSide';
 
-// Angles are visual: 0 = right, 90 = up. Expected sides come from the
-// "atom-editing" spec of the dynamic-implicit-hydrogen-position change.
+// The tables state bonds as visual angles, 0 = right and 90 = up, as the
+// scenarios of openspec/specs/atom-editing/spec.md do. The helper takes model
+// directions, where y points down, so each angle goes through direction().
 type Row = [string, number[], boolean, ImplicitHydrogenSide];
+
+function direction(visualAngleDeg: number) {
+  const radians = (visualAngleDeg * Math.PI) / 180;
+  return { x: Math.cos(radians), y: -Math.sin(radians) };
+}
+
+function sideFor(angles: number[], hasRadical: boolean) {
+  return getImplicitHydrogenSide(angles.map(direction), hasRadical);
+}
 
 describe('getImplicitHydrogenSide', () => {
   describe('terminal atom', () => {
@@ -32,7 +41,7 @@ describe('getImplicitHydrogenSide', () => {
     ];
 
     it.each(rows)('%s', (_name, angles, hasRadical, expected) => {
-      expect(getImplicitHydrogenSide(angles, hasRadical)).toBe(expected);
+      expect(sideFor(angles, hasRadical)).toBe(expected);
     });
   });
 
@@ -77,7 +86,7 @@ describe('getImplicitHydrogenSide', () => {
     ];
 
     it.each(rows)('%s', (_name, angles, hasRadical, expected) => {
-      expect(getImplicitHydrogenSide(angles, hasRadical)).toBe(expected);
+      expect(sideFor(angles, hasRadical)).toBe(expected);
     });
   });
 
@@ -99,21 +108,30 @@ describe('getImplicitHydrogenSide', () => {
     ];
 
     it.each(rows)('%s', (_name, angles, hasRadical, expected) => {
-      expect(getImplicitHydrogenSide(angles, hasRadical)).toBe(expected);
+      expect(sideFor(angles, hasRadical)).toBe(expected);
     });
   });
 });
 
-describe('bondAngleDeg', () => {
-  it.each([
-    ['right', { x: 1, y: 0 }, 0],
-    ['up (model y is down)', { x: 0, y: -1 }, 90],
-    ['left', { x: -1, y: 0 }, 180],
-    ['down (model y is down)', { x: 0, y: 1 }, 270],
-    ['up and right', { x: 1, y: -1 }, 45],
-    ['down and right', { x: 1, y: 1 }, 315],
-    ['up and left, unnormalised length', { x: -3, y: -3 }, 135],
-  ])('%s', (_name, dir, expected) => {
-    expect(bondAngleDeg(dir)).toBeCloseTo(expected, 6);
+describe('model directions', () => {
+  it('reads y as pointing down: an up bond is { x: 0, y: -1 }', () => {
+    const right = { x: 1, y: 0 };
+    const up = { x: 0, y: -1 };
+    const left = { x: -1, y: 0 };
+
+    // Right, up and left bonds leave only the bottom quadrant free. A y-up
+    // reading of the same vectors would put the up bond at the bottom and
+    // return top.
+    expect(getImplicitHydrogenSide([right, up, left], false)).toBe('bottom');
+  });
+
+  it('puts hydrogens opposite a bond that points up and right', () => {
+    expect(getImplicitHydrogenSide([{ x: 1, y: -1 }], false)).toBe('left');
+    expect(getImplicitHydrogenSide([{ x: -1, y: 1 }], false)).toBe('right');
+  });
+
+  it('does not depend on the length of a direction', () => {
+    expect(getImplicitHydrogenSide([{ x: -30, y: 0 }], false)).toBe('right');
+    expect(getImplicitHydrogenSide([{ x: 0.001, y: 0 }], false)).toBe('left');
   });
 });

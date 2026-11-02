@@ -24,7 +24,6 @@ import {
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 import {
-  bondAngleDeg,
   getImplicitHydrogenSide,
   type ImplicitHydrogenSide,
   isGenericAtom,
@@ -311,7 +310,7 @@ export class AtomRenderer extends BaseRenderer {
       [
         ...halfEdges.map((halfEdge) => halfEdge.direction),
         ...monomerDirections,
-      ].map(bondAngleDeg),
+      ],
       this.atom.hasRadical,
     );
   }

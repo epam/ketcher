@@ -135,6 +135,8 @@ import {
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+import { createEditorPort } from 'application/editor/editorPort';
+import type { DrawingEntitiesManagerDeps } from 'domain/entities/EditorPort';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { EditorTheme } from 'domain/types/theme';
@@ -251,6 +253,9 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
 export class CoreEditor {
+  private disposed = false;
+  // A field, so it exists before the constructor body creates the first manager.
+  private readonly managerDeps = this.createManagerDeps();
   public events: IEditorEvents;
   public ketcherId?: string;
 
@@ -286,6 +291,19 @@ export class CoreEditor {
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
+
+  // Managers created by this editor read it through the port. After destroy()
+  // they behave as managers without an editor.
+  private createManagerDeps(): DrawingEntitiesManagerDeps {
+    const port = createEditorPort(() => this);
+    const isDisposed = () => this.disposed;
+
+    return {
+      get editor() {
+        return isDisposed() ? undefined : port;
+      },
+    };
+  }
 
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;
@@ -342,7 +360,7 @@ export class CoreEditor {
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
-    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.drawingEntitiesManager = new DrawingEntitiesManager(this.managerDeps);
     this.viewModel = new ViewModel();
     this.dragDropHandler = new LibraryItemDragDropHandler({
       get drawingEntitiesManager() {
@@ -2615,7 +2633,7 @@ export class CoreEditor {
       if (isCanvasSaved) {
         const struct = this.micromoleculesEditor.struct();
         this.rescaleStructForModeTransition(struct, 'microToMacro');
-        const manager = new DrawingEntitiesManager();
+        const manager = new DrawingEntitiesManager(this.managerDeps);
         const { modelChanges } =
           MacromoleculesConverter.convertStructToDrawingEntities(
             struct,
@@ -2801,7 +2819,7 @@ export class CoreEditor {
     this.micromoleculesEditor.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
-    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.drawingEntitiesManager = new DrawingEntitiesManager(this.managerDeps);
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
     this.micromoleculesEditor.selection(null);
     this.micromoleculesEditor.addHistoryAction(
@@ -2839,7 +2857,7 @@ export class CoreEditor {
     }
     this.micromoleculesEditor?.selection(null);
     const restorePreviousMode = this.captureModeState();
-    this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.drawingEntitiesManager = new DrawingEntitiesManager(this.managerDeps);
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
     this.resetModeIfNeeded();
     this.clearTransientViews();
@@ -3008,5 +3026,6 @@ export class CoreEditor {
     this.unsubscribeEvents();
     resetEditorInstance();
     AmbiguousMonomer.setMonomersLibrarySource(undefined);
+    this.disposed = true;
   }
 }

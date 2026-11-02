@@ -19,6 +19,16 @@ interface Box {
 }
 
 /**
+ * A position in model coordinates (y down) at a visual angle from the origin:
+ * 0 degrees is right and 90 is up.
+ */
+export const at = (deg: number, length = 1) =>
+  new Vec2(
+    Math.cos((deg * Math.PI) / 180) * length,
+    -Math.sin((deg * Math.PI) / 180) * length,
+  );
+
+/**
  * The canvas the renderers draw into: BaseRenderer finds it by its selector.
  * Returns it so a test can read what was drawn.
  */
@@ -52,6 +62,8 @@ export function installEditorStub() {
               };
             }),
       },
+      // No half-edge of a bond: a bond renderer builds its root and draws no line.
+      bondsToHalfEdges: new Map(),
       getLargestSectorFromAtomNeighbours: () => ({
         neighborAngle: 0,
         largestAngle: Math.PI,
@@ -67,7 +79,9 @@ export function createAtom(
   label: CoreAtomLabel = AtomLabel.N,
 ) {
   const monomer = {
-    monomerItem: { struct: { atoms: new Map(), frags: new Map() } },
+    monomerItem: {
+      struct: { atoms: new Map(), bonds: new Map(), frags: new Map() },
+    },
   } as unknown as BaseMonomer;
   return new Atom(position, monomer, 1, label, properties);
 }

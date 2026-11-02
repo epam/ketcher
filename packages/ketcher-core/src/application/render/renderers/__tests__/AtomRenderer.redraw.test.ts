@@ -4,12 +4,14 @@ import { AtomCIP } from 'domain/entities/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import {
+  at,
   connect,
   createAtom,
   createCanvas,
   disconnect,
   drawnLabel,
   installEditorStub,
+  labelElementOf,
   mockTextBoxes,
 } from './atomRendererHarness';
 
@@ -22,14 +24,6 @@ jest.mock('application/ketcherProvider', () => ({
     getKetcher: () => ({ settingsService: undefined }),
   },
 }));
-
-// Positions are model coordinates, y down. Directions in degrees are visual:
-// 0 is right and 90 is up.
-const at = (deg: number, length = 1) =>
-  new Vec2(
-    Math.cos((deg * Math.PI) / 180) * length,
-    -Math.sin((deg * Math.PI) / 180) * length,
-  );
 
 function draw(atom: ReturnType<typeof createAtom>) {
   const renderer = new AtomRenderer(atom);
@@ -115,6 +109,36 @@ describe('AtomRenderer redraw for a new hydrogen side', () => {
     ).toHaveLength(2);
   });
 
+  it('measures the hover contour of a charged atom as a fresh drawing does', () => {
+    // The charge sits right of the label, so the contour must reach it.
+    restoreBoxes();
+    restoreBoxes = mockTextBoxes({
+      '+': { x: 16, y: -12, width: 6, height: 8 },
+    });
+    const hoverRect = (atom: { id: number }) =>
+      document
+        .querySelector(`[data-atomid="${atom.id}"] rect[stroke="#0097a8"]`)
+        ?.getAttribute('width');
+    const drawFlipped = (redraw: boolean) => {
+      createCanvas();
+      const centre = createAtom(new Vec2(0, 0), { charge: 1 });
+      const lower = createAtom(at(330));
+      const flipping = createAtom(at(redraw ? 210 : 30));
+      connect(centre, lower);
+      connect(centre, flipping);
+      const renderer = draw(centre);
+      if (redraw) {
+        flipping.moveAbsolute(at(30));
+        expect(renderer.redrawLabelIfHydrogenSideChanged()).toBe(true);
+      }
+      return hoverRect(centre);
+    };
+
+    const fresh = drawFlipped(false);
+    expect(Number(fresh)).toBeGreaterThan(24);
+    expect(drawFlipped(true)).toBe(fresh);
+  });
+
   it('does not touch the label while the side is the same', () => {
     const { centre, flipping, renderer } = stereocentre();
     const labelBefore = document.querySelector(
@@ -130,24 +154,19 @@ describe('AtomRenderer redraw for a new hydrogen side', () => {
   });
 
   describe('an atom that draws no hydrogens', () => {
-    it('never computes a side, so moving its neighbours costs nothing', () => {
+    it('keeps its label when its neighbours move', () => {
       const middle = createAtom(new Vec2(0, 0), {}, AtomLabel.C);
       const left = createAtom(at(210));
       const right = createAtom(at(330));
       connect(middle, left);
       connect(middle, right);
       const renderer = draw(middle);
-      const computeSide = jest.spyOn(
-        AtomRenderer.prototype as unknown as {
-          computeHydrogenSide: () => void;
-        },
-        'computeHydrogenSide',
-      );
+      const label = labelElementOf(middle);
 
       right.moveAbsolute(at(30));
 
       expect(renderer.redrawLabelIfHydrogenSideChanged()).toBe(false);
-      expect(computeSide).not.toHaveBeenCalled();
+      expect(labelElementOf(middle)).toBe(label);
     });
 
     it('does not redraw for a full-valence heteroatom whose neighbours move', () => {

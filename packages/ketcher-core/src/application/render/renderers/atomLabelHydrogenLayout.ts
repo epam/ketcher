@@ -28,9 +28,9 @@ type TspanSelection = D3SvgElementSelection<SVGTSpanElement, void>;
 
 export const LABEL_FONT_SIZE = 13;
 // Matches the label font, so the H line does not touch the symbol line.
-export const LINE_HEIGHT = 13;
+export const LINE_HEIGHT = LABEL_FONT_SIZE;
 // The hydrogen count is a subscript, as in the side-by-side layout.
-const COUNT_DROP = 3;
+export const COUNT_DROP = 3;
 // Distance from the centre of H to the centre of its count.
 const COUNT_OFFSET_X = 10;
 // Half the advance of one digit of the 13px label font. The count is centred

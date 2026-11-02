@@ -150,26 +150,55 @@ describe('isStackedSide', () => {
 });
 
 describe('isLabelAnchoredLeft', () => {
-  it.each<[ImplicitHydrogenSide, number, boolean]>([
-    ['left', 1, true],
-    ['left', 2, false],
-    ['left', 4, false],
-    ['right', 0, false],
-    ['right', 1, false],
-    ['right', 3, false],
-    ['top', 1, false],
-    ['top', 2, false],
-    ['bottom', 2, false],
-  ])('for side %s and %i visible bonds is %s', (side, bondCount, expected) => {
-    expect(isLabelAnchoredLeft(side, bondCount)).toBe(expected);
-  });
+  // Label alignment is anchored left for an atom with one visible bond that
+  // points right (hydrogens on the left), and for a bondless atom whose element
+  // is flagged leftH (O, F, S, Cl, Se, Br, I) or has no element (atom lists,
+  // R#, pseudoatoms, generic atoms). A bondless D or T, a carbon, a nitrogen
+  // and an atom with two or more bonds are not.
+  it.each<[string, number, ImplicitHydrogenSide, boolean]>([
+    ['D', 0, 'right', false],
+    ['T', 0, 'right', false],
+    ['C', 0, 'right', false],
+    ['N', 0, 'right', false],
+    ['O', 0, 'right', true],
+    ['F', 0, 'right', true],
+    ['S', 0, 'right', true],
+    ['Cl', 0, 'right', true],
+    ['Se', 0, 'right', true],
+    ['Br', 0, 'right', true],
+    ['I', 0, 'right', true],
+    ['L#', 0, 'right', true],
+    ['R#', 0, 'right', true],
+    ['A', 0, 'right', true],
+    ['Q', 0, 'right', true],
+    ['L', 0, 'right', true],
+    ['N', 1, 'left', true],
+    ['O', 1, 'left', true],
+    ['N', 1, 'right', false],
+    ['Cl', 1, 'right', false],
+    ['L#', 1, 'right', false],
+    ['N', 2, 'left', false],
+    ['Cl', 2, 'right', false],
+    ['L#', 2, 'top', false],
+    ['O', 4, 'bottom', false],
+  ])(
+    'for label %s with %i visible bonds and side %s is %s',
+    (label, visibleBondCount, side, expected) => {
+      expect(isLabelAnchoredLeft({ side, visibleBondCount, label })).toBe(
+        expected,
+      );
+    },
+  );
 
   it('is false for an internal atom whose free quadrant on the left was picked', () => {
-    // A bond right and one up leave the left free, so the helper says left;
-    // master centred such an atom.
+    // A bond right and one up leave the left free, so the side is left, but
+    // label alignment looks at the bond count: an internal atom is not
+    // anchored left.
     const side = sideFor([0, 90], false);
 
     expect(side).toBe('left');
-    expect(isLabelAnchoredLeft(side, 2)).toBe(false);
+    expect(isLabelAnchoredLeft({ side, visibleBondCount: 2, label: 'N' })).toBe(
+      false,
+    );
   });
 });

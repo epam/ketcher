@@ -61,11 +61,11 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         ),
       );
 
-      // If the label is visible, stop at the boxes that stop an atom-to-atom
-      // bond too: the symbol and what sits next to it, not the hydrogens drawn
-      // on a line of their own.
+      // If the label is visible, stop at its text: the symbol and what sits
+      // next to it, not the hydrogens drawn on a line of their own and not the
+      // radical.
       const trimBoxes = atomRenderer.isLabelVisible
-        ? atomRenderer.bondTrimBBoxes.map(
+        ? atomRenderer.monomerBondTrimBBoxes.map(
             ({ x, y, width, height }) =>
               new Box2Abs(new Vec2(x, y), new Vec2(x + width, y + height)),
           )

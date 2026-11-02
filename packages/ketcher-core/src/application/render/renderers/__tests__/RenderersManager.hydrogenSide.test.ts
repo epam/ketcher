@@ -8,6 +8,7 @@ import type { BaseRenderer } from '../BaseRenderer';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
 import {
+  at,
   connect,
   createAtom,
   createCanvas,
@@ -28,13 +29,6 @@ jest.mock('application/ketcherProvider', () => ({
     getKetcher: () => ({ settingsService: undefined }),
   },
 }));
-
-// Model coordinates, y down. Degrees are visual: 0 is right and 90 is up.
-const at = (deg: number, length = 1) =>
-  new Vec2(
-    Math.cos((deg * Math.PI) / 180) * length,
-    -Math.sin((deg * Math.PI) / 180) * length,
-  );
 
 // The atoms are real and drawn by real AtomRenderers. A bond renderer needs
 // the whole view model, so a bond only records that it was trimmed again.
@@ -167,11 +161,9 @@ describe('RenderersManager hydrogen side of atom labels', () => {
 
     it('checks each atom once for a drag that moves all of a molecule', () => {
       const { centre, flipping, lowerRight } = stereocentre();
-      const computeSide = jest.spyOn(
-        AtomRenderer.prototype as unknown as {
-          computeHydrogenSide: () => void;
-        },
-        'computeHydrogenSide',
+      const checkSide = jest.spyOn(
+        AtomRenderer.prototype,
+        'redrawLabelIfHydrogenSideChanged',
       );
 
       [centre, flipping, lowerRight].forEach((atom) => {
@@ -180,23 +172,21 @@ describe('RenderersManager hydrogen side of atom labels', () => {
       });
       manager.runPostRenderMethods();
 
-      expect(computeSide).toHaveBeenCalledTimes(3);
+      expect(checkSide).toHaveBeenCalledTimes(3);
     });
 
     it('checks nothing the second time when nothing was scheduled', () => {
       const { flipping } = stereocentre();
       manager.moveDrawingEntity(flipping);
       manager.runPostRenderMethods();
-      const computeSide = jest.spyOn(
-        AtomRenderer.prototype as unknown as {
-          computeHydrogenSide: () => void;
-        },
-        'computeHydrogenSide',
+      const checkSide = jest.spyOn(
+        AtomRenderer.prototype,
+        'redrawLabelIfHydrogenSideChanged',
       );
 
       manager.runPostRenderMethods();
 
-      expect(computeSide).not.toHaveBeenCalled();
+      expect(checkSide).not.toHaveBeenCalled();
     });
   });
 

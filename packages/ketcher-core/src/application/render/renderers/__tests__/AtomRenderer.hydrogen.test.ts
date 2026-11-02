@@ -280,9 +280,10 @@ describe('AtomRenderer.appendLabel hydrogen layout', () => {
 });
 
 describe('AtomRenderer label alignment of an atom that draws no hydrogens', () => {
-  // Master drew an atom with two or more bonds centred on its position,
-  // whichever quadrants the bonds left free; a free left quadrant only moves
-  // hydrogens, so it must not move a label without them.
+  // An atom with two or more bonds is centred on its position, whichever
+  // quadrants the bonds leave free; a free left quadrant only moves hydrogens,
+  // so it must not move a label without them. A bondless atom is aligned left
+  // unless it is D, T or a carbon-like element (see isLabelAnchoredLeft).
   const anchorAndX = (textNode: SVGTextElement) => ({
     anchor: textNode.getAttribute('text-anchor'),
     x: textNode.getAttribute('x'),
@@ -354,6 +355,49 @@ describe('AtomRenderer label alignment of an atom that draws no hydrogens', () =
     );
 
     expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it.each([AtomLabel.Cl, AtomLabel.O, AtomLabel.F, AtomLabel.Br])(
+    'end-anchors a bondless %s that draws no hydrogens, with a charge',
+    (label) => {
+      const { textNode } = drawLabel(
+        fakeAtom({ label, charge: -1, hydrogenAmount: 0 }),
+        [],
+      );
+
+      expect(anchorAndX(textNode)).toEqual({ anchor: 'end', x: '5' });
+    },
+  );
+
+  it('end-anchors the alias of a bondless Cl, which follows the element', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ label: AtomLabel.Cl, alias: 'Boc', hydrogenAmount: 0 }),
+      [],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'end', x: '5' });
+  });
+
+  it.each([AtomLabel.D, AtomLabel.T, AtomLabel.N, AtomLabel.C])(
+    'centres a bondless %s that draws no hydrogens',
+    (label) => {
+      const { textNode } = drawLabel(
+        fakeAtom({ label, charge: -1, hydrogenAmount: 0 }),
+        [],
+      );
+
+      expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+    },
+  );
+
+  it('draws the hydrogens of a bondless O on its right, as for a bondless N', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ label: AtomLabel.O, hydrogenAmount: 2 }),
+      [],
+    );
+
+    expect(tspansOf(textNode).map(({ text }) => text)).toEqual(['O', 'H', '2']);
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'start', x: '-5' });
   });
 });
 
@@ -479,7 +523,7 @@ describe('AtomRenderer label contour with stacked hydrogens', () => {
     });
   });
 
-  it('keeps a zero measured height for hydrogens on the right, as before', () => {
+  it('keeps a zero measured height for hydrogens on the right', () => {
     const { renderer, textNode } = drawLabel(fakeAtom(), [180]);
     Object.defineProperty(textNode, 'getBBox', {
       value: () => ({ x: -5, y: -8, width: 10, height: 0 }),

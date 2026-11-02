@@ -544,9 +544,10 @@ describe('ReAtom bond trimming with hydrogens', () => {
   });
 });
 
-// Master put hydrogens left only for an atom with at most one visible bond.
-// A free left quadrant of an internal atom moves hydrogens, not the atom-list
-// label or the atom id, which stayed on the right branch.
+// The atom-list label and the atom id are aligned left for an atom with one
+// bond going right, and for a bondless atom that is not D, T or a carbon-like
+// element (see isLabelAnchoredLeft). A free left quadrant of an internal atom
+// moves hydrogens only, so they stay on the right branch.
 describe('ReAtom label alignment next to a free left quadrant', () => {
   const ATOM_LIST: AtomListParams = { notList: false, ids: [6, 7] };
 
@@ -564,8 +565,8 @@ describe('ReAtom label alignment next to a free left quadrant', () => {
 
   // The id of the atom at the origin is '0'; the label is drawn at the same y
   // minus the shift of a label, so only x tells the sides apart.
-  const idX = (bondAnglesDeg: number[]) => {
-    const { paper } = showAtom({ bondAnglesDeg, showAtomIds: true });
+  const idX = (bondAnglesDeg: number[], label?: string) => {
+    const { paper } = showAtom({ label, bondAnglesDeg, showAtomIds: true });
     return paper.texts.find(({ text }) => text === '0')?.x ?? NaN;
   };
 
@@ -599,5 +600,38 @@ describe('ReAtom label alignment next to a free left quadrant', () => {
 
   it('puts the atom id of an atom with one bond going left right of the atom', () => {
     expect(idX([180])).toBeGreaterThan(0);
+  });
+
+  it('shifts the atom-list label of a bondless atom to the left', () => {
+    expect(labelShift([])).toBeLessThan(0);
+  });
+
+  it('shifts a bondless atom-list label as far as one with a bond going right', () => {
+    expect(labelShift([])).toBeCloseTo(labelShift([0]));
+  });
+
+  it.each(['Cl', 'O', 'L#'])(
+    'puts the atom id of a bondless %s left of the atom',
+    (label) => {
+      expect(idX([], label)).toBeLessThan(0);
+    },
+  );
+
+  it.each(['C', 'N', 'D', 'T'])(
+    'puts the atom id of a bondless %s right of the atom',
+    (label) => {
+      expect(idX([], label)).toBeGreaterThan(0);
+    },
+  );
+
+  it('keeps hydrogens of a bondless O on the right while its id is on the left', () => {
+    const { reatom } = showAtom({
+      label: 'O',
+      implicitH: 2,
+      showAtomIds: true,
+    });
+
+    expect(reatom.hydrogenSide).toBe('right');
+    expect(reatom.labelAnchoredLeft).toBe(true);
   });
 });

@@ -12,8 +12,8 @@
 
 ## 3. Macromolecules mode rendering
 
-- [ ] 3.1 In `AtomRenderer.ts`, replace `shouldHydrogenBeOnLeft` with the helper's result, feeding it the angles of `viewModel.atomsToHalfEdges`, and lay out `top` and `bottom` hydrogens in `appendLabel`; verify with a unit test for the renderer's label for terminal and internal atoms.
-- [ ] 3.2 Verify that the hover and selection contours of a macromolecules-mode atom include top and bottom hydrogens, with a unit test on `labelBoundingBox`.
+- [x] 3.1 In `AtomRenderer.ts`, replace `shouldHydrogenBeOnLeft` with the helper's result, feeding it the angles of `viewModel.atomsToHalfEdges`, and lay out `top` and `bottom` hydrogens in `appendLabel`; verify with a unit test for the renderer's label for terminal and internal atoms.
+- [x] 3.2 Verify that the hover and selection contours of a macromolecules-mode atom include top and bottom hydrogens, with a unit test on `labelBoundingBox`.
 
 ## 4. Snapshots and in-app proof
 

@@ -32,8 +32,8 @@ export const runAsyncAction = async <T = unknown>(
     const res = await action();
     eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
     return res;
-  } catch (e) {
-    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', e);
+  } catch (error) {
+    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', error);
     eventEmitter.emit(KetcherAsyncEvents.FAILURE);
     return undefined;
   }

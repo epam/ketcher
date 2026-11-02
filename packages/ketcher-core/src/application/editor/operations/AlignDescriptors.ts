@@ -32,7 +32,7 @@ class AlignDescriptors extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroups: SGroup[] = Array.from(struct.sgroups.values()).reverse();
+    const sgroups: SGroup[] = [...struct.sgroups.values()].reverse();
 
     const structBox = struct.getCoordBoundingBoxObj();
     if (!structBox) return;

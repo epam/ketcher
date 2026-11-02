@@ -17,7 +17,7 @@
 import { useEffect, useRef } from 'react';
 
 export const useRequestAnimationFrame = (
-  active: boolean,
+  isActive: boolean,
   onFrame: (deltaTimeInMilliseconds: number) => void,
 ) => {
   const callbackRef = useRef(onFrame);
@@ -26,7 +26,7 @@ export const useRequestAnimationFrame = (
   }, [onFrame]);
 
   useEffect(() => {
-    if (!active) return;
+    if (!isActive) return;
 
     let requestAnimationFrameId = 0;
     let previousTime = performance.now();
@@ -40,5 +40,5 @@ export const useRequestAnimationFrame = (
 
     requestAnimationFrameId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(requestAnimationFrameId);
-  }, [active]);
+  }, [isActive]);
 };

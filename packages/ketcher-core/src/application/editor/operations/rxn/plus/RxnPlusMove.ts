@@ -27,13 +27,13 @@ export class RxnPlusMove extends BaseOperation {
     noinvalidate?: boolean;
   };
 
-  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(id?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.RXN_PLUS_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct) {
-    const { id, d, noinvalidate } = this.data;
+    const { id, d, noinvalidate: shouldSkipInvalidation } = this.data;
     if (id === undefined || !d) return;
 
     const struct = restruct.molecule;
@@ -47,7 +47,7 @@ export class RxnPlusMove extends BaseOperation {
 
     this.data.d = d.negated();
 
-    if (!noinvalidate) {
+    if (!shouldSkipInvalidation) {
       BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1);
     }
   }

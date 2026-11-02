@@ -43,12 +43,12 @@ const debouncedSetAndHoverMergeItems = debounce(function (
   editor,
   pasteItems,
   pasteToolInstance,
-  needResetTool = false,
+  shouldResetTool = false,
 ) {
   const mergeItems = getItemsToFuse(editor, pasteItems);
   editor.hover(
     getHoverToFuse(mergeItems),
-    needResetTool ? pasteToolInstance : undefined,
+    shouldResetTool ? pasteToolInstance : undefined,
   );
   pasteToolInstance.setMergeItems(mergeItems);
   notifyItemsToMergeInitializationComplete();
@@ -163,7 +163,7 @@ class PasteTool implements Tool {
         this.editor.render,
       );
 
-      const extraBond = true;
+      const hasExtraBond = true;
 
       const struct = this.editor.struct();
       const targetGroup = struct.sgroups.get(this.dragCtx.item.id);
@@ -216,7 +216,7 @@ class PasteTool implements Tool {
         prepareTemplateFromSingleGroup(this.struct),
         atomId,
         angle,
-        extraBond,
+        hasExtraBond,
       );
 
       this.dragCtx.action = action;
@@ -246,10 +246,10 @@ class PasteTool implements Tool {
   mouseup() {
     const idsOfItemsMerged = this.mergeItems && {
       ...(this.mergeItems.atoms && {
-        atoms: Array.from(this.mergeItems.atoms.values()),
+        atoms: [...this.mergeItems.atoms.values()],
       }),
       ...(this.mergeItems.bonds && {
-        bonds: Array.from(this.mergeItems.bonds.values()),
+        bonds: [...this.mergeItems.bonds.values()],
       }),
     };
 

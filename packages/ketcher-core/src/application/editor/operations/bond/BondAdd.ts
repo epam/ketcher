@@ -35,7 +35,7 @@ class BondAdd extends BaseOperation {
     begin?: number,
     end?: number,
     bond?: Partial<BondAttributes>,
-    needInvalidateAtoms = true,
+    shouldInvalidateAtoms = true,
   ) {
     super(OperationType.BOND_ADD, OperationPriority.BOND_ADD);
     this.data = {
@@ -43,7 +43,7 @@ class BondAdd extends BaseOperation {
       begin: begin ?? null,
       end: end ?? null,
       bid: null,
-      needInvalidateAtoms,
+      needInvalidateAtoms: shouldInvalidateAtoms,
     };
   }
 

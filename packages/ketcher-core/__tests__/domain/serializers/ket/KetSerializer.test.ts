@@ -502,7 +502,7 @@ describe('deserialize (ToStruct)', () => {
     errorSpy.mockRestore();
   });
   it('validation function', () => {
-    const spy = jest.spyOn(validate, 'validate');
+    const spy = jest.spyOn(validate, 'isValidKet');
     ket.deserialize(preparedKet);
     expect(spy).toHaveBeenCalled();
     expect(spy.mock.results[0].value).toBeTruthy();

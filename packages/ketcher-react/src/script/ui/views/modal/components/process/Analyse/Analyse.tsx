@@ -104,13 +104,13 @@ const analyseItems: AnalyseItem[] = [
 function renderInputComponent(
   item: AnalyseItem,
   values: AnalyseValues | null,
-  loading: boolean,
+  isLoading: boolean,
   round: RoundSettings,
 ): ReactElement {
   if (item.key === 'gross') {
     return (
       <FormulaInput
-        value={values && !loading ? (values[item.key] as string) || '' : ''}
+        value={values && !isLoading ? (values[item.key] as string) || '' : ''}
         contentEditable={false}
       />
     );
@@ -121,7 +121,7 @@ function renderInputComponent(
       <textarea
         readOnly
         value={
-          values && !loading && item.round
+          values && !isLoading && item.round
             ? roundOff(
                 values[item.key] as string | number,
                 Number(round[item.round]),
@@ -137,7 +137,7 @@ function renderInputComponent(
     <FrozenInput
       data-testid={item.name + '-input'}
       value={
-        values && !loading && item.round
+        values && !isLoading && item.round
           ? roundOff(
               values[item.key] as string | number,
               Number(round[item.round]),

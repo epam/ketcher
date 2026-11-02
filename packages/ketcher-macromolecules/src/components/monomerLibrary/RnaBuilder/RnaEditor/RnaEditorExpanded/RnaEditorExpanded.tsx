@@ -47,8 +47,8 @@ import {
   selectCurrentMonomerGroup,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
-  selectIsBaseModificationBlocked,
-  selectIsPresetReadyToSave,
+  isRnaBaseModificationBlocked,
+  isRnaPresetReadyToSave,
   selectAllPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
@@ -58,7 +58,7 @@ import {
   setInvalidPresetNameError,
   setSequenceSelection,
   setSequenceSelectionName,
-  selectIsActivePresetNewAndEmpty,
+  isActiveRnaPresetNewAndEmpty,
   recalculateRnaBuilderValidations,
   setActiveMonomerKey,
 } from 'state/rna-builder';
@@ -68,10 +68,7 @@ import {
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorScroll';
 import { getMonomerUniqueKey } from 'state/library';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 import {
   ChangeEvent,
   KeyboardEvent,
@@ -141,7 +138,7 @@ export const RnaEditorExpanded = ({
   const dispatch = useDispatch();
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activePreset = useAppSelector(selectActivePreset);
-  const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
+  const isActivePresetEmpty = useAppSelector(isActiveRnaPresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const editor = useAppSelector(selectEditor);
   const presets = useAppSelector(selectAllPresets);
@@ -218,10 +215,10 @@ export const RnaEditorExpanded = ({
   const sequenceSelectionRef = useLatestRef(sequenceSelection);
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const isBaseModificationBlocked = useAppSelector(
-    selectIsBaseModificationBlocked,
+    isRnaBaseModificationBlocked,
   );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
@@ -229,7 +226,7 @@ export const RnaEditorExpanded = ({
     lastAppliedPresetMonomerGroupItem,
     setLastAppliedPresetMonomerGroupItem,
   ] = useState(activePresetGroupItem);
-  const [wasEditMode, setWasEditMode] = useState(isEditMode);
+  const [isPreviousEditMode, setIsPreviousEditMode] = useState(isEditMode);
   const [appliedPresetSync, setAppliedPresetSync] = useState<{
     initialized: boolean;
     item: typeof activePresetGroupItem;
@@ -241,18 +238,18 @@ export const RnaEditorExpanded = ({
   });
   const sequenceSelectionGroupNames: SequenceSelectionGroupNames | undefined =
     generateSequenceSelectionGroupNames(sequenceSelection);
-  if (isEditMode !== wasEditMode) {
-    setWasEditMode(isEditMode);
+  if (isEditMode !== isPreviousEditMode) {
+    setIsPreviousEditMode(isEditMode);
     if (isEditMode) {
       setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
       setIsSequenceSelectionUpdated(false);
     }
   } else if (
-    activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
     isEditMode &&
     isSequenceEditInRNABuilderMode &&
     activePresetGroupItem &&
-    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem
+    activePresetGroupItem !== lastAppliedPresetMonomerGroupItem &&
+    activeMonomerGroup !== RnaBuilderPresetsItem.Presets
   ) {
     setLastAppliedPresetMonomerGroupItem(activePresetGroupItem);
     setIsSequenceSelectionUpdated(true);
@@ -331,10 +328,10 @@ export const RnaEditorExpanded = ({
 
   useEffect(() => {
     if (
-      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets ||
-      !isEditModeRef.current ||
       !isSequenceEditInRNABuilderMode ||
-      !activePresetGroupItem
+      !activePresetGroupItem ||
+      !isEditModeRef.current ||
+      activeMonomerGroupRef.current === RnaBuilderPresetsItem.Presets
     ) {
       return;
     }
@@ -347,8 +344,8 @@ export const RnaEditorExpanded = ({
         // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
         // Do not set 'sugarLabel', 'baseLabel' for Phosphate
         if (
-          (node.isNucleosideConnectedAndSelectedWithPhosphate &&
-            field === 'phosphateLabel') ||
+          (field === 'phosphateLabel' &&
+            node.isNucleosideConnectedAndSelectedWithPhosphate) ||
           (node.type === Entities.Phosphate &&
             (field === 'sugarLabel' || field === 'baseLabel'))
         ) {
@@ -400,9 +397,9 @@ export const RnaEditorExpanded = ({
 
   const selectGroup = (selectedGroup) => () => {
     if (
-      selectedGroup === MonomerGroups.BASES &&
       isBaseModificationBlocked &&
-      isSequenceEditInRNABuilderMode
+      isSequenceEditInRNABuilderMode &&
+      selectedGroup === MonomerGroups.BASES
     ) {
       editor?.events.error.dispatch(BASE_MODIFICATION_DISABLED_IN_SYNC_MODE);
     }
@@ -488,14 +485,14 @@ export const RnaEditorExpanded = ({
   const renderPhosphateTriggerIcon = (
     position: RnaPhosphatePosition,
     isActive = false,
-    highlightOnHover = false,
+    shouldHighlightOnHover = false,
   ) => {
     return (
       <div
         className={clsx(
           styles.phosphatePositionIconWrapper,
           isActive && styles.active,
-          highlightOnHover && styles.hover,
+          shouldHighlightOnHover && styles.hover,
         )}
       >
         {position === 'left' ? (
@@ -555,7 +552,7 @@ export const RnaEditorExpanded = ({
     // since for the purposes of sequence mode a preset always keeps the
     // phosphate on the right — req 5.1/5.2 of #9120.
     const isPhosphatePositionReadOnly = isSequenceEditInRNABuilderMode;
-    const triggerDisabled =
+    const isTriggerDisabled =
       isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
     const triggerPosition = isPhosphatePositionReadOnly
       ? 'right'
@@ -563,20 +560,21 @@ export const RnaEditorExpanded = ({
     const isPhosphateGroupActive =
       !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;
-    const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
+    const shouldShowPhosphatePositionTooltip =
+      !isEditMode || !isPhosphateGroupActive;
 
     return (
       <div
         className={clsx(
           styles.phosphatePositionIconWrapperOnPresetCard,
           isPhosphateGroupActive &&
-            !triggerDisabled &&
+            !isTriggerDisabled &&
             styles.phosphatePositionIconWrapperOnPresetCardActive,
         )}
       >
         <Tooltip
           title={
-            showPhosphatePositionTooltip
+            shouldShowPhosphatePositionTooltip
               ? getPhosphatePositionTooltip(triggerPosition)
               : ''
           }
@@ -585,7 +583,7 @@ export const RnaEditorExpanded = ({
             <button
               type="button"
               className={styles.phosphatePositionTrigger}
-              disabled={triggerDisabled}
+              disabled={isTriggerDisabled}
               aria-label={t('monomerLibrary.selectPhosphatePositionAriaLabel')}
             >
               {renderPhosphateTriggerIcon(
@@ -595,12 +593,12 @@ export const RnaEditorExpanded = ({
             </button>
           </span>
         </Tooltip>
-        {!triggerDisabled && !showPhosphatePositionTooltip ? (
+        {isTriggerDisabled || shouldShowPhosphatePositionTooltip ? null : (
           <div className={styles.phosphatePositionSelector}>
             {renderPhosphatePositionOption('left', !is5PrimeAvailable)}
             {renderPhosphatePositionOption('right', !is3PrimeAvailable)}
           </div>
-        ) : null}
+        )}
       </div>
     );
   };
@@ -631,7 +629,7 @@ export const RnaEditorExpanded = ({
 
     const resolvedPhosphatePosition = resolvePhosphatePosition(newPreset);
 
-    if (newPreset?.phosphate && !resolvedPhosphatePosition) {
+    if (!resolvedPhosphatePosition && newPreset?.phosphate) {
       return;
     }
 
@@ -747,8 +745,7 @@ export const RnaEditorExpanded = ({
 
   let mainButton: JSX.Element;
   const isSaveButtonDisabled =
-    !selectIsPresetReadyToSave(newPreset) ||
-    saveButtonDisabledByPhosphatePosition;
+    !isRnaPresetReadyToSave(newPreset) || saveButtonDisabledByPhosphatePosition;
 
   if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
@@ -875,7 +872,7 @@ export const RnaEditorExpanded = ({
         ) : (
           <StyledButton
             data-testid="duplicate-btn"
-            disabled={!selectIsPresetReadyToSave(newPreset)}
+            disabled={!isRnaPresetReadyToSave(newPreset)}
             onClick={() => onDuplicate(newPreset)}
           >
             {t('monomerLibrary.duplicateAndEdit')}

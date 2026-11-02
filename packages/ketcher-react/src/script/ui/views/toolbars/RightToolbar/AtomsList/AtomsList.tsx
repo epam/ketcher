@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -41,7 +40,7 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps;
 
-const StyledAtom = styled(Atom)((props: any) => {
+const StyledAtom = styled(Atom)((props) => {
   const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000';
   return `
        color: ${atomColor};
@@ -81,6 +80,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
     <div ref={ref}>
       {atoms.map((label) => {
         const element = Elements.get(label);
+        if (!element) return null;
         const shortcut = atoms.includes(label)
           ? shortcutStr(atomCuts[label])
           : null;

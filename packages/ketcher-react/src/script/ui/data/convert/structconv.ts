@@ -313,7 +313,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
-    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
+    charge: charge !== 0 && restAtom.charge ? Number(charge) : null,
     // Empty string from cleared form field must become null like undefined (not ?? alone).
     alias: restAtom.alias === '' ? null : (restAtom.alias ?? null),
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
@@ -448,7 +448,7 @@ export function fromBond(sbond?: Bond) {
     type: isCustomQuery ? '' : fromBondType(type, stereo),
     topology: sbond.topology,
     center: sbond.reactingCenterStatus,
-    customQuery: !isCustomQuery ? '' : (sbond.customQuery?.toString() ?? ''),
+    customQuery: isCustomQuery ? (sbond.customQuery?.toString() ?? '') : '',
   };
 }
 
@@ -458,7 +458,7 @@ export function toBond(bond: ReturnType<typeof fromBond>) {
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    customQuery: !isCustomQuery ? null : bond.customQuery,
+    customQuery: isCustomQuery ? bond.customQuery : null,
     ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }

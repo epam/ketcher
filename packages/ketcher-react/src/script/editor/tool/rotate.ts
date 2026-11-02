@@ -205,9 +205,7 @@ class RotateTool implements Tool {
   }
 
   mousemove = throttle((event) => {
-    if (!this.dragCtx) {
-      this.editor.hover(null, null, event);
-    } else {
+    if (this.dragCtx) {
       const dragCtx = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
@@ -251,6 +249,8 @@ class RotateTool implements Tool {
 
         this.editor.update(dragCtx.action, true);
       }
+    } else {
+      this.editor.hover(null, null, event);
     }
     return true;
   }, 40); // 25fps
@@ -296,9 +296,23 @@ class RotateTool implements Tool {
           this.struct,
           this.selection?.atoms,
         );
-        const monomerRotateAction = new Action();
+        const monomerSGroups: MonomerMicromolecule[] = [];
         sGroups.forEach((sGroup) => {
           if (sGroup instanceof MonomerMicromolecule) {
+            monomerSGroups.push(sGroup);
+          }
+        });
+        // If at least one monomer in the selection is expanded, every
+        // monomer (including collapsed ones) gets its rotation metadata
+        // assigned, matching the atom-transform behavior in `fromRotate`.
+        // If none are expanded, no monomer gets a `RotateMonomerOperation`
+        // since their atoms were only rigidly translated, not rotated.
+        const hasExpandedMonomer = monomerSGroups.some((sGroup) =>
+          sGroup.isExpanded(),
+        );
+        const monomerRotateAction = new Action();
+        if (hasExpandedMonomer) {
+          monomerSGroups.forEach((sGroup) => {
             const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
@@ -306,8 +320,8 @@ class RotateTool implements Tool {
                 value: angleInRadians,
               }),
             );
-          }
-        });
+          });
+        }
         // `perform` executes the rotation and returns the inverted action
         // (the one that must go into the undo history). Merging the
         // un-inverted `monomerRotateAction` here instead would make `undo`

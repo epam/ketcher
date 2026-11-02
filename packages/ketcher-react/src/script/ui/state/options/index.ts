@@ -260,7 +260,7 @@ export function changeImage(file: RecognizeImageFile) {
   };
 }
 
-export function shouldFragment(isFrag: boolean) {
+export function setFragmentRecognition(isFrag: boolean) {
   return {
     type: 'IS_FRAGMENT_RECOGNIZE',
     data: { fragment: isFrag },

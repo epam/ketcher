@@ -29,9 +29,9 @@ interface TextMoveData {
 export class TextMove extends BaseOperation {
   data: TextMoveData;
 
-  constructor(id: number, d: Vec2, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.TEXT_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct): void {

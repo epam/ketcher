@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type ComponentType,
-  lazy,
-  Suspense,
-  useCallback,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 import { useTranslation } from 'react-i18next';
@@ -48,24 +39,20 @@ import { useAppContext } from 'src/hooks';
 import {
   alignToCentroid,
   collapseExpandedSuperatoms,
-  mergeCoordinatesFromResult,
+  didMergeCoordinatesFromResult,
   mergeMetaObjects,
-  needsMetaPreservation,
-  needsStructurePreservation,
+  shouldPreserveMeta as hasMetaToPreserve,
+  shouldPreserveStructure as hasStructureToPreserve,
 } from './miewStructMerge';
 
-const Viewer = lazy(() =>
-  import('miew-react').then((module) => ({
-    default: module.default as unknown as ComponentType<any>,
-  })),
-);
+const Viewer = lazy(() => import('miew-react'));
 
 type MiewDialogProps = {
-  miewOpts: any;
+  miewOpts: ReturnType<typeof createMiewOptions>;
   server: StructService;
   struct: Struct;
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: unknown) => void;
   miewTheme: 'dark' | 'light';
 };
 type MiewDialogCallProps = {
@@ -183,8 +170,8 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsInitialized(true);
         })
-        .catch((e) => {
-          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        .catch((error) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', error);
         });
     },
     [miewOpts, server, struct],
@@ -204,8 +191,8 @@ const MiewDialog = ({
       return;
     }
 
-    const shouldPreserveStructure = needsStructurePreservation(struct);
-    const shouldPreserveMeta = needsMetaPreservation(struct);
+    const shouldPreserveStructure = hasStructureToPreserve(struct);
+    const shouldPreserveMeta = hasMetaToPreserve(struct);
 
     if (!shouldPreserveStructure && !shouldPreserveMeta) {
       dispatch(load(cmlStruct));
@@ -218,10 +205,10 @@ const MiewDialog = ({
       result = await parseStruct(cmlStruct, server, serverSettings);
       result.rescale();
       alignToCentroid(result, struct);
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::parseAndPrepareResult',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(t('dialogs:process.miew.processFailedError')),
@@ -234,7 +221,7 @@ const MiewDialog = ({
         const preserved = struct.clone();
         preserved.enableInitiallySelected();
 
-        if (!mergeCoordinatesFromResult(result, preserved)) {
+        if (!didMergeCoordinatesFromResult(result, preserved)) {
           KetcherLogger.error(
             'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
             'Coordinate merge validation failed',
@@ -260,10 +247,10 @@ const MiewDialog = ({
           }),
         );
         return;
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'Miew.tsx::MiewDialog::exportCML::mergeCoordinates',
-          e,
+          error,
         );
         dispatch(
           showSnackbarNotification(
@@ -277,10 +264,10 @@ const MiewDialog = ({
     try {
       mergeMetaObjects(result, struct);
       dispatch(load(result, { preserveViewport: true, skipCenter: true }));
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'Miew.tsx::MiewDialog::exportCML::mergeMetaObjects',
-        e,
+        error,
       );
       dispatch(
         showSnackbarNotification(

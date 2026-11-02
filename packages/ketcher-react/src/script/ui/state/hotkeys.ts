@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -42,7 +41,7 @@ import actions from '../action';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,
-  selectIsAbbreviationLookupOpen,
+  isAbbreviationLookupOpen,
 } from './abbreviationLookup/selectors';
 import {
   closeAbbreviationLookup,
@@ -104,7 +103,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   if (globalThis.isPolymerEditorTurnedOn) {
     return true;
   }
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+  if (state.modal || isAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
@@ -116,7 +115,7 @@ function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
   const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -241,7 +240,7 @@ function handleHotkeyGroup(
   event,
 ) {
   const index = checkGroupOnTool(group, actionTool);
-  const groupLength = group !== null ? group.length : 1;
+  const groupLength = group === null ? 1 : group.length;
   const newIndex = (index + 1) % groupLength;
   const actName = group[newIndex];
 
@@ -286,7 +285,7 @@ function handleHotkeyGroup(
 
     event.preventDefault();
   } else if (isIE) {
-    clipArea.exec(event);
+    clipArea.canExecuteClipboardCommand(event);
   }
 }
 
@@ -307,7 +306,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key?.length === 1 && !hoveredItem) {
+  if (!hoveredItem && key?.length === 1) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -324,7 +323,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }
@@ -500,10 +499,10 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const simpleObjectOrText = Boolean(
+  const hasSimpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
-  if (simpleObjectOrText && isIE && errorHandler) {
+  if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
@@ -545,10 +544,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+  } catch (error) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -577,10 +576,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+  } catch (error) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 

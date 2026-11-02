@@ -16,7 +16,7 @@ type StructuresClientRect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;
 const getDrawnStructuresClientRect = (
   drawnStructures: Element,
 ): StructuresClientRect => {
-  const contentRects = Array.from(drawnStructures.children)
+  const contentRects = [...drawnStructures.children]
     .filter((child) => !child.matches(TRANSIENT_LAYERS_SELECTOR))
     .map((child) => child.getBoundingClientRect())
     .filter((rect) => rect.width > 0 || rect.height > 0);

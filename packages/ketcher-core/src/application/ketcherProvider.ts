@@ -12,7 +12,7 @@ class KetcherProvider {
   }
 
   getIndexById(id: string) {
-    return Array.from(this.ketcherInstances.keys()).indexOf(id);
+    return [...this.ketcherInstances.keys()].indexOf(id);
   }
 
   getKetcher(id?: string) {

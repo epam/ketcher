@@ -33,8 +33,8 @@ export function updateSelectedBonds({
         });
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('bonds.ts::updateSelectedBonds', e);
+      .catch((error) => {
+        KetcherLogger.error('bonds.ts::updateSelectedBonds', error);
       });
   }
 }

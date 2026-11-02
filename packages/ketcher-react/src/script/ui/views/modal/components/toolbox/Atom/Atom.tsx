@@ -121,7 +121,7 @@ const Atom: FC<Props> = (props: Props) => {
   };
 
   const handleCustomQueryCheckBoxChange = (
-    value: boolean,
+    isCustomQueryEnabled: boolean,
     formState,
     setCustomQuery: (value: string) => void,
   ) => {
@@ -129,8 +129,8 @@ const Atom: FC<Props> = (props: Props) => {
       return;
     }
 
-    const query = value ? getAtomCustomQuery(formState) : '';
-    setIsCustomQuery(value);
+    const query = isCustomQueryEnabled ? getAtomCustomQuery(formState) : '';
+    setIsCustomQuery(isCustomQueryEnabled);
     setExpandedAccordions([]);
     setCustomQuery(query);
   };

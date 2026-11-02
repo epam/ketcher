@@ -21,17 +21,19 @@ import {
   ANALYZING_FILE,
 } from './request.types';
 
-export function indigoVerification(data: boolean): RequestActionTypes {
+export function indigoVerification(
+  isVerifyingWithIndigo: boolean,
+): RequestActionTypes {
   return {
     type: INDIGO_VERIFICATION,
-    data,
+    data: isVerifyingWithIndigo,
   };
 }
 
-export function setAnalyzingFile(data: boolean): RequestActionTypes {
+export function setAnalyzingFile(isAnalyzingFile: boolean): RequestActionTypes {
   return {
     type: ANALYZING_FILE,
-    data,
+    data: isAnalyzingFile,
   };
 }
 

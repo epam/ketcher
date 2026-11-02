@@ -162,7 +162,7 @@ const Open: FC<Props> = (props) => {
     }, 0);
   };
 
-  const withFooterContent =
+  const hasFooterContent =
     (currentState === MODAL_STATES.textEditor ||
       currentState === MODAL_STATES.presentationViewer) &&
     !isAnalyzingFile;
@@ -172,7 +172,6 @@ const Open: FC<Props> = (props) => {
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />;
   }
-
   return (
     <Dialog
       title={t('dialogs:document.open.dialogTitle')}
@@ -181,7 +180,7 @@ const Open: FC<Props> = (props) => {
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
-        withFooterContent ? (
+        hasFooterContent ? (
           <FooterContent
             structStr={structStr}
             openHandler={openHandler}

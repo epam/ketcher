@@ -104,8 +104,8 @@ export function editTmpl(tmpl) {
         () => null,
       )
       .then(() =>
-        openDialog(dispatch, 'templates').catch((e) => {
-          KetcherLogger.error('index.ts::editTmpl', e);
+        openDialog(dispatch, 'templates').catch((error) => {
+          KetcherLogger.error('index.ts::editTmpl', error);
         }),
       );
   };
@@ -145,12 +145,12 @@ export function saveUserTmpl(struct) {
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
-        const lib = getState().templates.lib.concat(tmpl);
+        const lib = [...getState().templates.lib, tmpl];
         dispatch(initLib(lib));
         updateLocalStore(lib);
       })
-      .catch((e) => {
-        KetcherLogger.error('index.ts::saveUserTmpl', e);
+      .catch((error) => {
+        KetcherLogger.error('index.ts::saveUserTmpl', error);
       });
   };
 }

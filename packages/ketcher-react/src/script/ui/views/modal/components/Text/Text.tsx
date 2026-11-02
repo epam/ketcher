@@ -267,8 +267,8 @@ export const normalizeEditorState = (
     ) {
       return content;
     }
-  } catch (e) {
-    console.warn('Failed to parse editor state', e);
+  } catch (error) {
+    console.warn('Failed to parse editor state', error);
   }
   // For import-time conversion we expect Serialised Lexical state stored in `content`.
   // If it's not valid Lexical JSON, return undefined so the editor starts empty.

@@ -106,6 +106,25 @@ The system SHALL draw the implicit hydrogens of an atom that has two or more vis
 - **WHEN** an atom has a bond at exactly 45°
 - **THEN** that bond occupies the top quadrant, not the right quadrant
 
+### Requirement: Hydrogens go away from the bonds when top and bottom are both free
+
+The system SHALL, for an atom with two or more visible bonds whose right and left quadrants are occupied and whose top and bottom quadrants are both free, draw the implicit hydrogens in the quadrant away from the bonds: below the symbol when the bonds point up on balance, above it when they point down or are level.
+
+#### Scenario: Bonds pointing up put the hydrogens below
+
+- **WHEN** a nitrogen atom has two bonds pointing up and to the right (30°) and up and to the left (150°)
+- **THEN** its hydrogens are drawn below the symbol
+
+#### Scenario: Level bonds put the hydrogens above
+
+- **WHEN** an atom has two bonds at 0° and 180°
+- **THEN** its hydrogens are drawn above the symbol
+
+#### Scenario: Bonds pointing down put the hydrogens above
+
+- **WHEN** a nitrogen atom has two bonds at 210° and 330°
+- **THEN** its hydrogens are drawn above the symbol
+
 ### Requirement: Atom label bounds include the implicit hydrogens
 
 The system SHALL treat the symbol, the implicit hydrogens, and the atom's other label parts as one label. The hover highlight, the selection highlight, and S-group brackets SHALL be sized from a bounding box that includes the hydrogens, wherever they are drawn. A bond SHALL stop at the edge of the symbol, or of a label part beside it, that it reaches; hydrogens drawn above or below the symbol SHALL NOT shorten a bond.

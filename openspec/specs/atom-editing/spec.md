@@ -55,7 +55,7 @@ The system SHALL ensure that the atom's charge increases or decreases by one and
 
 ### Requirement: Implicit hydrogens of a terminal atom sit opposite its bond
 
-The system SHALL draw the implicit hydrogens of an atom that has at most one visible bond on the side of the atom symbol opposite that bond: on the left when the bond points into the right half of the plane, on the right when it points into the left half. An atom with no bond, or with a bond exactly vertical, SHALL show them on the right.
+The system SHALL draw the implicit hydrogens of an atom that has at most one visible bond on the side of the atom symbol opposite that bond: on the left when the bond points into the right half of the plane, on the right when it points into the left half. An atom with no bond, or with a bond vertical to within half a degree, SHALL show them on the right.
 
 #### Scenario: Bond to the right puts hydrogens on the left
 
@@ -69,13 +69,13 @@ The system SHALL draw the implicit hydrogens of an atom that has at most one vis
 
 #### Scenario: Vertical bond puts hydrogens on the right
 
-- **WHEN** a carbon atom has one bond going exactly up or exactly down
+- **WHEN** a carbon atom has one bond going straight up or straight down
 - **THEN** its hydrogens are drawn to the right of the symbol
 
 #### Scenario: Atom without bonds puts hydrogens on the right
 
 - **WHEN** an isolated oxygen atom is placed on the canvas
-- **THEN** its hydrogens are drawn to the right of the symbol (`OH`)
+- **THEN** its two hydrogens are drawn to the right of the symbol (`OH2`)
 
 ### Requirement: Implicit hydrogens of an internal atom sit in a free quadrant
 
@@ -108,7 +108,7 @@ The system SHALL draw the implicit hydrogens of an atom that has two or more vis
 
 ### Requirement: Atom label bounds include the implicit hydrogens
 
-The system SHALL treat the symbol, the implicit hydrogens, and the atom's other label parts as one label. Bonds, S-group brackets, the hover highlight, and the selection highlight SHALL be sized from that label's bounding box, wherever the hydrogens are drawn.
+The system SHALL treat the symbol, the implicit hydrogens, and the atom's other label parts as one label. The hover highlight, the selection highlight, and S-group brackets SHALL be sized from a bounding box that includes the hydrogens, wherever they are drawn. A bond SHALL stop at the edge of the label part it reaches.
 
 #### Scenario: Hydrogens on top extend the hover and selection highlight upward
 
@@ -119,6 +119,15 @@ The system SHALL treat the symbol, the implicit hydrogens, and the atom's other 
 
 - **WHEN** an atom draws its hydrogens in a quadrant where no bond runs
 - **THEN** each bond of the atom stops at the edge of the symbol it reaches, not at the edge of the hydrogens
+
+### Requirement: Charge and valence stay clear of stacked hydrogens
+
+The system SHALL draw an atom's charge and explicit valence so that they do not overprint the hydrogen count when the hydrogens are drawn above or below the symbol.
+
+#### Scenario: Charge beside a stacked hydrogen count
+
+- **WHEN** a nitrogen atom with charge +1 has two bonds at 210° and 330° and two implicit hydrogens
+- **THEN** the hydrogens are drawn above the symbol and the charge sign is drawn to the right of the hydrogen count, not over it
 
 ### Requirement: Implicit hydrogen placement is the same in macromolecules mode
 
@@ -133,6 +142,16 @@ The system SHALL place implicit hydrogens of atoms drawn in macromolecules mode 
 
 - **WHEN** a structure with an internal atom is switched from molecules to macromolecules mode
 - **THEN** the hydrogens of that atom are drawn in the same quadrant as before the switch
+
+#### Scenario: Bond to a monomer counts in macromolecules mode
+
+- **WHEN** an atom is bonded to another atom on its left and to a monomer on its right
+- **THEN** the atom is an internal atom and its hydrogens are drawn above the symbol, as in molecules mode
+
+#### Scenario: Hydrogens follow the bonds after an edit in macromolecules mode
+
+- **WHEN** a bond of an atom is deleted, or an atom bonded to it is moved, in macromolecules mode
+- **THEN** the hydrogens of that atom are drawn on the side the rules give for its new bonds
 
 ## User interaction
 

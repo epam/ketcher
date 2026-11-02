@@ -77,7 +77,7 @@ On top of the persistent D3 drawing, the macro editor draws **transient views** 
 ## Assumptions & constraints
 
 - Renderers never mutate the model.
-- The side of an atom label where implicit hydrogens are drawn (right, left, top, bottom) comes from one pure function in the core domain helpers, `getImplicitHydrogenSide`, fed with the visual bond angles (`bondAngleDeg` flips the model's y axis once). Both pipelines call it and only draw the result: the micromolecules atom wrapper and the macromolecules atom renderer. A change to the rule is one change there.
+- The side of an atom label where implicit hydrogens are drawn (right, left, top, bottom) comes from one pure function in the core domain helpers, `getImplicitHydrogenSide`, fed with the atom's bond directions in model coordinates (y down; the helper flips the axis once). Both pipelines call it and only draw the result: the micromolecules atom wrapper and the macromolecules atom renderer. A change to the rule is one change there.
 - Hydrogens drawn above or below the symbol take no room beside it except their count. The charge and valence labels are moved right of the count, so they do not overprint it, in both pipelines.
 - Micro uses diff-based dirty marking; macro relies on the executing Command to touch exactly the affected renderers.
 - The macro canvas comes from the zoom tool.

@@ -742,6 +742,7 @@ export class KetSerializer implements Serializer<Struct> {
               superatomMonomerToUsedAttachmentPoint,
               firstMonomer,
               secondMonomer,
+              (message) => KetSerializer.reportError(message),
             );
 
             command.merge(bondAdditionCommand);

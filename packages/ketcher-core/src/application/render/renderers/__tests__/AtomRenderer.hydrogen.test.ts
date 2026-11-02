@@ -21,6 +21,7 @@ interface FakeAtom {
     isotope?: number;
     charge?: number;
     explicitValence?: number;
+    alias?: string;
   };
   hydrogenAmount: number;
   hasCharge: boolean;
@@ -41,6 +42,7 @@ function fakeAtom({
   isotope,
   charge,
   explicitValence,
+  alias,
   hasBadValence = false,
 }: {
   label?: CoreAtomLabel;
@@ -49,15 +51,16 @@ function fakeAtom({
   isotope?: number;
   charge?: number;
   explicitValence?: number;
+  alias?: string;
   hasBadValence?: boolean;
 } = {}): FakeAtom {
   return {
     label,
-    properties: { radical, isotope, charge, explicitValence },
+    properties: { radical, isotope, charge, explicitValence, alias },
     hydrogenAmount,
     hasCharge: charge !== undefined,
     hasRadical: radical !== 0,
-    hasAlias: false,
+    hasAlias: alias !== undefined,
     hasExplicitIsotope: isotope !== undefined,
     hasExplicitValence: explicitValence !== undefined,
     hasBadValence,
@@ -273,6 +276,84 @@ describe('AtomRenderer.appendLabel hydrogen layout', () => {
     expect(lines[2]).toBe(0);
     expect(spans[1].x).toBe('0');
     expect(spans[2].x).toBeNull();
+  });
+});
+
+describe('AtomRenderer label alignment of an atom that draws no hydrogens', () => {
+  // Master drew an atom with two or more bonds centred on its position,
+  // whichever quadrants the bonds left free; a free left quadrant only moves
+  // hydrogens, so it must not move a label without them.
+  const anchorAndX = (textNode: SVGTextElement) => ({
+    anchor: textNode.getAttribute('text-anchor'),
+    x: textNode.getAttribute('x'),
+  });
+
+  it('centres an alias of an internal atom with bonds right and up', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ alias: 'Boc', hydrogenAmount: 0 }),
+      [0, 90],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it('centres a label of an internal atom that has no implicit hydrogens', () => {
+    const { textNode } = drawLabel(fakeAtom({ hydrogenAmount: 0 }), [0, 90]);
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it('centres an H label without implicit hydrogens of an internal atom', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ label: AtomLabel.H, hydrogenAmount: 0 }),
+      [0, 90],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it('centres a label whose hydrogens are not shown, as for carbon', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ label: AtomLabel.C, charge: 1 }),
+      [0, 90],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it('draws the hydrogens left of the symbol of the same atom when it has them', () => {
+    const { textNode } = drawLabel(fakeAtom(), [0, 90]);
+
+    expect(tspansOf(textNode).map(({ text }) => text)).toEqual(['H', 'N']);
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'end', x: '5' });
+  });
+
+  it('end-anchors an alias of a terminal atom bonded on its right', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ alias: 'Boc', hydrogenAmount: 0 }),
+      [0],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'end', x: '5' });
+  });
+
+  it('centres an alias of a terminal atom bonded on its left', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ alias: 'Boc', hydrogenAmount: 0 }),
+      [180],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
+  });
+
+  it('counts a bond to a monomer as a visible bond', () => {
+    const { textNode } = drawLabel(
+      fakeAtom({ alias: 'Boc', hydrogenAmount: 0 }),
+      [0],
+      [90],
+    );
+
+    expect(anchorAndX(textNode)).toEqual({ anchor: 'middle', x: '0' });
   });
 });
 

@@ -1,6 +1,7 @@
 import {
   getImplicitHydrogenSide,
   ImplicitHydrogenSide,
+  isLabelAnchoredLeft,
   isStackedSide,
 } from '../implicitHydrogenSide';
 
@@ -145,5 +146,30 @@ describe('isStackedSide', () => {
     ['right', false],
   ])('%s gives %s', (side, expected) => {
     expect(isStackedSide(side)).toBe(expected);
+  });
+});
+
+describe('isLabelAnchoredLeft', () => {
+  it.each<[ImplicitHydrogenSide, number, boolean]>([
+    ['left', 1, true],
+    ['left', 2, false],
+    ['left', 4, false],
+    ['right', 0, false],
+    ['right', 1, false],
+    ['right', 3, false],
+    ['top', 1, false],
+    ['top', 2, false],
+    ['bottom', 2, false],
+  ])('for side %s and %i visible bonds is %s', (side, bondCount, expected) => {
+    expect(isLabelAnchoredLeft(side, bondCount)).toBe(expected);
+  });
+
+  it('is false for an internal atom whose free quadrant on the left was picked', () => {
+    // A bond right and one up leave the left free, so the helper says left;
+    // master centred such an atom.
+    const side = sideFor([0, 90], false);
+
+    expect(side).toBe('left');
+    expect(isLabelAnchoredLeft(side, 2)).toBe(false);
   });
 });

@@ -4,6 +4,7 @@ import { ShowHydrogenLabels } from 'application/render/restruct/showHydrogenLabe
 import type { RenderOptions } from 'application/render/render.types';
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 import type { Box2Abs } from 'domain/entities/box2Abs';
+import type { AtomListParams } from 'domain/entities/atomList';
 import type { ImplicitHydrogenSide } from 'domain/helpers';
 
 // A real Raphael paper needs SVG geometry that jsdom does not implement, so
@@ -53,8 +54,11 @@ function createShape(cx: number, cy: number, size: Size) {
 
 function createPaper() {
   const small: Size = () => ({ width: 2 * LINE_WIDTH, height: 2 * LINE_WIDTH });
+  const texts: Array<{ x: number; y: number; text: string }> = [];
   return {
+    texts,
     text: (x: number, y: number, text: string) => {
+      texts.push({ x, y, text });
       let fontSize = FONT_PX;
       const shape = createShape(x, y, () => ({
         width: fontSize * CHAR_WIDTH_RATIO * text.length,
@@ -111,6 +115,8 @@ function showAtom({
   charge = 0,
   explicitValence = -1,
   aam = 0,
+  atomList,
+  showAtomIds = false,
 }: {
   label?: string;
   bondAnglesDeg?: number[];
@@ -119,6 +125,8 @@ function showAtom({
   charge?: number;
   explicitValence?: number;
   aam?: number;
+  atomList?: AtomListParams;
+  showAtomIds?: boolean;
 }): AtomFixture {
   const struct = new Struct();
   const atom = new Atom({
@@ -128,6 +136,7 @@ function showAtom({
     charge,
     explicitValence,
     aam,
+    atomList,
   });
   atom.implicitH = implicitH;
   const aid = struct.atoms.add(atom);
@@ -149,7 +158,8 @@ function showAtom({
   struct.sortNeighbors([...struct.atoms.keys()]);
 
   const paper = createPaper();
-  const render = { paper, options };
+  const atomOptions = { ...options, showAtomIds } as RenderOptions;
+  const render = { paper, options: atomOptions };
   const layers = new Proxy({}, { get: () => ({ node: { parentNode: {} } }) });
   const restructContext = { layers, render };
   const restruct = {
@@ -161,12 +171,12 @@ function showAtom({
 
   const reatom = new ReAtom(atom);
   jest.spyOn(reatom, 'setHover').mockImplementation(() => undefined);
-  reatom.show(restruct, aid, options);
+  reatom.show(restruct, aid, atomOptions);
 
   return {
     reatom,
     paper,
-    render: { paper, options, ctab: { render } },
+    render: { paper, options: atomOptions, ctab: { render } },
     symbolBox: () => reatom.visel.boxes[0],
   };
 }
@@ -531,5 +541,63 @@ describe('ReAtom bond trimming with hydrogens', () => {
     );
 
     expect(shifted.x).toBeGreaterThan(reference.x);
+  });
+});
+
+// Master put hydrogens left only for an atom with at most one visible bond.
+// A free left quadrant of an internal atom moves hydrogens, not the atom-list
+// label or the atom id, which stayed on the right branch.
+describe('ReAtom label alignment next to a free left quadrant', () => {
+  const ATOM_LIST: AtomListParams = { notList: false, ids: [6, 7] };
+
+  // The fake paper creates a text centered on the atom, so the label's center
+  // is its shift.
+  const labelShift = (bondAnglesDeg: number[]) => {
+    const { reatom } = showAtom({
+      label: 'L',
+      bondAnglesDeg,
+      atomList: ATOM_LIST,
+    });
+    const box = reatom.label?.path.getBBox();
+    return box ? box.x + box.width / 2 : NaN;
+  };
+
+  // The id of the atom at the origin is '0'; the label is drawn at the same y
+  // minus the shift of a label, so only x tells the sides apart.
+  const idX = (bondAnglesDeg: number[]) => {
+    const { paper } = showAtom({ bondAnglesDeg, showAtomIds: true });
+    return paper.texts.find(({ text }) => text === '0')?.x ?? NaN;
+  };
+
+  it('shifts the atom-list label of an atom with two bonds to the right', () => {
+    // A bond right and one up leave the left quadrant free.
+    expect(showAtom({ bondAnglesDeg: [0, 90] }).reatom.hydrogenSide).toBe(
+      'left',
+    );
+    expect(labelShift([0, 90])).toBeGreaterThan(0);
+  });
+
+  it('shifts the atom-list label of an atom with one bond going right to the left', () => {
+    expect(labelShift([0])).toBeLessThan(0);
+  });
+
+  it('shifts the atom-list label of an atom with one bond going left to the right', () => {
+    expect(labelShift([180])).toBeGreaterThan(0);
+  });
+
+  it('shifts the atom-list label by the same amount for both branches', () => {
+    expect(labelShift([0, 90])).toBeCloseTo(-labelShift([0]));
+  });
+
+  it('puts the atom id of an atom with two bonds right of the atom', () => {
+    expect(idX([0, 90])).toBeGreaterThan(0);
+  });
+
+  it('puts the atom id of an atom with one bond going right left of the atom', () => {
+    expect(idX([0])).toBeLessThan(0);
+  });
+
+  it('puts the atom id of an atom with one bond going left right of the atom', () => {
+    expect(idX([180])).toBeGreaterThan(0);
   });
 });

@@ -21,6 +21,19 @@ export function isStackedSide(side: ImplicitHydrogenSide): boolean {
   return side === 'top' || side === 'bottom';
 }
 
+/**
+ * Whether a label that is not split around hydrogens (an atom list, an alias,
+ * the atom id) sits left of the atom, as it does for a terminal atom whose
+ * hydrogens are on the left. An internal atom never does: a free quadrant on
+ * its left only places hydrogens, and the label stays on its usual side.
+ */
+export function isLabelAnchoredLeft(
+  side: ImplicitHydrogenSide,
+  visibleBondCount: number,
+): boolean {
+  return side === 'left' && visibleBondCount <= 1;
+}
+
 const FULL_TURN_DEG = 360;
 const QUADRANT_DEG = 90;
 // A vertical bond is drawn this close to 90 or 270 degrees; the sign of its

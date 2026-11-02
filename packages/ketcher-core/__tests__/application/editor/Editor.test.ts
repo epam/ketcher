@@ -1693,6 +1693,105 @@ describe('CoreEditor', () => {
       rootElement.remove();
     });
 
+    it.each([
+      ['Flex', FlexMode],
+      ['Snake', SnakeMode],
+    ] as const)(
+      'should cancel a library drag on right mousedown before mouseup in %s mode (#7376)',
+      (_, Mode) => {
+        editor.setMode(new Mode());
+        const dragStateHandler = jest.fn();
+        editor.events.setLibraryItemDragState.add(dragStateHandler);
+        editor.events.setLibraryItemDragState.dispatch({
+          item: peptideMonomerItem,
+          position: { x: 0, y: 0 },
+        });
+
+        canvas.dispatchEvent(
+          new MouseEvent('mousedown', {
+            button: 2,
+            buttons: 3,
+            bubbles: true,
+          }),
+        );
+
+        expect(editor.isLibraryItemDragCancelled).toBe(true);
+        expect(dragStateHandler).toHaveBeenLastCalledWith(null);
+      },
+    );
+
+    it.each([
+      ['Flex', FlexMode],
+      ['Snake', SnakeMode],
+    ] as const)(
+      'should suppress only the cancelled drag context menu after mouseup in %s mode (#7376)',
+      (_, Mode) => {
+        editor.setMode(new Mode());
+        const rightClickCanvasHandler = jest.fn();
+        editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+        editor.events.setLibraryItemDragState.dispatch({
+          item: peptideMonomerItem,
+          position: { x: 0, y: 0 },
+        });
+
+        canvas.dispatchEvent(
+          new MouseEvent('mousedown', {
+            button: 2,
+            buttons: 3,
+            bubbles: true,
+          }),
+        );
+        canvas.dispatchEvent(
+          new MouseEvent('mouseup', {
+            button: 2,
+            buttons: 1,
+            bubbles: true,
+          }),
+        );
+        // The library drag hook clears its state before Windows sends contextmenu.
+        editor.events.setLibraryItemDragState.dispatch(null);
+        editor.isLibraryItemDragCancelled = false;
+
+        canvas.dispatchEvent(
+          new MouseEvent('contextmenu', { button: 2, bubbles: true }),
+        );
+
+        expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+        canvas.dispatchEvent(
+          new MouseEvent('contextmenu', { button: 2, bubbles: true }),
+        );
+
+        expect(rightClickCanvasHandler).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it.each([
+      ['Flex', FlexMode],
+      ['Snake', SnakeMode],
+    ] as const)(
+      'should still cancel an active library drag on contextmenu in %s mode (#7376)',
+      (_, Mode) => {
+        editor.setMode(new Mode());
+        const rightClickCanvasHandler = jest.fn();
+        const dragStateHandler = jest.fn();
+        editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+        editor.events.setLibraryItemDragState.add(dragStateHandler);
+        editor.events.setLibraryItemDragState.dispatch({
+          item: peptideMonomerItem,
+          position: { x: 0, y: 0 },
+        });
+
+        canvas.dispatchEvent(
+          new MouseEvent('contextmenu', { button: 2, bubbles: true }),
+        );
+
+        expect(editor.isLibraryItemDragCancelled).toBe(true);
+        expect(dragStateHandler).toHaveBeenLastCalledWith(null);
+        expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+      },
+    );
+
     it('should ignore right click on element outside ketcherRootElement', () => {
       const outsideElement = document.createElement('div');
       document.body.appendChild(outsideElement);

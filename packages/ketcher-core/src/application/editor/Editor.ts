@@ -276,6 +276,7 @@ export class CoreEditor {
   public nextAutochainPosition?: Vec2 = undefined;
 
   private libraryItemDragCancelled = false;
+  private suppressLibraryItemDragContextMenu = false;
 
   public theme: CoreEditorTheme;
   /**
@@ -1282,7 +1283,11 @@ export class CoreEditor {
 
       event.preventDefault();
 
-      if (this.dragDropHandler.isDragging) {
+      if (
+        this.suppressLibraryItemDragContextMenu ||
+        this.dragDropHandler.isDragging
+      ) {
+        this.suppressLibraryItemDragContextMenu = false;
         this.cancelLibraryItemDrag();
         return;
       }
@@ -2504,6 +2509,15 @@ export class CoreEditor {
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
+
+        if (event.type === 'mousedown') {
+          // On Windows, contextmenu follows the mouseup that ends D3 dragging.
+          this.suppressLibraryItemDragContextMenu =
+            event.button === 2 && this.dragDropHandler.isDragging;
+          if (this.suppressLibraryItemDragContextMenu) {
+            this.cancelLibraryItemDrag();
+          }
+        }
 
         if (
           !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||

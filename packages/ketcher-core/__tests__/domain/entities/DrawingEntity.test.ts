@@ -1,3 +1,5 @@
+// Binds Coordinates to the editor settings and zoom, as the app does at startup.
+import 'application/editor/shared/coordinates';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';

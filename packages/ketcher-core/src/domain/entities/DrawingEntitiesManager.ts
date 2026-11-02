@@ -2118,7 +2118,7 @@ export class DrawingEntitiesManager {
     let chainsCollection: ChainsCollection;
 
     command.merge(
-      this.recalculateAntisenseChains(shouldRecalculateOldAntisense),
+      this.recalculateAntisenseChains(shouldRecalculateOldAntisense, false),
     );
 
     // not only snake mode???
@@ -3644,7 +3644,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains(shouldRecalculateOldAntisense = true) {
+  public recalculateAntisenseChains(
+    shouldRecalculateOldAntisense = true,
+    needClearSeqId = true,
+  ) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
@@ -3658,6 +3661,7 @@ export class DrawingEntitiesManager {
             ...monomer.monomerItem,
             isAntisense: false,
             isSense: false,
+            seqId: needClearSeqId ? undefined : monomer.monomerItem.seqId,
           }),
         );
       });

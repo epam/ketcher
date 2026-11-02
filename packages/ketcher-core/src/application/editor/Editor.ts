@@ -2864,7 +2864,7 @@ export class CoreEditor {
 
     if (this.mode.modeName === 'flex-layout-mode') {
       modelChanges.merge(
-        this.drawingEntitiesManager.recalculateAntisenseChains(),
+        this.drawingEntitiesManager.recalculateAntisenseChains(true, false),
       );
     }
 

@@ -57,12 +57,6 @@ export class EditorHistory {
   }
 
   update(command: Command, shouldMergeWithLatestHistoryCommand?: boolean) {
-    const resetSequenceIds = SequenceIdsResetOperation.forCommand(command);
-    if (resetSequenceIds) {
-      command.addOperation(resetSequenceIds);
-      resetSequenceIds.execute(this.editor.renderersContainer);
-      this.editor.renderersContainer.runPostRenderMethods();
-    }
     const latestCommand = this.previousCommand;
     if (
       shouldMergeWithLatestHistoryCommand &&

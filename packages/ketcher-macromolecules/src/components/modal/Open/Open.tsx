@@ -212,7 +212,7 @@ const hasAddedStructureToCanvas = ({
 
   if (isFlexMode) {
     modelChanges.merge(
-      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      editor.drawingEntitiesManager.recalculateAntisenseChains(true, false),
     );
   }
 

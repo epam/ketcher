@@ -337,6 +337,7 @@ export class SequenceMode extends BaseMode {
         )
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
           needRecalculateOldAntisense,
+          false,
         );
     const zoom = ZoomTool.instance;
 

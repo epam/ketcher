@@ -6,9 +6,9 @@
 
 ## 2. Molecules mode rendering
 
-- [ ] 2.1 In `reatom.ts`, replace `hydrogenOnTheLeft` and `shouldHydrogenBeOnLeft` with `hydrogenSide` computed through the helper from the visible bond angles and the radical, and update the two other readers; verify with a unit test that an atom with one right-going bond reports `left`, and with `npm run test:types`.
-- [ ] 2.2 Draw the hydrogens and their count above or below the symbol for `top` and `bottom` in `showHydrogen`, adding each part to the atom's `visel`; verify with a unit test that the `visel` boxes of an atom with `top` hydrogens extend above the symbol box, and that `getSelectionContour` covers them.
-- [ ] 2.3 Verify that bonds are trimmed only by the box they reach and that S-group brackets include the hydrogens, with a unit test on `getShiftedSegmentPosition` for an internal atom whose hydrogens are on top and on the right.
+- [x] 2.1 In `reatom.ts`, replace `hydrogenOnTheLeft` and `shouldHydrogenBeOnLeft` with `hydrogenSide` computed through the helper from the visible bond angles and the radical, and update the two other readers; verify with a unit test that an atom with one right-going bond reports `left`, and with `npm run test:types`.
+- [x] 2.2 Draw the hydrogens and their count above or below the symbol for `top` and `bottom` in `showHydrogen`, adding each part to the atom's `visel`; verify with a unit test that the `visel` boxes of an atom with `top` hydrogens extend above the symbol box, and that `getSelectionContour` covers them.
+- [x] 2.3 Verify that bonds are trimmed only by the box they reach and that S-group brackets include the hydrogens, with a unit test on `getShiftedSegmentPosition` for an internal atom whose hydrogens are on top and on the right.
 
 ## 3. Macromolecules mode rendering
 

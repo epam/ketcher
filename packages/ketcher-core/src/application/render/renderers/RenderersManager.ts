@@ -163,7 +163,7 @@ export class RenderersManager {
    * the new bonds. A drag moves many atoms and each has several neighbours, so
    * checking in each call would check an atom once per neighbour.
    */
-  public scheduleHydrogenSideCheck(atom: Atom) {
+  private scheduleHydrogenSideCheck(atom: Atom) {
     this.atomsToCheckHydrogenSide.add(atom);
   }
 
@@ -173,11 +173,23 @@ export class RenderersManager {
     const atoms = [...this.atomsToCheckHydrogenSide];
     this.atomsToCheckHydrogenSide.clear();
 
+    let isAnyRedrawn = false;
     atoms.forEach((atom) => {
       if (atom.renderer?.redrawLabelIfHydrogenSideChanged()) {
+        isAnyRedrawn = true;
         atom.bonds.forEach((bond) => bond.renderer?.move());
       }
     });
+
+    // This runs after rerenderSGroups, which hid the atoms and bonds inside
+    // collapsed S-groups. A redraw builds new elements that are visible, so
+    // hide what the S-groups hide again. Re-applying the S-group state only
+    // hides, and the redraw only shows, so no S-group is redrawn for it.
+    if (isAnyRedrawn) {
+      this.sgroups.forEach((sgroupRenderer) =>
+        sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds),
+      );
+    }
   }
 
   public redrawDrawingEntity(

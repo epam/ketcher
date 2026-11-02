@@ -603,10 +603,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       bondDirections,
       this.a.radical !== 0,
     );
-    this.labelAnchoredLeft = isLabelAnchoredLeft(
-      this.hydrogenSide,
-      bondDirections.length,
-    );
+    this.labelAnchoredLeft = isLabelAnchoredLeft({
+      side: this.hydrogenSide,
+      visibleBondCount: bondDirections.length,
+      label: this.a.label,
+    });
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 

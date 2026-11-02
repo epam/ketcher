@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Elements } from 'domain/constants';
+
 export type ImplicitHydrogenSide = 'right' | 'left' | 'top' | 'bottom';
 
 /** Top and bottom put H on a line of its own, apart from the symbol. */
@@ -23,15 +25,38 @@ export function isStackedSide(side: ImplicitHydrogenSide): boolean {
 
 /**
  * Whether a label that is not split around hydrogens (an atom list, an alias,
- * the atom id) sits left of the atom, as it does for a terminal atom whose
- * hydrogens are on the left. An internal atom never does: a free quadrant on
- * its left only places hydrogens, and the label stays on its usual side.
+ * the atom id, a label without implicit hydrogens) is aligned to the left of
+ * the atom, so that it grows away from the atom.
+ *
+ * - An atom with no visible bond is aligned left unless it is D or T. An
+ *   element with no `leftH` flag (C, N, ...) is not. A label that is not an
+ *   element (an atom list, R#, a pseudoatom, a generic atom) is.
+ * - An atom with one visible bond is aligned left when its hydrogens are on
+ *   the left, that is, when the bond points right.
+ * - An atom with two or more visible bonds is not: a free quadrant on its left
+ *   only places hydrogens.
+ *
+ * This is alignment of the label. Where hydrogens are drawn for a bondless
+ * atom is `getImplicitHydrogenSide`, which puts them on the right.
  */
-export function isLabelAnchoredLeft(
-  side: ImplicitHydrogenSide,
-  visibleBondCount: number,
-): boolean {
-  return side === 'left' && visibleBondCount <= 1;
+export function isLabelAnchoredLeft({
+  side,
+  visibleBondCount,
+  label,
+}: {
+  side: ImplicitHydrogenSide;
+  visibleBondCount: number;
+  label: string;
+}): boolean {
+  if (visibleBondCount === 0) {
+    if (label === 'D' || label === 'T') {
+      return false;
+    }
+    const element = Elements.get(label);
+    return !element || Boolean(element.leftH);
+  }
+
+  return visibleBondCount === 1 && side === 'left';
 }
 
 const FULL_TURN_DEG = 360;

@@ -3,7 +3,11 @@ import {
   COP_PADDING_VECTOR,
   DEFAULT_PADDING_VECTOR,
 } from '../SGroupRenderer';
-import { LABEL_FONT_SIZE, LINE_HEIGHT } from '../atomLabelHydrogenLayout';
+import {
+  COUNT_DROP,
+  LABEL_FONT_SIZE,
+  LINE_HEIGHT,
+} from '../atomLabelHydrogenLayout';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 
 // SGroupRenderer builds its brackets from atom positions plus a fixed padding,
@@ -17,11 +21,15 @@ describe('S-group brackets around stacked hydrogens', () => {
   const bracketPaddingPx = (padding: { y: number }) =>
     (BORDER_EXT.y + padding.y) * provideEditorSettings().microModeScale;
 
-  // The H line is LINE_HEIGHT above (or below) the symbol line, and its glyph
-  // reaches half the em box (the font size) past its own line centre. That is
-  // the furthest the label extends from the symbol line, with the em box as a
-  // generous bound of the glyph.
-  const stackedHydrogenExtentPx = LINE_HEIGHT + LABEL_FONT_SIZE / 2;
+  // Digits and capitals of Arial are about 0.72 of the font size tall, so
+  // the glyph reaches half of that past the centre of its own line.
+  const GLYPH_HEIGHT_RATIO = 0.72;
+  const glyphHalfHeightPx = (LABEL_FONT_SIZE * GLYPH_HEIGHT_RATIO) / 2;
+
+  // The furthest the label extends from the symbol line: the H line is
+  // LINE_HEIGHT above (or below) it and, below it, the count of H sits a
+  // further COUNT_DROP lower, a glyph half-height past its own line.
+  const stackedHydrogenExtentPx = LINE_HEIGHT + COUNT_DROP + glyphHalfHeightPx;
 
   it('pads the default bracket box at least as far as the stacked hydrogens extend', () => {
     expect(bracketPaddingPx(DEFAULT_PADDING_VECTOR)).toBeGreaterThanOrEqual(

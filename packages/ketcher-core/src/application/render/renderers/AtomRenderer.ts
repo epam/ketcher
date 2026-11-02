@@ -489,16 +489,33 @@ export class AtomRenderer extends BaseRenderer {
    * symbol. Hydrogens beside the symbol stay: they are part of its text run.
    */
   public get bondTrimBBoxes() {
-    const hydrogenLine = new Set<SVGTSpanElement | null | undefined>([
-      this.stackedLabel?.hydrogen.node(),
-      this.stackedLabel?.count?.tspan.node(),
-    ]);
+    return this.collectLabelBBoxes((tspan) =>
+      this.isNotStackedHydrogenLine(tspan),
+    );
+  }
 
-    return this.collectLabelBBoxes((tspan) => !hydrogenLine.has(tspan));
+  /**
+   * The boxes that stop a bond from a monomer: the text of the label as for
+   * bondTrimBBoxes, but not the radical, which an atom-to-atom bond avoids and
+   * a bond from a monomer runs under.
+   */
+  public get monomerBondTrimBBoxes() {
+    return this.collectLabelBBoxes(
+      (tspan) => this.isNotStackedHydrogenLine(tspan),
+      false,
+    );
+  }
+
+  private isNotStackedHydrogenLine(tspan: SVGTSpanElement) {
+    return (
+      tspan !== this.stackedLabel?.hydrogen.node() &&
+      tspan !== this.stackedLabel?.count?.tspan.node()
+    );
   }
 
   private collectLabelBBoxes(
     includeTspan: (tspan: SVGTSpanElement) => boolean,
+    includeRadical = true,
   ) {
     // TODO calculate label bboxes after creation of text element
     //  and store them in atom renderer to optimize performance
@@ -507,7 +524,9 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const labelBboxes: DOMRect[] = [];
-    const radicalElementBbox = this.radicalElement?.node()?.getBBox();
+    const radicalElementBbox = includeRadical
+      ? this.radicalElement?.node()?.getBBox()
+      : undefined;
 
     this.textElement
       .selectAll<SVGTSpanElement, this>('tspan')
@@ -541,10 +560,16 @@ export class AtomRenderer extends BaseRenderer {
     const hydrogenSide = this.computeHydrogenSide(bondDirections);
     const hasSeparateHydrogen = this.hasSeparateHydrogen;
     // Hydrogens drawn on the left follow the side. Without them the label is
-    // only aligned, and an internal atom keeps its label centred.
+    // only aligned, left as isLabelAnchoredLeft says. Otherwise it is centred,
+    // unless the atom has hydrogens that an alias hides: then it starts at
+    // x=-5, as it does when hydrogens follow it.
     const shouldHydrogenBeOnLeft = hasSeparateHydrogen
       ? hydrogenSide === 'left'
-      : isLabelAnchoredLeft(hydrogenSide, bondDirections.length);
+      : isLabelAnchoredLeft({
+          side: hydrogenSide,
+          visibleBondCount: bondDirections.length,
+          label: this.atom.label,
+        });
     let { hydrogenAmount } = this.atom.calculateValence();
 
     if (!this.shouldDisplayHydrogen) {
@@ -659,13 +684,14 @@ export class AtomRenderer extends BaseRenderer {
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
-    // Hover contour is the only hit-testable element; recreate it after removal.
-    this.hoverElement = this.appendHover();
+    // The same steps and order as show(), for what was removed above. The hover
+    // contour is the only hit-testable element, and it is measured after the
+    // charge and valence are drawn, as in show().
     this.appendAtomProperties();
     this.appendBadValenceWarning();
-    // The same steps and order as show(), for what was removed above.
     this.appendStereoLabel();
     this.appendCIPLabel();
+    this.hoverElement = this.appendHover();
     this.drawSelection();
   }
 

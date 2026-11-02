@@ -36,13 +36,12 @@ const COUNT_HALF_DIGIT = 3.6;
 // Gap kept between the count and the text that follows it.
 const COUNT_GAP = 1;
 const ISOTOPE_RISE = 4;
-const STACKED_SIDES: ReadonlyArray<ImplicitHydrogenSide> = ['top', 'bottom'];
 
 export const STACKED_LABEL_CLASS = 'atom-label';
 const STACKED_COUNT_CLASS = 'atom-hydrogen-count';
 
 export function isStackedSide(side: ImplicitHydrogenSide): boolean {
-  return STACKED_SIDES.includes(side);
+  return side === 'top' || side === 'bottom';
 }
 
 /**
@@ -108,9 +107,9 @@ export function startPropertyRunBesideCount(
   property: TspanSelection,
 ): void {
   const count = text.select<SVGTSpanElement>(`tspan.${STACKED_COUNT_CLASS}`);
-  const startsAfterSymbol = (
-    property.node()?.previousElementSibling as Element | null
-  )?.classList.contains(STACKED_LABEL_CLASS);
+  const startsAfterSymbol = property
+    .node()
+    ?.previousElementSibling?.classList.contains(STACKED_LABEL_CLASS);
   if (count.empty() || !startsAfterSymbol) {
     return;
   }

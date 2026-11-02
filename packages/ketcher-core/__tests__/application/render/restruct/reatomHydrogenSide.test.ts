@@ -270,8 +270,7 @@ describe('ReAtom hydrogen layout', () => {
   });
 
   it('covers the symbol and top hydrogens with the selection contour', () => {
-    const { reatom, render } = showAtom({ bondAnglesDeg: [210, 330] });
-    const paper = (render as { paper: ReturnType<typeof createPaper> }).paper;
+    const { reatom, render, paper } = showAtom({ bondAnglesDeg: [210, 330] });
     const padding = FONT_PX * 0.2;
 
     reatom.getSelectionContour(render as never);
@@ -283,8 +282,7 @@ describe('ReAtom hydrogen layout', () => {
   });
 
   it('keeps the selection contour of left or right hydrogens one line high', () => {
-    const { reatom, render } = showAtom({ bondAnglesDeg: [210] });
-    const paper = (render as { paper: ReturnType<typeof createPaper> }).paper;
+    const { reatom, render, paper } = showAtom({ bondAnglesDeg: [210] });
     const padding = FONT_PX * 0.2;
 
     reatom.getSelectionContour(render as never);

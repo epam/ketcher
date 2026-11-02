@@ -2010,7 +2010,6 @@ function showHydrogen(
   });
   const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
   draw.recenterText(hydrogenPath, hydrogenRbb);
-  let newHydroIndex: ElemAttr | null = null;
   if (implh > 1) {
     const hydroIndexText = implh.toString();
     const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
@@ -2020,17 +2019,16 @@ function showHydrogen(
     });
     const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
     draw.recenterText(hydroIndexPath, hydroIndexRbb);
-    newHydroIndex = {
+    hydroIndex = {
       text: hydroIndexText,
       path: hydroIndexPath,
       rbb: hydroIndexRbb,
     };
-    hydroIndex = newHydroIndex;
   }
 
   const layout = HYDROGEN_LAYOUT[atom.hydrogenSide]({
     hydrogenWidth: hydrogenRbb.width,
-    indexWidth: newHydroIndex?.rbb.width ?? null,
+    indexWidth: hydroIndex?.rbb.width ?? null,
     labelHeight: atom.label?.rbb.height ?? 0,
     delta: 0.5 * options.lineWidth,
     zoom: options.zoom,
@@ -2043,10 +2041,10 @@ function showHydrogen(
     layout.hydrogen.x,
     layout.hydrogen.y,
   );
-  if (newHydroIndex && layout.index) {
+  if (hydroIndex && layout.index) {
     pathAndRBoxTranslate(
-      newHydroIndex.path,
-      newHydroIndex.rbb,
+      hydroIndex.path,
+      hydroIndex.rbb,
       layout.index.x,
       layout.index.y,
     );

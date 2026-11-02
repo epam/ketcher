@@ -6,6 +6,9 @@ const KetcherAPI = (ketcherInstance) => {
     },
 
     clearSelection: function () {
+      // Explicit argument on purpose: selection() with none is the getter,
+      // since the API branches on arguments.length. undefined here is what
+      // clears the selection.
       ketcherInstance.editor.selection(undefined);
     },
 
@@ -26,7 +29,7 @@ const KetcherAPI = (ketcherInstance) => {
     getSelectedAtomId: function () {
       const selection = ketcherInstance.editor.selection();
       if (!selection?.atoms) {
-        return undefined;
+        return;
       }
 
       let atoms = selection.atoms.join(', ');

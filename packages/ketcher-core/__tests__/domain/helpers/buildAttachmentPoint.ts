@@ -1,10 +1,15 @@
 import { select } from 'd3';
 import 'application/editor';
-import { setEditorInstance } from 'application/editor/editorSingleton';
+import { editorEvents } from 'application/editor/editorEvents';
+import {
+  provideEditorInstance,
+  setEditorInstance,
+} from 'application/editor/editorSingleton';
 import type { CoreEditor } from 'application/editor/Editor';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
+import util from 'application/render/util';
 import { UsageInMacromolecule } from 'application/render';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
@@ -138,6 +143,9 @@ function buildSharedParams(overrides: AttachmentPointOverrides) {
       overrides.applyZoomForPositionCalculation ?? false,
     isDragTarget: overrides.isDragTarget,
     isDragCircleHover: overrides.isDragCircleHover,
+    editorEvents,
+    isSnakeLayoutMode: () =>
+      provideEditorInstance().mode.modeName === 'snake-layout-mode',
   };
 
   return { svg, rootElement, monomer, bondRendererStub, params };
@@ -158,9 +166,11 @@ export function buildPreviewAttachmentPoint(
   const { params, ...built } = buildSharedParams(overrides);
   const attachmentPoint = new PreviewAttachmentPoint({
     ...params,
-    selected: overrides.selected ?? false,
-    connected: overrides.connected ?? false,
-    usage: overrides.usage ?? UsageInMacromolecule.MonomerPreview,
+    labelStyles: util.useLabelStyles(
+      overrides.selected ?? false,
+      overrides.connected ?? false,
+      overrides.usage ?? UsageInMacromolecule.MonomerPreview,
+    ),
   });
 
   return { attachmentPoint, ...built };

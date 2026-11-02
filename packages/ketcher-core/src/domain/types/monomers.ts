@@ -16,7 +16,7 @@ import type {
 } from 'application/formatters/types/ket';
 import type { KetMonomerClass } from 'domain/constants/monomers';
 import type { D3SvgElementSelection } from 'application/render/types';
-import type { UsageInMacromolecule } from 'application/render';
+import type { IEditorEvents } from 'application/editor/editorEvents';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export type MonomerColorScheme = {
@@ -98,6 +98,15 @@ export const attachmentPointNames = [
   'R8',
 ];
 
+export type AttachmentPointEvents = Pick<
+  IEditorEvents,
+  | 'mouseOverAttachmentPoint'
+  | 'mouseLeaveAttachmentPoint'
+  | 'mouseMoveAttachmentPoint'
+  | 'mouseDownAttachmentPoint'
+  | 'mouseUpAttachmentPoint'
+>;
+
 export type AttachmentPointConstructorParams = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;
   monomer: BaseMonomer;
@@ -111,13 +120,14 @@ export type AttachmentPointConstructorParams = {
   applyZoomForPositionCalculation: boolean;
   isDragTarget?: boolean;
   isDragCircleHover?: boolean;
+  // The live `editorEvents` object: `resetEditorEvents()` replaces its subscriptions, so they are read at event time.
+  editorEvents: AttachmentPointEvents;
+  isSnakeLayoutMode: () => boolean;
 };
 
 export type PreviewAttachmentPointConstructorParams =
   AttachmentPointConstructorParams & {
-    selected: boolean;
-    connected: boolean;
-    usage: UsageInMacromolecule;
+    labelStyles: { color: string; fill: string; stroke: string };
   };
 
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;

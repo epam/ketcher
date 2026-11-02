@@ -39,7 +39,13 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale, isAttachmentGroupWithHapticBond } from 'domain/helpers';
+import {
+  Scale,
+  bondAngleDeg,
+  getImplicitHydrogenSide,
+  isAttachmentGroupWithHapticBond,
+  type ImplicitHydrogenSide,
+} from 'domain/helpers';
 import draw, {
   AP_PATH_SCALE,
   AP_WAVE_HALF_PERP,
@@ -61,6 +67,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 import type { ReBondEndpoint } from './rebondEndpoint';
+import { HYDROGEN_LAYOUT } from './reatomHydrogenLayout';
 
 interface ElemAttr {
   text: string;
@@ -87,7 +94,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   a: Atom;
   showLabel: boolean;
   showInfoLabel: boolean;
-  hydrogenOnTheLeft: boolean;
+  hydrogenSide: ImplicitHydrogenSide;
   color: string;
   component: number;
   label?: ElemAttr;
@@ -118,7 +125,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     this.showLabel = false;
     this.showInfoLabel = false;
 
-    this.hydrogenOnTheLeft = false;
+    this.hydrogenSide = 'right';
 
     this.color = '#000000';
     this.component = -1;
@@ -579,7 +586,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
+    this.hydrogenSide = getHydrogenSide(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 
@@ -614,9 +621,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     if (options.showAtomIds) {
       const text = aid.toString();
-      let idPos = this.hydrogenOnTheLeft
-        ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
-        : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
+      let idPos =
+        this.hydrogenSide === 'left'
+          ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
+          : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
       if (this.showLabel) {
         idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6);
       }
@@ -1611,27 +1619,15 @@ function shouldDisplayHydrogen(
   );
 }
 
-function shouldHydrogenBeOnLeft(struct: Struct, atom: ReAtom) {
-  const visibleNeighbors = getVisibleNeighborHalfBondIds(struct, atom);
+function getHydrogenSide(struct: Struct, atom: ReAtom): ImplicitHydrogenSide {
+  const bondAngles = getVisibleNeighborHalfBondIds(struct, atom).flatMap(
+    (neighborHalfBondId) => {
+      const halfBond = struct.halfBonds.get(neighborHalfBondId);
+      return halfBond ? [bondAngleDeg(halfBond.dir)] : [];
+    },
+  );
 
-  if (visibleNeighbors.length === 0) {
-    if (atom.a.label === 'D' || atom.a.label === 'T') {
-      return false;
-    } else {
-      const element = Elements.get(atom.a.label);
-      return !element || Boolean(element.leftH);
-    }
-  }
-
-  if (visibleNeighbors.length === 1) {
-    const neighbor = visibleNeighbors[0];
-    const neighborHalfBond = struct.halfBonds.get(neighbor);
-    const neighborDirX = neighborHalfBond?.dir.x ?? 0;
-
-    return neighborDirX > 0;
-  }
-
-  return false;
+  return getImplicitHydrogenSide(bondAngles, atom.a.radical !== 0);
 }
 
 function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
@@ -1757,7 +1753,7 @@ function buildLabel(
 
   if (atom.a.atomList !== null) {
     const xShift =
-      ((atom.hydrogenOnTheLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
+      ((atom.hydrogenSide === 'left' ? -1 : 1) * (rbb.width - rbb.height)) / 2;
     pathAndRBoxTranslate(path, rbb, xShift, 0);
     rightMargin += xShift;
     leftMargin += xShift;
@@ -2004,10 +2000,8 @@ function showHydrogen(
   leftMargin: number;
 } {
   let hydroIndex: ElemAttr | null = data.hydroIndex;
-  const isHydrogenOnLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
-  const delta = 0.5 * options.lineWidth;
   const hydrogenText = 'H';
   const hydrogenPath = render.paper.text(ps.x, ps.y, hydrogenText).attr({
     font: options.font,
@@ -2016,15 +2010,7 @@ function showHydrogen(
   });
   const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
   draw.recenterText(hydrogenPath, hydrogenRbb);
-  if (!isHydrogenOnLeft) {
-    pathAndRBoxTranslate(
-      hydrogenPath,
-      hydrogenRbb,
-      data.rightMargin + 0.35 * hydrogenRbb.width + delta,
-      0,
-    );
-    data.rightMargin += hydrogenRbb.width + delta;
-  }
+  let newHydroIndex: ElemAttr | null = null;
   if (implh > 1) {
     const hydroIndexText = implh.toString();
     const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
@@ -2034,45 +2020,40 @@ function showHydrogen(
     });
     const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
     draw.recenterText(hydroIndexPath, hydroIndexRbb);
-    hydroIndex = {
+    newHydroIndex = {
       text: hydroIndexText,
       path: hydroIndexPath,
       rbb: hydroIndexRbb,
     };
-    if (!isHydrogenOnLeft) {
-      pathAndRBoxTranslate(
-        hydroIndexPath,
-        hydroIndexRbb,
-        data.rightMargin +
-          0.15 * hydroIndexRbb.width * Math.min(options.zoom, 1) +
-          delta,
-        0.2 * (atom.label?.rbb.height ?? 0),
-      );
-      data.rightMargin += hydroIndexRbb.width + delta;
-    }
+    hydroIndex = newHydroIndex;
   }
-  if (isHydrogenOnLeft) {
-    if (hydroIndex != null) {
-      pathAndRBoxTranslate(
-        hydroIndex.path,
-        hydroIndex.rbb,
-        data.leftMargin - 0.4 * hydroIndex.rbb.width - delta,
-        0.2 * (atom.label?.rbb.height ?? 0),
-      );
-      data.leftMargin -= hydroIndex.rbb.width + delta;
-    }
+
+  const layout = HYDROGEN_LAYOUT[atom.hydrogenSide]({
+    hydrogenWidth: hydrogenRbb.width,
+    indexWidth: newHydroIndex?.rbb.width ?? null,
+    labelHeight: atom.label?.rbb.height ?? 0,
+    delta: 0.5 * options.lineWidth,
+    zoom: options.zoom,
+    rightMargin: data.rightMargin,
+    leftMargin: data.leftMargin,
+  });
+  pathAndRBoxTranslate(
+    hydrogenPath,
+    hydrogenRbb,
+    layout.hydrogen.x,
+    layout.hydrogen.y,
+  );
+  if (newHydroIndex && layout.index) {
     pathAndRBoxTranslate(
-      hydrogenPath,
-      hydrogenRbb,
-      data.leftMargin -
-        0.4 *
-          hydrogenRbb.width *
-          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
-        delta,
-      0,
+      newHydroIndex.path,
+      newHydroIndex.rbb,
+      layout.index.x,
+      layout.index.y,
     );
-    data.leftMargin -= hydrogenRbb.width + delta;
   }
+  data.rightMargin = layout.rightMargin;
+  data.leftMargin = layout.leftMargin;
+
   const hydrogen: ElemAttr = {
     text: hydrogenText,
     path: hydrogenPath,

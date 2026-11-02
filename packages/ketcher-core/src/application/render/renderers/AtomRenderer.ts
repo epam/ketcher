@@ -33,6 +33,7 @@ import {
   isStackedSide,
   labelContourTop,
   STACKED_LABEL_CLASS,
+  startPropertyRunBesideCount,
   startSymbolLineWithIsotope,
 } from 'application/render/renderers/atomLabelHydrogenLayout';
 
@@ -621,7 +622,7 @@ export class AtomRenderer extends BaseRenderer {
     if (this.atom.hasCharge) {
       const charge = this.atom.properties.charge as number;
 
-      this.textElement
+      const chargeElement = this.textElement
         ?.append('tspan')
         .text(
           (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
@@ -629,6 +630,8 @@ export class AtomRenderer extends BaseRenderer {
         )
         .attr('fill', this.labelColor)
         .attr('dy', -4);
+
+      this.startBesideStackedCount(chargeElement);
     }
   }
 
@@ -679,12 +682,22 @@ export class AtomRenderer extends BaseRenderer {
     if (this.atom.hasExplicitValence) {
       const explicitValence = this.atom.properties.explicitValence as number;
 
-      this.textElement
+      const valenceElement = this.textElement
         ?.append('tspan')
         .text(`(${VALENCE_MAP[explicitValence]})`)
         .attr('fill', this.labelColor)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
+
+      this.startBesideStackedCount(valenceElement);
+    }
+  }
+
+  private startBesideStackedCount(
+    property?: D3SvgElementSelection<SVGTSpanElement, void>,
+  ) {
+    if (this.textElement && property) {
+      startPropertyRunBesideCount(this.textElement, property);
     }
   }
 

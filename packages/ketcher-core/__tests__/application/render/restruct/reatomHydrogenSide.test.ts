@@ -107,13 +107,23 @@ function showAtom({
   bondAnglesDeg = [],
   implicitH = 1,
   radical = 0,
+  charge = 0,
+  explicitValence = -1,
 }: {
   bondAnglesDeg?: number[];
   implicitH?: number;
   radical?: number;
+  charge?: number;
+  explicitValence?: number;
 }): AtomFixture {
   const struct = new Struct();
-  const atom = new Atom({ label: 'N', pp: new Vec2(0, 0), radical });
+  const atom = new Atom({
+    label: 'N',
+    pp: new Vec2(0, 0),
+    radical,
+    charge,
+    explicitValence,
+  });
   atom.implicitH = implicitH;
   const aid = struct.atoms.add(atom);
   bondAnglesDeg.forEach((angleDeg) => {
@@ -281,6 +291,90 @@ describe('ReAtom hydrogen layout', () => {
 
     const [, , , height] = paper.rect.mock.calls[0];
     expect(height).toBeCloseTo(FONT_PX + 2 * padding);
+  });
+});
+
+describe('ReAtom charge and valence next to stacked hydrogens', () => {
+  const TOP = [210, 330];
+
+  it('draws the charge right of the count of top hydrogens', () => {
+    const { reatom } = showAtom({
+      bondAnglesDeg: TOP,
+      implicitH: 2,
+      charge: 1,
+    });
+    // symbol, H, count, charge
+    const [, , countBox, chargeBox] = reatom.visel.boxes;
+
+    expect(chargeBox.p0.x).toBeGreaterThanOrEqual(countBox.p1.x);
+  });
+
+  it('draws the charge right of the count of bottom hydrogens', () => {
+    const { reatom } = showAtom({
+      bondAnglesDeg: [0, 180],
+      radical: 2,
+      implicitH: 2,
+      charge: 1,
+    });
+    // symbol, radical, H, count, charge
+    const [, , , countBox, chargeBox] = reatom.visel.boxes;
+
+    expect(reatom.hydrogenSide).toBe('bottom');
+    expect(chargeBox.p0.x).toBeGreaterThanOrEqual(countBox.p1.x);
+  });
+
+  it('draws the explicit valence right of the count when there is no charge', () => {
+    const { reatom } = showAtom({
+      bondAnglesDeg: TOP,
+      implicitH: 2,
+      explicitValence: 2,
+    });
+    const [, , countBox, valenceBox] = reatom.visel.boxes;
+
+    expect(valenceBox.p0.x).toBeGreaterThanOrEqual(countBox.p1.x);
+  });
+
+  it('draws the valence right of the charge, which is right of the count', () => {
+    const { reatom } = showAtom({
+      bondAnglesDeg: TOP,
+      implicitH: 2,
+      charge: 1,
+      explicitValence: 2,
+    });
+    const [, , countBox, chargeBox, valenceBox] = reatom.visel.boxes;
+
+    expect(chargeBox.p0.x).toBeGreaterThanOrEqual(countBox.p1.x);
+    expect(valenceBox.p0.x).toBeGreaterThanOrEqual(chargeBox.p1.x);
+  });
+
+  it('keeps the charge where it is without hydrogens when H has no count', () => {
+    const oneHydrogen = showAtom({
+      bondAnglesDeg: TOP,
+      implicitH: 1,
+      charge: 1,
+    });
+    const noHydrogen = showAtom({
+      bondAnglesDeg: TOP,
+      implicitH: 0,
+      charge: 1,
+    });
+    // symbol, H, charge versus symbol, charge
+    const stackedCharge = oneHydrogen.reatom.visel.boxes[2];
+    const plainCharge = noHydrogen.reatom.visel.boxes[1];
+
+    expect(boxCenter(stackedCharge).x).toBeCloseTo(boxCenter(plainCharge).x);
+    expect(boxCenter(stackedCharge).y).toBeCloseTo(boxCenter(plainCharge).y);
+  });
+
+  it('keeps the charge of right hydrogens after their count', () => {
+    const { reatom } = showAtom({
+      bondAnglesDeg: [210],
+      implicitH: 2,
+      charge: 1,
+    });
+    const [, , countBox, chargeBox] = reatom.visel.boxes;
+
+    expect(chargeBox.p0.x).toBeGreaterThanOrEqual(countBox.p1.x);
   });
 });
 

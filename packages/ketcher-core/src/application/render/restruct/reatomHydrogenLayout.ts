@@ -88,25 +88,34 @@ function layoutLeft(input: HydrogenLayoutInput): HydrogenLayout {
 
 /**
  * Top and bottom stack H over or under the symbol, centered on it, one label
- * height away. The count sits right of H. The margins stay as they are: the
- * hydrogens take no room beside the symbol, so charge and valence keep their
- * place next to it.
+ * height away. The count sits right of H. The hydrogens take no room beside
+ * the symbol, so charge and valence keep their place next to it, except when a
+ * count is drawn: the right margin moves out to the count's right edge, so they
+ * are drawn clear of it, not on top of it.
  */
 function layoutStacked(direction: -1 | 1) {
   return (input: HydrogenLayoutInput): HydrogenLayout => {
     const { hydrogenWidth, indexWidth, labelHeight, delta } = input;
     const hydrogen = { x: 0, y: direction * labelHeight };
-    const index =
-      indexWidth === null
-        ? null
-        : {
-            x: 0.5 * hydrogenWidth + 0.5 * indexWidth + delta,
-            y: hydrogen.y + INDEX_DROP * labelHeight,
-          };
+    if (indexWidth === null) {
+      return {
+        hydrogen,
+        index: null,
+        rightMargin: input.rightMargin,
+        leftMargin: input.leftMargin,
+      };
+    }
+    const index = {
+      x: 0.5 * hydrogenWidth + 0.5 * indexWidth + delta,
+      y: hydrogen.y + INDEX_DROP * labelHeight,
+    };
     return {
       hydrogen,
       index,
-      rightMargin: input.rightMargin,
+      rightMargin: Math.max(
+        input.rightMargin,
+        index.x + 0.5 * indexWidth + delta,
+      ),
       leftMargin: input.leftMargin,
     };
   };

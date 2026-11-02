@@ -24,6 +24,7 @@ import {
 } from 'application/render/renderers/constants';
 import {
   getImplicitHydrogenSide,
+  isLabelAnchoredLeft,
   type ImplicitHydrogenSide,
   isGenericAtom,
   isStackedSide,
@@ -298,25 +299,29 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement?.attr('opacity', '0');
   }
 
-  // Same rule as molecules mode (ReAtom.hydrogenSide): the helper decides.
-  // This is the side for the bonds as they are now; the side that was drawn is
-  // labelHydrogenSide.
-  private computeHydrogenSide(): ImplicitHydrogenSide {
+  // The directions of the bonds that take room around the atom. The view model
+  // is built from atom-to-atom bonds only. A bond to a monomer takes room like
+  // any other bond, so it counts here.
+  private getBondDirections(): Vec2[] {
     const halfEdges =
       provideEditorInstance().viewModel.atomsToHalfEdges.get(this.atom) ?? [];
-    // The view model is built from atom-to-atom bonds only. A bond to a monomer
-    // takes room around the atom like any other bond, so it counts here.
     const monomerDirections = this.atom.bonds
       .filter((bond) => bond instanceof MonomerToAtomBond)
       .map((bond) => Vec2.diff(bond.monomer.position, this.atom.position));
 
-    return getImplicitHydrogenSide(
-      [
-        ...halfEdges.map((halfEdge) => halfEdge.direction),
-        ...monomerDirections,
-      ],
-      this.atom.hasRadical,
-    );
+    return [
+      ...halfEdges.map((halfEdge) => halfEdge.direction),
+      ...monomerDirections,
+    ];
+  }
+
+  // Same rule as molecules mode (ReAtom.hydrogenSide): the helper decides.
+  // This is the side for the bonds as they are now; the side that was drawn is
+  // labelHydrogenSide.
+  private computeHydrogenSide(
+    bondDirections = this.getBondDirections(),
+  ): ImplicitHydrogenSide {
+    return getImplicitHydrogenSide(bondDirections, this.atom.hasRadical);
   }
 
   // Hydrogens that the label draws as text of their own, beside or around the
@@ -532,9 +537,15 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const hydrogenSide = this.computeHydrogenSide();
+    const bondDirections = this.getBondDirections();
+    const hydrogenSide = this.computeHydrogenSide(bondDirections);
+    const hasSeparateHydrogen = this.hasSeparateHydrogen;
+    // Hydrogens drawn on the left follow the side. Without them the label is
+    // only aligned, and an internal atom keeps its label centred.
+    const shouldHydrogenBeOnLeft = hasSeparateHydrogen
+      ? hydrogenSide === 'left'
+      : isLabelAnchoredLeft(hydrogenSide, bondDirections.length);
     let { hydrogenAmount } = this.atom.calculateValence();
-    const shouldHydrogenBeOnLeft = hydrogenSide === 'left';
 
     if (!this.shouldDisplayHydrogen) {
       hydrogenAmount = 0;
@@ -559,7 +570,6 @@ export class AtomRenderer extends BaseRenderer {
       .attr('font-size', `${LABEL_FONT_SIZE}px`)
       .attr('pointer-events', 'none');
 
-    const hasSeparateHydrogen = this.hasSeparateHydrogen;
     if (hasSeparateHydrogen) {
       this.labelHydrogenSide = hydrogenSide;
     }

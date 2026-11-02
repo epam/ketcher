@@ -42,6 +42,7 @@ import type { Element, RaphaelSet } from 'raphael';
 import {
   Scale,
   getImplicitHydrogenSide,
+  isLabelAnchoredLeft,
   isAttachmentGroupWithHapticBond,
   isStackedSide,
   type ImplicitHydrogenSide,
@@ -95,6 +96,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   showLabel: boolean;
   showInfoLabel: boolean;
   hydrogenSide: ImplicitHydrogenSide;
+  // For the labels that hydrogens do not split: the atom list and the atom id.
+  labelAnchoredLeft: boolean;
   color: string;
   component: number;
   label?: ElemAttr;
@@ -132,6 +135,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     this.showInfoLabel = false;
 
     this.hydrogenSide = 'right';
+    this.labelAnchoredLeft = false;
 
     this.color = '#000000';
     this.component = -1;
@@ -594,7 +598,15 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    this.hydrogenSide = getHydrogenSide(restruct.molecule, this);
+    const bondDirections = getVisibleBondDirections(restruct.molecule, this);
+    this.hydrogenSide = getImplicitHydrogenSide(
+      bondDirections,
+      this.a.radical !== 0,
+    );
+    this.labelAnchoredLeft = isLabelAnchoredLeft(
+      this.hydrogenSide,
+      bondDirections.length,
+    );
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 
@@ -629,10 +641,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     if (options.showAtomIds) {
       const text = aid.toString();
-      let idPos =
-        this.hydrogenSide === 'left'
-          ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
-          : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
+      let idPos = this.labelAnchoredLeft
+        ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
+        : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
       if (this.showLabel) {
         idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6);
       }
@@ -1638,15 +1649,13 @@ function shouldDisplayHydrogen(
   );
 }
 
-function getHydrogenSide(struct: Struct, atom: ReAtom): ImplicitHydrogenSide {
-  const bondDirections = getVisibleNeighborHalfBondIds(struct, atom).flatMap(
+function getVisibleBondDirections(struct: Struct, atom: ReAtom): Vec2[] {
+  return getVisibleNeighborHalfBondIds(struct, atom).flatMap(
     (neighborHalfBondId) => {
       const halfBond = struct.halfBonds.get(neighborHalfBondId);
       return halfBond ? [halfBond.dir] : [];
     },
   );
-
-  return getImplicitHydrogenSide(bondDirections, atom.a.radical !== 0);
 }
 
 function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {
@@ -1772,7 +1781,7 @@ function buildLabel(
 
   if (atom.a.atomList !== null) {
     const xShift =
-      ((atom.hydrogenSide === 'left' ? -1 : 1) * (rbb.width - rbb.height)) / 2;
+      ((atom.labelAnchoredLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
     pathAndRBoxTranslate(path, rbb, xShift, 0);
     rightMargin += xShift;
     leftMargin += xShift;

@@ -68,13 +68,6 @@ export const ALLOWED_UI_IMPORTS = [
  */
 export const ALLOWED_DOMAIN_IMPORTS = [
   {
-    file: 'packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts',
-    imports: [
-      'application/editor/editorSingleton',
-      'application/editor/operations/monomer/resolveMonomerClass',
-    ],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
     imports: [
       'application/editor/editorSettings',

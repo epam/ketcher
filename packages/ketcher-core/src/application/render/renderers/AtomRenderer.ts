@@ -369,6 +369,7 @@ export class AtomRenderer extends BaseRenderer {
     const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
+    const hasBadValence = this.atom.hasBadValence;
 
     if (
       isCarbon &&
@@ -377,7 +378,8 @@ export class AtomRenderer extends BaseRenderer {
       !hasRadical &&
       !hasAlias &&
       !hasExplicitValence &&
-      !hasExplicitIsotope
+      !hasExplicitIsotope &&
+      !hasBadValence
     ) {
       // Show carbon label when bonds are collinear (180 degree angle),
       if (atomNeighborsHalfEdges?.length === 2) {

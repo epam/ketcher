@@ -166,7 +166,7 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
     });
 
     it('lays molecules out by the macro mode scale of the port', () => {
-      // mergeInto still reads the view model of the last created editor.
+      // The renderers read the last created editor, so one must exist.
       const { editor } = open(new SnakeMode());
       const layoutWith = (macroModeScale: number) => {
         const dem = new DrawingEntitiesManager({
@@ -405,7 +405,7 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
       ).toThrow(MissingEditorError);
     });
 
-    it('lets a sibling carry the deps, so the view model of the editor is re-initialized', () => {
+    it('initializes the view model of the editor when merging into an empty sibling', () => {
       const { editor } = open(new FlexMode());
       const initialize = jest.spyOn(editor.viewModel, 'initialize');
       deserializeKet(ETHANE_KET).mergeInto(editor.drawingEntitiesManager);
@@ -421,7 +421,7 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
       expect(mergedDrawingEntities.atoms.size).toBe(2);
     });
 
-    it('lets the sibling of a bare manager merge without a view model', () => {
+    it('merges into the sibling of a bare manager without touching any view model', () => {
       const { editor } = open(new FlexMode());
       const initialize = jest.spyOn(editor.viewModel, 'initialize');
       const bare = new DrawingEntitiesManager();

@@ -2426,6 +2426,7 @@ export class DrawingEntitiesManager {
     const mergedDrawingEntities = new DrawingEntitiesManager(
       targetDrawingEntitiesManager.deps,
     );
+
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
         monomer instanceof AmbiguousMonomer

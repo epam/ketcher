@@ -1,7 +1,6 @@
 import { CoreEditor } from 'application/editor';
 import type { BaseMode } from 'application/editor/modes/BaseMode';
 import { BaseMonomer, Vec2 } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { AttachmentPointName } from 'domain/types';
@@ -11,8 +10,6 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 
-// One molecule of two carbons joined by a single bond. Deserialized, it
-// becomes one Chem monomer holding 2 atoms and 1 bond.
 const yellow = { regular: 'yellow' };
 
 // The colors the renderers read for the peptides and sugars these tests draw.
@@ -23,6 +20,8 @@ const renderTheme = {
   peptide: { color: { A: yellow, X: yellow } },
 };
 
+// One molecule of two carbons joined by a single bond. Deserialized, it
+// becomes one Chem monomer holding 2 atoms and 1 bond.
 export const ETHANE_KET = JSON.stringify({
   root: { nodes: [{ $ref: 'mol0' }] },
   mol0: {
@@ -35,7 +34,7 @@ export const ETHANE_KET = JSON.stringify({
   },
 });
 
-export const stubCanvasDimensions = (canvas: SVGSVGElement) => {
+const stubCanvasDimensions = (canvas: SVGSVGElement) => {
   Object.defineProperty(canvas, 'width', {
     configurable: true,
     value: { baseVal: { value: 500 } },
@@ -60,18 +59,6 @@ export const createEditor = (mode?: BaseMode) => {
 
   return { canvas, editor };
 };
-
-// The one line that builds an empty clone to merge the editor's manager into.
-// The refactor changes this construction and nothing else about these tests.
-export const makeDetachedManager = (editor: CoreEditor) =>
-  editor.drawingEntitiesManager.createEmptySibling();
-
-// The one line that centers a detached manager on the canvas of an editor.
-// The refactor changes this signature and nothing else about these tests.
-export const centerDetached = (
-  dem: DrawingEntitiesManager,
-  editor: CoreEditor,
-) => dem.centerMacroStructure(editor.canvasOffset);
 
 export const deserializeKet = (ketText: string) => {
   const deserialized = new KetSerializer().deserializeToDrawingEntities(

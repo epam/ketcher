@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an 'AS IS' BASIS,
@@ -17,7 +17,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import FontFaceObserver from 'font-face-observer';
-import Select, { Option } from './Select';
+import Select, { type Option } from './Select';
 
 const commonFonts: string[] = [
   'Arial',
@@ -74,7 +74,7 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
   );
 
   useEffect(() => {
-    let mounted = true;
+    let isMounted = true;
     checkInSystem().then((results) => {
       const fonts = results
         .filter((i): i is string => i !== null)
@@ -82,13 +82,13 @@ function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
           // TODO remove font-size from here
           return { value: `30px ${font}`, label: font };
         });
-      if (mounted) {
+      if (isMounted) {
         setAvailableFonts(fonts);
       }
     });
 
     return () => {
-      mounted = false;
+      isMounted = false;
     };
   }, []);
 

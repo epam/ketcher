@@ -1,4 +1,4 @@
-import { MonomerItemType } from 'domain/types';
+import type { MonomerItemType } from 'domain/types';
 import {
   MONOMER_CONST,
   rnaDnaNaturalAnalogues,

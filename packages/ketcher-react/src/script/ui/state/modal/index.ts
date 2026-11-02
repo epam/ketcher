@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,7 @@ interface ModalState {
   parentModal: ModalState | null;
 }
 
-interface ModalOpenAction {
+export interface ModalOpenAction {
   type: 'MODAL_OPEN';
   data: {
     name: string;
@@ -40,18 +40,18 @@ interface ModalOpenAction {
   };
 }
 
-interface ModalCloseAction {
+export interface ModalCloseAction {
   type: 'MODAL_CLOSE';
 }
 
-type ModalAction = ModalOpenAction | ModalCloseAction | AnyAction;
+export type ModalAction = ModalOpenAction | ModalCloseAction | AnyAction;
 
 export type { ModalState, ModalDialogProps };
 
 export function openDialog(
   dispatch: Dispatch,
   dialogName: string,
-  props?: Record<string, unknown>,
+  props?: object | null,
 ): Promise<unknown> {
   return new Promise((resolve, reject) => {
     dispatch({
@@ -90,7 +90,7 @@ function modalReducer(
       if (state?.parentModal) {
         const restoredProp = {
           ...state.parentModal.prop,
-          ...(state.parentModal.form?.result ?? {}),
+          ...state.parentModal.form?.result,
           isRestoredModal: true,
         } as ModalDialogProps;
         return { ...state.parentModal, prop: restoredProp };

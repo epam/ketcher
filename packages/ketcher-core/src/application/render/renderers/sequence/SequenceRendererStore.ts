@@ -1,4 +1,4 @@
-import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
+import type { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
 
 // Module-level state store extracted to break circular dependencies:
 // SequenceRenderer → ... → BaseSequenceItemRenderer → SequenceRenderer

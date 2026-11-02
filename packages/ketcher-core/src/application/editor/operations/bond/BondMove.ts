@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,22 +16,26 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
+
+type Data = {
+  bid: number | null;
+  d: Vec2 | null;
+};
 
 export class BondMove extends BaseOperation {
-  data: {
-    bid: any;
-    d: any;
-  };
+  data: Data;
 
-  constructor(bondId?: any, d?: any) {
+  constructor(bondId?: number, d?: Vec2) {
     super(OperationType.BOND_MOVE, OperationPriority.BOND_MOVE);
-    this.data = { bid: bondId, d };
+    this.data = { bid: bondId ?? null, d: d ?? null };
   }
 
   execute(restruct: ReStruct) {
     const { bid, d } = this.data;
+    if (bid === null || !d) return;
     const bond = restruct.bonds.get(bid);
     if (!bond) return;
 
@@ -45,5 +49,10 @@ export class BondMove extends BaseOperation {
     const inverted = new BondMove();
     inverted.data = this.data;
     return inverted;
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d?.x === 0 && d?.y === 0;
   }
 }

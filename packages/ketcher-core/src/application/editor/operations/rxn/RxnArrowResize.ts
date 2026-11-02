@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from 'application/render';
-import assert from 'assert';
+import type { ReStruct } from 'application/render';
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
-import { toFixed } from 'utilities';
+import { assert, toFixed } from 'utilities';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 
@@ -41,11 +40,17 @@ export class RxnArrowResize extends Base {
     d: Vec2,
     current: Vec2,
     anchor: Vec2 | null,
-    noinvalidate: boolean,
+    shouldSkipInvalidation: boolean,
     isSnappingEnabled: boolean,
   ) {
     super(OperationType.RXN_ARROW_RESIZE);
-    this.data = { id, d, current, anchor, noinvalidate };
+    this.data = {
+      id,
+      d,
+      current,
+      anchor,
+      noinvalidate: shouldSkipInvalidation,
+    };
     this.isSnappingEnabled = isSnappingEnabled;
   }
 
@@ -61,7 +66,7 @@ export class RxnArrowResize extends Base {
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0();
       const previousPos1 = item.pos[1].get_xy0();
-      let middlePoint;
+      let middlePoint: Vec2 | undefined;
 
       if (RxnArrow.isElliptical(item)) {
         [, , middlePoint] = reItem.getReferencePoints();
@@ -118,8 +123,9 @@ export class RxnArrowResize extends Base {
       }
 
       if (
-        toFixed(anchor.x) === toFixed(middlePoint?.x) &&
-        toFixed(anchor.y) === toFixed(middlePoint?.y)
+        middlePoint &&
+        toFixed(anchor.x) === toFixed(middlePoint.x) &&
+        toFixed(anchor.y) === toFixed(middlePoint.y)
       ) {
         const { angle } = reItem.getArrowParams(
           item.pos[0].x,
@@ -168,6 +174,11 @@ export class RxnArrowResize extends Base {
       this.data.noinvalidate,
       this.isSnappingEnabled,
     );
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
   }
 }
 

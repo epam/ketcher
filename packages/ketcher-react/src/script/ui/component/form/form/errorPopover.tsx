@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,9 @@ import styled from '@emotion/styled';
 const ErrorMessage = styled(Popover)`
   & .MuiPopover-paper {
     padding: 0 8px;
-    box-shadow: 4px 0px, 2px rgba(0, 0, 0, 0.25);
+    box-shadow:
+      4px 0px,
+      2px rgba(0, 0, 0, 0.25);
     font-size: 12px;
     max-width: 160px;
   }

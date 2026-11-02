@@ -1,0 +1,16 @@
+{
+  "modeControl": {
+    "molecules": "分子",
+    "macromolecules": "大分子",
+    "switchToKetcherMode": "切换到 Ketcher 模式",
+    "switchToMacromoleculeMode": "切换到大分子模式"
+  },
+  "zoom": {
+    "outLabel": "缩小",
+    "inLabel": "放大",
+    "reset": "缩放 100%"
+  },
+  "systemControls": {
+    "help": "帮助 ({shortcut})"
+  }
+}

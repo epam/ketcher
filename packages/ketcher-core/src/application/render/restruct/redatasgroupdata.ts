@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,9 @@
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
-import { SGroup } from 'domain/entities/sgroup';
+import type { SGroup } from 'domain/entities/sgroup';
 
 class ReDataSGroupData extends ReObject {
   public sgroup: SGroup;
@@ -35,6 +35,9 @@ class ReDataSGroupData extends ReObject {
 
   hoverPath(render: Render) {
     const box = this.sgroup.dataArea;
+    if (!box) {
+      return render.paper.rect(0, 0, 0, 0);
+    }
     const p0 = Scale.modelToCanvas(box.p0, render.options);
     const sz = Scale.modelToCanvas(box.p1, render.options).sub(p0);
     return render.paper.rect(p0.x, p0.y, sz.x, sz.y);

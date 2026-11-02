@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,8 @@
 import {
   Action,
   Atom,
+  type AtomAttributes,
+  type ElementLabel,
   Bond,
   FunctionalGroup,
   SGroup,
@@ -31,19 +33,21 @@ import {
   CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
+import type { AtomToolDragContext } from './atom.types';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
+import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 class AtomTool implements Tool {
   private readonly editor: Editor;
-  private readonly atomProps: any;
-  private dragCtx: any;
+  private readonly atomProps: AtomAttributes;
+  private dragCtx?: AtomToolDragContext;
   readonly #bondProps: { stereo: number; type: number };
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor, atomProps) {
+  constructor(editor: Editor, atomProps: AtomAttributes) {
     this.editor = editor;
     this.atomProps = atomProps;
     this.#bondProps = { type: 1, stereo: Bond.PATTERN.STEREO.NONE };
@@ -67,7 +71,7 @@ class AtomTool implements Tool {
             return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
           });
         if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
-          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          dispatchMonomerOrGroupDialog(editor, [...selectedSGroupsId]);
           this.editor.hoverIcon.hide();
           this.isNotActiveTool = true;
           return;
@@ -95,7 +99,7 @@ class AtomTool implements Tool {
       this.isNotActiveTool = true;
     } else {
       this.editor.hoverIcon.show();
-      this.editor.hoverIcon.label = atomProps.label;
+      this.editor.hoverIcon.label = atomProps.label as ElementLabel;
       this.editor.hoverIcon.fill = ElementColor[atomProps.label] ?? '#000000';
       this.editor.hoverIcon.updatePosition();
     }
@@ -134,7 +138,7 @@ class AtomTool implements Tool {
       );
 
       if (fgId !== null) {
-        editor.event.removeFG.dispatch({ fgIds: [fgId] });
+        dispatchMonomerOrGroupDialog(editor, [fgId]);
         return;
       }
     }
@@ -205,37 +209,43 @@ class AtomTool implements Tool {
       atomId = sGroup?.getAttachmentAtomId();
     }
 
-    if (atomId !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const atom = molecule.atoms.get(atomId)!;
-      let angle = vectorUtils.calcAngle(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-      );
-      if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
-      const degrees = vectorUtils.degrees(angle);
-      editor.event.message.dispatch({ info: degrees + 'º' });
-      const newAtomPos = vectorUtils.calcNewAtomPos(
-        atom.pp,
-        CoordinateTransformation.pageToModel(event, rnd),
-        event.ctrlKey,
-      );
-
-      if (dragCtx.action) {
-        dragCtx.action.perform(reStruct);
-      }
-
-      dragCtx.action = fromBondAddition(
-        rnd.ctab,
-        this.#bondProps,
-        atomId,
-        { ...(atomProps ?? {}) },
-        undefined,
-        newAtomPos,
-      )[0];
-
-      editor.update(dragCtx.action, true);
+    if (atomId === undefined) {
+      return;
     }
+
+    const atom = molecule.atoms.get(atomId);
+
+    if (!atom) {
+      return;
+    }
+
+    let angle = vectorUtils.calcAngle(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+    );
+    if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+    const degrees = vectorUtils.degrees(angle);
+    editor.event.message.dispatch({ info: degrees + 'º' });
+    const newAtomPos = vectorUtils.calcNewAtomPos(
+      atom.pp,
+      CoordinateTransformation.pageToModel(event, rnd),
+      event.ctrlKey,
+    );
+
+    if (dragCtx.action) {
+      dragCtx.action.perform(reStruct);
+    }
+
+    dragCtx.action = fromBondAddition(
+      rnd.ctab,
+      this.#bondProps,
+      atomId,
+      { ...atomProps },
+      undefined,
+      newAtomPos,
+    )[0];
+
+    editor.update(dragCtx.action, true);
   }
 
   mouseup(event) {
@@ -259,11 +269,11 @@ class AtomTool implements Tool {
     const struct = editor.struct();
     const action = new Action();
 
-    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+    if (!dragCtx || struct.isTargetFromMacromolecule(ci)) {
       return;
     }
 
-    if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
+    if (!ci && (!dragCtx.item || dragCtx?.isSaltOrSolvent)) {
       action.mergeWith(
         fromAtomAddition(
           reStruct,
@@ -271,7 +281,7 @@ class AtomTool implements Tool {
           atomProps,
         ),
       );
-    } else if (dragCtx.item && ci) {
+    } else if (ci && dragCtx.item) {
       if (dragCtx.item.id === ci.id) {
         if (
           ci.map === 'functionalGroups' &&
@@ -337,19 +347,21 @@ class AtomTool implements Tool {
 
 export function atomLongtapEvent(tool, render) {
   const { dragCtx, editor } = tool;
+  if (!dragCtx) return;
+
   const atomid = dragCtx.item?.id;
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom
   const atom =
-    atomid !== undefined && atomid !== null
-      ? render.ctab.molecule.atoms.get(atomid)
-      : new Atom({ label: '' });
+    atomid === undefined || atomid === null
+      ? new Atom({ label: '' })
+      : render.ctab.molecule.atoms.get(atomid);
   const fgId = FunctionalGroup.findFunctionalGroupByAtom(fgs, atomid);
   // TODO: longtab event
   dragCtx.timeout = setTimeout(() => {
     delete tool.dragCtx;
     if (fgId != null) {
-      editor.event.removeFG.dispatch({ fgIds: [fgId] });
+      dispatchMonomerOrGroupDialog(editor, [fgId]);
       return;
     }
     editor.selection(null);
@@ -361,8 +373,8 @@ export function atomLongtapEvent(tool, render) {
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
+      .catch((error) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', error);
       }); // w/o changes
   }, 750);
 

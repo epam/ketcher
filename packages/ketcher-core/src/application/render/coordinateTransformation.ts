@@ -1,5 +1,5 @@
 import { Vec2 } from 'domain/entities/vec2';
-import { Render } from './raphaelRender';
+import type { Render } from './raphaelRender';
 import { Scale } from 'domain/helpers';
 
 const canvasToView = (point: Vec2, render: Render) => {

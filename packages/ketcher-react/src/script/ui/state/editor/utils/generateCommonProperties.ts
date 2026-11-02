@@ -1,4 +1,4 @@
-import { Atom, Bond } from 'ketcher-core';
+import type { Atom, Bond } from 'ketcher-core';
 
 type partialPropertiesOfElement = Partial<{
   [attribute in keyof (Atom | Bond)]: string | number | boolean;
@@ -17,8 +17,8 @@ export function generateCommonProperties(
     selectedElements.forEach((element) => {
       uniqueValues.add(element[property]);
     });
-    const allElementsHaveTheSameValue = uniqueValues.size === 1;
-    if (allElementsHaveTheSameValue) {
+    const hasSameValueForAllElements = uniqueValues.size === 1;
+    if (hasSameValueForAllElements) {
       resultElementAttributes[property] = normalizedElement[property];
     } else {
       resultElementAttributes[property] = '';

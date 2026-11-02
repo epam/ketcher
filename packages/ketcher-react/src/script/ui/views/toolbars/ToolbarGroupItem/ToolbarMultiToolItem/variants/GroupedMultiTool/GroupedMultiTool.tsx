@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MultiToolCallProps, MultiToolProps } from '../variants.types';
+import type { MultiToolCallProps, MultiToolProps } from '../variants.types';
 
-import { ActionButton, ActionButtonProps } from '../../../ActionButton';
+import { type ActionButtonProps, ActionButton } from '../../../ActionButton';
 import action from '../../../../../../action';
 import classes from './GroupedMultiTool.module.less';
 import { getIconName } from 'components';

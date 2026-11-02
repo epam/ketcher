@@ -14,6 +14,7 @@ declare global {
     ): void;
 
     ketcher?: Ketcher;
+    _ketcher_isAutozoomDisabled?: boolean;
   }
 
   declare namespace NodeJS {

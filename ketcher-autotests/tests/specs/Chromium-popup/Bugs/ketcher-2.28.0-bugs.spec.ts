@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
@@ -124,7 +121,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 //     let changeEventSubscriber: any;
 //     await page.evaluate(() => {
-//       changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+//       changeEventSubscriber = globalThis.window.ketcher.editor.subscribe('change', () =>
 //         console.log('hello'),
 //       );
 //     });
@@ -140,7 +137,7 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //     });
 
 //     await page.evaluate(() => {
-//       window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+//       globalThis.window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
 //     });
 //   },
 // );
@@ -167,8 +164,9 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
-    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
-      console.log('in change event'),
+    changeEventSubscriber = globalThis.window.ketcher.editor.subscribe(
+      'change',
+      () => console.log('in change event'),
     );
   });
 
@@ -179,7 +177,10 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   expect(consoleMessage.text()).toBe('in change event');
 
   await page.evaluate(() => {
-    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
+    globalThis.window.ketcher.editor.unsubscribe(
+      'change',
+      changeEventSubscriber,
+    );
   });
 });
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,34 +16,38 @@
 
 import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
-import { ReStruct } from '../../../../render';
+import type { ReStruct } from '../../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
 
 export class RxnPlusMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
-    noinvalidate: any;
+    id?: number;
+    d?: Vec2;
+    noinvalidate?: boolean;
   };
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.RXN_PLUS_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct) {
-    const { id, d, noinvalidate } = this.data;
+    const { id, d, noinvalidate: shouldSkipInvalidation } = this.data;
+    if (id === undefined || !d) return;
 
     const struct = restruct.molecule;
-    struct.rxnPluses.get(id)!.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    const rxnPlus = struct.rxnPluses.get(id);
+    const rxn = restruct.rxnPluses.get(id);
+    if (!rxnPlus || !rxn) return;
 
-    const rxn = restruct.rxnPluses.get(id)!;
+    rxnPlus.pp.add_(d);
     const scaled = Scale.modelToCanvas(d, restruct.render.options);
     rxn.visel.translate(scaled);
 
     this.data.d = d.negated();
 
-    if (!noinvalidate) {
+    if (!shouldSkipInvalidation) {
       BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1);
     }
   }
@@ -52,5 +56,10 @@ export class RxnPlusMove extends BaseOperation {
     const inverted = new RxnPlusMove();
     inverted.data = this.data;
     return inverted;
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d?.x === 0 && d?.y === 0;
   }
 }

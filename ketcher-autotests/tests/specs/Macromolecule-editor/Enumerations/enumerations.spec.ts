@@ -1,11 +1,14 @@
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -19,6 +22,7 @@ test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test('Verify system enumeration for connected monomers through R2-R1', async ({
@@ -242,6 +246,33 @@ test.describe('Enumerations', () => {
     for (let i = 0; i < pressCount; i++) {
       await CommonTopLeftToolbar(page).undo();
     }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Base number disappears once the base stops being part of the preset after sugar and phosphate are deleted', async ({
+    page,
+  }) => {
+    /*
+    Test case: #10734
+    Description: A base keeps its enumeration number only while it remains part of a valid
+    enumerable preset chain (sugar/phosphate based). Once the sugar and phosphate it was
+    attached to are deleted, leaving a lone base, the enumeration number must disappear
+    instead of remaining stale.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await CommonLeftToolbar(page).erase();
+    await getMonomerLocator(page, Sugar.R).click();
+    await getMonomerLocator(page, Phosphate.P).click();
+
     await takeEditorScreenshot(page);
   });
 });

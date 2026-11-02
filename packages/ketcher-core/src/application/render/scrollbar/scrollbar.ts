@@ -1,6 +1,6 @@
-import { Render } from '../raphaelRender';
-import { ViewBox } from '../render.types';
-import { RaphaelElement, RaphaelRectAttr } from './types';
+import type { Render } from '../raphaelRender';
+import type { ViewBox } from '../render.types';
+import type { RaphaelElement, RaphaelRectAttr } from './types';
 
 export abstract class Scrollbar {
   protected bar: RaphaelElement | null = null;
@@ -50,7 +50,9 @@ export abstract class Scrollbar {
       fill: this.COLOR,
     });
 
-    /** @see https://dmitrybaranovskiy.github.io/raphael/reference.html#Element.drag */
+    /**
+    @see https://dmitrybaranovskiy.github.io/raphael/reference.html#Element.drag
+    */
     bar.drag(
       this.onDragMove,
       this.onDragStart,

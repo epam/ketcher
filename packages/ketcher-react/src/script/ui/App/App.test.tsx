@@ -44,6 +44,7 @@ jest.mock('../dialog/AbbreviationLookup', () => ({
 
 jest.mock('../../../hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test-ketcher-id', prevKetcherId: '' }),
+  useSettings: jest.fn(),
   useSubscriptionOnEvents: jest.fn(),
 }));
 
@@ -125,5 +126,24 @@ describe('App notification banner', () => {
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'HIDE_SNACKBAR_NOTIFICATION',
     });
+  });
+
+  it('initializes once and removes its Ketcher instance on unmount', () => {
+    const checkServer = jest.fn();
+    const { rerender, unmount } = render(<App checkServer={checkServer} />);
+
+    expect(checkServer).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+
+    rerender(<App checkServer={checkServer} />);
+
+    expect(checkServer).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(2);
+
+    unmount();
+
+    expect(mockDispatch).toHaveBeenCalledTimes(5);
+    expect(mockRemoveKetcherInstance).toHaveBeenCalledTimes(1);
+    expect(mockRemoveKetcherInstance).toHaveBeenCalledWith('test-ketcher-id');
   });
 });

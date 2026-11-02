@@ -1,5 +1,5 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 
@@ -15,9 +15,7 @@ export interface ITwoStrandedSnakeLayoutNode {
 
 export interface ISnakeLayoutModelRow {
   snakeLayoutModelItems: (
-    | ITwoStrandedSnakeLayoutNode
-    | MoleculeSnakeLayoutNode
-    | EmptySnakeLayoutNode
+    ITwoStrandedSnakeLayoutNode | MoleculeSnakeLayoutNode | EmptySnakeLayoutNode
   )[];
 }
 

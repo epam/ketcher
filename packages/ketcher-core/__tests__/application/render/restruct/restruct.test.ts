@@ -1,5 +1,5 @@
 import { ReSimpleObject, ReStruct, Render } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import {
   Atom,
   Bond,
@@ -112,7 +112,7 @@ describe('expanded monomer rendering', () => {
   };
 
   const mockSvgGeometry = () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -137,7 +137,7 @@ describe('expanded monomer rendering', () => {
         rotate() {
           return this;
         },
-      } as unknown as DOMMatrix);
+      }) as unknown as DOMMatrix;
     svgSvgElement.createSVGPoint = () =>
       ({
         x: 0,
@@ -145,9 +145,9 @@ describe('expanded monomer rendering', () => {
         matrixTransform() {
           return this;
         },
-      } as unknown as DOMPoint);
-    window.SVGElement.prototype.getBBox = () =>
-      ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+      }) as unknown as DOMPoint;
+    globalThis.SVGElement.prototype.getBBox = () =>
+      ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
   };
 
   afterEach(() => {
@@ -155,7 +155,7 @@ describe('expanded monomer rendering', () => {
   });
 
   it('shows CH3 for an expanded monomer with one visible atom and one leaving group', () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -180,7 +180,7 @@ describe('expanded monomer rendering', () => {
         rotate() {
           return this;
         },
-      } as unknown as DOMMatrix);
+      }) as unknown as DOMMatrix;
     svgSvgElement.createSVGPoint = () =>
       ({
         x: 0,
@@ -188,9 +188,9 @@ describe('expanded monomer rendering', () => {
         matrixTransform() {
           return this;
         },
-      } as unknown as DOMPoint);
-    window.SVGElement.prototype.getBBox = () =>
-      ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+      }) as unknown as DOMPoint;
+    globalThis.SVGElement.prototype.getBBox = () =>
+      ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 
     const struct = new Struct();
     const atomOutsideMonomerId = struct.atoms.add(

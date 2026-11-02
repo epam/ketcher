@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import EventEmitter from 'events';
+import type EventEmitter from 'node:events';
 import { KetcherLogger } from './KetcherLogger';
 
 export enum KetcherAsyncEvents {
@@ -23,7 +23,7 @@ export enum KetcherAsyncEvents {
   FAILURE = 'FAILURE',
 }
 
-export const runAsyncAction = async <T = any>(
+export const runAsyncAction = async <T = unknown>(
   action: () => Promise<T>,
   eventEmitter: EventEmitter,
 ): Promise<T | undefined> => {
@@ -32,8 +32,8 @@ export const runAsyncAction = async <T = any>(
     const res = await action();
     eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
     return res;
-  } catch (e) {
-    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', e);
+  } catch (error) {
+    KetcherLogger.error('runAsyncAction.ts::runAsyncAction', error);
     eventEmitter.emit(KetcherAsyncEvents.FAILURE);
     return undefined;
   }

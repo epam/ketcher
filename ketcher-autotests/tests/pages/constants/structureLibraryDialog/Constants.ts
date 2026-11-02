@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 export enum TabSection {
   TemplateLibrary = 'template-library-tab',
   FunctionalGroups = 'functional-groups-tab',

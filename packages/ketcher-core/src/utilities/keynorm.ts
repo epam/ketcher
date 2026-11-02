@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 const isMac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
+  typeof navigator === 'undefined' ? false : /Mac/.test(navigator.platform);
 
 export const KeyboardModifiers = {
   Alt: 'Alt',
@@ -29,6 +29,12 @@ export const KeyCodePrefixes = {
   Key: 'Key',
   Digit: 'Digit',
 };
+
+type HotKeyMap = Record<string, string[]>;
+type HotKeyAction = {
+  shortcut?: string | string[];
+};
+type HotKeyActions = Record<string, HotKeyAction>;
 
 export const CanonicalModifiersOrder = [
   KeyboardModifiers.Ctrl,
@@ -115,7 +121,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 
     key = normalizeCode(e.code);
   } else {
-    throw new Error('normalizeShortcut expects string or KeyboardEvent');
+    throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }
 
   const appliedModifiersInOrder = CanonicalModifiersOrder.filter((modifier) =>
@@ -124,8 +130,8 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
   return [...appliedModifiersInOrder, key].join('+');
 };
 
-const normalizeKeyMap = (map) => {
-  const copy = Object.create(null);
+const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
+  const copy = Object.create(null) as HotKeyMap;
 
   Object.keys(map).forEach((prop) => {
     copy[normalizeShortcut(prop)] = map[prop];
@@ -140,7 +146,12 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
 
 // TODO rename and unify after moving all hotkeys to core editor
 //  to handle all events in same way and to have same structure for all hotkey configs
-const keyNorm = (obj) => {
+/**
+ * Normalizes a shortcut string, keyboard event, or normalized hotkey map.
+ * String and event inputs return a normalized shortcut key, while map inputs
+ * return a copy with normalized shortcut keys.
+ */
+const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -148,13 +159,13 @@ const keyNorm = (obj) => {
   return typeof obj === 'object'
     ? normalizeKeyMap(obj)
     : normalizeShortcut(obj);
+}) as {
+  (obj: KeyboardEvent): string;
+  (obj: string): string;
+  (obj: HotKeyMap): HotKeyMap;
 };
 
-const setHotKey = (
-  key: string,
-  actName: string,
-  hotKeys: Record<string, string | string[]>,
-) => {
+const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];
   if (Array.isArray(existing)) {
     existing.push(actName);
@@ -163,12 +174,11 @@ const setHotKey = (
   }
 };
 
-export const initHotKeys = (actions) => {
-  const hotKeys = {};
-  let act;
+export const initHotKeys = (actions: HotKeyActions) => {
+  const hotKeys: HotKeyMap = {};
 
   Object.keys(actions).forEach((actName) => {
-    act = actions[actName];
+    const act = actions[actName];
     if (!act.shortcut) return;
 
     if (Array.isArray(act.shortcut)) {
@@ -180,13 +190,22 @@ export const initHotKeys = (actions) => {
     }
   });
 
-  return keyNorm(hotKeys);
+  return keyNormBase(hotKeys);
 };
 
-const lookup = (map: Record<string, string>, event: KeyboardEvent) => {
-  return map[normalizeShortcut(event)];
+type KeyNorm = typeof keyNormBase & {
+  /**
+   * Returns the action group bound to a keyboard event. Multiple action names
+   * may be returned when the same hotkey is shared, in the order they were
+   * registered. Undefined means no binding was found for that shortcut.
+   */
+  lookup: (map: HotKeyMap, event: KeyboardEvent) => string[] | undefined;
 };
 
-keyNorm.lookup = lookup;
+const keyNorm: KeyNorm = Object.assign(keyNormBase, {
+  lookup: (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
+    return map[normalizeShortcut(event)];
+  },
+});
 
 export { keyNorm };

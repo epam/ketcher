@@ -1,4 +1,4 @@
-import { Vec2 } from 'ketcher-core';
+import type { Vec2 } from 'ketcher-core';
 
 export const rotatePoint = (
   centerPoint: Vec2,
@@ -19,7 +19,7 @@ export const getDifference = (
   currentDegree: number,
   structRotateDegree: number,
 ) => {
-  let abs = 0;
+  let abs: number;
 
   // HACK: https://github.com/epam/ketcher/pull/2574#issuecomment-1539509046
   if (structRotateDegree > 90) {

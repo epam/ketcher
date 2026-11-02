@@ -1,8 +1,8 @@
 import { BaseMonomer } from './BaseMonomer';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
-import { Vec2 } from './vec2';
+import { type MonomerItemType, AttachmentPointName } from 'domain/types';
+import type { Vec2 } from './vec2';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { isSugarOrAmbiguousSugar } from 'domain/helpers/monomers';
 

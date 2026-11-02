@@ -53,20 +53,20 @@ export async function selectAtomAndBonds(
   await CommonLeftToolbar(page).handTool();
   await CommonLeftToolbar(page).areaSelectionTool();
   await clickOnCanvas(page, 0, 0);
-  if (options.atomIds) {
-    for (const atomId of options.atomIds) {
-      await clickSelectableCanvasElement(
-        page,
-        getAtomLocator(page, { atomId }),
-        { modifiers: ['Shift'] },
-      );
-    }
-  }
   if (options.bondIds) {
     for (const bondId of options.bondIds) {
       await clickSelectableCanvasElement(
         page,
         getBondLocator(page, { bondId }),
+        { modifiers: ['Shift'] },
+      );
+    }
+  }
+  if (options.atomIds) {
+    for (const atomId of options.atomIds) {
+      await clickSelectableCanvasElement(
+        page,
+        getAtomLocator(page, { atomId }),
         { modifiers: ['Shift'] },
       );
     }

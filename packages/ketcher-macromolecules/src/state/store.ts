@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { configureStore, Store } from '@reduxjs/toolkit';
+import { configureStore, Store, Tuple } from '@reduxjs/toolkit';
 import { editorReducer } from 'state/common';
 import { libraryReducer } from 'state/library';
 import { modalReducer } from 'state/modal';
+import { toastMiddleware } from 'state/modal/toastMiddleware';
 import { rnaBuilderReducer } from 'state/rna-builder';
 
 export function configureAppStore(preloadedState = {}) {
@@ -29,10 +30,13 @@ export function configureAppStore(preloadedState = {}) {
       rnaBuilder: rnaBuilderReducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
-        serializableCheck: false,
-      }),
+      new Tuple(
+        ...getDefaultMiddleware({
+          // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
+          serializableCheck: false,
+        }),
+        toastMiddleware,
+      ),
     preloadedState,
   });
 

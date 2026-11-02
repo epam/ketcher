@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 import {
   AtomMove,
+  AttachmentGroupAttr,
   BondMove,
   EnhancedFlagMove,
   FragmentAdd,
@@ -46,11 +47,11 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
 
   const action = new Action();
   const struct = restruct.molecule;
-  const loops = new Pile();
-  const atomsToInvalidate = new Pile();
+  const loops = new Pile<number>();
+  const atomsToInvalidate = new Pile<number>();
 
   if (lists.atoms) {
-    const atomSet = new Pile(lists.atoms);
+    const atomSet = new Pile<number>(lists.atoms);
     const bondlist: Array<number> = [];
     const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
@@ -183,24 +184,24 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
  * @returns { Action }
  */
 function processAtom(restruct, aid, frid, newfrid) {
-  const queue = [aid];
-  const usedIds = new Pile(queue);
+  const struct = restruct.molecule;
+  const atomIds = struct
+    .findConnectedComponent(aid)
+    .filter((id) => struct.atoms.get(id).fragment === frid);
+  const atomAction = fromAtomsFragmentAttr(restruct, atomIds, newfrid);
+  const action = new Action();
 
-  while (queue.length > 0) {
-    const id = queue.shift();
+  struct.attachmentGroups.forEach((group, groupId) => {
+    if (group.atomIds.some((id) => atomIds.has(id))) {
+      action.addOp(
+        new AttachmentGroupAttr(groupId, 'fragment', newfrid).perform(restruct),
+      );
+    }
+  });
 
-    restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
-      if (
-        restruct.molecule.atoms.get(nei.aid).fragment === frid &&
-        !usedIds.has(nei.aid)
-      ) {
-        usedIds.add(nei.aid);
-        queue.push(nei.aid);
-      }
-    });
-  }
-
-  return fromAtomsFragmentAttr(restruct, usedIds, newfrid);
+  // fromFragmentSplit reverses these operations so undo restores atoms before
+  // the group recalculates its fragment from its members.
+  return action.mergeWith(atomAction);
 }
 
 /**

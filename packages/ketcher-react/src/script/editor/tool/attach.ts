@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { Elements, FunctionalGroup } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class AttachTool implements Tool {
   private readonly attach: { atomid: number; bondid: number };

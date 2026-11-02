@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerMoveOperation implements Operation {

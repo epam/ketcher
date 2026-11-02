@@ -93,7 +93,8 @@
                     0.25,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "H",
@@ -281,7 +282,8 @@
                     -1.001,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "N",
@@ -464,7 +466,8 @@
                     -1.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "H",
@@ -702,7 +705,8 @@
                     -0.5,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

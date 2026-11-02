@@ -5,7 +5,7 @@ import {
   ARROW_OFFSET,
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { toFixed } from 'utilities';
 
 export class EquilibriumFilledTriangleArrowRenderer {
@@ -17,7 +17,7 @@ export class EquilibriumFilledTriangleArrowRenderer {
     const endX = start.x + arrowLength;
     const pathParts: string[] = [];
 
-    // First arrow
+    // First and second arrow
     pathParts.push(
       `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
@@ -28,10 +28,6 @@ export class EquilibriumFilledTriangleArrowRenderer {
           start.y - arrowHeadWidth - arrowOffset,
         )}` +
         `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
-    );
-
-    // Second arrow
-    pathParts.push(
       `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
         `L${toFixed(start.x + arrowHeadLength)},${toFixed(

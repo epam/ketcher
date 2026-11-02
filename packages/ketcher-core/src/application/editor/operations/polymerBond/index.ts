@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { LayoutMode } from 'application/editor/modes/types';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -78,6 +78,32 @@ export class PolymerBondMoveOperation implements Operation {
 
   public invert() {
     // intentional no-op: move state is transient and has no undo state
+  }
+}
+
+/**
+ * Snaps a polymer bond's endpoints to the current positions of its linked
+ * monomers by calling `moveToLinkedEntities()` and then re-rendering.
+ *
+ * Unlike `PolymerBondMoveOperation`, this operation is fully symmetric:
+ * both `execute` and `invert` snap the bond to its monomers' current
+ * positions. This makes it suitable for undo-safe chain-shift operations
+ * where monomers are moved and bonds must follow in both directions.
+ */
+export class PolymerBondSnapToMonomersOperation implements Operation {
+  constructor(public polymerBond: PolymerBond) {}
+
+  private snap(renderersManager: RenderersManager) {
+    this.polymerBond.moveToLinkedEntities();
+    renderersManager.movePolymerBond(this.polymerBond);
+  }
+
+  public execute(renderersManager: RenderersManager) {
+    this.snap(renderersManager);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.snap(renderersManager);
   }
 }
 

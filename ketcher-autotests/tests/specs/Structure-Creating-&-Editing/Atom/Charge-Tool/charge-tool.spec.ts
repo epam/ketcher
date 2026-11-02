@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {

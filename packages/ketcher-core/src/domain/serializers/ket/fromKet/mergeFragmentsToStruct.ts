@@ -1,6 +1,6 @@
-import { Struct } from 'domain/entities';
+import type { Struct } from 'domain/entities';
 import { atomToStruct, bondToStruct } from './atomBondToStruct';
-import { KetItem } from './types';
+import type { KetItem } from './types';
 
 export function mergeFragmentsToStruct(
   ketItem: KetItem,

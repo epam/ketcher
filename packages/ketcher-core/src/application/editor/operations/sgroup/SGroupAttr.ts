@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,17 +16,19 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
-export class SGroupAttr extends BaseOperation {
-  data: {
-    sgid: any;
-    attr: any;
-    value: any;
-  };
+export type SGroupAttrData = {
+  sgid?: number;
+  attr?: string;
+  value?: unknown;
+};
 
-  constructor(sgroupId?: any, attribute?: any, value?: any) {
+export class SGroupAttr extends BaseOperation {
+  data: SGroupAttrData;
+
+  constructor(sgroupId?: number, attribute?: string, value?: unknown) {
     super(OperationType.S_GROUP_ATTR, OperationPriority.S_GROUP_ATTR);
     this.data = {
       sgid: sgroupId,
@@ -37,36 +39,49 @@ export class SGroupAttr extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroupId = this.data.sgid!;
-    const sgroup = struct.sgroups.get(sgroupId)!;
+    const { sgid, attr, value } = this.data;
 
+    if (sgid === undefined || attr === undefined) {
+      return;
+    }
+
+    const sgroup = struct.sgroups.get(sgid);
     if (!sgroup) {
       return;
     }
 
-    const sgroupData = restruct.sgroupData.get(sgroupId);
-    if (sgroup.type === 'DAT' && sgroupData) {
+    const sgroupData = restruct.sgroupData.get(sgid);
+    if (sgroupData && sgroup.type === 'DAT') {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
       restruct.clearVisel(sgroupData.visel);
-      restruct.sgroupData.delete(sgroupId);
+      restruct.sgroupData.delete(sgid);
     }
 
-    if (
-      this.data.attr === 'expanded' &&
-      sgroup instanceof MonomerMicromolecule
-    ) {
-      if (Object.isFrozen(sgroup.monomer.monomerItem)) {
-        sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
+    if (attr === 'expanded' && sgroup instanceof MonomerMicromolecule) {
+      if (typeof value === 'boolean') {
+        sgroup.setExpanded(value);
       }
-      sgroup.monomer.monomerItem.expanded = this.data.value;
     }
 
-    this.data.value = sgroup.setAttr(this.data.attr, this.data.value);
+    this.data.value = sgroup.setAttr(attr, value);
   }
 
   invert() {
     const inverted = new SGroupAttr();
     inverted.data = this.data;
     return inverted;
+  }
+
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) return false;
+
+    const { sgid, attr, value } = this.data;
+    if (sgid === undefined || attr === undefined) {
+      return false;
+    }
+
+    const sgroup = restruct.molecule.sgroups.get(sgid);
+    if (!sgroup) return false;
+    return sgroup.checkAttr(attr, value);
   }
 }

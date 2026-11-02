@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +15,16 @@
  ***************************************************************************/
 
 import {
+  type ActionButtonCallProps,
+  type ActionButtonProps,
   ActionButton,
-  ActionButtonCallProps,
-  ActionButtonProps,
 } from '../ActionButton';
-import { GroupDescriptor, MultiToolVariant } from './variants/variants.types';
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
-import action, { UiAction, UiActionAction } from '../../../../action';
+import type {
+  GroupDescriptor,
+  MultiToolVariant,
+} from './variants/variants.types';
+import type { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
+import action, { type UiAction, type UiActionAction } from '../../../../action';
 
 import { useRef } from 'react';
 import clsx from 'clsx';
@@ -77,7 +80,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   const [isOpen] = usePortalOpening([id, opened, options]);
   const [portalStyle] = usePortalStyle([ref, isOpen]);
 
-  let selected = false;
+  let isSelected = false;
   let currentId = id;
 
   const selectedTool = options.find(
@@ -85,38 +88,38 @@ const ToolbarMultiToolItem = (props: Props) => {
   );
   if (selectedTool) {
     currentId = selectedTool.id;
-    selected = true;
+    isSelected = true;
   }
 
   const currentStatus = status[currentId];
   // todo: #type find out real type, possible GetActionState is no acceptable here
   // and check this type convert is redundant
-  selected = selected || Boolean(currentStatus?.selected);
+  isSelected = isSelected || Boolean(currentStatus?.selected);
 
-  const allInnerItemsHidden: boolean = options.every(
+  const areAllInnerItemsHidden: boolean = options.every(
     (option) => status[option.id]?.hidden,
   );
 
-  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
+  const shouldDisplayMultiToolItem = !(
+    areAllInnerItemsHidden || currentStatus?.hidden
+  );
 
   if (!currentStatus && options.length) {
-    const savedSelectionTool = SettingsManager.selectionTool;
-    const savedSelectionToolId =
-      savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
-        (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+    const savedSelectionTool = SettingsManager.getSelectionTool('micro');
+    const savedSelectionToolId = savedSelectionTool
+      ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+      : undefined;
+    const savedSelectionOption = savedSelectionToolId
+      ? options.find(
+          (option) =>
+            !status[option.id]?.hidden && option.id === savedSelectionToolId,
+        )
+      : undefined;
 
-    if (!currentId) {
-      currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
-        options[0].id;
-    }
+    currentId =
+      savedSelectionOption?.id ??
+      options.find((option) => !status[option.id]?.hidden)?.id ??
+      options[0].id;
   }
   const onOpenOptions = () => {
     // TODO: same as #type above
@@ -129,18 +132,18 @@ const ToolbarMultiToolItem = (props: Props) => {
   > = {
     disableableButtons,
     indigoVerification,
-    onAction: selected ? () => onOpenOptions() : onAction,
+    onAction: isSelected ? () => onOpenOptions() : onAction,
   };
 
   const [Component, portalClassName] = chooseMultiTool(variant);
   const iconName = getIconName(currentId);
   const isDisabled = currentStatus?.disabled === true;
-  return displayMultiToolItem && iconName ? (
+  return shouldDisplayMultiToolItem && iconName ? (
     <div
       ref={ref}
       className={classes.root}
       data-testid={`${id}-drop-down-button`}
-      data-is-selected={selected ? 'true' : 'false'}
+      data-is-selected={isSelected ? 'true' : 'false'}
     >
       <ActionButton
         {...actionButtonProps}
@@ -148,7 +151,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         name={iconName}
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
-        selected={selected}
+        selected={isSelected}
         dataTestId={dataTestId ?? iconName}
       />
       {!isOpen && !isDisabled && (

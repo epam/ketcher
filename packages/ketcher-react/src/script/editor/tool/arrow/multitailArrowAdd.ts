@@ -3,14 +3,13 @@ import {
   Vec2,
   fromMultitailArrowCreation,
 } from 'ketcher-core';
-import { ArrowAddTool } from './arrow.types';
-import Editor from '../../Editor';
+import type { ArrowAddTool } from './arrow.types';
+import type Editor from '../../Editor';
 
 export class MultitailArrowAddTool implements ArrowAddTool {
   static readonly MIN_HEIGHT = 2.5;
   static readonly MIN_WIDTH = 1.2;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(private readonly editor: Editor) {}
 
   private get render() {

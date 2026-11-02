@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +15,15 @@
  ***************************************************************************/
 
 import { RGroupAttr, RGroupFragment, UpdateIfThen } from '../operations';
+import type { RGroupAttributeKey } from '../operations/rgroup/RGroupAttr';
+import type { RGroupAttributes } from 'domain/entities/rgroup';
 
 import { Action } from './action';
 
-export function fromRGroupAttrs(restruct, id, attrs) {
+export function fromRGroupAttrs(restruct, id, attrs: RGroupAttributes) {
   const action = new Action();
 
-  Object.keys(attrs).forEach((key) => {
+  (Object.keys(attrs) as Array<RGroupAttributeKey>).forEach((key) => {
     action.addOp(new RGroupAttr(id, key, attrs[key]));
   });
 

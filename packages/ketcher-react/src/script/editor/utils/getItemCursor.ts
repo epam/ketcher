@@ -1,13 +1,13 @@
-import { ClosestItemWithMap } from '../shared/closest.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import {
+  type ImageReferencePositionInfo,
+  type MultitailArrowReferencePosition,
+  type Render,
   IMAGE_KEY,
   imageReferencePositionToCursor,
   MULTITAIL_ARROW_KEY,
   multitailArrowReferenceLinesToCursor,
   multitailReferencePositionToCursor,
-  ImageReferencePositionInfo,
-  MultitailArrowReferencePosition,
-  Render,
 } from 'ketcher-core';
 
 export function getItemCursor(
@@ -17,6 +17,9 @@ export function getItemCursor(
   const defaultCursor = render.options.movingStyle.cursor as string;
   if (!item) {
     return defaultCursor;
+  }
+  if (item.map === 'attachmentGroups') {
+    return 'default';
   }
   switch (item.map) {
     case MULTITAIL_ARROW_KEY: {

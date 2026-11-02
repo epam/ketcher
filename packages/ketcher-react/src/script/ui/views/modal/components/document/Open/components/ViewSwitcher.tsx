@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react';
-import { AnalyzingFile, AnalyzingFileProps } from './AnalyzingFile';
+import type { FC } from 'react';
+import { type AnalyzingFileProps, AnalyzingFile } from './AnalyzingFile';
 
-import { OpenOptions, OpenOptionsProps } from './OpenOptions';
-import { TextEditor, TextEditorProps } from './TextEditor';
+import { type OpenOptionsProps, OpenOptions } from './OpenOptions';
+import { type TextEditorProps, TextEditor } from './TextEditor';
 import CDXStructuresViewer from './CDXStructuresViewer';
-import { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
+import type { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
 
 type ViewStates = {
   idle: string;

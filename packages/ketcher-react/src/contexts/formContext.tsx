@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,22 +18,23 @@ import React from 'react';
 
 export interface SchemaProperty {
   title?: string;
-  type?: string;
+  type?: string | string[];
+  description?: string;
   enum?: unknown[];
   enumNames?: string[];
   default?: unknown;
   format?: string;
-  pattern?: string;
+  pattern?: string | RegExp;
   maxLength?: number;
   invalidMessage?: string | ((data: unknown) => string);
+  items?: SchemaProperty | SchemaProperty[];
 }
 
 export interface FormSchema {
   key?: string;
   title?: string;
   default?: unknown;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties?: Record<string, SchemaProperty | Record<string, any>>;
+  properties?: Record<string, SchemaProperty>;
 }
 
 export interface FieldState {

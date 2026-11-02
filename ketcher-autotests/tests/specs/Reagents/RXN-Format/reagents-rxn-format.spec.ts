@@ -109,12 +109,11 @@ test.describe('Reagents RXN format', () => {
     await waitForPageInit(page);
   });
 
-  test.fail('Open from file in "RXN V2000" format', async ({ page }) => {
+  test('Open from file in "RXN V2000" format', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-4679
-      Description: Reagent 'NH3' above the reaction arrow
-      We have a bug https://github.com/epam/Indigo/issues/2591
-      */
+     * Test case: EPMLSOPKET-4679
+     * Description: Reagent 'NH3' above the reaction arrow
+     */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
@@ -124,12 +123,11 @@ test.describe('Reagents RXN format', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Open from file in "RXN V3000" format', async ({ page }) => {
+  test('Open from file in "RXN V3000" format', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-4680
-      Description: Reagent 'NH3' above the reaction arrow
-      We have a bug https://github.com/epam/Indigo/issues/2591
-      */
+     * Test case: EPMLSOPKET-4680
+     * Description: Reagent 'NH3' above the reaction arrow
+     */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
@@ -153,12 +151,11 @@ test.describe('Reagents RXN format', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
+  test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-4678
-      Description: Reagent 'Cl' displays below reaction arrow
-      We have a bug https://github.com/epam/Indigo/issues/2591
-      */
+     * Test case: EPMLSOPKET-4678
+     * Description: Reagent 'Cl' displays below reaction arrow
+     */
     const fileContent = await readFileContent(
       'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
@@ -167,21 +164,19 @@ test.describe('Reagents RXN format', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Open from file in "RXN V3000" format with reagents above and below arrow',
-    async ({ page }) => {
-      /*
-      Test case: EPMLSOPKET-8912
-      Description: Reagent 'NH3' above the reaction arrow and reagent HBr below.
-      We have a bug https://github.com/epam/Indigo/issues/2591
-      */
-      await openFileAndAddToCanvas(
-        page,
-        'Rxn-V3000/reagents-below-and-above.rxn',
-      );
-      await clickInTheMiddleOfTheCanvas(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Open from file in "RXN V3000" format with reagents above and below arrow', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-8912
+     * Description: Reagent 'NH3' above the reaction arrow and reagent HBr below.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Rxn-V3000/reagents-below-and-above.rxn',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 });

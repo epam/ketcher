@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +15,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
-import { KetMonomerClass } from 'domain/constants/monomers';
+import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type { KetMonomerClass } from 'domain/constants/monomers';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-import { BaseMonomerRenderer } from './BaseMonomerRenderer';
+import type { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 import { monomerRendererFactory } from './monomerRendererFactory';
-import {
+import type {
   MonomerEntityClass,
   ConcreteMonomerEntityClass,
 } from 'domain/helpers/monomerEntityFactory';

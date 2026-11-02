@@ -1,7 +1,7 @@
-import { EditorSelection } from './editor/editor.types';
+import type { EditorSelection } from './editor/editor.types';
 import { ketcherProvider } from './ketcherProvider';
-import { FormatterFactory, SupportedFormat } from './formatters';
-import { Struct } from 'domain/entities';
+import { type FormatterFactory, SupportedFormat } from './formatters';
+import type { Struct } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export function getStructure(
@@ -14,7 +14,12 @@ export function getStructure(
 ): Promise<string> {
   const serverSettings =
     ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
-  const formatter = formatterFactory.create(structureFormat, serverSettings);
+  const formatter = formatterFactory.create(
+    structureFormat,
+    serverSettings,
+    undefined,
+    struct,
+  );
   const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
     new DrawingEntitiesManager(),
   );

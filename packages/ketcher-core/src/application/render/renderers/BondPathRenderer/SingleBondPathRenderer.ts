@@ -1,7 +1,7 @@
 import {
+  type SVGPathAttributes,
+  type BondVectors,
   BondDashArrayMap,
-  SVGPathAttributes,
-  BondVectors,
   BondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import { BondType } from 'domain/entities/CoreBond';
@@ -14,7 +14,7 @@ class SingleBondPathRenderer {
     const { startPosition, endPosition } = bondVectors;
 
     const strokeDasharray =
-      type !== undefined ? BondDashArrayMap[type] : 'none';
+      type === undefined ? 'none' : BondDashArrayMap[type];
     const svgPath: SVGPathAttributes = {
       d: `
           M${startPosition.x},${startPosition.y}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,12 @@
 
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import { RGroup } from 'domain/entities/rgroup';
+import type { RGroup } from 'domain/entities/rgroup';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
-import { RenderOptions } from '../render.types';
+import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
@@ -48,7 +48,7 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-        ret = ret.concat(frag.fragGetAtoms(render.ctab, fid));
+        ret = [...ret, ...frag.fragGetAtoms(render.ctab, fid)];
       }
     });
     return ret;
@@ -59,7 +59,7 @@ class ReRGroup extends ReObject {
     this.item.frags.forEach((fid) => {
       const frag = render.ctab.frags.get(fid);
       if (frag) {
-        ret = ret.concat(frag.fragGetBonds(render.ctab, fid));
+        ret = [...ret, ...frag.fragGetBonds(render.ctab, fid)];
       }
     });
     return ret;
@@ -96,14 +96,14 @@ class ReRGroup extends ReObject {
   draw(render: Render, options: RenderOptions): { data: unknown[] } {
     let bb = this.calcBBox(render);
 
-    if (!bb) {
+    if (bb) {
+      // add a little space between the attachment points and brackets
+      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
+    } else {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools',
       );
       return { data: [] };
-    } else {
-      // add a little space between the attachment points and brackets
-      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
     const ret: { data: unknown[] } = { data: [] };
@@ -111,7 +111,7 @@ class ReRGroup extends ReObject {
     const p1 = Scale.modelToCanvas(bb.p1, options);
     const brackets = render.paper.set();
 
-    rGroupdrawBrackets(brackets, render, bb); // eslint-disable-line new-cap
+    rGroupdrawBrackets(brackets, render, bb);
 
     ret.data.push(brackets);
     const key = render.ctab.rgroups.keyOf(this);
@@ -161,7 +161,6 @@ class ReRGroup extends ReObject {
   }
 
   _draw(render: Render, _rgid: number, attrs: Record<string, unknown>) {
-    // eslint-disable-line no-underscore-dangle
     const vbox = this.getVBoxObj(render);
     if (!vbox) {
       return null;
@@ -189,7 +188,7 @@ class ReRGroup extends ReObject {
       return null;
     }
 
-    const ret = this._draw(render, rgid, render.options.hoverStyle); // eslint-disable-line no-underscore-dangle
+    const ret = this._draw(render, rgid, render.options.hoverStyle);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
 
     this.item.frags.forEach((_fnum, fid) => {
@@ -200,20 +199,17 @@ class ReRGroup extends ReObject {
   }
 
   show(restruct: ReStruct, _id: number, options: RenderOptions): void {
-    const drawing = this.draw(restruct.render, options);
+    const { data } = this.draw(restruct.render, options);
 
-    Object.keys(drawing).forEach((group) => {
-      const items = drawing[group as keyof typeof drawing] as unknown[];
-      while (items.length > 0) {
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          items.shift(),
-          null,
-          true,
-        );
-      }
-    });
+    while (data.length > 0) {
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        data.shift(),
+        null,
+        true,
+      );
+    }
   }
 }
 
@@ -254,14 +250,14 @@ function rGroupdrawBrackets(
 function rLogicToString(id: number | null, rLogic: RGroup): string {
   const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
 
-  const rangeExists =
+  const hasRangeOperator =
     rLogic.range.startsWith('>') ||
     rLogic.range.startsWith('<') ||
     rLogic.range.startsWith('=');
 
   let range: string;
   if (rLogic.range.length > 0) {
-    range = rangeExists ? rLogic.range : '=' + rLogic.range;
+    range = hasRangeOperator ? rLogic.range : '=' + rLogic.range;
   } else {
     range = '>0';
   }

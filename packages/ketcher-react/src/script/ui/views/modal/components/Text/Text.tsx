@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,16 +15,17 @@
  ***************************************************************************/
 
 import React, { useCallback, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
+  type LexicalEditor,
+  type TextFormatType,
+  type SerializedEditorState,
   $getRoot,
   $getSelection,
   $isRangeSelection,
   FORMAT_TEXT_COMMAND,
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_HIGH,
-  LexicalEditor,
-  TextFormatType,
-  SerializedEditorState,
 } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -32,20 +33,26 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
 import { TextCommand } from 'ketcher-core';
 import classes from './Text.module.less';
 import { connect } from 'react-redux';
-import { IconName } from 'components';
+import type { IconName } from 'components';
+import type { FormState } from 'src/script/ui/component/form/form/form';
+
+interface TextFormState {
+  form: FormState;
+}
 
 interface TextProps extends DialogParams {
-  formState: any;
-  id?: any;
+  formState: TextFormState;
+  id?: string;
   content: string;
   position?: string;
 }
@@ -115,12 +122,13 @@ function EditorRefPlugin({
 }
 
 const TextEditorInner = (props: {
-  formState: any;
+  formState: TextFormState;
   position?: string;
-  id?: any;
+  id?: string;
   params: TextProps;
 }) => {
   const { formState, position, id, params } = props;
+  const { t } = useTranslation(['common', 'dialogs']);
   const [editor] = useLexicalComposerContext();
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
   const editorRef = React.useRef<LexicalEditor | null>(null);
@@ -186,11 +194,11 @@ const TextEditorInner = (props: {
   return (
     <Dialog
       className={classes.textEditor}
-      title="Text Editor"
+      title={t('dialogs:text.dialogTitle')}
       params={params}
       result={result}
       valid={() => formState.form.valid}
-      buttonsNameMap={{ OK: 'Apply' }}
+      buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider
     >
@@ -200,7 +208,7 @@ const TextEditorInner = (props: {
         onKeyDown={handleKeyDown}
         role="toolbar"
         tabIndex={0}
-        aria-label="Text formatting toolbar"
+        aria-label={t('dialogs:text.toolbarAriaLabel')}
       >
         {buttons.map((button) => {
           return (
@@ -213,10 +221,10 @@ const TextEditorInner = (props: {
           );
         })}
         <SpecialSymbolsButton editor={editor} />
-        <span>Font Size</span>
+        <span>{t('dialogs:text.fontSizeLabel')}</span>
         <FontControl editor={editor} />
       </div>
-      <span>Text:</span>
+      <span>{t('dialogs:text.textLabel')}</span>
       <RichTextPlugin
         contentEditable={
           <ContentEditable
@@ -226,6 +234,7 @@ const TextEditorInner = (props: {
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
+      <HistoryPlugin />
       <EnterKeyPlugin />
       <EditorRefPlugin editorRef={editorRef} />
       <AutoFocusPlugin />
@@ -258,8 +267,8 @@ export const normalizeEditorState = (
     ) {
       return content;
     }
-  } catch (e) {
-    console.warn('Failed to parse editor state', e);
+  } catch (error) {
+    console.warn('Failed to parse editor state', error);
   }
   // For import-time conversion we expect Serialised Lexical state stored in `content`.
   // If it's not valid Lexical JSON, return undefined so the editor starts empty.
@@ -292,4 +301,6 @@ const Text = (props: TextProps) => {
   );
 };
 
-export default connect((store: any) => ({ formState: store.modal }))(Text);
+export default connect((store: { modal: TextFormState }) => ({
+  formState: store.modal,
+}))(Text);

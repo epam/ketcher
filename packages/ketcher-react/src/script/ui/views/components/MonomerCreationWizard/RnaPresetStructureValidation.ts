@@ -1,6 +1,6 @@
 import { Bond } from 'ketcher-core';
 
-import {
+import type {
   RnaPresetWizardComponentStateFieldId,
   RnaPresetWizardState,
 } from './MonomerCreationWizard.types';
@@ -169,16 +169,16 @@ export const getRnaPresetStructureValidationResult = (
     atomComponentCount.set(atomId, (atomComponentCount.get(atomId) ?? 0) + 1);
   });
 
-  const hasAtomsInMultipleComponents = Array.from(
-    atomComponentCount.entries(),
-  ).some(([atomId, componentCount]) => {
-    if (componentCount > 1) {
-      problematicAtomIds.add(atomId);
-      return true;
-    }
+  const hasAtomsInMultipleComponents = [...atomComponentCount.entries()].some(
+    ([atomId, componentCount]) => {
+      if (componentCount > 1) {
+        problematicAtomIds.add(atomId);
+        return true;
+      }
 
-    return false;
-  });
+      return false;
+    },
+  );
 
   if (hasAtomsInMultipleComponents) {
     issues.push('rnaPresetAtomsInMultipleComponents');

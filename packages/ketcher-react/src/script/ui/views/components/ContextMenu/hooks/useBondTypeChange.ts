@@ -1,14 +1,18 @@
 import {
-  BondAttributes,
+  type BondAttributes,
   fromBondsAttrs,
   ketcherProvider,
   bondChangingAction,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
-import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
+import type {
+  BondsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
+import { getEditableBondIds } from '../utils';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -22,7 +26,9 @@ const useBondTypeChange = () => {
 
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
-      const bondIds = props?.bondIds ?? [];
+      const bondIds = getEditableBondIds(editor.struct(), props?.bondIds ?? []);
+      if (bondIds.length === 0) return;
+
       const bondProps: Partial<BondAttributes> = {
         ...(toolAction.opts as Partial<BondAttributes>),
       };
@@ -56,10 +62,13 @@ const useBondTypeChange = () => {
 
   const disabled = useCallback(
     ({ props }: Params) => {
-      const selectedBondIds = props?.bondIds;
       const editor = ketcherProvider.getKetcher(ketcherId).editor;
+      const selectedBondIds = getEditableBondIds(
+        editor.struct(),
+        props?.bondIds ?? [],
+      );
 
-      if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
+      if (selectedBondIds.length !== 0) {
         return editor.struct().isBondFromMacromolecule(selectedBondIds[0]);
       }
       return true;

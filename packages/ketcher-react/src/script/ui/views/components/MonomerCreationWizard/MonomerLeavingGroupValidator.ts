@@ -1,7 +1,7 @@
-import { KetMonomerClass, AttachmentPointName } from 'ketcher-core';
+import { type AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { getValidationRuleForMonomerType } from './MonomerValidationRules';
-import { WizardNotification } from './MonomerCreationWizard.types';
-import { Editor } from 'src/script/editor/Editor';
+import type { WizardNotification } from './MonomerCreationWizard.types';
+import type { Editor } from 'src/script/editor/Editor';
 
 const getNotificationIdForMonomerType = (
   monomerType: KetMonomerClass | 'rnaPreset',

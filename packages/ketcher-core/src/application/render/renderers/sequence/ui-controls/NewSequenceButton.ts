@@ -1,7 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';

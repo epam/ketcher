@@ -6,11 +6,12 @@ export type Props = {
   label: string;
   color: string;
   className?: string;
+  testId?: string;
 };
 
-const NaturalAnalogueChip = ({ label, color, className }: Props) => {
+const NaturalAnalogueChip = ({ label, color, className, testId }: Props) => {
   return (
-    <button className={clsx(styles.chip, className)}>
+    <button className={clsx(styles.chip, className)} data-testid={testId}>
       <span className={styles.chipLetter}>{label}</span>
       <div className={styles.chipStrip} style={{ backgroundColor: color }} />
     </button>

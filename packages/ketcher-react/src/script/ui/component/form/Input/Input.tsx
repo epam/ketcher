@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,30 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { PureComponent, ComponentType, useRef, useEffect } from 'react';
+import React, { type ComponentType, PureComponent } from 'react';
 
 import classes from './Input.module.less';
 import clsx from 'clsx';
+import { type SchemaProperty } from '../../../../../contexts';
+
+export type InputSchema = SchemaProperty | unknown[];
+
+type InputComponentProps = {
+  schema?: InputSchema;
+  value?: unknown;
+  onChange?: (val: unknown) => void;
+  onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
+  selected?: (testVal: unknown, value: unknown) => boolean;
+  multiple?: boolean;
+  innerRef?: React.Ref<HTMLInputElement>;
+  name?: string;
+  className?: string;
+  type?: string;
+  [key: string]: unknown;
+};
 
 type Props = {
   name?: string;
-  component?: ComponentType;
+  component?: ComponentType<InputComponentProps>;
   children?: React.ReactNode;
   className?: string;
   type?: string;
   value?: unknown;
-  onChange: (val: any) => void;
+  onChange: (val: unknown) => void;
   placeholder?: string;
   isFocused?: boolean;
-  innerRef?: React.Ref<any>;
-  schema?: any;
+  innerRef?: React.Ref<HTMLInputElement>;
+  schema?: InputSchema;
   multiple?: boolean;
 };
 
 export function GenericInput({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  schema: _schema,
   value,
   onChange,
   innerRef,
@@ -45,20 +60,6 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(innerRef);
-
-  useEffect(() => {
-    if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current;
-    }
-  }, [innerRef]);
-
-  useEffect(() => {
-    if (inputRef.current && isFocused) {
-      inputRef.current.focus();
-    }
-  }, [inputRef, isFocused]);
-
   return (
     <>
       <input
@@ -66,7 +67,8 @@ export function GenericInput({
         value={value ?? ''}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
-        ref={inputRef}
+        ref={innerRef}
+        autoFocus={isFocused}
         {...props}
       />
       {type === 'checkbox' && <span className={classes.checkbox} />}
@@ -94,15 +96,7 @@ GenericInput.val = function (ev, schema) {
   return value;
 };
 
-function TextArea({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  value,
-  onChange,
-  innerRef,
-  ...rest
-}) {
+function TextArea({ schema: _schema, value, onChange, innerRef, ...rest }) {
   return (
     <textarea value={value ?? ''} ref={innerRef} onInput={onChange} {...rest} />
   );
@@ -111,9 +105,7 @@ function TextArea({
 TextArea.val = (ev) => ev.target.value;
 
 function CheckBox({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  schema: _schema,
   value = '',
   onChange,
   innerRef,
@@ -171,9 +163,9 @@ Select.val = function (ev, schema) {
 
   const options = select.options;
 
-  return Array.from(options).reduce(
+  return [...options].reduce(
     (res, o: HTMLOptionElement, i) =>
-      !o.selected ? res : [enumSchema(schema, i), ...res],
+      o.selected ? [enumSchema(schema, i), ...res] : res,
     [] as HTMLOptionElement[],
   );
 };
@@ -193,7 +185,6 @@ function FieldSet({
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
-            {/* eslint-disable jsx-a11y/label-has-associated-control */}
             <input
               ref={innerRef}
               type={type}
@@ -213,7 +204,7 @@ function FieldSet({
             {type === 'checkbox' && <span className={classes.checkbox} />}
             {type === 'radio' && <span className={classes.radioButton} />}
             {title}
-            {/* eslint-disable jsx-a11y/label-has-associated-control */}
+            {}
           </label>
         </li>
       ))}
@@ -237,9 +228,9 @@ FieldSet.val = function (ev, schema) {
   let result;
 
   if (inputCollection?.length) {
-    result = Array.from(inputCollection).reduce(
+    result = [...inputCollection].reduce(
       (res, inp: HTMLInputElement, i) =>
-        !inp.checked ? res : [enumSchema(schema, i), ...res],
+        inp.checked ? [enumSchema(schema, i), ...res] : res,
 
       [] as HTMLInputElement[],
     );
@@ -278,8 +269,8 @@ function enumSchema(schema, cbOrIndex) {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
       const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
-        title !== undefined ? title : item,
-        item?.value !== undefined ? item.value : item,
+        title === undefined ? item : title,
+        item?.value === undefined ? item : item.value,
       );
     });
   }
@@ -287,7 +278,7 @@ function enumSchema(schema, cbOrIndex) {
   if (!isTypeValue) return schema.enum[cbOrIndex];
 
   const res = schema[cbOrIndex];
-  return res.value !== undefined ? res.value : res;
+  return res.value === undefined ? res : res.value;
 }
 
 function inputCtrl(component, schema, onChange) {
@@ -300,7 +291,7 @@ function inputCtrl(component, schema, onChange) {
 
   return {
     onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       onChange(val);
     },
     ...props,
@@ -311,7 +302,7 @@ function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
     onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       if (val !== undefined) onChange(val);
     },
   };
@@ -336,78 +327,108 @@ function multipleSelectCtrl(component, schema, onChange) {
 
 function ctrlMap(component, props: Props) {
   const { schema, multiple, onChange } = props;
-  if (
-    !schema ||
-    (!schema.enum && !schema.items && !Array.isArray(schema)) ||
-    schema.type === 'string'
-  )
+
+  if (!schema) {
     return inputCtrl(component, schema, onChange);
+  }
 
-  if (multiple || schema.type === 'array')
+  if (!Array.isArray(schema)) {
+    // schema is SchemaProperty here
+    if ((!schema.enum && !schema.items) || schema.type === 'string') {
+      return inputCtrl(component, schema, onChange);
+    }
+    if (multiple || schema.type === 'array') {
+      return multipleSelectCtrl(component, schema, onChange);
+    }
+    return singleSelectCtrl(component, schema, onChange);
+  }
+
+  // schema is an array
+  if (multiple) {
     return multipleSelectCtrl(component, schema, onChange);
-
+  }
   return singleSelectCtrl(component, schema, onChange);
 }
 
 function componentMap(props: Props) {
   const { schema, type, multiple } = props;
 
-  if (schema?.type === 'boolean' && schema?.description === 'slider') {
-    return Slider;
-  }
-
-  if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
-    if (type === 'checkbox' || schema?.type === 'boolean') {
-      return CheckBox;
+  if (!Array.isArray(schema)) {
+    // schema is SchemaProperty | undefined here
+    if (schema?.type === 'boolean' && schema?.description === 'slider') {
+      return Slider;
     }
 
-    return type === 'textarea' ? TextArea : GenericInput;
+    if (!schema || (!schema.enum && !schema.items)) {
+      if (type === 'checkbox' || schema?.type === 'boolean') {
+        return CheckBox;
+      }
+      return type === 'textarea' ? TextArea : GenericInput;
+    }
+
+    // schema has enum or items (SchemaProperty with options)
+    if (multiple || schema.type === 'array') {
+      return type === 'checkbox' ? FieldSet : Select;
+    }
+    return type === 'radio' ? FieldSet : Select;
   }
 
-  if (multiple || schema.type === 'array')
+  // schema is an array
+  if (multiple) {
     return type === 'checkbox' ? FieldSet : Select;
-
+  }
   return type === 'radio' ? FieldSet : Select;
 }
 
+type AnyComponentWithRefProps = {
+  Component: ComponentType<InputComponentProps>;
+  schema?: InputSchema;
+  value?: unknown;
+  onChange?: (val: unknown) => void;
+  onSelect?: (ev: React.SyntheticEvent, values?: unknown[]) => void;
+  selected?: (testVal: unknown, value: unknown) => boolean;
+  multiple?: boolean;
+  innerRef?: React.Ref<HTMLInputElement>;
+  name?: string;
+  className?: string;
+  type?: string;
+  placeholder?: string;
+  isFocused?: boolean;
+  checked?: boolean;
+  'data-testid'?: string;
+};
+
 const AnyComponentWithRef = React.forwardRef(
-  ({ Component, ...props }: any, ref) => (
-    <Component {...props} innerRef={ref} />
-  ),
+  (
+    { Component, ...props }: AnyComponentWithRefProps,
+    ref: React.Ref<HTMLInputElement>,
+  ) => <Component {...props} innerRef={ref} />,
 );
 
 class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
-  component: any;
-  ctrl: {
-    type?: string;
-    onChange?: (val: any) => void;
-    onSelect?: (ev, values) => void;
-    selected?: (testVal: any, value: any) => boolean;
-    multiple?: boolean;
-  };
+  component: ComponentType<InputComponentProps>;
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
     super(props);
-    this.component = props.component || componentMap(props);
-    this.ctrl = ctrlMap(this.component, props);
+    this.component = (props.component ||
+      componentMap(props)) as ComponentType<InputComponentProps>;
   }
 
   render() {
     const {
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      children,
-      onChange,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      children: _children,
+      onChange: _onChange,
       innerRef,
       ...restProps
     } = this.props;
+    const ctrl = ctrlMap(this.component, this.props);
     return (
       <AnyComponentWithRef
         Component={this.component}
         ref={innerRef}
-        {...this.ctrl}
+        {...ctrl}
         {...restProps}
       />
     );

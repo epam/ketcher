@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
+import type { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { type BaseMonomer, Vec2 } from 'domain/entities';
 
-import { CoreEditor } from 'application/editor/Editor';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/internal';
-import { BaseMonomerRenderer } from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
+import type { BaseMonomerRenderer } from 'application/render/renderers';
+import type { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import { RNABase } from 'domain/entities/RNABase';
+import type { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import { IKetTemplateConnection } from 'application/formatters';
+import type { IKetTemplateConnection } from 'application/formatters';
 import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
@@ -50,7 +50,11 @@ class RnaPresetTool implements Tool {
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
   history: EditorHistory;
 
-  constructor(private readonly editor: CoreEditor, preset: IRnaPreset) {
+  constructor(
+    private readonly editor: CoreEditor,
+    ...args: unknown[]
+  ) {
+    const [preset] = args as [IRnaPreset];
     this.editor = editor;
     if (preset?.base) {
       this.rnaBase = preset?.base;

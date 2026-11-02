@@ -1,11 +1,11 @@
 /** @jest-environment jsdom */
 
 import {
+  type RotationViewParams,
   RotationView,
-  RotationViewParams,
 } from 'application/render/renderers/TransientView/RotationView';
 import { Coordinates } from 'application/editor';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { select } from 'd3';
 
@@ -97,9 +97,9 @@ describe('RotationView', () => {
     expect(findArcPath(svg, 'A90,90 0 0,1')).toContain('M190,100A90,90 0 0,1');
   });
 
-  it('uses large-arc-flag for rotation angles above 180 degrees', () => {
+  it('draws the short arc the other way for rotation angles above 180 degrees', () => {
     const svg = renderRotation({ rotationAngle: (210 * Math.PI) / 180 });
 
-    expect(findArcPath(svg, 'A90,90 0 1,1')).toContain('M100,10A90,90 0 1,1');
+    expect(findArcPath(svg, 'A90,90 0 0,0')).toContain('M100,10A90,90 0 0,0');
   });
 });

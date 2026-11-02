@@ -1,5 +1,5 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import {
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';

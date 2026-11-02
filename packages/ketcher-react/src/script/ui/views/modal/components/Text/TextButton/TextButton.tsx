@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react';
-import { TextCommand } from 'ketcher-core';
+import type React from 'react';
+import type { TextCommand } from 'ketcher-core';
 import clsx from 'clsx';
 import styles from './TextButton.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 interface TextButtonProps {
   button: { command: TextCommand; name: IconName };

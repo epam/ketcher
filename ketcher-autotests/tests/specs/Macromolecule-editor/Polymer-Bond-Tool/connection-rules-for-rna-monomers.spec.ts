@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-magic-numbers */
 import { Page, test, Locator, expect } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,

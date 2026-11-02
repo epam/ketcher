@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from './mol.types';
+import type { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
-import { Serializer } from '../serializers.types';
-import { Struct } from 'domain/entities/struct';
+import type { Serializer } from '../serializers.types';
+import { Atom } from 'domain/entities/atom';
+import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
@@ -48,8 +49,8 @@ export class MolSerializer implements Serializer<Struct> {
 
     try {
       return molfile.parseCTFile(parseCTFileParams);
-    } catch (e) {
-      KetcherLogger.error('molSerializer::MolSerializer::deserialize', e);
+    } catch (error) {
+      KetcherLogger.error('molSerializer::MolSerializer::deserialize', error);
       if (this.options.badHeaderRecover) {
         try {
           // check whether there's an extra empty line on top
@@ -58,29 +59,52 @@ export class MolSerializer implements Serializer<Struct> {
             ...parseCTFileParams,
             molfileLines: lines.slice(1),
           });
-        } catch (e1) {
-          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e1);
+        } catch (extraLineError) {
+          KetcherLogger.error(
+            'molSerializer::MolSerializer::deserialize',
+            extraLineError,
+          );
         }
         try {
           // check for a missing first line
           // this sometimes happens when pasting
           return molfile.parseCTFile({
             ...parseCTFileParams,
-            molfileLines: [''].concat(lines),
+            molfileLines: ['', ...lines],
           });
-        } catch (e2) {
-          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e2);
+        } catch (missingFirstLineError) {
+          KetcherLogger.error(
+            'molSerializer::MolSerializer::deserialize',
+            missingFirstLineError,
+          );
         }
       }
-      throw e;
+      throw error;
     }
   }
 
   serialize(_struct: Struct): string {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+    const serializationStruct = struct.clone();
+
+    // Molfile writers only understand atom endpoints. Materialize attachment
+    // groups in this disposable projection so editor Struct.atoms stays purely
+    // chemical while legacy export can still resolve every bond endpoint.
+    serializationStruct.attachmentGroups.forEach((attachmentGroup, id) => {
+      attachmentGroup.recalculatePosition(serializationStruct.atoms);
+      serializationStruct.atoms.set(
+        id,
+        new Atom({
+          label: '*',
+          pp: attachmentGroup.pp,
+          fragment: attachmentGroup.fragment,
+        }),
+      );
+    });
+    serializationStruct.attachmentGroups.clear();
 
     return new Molfile().saveMolecule(
-      struct,
+      serializationStruct,
       this.options.ignoreErrors,
       this.options.noRgroups,
       this.options.preserveIndigoDesc,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useCallback, useEffect } from 'react';
-import { contextMenu, Menu, MenuProps } from 'react-contexify';
+import { type FC, useCallback, useEffect } from 'react';
+import { type MenuProps, contextMenu, Menu } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import styles from './ContextMenu.module.less';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import AtomMenuItems from './menuItems/AtomMenuItems';
@@ -31,13 +31,77 @@ import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
 import { ketcherProvider } from 'ketcher-core';
 import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
+import AttachmentGroupMenuItems from './menuItems/AttachmentGroupMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
   className: styles.contextMenu,
 };
 
-const ContextMenu: React.FC = () => {
+// Takes ketcherId as an argument instead of closing over it, so it stays out of
+// the render scope and callbacks using it do not have to depend on it.
+const resetMenuPosition = (menuElement: HTMLElement, ketcherId: string) => {
+  const contextMenuElement = menuElement;
+  const ketcherRootElement = document.querySelectorAll(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  )[ketcherProvider.getIndexById(ketcherId)];
+
+  if (!contextMenuElement || !ketcherRootElement) {
+    return;
+  }
+
+  const contextMenuElementBoundingBox =
+    contextMenuElement.getBoundingClientRect();
+  const ketcherRootElementBoundingBox =
+    ketcherRootElement.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  if (!contextMenuElementBoundingBox || !ketcherRootElementBoundingBox) {
+    return;
+  }
+
+  let left = contextMenuElementBoundingBox.left;
+  let top = contextMenuElementBoundingBox.top;
+
+  // Ensure the menu is within the Ketcher root element
+  if (
+    contextMenuElementBoundingBox.right > ketcherRootElementBoundingBox.right
+  ) {
+    left =
+      ketcherRootElementBoundingBox.right - contextMenuElementBoundingBox.width;
+  }
+
+  if (
+    contextMenuElementBoundingBox.bottom > ketcherRootElementBoundingBox.bottom
+  ) {
+    top =
+      ketcherRootElementBoundingBox.bottom -
+      contextMenuElementBoundingBox.height;
+  }
+
+  // Ensure the menu is within the viewport
+  if (left < 0) {
+    left = 0;
+  }
+
+  if (top < 0) {
+    top = 0;
+  }
+
+  if (contextMenuElementBoundingBox.right > viewportWidth) {
+    left = viewportWidth - contextMenuElementBoundingBox.width - 10;
+  }
+
+  if (contextMenuElementBoundingBox.bottom > viewportHeight) {
+    top = viewportHeight - contextMenuElementBoundingBox.height - 10;
+  }
+
+  contextMenuElement.style.left = `${left}px`;
+  contextMenuElement.style.top = `${top}px`;
+};
+
+const ContextMenu: FC = () => {
   const { ketcherId } = useAppContext();
 
   useEffect(() => {
@@ -95,73 +159,10 @@ const ContextMenu: React.FC = () => {
     }
   };
 
-  const resetMenuPosition = (menuElement: HTMLElement) => {
-    const contextMenuElement = menuElement;
-    const ketcherRootElement = document.querySelectorAll(
-      KETCHER_ROOT_NODE_CSS_SELECTOR,
-    )[ketcherProvider.getIndexById(ketcherId)];
-
-    if (!contextMenuElement || !ketcherRootElement) {
-      return;
-    }
-
-    const contextMenuElementBoundingBox =
-      contextMenuElement.getBoundingClientRect();
-    const ketcherRootElementBoundingBox =
-      ketcherRootElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    if (!contextMenuElementBoundingBox || !ketcherRootElementBoundingBox) {
-      return;
-    }
-
-    let left = contextMenuElementBoundingBox.left;
-    let top = contextMenuElementBoundingBox.top;
-
-    // Ensure the menu is within the Ketcher root element
-    if (
-      contextMenuElementBoundingBox.right > ketcherRootElementBoundingBox.right
-    ) {
-      left =
-        ketcherRootElementBoundingBox.right -
-        contextMenuElementBoundingBox.width;
-    }
-
-    if (
-      contextMenuElementBoundingBox.bottom >
-      ketcherRootElementBoundingBox.bottom
-    ) {
-      top =
-        ketcherRootElementBoundingBox.bottom -
-        contextMenuElementBoundingBox.height;
-    }
-
-    // Ensure the menu is within the viewport
-    if (left < 0) {
-      left = 0;
-    }
-
-    if (top < 0) {
-      top = 0;
-    }
-
-    if (contextMenuElementBoundingBox.right > viewportWidth) {
-      left = viewportWidth - contextMenuElementBoundingBox.width - 10;
-    }
-
-    if (contextMenuElementBoundingBox.bottom > viewportHeight) {
-      top = viewportHeight - contextMenuElementBoundingBox.height - 10;
-    }
-
-    contextMenuElement.style.left = `${left}px`;
-    contextMenuElement.style.top = `${top}px`;
-  };
-
   const trackVisibility = useCallback(
-    (id: string, visible: boolean) => {
+    (id: string, isVisible: boolean) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-      if (visible) {
+      if (isVisible) {
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector<HTMLElement>(
           '.contexify:last-of-type',
@@ -171,7 +172,7 @@ const ContextMenu: React.FC = () => {
         if (contextMenuElement) {
           // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
           // Without timeout library overrides the position of the context menu which we set.
-          setTimeout(() => resetMenuPosition(contextMenuElement), 0);
+          setTimeout(() => resetMenuPosition(contextMenuElement, ketcherId), 0);
         }
 
         if (submenuElements.length) {
@@ -180,7 +181,7 @@ const ContextMenu: React.FC = () => {
           });
         }
       }
-      editor.contextMenu[id] = visible;
+      editor.contextMenu[id] = isVisible;
     },
     [ketcherId],
   );
@@ -210,6 +211,19 @@ const ContextMenu: React.FC = () => {
             }
           >
             <AtomMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId}
+            onVisibilityChange={(visible) =>
+              trackVisibility(
+                CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId,
+                visible,
+              )
+            }
+          >
+            <AttachmentGroupMenuItems />
           </Menu>
 
           <Menu

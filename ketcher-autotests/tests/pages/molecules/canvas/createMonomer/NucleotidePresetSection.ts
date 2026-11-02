@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Constants';
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -40,7 +39,6 @@ type NucleotidePresetSectionLocators = {
   baseTab: Locator & BaseTabLocators;
   sugarTab: Locator & SugarTabLocators;
   phosphateTab: Locator & PhosphateTabLocators;
-  highlightCheckbox: Locator;
 };
 
 export const NucleotidePresetSection = (page: Page) => {
@@ -88,8 +86,6 @@ export const NucleotidePresetSection = (page: Page) => {
         }),
       },
     ),
-
-    highlightCheckbox: page.getByTestId('highlight-toggle'),
   };
 
   return {
@@ -108,7 +104,16 @@ export const NucleotidePresetSection = (page: Page) => {
 
     async openTab(tab: NucleotidePresetTab) {
       if (!(await this.isTabOpened(tab))) {
-        await page.getByTestId(tab).click();
+        const tabButton = page.getByTestId(tab);
+        await tabButton.click();
+        await tabButton.evaluate(
+          () =>
+            new Promise<void>((resolve) => {
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              );
+            }),
+        );
       }
     },
 
@@ -154,16 +159,25 @@ export const NucleotidePresetSection = (page: Page) => {
     async markAsBase() {
       await this.openTab(NucleotidePresetTab.Base);
       await locators.baseTab.maskAsBaseButton.click();
+      await page.waitForSelector(
+        '[data-testid="Mark-as-base-button"][disabled]',
+      );
     },
 
     async markAsSugar() {
       await this.openTab(NucleotidePresetTab.Sugar);
       await locators.sugarTab.maskAsSugarButton.click();
+      await page.waitForSelector(
+        '[data-testid="Mark-as-sugar-button"][disabled]',
+      );
     },
 
     async markAsPhosphate() {
       await this.openTab(NucleotidePresetTab.Phosphate);
       await locators.phosphateTab.maskAsPhosphateButton.click();
+      await page.waitForSelector(
+        '[data-testid="Mark-as-phosphate-button"][disabled]',
+      );
     },
 
     async setupBase(options: {
@@ -249,14 +263,6 @@ export const NucleotidePresetSection = (page: Page) => {
         await this.openAliasesSection(NucleotidePresetTab.Phosphate);
         await locators.phosphateTab.aliasesSection.helmAliasEditbox.click();
         await page.keyboard.type(options.HELMAlias);
-      }
-    },
-
-    async setHighlight(checked: boolean) {
-      if (checked) {
-        await locators.highlightCheckbox.check();
-      } else {
-        await locators.highlightCheckbox.uncheck();
       }
     },
   };

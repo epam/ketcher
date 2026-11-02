@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +17,7 @@
 
 import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index';
@@ -60,7 +61,7 @@ const shortcuts = generateMenuShortcuts<typeof action>(action);
 
 const mapStateToProps = (state: any) => {
   return {
-    currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
+    currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
     isModeSwitcherDisabled: Boolean(
@@ -103,7 +104,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
-    onSettingsOpen: () => dispatchAction('settings'),
+    onSettingsOpen: () => {
+      dispatchAction('settings');
+    },
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),

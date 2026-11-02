@@ -1,14 +1,14 @@
 import {
+  type ReStruct,
   Action,
   fromFragmentDeletion,
   fromItemsFuse,
   fromSgroupDeletion,
-  ReStruct,
   setExpandSGroup,
   SGroup,
   ReBond,
 } from 'ketcher-core';
-import Editor from '../../Editor';
+import type Editor from '../../Editor';
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems';
 
 type MergeItems = {
@@ -19,7 +19,7 @@ type MergeItems = {
 
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: any,
+  mergeItems?: MergeItems | null,
   action?: Action | null,
   copyAction?: Action,
 ): Action {
@@ -27,7 +27,7 @@ export function dropAndMerge(
   const isMerging = !!mergeItems;
   let dropItemAction = copyAction || new Action();
 
-  if (isMerging) {
+  if (mergeItems) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
       editor.render.ctab,
       mergeItems,

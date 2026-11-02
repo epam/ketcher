@@ -3,5 +3,5 @@ export const MODAL_STATES = {
   textEditor: 'textEditor',
 } as const;
 
-export type MODAL_STATES_VALUES =
-  typeof MODAL_STATES[keyof typeof MODAL_STATES];
+export type ModalStateValue = (typeof MODAL_STATES)[keyof typeof MODAL_STATES];
+export type MODAL_STATES_VALUES = ModalStateValue;

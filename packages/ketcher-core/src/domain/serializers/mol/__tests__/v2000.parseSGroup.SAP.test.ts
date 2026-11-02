@@ -1,4 +1,4 @@
-import { SGroup } from 'domain/entities';
+import type { SGroup } from 'domain/entities';
 import sGroup from 'domain/serializers/mol/parseSGroup';
 
 describe('parseSGroup', () => {

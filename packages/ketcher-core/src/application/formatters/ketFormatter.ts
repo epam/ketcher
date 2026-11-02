@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { Struct } from 'domain/entities/struct';
-import { StructFormatter } from './structFormatter.types';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { EditorSelection } from 'application/editor/editor.types';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export class KetFormatter implements StructFormatter {
   readonly #ketSerializer: KetSerializer;

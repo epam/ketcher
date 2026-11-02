@@ -1,20 +1,30 @@
 import { Subscription } from 'subscription';
-import { ToolEventHandlerName } from 'application/editor/tools/Tool';
-import { CoreEditor } from 'application/editor/Editor';
+import type {
+  IRnaPreset,
+  ToolEventHandlerName,
+} from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
+import type {
+  CreateBondViaModalPayload,
+  SelectLayoutModePayload,
+  MonomerCreationWizardRequest,
+} from './editor.types';
+import type { HistoryOperationType } from './EditorHistory';
+import type { AmbiguousMonomerType, MonomerItemType } from 'domain/types';
 
 export interface IEditorEvents {
-  selectMonomer: Subscription;
-  selectPreset: Subscription;
+  selectMonomer: Subscription<MonomerItemType>;
+  selectPreset: Subscription<IRnaPreset>;
   selectTool: Subscription;
   selectSelectionTool: Subscription;
-  createBondViaModal: Subscription;
+  createBondViaModal: Subscription<CreateBondViaModalPayload>;
   cancelBondCreationViaModal: Subscription;
-  selectMode: Subscription;
+  selectMode: Subscription<SelectLayoutModePayload>;
   layoutModeChange: Subscription;
-  selectHistory: Subscription;
+  selectHistory: Subscription<HistoryOperationType>;
   error: Subscription;
   openErrorModal: Subscription;
   openMonomerConnectionModal: Subscription;
@@ -44,6 +54,7 @@ export interface IEditorEvents {
   deleteHydrogenBond: Subscription;
   turnOnSequenceEditInRNABuilderMode: Subscription;
   turnOffSequenceEditInRNABuilderMode: Subscription;
+  cancelSequenceEditInRNABuilderMode: Subscription;
   modifySequenceInRnaBuilder: Subscription;
   mouseOverSequenceItem: Subscription;
   mouseOnMoveSequenceItem: Subscription;
@@ -62,35 +73,39 @@ export interface IEditorEvents {
   updateMonomersLibrary: Subscription;
   createAntisenseChain: Subscription;
   copySelectedStructure: Subscription;
+  copySelectedStructureAs: Subscription;
+  cutSelectedStructure: Subscription;
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  modelChange: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
   toggleLineLengthHighlighting: Subscription;
   setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
-  autochain: Subscription;
-  previewAutochain: Subscription;
+  autochain: Subscription<MonomerItemType | AmbiguousMonomerType | IRnaPreset>;
+  previewAutochain: Subscription<MonomerItemType | IRnaPreset>;
   removeAutochainPreview: Subscription;
   switchToMacromoleculesMode: Subscription;
   switchToMoleculesMode: Subscription;
+  openMonomerCreationWizard: Subscription<MonomerCreationWizardRequest>;
   layoutCircular: Subscription;
   flipHorizontal: Subscription;
   flipVertical: Subscription;
 }
 
 export const editorEvents: IEditorEvents = {
-  selectMonomer: new Subscription(),
-  selectPreset: new Subscription(),
+  selectMonomer: new Subscription<MonomerItemType>(),
+  selectPreset: new Subscription<IRnaPreset>(),
   selectTool: new Subscription(),
   selectSelectionTool: new Subscription(),
-  createBondViaModal: new Subscription(),
+  createBondViaModal: new Subscription<CreateBondViaModalPayload>(),
   cancelBondCreationViaModal: new Subscription(),
-  selectMode: new Subscription(),
+  selectMode: new Subscription<SelectLayoutModePayload>(),
   layoutModeChange: new Subscription(),
-  selectHistory: new Subscription(),
+  selectHistory: new Subscription<HistoryOperationType>(),
   error: new Subscription(),
   openErrorModal: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
@@ -120,6 +135,7 @@ export const editorEvents: IEditorEvents = {
   deleteHydrogenBond: new Subscription(),
   turnOnSequenceEditInRNABuilderMode: new Subscription(),
   turnOffSequenceEditInRNABuilderMode: new Subscription(),
+  cancelSequenceEditInRNABuilderMode: new Subscription(),
   modifySequenceInRnaBuilder: new Subscription(),
   mouseOverSequenceItem: new Subscription(),
   mouseOnMoveSequenceItem: new Subscription(),
@@ -138,28 +154,34 @@ export const editorEvents: IEditorEvents = {
   updateMonomersLibrary: new Subscription(),
   createAntisenseChain: new Subscription(),
   copySelectedStructure: new Subscription(),
+  copySelectedStructureAs: new Subscription(),
+  cutSelectedStructure: new Subscription(),
   pasteFromClipboard: new Subscription(),
   deleteSelectedStructure: new Subscription(),
   selectEntities: new Subscription(),
+  modelChange: new Subscription(),
   toggleMacromoleculesPropertiesVisibility: new Subscription(),
   modifyAminoAcids: new Subscription(),
   setEditorLineLength: new Subscription(),
   toggleLineLengthHighlighting: new Subscription(),
   setLibraryItemDragState: new Subscription(),
   placeLibraryItemOnCanvas: new Subscription(),
-  autochain: new Subscription(),
-  previewAutochain: new Subscription(),
+  autochain: new Subscription<
+    MonomerItemType | AmbiguousMonomerType | IRnaPreset
+  >(),
+  previewAutochain: new Subscription<MonomerItemType | IRnaPreset>(),
   removeAutochainPreview: new Subscription(),
   switchToMacromoleculesMode: new Subscription(),
   switchToMoleculesMode: new Subscription(),
+  openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
   layoutCircular: new Subscription(),
   flipHorizontal: new Subscription(),
   flipVertical: new Subscription(),
 };
-
 export function resetEditorEvents() {
-  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
-    editorEvents[key] = new Subscription();
+  const events: Record<keyof IEditorEvents, Subscription> = editorEvents;
+  for (const key of Object.keys(events) as Array<keyof IEditorEvents>) {
+    events[key] = new Subscription();
   }
 }
 export const renderersEvents: ToolEventHandlerName[] = [
@@ -214,19 +236,19 @@ const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
 
 export const hotkeysConfiguration = {
   RNASequenceType: {
-    shortcut: ['Control+Alt+r'],
+    shortcut: ['Mod+Alt+r'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
     },
   },
   DNASequenceType: {
-    shortcut: ['Control+Alt+d'],
+    shortcut: ['Mod+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.DNA);
     },
   },
   PEPTIDESequenceTYpe: {
-    shortcut: ['Control+Alt+p'],
+    shortcut: ['Mod+Alt+p'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.PEPTIDE);
     },
@@ -363,6 +385,24 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Alt+c'],
     handler: (editor: CoreEditor) => {
       editor.events.layoutCircular.dispatch();
+    },
+  },
+  copyAsKet: {
+    shortcut: 'Mod+Shift+k',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('ket');
+    },
+  },
+  copyAsMol: {
+    shortcut: 'Mod+Shift+m',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('mol');
+    },
+  },
+  copyImage: {
+    shortcut: 'Mod+Shift+f',
+    handler: (editor: CoreEditor) => {
+      editor.events.copySelectedStructureAs.dispatch('image');
     },
   },
 };

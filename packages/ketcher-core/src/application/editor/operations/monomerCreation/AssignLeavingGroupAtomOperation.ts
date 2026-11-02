@@ -1,10 +1,10 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MonomerCreationState, ReStruct } from 'application/render';
+import type { MonomerCreationState, ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
-import { AttachmentPointName } from 'domain/types';
-import Restruct from 'application/render/restruct/restruct';
+import type { AttachmentPointName } from 'domain/types';
+import type Restruct from 'application/render/restruct/restruct';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
@@ -17,7 +17,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
     private readonly monomerCreationState: MonomerCreationState,
     private readonly attachmentPointName: AttachmentPointName,
     private readonly potentialLeavingAtoms?: Set<number>,
-    private _assignedAttachmentPoints?: Map<
+    private readonly _assignedAttachmentPoints?: Map<
       AttachmentPointName,
       [number, number]
     >,
@@ -81,8 +81,11 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const {
+      assignedAttachmentPoints,
+      potentialAttachmentPoints,
+      connectionAttachmentPoints,
+    } = this.monomerCreationState;
 
     let atomPairForLeavingGroup: [number, number] | null = null;
     for (const attachmentPointAtoms of potentialAttachmentPoints.entries()) {
@@ -99,9 +102,13 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
 
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
-    const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
-    );
+    const occupiedAttachmentPointNames = new Set([
+      ...assignedAttachmentPoints.keys(),
+      ...(connectionAttachmentPoints?.keys() ?? []),
+    ]);
+    const attachmentPointName = getNextFreeAttachmentPoint([
+      ...occupiedAttachmentPointNames,
+    ]);
     this.attachmentPointName = attachmentPointName;
 
     assignedAttachmentPoints.set(attachmentPointName, atomPairForLeavingGroup);

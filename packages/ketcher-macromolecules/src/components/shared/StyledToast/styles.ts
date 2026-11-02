@@ -1,16 +1,22 @@
 import styled from '@emotion/styled';
 import { IconButton } from 'ketcher-react';
 
+export const StyledToastContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
+});
+
 export const StyledToast = styled.div({
   backgroundColor: '#333333',
-  maxHeight: '40px',
+  minHeight: '40px',
   display: 'flex',
-  alignItems: 'stretch',
+  alignItems: 'flex-start',
 });
 
 export const StyledToastContent = styled.div({
-  maxWidth: '356px',
-  padding: '4px 10px 4px 10px',
+  maxWidth: '420px',
+  padding: '8px 10px',
   color: 'white',
   display: 'flex',
 });

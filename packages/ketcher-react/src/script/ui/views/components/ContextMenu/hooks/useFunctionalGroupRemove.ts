@@ -2,9 +2,9 @@ import { Action, fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
-import {
+import type {
   FunctionalGroupsContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';

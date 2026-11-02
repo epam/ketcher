@@ -1,7 +1,7 @@
 import { select } from 'd3';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Coordinates } from 'application/editor';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { createSvgElement } from '../../../helpers/dom';
 

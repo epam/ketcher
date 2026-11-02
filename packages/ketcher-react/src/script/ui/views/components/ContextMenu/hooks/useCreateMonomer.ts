@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import { ketcherProvider } from 'ketcher-core';
 
 const useCreateMonomer = () => {

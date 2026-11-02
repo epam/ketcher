@@ -1,17 +1,17 @@
 import { useCallback } from 'react';
-import {
+import type {
   ItemEventParams,
   MultitailArrowContextMenuProps,
 } from '../contextMenu.types';
 import { useAppContext } from '../../../../../../hooks';
 import {
+  type Action,
   fromMultitailArrowTailAdd,
   fromMultitailArrowTailRemove,
   MultitailArrow,
-  Action,
   ketcherProvider,
 } from 'ketcher-core';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 
 type Params = ItemEventParams<MultitailArrowContextMenuProps>;
 

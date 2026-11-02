@@ -1,6 +1,6 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
-import { forwardRef, HTMLAttributes } from 'react';
+import { type HTMLAttributes, forwardRef } from 'react';
 import styles from './ModificationTypeDropdown.module.less';
 import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
 import {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { castDraft } from 'immer';
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
@@ -22,13 +23,15 @@ import {
   SettingsManager,
   type EditorLineLength,
   type SingleChainMacromoleculeProperties,
+  DeepPartial,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
-import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
-import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
-import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import {
+  isMacroSelectionTool,
+  SELECT_SUBMENU_ID,
+} from 'components/menu/constants';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -52,11 +55,12 @@ interface AppMeta {
 interface EditorState {
   ketcherId: string;
   isReady: boolean | null;
-  activeTool: string;
+  activeTool: string | null;
   editor: CoreEditor | undefined;
+  monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
-  preview: EditorStatePreview;
+  preview: EditorStatePreview | undefined;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
   isDragging: boolean;
@@ -75,13 +79,10 @@ const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
+  monomerLibraryLoadError: null,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
-  preview: {
-    type: PreviewType.Monomer,
-    monomer: undefined,
-    style: {},
-  },
+  preview: undefined,
   position: undefined,
   isContextMenuActive: false,
   isDragging: false,
@@ -92,10 +93,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE ?? '',
-    indigoVersion: process.env.INDIGO_VERSION ?? '',
-    indigoMachine: process.env.INDIGO_MACHINE ?? '',
-    version: process.env.VERSION ?? '',
+    buildDate: import.meta.env.BUILD_DATE ?? '',
+    indigoVersion: import.meta.env.INDIGO_VERSION ?? '',
+    indigoMachine: import.meta.env.INDIGO_MACHINE ?? '',
+    version: import.meta.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };
@@ -116,8 +117,18 @@ export const editorSlice: Slice<EditorState> = createSlice({
     initFailure: (state) => {
       state.isReady = false;
     },
-    selectTool: (state, action: PayloadAction<string>) => {
+    setMonomerLibraryLoadError: (
+      state,
+      action: PayloadAction<string | null>,
+    ) => {
+      state.monomerLibraryLoadError = action.payload;
+    },
+    selectTool: (state, action: PayloadAction<string | null>) => {
       state.activeTool = action.payload;
+
+      if (isMacroSelectionTool(action.payload)) {
+        state.selectedMenuGroupItems[SELECT_SUBMENU_ID] = action.payload;
+      }
     },
     setPosition: (state, action: PayloadAction<PresetPosition>) => {
       state.position = action.payload;
@@ -131,8 +142,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
         monomersLibraryUpdate?: string | JSON;
         monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
+        onLibraryError?: (err: unknown) => void;
       }>,
     ) => {
+      state.monomerLibraryLoadError = null;
+
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
@@ -144,12 +158,10 @@ export const editorSlice: Slice<EditorState> = createSlice({
       editor.initializeMonomersLibraryFromKetcher(
         action.payload.monomersLibraryUpdate,
         action.payload.monomersLibraryReplace,
+        action.payload.onLibraryError,
       );
 
-      // TODO: Figure out proper typing here and below
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.editor = editor;
+      state.editor = castDraft(editor);
       action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
@@ -161,9 +173,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state,
       action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      state.preview = action.payload || { monomer: undefined, style: '' };
+      state.preview = action.payload ? castDraft(action.payload) : undefined;
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
@@ -206,7 +216,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.editorLineLength = {
         ...state.editorLineLength,
         ...action.payload,
-      };
+      } as EditorLineLength;
     },
     setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
       state.unipositiveIonsValue = action.payload;
@@ -214,17 +224,8 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
       state.oligonucleotidesValue = action.payload;
     },
-    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
-      state.app = action.payload;
-    },
-    setSelectedMenuGroupItem: (
-      state,
-      action: PayloadAction<{ groupName: string; activeItemName: string }>,
-    ) => {
-      state.selectedMenuGroupItems = {
-        ...state.selectedMenuGroupItems,
-        [action.payload.groupName]: action.payload.activeItemName,
-      };
+    setIndigoVersion: (state, action: PayloadAction<string>) => {
+      state.app.indigoVersion = action.payload;
     },
   },
 });
@@ -233,6 +234,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  setMonomerLibraryLoadError,
   initKetcherId,
   selectTool,
   setPosition,
@@ -249,12 +251,12 @@ export const {
   setEditorLineLength,
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
-  setAppMeta,
-  setSelectedMenuGroupItem,
+  setIndigoVersion,
 } = editorSlice.actions;
 
-export const selectShowPreview = (state: RootState): EditorStatePreview =>
-  state.editor.preview;
+export const selectShowPreview = (
+  state: RootState,
+): EditorStatePreview | undefined => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
 export const selectEditorPosition = (
@@ -272,14 +274,17 @@ export const selectKetcherId = (state: RootState): string => {
 export const selectEditor = (state: RootState): CoreEditor | undefined =>
   state.editor.editor;
 
-export const selectIsSequenceEditInRNABuilderMode = (
+export const selectMonomerLibraryLoadError = (
   state: RootState,
-): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
+): string | null => state.editor.monomerLibraryLoadError;
 
-export const selectIsSequenceMode = (state: RootState): boolean =>
+export const isRnaBuilderSequenceEditMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceEditInRNABuilderMode;
+
+export const isSequenceModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
 
-export const selectIsSequenceSyncEditMode = (state: RootState): boolean =>
+export const isSequenceSyncEditModeEnabled = (state: RootState): boolean =>
   state.editor.editor?.isSequenceSyncEditMode;
 
 export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
@@ -292,10 +297,10 @@ export const selectIsHandToolSelected = (state: RootState) =>
 export const hasAntisenseChains = (state: RootState): CoreEditor =>
   state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
 
-export const selectIsContextMenuActive = (state: RootState): boolean =>
+export const isContextMenuActivated = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
 
-export const selectIsDragging = (state: RootState): boolean =>
+export const isEditorDragging = (state: RootState): boolean =>
   state.editor.isDragging;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (
@@ -329,7 +334,8 @@ export const selectSelectedMenuGroupItemsState = (state: RootState) =>
   state.editor.selectedMenuGroupItems;
 
 export const selectSelectedMenuGroupItem =
-  (groupItemName: string) => (state: RootState) => {
+  (groupItemName: string | undefined) => (state: RootState) => {
+    if (!groupItemName) return undefined;
     return state.editor.selectedMenuGroupItems[groupItemName];
   };
 

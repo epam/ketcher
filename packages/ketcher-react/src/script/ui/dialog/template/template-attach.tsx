@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Dialog, StructEditor } from '../../views/components';
-import { Component } from 'react';
+import { Component, type ComponentType } from 'react';
 import { isEmpty } from 'lodash';
 import {
   initAttach,
@@ -24,16 +24,17 @@ import {
 } from '../../state/templates';
 
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { StoreState } from '../../state/store.types';
+import { withTranslation, type WithTranslation } from 'react-i18next';
+import type { Dispatch } from 'redux';
+import type { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
-import Form, { Field, FormState } from '../../component/form/form/form';
+import Form, { type FormState, Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
 import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
 import { css } from '@emotion/react';
 import { Button } from '@mui/material';
-import { Editor, ketcherProvider, Struct } from 'ketcher-core';
+import { type Editor, type Struct, ketcherProvider } from 'ketcher-core';
 
 interface AttachPoints {
   atomid: number;
@@ -77,7 +78,10 @@ interface AttachDispatchProps {
   onNameEdit: (name: string) => void;
 }
 
-type AttachProps = AttachOwnProps & AttachStateProps & AttachDispatchProps;
+type AttachProps = AttachOwnProps &
+  AttachStateProps &
+  AttachDispatchProps &
+  WithTranslation;
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -277,6 +281,7 @@ class Attach extends Component<AttachProps> {
   checkIsValidName(name: string) {
     return (
       !!name &&
+      name.trim().length > 0 &&
       !this.props.templateLib.some(
         (tmpl) =>
           tmpl.struct.name === name && tmpl.props.group === 'User Templates',
@@ -286,14 +291,7 @@ class Attach extends Component<AttachProps> {
   }
 
   render() {
-    const {
-      name,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      onNameEdit,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      onAttachEdit,
-      ...prop
-    } = this.props;
+    const { name, onNameEdit, onAttachEdit, t, ...prop } = this.props;
     const struct = this.tmpl.struct;
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
@@ -304,9 +302,13 @@ class Attach extends Component<AttachProps> {
       reuseRestructIfExist: false,
     });
     const dialogTitle =
-      this.mode === 'save' ? 'Save to Templates' : 'Template Edit';
+      this.mode === 'save'
+        ? t('dialogs:toolbox.templateAttach.saveDialogTitle')
+        : t('dialogs:toolbox.templateAttach.editDialogTitle');
     const warningObject =
-      this.mode === 'save' ? 'Templates' : 'Edited templates';
+      this.mode === 'save'
+        ? t('dialogs:toolbox.templateAttach.templatesName')
+        : t('dialogs:toolbox.templateAttach.editedTemplatesName');
 
     return (
       <TemplateEditDialog
@@ -319,13 +321,11 @@ class Attach extends Component<AttachProps> {
       >
         <Message>
           <div>
-            {warningObject} are saved locally and cannot be accessed on
-            different browsers or computers.
+            {t('dialogs:toolbox.templateAttach.savedLocallyWarning', {
+              name: warningObject,
+            })}
           </div>
-          <div>
-            Be aware that other users of the same computer and browser can
-            access them as well.
-          </div>
+          <div>{t('dialogs:toolbox.templateAttach.sharedComputerWarning')}</div>
         </Message>
         <Form
           schema={attachSchema}
@@ -347,20 +347,24 @@ class Attach extends Component<AttachProps> {
                 showAttachmentPoints={false}
               />
             </EditorContainer>
-            {!storage.isAvailable() ? (
+            {storage.isAvailable() ? null : (
               <Warning>{storage.warningMessage}</Warning>
-            ) : null}
+            )}
           </LeftColumn>
           <RightColumn>
             <NameInput
               name="name"
               value={name}
-              onChange={this.props.onNameEdit}
-              placeholder="template"
+              onChange={(value) => onNameEdit(value as string)}
+              placeholder={t('dialogs:toolbox.templateAttach.namePlaceholder')}
             />
-            <span>Selected attachment points</span>
+            <span>
+              {t('dialogs:toolbox.templateAttach.selectedAttachmentPoints')}
+            </span>
             <AttachmentOutput data-testid="attach-output">
-              Atom ID: <strong>{atomid}</strong> Bond ID:{' '}
+              {t('dialogs:toolbox.templateAttach.atomIdLabel')}{' '}
+              <strong>{atomid}</strong>{' '}
+              {t('dialogs:toolbox.templateAttach.bondIdLabel')}{' '}
               <strong>{bondid}</strong>
             </AttachmentOutput>
             <Buttons>
@@ -370,7 +374,7 @@ class Attach extends Component<AttachProps> {
                 className={classes.button}
                 data-testid="template-cancel-button"
               >
-                Cancel
+                {t('dialogs:toolbox.templateAttach.cancelButton')}
               </CancelButton>
               <SaveButton
                 variant="contained"
@@ -383,7 +387,9 @@ class Attach extends Component<AttachProps> {
                     : 'template-edit-button'
                 }
               >
-                {this.mode === 'save' ? 'Save' : 'Edit'}
+                {this.mode === 'save'
+                  ? t('dialogs:toolbox.templateAttach.saveButton')
+                  : t('dialogs:toolbox.templateAttach.editButton')}
               </SaveButton>
             </Buttons>
           </RightColumn>
@@ -406,9 +412,12 @@ const mapDispatchToProps = (dispatch: Dispatch): AttachDispatchProps => ({
   onNameEdit: (name: string) => dispatch(setTmplName(name)),
 });
 
-// Type assertion needed due to @types/react version mismatch with react-redux
 const connector = connect(mapStateToProps, mapDispatchToProps);
-export default connector(Attach as never);
+const ConnectedAttach: ComponentType<AttachOwnProps> = connector(
+  withTranslation(['dialogs'])(Attach),
+);
+
+export default ConnectedAttach;
 
 function initTmpl(tmpl: TemplateItem): NormalizedTemplate {
   const normTmpl = {

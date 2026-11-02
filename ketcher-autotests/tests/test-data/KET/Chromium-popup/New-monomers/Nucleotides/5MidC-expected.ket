@@ -33,7 +33,8 @@
                     0.166,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "O",
@@ -50,7 +51,8 @@
                     -0.169,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -67,7 +69,8 @@
                     -0.827,
                     0
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 2
             },
             {
                 "label": "C",

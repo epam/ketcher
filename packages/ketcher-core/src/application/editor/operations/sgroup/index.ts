@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
-import { ReSGroup, ReStruct } from '../../../render';
+import { type ReStruct, ReSGroup } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
-// todo: separate classes: now here is circular dependency in `invert` method
-
 type Data = {
-  sgid: any;
-  type?: any;
-  pp?: any;
+  sgid?: number;
+  type?: string;
+  pp?: Vec2 | null;
   expanded?: boolean;
   name?: string;
   oldSgroup?: SGroup;
 };
 
-const SGROUP_TYPE_MAPPING = {
+const SGROUP_TYPE_MAPPING: Record<string, string> = {
   nucleotideComponent: SGroup.TYPES.SUP,
 };
 
@@ -44,10 +41,10 @@ class SGroupCreate extends BaseOperation {
   data: Data;
 
   constructor(
-    sgroupId?: any,
-    type?: any,
-    pp?: any,
-    expanded?: boolean,
+    sgroupId?: number,
+    type?: string,
+    pp?: Vec2,
+    isExpanded?: boolean,
     name?: string,
     oldSgroup?: SGroup,
     private readonly monomer?: BaseMonomer,
@@ -57,7 +54,7 @@ class SGroupCreate extends BaseOperation {
       sgid: sgroupId,
       type,
       pp,
-      expanded,
+      expanded: isExpanded,
       name,
       oldSgroup,
     };
@@ -65,7 +62,12 @@ class SGroupCreate extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const { sgid, pp, expanded, name, oldSgroup } = this.data;
+    const { sgid, type, pp, expanded: isExpanded, name, oldSgroup } = this.data;
+
+    if (sgid === undefined || type === undefined) {
+      return;
+    }
+
     let sgroup: SGroup;
 
     if (oldSgroup && oldSgroup instanceof MonomerMicromolecule) {
@@ -73,9 +75,7 @@ class SGroupCreate extends BaseOperation {
     } else if (this.monomer) {
       sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, this.monomer);
     } else {
-      sgroup = new SGroup(
-        SGROUP_TYPE_MAPPING[this.data.type] || this.data.type,
-      );
+      sgroup = new SGroup(SGROUP_TYPE_MAPPING[type] || type);
     }
 
     sgroup.id = sgid;
@@ -85,13 +85,10 @@ class SGroupCreate extends BaseOperation {
       sgroup.pp = new Vec2(pp);
     }
 
-    if (expanded) {
-      sgroup.data.expanded = expanded;
+    if (isExpanded !== undefined) {
+      sgroup.data.expanded = isExpanded;
       if (sgroup instanceof MonomerMicromolecule) {
-        if (Object.isFrozen(sgroup.monomer.monomerItem)) {
-          sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
-        }
-        sgroup.monomer.monomerItem.expanded = expanded;
+        sgroup.setExpanded(isExpanded);
       }
     }
 
@@ -112,18 +109,12 @@ class SGroupCreate extends BaseOperation {
     }
     this.data.sgid = sgid;
   }
-
-  invert() {
-    const inverted = new SGroupDelete();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
 
 class SGroupDelete extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId?: number) {
     super(OperationType.S_GROUP_DELETE, OperationPriority.S_GROUP_DELETE);
     this.data = { sgid: sgroupId };
   }
@@ -131,6 +122,11 @@ class SGroupDelete extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
     const { sgid } = this.data;
+
+    if (sgid === undefined) {
+      return;
+    }
+
     const sgroup = restruct.sgroups.get(sgid);
     const sgroupData = restruct.sgroupData.get(sgid);
     if (!sgroup) return;
@@ -138,7 +134,7 @@ class SGroupDelete extends BaseOperation {
     this.data.pp = sgroup?.item?.pp;
     this.data.oldSgroup = sgroup.item;
 
-    if (sgroup?.item?.type === 'DAT' && sgroupData) {
+    if (sgroupData && sgroup?.item?.type === 'DAT') {
       restruct.clearVisel(sgroupData.visel);
       restruct.sgroupData.delete(sgid);
     }
@@ -166,13 +162,10 @@ class SGroupDelete extends BaseOperation {
     restruct.sgroups.delete(sgid);
     struct.sgroups.delete(sgid);
   }
-
-  invert() {
-    const inverted = new SGroupCreate();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
+
+SGroupCreate.InverseConstructor = SGroupDelete;
+SGroupDelete.InverseConstructor = SGroupCreate;
 
 export { SGroupCreate, SGroupDelete };
 export * from './sgroupAtom';

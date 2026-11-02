@@ -23,7 +23,7 @@ const ButtonBox = styled('div')`
 
 const selectHandler = (input) => {
   const arr = input.split(',');
-  const numberArr = arr.map((item) => parseInt(item));
+  const numberArr = arr.map((item) => Number.parseInt(item));
   KetcherFunctions.selectAtomsById(numberArr);
 };
 

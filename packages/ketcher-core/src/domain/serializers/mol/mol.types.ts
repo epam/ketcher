@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import type { SGroup, Struct } from 'domain/entities';
 
 export interface MolSerializerOptions {
   reactionRelayout: boolean;
@@ -29,12 +31,12 @@ export type Mapping = {
   [key in number]: number;
 };
 
-export type SGroupMap = Record<number, import('domain/entities').SGroup>;
+export type SGroupMap = Record<number, SGroup>;
 
 export type AtomMap = Record<number, number>;
 
 export type PostLoadHandler = (
-  sgroup: import('domain/entities').SGroup,
-  mol?: import('domain/entities').Struct,
+  sgroup: SGroup,
+  mol?: Struct,
   atomMap?: AtomMap,
 ) => void;

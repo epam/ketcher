@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { Tools, UiActionAction } from '../../../action';
+import action, { type Tools, type UiActionAction } from '../../../action';
 
-import { ActionButton, ActionButtonProps } from './ActionButton';
-import { ToolbarItem } from '../toolbar.types';
+import { type ActionButtonProps, ActionButton } from './ActionButton';
+import type { ToolbarItem } from '../toolbar.types';
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem';
 import { getIconName } from 'components';
 

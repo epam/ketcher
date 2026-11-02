@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@fixtures';
 import {
   clickInTheMiddleOfTheCanvas,

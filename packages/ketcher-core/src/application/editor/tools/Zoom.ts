@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
-import { BaseTool } from 'application/editor/tools/Tool';
+import { type ZoomBehavior, zoom, select, ZoomTransform, drag } from 'd3';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { canvasSelector, drawnStructuresSelector } from '../constants';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
-import { StructureBbox } from 'application/render/renderers/types';
+import type { StructureBbox } from 'application/render/renderers/types';
 
 export enum SCROLL_POSITION {
   CENTER = 'CENTER',
@@ -47,6 +47,7 @@ export class ZoomTool implements BaseTool {
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
+  private rememberedZoomTransform: ZoomTransform | null = null;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
@@ -65,15 +66,14 @@ export class ZoomTool implements BaseTool {
   MINZOOMSCALE = 0.2;
   MAXZOOMSCALE = 4;
 
-  // eslint-disable-next-line no-use-before-define
   private static _instance: ZoomTool;
   public static get instance() {
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
     ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    return ZoomTool._instance;
+    return this._instance;
   }
 
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
@@ -89,6 +89,13 @@ export class ZoomTool implements BaseTool {
 
   initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
+      .extent((): [[number, number], [number, number]] => {
+        const rect = this.canvasWrapper.node()?.getBoundingClientRect();
+        return [
+          [0, 0],
+          [rect?.width ?? 0, rect?.height ?? 0],
+        ];
+      })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
@@ -129,6 +136,24 @@ export class ZoomTool implements BaseTool {
     return this._zoomTransform;
   }
 
+  public rememberZoomTransform() {
+    this.rememberedZoomTransform ??= this._zoomTransform;
+  }
+
+  public forgetRememberedZoomTransform() {
+    this.rememberedZoomTransform = null;
+  }
+
+  public restoreRememberedZoomTransform() {
+    const transform = this.rememberedZoomTransform;
+
+    this.rememberedZoomTransform = null;
+
+    if (transform) {
+      this.zoom?.transform(this.canvasWrapper, transform);
+    }
+  }
+
   zoomAction({ transform }) {
     this.canvas.attr('transform', transform);
     this.zoomLevel = transform.k;
@@ -157,17 +182,17 @@ export class ZoomTool implements BaseTool {
     });
   }
 
-  drawScrollBars(forceHide = false) {
+  drawScrollBars(shouldForceHide = false) {
     if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
-      this.renderScrollBar(this.scrollBars.vertical, forceHide);
+      this.renderScrollBar(this.scrollBars.horizontal, shouldForceHide);
+      this.renderScrollBar(this.scrollBars.vertical, shouldForceHide);
     }
   }
 
-  renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
+  renderScrollBar(scrollBar: ScrollBar, shouldForceHide = false) {
     const hasOffset = scrollBar.offsetStart < 0 || scrollBar.offsetEnd < 0;
-    if (hasOffset && !forceHide) {
+    if (hasOffset && !shouldForceHide) {
       if (scrollBar.bar) {
         this.updateScrollBarAttrs(scrollBar);
       } else {
@@ -209,7 +234,7 @@ export class ZoomTool implements BaseTool {
     scrollBar.bar
       ?.attr('rx', this.RADIUS)
       .attr('draggable', true)
-      .attr('cursor', 'pointer')
+      .attr('cursor', 'default')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
       .attr('data-testid', scrollBar.name + '-bar')
@@ -239,21 +264,19 @@ export class ZoomTool implements BaseTool {
 
   public scrollTo(
     position: Vec2,
-    stickToBottom = false,
+    shouldStickToBottom = false,
     xOffset?,
     yOffset?,
     isOffsetInPercents = true,
-    needScrollVertical = true,
+    shouldScrollVertical = true,
   ) {
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const wrapperRect = this.canvasWrapper.node()?.getBoundingClientRect();
+    const canvasWrapperHeight = wrapperRect?.height ?? 0;
+    const canvasWrapperWidth = wrapperRect?.width ?? 0;
 
     // Calculate X offset
     let xOffsetValue: number;
-    if (isNumber(xOffset) && !isOffsetInPercents) {
+    if (!isOffsetInPercents && isNumber(xOffset)) {
       xOffsetValue = xOffset;
     } else {
       const xOffsetOrDefault = isNumber(xOffset)
@@ -264,7 +287,7 @@ export class ZoomTool implements BaseTool {
 
     // Calculate Y offset
     let yOffsetValue: number;
-    if (isNumber(yOffset) && !isOffsetInPercents) {
+    if (!isOffsetInPercents && isNumber(yOffset)) {
       yOffsetValue = yOffset;
     } else {
       const yOffsetOrDefault = isNumber(yOffset)
@@ -281,8 +304,8 @@ export class ZoomTool implements BaseTool {
 
     // Calculate Y position for translateTo
     let yPosition: number;
-    if (needScrollVertical) {
-      const multiplier = stickToBottom ? -1 : 1;
+    if (shouldScrollVertical) {
+      const multiplier = shouldStickToBottom ? -1 : 1;
       yPosition = position.y + this.unzoomValue(offset.y * multiplier);
     } else {
       yPosition = this.unzoomValue(canvasWrapperHeight / 2 - currentY);
@@ -341,11 +364,8 @@ export class ZoomTool implements BaseTool {
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;
-    const canvasWrapperHeight =
-      this.canvasWrapper.node()?.height.baseVal.value || 0;
-
-    const canvasWrapperWidth =
-      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    const canvasWrapperHeight = wrapperBoundingBox.height;
+    const canvasWrapperWidth = wrapperBoundingBox.width;
     this.scrollBars = {
       horizontal: {
         name: 'horizontal',
@@ -402,6 +422,8 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
+    this.rememberedZoomTransform = null;
+
     const canvasWrapperNode = this.canvasWrapper.node();
 
     if (!canvasWrapperNode?.transform?.baseVal) {

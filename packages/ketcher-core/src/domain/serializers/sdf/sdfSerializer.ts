@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SdfItem, StructAssociatedData } from './sdf.types';
+import type { SdfItem, StructAssociatedData } from './sdf.types';
 
 import { MolSerializer } from '../mol/molSerializer';
-import { Serializer } from '../serializers.types';
-import { MolSerializerOptions } from '../mol';
+import type { Serializer } from '../serializers.types';
+import type { MolSerializerOptions } from '../mol';
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm;
 export class SdfSerializer implements Serializer<Array<SdfItem>> {
@@ -31,12 +31,12 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   deserialize(content: string): Array<SdfItem> {
     const result: Array<SdfItem> = [];
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    let m: any = DelimeterRegex.exec(content);
+    let m: RegExpExecArray | null = DelimeterRegex.exec(content);
     while (m !== null) {
       const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
-        const propChunks: any = chunk
+        const propChunks: string[] = chunk
           .substr(end + 7)
           .trim()
           .split(/^$\n?/m);
@@ -48,14 +48,14 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
             if (m) {
               const field = m[1];
               const valueArr = pc.split('\n').slice(1, -1);
-              let value = '';
+              let value: string;
               if (valueArr.length > 1) {
                 value = valueArr.join(',');
               } else {
                 value = pc.split('\n')[1].trim();
               }
 
-              acc[field] = Number.isFinite(value) ? +value : value.toString(); // eslint-disable-line
+              acc[field] = Number.isFinite(value) ? +value : value.toString();
             }
             return acc;
           },

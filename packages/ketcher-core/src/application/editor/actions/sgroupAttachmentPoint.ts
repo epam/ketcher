@@ -1,6 +1,6 @@
 import { Action } from './action';
 import { SGroupAttachmentPointRemove } from '../operations';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 import { isNumber } from 'lodash';
 
 export function fromSgroupAttachmentPointRemove(
@@ -8,7 +8,7 @@ export function fromSgroupAttachmentPointRemove(
   sgroupId: number,
   atomId: number,
   leaveAtomId?: number,
-  needPerform = true,
+  shouldPerform = true,
 ) {
   let action = new Action();
   const struct = restruct.molecule;
@@ -27,7 +27,7 @@ export function fromSgroupAttachmentPointRemove(
     }
   });
 
-  if (needPerform) {
+  if (shouldPerform) {
     action = action.perform(restruct);
   }
 

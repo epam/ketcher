@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MonomerCreationState } from 'application/render';
+import type { MonomerCreationState } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
-import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
-import Restruct from 'application/render/restruct/restruct';
+import { assert } from 'utilities';
+import type { AttachmentPointName } from 'domain/types';
+import type Restruct from 'application/render/restruct/restruct';
 
 export class ReassignAttachmentPointOperation extends BaseOperation {
   constructor(
@@ -69,5 +69,9 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
       this.newName,
       this.currentName,
     );
+  }
+
+  isDummy() {
+    return this.currentName === this.newName;
   }
 }

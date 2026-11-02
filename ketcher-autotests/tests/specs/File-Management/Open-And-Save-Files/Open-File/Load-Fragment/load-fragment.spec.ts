@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -61,7 +60,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
   for (const testCase of testCasesForOpeningFiles) {
     const index = -1;
@@ -138,9 +137,8 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       false,
     );
 
-    const convertErrorMessage = await ErrorMessageDialog(
-      page,
-    ).getErrorMessage();
+    const convertErrorMessage =
+      await ErrorMessageDialog(page).getErrorMessage();
     const expectedErrorMessage =
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +

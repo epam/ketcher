@@ -1,8 +1,8 @@
-import { StructService } from 'ketcher-core';
+import type { StructService } from 'ketcher-core';
 
-let indigo;
+let indigo: StructService | undefined;
 export class IndigoProvider {
-  static getIndigo(): StructService {
+  static getIndigo(): StructService | undefined {
     return indigo;
   }
 

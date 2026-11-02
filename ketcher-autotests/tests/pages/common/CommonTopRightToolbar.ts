@@ -1,10 +1,10 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
-import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
+import { getCanvasByMode } from '@utils/canvas/canvasLocators';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -19,6 +19,12 @@ type ZoomDropdownLocators = {
   zoomOutButton: Locator;
   zoomInButton: Locator;
   zoomDefaultButton: Locator;
+};
+
+type TurnOnMacromoleculesEditorOptions = {
+  disableChainLengthRuler?: boolean;
+  disableAutozoom?: boolean;
+  enableFlexMode?: boolean;
 };
 
 export const CommonTopRightToolbar = (page: Page) => {
@@ -105,53 +111,44 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMacromoleculesEditor(
-      options: {
-        enableFlexMode?: boolean;
-        goToPeptides?: boolean;
-        disableChainLengthRuler?: boolean;
-        disableAutozoom?: boolean;
-      } = {
-        enableFlexMode: true,
-        goToPeptides: true,
-        disableChainLengthRuler: true,
-        disableAutozoom: true,
-      },
+      options?: TurnOnMacromoleculesEditorOptions,
     ) {
-      if (options.disableChainLengthRuler !== false) {
+      const {
+        disableChainLengthRuler = true,
+        disableAutozoom = true,
+        enableFlexMode = false,
+      } = options ?? {};
+
+      if (disableChainLengthRuler) {
         await hideRuler(page);
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
+      const macromoleculesCanvas = getCanvasByMode(page, 'macromolecules');
 
       if (!(await macromoleculesCanvas.isVisible())) {
-        await switcher.waitFor({ state: 'visible' });
-        await switcher.click();
-        await macroOption.waitFor({ state: 'visible' });
-        await macroOption.click();
-        await MacromoleculesTopToolbar(
-          page,
-        ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
-      }
-
-      if (options.enableFlexMode) {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
-      } else if (options.goToPeptides) {
-        await Library(page).switchToPeptidesTab();
-      } else {
-        await Library(page).rnaTab.nucleotidesSection.waitFor({
-          state: 'visible',
+        await waitForRender(page, async () => {
+          await switcher.waitFor({ state: 'visible' });
+          await switcher.click();
+          await macroOption.waitFor({ state: 'visible' });
+          await macroOption.click();
         });
       }
 
-      if (options.disableAutozoom !== false) {
+      await MacromoleculesTopToolbar(
+        page,
+      ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
+
+      if (enableFlexMode) {
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
+      }
+
+      if (disableAutozoom) {
         await page.evaluate(() => {
           // Temporary solution to disable autozoom for the macro editor in e2e tests
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          window._ketcher_isAutozoomDisabled = true;
+          globalThis.window._ketcher_isAutozoomDisabled = true;
         });
       }
     },
@@ -159,14 +156,15 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = page.getByTestId('canvas');
+      const moleculesCanvas = getCanvasByMode(page, 'molecules');
 
       if (!(await moleculesCanvas.isVisible())) {
-        await switcher.waitFor({ state: 'visible' });
-        await switcher.click();
-
-        await microOption.waitFor({ state: 'visible' });
-        await microOption.click();
+        await waitForRender(page, async () => {
+          await switcher.waitFor({ state: 'visible' });
+          await switcher.click();
+          await microOption.waitFor({ state: 'visible' });
+          await microOption.click();
+        });
       }
     },
   };

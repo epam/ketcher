@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  type GenerateImageOptions,
+  type StructService,
   KetcherLogger,
-  GenerateImageOptions,
   ketcherProvider,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
-import React, { PropsWithChildren } from 'react';
+import type { KeyboardEvent, MouseEvent, PropsWithChildren } from 'react';
 import { useAppContext } from '../../../../hooks';
 import { fileSaver } from './saveButton.utils';
-import { SaverType } from './saveButton.types';
+import type { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: any;
+  server?: StructService | null;
   filename: string;
-  data: any;
+  data?: Blob | string;
+  getData?: () => Blob | string;
   type?: string;
   mode?: string;
   options?: GenerateImageOptions;
   onSave?: () => void;
-  onError?: (err: any) => void;
+  onError?: (err: unknown) => void;
   className?: string;
   title?: string;
   disabled?: boolean;
@@ -48,6 +50,7 @@ const SaveButton = (props: SaveButtonProps) => {
     server,
     filename = 'unnamed',
     data,
+    getData,
     type,
     mode = 'saveFile',
     options,
@@ -61,35 +64,36 @@ const SaveButton = (props: SaveButtonProps) => {
   const { ketcherId } = useAppContext();
 
   const saveFile = async () => {
-    if (data) {
-      try {
+    try {
+      const dataToSave = getData ? getData() : data;
+      if (dataToSave) {
         const saver: SaverType = await fileSaver(server);
-        saver(data, filename, type);
+        saver(dataToSave, filename, type);
         onSave();
-      } catch (e) {
-        KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
-        onError(e);
       }
+    } catch (error) {
+      KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', error);
+      onError(error);
     }
   };
 
   const saveImage = () => {
     const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
-    if (options?.outputFormat) {
+    if (typeof data === 'string' && options?.outputFormat) {
       ketcherInstance
         .generateImage(data, options)
         .then((blob) => {
           saveAs(blob, `${filename}.${options.outputFormat}`);
           onSave();
         })
-        .catch((e) => {
-          KetcherLogger.error('savebutton.tsx::SaveButton::saveImage', e);
-          onError(e);
+        .catch((error) => {
+          KetcherLogger.error('savebutton.tsx::SaveButton::saveImage', error);
+          onError(error);
         });
     }
   };
 
-  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
+  const save = (event: KeyboardEvent | MouseEvent) => {
     event.preventDefault();
     switch (mode) {
       case 'saveImage':

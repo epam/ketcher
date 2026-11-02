@@ -1,30 +1,32 @@
 import { useEffect } from 'react';
 import { IndigoProvider } from 'ketcher-react';
-import { useAppDispatch, useAppSelector } from './stateHooks';
-import { setAppMeta, selectAppMeta } from 'state/common/editorSlice';
+import { KetcherLogger } from 'ketcher-core';
+import { useAppDispatch } from './stateHooks';
+import { setIndigoVersion } from 'state/common/editorSlice';
 
 export function useIndigoVersionToRedux() {
   const dispatch = useAppDispatch();
-  const app = useAppSelector(selectAppMeta);
 
   useEffect(() => {
     async function fetchIndigoInfo() {
       const indigo = IndigoProvider.getIndigo();
-      if (indigo?.info) {
-        try {
-          const info = await indigo.info();
-          dispatch(
-            setAppMeta({
-              ...app,
-              indigoVersion: info.indigoVersion ?? '',
-            }),
-          );
-        } catch (e) {
-          // ignore
-        }
+
+      if (!indigo?.info) {
+        return;
+      }
+
+      try {
+        const info = await indigo.info();
+
+        dispatch(setIndigoVersion(info.indigoVersion ?? ''));
+      } catch (error) {
+        KetcherLogger.error(
+          'useIndigoVersionToRedux::fetchIndigoInfo - Failed to fetch Indigo version',
+          error,
+        );
       }
     }
+
     fetchIndigoInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 }

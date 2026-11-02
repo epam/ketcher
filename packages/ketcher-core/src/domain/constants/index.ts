@@ -1,3 +1,4 @@
+export * from './customQuery';
 export * from './elementColor';
 export * from './elements';
 export * from './element.types';

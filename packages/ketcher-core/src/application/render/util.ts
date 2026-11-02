@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
+import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
 import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { Box2Abs } from 'domain/entities/box2Abs';
-import { HalfBond } from 'domain/entities/halfBond';
+import type { Bond } from 'domain/entities/bond';
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { LayerMap } from './restruct/generalEnumTypes';
-import ReStruct from './restruct/restruct';
-import Visel from './restruct/visel';
-import {
-  RelativeBox,
-  RenderOptions,
-  UsageInMacromolecule,
-} from './render.types';
+import type ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
+import type { RelativeBox, RenderOptions } from './render.types';
+import { UsageInMacromolecule } from './render.constants';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
@@ -85,7 +82,7 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   const id1 = rd[pid] > rd[nid] ? pid : nid;
 
   // simple proportion to calculate the shift
-  /* eslint-disable no-mixed-operators */
+
   return (
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /
@@ -102,7 +99,14 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
     -2;
   const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
-  if (oPos2.x !== 0) {
+  if (oPos2.x === 0) {
+    obj.pos1 = { x: 0, y: 0 };
+    obj.pos2 = { x: 0, y: 0 };
+    obj.pos1.y = c / oPos2.y;
+    obj.pos2.y = c / oPos2.y;
+    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+  } else {
     const b = -2 * oPos2.y * c;
     const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
     const D = b * b - 4 * a * e;
@@ -114,13 +118,6 @@ function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
       obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x;
       obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x;
     }
-  } else {
-    obj.pos1 = { x: 0, y: 0 };
-    obj.pos2 = { x: 0, y: 0 };
-    obj.pos1.y = c / oPos2.y;
-    obj.pos2.y = c / oPos2.y;
-    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
-    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   }
   if (obj.pos1 !== null) {
     obj.pos1.x += aPoint.x;
@@ -219,8 +216,8 @@ function escapeHtml(str) {
 }
 
 function useLabelStyles(
-  attachmentPointSelected: boolean,
-  attachmentPointUsed: boolean,
+  isAttachmentPointSelected: boolean,
+  isAttachmentPointUsed: boolean,
   usageInMacromolecule: UsageInMacromolecule,
 ): {
   color: string;
@@ -234,25 +231,25 @@ function useLabelStyles(
   switch (usageInMacromolecule) {
     case UsageInMacromolecule.MonomerPreview:
       stroke = 'none';
-      if (attachmentPointUsed) {
+      if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.MonomerConnectionsModal:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#167782';
         color = '#FFF';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
         stroke = '#B4B9D6';
       }
       break;
     case UsageInMacromolecule.BondPreview:
-      if (attachmentPointSelected) {
+      if (isAttachmentPointSelected) {
         fill = '#CDF1FC';
-      } else if (attachmentPointUsed) {
+      } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';
       }

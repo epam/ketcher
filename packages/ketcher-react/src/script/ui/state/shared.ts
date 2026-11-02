@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,20 +15,22 @@
  ***************************************************************************/
 
 import {
+  type Struct,
+  type Editor,
   FormatterFactory,
   SGroup,
   identifyStructFormat,
-  Struct,
   SupportedFormat,
   notifyRequestCompleted,
-  Editor,
   KetcherLogger,
   SettingsManager,
   getSelectionFromStruct,
 } from 'ketcher-core';
+import { showSnackbarNotification } from './notifications';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
+import { restorePersistedSelectionTool } from './selectionToolPersistence';
 import tools from '../action/tools';
 import { isNumber } from 'lodash';
 
@@ -64,10 +66,8 @@ export function parseStruct(
   if (typeof struct === 'string') {
     options = options || {};
     const {
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      rescale,
-      fragment,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      rescale: _rescale,
+      fragment: _fragment,
       ...formatterOptions
     } = options;
 
@@ -94,7 +94,9 @@ export function removeStructAction(): {
   type: string;
   action?: Record<string, unknown>;
 } {
-  const savedSelectedTool = SettingsManager.selectionTool;
+  const savedSelectedTool = restorePersistedSelectionTool(
+    SettingsManager.getSelectionTool('micro'),
+  );
 
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
@@ -107,7 +109,13 @@ export function load(struct: string | Struct, options?) {
     const serverSettings = state.options.getServerSettings();
     const errorHandler = editor.errorHandler;
     options = options || {};
-    let { isPaste, method, ...otherOptions } = options;
+    let {
+      isPaste,
+      method,
+      preserveViewport = false,
+      skipCenter = false,
+      ...otherOptions
+    } = options;
     otherOptions = {
       ...serverSettings,
       ...otherOptions,
@@ -137,8 +145,10 @@ export function load(struct: string | Struct, options?) {
         );
       }
 
-      // scaling works bad with molecule-to-monomer connections
-      if (!hasMoleculeToMonomerConnections) {
+      // scaling works bad with molecule-to-monomer connections.
+      // preserveViewport also skips rescale so aromatize/dearomatize keep the
+      // current canvas position instead of re-normalizing coordinates.
+      if (!preserveViewport && !hasMoleculeToMonomerConnections) {
         parsedStruct.rescale(); // TODO: move out parsing?
       }
 
@@ -163,7 +173,7 @@ export function load(struct: string | Struct, options?) {
 
         // Find leaving group atoms in new struct
         const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
-          Array.from(assignedAttachmentPoints.values()).some(
+          [...assignedAttachmentPoints.values()].some(
             ([, leavingAtomId]) => leavingAtomId === atomId,
           ),
         );
@@ -181,7 +191,7 @@ export function load(struct: string | Struct, options?) {
 
         // Find explicit hydrogen atoms
         const explicitHydrogenAtomsForLeavingGroupAtoms = new Set(
-          Array.from(newBondsToLeavingGroupAtoms.values()).map((bond) =>
+          [...newBondsToLeavingGroupAtoms.values()].map((bond) =>
             leavingGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
           ),
         );
@@ -214,17 +224,23 @@ export function load(struct: string | Struct, options?) {
       if (fragment) {
         if (parsedStruct.isBlank()) {
           dispatch(removeStructAction());
+          dispatch(showSnackbarNotification('No structure'));
         } else {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
         editor.struct(parsedStruct, method === 'layout');
+        if (parsedStruct.isBlank()) {
+          dispatch(showSnackbarNotification('No structure'));
+        }
       }
 
-      editor.zoomAccordingContent(parsedStruct);
+      if (!preserveViewport) {
+        editor.zoomAccordingContent(parsedStruct);
+      }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled) {
+      if (!fragment && !isPaste && !isIndigoFunctionCalled && !skipCenter) {
         editor.centerStruct();
       }
       if (!fragment) {
@@ -234,11 +250,11 @@ export function load(struct: string | Struct, options?) {
       editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (e: any) {
-      KetcherLogger.error('shared.ts::load', e);
+    } catch (error) {
+      KetcherLogger.error('shared.ts::load', error);
       dispatch(setAnalyzingFile(false));
-      if (e) {
-        errorHandler?.(e.message);
+      if (error) {
+        errorHandler?.(error instanceof Error ? error.message : String(error));
       }
     } finally {
       notifyRequestCompleted();

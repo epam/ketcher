@@ -1,6 +1,6 @@
 import utils from 'application/editor/shared/utils';
-import { ReStruct } from 'application/render';
-import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from '../OperationType';
 import Base from '../BaseOperation';
 
@@ -14,9 +14,14 @@ interface RxnArrowRotateData {
 export class RxnArrowRotate extends Base {
   readonly data: RxnArrowRotateData;
 
-  constructor(id: number, angle: number, center: Vec2, noinvalidate?: boolean) {
+  constructor(
+    id: number,
+    angle: number,
+    center: Vec2,
+    shouldSkipInvalidation?: boolean,
+  ) {
     super(OperationType.RXN_ARROW_ROTATE);
-    this.data = { id, angle, center, noinvalidate };
+    this.data = { id, angle, center, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(reStruct: ReStruct) {
@@ -52,5 +57,9 @@ export class RxnArrowRotate extends Base {
       this.data.noinvalidate,
     );
     return move;
+  }
+
+  isDummy() {
+    return this.data.angle === 0;
   }
 }

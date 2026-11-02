@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   .dots {
     visibility: hidden;
     position: absolute;
-    right: 2px;
+    inset-inline-end: 2px;
     top: 10px;
   }
 
@@ -35,8 +35,8 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   }
 
   > .star {
-    right: 0;
-    left: calc(50% - 7px);
+    inset-inline-end: 0;
+    inset-inline-start: calc(50% - 7px);
     top: 11px;
     width: min-content;
   }

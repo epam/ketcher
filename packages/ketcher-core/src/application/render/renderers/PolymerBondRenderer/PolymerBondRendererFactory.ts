@@ -1,7 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export enum LayoutMode {
@@ -10,11 +10,9 @@ export enum LayoutMode {
 }
 
 type PolymerBondRendererClass =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
+  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
 type PolymerBondRendererClassType =
-  | typeof FlexModePolymerBondRenderer
-  | typeof SnakeModePolymerBondRenderer;
+  typeof FlexModePolymerBondRenderer | typeof SnakeModePolymerBondRenderer;
 const polymerBondRendererMap = new Map<
   LayoutMode,
   PolymerBondRendererClassType
@@ -27,10 +25,10 @@ export class PolymerBondRendererFactory {
   public static createInstance(
     polymerBond: PolymerBond | HydrogenBond,
   ): PolymerBondRendererClass {
-    const mode = checkIfIsSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
+    const mode = isSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
     return polymerBond instanceof HydrogenBond
       ? new SnakeModePolymerBondRenderer(polymerBond)
-      : PolymerBondRendererFactory.createInstanceByMode(mode, polymerBond);
+      : this.createInstanceByMode(mode, polymerBond);
   }
 
   public static createInstanceByMode(
@@ -47,7 +45,7 @@ export class PolymerBondRendererFactory {
   }
 }
 
-function checkIfIsSnakeMode(): boolean {
+function isSnakeMode(): boolean {
   const editor = provideEditorInstance();
   return editor?.mode.modeName === 'snake-layout-mode';
 }

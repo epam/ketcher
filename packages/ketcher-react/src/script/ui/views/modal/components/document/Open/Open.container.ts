@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { OpenProps } from './Open';
+import Open, { type OpenProps } from './Open';
 
-import { BaseCallProps } from '../../../modal.types';
+import type { BaseCallProps } from '../../../modal.types';
 import { connect } from 'react-redux';
-import { exec } from '../../../../../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';
 import { changeImage } from '../../../../../state/options';
 
@@ -34,12 +34,11 @@ const mapStateToProps = (state): StateProps => ({
   errorHandler: state.editor.errorHandler,
   isRecognizeDisabled: state.actionState.recognize?.disabled,
   isAnalyzingFile: state.requestsStatuses.isAnalyzingFile,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
-    if (result.fragment) exec('copy');
+    if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
       load(result.structStr, {
         badHeaderRecover: true,

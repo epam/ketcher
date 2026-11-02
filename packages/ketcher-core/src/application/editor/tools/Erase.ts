@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor } from 'application/editor/Editor';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 class EraserTool implements BaseTool {

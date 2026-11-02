@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ import atoms from './atoms';
 import copyAs from './copyAs';
 import copyImageToClipboard from './copyImageToClipboard';
 import debug from './debug';
-import { exec } from '../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../component/cliparea/cliparea';
 import isHidden from './isHidden';
 import server from './server';
 import templates from './templates';
@@ -28,12 +28,12 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
-import { Tools, UiAction } from './action.types';
-import Editor from '../../editor/Editor';
+import type { Tools, UiAction } from './action.types';
+import type Editor from '../../editor/Editor';
 
 export * from './action.types';
 
-const disableIfViewOnly = (editor: Editor): boolean =>
+const isViewOnly = (editor: Editor): boolean =>
   !!editor.render.options.viewOnlyMode;
 
 const updateConfigItem = (item: UiAction): UiAction => {
@@ -44,12 +44,12 @@ const updateConfigItem = (item: UiAction): UiAction => {
     return {
       ...item,
       disabled: (...props) =>
-        disableIfViewOnly(props[0]) || originalDisabled(...props),
+        isViewOnly(props[0]) || originalDisabled(...props),
     };
   } else {
     return {
       ...item,
-      disabled: disableIfViewOnly,
+      disabled: isViewOnly,
     };
   }
 };
@@ -57,14 +57,14 @@ const updateConfigItem = (item: UiAction): UiAction => {
 const config: Record<string, UiAction> = {
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
-    title: 'Clear Canvas',
+    title: 'toolbar:menu.clear',
     action: {
       thunk: (dispatch, getState) => {
         const editor = getState().editor;
 
         dispatch(removeStructAction());
 
-        if (!editor.struct().isBlank()) editor.struct(null);
+        if (!editor.struct().isBlank()) editor.struct(undefined);
       },
     },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
@@ -72,7 +72,7 @@ const config: Record<string, UiAction> = {
   },
   open: {
     shortcut: 'Mod+o',
-    title: 'Open…',
+    title: 'toolbar:menu.open',
     enabledInViewOnly: true,
     action: { dialog: 'open' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
@@ -80,25 +80,25 @@ const config: Record<string, UiAction> = {
   },
   save: {
     shortcut: 'Mod+s',
-    title: 'Save As…',
+    title: 'toolbar:menu.save',
     enabledInViewOnly: true,
     action: { dialog: 'save' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'save'),
   },
   'atom-props': {
-    title: 'Atom Properties',
+    title: 'toolbar:menu.atomProps',
     action: { dialog: 'atomProps' },
     hidden: (options) => isHidden(options, 'atom-props'),
   },
   'bond-props': {
-    title: 'Bond Properties',
+    title: 'toolbar:menu.bondProps',
     action: { dialog: 'bondProps' },
     hidden: (options) => isHidden(options, 'bond-props'),
   },
   undo: {
     shortcut: 'Mod+z',
-    title: 'Undo',
+    title: 'toolbar:menu.undo',
     action: {
       thunk: (_, getState) => {
         const editor = getState().editor;
@@ -110,7 +110,7 @@ const config: Record<string, UiAction> = {
   },
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
-    title: 'Redo',
+    title: 'toolbar:menu.redo',
     action: {
       thunk: (_, getState) => {
         const editor = getState().editor;
@@ -122,10 +122,10 @@ const config: Record<string, UiAction> = {
   },
   cut: {
     shortcut: 'Mod+x',
-    title: 'Cut',
+    title: 'toolbar:menu.cut',
     action: {
       thunk: (dispatch, _) => {
-        const isCutSupported = exec('cut');
+        const isCutSupported = canExecuteClipboardCommand('cut');
 
         if (!isCutSupported) {
           dispatch(openInfoModal('Cut'));
@@ -145,10 +145,10 @@ const config: Record<string, UiAction> = {
   copy: {
     shortcut: 'Mod+c',
     enabledInViewOnly: true,
-    title: 'Copy',
+    title: 'toolbar:menu.copy',
     action: {
       thunk: (dispatch, _) => {
-        const isCopySupported = exec('copy');
+        const isCopySupported = canExecuteClipboardCommand('copy');
 
         if (!isCopySupported) {
           dispatch(openInfoModal('Copy'));
@@ -161,7 +161,7 @@ const config: Record<string, UiAction> = {
   'copy-image': {
     shortcut: 'Mod+Shift+f',
     enabledInViewOnly: true,
-    title: 'Copy Image',
+    title: 'toolbar:menu.copyImage',
     action: () => {
       copyImageToClipboard();
     },
@@ -171,7 +171,7 @@ const config: Record<string, UiAction> = {
   'copy-mol': {
     shortcut: 'Mod+Shift+m',
     enabledInViewOnly: true,
-    title: 'Copy as MOL',
+    title: 'toolbar:menu.copyMol',
     action: () => {
       copyAs('mol');
     },
@@ -181,7 +181,7 @@ const config: Record<string, UiAction> = {
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
     enabledInViewOnly: true,
-    title: 'Copy as KET',
+    title: 'toolbar:menu.copyKet',
     action: () => {
       copyAs('ket');
     },
@@ -190,10 +190,10 @@ const config: Record<string, UiAction> = {
   },
   paste: {
     shortcut: 'Mod+v',
-    title: 'Paste',
+    title: 'toolbar:menu.paste',
     action: {
       thunk: (dispatch, _) => {
-        const isPasteSupported = exec('paste');
+        const isPasteSupported = canExecuteClipboardCommand('paste');
 
         if (!isPasteSupported) {
           dispatch(openInfoModal('Paste'));
@@ -204,37 +204,37 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'paste'),
   },
   settings: {
-    title: 'Settings',
+    title: 'toolbar:menu.settings',
     action: { dialog: 'settings' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'settings'),
   },
   about: {
-    title: 'About',
+    title: 'toolbar:menu.about',
     enabledInViewOnly: true,
     action: { dialog: 'about' },
     hidden: (options) => isHidden(options, 'about'),
   },
   'reaction-automap': {
-    title: 'Reaction Auto-Mapping Tool',
+    title: 'toolbar:menu.reactionAutomap',
     action: { dialog: 'automap' },
     hidden: (options) => isHidden(options, 'reaction-automap'),
     disabled: (editor, _server, options) =>
       !options.app.server || !editor.struct().hasRxnArrow(),
   },
   'period-table': {
-    title: 'Periodic Table',
+    title: 'toolbar:menu.periodTable',
     action: { dialog: 'period-table' },
     hidden: (options) => isHidden(options, 'period-table'),
   },
   'extended-table': {
-    title: 'Extended Table',
+    title: 'toolbar:menu.extendedTable',
     action: { dialog: 'extended-table' },
     disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'extended-table'),
   },
   'select-all': {
-    title: 'Select All',
+    title: 'toolbar:menu.selectAll',
     enabledInViewOnly: true,
     shortcut: 'Mod+a',
     action: {
@@ -247,7 +247,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'select-all'),
   },
   'deselect-all': {
-    title: 'Deselect All',
+    title: 'toolbar:menu.deselectAll',
     enabledInViewOnly: true,
     shortcut: 'Mod+Shift+a',
     action: (editor) => {
@@ -256,7 +256,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'deselect-all'),
   },
   'select-descriptors': {
-    title: 'Select descriptors',
+    title: 'toolbar:menu.selectDescriptors',
     shortcut: 'Mod+d',
     enabledInViewOnly: true,
     action: {
@@ -271,7 +271,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'select-descriptors'),
   },
   'any-atom': {
-    title: 'Any atom',
+    title: 'toolbar:menu.anyAtom',
     action: {
       tool: 'atom',
       opts: {
@@ -284,7 +284,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'any-atom'),
   },
   'info-modal': {
-    title: 'Error message',
+    title: 'toolbar:menu.errorMessage',
     action: { dialog: 'info-modal' },
     hidden: (options) => isHidden(options, 'info-modal'),
   },
@@ -313,8 +313,7 @@ function hasSelection(editor) {
   const selection = editor.selection();
   return (
     selection && // if not only sgroupData selected
-    Object.keys(selection).filter((key) => !['sgroupData'].includes(key))
-      .length > 0
+    Object.keys(selection).some((key) => !['sgroupData'].includes(key))
   );
 }
 

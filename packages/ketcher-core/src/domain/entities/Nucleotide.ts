@@ -1,15 +1,15 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { RNABase } from 'domain/entities/RNABase';
-import { Phosphate } from 'domain/entities/Phosphate';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPhosphateFromSugar,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
@@ -17,8 +17,8 @@ import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
 } from 'domain/constants/monomers';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
@@ -40,8 +40,8 @@ export class Nucleotide {
     );
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleotide(sugar),
         'Nucleotide is not valid. Please check nucleotide parts connections.',
@@ -84,9 +84,9 @@ export class Nucleotide {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
-    assert(phosphateLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem || !phosphateLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
@@ -109,7 +109,7 @@ export class Nucleotide {
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
-    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

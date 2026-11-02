@@ -1,9 +1,3 @@
-/* eslint-disable prefer-template */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -14,7 +8,10 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { updateMonomersLibrary } from '@utils/library/updateLibrary';
+import {
+  updateMonomersLibrary,
+  updateMonomersLibraryAndGetLoggedErrors,
+} from '@utils/library/updateLibrary';
 
 let page: Page;
 
@@ -267,191 +264,181 @@ test.fail(
   },
 );
 
-test.fail(
-  'Case 12: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain one space as value',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8143
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain one space as value
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 12: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain one space as value', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain one space as value
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _aliasHELM +
-      ' ' +
-      _betweenEntries +
-      _idtAliases +
-      'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _aliasHELM +
+    ' ' +
+    _betweenEntries +
+    _idtAliases +
+    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('The HELM alias must consist only of');
+});
 
-test.fail(
-  'Case 13: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain inpropper characters (quoters and so on)',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8142
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain inpropper characters (quoters and so on)
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 13: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain improper characters (quotation marks and so on)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain improper characters (quotation marks and so on)
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _aliasHELM +
-      '\\/' +
-      _betweenEntries +
-      _idtAliases +
-      'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _aliasHELM +
+    String.raw`\/` +
+    _betweenEntries +
+    _idtAliases +
+    'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('The HELM alias must consist only of');
+});
 
-test.fail(
-  'Case 14: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for base field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8201
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for base field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 14: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for base field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for base field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _idtAliases +
-      'base=_phospha/te1IDT' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _idtAliases +
+    'base=_phospha/te1IDT' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
+});
 
-test.fail(
-  'Case 15: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep5 field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8203
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep5 field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 15: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep5 field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep5 field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _idtAliases +
-      'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\\//ate1_ep5/,internal=/phosphate1_internal/' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _idtAliases +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosph\//ate1_ep5/,internal=/phosphate1_internal/` +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
+});
 
-test.fail(
-  'Case 16: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep3 field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8203
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep3 field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 16: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep3 field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep3 field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _idtAliases +
-      'base=_phosphate1IDT,ep3=/phospha\\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _idtAliases +
+    String.raw`base=_phosphate1IDT,ep3=/phospha\//te1_ep3/,ep5=/phosphate1_ep5/,internal=/phosphate1_internal/` +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
+});
 
-test.fail(
-  'Case 17: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for internal field',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8203
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for internal field
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 17: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for internal field', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for internal field
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _Phosphate1Body +
-      _idtAliases +
-      'base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\\//te1_internal/' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _Phosphate1Body +
+    _idtAliases +
+    String.raw`base=_phosphate1IDT,ep3=/phosphate1_ep3/,ep5=/phosphate1_ep5/,internal=/phospha\//te1_internal/` +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Phosphate._Phosphate1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
+});
 
 test('Case 18: Update Library item with compound that contains MOLv3000 file with idtAliases that contain base field and ep5, ep3 and internal fields at the same time', async () => {
   /*
@@ -550,65 +537,62 @@ test.fail(
   },
 );
 
-test.fail(
-  'Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain inpropper characters (quoters and so on)',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8357
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain inpropper characters (quoters and so on)
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   * Fixed by: #8357
+   */
 
-    const sdfFile =
-      _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
+  const sdfFile =
+    _Peptide1Body + _modificationTypes + ' \t ' + _betweenEntries + _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(
-      await Library(page).isMonomerExist(Peptide._Peptide1),
-    ).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('invalid modificationTypes value');
+});
 
-test.fail(
-  'Case 22: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8184
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 22: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA)
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupClass +
-      'DNA' +
-      _betweenEntries +
-      _groupName +
-      '_A1' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupClass +
+    'DNA' +
+    _betweenEntries +
+    _groupName +
+    '_A1' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('Monomer group template class must be "RNA"');
+});
 
 test.fail(
   'Case 23: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate without groupClass field',
@@ -672,107 +656,104 @@ test.fail(
   },
 );
 
-test.fail(
-  'Case 25: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has empty value',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8187
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has empty value
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 25: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has empty value', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has empty value
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupClass +
-      'DNA' +
-      _betweenEntries +
-      _groupName +
-      _emptyValue +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupClass +
+    'RNA' +
+    _betweenEntries +
+    _groupName +
+    _emptyValue +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('cannot be empty or whitespace');
+});
 
-test.fail(
-  'Case 26: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has one space value',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8182
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has one space value
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 26: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has one space value', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has one space value
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupClass +
-      'DNA' +
-      _betweenEntries +
-      _groupName +
-      ' ' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupClass +
+    'RNA' +
+    _betweenEntries +
+    _groupName +
+    ' ' +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('cannot be empty or whitespace');
+});
 
-test.fail(
-  'Case 27: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value',
-  async () => {
-    // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8182
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value
-     * Scenario:
-     * 1. Go to Macro mode
-     * 2. Execute command in console
-     * 3. Check that the structure doesn't appears in the Library
-     *
-     * Version 3.9
-     */
+test('Case 27: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/8345
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute command in console
+   * 3. Check that the structure doesn't appears in the Library
+   *
+   * Version 3.9
+   */
 
-    const sdfFile =
-      _A1Body +
-      _type +
-      'monomerGroupTemplate' +
-      _betweenEntries +
-      _groupClass +
-      'DNA' +
-      _betweenEntries +
-      _groupName +
-      'InproperCharacters\\//' +
-      _betweenEntries +
-      _endToken;
+  const sdfFile =
+    _A1Body +
+    _type +
+    'monomerGroupTemplate' +
+    _betweenEntries +
+    _groupClass +
+    'RNA' +
+    _betweenEntries +
+    _groupName +
+    String.raw`InproperCharacters\//` +
+    _betweenEntries +
+    _endToken;
 
-    const error = await updateMonomersLibrary(page, sdfFile);
-    expect(error).not.toBeNull();
-    expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
-  },
-);
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
+  expect(error).toBeNull();
+  expect(loggedErrors).toContain('must consist only of letters, numbers');
+});
 
 test.fail(
   'Case 28: Update Library with SDF that contain few compounds but one of them is invalid (try compound that contains MOLv3000 file with groupClass field that has non-RNA value (try DNA))',
@@ -833,7 +814,7 @@ test.fail(
 test('Case 29: Update Library item with HELM alias longer than 23 symbols logs an error', async () => {
   /*
    * AUTOTEST_REQUEST_URL: N/A
-   * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
+   * Description: updateMonomersLibrary skips monomers with HELM aliases longer than 23 symbols and logs an error.
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
@@ -850,32 +831,12 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
     '123456789012345678901234' +
     _betweenEntries +
     _endToken;
-  type ConsoleCaptureWindow = typeof window & {
-    capturedConsoleErrors: string[];
-    originalConsoleError: typeof console.error;
-  };
-
-  await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
-
-    window.ketcher.logging.enabled = true;
-    testWindow.capturedConsoleErrors = [];
-    testWindow.originalConsoleError = console.error;
-    console.error = (...args) => {
-      testWindow.capturedConsoleErrors.push(args.flat().join(' '));
-    };
-  });
-
-  const error = await updateMonomersLibrary(page, sdfFile);
-  const consoleMessages = await page.evaluate(() => {
-    const testWindow = window as ConsoleCaptureWindow;
-
-    console.error = testWindow.originalConsoleError;
-    return testWindow.capturedConsoleErrors;
-  });
-
+  const { error, loggedErrors } = await updateMonomersLibraryAndGetLoggedErrors(
+    page,
+    sdfFile,
+  );
   expect(error).toBeNull();
-  expect(consoleMessages.join('\n')).toContain(
+  expect(loggedErrors).toContain(
     'The HELM alias must be no more than 23 symbols long.',
   );
 });

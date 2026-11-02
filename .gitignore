@@ -44,3 +44,12 @@ ketcher-autotests/results.json
 .yarn/*
 output.txt
 .github/agents/*
+
+.cursor
+.cursor/*
+
+# verify-ketcher skill: server state, browser session, evidence
+.verify-ketcher/
+
+# ketcher-flow skill: run directories and worktrees
+.ketcher-flow/

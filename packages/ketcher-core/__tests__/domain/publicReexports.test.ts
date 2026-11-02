@@ -1,7 +1,6 @@
 import { MACROMOLECULES_BOND_TYPES, SgContexts } from 'application/editor';
 import { convertDraftToLexical } from 'application/render';
 
-// These names are public ketcher-core API through the application barrels.
 describe('public names exported by the application barrels', () => {
   it('exports the macromolecules bond types from application/editor', () => {
     expect(MACROMOLECULES_BOND_TYPES).toEqual({

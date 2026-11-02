@@ -59,11 +59,8 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     // Navigate to the preset tab where the main identifier is entered
     await presetSection.openTab(NucleotidePresetTab.Preset);
 
-    const codeField = page.getByTestId('code-input');
-    await expect(codeField).toBeVisible();
-    await expect(codeField.locator('xpath=..').locator('p')).toHaveText(
-      /^Code\s*\*?$/,
-    );
+    await expect(presetSection.presetTab.nameEditbox).toBeVisible();
+    await expect(presetSection.presetTab.codeLabel).toHaveText(/^Code\s*\*?$/);
 
     await dialog.discard();
   });
@@ -127,9 +124,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     // Verify preset tab and code field are highlighted in red
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
-      /errorTab/,
-    );
+    await expect(presetSection.presetTab).toHaveClass(/errorTab/);
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
     await dialog.discard();
@@ -207,22 +202,19 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await dialog.submit();
 
     // Verify uniqueness validation error appears
-    const errorNotification = page.getByTestId(
-      'notification-notUniquePresetCode-message-banner',
+    const errorNotification = NotificationMessageBanner(
+      page,
+      ErrorMessage.notUniquePresetCode,
     );
-    await expect(errorNotification).toBeVisible();
-    expect(
-      await errorNotification
-        .getByTestId('notification-message-body')
-        .textContent(),
-    ).toEqual('The preset code must be unique amongst other presets.');
+    await expect(errorNotification.notificationMessageBanner).toBeVisible();
+    await expect(errorNotification.getNotificationMessage()).resolves.toBe(
+      'The preset code must be unique amongst other presets.',
+    );
 
     // Verify dialog stays open and fields are highlighted
     await expect(dialog.window).toBeVisible();
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
-      /errorTab/,
-    );
+    await expect(presetSection.presetTab).toHaveClass(/errorTab/);
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
     await dialog.discard();
@@ -358,9 +350,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
       // Verify dialog stays open and fields are highlighted
       await expect(dialog.window).toBeVisible();
       await presetSection.openTab(NucleotidePresetTab.Preset);
-      await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
-        /errorTab/,
-      );
+      await expect(presetSection.presetTab).toHaveClass(/errorTab/);
       await expect(presetSection.presetTab.nameEditbox).toHaveClass(
         /inputError/,
       );
@@ -413,9 +403,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     // Confirm error highlighting
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
-      /errorTab/,
-    );
+    await expect(presetSection.presetTab).toHaveClass(/errorTab/);
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
     // Verify the validation notification without requiring a dismissal control
@@ -429,9 +417,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     );
     // Fix the Code field with valid value
     await presetSection.setName('VALID_CODE');
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).not.toHaveClass(
-      /errorTab/,
-    );
+    await expect(presetSection.presetTab).not.toHaveClass(/errorTab/);
     await expect(presetSection.presetTab.nameEditbox).not.toHaveClass(
       /inputError/,
     );

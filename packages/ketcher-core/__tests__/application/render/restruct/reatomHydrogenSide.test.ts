@@ -213,6 +213,16 @@ describe('ReAtom hydrogenSide', () => {
       expected: 'top',
     },
     {
+      name: 'two bonds going up',
+      bondAnglesDeg: [30, 150],
+      expected: 'bottom',
+    },
+    {
+      name: 'a bond going up and one going down in balance',
+      bondAnglesDeg: [330, 150],
+      expected: 'top',
+    },
+    {
       name: 'bonds in the top and bottom quadrants',
       bondAnglesDeg: [90, 270],
       expected: 'right',
@@ -468,9 +478,11 @@ describe('ReAtom bond trimming with hydrogens', () => {
   it.each([41, 44])(
     'does not shorten a bond at %s degrees because of the count of top hydrogens',
     (angleDeg) => {
-      // An atom with bonds at this angle and at 180 degrees has its hydrogens
-      // on top; the bond passes through the box of the count but not the symbol.
-      const bondAnglesDeg = [angleDeg, 180];
+      // An atom with bonds at this angle and at 224 degrees has its hydrogens
+      // on top, as the bonds do not point up on balance (at 44 degrees they
+      // are level); the bond passes through the box of the count but not the
+      // symbol.
+      const bondAnglesDeg = [angleDeg, 224];
       const withHydrogens = showAtom({ bondAnglesDeg, implicitH: 2 });
       const withoutHydrogens = showAtom({ bondAnglesDeg, implicitH: 0 });
       const direction = canvasDirection(angleDeg);

@@ -65,6 +65,9 @@ const QUADRANT_DEG = 90;
 // cosine is rounding noise, so it must not pick a side.
 const VERTICAL_TOLERANCE_DEG = 0.5;
 const ANGLE_PRECISION = 100; // angles are rounded to 0.01 degree
+// Bonds whose unit directions sum to no more than this upward do not tip the
+// hydrogens to the bottom: they count as level.
+const VERTICAL_BALANCE_TOLERANCE = 0.01;
 
 // Each quadrant spans [startDeg, startDeg + 90). The order is the priority
 // in which a free quadrant is taken.
@@ -101,6 +104,15 @@ function bondAngleDeg(dir: { x: number; y: number }): number {
   return (angleDeg + FULL_TURN_DEG) % FULL_TURN_DEG;
 }
 
+/** Whether the bonds point up on balance: the sum of their unit visual y. */
+function bondsPointUp(anglesDeg: ReadonlyArray<number>): boolean {
+  const balance = anglesDeg.reduce(
+    (sum, angle) => sum + Math.sin((angle * Math.PI) / 180),
+    0,
+  );
+  return balance > VERTICAL_BALANCE_TOLERANCE;
+}
+
 /**
  * Picks the side of the atom symbol where implicit hydrogens are drawn.
  * Each bond is a direction from the atom in model coordinates, where y points
@@ -110,6 +122,9 @@ function bondAngleDeg(dir: { x: number; y: number }): number {
  * right for no bond or a vertical bond. An internal atom puts them in the
  * first quadrant, in the order right, left, top, bottom, that has no bond and
  * no radical (a radical occupies top), and on the right when none is free.
+ * When that quadrant is top and bottom is free too, the bonds decide: they go
+ * to the bottom when the bonds point up on balance, away from them, and stay
+ * on top when the bonds point down or are level.
  */
 export function getImplicitHydrogenSide(
   bondDirections: ReadonlyArray<{ x: number; y: number }>,
@@ -125,10 +140,15 @@ export function getImplicitHydrogenSide(
     return Math.cos((angle * Math.PI) / 180) > 0 ? 'left' : 'right';
   }
 
-  const free = QUADRANTS.find(
+  const freeSides = QUADRANTS.filter(
     ([side, startDeg]) =>
       !(hasRadical && side === 'top') &&
       !angles.some((angle) => isInQuadrant(angle, startDeg)),
-  );
-  return free ? free[0] : 'right';
+  ).map(([side]) => side);
+
+  const [first] = freeSides;
+  if (first === 'top' && freeSides.includes('bottom') && bondsPointUp(angles)) {
+    return 'bottom';
+  }
+  return first ?? 'right';
 }

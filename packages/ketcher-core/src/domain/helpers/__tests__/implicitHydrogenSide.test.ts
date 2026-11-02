@@ -92,12 +92,119 @@ describe('getImplicitHydrogenSide', () => {
     });
   });
 
+  describe('top and bottom both free: hydrogens go away from the bonds', () => {
+    const rows: Row[] = [
+      ['peak, both bonds down (210, 330), go top', [210, 330], false, 'top'],
+      [
+        'valley, both bonds up (30, 150), go bottom',
+        [30, 150],
+        false,
+        'bottom',
+      ],
+      ['bonds at 20 and 160 go bottom', [20, 160], false, 'bottom'],
+      ['level bonds (0, 180) go top', [0, 180], false, 'top'],
+      [
+        'one bond up, one down, in balance (330, 150) go top',
+        [330, 150],
+        false,
+        'top',
+      ],
+      [
+        'bonds pointing down on balance (350, 190) go top',
+        [350, 190],
+        false,
+        'top',
+      ],
+      [
+        'bonds pointing up on balance (20, 190) go bottom',
+        [20, 190],
+        false,
+        'bottom',
+      ],
+      [
+        'three bonds pointing up on balance (10, 170, 190) go bottom',
+        [10, 170, 190],
+        false,
+        'bottom',
+      ],
+      [
+        'three bonds pointing down on balance (350, 170, 190) go top',
+        [350, 170, 190],
+        false,
+        'top',
+      ],
+      [
+        'a radical with bonds 30 and 150 goes bottom',
+        [30, 150],
+        true,
+        'bottom',
+      ],
+      [
+        'a radical with bonds 210 and 330 goes bottom',
+        [210, 330],
+        true,
+        'bottom',
+      ],
+      // sin(179) is 0.0175, above the 0.01 tolerance; sin(179.5) is 0.0087, within it
+      [
+        'balance above the tolerance (0, 179) goes bottom',
+        [0, 179],
+        false,
+        'bottom',
+      ],
+      [
+        'balance within the tolerance (0, 179.5) goes top',
+        [0, 179.5],
+        false,
+        'top',
+      ],
+      [
+        'balance within the tolerance (0, 180.5) goes top',
+        [0, 180.5],
+        false,
+        'top',
+      ],
+    ];
+
+    it.each(rows)('%s', (_name, angles, hasRadical, expected) => {
+      expect(sideFor(angles, hasRadical)).toBe(expected);
+    });
+
+    it.each(rows)(
+      '%s, with bond directions of length 5',
+      (_name, angles, hasRadical, expected) => {
+        const scaled = angles
+          .map(direction)
+          .map(({ x, y }) => ({ x: x * 5, y: y * 5 }));
+
+        expect(getImplicitHydrogenSide(scaled, hasRadical)).toBe(expected);
+      },
+    );
+
+    it('counts each bond once, whatever its length', () => {
+      // Unit directions at 30 and 210 balance to zero: top. A long bond up
+      // and a short bond down would tip the sum of raw vectors to bottom.
+      const long = {
+        x: 10 * Math.cos(Math.PI / 6),
+        y: -10 * Math.sin(Math.PI / 6),
+      };
+      const short = {
+        x: 0.1 * Math.cos((Math.PI * 7) / 6),
+        y: -0.1 * Math.sin((Math.PI * 7) / 6),
+      };
+
+      expect(getImplicitHydrogenSide([long, short], false)).toBe('top');
+    });
+  });
+
   describe('quadrant boundaries belong to the quadrant that starts there', () => {
     const rows: Row[] = [
       // 45 is top, so right is free
       ['45 is top, not right', [45, 180], false, 'right'],
-      // 135 is left, so right and top are free
-      ['135 is left, not top', [135, 0], false, 'top'],
+      // 135 is left, so right is taken by the 0 bond and top and bottom are
+      // free; the 135 bond points up, so the hydrogens go bottom (were it top,
+      // left would be free and win)
+      ['135 is left, not top', [135, 0], false, 'bottom'],
       // 225 is bottom, so left is free
       ['225 is bottom, not left', [225, 0], false, 'left'],
       // 315 is right, so top is free

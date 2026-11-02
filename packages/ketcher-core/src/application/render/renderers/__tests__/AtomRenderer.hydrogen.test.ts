@@ -177,6 +177,10 @@ describe('AtomRenderer hydrogen side', () => {
     expect(sideOf(fakeAtom(), [330, 210])).toBe('top');
   });
 
+  it('puts hydrogens at the bottom of an internal atom with bonds up-right and up-left', () => {
+    expect(sideOf(fakeAtom(), [30, 150])).toBe('bottom');
+  });
+
   it('puts hydrogens at the bottom of an internal atom with bonds right, up and left', () => {
     expect(sideOf(fakeAtom(), [0, 90, 180])).toBe('bottom');
   });
@@ -186,6 +190,11 @@ describe('AtomRenderer hydrogen side', () => {
     // the monomer ignored the atom would look terminal and put H on the right,
     // on top of the monomer bond.
     expect(sideOf(fakeAtom(), [180], [0])).toBe('top');
+  });
+
+  it('counts a bond to a monomer when choosing between top and bottom', () => {
+    // An atom bond up-left and a monomer up-right both point up.
+    expect(sideOf(fakeAtom(), [150], [30])).toBe('bottom');
   });
 
   it('puts hydrogens opposite the only bond when that bond goes to a monomer', () => {

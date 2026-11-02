@@ -108,7 +108,7 @@ The system SHALL draw the implicit hydrogens of an atom that has two or more vis
 
 ### Requirement: Atom label bounds include the implicit hydrogens
 
-The system SHALL treat the symbol, the implicit hydrogens, and the atom's other label parts as one label. The hover highlight, the selection highlight, and S-group brackets SHALL be sized from a bounding box that includes the hydrogens, wherever they are drawn. A bond SHALL stop at the edge of the label part it reaches.
+The system SHALL treat the symbol, the implicit hydrogens, and the atom's other label parts as one label. The hover highlight, the selection highlight, and S-group brackets SHALL be sized from a bounding box that includes the hydrogens, wherever they are drawn. A bond SHALL stop at the edge of the symbol, or of a label part beside it, that it reaches; hydrogens drawn above or below the symbol SHALL NOT shorten a bond.
 
 #### Scenario: Hydrogens on top extend the hover and selection highlight upward
 

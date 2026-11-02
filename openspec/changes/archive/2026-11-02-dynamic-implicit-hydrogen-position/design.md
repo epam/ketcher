@@ -23,34 +23,34 @@ Angles in this design are measured as the user sees them: 0° points right and 9
 
 - Indigo's PNG/SVG rendering (epam/Indigo#4031). This PR makes Ketcher follow the rule Indigo is to follow.
 - The rule for when hydrogens are shown at all (`ShowHydrogenLabels` setting, terminal/hetero checks). That stays as it is.
-- Moving the charge, isotope, valence, or stereo labels.
+- Moving the charge, isotope, valence, or stereo labels, except that a stacked hydrogen count pushes the charge and valence to its right so they do not overprint it.
 
 ## Decisions
 
 ### 1. A pure placement function in `ketcher-core`, outside both renderers
 
-`getImplicitHydrogenSide(bondAnglesDeg: number[], hasRadical: boolean): 'right' | 'left' | 'top' | 'bottom'` lives in `packages/ketcher-core/src/domain/helpers/` and takes angles, not atoms or half-bonds. Each renderer collects its own visible bond angles (molecules: `getVisibleNeighborHalfBondIds`; macromolecules: `viewModel.atomsToHalfEdges`) and calls it.
+`getImplicitHydrogenSide(bondDirections: ReadonlyArray<{ x: number; y: number }>, hasRadical: boolean): 'right' | 'left' | 'top' | 'bottom'` lives in `packages/ketcher-core/src/domain/helpers/` and takes bond directions in model coordinates (y down), not atoms or half-bonds; it flips the y axis once, inside. Each renderer collects its own visible bond directions (molecules: `getVisibleNeighborHalfBondIds`; macromolecules: `viewModel.atomsToHalfEdges`, plus the directions to the monomers of monomer-to-atom bonds) and calls it. The first version took visual angles; review showed that a caller could pass the wrong y sign and still pass terminal-atom tests.
 
 Why: the rule is geometry only, so it is testable with plain numbers, and both renderers get identical results. Alternative: copy the rule into each renderer, as today's boolean is copied. Rejected: that is the drift the issue complains about (Ketcher differs from Indigo).
 
 Usage:
 
 ```ts
-const side = getImplicitHydrogenSide(visibleBondAngles, atom.radical !== 0);
+const side = getImplicitHydrogenSide(visibleBondDirections, atom.radical !== 0);
 ```
 
 The function's rules:
 
-- At most one angle: terminal. Right when there is no bond or the bond is within a small tolerance (0.5°) of vertical; left when the bond's x component points right (cos > 0); right otherwise.
-- Two or more angles: internal. Mark each quadrant that holds an angle (`[start, end)` intervals, with `start` inclusive) and the top quadrant when `hasRadical`. Return the first free in the order right, left, top, bottom; when none is free, return right.
+- At most one direction: terminal. Right when there is no bond or the bond is within a small tolerance (0.5°) of vertical; left when the bond's x component points right (cos > 0); right otherwise.
+- Two or more directions: internal. Mark each quadrant that holds a bond (`[start, end)` intervals, with `start` inclusive) and the top quadrant when `hasRadical`. Return the first free in the order right, left, top, bottom; when none is free, return right.
 
 ### 2. `hydrogenOnTheLeft: boolean` becomes `hydrogenSide`
 
-`ReAtom.hydrogenOnTheLeft` has two other readers in `reatom.ts` (the atom-id position and the label background shift); both read `hydrogenSide === 'left'`. The `leftH` element property in `elements.ts` stops being read for placement (it is still on the element data; removing it is out of scope).
+`ReAtom.hydrogenOnTheLeft` had two other readers in `reatom.ts` (the atom-id position and the atom-list label shift), and the macromolecules renderer used its own boolean for the text anchor. Those uses are about label alignment, not hydrogens, and on master they were `false` for every atom with two or more visible bonds. They read `isLabelAnchoredLeft(side, visibleBondCount)` (`side === 'left'` and at most one bond), so internal atoms keep master's alignment; only the hydrogen layout reads the four-way side. The `leftH` element property had no reader left and was deleted from the type and the element data.
 
 ### 3. Top and bottom hydrogens are stacked, left and right stay as they are
 
-Left and right keep today's layout in `showHydrogen`. For top and bottom, `H` is centered on the symbol and offset vertically by the label height; the hydrogen count is a subscript to the right of `H`. Each part is still added to the `visel` with the same call as now, so `exts`, hover, selection (`getLabelVBoxObj` takes the first `labelBoxCount` boxes), and S-group brackets (`getVBoxObj`) include them with no further change.
+Left and right keep today's layout in `showHydrogen`. For top and bottom, `H` is centered on the symbol and offset vertically by the label height; the hydrogen count is a subscript to the right of `H`. Each part is still added to the `visel` with the same call as now, so hover, selection (`getLabelVBoxObj` takes the first `labelBoxCount` boxes), S-group brackets (`getVBoxObj`), and the placement of atom-map, query, stereo, and CIP text (they clear `visel.exts` along the largest free sector, which is where stacked hydrogens sit) include them with no further change. Only bond trimming skips the stacked parts, because a bond never points into the free quadrant that holds them: molecules mode keeps the skipped boxes in a set on the atom, macromolecules mode trims against `bondTrimBBoxes`, and the monomer-to-atom bond renderer does the same. A first version dropped them from `exts` altogether; review showed that put atom-map and CIP text on top of the `H`.
 
 Alternative: merge all label parts into one box before trimming bonds. Rejected: it would shorten bonds against the empty corners of the merged box, which is the symptom in the issue.
 
@@ -60,7 +60,7 @@ Radicals are already drawn above the symbol (`showRadical`). The helper only nee
 
 ### 5. Macromolecules mode reuses the helper and keeps its `tspan` layout
 
-`appendLabel` in `AtomRenderer.ts` adds `top` and `bottom` by emitting `H` in a second `tspan` line (`dy`) centered over the symbol. The shared helper decides the side; the SVG text mechanics stay in the renderer.
+`appendLabel` in `AtomRenderer.ts` adds `top` and `bottom` by emitting `H` in a second `tspan` line (`dy`) centered over the symbol. The shared helper decides the side; the SVG text mechanics stay in the renderer. The renderer stores the side it drew (only when separate hydrogens are drawn), and contours, charge, valence, and isotope placement read that stored value, so they cannot disagree with the drawn label. `RenderersManager` collects the atoms whose bonds were deleted or moved (including the atoms bonded to a moved monomer) and checks each once in `runPostRenderMethods`, after the view model is rebuilt; an atom is redrawn only when its side changed.
 
 ## Risks / Trade-offs
 

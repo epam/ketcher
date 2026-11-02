@@ -78,7 +78,9 @@ On top of the persistent D3 drawing, the macro editor draws **transient views** 
 
 - Renderers never mutate the model.
 - The side of an atom label where implicit hydrogens are drawn (right, left, top, bottom) comes from one pure function in the core domain helpers, `getImplicitHydrogenSide`, fed with the atom's bond directions in model coordinates (y down; the helper flips the axis once). Both pipelines call it and only draw the result: the micromolecules atom wrapper and the macromolecules atom renderer. A change to the rule is one change there.
-- Hydrogens drawn above or below the symbol take no room beside it except their count. The charge and valence labels are moved right of the count, so they do not overprint it, in both pipelines.
+- Hydrogens drawn above or below the symbol take no room beside it except their count. The charge and valence labels are moved right of the count, so they do not overprint it, in both pipelines. Bond trimming skips the stacked hydrogens (a bond never points into the free quadrant that holds them), while hover, selection, S-group brackets, and the placement of atom-map, query, stereo, and CIP text include them.
+- The hydrogen side is for drawing hydrogens only. Label alignment that master tied to a terminal atom (the atom-list shift, the atom-id position, the macromolecules text anchor) reads `isLabelAnchoredLeft`, so atoms with two or more bonds keep their alignment.
+- In macromolecules mode the atom renderer stores the side it drew. The renderers manager collects atoms whose bonds changed or moved and checks each once after the view model is rebuilt; an atom is redrawn only when its side changed.
 - Micro uses diff-based dirty marking; macro relies on the executing Command to touch exactly the affected renderers.
 - The macro canvas comes from the zoom tool.
 - One of the goals is to get rid of Raphael and move to D3 for all rendering, but the micro editor is still Raphael-based.

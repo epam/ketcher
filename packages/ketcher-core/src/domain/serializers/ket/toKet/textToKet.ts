@@ -151,8 +151,7 @@ export function textToKet(textNode) {
         // Build parts array from text children
         paraObj.parts = (paragraph.children || [])
           .map((child: LexicalTextChild) => {
-            if (child.type !== 'text' || child.text === undefined)
-              return undefined;
+            if (child.type !== 'text' || child.text === undefined) return;
 
             const part: KetTextPart = { text: child.text };
             applyFontStyleOverrides(part, child);

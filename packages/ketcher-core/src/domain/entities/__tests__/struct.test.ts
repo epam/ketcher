@@ -1,8 +1,12 @@
-import { Atom } from 'domain/entities/atom';
+import { Atom, StereoLabel } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Peptide } from 'domain/entities/Peptide';
+import { SGroup } from 'domain/entities/sgroup';
 import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import type { MonomerItemType } from 'domain/types';
 
 function chain(bondLengths: number[]): Struct {
   const struct = new Struct();
@@ -178,5 +182,210 @@ describe('Struct.rescale', () => {
         expect(shapeDiagonal(struct)).toBeCloseTo(before, 6);
       },
     );
+  });
+});
+
+describe('Struct.setStereoLabelsToAtoms', () => {
+  const { STEREO } = Bond.PATTERN;
+  const { STEREO_PARITY } = Atom.PATTERN;
+
+  // A carbon with three neighbors is a stereo center for a stereo bond that
+  // begins at it.
+  function stereoCenter(stereo: number, centerLabel: string | null = null) {
+    const struct = new Struct();
+    const center = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 0), stereoLabel: centerLabel }),
+    );
+    const [stereoEnd, ...otherEnds] = [
+      new Vec2(1, 0),
+      new Vec2(-0.5, 0.87),
+      new Vec2(-0.5, -0.87),
+    ].map((pp) => struct.atoms.add(new Atom({ label: 'C', pp })));
+
+    struct.bonds.add(
+      new Bond({
+        begin: center,
+        end: stereoEnd,
+        type: Bond.PATTERN.TYPE.SINGLE,
+        stereo,
+      }),
+    );
+    otherEnds.forEach((end) =>
+      struct.bonds.add(
+        new Bond({ begin: center, end, type: Bond.PATTERN.TYPE.SINGLE }),
+      ),
+    );
+    struct.initHalfBonds();
+    struct.initNeighbors();
+
+    return { struct, center };
+  }
+
+  it.each([
+    { bond: 'up', stereo: STEREO.UP, parity: STEREO_PARITY.ODD },
+    { bond: 'down', stereo: STEREO.DOWN, parity: STEREO_PARITY.EVEN },
+    { bond: 'either', stereo: STEREO.EITHER, parity: STEREO_PARITY.EITHER },
+  ])(
+    'gives the center of an $bond bond parity $parity and the abs label',
+    ({ stereo, parity }) => {
+      const { struct, center } = stereoCenter(stereo);
+
+      struct.setStereoLabelsToAtoms();
+
+      expect(struct.atoms.get(center)).toMatchObject({
+        stereoLabel: StereoLabel.Abs,
+        stereoParity: parity,
+      });
+    },
+  );
+
+  it('keeps a stereo label already set on the center', () => {
+    const andLabel = `${StereoLabel.And}1`;
+    const { struct, center } = stereoCenter(STEREO.UP, andLabel);
+
+    struct.setStereoLabelsToAtoms();
+
+    expect(struct.atoms.get(center)).toMatchObject({
+      stereoLabel: andLabel,
+      stereoParity: STEREO_PARITY.ODD,
+    });
+  });
+
+  it('clears both ends of a stereo bond whose begin atom has one neighbor', () => {
+    const struct = new Struct();
+    const begin = struct.atoms.add(
+      new Atom({
+        label: 'C',
+        pp: new Vec2(0, 0),
+        stereoLabel: StereoLabel.Abs,
+        stereoParity: STEREO_PARITY.ODD,
+      }),
+    );
+    const end = struct.atoms.add(
+      new Atom({
+        label: 'C',
+        pp: new Vec2(1, 0),
+        stereoLabel: `${StereoLabel.And}1`,
+        stereoParity: STEREO_PARITY.EVEN,
+      }),
+    );
+    struct.bonds.add(
+      new Bond({
+        begin,
+        end,
+        type: Bond.PATTERN.TYPE.SINGLE,
+        stereo: STEREO.UP,
+      }),
+    );
+    struct.initHalfBonds();
+    struct.initNeighbors();
+
+    struct.setStereoLabelsToAtoms();
+
+    [begin, end].forEach((atomId) =>
+      expect(struct.atoms.get(atomId)).toMatchObject({
+        stereoLabel: null,
+        stereoParity: STEREO_PARITY.NONE,
+      }),
+    );
+  });
+
+  it('clears the stereo label of an atom without bonds', () => {
+    const struct = new Struct();
+    const atomId = struct.atoms.add(
+      new Atom({
+        label: 'C',
+        pp: new Vec2(0, 0),
+        stereoLabel: StereoLabel.Abs,
+        stereoParity: STEREO_PARITY.ODD,
+      }),
+    );
+
+    struct.setStereoLabelsToAtoms();
+
+    expect(struct.atoms.get(atomId)).toMatchObject({
+      stereoLabel: null,
+      stereoParity: STEREO_PARITY.NONE,
+    });
+  });
+});
+
+describe('Struct.applyMonomersTransformations', () => {
+  type MonomerTransformation = NonNullable<MonomerItemType['transformation']>;
+
+  const monomerPosition = new Vec2(2, 1);
+
+  function monomerStruct(
+    transformation: MonomerTransformation,
+    atomPositions: Vec2[],
+  ) {
+    const struct = new Struct();
+    const monomer = new Peptide({
+      label: 'A',
+      props: {
+        MonomerNaturalAnalogCode: 'A',
+        MonomerName: 'A',
+        Name: 'Alanine',
+      },
+      struct: new Struct(),
+      transformation,
+    });
+    const sGroup = new MonomerMicromolecule(SGroup.TYPES.SUP, monomer);
+    sGroup.pp = monomerPosition;
+    const sGroupId = struct.sgroups.add(sGroup);
+    sGroup.id = sGroupId;
+
+    const atomIds = atomPositions.map((pp) => {
+      const atomId = struct.atoms.add(new Atom({ label: 'C', pp }));
+      struct.atomAddToSGroup(sGroupId, atomId);
+      return atomId;
+    });
+
+    return { struct, atomIds };
+  }
+
+  function expectPositions(
+    struct: Struct,
+    atomIds: number[],
+    expected: Vec2[],
+  ) {
+    atomIds.forEach((atomId, index) => {
+      const pp = struct.atoms.get(atomId)?.pp;
+      expect(pp?.x).toBeCloseTo(expected[index].x);
+      expect(pp?.y).toBeCloseTo(expected[index].y);
+    });
+  }
+
+  it('rotates the monomer atoms about the monomer position by transformation.rotate radians', () => {
+    const { struct, atomIds } = monomerStruct({ rotate: Math.PI / 2 }, [
+      new Vec2(3, 1),
+      new Vec2(2, 3),
+    ]);
+
+    struct.applyMonomersTransformations();
+
+    expectPositions(struct, atomIds, [new Vec2(2, 2), new Vec2(0, 1)]);
+  });
+
+  it('mirrors the monomer atoms across the vertical line through the monomer position for a horizontal flip', () => {
+    const { struct, atomIds } = monomerStruct({ flip: 'horizontal' }, [
+      new Vec2(3, 4),
+      new Vec2(0.5, -1),
+    ]);
+
+    struct.applyMonomersTransformations();
+
+    expectPositions(struct, atomIds, [new Vec2(1, 4), new Vec2(3.5, -1)]);
+  });
+
+  it('mirrors the monomer atoms across the horizontal line through the monomer position for a vertical flip', () => {
+    const { struct, atomIds } = monomerStruct({ flip: 'vertical' }, [
+      new Vec2(3, 4),
+      new Vec2(0.5, -1),
+    ]);
+
+    struct.applyMonomersTransformations();
+
+    expectPositions(struct, atomIds, [new Vec2(3, -2), new Vec2(0.5, 3)]);
   });
 });

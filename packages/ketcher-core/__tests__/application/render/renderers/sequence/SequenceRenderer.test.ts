@@ -121,6 +121,7 @@ describe('SequenceRenderer', () => {
       if (!(mode instanceof SequenceMode)) {
         throw new Error('Expected Sequence mode');
       }
+      mode.isEditMode = true;
       const scroll = jest
         .spyOn(editor.zoomTool, 'scrollBy')
         .mockImplementation();
@@ -145,6 +146,48 @@ describe('SequenceRenderer', () => {
       }
       bounds.mockRestore();
       scroll.mockRestore();
+    },
+  );
+
+  it.each([
+    ['left of the canvas', -598, -749, 648, 803],
+    ['right of the canvas', 1100, 400, -98, 0],
+    ['inside the canvas', 400, 400, 0, 0],
+  ])(
+    'keeps the empty sequence caret visible on edit initialization when it is %s',
+    (_, caretLeft, caretTop, xOffset, yOffset) => {
+      const scroll = jest
+        .spyOn(editor.zoomTool, 'scrollBy')
+        .mockImplementation();
+      const bounds = jest
+        .spyOn(SVGElement.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: SVGElement) {
+          return this === canvas
+            ? new DOMRect(50, 54, 952, 666)
+            : new DOMRect(caretLeft, caretTop, 0, 88);
+        });
+
+      try {
+        const mode = editor.mode;
+        if (!(mode instanceof SequenceMode)) {
+          throw new Error('Expected Sequence mode');
+        }
+        mode.isEditMode = true;
+        SequenceRenderer.setCaretPosition(-1);
+        mode.initialize();
+
+        expect(
+          canvas.querySelector('[data-testid="sequence-caret"]'),
+        ).not.toBeNull();
+        if (xOffset === 0 && yOffset === 0) {
+          expect(scroll).not.toHaveBeenCalled();
+        } else {
+          expect(scroll).toHaveBeenCalledWith(xOffset, yOffset);
+        }
+      } finally {
+        bounds.mockRestore();
+        scroll.mockRestore();
+      }
     },
   );
 

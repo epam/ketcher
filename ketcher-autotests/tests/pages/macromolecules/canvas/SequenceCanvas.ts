@@ -22,6 +22,9 @@ export const SequenceCanvas = (page: Page) => {
             throw new Error('Sequence canvas has no bounding box');
           }
           return (
+            caretBounds.x >= canvasBounds.x &&
+            caretBounds.x + caretBounds.width <=
+              canvasBounds.x + canvasBounds.width &&
             caretBounds.y >= canvasBounds.y &&
             caretBounds.y + caretBounds.height <=
               canvasBounds.y + canvasBounds.height

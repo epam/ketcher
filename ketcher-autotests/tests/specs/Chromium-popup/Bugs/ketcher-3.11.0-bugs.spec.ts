@@ -1367,6 +1367,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
   test('Case 37 - System ignored HELM alias for bases on monomer load to Library', async ({
     FlexCanvas: _,
   }) => {
+    await pageReload(page);
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/Indigo/issues/3269
      * Steps:

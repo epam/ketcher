@@ -66,10 +66,11 @@ content box does not create overflow, even when the viewport transfer has
 translated the empty drawing group. Content extending beyond either edge
 still enables the scrollbar for that axis.
 
-After creating a new Sequence row, the mode checks the active caret against
-the canvas's page-relative bounds and scrolls vertically only if the caret
-would be clipped. This is independent of scrollbar visibility and does not
-scroll to unrelated content at the bottom of the document.
+When entering or updating Sequence edit mode, or creating a new row, the mode
+checks the active caret against the canvas's page-relative bounds and scrolls
+only along axes where the caret would be clipped. This keeps a Micro/Flex pan
+or zoom from hiding the active Sequence caret without resetting the zoom.
+Switching to Sequence without editing does not pan to the empty placeholder.
 
 ## Macromolecules rendering (D3)
 

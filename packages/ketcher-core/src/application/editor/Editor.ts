@@ -127,6 +127,7 @@ import {
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import {
+  provideEditorInstance,
   setEditorInstance,
   resetEditorInstance,
 } from 'application/editor/editorSingleton';
@@ -330,6 +331,12 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
+    KetSerializer.setEditorBridge({
+      reportError: (message) =>
+        provideEditorInstance().events.error.dispatch(message),
+      getMonomersLibraryJson: () =>
+        provideEditorInstance()?.monomersLibraryParsedJson,
+    });
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();

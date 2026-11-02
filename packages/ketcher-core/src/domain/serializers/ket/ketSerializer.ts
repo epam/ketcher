@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -54,7 +53,6 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
   type MonomerFactoryFn,
@@ -223,11 +221,33 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
   }
 }
 
+// What the serializer needs from the running editor. The domain layer cannot
+// import the editor, so the editor binds these reads once (see setEditorBridge).
+type KetSerializerEditorBridge = {
+  reportError: (message: string) => void;
+  getMonomersLibraryJson: () => IKetMacromoleculesContent | null | undefined;
+};
+
 export class KetSerializer implements Serializer<Struct> {
   private static _monomerFactory: MonomerFactoryFn | null = null;
 
   public static setMonomerFactory(factory: MonomerFactoryFn): void {
     KetSerializer._monomerFactory = factory;
+  }
+
+  private static _editorBridge: KetSerializerEditorBridge | null = null;
+
+  public static setEditorBridge(bridge: KetSerializerEditorBridge): void {
+    KetSerializer._editorBridge = bridge;
+  }
+
+  private static reportError(message: string): void {
+    if (!KetSerializer._editorBridge) {
+      throw new Error(
+        `KetSerializer: editor bridge has not been initialized. Call KetSerializer.setEditorBridge() before reporting "${message}".`,
+      );
+    }
+    KetSerializer._editorBridge.reportError(message);
   }
 
   private static getMonomerFactory(): MonomerFactoryFn {
@@ -399,35 +419,30 @@ export class KetSerializer implements Serializer<Struct> {
   private validateMonomerNodeTemplate(
     node: IKetMonomerNode,
     parsedFileContent: IKetMacromoleculesContent,
-    editor: CoreEditor,
   ) {
     const template =
       parsedFileContent[setMonomerTemplatePrefix(node.templateId)];
     if (!template) {
-      editor.events.error.dispatch('Error during file parsing');
+      KetSerializer.reportError('Error during file parsing');
       return true;
     }
 
     return false;
   }
 
-  private validateConnectionTypeAndEndpoints(
-    connection: IKetConnection,
-    editor: CoreEditor,
-  ) {
+  private validateConnectionTypeAndEndpoints(connection: IKetConnection) {
     if (
       getConnectionType(connection) !== KetConnectionType.SINGLE &&
       getConnectionType(connection) !== KetConnectionType.HYDROGEN &&
       getConnectionType(connection) !== KetConnectionType.HAPTIC
     ) {
-      editor.events.error.dispatch('Error during file parsing');
+      KetSerializer.reportError('Error during file parsing');
       return true;
     }
     return false;
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = provideEditorInstance();
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
@@ -446,7 +461,6 @@ export class KetSerializer implements Serializer<Struct> {
         hasError = this.validateMonomerNodeTemplate(
           nodeDefinition,
           parsedFileContent,
-          editor,
         );
       }
     });
@@ -455,7 +469,7 @@ export class KetSerializer implements Serializer<Struct> {
     }
     parsedFileContent.root.connections?.forEach(
       (connection: IKetConnection) => {
-        this.validateConnectionTypeAndEndpoints(connection, editor);
+        this.validateConnectionTypeAndEndpoints(connection);
       },
     );
     return {
@@ -532,7 +546,7 @@ export class KetSerializer implements Serializer<Struct> {
     ) {
       return;
     }
-    const library = provideEditorInstance()?.monomersLibraryParsedJson;
+    const library = KetSerializer._editorBridge?.getMonomersLibraryJson();
     if (!library) return;
 
     const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as

@@ -109,10 +109,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     file: 'packages/ketcher-core/src/domain/serializers/ket/fromKet/polymerBondToDrawingEntity.ts',
     imports: ['application/editor/editorSingleton'],
   },
-  {
-    file: 'packages/ketcher-core/src/domain/serializers/ket/ketSerializer.ts',
-    imports: ['application/editor/editorSingleton'],
-  },
 ];
 
 /**

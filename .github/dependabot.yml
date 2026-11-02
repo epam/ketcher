@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Workflow actions are pinned to commit SHAs. Dependabot opens one grouped
+  # PR per month that moves the SHAs and the version comments to new releases.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: quarterly
+    groups:
+      github-actions:
+        patterns:
+          - '*'

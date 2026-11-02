@@ -15,11 +15,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, {
-  type Tools,
-  type UiAction,
-  type UiActionAction,
-} from '../../../../action';
+import action, { type UiAction, type UiActionAction } from '../../../../action';
+import type { ToolbarStatus } from '../../toolbar.types';
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton';
 import templates from '../../../../data/templates';
@@ -34,7 +31,7 @@ interface TemplatesListProps {
   };
   disableableButtons: string[];
   indigoVerification: boolean;
-  status: Tools;
+  status: ToolbarStatus;
 }
 
 interface TemplatesListCallProps {

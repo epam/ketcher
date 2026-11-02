@@ -23,6 +23,7 @@ jobs:
         github.event.issue.type == 'Task'
       )
     runs-on: ubuntu-latest
+    environment: ai-workflows
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,7 +32,7 @@ jobs:
 
       - name: Extract and check data
         id: issue
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           script: |
             const issue = context.payload.issue;
@@ -49,7 +50,7 @@ jobs:
             core.setOutput('issue_body', issueBody);
 
       - name: Implement autotests with Claude
-        uses: anthropics/claude-code-action@28f83620103c48a57093dcc2837eec89e036bb9f # v0.0.63
+        uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1.0.264
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

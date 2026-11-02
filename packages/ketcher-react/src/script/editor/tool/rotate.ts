@@ -36,16 +36,12 @@ import {
 } from 'ketcher-core';
 import { intersection, throttle } from 'lodash';
 import type { Editor, Selection } from '../Editor';
-import type { Tool } from './Tool';
+import type { BaseDragContext, MergeItems, Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
 
-type MergeItems = ReturnType<typeof getItemsToFuse>;
-
-interface RotateDragContext {
-  xy0: Vec2;
+interface RotateDragContext extends BaseDragContext {
   angle1: number;
   angle?: number;
-  action?: Action;
   mergeItems?: MergeItems;
 }
 

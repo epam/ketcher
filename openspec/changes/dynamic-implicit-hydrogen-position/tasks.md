@@ -17,5 +17,5 @@
 
 ## 4. Snapshots and in-app proof
 
-- [ ] 4.1 Update the Jest snapshots that changed and list each changed file in the PR; verify with `npm test` from the repository root, compared against the baseline.
-- [ ] 4.2 Run `verify-ketcher`: draw hexane, S(CH3)6, pyrrole, an isolated O, and an atom with a radical, and verify the hydrogens' sides, the bond lengths, and the hover and selection highlight, and that macromolecules mode shows the same sides.
+- [x] 4.1 Update the Jest snapshots that changed and list each changed file in the PR; verify with `npm test` from the repository root, compared against the baseline.
+- [x] 4.2 Run `verify-ketcher`: draw hexane, S(CH3)6, pyrrole, an isolated O, and an atom with a radical, and verify the hydrogens' sides, the bond lengths, and the hover and selection highlight, and that macromolecules mode shows the same sides.

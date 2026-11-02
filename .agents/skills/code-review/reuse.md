@@ -28,4 +28,4 @@ Before you report a finding:
 3. Check that the new code can import it without a cycle and without breaking invariant A4 or A5.
 4. Write the failing scenario as the concrete change the duplicate makes harder, as the output contract asks for structural findings. For example: "A fix to the existing centering method (`file:line`) will not reach the macromolecule canvas, which now has its own copy."
 
-Severity: use the severity of the rule the finding cites. A finding that also breaks behavior belongs to the functional-correctness lens.
+Severity: use the severity of the rule the finding cites. A finding that also breaks behavior belongs to the correctness lens.

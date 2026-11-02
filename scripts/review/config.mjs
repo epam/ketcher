@@ -11,7 +11,7 @@ export const PROMPT_DIR = '.agents/skills/code-review';
 
 /** Lenses of a Standard review, in the order they are started. */
 export const STANDARD_LENSES = [
-  'functional-correctness',
+  'correctness',
   'reuse',
   'code-quality',
   'security',
@@ -20,7 +20,7 @@ export const STANDARD_LENSES = [
 ];
 
 /** Lenses of a Quick review. */
-export const QUICK_LENSES = ['functional-correctness'];
+export const QUICK_LENSES = ['correctness'];
 
 /** Prompt file of the verifier role, in PROMPT_DIR. */
 export const VERIFIER_ROLE = 'verifier';

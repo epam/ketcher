@@ -9,7 +9,7 @@ import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { Atom } from 'domain/entities/CoreAtom';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { assert } from 'utilities';
 
 import type { DrawingEntitiesManager } from './DrawingEntitiesManager';

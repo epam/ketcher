@@ -18,6 +18,16 @@ import {
 
 const sortLabels = (labels: string[]) => labels.sort(compareStrings);
 
+const testRenderTheme = {
+  monomer: {
+    color: {
+      X: { regular: 'yellow' },
+      R: { regular: 'yellow' },
+      P: { regular: 'yellow' },
+    },
+  },
+};
+
 globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -102,7 +112,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     editor = new CoreEditor({
       canvas,
       theme: {},
-      renderersContainer: createRenderersManager(),
+      renderersContainer: createRenderersManager(testRenderTheme),
     });
   });
 
@@ -115,7 +125,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     selectAllMonomers(editor);
 
     const monomersBefore = editor.drawingEntitiesManager.monomers.size;
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     expect(editor.drawingEntitiesManager.monomers.size).toBe(
       monomersBefore + 3,
@@ -165,7 +177,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     );
 
     selectAllMonomers(editor);
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     const antisenseMonomers = [
       ...editor.drawingEntitiesManager.monomers.values(),
@@ -184,7 +198,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     }
 
     selectAllMonomers(editor);
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     const newChain = Nucleotide.createOnCanvas('G', new Vec2(0, 10));
 
@@ -193,7 +209,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     }
 
     selectAllMonomers(editor);
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     const antisenseMonomers = [
       ...editor.drawingEntitiesManager.monomers.values(),
@@ -208,7 +226,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     const unsplit = addUnsplitNucleotide(editor, '2-damdA', new Vec2(0, 0));
     selectAllMonomers(editor);
 
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     expect(editor.drawingEntitiesManager.monomers.size).toBe(4);
     expect(unsplit.monomerItem.isSense).toBe(true);
@@ -228,7 +248,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     addUnsplitNucleotide(editor, '2-damdA', new Vec2(0, 0));
     selectAllMonomers(editor);
 
-    editor.drawingEntitiesManager.createAntisenseChain(true);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(true),
+    );
 
     const antisenseMonomers = [
       ...editor.drawingEntitiesManager.monomers.values(),
@@ -249,7 +271,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     addUnsplitNucleotide(editor, '5NitInd', new Vec2(0, 0));
     selectAllMonomers(editor);
 
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     expect(editor.drawingEntitiesManager.monomers.size).toBe(1);
   });
@@ -273,7 +297,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     );
 
     selectAllMonomers(editor);
-    editor.drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     const antisenseMonomers = [
       ...editor.drawingEntitiesManager.monomers.values(),
@@ -339,7 +365,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     );
 
     selectAllMonomers(editor);
-    dem.createAntisenseChain(false);
+    editor.renderersContainer.update(dem.createAntisenseChain(false));
 
     // The unsplit is complemented (hydrogen-bonded), not copied verbatim.
     expect(unsplit.monomerItem.isSense).toBe(true);
@@ -367,7 +393,9 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
 
       addUnsplitNucleotide(editor, alias, new Vec2(0, 0));
       selectAllMonomers(editor);
-      editor.drawingEntitiesManager.createAntisenseChain(false);
+      editor.renderersContainer.update(
+        editor.drawingEntitiesManager.createAntisenseChain(false),
+      );
 
       expect(errorDispatch).not.toHaveBeenCalled();
       expect(

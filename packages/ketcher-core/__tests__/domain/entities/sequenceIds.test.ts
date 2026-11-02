@@ -132,6 +132,7 @@ describe('imported sequence IDs', () => {
 
     const [bond] = manager.polymerBonds.values();
     const command = manager.deletePolymerBond(bond);
+    command.merge(manager.recalculateAntisenseChains());
     EditorHistory.getInstance(editor).update(command);
     editor.renderersContainer.update(command);
     await formatter.getStringFromStructureAsync(new Struct(), manager);
@@ -185,6 +186,7 @@ describe('imported sequence IDs', () => {
       first,
       first.monomerItem,
     );
+    command.merge(editor.drawingEntitiesManager.recalculateAntisenseChains());
     editor.renderersContainer.update(command);
     const history = EditorHistory.getInstance(editor);
     history.update(command);
@@ -211,6 +213,7 @@ describe('imported sequence IDs', () => {
     expect(exportSequenceIds()).toEqual([21, 20, 22]);
 
     const command = editor.drawingEntitiesManager.deleteMonomer(base);
+    command.merge(editor.drawingEntitiesManager.recalculateAntisenseChains());
     EditorHistory.getInstance(editor).update(command);
     editor.renderersContainer.update(command);
     expect(exportSequenceIds()).toEqual([undefined, undefined]);
@@ -244,6 +247,7 @@ describe('imported sequence IDs', () => {
       AttachmentPointName.R2,
       AttachmentPointName.R1,
     );
+    command.merge(editor.drawingEntitiesManager.recalculateAntisenseChains());
     EditorHistory.getInstance(editor).update(command);
     editor.renderersContainer.update(command);
     expect(exportSequenceIds()).toEqual([undefined, undefined, undefined]);
@@ -273,6 +277,7 @@ describe('imported sequence IDs', () => {
         AttachmentPointName.R1,
       ),
     );
+    command.merge(manager.recalculateAntisenseChains());
     EditorHistory.getInstance(editor).update(command);
     editor.renderersContainer.update(command);
     expect(exportSequenceIds()).toEqual([undefined, undefined, undefined]);
@@ -281,7 +286,7 @@ describe('imported sequence IDs', () => {
     ).toEqual([1, 2, 3]);
   });
 
-  it('does not reset numbering in an unrelated sequence', () => {
+  it('keeps sequence IDs of an unrelated sequence until recalculate clears all', () => {
     loadPeptides();
     const manager = editor.drawingEntitiesManager;
     const [first] = manager.monomers.values();
@@ -291,9 +296,10 @@ describe('imported sequence IDs', () => {
     expect(exportSequenceIds()).toEqual([7, 12, 7]);
     const [bond] = manager.polymerBonds.values();
     const deletion = manager.deletePolymerBond(bond);
+    deletion.merge(manager.recalculateAntisenseChains());
     EditorHistory.getInstance(editor).update(deletion);
     editor.renderersContainer.update(deletion);
-    expect(exportSequenceIds()).toEqual([undefined, undefined, 7]);
+    expect(exportSequenceIds()).toEqual([undefined, undefined, undefined]);
   });
 
   it.each([false, true])(
@@ -303,6 +309,7 @@ describe('imported sequence IDs', () => {
       const manager = editor.drawingEntitiesManager;
       const [bond] = manager.polymerBonds.values();
       const command = manager.deletePolymerBond(bond);
+      command.merge(manager.recalculateAntisenseChains());
       const history = EditorHistory.getInstance(editor);
       if (frozen) {
         monomers.forEach((monomer) => Object.freeze(monomer.monomerItem));

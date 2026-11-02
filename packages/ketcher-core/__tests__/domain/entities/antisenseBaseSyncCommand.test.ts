@@ -48,6 +48,16 @@ const createNucleosideNode = (base: string, position: Vec2) => {
   return created.node;
 };
 
+const testRenderTheme = {
+  monomer: {
+    color: {
+      X: { regular: 'yellow' },
+      R: { regular: 'yellow' },
+      P: { regular: 'yellow' },
+    },
+  },
+};
+
 globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
@@ -78,7 +88,9 @@ export const buildDuplex = (
   editor.drawingEntitiesManager.selectDrawingEntities([
     ...editor.drawingEntitiesManager.monomers.values(),
   ]);
-  editor.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
+  editor.renderersContainer.update(
+    editor.drawingEntitiesManager.createAntisenseChain(isDnaAntisense),
+  );
 
   const senseBase = [...editor.drawingEntitiesManager.monomers.values()].find(
     (monomer) =>
@@ -135,7 +147,7 @@ describe('duplex traversal', () => {
     editor = new CoreEditor({
       canvas,
       theme: {},
-      renderersContainer: createRenderersManager(),
+      renderersContainer: createRenderersManager(testRenderTheme),
     });
   });
 
@@ -269,7 +281,7 @@ describe('createMirroredBaseCommand', () => {
     editor = new CoreEditor({
       canvas,
       theme: {},
-      renderersContainer: createRenderersManager(),
+      renderersContainer: createRenderersManager(testRenderTheme),
     });
   });
 
@@ -298,6 +310,7 @@ describe('createMirroredBaseCommand', () => {
     });
 
     expect(command).toBeDefined();
+    if (command) editor.renderersContainer.update(command);
     expect(antisenseBase.label).toBe('G');
   });
 
@@ -321,6 +334,7 @@ describe('createMirroredBaseCommand', () => {
     });
 
     expect(command).toBeDefined();
+    if (command) editor.renderersContainer.update(command);
     expect(senseBase.label).toBe('U');
     expect(antisenseBase.hydrogenBonds).toHaveLength(1);
   });
@@ -451,7 +465,7 @@ describe('createMirroredBaseCommand', () => {
     const newBaseItem = resolveBaseLibraryItem('C');
     if (!newBaseItem) throw new Error('Library item C not found');
 
-    createMirroredBaseCommand({
+    const mirrorCommand = createMirroredBaseCommand({
       drawingEntitiesManager: editor.drawingEntitiesManager,
       editedBase: senseBase,
       previousNaturalAnalogue: 'A',
@@ -459,6 +473,7 @@ describe('createMirroredBaseCommand', () => {
       isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
+    if (mirrorCommand) editor.renderersContainer.update(mirrorCommand);
 
     expect(antisenseBase.label).toBe('G');
   });
@@ -579,6 +594,7 @@ describe('createMirroredBaseCommand', () => {
     });
 
     expect(command).toBeDefined();
+    if (command) editor.renderersContainer.update(command);
     // Not 'U': the partner's own sugar is deoxyribose, so the DNA table is
     // used for the rewritten side, independent of the edited base's sugar.
     expect(antisenseBase.label).toBe('T');
@@ -653,7 +669,7 @@ describe('createMirroredBaseCommand', () => {
       throw new Error('Library item A not found');
     }
 
-    createMirroredBaseCommand({
+    const mirrorCommand = createMirroredBaseCommand({
       drawingEntitiesManager: editor.drawingEntitiesManager,
       editedBase: senseBase,
       previousNaturalAnalogue: 'C',
@@ -661,6 +677,7 @@ describe('createMirroredBaseCommand', () => {
       isSyncEditMode: true,
       resolveBaseLibraryItem,
     });
+    if (mirrorCommand) editor.renderersContainer.update(mirrorCommand);
 
     // Plain complement, not a modified one: the modification is gone.
     expect(antisenseBase.label).toBe('U');
@@ -714,6 +731,7 @@ describe('createMirroredBaseCommand', () => {
     });
 
     expect(command).toBeDefined();
+    if (command) editor.renderersContainer.update(command);
     expect(antisenseBase.label).toBe('G');
   });
 
@@ -751,7 +769,7 @@ describe('resolveMirroredBaseTarget', () => {
     editor = new CoreEditor({
       canvas,
       theme: {},
-      renderersContainer: createRenderersManager(),
+      renderersContainer: createRenderersManager(testRenderTheme),
     });
   });
 

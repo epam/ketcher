@@ -191,7 +191,9 @@ const buildFourNucleotideDuplex = (editor: CoreEditor) => {
   }
 
   selectAllMonomers(editor);
-  drawingEntitiesManager.createAntisenseChain(false);
+  editor.renderersContainer.update(
+    drawingEntitiesManager.createAntisenseChain(false),
+  );
   drawingEntitiesManager.unselectAllDrawingEntities();
 
   const antisenseNucleotides = senseNucleotides.map((senseNucleotide) => {
@@ -292,7 +294,9 @@ describe('antisense chain direction', () => {
       AttachmentPointName.R1,
     );
     selectAllMonomers(editor);
-    drawingEntitiesManager.createAntisenseChain(false);
+    editor.renderersContainer.update(
+      drawingEntitiesManager.createAntisenseChain(false),
+    );
 
     const senseSugar = firstNucleotide.sugar;
     // The second sense nucleotide's paired antisense base is the chain-start

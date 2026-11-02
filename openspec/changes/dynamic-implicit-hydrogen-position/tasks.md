@@ -2,7 +2,7 @@
 
 ## 1. Shared placement rule
 
-- [ ] 1.1 Add `getImplicitHydrogenSide` under `packages/ketcher-core/src/domain/helpers/` and export it from the helpers index; verify with `npm run test:unit` in `packages/ketcher-core` using a table test that covers every scenario of the "terminal atom" and "internal atom" requirements, including the 45°, 135°, 225°, and 315° boundaries and the vertical bond.
+- [x] 1.1 Add `getImplicitHydrogenSide` under `packages/ketcher-core/src/domain/helpers/` and export it from the helpers index; verify with `npm run test:unit` in `packages/ketcher-core` using a table test that covers every scenario of the "terminal atom" and "internal atom" requirements, including the 45°, 135°, 225°, and 315° boundaries and the vertical bond.
 
 ## 2. Molecules mode rendering
 

@@ -4198,7 +4198,13 @@ class Editor implements KetcherEditor {
   }
 
   findMerge(srcItems: SelectedItems, maps: string[] | undefined) {
-    return closest.merge(this.render.ctab, srcItems, this.render.options, maps);
+    return closest.merge(
+      this.render.ctab,
+      srcItems,
+      this.render.options,
+      maps,
+      this._tool instanceof toolsMap.paste ? srcItems.atoms : [],
+    );
   }
 
   explicitSelected(shouldAutoSelectBonds = true) {

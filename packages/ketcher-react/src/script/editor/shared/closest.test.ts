@@ -105,6 +105,8 @@ describe('closest: overlapping functional groups (#12091)', () => {
       restruct,
       { atoms: [sourceAtomId, movingAtomId, stationaryAtomId], bonds: [] },
       restruct.render.options,
+      undefined,
+      [sourceAtomId, movingAtomId, stationaryAtomId],
     );
 
     expect(result.atomToFunctionalGroup).toEqual(new Map());
@@ -123,6 +125,8 @@ describe('closest: overlapping functional groups (#12091)', () => {
         restruct,
         { atoms: [sourceAtomId, movingAtomId], bonds: [] },
         restruct.render.options,
+        undefined,
+        [sourceAtomId, movingAtomId],
       );
 
       expect(result.atomToFunctionalGroup).toEqual(
@@ -130,6 +134,21 @@ describe('closest: overlapping functional groups (#12091)', () => {
       );
     },
   );
+
+  it('preserves ordinary merge picking when no paste exclusions are supplied', () => {
+    const { restruct, sourceAtomId, movingAtomId, movingGroupId } =
+      buildOverlappingGroups();
+
+    const result = closest.merge(
+      restruct,
+      { atoms: [sourceAtomId, movingAtomId], bonds: [] },
+      restruct.render.options,
+    );
+
+    expect(result.atomToFunctionalGroup).toEqual(
+      new Map([[sourceAtomId, movingGroupId]]),
+    );
+  });
 
   it('finds a functional group during ordinary picking', () => {
     const { restruct, movingGroupId } = buildOverlappingGroups();

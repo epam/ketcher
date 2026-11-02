@@ -669,6 +669,7 @@ function findCloseMerge(
   selected: SelectedItems,
   options: ClosestFunctionOptions,
   maps: string[] = ['atoms', 'bonds'],
+  excludedAtomIds: number[] = [],
 ) {
   const pos: { atoms: Map<number, Vec2>; bonds: Map<number, Vec2> } = {
     atoms: new Map(), // aid -> position
@@ -722,7 +723,7 @@ function findCloseMerge(
             atomId,
             restruct,
             atomPosition,
-            selected.atoms,
+            excludedAtomIds,
             result,
           );
         }

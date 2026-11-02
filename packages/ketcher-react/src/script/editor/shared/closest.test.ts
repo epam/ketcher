@@ -56,47 +56,47 @@ describe('closest.merge (findCloseMerge): stale bond references', () => {
   });
 });
 
-describe('closest: overlapping functional groups (#12091)', () => {
-  function buildOverlappingGroups() {
-    const struct = new Struct();
-    const [sourceAtomId, movingAtomId, stationaryAtomId] = Array.from(
-      { length: 3 },
-      () => struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+function buildOverlappingGroups() {
+  const struct = new Struct();
+  const [sourceAtomId, movingAtomId, stationaryAtomId] = Array.from(
+    { length: 3 },
+    () => struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+  );
+  const [movingGroupId, stationaryGroupId] = [
+    movingAtomId,
+    stationaryAtomId,
+  ].map((atomId, index) => {
+    const group = new SGroup(SGroup.TYPES.SUP);
+    group.data.name = index === 0 ? 'Unknown' : 'Stationary';
+    group.data.expanded = false;
+    group.id = struct.sgroups.add(group);
+    struct.atomAddToSGroup(group.id, atomId);
+    group.addAttachmentPoint(
+      new SGroupAttachmentPoint(atomId, undefined, undefined, 1),
     );
-    const [movingGroupId, stationaryGroupId] = [
-      movingAtomId,
-      stationaryAtomId,
-    ].map((atomId, index) => {
-      const group = new SGroup(SGroup.TYPES.SUP);
-      group.data.name = index === 0 ? 'Unknown' : 'Stationary';
-      group.data.expanded = false;
-      group.id = struct.sgroups.add(group);
-      struct.atomAddToSGroup(group.id, atomId);
-      group.addAttachmentPoint(
-        new SGroupAttachmentPoint(atomId, undefined, undefined, 1),
-      );
-      return group.id;
-    });
-    struct.bindSGroupsToFunctionalGroups();
+    return group.id;
+  });
+  struct.bindSGroupsToFunctionalGroups();
 
-    const restruct = buildReStruct(struct);
-    restruct.render.ctab = restruct;
-    restruct.recalculateVisibleAtomsAndBonds();
-    // The rendered labels overlap the source atom, as in the issue's KET.
-    for (const atom of restruct.atoms.values()) {
-      atom.visel.boundingBox = new Box2Abs(-5, -5, 5, 5);
-    }
-
-    return {
-      restruct,
-      sourceAtomId,
-      movingAtomId,
-      stationaryAtomId,
-      movingGroupId,
-      stationaryGroupId,
-    };
+  const restruct = buildReStruct(struct);
+  restruct.render.ctab = restruct;
+  restruct.recalculateVisibleAtomsAndBonds();
+  // The rendered labels overlap the source atom, as in the issue's KET.
+  for (const atom of restruct.atoms.values()) {
+    atom.visel.boundingBox = new Box2Abs(-5, -5, 5, 5);
   }
 
+  return {
+    restruct,
+    sourceAtomId,
+    movingAtomId,
+    stationaryAtomId,
+    movingGroupId,
+    stationaryGroupId,
+  };
+}
+
+describe('closest: overlapping functional groups (#12091)', () => {
   it('does not merge an atom into a group within the same selection', () => {
     const { restruct, sourceAtomId, movingAtomId, stationaryAtomId } =
       buildOverlappingGroups();

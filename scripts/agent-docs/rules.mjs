@@ -8,8 +8,8 @@ export const INSTRUCTIONS_DIR = '.github/instructions';
 const SEVERITIES = ['blocker', 'major', 'nit'];
 const STATUSES = ['proposed', 'approved', 'active', 'moved-to-lint', 'retired'];
 const EMITTED_STATUSES = ['approved', 'active'];
-const MACHINE_ENFORCERS = ['lint', 'tsc'];
-const PLAIN_ENFORCERS = ['tsc', 'test', 'AI', 'human'];
+const MACHINE_ENFORCERS = ['lint', 'tsc', 'Danger'];
+const PLAIN_ENFORCERS = ['tsc', 'test', 'Danger', 'AI', 'human'];
 const REQUIRED_FIELDS = [
   'Scope',
   'Severity',

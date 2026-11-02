@@ -79,7 +79,7 @@ function pollDeferred<T>(
 }
 
 function parametrizeUrl(url: string, params: Record<string, string>) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+  return url.replace(/:([A-Za-z_]\w*)/g, (_, val) => params[val]);
 }
 
 function request<T = unknown>(

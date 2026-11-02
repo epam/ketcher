@@ -117,6 +117,41 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       const markerPos = CoordinateTransformation.modelToView(position, render);
       const TOOLTIP_GAP = 10;
 
+      // Estimate tooltip dimensions for boundary checking
+      const TOOLTIP_WIDTH = 250;
+      const TOOLTIP_HEIGHT = 200;
+
+      // Calculate position, ensuring it stays within canvas bounds
+      let left = markerPos.x;
+      let top = markerPos.y + TOOLTIP_GAP;
+
+      // Adjust horizontally if tooltip would overflow canvas
+      const canvasWidth = render?.clientArea?.clientWidth || 0;
+      const canvasHeight = render?.clientArea?.clientHeight || 0;
+
+      // Increased safety margin to prevent toolbar overlap
+      // With transform: translate(-50%, 0), the tooltip extends TOOLTIP_WIDTH/2 on each side
+      // Add extra 30px buffer on each side to account for toolbars and ensure clean spacing
+      const SAFE_MARGIN = 30;
+      const MIN_SAFE_LEFT = TOOLTIP_WIDTH / 2 + SAFE_MARGIN;
+      const MIN_SAFE_RIGHT = TOOLTIP_WIDTH / 2 + SAFE_MARGIN;
+
+      // Check right overflow (accounting for centered transform)
+      if (left + MIN_SAFE_RIGHT > canvasWidth) {
+        left = canvasWidth - MIN_SAFE_RIGHT;
+      }
+
+      // Check left overflow (accounting for centered transform)
+      // This prevents the tooltip from overlapping the left toolbar
+      if (left < MIN_SAFE_LEFT) {
+        left = MIN_SAFE_LEFT;
+      }
+
+      // Check bottom overflow
+      if (top + TOOLTIP_HEIGHT > canvasHeight) {
+        top = markerPos.y - TOOLTIP_HEIGHT - HOVER_PANEL_PADDING;
+      }
+
       return (
         <AmbiguousMonomerPreview
           preview={{
@@ -125,8 +160,8 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           }}
           style={{
             position: 'absolute',
-            left: `${markerPos.x}px`,
-            top: `${markerPos.y + TOOLTIP_GAP}px`,
+            left: `${left}px`,
+            top: `${top}px`,
             transform: 'translate(-50%, 0)',
           }}
         />

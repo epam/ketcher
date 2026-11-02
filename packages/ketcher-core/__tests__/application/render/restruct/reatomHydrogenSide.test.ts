@@ -100,16 +100,18 @@ interface AtomFixture {
 }
 
 /**
- * An N atom at the origin with a bond to a neighbor at each given visual angle
+ * An atom (N by default) at the origin with a bond to a neighbor at each given visual angle
  * (degrees, 0 is right, 90 is up), drawn through ReAtom.show.
  */
 function showAtom({
+  label = 'N',
   bondAnglesDeg = [],
   implicitH = 1,
   radical = 0,
   charge = 0,
   explicitValence = -1,
 }: {
+  label?: string;
   bondAnglesDeg?: number[];
   implicitH?: number;
   radical?: number;
@@ -118,7 +120,7 @@ function showAtom({
 }): AtomFixture {
   const struct = new Struct();
   const atom = new Atom({
-    label: 'N',
+    label,
     pp: new Vec2(0, 0),
     radical,
     charge,
@@ -173,11 +175,21 @@ function boxCenter(box: Box2Abs) {
 describe('ReAtom hydrogenSide', () => {
   it.each<{
     name: string;
+    label?: string;
     bondAnglesDeg: number[];
     radical?: number;
     expected: ImplicitHydrogenSide;
   }>([
     { name: 'no bond', bondAnglesDeg: [], expected: 'right' },
+    { name: 'no bond on O', label: 'O', bondAnglesDeg: [], expected: 'right' },
+    {
+      name: 'no bond on Cl',
+      label: 'Cl',
+      bondAnglesDeg: [],
+      expected: 'right',
+    },
+    { name: 'no bond on D', label: 'D', bondAnglesDeg: [], expected: 'right' },
+    { name: 'no bond on T', label: 'T', bondAnglesDeg: [], expected: 'right' },
     { name: 'one bond going right', bondAnglesDeg: [30], expected: 'left' },
     { name: 'one bond going left', bondAnglesDeg: [210], expected: 'right' },
     { name: 'one bond going up', bondAnglesDeg: [90], expected: 'right' },
@@ -203,11 +215,14 @@ describe('ReAtom hydrogenSide', () => {
       bondAnglesDeg: [0, 90, 180, 270],
       expected: 'right',
     },
-  ])('is $expected for $name', ({ bondAnglesDeg, radical, expected }) => {
-    const { reatom } = showAtom({ bondAnglesDeg, radical });
+  ])(
+    'is $expected for $name',
+    ({ label, bondAnglesDeg, radical, expected }) => {
+      const { reatom } = showAtom({ label, bondAnglesDeg, radical });
 
-    expect(reatom.hydrogenSide).toBe(expected);
-  });
+      expect(reatom.hydrogenSide).toBe(expected);
+    },
+  );
 });
 
 describe('ReAtom hydrogen layout', () => {
@@ -261,12 +276,20 @@ describe('ReAtom hydrogen layout', () => {
     expect(boxCenter(countBox).y).toBeGreaterThan(boxCenter(hydrogenBox).y);
   });
 
-  it('records every hydrogen part in the visel exts and boxes', () => {
-    const { reatom } = showAtom({ bondAnglesDeg: [210, 330], implicitH: 2 });
+  it('records right hydrogens in the visel exts and boxes', () => {
+    const { reatom } = showAtom({ bondAnglesDeg: [210], implicitH: 2 });
 
     // symbol, H, count
     expect(reatom.visel.boxes).toHaveLength(3);
     expect(reatom.visel.exts).toHaveLength(3);
+  });
+
+  it('records stacked hydrogens in the visel boxes but not in its exts', () => {
+    const { reatom } = showAtom({ bondAnglesDeg: [210, 330], implicitH: 2 });
+
+    // symbol, H, count: only the symbol is something a bond stops at
+    expect(reatom.visel.boxes).toHaveLength(3);
+    expect(reatom.visel.exts).toHaveLength(1);
   });
 
   it('covers the symbol and top hydrogens with the selection contour', () => {
@@ -277,6 +300,20 @@ describe('ReAtom hydrogen layout', () => {
 
     const [, y, , height] = paper.rect.mock.calls[0];
     // The symbol and H are stacked, each FONT_PX high.
+    expect(height).toBeCloseTo(2 * FONT_PX + 2 * padding);
+    expect(y).toBeCloseTo(-1.5 * FONT_PX - padding);
+  });
+
+  it('covers the stacked hydrogens and their count with the selection contour', () => {
+    const { reatom, render, paper } = showAtom({
+      bondAnglesDeg: [210, 330],
+      implicitH: 2,
+    });
+    const padding = FONT_PX * 0.2;
+
+    reatom.getSelectionContour(render as never);
+
+    const [, y, , height] = paper.rect.mock.calls[0];
     expect(height).toBeCloseTo(2 * FONT_PX + 2 * padding);
     expect(y).toBeCloseTo(-1.5 * FONT_PX - padding);
   });
@@ -401,6 +438,31 @@ describe('ReAtom bond trimming with hydrogens', () => {
       expect(shifted.y).toBeCloseTo(reference.y);
     });
   });
+
+  it.each([41, 44])(
+    'does not shorten a bond at %s degrees because of the count of top hydrogens',
+    (angleDeg) => {
+      // An atom with bonds at this angle and at 180 degrees has its hydrogens
+      // on top; the bond passes through the box of the count but not the symbol.
+      const bondAnglesDeg = [angleDeg, 180];
+      const withHydrogens = showAtom({ bondAnglesDeg, implicitH: 2 });
+      const withoutHydrogens = showAtom({ bondAnglesDeg, implicitH: 0 });
+      const direction = canvasDirection(angleDeg);
+
+      const shifted = withHydrogens.reatom.getShiftedSegmentPosition(
+        options,
+        direction,
+      );
+      const reference = withoutHydrogens.reatom.getShiftedSegmentPosition(
+        options,
+        direction,
+      );
+
+      expect(withHydrogens.reatom.hydrogenSide).toBe('top');
+      expect(shifted.x).toBeCloseTo(reference.x);
+      expect(shifted.y).toBeCloseTo(reference.y);
+    },
+  );
 
   it('does not shorten a bond that points away from hydrogens on the right', () => {
     const withHydrogens = showAtom({ bondAnglesDeg: [210], implicitH: 2 });

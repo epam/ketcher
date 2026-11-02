@@ -147,7 +147,6 @@ export interface Element {
   origin: string;
   type?: string;
   mass: number;
-  leftH?: boolean;
 }
 
 /**

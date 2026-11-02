@@ -41,7 +41,6 @@ import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
 import {
   Scale,
-  bondAngleDeg,
   getImplicitHydrogenSide,
   isAttachmentGroupWithHapticBond,
   type ImplicitHydrogenSide,
@@ -702,11 +701,18 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         hydroIndex = data.hydroIndex;
         rightMargin = data.rightMargin;
         leftMargin = data.leftMargin;
+        // A bond stops at the symbol it reaches. Stacked hydrogens sit over or
+        // under the symbol, not beside it, so they stay out of the visel exts
+        // that trim bonds; their boxes still count for hover and selection.
+        const hydrogenExtOrigin =
+          this.hydrogenSide === 'top' || this.hydrogenSide === 'bottom'
+            ? null
+            : ps;
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
           hydrogen.path,
-          ps,
+          hydrogenExtOrigin,
           true,
         );
         if (hydroIndex != null) {
@@ -714,7 +720,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             LayerMap.data,
             this.visel,
             hydroIndex.path,
-            ps,
+            hydrogenExtOrigin,
             true,
           );
         }
@@ -1620,14 +1626,14 @@ function shouldDisplayHydrogen(
 }
 
 function getHydrogenSide(struct: Struct, atom: ReAtom): ImplicitHydrogenSide {
-  const bondAngles = getVisibleNeighborHalfBondIds(struct, atom).flatMap(
+  const bondDirections = getVisibleNeighborHalfBondIds(struct, atom).flatMap(
     (neighborHalfBondId) => {
       const halfBond = struct.halfBonds.get(neighborHalfBondId);
-      return halfBond ? [bondAngleDeg(halfBond.dir)] : [];
+      return halfBond ? [halfBond.dir] : [];
     },
   );
 
-  return getImplicitHydrogenSide(bondAngles, atom.a.radical !== 0);
+  return getImplicitHydrogenSide(bondDirections, atom.a.radical !== 0);
 }
 
 function getVisibleNeighborHalfBondIds(struct: Struct, atom: ReAtom): number[] {

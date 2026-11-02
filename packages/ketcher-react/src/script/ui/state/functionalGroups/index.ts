@@ -32,7 +32,7 @@ import { MODES } from 'src/constants';
 
 export type FunctionalGroupInfo =
   | InfoPanelData
-  | { groupStruct: null; sGroup: null }
+  | Record<keyof Omit<InfoPanelData, 'event'>, null>
   | { group: null; id: null };
 
 export interface FGState {

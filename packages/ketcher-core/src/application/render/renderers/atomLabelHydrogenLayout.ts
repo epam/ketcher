@@ -19,7 +19,9 @@ import type { ImplicitHydrogenSide } from 'domain/helpers';
 
 // SVG text mechanics of macromolecules mode for implicit hydrogens drawn on
 // top of or below the atom symbol. Which side to use is decided by
-// getImplicitHydrogenSide; this file only draws it.
+// getImplicitHydrogenSide; this file only draws it. The renderer keeps what
+// appendStackedHydrogenLabel returns, so later steps find the lines of the
+// label without reading the DOM back.
 
 type TextSelection = D3SvgElementSelection<SVGTextElement, void>;
 type TspanSelection = D3SvgElementSelection<SVGTSpanElement, void>;
@@ -37,11 +39,21 @@ const COUNT_HALF_DIGIT = 3.6;
 const COUNT_GAP = 1;
 const ISOTOPE_RISE = 4;
 
-export const STACKED_LABEL_CLASS = 'atom-label';
-const STACKED_COUNT_CLASS = 'atom-hydrogen-count';
-
 export function isStackedSide(side: ImplicitHydrogenSide): boolean {
   return side === 'top' || side === 'bottom';
+}
+
+/** The lines of a stacked label, as drawn by appendStackedHydrogenLabel. */
+export interface StackedLabel {
+  hydrogen: TspanSelection;
+  count?: TspanSelection;
+  symbol: TspanSelection;
+  /**
+   * Where a text that follows the symbol must start so it clears the count of
+   * H. Undefined when H has no count: nothing collides and the text follows
+   * the symbol as usual.
+   */
+  startAfterCount?: number;
 }
 
 /**
@@ -60,25 +72,38 @@ export function appendStackedHydrogenLabel(
     hydrogenAmount: number;
     labelText: string;
   },
-): void {
+): StackedLabel {
   const hydrogenDy = side === 'top' ? -LINE_HEIGHT : LINE_HEIGHT;
   const hasCount = hydrogenAmount > 1;
 
-  text.append('tspan').attr('x', 0).attr('dy', hydrogenDy).text('H');
-  if (hasCount) {
-    text
-      .append('tspan')
-      .attr('class', STACKED_COUNT_CLASS)
-      .attr('x', COUNT_OFFSET_X)
-      .attr('dy', COUNT_DROP)
-      .text(hydrogenAmount);
-  }
-  text
+  const hydrogen = text
     .append('tspan')
-    .attr('class', STACKED_LABEL_CLASS)
+    .attr('x', 0)
+    .attr('dy', hydrogenDy)
+    .text('H');
+  const count = hasCount
+    ? text
+        .append('tspan')
+        .attr('x', COUNT_OFFSET_X)
+        .attr('dy', COUNT_DROP)
+        .text(hydrogenAmount)
+    : undefined;
+  const symbol = text
+    .append('tspan')
     .attr('x', 0)
     .attr('dy', -hydrogenDy - (hasCount ? COUNT_DROP : 0))
     .text(labelText);
+
+  return {
+    hydrogen,
+    count,
+    symbol,
+    startAfterCount: hasCount
+      ? COUNT_OFFSET_X +
+        String(hydrogenAmount).length * COUNT_HALF_DIGIT +
+        COUNT_GAP
+      : undefined,
+  };
 }
 
 /**
@@ -86,49 +111,59 @@ export function appendStackedHydrogenLabel(
  * start (`x` and the move from the H line) and the symbol follows it.
  */
 export function startSymbolLineWithIsotope(
-  text: TextSelection,
+  { symbol }: StackedLabel,
   isotope: TspanSelection,
 ): void {
-  const label = text.select<SVGTSpanElement>(`tspan.${STACKED_LABEL_CLASS}`);
   isotope
-    .attr('x', label.attr('x'))
-    .attr('dy', Number(label.attr('dy')) - ISOTOPE_RISE);
-  label.attr('x', null).attr('dy', ISOTOPE_RISE);
+    .attr('x', symbol.attr('x'))
+    .attr('dy', Number(symbol.attr('dy')) - ISOTOPE_RISE);
+  symbol.attr('x', null).attr('dy', ISOTOPE_RISE);
 }
 
 /**
  * Charge and valence follow the symbol and share its centred run of text, so
- * they land under the count of H. When the label has a count, the first of
- * them starts its own run, left-aligned right of the count, and the ones after
- * it follow it. Without a count nothing collides and the run stays as it is.
+ * they land under the count of H. The first of them starts its own run,
+ * left-aligned right of the count; the ones after it follow it. The caller
+ * passes only that first one. Without a count nothing collides and the run
+ * stays as it is.
  */
-export function startPropertyRunBesideCount(
-  text: TextSelection,
-  property: TspanSelection,
+export function startPropertyRunAfterCount(
+  { startAfterCount }: StackedLabel,
+  firstProperty: TspanSelection,
 ): void {
-  const count = text.select<SVGTSpanElement>(`tspan.${STACKED_COUNT_CLASS}`);
-  const startsAfterSymbol = property
-    .node()
-    ?.previousElementSibling?.classList.contains(STACKED_LABEL_CLASS);
-  if (count.empty() || !startsAfterSymbol) {
+  if (startAfterCount === undefined) {
     return;
   }
-  const countRight =
-    Number(count.attr('x')) + count.text().length * COUNT_HALF_DIGIT;
-  property.attr('x', countRight + COUNT_GAP).attr('text-anchor', 'start');
+  firstProperty.attr('x', startAfterCount).attr('text-anchor', 'start');
+}
+
+export interface LabelBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 /**
- * Top edge of the hover and selection contour, relative to the atom. The
- * contour of a side-by-side label is centred on the atom; a stacked label has
- * an extra line, so its contour follows the measured text box. `height` falls
- * back to 8 like the contour rectangles do while the text is not measured.
+ * The rectangle that wraps the label for hover, selection and the bad-valence
+ * line, grown by `padding`. A side-by-side label is centred on the atom, so
+ * its rectangle is centred too; a stacked label has an extra line, so its
+ * rectangle follows the measured text box. Size falls back to 8 while the text
+ * is not measured.
  */
-export function labelContourTop(
-  side: ImplicitHydrogenSide,
-  labelBox?: { y: number; height: number },
-): number {
-  return isStackedSide(side)
-    ? (labelBox?.y ?? 0)
-    : -((labelBox?.height || 8) / 2);
+export function labelContourRect(
+  isStacked: boolean,
+  labelBox: LabelBox | undefined,
+  padding: number,
+): LabelBox {
+  const width = labelBox?.width ?? 8;
+  const height = labelBox?.height ?? 8;
+  const top = isStacked ? (labelBox?.y ?? 0) : -(height / 2);
+
+  return {
+    x: (labelBox?.x ?? 0) - padding,
+    y: top - padding,
+    width: width + padding * 2,
+    height: height + padding * 2,
+  };
 }

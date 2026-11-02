@@ -31,16 +31,19 @@ import {
 import {
   appendStackedHydrogenLabel,
   isStackedSide,
-  labelContourTop,
-  STACKED_LABEL_CLASS,
-  startPropertyRunBesideCount,
+  labelContourRect,
+  type StackedLabel,
+  startPropertyRunAfterCount,
   startSymbolLineWithIsotope,
 } from 'application/render/renderers/atomLabelHydrogenLayout';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
 const MAX_LABEL_LENGTH = 8;
+const HOVER_PADDING = 4;
+const HOVER_RECTANGLE_RADIUS = 10;
 
 export type AtomHoverContour =
   | {
@@ -65,6 +68,12 @@ export class AtomRenderer extends BaseRenderer {
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
+
+  // What appendLabel drew. Contours, the bad-valence line and the atom
+  // properties follow the drawn label, not the bonds as they are now: a bond
+  // can change before the label is redrawn.
+  private labelHydrogenSide: ImplicitHydrogenSide = 'right';
+  private stackedLabel?: StackedLabel;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
@@ -177,20 +186,14 @@ export class AtomRenderer extends BaseRenderer {
         void
       >;
     } else {
-      const labelBbox = this.textElement?.node()?.getBBox();
-      const labelX = labelBbox?.x ?? 0;
-      const labelWidth = labelBbox?.width ?? 8;
-      const labelHeight = labelBbox?.height ?? 8;
-      const labelTop = labelContourTop(this.hydrogenSide, labelBbox);
-      const HOVER_PADDING = 4;
-      const HOVER_RECTANGLE_RADIUS = 10;
+      const contour = this.labelContour(this.textElement?.node()?.getBBox());
 
       return this.rootElement
         ?.insert('rect', ':first-child')
-        .attr('x', labelX - HOVER_PADDING)
-        .attr('y', labelTop - HOVER_PADDING)
-        .attr('width', labelWidth + HOVER_PADDING * 2)
-        .attr('height', labelHeight + HOVER_PADDING * 2)
+        .attr('x', contour.x)
+        .attr('y', contour.y)
+        .attr('width', contour.width)
+        .attr('height', contour.height)
         .attr('rx', HOVER_RECTANGLE_RADIUS)
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
@@ -210,22 +213,20 @@ export class AtomRenderer extends BaseRenderer {
       };
     }
 
-    const labelBbox = this.textElement?.node()?.getBBox();
-    const labelX = labelBbox?.x ?? 0;
-    const labelWidth = labelBbox?.width ?? 8;
-    const labelHeight = labelBbox?.height ?? 8;
-    const labelTop = labelContourTop(this.hydrogenSide, labelBbox);
-    const HOVER_PADDING = 4;
-    const HOVER_RECTANGLE_RADIUS = 10;
+    const contour = this.labelContour(this.textElement?.node()?.getBBox());
 
     return {
       type: 'rect',
-      x: this.center.x + labelX - HOVER_PADDING,
-      y: this.center.y + labelTop - HOVER_PADDING,
-      width: labelWidth + HOVER_PADDING * 2,
-      height: labelHeight + HOVER_PADDING * 2,
+      x: this.center.x + contour.x,
+      y: this.center.y + contour.y,
+      width: contour.width,
+      height: contour.height,
       radius: HOVER_RECTANGLE_RADIUS,
     };
+  }
+
+  private labelContour(labelBox: DOMRect | undefined, padding = HOVER_PADDING) {
+    return labelContourRect(this.stackedLabel !== undefined, labelBox, padding);
   }
 
   /**
@@ -237,19 +238,15 @@ export class AtomRenderer extends BaseRenderer {
     const labelBbox = this.textElement.node()?.getBBox();
     if (!labelBbox) return;
 
-    const labelX = labelBbox.x || 0;
-    const labelWidth = labelBbox.width || 8;
-    const labelHeight = labelBbox.height || 8;
-    const labelTop = labelContourTop(this.hydrogenSide, labelBbox);
-    const HOVER_PADDING = 4;
+    const contour = this.labelContour(labelBbox);
 
     const rect = this.rootElement.select('rect');
     if (rect?.node()) {
       rect
-        .attr('x', labelX - HOVER_PADDING)
-        .attr('y', labelTop - HOVER_PADDING)
-        .attr('width', labelWidth + HOVER_PADDING * 2)
-        .attr('height', labelHeight + HOVER_PADDING * 2);
+        .attr('x', contour.x)
+        .attr('y', contour.y)
+        .attr('width', contour.width)
+        .attr('height', contour.height);
     }
   }
 
@@ -300,14 +297,42 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   // Same rule as molecules mode (ReAtom.hydrogenSide): the helper decides.
-  private get hydrogenSide(): ImplicitHydrogenSide {
+  // This is the side for the bonds as they are now; the side that was drawn is
+  // labelHydrogenSide.
+  private computeHydrogenSide(): ImplicitHydrogenSide {
     const halfEdges =
       provideEditorInstance().viewModel.atomsToHalfEdges.get(this.atom) ?? [];
+    // The view model is built from atom-to-atom bonds only. A bond to a monomer
+    // takes room around the atom like any other bond, so it counts here.
+    const monomerDirections = this.atom.bonds
+      .filter((bond) => bond instanceof MonomerToAtomBond)
+      .map((bond) => Vec2.diff(bond.monomer.position, this.atom.position));
 
     return getImplicitHydrogenSide(
-      halfEdges.map((halfEdge) => bondAngleDeg(halfEdge.direction)),
+      [
+        ...halfEdges.map((halfEdge) => halfEdge.direction),
+        ...monomerDirections,
+      ].map(bondAngleDeg),
       this.atom.hasRadical,
     );
+  }
+
+  /**
+   * Redraws the label when the bonds now put the hydrogens on another side than
+   * the one drawn. Returns whether it redrew, so the caller can trim the bonds
+   * of the atom against the new label.
+   */
+  public redrawLabelIfHydrogenSideChanged(): boolean {
+    if (
+      !this.rootElement ||
+      this.computeHydrogenSide() === this.labelHydrogenSide
+    ) {
+      return false;
+    }
+
+    this.redrawLabel();
+
+    return true;
   }
 
   public get labelText() {
@@ -424,7 +449,29 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias ? 'black' : ElementColor[this.atom.label];
   }
 
+  /** Every box the label occupies, the hydrogens drawn on top or below too. */
   public get labelBBoxes() {
+    return this.collectLabelBBoxes(() => true);
+  }
+
+  /**
+   * The boxes that stop a bond: the label without the hydrogens of a stacked
+   * label. A bond never points into the free quadrant that holds them, and the
+   * count of H would otherwise stop a bond at 30 or 150 degrees short of the
+   * symbol. Hydrogens beside the symbol stay: they are part of its text run.
+   */
+  public get bondTrimBBoxes() {
+    const hydrogenLine = new Set<SVGTSpanElement | null | undefined>([
+      this.stackedLabel?.hydrogen.node(),
+      this.stackedLabel?.count?.node(),
+    ]);
+
+    return this.collectLabelBBoxes((tspan) => !hydrogenLine.has(tspan));
+  }
+
+  private collectLabelBBoxes(
+    includeTspan: (tspan: SVGTSpanElement) => boolean,
+  ) {
     // TODO calculate label bboxes after creation of text element
     //  and store them in atom renderer to optimize performance
     if (!this.textElement) {
@@ -437,7 +484,9 @@ export class AtomRenderer extends BaseRenderer {
     this.textElement
       .selectAll<SVGTSpanElement, this>('tspan')
       .each(function (_atomRenderer, tspanIndex, tspans) {
-        labelBboxes.push(tspans[tspanIndex].getBBox());
+        if (includeTspan(tspans[tspanIndex])) {
+          labelBboxes.push(tspans[tspanIndex].getBBox());
+        }
       });
 
     if (radicalElementBbox) {
@@ -457,12 +506,15 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendLabel() {
+    const hydrogenSide = this.computeHydrogenSide();
+    this.labelHydrogenSide = hydrogenSide;
+    this.stackedLabel = undefined;
+
     if (!this.isLabelVisible) {
       return;
     }
 
     let { hydrogenAmount } = this.atom.calculateValence();
-    const hydrogenSide = this.hydrogenSide;
     const shouldHydrogenBeOnLeft = hydrogenSide === 'left';
 
     if (!this.shouldDisplayHydrogen) {
@@ -492,7 +544,7 @@ export class AtomRenderer extends BaseRenderer {
       !isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias;
 
     if (textElement && hasSeparateHydrogen && isStackedSide(hydrogenSide)) {
-      appendStackedHydrogenLabel(textElement, {
+      this.stackedLabel = appendStackedHydrogenLabel(textElement, {
         side: hydrogenSide,
         hydrogenAmount,
         labelText: this.displayLabelText,
@@ -631,7 +683,8 @@ export class AtomRenderer extends BaseRenderer {
         .attr('fill', this.labelColor)
         .attr('dy', -4);
 
-      this.startBesideStackedCount(chargeElement);
+      // The charge is the first text after the symbol.
+      this.startPropertyRunAfterStackedCount(chargeElement);
     }
   }
 
@@ -689,15 +742,18 @@ export class AtomRenderer extends BaseRenderer {
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
 
-      this.startBesideStackedCount(valenceElement);
+      // The charge, when there is one, already started the run.
+      if (!this.atom.hasCharge) {
+        this.startPropertyRunAfterStackedCount(valenceElement);
+      }
     }
   }
 
-  private startBesideStackedCount(
-    property?: D3SvgElementSelection<SVGTSpanElement, void>,
+  private startPropertyRunAfterStackedCount(
+    firstProperty?: D3SvgElementSelection<SVGTSpanElement, void>,
   ) {
-    if (this.textElement && property) {
-      startPropertyRunBesideCount(this.textElement, property);
+    if (this.stackedLabel && firstProperty) {
+      startPropertyRunAfterCount(this.stackedLabel, firstProperty);
     }
   }
 
@@ -705,25 +761,23 @@ export class AtomRenderer extends BaseRenderer {
     if (this.atom.hasExplicitIsotope) {
       const explicitIsotope = this.atom.properties.isotope as number;
 
-      // A stacked layout puts the isotope on the symbol line, before the symbol.
-      const stackedLabel = this.textElement
-        ?.select<SVGTSpanElement>(`tspan.${STACKED_LABEL_CLASS}`)
-        .node();
+      const stackedLabel = this.stackedLabel;
+      const symbolNode = stackedLabel?.symbol.node();
       const isotopeElement = this.textElement
         /*
-         * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
-         * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
+         * TODO: A stacked label puts the isotope in front of the symbol (H, then 15N), as in micro mode. A label with the hydrogen on the left still puts it in front of everything (1H3C instead of H31C): micro mode places it before the symbol, not the hydrogen.
+         * To fix the left case, insert before the symbol tspan there too instead of :first-child.
          * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
          * Probably we could consider another approach for positioning the atom properties?
          */
-        ?.insert('tspan', stackedLabel ? () => stackedLabel : ':first-child')
+        ?.insert('tspan', symbolNode ? () => symbolNode : ':first-child')
         .text(explicitIsotope)
         .attr('fill', this.labelColor)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
 
-      if (this.textElement && stackedLabel && isotopeElement) {
-        startSymbolLineWithIsotope(this.textElement, isotopeElement);
+      if (stackedLabel && isotopeElement) {
+        startSymbolLineWithIsotope(stackedLabel, isotopeElement);
       }
     }
   }
@@ -745,10 +799,9 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const lineY =
-      labelContourTop(this.hydrogenSide, labelBbox) +
-      labelBbox.height +
-      BAD_VALENCE_LINE_OFFSET;
+    // The unpadded contour: its bottom edge is the bottom of the label.
+    const contour = this.labelContour(labelBbox, 0);
+    const lineY = contour.y + contour.height + BAD_VALENCE_LINE_OFFSET;
     const lineStartX = labelBbox.x;
     const lineEndX = labelBbox.x + labelBbox.width;
 

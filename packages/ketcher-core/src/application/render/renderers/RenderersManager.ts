@@ -104,6 +104,16 @@ export class RenderersManager {
           bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom;
         connectedAtom.renderer?.move();
       });
+
+      // The bond directions of the moved atom and of its neighbours changed.
+      this.redrawLabelForChangedHydrogenSide(drawingEntity);
+      drawingEntity.bonds.forEach((bond) => {
+        if (bond instanceof Bond) {
+          this.redrawLabelForChangedHydrogenSide(
+            bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom,
+          );
+        }
+      });
     }
 
     drawingEntity.baseRenderer.drawSelection();
@@ -137,6 +147,24 @@ export class RenderersManager {
   public moveMonomer(monomer: BaseMonomer) {
     monomer.renderer?.move();
     monomer.renderer?.drawSelection();
+
+    // The direction of a bond to the monomer changed for its atom.
+    monomer.monomerToAtomBonds.forEach((bond) =>
+      this.redrawLabelForChangedHydrogenSide(bond.atom),
+    );
+  }
+
+  /**
+   * An atom's label puts the implicit hydrogens on the side the bonds leave
+   * free. When the bonds or their directions changed, redraw the label if that
+   * side is another one, and trim the bonds of the atom against the new label.
+   */
+  private redrawLabelForChangedHydrogenSide(atom: Atom) {
+    if (!atom.renderer?.redrawLabelIfHydrogenSideChanged()) {
+      return;
+    }
+
+    atom.bonds.forEach((bond) => bond.renderer?.move());
   }
 
   public redrawDrawingEntity(
@@ -478,6 +506,9 @@ export class RenderersManager {
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
+
+    this.redrawLabelForChangedHydrogenSide(bond.firstAtom);
+    this.redrawLabelForChangedHydrogenSide(bond.secondAtom);
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {

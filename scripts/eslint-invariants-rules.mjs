@@ -92,13 +92,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/entities/snake-layout-model/SnakeLayoutModel.ts',
-    imports: [
-      'application/editor/editorSettings',
-      'application/editor/editorSingleton',
-    ],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/serializers/ket/fromKet/polymerBondToDrawingEntity.ts',
     imports: ['application/editor/editorSingleton'],
   },

@@ -132,7 +132,6 @@ function buildSharedParams(overrides: AttachmentPointOverrides) {
     canvas,
     attachmentPointName,
     isUsed: overrides.isUsed ?? false,
-    isPotentiallyUsed: false,
     angle: overrides.angle ?? 0,
     isSnake: overrides.isSnake ?? false,
     applyZoomForPositionCalculation:

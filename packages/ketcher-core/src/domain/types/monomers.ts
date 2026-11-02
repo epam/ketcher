@@ -106,7 +106,6 @@ export type AttachmentPointConstructorParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
   attachmentPointName: AttachmentPointName;
   isUsed: boolean;
-  isPotentiallyUsed: boolean;
   angle: number;
   isSnake: boolean;
   applyZoomForPositionCalculation: boolean;

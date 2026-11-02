@@ -214,17 +214,15 @@ describe('DrawingEntitiesManager.applySnakeLayout', () => {
 
       layoutAtScale(DEFAULT_MACRO_MODE_SCALE);
 
-      const positionsOf = (nucleotide: Nucleotide) => ({
-        sugar: nucleotide.sugar.position,
-        base: nucleotide.rnaBase.position,
-        phosphate: nucleotide.phosphate?.position,
-      });
       const round = (nucleotide: Nucleotide) => {
-        const { sugar, base, phosphate } = positionsOf(nucleotide);
         const xy = (position?: Vec2) =>
           position && [position.x, position.y].map((n) => Math.round(n * 1000));
 
-        return { sugar: xy(sugar), base: xy(base), phosphate: xy(phosphate) };
+        return {
+          sugar: xy(nucleotide.sugar.position),
+          base: xy(nucleotide.rnaBase.position),
+          phosphate: xy(nucleotide.phosphate?.position),
+        };
       };
 
       // x and y times 1000, pinned from the code at cf8b6cc8ff

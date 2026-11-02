@@ -28,7 +28,7 @@ const buildHydrogenBondedPeptides = () => {
   return { sense, antisense, chainsCollection };
 };
 
-const buildSnakeLayoutModel = (
+const collectNodes = (
   chainsCollection: ChainsCollection,
   drawingEntitiesManager: DrawingEntitiesManager,
 ) => {
@@ -38,13 +38,12 @@ const buildSnakeLayoutModel = (
     CELL_WIDTH_IN_ANGSTROMS,
     false,
   );
-  const twoStrandedNodes: Parameters<
-    Parameters<SnakeLayoutModel['forEachNode']>[0]
-  >[0][] = [];
+  const nodes: Parameters<Parameters<SnakeLayoutModel['forEachNode']>[0]>[0][] =
+    [];
 
-  model.forEachNode((node) => twoStrandedNodes.push(node));
+  model.forEachNode((node) => nodes.push(node));
 
-  return twoStrandedNodes;
+  return nodes;
 };
 
 describe('SnakeLayoutModel', () => {
@@ -60,10 +59,7 @@ describe('SnakeLayoutModel', () => {
       senseChain as NonNullable<typeof senseChain>,
     );
 
-    const nodes = buildSnakeLayoutModel(
-      chainsCollection,
-      drawingEntitiesManager,
-    );
+    const nodes = collectNodes(chainsCollection, drawingEntitiesManager);
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].senseNode?.monomers).toEqual([sense]);
@@ -73,10 +69,7 @@ describe('SnakeLayoutModel', () => {
   it('leaves an antisense monomer unpaired when the given manager does not map it', () => {
     const { sense, chainsCollection } = buildHydrogenBondedPeptides();
 
-    const nodes = buildSnakeLayoutModel(
-      chainsCollection,
-      new DrawingEntitiesManager(),
-    );
+    const nodes = collectNodes(chainsCollection, new DrawingEntitiesManager());
 
     expect(nodes).toHaveLength(1);
     expect(nodes[0].senseNode?.monomers).toEqual([sense]);

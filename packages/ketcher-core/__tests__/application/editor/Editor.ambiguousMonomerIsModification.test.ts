@@ -20,7 +20,7 @@ describe('AmbiguousMonomer.isModification through a CoreEditor library', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
   let isEditorDestroyed: boolean;
-  let addedLibraryItems: AmbiguousMonomerType[];
+  let addedLibraryItems: MonomerItemType[];
 
   const createMonomer = (label: string) =>
     ({
@@ -52,8 +52,10 @@ describe('AmbiguousMonomer.isModification through a CoreEditor library', () => {
 
   // The library array is typed for monomers, though it also holds ambiguous items.
   const addToLibrary = (item: AmbiguousMonomerType) => {
-    editor.monomersLibrary.push(item as unknown as MonomerItemType);
-    addedLibraryItems.push(item);
+    const libraryItem = item as unknown as MonomerItemType;
+
+    editor.monomersLibrary.push(libraryItem);
+    addedLibraryItems.push(libraryItem);
   };
 
   const createVariantMonomer = (
@@ -79,9 +81,7 @@ describe('AmbiguousMonomer.isModification through a CoreEditor library', () => {
 
   afterEach(() => {
     addedLibraryItems.forEach((item) => {
-      const index = editor.monomersLibrary.indexOf(
-        item as unknown as MonomerItemType,
-      );
+      const index = editor.monomersLibrary.indexOf(item);
 
       if (index !== -1) {
         editor.monomersLibrary.splice(index, 1);

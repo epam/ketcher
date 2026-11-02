@@ -11,11 +11,14 @@ import {
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { MonomerType } from '@utils/index';
+import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constants';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -629,66 +632,54 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await dialog.discard();
   });
 
-  test('Case 10 - Verify existing presets with valid codes still save successfully after introducing new validation rules', async () => {
+  test('Case 10 - Verify an existing preset with a valid code can be reopened and saved', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10009
      * Description: Verify existing presets with valid codes still save successfully after introducing new validation rules
      * Scenario:
-     * 1. Open an existing preset created before this change that has a valid Code according to new rules
-     * 2. Open it in the wizard without changing the Code
-     * 3. Click 'Save' / 'Finish'
+     * 1. Duplicate a built-in preset with a valid Code and save the copy
+     * 2. Open the saved preset for editing from the RNA library
+     * 3. Verify its Code is preserved and save it without changing the Code
      *
-     * Expected: Existing presets with valid codes save successfully without triggering new validation errors
+     * Expected: The existing preset can be reopened and saved without validation errors
      *
      * Version 3.14.0
      */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-
-    // Create a preset with a valid code according to new rules
-    await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
-    await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    await presetSection.setName('EXISTING_CODE-123_*'); // Valid according to new rules
-    await presetSection.setupSugar({
-      atomIds: [2, 3],
-      bondIds: [2],
-      code: 'ExS',
-      name: 'Existing Sugar',
-    });
-    await presetSection.setupBase({
-      atomIds: [0, 1],
-      bondIds: [0],
-      code: 'ExB',
-      name: 'Existing Base',
-      naturalAnalogue: NucleotideNaturalAnalogue.A,
-    });
-    await presetSection.setupPhosphate({
-      atomIds: [4, 5],
-      bondIds: [4],
-      code: 'ExP',
-      name: 'Existing Phosphate',
-    });
-
-    // Save the preset (simulates existing preset created before validation changes)
-    await dialog.submit();
-
-    // Verify preset was created successfully without validation errors
-    await expect(
-      page.locator('.notification-message-banner').filter({
-        hasText: 'error',
-      }),
-    ).not.toBeVisible();
-
-    // Verify preset exists in library
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    const existingPreset = {
-      alias: 'EXISTING_CODE-123_*',
-      testId: 'EXISTING_CODE-123_*_ExB_ExS_ExP',
+    const library = Library(page);
+    await library.goToMonomerLibraryLocation(Preset.A);
+    await ContextMenu(
+      page,
+      library.getMonomerLibraryCardLocator(Preset.A),
+    ).click(LibraryPresetOption.DuplicateAndEdit);
+
+    const rnaBuilder = library.rnaBuilder;
+    await rnaBuilder.expand();
+    const presetCopy = {
+      alias: `${Preset.A.alias}_Copy`,
+      testId: 'A_Copy_A_R_P',
       monomerType: MonomerType.Preset,
     };
-    await expect(
-      Library(page).isMonomerExist(existingPreset),
-    ).resolves.toBeTruthy();
+    await expect(rnaBuilder.rnaEditorBody).toBeVisible();
+    await expect(rnaBuilder.nameYourStructureEditbox).toHaveValue(
+      presetCopy.alias,
+    );
+    await rnaBuilder.save();
+
+    // Reopen the saved custom preset and save it again without changing its code
+    await expect(library.isMonomerExist(presetCopy)).resolves.toBeTruthy();
+    await ContextMenu(
+      page,
+      library.getMonomerLibraryCardLocator(presetCopy),
+    ).click(LibraryPresetOption.Edit);
+    await rnaBuilder.expand();
+    await expect(rnaBuilder.nameYourStructureEditbox).toHaveValue(
+      presetCopy.alias,
+    );
+    await rnaBuilder.save();
+
+    // Verify the existing preset remains available after editing and saving
+    await expect(library.isMonomerExist(presetCopy)).resolves.toBeTruthy();
   });
 
   test('Case 11 - Verify IDT and AxoLabs aliases for presets follow same uniqueness and validation rules as for monomers', async () => {

@@ -58,7 +58,7 @@ const findMaps: Record<string, FindMapFn> = {
   enhancedFlags: findClosestEnhancedFlag,
   sgroupData: findClosestDataSGroupData,
   sgroups: findClosestSGroup,
-  functionalGroups: findClosestFG,
+  functionalGroups: (restruct, pos, skip) => findClosestFG(restruct, pos, skip),
   rxnArrows: findClosestRxnArrow,
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
@@ -579,7 +579,12 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
   return null;
 }
 
-function findClosestFG(restruct: ReStruct, pos: Vec2, skip: SkipItem | null) {
+function findClosestFG(
+  restruct: ReStruct,
+  pos: Vec2,
+  skip: SkipItem | null,
+  excludedAtomIds: number[] = [],
+) {
   const sGroups = restruct.sgroups;
   const skipId = skip?.map === 'functionalGroups' ? skip.id : null;
   for (const [reSGroupId, reSGroup] of sGroups.entries()) {
@@ -597,6 +602,9 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip: SkipItem | null) {
       const dist = Vec2.dist(rectangleCenter, cursorPosition);
       const sGroupItem = reSGroup.item;
       assert(sGroupItem, `ReSGroup ${reSGroupId} has no item`);
+      if (sGroupItem.atoms.some((atomId) => excludedAtomIds.includes(atomId))) {
+        continue;
+      }
       const { id } = sGroupItem;
       return { id, dist };
     }
@@ -710,7 +718,13 @@ function findCloseMerge(
           result,
         );
         if (!merged) {
-          didMergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
+          didMergeAtomToFunctionalGroup(
+            atomId,
+            restruct,
+            atomPosition,
+            selected.atoms,
+            result,
+          );
         }
       });
     } else {
@@ -757,6 +771,7 @@ function mergeAtomToAtom(
  * @param atomId { number }
  * @param restruct { ReStruct }
  * @param atomPosition { Vec2 }
+ * @param selectedAtomIds { number[] }
  * @param result { Object } Mutating arguments!!!
  * @return {boolean}
  */
@@ -764,6 +779,7 @@ function didMergeAtomToFunctionalGroup(
   atomId: number,
   restruct: ReStruct,
   atomPosition: Vec2,
+  selectedAtomIds: number[],
   result: MergeResult,
 ) {
   const sgroup = restruct.molecule.getGroupFromAtomId(atomId);
@@ -772,7 +788,12 @@ function didMergeAtomToFunctionalGroup(
     return false;
   }
 
-  const closestFunctionalGroup = findClosestFG(restruct, atomPosition, null);
+  const closestFunctionalGroup = findClosestFG(
+    restruct,
+    atomPosition,
+    null,
+    selectedAtomIds,
+  );
   if (closestFunctionalGroup) {
     result.atomToFunctionalGroup.set(atomId, closestFunctionalGroup.id);
     return true;

@@ -43,7 +43,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. Create or edit a preset (e.g., type 'Nucleotide (preset)')
      * 3. Navigate to the tab/section where preset main identifier is entered
      * 4. Inspect the label of the primary text field at the top of the preset section
-     * 
+     *
      * Expected: The primary preset identifier field is labeled 'Code' (not 'Name')
      *
      * Version 3.14.0
@@ -53,21 +53,15 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Navigate to the preset tab where the main identifier is entered
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    
-    // Verify the field label is 'Code' not 'Name'
+
     const codeField = page.getByTestId('code-input');
     await expect(codeField).toBeVisible();
-    
-    // Check that the associated label contains 'Code'
-    const codeFieldLabel = page.locator('label').filter({ has: codeField }).or(
-      page.locator('label[for*="code"]')
-    ).or(
-      page.locator('text=Code').locator('..').filter({ has: codeField })
+    await expect(codeField.locator('xpath=..').locator('p')).toHaveText(
+      /^Code\s*\*?$/,
     );
-    await expect(codeFieldLabel.first()).toContainText(/Code/i);
 
     await dialog.discard();
   });
@@ -81,8 +75,8 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. Leave the 'Code' field completely empty
      * 3. Fill in all other required fields for saving a preset
      * 4. Click 'Save' / 'Finish' in the wizard
-     * 
-     * Expected: Saving is blocked. Error message appears: 'Mandatory fields must be filled.' 
+     *
+     * Expected: Saving is blocked. Error message appears: 'Mandatory fields must be filled.'
      * The Code field and preset tab are highlighted in red
      *
      * Version 3.14.0
@@ -92,7 +86,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Leave preset code empty but fill other required components
     await presetSection.setupSugar({
       atomIds: [2, 3],
@@ -123,16 +117,18 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
       ErrorMessage.emptyMandatoryFields,
     );
     await expect(errorNotification.notificationMessageBanner).toBeVisible();
-    expect(
-      await errorNotification.getNotificationMessage(),
-    ).toContain('Mandatory fields must be filled');
+    expect(await errorNotification.getNotificationMessage()).toEqual(
+      'Mandatory fields must be filled.',
+    );
 
     // Verify dialog stays open
     await expect(dialog.window).toBeVisible();
 
     // Verify preset tab and code field are highlighted in red
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(/errorTab/);
+    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
+      /errorTab/,
+    );
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
     await errorNotification.ok();
@@ -149,7 +145,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 3. Enter Code 'PRESET1' for the new preset
      * 4. Fill in all other required fields
      * 5. Attempt to save the second preset
-     * 
+     *
      * Expected: Saving blocked with error: 'The preset code must be unique amongst other presets.'
      * Code field and preset tab highlighted in red
      *
@@ -213,17 +209,27 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await dialog.submit();
 
     // Verify uniqueness validation error appears
-    const errorNotification = page.locator('.notification-message-banner').filter({
-      hasText: 'unique',
-    });
+    const errorNotification = page.getByTestId(
+      'notification-notUniquePresetCode-message-banner',
+    );
     await expect(errorNotification).toBeVisible();
-    
+    expect(
+      await errorNotification
+        .getByTestId('notification-message-body')
+        .textContent(),
+    ).toEqual('The preset code must be unique amongst other presets.');
+
     // Verify dialog stays open and fields are highlighted
     await expect(dialog.window).toBeVisible();
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(/errorTab/);
+    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
+      /errorTab/,
+    );
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
+    await errorNotification
+      .getByTestId('notification-message-ok-button')
+      .click();
     await dialog.discard();
   });
 
@@ -236,16 +242,23 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. In the Code field, enter values using only allowed characters: 'AbC-12_*', 'abc', 'ABC123', 'CODE-1', 'CODE_2', 'CODE*3'
      * 3. Ensure all other required fields are valid
      * 4. Attempt to save the preset for several examples of valid codes
-     * 
+     *
      * Expected: Presets save successfully with no validation error or red highlighting
      *
      * Version 3.14.0
      */
-    const validCodes = ['AbC-12_*', 'abc123', 'ABC123', 'CODE-1', 'CODE_2', 'CODE*3'];
+    const validCodes = [
+      'AbC-12_*',
+      'abc123',
+      'ABC123',
+      'CODE-1',
+      'CODE_2',
+      'CODE*3',
+    ];
 
     for (let i = 0; i < validCodes.length; i++) {
       const validCode = validCodes[i];
-      
+
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
       await LeftToolbar(page).createMonomer();
@@ -274,14 +287,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
       // Submit should succeed with no validation errors
       await dialog.submit();
-      
-      // Verify no error notification appears
-      await expect(
-        page.locator('.notification-message-banner').filter({
-          hasText: 'error',
-        })
-      ).not.toBeVisible();
-      
+
       // Verify preset was created successfully
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       const createdPreset = {
@@ -292,7 +298,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
       await expect(
         Library(page).isMonomerExist(createdPreset),
       ).resolves.toBeTruthy();
-      
+
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     }
   });
@@ -306,7 +312,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. In the Code field, enter values with invalid characters: 'PRE SET', 'PRESET#1', 'PRESET@1', 'PRESET+1'
      * 3. Ensure other required fields are valid
      * 4. Attempt to save the preset
-     * 
+     *
      * Expected: Saving blocked with error: 'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).'
      * Code field and preset tab highlighted in red
      *
@@ -316,7 +322,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     for (let i = 0; i < invalidCodes.length; i++) {
       const invalidCode = invalidCodes[i];
-      
+
       await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
       await LeftToolbar(page).createMonomer();
@@ -352,17 +358,19 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
         ErrorMessage.invalidPresetCode,
       );
       await expect(errorNotification.notificationMessageBanner).toBeVisible();
-      expect(
-        await errorNotification.getNotificationMessage(),
-      ).toContain(
-        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*)',
+      expect(await errorNotification.getNotificationMessage()).toEqual(
+        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
       );
 
       // Verify dialog stays open and fields are highlighted
       await expect(dialog.window).toBeVisible();
       await presetSection.openTab(NucleotidePresetTab.Preset);
-      await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(/errorTab/);
-      await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
+      await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
+        /errorTab/,
+      );
+      await expect(presetSection.presetTab.nameEditbox).toHaveClass(
+        /inputError/,
+      );
 
       await errorNotification.ok();
       await dialog.discard();
@@ -378,7 +386,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. Confirm Code field and preset tab are highlighted in red
      * 3. Edit the Code field to a valid, unique value using only allowed characters
      * 4. Attempt to save again
-     * 
+     *
      * Expected: After correcting the Code and saving successfully, red highlighting is cleared
      *
      * Version 3.14.0
@@ -414,7 +422,9 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     // Confirm error highlighting
     await presetSection.openTab(NucleotidePresetTab.Preset);
-    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(/errorTab/);
+    await expect(page.getByTestId(NucleotidePresetTab.Preset)).toHaveClass(
+      /errorTab/,
+    );
     await expect(presetSection.presetTab.nameEditbox).toHaveClass(/inputError/);
 
     // Dismiss error notification
@@ -422,10 +432,20 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
       page,
       ErrorMessage.invalidPresetCode,
     );
+    await expect(errorNotification.notificationMessageBanner).toBeVisible();
+    expect(await errorNotification.getNotificationMessage()).toEqual(
+      'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    );
     await errorNotification.ok();
 
     // Fix the Code field with valid value
     await presetSection.setName('VALID_CODE');
+    await expect(page.getByTestId(NucleotidePresetTab.Preset)).not.toHaveClass(
+      /errorTab/,
+    );
+    await expect(presetSection.presetTab.nameEditbox).not.toHaveClass(
+      /inputError/,
+    );
 
     // Try to save again
     await dialog.submit();
@@ -455,7 +475,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 3. Confirm initial monomer codes follow expected default pattern (e.g. 'ABCB', 'ABCS', 'ABCP')
      * 4. Change the preset Code to 'XYZ'
      * 5. Observe monomer codes for components that were not manually edited
-     * 
+     *
      * Expected: Auto-generated monomer codes update to reflect new preset Code (e.g. from 'ABCB' to 'XYZB')
      *
      * Version 3.14.0
@@ -465,31 +485,31 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Set initial preset code and observe auto-generated component codes
     await presetSection.setName('ABC');
-    
+
     // Verify auto-generated codes
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await expect(presetSection.sugarTab.codeEditbox).toHaveValue('ABCS');
-    
+
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('ABCB');
-    
+
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('ABCP');
-    
+
     // Change preset code
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('XYZ');
-    
+
     // Verify auto-generated codes updated
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await expect(presetSection.sugarTab.codeEditbox).toHaveValue('XYZS');
-    
+
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('XYZB');
-    
+
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('XYZP');
 
@@ -506,7 +526,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 3. Manually change one monomer code (e.g. Base code) to a custom value like 'BASE_CUSTOM'
      * 4. Change the preset Code to a new value (e.g. 'XYZ')
      * 5. Inspect all monomer codes in the wizard
-     * 
+     *
      * Expected: Default monomer codes update to new preset Code, but manually edited code ('BASE_CUSTOM') remains unchanged
      *
      * Version 3.14.0
@@ -516,26 +536,26 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Set initial preset code
     await presetSection.setName('ABC');
-    
+
     // Manually change Base code
     await presetSection.openTab(NucleotidePresetTab.Base);
     await presetSection.baseTab.codeEditbox.fill('BASE_CUSTOM');
-    
+
     // Change preset code
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('XYZ');
-    
+
     // Verify manually changed code remains unchanged
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('BASE_CUSTOM');
-    
+
     // Verify auto-generated codes still update
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await expect(presetSection.sugarTab.codeEditbox).toHaveValue('XYZS');
-    
+
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('XYZP');
 
@@ -551,7 +571,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. Change Code to 'BBB' and verify non-overridden monomer codes update accordingly
      * 3. Change Code again to 'CCC'
      * 4. Inspect monomer codes after each change
-     * 
+     *
      * Expected: After each preset Code change, non-manually-changed monomer codes update to latest preset Code value.
      * Manually overridden codes remain unchanged
      *
@@ -562,10 +582,10 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Set initial preset code 'AAA'
     await presetSection.setName('AAA');
-    
+
     // Verify initial auto-generated codes
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await expect(presetSection.sugarTab.codeEditbox).toHaveValue('AAAS');
@@ -573,30 +593,34 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('AAAB');
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('AAAP');
-    
+
     // Manually change Sugar code
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await presetSection.sugarTab.codeEditbox.fill('MANUAL_SUGAR');
-    
+
     // Change preset code to 'BBB'
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('BBB');
-    
+
     // Verify manually changed code remains, others update
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('MANUAL_SUGAR');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue(
+      'MANUAL_SUGAR',
+    );
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('BBBB');
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('BBBP');
-    
+
     // Change preset code to 'CCC'
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('CCC');
-    
+
     // Verify consistency after second change
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('MANUAL_SUGAR');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue(
+      'MANUAL_SUGAR',
+    );
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.codeEditbox).toHaveValue('CCCB');
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
@@ -613,7 +637,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 1. Open an existing preset created before this change that has a valid Code according to new rules
      * 2. Open it in the wizard without changing the Code
      * 3. Click 'Save' / 'Finish'
-     * 
+     *
      * Expected: Existing presets with valid codes save successfully without triggering new validation errors
      *
      * Version 3.14.0
@@ -652,7 +676,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await expect(
       page.locator('.notification-message-banner').filter({
         hasText: 'error',
-      })
+      }),
     ).not.toBeVisible();
 
     // Verify preset exists in library
@@ -676,7 +700,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * 2. For first preset, set IDT and/or AxoLabs alias values according to valid monomer rules
      * 3. Attempt to create second preset with same alias values that would violate monomer-level uniqueness
      * 4. Attempt to save the second preset
-     * 
+     *
      * Expected: IDT and AxoLabs alias fields for presets match existing monomer behavior (same allowed characters and uniqueness rules)
      *
      * Version 3.14.0
@@ -688,7 +712,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('ALIAS_TEST_1');
-    
+
     // Set up components with aliases
     await presetSection.setupSugar({
       atomIds: [2, 3],
@@ -722,7 +746,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('ALIAS_TEST_2');
-    
+
     // Try to use same aliases (should trigger uniqueness validation)
     await presetSection.setupSugar({
       atomIds: [2, 3],
@@ -752,14 +776,16 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     // Verify alias uniqueness validation works for presets
     // (Implementation may vary - checking for general alias-related error)
-    const aliasErrorNotification = page.locator('.notification-message-banner').filter({
-      hasText: 'alias',
-    });
-    
+    const aliasErrorNotification = page
+      .locator('.notification-message-banner')
+      .filter({
+        hasText: 'alias',
+      });
+
     // If alias validation is enforced for presets, expect error
     // If not enforced yet, this test documents current behavior
     const aliasErrorExists = await aliasErrorNotification.isVisible();
-    
+
     // Document current behavior - test passes regardless but shows what happens
     if (aliasErrorExists) {
       // Alias validation is enforced
@@ -768,7 +794,9 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
     } else {
       // Alias validation might not be enforced yet for presets
       // Test documents this behavior
-      console.log('Alias uniqueness validation may not be enforced for preset components yet');
+      console.log(
+        'Alias uniqueness validation may not be enforced for preset components yet',
+      );
     }
 
     await dialog.discard();

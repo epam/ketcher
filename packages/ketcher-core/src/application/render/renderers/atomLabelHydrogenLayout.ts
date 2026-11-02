@@ -30,10 +30,16 @@ const LINE_HEIGHT = 13;
 const COUNT_DROP = 3;
 // Distance from the centre of H to the centre of its count.
 const COUNT_OFFSET_X = 10;
+// Half the advance of one digit of the 13px label font. The count is centred
+// on COUNT_OFFSET_X, so its right edge is this far past it for each digit.
+const COUNT_HALF_DIGIT = 3.6;
+// Gap kept between the count and the text that follows it.
+const COUNT_GAP = 1;
 const ISOTOPE_RISE = 4;
 const STACKED_SIDES: ReadonlyArray<ImplicitHydrogenSide> = ['top', 'bottom'];
 
 export const STACKED_LABEL_CLASS = 'atom-label';
+const STACKED_COUNT_CLASS = 'atom-hydrogen-count';
 
 export function isStackedSide(side: ImplicitHydrogenSide): boolean {
   return STACKED_SIDES.includes(side);
@@ -63,6 +69,7 @@ export function appendStackedHydrogenLabel(
   if (hasCount) {
     text
       .append('tspan')
+      .attr('class', STACKED_COUNT_CLASS)
       .attr('x', COUNT_OFFSET_X)
       .attr('dy', COUNT_DROP)
       .text(hydrogenAmount);
@@ -88,6 +95,28 @@ export function startSymbolLineWithIsotope(
     .attr('x', label.attr('x'))
     .attr('dy', Number(label.attr('dy')) - ISOTOPE_RISE);
   label.attr('x', null).attr('dy', ISOTOPE_RISE);
+}
+
+/**
+ * Charge and valence follow the symbol and share its centred run of text, so
+ * they land under the count of H. When the label has a count, the first of
+ * them starts its own run, left-aligned right of the count, and the ones after
+ * it follow it. Without a count nothing collides and the run stays as it is.
+ */
+export function startPropertyRunBesideCount(
+  text: TextSelection,
+  property: TspanSelection,
+): void {
+  const count = text.select<SVGTSpanElement>(`tspan.${STACKED_COUNT_CLASS}`);
+  const startsAfterSymbol = (
+    property.node()?.previousElementSibling as Element | null
+  )?.classList.contains(STACKED_LABEL_CLASS);
+  if (count.empty() || !startsAfterSymbol) {
+    return;
+  }
+  const countRight =
+    Number(count.attr('x')) + count.text().length * COUNT_HALF_DIGIT;
+  property.attr('x', countRight + COUNT_GAP).attr('text-anchor', 'start');
 }
 
 /**

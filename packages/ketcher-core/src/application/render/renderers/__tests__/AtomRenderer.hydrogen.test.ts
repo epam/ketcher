@@ -12,7 +12,12 @@ jest.mock('application/editor/editorSingleton', () => ({
 
 interface FakeAtom {
   label: CoreAtomLabel;
-  properties: { radical?: number; isotope?: number };
+  properties: {
+    radical?: number;
+    isotope?: number;
+    charge?: number;
+    explicitValence?: number;
+  };
   hydrogenAmount: number;
   hasCharge: boolean;
   hasRadical: boolean;
@@ -28,21 +33,25 @@ function fakeAtom({
   hydrogenAmount = 1,
   radical = 0,
   isotope,
+  charge,
+  explicitValence,
 }: {
   label?: CoreAtomLabel;
   hydrogenAmount?: number;
   radical?: number;
   isotope?: number;
+  charge?: number;
+  explicitValence?: number;
 } = {}): FakeAtom {
   return {
     label,
-    properties: { radical, isotope },
+    properties: { radical, isotope, charge, explicitValence },
     hydrogenAmount,
-    hasCharge: false,
+    hasCharge: charge !== undefined,
     hasRadical: radical !== 0,
     hasAlias: false,
     hasExplicitIsotope: isotope !== undefined,
-    hasExplicitValence: false,
+    hasExplicitValence: explicitValence !== undefined,
     hasBadValence: false,
     calculateValence: () => ({ hydrogenAmount }),
   };
@@ -71,6 +80,8 @@ type RendererUnderTest = Pick<
 > & {
   appendLabel: () => Selection<SVGTextElement, unknown, null, undefined>;
   appendExplicitIsotope: () => void;
+  appendCharge: () => void;
+  appendExplicitValence: () => void;
   textElement: Selection<SVGTextElement, unknown, null, undefined>;
   hydrogenSide: ImplicitHydrogenSide;
 };
@@ -214,6 +225,101 @@ describe('AtomRenderer.appendLabel hydrogen layout', () => {
     expect(lines[2]).toBe(0);
     expect(spans[1].x).toBe('0');
     expect(spans[2].x).toBeNull();
+  });
+});
+
+describe('AtomRenderer charge and valence with stacked hydrogens', () => {
+  // Half the advance of one digit of the 13px Arial label: the least a text
+  // that starts at the center of the count must be moved to clear it.
+  const HALF_DIGIT = (0.556 * 13) / 2;
+
+  function drawWithProperties(
+    options: Parameters<typeof fakeAtom>[0],
+    bondAnglesDeg: number[],
+  ) {
+    const { renderer, textNode } = drawLabel(fakeAtom(options), bondAnglesDeg);
+    renderer.appendCharge();
+    renderer.appendExplicitValence();
+    return tspansOf(textNode);
+  }
+
+  it('starts the charge to the right of the count of top hydrogens', () => {
+    const spans = drawWithProperties(
+      { hydrogenAmount: 2, charge: 1 },
+      [330, 210],
+    );
+
+    expect(spans.map(({ text }) => text)).toEqual(['H', '2', 'N', '+']);
+    const [, count, , charge] = spans;
+    expect(Number(charge.x)).toBeGreaterThanOrEqual(
+      Number(count.x) + HALF_DIGIT,
+    );
+  });
+
+  it('left-aligns the charge text at its start so it grows away from the count', () => {
+    const { renderer, textNode } = drawLabel(
+      fakeAtom({ hydrogenAmount: 2, charge: 1 }),
+      [330, 210],
+    );
+    renderer.appendCharge();
+    const charge = textNode.querySelectorAll('tspan')[3];
+
+    expect(charge.getAttribute('text-anchor')).toBe('start');
+  });
+
+  it('keeps the charge above the symbol line, as without hydrogens', () => {
+    const spans = drawWithProperties(
+      { hydrogenAmount: 2, charge: 1 },
+      [330, 210],
+    );
+    const lines = baselines(spans);
+
+    expect(lines[2]).toBe(0);
+    expect(lines[3]).toBeLessThan(0);
+  });
+
+  it('starts the explicit valence right of the count when there is no charge', () => {
+    const spans = drawWithProperties(
+      { hydrogenAmount: 2, explicitValence: 2 },
+      [330, 210],
+    );
+
+    expect(spans.map(({ text }) => text)).toEqual(['H', '2', 'N', '(II)']);
+    const [, count, , valence] = spans;
+    expect(Number(valence.x)).toBeGreaterThanOrEqual(
+      Number(count.x) + HALF_DIGIT,
+    );
+  });
+
+  it('draws the valence after the charge on the same run of text', () => {
+    const spans = drawWithProperties(
+      { hydrogenAmount: 2, charge: 1, explicitValence: 2 },
+      [330, 210],
+    );
+
+    expect(spans.map(({ text }) => text)).toEqual(['H', '2', 'N', '+', '(II)']);
+    const [, count, , charge, valence] = spans;
+    expect(Number(charge.x)).toBeGreaterThanOrEqual(
+      Number(count.x) + HALF_DIGIT,
+    );
+    expect(valence.x).toBeNull();
+  });
+
+  it('keeps the charge on the symbol run when H has no count', () => {
+    const spans = drawWithProperties(
+      { hydrogenAmount: 1, charge: 1 },
+      [330, 210],
+    );
+
+    expect(spans.map(({ text }) => text)).toEqual(['H', 'N', '+']);
+    expect(spans[2].x).toBeNull();
+  });
+
+  it('keeps the charge on the symbol run for hydrogens on the right', () => {
+    const spans = drawWithProperties({ hydrogenAmount: 2, charge: 1 }, [180]);
+
+    expect(spans.map(({ text }) => text)).toEqual(['N', 'H', '2', '+']);
+    expect(spans[3].x).toBeNull();
   });
 });
 

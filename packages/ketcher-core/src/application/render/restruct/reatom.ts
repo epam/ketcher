@@ -43,6 +43,7 @@ import {
   Scale,
   getImplicitHydrogenSide,
   isAttachmentGroupWithHapticBond,
+  isStackedSide,
   type ImplicitHydrogenSide,
 } from 'domain/helpers';
 import draw, {
@@ -117,6 +118,12 @@ class ReAtom extends ReObject implements ReBondEndpoint {
   // this correct even when the visel is translated/rotated in place
   // (e.g. dragging a fragment) without a full atom redraw.
   private labelBoxCount = 0;
+
+  // The entries of visel.exts that bond trimming ignores: the boxes of
+  // stacked hydrogens. Label placement still reads them from visel.exts.
+  // Identity is what matters, so the set holds the Box2Abs objects pushed to
+  // visel.exts, and show() rebuilds it together with the visel.
+  private bondTrimSkippedExts = new Set<Box2Abs>();
 
   constructor(atom: Atom) {
     super('atom');
@@ -490,6 +497,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const exts = this.visel.exts;
     const ratio = this.getRatio(renderOptions, bondLen);
     for (const ext of exts) {
+      if (this.bondTrimSkippedExts.has(ext)) continue;
       const box = ext.translate(atomPosition);
       const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
       const shift = shiftRayBox * ratio;
@@ -526,6 +534,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     if (!atom) {
       return;
     }
+    this.bondTrimSkippedExts.clear();
     const sgroups = struct.sgroups;
     const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
@@ -701,18 +710,17 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         hydroIndex = data.hydroIndex;
         rightMargin = data.rightMargin;
         leftMargin = data.leftMargin;
-        // A bond stops at the symbol it reaches. Stacked hydrogens sit over or
-        // under the symbol, not beside it, so they stay out of the visel exts
-        // that trim bonds; their boxes still count for hover and selection.
-        const hydrogenExtOrigin =
-          this.hydrogenSide === 'top' || this.hydrogenSide === 'bottom'
-            ? null
-            : ps;
+        // Stacked hydrogens stay in visel.exts, which label placement (aam,
+        // query, stereo, CIP, attachment points) clears. Bond trimming skips
+        // them: a bond never points into the free quadrant that holds them,
+        // and a box wider than the symbol would shorten a bond that only
+        // passes near it. Their boxes still count for hover and selection.
+        const extsBefore = this.visel.exts.length;
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
           hydrogen.path,
-          hydrogenExtOrigin,
+          ps,
           true,
         );
         if (hydroIndex != null) {
@@ -720,9 +728,14 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             LayerMap.data,
             this.visel,
             hydroIndex.path,
-            hydrogenExtOrigin,
+            ps,
             true,
           );
+        }
+        if (isStackedSide(this.hydrogenSide)) {
+          this.visel.exts
+            .slice(extsBefore)
+            .forEach((ext) => this.bondTrimSkippedExts.add(ext));
         }
       }
       if (this.a.charge === 0) {

@@ -16,6 +16,11 @@
 
 export type ImplicitHydrogenSide = 'right' | 'left' | 'top' | 'bottom';
 
+/** Top and bottom put H on a line of its own, apart from the symbol. */
+export function isStackedSide(side: ImplicitHydrogenSide): boolean {
+  return side === 'top' || side === 'bottom';
+}
+
 const FULL_TURN_DEG = 360;
 const QUADRANT_DEG = 90;
 // A vertical bond is drawn this close to 90 or 270 degrees; the sign of its

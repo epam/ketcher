@@ -26,10 +26,10 @@ import {
   getImplicitHydrogenSide,
   type ImplicitHydrogenSide,
   isGenericAtom,
+  isStackedSide,
 } from 'domain/helpers';
 import {
   appendStackedHydrogenLabel,
-  isStackedSide,
   labelContourRect,
   type StackedLabel,
   startPropertyRunAfterCount,

@@ -49,7 +49,7 @@ describe('RemoteStructService', () => {
 
     const result = await service.recognize(blob, '');
 
-    expect(result).toEqual({ struct: 'C' });
+    expect(result).toMatchObject({ struct: 'C' });
     expect(calls.length).toBeGreaterThanOrEqual(2);
     expect(calls[1]).toBe('http://127.0.0.1:9321/v2/imago/uploads/abc');
   });

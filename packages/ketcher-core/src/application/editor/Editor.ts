@@ -12,7 +12,7 @@ import {
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
   DEFAULT_LAYOUT_MODE,

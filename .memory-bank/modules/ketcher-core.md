@@ -53,7 +53,7 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 | `src/application/render/restruct/restruct.ts`                   | Raphael re-renderer for micromolecules  |
 | `src/application/render/raphaelRender.ts`                       | Raphael canvas host                     |
 | `src/application/editor/EditorHistory.ts`                       | Undo/redo stack (max 32 steps)          |
-| `src/application/editor/MacromoleculesConverter.ts`             | Converts between macro and micro models |
+| `src/domain/helpers/MacromoleculesConverter.ts`                 | Converts between macro and micro models |
 | `src/domain/serializers/ket/ketSerializer.ts`                   | KET format serializer/deserializer      |
 | `src/application/formatters/formatterFactory.ts`                | Multi-format formatter registry         |
 | `src/application/indigo.ts`                                     | StructService wrapper (chemistry ops)   |

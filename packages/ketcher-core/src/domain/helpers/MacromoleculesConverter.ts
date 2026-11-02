@@ -31,7 +31,7 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
-import { monomerFactory } from 'application/render/renderers/monomerFactory';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 
 export class MacromoleculesConverter {
   public static convertMonomerToMonomerMicromolecule(
@@ -188,7 +188,7 @@ export class MacromoleculesConverter {
               new Vec2(monomer.position),
             );
           } else {
-            const [Monomer] = monomerFactory(monomer.monomerItem);
+            const [Monomer] = monomerEntityFactory(monomer.monomerItem);
             convertedMonomer = new Monomer(
               { ...monomer.monomerItem, struct: monomerStruct },
               new Vec2(monomer.position),

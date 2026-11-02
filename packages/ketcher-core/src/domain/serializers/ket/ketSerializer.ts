@@ -84,7 +84,7 @@ import {
 } from 'domain/serializers/ket/helpers';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { isValidKet } from 'domain/serializers/ket/validate';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { isNumber } from 'lodash';
 import {
   type AmbiguousMonomerType,

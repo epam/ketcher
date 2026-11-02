@@ -111,10 +111,7 @@ export const ALLOWED_DOMAIN_IMPORTS = [
   },
   {
     file: 'packages/ketcher-core/src/domain/serializers/ket/ketSerializer.ts',
-    imports: [
-      'application/editor/MacromoleculesConverter',
-      'application/editor/editorSingleton',
-    ],
+    imports: ['application/editor/editorSingleton'],
   },
 ];
 

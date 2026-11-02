@@ -29,7 +29,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';

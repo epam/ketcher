@@ -3616,7 +3616,7 @@ export class DrawingEntitiesManager {
     return antisenseMap;
   }
 
-  public markMonomerAsAntisense(monomer: BaseMonomer) {
+  public markMonomerAsAntisense(monomer: BaseMonomer, needClearSeqId = true) {
     const command = new Command();
 
     command.merge(
@@ -3624,13 +3624,14 @@ export class DrawingEntitiesManager {
         ...monomer.monomerItem,
         isSense: false,
         isAntisense: true,
+        seqId: needClearSeqId ? undefined : monomer.monomerItem.seqId,
       }),
     );
 
     return command;
   }
 
-  public markMonomerAsSense(monomer: BaseMonomer) {
+  public markMonomerAsSense(monomer: BaseMonomer, needClearSeqId = true) {
     const command = new Command();
 
     command.merge(
@@ -3638,6 +3639,7 @@ export class DrawingEntitiesManager {
         ...monomer.monomerItem,
         isSense: true,
         isAntisense: false,
+        seqId: needClearSeqId ? undefined : monomer.monomerItem.seqId,
       }),
     );
 
@@ -3683,7 +3685,7 @@ export class DrawingEntitiesManager {
 
         if (isSenseChain) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsSense(monomer));
+            command.merge(this.markMonomerAsSense(monomer, needClearSeqId));
           });
 
           return;
@@ -3691,7 +3693,7 @@ export class DrawingEntitiesManager {
 
         if (isAntisenseChain) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsAntisense(monomer));
+            command.merge(this.markMonomerAsAntisense(monomer, needClearSeqId));
           });
 
           return;
@@ -3788,11 +3790,11 @@ export class DrawingEntitiesManager {
         handledChains.add(chain);
         if (group === senseGroup) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsSense(monomer));
+            command.merge(this.markMonomerAsSense(monomer, needClearSeqId));
           });
         } else {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsAntisense(monomer));
+            command.merge(this.markMonomerAsAntisense(monomer, needClearSeqId));
             this.antisenseMonomerToSenseChain.set(monomer, senseChain.chain);
           });
         }

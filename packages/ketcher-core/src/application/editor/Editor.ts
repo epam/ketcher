@@ -1379,41 +1379,48 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        if (
-          typeof document.elementsFromPoint === 'function' &&
-          document
-            .elementsFromPoint(event.clientX, event.clientY)
-            .some((el) => el.__data__?.drawingEntity?.selected)
-        ) {
-          this.events.rightClickSelectedMonomers.dispatch([
-            event,
-            selectedMonomers,
-          ]);
-          return false;
-        }
-
-        const modelChanges =
-          this.drawingEntitiesManager.unselectAllDrawingEntities();
-
-        if (this.mode.modeName === 'sequence-layout-mode') {
-          modelChanges.merge(
-            SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
-          );
-        }
-
-        this.renderersContainer.update(modelChanges);
-
-        if (this.mode.modeName === 'sequence-layout-mode') {
-          this.events.rightClickCanvasSequence.dispatch([event, []]);
-        } else {
-          this.events.rightClickCanvas.dispatch([event, []]);
-        }
+        this.handleCanvasContextMenu(event, selectedMonomers);
       }
 
       return false;
     };
 
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
+  }
+
+  private handleCanvasContextMenu(
+    event: MouseEvent,
+    selectedMonomers: BaseMonomer[],
+  ) {
+    if (
+      typeof document.elementsFromPoint === 'function' &&
+      document
+        .elementsFromPoint(event.clientX, event.clientY)
+        .some((el) => el.__data__?.drawingEntity?.selected)
+    ) {
+      this.events.rightClickSelectedMonomers.dispatch([
+        event,
+        selectedMonomers,
+      ]);
+      return;
+    }
+
+    const modelChanges =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      modelChanges.merge(
+        SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+      );
+    }
+
+    this.renderersContainer.update(modelChanges);
+
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.events.rightClickCanvasSequence.dispatch([event, []]);
+    } else {
+      this.events.rightClickCanvas.dispatch([event, []]);
+    }
   }
 
   private async onLayoutCircular() {

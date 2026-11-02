@@ -110,6 +110,7 @@ function showAtom({
   radical = 0,
   charge = 0,
   explicitValence = -1,
+  aam = 0,
 }: {
   label?: string;
   bondAnglesDeg?: number[];
@@ -117,6 +118,7 @@ function showAtom({
   radical?: number;
   charge?: number;
   explicitValence?: number;
+  aam?: number;
 }): AtomFixture {
   const struct = new Struct();
   const atom = new Atom({
@@ -125,6 +127,7 @@ function showAtom({
     radical,
     charge,
     explicitValence,
+    aam,
   });
   atom.implicitH = implicitH;
   const aid = struct.atoms.add(atom);
@@ -284,12 +287,25 @@ describe('ReAtom hydrogen layout', () => {
     expect(reatom.visel.exts).toHaveLength(3);
   });
 
-  it('records stacked hydrogens in the visel boxes but not in its exts', () => {
+  it('records stacked hydrogens in the visel boxes and exts', () => {
     const { reatom } = showAtom({ bondAnglesDeg: [210, 330], implicitH: 2 });
 
-    // symbol, H, count: only the symbol is something a bond stops at
+    // symbol, H, count: the exts are what label placement clears
     expect(reatom.visel.boxes).toHaveLength(3);
-    expect(reatom.visel.exts).toHaveLength(1);
+    expect(reatom.visel.exts).toHaveLength(3);
+  });
+
+  it('places the atom-mapping number clear of top hydrogens', () => {
+    // The free sector of this atom points up, where the H line is drawn.
+    const { reatom } = showAtom({
+      bondAnglesDeg: [210, 330],
+      implicitH: 2,
+      aam: 5,
+    });
+    const hydrogenBox = reatom.visel.boxes[1];
+    const aamBox = reatom.visel.boxes[reatom.visel.boxes.length - 1];
+
+    expect(aamBox.p1.y).toBeLessThanOrEqual(hydrogenBox.p0.y);
   });
 
   it('covers the symbol and top hydrogens with the selection contour', () => {
@@ -480,6 +496,24 @@ describe('ReAtom bond trimming with hydrogens', () => {
 
     expect(shifted.x).toBeCloseTo(reference.x);
     expect(shifted.y).toBeCloseTo(reference.y);
+  });
+
+  it('shortens a bond that runs into hydrogens on the left', () => {
+    const withHydrogens = showAtom({ bondAnglesDeg: [30], implicitH: 2 });
+    const withoutHydrogens = showAtom({ bondAnglesDeg: [30], implicitH: 0 });
+    const direction = canvasDirection(180);
+
+    const shifted = withHydrogens.reatom.getShiftedSegmentPosition(
+      options,
+      direction,
+    );
+    const reference = withoutHydrogens.reatom.getShiftedSegmentPosition(
+      options,
+      direction,
+    );
+
+    expect(withHydrogens.reatom.hydrogenSide).toBe('left');
+    expect(shifted.x).toBeLessThan(reference.x);
   });
 
   it('shortens a bond that runs into hydrogens on the right', () => {

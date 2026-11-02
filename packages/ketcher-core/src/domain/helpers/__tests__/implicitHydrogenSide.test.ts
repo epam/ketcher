@@ -1,6 +1,7 @@
 import {
   getImplicitHydrogenSide,
   ImplicitHydrogenSide,
+  isStackedSide,
 } from '../implicitHydrogenSide';
 
 // The tables state bonds as visual angles, 0 = right and 90 = up, as the
@@ -133,5 +134,16 @@ describe('model directions', () => {
   it('does not depend on the length of a direction', () => {
     expect(getImplicitHydrogenSide([{ x: -30, y: 0 }], false)).toBe('right');
     expect(getImplicitHydrogenSide([{ x: 0.001, y: 0 }], false)).toBe('left');
+  });
+});
+
+describe('isStackedSide', () => {
+  it.each<[ImplicitHydrogenSide, boolean]>([
+    ['top', true],
+    ['bottom', true],
+    ['left', false],
+    ['right', false],
+  ])('%s gives %s', (side, expected) => {
+    expect(isStackedSide(side)).toBe(expected);
   });
 });

@@ -39,10 +39,6 @@ const COUNT_HALF_DIGIT = 3.6;
 const COUNT_GAP = 1;
 const ISOTOPE_RISE = 4;
 
-export function isStackedSide(side: ImplicitHydrogenSide): boolean {
-  return side === 'top' || side === 'bottom';
-}
-
 /** The lines of a stacked label, as drawn by appendStackedHydrogenLabel. */
 export interface StackedLabel {
   hydrogen: TspanSelection;

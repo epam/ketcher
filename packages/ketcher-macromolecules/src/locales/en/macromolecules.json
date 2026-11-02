@@ -44,7 +44,9 @@
   },
   "buttons": {
     "help": "Help (?)",
-    "about": "About"
+    "settings": "Settings",
+    "about": "About",
+    "fullscreen": "Fullscreen mode"
   },
   "sequenceType": {
     "rnaTooltip": "RNA ({shortcut})",

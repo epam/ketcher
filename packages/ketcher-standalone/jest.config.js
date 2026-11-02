@@ -4,7 +4,14 @@ module.exports = {
   testPathIgnorePatterns: ['dist', 'node_modules'],
   testEnvironment: 'node',
   transform: {
-    '^.+\\.(js|ts)$': 'ts-jest',
+    '^.+\\.(js|ts)$': [
+      'ts-jest',
+      {
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
+      },
+    ],
   },
   moduleNameMapper: {
     // Resolved at build time via `resolve.alias` in vite.config.mjs; for unit

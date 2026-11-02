@@ -4,7 +4,14 @@ module.exports = {
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx|ts|tsx)$': [
+      'ts-jest',
+      {
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
+      },
+    ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',
   },
   moduleNameMapper: {

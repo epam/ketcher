@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,13 +36,13 @@ class ReFrag extends ReObject {
   }
 
   fragGetAtoms(restruct: ReStruct, fid: number): number[] {
-    return Array.from(restruct.atoms.keys()).filter(
+    return [...restruct.atoms.keys()].filter(
       (aid) => restruct.atoms.get(aid)?.a.fragment === fid,
     );
   }
 
   fragGetBonds(restruct: ReStruct, fid: number): number[] {
-    return Array.from(restruct.bonds.keys()).filter((bid) => {
+    return [...restruct.bonds.keys()].filter((bid) => {
       const bond = restruct.bonds.get(bid)?.b;
       if (!bond) {
         return false;
@@ -68,17 +68,17 @@ class ReFrag extends ReObject {
 
       // TODO ReObject.calcBBox to be used instead
       let bba = atom.visel.boundingBox;
-      if (!bba) {
-        bba = new Box2Abs(atom.a.pp, atom.a.pp);
-        const ext = new Vec2(0.05 * 3, 0.05 * 3);
-        bba = bba.extend(ext, ext);
-      } else {
+      if (bba) {
         if (!render) {
-          render = (global as Record<string, unknown>)._ui_editor as Render;
+          render = (globalThis as Record<string, unknown>)._ui_editor as Render;
         }
         bba = bba
           .translate((render.options.offset ?? new Vec2()).negated())
           .transform(Scale.canvasToModel, render.options);
+      } else {
+        bba = new Box2Abs(atom.a.pp, atom.a.pp);
+        const ext = new Vec2(0.05 * 3, 0.05 * 3);
+        bba = bba.extend(ext, ext);
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;
     });
@@ -114,7 +114,7 @@ class ReFrag extends ReObject {
     // Do nothing. This method shouldn't actually be called.
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(isHovered: boolean, render: Render): void {
     let fid = render.ctab.frags.keyOf(this);
 
     if (!fid && fid !== 0) {
@@ -126,13 +126,13 @@ class ReFrag extends ReObject {
 
     render.ctab.atoms.forEach((atom) => {
       if (atom.a.fragment === fid) {
-        atom.setHover(hover, render);
+        atom.setHover(isHovered, render);
       }
     });
 
     render.ctab.bonds.forEach((bond) => {
       if (render.ctab.getBondEndpoint(bond.b.begin)?.a.fragment === fid) {
-        bond.setHover(hover, render);
+        bond.setHover(isHovered, render);
       }
     });
   }

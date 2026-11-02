@@ -123,7 +123,7 @@ const resolvePackageAlias = (source, importer) => {
     }
 
     const replacementPath =
-      replacement.hasWildcard && suffix
+      suffix && replacement.hasWildcard
         ? `${replacement.value}/${suffix}`
         : replacement.value;
 
@@ -157,7 +157,7 @@ const getDefineValue = (value) => {
   return value === undefined ? 'undefined' : JSON.stringify(value);
 };
 
-const PROCESS_ENV_DEFINE_KEYS = [
+const ENV_DEFINE_KEYS = [
   'API_PATH',
   'KETCHER_ENABLE_REDUX_LOGGER',
   'MODE',
@@ -414,10 +414,10 @@ const codeSplitting = {
   ],
 };
 
-const processEnvDefines = Object.fromEntries(
-  PROCESS_ENV_DEFINE_KEYS.map((key) => [
-    `process.env.${key}`,
-    getDefineValue(process.env[key]),
+const envDefines = Object.fromEntries(
+  ENV_DEFINE_KEYS.flatMap((key) => [
+    [`import.meta.env.${key}`, getDefineValue(process.env[key])],
+    [`process.env.${key}`, getDefineValue(process.env[key])],
   ]),
 );
 
@@ -435,7 +435,7 @@ const HtmlReplaceVitePlugin = () => {
         .replaceAll('%PUBLIC_URL%', publicUrl)
         .replaceAll(
           '@@version',
-          JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
+          JSON.parse(ketcherReactValues['import.meta.env.HELP_LINK']).split(
             '-',
           )[0] + ' (Vite)',
         );
@@ -637,7 +637,7 @@ export default defineConfig(({ command }) => ({
     CopyServeConfigPlugin(),
   ],
   define: {
-    ...processEnvDefines,
+    ...envDefines,
   },
   resolve: {
     dedupe: ['react', 'react-dom', 'react-is'],

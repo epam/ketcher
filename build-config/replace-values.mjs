@@ -25,10 +25,7 @@ import { config as loadEnv } from 'dotenv';
 // local .env instead of exporting it before every build invocation - see
 // packages/ketcher-react/src/locales/README.md for the full flag docs.
 loadEnv({
-  path: path.resolve(
-    fileURLToPath(new URL('.', import.meta.url)),
-    '../.env',
-  ),
+  path: path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../.env'),
 });
 
 /**
@@ -99,27 +96,34 @@ const getBuildDate = () => {
 };
 
 /**
- * `process.env.*` substitutions injected into a package's bundle.
+ * Build-time substitutions injected into a package's bundle.
+ *
+ * Source code reads these as `import.meta.env.*`. The `process.env.*` aliases
+ * are kept for code that still reads them, such as bundled dependencies.
  *
  * Build metadata uses a shared source so packages built from the same commit
  * receive identical values.
  */
-export const createReplaceValues = ({ version, isProduction }) => ({
-  'process.env.NODE_ENV': JSON.stringify(
-    isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
-  ),
-  'process.env.VERSION': JSON.stringify(version),
-  'process.env.BUILD_DATE': JSON.stringify(getBuildDate()),
-  // TODO: add logic to init BUILD_NUMBER
-  'process.env.BUILD_NUMBER': JSON.stringify(undefined),
-  'process.env.HELP_LINK': JSON.stringify(getTagName()),
-  'process.env.INDIGO_VERSION': JSON.stringify(
-    process.env.INDIGO_VERSION || '',
-  ),
-  'process.env.INDIGO_MACHINE': JSON.stringify(
-    process.env.INDIGO_MACHINE || '',
-  ),
-  'process.env.KETCHER_MULTI_LANGUAGE_BUILD': JSON.stringify(
-    process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
-  ),
-});
+export const createReplaceValues = ({ version, isProduction }) => {
+  const values = {
+    NODE_ENV: isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
+    VERSION: version,
+    BUILD_DATE: getBuildDate(),
+    // TODO: add logic to init BUILD_NUMBER
+    BUILD_NUMBER: undefined,
+    HELP_LINK: getTagName(),
+    INDIGO_VERSION: process.env.INDIGO_VERSION || '',
+    INDIGO_MACHINE: process.env.INDIGO_MACHINE || '',
+    KETCHER_ENABLE_REDUX_LOGGER:
+      process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true' ? 'true' : 'false',
+    KETCHER_MULTI_LANGUAGE_BUILD:
+      process.env.KETCHER_MULTI_LANGUAGE_BUILD === 'true' ? 'true' : 'false',
+  };
+
+  return Object.fromEntries(
+    Object.entries(values).flatMap(([key, value]) => [
+      [`import.meta.env.${key}`, JSON.stringify(value)],
+      [`process.env.${key}`, JSON.stringify(value)],
+    ]),
+  );
+};

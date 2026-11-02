@@ -10,6 +10,9 @@ module.exports = {
           module: 'commonjs',
           moduleResolution: 'node16',
         },
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
       },
     ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',

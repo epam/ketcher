@@ -187,7 +187,7 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.mts', '.ts', '.json'],
   },
   define: {
-    'process.env.SEPARATE_INDIGO_RENDER': JSON.stringify(
+    'import.meta.env.SEPARATE_INDIGO_RENDER': JSON.stringify(
       process.env.SEPARATE_INDIGO_RENDER,
     ),
   },

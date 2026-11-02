@@ -100,6 +100,9 @@ const output = (format, entryFileNames) => ({
 export default defineConfig({
   ...createTsconfigPathResolution(),
   define: {
+    'import.meta.env.NODE_ENV': JSON.stringify(
+      isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
+    ),
     'process.env.NODE_ENV': JSON.stringify(
       isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
     ),

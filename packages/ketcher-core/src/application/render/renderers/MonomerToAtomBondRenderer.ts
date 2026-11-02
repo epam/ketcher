@@ -61,27 +61,22 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         ),
       );
 
-      let combinedVisualBBox: Box2Abs;
+      // If the label is visible, stop at the boxes that stop an atom-to-atom
+      // bond too: the symbol and what sits next to it, not the hydrogens drawn
+      // on a line of their own.
+      const trimBoxes = atomRenderer.isLabelVisible
+        ? atomRenderer.bondTrimBBoxes.map(
+            ({ x, y, width, height }) =>
+              new Box2Abs(new Vec2(x, y), new Vec2(x + width, y + height)),
+          )
+        : [];
 
-      // If the label is visible, use labelBoundingBox for a more precise bounding box.
-      // Otherwise, use the overall bounding box of the atom's visual representation.
-      if (atomRenderer.isLabelVisible && atomRenderer.labelBoundingBox) {
-        const labelBBox = atomRenderer.labelBoundingBox;
-        combinedVisualBBox = new Box2Abs(
-          new Vec2(labelBBox.x, labelBBox.y),
-          new Vec2(
-            labelBBox.x + labelBBox.width,
-            labelBBox.y + labelBBox.height,
-          ),
-        );
-      } else {
-        // Fallback: use the bounding box of the entire atom element (circle or rectangle for selection)
-        // Adjust for being relative to (0,0) (atom's center)
-        combinedVisualBBox = new Box2Abs(
-          new Vec2(atomVisualBBox.p0.x, atomVisualBBox.p0.y),
-          new Vec2(atomVisualBBox.p1.x, atomVisualBBox.p1.y),
-        );
-      }
+      // Otherwise, use the bounding box of the entire atom element (circle or
+      // rectangle for selection), relative to (0,0) (atom's center).
+      const combinedVisualBBox =
+        trimBoxes.length > 0
+          ? trimBoxes.reduce((union, box) => Box2Abs.union(union, box))
+          : atomVisualBBox;
 
       // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;

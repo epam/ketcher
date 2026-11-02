@@ -26,8 +26,9 @@ import type { ImplicitHydrogenSide } from 'domain/helpers';
 type TextSelection = D3SvgElementSelection<SVGTextElement, void>;
 type TspanSelection = D3SvgElementSelection<SVGTSpanElement, void>;
 
-// Matches the 13px label font, so the H line does not touch the symbol line.
-const LINE_HEIGHT = 13;
+export const LABEL_FONT_SIZE = 13;
+// Matches the label font, so the H line does not touch the symbol line.
+export const LINE_HEIGHT = 13;
 // The hydrogen count is a subscript, as in the side-by-side layout.
 const COUNT_DROP = 3;
 // Distance from the centre of H to the centre of its count.
@@ -42,14 +43,16 @@ const ISOTOPE_RISE = 4;
 /** The lines of a stacked label, as drawn by appendStackedHydrogenLabel. */
 export interface StackedLabel {
   hydrogen: TspanSelection;
-  count?: TspanSelection;
   symbol: TspanSelection;
   /**
-   * Where a text that follows the symbol must start so it clears the count of
-   * H. Undefined when H has no count: nothing collides and the text follows
-   * the symbol as usual.
+   * The count of H. Undefined when H has no count: nothing collides and a text
+   * that follows the symbol continues it as usual.
    */
-  startAfterCount?: number;
+  count?: {
+    tspan: TspanSelection;
+    /** Where a text that follows the symbol must start to clear the count. */
+    startAfter: number;
+  };
 }
 
 /**
@@ -77,7 +80,7 @@ export function appendStackedHydrogenLabel(
     .attr('x', 0)
     .attr('dy', hydrogenDy)
     .text('H');
-  const count = hasCount
+  const countTspan = hasCount
     ? text
         .append('tspan')
         .attr('x', COUNT_OFFSET_X)
@@ -92,13 +95,14 @@ export function appendStackedHydrogenLabel(
 
   return {
     hydrogen,
-    count,
     symbol,
-    startAfterCount: hasCount
-      ? COUNT_OFFSET_X +
+    count: countTspan && {
+      tspan: countTspan,
+      startAfter:
+        COUNT_OFFSET_X +
         String(hydrogenAmount).length * COUNT_HALF_DIGIT +
-        COUNT_GAP
-      : undefined,
+        COUNT_GAP,
+    },
   };
 }
 
@@ -124,13 +128,13 @@ export function startSymbolLineWithIsotope(
  * stays as it is.
  */
 export function startPropertyRunAfterCount(
-  { startAfterCount }: StackedLabel,
+  { count }: StackedLabel,
   firstProperty: TspanSelection,
 ): void {
-  if (startAfterCount === undefined) {
+  if (!count) {
     return;
   }
-  firstProperty.attr('x', startAfterCount).attr('text-anchor', 'start');
+  firstProperty.attr('x', count.startAfter).attr('text-anchor', 'start');
 }
 
 export interface LabelBox {

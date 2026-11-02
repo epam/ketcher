@@ -30,6 +30,7 @@ import {
 } from 'domain/helpers';
 import {
   appendStackedHydrogenLabel,
+  LABEL_FONT_SIZE,
   labelContourRect,
   type StackedLabel,
   startPropertyRunAfterCount,
@@ -71,7 +72,9 @@ export class AtomRenderer extends BaseRenderer {
   // What appendLabel drew. Contours, the bad-valence line and the atom
   // properties follow the drawn label, not the bonds as they are now: a bond
   // can change before the label is redrawn.
-  private labelHydrogenSide: ImplicitHydrogenSide = 'right';
+  // The side is set only while the label draws hydrogens apart from the symbol,
+  // which is the only case where a change of side redraws the label.
+  private labelHydrogenSide?: ImplicitHydrogenSide;
   private stackedLabel?: StackedLabel;
 
   private cipLabelElementBBox?: SVGRect;
@@ -316,16 +319,36 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  // Hydrogens that the label draws as text of their own, beside or around the
+  // symbol: the ones whose side the bonds decide. A hidden label, an alias, an
+  // H label (it folds the hydrogens into its own count) and an atom without
+  // implicit hydrogens draw none.
+  private get hasSeparateHydrogen() {
+    return (
+      this.isLabelVisible &&
+      this.shouldDisplayHydrogen &&
+      !this.isHydrogenLabel &&
+      !this.atom.hasAlias &&
+      this.atom.calculateValence().hydrogenAmount > 0
+    );
+  }
+
   /**
-   * Redraws the label when the bonds now put the hydrogens on another side than
-   * the one drawn. Returns whether it redrew, so the caller can trim the bonds
-   * of the atom against the new label.
+   * Redraws the label when the hydrogens it draws belong on another side than
+   * the one drawn, or when it now draws hydrogens it did not, or no longer
+   * does. An atom that draws none and drew none is left alone without reading
+   * the bonds. Returns whether it redrew, so the caller can trim the bonds of
+   * the atom against the new label.
    */
   public redrawLabelIfHydrogenSideChanged(): boolean {
-    if (
-      !this.rootElement ||
-      this.computeHydrogenSide() === this.labelHydrogenSide
-    ) {
+    if (!this.rootElement) {
+      return false;
+    }
+
+    const side = this.hasSeparateHydrogen
+      ? this.computeHydrogenSide()
+      : undefined;
+    if (side === this.labelHydrogenSide) {
       return false;
     }
 
@@ -456,13 +479,14 @@ export class AtomRenderer extends BaseRenderer {
   /**
    * The boxes that stop a bond: the label without the hydrogens of a stacked
    * label. A bond never points into the free quadrant that holds them, and the
-   * count of H would otherwise stop a bond at 30 or 150 degrees short of the
+   * count of H, which sits right of H, would otherwise stop a bond at 30
+   * degrees (hydrogens on top) or 330 degrees (hydrogens below) short of the
    * symbol. Hydrogens beside the symbol stay: they are part of its text run.
    */
   public get bondTrimBBoxes() {
     const hydrogenLine = new Set<SVGTSpanElement | null | undefined>([
       this.stackedLabel?.hydrogen.node(),
-      this.stackedLabel?.count?.node(),
+      this.stackedLabel?.count?.tspan.node(),
     ]);
 
     return this.collectLabelBBoxes((tspan) => !hydrogenLine.has(tspan));
@@ -495,24 +519,20 @@ export class AtomRenderer extends BaseRenderer {
     return labelBboxes;
   }
 
-  public get labelBoundingBox() {
-    return this.textElement?.node()?.getBBox();
-  }
-
   public get shouldDisplayHydrogen() {
     // Remove when rules for displaying hydrogen are implemented same as in molecules mode
     return this.atom.label !== AtomLabel.C || this.isAtomTerminal;
   }
 
   private appendLabel() {
-    const hydrogenSide = this.computeHydrogenSide();
-    this.labelHydrogenSide = hydrogenSide;
+    this.labelHydrogenSide = undefined;
     this.stackedLabel = undefined;
 
     if (!this.isLabelVisible) {
       return;
     }
 
+    const hydrogenSide = this.computeHydrogenSide();
     let { hydrogenAmount } = this.atom.calculateValence();
     const shouldHydrogenBeOnLeft = hydrogenSide === 'left';
 
@@ -536,11 +556,13 @@ export class AtomRenderer extends BaseRenderer {
           this.isGenericLabel ? ' font-style: italic;' : ''
         }`,
       )
-      .attr('font-size', '13px')
+      .attr('font-size', `${LABEL_FONT_SIZE}px`)
       .attr('pointer-events', 'none');
 
-    const hasSeparateHydrogen =
-      !isHydrogenLabel && hydrogenAmount > 0 && !this.atom.hasAlias;
+    const hasSeparateHydrogen = this.hasSeparateHydrogen;
+    if (hasSeparateHydrogen) {
+      this.labelHydrogenSide = hydrogenSide;
+    }
 
     if (textElement && hasSeparateHydrogen && isStackedSide(hydrogenSide)) {
       this.stackedLabel = appendStackedHydrogenLabel(textElement, {
@@ -631,6 +653,10 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
+    // The same steps and order as show(), for what was removed above.
+    this.appendStereoLabel();
+    this.appendCIPLabel();
+    this.drawSelection();
   }
 
   public appendSelection() {
@@ -670,21 +696,20 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendCharge() {
-    if (this.atom.hasCharge) {
-      const charge = this.atom.properties.charge as number;
-
-      const chargeElement = this.textElement
-        ?.append('tspan')
-        .text(
-          (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
-            (charge > 0 ? '+' : '–'),
-        )
-        .attr('fill', this.labelColor)
-        .attr('dy', -4);
-
-      // The charge is the first text after the symbol.
-      this.startPropertyRunAfterStackedCount(chargeElement);
+    if (!this.atom.hasCharge) {
+      return undefined;
     }
+
+    const charge = this.atom.properties.charge as number;
+
+    return this.textElement
+      ?.append('tspan')
+      .text(
+        (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
+          (charge > 0 ? '+' : '–'),
+      )
+      .attr('fill', this.labelColor)
+      .attr('dy', -4);
   }
 
   private appendRadical() {
@@ -731,29 +756,18 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendExplicitValence() {
-    if (this.atom.hasExplicitValence) {
-      const explicitValence = this.atom.properties.explicitValence as number;
-
-      const valenceElement = this.textElement
-        ?.append('tspan')
-        .text(`(${VALENCE_MAP[explicitValence]})`)
-        .attr('fill', this.labelColor)
-        .attr('letter-spacing', 0.2)
-        .attr('dy', -4);
-
-      // The charge, when there is one, already started the run.
-      if (!this.atom.hasCharge) {
-        this.startPropertyRunAfterStackedCount(valenceElement);
-      }
+    if (!this.atom.hasExplicitValence) {
+      return undefined;
     }
-  }
 
-  private startPropertyRunAfterStackedCount(
-    firstProperty?: D3SvgElementSelection<SVGTSpanElement, void>,
-  ) {
-    if (this.stackedLabel && firstProperty) {
-      startPropertyRunAfterCount(this.stackedLabel, firstProperty);
-    }
+    const explicitValence = this.atom.properties.explicitValence as number;
+
+    return this.textElement
+      ?.append('tspan')
+      .text(`(${VALENCE_MAP[explicitValence]})`)
+      .attr('fill', this.labelColor)
+      .attr('letter-spacing', 0.2)
+      .attr('dy', -4);
   }
 
   private appendExplicitIsotope() {
@@ -783,9 +797,16 @@ export class AtomRenderer extends BaseRenderer {
 
   private appendAtomProperties() {
     this.appendExplicitIsotope();
-    this.appendCharge();
+    const charge = this.appendCharge();
     this.appendRadical();
-    this.appendExplicitValence();
+    const valence = this.appendExplicitValence();
+
+    // Charge and valence follow the symbol as one run of text; the first of
+    // them starts it, clear of the count of stacked hydrogens.
+    const firstProperty = charge ?? valence;
+    if (this.stackedLabel && firstProperty) {
+      startPropertyRunAfterCount(this.stackedLabel, firstProperty);
+    }
   }
 
   private appendBadValenceWarning() {
@@ -1049,7 +1070,10 @@ export class AtomRenderer extends BaseRenderer {
     const baseDistance = 3;
 
     // Forward shift: clearance past the atom label in the placement direction.
-    // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
+    // Counts every box of the label, the stacked hydrogens too, as molecules
+    // mode does through visel.exts: there the stacked hydrogens are left out of
+    // bond trimming only, which is the split between labelBBoxes (here) and
+    // bondTrimBBoxes.
     let forwardShift = 0;
     this.labelBBoxes.forEach((labelSymbolBBox) => {
       const absoluteBox = new Box2Abs(

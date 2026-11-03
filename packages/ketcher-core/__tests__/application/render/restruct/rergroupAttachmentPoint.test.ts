@@ -257,6 +257,57 @@ describe('ReRGroupAttachmentPoint', () => {
     document.body.innerHTML = '';
   });
 
+  it.each([-1, 4])(
+    'renders isolated GeH2 with opposite numbered attachment points for valence %i (#3997)',
+    (explicitValence) => {
+      const struct = new Struct();
+      const atom = new Atom({
+        label: 'Ge',
+        pp: new Vec2(0, 0),
+        attachmentPoints: AttachmentPoints.BothSides,
+        explicitValence,
+      });
+      const atomId = struct.atoms.add(atom);
+      const primaryId = struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'primary'),
+      );
+      const secondaryId = struct.rgroupAttachmentPoints.add(
+        new RGroupAttachmentPoint(atomId, 'secondary'),
+      );
+      struct.setImplicitHydrogen();
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const render = new Render(container, options);
+      const restruct = new ReStruct(struct, render);
+
+      restruct.update(true);
+
+      expect(atom.implicitH).toBe(2);
+      expect(
+        restruct.rgroupAttachmentPoints.get(primaryId)?.lineDirectionVector,
+      ).toEqual(new Vec2(0, -1));
+      expect(
+        restruct.rgroupAttachmentPoints.get(secondaryId)?.lineDirectionVector,
+      ).toEqual(new Vec2(0, 1));
+
+      const rings = Array.from(container.querySelectorAll('circle, ellipse'));
+      expect(rings).toHaveLength(2);
+      expect(Number(rings[0].getAttribute('cy'))).toBeLessThan(0);
+      expect(Number(rings[1].getAttribute('cy'))).toBeGreaterThan(0);
+      expect(rings[0].getAttribute('cx')).toBe(rings[1].getAttribute('cx'));
+      const labels = Array.from(container.querySelectorAll('text'));
+      const primaryLabel = labels.find((label) => label.textContent === '1');
+      const secondaryLabel = labels.find(
+        (label) =>
+          label.textContent === '2' && Number(label.getAttribute('y')) > 0,
+      );
+      expect(primaryLabel?.getAttribute('y')).toBe(rings[0].getAttribute('cy'));
+      expect(secondaryLabel?.getAttribute('y')).toBe(
+        rings[1].getAttribute('cy'),
+      );
+    },
+  );
+
   it('adds attachment point test attributes to rendered attachment points', () => {
     const struct = new Struct();
     const attachedAtomId = struct.atoms.add(

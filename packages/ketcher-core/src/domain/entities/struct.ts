@@ -1445,7 +1445,6 @@ export class Struct {
 
     const atom = this.atoms.get(aid);
     assert(atom, `Atom ${aid} not found`);
-    const charge = atom.charge ?? 0;
     const [conn, isAromatic] = this.calcConn(
       atom,
       shouldIncludeAtomsInCollapsedSgroups,
@@ -1454,30 +1453,18 @@ export class Struct {
     atom.badConn = false;
 
     if (isAromatic) {
-      if (charge === 0 && atom.label === 'C') {
-        if (conn === 3) {
-          atom.implicitH = -radicalElectrons(atom.radical);
-          return;
-        }
-        if (conn === 2) {
-          atom.implicitH = 1 - radicalElectrons(atom.radical);
-          return;
-        }
-      } else if (
-        (charge === 0 && atom.label === 'O') ||
-        (charge === 0 && conn === 3 && atom.label === 'N') ||
-        (charge === 1 && conn === 3 && atom.label === 'N') ||
-        (charge === 0 && conn === 3 && atom.label === 'S') ||
-        !atom.implicitH
-      ) {
-        atom.implicitH = 0;
+      const aromaticConn = this.calcAromaticImplicitHydrogen(atom, conn);
+      if (aromaticConn === null) {
         return;
-      } else if (!atom.hasImplicitH) {
-        correctConn++;
       }
+      correctConn = aromaticConn;
     }
 
-    if (correctConn < 0 || atom.isQuery() || atom.attachmentPoints) {
+    if (
+      correctConn < 0 ||
+      atom.isQuery() ||
+      (atom.attachmentPoints && atom.neighbors.length > 0)
+    ) {
       atom.implicitH = 0;
       return;
     }
@@ -1485,7 +1472,8 @@ export class Struct {
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label);
       atom.implicitH = elem
-        ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
+        ? atom.explicitValence -
+          atom.calcValenceMinusHyd(correctConn + atom.attachmentPointCount)
         : 0;
       if (atom.implicitH < 0) {
         atom.implicitH = 0;
@@ -1494,6 +1482,38 @@ export class Struct {
     } else {
       atom.calcValence(correctConn);
     }
+  }
+
+  /** Returns null when the aromatic hydrogen count is already resolved. */
+  private calcAromaticImplicitHydrogen(
+    atom: Atom,
+    conn: number,
+  ): number | null {
+    const charge = atom.charge ?? 0;
+    if (charge === 0 && atom.label === 'C') {
+      if (conn === 3) {
+        atom.implicitH = -radicalElectrons(atom.radical);
+        return null;
+      }
+      if (conn === 2) {
+        atom.implicitH = 1 - radicalElectrons(atom.radical);
+        return null;
+      }
+      return conn;
+    }
+
+    if (
+      (charge === 0 && atom.label === 'O') ||
+      (charge === 0 && conn === 3 && atom.label === 'N') ||
+      (charge === 1 && conn === 3 && atom.label === 'N') ||
+      (charge === 0 && conn === 3 && atom.label === 'S') ||
+      !atom.implicitH
+    ) {
+      atom.implicitH = 0;
+      return null;
+    }
+
+    return atom.hasImplicitH ? conn : conn + 1;
   }
 
   setImplicitHydrogen(

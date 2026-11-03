@@ -37,10 +37,10 @@ import type {
 
 export function toRlabel(values: number[]): number {
   let res = 0;
-  values.forEach((val) => {
+  for (const val of values) {
     const rgi = val - 1;
     res |= 1 << rgi;
-  });
+  }
   return res;
 }
 
@@ -55,7 +55,7 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
 
   if (ketItem.atoms) {
-    ketItem.atoms.forEach((atom) => {
+    for (const atom of ketItem.atoms) {
       let atomId: number | null = null;
       if (atom.type === 'rg-label') {
         atomId = struct.atoms.add(rglabelToStruct(atom));
@@ -71,15 +71,17 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
           atom.selected,
         );
       }
-    });
+    }
   }
 
   if (ketItem.bonds) {
-    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)));
+    for (const bond of ketItem.bonds) {
+      struct.bonds.add(bondToStruct(bond));
+    }
   }
 
   if (ketItem.sgroups) {
-    ketItem.sgroups.forEach((sgroupData) => {
+    for (const sgroupData of ketItem.sgroups) {
       const sgroup = sgroupToStruct(sgroupData);
       // Drop dangling atom references (atom ids absent from the struct). A malformed
       // file can reference a non-existent atom; without this the whole S-group is later
@@ -88,11 +90,11 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
       const hasOriginalAtoms = sgroup.atoms.length > 0;
       sgroup.atoms = sgroup.atoms.filter((atomId) => struct.atoms.has(atomId));
       if (hasOriginalAtoms && sgroup.atoms.length === 0) {
-        return; // all references were invalid — skip this malformed S-group
+        continue; // all references were invalid — skip this malformed S-group
       }
       const id = struct.sgroups.add(sgroup);
       sgroup.id = id;
-    });
+    }
   }
 
   struct.initHalfBonds();
@@ -142,9 +144,9 @@ function addRGroupAttachmentPointsToStruct(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }
-  rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
+  for (const rgroupAttachmentPoint of rgroupAttachmentPoints) {
     struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
-  });
+  }
 }
 
 type KetAttachmentPoint = KetSGroupAttachmentPointNode & {
@@ -175,23 +177,24 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup.data, 'class', source.class);
       ifDef(sgroup, 'id', source.id);
-      source.attachmentPoints?.forEach(
-        (sourceAttachmentPoint, sourceAttachmentPointIndex: number) => {
-          const { attachmentAtom } = sourceAttachmentPoint;
-          if (typeof attachmentAtom !== 'number') {
-            return;
-          }
-          sgroup.addAttachmentPoint(
-            sgroupAttachmentPointToStruct(
-              {
-                ...sourceAttachmentPoint,
-                attachmentAtom,
-              },
-              sourceAttachmentPointIndex + 1,
-            ),
-          );
-        },
-      );
+      for (const [
+        sourceAttachmentPointIndex,
+        sourceAttachmentPoint,
+      ] of source.attachmentPoints?.entries() ?? []) {
+        const { attachmentAtom } = sourceAttachmentPoint;
+        if (typeof attachmentAtom !== 'number') {
+          continue;
+        }
+        sgroup.addAttachmentPoint(
+          sgroupAttachmentPointToStruct(
+            {
+              ...sourceAttachmentPoint,
+              attachmentAtom,
+            },
+            sourceAttachmentPointIndex + 1,
+          ),
+        );
+      }
       break;
     }
     case 'DAT': {

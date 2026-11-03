@@ -34,13 +34,16 @@ export function findHapticBondAttachmentGroupTarget(
   let closestAttachmentGroupId: number | null = null;
   let closestDistance = radiusInModelCoordinates;
 
-  restruct.visibleAttachmentGroups.forEach((attachmentGroup, id) => {
+  for (const [
+    id,
+    attachmentGroup,
+  ] of restruct.visibleAttachmentGroups.entries()) {
     const distance = Vec2.dist(pointerPosition, attachmentGroup.a.pp);
     if (distance <= closestDistance) {
       closestAttachmentGroupId = id;
       closestDistance = distance;
     }
-  });
+  }
 
   return closestAttachmentGroupId;
 }

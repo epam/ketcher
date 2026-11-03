@@ -33,10 +33,10 @@ export function isStructureContinuous(
   for (const atomId of atomIds) {
     adjacencyList.set(atomId, []);
   }
-  bondIds.forEach((bondId) => {
+  for (const bondId of bondIds) {
     const bond = struct.bonds.get(bondId);
     if (!bond) {
-      return;
+      continue;
     }
 
     const { begin, end } = bond;
@@ -44,7 +44,7 @@ export function isStructureContinuous(
       adjacencyList.get(begin)?.push(end);
       adjacencyList.get(end)?.push(begin);
     }
-  });
+  }
 
   const visited = new Set<number>();
   const queue = [atomIds[0]];

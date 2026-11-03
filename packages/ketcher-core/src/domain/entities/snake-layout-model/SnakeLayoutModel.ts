@@ -58,12 +58,12 @@ export class SnakeLayoutModel {
 
     this.nodes.push(twoStrandedSnakeLayoutNode);
 
-    snakeLayoutNode.monomers.forEach((monomer) => {
+    for (const monomer of snakeLayoutNode.monomers) {
       this.monomerToTwoStrandedSnakeLayoutNode.set(
         monomer,
         twoStrandedSnakeLayoutNode,
       );
-    });
+    }
   }
 
   private getSnakeLayoutNodesFromChainNode(
@@ -88,13 +88,13 @@ export class SnakeLayoutModel {
       nodes.push(new SugarWithBaseSnakeLayoutNode(node.sugar, node.rnaBase));
     } else if (node instanceof LinkerSequenceNode) {
       if (isAntisense) {
-        node.monomers.reverse().forEach((monomer) => {
+        for (const monomer of node.monomers.reverse()) {
           nodes.push(new SingleMonomerSnakeLayoutNode(monomer));
-        });
+        }
       } else {
-        node.monomers.forEach((monomer) => {
+        for (const monomer of node.monomers) {
           nodes.push(new SingleMonomerSnakeLayoutNode(monomer));
-        });
+        }
       }
     } else {
       nodes.push(new SingleMonomerSnakeLayoutNode(node.monomer));
@@ -104,19 +104,19 @@ export class SnakeLayoutModel {
   }
 
   private fillSenseNodes(chainsCollection: ChainsCollection) {
-    chainsCollection.chains.forEach((chain) => {
+    for (const chain of chainsCollection.chains) {
       if (chain.isAntisense) {
-        return;
+        continue;
       }
 
       chain.forEachNode(({ node }) => {
         const snakeLayoutNodes = this.getSnakeLayoutNodesFromChainNode(node);
 
-        snakeLayoutNodes.forEach((snakeLayoutNode) => {
+        for (const snakeLayoutNode of snakeLayoutNodes) {
           this.addNode(snakeLayoutNode, chain);
-        });
+        }
       });
-    });
+    }
   }
 
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
@@ -124,9 +124,9 @@ export class SnakeLayoutModel {
     const monomerToChain = chainsCollection.monomerToChain;
     const editor = provideEditorInstance();
 
-    chainsCollection.chains.forEach((chain) => {
+    for (const chain of chainsCollection.chains) {
       if (!chain.isAntisense) {
-        return;
+        continue;
       }
       let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutMonomersNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
@@ -142,7 +142,7 @@ export class SnakeLayoutModel {
           true,
         );
 
-        snakeLayoutNodes.forEach((snakeLayoutNode) => {
+        for (const snakeLayoutNode of snakeLayoutNodes) {
           const senseMonomersConnectedByHydrogenBond =
             snakeLayoutNode.monomers.reduce((foundMonomersInNode, monomer) => {
               return [
@@ -257,7 +257,7 @@ export class SnakeLayoutModel {
           } else {
             nodesBeforeHydrogenConnectionToBase.push(snakeLayoutNode);
           }
-        });
+        }
 
         handledChainNodes.add(node);
       });
@@ -326,7 +326,7 @@ export class SnakeLayoutModel {
 
         lastTwoStrandedNodeWithHydrogenBond = undefined;
       }
-    });
+    }
   }
 
   private fillNodes(chainsCollection: ChainsCollection) {
@@ -337,13 +337,17 @@ export class SnakeLayoutModel {
   public forEachNode(
     callback: (node: ITwoStrandedSnakeLayoutNode, index: number) => void,
   ) {
-    this.nodes.forEach(callback);
+    for (const [index, node] of this.nodes.entries()) {
+      callback(node, index);
+    }
   }
 
   public forEachChain(
     callback: (chain: SnakeLayoutModelChain, index: number) => void,
   ) {
-    this.chains.forEach(callback);
+    for (const [index, chain] of this.chains.entries()) {
+      callback(chain, index);
+    }
   }
 
   private fillChains() {
@@ -353,9 +357,9 @@ export class SnakeLayoutModel {
     let currentSequenceModelRow: ISnakeLayoutModelRow = {
       snakeLayoutModelItems: [],
     };
-    let previousSenseNodeChain: Chain;
+    let previousSenseNodeChain: Chain | undefined;
 
-    this.nodes.forEach((sequenceModelItem) => {
+    for (const sequenceModelItem of this.nodes) {
       const currentSenseChain = sequenceModelItem.chain;
 
       if (previousSenseNodeChain !== currentSenseChain) {
@@ -375,7 +379,7 @@ export class SnakeLayoutModel {
 
       previousSenseNodeChain = currentSenseChain;
       currentIndexInSequenceModelChain++;
-    });
+    }
   }
 
   private fillMolecules(drawingEntitiesManager: DrawingEntitiesManager) {
@@ -383,7 +387,7 @@ export class SnakeLayoutModel {
     const handledMonomerConnectedToMolecules = new Set<BaseMonomer>();
     const handledMolecules = [] as (Atom | Bond)[]; // for checking existing of molecule we can check only one atom;
 
-    this.chains.forEach((chain, chainIndex) => {
+    for (const [chainIndex, chain] of this.chains.entries()) {
       const newChain = new SnakeLayoutModelChain();
 
       chain.forEachRow((row, rowIndex) => {
@@ -395,9 +399,9 @@ export class SnakeLayoutModel {
           chainIndex === this.chains.length - 1 &&
           rowIndex === chain.rowsLength - 1;
 
-        row.snakeLayoutModelItems.forEach((node, nodeIndex) => {
+        for (const [nodeIndex, node] of row.snakeLayoutModelItems.entries()) {
           if (!isTwoStrandedSnakeLayoutNode(node)) {
-            return;
+            continue;
           }
 
           const monomers = [
@@ -405,8 +409,8 @@ export class SnakeLayoutModel {
             ...(node.antisenseNode?.monomers ?? []),
           ];
 
-          monomers.forEach((monomer) => {
-            monomer.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+          for (const monomer of monomers) {
+            for (const monomerToAtomBond of monomer.monomerToAtomBonds) {
               const molecule = drawingEntitiesManager.getConnectedMolecule(
                 monomerToAtomBond.atom,
                 [Atom],
@@ -437,15 +441,15 @@ export class SnakeLayoutModel {
                 handledMolecules.push(molecule[0]);
                 nodeIndexToMolecules.get(nodeIndex)?.push(molecule);
               }
-            });
-          });
-        });
+            }
+          }
+        }
 
         if (isLastRowOfLastChain) {
           // Add all unhandled molecules in end of the last row of the last chain
-          drawingEntitiesManager.atoms.forEach((atom) => {
+          for (const atom of drawingEntitiesManager.atoms.values()) {
             if (handledMonomerConnectedToMolecules.has(atom.monomer)) {
-              return;
+              continue;
             }
 
             const molecule = drawingEntitiesManager.getConnectedMolecule(atom, [
@@ -461,7 +465,7 @@ export class SnakeLayoutModel {
             nodeIndexToMolecules
               .get(row.snakeLayoutModelItems.length)
               ?.push(molecule);
-          });
+          }
         }
 
         // Place collected molecules in additional rows below the current one
@@ -476,7 +480,7 @@ export class SnakeLayoutModel {
         let emptyRowsToAdd = 0;
 
         nodeIndexToMolecules.forEach((molecules) => {
-          molecules.forEach((molecule) => {
+          for (const molecule of molecules) {
             const moleculeBbox = getStructureBbox(molecule);
             const cellsNeededHorizontally = Math.ceil(
               (moleculeBbox.width + cellSizeInAngstroms / 2) /
@@ -531,7 +535,7 @@ export class SnakeLayoutModel {
               emptyRowsToAdd,
               cellsNeededVertically - 1,
             );
-          });
+          }
         });
 
         // Fill the rest of the last row with empty nodes
@@ -561,6 +565,6 @@ export class SnakeLayoutModel {
       });
 
       this.chains.splice(chainIndex, 1, newChain);
-    });
+    }
   }
 }

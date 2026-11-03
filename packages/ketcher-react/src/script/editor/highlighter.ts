@@ -49,14 +49,14 @@ export class Highlighter {
   create(...args: HighlightAttributes[]) {
     const createdHighlights: HighlightAttributes[] = [];
 
-    args.forEach((arg) => {
+    for (const arg of args) {
       const { atoms, bonds, rgroupAttachmentPoints, color, outline } = arg;
       if (typeof color !== 'string') {
-        return;
+        continue;
       }
 
       if (!atoms && !bonds && !rgroupAttachmentPoints) {
-        return;
+        continue;
       }
 
       const restruct = this.editor.render.ctab;
@@ -74,7 +74,7 @@ export class Highlighter {
         validBonds.length === 0 &&
         validRgroupAttachmentPoints.length === 0
       ) {
-        return;
+        continue;
       }
 
       createdHighlights.push({
@@ -84,7 +84,7 @@ export class Highlighter {
         color,
         outline,
       });
-    });
+    }
     const action = fromHighlightCreate(
       this.editor.render.ctab,
       createdHighlights,

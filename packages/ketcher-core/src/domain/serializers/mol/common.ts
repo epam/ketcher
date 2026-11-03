@@ -107,7 +107,7 @@ const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
 
 function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
   const xBonds: number[] = [];
-  mol.bonds.forEach((bond, bid) => {
+  for (const [bid, bond] of mol.bonds.entries()) {
     const a1 = getAtom(mol, bond.begin);
     const a2 = getAtom(mol, bond.end);
     if (
@@ -116,7 +116,7 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
     ) {
       xBonds.push(bid);
     }
-  });
+  }
   if (xBonds.length !== 0 && xBonds.length !== 2) {
     const error = new Error(
       'Unsupported cross-bonds number',
@@ -137,7 +137,7 @@ function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
   // This code is also used for GroupSru and should be moved into a separate common method
   // It seems that such code should be used for any sgroup by this this should be checked
   const xBonds: number[] = [];
-  mol.bonds.forEach((bond, bid) => {
+  for (const [bid, bond] of mol.bonds.entries()) {
     const a1 = getAtom(mol, bond.begin);
     const a2 = getAtom(mol, bond.end);
 
@@ -147,7 +147,7 @@ function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
     ) {
       xBonds.push(bid);
     }
-  });
+  }
   sgroup.bonds = xBonds;
 }
 
@@ -326,13 +326,13 @@ function saveDatToMolfile(
   lines.push(sddLine);
   const val = normalizeNewlines(data.fieldValue).replace(/\n*$/, '');
   const charsPerLine = 69;
-  val.split('\n').forEach((chars) => {
+  for (let chars of val.split('\n')) {
     while (chars.length > charsPerLine) {
       lines.push('M  SCD ' + idstr + ' ' + chars.slice(0, charsPerLine));
       chars = chars.slice(charsPerLine);
     }
     lines.push('M  SED ' + idstr + ' ' + chars);
-  });
+  }
   return lines.join('\n');
 }
 

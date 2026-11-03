@@ -127,7 +127,9 @@ export default class FragmentSelectionTool implements Tool {
 
   private removeBondPreview() {
     if (this.bondPreview) {
-      this.bondPreview.paths.forEach((path) => path.remove());
+      for (const path of this.bondPreview.paths) {
+        path.remove();
+      }
     }
   }
 
@@ -215,7 +217,9 @@ export default class FragmentSelectionTool implements Tool {
 
     const blockedBonds = new Set<number>(componentData.componentBonds);
 
-    componentData.connectingBonds.forEach((bondId) => blockedBonds.add(bondId));
+    for (const bondId of componentData.connectingBonds) {
+      blockedBonds.add(bondId);
+    }
     blockedBonds.add(bondItem.id);
 
     if (isStartAtomComponent) {
@@ -424,10 +428,14 @@ export default class FragmentSelectionTool implements Tool {
     const rnaComponentAtoms =
       this.editor.monomerCreationState?.rnaComponentAtoms;
 
-    rnaComponentAtoms?.forEach((component) => {
-      component.atoms?.forEach((atomId) => componentAtoms.add(atomId));
-      component.bonds?.forEach((bondId) => componentBonds.add(bondId));
-    });
+    for (const component of rnaComponentAtoms?.values() ?? []) {
+      for (const atomId of component.atoms ?? []) {
+        componentAtoms.add(atomId);
+      }
+      for (const bondId of component.bonds ?? []) {
+        componentBonds.add(bondId);
+      }
+    }
 
     if (componentAtoms.size) {
       for (const [bondId, bond] of struct.bonds.entries()) {

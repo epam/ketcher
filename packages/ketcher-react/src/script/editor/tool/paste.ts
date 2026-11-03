@@ -314,9 +314,9 @@ function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   const sgroup = molecule.sgroups.get(0);
   const xy0 = new Vec2();
 
-  molecule.atoms.forEach((atom) => {
+  for (const atom of molecule.atoms.values()) {
     xy0.add_(atom.pp);
-  });
+  }
 
   const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
   const aid = sgroup?.getAttachmentAtomId() ?? 0;

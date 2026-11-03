@@ -366,11 +366,11 @@ function getHoveredItem(
       continue;
     }
 
-    ctab[ctabItem].forEach((item, id) => {
+    for (const [id, item] of ctab[ctabItem].entries()) {
       if (item.hover) {
         hoveredItem[ctabItem] = id;
       }
-    });
+    }
   }
 
   return Object.keys(hoveredItem).length ? hoveredItem : null;
@@ -379,9 +379,9 @@ function getHoveredItem(
 function checkGroupOnTool(group, actionTool) {
   let index = group.indexOf(actionTool.tool);
 
-  group.forEach((actName, i) => {
+  for (const [i, actName] of group.entries()) {
     if (isEqual(actions[actName].action, actionTool)) index = i;
-  });
+  }
 
   return index;
 }

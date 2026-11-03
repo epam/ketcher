@@ -54,13 +54,13 @@ export class ChainsCollection {
   public get monomerToChain() {
     const monomerToChain = new Map<BaseMonomer, Chain>();
 
-    this.chains.forEach((chain) => {
+    for (const chain of this.chains) {
       chain.forEachNode(({ node }) => {
-        node.monomers.forEach((monomer) => {
+        for (const monomer of node.monomers) {
           monomerToChain.set(monomer, chain);
-        });
+        }
       });
-    });
+    }
 
     return monomerToChain;
   }
@@ -69,9 +69,9 @@ export class ChainsCollection {
     const monomerToNode = new Map<BaseMonomer, SubChainNode>();
 
     this.forEachNode(({ node }) => {
-      node.monomers.forEach((monomer) => {
+      for (const monomer of node.monomers) {
         monomerToNode.set(monomer, node);
-      });
+      }
     });
 
     return monomerToNode;
@@ -102,25 +102,25 @@ export class ChainsCollection {
 
     const reorderedChains = new Set<Chain>();
     const monomerToChain = this.monomerToChain;
-    this.chains.forEach((chain) => {
+    for (const chain of this.chains) {
       reorderedChains.add(chain);
 
       chain.forEachNode(({ node }) => {
-        node.monomers.forEach((monomer) => {
+        for (const monomer of node.monomers) {
           const sideConnections = monomer.sideConnections;
           if (sideConnections.length) {
-            sideConnections.forEach((sideConnection) => {
+            for (const sideConnection of sideConnections) {
               const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
               const anotherChain =
                 anotherMonomer && monomerToChain.get(anotherMonomer);
               if (anotherChain && !reorderedChains.has(anotherChain)) {
                 reorderedChains.add(anotherChain);
               }
-            });
+            }
           }
-        });
+        }
       });
-    });
+    }
 
     this.chains = [...reorderedChains.values()];
 
@@ -148,23 +148,21 @@ export class ChainsCollection {
     const [firstMonomersInRegularChains, firstMonomersInCycledChains] =
       this.getFirstMonomersInChains(filteredMonomers);
 
-    firstMonomersInRegularChains.forEach((monomer) => {
+    for (const monomer of firstMonomersInRegularChains) {
       chainsCollection.add(new Chain(monomer));
-    });
+    }
 
-    firstMonomersInCycledChains.forEach((monomer) => {
+    for (const monomer of firstMonomersInCycledChains) {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
-    });
+    }
 
     const firstMonomersInMiddleOfChains =
       this.getFirstMonomersInMiddleOfChains(filteredMonomers);
 
     if (firstMonomersInMiddleOfChains.length) {
-      firstMonomersInMiddleOfChains.forEach(
-        (firstMonomerInMiddleOfChain: BaseMonomer) => {
-          chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
-        },
-      );
+      for (const firstMonomerInMiddleOfChain of firstMonomersInMiddleOfChains) {
+        chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
+      }
     }
 
     return chainsCollection;
@@ -217,9 +215,9 @@ export class ChainsCollection {
     const handledMonomers = new Set<BaseMonomer>();
     const firstMonomersInMiddleOfChains: BaseMonomer[] = [];
 
-    monomers.forEach((monomer) => {
+    for (const monomer of monomers) {
       if (handledMonomers.has(monomer)) {
-        return;
+        continue;
       }
 
       handledMonomers.add(monomer);
@@ -243,7 +241,7 @@ export class ChainsCollection {
           firstMonomersInMiddleOfChains.push(previousMonomerInChain);
         }
       }
-    });
+    }
 
     return firstMonomersInMiddleOfChains;
   }
@@ -297,9 +295,9 @@ export class ChainsCollection {
     const handledMonomers = new Set<BaseMonomer>();
     const cyclicChains: BaseMonomer[][] = [];
 
-    monomersList.forEach((monomer) => {
+    for (const monomer of monomersList) {
       if (handledMonomers.has(monomer)) {
-        return;
+        continue;
       }
 
       const monomersInSameChain = new Set<BaseMonomer>();
@@ -316,7 +314,7 @@ export class ChainsCollection {
       if (monomer === nextMonomerInChain) {
         cyclicChains.push([...monomersInSameChain]);
       }
-    });
+    }
 
     const firstMonomersOfCycledChainsSet = cyclicChains.map((cyclicChain) =>
       this.getMonomerWithLowerCoordsFromMonomerList(cyclicChain),
@@ -373,9 +371,9 @@ export class ChainsCollection {
   ) {
     let nodeIndexOverall = 0;
 
-    this.chains.forEach((chain, chainIndex) => {
-      chain.subChains.forEach((subChain, subChainIndex) => {
-        subChain.nodes.forEach((node, nodeIndex) => {
+    for (const [chainIndex, chain] of this.chains.entries()) {
+      for (const [subChainIndex, subChain] of chain.subChains.entries()) {
+        for (const [nodeIndex, node] of subChain.nodes.entries()) {
           forEachCallback({
             chainIndex,
             subChainIndex,
@@ -386,9 +384,9 @@ export class ChainsCollection {
             chain,
           });
           nodeIndexOverall++;
-        });
-      });
-    });
+        }
+      }
+    }
   }
 
   private getFirstComplimentaryMonomer(monomer: BaseMonomer) {
@@ -498,14 +496,14 @@ export class ChainsCollection {
     const reorderedSenseForSequentialAntisenseChains: Chain[] = new Array(
       this.chains.length,
     );
-    this.chains.forEach((chain) => {
+    for (const chain of this.chains) {
       if (!handledChain.has(chain)) {
         reorderedSenseForSequentialAntisenseChains[handledChain.size] = chain;
         handledChain.add(chain);
       }
 
       if (chain.isAntisense) {
-        return;
+        continue;
       }
 
       chain.forEachNode(({ node: sNode }) => {
@@ -552,7 +550,7 @@ export class ChainsCollection {
           }
         });
       });
-    });
+    }
     this.chains = [...reorderedSenseForSequentialAntisenseChains];
   }
 
@@ -655,7 +653,7 @@ export class ChainsCollection {
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node, nodeIndex }) => {
-      node.monomers.forEach((monomer) => {
+      for (const monomer of node.monomers) {
         const { complimentaryMonomer } =
           this.getFirstComplimentaryMonomer(monomer) || {};
         const complimentaryNode =
@@ -668,7 +666,7 @@ export class ChainsCollection {
           !complimentaryChain ||
           handledChains.has(complimentaryChain)
         ) {
-          return;
+          continue;
         }
 
         handledChains.add(complimentaryChain);
@@ -679,7 +677,7 @@ export class ChainsCollection {
           firstConnectedComplimentaryNode: complimentaryNode,
           chainIdxConnection: nodeIndex,
         });
-      });
+      }
     });
 
     return complimentaryChainsWithData;

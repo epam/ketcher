@@ -73,9 +73,9 @@ function getExpandGroupsInMergeAction(
   const action = new Action();
   const groupsInMerge = getGroupIdsFromItemMaps(restruct.molecule, mergeItems);
   if (groupsInMerge.length) {
-    groupsInMerge.forEach((groupId) => {
+    for (const groupId of groupsInMerge) {
       action.mergeWith(setExpandSGroup(restruct, groupId, { expanded: true }));
-    });
+    }
   }
 
   return action;
@@ -103,7 +103,10 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
 
   const action = new Action();
 
-  mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
+  for (const [
+    srcAtomId,
+    functionalGroupId,
+  ] of mergeItems.atomToFunctionalGroup?.entries() ?? []) {
     const sGroup = struct.sgroups.get(functionalGroupId) as SGroup;
 
     const { atomId: positionAtomId } = sGroup.getContractedPosition(
@@ -124,7 +127,7 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
       );
       newMergeItems.atoms.set(srcAtomId, positionAtomId);
     }
-  });
+  }
 
   return [newMergeItems, action] as const;
 }

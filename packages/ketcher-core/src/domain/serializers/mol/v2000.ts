@@ -265,10 +265,10 @@ function handleAtomListProperty(
     return;
   }
 
-  pool.forEach((atomList, aid) => {
+  for (const [aid, atomList] of pool.entries()) {
     labelPool.set(aid, 'L#');
     atomListPool.set(aid, atomList);
-  });
+  }
 }
 
 /**
@@ -297,10 +297,10 @@ function handleSGroupExpandedProperty(
   sGroups: SGroupMap,
 ): void {
   const expandedSGroups = propertyData.slice(7).trim().split('   ');
-  expandedSGroups.forEach((eg) => {
+  for (const eg of expandedSGroups) {
     const sGroupId = Number(eg) - 1;
     sGroups[sGroupId].data.expanded = true;
-  });
+  }
 }
 
 /**
@@ -312,9 +312,9 @@ function handleSGroupAttachmentProperty(
 ): void {
   const { sGroupId, attachmentPoints } =
     sGroup.parseSGroupSAPLineV2000(propertyData);
-  attachmentPoints.forEach((attachmentPoint) => {
+  for (const attachmentPoint of attachmentPoints) {
     sGroups[sGroupId].addAttachmentPoint(attachmentPoint);
-  });
+  }
 }
 
 /**
@@ -470,15 +470,13 @@ function applyAtomProp(
   values: Pool<string | number | AtomList>,
   propId: string,
 ): void {
-  /*
-  reader
-  */
-  values.forEach((propVal, aid) => {
+  /* reader */
+  for (const [aid, propVal] of values.entries()) {
     const atom = atoms.get(aid);
     if (atom) {
       (atom as Atom & Record<string, unknown>)[propId] = propVal;
     }
-  });
+  }
 }
 
 /**
@@ -487,9 +485,9 @@ function applyAtomProp(
  * @param struct { Struct }
  */
 function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
-  struct.atoms.forEach((atom, atomId) => {
+  for (const [atomId, atom] of struct.atoms.entries()) {
     if (!atom.attachmentPoints) {
-      return;
+      continue;
     }
 
     const attachmentPoints = atom.attachmentPoints;
@@ -510,7 +508,7 @@ function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
         new RGroupAttachmentPoint(atomId, 'secondary'),
       );
     }
-  });
+  }
 }
 
 function parseCTabV2000(
@@ -541,10 +539,12 @@ function parseCTabV2000(
   shift += atomListCount + stextLinesCount;
 
   const atoms = atomLines.map(parseAtomLine);
-  atoms.forEach((atom) => ctab.atoms.add(atom));
+  for (const atom of atoms) {
+    ctab.atoms.add(atom);
+  }
 
   const bonds = bondLines.map(parseBondLine);
-  bonds.forEach((bond) => {
+  for (const bond of bonds) {
     const beginAtom = ctab.atoms.get(bond.begin);
     if (beginAtom) {
       if (isAbs && bond.stereo) {
@@ -555,17 +555,17 @@ function parseCTabV2000(
       }
     }
     ctab.bonds.add(bond);
-  });
+  }
 
   const atomLists = atomListLines.map(parseAtomListLine);
-  atomLists.forEach((pair) => {
+  for (const pair of atomLists) {
     const atom = ctab.atoms.get(pair.aid);
     if (!atom) {
       throw new Error('Atom index out of range for atom list');
     }
     atom.atomList = pair.atomList;
     atom.label = 'L#';
-  });
+  }
 
   const sGroups: SGroupMap = {};
   const rLogic: Record<number, RGroupAttributes> = {};

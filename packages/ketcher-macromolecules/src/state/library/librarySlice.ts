@@ -161,21 +161,21 @@ export const librarySlice: Slice = createSlice({
         return;
       }
 
-      state.monomers.forEach((monomer: MonomerItemType) => {
+      for (const monomer of state.monomers.values() as Iterable<MonomerItemType>) {
         const uniqueKey: string = getMonomerUniqueKey(monomer);
         const favoriteItem = favoritesInLocalStorage.find(
           (key) => key === uniqueKey,
         );
 
         if (!favoriteItem) {
-          return;
+          continue;
         }
 
         localFavorites[uniqueKey] = {
           ...monomer,
           favorite: true,
         };
-      });
+      }
 
       state.favorites = localFavorites;
     },
@@ -341,7 +341,7 @@ export const selectAmbiguousMonomersInCategory = (
 
   const firstAmbiguousMonomersInLibrary = new Set(['X', 'N']);
 
-  groupedAmbiguousMonomerLibraryItems.forEach((group) => {
+  for (const group of groupedAmbiguousMonomerLibraryItems) {
     group.groupItems.sort(
       (ambiguousMonomerLibraryItem, ambiguousMonomerLibraryItemToCompare) =>
         ambiguousMonomerLibraryItem.label.localeCompare(
@@ -354,7 +354,7 @@ export const selectAmbiguousMonomersInCategory = (
         ? -1
         : 1,
     );
-  });
+  }
 
   return groupedAmbiguousMonomerLibraryItems;
 };
@@ -387,9 +387,9 @@ export const selectAmbiguousMonomersInFavorites = (
     ];
   }
 
-  favoritesAmbiguousMonomers.forEach((group) => {
+  for (const group of favoritesAmbiguousMonomers) {
     group.groupItems = group.groupItems.filter((item) => item.favorite);
-  });
+  }
 
   return favoritesAmbiguousMonomers.filter((group) => group.groupItems.length);
 };
@@ -715,12 +715,12 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
           : code,
       groupItems: [],
     };
-    sortedPreparedData[code].forEach((item: MonomerItemType) => {
+    for (const item of sortedPreparedData[code] as Iterable<MonomerItemType>) {
       group.groupItems.push({
         ...item,
         props: { ...item.props },
       });
-    });
+    }
     if (group.groupItems.length) {
       result.push(group);
     }

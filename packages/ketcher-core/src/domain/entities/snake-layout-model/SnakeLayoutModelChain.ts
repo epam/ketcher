@@ -66,19 +66,19 @@ export class SnakeLayoutModelChain {
   ) {
     let nodeIndexInChain = 0;
 
-    this.rows.forEach((row) => {
-      row.snakeLayoutModelItems.forEach((node) => {
+    for (const row of this.rows) {
+      for (const node of row.snakeLayoutModelItems) {
         callback(node, nodeIndexInChain);
         nodeIndexInChain++;
-      });
-    });
+      }
+    }
   }
 
   public forEachRow(
     callback: (row: ISnakeLayoutModelRow, rowIndex: number) => void,
   ) {
-    this.rows.forEach((row, rowIndex) => {
+    for (const [rowIndex, row] of this.rows.entries()) {
       callback(row, rowIndex);
-    });
+    }
   }
 }

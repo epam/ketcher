@@ -66,7 +66,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
   const svgChildren = useMemo(() => {
     const children: JSX.Element[] = [];
 
-    positions.forEach((position, i) => {
+    for (const [i, position] of positions.entries()) {
       if (layoutMode === 'sequence-layout-mode') {
         children.push(
           <line
@@ -130,12 +130,12 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
 
       const nextPosition = positions[i + 1];
       if (nextPosition === undefined) {
-        return;
+        continue;
       }
 
       // Skip dashed lines between markers when zoomed out (too many markers)
       if (isZoomedOut && layoutMode === 'snake-layout-mode') {
-        return;
+        continue;
       }
 
       children.push(
@@ -150,7 +150,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
           strokeWidth={1}
         />,
       );
-    });
+    }
 
     return children;
   }, [positions, layoutMode, transform, isZoomedOut]);

@@ -106,9 +106,9 @@ class Portal extends Component<Props> {
       return;
     }
 
-    classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
+    for (const className of classNames.split(CLASSNAME_SEPARATOR)) {
       this.element.classList.remove(className);
-    });
+    }
   }
 
   private addClassName(classNames?: string) {
@@ -116,25 +116,25 @@ class Portal extends Component<Props> {
       return;
     }
 
-    classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
+    for (const className of classNames.split(CLASSNAME_SEPARATOR)) {
       this.element.classList.add(className);
-    });
+    }
   }
 
   private updateStyle(style?: CSSProperties, prevStyle?: CSSProperties) {
     if (prevStyle) {
-      Object.keys(prevStyle).forEach((property) => {
+      for (const property of Object.keys(prevStyle)) {
         this.element.style[property] = '';
-      });
+      }
     }
 
     if (!style) {
       return;
     }
 
-    Object.keys(style).forEach((property) => {
+    for (const property of Object.keys(style)) {
       this.element.style[property] = style[property];
-    });
+    }
   }
 
   render() {

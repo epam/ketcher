@@ -51,9 +51,9 @@ export const MonomerLibraryContextMenu = () => {
         presetsCustom,
       );
       const deleteMonomer = () => {
-        referencingCustomPresets.forEach((preset) =>
-          dispatch(deletePreset(preset)),
-        );
+        for (const preset of referencingCustomPresets) {
+          dispatch(deletePreset(preset));
+        }
         deleteMonomerWithPresets(
           editor,
           libraryItem,

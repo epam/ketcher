@@ -90,7 +90,10 @@ export class MolSerializer implements Serializer<Struct> {
     // Molfile writers only understand atom endpoints. Materialize attachment
     // groups in this disposable projection so editor Struct.atoms stays purely
     // chemical while legacy export can still resolve every bond endpoint.
-    serializationStruct.attachmentGroups.forEach((attachmentGroup, id) => {
+    for (const [
+      id,
+      attachmentGroup,
+    ] of serializationStruct.attachmentGroups.entries()) {
       attachmentGroup.recalculatePosition(serializationStruct.atoms);
       serializationStruct.atoms.set(
         id,
@@ -100,7 +103,7 @@ export class MolSerializer implements Serializer<Struct> {
           fragment: attachmentGroup.fragment,
         }),
       );
-    });
+    }
     serializationStruct.attachmentGroups.clear();
 
     return new Molfile().saveMolecule(

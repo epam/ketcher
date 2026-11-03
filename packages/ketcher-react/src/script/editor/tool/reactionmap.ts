@@ -108,7 +108,7 @@ class ReactionMapTool implements Tool {
 
         if (!aam1 || aam1 !== aam2) {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
-            atoms.forEach((atom, aid) => {
+            for (const [aid, atom] of atoms.entries()) {
               if (
                 aid !== this.dragCtx.item.id &&
                 aid !== closestItem.id && // target is reassigned below; don't also reset it (would leave 2 conflicting aam ops on one atom -> broken undo, #2174)
@@ -117,7 +117,7 @@ class ReactionMapTool implements Tool {
                 action.mergeWith(
                   fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
                 );
-            });
+            }
           }
 
           if (aam1) {
@@ -126,9 +126,9 @@ class ReactionMapTool implements Tool {
             );
           } else {
             let aam = 0;
-            atoms.forEach((atom) => {
+            for (const atom of atoms.values()) {
               aam = Math.max(aam, atom.aam || 0);
-            });
+            }
             action.mergeWith(
               fromAtomsAttrs(
                 rnd.ctab,

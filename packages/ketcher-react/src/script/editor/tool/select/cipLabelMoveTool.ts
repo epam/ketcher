@@ -1,22 +1,18 @@
 import {
-  type Action,
-  type Vec2,
+  Action,
+  CipLabelMove,
   CoordinateTransformation,
-  fromCipLabelMove,
+  type Vec2,
 } from 'ketcher-core';
 import type { Editor } from '../../Editor';
 import closest, { type CipLabelHit } from '../../shared/closest';
 
-type CipLabelDrag = CipLabelHit & {
-  start: Vec2;
-  action: Action | null;
-};
-
-const HOVER_STROKE_WIDTH = 1.5;
+type Drag = CipLabelHit & { start: Vec2; action: Action | null };
 
 export class CipLabelMoveTool {
-  private drag: CipLabelDrag | null = null;
-  private hovered: (CipLabelHit & { restore: () => void }) | null = null;
+  private drag: Drag | null = null;
+  private hovered: CipLabelHit['rectangle'] | null = null;
+  private restoreHover: (() => void) | null = null;
 
   constructor(private readonly editor: Editor) {}
 
@@ -24,10 +20,13 @@ export class CipLabelMoveTool {
     return this.drag !== null;
   }
 
+  private pointer(event: PointerEvent) {
+    return CoordinateTransformation.pageToModel(event, this.editor.render);
+  }
+
   private find(event: PointerEvent) {
     const { render } = this.editor;
-    const pos = CoordinateTransformation.pageToModel(event, render);
-    return closest.cipLabel(render.ctab, pos, render.options);
+    return closest.cipLabel(render.ctab, this.pointer(event), render.options);
   }
 
   mousedown(event: PointerEvent) {
@@ -35,11 +34,7 @@ export class CipLabelMoveTool {
     if (!hit) return false;
 
     this.clearHover();
-    this.drag = {
-      ...hit,
-      start: CoordinateTransformation.pageToModel(event, this.editor.render),
-      action: null,
-    };
+    this.drag = { ...hit, start: this.pointer(event), action: null };
     return true;
   }
 
@@ -49,71 +44,60 @@ export class CipLabelMoveTool {
 
     const { ctab } = editor.render;
     drag.action?.perform(ctab);
-    drag.action = fromCipLabelMove(
-      ctab,
-      drag.owner,
-      drag.id,
-      CoordinateTransformation.pageToModel(event, editor.render).sub(
-        drag.start,
+    const move = new Action();
+    move.addOp(
+      new CipLabelMove(
+        drag.owner,
+        drag.id,
+        this.pointer(event).sub(drag.start),
       ),
     );
+    drag.action = move.perform(ctab);
     editor.update(drag.action, true);
     return true;
   }
 
   mouseup() {
-    return this.finishDrag();
+    const { drag } = this;
+    this.drag = null;
+    if (drag?.action) this.editor.update(drag.action);
+    return drag !== null;
   }
 
   mouseleave() {
-    this.finishDrag();
+    this.mouseup();
     this.clearHover();
-  }
-
-  private finishDrag() {
-    const { drag, editor } = this;
-    if (!drag) return false;
-
-    this.drag = null;
-    if (drag.action) editor.update(drag.action);
-    return true;
   }
 
   hover(event: PointerEvent) {
     const hit = this.find(event);
-    if (hit?.owner === this.hovered?.owner && hit?.id === this.hovered?.id) {
-      return Boolean(hit);
-    }
+    if (hit?.rectangle === this.hovered) return Boolean(hit);
 
     this.clearHover();
     if (!hit) return false;
 
+    const { rectangle } = hit;
     const { render } = this.editor;
-    const reItem =
-      hit.owner === 'atoms'
-        ? render.ctab.atoms.get(hit.id)
-        : render.ctab.bonds.get(hit.id);
-    const rectangle = reItem?.cip?.rectangle;
-    if (!rectangle) return false;
-
     const previous = {
       stroke: rectangle.attr('stroke'),
       'stroke-width': rectangle.attr('stroke-width'),
     };
     rectangle.attr({
       stroke: render.options.hoverStyle.stroke,
-      'stroke-width': HOVER_STROKE_WIDTH,
+      'stroke-width': 1.5,
     });
     render.paper.canvas.setAttribute('cursor', 'move');
-    this.hovered = { ...hit, restore: () => rectangle.attr(previous) };
+    this.hovered = rectangle;
+    this.restoreHover = () => rectangle.attr(previous);
     return true;
   }
 
-  clearHover() {
-    if (!this.hovered) return;
+  private clearHover() {
+    if (!this.restoreHover) return;
 
-    this.hovered.restore();
+    this.restoreHover();
     this.editor.render.paper.canvas.removeAttribute('cursor');
+    this.restoreHover = null;
     this.hovered = null;
   }
 }

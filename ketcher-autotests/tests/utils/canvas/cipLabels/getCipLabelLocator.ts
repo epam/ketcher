@@ -1,19 +1,9 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from '@playwright/test';
 
-type CipLabelLocatorOptions = {
-  owner: 'atom' | 'bond';
-  text?: string;
-};
+const LABEL_TEXT = { atom: /^\([RSrs]\)$/, bond: /^\([EZMP]\)$/ };
 
-export function getCipLabelLocator(
-  page: Page,
-  options: CipLabelLocatorOptions,
-): Locator {
-  const label = page.locator(
-    `[data-testid="cip-label"][data-cip-owner="${options.owner}"]`,
-  );
-
-  return options.text === undefined
-    ? label
-    : label.filter({ hasText: options.text });
+export function getCipLabelLocator(page: Page, owner: 'atom' | 'bond') {
+  return page
+    .locator('[data-testid="cip-label"]')
+    .filter({ hasText: LABEL_TEXT[owner] });
 }

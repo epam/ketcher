@@ -1215,7 +1215,6 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         'pointer-events': 'none',
       });
       cipText.node?.setAttribute('data-testid', 'cip-label');
-      cipText.node?.setAttribute('data-cip-owner', 'atom');
       const cipTextBBox = cipText.getBBox();
 
       const rect = paper

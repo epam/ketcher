@@ -844,33 +844,38 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
   );
 }
 
-export type CipLabelHit = { owner: 'atoms' | 'bonds'; id: number };
+type CipRectangle = NonNullable<
+  NonNullable<ReturnType<ReStruct['atoms']['get']>>['cip']
+>['rectangle'];
+export type CipLabelHit = {
+  owner: 'atoms' | 'bonds';
+  id: number;
+  rectangle: CipRectangle;
+};
 
 function findCipLabel(
   restruct: ReStruct,
   pos: Vec2,
   options: RenderOptions,
 ): CipLabelHit | null {
-  const isInside = (rectangle: { getBBox(): Box }) => {
-    const box = rectangle.getBBox();
-    const p0 = Scale.canvasToModel(new Vec2(box.x, box.y), options);
-    const p1 = Scale.canvasToModel(
-      new Vec2(box.x + box.width, box.y + box.height),
-      options,
-    );
-    return pos.x >= p0.x && pos.x <= p1.x && pos.y >= p0.y && pos.y <= p1.y;
-  };
+  for (const [owner, items] of [
+    ['atoms', restruct.atoms],
+    ['bonds', restruct.bonds],
+  ] as const) {
+    for (const [id, item] of items) {
+      const rectangle = item.cip?.rectangle;
+      if (!rectangle) continue;
 
-  for (const [id, atom] of restruct.atoms) {
-    if (atom.cip && isInside(atom.cip.rectangle)) return { owner: 'atoms', id };
-  }
-  for (const [id, bond] of restruct.bonds) {
-    if (bond.cip && isInside(bond.cip.rectangle)) return { owner: 'bonds', id };
+      const { x, y, width, height } = rectangle.getBBox();
+      const p0 = Scale.canvasToModel(new Vec2(x, y), options);
+      const p1 = Scale.canvasToModel(new Vec2(x + width, y + height), options);
+      if (pos.x >= p0.x && pos.x <= p1.x && pos.y >= p0.y && pos.y <= p1.y) {
+        return { owner, id, rectangle };
+      }
+    }
   }
   return null;
 }
-
-type Box = { x: number; y: number; width: number; height: number };
 
 export default {
   atom: findClosestAtom, // used in Actions

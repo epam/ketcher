@@ -148,10 +148,6 @@ function getCIPValuePath({
       'font-size': options.fontszInPx,
     });
   text.node?.setAttribute('data-testid', 'cip-label');
-  text.node?.setAttribute(
-    'data-cip-owner',
-    atomOrBond instanceof Atom ? 'atom' : 'bond',
-  );
   const box = text.getBBox();
   const path = paper.set();
   const rect = paper

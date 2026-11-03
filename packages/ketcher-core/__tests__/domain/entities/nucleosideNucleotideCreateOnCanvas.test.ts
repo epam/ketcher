@@ -7,8 +7,10 @@ import {
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
+import type { RnaCanvasHost } from 'domain/helpers/rna';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -62,6 +64,15 @@ const otherMonomerAt = (
   attachmentPoint: 'R1' | 'R2' | 'R3',
 ) =>
   monomer.attachmentPointsToBonds[attachmentPoint]?.getAnotherEntity(monomer);
+
+// A host that is not the editor singleton: it owns its own manager, so a
+// monomer that lands in it did not go through the singleton editor.
+const createHost = (
+  monomersLibrary: RnaCanvasHost['monomersLibrary'],
+): RnaCanvasHost => ({
+  monomersLibrary,
+  drawingEntitiesManager: new DrawingEntitiesManager(),
+});
 
 describe('Nucleoside.createOnCanvas and Nucleotide.createOnCanvas', () => {
   let canvas: SVGSVGElement;
@@ -172,6 +183,24 @@ describe('Nucleoside.createOnCanvas and Nucleotide.createOnCanvas', () => {
       expect(editor.drawingEntitiesManager.monomers.size).toBe(monomersBefore);
     });
 
+    it('adds the monomers to the passed host, not to the editor singleton', () => {
+      const host = createHost(editor.monomersLibrary);
+
+      const created = createNucleoside(host, 'A', POSITION);
+
+      expect(created).toBeDefined();
+      expect(host.drawingEntitiesManager.monomers.size).toBe(2);
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(0);
+    });
+
+    it('returns undefined when the passed host has no library, though the editor does', () => {
+      const host = createHost([]);
+
+      expect(createNucleoside(editor, 'A', POSITION)).toBeDefined();
+      expect(createNucleoside(host, 'A', POSITION)).toBeUndefined();
+      expect(host.drawingEntitiesManager.monomers.size).toBe(0);
+    });
+
     it('reads the monomer height when called, not when the editor was built', () => {
       setMonomerSize({ width: 0, height: 60 });
       const first = createNucleoside(editor, 'A', POSITION);
@@ -250,6 +279,24 @@ describe('Nucleoside.createOnCanvas and Nucleotide.createOnCanvas', () => {
 
       expect(createNucleotide(editor, 'NoSuchBase', POSITION)).toBeUndefined();
       expect(editor.drawingEntitiesManager.monomers.size).toBe(monomersBefore);
+    });
+
+    it('adds the monomers to the passed host, not to the editor singleton', () => {
+      const host = createHost(editor.monomersLibrary);
+
+      const created = createNucleotide(host, 'C', POSITION);
+
+      expect(created).toBeDefined();
+      expect(host.drawingEntitiesManager.monomers.size).toBe(3);
+      expect(editor.drawingEntitiesManager.monomers.size).toBe(0);
+    });
+
+    it('returns undefined when the passed host has no library, though the editor does', () => {
+      const host = createHost([]);
+
+      expect(createNucleotide(editor, 'C', POSITION)).toBeDefined();
+      expect(createNucleotide(host, 'C', POSITION)).toBeUndefined();
+      expect(host.drawingEntitiesManager.monomers.size).toBe(0);
     });
 
     it('reads the monomer height when called, not when the editor was built', () => {

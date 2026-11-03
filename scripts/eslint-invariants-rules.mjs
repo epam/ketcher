@@ -99,14 +99,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/entities/Nucleoside.ts',
-    imports: ['application/editor/editorSingleton'],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/entities/Nucleotide.ts',
-    imports: ['application/editor/editorSingleton'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/snake-layout-model/SnakeLayoutModel.ts',
     imports: [
       'application/editor/editorSettings',

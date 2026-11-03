@@ -45,14 +45,10 @@ const stubCanvasDimensions = (canvas: SVGSVGElement) => {
   });
 };
 
-// The reshape adds a leading `editor` argument: these two lines are the only
-// places that change.
 const createNucleoside = (
-  _editor: CoreEditor,
   ...args: Parameters<typeof Nucleoside.createOnCanvas>
 ) => Nucleoside.createOnCanvas(...args);
 const createNucleotide = (
-  _editor: CoreEditor,
   ...args: Parameters<typeof Nucleotide.createOnCanvas>
 ) => Nucleotide.createOnCanvas(...args);
 

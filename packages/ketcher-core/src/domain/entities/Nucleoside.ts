@@ -10,10 +10,9 @@ import {
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'domain/helpers/coordinates';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { getRnaPartLibraryItem, type RnaCanvasHost } from 'domain/helpers/rna';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
@@ -47,12 +46,12 @@ export class Nucleoside {
   }
 
   static createOnCanvas(
+    editor: RnaCanvasHost,
     rnaBaseName: string,
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
     isAntisense = false,
   ) {
-    const editor = provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,

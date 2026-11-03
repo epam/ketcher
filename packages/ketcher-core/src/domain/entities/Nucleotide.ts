@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
@@ -12,7 +11,7 @@ import {
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Coordinates } from 'domain/helpers/coordinates';
 import { Vec2 } from 'domain/entities/vec2';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { getRnaPartLibraryItem, type RnaCanvasHost } from 'domain/helpers/rna';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
@@ -62,11 +61,11 @@ export class Nucleotide {
   }
 
   static createOnCanvas(
+    editor: RnaCanvasHost,
     rnaBaseName: string,
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
-    const editor = provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,

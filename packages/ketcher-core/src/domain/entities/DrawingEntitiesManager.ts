@@ -114,7 +114,7 @@ import {
 } from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { getRnaPartLibraryItem, type RnaCanvasHost } from 'domain/helpers/rna';
 import { assert, KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
@@ -3856,6 +3856,7 @@ export class DrawingEntitiesManager {
   }
 
   public static createAntisenseNode(
+    editor: RnaCanvasHost,
     node: Nucleoside | Nucleotide | MonomerSequenceNode,
     isDnaAntisense: boolean,
   ) {
@@ -3871,6 +3872,7 @@ export class DrawingEntitiesManager {
       ? RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
       : RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
     return Nucleoside.createOnCanvas(
+      editor,
       antisenseBaseLabel,
       node.monomer.position.add(new Vec2(0, 3)),
       sugarName,
@@ -3963,6 +3965,7 @@ export class DrawingEntitiesManager {
         ) {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
+              editor,
               senseNode,
               isDnaAntisense,
             );

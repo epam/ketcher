@@ -49,7 +49,7 @@ describe('replaceMonomer with hydrogen bonds', () => {
   });
 
   it('keeps a hydrogen bond a hydrogen bond after replacement', () => {
-    Nucleotide.createOnCanvas('A', new Vec2(0, 0));
+    Nucleotide.createOnCanvas(editor, 'A', new Vec2(0, 0));
     editor.drawingEntitiesManager.selectDrawingEntities([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);

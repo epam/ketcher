@@ -5,6 +5,7 @@ import type { Selection } from '../../../../editor/Editor';
 export enum CONTEXT_MENU_ID {
   FOR_BONDS = 'context-menu-for-bonds',
   FOR_ATOMS = 'context-menu-for-atoms',
+  FOR_ATTACHMENT_GROUP = 'context-menu-for-attachment-group',
   FOR_SELECTION = 'context-menu-for-selection',
   FOR_FUNCTIONAL_GROUPS = 'context-menu-for-functional-groups',
   FOR_R_GROUP_ATTACHMENT_POINT = 'context-menu-for-rgroup-attachment-point',
@@ -31,6 +32,12 @@ export interface AtomContextMenuProps
   extends BaseContextMenuProps, WithExtraItems {
   id: string;
   atomIds: Array<number>;
+  attachmentGroupIds?: Array<number>;
+}
+
+export interface AttachmentGroupContextMenuProps extends BaseContextMenuProps {
+  id: string;
+  attachmentGroupIds: Array<number>;
 }
 
 export interface RGroupAttachmentPointContextMenuProps
@@ -48,6 +55,7 @@ export interface SelectionContextMenuProps
       Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
     > {
   id: string;
+  attachmentGroupIds?: Array<number>;
 }
 
 export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
@@ -58,9 +66,13 @@ export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   id: string;
   functionalGroups: FunctionalGroup[];
-  /** Total count of monomers on canvas with the same code as the primary monomer */
+  /**
+  Total count of monomers on canvas with the same code as the primary monomer
+  */
   totalMonomerCount?: number;
-  /** True when the selection contains at least one non-monomer chemical structure element */
+  /**
+  True when the selection contains at least one non-monomer chemical structure element
+  */
   hasNonMonomerStructure?: boolean;
 }
 
@@ -78,6 +90,7 @@ export interface AttachmentPointLabelContextMenuProps extends BaseContextMenuPro
 export type ContextMenuProps =
   | BondsContextMenuProps
   | AtomContextMenuProps
+  | AttachmentGroupContextMenuProps
   | SelectionContextMenuProps
   | FunctionalGroupsContextMenuProps
   | RGroupAttachmentPointContextMenuProps

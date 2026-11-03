@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,7 +41,7 @@ import actions from '../action';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,
-  selectIsAbbreviationLookupOpen,
+  isAbbreviationLookupOpen,
 } from './abbreviationLookup/selectors';
 import {
   closeAbbreviationLookup,
@@ -53,6 +52,8 @@ import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+const affectedTools = new Set(['paste', 'template']);
+const zoomActionNames = new Set(['zoom-in', 'zoom-out']);
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -72,15 +73,14 @@ export function removeKeydownListener(element) {
 }
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
-  const affectedTools = ['paste', 'template'];
-  if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
+  if (affectedTools.has(actionTool.tool) && group?.includes('save')) {
     dispatch(removeStructAction());
   }
 }
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = [
+const shortcutKeys = new Set([
   '0',
   '1',
   '2',
@@ -97,13 +97,13 @@ const shortcutKeys = [
   'b',
   '+',
   '-',
-];
+]);
 
 function shouldIgnoreKeyEvent(state, event): boolean {
-  if (window.isPolymerEditorTurnedOn) {
+  if (globalThis.isPolymerEditorTurnedOn) {
     return true;
   }
-  if (state.modal || selectIsAbbreviationLookupOpen(state)) {
+  if (state.modal || isAbbreviationLookupOpen(state)) {
     return true;
   }
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
@@ -113,9 +113,9 @@ function shouldIgnoreKeyEvent(state, event): boolean {
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
   const currentlyPressedKeys = selectAbbreviationLookupValue(state);
-  const isShortcutKey = shortcutKeys.includes(key.toLowerCase());
+  const isShortcutKey = shortcutKeys.has(key.toLowerCase());
   const isTheSameKey = key.toLowerCase() === currentlyPressedKeys;
-  return Boolean((!isTheSameKey || !isShortcutKey) && currentlyPressedKeys);
+  return Boolean(currentlyPressedKeys && (!isTheSameKey || !isShortcutKey));
 }
 
 function handleAbbreviationLookup(key: string, state, dispatch, event) {
@@ -133,7 +133,7 @@ function handleAbbreviationLookup(key: string, state, dispatch, event) {
     return true;
   }
 
-  abbreviationLookupTimeoutId = window.setTimeout(() => {
+  abbreviationLookupTimeoutId = globalThis.window.setTimeout(() => {
     dispatch(closeAbbreviationLookup());
     abbreviationLookupTimeoutId = undefined;
   }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
@@ -182,7 +182,7 @@ function isActionDisabledOrHidden(actionState, actName): boolean {
 }
 
 function getNextAction(actName) {
-  return ['zoom-in', 'zoom-out'].includes(actName)
+  return zoomActionNames.has(actName)
     ? actions[actName].action()
     : actions[actName].action;
 }
@@ -240,7 +240,7 @@ function handleHotkeyGroup(
   event,
 ) {
   const index = checkGroupOnTool(group, actionTool);
-  const groupLength = group !== null ? group.length : 1;
+  const groupLength = group === null ? 1 : group.length;
   const newIndex = (index + 1) % groupLength;
   const actName = group[newIndex];
 
@@ -256,7 +256,7 @@ function handleHotkeyGroup(
 
   removeNotRenderedStruct(actionTool, group, dispatch);
 
-  if (clipArea.actions.indexOf(actName) === -1) {
+  if (!clipArea.actions.includes(actName)) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
     const { atoms, bonds } = editor.selection() ?? {};
@@ -285,11 +285,13 @@ function handleHotkeyGroup(
 
     event.preventDefault();
   } else if (isIE) {
-    clipArea.exec(event);
+    clipArea.canExecuteClipboardCommand(event);
   }
 }
 
-/* HotKeys */
+/*
+HotKeys
+*/
 function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState();
 
@@ -304,7 +306,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   const key = keyNorm(event);
   const hoveredItem = getHoveredItem(render.ctab);
 
-  if (key?.length === 1 && !hoveredItem) {
+  if (!hoveredItem && key?.length === 1) {
     const abbreviationLookupHandled = handleAbbreviationLookup(
       key,
       state,
@@ -321,7 +323,7 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     return;
   }
 
-  if (editor.rotateController.isRotating && key === 'Escape') {
+  if (key === 'Escape' && editor.rotateController.isRotating) {
     handleRotateEscape(editor);
     return;
   }
@@ -386,7 +388,9 @@ function checkGroupOnTool(group, actionTool) {
 
 const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
-/* ClipArea */
+/*
+ClipArea
+*/
 export function initClipboard(dispatch, getState) {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
@@ -401,7 +405,7 @@ export function initClipboard(dispatch, getState) {
     formats,
     focused() {
       const state = getState();
-      return !state.modal && !window.isPolymerEditorTurnedOn;
+      return !state.modal && !globalThis.isPolymerEditorTurnedOn;
     },
     onLegacyCopy() {
       const state = getState();
@@ -495,10 +499,10 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const simpleObjectOrText = Boolean(
+  const hasSimpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
-  if (simpleObjectOrText && isIE && errorHandler) {
+  if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
@@ -540,10 +544,10 @@ async function clipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::clipData', e);
+  } catch (error) {
+    KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -572,10 +576,10 @@ function legacyClipData(editor: Editor) {
     res[type] = data;
 
     return res;
-  } catch (e: any) {
-    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
+  } catch (error) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(e.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 

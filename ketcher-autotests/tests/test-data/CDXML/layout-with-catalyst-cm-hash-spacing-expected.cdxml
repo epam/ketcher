@@ -66,18 +66,18 @@
             </graphic>
         </fragment>
         <fragment id="16">
-            <n id="17" Element="7" NumHydrogens="0" p="311.272247 177.441437">
-                <t p="311.272247 177.441437" LabelJustification="Left">
+            <n id="17" Element="7" NumHydrogens="0" p="311.272217 177.441437">
+                <t p="311.272217 177.441437" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="18" Element="7" NumHydrogens="0" p="285.291504 222.441437">
-                <t p="285.291504 222.441437" LabelJustification="Left">
+            <n id="18" Element="7" NumHydrogens="0" p="285.291473 222.441437">
+                <t p="285.291473 222.441437" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="19" Element="7" NumHydrogens="0" p="285.291504 192.441437">
-                <t p="285.291504 192.441437" LabelJustification="Left">
+            <n id="19" Element="7" NumHydrogens="0" p="285.291473 192.441437">
+                <t p="285.291473 192.441437" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>

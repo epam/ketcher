@@ -189,12 +189,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
       bondIds: [2, 3, 4, 5],
@@ -455,13 +449,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -583,13 +570,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       atomIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
       bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
     });
-
-    // Marking a component recenters the structure under the attributes panel.
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     // --- Sugar ---
     await presetSection.setupSugar({

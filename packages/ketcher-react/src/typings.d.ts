@@ -3,9 +3,10 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css';
+
 declare namespace JSX {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type Element = React.ReactElement<any, any>;
+  type Element = React.JSX.Element;
 }
 
 declare module '*.sdf' {
@@ -35,6 +36,20 @@ declare namespace NodeJS {
   }
 }
 
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly KETCHER_ENABLE_REDUX_LOGGER?: string;
+  readonly KETCHER_MULTI_LANGUAGE_BUILD?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 interface Document {
   mozFullScreenElement?: Element;
   msFullscreenElement?: Element;
@@ -51,32 +66,62 @@ interface HTMLElement {
 }
 
 declare module 'subscription' {
-  export class Subscription<TDispatchValue = any> {
-    handlers: Array<any>;
-    handlersForDispatch: () => typeof this.handlers;
-    add: (f: any, priority?: number) => void;
-    addOnce: (f: any, priority?: number) => void;
-    remove: (f: any) => void;
-    hasHandler: () => boolean;
-    dispatch: (value?: TDispatchValue) => void;
+  export type SubscriptionHandler<
+    TDispatchValue = unknown,
+    TDispatchResult = unknown,
+  > = {
+    bivarianceHack(value: TDispatchValue, ...rest: unknown[]): TDispatchResult;
+  }['bivarianceHack'];
+
+  export interface Handler<
+    TDispatchValue = unknown,
+    TDispatchResult = unknown,
+  > {
+    f: SubscriptionHandler<TDispatchValue, TDispatchResult>;
+    once: boolean;
+    priority: number;
+  }
+
+  export class Subscription<
+    TDispatchValue = unknown,
+    TDispatchResult = unknown,
+  > {
+    handlers: Array<Handler<TDispatchValue, TDispatchResult>>;
+    handlersForDispatch(): typeof this.handlers;
+    add(
+      handler: SubscriptionHandler<TDispatchValue, TDispatchResult>,
+      priority?: number,
+    ): void;
+    addOnce(
+      handler: SubscriptionHandler<TDispatchValue, TDispatchResult>,
+      priority?: number,
+    ): void;
+    remove(handler: SubscriptionHandler<TDispatchValue, TDispatchResult>): void;
+    hasHandler(): boolean;
+    dispatch(value?: TDispatchValue, ...rest: unknown[]): void;
   }
 
   export class PipelineSubscription<
-    TDispatchValue = any,
-  > extends Subscription<TDispatchValue> {
-    dispatch: (value?: TDispatchValue) => any;
+    TDispatchValue = unknown,
+    TDispatchResult = unknown,
+  > extends Subscription<TDispatchValue, TDispatchResult> {
+    dispatch(value?: TDispatchValue): TDispatchResult;
   }
 
   export class StoppableSubscription<
-    TDispatchValue = any,
-  > extends Subscription<TDispatchValue> {
-    dispatch: (value?: TDispatchValue) => any;
+    TDispatchValue = unknown,
+    TDispatchResult = unknown,
+  > extends Subscription<TDispatchValue, TDispatchResult> {
+    dispatch(
+      value?: TDispatchValue,
+      ...rest: unknown[]
+    ): TDispatchResult | undefined;
   }
 
   export class DOMSubscription<
-    TDispatchEvent = any,
+    TDispatchEvent = unknown,
   > extends Subscription<TDispatchEvent> {
-    dispatch: (event: TDispatchEvent) => boolean;
+    dispatch(event: TDispatchEvent): boolean;
   }
 }
 
@@ -88,4 +133,10 @@ declare module 'ketcher-macromolecules' {
   }
   const MacromoleculesEditor: React.ComponentType<MacromoleculesEditorProps>;
   export default MacromoleculesEditor;
+}
+
+declare module 'redux-logger' {
+  import type { Middleware } from 'redux';
+
+  export const logger: Middleware;
 }

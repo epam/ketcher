@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -132,7 +132,9 @@ class RGroupFragmentTool implements Tool {
       .then((newRg) => {
         let action;
 
-        if (ci.map !== 'rgroups') {
+        if (ci.map === 'rgroups') {
+          action = fromRGroupAttrs(struct, ci.id, newRg);
+        } else {
           const rgidOld = RGroup.findRGroupByFragment(
             struct.molecule.rgroups,
             ci.id,
@@ -140,14 +142,15 @@ class RGroupFragmentTool implements Tool {
           action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
             fromUpdateIfThen(struct, newRg.label, rgidOld),
           );
-        } else {
-          action = fromRGroupAttrs(struct, ci.id, newRg);
         }
 
         editor.update(action);
       })
-      .catch((e) => {
-        KetcherLogger.error('rgroupfragment.ts::RGroupFragmentTool::click', e);
+      .catch((error) => {
+        KetcherLogger.error(
+          'rgroupfragment.ts::RGroupFragmentTool::click',
+          error,
+        );
       }); // w/o changes
 
     return true;

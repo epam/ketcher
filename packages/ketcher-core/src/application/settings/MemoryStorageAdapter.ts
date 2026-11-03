@@ -19,7 +19,7 @@ export class MemoryStorageAdapter implements ISettingsStorage {
    * Save settings to memory
    */
   async save(key: string, settings: Settings): Promise<void> {
-    this.storage.set(key, JSON.parse(JSON.stringify(settings)));
+    this.storage.set(key, globalThis.structuredClone(settings));
   }
 
   /**

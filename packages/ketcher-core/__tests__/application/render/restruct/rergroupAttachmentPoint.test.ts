@@ -17,7 +17,7 @@ type SvgSvgElementWithRaphaelMethods = SVGSVGElement & {
 };
 
 function mockSvgDomApi() {
-  const svgSvgElement = window.SVGSVGElement
+  const svgSvgElement = globalThis.SVGSVGElement
     .prototype as unknown as SvgSvgElementWithRaphaelMethods;
 
   svgSvgElement.createSVGMatrix = () =>
@@ -54,7 +54,7 @@ function mockSvgDomApi() {
       },
     }) as unknown as DOMPoint;
 
-  window.SVGElement.prototype.getBBox = () =>
+  globalThis.SVGElement.prototype.getBBox = () =>
     ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 }
 
@@ -314,12 +314,19 @@ describe('ReRGroupAttachmentPoint', () => {
     ).toHaveLength(2);
     expect(primaryAttachmentPoint).not.toBeNull();
     expect(secondaryAttachmentPoint).not.toBeNull();
-    expect(
-      primaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
-    ).toBe(atomElement?.getAttribute('data-atom-id'));
-    expect(
-      secondaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
-    ).toBe(atomElement?.getAttribute('data-atom-id'));
+    const primaryAttachmentPointData = (
+      primaryAttachmentPoint as SVGElement | null
+    )?.dataset;
+    const secondaryAttachmentPointData = (
+      secondaryAttachmentPoint as SVGElement | null
+    )?.dataset;
+    const atomElementData = (atomElement as SVGElement | null)?.dataset;
+    expect(primaryAttachmentPointData?.attachedToAtomid).toBe(
+      atomElementData?.atomId,
+    );
+    expect(secondaryAttachmentPointData?.attachedToAtomid).toBe(
+      atomElementData?.atomId,
+    );
   });
 
   it('preserves nominal endpoint and number position; clamps extreme stem start to maintain a minimum visible stem', () => {

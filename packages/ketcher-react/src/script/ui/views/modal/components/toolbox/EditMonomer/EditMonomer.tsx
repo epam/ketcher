@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,17 +24,9 @@ import {
   Action,
   fromSgroupDeletion,
   ketcherProvider,
-  MonomerMicromolecule,
-  provideEditorInstance,
   type EditMonomerVariant,
-  type Bond,
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
-import {
-  getEditAllInstancesInitialValues,
-  getEditInstanceInitialValues,
-  isSameMonomerType,
-} from '../../../../components/MonomerCreationWizard/MonomerCreationWizard.utils';
 
 interface EditMonomerDialogProps extends BaseProps {
   fgIds: number[];
@@ -68,57 +60,10 @@ const EditMonomer = (props: Props) => {
     onOk(true);
   };
 
-  const handleEditMonomer = (editAllInstances = false) => {
-    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const struct = editor.struct();
-    const firstSgroup = struct.sgroups.get(fgIds[0]);
-
-    if (!(firstSgroup instanceof MonomerMicromolecule)) {
-      return;
+  const handleEditMonomer = (shouldEditAllInstances = false) => {
+    if (editor.openEditMonomerWizard(fgIds, shouldEditAllInstances)) {
+      onOk(true);
     }
-
-    const atoms = [...firstSgroup.atoms];
-    const bonds: number[] = [];
-    struct.bonds.forEach((bond: Bond, bondId: number) => {
-      if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
-        bonds.push(bondId);
-      }
-    });
-
-    let editAllInitialValues = getEditAllInstancesInitialValues(
-      firstSgroup.monomer,
-      provideEditorInstance()?.monomersLibraryParsedJson,
-    );
-
-    if (editAllInstances && fgIds.length > 1) {
-      const selectedSGroupIds = fgIds.filter((id) => {
-        const sg = struct.sgroups.get(id);
-        return (
-          sg instanceof MonomerMicromolecule &&
-          isSameMonomerType(sg, firstSgroup.monomer)
-        );
-      });
-      if (selectedSGroupIds.length > 1) {
-        editAllInitialValues = { ...editAllInitialValues, selectedSGroupIds };
-      }
-    }
-
-    editor.openMonomerCreationWizard(
-      {
-        atoms,
-        bonds,
-        rxnArrows: [],
-        rxnPluses: [],
-        texts: [],
-        rgroupAttachmentPoints: [],
-      },
-      editAllInstances
-        ? editAllInitialValues
-        : getEditInstanceInitialValues(firstSgroup.monomer),
-      firstSgroup.getAttachmentPoints(),
-    );
-
-    onOk(true);
   };
 
   const footerContent = (

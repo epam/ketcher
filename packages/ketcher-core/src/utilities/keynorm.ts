@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +15,7 @@
  ***************************************************************************/
 
 const isMac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false;
+  typeof navigator === 'undefined' ? false : /Mac/.test(navigator.platform);
 
 export const KeyboardModifiers = {
   Alt: 'Alt',
@@ -152,12 +151,7 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
  * String and event inputs return a normalized shortcut key, while map inputs
  * return a copy with normalized shortcut keys.
  */
-function keyNormBase(obj: KeyboardEvent): string;
-function keyNormBase(obj: string): string;
-function keyNormBase(obj: HotKeyMap): HotKeyMap;
-function keyNormBase(
-  obj: string | KeyboardEvent | HotKeyMap,
-): string | HotKeyMap {
+const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -165,7 +159,11 @@ function keyNormBase(
   return typeof obj === 'object'
     ? normalizeKeyMap(obj)
     : normalizeShortcut(obj);
-}
+}) as {
+  (obj: KeyboardEvent): string;
+  (obj: string): string;
+  (obj: HotKeyMap): HotKeyMap;
+};
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];

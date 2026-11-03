@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,12 +21,12 @@ import { type Element, Elements } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
 import i18n from 'src/i18n/i18n';
 
-const metalPrefix = [
+const metalPrefix = new Set([
   'alkali',
   'alkaline-earth',
   'transition',
   'post-transition',
-]; // 'lanthanide', 'actinide'
+]); // 'lanthanide', 'actinide'
 const atomClassNames = {
   metal: 'metal',
   unknownProps: 'unknown-props',
@@ -67,11 +67,11 @@ const actinides: Element[] = Elements.filter(
 function rowPartition(elements: Element[]): Row[] {
   return elements.reduce((result: Row[], item: Element) => {
     const row = result[item.period - 1];
-    if (!row) {
-      result.push([item]);
-    } else {
+    if (row) {
       if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
       row.push(item);
+    } else {
+      result.push([item]);
     }
     return result;
   }, []);
@@ -96,7 +96,7 @@ class ElementsTable extends Component<ElementsTableProps> {
   getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
-    const type = metalPrefix.includes(item.type ?? '')
+    const type = metalPrefix.has(item.type ?? '')
       ? `${item.type} ${atomClassNames.metal}`
       : (item.type ?? atomClassNames.unknownProps);
 

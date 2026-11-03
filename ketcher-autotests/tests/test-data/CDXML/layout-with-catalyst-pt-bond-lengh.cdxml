@@ -71,28 +71,28 @@
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="18" Element="7" NumHydrogens="0" p="93.093300 117.234489">
-                <t p="93.093300 117.234489" LabelJustification="Left">
+            <n id="18" Element="7" NumHydrogens="0" p="93.093285 117.234489">
+                <t p="93.093285 117.234489" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="19" Element="7" NumHydrogens="0" p="93.093300 87.234489">
-                <t p="93.093300 87.234489" LabelJustification="Left">
+            <n id="19" Element="7" NumHydrogens="0" p="93.093285 87.234489">
+                <t p="93.093285 87.234489" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="20" Element="7" NumHydrogens="0" p="119.074081 132.234497">
-                <t p="119.074081 132.234497" LabelJustification="Left">
+            <n id="20" Element="7" NumHydrogens="0" p="119.074051 132.234497">
+                <t p="119.074051 132.234497" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="21" Element="7" NumHydrogens="0" p="145.054825 87.234497">
-                <t p="145.054825 87.234497" LabelJustification="Left">
+            <n id="21" Element="7" NumHydrogens="0" p="145.054794 87.234497">
+                <t p="145.054794 87.234497" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
-            <n id="22" Element="7" NumHydrogens="0" p="145.054825 117.234489">
-                <t p="145.054825 117.234489" LabelJustification="Left">
+            <n id="22" Element="7" NumHydrogens="0" p="145.054794 117.234489">
+                <t p="145.054794 117.234489" LabelJustification="Left">
                     <s font="3" size="10" face="96">N</s>
                 </t>
             </n>
@@ -147,8 +147,8 @@
                     <s font="3" size="10" face="96">O</s>
                 </t>
             </n>
-            <n id="41" Element="7" NumHydrogens="2" p="405.535614 170.798813">
-                <t p="405.535614 170.798813" LabelJustification="Left">
+            <n id="41" Element="7" NumHydrogens="2" p="405.535614 170.798798">
+                <t p="405.535614 170.798798" LabelJustification="Left">
                     <s font="3" size="10" face="96">NH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>

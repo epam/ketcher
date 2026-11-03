@@ -4,4 +4,5 @@ export type {
   KetFragment,
   KetItem,
   KetRGroupLogic,
+  KetSimpleObjectNode,
 } from '../types';

@@ -70,7 +70,6 @@ import {
   type GrouppedChain,
   ChainsCollection,
 } from 'domain/entities/monomer-chains/ChainsCollection';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
@@ -2807,7 +2806,9 @@ export class DrawingEntitiesManager {
 
     chainsCollection.rearrange();
     this.rerenderMolecules();
-    SequenceRenderer.show(chainsCollection);
+    this.requireEditor('applyMonomersSequenceLayout').sequenceRenderer.show(
+      chainsCollection,
+    );
 
     return chainsCollection;
   }
@@ -2857,7 +2858,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteSGroup(sgroup);
     });
 
-    SequenceRenderer.clear();
+    editor.sequenceRenderer.clear();
   }
 
   public applyFlexLayoutMode(shouldRedrawBonds = false) {

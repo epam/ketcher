@@ -83,7 +83,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
       'application/editor/operations/monomerToAtomBond/monomerToAtomBond',
       'application/editor/operations/polymerBond',
       'application/editor/operations/stereoFlag',
-      'application/render/renderers/sequence/SequenceRenderer',
     ],
   },
 ];

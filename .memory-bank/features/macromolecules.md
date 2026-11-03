@@ -148,6 +148,10 @@ Monomers connect through defined attachment points, sequences render as single-l
 - The macromolecules editor keeps its own 32-step undo history, separate from molecules mode (see [undo-redo](./undo-redo.md)).
 - A drag-drop that places a monomer/preset **and** creates a bond is undoable as a single atomic step (both the placed entity and the bond are removed together on undo).
 
+## Expected behavior
+
+- In Sequence edit mode, inserting RNA or DNA immediately before a CHEM creates a nucleotide with a phosphate connecting the new sugar to the CHEM. This also applies on the antisense strand. Existing phosphate neighbors and chain ends retain their usual insertion rules.
+
 ## Limitations
 
 - The eraser is disabled in sequence layout mode.

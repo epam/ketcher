@@ -203,7 +203,8 @@
                     -11.632647038827502,
                     5.810055272718222
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -212,7 +213,8 @@
                     -10.542947965231875,
                     5.810055272718222
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",
@@ -309,7 +311,8 @@
                     -11.289561859623396,
                     5.810055272718222
                 ],
-                "stereoLabel": "abs"
+                "stereoLabel": "abs",
+                "stereoParity": 1
             },
             {
                 "label": "C",

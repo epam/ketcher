@@ -1,6 +1,6 @@
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
@@ -32,8 +32,8 @@ export class Nucleoside {
     this.monomersCache = [sugar, rnaBase];
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleoside(sugar),
         'Created nucleoside is not valid. Please check nucleotide parts connections.',
@@ -66,8 +66,9 @@ export class Nucleoside {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
@@ -102,7 +103,7 @@ export class Nucleoside {
       ),
     );
 
-    return { modelChanges, node: Nucleoside.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

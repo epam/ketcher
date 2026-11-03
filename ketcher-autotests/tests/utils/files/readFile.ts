@@ -1,7 +1,5 @@
-/* eslint-disable no-magic-numbers */
-/* eslint-disable max-len */
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheCanvas,
@@ -220,9 +218,7 @@ export async function openImageAndAddToCanvas(
   if (!(await ErrorMessageDialog(page).isVisible())) {
     const imageBoxId = await getImageLocator(page, {}).evaluateAll(
       (elements) => {
-        const ids = elements.map((element) =>
-          Number(element.getAttribute('data-image-id')),
-        );
+        const ids = elements.map((element) => Number(element.dataset.imageId));
         const validIds = ids.filter(Number.isFinite);
         return validIds.length > 0 ? Math.max(...validIds) : null;
       },
@@ -238,16 +234,18 @@ export async function openImageAndAddToCanvas(
 export async function openPPTXFileAndAddToCanvasAsNewProject(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
-  if (numberOf.Structure !== 1) {
-    await OpenPPTXFileDialog(page).selectStructure(numberOf);
+  if (Structure !== 1) {
+    await OpenPPTXFileDialog(page).selectStructure({ Structure });
   }
   await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
 }
@@ -404,7 +402,7 @@ export async function receiveMolFileComparisonData(
     .filter((_str, index) => !metaDataIndexes.includes(index));
   const molFile = (
     await page.evaluate(
-      (fileType) => window.ketcher.getMolfile(fileType),
+      (fileType) => globalThis.window.ketcher.getMolfile(fileType),
       molFileType,
     )
   )

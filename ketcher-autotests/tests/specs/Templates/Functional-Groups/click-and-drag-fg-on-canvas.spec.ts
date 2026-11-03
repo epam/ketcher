@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';

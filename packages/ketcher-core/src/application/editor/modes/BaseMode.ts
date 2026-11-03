@@ -6,14 +6,19 @@ import { provideEditorInstance } from '../editorSingleton';
 import { type LayoutMode, DEFAULT_LAYOUT_MODE } from './types';
 import { getModeConstructor } from './modesRegistry';
 import {
+  type ClipboardData,
   getStructStringFromClipboardData,
   initHotKeys,
   isClipboardAPIAvailable,
+  isSelectionOutsideElement,
   KetcherLogger,
   keyNorm,
   legacyCopy,
   legacyPaste,
+  getSvgFromDrawnStructures,
   normalizeError,
+  PLAIN_TEXT_MIME_TYPE,
+  convertSvgToPng,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -22,6 +27,13 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+
+type KeyboardEventHandler = {
+  shortcut: string | string[];
+  handler: (event: KeyboardEvent) => void;
+};
+
+type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -39,7 +51,11 @@ export abstract class BaseMode {
     return false;
   }
 
-  private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
+  private changeMode(
+    editor: CoreEditor,
+    modeName: LayoutMode,
+    isUndo = false,
+  ): void {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
@@ -48,10 +64,11 @@ export abstract class BaseMode {
   }
 
   public initialize(
-    needRemoveSelection = true,
+    shouldRemoveSelection = true,
     _isUndo = false,
-    _needReArrangeChains = false,
-  ) {
+    _shouldReArrangeChains = false,
+    _shouldForceRecalculateAntisense = false,
+  ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
 
@@ -64,19 +81,22 @@ export abstract class BaseMode {
       ),
     );
 
-    if (needRemoveSelection) {
+    if (shouldRemoveSelection) {
       editor.events.selectSelectionTool.dispatch();
     }
 
     return command;
   }
 
-  async onKeyDown(event: KeyboardEvent) {
+  async onKeyDown(event: KeyboardEvent): Promise<void> {
     if (!this.checkIfTargetIsInput(event)) {
       const hotKeys = initHotKeys(this.keyboardEventHandlers);
-      const shortcutKey = keyNorm.lookup(hotKeys, event);
+      const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
-      if (this.keyboardEventHandlers[shortcutKey]) {
+      if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
+        if (shortcutKey === 'start-new-sequence') {
+          event.preventDefault();
+        }
         event.stopImmediatePropagation();
       }
     }
@@ -85,8 +105,10 @@ export abstract class BaseMode {
         const editor = provideEditorInstance();
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
-          const shortcutKey = keyNorm.lookup(hotKeys, event);
-          this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
+          if (shortcutKey) {
+            this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          }
         }
         editor.events.mouseLeaveSequenceItem.dispatch();
         resolve();
@@ -94,11 +116,11 @@ export abstract class BaseMode {
     });
   }
 
-  get keyboardEventHandlers() {
+  get keyboardEventHandlers(): KeyboardEventHandlers {
     return {};
   }
 
-  abstract getNewNodePosition();
+  abstract getNewNodePosition(): Vec2;
 
   abstract applyAdditionalPasteOperations(
     _drawingEntitiesManager: DrawingEntitiesManager,
@@ -114,8 +136,11 @@ export abstract class BaseMode {
 
   abstract scrollForView(): void | Promise<void>;
 
-  onCopy(event?: ClipboardEvent) {
-    if (event && this.checkIfTargetIsInput(event)) {
+  onCopy(event?: ClipboardEvent): void {
+    if (
+      event &&
+      (this.checkIfTargetIsInput(event) || this.isSelectionOutsideCanvas())
+    ) {
       return;
     }
     const editor = provideEditorInstance();
@@ -127,17 +152,20 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(serializedKet);
+      this.writeToClipboard(serializedKet, drawingEntitiesManager);
     } else if (event) {
       legacyCopy(event.clipboardData, {
-        'text/plain': serializedKet,
+        [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
     }
   }
 
-  onCut(event?: ClipboardEvent) {
-    if (event && this.checkIfTargetIsInput(event)) {
+  onCut(event?: ClipboardEvent): void {
+    if (
+      event &&
+      (this.checkIfTargetIsInput(event) || this.isSelectionOutsideCanvas())
+    ) {
       return;
     }
 
@@ -157,7 +185,82 @@ export abstract class BaseMode {
     }
   }
 
-  async onPaste(event?: ClipboardEvent) {
+  async onCopyAs(format: 'ket' | 'mol' | 'image'): Promise<void> {
+    const editor = provideEditorInstance();
+
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    try {
+      if (format === 'image') {
+        await this.copyCanvasAsImage();
+        return;
+      }
+
+      const drawingEntitiesManager =
+        editor.drawingEntitiesManager.filterSelection();
+      const serializedKet = new KetSerializer().serialize(
+        new Struct(),
+        drawingEntitiesManager,
+      );
+      const text =
+        format === 'mol'
+          ? await this.convertKetToMol(serializedKet)
+          : serializedKet;
+
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::onCopyAs', error);
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage: normalizeError(error).message,
+      });
+    }
+  }
+
+  /**
+   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+   * exports it (monomers are drawn as they look on the canvas).
+   */
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+    );
+
+    return result.struct;
+  }
+
+  /**
+   * Puts the copied structure on the clipboard. By default only KET is written
+   * as plain text; modes can override it to add other formats.
+   */
+  protected writeToClipboard(
+    serializedKet: string,
+    _drawingEntitiesManager: DrawingEntitiesManager,
+  ): void | Promise<void> {
+    navigator.clipboard.writeText(serializedKet);
+  }
+
+  async onPaste(event?: ClipboardEvent): Promise<void> {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
@@ -183,7 +286,9 @@ export abstract class BaseMode {
         editor.zoomToStructuresIfNeeded();
       });
     } else if (event) {
-      const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
+      const clipboardData = legacyPaste(event.clipboardData, [
+        PLAIN_TEXT_MIME_TYPE,
+      ]);
       this.pasteFromClipboard(clipboardData);
       event.preventDefault();
 
@@ -199,8 +304,43 @@ export abstract class BaseMode {
     }
   }
 
-  async pasteFromClipboard(clipboardData) {
-    let modelChanges;
+  async isPasteContentValid(pastedStr: string): Promise<boolean> {
+    if (!pastedStr.trim()) {
+      return false;
+    }
+
+    try {
+      const editor = provideEditorInstance();
+      const format = identifyStructFormat(pastedStr, true);
+      let ketStruct = pastedStr;
+
+      if (format !== SupportedFormat.ket) {
+        const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
+        const convertedStruct = await indigo.convert(pastedStr, {
+          outputFormat: ChemicalMimeType.KET,
+          sequenceType: editor.sequenceTypeEnterMode,
+        });
+
+        ketStruct = convertedStruct.struct;
+      }
+
+      const ketSerializer = new KetSerializer();
+      const deserialisedKet =
+        ketSerializer.deserializeToDrawingEntities(ketStruct);
+      const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
+
+      return Boolean(
+        drawingEntitiesManager &&
+        this.isPasteAllowedByMode(drawingEntitiesManager),
+      );
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::isPasteContentValid', error);
+      return false;
+    }
+  }
+
+  async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
+    let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     if (!pastedStr?.trim()) {
@@ -208,26 +348,26 @@ export abstract class BaseMode {
     }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
-      modelChanges = this.pasteKetFormatFragment(pastedStr);
+      pasteOperations = this.pasteKetFormatFragment(pastedStr);
     } else {
-      modelChanges = await this.pasteWithIndigoConversion(
+      pasteOperations = await this.pasteWithIndigoConversion(
         pastedStr,
         editor.sequenceTypeEnterMode,
       );
     }
 
-    if (!modelChanges || modelChanges.operations.length === 0) {
+    if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;
     }
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
-    editor.renderersContainer.update(modelChanges);
-    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.renderersContainer.update(pasteOperations);
+    EditorHistory.getInstance(editor).update(pasteOperations);
     editor.events.mouseLeaveSequenceItem.dispatch();
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string) {
+  pasteKetFormatFragment(pastedStr: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
@@ -268,7 +408,7 @@ export abstract class BaseMode {
   async pasteWithIndigoConversion(
     pastedStr: string,
     sequenceType: SequenceType,
-  ) {
+  ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
@@ -290,7 +430,7 @@ export abstract class BaseMode {
 
   private updateEntitiesPosition(
     drawingEntitiesManager: DrawingEntitiesManager,
-  ) {
+  ): void {
     const newNodePosition = this.getNewNodePosition();
     const firstEntityPosition =
       drawingEntitiesManager.allEntities[0]?.[1].position;
@@ -304,7 +444,7 @@ export abstract class BaseMode {
     });
   }
 
-  unsupportedSymbolsError(errorMessage: string) {
+  unsupportedSymbolsError(errorMessage: string): void {
     const editor = provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
@@ -312,7 +452,7 @@ export abstract class BaseMode {
     });
   }
 
-  private checkIfTargetIsInput(event: Event) {
+  private checkIfTargetIsInput(event: Event): boolean {
     return (
       event.target instanceof HTMLElement &&
       (event.target?.nodeName === 'INPUT' ||
@@ -321,7 +461,11 @@ export abstract class BaseMode {
     );
   }
 
-  public destroy() {
+  private isSelectionOutsideCanvas(): boolean {
+    return isSelectionOutsideElement(provideEditorInstance().canvas);
+  }
+
+  public destroy(): void {
     // intentional no-op: default base implementation; subclasses override when behavior is needed
   }
 }

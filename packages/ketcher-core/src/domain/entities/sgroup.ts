@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Bond } from './bond';
+import type { Atom } from './atom';
+import type { Bond, StructBondEndpointAccess } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
 import type { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
-import type { ReStruct } from '../../application/render';
+import type { Render, ReStruct } from '../../application/render';
 import type { FunctionalGroup } from 'domain/entities/functionalGroup';
 import type { Pool } from 'domain/entities/pool';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { isNumber } from 'lodash';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
@@ -35,6 +36,15 @@ export enum SUPERATOM_CLASS {
   BASE = 'BASE',
   PHOSPHATE = 'PHOSPHATE',
 }
+
+export const SUPERATOM_CLASS_TEXT = {
+  [SUPERATOM_CLASS.BASE]: 'Base',
+  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
+  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+};
+
+const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
+  typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
 
 export class SGroupBracketParams {
   readonly c: Vec2;
@@ -51,6 +61,44 @@ export class SGroupBracketParams {
     this.h = h;
   }
 }
+
+type SGroupContext = (typeof SgContexts)[keyof typeof SgContexts];
+
+interface SGroupData {
+  [key: string]: unknown;
+  mul: number;
+  connectivity: string;
+  name: string;
+  nucleotideComponent: string;
+  subscript: string;
+  expanded: boolean;
+  attached: boolean;
+  absolute: boolean;
+  showUnits: boolean;
+  nCharsToDisplay: number;
+  nCharnCharsToDisplay: number;
+  tagChar: string;
+  daspPos: number;
+  fieldType: string;
+  fieldName: string;
+  fieldValue: string;
+  units: string;
+  query: string;
+  queryOp: string;
+  context?: SGroupContext;
+  subtype?: string;
+  class?: SUPERATOM_CLASS | string;
+}
+
+type AtomIdRemap = Record<number, number> | number[];
+type StructAtomsAccess = Pick<Struct, 'atoms'>;
+type StructAtomsAndBondsAccess = Pick<Struct, 'atoms' | 'bonds'>;
+type RenderableSGroupAtom =
+  | Atom
+  | {
+      pp?: Vec2;
+      getVBoxObj?: (render: Render) => Box2Abs | null;
+    };
 
 export class SGroup {
   static readonly TYPES = {
@@ -76,24 +124,24 @@ export class SGroup {
   type: string;
   id: number;
   label: number;
-  bracketBox: any;
+  bracketBox: Box2Abs | null;
   bracketDirection: Vec2;
-  areas: any;
+  areas: Box2Abs[];
   hover: boolean;
-  hovering: any;
+  hovering: unknown;
   selected: boolean;
-  selectionPlate: any;
-  atoms: any;
-  atomSet: any;
-  parentAtomSet: any;
-  patoms?: any;
-  allAtoms: any;
-  bonds: any;
-  xBonds: any;
-  neiAtoms: any;
+  selectionPlate: unknown;
+  atoms: number[];
+  atomSet: Pile<number>;
+  parentAtomSet: Pile<number>;
+  patoms: number[] | null;
+  allAtoms: boolean;
+  bonds: number[];
+  xBonds: number[];
+  neiAtoms: number[];
   pp: Vec2 | null;
-  data: any;
-  dataArea: any;
+  data: SGroupData;
+  dataArea: Box2Abs | null;
   functionalGroup: FunctionalGroup | undefined;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
@@ -111,24 +159,29 @@ export class SGroup {
     this.selectionPlate = null;
 
     this.atoms = [];
+    this.atomSet = new Pile<number>();
+    this.parentAtomSet = new Pile<number>();
     this.patoms = [];
+    this.allAtoms = false;
     this.bonds = [];
     this.xBonds = [];
     this.neiAtoms = [];
     this.attachmentPoints = [];
     this.pp = null;
+    this.dataArea = null;
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
       nucleotideComponent: '',
       subscript: '',
-      expanded: undefined,
+      expanded: false,
       // data s-group fields
       attached: false,
       absolute: true,
       showUnits: false,
       nCharsToDisplay: -1,
+      nCharnCharsToDisplay: -1,
       tagChar: '',
       daspPos: 1,
       fieldType: 'F',
@@ -144,7 +197,7 @@ export class SGroup {
   //      and should only accept valid attributes for each S-group type.
   //      The attributes should be accessed via these methods only and not directly through this.data.
   // stub
-  getAttr(attr: string): any {
+  getAttr(attr: string): unknown {
     return this.data[attr];
   }
 
@@ -153,8 +206,8 @@ export class SGroup {
   }
 
   // TODO: should be group-specific
-  getAttrs(): any {
-    const attrs = {};
+  getAttrs(): Record<string, unknown> {
+    const attrs: Record<string, unknown> = {};
     Object.keys(this.data).forEach((attr) => {
       attrs[attr] = this.data[attr];
     });
@@ -162,18 +215,19 @@ export class SGroup {
   }
 
   // stub
-  setAttr(attr: string, value: any): any {
+  setAttr(attr: string, value: unknown): unknown {
     const oldValue = this.data[attr];
     this.data[attr] = value;
     return oldValue;
   }
 
   // stub
-  checkAttr(attr: string, value: any): boolean {
+  checkAttr(attr: string, value: unknown): boolean {
     return this.data[attr] === value;
   }
 
   updateOffset(offset: Vec2): void {
+    assert(this.bracketBox, 'SGroup.updateOffset: bracketBox is required');
     this.pp = Vec2.sum(this.bracketBox.p1, offset);
   }
 
@@ -191,42 +245,48 @@ export class SGroup {
   }
 
   calculatePP(struct: Struct): void {
-    let topLeftPoint;
+    let topLeftPoint: Vec2;
 
     const isAtomContext = this.data.context === SgContexts.Atom;
     const isBondContent = this.data.context === SgContexts.Bond;
     if (isAtomContext || isBondContent) {
-      const contentBoxes: Array<any> = [];
-      let contentBB: Box2Abs | null = null;
+      const contentBoxes: Box2Abs[] = [];
 
       this.atoms.forEach((aid) => {
         const atom = struct.atoms.get(aid);
-        const pos = new Vec2(atom!.pp);
+        assert(atom, `SGroup.calculatePP: atom ${aid} is not found`);
+        const pos = new Vec2(atom.pp);
 
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         const bba = new Box2Abs(pos, pos).extend(ext, ext);
         contentBoxes.push(bba);
       });
 
-      contentBoxes.forEach((bba) => {
-        let bbb: Box2Abs | null = null;
-        [bba.p0.x, bba.p1.x].forEach((x) => {
-          [bba.p0.y, bba.p1.y].forEach((y) => {
-            const v = new Vec2(x, y);
-            bbb = !bbb ? new Box2Abs(v, v) : bbb.include(v);
+      const contentBB = contentBoxes.reduce<Box2Abs | null>(
+        (contentBounds, bba) => {
+          let bbb: Box2Abs | null = null;
+          [bba.p0.x, bba.p1.x].forEach((x) => {
+            [bba.p0.y, bba.p1.y].forEach((y) => {
+              const v = new Vec2(x, y);
+              bbb = bbb ? bbb.include(v) : new Box2Abs(v, v);
+            });
           });
-        });
-        contentBB = !contentBB ? bbb! : Box2Abs.union(contentBB, bbb!);
-      });
+          assert(bbb, 'SGroup.calculatePP: failed to build atom bounding box');
+          return contentBounds ? Box2Abs.union(contentBounds, bbb) : bbb;
+        },
+        null,
+      );
 
-      topLeftPoint = isBondContent ? contentBB!.centre() : contentBB!.p0;
+      assert(contentBB, 'SGroup.calculatePP: content bounding box is required');
+      topLeftPoint = isBondContent ? contentBB.centre() : contentBB.p0;
     } else {
+      assert(this.bracketBox, 'SGroup.calculatePP: bracketBox is required');
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }
 
-    const sgroups = Array.from(struct.sgroups.values());
+    const sgroups = [...struct.sgroups.values()];
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
+      if (!doesDescriptorIntersect(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -255,15 +315,17 @@ export class SGroup {
 
   addAttachmentPoint(
     attachmentPoint: SGroupAttachmentPoint,
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId, leaveAtomId }) =>
+      ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
         attachmentPoint.atomId === atomId &&
-        attachmentPoint.leaveAtomId === leaveAtomId,
+        attachmentPoint.leaveAtomId === leaveAtomId &&
+        attachmentPoint.attachmentId === attachmentId &&
+        attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
-    if (isAttachmentPointAlreadyExist && validateUniqueness) {
+    if (isAttachmentPointAlreadyExist && shouldValidateUniqueness) {
       throw new Error(
         'The same attachment point cannot be added to an S-group more than once',
       );
@@ -274,12 +336,11 @@ export class SGroup {
 
   addAttachmentPoints(
     attachmentPoints:
-      | ReadonlyArray<SGroupAttachmentPoint>
-      | SGroupAttachmentPoint[],
-    validateUniqueness = true,
+      ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
+    shouldValidateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
-      this.addAttachmentPoint(attachmentPoint, validateUniqueness);
+      this.addAttachmentPoint(attachmentPoint, shouldValidateUniqueness);
     }
   }
 
@@ -358,7 +419,7 @@ export class SGroup {
     }
 
     const atom = struct.atoms.get(atomId);
-    assert(atom);
+    assert(atom, `SGroup.getContractedPosition: atom ${atomId} is not found`);
     return { atomId, position: atom.pp };
   }
 
@@ -376,6 +437,20 @@ export class SGroup {
 
   public get isMonomer() {
     return false;
+  }
+
+  public get superatomLabel(): string {
+    const name = this.data.name?.trim();
+    if (name) {
+      return name;
+    }
+
+    const superatomClass = this.data.class;
+    if (isSuperatomClass(superatomClass)) {
+      return SUPERATOM_CLASS_TEXT[superatomClass];
+    }
+
+    return '';
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
@@ -399,9 +474,7 @@ export class SGroup {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
       this.isSaltOrSolvent(sgroup.data.name),
     );
-    return onlySaltsOrSolvents.some(({ atoms }) =>
-      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId),
-    );
+    return onlySaltsOrSolvents.some(({ atoms }) => atoms.includes(atomId));
   }
 
   static isBondInSaltOrSolvent(
@@ -412,12 +485,20 @@ export class SGroup {
       this.isSaltOrSolvent(sgroup.data.name),
     );
     return onlySaltsOrSolvents.some(({ bonds }) =>
-      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId),
+      (bonds ?? []).some(
+        (bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId,
+      ),
     );
   }
 
-  static filterAtoms(atoms: any, map: any) {
-    const newAtoms: Array<any> = [];
+  static filterAtoms(
+    atoms: readonly number[] | null | undefined,
+    map: AtomIdRemap,
+  ): number[] {
+    const newAtoms: number[] = [];
+    if (!atoms) {
+      return newAtoms;
+    }
     for (const aid of atoms) {
       if (typeof map[aid] !== 'number') newAtoms.push(aid);
       else if (map[aid] >= 0) newAtoms.push(map[aid]);
@@ -426,16 +507,16 @@ export class SGroup {
     return newAtoms;
   }
 
-  static removeNegative(atoms: any) {
-    const newAtoms: Array<any> = [];
+  static removeNegative(atoms: readonly number[]): number[] {
+    const newAtoms: number[] = [];
     for (const atom of atoms) {
       if (atom >= 0) newAtoms.push(atom);
     }
     return newAtoms;
   }
 
-  static filter(_mol, sg, atomMap) {
-    sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
+  static filter(_mol: unknown, sg: SGroup, atomMap: AtomIdRemap): void {
+    sg.atoms = this.removeNegative(this.filterAtoms(sg.atoms, atomMap));
   }
 
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
@@ -445,11 +526,17 @@ export class SGroup {
       cp.data[field] = sgroup.data[field];
     });
 
-    cp.atoms = sgroup.atoms.map((elem) => aidMap.get(elem));
+    cp.atoms = sgroup.atoms.map((elem) => {
+      const remappedAtomId = aidMap.get(elem);
+      assert(
+        remappedAtomId !== undefined,
+        `SGroup.clone: missing remapped atom id for ${elem}`,
+      );
+      return remappedAtomId;
+    });
     cp.pp = sgroup.pp;
     cp.bracketBox = sgroup.bracketBox;
     cp.patoms = null;
-    cp.bonds = null;
     cp.allAtoms = sgroup.allAtoms;
     cp.data.expanded = sgroup.data.expanded;
     cp.addAttachmentPoints(sgroup.cloneAttachmentPoints(aidMap));
@@ -475,7 +562,7 @@ export class SGroup {
   }
 
   static getCrossBonds(
-    mol: any,
+    mol: StructAtomsAndBondsAccess,
     parentAtomSet: Pile<number>,
   ): { [key: number]: Array<number> } {
     const crossBonds: { [key: number]: Array<number> } = {};
@@ -498,15 +585,20 @@ export class SGroup {
     return crossBonds;
   }
 
-  static bracketPos(sGroup, mol, remol?: ReStruct, render?): void {
+  static bracketPos(
+    sGroup: SGroup,
+    mol: StructAtomsAccess,
+    remol?: ReStruct,
+    render?: Render,
+  ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = !SGroup.isCOPGroup(sGroup)
-      ? new Vec2(0.2, 0.4)
-      : new Vec2(1.2, 1.2);
+    const PADDING_VECTOR = this.isCOPGroup(sGroup)
+      ? new Vec2(1.2, 1.2)
+      : new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     let braketBox: Box2Abs | null = null;
-    const contentBoxes: Array<any> = [];
-    const getAtom = (aid) => {
+    const contentBoxes: Box2Abs[] = [];
+    const getAtom = (aid: number): RenderableSGroupAtom | undefined => {
       if (remol && render) {
         return remol.atoms.get(aid);
       }
@@ -519,12 +611,11 @@ export class SGroup {
       const atom = getAtom(aid);
       if (!atom) return;
 
-      let position;
       let structBoundingBox: Box2Abs | null = null;
-      if ('getVBoxObj' in atom && render) {
+      if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
         structBoundingBox = atom.getVBoxObj(render);
       } else if (atom.pp) {
-        position = new Vec2(atom.pp);
+        const position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
 
@@ -533,11 +624,12 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
+      braketBox = braketBox ? Box2Abs.union(braketBox, bba) : bba;
     });
-    if (!render) render = window.ketcher!.editor.render;
+    const currentRender = render ?? globalThis.ketcher?.editor?.render;
+    assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
-      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+      currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
@@ -550,14 +642,14 @@ export class SGroup {
   }
 
   static getBracketParameters(
-    mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    mol: StructAtomsAndBondsAccess & StructBondEndpointAccess,
+    crossBondsPerAtom: { [key: number]: Array<number> },
     atomSet: Pile<number>,
-    bb,
-    d,
-    n,
-  ): Array<any> {
-    const brackets: Array<any> = [];
+    bb: Box2Abs,
+    d?: Vec2,
+    n?: Vec2,
+  ): SGroupBracketParams[] {
+    const brackets: SGroupBracketParams[] = [];
     const crossBondsPerAtomValues = Object.values(crossBondsPerAtom);
     const crossBonds = crossBondsPerAtomValues.flat();
     if (crossBonds.length < 2) {
@@ -581,6 +673,14 @@ export class SGroup {
       (function () {
         const b1 = mol.bonds.get(crossBonds[0]);
         const b2 = mol.bonds.get(crossBonds[1]);
+        assert(
+          b1,
+          `SGroup.getBracketParameters: first cross-bond ${crossBonds[0]} is not found`,
+        );
+        assert(
+          b2,
+          `SGroup.getBracketParameters: second cross-bond ${crossBonds[1]} is not found`,
+        );
         const cl0 = b1.getCenter(mol);
         const cr0 = b2.getCenter(mol);
         const dr = Vec2.diff(cr0, cl0).normalized();
@@ -607,11 +707,15 @@ export class SGroup {
       (function () {
         for (const crossBondId of crossBonds) {
           const b = mol.bonds.get(crossBondId);
+          assert(
+            b,
+            `SGroup.getBracketParameters: cross-bond ${crossBondId} is not found`,
+          );
           const c = b.getCenter(mol);
           const d = atomSet.has(b.begin)
             ? b.getDir(mol)
             : b.getDir(mol).negated();
-          brackets.push(new SGroupBracketParams(c, d, 0.2, 1.0));
+          brackets.push(new SGroupBracketParams(c, d, 0.2, 1));
         }
       })();
     }
@@ -621,18 +725,18 @@ export class SGroup {
   static getObjBBox(
     atoms: number[],
     mol: Struct,
-    useCollapsedSgroupsPosition = false,
+    shouldUseCollapsedSgroupsPosition = false,
   ): Box2Abs {
     const a0 = mol.atoms.get(atoms[0])?.pp;
-    assert(a0);
+    assert(a0, `SGroup.getObjBBox: atom ${atoms[0]} position is not found`);
     let bb = new Box2Abs(a0, a0);
     for (const aid of atoms.slice(1)) {
       const atom = mol.atoms.get(aid);
-      assert(atom);
+      assert(atom, `SGroup.getObjBBox: atom ${aid} is not found`);
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
+        shouldUseCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -640,9 +744,9 @@ export class SGroup {
     return bb;
   }
 
-  static getAtoms(mol: Struct, sg: SGroup | undefined) {
+  static getAtoms(mol: StructAtomsAccess, sg: SGroup | undefined): number[] {
     if (sg && !sg.allAtoms) {
-      return sg.atoms as number[];
+      return sg.atoms;
     }
 
     const atoms: number[] = [];
@@ -653,9 +757,9 @@ export class SGroup {
     return atoms;
   }
 
-  static getBonds(mol, sg): Array<any> {
-    const atoms = SGroup.getAtoms(mol, sg);
-    const bonds: Array<any> = [];
+  static getBonds(mol: StructAtomsAndBondsAccess, sg?: SGroup): number[] {
+    const atoms = this.getAtoms(mol, sg);
+    const bonds: number[] = [];
     mol.bonds.forEach((bond, bid) => {
       if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) {
         bonds.push(bid);
@@ -664,12 +768,12 @@ export class SGroup {
     return bonds;
   }
 
-  static prepareMulForSaving(sgroup, mol): void {
+  static prepareMulForSaving(sgroup: SGroup, mol: Struct): void {
     sgroup.atoms.sort((a, b) => a - b);
     sgroup.atomSet = new Pile(sgroup.atoms);
     sgroup.parentAtomSet = new Pile(sgroup.atomSet);
-    const inBonds: Array<any> = [];
-    const xBonds: Array<any> = [];
+    const inBonds: number[] = [];
+    const xBonds: number[] = [];
 
     mol.bonds.forEach((bond, bid) => {
       if (
@@ -686,7 +790,7 @@ export class SGroup {
     });
 
     if (xBonds.length !== 0 && xBonds.length !== 2) {
-      throw Error('Unsupported cross-bonds number');
+      throw new Error('Unsupported cross-bonds number');
     }
 
     let xAtom1 = -1;
@@ -694,20 +798,29 @@ export class SGroup {
     let crossBond: Bond | null = null;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
+      assert(
+        bond1,
+        `SGroup.prepareMulForSaving: first cross-bond ${xBonds[0]} is not found`,
+      );
       xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end;
 
       const bond2 = mol.bonds.get(xBonds[1]);
+      assert(
+        bond2,
+        `SGroup.prepareMulForSaving: second cross-bond ${xBonds[1]} is not found`,
+      );
       xAtom2 = sgroup.parentAtomSet.has(bond2.begin) ? bond2.begin : bond2.end;
       crossBond = bond2;
     }
 
     let tailAtom = xAtom2;
 
-    const newAtoms: Array<any> = [];
+    const newAtoms: number[] = [];
     for (let j = 0; j < sgroup.data.mul - 1; j++) {
-      const amap = {};
+      const amap: Record<number, number> = {};
       sgroup.atoms.forEach((aid) => {
         const atom = mol.atoms.get(aid);
+        assert(atom, `SGroup.prepareMulForSaving: atom ${aid} is not found`);
         const aid2 = mol.atoms.add(atom.clone());
         newAtoms.push(aid2);
         sgroup.atomSet.add(aid2);
@@ -715,6 +828,7 @@ export class SGroup {
       });
       inBonds.forEach((bid) => {
         const bond = mol.bonds.get(bid);
+        assert(bond, `SGroup.prepareMulForSaving: bond ${bid} is not found`);
         const newBond = bond.clone();
         newBond.begin = amap[newBond.begin];
         newBond.end = amap[newBond.end];
@@ -730,6 +844,10 @@ export class SGroup {
     }
     if (tailAtom >= 0) {
       const xBond2 = mol.bonds.get(xBonds[1]);
+      assert(
+        xBond2,
+        `SGroup.prepareMulForSaving: cross-bond ${xBonds[1]} is not found`,
+      );
       if (xBond2.begin === xAtom2) xBond2.begin = tailAtom;
       else xBond2.end = tailAtom;
     }
@@ -745,15 +863,20 @@ export class SGroup {
     });
   }
 
-  static getMassCentre(mol, atoms): Vec2 {
+  static getMassCentre(mol: StructAtomsAccess, atoms: readonly number[]): Vec2 {
     let c = new Vec2(); // mass centre
     for (const atomId of atoms) {
-      c = c.addScaled(mol.atoms.get(atomId).pp, 1.0 / atoms.length);
+      const atom = mol.atoms.get(atomId);
+      assert(atom, `SGroup.getMassCentre: atom ${atomId} is not found`);
+      c = c.addScaled(atom.pp, 1 / atoms.length);
     }
     return c;
   }
 
-  static readonly isAtomInContractedSGroup = (atom, sGroups) => {
+  static readonly isAtomInContractedSGroup = (
+    atom: Atom,
+    sGroups: Map<number, ReSGroup> | Pool<SGroup>,
+  ) => {
     const contractedSGroup: number[] = [];
 
     sGroups.forEach((sGroupOrReSGroup) => {
@@ -773,7 +896,7 @@ export class SGroup {
     return [...sGroups.values()].some((sGroupOrReSGroup) => {
       const sGroup: SGroup | undefined =
         'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
-      const atomsInSGroup = sGroup?.atoms;
+      const atomsInSGroup = sGroup?.atoms ?? [];
       return (
         sGroup?.isContracted() &&
         atomsInSGroup.includes(bond?.begin) &&
@@ -786,31 +909,34 @@ export class SGroup {
     if (!sGroup) {
       return false;
     }
-    return sGroup?.type === SGroup.TYPES.SUP;
+    return sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.DAT;
+    return sGroup.type === this.TYPES.DAT;
   }
 
   static isQuerySGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.queryComponent;
+    return sGroup.type === this.TYPES.queryComponent;
   }
 
   static isSRUSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.SRU;
+    return sGroup.type === this.TYPES.SRU;
   }
 
   static isMulSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.MUL;
+    return sGroup.type === this.TYPES.MUL;
   }
 
   static isCOPGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.COP;
+    return sGroup.type === this.TYPES.COP;
   }
 }
 
-function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {
+function doesDescriptorIntersect(
+  sgroups: SGroup[],
+  topLeftPoint: Vec2,
+): boolean {
   return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false;
 

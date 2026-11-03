@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TransientView } from 'application/render/renderers/TransientView/TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { TransientView } from './TransientView';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -115,11 +115,6 @@ const getRotationArcPath = (
   );
 };
 
-// TypeScript doesn't support abstract static methods, but the TransientView pattern
-// requires static show() methods. This ts-ignore is necessary to follow the
-// established pattern used by other TransientView subclasses (SelectionView, etc.)
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 export class RotationView extends TransientView {
   private static lastSnappingRadius?: number;
   private static wasRotating = false;
@@ -134,15 +129,15 @@ export class RotationView extends TransientView {
   public static subscribeRotationHandle(
     listener: (payload: RotationHandleEvent) => void,
   ) {
-    RotationView.rotationHandleSubscribers.add(listener);
-    return () => RotationView.rotationHandleSubscribers.delete(listener);
+    this.rotationHandleSubscribers.add(listener);
+    return () => this.rotationHandleSubscribers.delete(listener);
   }
 
   public static subscribeRotationCenter(
     listener: (payload: RotationCenterEvent) => void,
   ) {
-    RotationView.rotationCenterSubscribers.add(listener);
-    return () => RotationView.rotationCenterSubscribers.delete(listener);
+    this.rotationCenterSubscribers.add(listener);
+    return () => this.rotationCenterSubscribers.delete(listener);
   }
 
   public static show(
@@ -158,7 +153,7 @@ export class RotationView extends TransientView {
       startAngle: startAngleParam,
     } = params;
 
-    if (!isRotating || !RotationView.wasRotating) {
+    if (!isRotating || !this.wasRotating) {
       RotationView.lastSnappingRadius = undefined;
     }
     RotationView.wasRotating = isRotating;
@@ -188,7 +183,7 @@ export class RotationView extends TransientView {
       isRotating && cursor ? Coordinates.viewToCanvas(cursor) : undefined;
 
     const handleCenterX = isRotating
-      ? cursorInCanvas?.x ?? center.x
+      ? (cursorInCanvas?.x ?? center.x)
       : boundingBox.left + boundingBox.width / 2;
     const handleCenterY =
       cursorInCanvas?.y ??
@@ -230,13 +225,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousemove', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationCenterSubscribers.forEach((listener) =>
+        this.rotationCenterSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -274,13 +269,13 @@ export class RotationView extends TransientView {
       .on('mousedown', (event: PointerEvent) => {
         event.stopPropagation();
         event.preventDefault();
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'down', event }),
         );
       })
       .on('mousedown', (event: PointerEvent) => {
         if (event.buttons !== 1) return;
-        RotationView.rotationHandleSubscribers.forEach((listener) =>
+        this.rotationHandleSubscribers.forEach((listener) =>
           listener({ type: 'drag', event }),
         );
       });
@@ -341,9 +336,9 @@ export class RotationView extends TransientView {
       const snappedToStep =
         Math.round(rawRadius / STYLE.PROTRACTOR_RADIUS_STEP) *
         STYLE.PROTRACTOR_RADIUS_STEP;
-      let radius = snappedToStep > 0 ? snappedToStep : 0;
+      let radius = Math.max(snappedToStep, 0);
 
-      const lastSnappingRadius = RotationView.lastSnappingRadius;
+      const lastSnappingRadius = this.lastSnappingRadius;
       if (radius > 0) {
         if (lastSnappingRadius === undefined) {
           RotationView.lastSnappingRadius = radius;

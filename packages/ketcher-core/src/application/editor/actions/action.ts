@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,11 +35,13 @@ export class Action {
   }
 
   mergeWith(action) {
-    this.operations = this.operations.concat(action.operations);
+    this.operations = [...this.operations, ...action.operations];
     return this;
   }
 
-  /** Perform action and return inverted one */
+  /**
+  Perform action and return inverted one
+  */
   perform(restruct: ReStruct): Action {
     const action = new Action();
     const sortedOperations = [...this.operations].sort(
@@ -59,10 +61,8 @@ export class Action {
     // anything (operations that don't override `isDummy` always count as a
     // real change). Without `restruct` we can only tell that an action with no
     // operations is a dummy.
-    return (
-      this.operations.find((operation) =>
-        restruct ? !operation.isDummy(restruct) : true,
-      ) === undefined
+    return !this.operations.some((operation) =>
+      restruct ? !operation.isDummy(restruct) : true,
     );
   }
 }

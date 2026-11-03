@@ -8,6 +8,15 @@ import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/Extend
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
+function getEnumKeyByValue<T extends Record<string, string>>(
+  enumObj: T,
+  value: T[keyof T],
+): keyof T | undefined {
+  return (Object.keys(enumObj) as Array<keyof T>).find(
+    (k) => enumObj[k] === value,
+  );
+}
+
 test.describe('Generic node', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -16,14 +25,6 @@ test.describe('Generic node', () => {
       'Molfiles-V2000/heteroatoms-structure.mol',
     );
   });
-  function getEnumKeyByValue<T extends Record<string, string>>(
-    enumObj: T,
-    value: T[keyof T],
-  ): keyof T | undefined {
-    return (Object.keys(enumObj) as Array<keyof T>).find(
-      (k) => enumObj[k] === value,
-    );
-  }
   const extendedAtomsTests = [
     ExtendedTableButton.A,
     ExtendedTableButton.AH,

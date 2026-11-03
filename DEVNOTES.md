@@ -1,6 +1,6 @@
 ## Prerequisites
 
-- Stable [Node.js](https://nodejs.org) version >= 24.14.1
+- Stable [Node.js](https://nodejs.org) version >= 24.20.0
 - Stable [npm](https://npmjs.com) version >= 7
 
 # NOTES
@@ -142,7 +142,7 @@ http://localhost:3000/?api_path={insert link to Indigo service here}
 ```
 
 You can find the instruction for service installation
-[here](http://lifescience.opensource.epam.com/indigo/service/index.html).
+[here](https://lifescience.opensource.epam.com/indigo/service/index.html).
 
 ## Additional commands
 

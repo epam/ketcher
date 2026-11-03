@@ -63,7 +63,8 @@ export interface IKetConnectionMonomerEndPoint {
 
 export interface IKetConnectionMoleculeEndPoint {
   moleculeId: string;
-  atomId: string;
+  atomId?: string;
+  attachmentGroupId?: string;
 }
 
 export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
@@ -72,6 +73,7 @@ export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
 export enum KetConnectionType {
   SINGLE = 'single',
   HYDROGEN = 'hydrogen',
+  HAPTIC = 'haptic',
 }
 
 export interface IKetTemplateConnectionEndPoint {
@@ -86,7 +88,8 @@ export interface IKetTemplateConnection {
 }
 
 export interface IKetConnection {
-  connectionType: KetConnectionType;
+  connectionType?: KetConnectionType;
+  type?: KetConnectionType;
   label?: string;
   endpoint1: IKetConnectionEndPoint;
   endpoint2: IKetConnectionEndPoint;
@@ -94,12 +97,7 @@ export interface IKetConnection {
 }
 
 export type monomerClass =
-  | 'RNA'
-  | 'PEPTIDE'
-  | 'CHEM'
-  | 'UNKNOWN'
-  | 'DNA'
-  | 'MODDNA';
+  'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA' | 'MODDNA';
 
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
@@ -210,6 +208,7 @@ export interface IKetMonomerGroupTemplate {
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
   aliasBILN?: string;
+  hidden?: boolean;
 }
 
 export interface IKetMacromoleculesContentRootProperty {

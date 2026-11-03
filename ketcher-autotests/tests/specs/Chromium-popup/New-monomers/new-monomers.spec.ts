@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import {
@@ -1080,13 +1077,13 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
     ...internalR1R2Nucleotides,
   ]) {
     await CommonTopLeftToolbar(page).clearCanvas();
-    if (fivePrimeR2Nucleotides.some((n) => n === nucleotide)) {
+    if (fivePrimeR2Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(nucleotide);
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
-    } else if (threePrimeR1Nucleotides.some((n) => n === nucleotide)) {
+    } else if (threePrimeR1Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
       await Library(page).clickMonomerAutochain(nucleotide);
-    } else if (internalR1R2Nucleotides.some((n) => n === nucleotide)) {
+    } else if (internalR1R2Nucleotides.includes(nucleotide)) {
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
       await Library(page).clickMonomerAutochain(nucleotide);
       await Library(page).clickMonomerAutochain(Nucleotide._2_damdA);
@@ -1107,7 +1104,7 @@ test(`27. Check that newly added nineteen standalone nucleotide can be saved and
   }
 });
 
-const abnormalCHEMs = [
+const abnormalCHEMs = new Set([
   Chem._5TAMRA,
   Chem.SCY5,
   Chem._56FAM,
@@ -1132,9 +1129,9 @@ const abnormalCHEMs = [
   Chem.A700,
   Chem.A425,
   Chem._5SUN,
-];
+]);
 
-const fivePrimeR2s = [Chem.SpC3, Chem.UAmM, Chem.ThiP, Chem.PCS];
+const fivePrimeR2s = new Set([Chem.SpC3, Chem.UAmM, Chem.ThiP, Chem.PCS]);
 test(`28. Check that newly added sixty-five new CHEMs can be saved and opened for IDT`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/7910
@@ -1154,11 +1151,11 @@ test(`28. Check that newly added sixty-five new CHEMs can be saved and opened fo
    * Version 3.8
    */
   test.slow();
-  const verifiableCHEMs = newCHEMs.filter((c) => !abnormalCHEMs.includes(c));
+  const verifiableCHEMs = newCHEMs.filter((c) => !abnormalCHEMs.has(c));
 
   for (const chem of verifiableCHEMs) {
     await CommonTopLeftToolbar(page).clearCanvas();
-    if (verifiableCHEMs.some((chem) => fivePrimeR2s.includes(chem))) {
+    if (verifiableCHEMs.some((chem) => fivePrimeR2s.has(chem))) {
       await Library(page).clickMonomerAutochain(chem);
       await Library(page).clickMonomerAutochain(Chem.Sp18P);
     } else {
@@ -1827,9 +1824,7 @@ test(`45.2 Check that newly added two phosphates can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1866,9 +1861,7 @@ test(`46.1 Check that newly added eleven presets can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1905,9 +1898,7 @@ test(`46.2 Check that newly added eleven presets can be connected to any monomer
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R2,
     );
 
@@ -1944,9 +1935,7 @@ test(`47.1 Check that newly added nineteen standalone nucleotide can be connecte
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -1983,9 +1972,7 @@ test(`47.2 Check that newly added nineteen standalone nucleotide can be connecte
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -2023,9 +2010,7 @@ test(`48.1  Check that newly added sixty-five new CHEMs can be connected to any 
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 
@@ -2063,9 +2048,7 @@ test(`48.2 Check that newly added sixty-five new CHEMs can be connected to any m
       page,
       monomer,
       monomerConnectTo,
-      (
-        await getAvailableAttachmentPoints(monomer)
-      )[0],
+      (await getAvailableAttachmentPoints(monomer))[0],
       AttachmentPoint.R1,
     );
 

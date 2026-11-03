@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
-  shiftCanvas,
   clickOnCanvas,
   undoByKeyboard,
   takeElementScreenshot,
@@ -68,7 +64,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset');
 
@@ -125,7 +120,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset2');
 
@@ -177,7 +171,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset3');
 
@@ -229,7 +222,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset4');
 
@@ -291,7 +283,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset5');
 
@@ -350,7 +341,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset6');
 
@@ -410,7 +400,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset7');
 
@@ -478,7 +467,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset8');
 
@@ -544,7 +532,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset9');
 
@@ -601,7 +588,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset10');
 

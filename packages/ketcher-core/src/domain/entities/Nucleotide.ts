@@ -2,7 +2,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
-import assert from 'assert';
+import { assert } from 'utilities';
 import {
   getPhosphateFromSugar,
   getRnaBaseFromSugar,
@@ -40,8 +40,8 @@ export class Nucleotide {
     );
   }
 
-  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
-    if (needValidation) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, shouldValidate = true) {
+    if (shouldValidate) {
       assert(
         isValidNucleotide(sugar),
         'Nucleotide is not valid. Please check nucleotide parts connections.',
@@ -84,9 +84,9 @@ export class Nucleotide {
       KetMonomerClass.Sugar,
     );
 
-    assert(sugarLibraryItem);
-    assert(rnaBaseLibraryItem);
-    assert(phosphateLibraryItem);
+    if (!sugarLibraryItem || !rnaBaseLibraryItem || !phosphateLibraryItem) {
+      return;
+    }
 
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
@@ -109,7 +109,7 @@ export class Nucleotide {
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
-    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
+    return { modelChanges, node: this.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

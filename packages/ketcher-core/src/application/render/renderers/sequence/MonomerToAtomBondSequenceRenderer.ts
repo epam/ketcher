@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from 'utilities';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';

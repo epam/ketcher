@@ -19,17 +19,8 @@ exports[`FileDrop component should render correctly 1`] = `
         />
         <svg
           class="css-1opl6cd"
-          height="27"
-          viewBox="0 0 21 27"
-          width="21"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clip-rule="evenodd"
-            d="M.898 8.972L9.54.395a1.365 1.365 0 011.92 0l8.642 8.577c.53.527.53 1.38 0 1.906-.53.527-1.39.527-1.92 0l-6.324-6.276V26.5H9.142V4.602l-6.324 6.276c-.53.527-1.39.527-1.92 0a1.34 1.34 0 010-1.906z"
-            fill-rule="evenodd"
-          />
-        </svg>
+          name="arrow-upward"
+        />
         <div
           class="css-1b8y5ux"
         >
@@ -60,17 +51,8 @@ exports[`FileDrop component should render correctly 1`] = `
       />
       <svg
         class="css-1opl6cd"
-        height="27"
-        viewBox="0 0 21 27"
-        width="21"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          clip-rule="evenodd"
-          d="M.898 8.972L9.54.395a1.365 1.365 0 011.92 0l8.642 8.577c.53.527.53 1.38 0 1.906-.53.527-1.39.527-1.92 0l-6.324-6.276V26.5H9.142V4.602l-6.324 6.276c-.53.527-1.39.527-1.92 0a1.34 1.34 0 010-1.906z"
-          fill-rule="evenodd"
-        />
-      </svg>
+        name="arrow-upward"
+      />
       <div
         class="css-1b8y5ux"
       >

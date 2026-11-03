@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,15 +48,23 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   select: SelectCommonTool,
   fragmentSelection: FragmentSelectionTool,
   sgroup: SGroupTool,
-  eraser: EraserTool,
-  atom: AtomTool,
-  bond: BondTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  atom: AtomTool as unknown as ToolConstructorInterface,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  bond: BondTool as unknown as ToolConstructorInterface,
   chain: ChainTool,
-  template: TemplateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  template: TemplateTool as unknown as ToolConstructorInterface,
   charge: ChargeTool,
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,
   attach: AttachTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  eraser: EraserTool as unknown as ToolConstructorInterface,
   // Cast to ToolConstructorInterface: constructor param types are narrower
   // than `unknown[]`, but toolsMap only ever calls these with the correct args.
   reactionarrow: CommonArrowTool as unknown as ToolConstructorInterface,

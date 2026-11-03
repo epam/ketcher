@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,6 +36,7 @@ import LabelEdit from './toolbox/labeledit';
 import PeriodTable from '../views/modal/components/PeriodTable';
 import ExtendedTable from '../views/modal/components/ExtendedTable';
 import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG';
+import { EditMonomer } from '../views/modal/components/toolbox/EditMonomer/EditMonomer';
 import Rgroup from './toolbox/rgroup/rgroup';
 import SGroup from './toolbox/sgroup';
 import TemplateAttach from './template/template-attach';
@@ -43,8 +44,9 @@ import TemplatesDialog from './template/TemplateDialog';
 import Text from '../views/modal/components/Text';
 import { Confirm } from '../views/modal/components/Confirm';
 import InfoModal from '../views/modal/components/InfoModal';
+import type { ElementType } from 'react';
 
-export default {
+const dialogs: Record<string, ElementType> = {
   open: Open,
   analyse: Analyse,
   recognize: Recognize,
@@ -64,10 +66,13 @@ export default {
   labelEdit: LabelEdit,
   rgroupLogic: RgroupLogic,
   removeFG: RemoveFG,
+  editMonomer: EditMonomer,
   save: Save,
   settings: Settings,
   sgroup: SGroup,
   text: Text,
   confirm: Confirm,
   'info-modal': InfoModal,
-} as any;
+};
+
+export default dialogs;

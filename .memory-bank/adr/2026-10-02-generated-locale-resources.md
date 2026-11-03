@@ -1,0 +1,28 @@
+# Locale resource wiring is generated from disk, not hand-edited per language
+
+## Decision
+
+Adding or removing a supported language in `ketcher-react`/`ketcher-macromolecules` no longer requires editing `i18n.ts`/`registerNamespaces.ts`. A build-time codegen script (`scripts/generate-locale-resources.mjs` in each package) scans `src/locales/<code>/` for that package's namespace JSON files and writes a generated module (`src/i18n/localeResources.generated.ts`) that both files import from. The language list, its imports, and the Settings-switcher label are all derived from what's on disk, not a hardcoded array.
+
+## Context
+
+The previous design required a manual code change for every language: static `import` statements per namespace per locale, a hand-maintained `resources`/`LocaleResources` type, a hardcoded `SUPPORTED_LANGUAGES` array with a literal display label per entry. This directly conflicted with the point of adopting Crowdin (see `adr/2026-10-01-crowdin-placeholder-protection-gap.md`): a translator finishing a new language in Crowdin and running `download` still wouldn't see it in the app without an engineer also touching `i18n.ts`. The owner raised this directly as a bug report ("чому es не з'являється в селекті") during the Crowdin compatibility test — Spanish's locale files existed on disk but the app had no path to discover them.
+
+## Alternatives considered
+
+- **Runtime dynamic `import()` per language**, loading translation JSON over the network on demand instead of bundling it — would let a language appear without any rebuild at all, which is closer to the ideal ("Crowdin adds a language, it just shows up"). Rejected for now: it inverts the `MULTI_LANGUAGE_BUILD` flag's current meaning (a compile-time bundle-size decision) into a runtime loading concern, adds loading-state/SSR handling that doesn't exist today, and is a much larger change than the actual problem (manual code edits) requires.
+- **Keep per-language manual edits**, just document the workflow better — rejected: doesn't fix the underlying issue, and the owner explicitly asked for automatic behavior ("щоб юзер мав змогу через крауді розширяти переклади", not through code).
+- **Scan `src/locales/` directly at runtime** (e.g. inside `i18n.ts`, via `require.context` or similar) instead of a separate codegen step — rejected: Rollup needs static, lexically-visible `import` statements to tree-shake non-English JSON out of the English-only default build; a runtime directory scan can't preserve that without switching to the dynamic-import alternative above.
+
+## Rationale
+
+A build-time codegen script keeps every property the previous design relied on (static imports → tree-shaking, full TypeScript typing of `resources`) while removing the one-handwritten-list problem. The generated file is committed (not gitignored), so `tsc`/`jest` work on a fresh clone without requiring the codegen step to run first — but it's also wired into `prebuild`/`prestart`/`pretest` npm hooks in both packages, so a locale added purely as files is picked up automatically the next time anyone builds, starts, or tests, with no separate step to remember. An incomplete locale (missing a namespace file) is skipped with a console warning rather than partially included — i18next's per-key English fallback would otherwise mask a half-finished language as if it were silently degraded rather than simply "not ready yet."
+
+Labels are computed via `Intl.DisplayNames` (the language's own endonym) rather than stored per-language, so a brand-new complete locale gets a sensible label with zero code change; a small override exists only for `zh-CN`, where the computed default ("中文（中国）") would silently change text this UI has already shipped as "简体中文".
+
+## Consequences
+
+- **A genuinely new behavior, verified end-to-end during this change**: copying `en`'s full namespace set to `src/locales/fr/` (both packages) and re-running `npm run i18n:generate` made French appear in the multi-language build's bundled resources with zero edits to `i18n.ts`/`registerNamespaces.ts` — confirmed via bundle-content grep (`common_fr` present) and `Intl.DisplayNames(['fr']).of('fr')` → `"français"`. This is the actual fix for the reported gap.
+- **Tree-shaking discipline now applies to two files instead of one.** Anything added to `i18n.ts`/`registerNamespaces.ts` that reads `EXTRA_LOCALE_RESOURCES` (or embeds non-English label text) must stay inside a `MULTI_LANGUAGE_BUILD`-gated branch, or it leaks into the English-only bundle — caught once already during this change (see `modules/i18n.md`'s "Tree-shaking hazard" note) via the same bundle-content grep check `adr/2026-09-24-english-only-default-build.md` already established as required verification, not `tsc`/`eslint`/`jest`, none of which would catch this class of regression.
+- **ketcher-react's and ketcher-macromolecules' namespace completeness are tracked independently**, same as before this change — a locale can be "supported" (complete) in one package's `SUPPORTED_LANGUAGES` while still missing in the other's `registerNamespaces.ts` registration, degrading gracefully (English fallback per-key) rather than erroring. This wasn't changed by the codegen switch; it's inherent to the existing one-way `ketcher-macromolecules -> ketcher-react` dependency (see `modules/i18n.md`).
+- The generated files (`localeResources.generated.ts` in both packages) must be regenerated and re-committed whenever a locale directory's namespace files change — the `pretest`/`prebuild`/`prestart` hooks make this automatic for anyone running those scripts, but a stale committed copy would silently diverge from `src/locales/` for anyone who only inspects the generated file directly.

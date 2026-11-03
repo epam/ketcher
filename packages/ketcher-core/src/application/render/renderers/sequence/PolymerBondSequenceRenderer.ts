@@ -1,5 +1,5 @@
 import type { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
@@ -10,8 +10,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
-    | D3SvgElementSelection<SVGPathElement, void>
-    | undefined;
+    D3SvgElementSelection<SVGPathElement, void> | undefined;
 
   constructor(
     public polymerBond: PolymerBond,
@@ -121,7 +120,7 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   private getBondPath() {
-    let path = '';
+    let path: string;
     if (this.areMonomersOnSameRow) {
       path = `M ${this.scaledPosition.startPosition.x + 6},
       ${this.mainLineY.mainLineY1 + 5} 

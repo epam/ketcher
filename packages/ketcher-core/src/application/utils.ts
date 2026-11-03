@@ -10,7 +10,7 @@ import type { StructService } from 'domain/services';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
-import assert from 'assert';
+import { assert } from 'utilities';
 
 export async function prepareStructToRender(
   structStr: string,
@@ -58,7 +58,7 @@ export function deleteAllEntitiesOnCanvas() {
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
-  mergeWithLatestHistoryCommand = false,
+  shouldMergeWithLatestHistoryCommand = false,
 ) {
   const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
@@ -82,7 +82,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   EditorHistory.getInstance(editor).update(
     modelChanges,
-    mergeWithLatestHistoryCommand,
+    shouldMergeWithLatestHistoryCommand,
   );
   editor.renderersContainer.update(modelChanges);
 }

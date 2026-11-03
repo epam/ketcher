@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
 import utils from '../shared/utils';
+import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {
   let action = new Action();
@@ -53,8 +54,8 @@ export function getItemsToFuse(editor, items) {
   const struct = editor.render.ctab.molecule;
 
   const mergeItems = items || {
-    atoms: Array.from(struct.atoms.keys()),
-    bonds: Array.from(struct.bonds.keys()),
+    atoms: [...struct.atoms.keys()],
+    bonds: [...struct.bonds.keys()],
   };
 
   return closestToMerge(
@@ -67,13 +68,13 @@ export function getHoverToFuse(items) {
   if (!items) return null;
 
   const hoverItems = {
-    atoms: Array.from(items.atoms.values()),
-    bonds: Array.from(items.bonds.values()),
+    atoms: [...items.atoms.values()],
+    bonds: [...items.bonds.values()],
     ...(items.functionalGroups && {
-      functionalGroups: Array.from(items.functionalGroups.values()),
+      functionalGroups: [...items.functionalGroups.values()],
     }),
     ...(items.atomToFunctionalGroup && {
-      sgroups: Array.from(items.atomToFunctionalGroup.values()),
+      sgroups: [...items.atomToFunctionalGroup.values()],
     }),
   };
 
@@ -113,8 +114,25 @@ function closestToMerge(struct, closestMap) {
   closestMap.bonds.forEach((dstId, srcId) => {
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
+    if (!bond || !bondCI) {
+      mergeMap.bonds.delete(srcId);
+      return;
+    }
 
-    if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+    if (
+      isHapticBondWithAttachmentGroup(struct, bond) ||
+      isHapticBondWithAttachmentGroup(struct, bondCI)
+    ) {
+      mergeMap.bonds.delete(srcId);
+      if (bond) {
+        mergeMap.atoms.delete(bond.begin);
+        mergeMap.atoms.delete(bond.end);
+      }
+      return;
+    }
+
+    const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
+    if (mergeParams?.merged) {
       mergeMap.atoms.delete(bond.begin);
       mergeMap.atoms.delete(bond.end);
     } else {

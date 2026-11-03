@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,7 @@ import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
 import { cloneElement, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -124,6 +125,8 @@ const BtnsWpapper = styled.div`
  */
 const TopToolbarNaturalWidthMirror = styled.div`
   position: absolute;
+  top: -9999px;
+  left: -9999px;
   visibility: hidden;
   pointer-events: none;
   display: flex;
@@ -189,6 +192,7 @@ export const TopToolbar = ({
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
   const { ref: mirrorRef, width: mirrorWidth = 0 } =
     useResizeObserver<HTMLDivElement>();
+  const { t } = useTranslation('toolbar');
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
@@ -219,7 +223,7 @@ export const TopToolbar = ({
   const renderLeftToolbarSection = (collapsed: boolean) => (
     <BtnsWpapper>
       <TopToolbarIconButton
-        title="Clear Canvas"
+        title={t('menu.clear')}
         onClick={onClear}
         iconName="clear"
         shortcut={shortcuts.clear}

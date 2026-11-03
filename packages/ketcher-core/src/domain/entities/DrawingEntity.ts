@@ -1,6 +1,6 @@
 import { Vec2 } from 'domain/entities/vec2';
 import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { Coordinates } from 'application/editor/shared/coordinates';
 let id = 0;
 
@@ -61,7 +61,7 @@ export abstract class DrawingEntity {
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -71,15 +71,15 @@ export abstract class DrawingEntity {
     let isSelected = false;
 
     selectionPoints.forEach((point) => {
-      const locatedInRectangle =
+      const isLocatedInRectangle =
         rectangleBottomRightPoint.x > point.x &&
         rectangleBottomRightPoint.y > point.y &&
         rectangleTopLeftPoint.x < point.x &&
         rectangleTopLeftPoint.y < point.y;
-      if (shiftKey) {
-        isSelected = isPreviousSelected || locatedInRectangle;
+      if (isShiftKeyPressed) {
+        isSelected = isPreviousSelected || isLocatedInRectangle;
       } else {
-        isSelected = locatedInRectangle;
+        isSelected = isLocatedInRectangle;
       }
     });
 
@@ -95,7 +95,7 @@ export abstract class DrawingEntity {
   public selectIfLocatedInPolygon(
     polygonPoints: Vec2[],
     isPreviousSelected = false,
-    shiftKey = false,
+    isShiftKeyPressed = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -106,7 +106,7 @@ export abstract class DrawingEntity {
 
     selectionPoints.forEach((point) => {
       const locatedInPolygon = this.isPointInPolygon(polygonPoints, point);
-      if (shiftKey) {
+      if (isShiftKeyPressed) {
         isSelected = isPreviousSelected || locatedInPolygon;
       } else {
         isSelected = locatedInPolygon;
@@ -123,47 +123,54 @@ export abstract class DrawingEntity {
   }
 
   private isPointInPolygon(r: Vec2[], p: Vec2) {
-    // eslint-disable-line max-statements
+    const lastPoint = r.at(-1);
+
+    if (!lastPoint) {
+      return false;
+    }
+
     const d = new Vec2(0, 1);
     const n = d.rotate(Math.PI / 2);
-    let v0 = Vec2.diff(r[r.length - 1], p);
+    let v0 = Vec2.diff(lastPoint, p);
     let n0 = Vec2.dot(n, v0);
     let d0 = Vec2.dot(d, v0);
     let w0 = new Vec2(0, 0);
     let counter = 0;
     const eps = 1e-5;
-    let flag1 = false;
-    let flag0 = false;
+    let isCurrentEdgeCrossing: boolean;
+    let isPreviousEdgeCrossing = false;
 
     for (const point of r) {
       const v1 = Vec2.diff(point, p);
       const w1 = Vec2.diff(v1, v0);
       const n1 = Vec2.dot(n, v1);
       const d1 = Vec2.dot(d, v1);
-      flag1 = false;
+      isCurrentEdgeCrossing = false;
       if (n1 * n0 < 0) {
         if (d1 * d0 > -eps) {
-          if (d0 > -eps) flag1 = true;
-          /* eslint-disable no-mixed-operators */
+          if (d0 > -eps) isCurrentEdgeCrossing = true;
         } else if (
           (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
           0
         ) {
-          /* eslint-enable no-mixed-operators */
-          flag1 = true;
+          isCurrentEdgeCrossing = true;
         }
       }
-      if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
-        flag1 = false;
+      if (
+        isCurrentEdgeCrossing &&
+        isPreviousEdgeCrossing &&
+        Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0
+      ) {
+        isCurrentEdgeCrossing = false;
       }
-      if (flag1) {
+      if (isCurrentEdgeCrossing) {
         counter++;
       }
       v0 = v1;
       n0 = n1;
       d0 = d1;
       w0 = w1;
-      flag0 = flag1;
+      isPreviousEdgeCrossing = isCurrentEdgeCrossing;
     }
     return counter % 2 !== 0;
   }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,19 +18,20 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
 
 interface TextMoveData {
-  id: any;
-  d: any;
+  id: number;
+  d: Vec2;
   noinvalidate?: boolean;
 }
 
 export class TextMove extends BaseOperation {
   data: TextMoveData;
 
-  constructor(id: any, d: any, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.TEXT_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct): void {

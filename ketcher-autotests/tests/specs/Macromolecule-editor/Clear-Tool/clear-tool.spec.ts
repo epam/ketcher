@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -15,7 +14,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-/* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {

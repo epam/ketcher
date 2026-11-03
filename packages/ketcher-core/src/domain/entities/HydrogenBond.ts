@@ -7,7 +7,10 @@ export class HydrogenBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
-  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
+  constructor(
+    public firstMonomer: BaseMonomer,
+    secondMonomer?: BaseMonomer,
+  ) {
     super();
     this.firstMonomer = firstMonomer;
     this.secondMonomer = secondMonomer;

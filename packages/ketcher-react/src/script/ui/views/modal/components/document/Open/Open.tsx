@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -5,7 +6,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +16,8 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import { type FC, useEffect, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
@@ -49,6 +51,7 @@ const FooterContent = ({
   onCancel,
   isAddToCanvasDisabled,
 }) => {
+  const { t } = useTranslation(['common', 'dialogs']);
   return (
     <div className={classes.footerContent}>
       <button
@@ -56,7 +59,7 @@ const FooterContent = ({
         className={classes.cancelButton}
         data-testid="cancel-button"
       >
-        Cancel
+        {t('common:button.cancel')}
       </button>
       <div className={classes.buttonsContainer}>
         <DialogActionButton
@@ -64,7 +67,7 @@ const FooterContent = ({
           disabled={!structStr.trim()}
           clickHandler={openHandler}
           styles={classes.openButton}
-          label="Open as New Project"
+          label={t('dialogs:document.open.openAsNewProject')}
           testId="open-as-new-button"
         />
         <DialogActionButton
@@ -72,8 +75,8 @@ const FooterContent = ({
           disabled={!structStr.trim() || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.copyButton}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+          label={t('dialogs:shared.addToCanvas')}
+          title={t('dialogs:shared.addToCanvasTooltip')}
           testId="add-to-canvas-button"
         />
       </div>
@@ -94,34 +97,29 @@ const Open: FC<Props> = (props) => {
   const [structStr, setStructStr] = useState<string>('');
   const [structList, setStructList] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>('');
-  const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation(['dialogs']);
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
     [ketcherId],
   );
 
-  useEffect(() => {
-    if (server) {
-      fileOpener(server).then((chosenOpener) => {
-        setOpener({ chosenOpener });
-      });
-    }
-  }, [server]);
-
   const onFileLoad = (files) => {
-    if ((window as any).isKetcherFullscreenBeforeFilePicker) {
+    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (window as any).isKetcherFullscreenBeforeFilePicker = false;
+      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
+        if (!fileContent.structures.length && files[0].size > 0) {
+          errorHandler(t('dialogs:document.open.passwordProtectedError'));
+        }
         setStructStr('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);
@@ -133,11 +131,13 @@ const Open: FC<Props> = (props) => {
     };
     const onError = () => {
       setIsLoading(false);
-      errorHandler('Error processing file');
+      errorHandler(t('dialogs:document.open.errorProcessingFile'));
     };
 
     setFileName(files[0].name);
-    opener.chosenOpener(files[0]).then(onLoad, onError);
+    fileOpener(server)
+      .then((chosenOpener) => chosenOpener(files[0]))
+      .then(onLoad, onError);
   };
 
   const onImageLoad = (files) => {
@@ -162,7 +162,7 @@ const Open: FC<Props> = (props) => {
     }, 0);
   };
 
-  const withFooterContent =
+  const hasFooterContent =
     (currentState === MODAL_STATES.textEditor ||
       currentState === MODAL_STATES.presentationViewer) &&
     !isAnalyzingFile;
@@ -172,16 +172,15 @@ const Open: FC<Props> = (props) => {
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />;
   }
-
   return (
     <Dialog
-      title="Open structure"
+      title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
       params={rest}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
-        withFooterContent ? (
+        hasFooterContent ? (
           <FooterContent
             structStr={structStr}
             openHandler={openHandler}

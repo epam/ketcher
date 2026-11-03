@@ -1,8 +1,7 @@
-import type { KetMonomerClass } from 'application/formatters';
+import type { KetMonomerClass, AttachmentPointName } from 'ketcher-core';
 import type { IconName } from 'components';
 import type { Editor } from '../../../../editor';
 import type { Selection } from '../../../../editor/Editor';
-import type { AttachmentPointName } from 'domain/types';
 import type { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
@@ -12,18 +11,10 @@ export type MonomerTypeSelectItem = {
 };
 
 export type WizardFormFieldId =
-  | 'type'
-  | 'symbol'
-  | 'name'
-  | 'naturalAnalogue'
-  | 'aliasHELM'
-  | 'aliasBILN';
+  'type' | 'symbol' | 'name' | 'naturalAnalogue' | 'aliasHELM' | 'aliasBILN';
 
 export type RnaPresetWizardStateFieldId =
-  | 'base'
-  | 'sugar'
-  | 'phosphate'
-  | 'preset';
+  'base' | 'sugar' | 'phosphate' | 'preset';
 
 export type RnaPresetWizardComponentStateFieldId = Exclude<
   RnaPresetWizardStateFieldId,
@@ -74,7 +65,8 @@ export type WizardNotificationId =
   | 'phosphatePositionNotSelected'
   | 'editAllPresetWarning'
   | 'editAllPresetError'
-  | 'invalidName';
+  | 'invalidName'
+  | 'usedAttachmentPointsWarning';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -202,8 +194,7 @@ export type AssignedAttachmentPointsByMonomerType = Map<
 
 export function isDispatchActionForRnaPreset(
   action:
-    | ActionDispatch<[WizardAction]>
-    | ActionDispatch<[RnaPresetWizardAction]>,
+    ActionDispatch<[WizardAction]> | ActionDispatch<[RnaPresetWizardAction]>,
 ): action is ActionDispatch<[RnaPresetWizardAction]> {
   return 'rnaComponentKey' in action;
 }

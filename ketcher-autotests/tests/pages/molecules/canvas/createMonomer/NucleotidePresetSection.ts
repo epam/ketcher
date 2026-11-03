@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { NucleotidePresetTab } from './constants/nucleiotidePresetSection/Constants';
 import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';

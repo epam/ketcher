@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 import { Page, Locator, expect } from '@playwright/test';
 import { MacroFileType } from '@utils/canvas/types';
 import {
@@ -47,6 +46,7 @@ export const PasteFromClipboardDialog = (page: Page) => {
         await listbox.waitFor({ state: 'visible' });
         await contentTypeOption.click();
         if (await listbox.isVisible()) {
+          // eslint-disable-next-line no-inline-comments
           await contentTypeOption.click(); /* retry */
         }
       }
@@ -68,12 +68,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
       await locators.openStructureTextarea.fill(text);
     },
 
-    async addToCanvas(
-      option: { errorMessageExpected: boolean } = {
-        errorMessageExpected: false,
-      },
-    ) {
-      if (option.errorMessageExpected) {
+    async addToCanvas({
+      errorMessageExpected = false,
+    }: { errorMessageExpected?: boolean } = {}) {
+      if (errorMessageExpected) {
         await waitForLoad(page, async () => {
           await PasteFromClipboardDialog(page).addToCanvasButton.click();
         });
@@ -84,12 +82,10 @@ export const PasteFromClipboardDialog = (page: Page) => {
       }
     },
 
-    async openAsNew(
-      option: { errorMessageExpected: boolean } = {
-        errorMessageExpected: false,
-      },
-    ) {
-      if (option.errorMessageExpected) {
+    async openAsNew({
+      errorMessageExpected = false,
+    }: { errorMessageExpected?: boolean } = {}) {
+      if (errorMessageExpected) {
         await waitForLoad(page, async () => {
           await expect(
             PasteFromClipboardDialog(page).openAsNewButton,

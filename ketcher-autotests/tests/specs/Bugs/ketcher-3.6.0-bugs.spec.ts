@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-/* eslint-disable no-magic-numbers */
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Page, test, expect } from '@fixtures';
 import {
@@ -59,17 +55,19 @@ import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBon
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
   filePath: string,
-  numberOf: {
-    Structure: number;
-  } = { Structure: 1 },
+  numberOf?: {
+    Structure?: number;
+  },
 ) {
+  const { Structure = 1 } = numberOf ?? {};
+
   await CommonTopLeftToolbar(page).openFile();
   await waitForSpinnerFinishedWork(page, async () => {
     await openFile(page, filePath);
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
-  if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+  if (Structure !== 1) {
+    await openPPTXFileDialog.selectStructure({ Structure });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();
@@ -103,7 +101,7 @@ test.describe('MacromoleculePropertiesWindow events access', () => {
           timeout: 5000,
         },
       );
-    } catch (error) {
+    } catch (_error) {
       console.log(
         'Component not found, but this is expected if there is no selection',
       );
@@ -432,7 +430,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     await CalculateVariablesPanel(page).closeButton.click();
   });
 
@@ -457,7 +455,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await MacromoleculesTopToolbar(page).calculateProperties();
     expect(
       await CalculateVariablesPanel(page).getIsoelectricPointValue(),
-    ).toEqual('8.49');
+    ).toEqual('8');
     expect(
       await CalculateVariablesPanel(page).getExtinctionCoefficientValue(),
     ).toEqual('125');

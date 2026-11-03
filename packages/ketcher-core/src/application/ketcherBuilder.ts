@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,7 @@ import type {
 
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
-import assert from 'assert';
+import { assert } from 'utilities';
 import { ketcherProvider } from './ketcherProvider';
 import {
   SettingsService,
@@ -84,20 +84,21 @@ export class KetcherBuilder {
   }
 
   async build(serviceOptions?: StructServiceOptions): Promise<Ketcher> {
-    assert(this.#structServiceProvider != null);
+    assert(this.#structServiceProvider !== undefined);
+    const structServiceProvider = this.#structServiceProvider;
 
     const mergedServiceOptions: StructServiceOptions = {
       ...DefaultStructServiceOptions,
       ...serviceOptions,
     };
     const structService: StructService =
-      this.#structServiceProvider!.createStructService(mergedServiceOptions);
+      structServiceProvider.createStructService(mergedServiceOptions);
 
     // Initialize settings service if not provided
     let settingsService = this.#settingsService;
     if (!settingsService) {
       settingsService = await SettingsService.getInstance({
-        storage: this.#storageAdapter || new LocalStorageAdapter(),
+        storage: this.#storageAdapter ?? new LocalStorageAdapter(),
         defaults: this.#initialSettings,
         autoSave: true,
         migrateOnLoad: true,
@@ -110,7 +111,7 @@ export class KetcherBuilder {
       settingsService,
     );
     structService.addKetcherId(ketcher.id);
-    ketcher[this.#structServiceProvider.mode] = true;
+    ketcher[structServiceProvider.mode] = true;
 
     ketcherProvider.addKetcherInstance(ketcher);
     return ketcher;

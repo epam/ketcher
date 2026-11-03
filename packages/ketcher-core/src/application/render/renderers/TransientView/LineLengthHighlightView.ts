@@ -1,13 +1,10 @@
-import { TransientView } from './TransientView';
 import type { D3SvgElementSelection } from 'application/render/types';
 
 export type LineLengthHighlightViewParams = {
   currentPosition: number;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export class LineLengthHighlightView extends TransientView {
+export class LineLengthHighlightView {
   public static readonly viewName = 'LineLengthHighlightView';
 
   public static show(

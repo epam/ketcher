@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { openFileAndAddToCanvasAsNewProject } from '@utils/files/readFile';
@@ -20,7 +17,7 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {

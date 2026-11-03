@@ -27,7 +27,13 @@ export class LinkerSequenceNode {
   }
 
   public get lastMonomerInNode() {
-    return this.monomers[this.monomers.length - 1];
+    const lastMonomer = this.monomers.at(-1);
+
+    if (!lastMonomer) {
+      throw new Error('Cannot get the last monomer of an empty linker node');
+    }
+
+    return lastMonomer;
   }
 
   public get monomers() {
@@ -80,9 +86,9 @@ export class LinkerSequenceNode {
     const nextMonomerInChain = getNextMonomerInChain(monomer);
 
     return (
-      LinkerSequenceNode.isValidPartForLinker(monomer) &&
-      (LinkerSequenceNode.isValidPartForLinker(previousMonomerInChain) ||
-        LinkerSequenceNode.isValidPartForLinker(nextMonomerInChain))
+      this.isValidPartForLinker(monomer) &&
+      (this.isValidPartForLinker(previousMonomerInChain) ||
+        this.isValidPartForLinker(nextMonomerInChain))
     );
   }
 }

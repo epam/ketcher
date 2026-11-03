@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { Atom, FunctionalGroup } from 'ketcher-core';
+import { Atom, FunctionalGroup, assert } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 import { editRGroupAttachmentPoint } from './apoint.utils';
@@ -89,7 +88,7 @@ class APointTool implements Tool {
       }
     }
 
-    if (ci && ci.map === 'atoms') {
+    if (ci?.map === 'atoms') {
       this.editor.hover(null);
       const atom = molecule.atoms.get(ci.id);
       assert(atom != null);

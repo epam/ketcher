@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-len */
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   MacroFileType,
@@ -1498,7 +1495,7 @@ const monomersToAddWithDashAndEnter = [
   ...Object.values(dash),
   ...Object.values(enter),
 ];
-const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
+const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = new Set([
   2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 18, 19, 20, 21, 22, 23, 24, 24,
   25, 26, 27, 28, 29, 31, 32, 33, 33, 39, 40, 41, 42, 43, 43, 44, 55, 56, 57,
   58, 59, 60, 61, 62, 63, 74, 75, 76, 77, 78, 79, 85, 86, 87, 88, 89, 90, 95,
@@ -1508,10 +1505,10 @@ const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
   182, 183, 184, 185, 186, 187, 188, 193, 194, 195, 196, 197, 198, 201, 202,
   203, 204, 205, 206, 210, 211, 212, 213, 214, 215, 216, 223, 227, 230, 231,
   232, 233, 234, 235, 236, 237, 238,
-];
+]);
 const uniquePairsOfFirstAndSecondSymbols = sequences.filter(
   (sequence) =>
-    !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.includes(sequence.Id),
+    !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.has(sequence.Id),
 );
 
 for (const monomer of monomersToAddWithDashAndEnter) {
@@ -1535,7 +1532,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1555,7 +1552,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1572,7 +1569,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
 
 // Adding monomer to third position in sequence make sense only if second sense/antisense pair contains dash
 // Otherwise it would be duplacate check with adding monomer to second position
-const excludeNonWithDashSecondPairsIds = [
+const excludeNonWithDashSecondPairsIds = new Set([
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
   23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 50, 51, 52, 53, 54, 55, 56, 57,
   58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 73, 74, 75, 76, 77, 78, 79, 80, 82,
@@ -1586,9 +1583,9 @@ const excludeNonWithDashSecondPairsIds = [
   200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213, 214, 215,
   216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230,
   231, 232, 233, 234, 235, 236, 237, 238,
-];
+]);
 const secondSymbolPairsWithDash = sequences.filter(
-  (sequence) => !excludeNonWithDashSecondPairsIds.includes(sequence.Id),
+  (sequence) => !excludeNonWithDashSecondPairsIds.has(sequence.Id),
 );
 for (const monomer of monomersToAddWithDashAndEnter) {
   for (const sequence of secondSymbolPairsWithDash) {
@@ -1611,7 +1608,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
@@ -1631,7 +1628,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1646,7 +1643,7 @@ for (const monomer of monomersToAddWithDashAndEnter) {
   }
 }
 
-const excludeNonUniqueLastSymbolPairsIds = [
+const excludeNonUniqueLastSymbolPairsIds = new Set([
   2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
   23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42, 43, 44, 47,
   51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 70, 74, 75, 76,
@@ -1659,22 +1656,24 @@ const excludeNonUniqueLastSymbolPairsIds = [
   193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
   211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
   228, 229,
-];
+]);
 const uniqueLastSymbolPairs = sequences.filter(
-  (sequence) => !excludeNonUniqueLastSymbolPairsIds.includes(sequence.Id),
+  (sequence) => !excludeNonUniqueLastSymbolPairsIds.has(sequence.Id),
 );
 for (const monomer of monomersToAdd) {
   for (const sequence of uniqueLastSymbolPairs) {
     test(`Case 30-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of antisense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 20
-       * Description: User can add monomer (of every type) to last position in sense chain of sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to the end of antisense row of sequence (of every configuration) in edit mode
+       * Position 9 is past the last sense symbol, so the caret lands at the end of the row: if the antisense chain
+       * reaches it, the monomer extends that chain, otherwise it is added as a new chain (#6770)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
-       * 3. Switch sequence to edit mode and move cursor to the last position of antisencse chain
+       * 3. Switch sequence to edit mode and move cursor to the end of antisense row
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
-       * 5. Press keyboard key to add monomer to the last position of antisencse chain
+       * 5. Press keyboard key to add monomer at the end of antisense row
        * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode
@@ -1685,7 +1684,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1706,7 +1705,7 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+        (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
       );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1742,7 +1741,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1762,7 +1761,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1795,7 +1794,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1815,7 +1814,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1828,7 +1827,7 @@ for (const sequence of sequences) {
   });
 }
 
-const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = [
+const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = new Set([
   50, 51, 52, 53, 54, 56, 57, 58, 60, 61, 62, 65, 69, 73, 74, 75, 76, 77, 78,
   79, 80, 82, 84, 85, 86, 87, 88, 89, 90, 91, 93, 94, 95, 96, 97, 98, 99, 100,
   101, 102, 103, 104, 106, 107, 110, 111, 114, 115, 116, 117, 118, 119, 120,
@@ -1839,10 +1838,10 @@ const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = [
   183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
   198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213,
   214, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
-];
+]);
 const uniquePairsOfSecondAndThirdSymbols = sequences.filter(
   (sequence) =>
-    !excludeNonUniquePairsOfSecondAndThirdSymbolsIds.includes(sequence.Id),
+    !excludeNonUniquePairsOfSecondAndThirdSymbolsIds.has(sequence.Id),
 );
 for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 33-${sequence.Id}. Delete third symbol of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
@@ -1864,7 +1863,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1873,7 +1872,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-      position: !sequence.Rotation ? 3 : 7,
+      position: sequence.Rotation ? 7 : 3,
       senseOrAntisense: SequenceChainType.Antisense,
       syncEditMode: false,
     });
@@ -1884,7 +1883,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
 
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1916,7 +1915,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1936,7 +1935,7 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -1967,7 +1966,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -1987,7 +1986,7 @@ for (const sequence of sequences) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.RightAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -2018,7 +2017,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -2027,7 +2026,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await resetZoomLevelToDefault(page);
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-      position: !sequence.Rotation ? 4 : 8,
+      position: sequence.Rotation ? 8 : 4,
       senseOrAntisense: SequenceChainType.Antisense,
       syncEditMode: false,
     });
@@ -2038,7 +2037,7 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) ?? '',
+      (sequence.Rotation ? sequence.LeftAnchoredHELM : sequence.HELM) ?? '',
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

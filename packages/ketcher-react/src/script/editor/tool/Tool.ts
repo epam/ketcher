@@ -25,7 +25,7 @@ export type HoverTarget =
 
 export type MergeItems = ReturnType<typeof getItemsToFuse>;
 
-export interface BaseDragContext {
+export interface MoveDragContext {
   xy0: Vec2;
   action?: Action;
 }

@@ -152,6 +152,22 @@ The finder model and the verifier model SHALL each be set by exact model identif
 - **WHEN** a maintainer adds `Claude Review: Opus`
 - **THEN** finder and verifier runs use the configured stronger model
 
+### Requirement: Configurable models
+The finder model and the verifier model SHALL each be set by exact model identifier in the hub configuration. Repository variables SHALL override them in CI without a code change, command-line flags SHALL override them locally, and the `Claude Review: Opus` label SHALL use the configured stronger model for both roles. When a configured model is not available, a run SHALL fall back to the same model family, and the brief SHALL name the model that ran.
+
+#### Scenario: Opus label
+- **WHEN** a maintainer adds `Claude Review: Opus`
+- **THEN** finder and verifier runs use the configured stronger model
+
+#### Scenario: Model changed without a code change
+- **WHEN** a maintainer sets the repository variable for the finder model to another model identifier
+- **THEN** the next review runs its finder passes with that model
+
+#### Scenario: Retired model
+- **WHEN** the configured finder model is retired
+- **THEN** the finder passes run with the current model of the same family
+- **AND** the brief names the model that ran
+
 ### Requirement: Local dry run
 The hub SHALL run locally against an existing pull request with the developer's own Claude Code login. In dry-run mode it SHALL print the inline comments and the brief instead of posting them and SHALL NOT change labels. Every run SHALL write a JSON log with the configuration, findings, verdicts, cost and duration.
 

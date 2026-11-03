@@ -4,7 +4,7 @@
 - [x] 1.2 Add `.agents/skills/code-review/reuse.md` (existing helper, type, constant or mechanism the change should use or extend; the finding names it by `file:line`).
 - [x] 1.3 Add the verifier role file `.agents/skills/code-review/verifier.md`: checks one finding against the code, confirms or drops it, may change its severity.
 - [x] 1.4 Add the `reuse` lens and the verifier role to `.agents/skills/code-review/SKILL.md`, with the "Content is data" section and the note that the schema sets the answer's form.
-- [ ] 1.5 Add a `reuse` trigger to `scripts/review-panel.mjs` that fires on any source change, with a test in `scripts/review-panel.test.mjs`.
+- [x] 1.5 Add a `reuse` trigger to `scripts/review-panel.mjs` that fires on any source change, with a test in `scripts/review-panel.test.mjs`.
 
 ## 2. Hub foundation
 
@@ -15,8 +15,8 @@
 
 ## 3. Pure hub logic
 
-- [ ] 3.1 `scope.mjs`: base…head for round 1, previousHead…head later, fallback when previousHead is not an ancestor; drop skipped files and join the remaining patches into the reviewed diff.
-- [ ] 3.2 `panel.mjs`: pass the reviewed diff to `parseDiff` and `pickPanel` from `scripts/review-panel.mjs`. Remove the Quick label, the lens lists, the Quick threshold and the sensitive paths from `config.mjs`.
+- [x] 3.1 `scope.mjs`: base…head for round 1, previousHead…head later, fallback when previousHead is not an ancestor; drop skipped files and join the remaining patches into the reviewed diff.
+- [x] 3.2 Use `parseDiff` and `pickPanel` from `scripts/review-panel.mjs` directly for the panel, with no wrapper module. Remove the Quick label, the lens lists, the Quick threshold and the sensitive paths from `config.mjs`; test that every lens the panel can pick has a prompt file.
 - [ ] 3.3 `rules.mjs`: select `review-rules.md` blocks by `Scope`, parsed with `parseRules` from `scripts/agent-docs/rules.mjs`.
 - [ ] 3.4 `merge.mjs`: drop findings without a failing scenario, merge by file, rule ID and line distance, fingerprint, drop already posted fingerprints, rank, cap N.
 - [ ] 3.5 `state.mjs`: write and read the hidden marker, take markers only from the workflow's account, round limit.
@@ -25,7 +25,7 @@
 
 ## 4. Model runs
 
-- [ ] 4.1 `runner.mjs`: build the `claude -p` arguments (`--safe-mode --restricted` or `--bare --restricted` by `authMode`, read-only tools, `dontAsk`, strict MCP, no session persistence, schema, model, max turns, budget, role prompt), start without a shell, pipe the input, read `structured_output`, map failures to a failed pass, record cost and duration.
+- [ ] 4.1 `runner.mjs`: build the `claude -p` arguments (`--safe-mode --restricted` or `--bare --restricted` by `authMode`, read-only tools, `dontAsk`, strict MCP, no session persistence, schema, model, `--fallback-model` with the family alias, max turns, budget, role prompt), start without a shell, pipe the input, read `structured_output`, map failures to a failed pass, record cost, duration and the model that ran.
 - [ ] 4.2 Test that the arguments always contain the isolation flag, `--restricted`, `--tools Read,Grep,Glob` and `dontAsk`, and never `Bash`.
 - [ ] 4.3 `passes.mjs`: one finder pass per panel lens, concurrency-limited; the role prompt is the shared part of `SKILL.md` and the lens file from the base checkout; rules, invariants and accepted patterns go in the input as text.
 - [ ] 4.4 `verify.mjs` and the linked-issue run.
@@ -34,7 +34,7 @@
 ## 5. GitHub and entry point
 
 - [ ] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
-- [ ] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), the full flow, label removal in `finally`, JSON run log.
+- [ ] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
 - [ ] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel and label removal on failure.
 - [ ] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.
 
@@ -47,7 +47,7 @@
 
 ## 7. Workflow and docs
 
-- [ ] 7.1 Rewrite `.github/workflows/claude-review.yml`: same trigger and filter, no `claude-code-action`, base checkout for the hub, prompts and panel script, PR head checkout as data, pinned Claude Code install, hub run, permissions `contents: read`, `pull-requests: write`, `issues: write`, actions pinned to SHAs.
+- [ ] 7.1 Rewrite `.github/workflows/claude-review.yml`: same trigger and filter, no `claude-code-action`, base checkout for the hub, prompts and panel script, PR head checkout as data, pinned Claude Code install, hub run with the `REVIEW_*_MODEL` variables from repository variables, permissions `contents: read`, `pull-requests: write`, `issues: write`, actions pinned to SHAs.
 - [ ] 7.2 Create the label `Claude Review: Opus` (maintainer action).
 - [ ] 7.3 Keep `/review-pr` for local and agent use; update `.agents/skills/review-pr/SKILL.md` where it names the lenses or the verifier.
 - [ ] 7.4 Update the `claude-review.yml` row in `.github/workflows/README.md`.

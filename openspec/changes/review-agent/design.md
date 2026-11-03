@@ -39,7 +39,8 @@ Each finder pass and each verification runs as:
 claude -p --safe-mode --restricted --tools "Read,Grep,Glob" --permission-mode dontAsk \
   --strict-mcp-config --no-session-persistence \
   --output-format json --json-schema <schema> \
-  --model <id> --max-turns <n> --max-budget-usd <x> \
+  --model <id> --fallback-model <family alias> \
+  --max-turns <n> --max-budget-usd <x> \
   --append-system-prompt-file <role prompt> < <input>
 ```
 
@@ -81,7 +82,11 @@ The finder passes get the diff, the file list and the rules, not the PR title or
 
 ### 9. Models are configuration; defaults come from the evaluation
 
-`scripts/review/config.mjs` holds exact model IDs per role. The initial default for both roles is `claude-sonnet-5-5`; the stronger model is `claude-opus-5-5`. Local flags `--finder-model` and `--verifier-model` override them; the `Claude Review: Opus` label sets both roles to the stronger model. Overrides build a new object; the hub never changes the configuration.
+`scripts/review/config.mjs` holds exact model IDs per role as defaults. The initial default for both roles is `claude-sonnet-5-5`; the stronger model is `claude-opus-5-5`. Exact IDs keep a run reproducible and make a model change a deliberate step, which an alias such as `sonnet` would not.
+
+The entry point reads overrides in this order: the environment variables `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, which the workflow takes from GitHub repository variables, so a maintainer can change a model without a pull request; then the local flags `--finder-model` and `--verifier-model`; then the `Claude Review: Opus` label, which sets both roles to the stronger model. Overrides build a new object; the hub never changes the configuration, and `config.mjs` reads no environment.
+
+Model IDs get retired. The runner passes `--fallback-model` with the alias of the same family (`sonnet` or `opus`), so a retired ID does not stop the review. The hub reads the model that ran from the JSON output and names it in the brief and the run log when it differs from the configured one, as a sign to update the default.
 
 ### 10. Evaluation reuses the hub
 
@@ -96,6 +101,7 @@ The finder passes get the diff, the file list and the rules, not the PR title or
 - **Subscription limits** → The token belongs to a team member's Claude account. A review is up to one finder run per panel lens, one linked-issue run and up to N verifications on that account. Mitigated by manual rounds, the panel, the cap N, Sonnet defaults and `--max-budget-usd` per run.
 - **First CI run after merge** → The secret exists only in the main repository. Mitigated by local dry runs and unit tests; the first CI runs are watched by hand.
 - **Safe and restricted mode with the OAuth token are not yet run** → Verified in the first local run (task 4.5). If they fail, run with `--setting-sources` limited and the same tool list, and record the change here.
+- **A model ID is retired** → The runner falls back to the family alias, and the brief names the model that ran. A maintainer then updates the repository variable or the default in `config.mjs`.
 - **`--bare` may become the default for `-p`** → The documentation says so. Bare mode does not read the OAuth token. Mitigated by the pinned Claude Code version, and by checking the flag behavior before each version bump.
 - **Prompt injection from PR content** → Model runs cannot run commands, edit files, use the network, read PR settings files, or post. The worst case is a wrong or missing finding, which verification and the human reviewer still filter.
 - **Two review paths** → `/review-pr` (local) and the hub (CI) can drift. Mitigated by sharing the lens files, the shared prompt and the panel script.

@@ -22,7 +22,7 @@ export interface Point {
   z?: number;
 }
 
-type Vec2ConstructorArgs = [Point] | [x?: number, y?: number, z?: number];
+type Vec2ConstructorArguments = [Point] | [x?: number, y?: number, z?: number];
 
 // Optimize major GC in case of importing big sequences - only parse float when necessary
 // most of the time it is already a number from atom.clone
@@ -40,24 +40,25 @@ export class Vec2 {
 
   constructor(point: Point);
   constructor(x?: number, y?: number, z?: number);
-  constructor(...args: Vec2ConstructorArgs) {
-    if (args.length === 0) {
+  constructor(...arguments_: Vec2ConstructorArguments) {
+    if (arguments_.length === 0) {
       this.x = 0;
       this.y = 0;
       this.z = 0;
-    } else if (args.length === 1) {
-      const point: Point = typeof args[0] === 'object' ? args[0] : {};
+    } else if (arguments_.length === 1) {
+      const point: Point =
+        typeof arguments_[0] === 'object' ? arguments_[0] : {};
       this.x = toNumber(point.x || 0);
       this.y = toNumber(point.y || 0);
       this.z = toNumber(point.z || 0);
-    } else if (args.length === 2) {
-      this.x = toNumber(args[0] || 0);
-      this.y = toNumber(args[1] || 0);
+    } else if (arguments_.length === 2) {
+      this.x = toNumber(arguments_[0] || 0);
+      this.y = toNumber(arguments_[1] || 0);
       this.z = 0;
-    } else if (args.length === 3) {
-      this.x = toNumber(args[0] ?? NaN);
-      this.y = toNumber(args[1] ?? NaN);
-      this.z = toNumber(args[2] ?? NaN);
+    } else if (arguments_.length === 3) {
+      this.x = toNumber(arguments_[0] ?? NaN);
+      this.y = toNumber(arguments_[1] ?? NaN);
+      this.z = toNumber(arguments_[2] ?? NaN);
     } else {
       throw new Error('Vec2(): invalid arguments');
     }
@@ -105,10 +106,13 @@ export class Vec2 {
 
   // assume arguments v1, f1, v2, f2, v3, f3, etc.
   // where v[i] are vectors and f[i] are corresponding coefficients
-  static lc(...args: Array<Vec2 | number>): Vec2 {
+  static lc(...arguments_: Array<Vec2 | number>): Vec2 {
     let v = new Vec2();
-    for (let i = 0; i < arguments.length / 2; ++i) {
-      v = v.addScaled(args[2 * i] as Vec2, args[2 * i + 1] as number);
+    for (let index = 0; index < arguments.length / 2; ++index) {
+      v = v.addScaled(
+        arguments_[2 * index] as Vec2,
+        arguments_[2 * index + 1] as number,
+      );
     }
     return v;
   }
@@ -268,11 +272,15 @@ export class Vec2 {
     const { x, y } = this;
     let isInside = false;
 
-    for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-      const xi = points[i].x || 0;
-      const yi = points[i].y || 0;
-      const xj = points[j].x || 0;
-      const yj = points[j].y || 0;
+    for (
+      let index = 0, index_ = points.length - 1;
+      index < points.length;
+      index_ = index++
+    ) {
+      const xi = points[index].x || 0;
+      const yi = points[index].y || 0;
+      const xj = points[index_].x || 0;
+      const yj = points[index_].y || 0;
 
       const doesIntersect =
         yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;

@@ -2,32 +2,32 @@ import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_OUTLINE_COLOR } from 'application/render/renderers/constants';
 import { curveLinearClosed, line as d3Line } from 'd3';
 
-export type SelectionRectangleViewParams = {
+export type SelectionRectangleViewParameters = {
   type: 'rectangle';
   start: [x: number, y: number];
   width: number;
   height: number;
 };
 
-export type SelectionLassoViewParams = {
+export type SelectionLassoViewParameters = {
   type: 'lasso';
   path: [x: number, y: number][];
 };
 
-export type SelectionViewParams =
-  SelectionRectangleViewParams | SelectionLassoViewParams;
+export type SelectionViewParameters =
+  SelectionRectangleViewParameters | SelectionLassoViewParameters;
 
 export class SelectionView {
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: SelectionViewParams,
+    parameters: SelectionViewParameters,
   ) {
-    if (params.type === 'rectangle') {
+    if (parameters.type === 'rectangle') {
       const {
         start: [x, y],
         width,
         height,
-      } = params;
+      } = parameters;
 
       transientLayer
         .append('rect')
@@ -41,7 +41,7 @@ export class SelectionView {
       return;
     }
 
-    if (params.type === 'lasso') {
+    if (parameters.type === 'lasso') {
       // A closed curve gives the same outline the molecules mode draws:
       // one path back to the starting point, without a filled area.
       const line = d3Line()
@@ -51,7 +51,7 @@ export class SelectionView {
 
       transientLayer
         .append('path')
-        .datum(params.path)
+        .datum(parameters.path)
         .attr('d', line)
         .attr('fill', 'none')
         .attr('stroke', SELECTION_OUTLINE_COLOR)

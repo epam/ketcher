@@ -4,7 +4,7 @@ import type { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { MonomerSize } from 'domain/constants';
 
-export type GroupCenterSnapViewParams = {
+export type GroupCenterSnapViewParameters = {
   isVertical: boolean;
   absoluteSnapPosition: Vec2;
   monomerPair: [BaseMonomer, BaseMonomer];
@@ -15,9 +15,9 @@ export class GroupCentersnapView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: GroupCenterSnapViewParams,
+    parameters: GroupCenterSnapViewParameters,
   ) {
-    const { absoluteSnapPosition, isVertical, monomerPair } = params;
+    const { absoluteSnapPosition, isVertical, monomerPair } = parameters;
     const snapPositionInPixels =
       Coordinates.modelToCanvas(absoluteSnapPosition);
     const LINE_LENGTH = 80;

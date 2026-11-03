@@ -60,11 +60,11 @@ export const setAmbiguousMonomerTemplatePrefix = (templateName: string) =>
 export const setAmbiguousMonomerPrefix = (monomerId: number) =>
   `ambiguousMonomer${monomerId}`;
 
-export const getKetRef = (entityId: string) => {
+export const getKetReference = (entityId: string) => {
   return { $ref: entityId };
 };
 
-export const getMonomerTemplateRefFromMonomerItem = (
+export const getMonomerTemplateReferenceFromMonomerItem = (
   monomerItem: MonomerItemType,
 ) => {
   const { props } = monomerItem;

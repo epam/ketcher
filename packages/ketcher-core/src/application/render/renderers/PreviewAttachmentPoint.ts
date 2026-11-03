@@ -1,8 +1,8 @@
-import { AttachmentPoint } from './AttachmentPoint';
+import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { Coordinates } from 'domain/helpers/attachmentPointCalculations';
 import type { PreviewAttachmentPointConstructorParams } from 'domain/types';
 import type { UsageInMacromolecule } from 'application/render';
-import util from 'application/render/util';
+import util from 'application/render/utility';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class PreviewAttachmentPoint extends AttachmentPoint {
@@ -10,12 +10,12 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
   private readonly selected: boolean;
   private readonly usage: UsageInMacromolecule;
 
-  constructor(constructorParams: PreviewAttachmentPointConstructorParams) {
-    super(constructorParams, true);
+  constructor(constructorParameters: PreviewAttachmentPointConstructorParams) {
+    super(constructorParameters, true);
 
-    this.connected = constructorParams.connected;
-    this.selected = constructorParams.selected;
-    this.usage = constructorParams.usage;
+    this.connected = constructorParameters.connected;
+    this.selected = constructorParameters.selected;
+    this.usage = constructorParameters.usage;
 
     this.appendAttachmentPoint();
   }

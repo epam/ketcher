@@ -26,7 +26,7 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
-import util from 'application/render/util';
+import util from 'application/render/utility';
 import { editorEvents } from 'application/editor/editorEvents';
 import {
   CANVAS_BACKGROUND_COLOR,

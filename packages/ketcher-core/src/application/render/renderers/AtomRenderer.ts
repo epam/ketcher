@@ -13,7 +13,7 @@ import { StereoLabel } from 'domain/entities/atom';
 import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 import { StereoFlag } from 'domain/entities/fragment';
 import type { Settings } from 'application/settings';
-import util from '../util';
+import util from '../utility';
 import { assert } from 'utilities';
 import {
   BAD_VALENCE_WARNING_COLOR,

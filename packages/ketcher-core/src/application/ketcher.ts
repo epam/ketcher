@@ -56,7 +56,7 @@ import {
   deleteAllEntitiesOnCanvas,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
-} from './utils';
+} from './utilities';
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
   type DisabledFunctionalityConfig,

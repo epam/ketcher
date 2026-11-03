@@ -164,10 +164,10 @@ export class Image extends BaseMicromoleculeEntity {
     const halfSize = new Vec2(width / 2, height / 2);
     const topLeftCorner = new Vec2(point);
     const center = topLeftCorner.add(halfSize);
-    const imageSrc = `data:${ketFileNode.format};base64,${ketFileNode.data}`;
+    const imageSource = `data:${ketFileNode.format};base64,${ketFileNode.data}`;
 
     // Should be validated already
-    const image = new Image(imageSrc, center, halfSize);
+    const image = new Image(imageSource, center, halfSize);
     image.setInitiallySelected(ketFileNode.selected);
     return image;
   }

@@ -161,7 +161,7 @@ export type Unsubscribe = () => void;
 export class SettingsValidationError extends Error {
   constructor(public readonly errors: ValidationError[]) {
     super(
-      `Settings validation failed: ${errors.map((e) => e.message).join(', ')}`,
+      `Settings validation failed: ${errors.map((validationError) => validationError.message).join(', ')}`,
     );
     this.name = 'SettingsValidationError';
   }

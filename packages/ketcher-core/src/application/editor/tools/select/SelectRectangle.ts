@@ -19,10 +19,10 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import type { CoreEditor } from 'application/editor/Editor';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import { Vec2 } from 'domain/entities';
-import type { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';
+import type { SelectionRectangleViewParameters } from 'application/render/renderers/TransientView';
 
 class SelectRectangle extends SelectBase {
-  selectionViewParams: SelectionRectangleViewParams = {
+  selectionViewParams: SelectionRectangleViewParameters = {
     type: 'rectangle',
     start: [0, 0],
     width: 0,

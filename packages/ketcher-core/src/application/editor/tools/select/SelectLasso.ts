@@ -16,11 +16,11 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  ***************************************************************************/
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import type { CoreEditor } from 'application/editor';
-import type { SelectionLassoViewParams } from 'application/render/renderers/TransientView';
+import type { SelectionLassoViewParameters } from 'application/render/renderers/TransientView';
 import { Vec2 } from 'domain/entities';
 
 export class SelectLasso extends SelectBase {
-  selectionViewParams: SelectionLassoViewParams = {
+  selectionViewParams: SelectionLassoViewParameters = {
     type: 'lasso',
     path: [],
   };

@@ -6,7 +6,7 @@ import {
   BaseSequenceItemRenderer,
 } from 'application/render';
 
-export type ModifyAminoAcidsViewParams = {
+export type ModifyAminoAcidsViewParameters = {
   monomersToModify: BaseMonomer[];
 };
 
@@ -15,10 +15,10 @@ export class ModifyAminoAcidsView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: ModifyAminoAcidsViewParams,
+    parameters: ModifyAminoAcidsViewParameters,
   ) {
     const editor = provideEditorInstance();
-    const { monomersToModify } = params;
+    const { monomersToModify } = parameters;
 
     if (editor.mode.modeName === 'sequence-layout-mode') {
       monomersToModify.forEach((monomer) => {

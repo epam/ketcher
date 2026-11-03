@@ -40,7 +40,7 @@ import {
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utilities';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   type NodeSelection,
@@ -138,8 +138,8 @@ import type { D3SvgElementSelection } from 'application/render/types';
 import type { EditorTheme } from 'domain/types/theme';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
-  getKetRef,
-  getMonomerTemplateRefFromMonomerItem,
+  getKetReference,
+  getMonomerTemplateReferenceFromMonomerItem,
   setMonomerTemplatePrefix,
   KetSerializer,
 } from 'domain/serializers';
@@ -495,7 +495,7 @@ export class CoreEditor {
         const monomer = this._monomersLibrary.find(
           (item) =>
             !isAmbiguousMonomerLibraryItem(item) &&
-            getMonomerTemplateRefFromMonomerItem(item) === ref,
+            getMonomerTemplateReferenceFromMonomerItem(item) === ref,
         );
         if (monomer) {
           this.removeMonomerFromLibrary(monomer, false);
@@ -552,7 +552,7 @@ export class CoreEditor {
     } = parseMonomersLibrary(monomersDataRaw);
     const isEditedMonomer = (monomer: MonomerItemType) =>
       !isAmbiguousMonomerLibraryItem(monomer) &&
-      getMonomerTemplateRefFromMonomerItem(monomer) === editedMonomerRef;
+      getMonomerTemplateReferenceFromMonomerItem(monomer) === editedMonomerRef;
     const editedMonomer = editedMonomerRef
       ? this._monomersLibrary.find(isEditedMonomer)
       : undefined;
@@ -822,13 +822,13 @@ export class CoreEditor {
       );
 
       const newMonomerTemplateRef =
-        getMonomerTemplateRefFromMonomerItem(newMonomer);
+        getMonomerTemplateReferenceFromMonomerItem(newMonomer);
 
       if (existingMonomerIndex === -1) {
         this._monomersLibrary.push(newMonomer);
 
         monomersLibraryParsedJson.root.templates.push(
-          getKetRef(newMonomerTemplateRef),
+          getKetReference(newMonomerTemplateRef),
         );
         monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
@@ -836,9 +836,10 @@ export class CoreEditor {
           persistentUserCreatedMonomerRefs.add(newMonomerTemplateRef);
         }
       } else {
-        const existingMonomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
-          this._monomersLibrary[existingMonomerIndex],
-        );
+        const existingMonomerTemplateRef =
+          getMonomerTemplateReferenceFromMonomerItem(
+            this._monomersLibrary[existingMonomerIndex],
+          );
 
         const existingMonomerRefIndex =
           monomersLibraryParsedJson.root.templates.findIndex(
@@ -984,7 +985,7 @@ export class CoreEditor {
   }
 
   public isMonomerReferencedInLibrary(monomer: MonomerItemType) {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const ref = getMonomerTemplateReferenceFromMonomerItem(monomer);
     return (
       this._monomersLibraryParsedJson?.root.templates.some(({ $ref }) => {
         const template = this._monomersLibraryParsedJson?.[$ref];
@@ -1011,7 +1012,7 @@ export class CoreEditor {
   public getReferencingPresets(
     monomer: MonomerItemType,
   ): IKetMonomerGroupTemplate[] {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const ref = getMonomerTemplateReferenceFromMonomerItem(monomer);
     const parsedJson = this._monomersLibraryParsedJson;
     if (!parsedJson) return [];
     const presets: IKetMonomerGroupTemplate[] = [];
@@ -1035,7 +1036,7 @@ export class CoreEditor {
    * user-made and cannot be deleted by the user.
    */
   public isUserMadeMonomer(monomer: MonomerItemType): boolean {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const ref = getMonomerTemplateReferenceFromMonomerItem(monomer);
     return persistentUserCreatedMonomerRefs.has(ref);
   }
 
@@ -1045,12 +1046,12 @@ export class CoreEditor {
    * `invalidateNextAutochainPositionIfNeeded`, `replaceMonomerInstances`).
    */
   public isMonomerPlacedOnCanvas(monomer: MonomerItemType): boolean {
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const ref = getMonomerTemplateReferenceFromMonomerItem(monomer);
     return this.drawingEntitiesManager.monomersArray.some((placedMonomer) => {
       const placedMonomerItem = placedMonomer.monomerItem;
       return (
         !isAmbiguousMonomerLibraryItem(placedMonomerItem) &&
-        getMonomerTemplateRefFromMonomerItem(placedMonomerItem) === ref
+        getMonomerTemplateReferenceFromMonomerItem(placedMonomerItem) === ref
       );
     });
   }
@@ -1064,11 +1065,11 @@ export class CoreEditor {
         'A monomer used in an ambiguous monomer cannot be deleted.',
       );
     }
-    const ref = getMonomerTemplateRefFromMonomerItem(monomer);
+    const ref = getMonomerTemplateReferenceFromMonomerItem(monomer);
     const index = this._monomersLibrary.findIndex(
       (item) =>
         !isAmbiguousMonomerLibraryItem(item) &&
-        getMonomerTemplateRefFromMonomerItem(item) === ref,
+        getMonomerTemplateReferenceFromMonomerItem(item) === ref,
     );
     if (index === -1 || !this._monomersLibraryParsedJson) return;
     this._monomersLibrary.splice(index, 1);

@@ -25,6 +25,6 @@ export interface ReBondEndpoint {
     renderOptions: RenderOptions,
     direction: Vec2,
     atomPosition?: Vec2,
-    bondLen?: number | null,
+    bondLength?: number | null,
   ): Vec2;
 }

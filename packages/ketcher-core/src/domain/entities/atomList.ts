@@ -16,7 +16,7 @@
 
 import { type ElementLabel, Elements } from 'domain/constants';
 
-export interface AtomListParams {
+export interface AtomListParameters {
   readonly notList: boolean;
   readonly ids: Array<number>;
 }
@@ -25,9 +25,9 @@ export class AtomList {
   notList: boolean;
   ids: Array<number>;
 
-  constructor(params: AtomListParams) {
-    this.notList = params.notList;
-    this.ids = params.ids;
+  constructor(parameters: AtomListParameters) {
+    this.notList = parameters.notList;
+    this.ids = parameters.ids;
   }
 
   labelList() {

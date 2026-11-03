@@ -38,7 +38,9 @@ import { SugarRenderer } from './SugarRenderer';
 import { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 import { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 
-type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
+type DerivedRendererClass = new (
+  ...arguments_: unknown[]
+) => BaseMonomerRenderer;
 
 const entityToRenderer = new Map<
   ConcreteMonomerEntityClass,

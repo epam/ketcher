@@ -1,5 +1,5 @@
 import { Struct, Atom, Bond } from 'domain/entities';
-import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+import { getLeavingGroupLabelWithHydrogens } from 'domain/serializers/ket/fromKet/monomerTemplateUtilities';
 
 describe('getLeavingGroupLabelWithHydrogens', () => {
   /**

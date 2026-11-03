@@ -127,7 +127,7 @@ import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
-import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
+import { getMonomerTemplateReferenceFromMonomerItem } from 'domain/serializers/ket/helpers';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
@@ -193,7 +193,7 @@ export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
 export const MONOMER_START_X_POSITION = 20 + SnakeLayoutCellWidth / 2;
 export const MONOMER_START_Y_POSITION = 20 + SnakeLayoutCellWidth / 2;
 
-type RnaPresetAdditionParams = {
+type RnaPresetAdditionParameters = {
   sugar: MonomerItemType;
   sugarPosition: Vec2;
   rnaBase: MonomerItemType | undefined;
@@ -1180,13 +1180,13 @@ export class DrawingEntitiesManager {
   }
 
   private checkBondSelectionForSequenceMode(bond: PolymerBond) {
-    const prevSelectedValue = bond.selected;
+    const previousSelectedValue = bond.selected;
     if (bond.firstMonomer.selected && bond.secondMonomer?.selected) {
       bond.turnOnSelection();
     } else {
       bond.turnOffSelection();
     }
-    return prevSelectedValue !== bond.selected;
+    return previousSelectedValue !== bond.selected;
   }
 
   public startPolymerBondCreationChangeModel(
@@ -1743,7 +1743,9 @@ export class DrawingEntitiesManager {
         if (connectionTemplate) {
           const isEndpoint1 =
             connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+            getMonomerTemplateReferenceFromMonomerItem(
+              previousMonomer.monomerItem,
+            );
           attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
             : connectionTemplate.endpoint2.attachmentPointId;
@@ -1787,13 +1789,13 @@ export class DrawingEntitiesManager {
       connections?.find((connection) => {
         return (
           (connection.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            getMonomerTemplateReferenceFromMonomerItem(monomer1) &&
             connection.endpoint2.templateId ===
-              getMonomerTemplateRefFromMonomerItem(monomer2)) ||
+              getMonomerTemplateReferenceFromMonomerItem(monomer2)) ||
           (connection.endpoint2.templateId ===
-            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            getMonomerTemplateReferenceFromMonomerItem(monomer1) &&
             connection.endpoint1.templateId ===
-              getMonomerTemplateRefFromMonomerItem(monomer2))
+              getMonomerTemplateReferenceFromMonomerItem(monomer2))
         );
       })
     );
@@ -1807,7 +1809,7 @@ export class DrawingEntitiesManager {
     rnaBase,
     rnaBasePosition: _rnaBasePosition,
     connections,
-  }: RnaPresetAdditionParams) {
+  }: RnaPresetAdditionParameters) {
     const sugarPhosphateConnectionTemplate = this.findGroupTemplateConnection(
       connections || [],
       sugar,
@@ -1815,7 +1817,7 @@ export class DrawingEntitiesManager {
     );
     const isFivePrimePhosphate =
       sugarPhosphateConnectionTemplate?.endpoint1.templateId ===
-      getMonomerTemplateRefFromMonomerItem(sugar)
+      getMonomerTemplateReferenceFromMonomerItem(sugar)
         ? sugarPhosphateConnectionTemplate?.endpoint1.attachmentPointId ===
           AttachmentPointName.R1
         : sugarPhosphateConnectionTemplate?.endpoint2.attachmentPointId ===
@@ -1866,7 +1868,9 @@ export class DrawingEntitiesManager {
         if (connectionTemplate) {
           const isEndpoint1 =
             connectionTemplate.endpoint1.templateId ===
-            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+            getMonomerTemplateReferenceFromMonomerItem(
+              previousMonomer.monomerItem,
+            );
           attPointStart = isEndpoint1
             ? connectionTemplate.endpoint1.attachmentPointId
             : connectionTemplate.endpoint2.attachmentPointId;
@@ -2906,16 +2910,16 @@ export class DrawingEntitiesManager {
         selectedDrawingEntities: DrawingEntity[],
         drawingEntity: DrawingEntity,
       ) => {
-        const res =
+        const result =
           editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
             drawingEntity,
             true,
             selectedDrawingEntities,
           );
-        res.drawingEntities.forEach((entity) =>
+        result.drawingEntities.forEach((entity) =>
           command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
-        return [...selectedDrawingEntities, ...res.drawingEntities];
+        return selectedDrawingEntities.concat(result.drawingEntities);
       },
       [],
     );

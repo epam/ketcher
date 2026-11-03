@@ -157,6 +157,74 @@ test('A4 allowlist suppresses named specifiers for named domain files and nothin
   );
 });
 
+test('A4 reports a runtime import from application in a domain file when the allowlist is empty', () => {
+  const code = [
+    "import { provideEditorInstance } from 'application/editor/editorSingleton';",
+    "import type { Base } from 'application/render/renderers/BaseRenderer';",
+  ].join('\n');
+  assert.deepEqual(
+    lint(
+      code,
+      toRuleConfig('domain-no-application-imports', { allow: [] }),
+      path.join(DOCS, 'domain/entities/DrawingEntitiesManager.ts'),
+    ),
+    [1],
+  );
+});
+
+// The source files that eslint.config.mjs lints under domain/: it ignores
+// declaration files, tests, and __tests__ folders.
+const domainFiles = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      return entry.name === '__tests__' ? [] : domainFiles(full);
+    }
+    return /\.(ts|tsx)$/.test(entry.name) &&
+      !/\.(d|test|spec)\.(ts|tsx)$/.test(entry.name)
+      ? [full]
+      : [];
+  });
+
+test('A4 finds no uncovered runtime import from application in the domain layer', () => {
+  const files = domainFiles(path.join(DOCS, 'domain'));
+  assert.ok(files.length > 0, 'the domain folder holds source files');
+  const config = {
+    ...BASE_CONFIG,
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ...BASE_CONFIG.languageOptions,
+      parserOptions: {
+        ...BASE_CONFIG.languageOptions.parserOptions,
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    // Domain files carry eslint-disable comments for rules this config omits.
+    linterOptions: { reportUnusedDisableDirectives: 'off' },
+    rules: toRuleConfig('domain-no-application-imports'),
+  };
+  // Messages with no rule ID are parse errors or files without a config. They
+  // count as findings, so a file the parser cannot read is not skipped.
+  const violations = files.flatMap((filename) =>
+    linter
+      .verify(fs.readFileSync(filename, 'utf8'), config, filename)
+      .filter(
+        (message) =>
+          !message.ruleId ||
+          message.ruleId === 'ketcher/domain-no-application-imports',
+      )
+      .map(
+        (message) =>
+          `${path.relative(REPO_ROOT, filename)}:${message.line}: ${message.message}`,
+      ),
+  );
+  assert.deepEqual(
+    violations,
+    [],
+    'A domain file imports application/render, application/editor, or a UI framework at run time. Fix the import; list it in ALLOWED_DOMAIN_IMPORTS only if it cannot be removed.',
+  );
+});
+
 test('A5 flags React imports in ketcher-core, unless the file is allowlisted', () => {
   const code = [
     "import detectMobile from 'react-device-detect';",

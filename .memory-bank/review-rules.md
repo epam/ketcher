@@ -14,7 +14,7 @@ Scope: packages/ketcher-core/src/domain/**
 Severity: major
 Enforced by: lint(ketcher-invariants/domain-no-application-imports)
 Status: active
-Why: Invariant A4 keeps the domain layer free of rendering, editor, and UI imports. Runtime (non-type-only) imports are lint errors; type-only imports pass. The imports that predate the rule are allowlisted in scripts/eslint-invariants-rules.mjs (`ALLOWED_DOMAIN_IMPORTS`), and the unit tests keep that list from going stale. A change may remove a violation but must not add one.
+Why: Invariant A4 keeps the domain layer free of rendering, editor, and UI imports. Runtime (non-type-only) imports are lint errors; type-only imports pass. The allowlist state and what a change may add are in [invariants.md](invariants.md) (A4).
 Source: agent-docs
 Bad: a new `import { provideEditorInstance } from 'application/editor/editorSingleton';` in a file under domain/
 Good: move the logic into application/ and pass the domain value into it

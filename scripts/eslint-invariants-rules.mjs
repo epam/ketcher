@@ -61,10 +61,11 @@ export const ALLOWED_UI_IMPORTS = [
 ];
 
 /**
- * A4 known debt: runtime imports from application/render and
- * application/editor in the domain layer predate invariant A4
- * (invariant A4 allows type-only imports). List refreshed on the first lint
- * run of the enforcement. See .memory-bank/accepted-patterns.md.
+ * A4 allowlist. It is empty: no domain file imports application/render,
+ * application/editor, or a UI framework at run time (type-only imports are
+ * allowed). The array
+ * stays so that an import which cannot be removed has a place to be listed,
+ * per file and per module specifier. Fix the import first.
  */
 export const ALLOWED_DOMAIN_IMPORTS = [];
 

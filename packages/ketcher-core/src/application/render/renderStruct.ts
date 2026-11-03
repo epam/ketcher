@@ -19,7 +19,9 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
-const MIN_ATTACHMENT_POINT_SIZE = 8;
+// Width of an R-label in the small connection dialog preview below which
+// the label is enlarged to stay readable
+const MIN_ATTACHMENT_POINT_LABEL_WIDTH = 10;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
@@ -39,7 +41,7 @@ export class RenderStruct {
     return struct;
   }
 
-  static removeSmallAttachmentPointLabelsInModal(
+  static enlargeSmallAttachmentPointLabelsInModal(
     render: Render,
     options: RenderStructOptions = {},
   ) {
@@ -57,13 +59,21 @@ export class RenderStruct {
         return;
       }
 
-      const isSmall =
-        atom.label.path.node.getBoundingClientRect().width <
-        MIN_ATTACHMENT_POINT_SIZE;
+      const { path, background } = atom.label;
+      const width = path.node.getBoundingClientRect().width;
+      // A zero width means the label is not laid out, so it cannot be measured
+      const isSmall = width > 0 && width < MIN_ATTACHMENT_POINT_LABEL_WIDTH;
 
-      if (isSmall) {
-        atom.label.path.node.remove();
+      if (!isSmall) {
+        return;
       }
+
+      // The label and its box share the center, so both are scaled around it
+      const scale = MIN_ATTACHMENT_POINT_LABEL_WIDTH / width;
+      const { x, y, width: boxWidth, height: boxHeight } = path.getBBox();
+      const transform = `...s${scale},${scale},${x + boxWidth / 2},${y + boxHeight / 2}`;
+      path.transform(transform);
+      background?.transform(transform);
     });
   }
 
@@ -156,7 +166,7 @@ export class RenderStruct {
         (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
       }
 
-      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
+      this.enlargeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (shouldCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);

@@ -94,12 +94,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     setMonomerSize(this.monomerSize);
   }
 
+  // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
   ): boolean {
-    const bond = this.monomer.attachmentPointsToBonds[attachmentPointName];
-    if (!bond) return false;
-    return bond.isRenderedAsSnakeBond;
+    const renderer =
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
+    if (!renderer) return false;
+    if ('isSnake' in renderer) {
+      return renderer.isSnake && !renderer.polymerBond.isHorizontal;
+    }
+    return false;
   }
 
   public static get monomerSize() {
@@ -314,6 +319,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle ?? rotation,
       applyZoomForPositionCalculation: true,
+      // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
       isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
       isDragCircleHover:

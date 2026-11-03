@@ -18,6 +18,7 @@ export * from './Editor';
 export * from './script';
 export * from './constants';
 export * from './components';
+export * from './script/ui/views/modal/components/meta/Settings/exports';
 export * from './utils';
 export { AppContext } from './contexts';
 export { default as i18n } from './i18n/i18n';

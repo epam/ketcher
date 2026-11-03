@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,10 @@ import {
   selectLastSelectedSelectionMenuItem,
   selectEditor,
   selectEditorActiveTool,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
 } from 'state/common';
 import { modalComponentList } from 'components/modal/modalContainer';
-import { openModal } from 'state/modal';
+import { openModal, selectIsSettingsPanelOpen } from 'state/modal';
 import { BaseMonomer, shortcutStr } from 'ketcher-core';
 import {
   hasOnlyDeoxyriboseSugars,
@@ -47,15 +47,16 @@ export function TopMenuComponent() {
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const [selectedEntities, setSelectedEntities] = useState<BaseMonomer[]>([]);
-  const [needOpenByMenuItemClick, setNeedOpenByMenuItemClick] =
+  const [shouldOpenByMenuItemClick, setShouldOpenByMenuItemClick] =
     useState<boolean>(false);
   const [antisenseActiveOption, setAntisenseActiveOption] =
     useState<IconName>();
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
   const activeMenuItems = [activeTool];
-  const isDisabled = isSequenceEditInRNABuilderMode;
+  const isDisabled = isSequenceEditInRNABuilderMode || isSettingsPanelOpen;
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
@@ -65,7 +66,13 @@ export function TopMenuComponent() {
     (entity) => entity && typeof entity.forEachBond === 'function',
   );
 
-  const cyclicStructureFormationDisabled =
+  const isAntisenseDisabled =
+    isSettingsPanelOpen ||
+    !selectedEntities?.length ||
+    !isAntisenseOptionVisible(selectedEntities) ||
+    isAntisenseCreationDisabled(selectedEntities);
+
+  const isCyclicStructureFormationDisabled =
     (editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length ?? 0) >
       0 || !isCycleExistsForSelectedMonomers(selectedMonomers);
 
@@ -76,7 +83,7 @@ export function TopMenuComponent() {
         selectedEntities.length &&
         !isAntisenseCreationDisabled(selectedEntities)
       ) {
-        setNeedOpenByMenuItemClick(false);
+        setShouldOpenByMenuItemClick(false);
         if (
           !hasUnsplitNucleotide(selectedEntities) &&
           hasOnlyDeoxyriboseSugars(selectedEntities)
@@ -89,7 +96,7 @@ export function TopMenuComponent() {
           setAntisenseActiveOption('antisenseRnaStrand');
         } else {
           setAntisenseActiveOption('antisenseStrand');
-          setNeedOpenByMenuItemClick(true);
+          setShouldOpenByMenuItemClick(true);
         }
       }
     };
@@ -127,6 +134,7 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="clear"
           title={t('topMenu.clearCanvas', { shortcut: hotkeysShortcuts.clear })}
+          disabled={isSettingsPanelOpen}
           testId="clear-canvas"
         />
         <Menu.Item
@@ -138,6 +146,7 @@ export function TopMenuComponent() {
         <Menu.Item
           itemId="save"
           title={t('topMenu.saveAs')}
+          disabled={isSettingsPanelOpen}
           testId="save-file-button"
         />
       </Menu.Group>
@@ -212,19 +221,15 @@ export function TopMenuComponent() {
             title={t('topMenu.arrangeAsRing', {
               shortcut: hotkeysShortcuts.arrangeRing,
             })}
-            disabled={cyclicStructureFormationDisabled}
+            disabled={isSettingsPanelOpen || isCyclicStructureFormationDisabled}
             testId="arrange-ring"
           />
         </Menu.Group>
       )}
       <Menu.Group isHorizontal={true}>
         <Menu.Submenu
-          disabled={
-            !selectedEntities?.length ||
-            !isAntisenseOptionVisible(selectedEntities) ||
-            isAntisenseCreationDisabled(selectedEntities)
-          }
-          needOpenByMenuItemClick={needOpenByMenuItemClick}
+          disabled={isAntisenseDisabled}
+          needOpenByMenuItemClick={shouldOpenByMenuItemClick}
           vertical={true}
           autoSize={true}
           layoutModeButton={true}
@@ -237,11 +242,7 @@ export function TopMenuComponent() {
             title={t('topMenu.createRnaAntisenseStrand', {
               shortcut: hotkeysShortcuts.createRnaAntisenseStrand,
             })}
-            disabled={
-              !selectedEntities?.length ||
-              !isAntisenseOptionVisible(selectedEntities) ||
-              isAntisenseCreationDisabled(selectedEntities)
-            }
+            disabled={isAntisenseDisabled}
             testId="antisenseRnaStrand"
             type="button"
           />
@@ -250,11 +251,7 @@ export function TopMenuComponent() {
             title={t('topMenu.createDnaAntisenseStrand', {
               shortcut: hotkeysShortcuts.createDnaAntisenseStrand,
             })}
-            disabled={
-              !selectedEntities?.length ||
-              !isAntisenseOptionVisible(selectedEntities) ||
-              isAntisenseCreationDisabled(selectedEntities)
-            }
+            disabled={isAntisenseDisabled}
             testId="antisenseDnaStrand"
             type="button"
           />

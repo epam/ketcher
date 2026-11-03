@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,9 @@ function paddedNum(
  * @returns The parsed integer, or 0 if parsing fails
  */
 function parseDecimalInt(str: string): number {
-  /* reader */
+  /*
+  reader
+  */
   const val = Number.parseInt(str, 10);
 
   return Number.isNaN(val) ? 0 : val;
@@ -102,19 +104,21 @@ function parseDecimalInt(str: string): number {
  * Partition a line string into parts of varying lengths
  * @param str - The string to partition
  * @param parts - Array of lengths for each part
- * @param withspace - Whether there's a space between parts (default: false)
+ * @param hasSpaceBetweenParts - Whether there's a space between parts (default: false)
  * @returns Array of string parts
  */
 function partitionLine(
   str: string,
   parts: number[],
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
-    if (withspace) shift++;
+    if (hasSpaceBetweenParts) shift++;
     shift += parts[i];
   }
   return res;
@@ -124,17 +128,19 @@ function partitionLine(
  * Partition a line string into fixed-length parts
  * @param str - The string to partition
  * @param itemLength - Length of each item
- * @param withspace - Whether there's a space between items (default: false)
+ * @param hasSpaceBetweenParts - Whether there's a space between items (default: false)
  * @returns Array of string parts
  */
 function partitionLineFixed(
   str: string,
   itemLength: number,
-  withspace: boolean = false,
+  hasSpaceBetweenParts: boolean = false,
 ): string[] {
-  /* reader */
+  /*
+  reader
+  */
   const res: string[] = [];
-  const step = withspace ? itemLength + 1 : itemLength;
+  const step = hasSpaceBetweenParts ? itemLength + 1 : itemLength;
   let shift = 0;
   while (shift < str.length) {
     res.push(str.slice(shift, shift + itemLength));
@@ -300,7 +306,7 @@ function categorizeMolecules(
  * @param mol - Molecule to shift and merge
  * @param bb - Bounding box of the molecule
  * @param xorig - X origin for shifting
- * @param over - Whether to shift vertically over (true) or center (false)
+ * @param isAboveReactionArrow - Whether to shift vertically over (true) or center (false)
  * @returns Width of the shifted molecule
  */
 function shiftMol(
@@ -308,11 +314,11 @@ function shiftMol(
   mol: Struct,
   bb: BoundingBox,
   xorig: number,
-  over: boolean,
+  isAboveReactionArrow: boolean,
 ): number {
   const d = new Vec2(
     xorig - bb.min.x,
-    over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
+    isAboveReactionArrow ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
   );
   mol.atoms.forEach((atom: Atom) => {
     atom.pp.add_(d);
@@ -487,7 +493,9 @@ function rxnMerge(
   _nAgents: number,
   shouldReactionRelayout?: boolean,
 ): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
   if (SHOULD_RESCALE_MOLECULES) {
@@ -531,7 +539,9 @@ function rxnMerge(
  * @returns Merged R-group structure
  */
 function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
-  /* reader */
+  /*
+  reader
+  */
   const ret = new Struct();
 
   scaffold.mergeInto(ret, null, null, false, true);

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,7 +55,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 function pollDeferred<T>(
   process: () => Promise<T>,
-  complete: (val: T) => boolean,
+  isComplete: (val: T) => boolean,
   timeGap: number,
   startTimeGap?: number,
 ) {
@@ -64,22 +64,32 @@ function pollDeferred<T>(
       process().then(
         (val) => {
           try {
-            if (complete(val)) resolve(val);
+            if (isComplete(val)) resolve(val);
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
             reject(normalizeError(error));
           }
         },
-        (err) => reject(normalizeError(err)),
+        (error) => reject(normalizeError(error)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);
   });
 }
 
-function parametrizeUrl(url: string, params: Record<string, string>) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+function parametrizeUrl(url, params) {
+  return url.replace(/:([A-Za-z_]\w*)/g, (match, key) => {
+    if (
+      params &&
+      Object.prototype.hasOwnProperty.call(params, key) &&
+      params[key] !== undefined &&
+      params[key] !== null
+    ) {
+      return String(params[key]);
+    }
+    return match;
+  });
 }
 
 function request<T = unknown>(
@@ -103,7 +113,7 @@ function request<T = unknown>(
     fetchResponse = fetch(requestUrl, {
       method,
       headers: mergedHeaders,
-      body: method !== 'GET' ? (data as string | Blob) : undefined,
+      body: method === 'GET' ? undefined : (data as string | Blob),
       credentials: 'same-origin',
     });
   } catch (error) {
@@ -188,6 +198,7 @@ export function pickStandardServerOptions(
       options?.['mass-skip-error-on-pseudoatoms'],
     'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+    'smiles-saving-format': options?.['smiles-saving-format'],
     'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
     'aromatize-skip-superatoms': true,
     'valence-mode': options?.['valence-mode'],
@@ -260,10 +271,10 @@ export class RemoteStructService implements StructService {
       indigoVersion = response.indigo_version;
       imagoVersions = response.imago_versions;
       isAvailable = true;
-    } catch (e) {
+    } catch (error) {
       KetcherLogger.error(
         'remoteStructService.ts::RemoteStructService::info',
-        e,
+        error,
       );
       indigoVersion = '';
       imagoVersions = [];

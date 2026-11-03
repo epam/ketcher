@@ -42,7 +42,7 @@ const KetcherAPI = (ketcherInstance) => {
 
       const allHighlights =
         ketcherInstance.editor.render.ctab.molecule.highlights
-      const lastHighlightID = Array.from(allHighlights.keys()).pop()
+      const lastHighlightID = [...allHighlights.keys()].pop()
       const lastHighlight = allHighlights.get(lastHighlightID)
 
       return {

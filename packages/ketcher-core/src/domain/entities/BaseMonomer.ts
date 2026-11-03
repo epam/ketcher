@@ -350,8 +350,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds(clearSelectedPoints = false) {
-    if (clearSelectedPoints) {
+  public removePotentialBonds(shouldClearSelectedPoints = false) {
+    if (shouldClearSelectedPoints) {
       this.chosenFirstAttachmentPointForBond = null;
       this.chosenSecondAttachmentPointForBond = null;
       this.potentialSecondAttachmentPointForBond = null;

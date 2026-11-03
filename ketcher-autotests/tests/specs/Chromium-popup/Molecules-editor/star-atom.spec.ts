@@ -21,6 +21,8 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
   waitForRender,
   zoomInByKeyboard,
   zoomOutByKeyboard,
@@ -46,6 +48,7 @@ import {
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { SequenceCanvas } from '@tests/pages/macromolecules/canvas/SequenceCanvas';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -595,6 +598,13 @@ test('22. Verify the star atom remains visible and functional after switching be
   await takeEditorScreenshot(page);
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  await keyboardPressOnCanvas(page, 'Enter');
+  await SequenceCanvas(page).expectCaretInViewport();
+  await keyboardTypeOnCanvas(page, 'A');
+  await SequenceCanvas(page).expectCaretInViewport();
 });
 
 test('23. Verify the alignment of the star atom with various bond types when connected', async () => {

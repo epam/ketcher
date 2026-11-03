@@ -367,6 +367,10 @@ export class SequenceMode extends BaseMode {
       }
     }
 
+    if (this.isEditMode) {
+      this.keepCaretInViewport();
+    }
+
     modelChanges.merge(command);
 
     return modelChanges;
@@ -438,6 +442,40 @@ export class SequenceMode extends BaseMode {
 
       if (lastTwoStrandedNode) {
         SequenceRenderer.setCaretPositionByNode(lastTwoStrandedNode);
+      }
+    }
+
+    this.keepCaretInViewport();
+  }
+
+  private keepCaretInViewport() {
+    const editingNode =
+      SequenceRenderer.currentEdittingNode ??
+      (SequenceRenderer.sequenceViewModel.hasOnlyOneNewChain
+        ? SequenceRenderer.sequenceViewModel.chains[0].firstNode
+        : undefined);
+    const node = this.isAntisenseEditMode
+      ? editingNode?.antisenseNode
+      : editingNode?.senseNode;
+    const renderer = node?.renderer;
+    const caretBounds =
+      renderer instanceof BaseSequenceItemRenderer
+        ? renderer.caretElement?.node()?.getBoundingClientRect()
+        : undefined;
+    const zoom = ZoomTool.instance;
+    const canvasBounds = zoom.canvasWrapper.node()?.getBoundingClientRect();
+
+    if (caretBounds && canvasBounds) {
+      const xOffset =
+        caretBounds.left < canvasBounds.left
+          ? canvasBounds.left - caretBounds.left
+          : Math.min(0, canvasBounds.right - caretBounds.right);
+      const yOffset =
+        caretBounds.top < canvasBounds.top
+          ? canvasBounds.top - caretBounds.top
+          : Math.min(0, canvasBounds.bottom - caretBounds.bottom);
+      if (xOffset !== 0 || yOffset !== 0) {
+        zoom.scrollBy(xOffset, yOffset);
       }
     }
   }

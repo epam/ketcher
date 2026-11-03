@@ -21,7 +21,7 @@ import {
   readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -717,7 +717,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
   });
 
   test(`Case 23: Correct representation of hydrogens for Alias, Charge, Valence, and Radical properties in Macro mode`, async ({
-    MoleculesCanvas: _,
+    page: casePage,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
@@ -729,12 +729,18 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Macro mode
      * 4. Take a screenshot
      */
+    await waitForPageInit(casePage);
+    await CommonTopRightToolbar(casePage).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(casePage).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await CommonTopRightToolbar(casePage).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      page,
+      casePage,
       'KET/Chromium-popup/Bugs/ketcher - 2025-01-06T160012.582.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await takeEditorScreenshot(page);
+    await CommonTopRightToolbar(casePage).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(casePage);
   });
 
   test(`Case 24: Export to 3-letter sequence work`, async ({

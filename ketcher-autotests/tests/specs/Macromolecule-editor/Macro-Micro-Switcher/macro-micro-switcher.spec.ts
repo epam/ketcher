@@ -159,6 +159,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await scrollHorizontally(page, scrollValue);
     for (const label of monomerLabelsOnMacromoleculesCanvas) {
+      await AbbreviationPreviewTooltip(page).hide();
       await getAbbreviationLocator(page, {
         name: label,
       }).hover();

@@ -14,6 +14,7 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   moveMouseAway,
+  getKet,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
@@ -809,7 +810,19 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     }).first();
     await expandMonomer(page, peptide1Nal);
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
-    await clickOnCanvas(page, 505, 400, { from: 'pageTopLeft' });
+    const canvasCenter = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+    const comparisonRingOffset = 200;
+    await clickOnCanvas(
+      page,
+      canvasCenter.x + comparisonRingOffset,
+      canvasCenter.y,
+    );
+    const structure = JSON.parse(await getKet(page));
+    expect(structure.root.nodes).toHaveLength(2);
+    expect(structure.mol0.atoms).toHaveLength(6);
+    expect(structure.mol0.bonds).toHaveLength(6);
+    await keyboardPressOnCanvas(page, 'Escape');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

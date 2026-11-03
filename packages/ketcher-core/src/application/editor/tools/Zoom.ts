@@ -360,17 +360,23 @@ export class ZoomTool implements BaseTool {
   }
 
   initScrollBars() {
-    const boundingBox = this.canvas.node()?.getBoundingClientRect() as DOMRect;
+    const contentBoundingBox = this.canvas
+      .node()
+      ?.getBoundingClientRect() as DOMRect;
     const wrapperBoundingBox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect() as DOMRect;
+    const boundingBox =
+      contentBoundingBox.width === 0 && contentBoundingBox.height === 0
+        ? wrapperBoundingBox
+        : contentBoundingBox;
     const canvasWrapperHeight = wrapperBoundingBox.height;
     const canvasWrapperWidth = wrapperBoundingBox.width;
     this.scrollBars = {
       horizontal: {
         name: 'horizontal',
         offsetStart: boundingBox.left - wrapperBoundingBox.left,
-        offsetEnd: wrapperBoundingBox.width - boundingBox.right,
+        offsetEnd: wrapperBoundingBox.right - boundingBox.right,
         maxWidth: canvasWrapperWidth,
         maxHeight: canvasWrapperHeight,
         bar: this.scrollBars?.horizontal?.bar,
@@ -378,7 +384,7 @@ export class ZoomTool implements BaseTool {
       vertical: {
         name: 'vertical',
         offsetStart: boundingBox.top - wrapperBoundingBox.top,
-        offsetEnd: wrapperBoundingBox.height - boundingBox.bottom,
+        offsetEnd: wrapperBoundingBox.bottom - boundingBox.bottom,
         maxWidth: canvasWrapperHeight,
         maxHeight: canvasWrapperWidth,
         bar: this.scrollBars?.vertical?.bar,

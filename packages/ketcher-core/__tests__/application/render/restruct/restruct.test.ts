@@ -12,6 +12,45 @@ import {
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Peptide } from 'domain/entities/Peptide';
 import { peptideMonomerItem } from '../../../mock-data';
+import { ScrollOffset } from 'application/render/scrollbar/scroll-offset';
+
+describe('visible scroll bounds', () => {
+  it('ignores hidden atoms but retains visible atoms outside the viewport', () => {
+    const render = new Render(
+      document as unknown as HTMLElement,
+      {
+        microModeScale: 40,
+        width: 100,
+        height: 100,
+      } as RenderOptions,
+    );
+    const struct = new Struct();
+    const visibleAtom = new Atom({ label: 'C' });
+    visibleAtom.pp = new Vec2(1, 1);
+    const hiddenAtom = new Atom({ label: 'C' });
+    hiddenAtom.pp = new Vec2(1, -2);
+    const visibleId = struct.atoms.add(visibleAtom);
+    const hiddenId = struct.atoms.add(hiddenAtom);
+    const restruct = new ReStruct(struct, render);
+    render.ctab = restruct;
+    restruct.visibleAtoms = new Map(
+      [...restruct.atoms].filter(([id]) => id === visibleId),
+    );
+    const offset = new ScrollOffset(render);
+
+    offset.update();
+
+    expect(offset.hasVerticalOffset()).toBe(false);
+    expect(offset.hasHorizontalOffset()).toBe(false);
+
+    restruct.visibleAtoms = new Map(restruct.atoms);
+    offset.update();
+
+    expect(restruct.visibleAtoms.has(hiddenId)).toBe(true);
+    expect(offset.hasVerticalOffset()).toBe(true);
+    expect(offset.up).toBe(80);
+  });
+});
 
 describe('show selection', () => {
   const ellipse = {

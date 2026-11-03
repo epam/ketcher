@@ -4376,7 +4376,7 @@ for (const monomerToCreate of monomersToCreate) {
         monomerAlias: monomerToCreate.code,
       });
       await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
-        x: 100,
+        x: 260,
         y: 100,
       });
       const monomerConnectToOnMacro = getMonomerLocator(

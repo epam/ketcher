@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { type OpenProps } from './Open';
+import Open, { type OpenProps, type OpenResult } from './Open';
 
 import type { BaseCallProps } from '../../../modal.types';
 import { connect } from 'react-redux';
@@ -24,14 +24,8 @@ import { changeImage } from '../../../../../state/options';
 
 type StateProps = OpenProps;
 
-type OpenResult = {
-  structStr: string;
-  fragment: boolean;
-  'input-format'?: string;
-};
-
 type DispatchProps = {
-  onOk: BaseCallProps['onOk'];
+  onOk: BaseCallProps<OpenResult>['onOk'];
   onImageUpload: (file: File) => void;
 };
 
@@ -43,14 +37,13 @@ const mapStateToProps = (state): StateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
-  onOk: (result) => {
-    const openResult = result as OpenResult;
-    if (openResult.fragment) canExecuteClipboardCommand('copy');
+  onOk: (result: OpenResult) => {
+    if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
-      load(openResult.structStr, {
+      load(result.structStr, {
         badHeaderRecover: true,
-        fragment: openResult.fragment,
-        'input-format': openResult['input-format'],
+        fragment: result.fragment,
+        'input-format': result['input-format'],
       }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)

@@ -641,7 +641,6 @@ describe('DrawingEntitiesManager builds these operations', () => {
           Boolean(monomerItem.isSense),
           Boolean(monomerItem.isAntisense),
         ]);
-      const flagsBefore = senseFlags();
 
       const command = dem.finishPolymerBondCreation(
         polymerBond,
@@ -663,8 +662,14 @@ describe('DrawingEntitiesManager builds these operations', () => {
       ];
       expect(senseFlags()).toEqual(flagsAfter);
 
+      // The command reverts its four operations in the order it ran them: the
+      // two resets first (back to the original item), then the two marks (back
+      // to the reset item). Both flags end up false, not undefined.
       command.invert(editor.renderersContainer);
-      expect(senseFlags()).toEqual(flagsBefore);
+      expect(senseFlags()).toEqual([
+        [false, false],
+        [false, false],
+      ]);
 
       command.execute(editor.renderersContainer);
       expect(senseFlags()).toEqual(flagsAfter);

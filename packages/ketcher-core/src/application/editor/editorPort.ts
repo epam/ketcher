@@ -5,6 +5,7 @@ import type {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { CoreEditor } from './Editor';
 import { provideEditorSettings } from './editorSettings';
+import { ReinitializeModeOperation } from './operations/modes';
 
 export function createEditorPort(editor: CoreEditor): EditorPort {
   return {
@@ -35,6 +36,9 @@ export function createEditorPort(editor: CoreEditor): EditorPort {
     // The class itself: its static methods use `this`.
     get sequenceRenderer() {
       return SequenceRenderer;
+    },
+    createReinitializeModeOperation() {
+      return new ReinitializeModeOperation();
     },
   };
 }

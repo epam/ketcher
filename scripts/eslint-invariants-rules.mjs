@@ -66,12 +66,7 @@ export const ALLOWED_UI_IMPORTS = [
  * (invariant A4 allows type-only imports). List refreshed on the first lint
  * run of the enforcement. See .memory-bank/accepted-patterns.md.
  */
-export const ALLOWED_DOMAIN_IMPORTS = [
-  {
-    file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
-    imports: ['application/editor/operations/modes'],
-  },
-];
+export const ALLOWED_DOMAIN_IMPORTS = [];
 
 /**
  * A1 known debt: SequenceRenderer builds Commands and changes selection state.

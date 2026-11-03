@@ -213,7 +213,6 @@ test('A5 rejects declared React or UI-framework dependencies and tolerates the r
 });
 
 test('every ALLOWED_DOMAIN_IMPORTS entry still suppresses a real violation and leaves none behind', () => {
-  assert.ok(ALLOWED_DOMAIN_IMPORTS.length > 0, 'the allowlist is not empty');
   for (const entry of ALLOWED_DOMAIN_IMPORTS) {
     const filename = path.join(REPO_ROOT, entry.file);
     const expectedLines = statementLinesFor(filename, entry.imports);

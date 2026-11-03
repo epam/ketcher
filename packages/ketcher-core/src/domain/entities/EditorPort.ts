@@ -1,6 +1,7 @@
 import type { CoreEditor } from 'application/editor/Editor';
 import type { BaseMode } from 'application/editor/modes/BaseMode';
 import type { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import type { Operation } from 'domain/entities/Operation';
 
 export type Viewport = { readonly width: number; readonly height: number };
 
@@ -16,6 +17,7 @@ export interface EditorPort {
   renderersContainer: CoreEditor['renderersContainer'];
   monomersLibrary: CoreEditor['monomersLibrary'];
   sequenceRenderer: Pick<typeof SequenceRenderer, 'show' | 'clear'>;
+  createReinitializeModeOperation(): Operation;
 }
 
 export type DrawingEntitiesManagerDeps = { readonly editor?: EditorPort };

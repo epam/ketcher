@@ -274,14 +274,14 @@ describe('AttachmentPoint', () => {
         bond: {
           isFirstMonomer: true,
           otherAttachmentPointName: R1,
-          otherPosition: new Vec2(4, 0),
+          otherPosition: new Vec2(-4, 0),
           sideConnectionEndpointAngle: Math.PI / 2,
         },
       });
 
       expectDirection(
         readGeometry(rootElement.node() as SVGElement).directionDegrees,
-        0,
+        180,
       );
     });
 

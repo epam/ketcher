@@ -23,6 +23,26 @@ describe('util', () => {
   });
 
   describe('chooseNonOverlappingLabelPlacement()', () => {
+    it('falls back to zero extra distance when every placement overlaps', () => {
+      const directions = [new Vec2(1, 0), new Vec2(0, 1)];
+      const getLabelBox = jest.fn(() => new Box2Abs(8, 8, 12, 12));
+      const getLabelDistance = jest.fn();
+
+      const placement = util.chooseNonOverlappingLabelPlacement(
+        directions,
+        getLabelBox,
+        getLabelDistance,
+        [new Box2Abs(0, 0, 20, 20)],
+      );
+
+      expect(getLabelBox).toHaveBeenCalledTimes(4);
+      expect(getLabelDistance).not.toHaveBeenCalled();
+      expect(placement).toEqual({
+        direction: directions[0],
+        additionalDistance: 0,
+      });
+    });
+
     it('moves labels out of occupied boxes when all sectors initially collide', () => {
       const directions = [new Vec2(1, 0), new Vec2(0, 1)];
       const getLabelBox = (direction: Vec2, additionalDistance: number) => {

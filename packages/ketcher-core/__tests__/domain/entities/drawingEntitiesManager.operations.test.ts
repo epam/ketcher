@@ -632,9 +632,16 @@ describe('DrawingEntitiesManager builds these operations', () => {
       expect(second.attachmentPointsToBonds.R1).toBeNull();
     });
 
-    it('finishes a started bond, then resets and marks the antisense state of both monomers', () => {
+    it('finishes a started bond and marks both monomers of the new chain as sense', () => {
       const { dem, first, second } = addTwoPeptides();
       const polymerBond = startDrawnBond(first);
+
+      const senseFlags = () =>
+        [first, second].map(({ monomerItem }) => [
+          Boolean(monomerItem.isSense),
+          Boolean(monomerItem.isAntisense),
+        ]);
+      const flagsBefore = senseFlags();
 
       const command = dem.finishPolymerBondCreation(
         polymerBond,
@@ -650,18 +657,17 @@ describe('DrawingEntitiesManager builds these operations', () => {
         ['MonomerItemModifyOperation', undefined],
         ['MonomerItemModifyOperation', undefined],
       ]);
-      expect([
-        first.monomerItem.isSense,
-        first.monomerItem.isAntisense,
-      ]).toEqual([true, false]);
-      expect([
-        second.monomerItem.isSense,
-        second.monomerItem.isAntisense,
-      ]).toEqual([true, false]);
+      const flagsAfter = [
+        [true, false],
+        [true, false],
+      ];
+      expect(senseFlags()).toEqual(flagsAfter);
+
+      command.invert(editor.renderersContainer);
+      expect(senseFlags()).toEqual(flagsBefore);
 
       command.execute(editor.renderersContainer);
-      expect(first.monomerItem.isSense).toBe(true);
-      expect(second.monomerItem.isSense).toBe(true);
+      expect(senseFlags()).toEqual(flagsAfter);
     });
 
     it('cancels a started bond for good', () => {

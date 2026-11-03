@@ -383,11 +383,9 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
       const { editor } = open(new SequenceMode());
       const port = createEditorPort(editor);
 
-      const first = port.createReinitializeModeOperation();
-      const second = port.createReinitializeModeOperation();
-
-      expect(first).toBeInstanceOf(ReinitializeModeOperation);
-      expect(second).toBeInstanceOf(ReinitializeModeOperation);
+      expect(port.createReinitializeModeOperation()).toBeInstanceOf(
+        ReinitializeModeOperation,
+      );
     });
   });
 

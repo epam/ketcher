@@ -57,7 +57,7 @@ import {
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { Coordinates } from 'domain/helpers/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
@@ -154,9 +154,9 @@ import {
 import {
   collectMonomerBonds,
   computeReestablishableBonds,
-} from 'application/editor/libraryItemDragDrop/replacementHelpers';
+} from 'domain/helpers/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import { getRnaPresetPhosphatePosition } from 'domain/helpers/rnaPresetConnections';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;

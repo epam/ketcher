@@ -19,7 +19,7 @@ import {
   getPresetComponentRole,
   computeLostBondsForMonomerReplacement,
   computeLostBondsForPresetReplacement,
-} from 'application/editor/libraryItemDragDrop/replacementHelpers';
+} from 'domain/helpers/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { AttachmentPointName, type MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';

@@ -35,9 +35,9 @@ const RIGHT_ARROW_PATH =
 
 class RotateController implements RotateControllerContract {
   isRotating!: boolean;
-  private readonly editor: Editor;
-  private readonly rotateTool: RotateTool;
-  private originalCenter!: Vec2;
+  public readonly editor: Editor;
+  public readonly rotateTool: RotateTool;
+  public originalCenter!: Vec2;
   private normalizedCenterInitialHandleVec!: Vec2;
   private handleCenter!: Vec2;
   private initialRadius!: number;
@@ -45,7 +45,7 @@ class RotateController implements RotateControllerContract {
 
   private handle?: RaphaelSet;
   private boundingRect?: RaphaelElement;
-  private cross?: RaphaelSet;
+  public cross?: RaphaelSet;
   private link?: RaphaelElement;
   private protractor?: RaphaelSet;
   private rotateArc?: RaphaelSet;
@@ -74,7 +74,7 @@ class RotateController implements RotateControllerContract {
     return this.render.paper;
   }
 
-  private get center() {
+  public get center() {
     return this.originalCenter
       .scaled(this.render.options.microModeScale)
       .add(this.render.options.offset);
@@ -151,7 +151,7 @@ class RotateController implements RotateControllerContract {
     );
   }
 
-  private show() {
+  public show() {
     const originalCenter = this.rotateTool.getCenter();
     const selection = this.editor.selection();
     const visibleAtoms =
@@ -231,7 +231,7 @@ class RotateController implements RotateControllerContract {
     );
   }
 
-  private drawCross(state?: CrossState) {
+  public drawCross(state?: CrossState) {
     switch (state) {
       case 'active': {
         this.cross?.attr({
@@ -633,7 +633,7 @@ class RotateController implements RotateControllerContract {
     ] as const;
   }
 
-  private readonly dragStart = (event: MouseEvent) => {
+  public readonly dragStart = (event: MouseEvent) => {
     event.stopPropagation(); // Avoid triggering SelectTool's mousedown
 
     const isLeftButtonPressed = event.buttons === 1;

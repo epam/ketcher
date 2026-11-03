@@ -16,7 +16,6 @@ import { AtomLabel } from 'domain/constants';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlag } from 'domain/entities/fragment';
 import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { AttachmentPointName } from 'domain/types';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
@@ -69,7 +68,7 @@ const entityOf = <T>(entity: T | undefined): T => {
   return entity;
 };
 
-// The operation classes are identified by name: their files move in #12573.
+// Operations are identified by class name, so the test imports no operation file.
 const describeOperations = (command: Command) =>
   command.operations.map((operation) => [
     operation.constructor.name,
@@ -103,6 +102,21 @@ describe('DrawingEntitiesManager builds these operations', () => {
     const [bond] = [...mergedDrawingEntities.bonds.values()];
 
     return { monomer, firstAtom, secondAtom, bond };
+  };
+
+  // A polymer bond started from the monomer and drawn, still open at the far end.
+  const startDrawnBond = (monomer: ReturnType<typeof addPeptide>) => {
+    const { command, polymerBond } =
+      editor.drawingEntitiesManager.startPolymerBondCreation(
+        monomer,
+        new Vec2(0, 0),
+        new Vec2(3, 0),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
+      );
+
+    draw(command);
+
+    return polymerBond;
   };
 
   afterEach(() => {
@@ -520,14 +534,7 @@ describe('DrawingEntitiesManager builds these operations', () => {
       const dem = open();
       const first = addPeptide(editor, 'A', 0, 0);
       const second = addPeptide(editor, 'A', 3, 0);
-      const { command: startCommand, polymerBond } =
-        dem.startPolymerBondCreation(
-          first,
-          new Vec2(0, 0),
-          new Vec2(3, 0),
-          MACROMOLECULES_BOND_TYPES.SINGLE,
-        );
-      draw(startCommand);
+      const polymerBond = startDrawnBond(first);
 
       const command = dem.intendToFinishAttachmenPointBondCreation(
         second,
@@ -589,7 +596,7 @@ describe('DrawingEntitiesManager builds these operations', () => {
         AttachmentPointName.R2,
         AttachmentPointName.R1,
       );
-      const bond = command.operations[0].polymerBond as PolymerBond;
+      const bond = entityOf(command.operations[0].polymerBond);
 
       expect(describeOperations(command)).toEqual([
         ['PolymerBondFinishCreationOperation', 1],
@@ -605,14 +612,7 @@ describe('DrawingEntitiesManager builds these operations', () => {
 
     it('finishes a started bond, then resets and marks the antisense state of both monomers', () => {
       const { dem, first, second } = addTwoPeptides();
-      const { command: startCommand, polymerBond } =
-        dem.startPolymerBondCreation(
-          first,
-          new Vec2(0, 0),
-          new Vec2(3, 0),
-          MACROMOLECULES_BOND_TYPES.SINGLE,
-        );
-      draw(startCommand);
+      const polymerBond = startDrawnBond(first);
 
       const command = dem.finishPolymerBondCreation(
         polymerBond,
@@ -632,14 +632,7 @@ describe('DrawingEntitiesManager builds these operations', () => {
 
     it('cancels a started bond for good', () => {
       const { dem, first } = addTwoPeptides();
-      const { command: startCommand, polymerBond } =
-        dem.startPolymerBondCreation(
-          first,
-          new Vec2(0, 0),
-          new Vec2(3, 0),
-          MACROMOLECULES_BOND_TYPES.SINGLE,
-        );
-      draw(startCommand);
+      const polymerBond = startDrawnBond(first);
       expect(editor.renderersContainer.polymerBonds.has(polymerBond.id)).toBe(
         true,
       );

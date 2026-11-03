@@ -1,4 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +50,7 @@ export const CDXStructuresViewer = ({
   const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
-  const loading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
+  const isLoading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
     if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
@@ -80,16 +79,25 @@ export const CDXStructuresViewer = ({
     [server],
   );
 
-  const currentStructItem = structList[selectedIndex];
+  const handleSelectStructure = (index: number) => {
+    setSelectedIndex(index);
+    if (index !== selectedIndex && structList[index] && !itemsMap[index]) {
+      getImage(structList[index], index);
+    }
+  };
+
+  const loadFirstStructure = useCallback(() => {
+    if (structList[0]) {
+      getImage(structList[0], 0);
+    }
+  }, [getImage, structList]);
 
   useEffect(() => {
-    if (currentStructItem && !itemsMap[selectedIndex]) {
-      getImage(currentStructItem, selectedIndex);
-    }
-  }, [getImage, itemsMap, selectedIndex, currentStructItem]);
+    loadFirstStructure();
+  }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
-    if (loading) {
+    if (isLoading) {
       return (
         <div className={styles.centerWrapper}>
           <LoadingCircles />
@@ -134,7 +142,7 @@ export const CDXStructuresViewer = ({
                 key={value + index}
                 data-testid={`cdx-structure-${index + 1}`}
                 selected={index === selectedIndex}
-                onClick={() => setSelectedIndex(index)}
+                onClick={() => handleSelectStructure(index)}
               >
                 {t('document.cdxViewer.structureN', { number: index + 1 })}
                 {itemsMap[index]?.error && <Icon name="error" />}

@@ -11,6 +11,13 @@ import dialogs from '../locales/en/dialogs.json';
 import components from '../locales/en/components.json';
 import settings from '../locales/en/settings.json';
 
+import common_es from '../locales/es/common.json';
+import toolbar_es from '../locales/es/toolbar.json';
+import toolbars_es from '../locales/es/toolbars.json';
+import dialogs_es from '../locales/es/dialogs.json';
+import components_es from '../locales/es/components.json';
+import settings_es from '../locales/es/settings.json';
+
 import common_zh_CN from '../locales/zh-CN/common.json';
 import toolbar_zh_CN from '../locales/zh-CN/toolbar.json';
 import toolbars_zh_CN from '../locales/zh-CN/toolbars.json';
@@ -28,6 +35,14 @@ export const BASE_RESOURCES = {
 };
 
 export const EXTRA_LOCALE_RESOURCES = {
+  es: {
+    common: common_es,
+    toolbar: toolbar_es,
+    toolbars: toolbars_es,
+    dialogs: dialogs_es,
+    components: components_es,
+    settings: settings_es,
+  },
   'zh-CN': {
     common: common_zh_CN,
     toolbar: toolbar_zh_CN,

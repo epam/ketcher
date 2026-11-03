@@ -6,7 +6,7 @@ import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as any;
+    globalThis.window.PointerEvent = MouseEvent as any;
   });
 
   /**

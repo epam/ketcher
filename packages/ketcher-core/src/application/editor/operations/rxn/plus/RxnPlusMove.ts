@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,13 +27,13 @@ export class RxnPlusMove extends BaseOperation {
     noinvalidate?: boolean;
   };
 
-  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(id?: number, d?: Vec2, shouldSkipInvalidation?: boolean) {
     super(OperationType.RXN_PLUS_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id, d, noinvalidate: shouldSkipInvalidation };
   }
 
   execute(restruct: ReStruct) {
-    const { id, d, noinvalidate } = this.data;
+    const { id, d, noinvalidate: shouldSkipInvalidation } = this.data;
     if (id === undefined || !d) return;
 
     const struct = restruct.molecule;
@@ -47,7 +47,7 @@ export class RxnPlusMove extends BaseOperation {
 
     this.data.d = d.negated();
 
-    if (!noinvalidate) {
+    if (!shouldSkipInvalidation) {
       BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1);
     }
   }

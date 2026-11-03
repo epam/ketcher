@@ -70,6 +70,7 @@ const baseConfig = {
     babel({
       extensions,
       babelHelpers: 'runtime',
+      inputSourceMap: false,
       include: includePattern,
     }),
     cleanup({
@@ -78,7 +79,8 @@ const baseConfig = {
       comments: 'none',
     }),
     replace({
-      'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
+      'import.meta.env.SEPARATE_INDIGO_RENDER':
+        process.env.SEPARATE_INDIGO_RENDER,
       preventAssignment: true,
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),

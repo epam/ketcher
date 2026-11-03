@@ -7,7 +7,7 @@ import { Item } from 'react-contexify';
 import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import type { ReactNode } from 'react';
-import { assert } from 'ketcher-core';
+import { assert, getAttachmentPointNames } from 'ketcher-core';
 import { useTranslation } from 'react-i18next';
 
 type Props = {
@@ -50,18 +50,20 @@ const useMakeAttachmentPointMenuItems = ({
 
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
-  const isPotentialLeavingGroupAtom = Array.from(
-    potentialAttachmentPoints.values(),
-  ).some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
+  const isPotentialLeavingGroupAtom = [
+    ...potentialAttachmentPoints.values(),
+  ].some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
   const isPotentialAttachmentAtom =
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
 
   const occupiedAttachmentPointNames = new Set([
-    ...assignedAttachmentPoints.keys(),
-    ...(connectionAttachmentPoints?.keys() ?? []),
+    ...getAttachmentPointNames(assignedAttachmentPoints),
+    ...(connectionAttachmentPoints
+      ? getAttachmentPointNames(connectionAttachmentPoints)
+      : []),
   ]);
-  const attachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
+  const isAttachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 
@@ -77,7 +79,7 @@ const useMakeAttachmentPointMenuItems = ({
         {...props}
         onClick={handleMarkLeavingGroupAtomClick}
         disabled={
-          attachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
+          isAttachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
         }
         key="mark-as-leaving-group"
         data-testid="mark-as-leaving-group"
@@ -99,7 +101,7 @@ const useMakeAttachmentPointMenuItems = ({
       {...props}
       onClick={handleMarkConnectionPointAtomClick}
       disabled={
-        attachmentPointsLimitReached ||
+        isAttachmentPointsLimitReached ||
         !isPotentialAttachmentAtom ||
         isAtomAlreadyLeavingAtom
       }

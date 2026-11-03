@@ -118,3 +118,48 @@ describe('SelectBase mouseup', () => {
     );
   });
 });
+
+describe('SelectBase destroy', () => {
+  let canvas: SVGSVGElement;
+  let editor: CoreEditor;
+  let history: EditorHistory;
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    editor = new CoreEditor({
+      theme: {},
+      canvas,
+      renderersContainer: createRenderersManager(),
+    });
+    history = EditorHistory.getInstance(editor);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    history.destroy();
+    editor.destroy();
+    canvas.remove();
+  });
+
+  it.each([
+    [true, 0],
+    [false, 1],
+  ])(
+    'when Modify in RNA builder mode is %s, unselects all entities %i time(s) on tool switch',
+    (isSequenceEditInRNABuilderMode, unselectCalls) => {
+      jest
+        .spyOn(CoreEditor.prototype, 'isSequenceEditInRNABuilderMode', 'get')
+        .mockReturnValue(isSequenceEditInRNABuilderMode);
+      const unselectAll = jest.spyOn(
+        editor.drawingEntitiesManager,
+        'unselectAllDrawingEntities',
+      );
+      const selectTool = new SelectRectangle(editor);
+      unselectAll.mockClear();
+
+      selectTool.destroy();
+
+      expect(unselectAll).toHaveBeenCalledTimes(unselectCalls);
+    },
+  );
+});

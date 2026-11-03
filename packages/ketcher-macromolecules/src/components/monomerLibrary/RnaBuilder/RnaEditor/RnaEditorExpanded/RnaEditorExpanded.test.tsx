@@ -116,6 +116,113 @@ describe('Test Rna Editor Expanded component', () => {
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 
+  it('cancels sequence modification on Escape without letting other listeners clear the selection', () => {
+    const keyDownHandlers: Array<(event: KeyboardEvent) => void> = [];
+    const turnOffSequenceEditInRNABuilderMode = jest.fn();
+
+    render(
+      withThemeAndStoreProvider(
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
+        {
+          editor: {
+            editor: {
+              isSequenceEditInRNABuilderMode: true,
+              events: {
+                ...mockEditorEvents,
+                keyDown: {
+                  add: (handler: (event: KeyboardEvent) => void) =>
+                    keyDownHandlers.push(handler),
+                  remove: () => true,
+                },
+                turnOffSequenceEditInRNABuilderMode: {
+                  dispatch: turnOffSequenceEditInRNABuilderMode,
+                },
+              },
+            },
+          },
+          rnaBuilder: {
+            activePreset: {},
+            sequenceSelectionName: '1 nucleotide',
+            sequenceSelection: [
+              {
+                type: Entities.Nucleotide,
+                baseLabel: 'A',
+                sugarLabel: 'R',
+                phosphateLabel: 'P',
+                nodeIndexOverall: 0,
+                hasR1Connection: false,
+              },
+            ],
+            presetsDefault: [],
+            presetsCustom: [],
+          },
+        },
+      ),
+    );
+
+    // The editor dispatches the native DOM event, not a React synthetic one
+    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+    const stopImmediatePropagation = jest.spyOn(
+      escapeEvent,
+      'stopImmediatePropagation',
+    );
+    const handleKeyDown = keyDownHandlers.at(-1);
+
+    expect(handleKeyDown).toBeDefined();
+    act(() => handleKeyDown?.(escapeEvent));
+
+    expect(stopImmediatePropagation).toHaveBeenCalled();
+    expect(turnOffSequenceEditInRNABuilderMode).toHaveBeenCalledWith(false);
+  });
+
+  it('lets Escape reach other listeners when no sequence is being modified', () => {
+    const keyDownHandlers: Array<(event: KeyboardEvent) => void> = [];
+
+    render(
+      withThemeAndStoreProvider(
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
+        {
+          editor: {
+            editor: {
+              isSequenceEditInRNABuilderMode: false,
+              events: {
+                ...mockEditorEvents,
+                keyDown: {
+                  add: (handler: (event: KeyboardEvent) => void) =>
+                    keyDownHandlers.push(handler),
+                  remove: () => true,
+                },
+              },
+            },
+          },
+          rnaBuilder: {
+            activePreset: {
+              name: '',
+              nameInList: '',
+              sugar: undefined,
+              phosphate: undefined,
+              base: undefined,
+            },
+            presetsDefault: [],
+            presetsCustom: [],
+          },
+        },
+      ),
+    );
+
+    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+    const stopImmediatePropagation = jest.spyOn(
+      escapeEvent,
+      'stopImmediatePropagation',
+    );
+    const handleKeyDown = keyDownHandlers.at(-1);
+
+    expect(handleKeyDown).toBeDefined();
+    act(() => handleKeyDown?.(escapeEvent));
+
+    expect(stopImmediatePropagation).not.toHaveBeenCalled();
+  });
+
   it('should apply the active monomer group when mounting in edit mode', () => {
     const base: MonomerItemType = {
       label: 'Base',

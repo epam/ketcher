@@ -1409,13 +1409,20 @@ abstract class SelectBase implements BaseTool {
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (this.editor.selectedTool?.name !== 'eraser-tool') {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+    // Nucleotides being modified in the RNA builder must stay selected
+    const shouldKeepSelection =
+      this.editor.selectedTool?.name === 'eraser-tool' ||
+      this.editor.isSequenceEditInRNABuilderMode;
 
-      this.editor.renderersContainer.update(modelChanges);
+    if (shouldKeepSelection) {
+      return;
     }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public stopMovement() {

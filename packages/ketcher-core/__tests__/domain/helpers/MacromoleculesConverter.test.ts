@@ -1,4 +1,4 @@
-import { MacromoleculesConverter } from 'application/editor';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { KetSerializer } from 'domain/serializers';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -12,26 +12,25 @@ import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { Struct, Text, Vec2 } from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { peptideMonomerItem } from '../../mock-data';
-import { macromoleculesKet } from '../../domain/serializers/ket/fixtures/macromolecules';
+import {
+  deserializeToManager,
+  findMonomerByLabel,
+  macromoleculesKet,
+} from '../serializers/ket/fixtures/macromolecules';
 
 const NO_ATOM_MESSAGE =
   'There is no atom for provided attachment point. Bond between monomers was not created.';
 
-// The macromolecules content of ../../domain/serializers/ket/fixtures/macromolecules.ts:
+// The macromolecules content of ../serializers/ket/fixtures/macromolecules.ts:
 // peptides A and G, the CHEM Sp, an ambiguous monomer, a benzene ring that is
 // a micromolecule fragment, three polymer bonds, one hydrogen bond and one
 // monomer-to-molecule bond.
-const createManager = () => {
-  const result = new KetSerializer().deserializeToDrawingEntities(
-    macromoleculesKet(),
-  );
+const createManager = () =>
+  deserializeToManager(new KetSerializer(), macromoleculesKet());
 
-  return (result as NonNullable<typeof result>).drawingEntitiesManager;
-};
-
-const findByLabel = (dem: DrawingEntitiesManager, label: string) =>
+const findRing = (dem: DrawingEntitiesManager) =>
   [...dem.monomers.values()].find(
-    (monomer) => monomer.monomerItem.label === label,
+    (monomer) => monomer.monomerItem.props.isMicromoleculeFragment,
   ) as BaseMonomer;
 
 const addReactionEntities = (dem: DrawingEntitiesManager) => {
@@ -176,18 +175,20 @@ describe('MacromoleculesConverter', () => {
         expect(clone('G')).toBeInstanceOf(Peptide);
         expect(clone('Sp')).toBeInstanceOf(Chem);
         // Clones keep position and own a copy of the monomer struct.
-        expect(clone('A').position).toEqual(findByLabel(dem, 'A').position);
+        expect(clone('A').position).toEqual(
+          findMonomerByLabel(dem, 'A').position,
+        );
         expect(clone('A').monomerItem.struct).not.toBe(
-          findByLabel(dem, 'A').monomerItem.struct,
+          findMonomerByLabel(dem, 'A').monomerItem.struct,
         );
         expect(clone('A').monomerItem.struct.atoms.size).toBe(
-          findByLabel(dem, 'A').monomerItem.struct.atoms.size,
+          findMonomerByLabel(dem, 'A').monomerItem.struct.atoms.size,
         );
       });
 
       it('rebuilds an ambiguous monomer as an AmbiguousMonomer', () => {
         const dem = createManager();
-        const original = findByLabel(dem, '%');
+        const original = findMonomerByLabel(dem, '%');
         const { struct } = convertPreserving(dem);
 
         const ambiguousClone = [...struct.sgroups.values()]
@@ -222,9 +223,7 @@ describe('MacromoleculesConverter', () => {
   describe('findAtomByMicromoleculeAtomId', () => {
     it('returns the atom with that id inside the micromolecule monomer', () => {
       const dem = createManager();
-      const ring = [...dem.monomers.values()].find(
-        (monomer) => monomer.monomerItem.props.isMicromoleculeFragment,
-      ) as BaseMonomer;
+      const ring = findRing(dem);
 
       const atom = MacromoleculesConverter.findAtomByMicromoleculeAtomId(
         dem,
@@ -241,9 +240,7 @@ describe('MacromoleculesConverter', () => {
 
     it('returns undefined for an unknown atom id or another monomer', () => {
       const dem = createManager();
-      const ring = [...dem.monomers.values()].find(
-        (monomer) => monomer.monomerItem.props.isMicromoleculeFragment,
-      ) as BaseMonomer;
+      const ring = findRing(dem);
 
       expect(
         MacromoleculesConverter.findAtomByMicromoleculeAtomId(dem, 99, ring),
@@ -252,7 +249,7 @@ describe('MacromoleculesConverter', () => {
         MacromoleculesConverter.findAtomByMicromoleculeAtomId(
           dem,
           5,
-          findByLabel(dem, 'A'),
+          findMonomerByLabel(dem, 'A'),
         ),
       ).toBeUndefined();
     });
@@ -266,8 +263,8 @@ describe('MacromoleculesConverter', () => {
           dem,
           new Struct(),
         );
-      const glycine = findByLabel(dem, 'G');
-      const alanine = findByLabel(dem, 'A');
+      const glycine = findMonomerByLabel(dem, 'G');
+      const alanine = findMonomerByLabel(dem, 'A');
       const bond = glycine.attachmentPointsToBonds.R1 as NonNullable<
         typeof glycine.attachmentPointsToBonds.R1
       >;
@@ -295,8 +292,8 @@ describe('MacromoleculesConverter', () => {
           dem,
           new Struct(),
         );
-      const glycine = findByLabel(dem, 'G');
-      const spacerBond = findByLabel(dem, 'Sp').attachmentPointsToBonds
+      const glycine = findMonomerByLabel(dem, 'G');
+      const spacerBond = findMonomerByLabel(dem, 'Sp').attachmentPointsToBonds
         .R2 as NonNullable<BaseMonomer['attachmentPointsToBonds']['R2']>;
 
       expect(

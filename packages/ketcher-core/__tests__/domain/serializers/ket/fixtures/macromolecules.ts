@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import type { KetSerializer } from 'domain/serializers';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+
 // A hand-written macromolecules KET. Counts below are written from this content:
 //   monomer0  peptide A (Alanine):  7 atoms, 6 bonds, attachment points R1, R2
 //   monomer1  peptide G (Glycine):  6 atoms, 5 bonds, attachment points R1, R2
@@ -205,19 +209,6 @@ export const createMacromoleculesKet = (): Record<string, any> => ({
 export const macromoleculesKet = (): string =>
   JSON.stringify(createMacromoleculesKet());
 
-// The same content without the molecule and its connection: only monomers.
-export const createMonomersOnlyKet = (): Record<string, any> => {
-  const ket = createMacromoleculesKet();
-
-  ket.root.nodes = ket.root.nodes.filter(
-    (node: { $ref: string }) => node.$ref !== 'mol0',
-  );
-  ket.root.connections = ket.root.connections.slice(0, 4);
-  delete ket.mol0;
-
-  return ket;
-};
-
 // Peptide A whose R2 is bonded to atom 2 of a benzene ring that is a superatom
 // (SUP S-group) with two attachment points: the ring is read as a monomer-like
 // molecule, so the connection is a polymer bond, not a monomer-to-atom bond.
@@ -262,3 +253,31 @@ export const createSuperatomMoleculeKet = (): Record<string, any> => ({
   monomer0: monomerNode(0, 'A', ALANINE_TEMPLATE_ID, 10),
   [`monomerTemplate-${ALANINE_TEMPLATE_ID}`]: structuredClone(alanineTemplate),
 });
+
+export const deserializeToManager = (
+  serializer: KetSerializer,
+  ket: string,
+): DrawingEntitiesManager => {
+  const result = serializer.deserializeToDrawingEntities(ket);
+
+  if (!result) {
+    throw new Error('The KET was not read');
+  }
+
+  return result.drawingEntitiesManager;
+};
+
+export const findMonomerByLabel = (
+  dem: DrawingEntitiesManager,
+  label: string,
+): BaseMonomer => {
+  const monomer = [...dem.monomers.values()].find(
+    (item) => item.monomerItem.label === label,
+  );
+
+  if (!monomer) {
+    throw new Error(`No monomer with the label ${label}`);
+  }
+
+  return monomer;
+};

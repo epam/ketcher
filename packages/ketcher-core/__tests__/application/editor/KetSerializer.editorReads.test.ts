@@ -3,7 +3,6 @@ import { KetSerializer } from 'domain/serializers';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import { SettingsManager } from 'utilities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -12,6 +11,8 @@ import { coreEditorTheme, polymerEditorTheme } from '../../mock-data';
 import {
   SPACER_TEMPLATE_ID,
   createMacromoleculesKet,
+  deserializeToManager,
+  findMonomerByLabel,
   spacerTemplate,
 } from '../../domain/serializers/ket/fixtures/macromolecules';
 
@@ -32,17 +33,15 @@ describe('KetSerializer reads that depend on the editor', () => {
       },
     });
 
-  const deserializeMonomer = (ket: Record<string, unknown>, label: string) => {
-    const result = serializer.deserializeToDrawingEntities(JSON.stringify(ket));
-    const dem = (result as { drawingEntitiesManager: DrawingEntitiesManager })
-      .drawingEntitiesManager;
-
-    return [...dem.monomers.values()].find(
-      (monomer) => monomer.monomerItem.label === label,
-    ) as BaseMonomer;
-  };
+  const deserializeMonomer = (ket: Record<string, unknown>, label: string) =>
+    findMonomerByLabel(
+      deserializeToManager(serializer, JSON.stringify(ket)),
+      label,
+    );
   const deserializeSpacer = (ket: Record<string, unknown>) =>
     deserializeMonomer(ket, 'Sp');
+  const loadSpacerIntoLibrary = (fields: Record<string, unknown>) =>
+    editor.updateMonomersLibrary(libraryTemplate(fields));
 
   beforeAll(() => {
     KetSerializer.setMonomerFactory(monomerFactory);
@@ -60,6 +59,8 @@ describe('KetSerializer reads that depend on the editor', () => {
     jest.restoreAllMocks();
   });
 
+  // The library only grows, so the test for a missing entry runs before the
+  // tests that load the spacer into it.
   describe('library enrichment of monomer templates', () => {
     it('leaves a template as it is when the library has no template with that id', () => {
       const spacer = deserializeSpacer(createMacromoleculesKet());
@@ -69,22 +70,29 @@ describe('KetSerializer reads that depend on the editor', () => {
     });
 
     it('fills idtAliases and modificationTypes from the live library template with the same id', () => {
-      editor.updateMonomersLibrary(
-        libraryTemplate({
-          idtAliases: { base: 'iSpBase' },
-          modificationTypes: ['Natural amino acid'],
-        }),
-      );
+      loadSpacerIntoLibrary({
+        idtAliases: { base: 'iSpBase' },
+        modificationTypes: ['Natural amino acid'],
+      });
 
-      const spacer = deserializeSpacer(createMacromoleculesKet());
+      const ket = createMacromoleculesKet();
+      const spacer = deserializeSpacer(ket);
 
       expect(spacer.monomerItem.props.idtAliases).toEqual({ base: 'iSpBase' });
       expect(spacer.monomerItem.props.modificationTypes).toEqual([
         'Natural amino acid',
       ]);
+      expect(
+        deserializeMonomer(ket, 'A').monomerItem.props.idtAliases,
+      ).toBeUndefined();
     });
 
     it('keeps the values that the KET template carries itself', () => {
+      loadSpacerIntoLibrary({
+        idtAliases: { base: 'fromLibrary' },
+        modificationTypes: ['Library type'],
+      });
+
       const ket = createMacromoleculesKet();
 
       ket[`monomerTemplate-${SPACER_TEMPLATE_ID}`].modificationTypes = [
@@ -97,17 +105,9 @@ describe('KetSerializer reads that depend on the editor', () => {
       const spacer = deserializeSpacer(ket);
 
       expect(spacer.monomerItem.props.idtAliases).toEqual({ base: 'fromKet' });
-    });
-
-    it('does not touch a template of another id', () => {
-      const ket = createMacromoleculesKet();
-
-      expect(deserializeSpacer(ket).monomerItem.props.idtAliases).toEqual({
-        base: 'iSpBase',
-      });
-      expect(
-        deserializeMonomer(ket, 'A').monomerItem.props.idtAliases,
-      ).toBeUndefined();
+      expect(spacer.monomerItem.props.modificationTypes).toEqual([
+        'Natural amino acid',
+      ]);
     });
   });
 
@@ -154,9 +154,7 @@ describe('KetSerializer reads that depend on the editor', () => {
 
   describe('after the editor is destroyed', () => {
     it('reads a KET without enrichment and without throwing', () => {
-      editor.updateMonomersLibrary(
-        libraryTemplate({ idtAliases: { base: 'iSpBase' } }),
-      );
+      loadSpacerIntoLibrary({ idtAliases: { base: 'iSpBase' } });
       expect(
         deserializeSpacer(createMacromoleculesKet()).monomerItem.props
           .idtAliases,

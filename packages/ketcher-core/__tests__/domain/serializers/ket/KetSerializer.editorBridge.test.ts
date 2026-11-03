@@ -1,27 +1,15 @@
 import { KetSerializer } from 'domain/serializers';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   SPACER_TEMPLATE_ID,
   createMacromoleculesKet,
+  deserializeToManager,
+  findMonomerByLabel,
 } from './fixtures/macromolecules';
 
 const PARSING_ERROR = 'Error during file parsing';
 
 type Library = Record<string, unknown> | null | undefined;
-
-const monomerByLabel = (
-  result: ReturnType<KetSerializer['deserializeToDrawingEntities']>,
-  label: string,
-) => {
-  const dem = (result as { drawingEntitiesManager: DrawingEntitiesManager })
-    .drawingEntitiesManager;
-
-  return [...dem.monomers.values()].find(
-    (monomer) => monomer.monomerItem.label === label,
-  ) as BaseMonomer;
-};
 
 describe('KetSerializer reads of the editor through the bridge', () => {
   const spacerKey = `monomerTemplate-${SPACER_TEMPLATE_ID}`;
@@ -31,6 +19,11 @@ describe('KetSerializer reads of the editor through the bridge', () => {
 
   const deserialize = (ket: Record<string, unknown>) =>
     serializer.deserializeToDrawingEntities(JSON.stringify(ket));
+  const monomerByLabel = (ket: Record<string, unknown>, label: string) =>
+    findMonomerByLabel(
+      deserializeToManager(serializer, JSON.stringify(ket)),
+      label,
+    );
 
   beforeAll(() => {
     KetSerializer.setMonomerFactory(monomerFactory);
@@ -54,10 +47,7 @@ describe('KetSerializer reads of the editor through the bridge', () => {
 
   describe('library enrichment of monomer templates', () => {
     it('fills the four alias fields that the KET template lacks from the library', () => {
-      const spacer = monomerByLabel(
-        deserialize(createMacromoleculesKet()),
-        'Sp',
-      );
+      const spacer = monomerByLabel(createMacromoleculesKet(), 'Sp');
 
       expect(spacer.monomerItem.props.idtAliases).toEqual({ base: 'iSpBase' });
       expect(spacer.monomerItem.props.aliasAxoLabs).toBe('Sp-axo');
@@ -72,17 +62,14 @@ describe('KetSerializer reads of the editor through the bridge', () => {
 
       ket[spacerKey].idtAliases = { base: 'fromKet' };
 
-      const spacer = monomerByLabel(deserialize(ket), 'Sp');
+      const spacer = monomerByLabel(ket, 'Sp');
 
       expect(spacer.monomerItem.props.idtAliases).toEqual({ base: 'fromKet' });
       expect(spacer.monomerItem.props.aliasBILN).toBe('Sp-biln');
     });
 
     it('leaves a template as it is when the library has no template with its id', () => {
-      const alanine = monomerByLabel(
-        deserialize(createMacromoleculesKet()),
-        'A',
-      );
+      const alanine = monomerByLabel(createMacromoleculesKet(), 'A');
 
       expect(alanine.monomerItem.props.idtAliases).toBeUndefined();
       expect(alanine.monomerItem.props.modificationTypes).toBeUndefined();
@@ -93,10 +80,7 @@ describe('KetSerializer reads of the editor through the bridge', () => {
       (value) => {
         library = value;
 
-        const spacer = monomerByLabel(
-          deserialize(createMacromoleculesKet()),
-          'Sp',
-        );
+        const spacer = monomerByLabel(createMacromoleculesKet(), 'Sp');
 
         expect(spacer.monomerItem.props.idtAliases).toBeUndefined();
         expect(spacer.monomerItem.props.modificationTypes).toBeUndefined();

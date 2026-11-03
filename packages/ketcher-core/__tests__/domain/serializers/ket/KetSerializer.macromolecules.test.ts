@@ -1,6 +1,6 @@
 import { KetSerializer } from 'domain/serializers';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
-import { MacromoleculesConverter } from 'application/editor';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -16,6 +16,8 @@ import {
   benzeneMolecule,
   createMacromoleculesKet,
   createSuperatomMoleculeKet,
+  deserializeToManager,
+  findMonomerByLabel,
   macromoleculesKet,
 } from './fixtures/macromolecules';
 
@@ -27,16 +29,6 @@ const monomersOf = (dem: DrawingEntitiesManager): BaseMonomer[] => [
   ...dem.monomers.values(),
 ];
 
-const findByLabel = (dem: DrawingEntitiesManager, label: string) => {
-  const monomer = monomersOf(dem).find(
-    (item) => item.monomerItem.label === label,
-  );
-
-  expect(monomer).toBeDefined();
-
-  return monomer as BaseMonomer;
-};
-
 describe('KetSerializer macromolecules without an editor', () => {
   beforeAll(() => {
     KetSerializer.setMonomerFactory(monomerFactory);
@@ -44,11 +36,7 @@ describe('KetSerializer macromolecules without an editor', () => {
 
   describe('deserializeToDrawingEntities', () => {
     it('creates the monomers, the ambiguous monomer and the molecule fragment', () => {
-      const result =
-        serializer.deserializeToDrawingEntities(macromoleculesKet());
-
-      expect(result).toBeDefined();
-      const dem = (result as NonNullable<typeof result>).drawingEntitiesManager;
+      const dem = deserializeToManager(serializer, macromoleculesKet());
       const monomers = monomersOf(dem);
 
       expect(monomers).toHaveLength(5);
@@ -70,20 +58,18 @@ describe('KetSerializer macromolecules without an editor', () => {
           (item) => item.monomerItem.props.isMicromoleculeFragment,
         ),
       ).toHaveLength(1);
-      expect(findByLabel(dem, 'A')).toBeInstanceOf(Peptide);
-      expect(findByLabel(dem, 'G')).toBeInstanceOf(Peptide);
-      expect(findByLabel(dem, 'Sp')).toBeInstanceOf(Chem);
-      expect(findByLabel(dem, '%')).toBeInstanceOf(AmbiguousMonomer);
+      expect(findMonomerByLabel(dem, 'A')).toBeInstanceOf(Peptide);
+      expect(findMonomerByLabel(dem, 'G')).toBeInstanceOf(Peptide);
+      expect(findMonomerByLabel(dem, 'Sp')).toBeInstanceOf(Chem);
+      expect(findMonomerByLabel(dem, '%')).toBeInstanceOf(AmbiguousMonomer);
     });
 
     it('creates the polymer bonds with their attachment points and the hydrogen bond', () => {
-      const result =
-        serializer.deserializeToDrawingEntities(macromoleculesKet());
-      const dem = (result as NonNullable<typeof result>).drawingEntitiesManager;
-      const alanine = findByLabel(dem, 'A');
-      const glycine = findByLabel(dem, 'G');
-      const spacer = findByLabel(dem, 'Sp');
-      const ambiguous = findByLabel(dem, '%');
+      const dem = deserializeToManager(serializer, macromoleculesKet());
+      const alanine = findMonomerByLabel(dem, 'A');
+      const glycine = findMonomerByLabel(dem, 'G');
+      const spacer = findMonomerByLabel(dem, 'Sp');
+      const ambiguous = findMonomerByLabel(dem, '%');
       const bonds = [...dem.polymerBonds.values()];
       const hydrogenBonds = bonds.filter(
         (bond) => bond instanceof HydrogenBond,
@@ -127,10 +113,8 @@ describe('KetSerializer macromolecules without an editor', () => {
     });
 
     it('connects the monomer R1 to the atom of the molecule', () => {
-      const result =
-        serializer.deserializeToDrawingEntities(macromoleculesKet());
-      const dem = (result as NonNullable<typeof result>).drawingEntitiesManager;
-      const alanine = findByLabel(dem, 'A');
+      const dem = deserializeToManager(serializer, macromoleculesKet());
+      const alanine = findMonomerByLabel(dem, 'A');
       const moleculeFragment = monomersOf(dem).find(
         (item) => item.monomerItem.props.isMicromoleculeFragment,
       ) as BaseMonomer;
@@ -153,9 +137,7 @@ describe('KetSerializer macromolecules without an editor', () => {
     });
 
     it('creates the atoms and bonds of the molecule', () => {
-      const result =
-        serializer.deserializeToDrawingEntities(macromoleculesKet());
-      const dem = (result as NonNullable<typeof result>).drawingEntitiesManager;
+      const dem = deserializeToManager(serializer, macromoleculesKet());
 
       expect(dem.atoms.size).toBe(6);
       expect(dem.bonds.size).toBe(6);
@@ -206,16 +188,9 @@ describe('KetSerializer macromolecules without an editor', () => {
   });
 
   describe('serialize', () => {
-    const deserializeToManager = (ket: string) =>
-      (
-        serializer.deserializeToDrawingEntities(ket) as NonNullable<
-          ReturnType<typeof serializer.deserializeToDrawingEntities>
-        >
-      ).drawingEntitiesManager;
-
     it('serializeMacromolecules writes the monomer nodes, the connections and the molecule endpoint of a monomer-to-molecule bond', () => {
       const source = createMacromoleculesKet();
-      const dem = deserializeToManager(JSON.stringify(source));
+      const dem = deserializeToManager(serializer, JSON.stringify(source));
 
       const { serializedMacromolecules, micromoleculesStruct } =
         serializer.serializeMacromolecules(new Struct(), dem);
@@ -238,7 +213,7 @@ describe('KetSerializer macromolecules without an editor', () => {
 
     it('serializeMacromolecules writes the molecule endpoint of a polymer bond to a superatom molecule', () => {
       const source = createSuperatomMoleculeKet();
-      const dem = deserializeToManager(JSON.stringify(source));
+      const dem = deserializeToManager(serializer, JSON.stringify(source));
 
       expect(dem.polymerBonds.size).toBe(1);
       expect(dem.monomerToAtomBonds.size).toBe(0);

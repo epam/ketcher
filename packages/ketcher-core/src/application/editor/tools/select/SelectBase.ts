@@ -108,7 +108,7 @@ abstract class SelectBase implements BaseTool {
   };
   private static readonly AUTO_SCROLL_EDGE_THRESHOLD = 15; // pixels from edge to trigger auto-scroll
   private static readonly AUTO_SCROLL_SPEED = 5; // pixels to scroll per frame
-  private autoScrollRafId: number | null = null;
+  private autoScrollRequestAnimationFrameID: number | null = null;
   private autoScrollDelta: Vec2 = new Vec2(0, 0);
 
   /**
@@ -1064,16 +1064,19 @@ abstract class SelectBase implements BaseTool {
     this.autoScrollDelta.x = deltaX;
     this.autoScrollDelta.y = deltaY;
 
-    if (this.autoScrollRafId === null) {
-      this.autoScrollRafId = requestAnimationFrame(() =>
+    if (this.autoScrollRequestAnimationFrameID === null) {
+      this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
         this.performAutoScroll(),
       );
     }
   }
 
   private performAutoScroll() {
-    if (this.mode !== 'selecting' || this.autoScrollRafId === null) {
-      this.autoScrollRafId = null;
+    if (
+      this.mode !== 'selecting' ||
+      this.autoScrollRequestAnimationFrameID === null
+    ) {
+      this.autoScrollRequestAnimationFrameID = null;
       return;
     }
 
@@ -1081,7 +1084,7 @@ abstract class SelectBase implements BaseTool {
       this.autoScrollDelta.x,
       this.autoScrollDelta.y,
     );
-    this.autoScrollRafId = requestAnimationFrame(() =>
+    this.autoScrollRequestAnimationFrameID = requestAnimationFrame(() =>
       this.performAutoScroll(),
     );
   }
@@ -1478,9 +1481,9 @@ abstract class SelectBase implements BaseTool {
   }
 
   private cancelAutoScroll() {
-    if (this.autoScrollRafId !== null) {
-      cancelAnimationFrame(this.autoScrollRafId);
-      this.autoScrollRafId = null;
+    if (this.autoScrollRequestAnimationFrameID !== null) {
+      cancelAnimationFrame(this.autoScrollRequestAnimationFrameID);
+      this.autoScrollRequestAnimationFrameID = null;
     }
     this.autoScrollDelta.x = 0;
     this.autoScrollDelta.y = 0;

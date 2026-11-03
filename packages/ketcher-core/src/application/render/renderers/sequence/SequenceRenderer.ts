@@ -543,11 +543,11 @@ export class SequenceRenderer {
       const antisenseRenderer = twoStrandedNode.antisenseNode?.renderer;
 
       if (senseRenderer instanceof BaseSequenceItemRenderer) {
-        senseRenderer.redrawCounter(caretPosition);
+        senseRenderer.redrawCounter();
       }
 
       if (antisenseRenderer instanceof BaseSequenceItemRenderer) {
-        antisenseRenderer.redrawCounter(caretPosition);
+        antisenseRenderer.redrawCounter();
       }
     });
   }

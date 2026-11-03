@@ -146,13 +146,6 @@ The hub SHALL read the round number from the marker of the previous brief, and S
 - **AND** a comment states that the round limit is reached
 
 ### Requirement: Configurable models
-The finder model and the verifier model SHALL each be set by exact model identifier in the hub configuration. Command-line flags SHALL override them locally, and the `Claude Review: Opus` label SHALL use the configured stronger model for both roles.
-
-#### Scenario: Opus label
-- **WHEN** a maintainer adds `Claude Review: Opus`
-- **THEN** finder and verifier runs use the configured stronger model
-
-### Requirement: Configurable models
 The finder model and the verifier model SHALL each be set by exact model identifier in the hub configuration. Repository variables SHALL override them in CI without a code change, command-line flags SHALL override them locally, and the `Claude Review: Opus` label SHALL use the configured stronger model for both roles. When a configured model is not available, a run SHALL fall back to the same model family, and the brief SHALL name the model that ran.
 
 #### Scenario: Opus label

@@ -32,6 +32,7 @@ const CODE = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
 /** @type {Trigger[]} Order is the order the panel lists the lenses in. */
 export const TRIGGERS = [
   { lens: 'correctness', anySource: true },
+  { lens: 'reuse', anySource: true },
   { lens: 'code-quality', paths: [CODE] },
   {
     lens: 'performance',

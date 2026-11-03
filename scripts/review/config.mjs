@@ -9,18 +9,8 @@
 /** Folder of the lens and role prompts, relative to the base checkout. */
 export const PROMPT_DIR = '.agents/skills/code-review';
 
-/** Lenses of a Standard review, in the order they are started. */
-export const STANDARD_LENSES = [
-  'correctness',
-  'reuse',
-  'code-quality',
-  'security',
-  'performance',
-  'documentation-accuracy',
-];
-
-/** Lenses of a Quick review. */
-export const QUICK_LENSES = ['correctness'];
+// The lenses of a review come from scripts/review-panel.mjs, so the hub,
+// /review-pr and ketcher-flow pick the same lenses for the same diff.
 
 /** Prompt file of the verifier role, in PROMPT_DIR. */
 export const VERIFIER_ROLE = 'verifier';
@@ -28,7 +18,6 @@ export const VERIFIER_ROLE = 'verifier';
 /** Labels that start a review. The hub removes the one that started the run. */
 export const LABELS = {
   standard: 'Run Claude Review',
-  quick: 'Claude Review: Quick',
   opus: 'Claude Review: Opus',
 };
 
@@ -43,22 +32,12 @@ export const MODELS = {
 };
 
 /**
- * `oauth` runs `claude -p --safe-mode` with CLAUDE_CODE_OAUTH_TOKEN.
- * `api-key` runs `claude -p --bare` with ANTHROPIC_API_KEY.
+ * `oauth` runs `claude -p --safe-mode --restricted` with CLAUDE_CODE_OAUTH_TOKEN.
+ * `api-key` runs `claude -p --bare --restricted` with ANTHROPIC_API_KEY.
  */
 export const AUTH_MODE = 'oauth';
 
-/** A diff at or below this many changed lines gets a Quick review, unless it touches a sensitive path. */
-export const QUICK_MAX_CHANGED_LINES = 100;
-
-/** A diff that touches one of these paths always gets a Standard review. */
-export const SENSITIVE_PATHS = [
-  'packages/ketcher-core/src/application/editor/**',
-  'packages/ketcher-core/src/application/formatters/**',
-  'packages/ketcher-core/src/domain/serializers/**',
-];
-
-/** Files the finder passes never see. They do not count toward the changed lines. */
+/** Files the finder passes never see. The panel is picked without them. */
 export const SKIP_PATHS = [
   'ketcher-autotests/**',
   '**/package-lock.json',

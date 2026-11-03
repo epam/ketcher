@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { globToRegExp } from '../agent-docs/paths.mjs';
+import { TRIGGERS } from '../review-panel.mjs';
 import {
   LABELS,
   MAX_INLINE_COMMENTS,
@@ -11,26 +12,18 @@ import {
   MAX_VERIFIED_FINDINGS,
   MODELS,
   PROMPT_DIR,
-  QUICK_LENSES,
   RUN_LIMITS,
-  SENSITIVE_PATHS,
   SKIP_PATHS,
-  STANDARD_LENSES,
   VERIFIER_ROLE,
 } from './config.mjs';
 
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
 
-test('every lens and the verifier role have a prompt file', () => {
-  for (const name of [...STANDARD_LENSES, VERIFIER_ROLE]) {
+test('every lens the panel can pick and the verifier role have a prompt file', () => {
+  const names = [...TRIGGERS.map((trigger) => trigger.lens), VERIFIER_ROLE];
+  for (const name of names) {
     const file = join(repoRoot, PROMPT_DIR, `${name}.md`);
     assert.ok(existsSync(file), `missing prompt file ${file}`);
-  }
-});
-
-test('Quick lenses are a subset of the Standard lenses', () => {
-  for (const lens of QUICK_LENSES) {
-    assert.ok(STANDARD_LENSES.includes(lens), `${lens} is not a Standard lens`);
   }
 });
 
@@ -45,18 +38,14 @@ test('model IDs are exact IDs, not aliases', () => {
   }
 });
 
-test('no sensitive path is skipped', () => {
+test('no source file is skipped', () => {
   const skip = SKIP_PATHS.map(globToRegExp);
-  const samples = [
+  for (const file of [
     'packages/ketcher-core/src/application/editor/Editor.ts',
-    'packages/ketcher-core/src/application/formatters/formatterFactory.ts',
     'packages/ketcher-core/src/domain/serializers/ket/ketSerializer.ts',
-  ];
-  for (const file of samples) {
-    assert.ok(
-      SENSITIVE_PATHS.some((glob) => globToRegExp(glob).test(file)),
-      `${file} is not sensitive`,
-    );
+    'packages/ketcher-react/src/script/ui/App.tsx',
+    'packages/ketcher-macromolecules/src/Editor.tsx',
+  ]) {
     assert.ok(!skip.some((re) => re.test(file)), `${file} is skipped`);
   }
 });

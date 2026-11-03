@@ -46,7 +46,7 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 
 **Macro operation categories:** monomers, polymer bonds, drawing entities, core atoms/bonds/reactions/S-groups, monomer-to-atom bonds, monomer creation, and editor modes.
 
-The macro operations that the drawing-entities manager builds live in `domain/operations/`, beside `Command` and `Operation`, and call the renderers only through the renderers manager they receive (see [the ADR](../adr/2026-11-03-macro-operations-live-in-domain.md)). The mode-reinitialize operation stays in the application layer because it drives the editor's mode; the manager gets it from its editor port. The micro operations, the monomer flip/rotate/shift operations, and the monomer-creation operations stay in `application/editor/operations/`.
+The macro operations that the drawing-entities manager builds live in `domain/operations/`, beside `Command` and `Operation` (see [the ADR](../adr/2026-11-03-macro-operations-live-in-domain.md)). The mode-reinitialize operation stays in the application layer, and the manager gets it from its editor port.
 
 **Command** groups operations:
 

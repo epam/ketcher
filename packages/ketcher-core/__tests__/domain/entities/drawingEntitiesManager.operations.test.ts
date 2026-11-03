@@ -535,6 +535,14 @@ describe('DrawingEntitiesManager builds these operations', () => {
       const first = addPeptide(editor, 'A', 0, 0);
       const second = addPeptide(editor, 'A', 3, 0);
       const polymerBond = startDrawnBond(first);
+      const hoverMonomer = jest.spyOn(
+        editor.renderersContainer,
+        'hoverMonomer',
+      );
+      const hoverAttachmentPoint = jest.spyOn(
+        editor.renderersContainer,
+        'hoverAttachmentPoint',
+      );
 
       const command = dem.intendToFinishAttachmenPointBondCreation(
         second,
@@ -547,6 +555,20 @@ describe('DrawingEntitiesManager builds these operations', () => {
         ['MonomerHoverOperation', undefined],
         ['AttachmentPointHoverOperation', undefined],
       ]);
+      expect(second.hovered).toBe(true);
+
+      command.execute(editor.renderersContainer);
+      expect(hoverMonomer).toHaveBeenCalledTimes(1);
+      expect(hoverMonomer).toHaveBeenCalledWith(first, true);
+      expect(hoverAttachmentPoint).toHaveBeenCalledTimes(1);
+      expect(hoverAttachmentPoint).toHaveBeenCalledWith(
+        second,
+        AttachmentPointName.R1,
+      );
+
+      command.invert(editor.renderersContainer);
+      expect(hoverMonomer).toHaveBeenCalledTimes(1);
+      expect(hoverAttachmentPoint).toHaveBeenCalledTimes(1);
     });
 
     it('redraws an entity through the model changes it is given', () => {
@@ -628,6 +650,18 @@ describe('DrawingEntitiesManager builds these operations', () => {
         ['MonomerItemModifyOperation', undefined],
         ['MonomerItemModifyOperation', undefined],
       ]);
+      expect([
+        first.monomerItem.isSense,
+        first.monomerItem.isAntisense,
+      ]).toEqual([true, false]);
+      expect([
+        second.monomerItem.isSense,
+        second.monomerItem.isAntisense,
+      ]).toEqual([true, false]);
+
+      command.execute(editor.renderersContainer);
+      expect(first.monomerItem.isSense).toBe(true);
+      expect(second.monomerItem.isSense).toBe(true);
     });
 
     it('cancels a started bond for good', () => {

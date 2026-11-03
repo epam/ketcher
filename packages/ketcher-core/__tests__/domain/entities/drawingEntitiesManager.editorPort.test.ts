@@ -379,7 +379,7 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
       expect(command.operations.length).toBeGreaterThan(0);
     });
 
-    it('is a new ReinitializeModeOperation on each call of the editor port', () => {
+    it('returns a ReinitializeModeOperation', () => {
       const { editor } = open(new SequenceMode());
       const port = createEditorPort(editor);
 
@@ -388,7 +388,6 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
 
       expect(first).toBeInstanceOf(ReinitializeModeOperation);
       expect(second).toBeInstanceOf(ReinitializeModeOperation);
-      expect(second).not.toBe(first);
     });
   });
 

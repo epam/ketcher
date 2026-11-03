@@ -2,7 +2,10 @@ import { CoreEditor, FlexMode } from 'application/editor';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
-import type { IKetTemplateConnection } from 'application/formatters/types/ket';
+import {
+  type IKetTemplateConnection,
+  KetConnectionType,
+} from 'application/formatters/types/ket';
 import { ZoomTransform } from 'd3';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -41,7 +44,7 @@ const ADENINE = 'monomerTemplate-A___Adenine';
 const PHOSPHATE = 'monomerTemplate-P___Phosphate';
 
 const baseToSugar: IKetTemplateConnection = {
-  connectionType: 'single' as IKetTemplateConnection['connectionType'],
+  connectionType: KetConnectionType.SINGLE,
   endpoint1: { templateId: ADENINE, attachmentPointId: AttachmentPointName.R1 },
   endpoint2: { templateId: RIBOSE, attachmentPointId: AttachmentPointName.R3 },
 };
@@ -50,7 +53,7 @@ const sugarToPhosphate = (
   sugarPoint: AttachmentPointName,
   phosphatePoint: AttachmentPointName,
 ): IKetTemplateConnection => ({
-  connectionType: 'single' as IKetTemplateConnection['connectionType'],
+  connectionType: KetConnectionType.SINGLE,
   endpoint1: { templateId: RIBOSE, attachmentPointId: sugarPoint },
   endpoint2: { templateId: PHOSPHATE, attachmentPointId: phosphatePoint },
 });

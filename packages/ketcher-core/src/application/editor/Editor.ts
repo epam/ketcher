@@ -312,6 +312,13 @@ export class CoreEditor {
 
   public mode: BaseMode;
   public sequenceTypeEnterMode = SequenceType.RNA;
+  // True while a macromolecules dialog is open, so the canvas does not react
+  // to clipboard paste behind it (as in micro mode)
+  private isModalOpen = false;
+
+  public setIsModalOpen(isModalOpen: boolean) {
+    this.isModalOpen = isModalOpen;
+  }
 
   public get isMonomerWizardSessionActive() {
     return Boolean(this.monomerWizardMode);
@@ -1238,7 +1245,7 @@ export class CoreEditor {
     };
     this.pasteEventHandler = (event: ClipboardEvent) => {
       // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
-      if (this._type === EditorType.Micromolecules) {
+      if (this._type === EditorType.Micromolecules || this.isModalOpen) {
         return;
       }
 

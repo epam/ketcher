@@ -130,10 +130,16 @@ function getRootReducer(
       }
     }
 
+    // The modal reducer runs inside `shared`, so the dialog state it produces is not
+    // visible here yet. It is pure, so reducing it up front gives the action-state
+    // reducer the dialog state of the same pass instead of the previous one.
+    const nextModal = modalReducer(updatedState.modal ?? null, action);
+
     // Slices missing from the preloaded state are filled in by the shared reducers
     const sh = shared(updatedState as RootState, {
       ...action,
       ...pick(['editor', 'server', 'options'], updatedState),
+      isSettingsPanelOpen: nextModal?.name === 'settings',
     });
 
     const finalState = {

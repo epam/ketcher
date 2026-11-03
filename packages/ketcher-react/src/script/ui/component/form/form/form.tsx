@@ -106,6 +106,9 @@ export interface FieldProps {
   className?: string;
   extraName?: string;
   tooltip?: string;
+  /** Description rendered as static text beneath the control, instead of a hover tooltip */
+  hint?: string;
+  hintAlign?: 'left' | 'right';
   extraLabel?: string;
   schema?: SchemaProperty | unknown[];
   extraSchema?: SchemaProperty;
@@ -146,6 +149,15 @@ interface KetcherSchema extends Schema {
 type FormValidationError = ValidationError & {
   schema: KetcherSchema;
 };
+
+const updateFieldValue = (
+  result: Record<string, unknown>,
+  fieldName: string,
+  val: unknown,
+) =>
+  val === undefined
+    ? omit(result, [fieldName])
+    : { ...result, [fieldName]: val };
 
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
@@ -201,12 +213,17 @@ class Form extends Component<FormProps> {
       value,
       extraValue,
       onChange: (val: unknown) => {
-        const newState = { ...this.props.result, [name]: val };
+        const newState = updateFieldValue(this.props.result, name, val);
         this.updateState(newState);
         if (onChange) onChange(val);
       },
       onExtraChange: (val: unknown) => {
-        const newState = { ...this.props.result, [extraName ?? '']: val };
+        const extraFieldName = extraName ?? '';
+        const newState = updateFieldValue(
+          this.props.result,
+          extraFieldName,
+          val,
+        );
         this.updateState(newState);
       },
     };
@@ -337,8 +354,11 @@ function Field(props: Readonly<FieldProps>) {
     labelPos,
     className,
     extraLabel,
+    hint,
+    hintAlign,
     ...rest
   } = props;
+  const { t } = useTranslation();
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -378,16 +398,37 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
+  // A hint replaces the hover tooltip: the description is always readable as static
+  // text under the control, so the field keeps its own layout and grows downwards.
+  const withHint = (field: React.ReactNode) =>
+    hint ? (
+      <div className={classes.fieldWithHint}>
+        {field}
+        <span
+          className={clsx(classes.fieldHint, {
+            [classes.fieldHintRight]: hintAlign === 'right',
+          })}
+          data-testid={
+            props['data-testid'] ? `${props['data-testid']}-hint` : undefined
+          }
+        >
+          {resolveTranslatableText(hint, t)}
+        </span>
+      </div>
+    ) : (
+      field
+    );
+
   if (labelPos === false) {
     if (Component) {
-      return formField;
+      return withHint(formField);
     }
 
     const isSelectableControl =
       rest.type === 'radio' || rest.type === 'checkbox';
     const shouldShowError = Boolean(dataError) && !isSelectableControl;
 
-    return (
+    return withHint(
       <>
         <span
           className={clsx({ [classes.dataError]: shouldShowError }, className)}
@@ -414,10 +455,10 @@ function Field(props: Readonly<FieldProps>) {
             onClose={handlePopoverClose}
           />
         )}
-      </>
+      </>,
     );
   }
-  return (
+  return withHint(
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       title={rest.title ?? desc.title}
@@ -443,7 +484,7 @@ function Field(props: Readonly<FieldProps>) {
         />
       )}
       {extraLabel && <Label className={classes.extraLabel}>{extraLabel}</Label>}
-    </Label>
+    </Label>,
   );
 }
 

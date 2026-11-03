@@ -57,7 +57,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-workspaces": "^0.12.1",
     "eslint-scope": "9.1.2",
-    "glob": "^13.0.6",
+    "glob": "^14.0.2",
     "husky": "^8.0.3",
     "lint-staged": "^16.1.0",
     "npm-run-all2": "^9.0.3",
@@ -88,7 +88,7 @@
   },
   "dependencies": {
     "@playwright/test": "^1.62.1",
-    "minimatch": "^10.2.6",
+    "minimatch": "^11.0.1",
     "miew": "0.11.1",
     "playwright": "^1.62.1",
     "playwright-core": "^1.62.1",

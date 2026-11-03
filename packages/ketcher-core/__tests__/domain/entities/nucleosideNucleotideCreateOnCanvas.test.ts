@@ -3,7 +3,7 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import {
   getMonomerSize,
   setMonomerSize,
-} from 'application/render/renderers/monomerSizeState';
+} from 'domain/helpers/monomerSizeState';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { type BaseMonomer, Vec2 } from 'domain/entities';

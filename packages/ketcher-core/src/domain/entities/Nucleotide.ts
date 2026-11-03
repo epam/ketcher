@@ -10,7 +10,7 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { Coordinates } from 'domain/helpers/coordinates';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import {
@@ -20,7 +20,7 @@ import {
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
+import { getMonomerSize } from 'domain/helpers/monomerSizeState';
 
 export class Nucleotide {
   private readonly monomersCache: BaseMonomer[] = [];

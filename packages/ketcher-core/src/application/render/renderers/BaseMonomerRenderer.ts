@@ -318,7 +318,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
       isDragCircleHover:
         this._dragCircleHoverAttachmentPoint === attachmentPointName,
-      editorEvents,
+      editorEvents: this.editorEvents,
       isSnakeLayoutMode: () =>
         provideEditorInstance().mode.modeName === 'snake-layout-mode',
     };

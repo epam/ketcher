@@ -1,3 +1,5 @@
+// Binds Coordinates to the editor settings and zoom, as the app does at startup.
+import 'application/editor/shared/coordinates';
 import { ZoomTransform } from 'd3';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { getSearchFunction } from 'domain/helpers/attachmentPointCalculations';

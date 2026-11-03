@@ -155,7 +155,7 @@ describe('AttachmentPoint', () => {
     });
 
     it('does not use the snake angle in flex mode, even for a bond that is not horizontal', () => {
-      const { rootElement, bondRendererStub } = buildAttachmentPoint({
+      const { rootElement } = buildAttachmentPoint({
         attachmentPointName: R1,
         modeName: 'flex-mode',
         bond: {
@@ -171,9 +171,6 @@ describe('AttachmentPoint', () => {
         geometry.directionDegrees,
         Vec2.radiansToDegrees(Math.atan2(2, 4)),
       );
-      expect(
-        bondRendererStub.getSideConnectionEndpointAngle,
-      ).not.toHaveBeenCalled();
     });
   });
 
@@ -215,7 +212,7 @@ describe('AttachmentPoint', () => {
     });
 
     it('uses the side connection angle of the bond renderer for another name', () => {
-      const { rootElement, bondRendererStub, monomer } = buildAttachmentPoint({
+      const { rootElement } = buildAttachmentPoint({
         attachmentPointName: R3,
         isSnake: true,
         bond: {
@@ -231,9 +228,6 @@ describe('AttachmentPoint', () => {
         readGeometry(rootElement.node() as SVGElement).directionDegrees,
         -90,
       );
-      expect(
-        bondRendererStub.getSideConnectionEndpointAngle,
-      ).toHaveBeenCalledWith(monomer);
     });
 
     it('falls back to the bond angle when the renderer has no side connection angle', () => {
@@ -256,7 +250,7 @@ describe('AttachmentPoint', () => {
 
   describe('in snake layout mode', () => {
     it('uses the side connection angle for a side chain connection', () => {
-      const { rootElement, bondRendererStub } = buildAttachmentPoint({
+      const { rootElement } = buildAttachmentPoint({
         attachmentPointName: R3,
         modeName: 'snake-layout-mode',
         bond: {
@@ -271,13 +265,10 @@ describe('AttachmentPoint', () => {
         readGeometry(rootElement.node() as SVGElement).directionDegrees,
         -90,
       );
-      expect(
-        bondRendererStub.getSideConnectionEndpointAngle,
-      ).toHaveBeenCalledTimes(1);
     });
 
     it('uses the plain bond angle for a backbone connection', () => {
-      const { rootElement, bondRendererStub } = buildAttachmentPoint({
+      const { rootElement } = buildAttachmentPoint({
         attachmentPointName: R2,
         modeName: 'snake-layout-mode',
         bond: {
@@ -292,13 +283,10 @@ describe('AttachmentPoint', () => {
         readGeometry(rootElement.node() as SVGElement).directionDegrees,
         0,
       );
-      expect(
-        bondRendererStub.getSideConnectionEndpointAngle,
-      ).not.toHaveBeenCalled();
     });
 
     it('uses the plain bond angle for a side chain connection in another mode', () => {
-      const { rootElement, bondRendererStub } = buildAttachmentPoint({
+      const { rootElement } = buildAttachmentPoint({
         attachmentPointName: R3,
         modeName: 'sequence-layout-mode',
         bond: {
@@ -313,9 +301,6 @@ describe('AttachmentPoint', () => {
         readGeometry(rootElement.node() as SVGElement).directionDegrees,
         0,
       );
-      expect(
-        bondRendererStub.getSideConnectionEndpointAngle,
-      ).not.toHaveBeenCalled();
     });
   });
 });

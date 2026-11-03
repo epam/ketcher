@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 import {
+  type Action,
   type Struct,
   type EditorTemplate,
   fromItemsFuse,
@@ -39,6 +40,15 @@ import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 
 let isMovePreviewCalculationInProgress = false;
 
+type PasteItems = ReturnType<typeof fromPaste>[1];
+
+interface AttachDragContext {
+  targetAtomId: number;
+  template: EditorTemplate;
+  action?: Action;
+  angle?: number;
+}
+
 const debouncedSetAndHoverMergeItems = debounce(function (
   editor,
   pasteItems,
@@ -60,6 +70,8 @@ class PasteTool implements Tool {
   private action: any;
   private dragCtx: any;
   private mergeItems: any;
+  private attachDragCtx: AttachDragContext | null = null;
+  private pastedAtomIdToStructAtomId = new Map<number, number>();
   private readonly isSingleContractedGroup: boolean;
 
   constructor(editor, struct) {
@@ -87,6 +99,7 @@ class PasteTool implements Tool {
 
     const [action, pasteItems] = fromPaste(rnd.ctab, this.struct, point);
     this.action = action;
+    this.setPastedAtoms(pasteItems);
     this.editor.update(this.action, true);
 
     this.editor.update(this.action, true);
@@ -102,11 +115,136 @@ class PasteTool implements Tool {
     return this.editor.render.ctab;
   }
 
-  mousedown(event) {
+  // fromTemplateOnAtom copies only atoms, bonds and s-groups of one fragment
+  private get canAttachByBond() {
+    const struct = this.struct;
+    return (
+      struct.atoms.size > 0 &&
+      struct.frags.size === 1 &&
+      struct.attachmentGroups.size === 0 &&
+      struct.rgroupAttachmentPoints.size === 0 &&
+      struct.rxnArrows.size === 0 &&
+      struct.rxnPluses.size === 0 &&
+      struct.simpleObjects.size === 0 &&
+      struct.texts.size === 0 &&
+      struct.images.size === 0 &&
+      struct.multitailArrows.size === 0 &&
+      ![...struct.atoms.keys()].some((aid) =>
+        struct.isAtomFromMacromolecule(aid),
+      )
+    );
+  }
+
+  private setPastedAtoms(pasteItems: PasteItems) {
+    // fromPaste adds one atom per struct atom, in struct order
+    const structAtomIds = [...this.struct.atoms.keys()];
+    this.pastedAtomIdToStructAtomId = new Map(
+      pasteItems.atoms.map((pastedAtomId, index) => [
+        pastedAtomId,
+        structAtomIds[index],
+      ]),
+    );
+  }
+
+  /**
+   * Picks the existing atom the pasted structure is about to merge with,
+   * so that dragging away from it attaches the structure by a new bond.
+   */
+  private createAttachDragContext(event: MouseEvent): AttachDragContext | null {
+    const atomsToMerge: Map<number, number> | undefined =
+      this.mergeItems?.atoms;
+    if (!atomsToMerge?.size || !this.canAttachByBond) {
+      return null;
+    }
+
+    const cursor = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
+    const struct = this.editor.struct();
+    let closestPair: [pastedAtomId: number, targetAtomId: number] | null = null;
+    let minDistance = Infinity;
+
+    for (const [pastedAtomId, targetAtomId] of atomsToMerge) {
+      const targetAtom = struct.atoms.get(targetAtomId);
+      if (!targetAtom) {
+        continue;
+      }
+      const distance = Vec2.dist(targetAtom.pp, cursor);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPair = [pastedAtomId, targetAtomId];
+      }
+    }
+
+    if (!closestPair) {
+      return null;
+    }
+    const [pastedAtomId, targetAtomId] = closestPair;
+    const templateAtomId = this.pastedAtomIdToStructAtomId.get(pastedAtomId);
+    if (templateAtomId === undefined) {
+      return null;
+    }
+
+    return {
+      targetAtomId,
+      template: prepareTemplate(this.struct, templateAtomId),
+    };
+  }
+
+  private moveAttachDrag(attachDragCtx: AttachDragContext, event: MouseEvent) {
+    const targetPos = this.editor
+      .struct()
+      .atoms.get(attachDragCtx.targetAtomId)?.pp;
+    if (!targetPos) {
+      return;
+    }
+    const cursor = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
+
+    // keep the merge preview until the cursor leaves the target atom
+    if (!attachDragCtx.action && Vec2.dist(targetPos, cursor) <= 1) {
+      return;
+    }
+
+    if (this.action) {
+      debouncedSetAndHoverMergeItems.cancel();
+      this.action.perform(this.restruct);
+      this.action = null;
+      this.mergeItems = null;
+      this.editor.hover(null);
+    }
+
+    let angle = vectorUtils.calcAngle(targetPos, cursor);
+    if (!event.ctrlKey) {
+      angle = vectorUtils.fracAngle(angle, null);
+    }
+    const degrees = vectorUtils.degrees(angle);
+    if (attachDragCtx.action && attachDragCtx.angle === degrees) {
+      return;
+    }
+
+    attachDragCtx.action?.perform(this.restruct);
+    attachDragCtx.angle = degrees;
+    [attachDragCtx.action] = fromTemplateOnAtom(
+      this.restruct,
+      attachDragCtx.template,
+      attachDragCtx.targetAtomId,
+      angle,
+      true,
+    );
+    this.editor.update(attachDragCtx.action, true);
+    this.editor.event.message.dispatch({ info: degrees + 'º' });
+  }
+
+  mousedown(event: MouseEvent) {
     if (
       !this.isSingleContractedGroup ||
       SGroup.isSaltOrSolvent(this.struct.sgroups.get(0)?.data.name ?? '')
     ) {
+      this.attachDragCtx = this.createAttachDragContext(event);
       return;
     }
 
@@ -144,7 +282,12 @@ class PasteTool implements Tool {
     };
   }
 
-  mousemove(event) {
+  mousemove(event: MouseEvent) {
+    if (this.attachDragCtx) {
+      this.moveAttachDrag(this.attachDragCtx, event);
+      return;
+    }
+
     this.mergeItems = null;
     this.editor.hover(null);
     if (isMovePreviewCalculationInProgress) {
@@ -213,7 +356,10 @@ class PasteTool implements Tool {
 
       const [action] = fromTemplateOnAtom(
         this.restruct,
-        prepareTemplateFromSingleGroup(this.struct),
+        prepareTemplate(
+          this.struct,
+          this.struct.sgroups.get(0)?.getAttachmentAtomId() ?? 0,
+        ),
         atomId,
         angle,
         hasExtraBond,
@@ -229,6 +375,7 @@ class PasteTool implements Tool {
         CoordinateTransformation.pageToModel(event, this.editor.render),
       );
       this.action = action;
+      this.setPastedAtoms(pasteItems);
       this.editor.update(this.action, true);
       const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
@@ -244,6 +391,16 @@ class PasteTool implements Tool {
   }
 
   mouseup() {
+    const attachDragCtx = this.attachDragCtx;
+    this.attachDragCtx = null;
+    if (attachDragCtx?.action) {
+      this.editor.hover(null);
+      this.editor.update(attachDragCtx.action);
+      this.editor.event.message.dispatch({ info: false });
+      this.editor.tool('select');
+      return;
+    }
+
     const idsOfItemsMerged = this.mergeItems && {
       ...(this.mergeItems.atoms && {
         atoms: [...this.mergeItems.atoms.values()],
@@ -291,6 +448,12 @@ class PasteTool implements Tool {
     const rnd = this.editor.render;
     this.editor.hover(null);
 
+    if (this.attachDragCtx?.action) {
+      this.attachDragCtx.action.perform(rnd.ctab);
+      rnd.update();
+    }
+    this.attachDragCtx = null;
+
     if (this.action) {
       this.action.perform(rnd.ctab); // revert the action
       delete this.action;
@@ -310,8 +473,7 @@ class PasteTool implements Tool {
 /**
 Adds position and angle info to the molecule, similar to Template tool native behavior
 */
-function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
-  const sgroup = molecule.sgroups.get(0);
+function prepareTemplate(molecule: Struct, aid: number): EditorTemplate {
   const xy0 = new Vec2();
 
   molecule.atoms.forEach((atom) => {
@@ -319,7 +481,6 @@ function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
   });
 
   const xy0Center = xy0.scaled(1 / (molecule.atoms.size || 1)); // template center
-  const aid = sgroup?.getAttachmentAtomId() ?? 0;
   const atom = molecule.atoms.get(aid);
 
   return {

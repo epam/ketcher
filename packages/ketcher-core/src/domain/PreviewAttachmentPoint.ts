@@ -1,10 +1,13 @@
 import { AttachmentPoint } from './AttachmentPoint';
 import type { Coordinates } from 'domain/helpers/attachmentPointCalculations';
-import type { PreviewAttachmentPointConstructorParams } from 'domain/types';
+import type {
+  AttachmentPointLabelStyles,
+  PreviewAttachmentPointConstructorParams,
+} from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class PreviewAttachmentPoint extends AttachmentPoint {
-  private readonly labelStyles: PreviewAttachmentPointConstructorParams['labelStyles'];
+  private readonly labelStyles: AttachmentPointLabelStyles;
 
   constructor(constructorParams: PreviewAttachmentPointConstructorParams) {
     super(constructorParams, true);

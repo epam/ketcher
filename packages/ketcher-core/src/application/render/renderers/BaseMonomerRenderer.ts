@@ -345,7 +345,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public hoverAttachmentPoint(_attachmentPointName: AttachmentPointName): void {
-    // intentional no-op: hover state is not kept; updateAttachmentPoints redraws from the monomer state
+    // No-op: the hover flag was reset by updateAttachmentPoints before any redraw read it. Kept for RenderersManager.
   }
 
   public setDragTargetAttachmentPoint(

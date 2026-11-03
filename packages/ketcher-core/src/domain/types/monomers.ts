@@ -125,9 +125,15 @@ export type AttachmentPointConstructorParams = {
   isSnakeLayoutMode: () => boolean;
 };
 
+export type AttachmentPointLabelStyles = {
+  color: string;
+  fill: string;
+  stroke: string;
+};
+
 export type PreviewAttachmentPointConstructorParams =
   AttachmentPointConstructorParams & {
-    labelStyles: { color: string; fill: string; stroke: string };
+    labelStyles: AttachmentPointLabelStyles;
   };
 
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;

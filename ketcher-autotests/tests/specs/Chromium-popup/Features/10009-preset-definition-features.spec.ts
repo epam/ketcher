@@ -49,7 +49,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: The primary preset identifier field is labeled 'Code' (not 'Name')
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -78,7 +78,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * Expected: Saving is blocked. Error message appears: 'Mandatory fields must be filled.'
      * The Code field and preset tab are highlighted in red
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -144,7 +144,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * Expected: Saving blocked with error: 'The preset code must be unique amongst other presets.'
      * Code field and preset tab highlighted in red
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -232,7 +232,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: Presets save successfully with no validation error or red highlighting
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     const validCodes = [
       'AbC-12_*',
@@ -302,7 +302,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * Expected: Saving blocked with error: 'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).'
      * Code field and preset tab highlighted in red
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     const invalidCodes = ['PRE SET', 'PRESET#1', 'PRESET@1', 'PRESET+1'];
 
@@ -371,7 +371,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: After correcting the Code and saving successfully, red highlighting is cleared
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -452,7 +452,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: Auto-generated monomer codes update to reflect new preset Code (e.g. from 'ABCB' to 'XYZB')
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -502,7 +502,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: Default monomer codes update to new preset Code, but manually edited code ('BASE_CUSTOM') remains unchanged
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -547,7 +547,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      * Expected: After each preset Code change, non-manually-changed monomer codes update to latest preset Code value.
      * Manually overridden codes remain unchanged
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -611,7 +611,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: The existing preset can be reopened and saved without validation errors
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const library = Library(page);
@@ -663,7 +663,7 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
      *
      * Expected: IDT and AxoLabs alias fields for presets match existing monomer behavior (same allowed characters and uniqueness rules)
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 

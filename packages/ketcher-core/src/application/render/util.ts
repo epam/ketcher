@@ -146,7 +146,7 @@ function chooseNonOverlappingLabelPlacement(
 
   let selectedPlacement = {
     direction: directions[0],
-    additionalDistance: Number.POSITIVE_INFINITY,
+    additionalDistance: 0,
   };
   let shortestDistance = Number.POSITIVE_INFINITY;
 

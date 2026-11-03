@@ -46,10 +46,7 @@ export const NucleotidePresetSection = (page: Page) => {
   const locators: NucleotidePresetSectionLocators = {
     presetTab: Object.assign(page.getByTestId(NucleotidePresetTab.Preset), {
       nameEditbox: page.getByTestId('code-input'),
-      codeLabel: page
-        .getByTestId('code-input')
-        .locator('xpath=..')
-        .locator('p'),
+      codeLabel: page.getByTestId('code-label'),
     }),
 
     baseTab: Object.assign(page.getByTestId(NucleotidePresetTab.Base), {

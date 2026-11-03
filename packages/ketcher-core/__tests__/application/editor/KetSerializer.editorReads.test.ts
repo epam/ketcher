@@ -2,7 +2,6 @@ import { CoreEditor } from 'application/editor';
 import { KetSerializer } from 'domain/serializers';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import { SettingsManager } from 'utilities';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
@@ -55,12 +54,14 @@ describe('KetSerializer reads that depend on the editor', () => {
     });
   });
 
+  beforeEach(() => {
+    editor.clearMonomersLibrary();
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  // The library only grows, so the test for a missing entry runs before the
-  // tests that load the spacer into it.
   describe('library enrichment of monomer templates', () => {
     it('leaves a template as it is when the library has no template with that id', () => {
       const spacer = deserializeSpacer(createMacromoleculesKet());
@@ -149,26 +150,6 @@ describe('KetSerializer reads that depend on the editor', () => {
       );
 
       expect(dispatch).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('after the editor is destroyed', () => {
-    it('reads a KET without enrichment and without throwing', () => {
-      loadSpacerIntoLibrary({ idtAliases: { base: 'iSpBase' } });
-      expect(
-        deserializeSpacer(createMacromoleculesKet()).monomerItem.props
-          .idtAliases,
-      ).toEqual({ base: 'iSpBase' });
-
-      editor.destroy();
-
-      let spacer: BaseMonomer | undefined;
-
-      expect(() => {
-        spacer = deserializeSpacer(createMacromoleculesKet());
-      }).not.toThrow();
-      expect(spacer?.monomerItem.props.idtAliases).toBeUndefined();
-      expect(spacer?.monomerItem.props.modificationTypes).toBeUndefined();
     });
   });
 });

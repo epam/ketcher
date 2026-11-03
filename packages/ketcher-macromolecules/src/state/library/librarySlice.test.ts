@@ -360,3 +360,36 @@ describe('selectFilteredMonomers — hyphen and underscore (isShortNameOnlySearc
     ).toEqual([`label${char}match`, `amb${char}match`]);
   });
 });
+
+describe('selectFilteredMonomers — hyphen and underscore (isShortNameOnlySearch)', () => {
+  const makeMonomer = (
+    label: string,
+    monomerName: string,
+    name: string,
+  ): MonomerItemType => ({
+    label,
+    struct: {} as MonomerItemType['struct'],
+    props: {
+      MonomerName: monomerName,
+      Name: name,
+      MonomerNaturalAnalogCode: '',
+      MonomerType: 'RNA',
+      MonomerClass: KetMonomerClass.Sugar,
+    },
+  });
+
+  it.each(['-', '_'])('filters on label only for "%s"', (char) => {
+    const monomers: MonomerOrAmbiguousType[] = [
+      makeMonomer(`label${char}match`, 'noChar', 'No Char'), // label → matches
+      makeMonomer('noChar', `name${char}only`, 'No Char'), // MonomerName only → no match
+      makeMonomer('noChar2', 'testName', `full${char}name`), // Name only → no match
+      createAmbiguous(`amb${char}match`, [createComponent('A', 'Alanine')]), // ambiguous label → matches
+      createAmbiguous('ambNoMatch', [
+        createComponent(`comp${char}name`, 'Alanine'),
+      ]), // component only → no match
+    ];
+    expect(
+      selectFilteredMonomers(buildState(char, monomers)).map((m) => m.label),
+    ).toEqual([`label${char}match`, `amb${char}match`]);
+  });
+});

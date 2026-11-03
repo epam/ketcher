@@ -9,7 +9,8 @@ import {
 import {
   BaseMonomer,
   BaseSequenceItemRenderer,
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  FlexModePolymerBondRenderer,
+  SnakeModePolymerBondRenderer,
 } from 'ketcher-core';
 import { StyledMenu } from 'components/contextMenu/styles';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
@@ -28,7 +29,8 @@ export interface MenuItem {
         props,
       }: {
         props?: {
-          polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
+          polymerBondRenderer?:
+            FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
           sequenceItemRenderer?: BaseSequenceItemRenderer;
           selectedMonomers?: BaseMonomer[];
         };
@@ -39,7 +41,8 @@ export interface MenuItem {
         props,
       }: {
         props?: {
-          polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
+          polymerBondRenderer?:
+            FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
           sequenceItemRenderer?: BaseSequenceItemRenderer;
           selectedMonomers?: BaseMonomer[];
         };

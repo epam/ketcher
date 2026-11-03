@@ -135,8 +135,7 @@ import {
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { createEditorPort } from 'application/editor/editorPort';
-import type { DrawingEntitiesManagerDeps } from 'domain/entities/EditorPort';
+import { createManagerDeps } from 'application/editor/editorPort';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { EditorTheme } from 'domain/types/theme';
@@ -255,7 +254,7 @@ let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 export class CoreEditor {
   private disposed = false;
   // A field, so it exists before the constructor body creates the first manager.
-  private readonly managerDeps = this.createManagerDeps();
+  private readonly managerDeps = createManagerDeps(this, () => this.disposed);
   public events: IEditorEvents;
   public ketcherId?: string;
 
@@ -291,19 +290,6 @@ export class CoreEditor {
   private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
-
-  // Managers created by this editor read it through the port. After destroy()
-  // they behave as managers without an editor.
-  private createManagerDeps(): DrawingEntitiesManagerDeps {
-    const port = createEditorPort(() => this);
-    const isDisposed = () => this.disposed;
-
-    return {
-      get editor() {
-        return isDisposed() ? undefined : port;
-      },
-    };
-  }
 
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;

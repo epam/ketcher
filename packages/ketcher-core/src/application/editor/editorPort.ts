@@ -1,32 +1,50 @@
-import type { EditorPort } from 'domain/entities/EditorPort';
+import type {
+  DrawingEntitiesManagerDeps,
+  EditorPort,
+} from 'domain/entities/EditorPort';
 import type { CoreEditor } from './Editor';
 import { provideEditorSettings } from './editorSettings';
 
-export function createEditorPort(getEditor: () => CoreEditor): EditorPort {
+export function createEditorPort(editor: CoreEditor): EditorPort {
   return {
     get events() {
-      return getEditor().events;
+      return editor.events;
     },
     get mode() {
-      return getEditor().mode;
+      return editor.mode;
     },
     get canvasWidth() {
-      return getEditor().canvas.width.baseVal.value;
+      return editor.canvas.width.baseVal.value;
     },
     get macroModeScale() {
       return provideEditorSettings().macroModeScale;
     },
     get canvasOffset() {
-      return getEditor().canvasOffset;
+      return editor.canvasOffset;
     },
     get viewModel() {
-      return getEditor().viewModel;
+      return editor.viewModel;
     },
     get renderersContainer() {
-      return getEditor().renderersContainer;
+      return editor.renderersContainer;
     },
     get monomersLibrary() {
-      return getEditor().monomersLibrary;
+      return editor.monomersLibrary;
+    },
+  };
+}
+
+// Managers created by an editor read it through the port. After the editor is
+// disposed they behave as managers without an editor.
+export function createManagerDeps(
+  editor: CoreEditor,
+  isDisposed: () => boolean,
+): DrawingEntitiesManagerDeps {
+  const port = createEditorPort(editor);
+
+  return {
+    get editor() {
+      return isDisposed() ? undefined : port;
     },
   };
 }

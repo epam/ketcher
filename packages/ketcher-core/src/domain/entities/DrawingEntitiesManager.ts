@@ -2423,9 +2423,8 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const atomToNewAtom = new Map<Atom, Atom>();
-    const mergedDrawingEntities = new DrawingEntitiesManager(
-      targetDrawingEntitiesManager.deps,
-    );
+    const mergedDrawingEntities =
+      targetDrawingEntitiesManager.createEmptySibling();
 
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
@@ -2629,9 +2628,7 @@ export class DrawingEntitiesManager {
   }
 
   public filterSelection() {
-    const filteredDrawingEntitiesManager = new DrawingEntitiesManager(
-      this.deps,
-    );
+    const filteredDrawingEntitiesManager = this.createEmptySibling();
 
     this.selectedEntities.forEach(([, entity]) => {
       if (entity instanceof BaseMonomer) {

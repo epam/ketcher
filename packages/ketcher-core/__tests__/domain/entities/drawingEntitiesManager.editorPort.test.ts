@@ -364,8 +364,37 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
 
       expect(dispatch).not.toHaveBeenCalled();
       expect(overlappedBond.isOverlappedByMonomer).toBe(false);
-      expect(() => dem.clearCanvas()).toThrow(MissingEditorError);
-      expect(() => dem.applyFlexLayoutMode()).toThrow(MissingEditorError);
+    });
+
+    it.each([
+      [
+        'clearCanvas',
+        (manager: DrawingEntitiesManager) => manager.clearCanvas(),
+      ],
+      [
+        'rerenderMolecules',
+        (manager: DrawingEntitiesManager) => manager.rerenderMolecules(),
+      ],
+      [
+        'applyFlexLayoutMode',
+        (manager: DrawingEntitiesManager) => manager.applyFlexLayoutMode(),
+      ],
+      [
+        'applySnakeLayout',
+        (manager: DrawingEntitiesManager) => manager.applySnakeLayout(true),
+      ],
+      [
+        'getCurrentCenterPointOfCanvas',
+        (manager: DrawingEntitiesManager) =>
+          manager.getCurrentCenterPointOfCanvas(),
+      ],
+    ])('throws MissingEditorError from %s', (_method, call) => {
+      const { editor } = open(new FlexMode());
+      const dem = editor.drawingEntitiesManager;
+      addPeptide(editor, 'A', 0, 0);
+      editor.destroy();
+
+      expect(() => call(dem)).toThrow(MissingEditorError);
     });
   });
 

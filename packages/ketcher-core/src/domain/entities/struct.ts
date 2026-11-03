@@ -86,7 +86,6 @@ export class Struct {
   sgroups: Pool<SGroup>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
-  isReaction: boolean;
   rxnArrows: Pool<RxnArrow>;
   rxnPluses: Pool<RxnPlus>;
   frags: Pool<Fragment | null>;
@@ -113,7 +112,6 @@ export class Struct {
     this.sgroups = new Pool<SGroup>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
-    this.isReaction = false;
     this.rxnArrows = new Pool<RxnArrow>();
     this.rxnPluses = new Pool<RxnPlus>();
     this.frags = new Pool<Fragment>();
@@ -203,6 +201,10 @@ export class Struct {
 
   hasRxnPluses(): boolean {
     return this.rxnPluses.size > 0;
+  }
+
+  get isReaction(): boolean {
+    return this.isRxn();
   }
 
   isRxn(): boolean {
@@ -516,7 +518,6 @@ export class Struct {
     });
 
     if (!shouldDropRxnSymbols) {
-      cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
         cp.addRxnArrow(item.clone());
       });

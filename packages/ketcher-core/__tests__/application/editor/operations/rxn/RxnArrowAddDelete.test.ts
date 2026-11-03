@@ -79,6 +79,27 @@ describe('RxnArrowAdd and RxnArrowDelete operations', () => {
     expect(addedArrow?.height).toBeUndefined();
   });
 
+  it('updates reaction state through adding, undoing, redoing and deleting arrows', () => {
+    const struct = restruct.molecule;
+    const add = new RxnArrowAdd([new Vec2(0, 0), new Vec2(5, 0)]);
+    expect(struct.isReaction).toBe(false);
+    add.execute(restruct);
+    expect(struct.isReaction).toBe(true);
+
+    const undo = add.invert();
+    undo.execute(restruct);
+    expect(struct.isReaction).toBe(false);
+    undo.invert().execute(restruct);
+    expect(struct.isReaction).toBe(true);
+
+    const second = new RxnArrowAdd([new Vec2(6, 0), new Vec2(10, 0)]);
+    second.execute(restruct);
+    new RxnArrowDelete(add.data.id).execute(restruct);
+    expect(struct.isReaction).toBe(true);
+    new RxnArrowDelete(second.data.id).execute(restruct);
+    expect(struct.isReaction).toBe(false);
+  });
+
   it('should preserve height through add-delete-invert cycle for all elliptical types', () => {
     const ellipticalModes = [
       RxnArrowMode.EllipticalArcFilledBow,

@@ -137,7 +137,6 @@ describe('miewStructMerge', () => {
   describe('mergeMetaObjects', () => {
     it('copies reaction symbols and text from the original struct', () => {
       const original = new Struct();
-      original.isReaction = true;
       original.rxnPluses.add(new RxnPlus({ pp: new Vec2(5, 5) }));
       original.addRxnArrow(
         new RxnArrow({

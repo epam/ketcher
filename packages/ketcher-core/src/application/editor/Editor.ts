@@ -1303,6 +1303,34 @@ export class CoreEditor {
         event.clientX <= canvasBoundingClientRect.right &&
         event.clientY >= canvasBoundingClientRect.top &&
         event.clientY <= canvasBoundingClientRect.bottom;
+
+      // A right-click outside the selection selects the clicked item the same
+      // way a click does, so the menu is offered for it, as in Micro mode.
+      // Without any selection the menu keeps Copy and Delete disabled (#6472)
+      if (
+        eventData instanceof BaseSequenceItemRenderer &&
+        this.drawingEntitiesManager.selectedEntitiesArr.length > 0
+      ) {
+        const clickedMonomers = [
+          eventData.twoStrandedNode.senseNode?.monomer,
+          eventData.twoStrandedNode.antisenseNode?.monomer,
+        ].filter((monomer) => monomer !== undefined);
+
+        if (!clickedMonomers.some((monomer) => monomer.selected)) {
+          const modelChanges =
+            this.drawingEntitiesManager.unselectAllDrawingEntities();
+          modelChanges.merge(
+            SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+          );
+          modelChanges.merge(
+            this.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+              clickedMonomers,
+            ).command,
+          );
+          this.renderersContainer.update(modelChanges);
+        }
+      }
+
       const sequenceSelections: NodesSelection =
         SequenceRenderer.selections.map((selectionRange) =>
           selectionRange.flatMap((twoStrandedNodeSelection) => {

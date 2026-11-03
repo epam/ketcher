@@ -28,6 +28,8 @@ const STYLE = {
   ACTIVE_COLOR: '#365CFF',
 };
 
+const NON_COUNTED_SELECTION_KEYS = ['enhancedFlags', 'bonds'];
+
 const LEFT_ARROW_PATH =
   'M12.7034 14.8189L9.39616 17.6218L9.13674 16.1892C8.12927 16.0487 7.17132 15.6644 6.34605 15.0697C5.52078 14.475 4.85314 13.6878 4.40108 12.7766C3.94903 11.8653 3.72622 10.8575 3.75201 9.84062C3.7778 8.82373 4.0514 7.8285 4.54906 6.94133L5.8121 7.65148C5.45018 8.29719 5.24246 9.01784 5.20516 9.75712C5.16786 10.4964 5.302 11.2343 5.59709 11.9132C5.89218 12.592 6.34023 13.1935 6.90624 13.6705C7.47225 14.1475 8.1409 14.4872 8.85993 14.6631L8.62297 13.3587L12.7034 14.8189Z';
 const RIGHT_ARROW_PATH =
@@ -153,23 +155,25 @@ class RotateController implements RotateControllerContract {
 
   private show() {
     const originalCenter = this.rotateTool.getCenter();
-    const selection = this.editor.selection();
+    const selection = this.editor.explicitSelected();
     const visibleAtoms =
       this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
 
-    const { texts, rxnArrows, rxnPluses } = selection || {};
+    const { texts, rxnArrows, rxnPluses, multitailArrows } = selection;
 
-    const isMoreThanOneItemBeingSelected =
-      [
-        ...visibleAtoms,
-        ...(texts || []),
-        ...(rxnArrows || []),
-        ...(rxnPluses || []),
-      ].length > 1;
+    const selectedItemsCount = Object.entries({
+      ...selection,
+      atoms: visibleAtoms,
+    })
+      .filter(([key]) => !NON_COUNTED_SELECTION_KEYS.includes(key))
+      .reduce((count, [, ids]) => count + (ids?.length ?? 0), 0);
+    const isSingleAtomOrPlus =
+      selectedItemsCount === 1 &&
+      (visibleAtoms.length === 1 || Boolean(rxnPluses?.length));
 
     const currentTool = this.editor.tool();
     const enable =
-      isMoreThanOneItemBeingSelected &&
+      !isSingleAtomOrPlus &&
       (currentTool instanceof SelectTool ||
         currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
@@ -185,8 +189,9 @@ class RotateController implements RotateControllerContract {
       texts,
       rxnArrows,
       rxnPluses,
-      selection?.bonds,
-      selection?.rgroupAttachmentPoints,
+      selection.bonds,
+      selection.rgroupAttachmentPoints,
+      multitailArrows,
     );
 
     this.handleCenter = new Vec2(
@@ -283,6 +288,7 @@ class RotateController implements RotateControllerContract {
     rxnPluses?: number[],
     bonds?: number[],
     rgroupAttachmentPoints?: number[],
+    multitailArrows?: number[],
   ) {
     const RECT_RADIUS = 20;
     const RECT_PADDING = 10;
@@ -299,6 +305,7 @@ class RotateController implements RotateControllerContract {
         }),
         bonds,
         rgroupAttachmentPoints,
+        multitailArrows,
       })
       .transform(Scale.modelToCanvas, this.render.options)
       .translate(this.render.options.offset || new Vec2());

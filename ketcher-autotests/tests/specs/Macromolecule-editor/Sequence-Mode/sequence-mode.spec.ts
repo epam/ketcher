@@ -425,6 +425,7 @@ test.describe('Sequence Mode', () => {
     Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/r3-r2-sugar-phosphate.ket');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -445,6 +446,7 @@ test.describe('Sequence Mode', () => {
       page,
       'KET/r1-r1-sugar-base-connection.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,

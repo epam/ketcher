@@ -1,5 +1,9 @@
 import { Page, test } from '@fixtures';
-import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
+import {
+  moveMouseAway,
+  openFileAndAddToCanvasMacro,
+  takeEditorScreenshot,
+} from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -138,6 +142,7 @@ test.describe('Saving in .svg files', () => {
       */
 
       await openFileAndAddToCanvasMacro(page, filename);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await verifySVGExport(page);
     });

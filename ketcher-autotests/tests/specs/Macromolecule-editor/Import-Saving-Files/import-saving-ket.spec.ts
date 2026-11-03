@@ -286,6 +286,7 @@ test.describe('Import-Saving .ket Files', () => {
     Description: .ket file with macro structures is imported correctly in macro mode.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/three-chems-connected.ket');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

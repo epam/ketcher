@@ -35,8 +35,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 10.487500000000026,
-            "y": -7.499999999999992
+            "x": 10.621051788330083,
+            "y": -7.574999999999986
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -292,8 +292,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 13.312499999999973,
-            "y": -9.15000000000001
+            "x": 13.446051788330031,
+            "y": -9.225000000000003
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"

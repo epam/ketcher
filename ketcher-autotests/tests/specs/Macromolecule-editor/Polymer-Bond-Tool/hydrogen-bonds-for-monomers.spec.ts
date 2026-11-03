@@ -30,6 +30,7 @@ import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constan
 import {
   AttachmentPoint,
   getMonomerLocator,
+  moveMonomerToPosition,
 } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
@@ -139,6 +140,7 @@ async function loadTwoMonomers(
   page: Page,
   leftMonomer: IMonomer,
   rightMonomer: IMonomer,
+  useLegacyDragPositioning = false,
 ) {
   await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
@@ -146,8 +148,12 @@ async function loadTwoMonomers(
     monomerAlias: leftMonomer.alias,
   }).first();
 
-  await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(page, 500, 370);
+  if (useLegacyDragPositioning) {
+    await leftMonomerLocator.hover({ force: true });
+    await dragMouseTo(page, 500, 370);
+  } else {
+    await moveMonomerToPosition(page, leftMonomerLocator, 500, 370);
+  }
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -163,9 +169,13 @@ async function loadTwoMonomers(
           monomerAlias: rightMonomer.alias,
         }).first();
 
-  await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-  await dragMouseTo(page, 600, 372);
+  if (useLegacyDragPositioning) {
+    await rightMonomerLocator.hover({ force: true });
+    await dragMouseTo(page, 600, 372);
+  } else {
+    await moveMonomerToPosition(page, rightMonomerLocator, 600, 372);
+  }
   await moveMouseAway(page);
 }
 
@@ -180,8 +190,7 @@ async function loadMonomersAndMolecule(
     monomerAlias: leftMonomer.alias,
   }).first();
 
-  await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(page, 500, 370);
+  await moveMonomerToPosition(page, leftMonomerLocator, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMolecule.fileName);
@@ -527,7 +536,27 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`5. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) and switch to Snake`, async () => {
       test.setTimeout(25000);
 
-      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+      await loadTwoMonomers(page, leftMonomer, rightMonomer, true);
+
+      const rightMonomerAboveLeft = [
+        ['unresolved monomer', 'ambiguous base'],
+        ['peptide', 'unresolved monomer'],
+        ['nucleotide', 'ambiguous peptide'],
+      ].some(
+        ([leftType, rightType]) =>
+          leftMonomer.monomerType === leftType &&
+          rightMonomer.monomerType === rightType,
+      );
+      if (rightMonomerAboveLeft) {
+        // Snake orders these disconnected backbones by their vertical position.
+        await moveMonomerToPosition(
+          page,
+          getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).first(),
+          600,
+          350,
+        );
+        await moveMouseAway(page);
+      }
 
       await bondTwoMonomers(
         page,

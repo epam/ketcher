@@ -427,6 +427,7 @@ test.describe('Rectangle Selection Tool', () => {
     await openFileAndAddToCanvasMacro(page, 'KET/two-rows-of-monomers.ket');
     await getMonomerLocator(page, Peptide.Hhs).hover();
     await dragMouseTo(page, 900, 500);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

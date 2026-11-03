@@ -742,6 +742,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       MacroFileType.HELM,
       'RNA1{[5R6Rm5](A).[5R6Rm5](A).[5R6Rm5](A)}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

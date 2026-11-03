@@ -8,6 +8,13 @@ import {
   drawnStructuresSelector,
 } from 'application/editor/constants';
 import type { Vec2 } from 'domain/entities/vec2';
+import type { ViewModel } from 'application/render/view-model/ViewModel';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+
+export type RendererContext = {
+  canvas: D3SvgElementSelection<SVGGElement, void>;
+  viewModel: ViewModel;
+};
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -45,6 +52,17 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGGElement, void>;
+  private renderContext?: RendererContext;
+
+  public setRenderContext(context: RendererContext) {
+    this.renderContext = context;
+    this.canvas = context.canvas;
+  }
+
+  protected get viewModel() {
+    return this.renderContext?.viewModel ?? provideEditorInstance().viewModel;
+  }
+
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper =
       ZoomTool.instance?.canvasWrapper ?? select(canvasSelector);

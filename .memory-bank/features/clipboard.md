@@ -9,6 +9,7 @@ Spec: [openspec/specs/clipboard/spec.md](../../openspec/specs/clipboard/spec.md)
 - Some browsers (Chrome, Firefox) require `Ctrl+V` for pasting via the system clipboard.
 - Cross-mode paste (molecules ↔ macromolecules) is routed through structure conversion and may be constrained by what the target mode can represent (see [macromolecules](./macromolecules.md)).
 - Image copy produces a raster/vector image, not an editable structure.
+- Snake and sequence modes retain direct paste placement without a ghost.
 
 ## Related
 

@@ -422,6 +422,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       MacroFileType.HELM,
       'CHEM1{([4aPEGMal],[4FB])}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

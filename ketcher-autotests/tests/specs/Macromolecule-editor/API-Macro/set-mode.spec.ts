@@ -46,6 +46,7 @@ test.describe('setMode', () => {
      * Description: ketcher.setMode switch canvas to Snake Mode
      */
     await openFileAndAddToCanvasMacro(page, 'KET/snake-mode-peptides.ket');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await setMode(page, 'snake');
     await takeEditorScreenshot(page);

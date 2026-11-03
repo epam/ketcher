@@ -24,6 +24,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { ToolName } from 'application/editor/tools/types';
 import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
+import { PasteTool } from './Paste';
 
 export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.monomer]: MonomerTool,
@@ -36,6 +37,7 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.erase]: EraserTool,
   [ToolName.clear]: ClearTool,
   [ToolName.hand]: HandTool,
+  [ToolName.paste]: PasteTool,
 };
 
 export * from './Tool';

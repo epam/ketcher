@@ -1,0 +1,177 @@
+{
+  "language": {
+    "title": "Idioma"
+  },
+  "units": {
+    "px": "px",
+    "cm": "cm",
+    "pt": "pt",
+    "inch": "pulgada"
+  },
+  "fields": {
+    "resetToSelect": {
+      "title": "Restablecer a herramienta de selección",
+      "enumOn": "Selección automática activada",
+      "enumAfterPaste": "Selección automática tras pegar",
+      "enumOff": "Selección manual"
+    },
+    "rotationStep": {
+      "title": "Paso de rotación, º"
+    },
+    "showValenceWarnings": {
+      "title": "Mostrar advertencias de valencia"
+    },
+    "atomColoring": {
+      "title": "Coloración de átomos"
+    },
+    "showStereoFlags": {
+      "title": "Mostrar los indicadores de estereoquímica"
+    },
+    "stereoLabelStyle": {
+      "title": "Visualización de etiquetas en centros quirales",
+      "enumIupac": "Estilo IUPAC",
+      "enumClassic": "Clásico",
+      "enumOn": "Activado",
+      "enumOff": "Desactivado"
+    },
+    "colorOfAbsoluteCenters": {
+      "title": "Color de centros ABS"
+    },
+    "colorOfAndCenters": {
+      "title": "Color de centros AND"
+    },
+    "colorOfOrCenters": {
+      "title": "Color de centros OR"
+    },
+    "colorStereogenicCenters": {
+      "title": "Colorear centros quirales",
+      "enumLabelsOnly": "Solo etiquetas",
+      "enumBondsOnly": "Solo enlaces",
+      "enumLabelsAndBonds": "Etiquetas y enlaces",
+      "enumOff": "Desactivado"
+    },
+    "autoFadeOfStereoLabels": {
+      "title": "Atenuar automáticamente las etiquetas de centros AND/OR"
+    },
+    "absFlagLabel": {
+      "title": "Texto del indicador ABS"
+    },
+    "andFlagLabel": {
+      "title": "Texto del indicador AND"
+    },
+    "mixedFlagLabel": {
+      "title": "Texto del indicador mixto"
+    },
+    "ignoreChiralFlag": {
+      "title": "Ignorar el indicador quiral"
+    },
+    "orFlagLabel": {
+      "title": "Texto del indicador OR"
+    },
+    "font": {
+      "title": "Fuente"
+    },
+    "fontsz": {
+      "title": "Tamaño de fuente"
+    },
+    "fontszsub": {
+      "title": "Tamaño de fuente de subíndices/superíndices"
+    },
+    "carbonExplicitly": {
+      "title": "Mostrar explícitamente las etiquetas de carbono"
+    },
+    "showCharge": {
+      "title": "Mostrar carga"
+    },
+    "showValence": {
+      "title": "Mostrar valencia"
+    },
+    "showHydrogenLabels": {
+      "title": "Mostrar explícitamente las etiquetas de hidrógeno"
+    },
+    "aromaticCircle": {
+      "title": "Enlaces aromáticos como círculo"
+    },
+    "bondSpacing": {
+      "title": "Espaciado de enlaces",
+      "extraLabel": "% de la longitud"
+    },
+    "bondThickness": {
+      "title": "Grosor de enlace"
+    },
+    "stereoBondWidth": {
+      "title": "Ancho del enlace estéreo (cuña)"
+    },
+    "bondLength": {
+      "title": "Longitud de enlace"
+    },
+    "reactionComponentMarginSize": {
+      "title": "Tamaño del margen del componente de reacción"
+    },
+    "hashSpacing": {
+      "title": "Espaciado del rayado"
+    },
+    "imageResolution": {
+      "title": "Resolución de imagen",
+      "enumHigh": "alta",
+      "enumLow": "baja"
+    },
+    "dearomatize-on-load": {
+      "title": "Desaromatizar al cargar el archivo"
+    },
+    "valence-mode": {
+      "title": "Modo de valencia",
+      "enumBiovia2009": "BIOVIA 2009",
+      "enumBiovia2017": "BIOVIA 2017",
+      "enumDefault": "Predeterminado"
+    },
+    "smart-layout": {
+      "title": "Diseño inteligente"
+    },
+    "ignore-stereochemistry-errors": {
+      "title": "Ignorar errores de estereoquímica"
+    },
+    "mass-skip-error-on-pseudoatoms": {
+      "title": "Ignorar pseudoátomos en el cálculo de masa"
+    },
+    "gross-formula-add-rsites": {
+      "title": "Añadir sitios R en el cálculo de masa"
+    },
+    "aromatize-skip-superatoms": {
+      "title": "Omitir superátomos en la aromatización"
+    },
+    "gross-formula-add-isotopes": {
+      "title": "Añadir isótopos en el cálculo de masa"
+    },
+    "showAtomIds": {
+      "title": "Mostrar ID de átomos"
+    },
+    "showBondIds": {
+      "title": "Mostrar ID de enlaces"
+    },
+    "showHalfBondIds": {
+      "title": "Mostrar ID de semienlaces"
+    },
+    "showLoopIds": {
+      "title": "Mostrar ID de bucles"
+    },
+    "miewMode": {
+      "title": "Modo de visualización",
+      "enumLines": "Líneas",
+      "enumBallsAndSticks": "Esferas y varillas",
+      "enumLicorice": "Cilindros finos"
+    },
+    "miewTheme": {
+      "title": "Color de fondo",
+      "enumLight": "Claro",
+      "enumDark": "Oscuro"
+    },
+    "miewAtomLabel": {
+      "title": "Color de etiquetas",
+      "enumNo": "No",
+      "enumBright": "Brillante",
+      "enumBlackAndWhite": "Blanco y negro",
+      "enumBlack": "Negro"
+    }
+  }
+}

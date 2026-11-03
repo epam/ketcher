@@ -9,6 +9,7 @@ import {
 import { ZoomTransform } from 'd3';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { MissingEditorError } from 'domain/entities/EditorPort';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { KetMonomerClass } from 'domain/constants/monomers';
@@ -161,7 +162,7 @@ describe('DrawingEntitiesManager reads of helpers, coordinates and the sequence 
           .spyOn(SequenceRenderer, rendererMember)
           .mockImplementation(() => undefined);
 
-        expect(() => dem[method]()).toThrow();
+        expect(() => dem[method]()).toThrow(MissingEditorError);
         expect(rendererCall).not.toHaveBeenCalled();
       },
     );
@@ -292,61 +293,48 @@ describe('DrawingEntitiesManager reads of helpers, coordinates and the sequence 
           !replacedAndKept.some(({ node }) => node.monomers.includes(monomer)),
       );
 
-    // At scale 20 the base sits 3 below the sugar and the phosphate 3 beside it.
-    it('puts a right phosphate to the right of the sugar and the base below it', () => {
+    const replaceFirstPreset = (phosphateOnLeft: boolean) => {
       const { dem, first, second } = buildTwoNucleotides();
-
       const { command, newSugar } = dem.replacePreset(
         first.node.sugar,
-        rnaPreset(false),
+        rnaPreset(phosphateOnLeft),
         new Vec2(10, 10),
         first.node.monomers,
       );
       editor.renderersContainer.update(command);
-      const byLabel = (label: string) =>
-        placeOf(
-          newMonomersOf(dem, first, second).find((m) => m.label === label),
-        );
+      const newMonomer = (label: string) =>
+        newMonomersOf(dem, first, second).find((m) => m.label === label);
+
+      return {
+        dem,
+        second,
+        newSugar,
+        newMonomer,
+        placeOfNew: (label: string) => placeOf(newMonomer(label)),
+      };
+    };
+
+    // At scale 20 the base sits 3 below the sugar and the phosphate 3 beside it.
+    it('puts a right phosphate to the right of the sugar and the base below it', () => {
+      const { newSugar, placeOfNew } = replaceFirstPreset(false);
 
       expect(placeOf(newSugar)).toEqual([10, 10]);
-      expect(byLabel('A')).toEqual([10, 13]);
-      expect(byLabel('P')).toEqual([13, 10]);
+      expect(placeOfNew('A')).toEqual([10, 13]);
+      expect(placeOfNew('P')).toEqual([13, 10]);
     });
 
     it('puts a left phosphate to the left of the sugar, which stays at the drop point', () => {
-      const { dem, first, second } = buildTwoNucleotides();
-
-      const { command, newSugar } = dem.replacePreset(
-        first.node.sugar,
-        rnaPreset(true),
-        new Vec2(10, 10),
-        first.node.monomers,
-      );
-      editor.renderersContainer.update(command);
-      const byLabel = (label: string) =>
-        placeOf(
-          newMonomersOf(dem, first, second).find((m) => m.label === label),
-        );
+      const { newSugar, placeOfNew } = replaceFirstPreset(true);
 
       expect(placeOf(newSugar)).toEqual([10, 10]);
-      expect(byLabel('A')).toEqual([10, 13]);
-      expect(byLabel('P')).toEqual([7, 10]);
+      expect(placeOfNew('A')).toEqual([10, 13]);
+      expect(placeOfNew('P')).toEqual([7, 10]);
     });
 
     it('re-establishes the outer bond on the new right phosphate', () => {
-      const { dem, first, second } = buildTwoNucleotides();
+      const { dem, second, newMonomer } = replaceFirstPreset(false);
 
-      const { command } = dem.replacePreset(
-        first.node.sugar,
-        rnaPreset(false),
-        new Vec2(10, 10),
-        first.node.monomers,
-      );
-      editor.renderersContainer.update(command);
-
-      const newPhosphate = newMonomersOf(dem, first, second).find(
-        (monomer) => monomer.label === 'P',
-      );
+      const newPhosphate = newMonomer('P');
 
       expect(dem.polymerBonds.size).toBe(5);
       expect(
@@ -355,15 +343,7 @@ describe('DrawingEntitiesManager reads of helpers, coordinates and the sequence 
     });
 
     it('loses the outer bond when the new phosphate is on the left', () => {
-      const { dem, first, second } = buildTwoNucleotides();
-
-      const { command } = dem.replacePreset(
-        first.node.sugar,
-        rnaPreset(true),
-        new Vec2(10, 10),
-        first.node.monomers,
-      );
-      editor.renderersContainer.update(command);
+      const { dem, second } = replaceFirstPreset(true);
 
       expect(dem.polymerBonds.size).toBe(4);
       expect(

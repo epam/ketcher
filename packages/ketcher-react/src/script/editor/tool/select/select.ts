@@ -56,6 +56,7 @@ import type {
   ReactionArrowClosestItem,
 } from '../arrow/arrow.types';
 import { CommonArrowTool } from '../arrow/commonArrow';
+import { CipLabelMoveTool } from './cipLabelMoveTool';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
 import type { ClosestItemWithMap } from '../../shared/closest.types';
@@ -106,11 +107,13 @@ class SelectTool implements Tool {
   private lastHoveredFragmentTarget: HoverTarget | null = null;
   private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
+  private readonly cipLabelMoveTool: CipLabelMoveTool;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
     this.multitailArrowMoveTool = new MultitailArrowMoveTool(editor);
     this.reactionArrowMoveTool = new ReactionArrowMoveTool(editor);
+    this.cipLabelMoveTool = new CipLabelMoveTool(editor);
     this.#mode = mode;
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
@@ -125,6 +128,7 @@ class SelectTool implements Tool {
 
   mousedown(event: PointerEvent) {
     this.isMouseDown = true;
+    if (this.cipLabelMoveTool.mousedown(event)) return;
     const rnd = this.editor.render;
     const ctab = rnd.ctab;
     const molecule = ctab.molecule;
@@ -236,6 +240,13 @@ class SelectTool implements Tool {
   mousemove(event: PointerEvent) {
     this.previousMouseMoveEvent = event;
     const editor = this.editor;
+    if (this.cipLabelMoveTool.isDragging()) {
+      return this.cipLabelMoveTool.mousemove(event);
+    }
+    if (!this.isMouseDown && this.cipLabelMoveTool.hover(event)) {
+      editor.hover(null);
+      return true;
+    }
     const rnd = editor.render;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
@@ -430,6 +441,10 @@ class SelectTool implements Tool {
   }
 
   mouseup(event: PointerEvent) {
+    if (this.cipLabelMoveTool.mouseup()) {
+      this.isMouseDown = false;
+      return;
+    }
     if (!this.isMouseDown) {
       return;
     }
@@ -671,6 +686,7 @@ class SelectTool implements Tool {
   }
 
   mouseleave() {
+    this.cipLabelMoveTool.mouseleave();
     if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 
     if (this.dragCtx?.action) {

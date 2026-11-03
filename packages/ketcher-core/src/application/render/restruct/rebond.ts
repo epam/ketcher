@@ -551,7 +551,9 @@ class ReBond extends ReObject {
     if (bond.cip) {
       this.cip = util.drawCIPLabel({
         atomOrBond: bond,
-        position: bond.center,
+        position: bond.cipLabelOffset
+          ? Vec2.sum(bond.center, bond.cipLabelOffset)
+          : bond.center,
         restruct: render.ctab,
         visel: this.visel,
       });

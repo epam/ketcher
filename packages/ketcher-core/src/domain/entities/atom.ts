@@ -189,6 +189,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   hCount: number;
   radical: number;
   cip: AtomCIP | null;
+  cipLabelOffset?: Vec2;
   charge: number | null;
   explicitValence: number;
   ringBondCount: number;

@@ -1214,6 +1214,8 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         'font-size': Math.floor(options.fontszInPx * 0.8),
         'pointer-events': 'none',
       });
+      cipText.node?.setAttribute('data-testid', 'cip-label');
+      cipText.node?.setAttribute('data-cip-owner', 'atom');
       const cipTextBBox = cipText.getBBox();
 
       const rect = paper
@@ -1246,7 +1248,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           direction.negated(),
           Box2Abs.fromRelBox(cipTextBBox),
         );
-      const shiftVector = direction.scaled(3 + shiftDistance);
+      const shiftVector = direction
+        .scaled(3 + shiftDistance)
+        .add(Scale.modelToCanvas(this.a.cipLabelOffset ?? new Vec2(), options));
       pathAndRBoxTranslate(
         cipGroup,
         cipGroupRelBox,

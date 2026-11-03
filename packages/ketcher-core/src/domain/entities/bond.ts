@@ -114,6 +114,7 @@ export class Bond extends BaseMicromoleculeEntity {
   sb: number;
   sa: number;
   cip?: BondCIP | null;
+  cipLabelOffset?: Vec2;
   hb1?: number;
   hb2?: number;
   angle: number;

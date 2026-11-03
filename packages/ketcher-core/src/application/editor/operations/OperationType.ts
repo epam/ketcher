@@ -66,6 +66,7 @@ export const OperationType = Object.freeze({
   FRAGMENT_ADD_STEREO_ATOM: 'Add stereo atom to fragment',
   FRAGMENT_DELETE_STEREO_ATOM: 'Delete stereo atom from fragment',
   ENHANCED_FLAG_MOVE: 'Move enhanced flag',
+  CIP_LABEL_MOVE: 'Move CIP label',
   TEXT_CREATE: 'Add text',
   TEXT_UPDATE: 'Edit text',
   TEXT_DELETE: 'Delete text',

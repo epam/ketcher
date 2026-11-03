@@ -7,6 +7,7 @@ export * from './basic';
 export * from './bond';
 export * from './bondStereo';
 export * from './chain';
+export * from './cipLabel';
 export * from './closelyFusing';
 export * from './erase';
 export * from './fragment';

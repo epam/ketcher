@@ -19,6 +19,7 @@ export * from './attachmentGroup';
 export * from './bond';
 export * from './CanvasLoad';
 export * from './descriptors';
+export * from './CipLabelMove';
 export * from './EnhancedFlagMove';
 export * from './EnhancedFlagClear';
 export * from './ifThen';

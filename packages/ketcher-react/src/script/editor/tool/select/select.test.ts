@@ -310,6 +310,7 @@ describe('SelectTool Attachment Group selection', () => {
         },
         ctab: {
           molecule: struct,
+          atoms: new Map(),
           bonds: new Map(),
           rgroups: new Map(),
           sgroups: new Map(),

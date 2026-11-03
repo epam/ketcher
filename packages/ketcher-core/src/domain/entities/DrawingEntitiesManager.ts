@@ -40,13 +40,13 @@ import {
   MonomerHoverOperation,
   MonomerItemModifyOperation,
   MonomerMoveOperation,
-} from 'application/editor/operations/monomer';
+} from 'domain/operations/monomer';
 import {
   DrawingEntityHoverOperation,
   DrawingEntityMoveOperation,
   DrawingEntityRedrawOperation,
   DrawingEntitySelectOperation,
-} from 'application/editor/operations/drawingEntity';
+} from 'domain/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
   PolymerBondCancelCreationOperation,
@@ -55,7 +55,7 @@ import {
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
-} from 'application/editor/operations/polymerBond';
+} from 'domain/operations/polymerBond';
 import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { Coordinates } from 'domain/helpers/coordinates';
 import {
@@ -74,7 +74,7 @@ import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
-import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
+import { RecalculateCanvasMatrixOperation } from 'domain/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
@@ -84,16 +84,16 @@ import { Bond } from 'domain/entities/CoreBond';
 import {
   AtomAddOperation,
   AtomDeleteOperation,
-} from 'application/editor/operations/coreAtom/atom';
+} from 'domain/operations/coreAtom/atom';
 import {
   BondAddOperation,
   BondDeleteOperation,
-} from 'application/editor/operations/coreBond/bond';
+} from 'domain/operations/coreBond/bond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
-} from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
+} from 'domain/operations/monomerToAtomBond/monomerToAtomBond';
 import {
   type CoreAtomLabel,
   HalfMonomerSize,
@@ -123,20 +123,20 @@ import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
   RxnArrowAddOperation,
   RxnArrowDeleteOperation,
-} from 'application/editor/operations/coreRxn/rxnArrow';
+} from 'domain/operations/coreRxn/rxnArrow';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
-} from 'application/editor/operations/coreRxn/multitailArrow';
+} from 'domain/operations/coreRxn/multitailArrow';
 import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
-} from 'application/editor/operations/coreRxn/rxnPlus';
+} from 'domain/operations/coreRxn/rxnPlus';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
@@ -144,12 +144,12 @@ import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
 import {
   StereoFlagAddOperation,
   StereoFlagDeleteOperation,
-} from 'application/editor/operations/stereoFlag';
+} from 'domain/operations/stereoFlag';
 import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,
-} from 'application/editor/operations/coreSGroup/sgroup';
+} from 'domain/operations/coreSGroup/sgroup';
 import {
   collectMonomerBonds,
   computeReestablishableBonds,

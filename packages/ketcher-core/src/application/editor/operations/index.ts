@@ -37,5 +37,13 @@ export * from './simpleObject';
 export * from './sgroup';
 export * from './Text';
 export * from './monomer';
+export {
+  AttachmentPointHoverOperation,
+  MonomerAddOperation,
+  MonomerDeleteOperation,
+  MonomerHoverOperation,
+  MonomerItemModifyOperation,
+  MonomerMoveOperation,
+} from 'domain/operations/monomer';
 export * from './modes';
 export * from './monomerCreation';

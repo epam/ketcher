@@ -10,7 +10,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
 } from 'domain/helpers/monomers';
-import { PolymerBondSnapToMonomersOperation } from 'application/editor/operations/polymerBond';
+import { PolymerBondSnapToMonomersOperation } from 'domain/operations/polymerBond';
 
 /**
  * In Flex mode, after a drag-drop bond is established, reposition the

@@ -69,21 +69,7 @@ export const ALLOWED_UI_IMPORTS = [
 export const ALLOWED_DOMAIN_IMPORTS = [
   {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
-    imports: [
-      'application/editor/operations/coreAtom/atom',
-      'application/editor/operations/coreBond/bond',
-      'application/editor/operations/coreRxn/multitailArrow',
-      'application/editor/operations/coreRxn/rxnArrow',
-      'application/editor/operations/coreRxn/rxnPlus',
-      'application/editor/operations/coreSGroup/sgroup',
-      'application/editor/operations/drawingEntity',
-      'application/editor/operations/modes',
-      'application/editor/operations/modes/snake',
-      'application/editor/operations/monomer',
-      'application/editor/operations/monomerToAtomBond/monomerToAtomBond',
-      'application/editor/operations/polymerBond',
-      'application/editor/operations/stereoFlag',
-    ],
+    imports: ['application/editor/operations/modes'],
   },
 ];
 

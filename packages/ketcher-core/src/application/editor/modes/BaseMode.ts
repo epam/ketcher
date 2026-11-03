@@ -1,5 +1,5 @@
 import { Command } from 'domain/entities/Command';
-import { SelectLayoutModeOperation } from '../operations/polymerBond';
+import { SelectLayoutModeOperation } from 'domain/operations/polymerBond';
 import { EditorHistory } from '../EditorHistory';
 import type { CoreEditor } from '../Editor';
 import { provideEditorInstance } from '../editorSingleton';

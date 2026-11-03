@@ -736,11 +736,10 @@ test.describe('Autotests: Defining the preset - presets in the monomer creation 
 
     // Verify alias uniqueness validation works for presets
     // (Implementation may vary - checking for general alias-related error)
-    const aliasErrorNotification = page
-      .locator('.notification-message-banner')
-      .filter({
-        hasText: 'alias',
-      });
+    const aliasErrorNotification = NotificationMessageBanner(
+      page,
+      ErrorMessage.notUniqueHELMAlias,
+    ).notificationMessageBanner;
 
     // If alias validation is enforced for presets, expect error
     // If not enforced yet, this test documents current behavior

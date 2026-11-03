@@ -1718,7 +1718,7 @@ export const AP_PATH_SCALE = 39.8;
 export const AP_WAVE_HALF_PERP = 13.1;
 export const AP_WAVE_FAR_ALONG = 5.2;
 
-function getSvgCurveShapeAttachmentPoint(
+export function getSvgCurveShapeAttachmentPoint(
   centerPosition: Vec2,
   directionVector: Vec2,
   basicSize: number,

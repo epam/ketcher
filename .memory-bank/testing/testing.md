@@ -451,6 +451,8 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 2. **Use `waitForSpinnerFinishedWork`** whenever the action triggers a loading spinner (file open, save, structure check).
 3. **Use `waitFor({ state: 'visible' })`** or `waitFor({ state: 'detached' })` to assert element presence/absence. Avoid polling with `waitForTimeout`.
 
+   For auto-dismissed notifications, avoid waiting for visibility and then reading text in a separate operation: the toast may disappear between them. Read the text with a bounded `textContent({ timeout })` call, or use a bounded locator text assertion. Keep content assertions outside any catch that tolerates a known missing-notification bug, and catch only Playwright `TimeoutError` in that case.
+
 ### Selectors
 
 4. **Select through page objects and helpers.** Test files call their methods; `getByTestId` lives inside page objects. It is stable and maps to `data-testid` attributes in the source. See [Selector Order](#selector-order).

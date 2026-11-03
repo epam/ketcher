@@ -123,7 +123,7 @@ export function fromPaste(
       }
 
       const fragmentAdd = action.addOp(
-        new FragmentAdd(null, fragment.properties).perform(restruct),
+        new FragmentAdd(undefined, fragment.properties).perform(restruct),
       ) as FragmentAdd;
 
       if (fragmentAdd.frid === null) {
@@ -289,7 +289,7 @@ export function fromPaste(
     ).perform(restruct);
     action.addOp(operation);
     const rxnArrowId = operation.data.id;
-    if (rxnArrowId != null) {
+    if (rxnArrowId != undefined) {
       items.rxnArrows.push(rxnArrowId);
     }
   });

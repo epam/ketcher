@@ -39,9 +39,9 @@ function findClosestAtom(
   skip: ClosestSkipItem | null,
   minDist: number | null,
 ): ClosestAtom | null {
-  let closestAtom: number | null = null;
+  let closestAtom: number | undefined;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'atoms' ? skip.id : null;
+  const skipId = skip && skip.map === 'atoms' ? skip.id : undefined;
 
   let effectiveMinDist = minDist || maxMinDist;
   effectiveMinDist = Math.min(effectiveMinDist, maxMinDist);
@@ -57,7 +57,7 @@ function findClosestAtom(
     }
   });
 
-  if (closestAtom !== null) {
+  if (closestAtom !== undefined) {
     return {
       id: closestAtom,
       dist: effectiveMinDist,

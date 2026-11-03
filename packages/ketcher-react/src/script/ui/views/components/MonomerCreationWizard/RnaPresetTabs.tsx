@@ -417,6 +417,7 @@ export const RnaPresetTabs = (properties: IRnaPresetTabsProperties) => {
           <>
             <AttributeField
               title={t('components:monomerCreationWizard.codeFieldLabel')}
+              titleTestId="code-label"
               control={
                 <input
                   type="text"

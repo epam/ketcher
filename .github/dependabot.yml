@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: quarterly
+      interval: monthly
     groups:
       github-actions:
         patterns:

@@ -17,6 +17,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointId: AttachmentPointId | null = null;
   private attachmentPointName: AttachmentPointName | null = null;
   private assignedAttachmentPoints: AssignedAttachmentPoints = new Map();
+  private potentialLeavingAtoms?: Set<number>;
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
@@ -39,6 +40,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
       this.monomerCreationState.assignedAttachmentPoints;
 
     this.attachmentPointId =
+      this.attachmentPointId ??
       this._attachmentPointId ??
       getNextAttachmentPointId(this.monomerCreationState);
     const occupiedAttachmentPointNames = new Set([
@@ -50,6 +52,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
           : []),
     ]);
     this.attachmentPointName =
+      this.attachmentPointName ??
       this._attachmentPointName ??
       getNextFreeAttachmentPoint([...occupiedAttachmentPointNames]);
 
@@ -58,6 +61,9 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
       attachmentAtomId: this.attachmentAtomId,
       leavingAtomId: this.leavingAtomId,
     });
+    this.potentialLeavingAtoms = potentialAttachmentPoints.get(
+      this.attachmentAtomId,
+    );
     potentialAttachmentPoints.delete(this.attachmentAtomId);
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
@@ -71,7 +77,7 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,
       this.attachmentPointId,
-      undefined,
+      this.potentialLeavingAtoms,
       this.assignedAttachmentPoints,
     );
   }

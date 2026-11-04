@@ -64,7 +64,7 @@ ATW's `unexpected-module-syntax` rule is ignored for the ESM `.js` entries in st
 macromolecules, and react: all declare Node 24.20+ (which detects their module syntax), while
 ATW's Node 16 profile flags the ambiguous extensions. The macromolecules `Editor.d.ts` also
 imports an unshipped `theme.less`; its `internal-resolution-error` is a separate declaration
-packaging defect (same class as #12004). The two packages' CSS export paths are excluded from
+packaging defect. The two packages' CSS export paths are excluded from
 ATW's JS/type analysis; `publint` still checks their packed tarballs. The packed Vite/webpack
 consumer check covers the standalone entries.
 

@@ -84,11 +84,11 @@ export default defineConfig({
     // Rolldown minifies library output by default; Rollup did not. Publishing
     // minified library code breaks downstream stack traces and makes output
     // diffing impossible. See
-    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
+    // .memory-bank/build.md.
     minify: false,
     // `build.cssMinify` tracks `isProduction`, mirroring
     // ketcher-macromolecules/vite.config.mjs - see that file's comment and
-    // .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
+    // .memory-bank/build.md.
     cssMinify: isProduction,
     sourcemap: !isProduction,
     emptyOutDir: false,

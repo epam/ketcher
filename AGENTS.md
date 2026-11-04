@@ -29,6 +29,7 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 | Current product behavior (WHEN/THEN scenarios) | `openspec/specs/<capability>/spec.md`            | Requirements with SHALL text and scenarios. Archiving a change merges its deltas here.                 |
 | Feature summary and limitations                | `.memory-bank/features/<name>.md`                | Title, problem, link to the spec, Limitations, Related. No second copy of behavior.                    |
 | Architecture and data flow                     | `.memory-bank/architecture.md`                   | Package structure, subsystems, data flow                                                               |
+| Builds and toolchain                           | `.memory-bank/build.md`                          | Targets, build order, per-package pipelines, output contract, verification checks                      |
 | Subsystem                                      | `.memory-bank/modules/<name>.md`                 | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints                 |
 | Domain concepts                                | `.memory-bank/domain.md`                         | Entities, relationships, constraints                                                                   |
 | Terms                                          | `.memory-bank/glossary.md`                       | Term, Definition, Used In                                                                              |

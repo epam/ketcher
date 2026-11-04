@@ -30,8 +30,7 @@ const flushMicrotasks = () =>
 // started by something else on mount) and resolved *after* the consumer's
 // call, its resolution clobbered the consumer's library because
 // `setMonomersLibrary` overwrites `_monomersLibrary`/`_monomersLibraryParsedJson`
-// wholesale. See #10326 and the ADR:
-// .memory-bank/adr/2026-08-28-vite-for-library-builds.md.
+// wholesale. See #10326.
 describe('Ketcher monomer library ordering vs. the lazy default load', () => {
   let canvas: SVGSVGElement;
   let coreEditor: CoreEditor;

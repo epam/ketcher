@@ -19,7 +19,7 @@
  * entry in `dependencies` and `peerDependencies`. No plugin equivalent exists
  * for Rolldown, so it is reproduced by hand from package.json here, shared by
  * every library's Vite config so the predicate itself is not re-derived per
- * package (see .memory-bank/adr/2026-08-28-vite-for-library-builds.md).
+ * package.
  *
  * peerDepsExternal externalizes a package's deep imports too (e.g.
  * `ajv/dist/runtime/ucs2length`, `lodash/fp`), not just the bare package

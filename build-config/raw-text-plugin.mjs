@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 
 /**
  * `rollup-plugin-string` has no Rolldown equivalent (see
- * .memory-bank/adr/2026-08-28-vite-for-library-builds.md): this small inline
+ * .memory-bank/build.md): this small inline
  * transform imports a package's raw-text data files (`.ket` for
  * ketcher-core/ketcher-macromolecules, `.sdf` for ketcher-react) as raw-text
  * default exports, matching rollup-plugin-string's output shape. Shared here

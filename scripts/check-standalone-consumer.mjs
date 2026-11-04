@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Guards the #10326 regression (see the ADR:
- * .memory-bank/adr/2026-08-28-vite-for-library-builds.md): the
+ * Guards the #10326 regression (see
+ * .memory-bank/build.md): the
  * `binaryWasm`/`binaryWasmNoRender` build variants of `ketcher-standalone`
  * must be usable by a real external consumer's bundler, not just by this
  * monorepo's own `example` (which aliases the package to source and never

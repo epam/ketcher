@@ -77,6 +77,19 @@ Two dimensions drive these six variants:
 
 CJS output only exists for the base64 variants: the binaryWasm ones load their worker with `new Worker(new URL(..., import.meta.url))`, which has no CJS equivalent.
 
+### Build gotchas
+
+Each of these has a regression behind it. The `build-variants.mjs` and `vite.config.mjs` comments hold the detail.
+
+- `build.lib` is required. Without it Vite builds an app and tree-shakes the whole public API away.
+- `base: './'` is required. The bundles are consumed from `node_modules`, so the default `/` would emit `/assets/...` worker and `.wasm` URLs that resolve only from a site root.
+- The worker plugin is registered under `worker.plugins`, not `plugins`: Vite bundles workers through a separate pipeline, and the Indigo import lives entirely inside the worker graph.
+- The binaryWasm variants must ship a real `.wasm` file. In library mode Vite inlines every asset it rewrites, so `noInlineWasmPlugin` tags the Indigo glue's `new URL('<name>.wasm', import.meta.url)` with `?no-inline`. Each binaryWasm variant then ships `assets/indigoWorker.js` and one `assets/indigo-ketcher[-norender]-<version>.wasm`.
+- Rolldown emits the worker and `.wasm` references as a computed `new URL(new URL(...).href, ...)`. Consumer bundlers (webpack 5, Vite) recognise only the literal form and otherwise drop the file, which 404s at runtime. `literalWorkerUrlPlugin` rewrites them to the literal form and fails the build when it finds zero worker or zero `.wasm` references; that means Rolldown changed its output shape, or Vite re-inlined the `.wasm` (~16 MB).
+- The base64 variants embed the worker as a Blob, so `dropInlineWorkerMapsPlugin` removes worker source maps that would resolve against a `blob:` URL.
+- `scripts/build.mjs` changes directory to the package root because Rolldown writes cwd-relative paths into `//#region` comments, and `dist` must not depend on the caller's cwd.
+- Declarations are copied into every variant directory because TypeScript with `moduleResolution: node10` ignores `exports` and resolves `ketcher-standalone/dist/binaryWasm` by path.
+
 ### Package Entry Points (`package.json` `exports`)
 
 - `.` → `dist/main.js` (ESM) / `dist/cjs/main.js` (CJS) — the default base64 build.
@@ -86,7 +99,7 @@ CJS output only exists for the base64 variants: the binaryWasm ones load their w
 
 ### Dev Workflow
 
-- `npm run build` — production; runs all six variants sequentially (`NODE_ENV=production`, source maps on).
+- `npm run build` — production; runs all six variants sequentially (`NODE_ENV=production`, no source maps).
 - `npm run start` — development watch mode; builds only the default `base64` variant (`NODE_ENV=development`) and runs `tsc --watch --noEmit` alongside Vite.
 
 ## Dependencies
@@ -103,4 +116,4 @@ CJS output only exists for the base64 variants: the binaryWasm ones load their w
 
 - When using standalone mode, the `StructService.convert()` and similar calls are synchronous in the Indigo WASM sense but are wrapped in Promises to match the `StructService` async interface.
 - WASM binary size is significant. Choose a build variant accordingly: base64 variants inline the WASM (no extra fetch, larger JS); binaryWasm variants ship a separate `.wasm`. NoRender variants reduce initial bundle size by splitting out the Indigo render engine.
-- Adding/removing a build variant requires changes in three coordinated places: `VARIANTS` in `vite.config.mjs`, the `build` script chain in `package.json`, and the `exports` map in `package.json`.
+- Adding/removing a build variant requires changes in two coordinated places: `VARIANTS` in `build-variants.mjs` (`scripts/build.mjs` iterates it) and the `exports` map in `package.json`.

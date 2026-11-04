@@ -26,8 +26,7 @@ jest.mock('ketcher-core', () => ({
   provideEditorInstance: jest.fn(() => fakeEditor),
 }));
 
-// Regression/guard test for the ordering fixed by #10326 (see the ADR:
-// .memory-bank/adr/2026-08-28-vite-for-library-builds.md): the monomer library
+// Regression/guard test for the ordering fixed by #10326: the monomer library
 // baked into a `convert` worker command must be read only after the default
 // load is awaited via `ensureDefaultMonomersLibraryLoaded()`.
 describe('StandaloneStructService (IndigoService) convert()', () => {

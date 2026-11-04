@@ -224,9 +224,10 @@ export const Editor = (props: Props) => {
 
   /*
    * The default monomers library is a lazily loaded chunk, and the switch to
-   * Macromolecules waits for it. Start the load once the browser is idle, so
-   * the chunk stays out of the initial page load and is usually ready before
-   * the user's first switch.
+   * Macromolecules waits for it. Start the load once the browser is idle (on
+   * the next task where requestIdleCallback is unavailable), so the chunk
+   * stays out of the initial page load and is usually ready before the user's
+   * first switch.
    */
   useEffect(() => {
     if (!isMacromoleculesEditorEnabled || !macromoleculesEditor) {

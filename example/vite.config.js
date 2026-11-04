@@ -98,8 +98,6 @@ const resolvePackageAlias = (source, importer) => {
 
     return resolve(packageDirectory, replacementPath);
   }
-
-  return;
 };
 
 const PackageScopedAliasesPlugin = () => {

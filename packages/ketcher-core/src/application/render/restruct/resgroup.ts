@@ -324,7 +324,7 @@ class ReSGroup extends ReObject {
         LayerMap.data,
         this.visel,
         path,
-        null,
+        undefined,
         shouldIncludeInBoundingBox,
       );
       this.setHover(this.hover, render); // TODO: fix this

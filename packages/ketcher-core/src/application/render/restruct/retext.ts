@@ -187,7 +187,7 @@ class ReText extends ReObject {
     this.paths = [];
     // TODO: create parser in ketcher-core package
 
-    let editorState: SerializedEditorState | null = null;
+    let editorState: SerializedEditorState | undefined;
     try {
       if (this.item.content) {
         const parsed = JSON.parse(this.item.content);
@@ -270,7 +270,7 @@ class ReText extends ReObject {
       LayerMap.data,
       this.visel,
       flatten(this.paths),
-      null,
+      undefined,
       true,
     );
   }
@@ -283,7 +283,7 @@ class ReText extends ReObject {
     const format = textNode.format || 0;
 
     // Parse font-size from style string
-    let customFontSize: number | null = null;
+    let customFontSize: number | undefined;
     if (textNode.style) {
       const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(
         textNode.style,

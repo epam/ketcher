@@ -27,7 +27,7 @@ import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
-  #path: Element | null = null;
+  #path: Element | undefined;
 
   constructor() {
     super('enhancedFlag');
@@ -111,7 +111,7 @@ class ReEnhancedFlag extends ReObject {
       LayerMap.data,
       this.visel,
       this.#path,
-      null,
+      undefined,
       true,
     );
   }

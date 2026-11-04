@@ -20,13 +20,15 @@ describe('serverCall', () => {
       struct: createEthane,
     };
 
-    await serverCall(editor, server, 'layout', {});
+    await serverCall(editor as never, server as never, 'layout', {});
 
     const [{ selected, struct }] = method.mock.calls[0];
     const { mol0 } = JSON.parse(struct);
 
     expect(selected).toBeUndefined();
     expect(mol0.bonds[0].selected).toBe(true);
-    expect(mol0.atoms.some(({ selected }) => selected)).toBe(false);
+    expect(
+      mol0.atoms.some((atom: { selected?: boolean }) => atom.selected),
+    ).toBe(false);
   });
 });

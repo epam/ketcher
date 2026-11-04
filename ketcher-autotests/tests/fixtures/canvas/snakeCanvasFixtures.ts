@@ -16,6 +16,7 @@ export const test = mergeTests(utils, pageObjects).extend<
       MacromoleculesTopToolbar,
       resetZoomLevelToDefault,
       clearLocalStorage,
+      resetClipboard,
     },
     use,
   ) => {
@@ -30,6 +31,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
+    await resetClipboard(page);
   },
   initSnakeCanvas: [
     async (

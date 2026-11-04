@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -174,7 +173,7 @@ export function load(struct: string | Struct, options?) {
 
         // Find leaving group atoms in new struct
         const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
-          Array.from(assignedAttachmentPoints.values()).some(
+          [...assignedAttachmentPoints.values()].some(
             ([, leavingAtomId]) => leavingAtomId === atomId,
           ),
         );
@@ -192,7 +191,7 @@ export function load(struct: string | Struct, options?) {
 
         // Find explicit hydrogen atoms
         const explicitHydrogenAtomsForLeavingGroupAtoms = new Set(
-          Array.from(newBondsToLeavingGroupAtoms.values()).map((bond) =>
+          [...newBondsToLeavingGroupAtoms.values()].map((bond) =>
             leavingGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
           ),
         );
@@ -241,7 +240,7 @@ export function load(struct: string | Struct, options?) {
       }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled && !skipCenter) {
+      if (!fragment && !isPaste && !isIndigoFunctionCalled && !skipCenter) {
         editor.centerStruct();
       }
       if (!fragment) {
@@ -251,11 +250,11 @@ export function load(struct: string | Struct, options?) {
       editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (e: any) {
-      KetcherLogger.error('shared.ts::load', e);
+    } catch (error) {
+      KetcherLogger.error('shared.ts::load', error);
       dispatch(setAnalyzingFile(false));
-      if (e) {
-        errorHandler?.(e.message);
+      if (error) {
+        errorHandler?.(error instanceof Error ? error.message : String(error));
       }
     } finally {
       notifyRequestCompleted();

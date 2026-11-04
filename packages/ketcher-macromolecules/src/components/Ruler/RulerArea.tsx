@@ -1,16 +1,19 @@
-/* eslint-disable react-hooks/preserve-manual-memoization, react-hooks/refs */
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { D3DragEvent } from 'd3';
+import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
 import clsx from 'clsx';
+import type { LayoutMode } from 'ketcher-core';
 import { RootSizeContext } from '../../contexts';
 
 import RulerInput from './RulerInput';
 import RulerScale from './RulerScale';
 import RulerHandle from './RulerHandle';
 import {
+  RulerHandleOffsetX,
+  RulerInputOffsetX,
+  RulerInputWidth,
   SequenceModeIndentWidth,
   SequenceModeItemWidth,
   SequenceModeStartOffset,
@@ -21,6 +24,39 @@ import {
 import styles from './RulerArea.module.less';
 import { useZoomTransform } from '../../hooks/useZoomTransform';
 
+const getVisibleEdges = (
+  canvasContainer: HTMLElement | null | undefined,
+  fallbackWidth: number,
+) => {
+  const visibleWidth = canvasContainer?.clientWidth || fallbackWidth;
+  if (!visibleWidth) {
+    return null;
+  }
+
+  const left = canvasContainer?.scrollLeft || 0;
+  return { left, right: left + visibleWidth };
+};
+
+const getTranslateValue = (layoutMode: LayoutMode, lineLength: number) => {
+  if (layoutMode === 'sequence-layout-mode') {
+    const step = 10 * SequenceModeItemWidth + SequenceModeIndentWidth;
+    const index = Math.floor(lineLength / 10);
+    return SequenceModeStartOffset + index * step;
+  }
+
+  if (layoutMode === 'snake-layout-mode') {
+    return SnakeModeStartOffset + lineLength * SnakeModeItemWidth;
+  }
+
+  return 0;
+};
+
+const getDragPosition = (
+  transform: ZoomTransform,
+  translateValue: number,
+  dragDelta: number,
+): number => transform.invertX(transform.applyX(translateValue) + dragDelta);
+
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
   const { width: rootWidth } = useContext(RootSizeContext);
@@ -28,6 +64,11 @@ export const RulerArea = () => {
   const lineLengthValue = editorLineLength[layoutMode];
 
   const editor = useSelector(selectEditor);
+
+  const canvasContainer = editor?.canvas.parentElement;
+  const setEditorLineLength = editor?.events.setEditorLineLength;
+  const toggleLineLengthHighlighting =
+    editor?.events.toggleLineLengthHighlighting;
 
   const dragStartX = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
@@ -37,60 +78,40 @@ export const RulerArea = () => {
 
   const indentsInSequenceMode = lineLengthValue / 10 - 1;
 
-  const translateValue = useMemo(() => {
-    if (layoutMode === 'sequence-layout-mode') {
-      const step = 10 * SequenceModeItemWidth + SequenceModeIndentWidth;
-      const index = Math.floor(lineLengthValue / 10);
-      return SequenceModeStartOffset + index * step;
-    }
-
-    if (layoutMode === 'snake-layout-mode') {
-      return SnakeModeStartOffset + lineLengthValue * SnakeModeItemWidth;
-    }
-
-    return 0;
-  }, [layoutMode, lineLengthValue]);
+  const translateValue = useMemo(
+    () => getTranslateValue(layoutMode, lineLengthValue),
+    [layoutMode, lineLengthValue],
+  );
 
   const [inputOffsetX, handleOffsetX] = useMemo(() => {
     const translateValueWithZoomAndDrag =
       transform.applyX(translateValue) + dragDelta;
-    const handlePosition = translateValueWithZoomAndDrag - 8;
-    let inputPosition = translateValueWithZoomAndDrag + 10;
+    const handlePosition = translateValueWithZoomAndDrag + RulerHandleOffsetX;
+    let inputPosition = translateValueWithZoomAndDrag + RulerInputOffsetX;
 
-    const canvasContainer = editor?.canvas.parentElement;
-    const visibleWidth = canvasContainer?.clientWidth || rootWidth;
-    if (!visibleWidth) {
+    const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
+    if (!visibleEdges) {
       return [inputPosition, handlePosition];
     }
 
-    const scrollLeft = canvasContainer?.scrollLeft || 0;
-    const visibleLeftEdge = scrollLeft;
-    const visibleRightEdge = scrollLeft + visibleWidth;
-
-    // If input would go beyond right visible edge, cap it, take into account input width (35px)
-    if (inputPosition + 35 > visibleRightEdge) {
-      inputPosition = visibleRightEdge - 35;
+    // If input would go beyond right visible edge, cap it, take into account input width
+    if (inputPosition + RulerInputWidth > visibleEdges.right) {
+      inputPosition = visibleEdges.right - RulerInputWidth;
     }
 
     // If input would go beyond left visible edge, cap it
-    if (inputPosition < visibleLeftEdge) {
-      inputPosition = visibleLeftEdge;
+    if (inputPosition < visibleEdges.left) {
+      inputPosition = visibleEdges.left;
     }
 
     return [inputPosition, handlePosition];
-  }, [
-    editor?.canvas.parentElement,
-    rootWidth,
-    transform,
-    translateValue,
-    dragDelta,
-  ]);
+  }, [canvasContainer, rootWidth, transform, translateValue, dragDelta]);
 
   const updateSettings = useCallback(
     (value: number) => {
-      editor?.events.setEditorLineLength.dispatch({ [layoutMode]: value });
+      setEditorLineLength?.dispatch({ [layoutMode]: value });
     },
-    [editor?.events?.setEditorLineLength, layoutMode],
+    [setEditorLineLength, layoutMode],
   );
 
   const calculateLineLength = useCallback(
@@ -101,9 +122,11 @@ export const RulerArea = () => {
             indentsInSequenceMode * SequenceModeIndentWidth -
             SequenceModeStartOffset) /
           SequenceModeItemWidth;
+
         return Math.max(10, Math.round(rawCount / 10) * 10);
       } else if (layoutMode === 'snake-layout-mode') {
         const rawCount = (position - SnakeModeStartOffset) / SnakeModeItemWidth;
+
         return Math.max(1, Math.round(rawCount));
       }
 
@@ -115,8 +138,7 @@ export const RulerArea = () => {
   const calculateDragPosition = useCallback(
     (initialScreenX: number) => {
       const dragDelta = initialScreenX - dragStartX.current;
-      const screenX = transform.applyX(translateValue) + dragDelta;
-      return [dragDelta, transform.invertX(screenX)];
+      return [dragDelta, getDragPosition(transform, translateValue, dragDelta)];
     },
     [transform, translateValue],
   );
@@ -126,15 +148,14 @@ export const RulerArea = () => {
       return lineLengthValue;
     }
 
-    const [, dragPosition] = calculateDragPosition(
-      dragStartX.current + dragDelta,
+    return calculateLineLength(
+      getDragPosition(transform, translateValue, dragDelta),
     );
-    return calculateLineLength(dragPosition);
   }, [
     isDragging,
     lineLengthValue,
-    calculateDragPosition,
-    dragStartX,
+    transform,
+    translateValue,
     dragDelta,
     calculateLineLength,
   ]);
@@ -143,12 +164,41 @@ export const RulerArea = () => {
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       setIsDragging(true);
       dragStartX.current = event.sourceEvent.clientX;
-      editor?.events.toggleLineLengthHighlighting.dispatch(
-        true,
-        translateValue,
-      );
+
+      toggleLineLengthHighlighting?.dispatch(true, translateValue);
     },
-    [editor?.events?.toggleLineLengthHighlighting, translateValue],
+    [toggleLineLengthHighlighting, translateValue],
+  );
+
+  // Scrolls the canvas when the dragged slider would leave the visible area,
+  // so it stays on screen and can be grabbed again (decision in #7199).
+  // The line length does not depend on the scroll, see calculateDragPosition
+  const scrollToKeepHandleVisible = useCallback(
+    (sliderTranslateValue: number, dragDelta = 0) => {
+      const zoomTool = editor?.zoomTool;
+      const visibleEdges = getVisibleEdges(canvasContainer, rootWidth);
+      if (!zoomTool || !visibleEdges) {
+        return;
+      }
+
+      // The live transform, as the one from useZoomTransform lags behind a scroll
+      const liveTransform = zoomTool.zoomTransform;
+      const position = liveTransform.applyX(sliderTranslateValue) + dragDelta;
+      const rightOvershoot =
+        position + RulerInputOffsetX + RulerInputWidth - visibleEdges.right;
+      // Never scroll the start of the ruler past the left edge
+      const leftOvershoot = Math.min(
+        visibleEdges.left - (position + RulerHandleOffsetX),
+        visibleEdges.left - liveTransform.applyX(0),
+      );
+
+      if (rightOvershoot > 0) {
+        zoomTool.scrollBy(-rightOvershoot, 0);
+      } else if (leftOvershoot > 0) {
+        zoomTool.scrollBy(leftOvershoot, 0);
+      }
+    },
+    [editor?.zoomTool, canvasContainer, rootWidth],
   );
 
   const handleDrag = useCallback(
@@ -156,10 +206,17 @@ export const RulerArea = () => {
       const [dragDelta, dragPosition] = calculateDragPosition(
         event.sourceEvent.clientX,
       );
+
       setDragDelta(dragDelta);
-      editor?.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
+      scrollToKeepHandleVisible(translateValue, dragDelta);
+      toggleLineLengthHighlighting?.dispatch(true, dragPosition);
     },
-    [editor?.events?.toggleLineLengthHighlighting, calculateDragPosition],
+    [
+      toggleLineLengthHighlighting,
+      calculateDragPosition,
+      scrollToKeepHandleVisible,
+      translateValue,
+    ],
   );
 
   const handleDragEnd = useCallback(
@@ -172,17 +229,23 @@ export const RulerArea = () => {
       if (newValue !== lineLengthValue) {
         updateSettings(newValue);
       }
+      // The released slider snaps to the closest allowed value, which can be
+      // further than where it was dragged to
+      scrollToKeepHandleVisible(getTranslateValue(layoutMode, newValue));
 
       setDragDelta(0);
       dragStartX.current = 0;
-      editor?.events.toggleLineLengthHighlighting.dispatch(false);
+
+      toggleLineLengthHighlighting?.dispatch(false);
     },
     [
       calculateDragPosition,
       calculateLineLength,
       lineLengthValue,
-      editor?.events.toggleLineLengthHighlighting,
+      toggleLineLengthHighlighting,
       updateSettings,
+      scrollToKeepHandleVisible,
+      layoutMode,
     ],
   );
 
@@ -205,12 +268,14 @@ export const RulerArea = () => {
         layoutMode={layoutMode}
         onCommitValue={updateSettings}
       />
+
       <RulerHandle
         offsetX={handleOffsetX}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
       />
+
       <RulerScale transform={transform} layoutMode={layoutMode} />
     </div>
   ) : null;

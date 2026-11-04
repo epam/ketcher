@@ -48,7 +48,7 @@ export class PathBuilder {
   }
 
   addPathParts(pathParts: Array<string>): this {
-    this.pathParts = this.pathParts.concat(pathParts);
+    this.pathParts = [...this.pathParts, ...pathParts];
     return this;
   }
 

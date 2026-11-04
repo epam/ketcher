@@ -1,5 +1,3 @@
-/* eslint-disable react-you-might-not-need-an-effect/no-event-handler */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -7,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +15,6 @@
  ***************************************************************************/
 
 import {
-  type Dispatch,
   type FC,
   useState,
   useEffect,
@@ -27,6 +24,7 @@ import {
   memo,
 } from 'react';
 import { connect, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -44,7 +42,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Dialog } from '../../views/components';
 import Input from '../../component/form/Input/Input';
 import { SaveButton } from '../../component/view/savebutton';
-import { SdfSerializer, KetcherLogger } from 'ketcher-core';
+import { SdfSerializer, KetcherLogger, type RenderOptions } from 'ketcher-core';
 import classes from './template-lib.module.less';
 import accordionClasses from '../../../../components/Accordion/Accordion.module.less';
 import { createSelector } from 'reselect';
@@ -54,6 +52,7 @@ import { functionalGroupsSelector } from '../../state/functionalGroups/selectors
 import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
 import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
 import { showSnackbarNotification } from '../../state/notifications';
+import type { AppDispatch } from '../../state/hooks';
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -91,9 +90,8 @@ interface TemplateLibProps {
   lib: Array<Template>;
   selected: Template | null;
   tab: number;
-  initialTab: number;
   saltsAndSolvents: Template[];
-  renderOptions?: any;
+  renderOptions?: RenderOptions;
   isMonomerCreationWizardActive?: boolean;
 }
 
@@ -103,13 +101,24 @@ interface TemplateLibCallProps {
   onChangeGroup: (group: string) => void;
   onDelete: (tmpl: Template) => void;
   onFilter: (filter: string) => void;
-  onOk: (res: any) => void;
-  onSelect: (res: any) => void;
+  onOk: (result: unknown) => void;
+  onSelect: (tmpl: Template | null) => void;
   onTabChange: (tab: number) => void;
   functionalGroups: Template[];
 }
 
 type Props = TemplateLibProps & TemplateLibCallProps;
+
+interface TemplateDialogStoreState {
+  templates: Pick<
+    TemplateLibProps,
+    'filter' | 'group' | 'lib' | 'selected' | 'tab'
+  > & { attach: Record<string, unknown> };
+  editor?: {
+    render?: { options?: RenderOptions };
+    isMonomerCreationWizardActive?: boolean;
+  };
+}
 
 enum TemplateTabs {
   TemplateLibrary = 0,
@@ -125,12 +134,15 @@ const filterLibSelector = createSelector(
 
 const FUNCTIONAL_GROUPS = 'Functional Groups';
 
-const HeaderContent = () => (
-  <div className={classes.dialogHeader}>
-    <Icon name="template-dialog" />
-    <span>Structure Library</span>
-  </div>
-);
+const HeaderContent = () => {
+  const { t } = useTranslation('dialogs');
+  return (
+    <div className={classes.dialogHeader}>
+      <Icon name="template-dialog" />
+      <span>{t('toolbox.templateLibrary.title')}</span>
+    </div>
+  );
+};
 
 const FooterContent = ({
   getData,
@@ -138,8 +150,11 @@ const FooterContent = ({
   isMonomerCreationWizardActive,
   onError,
 }) => {
+  const { t } = useTranslation('dialogs');
   const clickToAddToCanvas = (
-    <span data-testid="add-to-canvas-button">Click to add to canvas</span>
+    <span data-testid="add-to-canvas-button">
+      {t('toolbox.templateLibrary.clickToAddToCanvas')}
+    </span>
   );
 
   // Determine filename based on tab
@@ -173,7 +188,7 @@ const FooterContent = ({
         disabled={isMonomerCreationWizardActive}
         onError={onError}
       >
-        Save to SDF
+        {t('toolbox.templateLibrary.saveToSdf')}
       </SaveButton>
       {clickToAddToCanvas}
     </div>
@@ -189,7 +204,6 @@ export const TemplateDialog: FC<Props> = (props) => {
     onTabChange,
     onChangeGroup,
     tab,
-    initialTab = null,
     functionalGroups,
     lib: templateLib,
     saltsAndSolvents,
@@ -199,6 +213,7 @@ export const TemplateDialog: FC<Props> = (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const { t } = useTranslation('dialogs');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
@@ -215,25 +230,15 @@ export const TemplateDialog: FC<Props> = (props) => {
 
   const filteredTemplateLib = filterLibSelector(props);
 
+  const activeTab =
+    isMonomerCreationWizardActive && tab === TemplateTabs.FunctionalGroupLibrary
+      ? TemplateTabs.TemplateLibrary
+      : tab;
+
   useEffect(() => {
     searchInputRef.current?.focus();
     onSelect(null);
-  }, [tab, onSelect]);
-
-  useEffect(() => {
-    if (initialTab !== null) {
-      onTabChange(initialTab);
-    }
-  }, [initialTab, onTabChange]);
-
-  useEffect(() => {
-    if (
-      isMonomerCreationWizardActive &&
-      tab === TemplateTabs.FunctionalGroupLibrary
-    ) {
-      onTabChange(TemplateTabs.TemplateLibrary);
-    }
-  }, [isMonomerCreationWizardActive, tab, onTabChange]);
+  }, [activeTab, onSelect]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions((prevAccordions) =>
@@ -256,8 +261,8 @@ export const TemplateDialog: FC<Props> = (props) => {
       [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
       [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
     };
-    return sdfSerializer.serialize(serializerMapper[tab]);
-  }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
+    return sdfSerializer.serialize(serializerMapper[activeTab]);
+  }, [activeTab, templateLib, functionalGroups, saltsAndSolvents]);
 
   const onSaveError = useCallback(
     (err: unknown) => {
@@ -266,10 +271,12 @@ export const TemplateDialog: FC<Props> = (props) => {
         err,
       );
       dispatch(
-        showSnackbarNotification('Some templates could not be exported.'),
+        showSnackbarNotification(
+          t('toolbox.templateLibrary.exportPartialFailure'),
+        ),
       );
     },
-    [dispatch],
+    [dispatch, t],
   );
 
   // Recreate selection handler only when upstream callbacks change.
@@ -292,7 +299,7 @@ export const TemplateDialog: FC<Props> = (props) => {
       headerContent={<HeaderContent />}
       footerContent={
         <FooterContent
-          tab={tab}
+          tab={activeTab}
           getData={getData}
           isMonomerCreationWizardActive={isMonomerCreationWizardActive}
           onError={onSaveError}
@@ -310,37 +317,37 @@ export const TemplateDialog: FC<Props> = (props) => {
           type="search"
           value={filter}
           onChange={(value) => onFilter(value as string)}
-          placeholder="Search by elements..."
+          placeholder={t('toolbox.templateLibrary.searchPlaceholder')}
           isFocused={true}
           data-testid="template-search-input"
         />
         <Icon name="search" className={classes.searchIcon} />
       </div>
       <Tabs
-        value={tab}
+        value={activeTab}
         onChange={(_, value) => handleTabChange(value)}
         className={classes.tabs}
       >
         <Tab
-          label="Template Library"
+          label={t('toolbox.templateLibrary.tabTemplateLibrary')}
           data-testid="template-library-tab"
           {...a11yProps(TemplateTabs.TemplateLibrary)}
         />
         <Tab
-          label="Functional Groups"
+          label={t('toolbox.templateLibrary.tabFunctionalGroups')}
           data-testid="functional-groups-tab"
           disabled={isMonomerCreationWizardActive}
           className={clsx(isMonomerCreationWizardActive && classes.disabled)}
           {...a11yProps(TemplateTabs.FunctionalGroupLibrary)}
         />
         <Tab
-          label="Salts and Solvents"
+          label={t('toolbox.templateLibrary.tabSaltsAndSolvents')}
           data-testid="salts-and-solvents-tab"
           {...a11yProps(TemplateTabs.SaltsAndSolvents)}
         />
       </Tabs>
       <div className={classes.tabsContent}>
-        <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
+        <TabPanel value={activeTab} index={TemplateTabs.TemplateLibrary}>
           <div>
             {groupNames.length ? (
               groupNames.map((groupName) => {
@@ -391,12 +398,14 @@ export const TemplateDialog: FC<Props> = (props) => {
               })
             ) : (
               <div className={classes.resultsContainer}>
-                <EmptySearchResult textInfo="No items found" />
+                <EmptySearchResult
+                  textInfo={t('toolbox.templateLibrary.noItemsFound')}
+                />
               </div>
             )}
           </div>
         </TabPanel>
-        <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
+        <TabPanel value={activeTab} index={TemplateTabs.FunctionalGroupLibrary}>
           {filteredFG?.length ? (
             <div className={classes.resultsContainer}>
               <MemoizedTemplateTable
@@ -409,11 +418,13 @@ export const TemplateDialog: FC<Props> = (props) => {
             </div>
           ) : (
             <div className={classes.resultsContainer}>
-              <EmptySearchResult textInfo="No items found" />
+              <EmptySearchResult
+                textInfo={t('toolbox.templateLibrary.noItemsFound')}
+              />
             </div>
           )}
         </TabPanel>
-        <TabPanel value={tab} index={TemplateTabs.SaltsAndSolvents}>
+        <TabPanel value={activeTab} index={TemplateTabs.SaltsAndSolvents}>
           {filteredSaltsAndSolvents?.length ? (
             <div className={classes.resultsContainer}>
               <MemoizedTemplateTable
@@ -426,7 +437,9 @@ export const TemplateDialog: FC<Props> = (props) => {
             </div>
           ) : (
             <div className={classes.resultsContainer}>
-              <EmptySearchResult textInfo="No items found" />
+              <EmptySearchResult
+                textInfo={t('toolbox.templateLibrary.noItemsFound')}
+              />
             </div>
           )}
         </TabPanel>
@@ -452,15 +465,14 @@ const onModalClose = (props, dispatch) => {
 };
 
 export default connect(
-  (store: any) => ({
+  (store: TemplateDialogStoreState) => ({
     ...omit(['attach'], store.templates),
-    initialTab: store.modal?.prop?.tab,
     renderOptions: store.editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
     saltsAndSolvents: saltsAndSolventsSelector(store),
     isMonomerCreationWizardActive: store.editor?.isMonomerCreationWizardActive,
   }),
-  (dispatch: Dispatch<any>, props: Props) => ({
+  (dispatch: AppDispatch, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
     onTabChange: (tab) => dispatch(changeTab(tab)),
     onSelect: (tmpl) => selectTemplate(tmpl, props, dispatch),

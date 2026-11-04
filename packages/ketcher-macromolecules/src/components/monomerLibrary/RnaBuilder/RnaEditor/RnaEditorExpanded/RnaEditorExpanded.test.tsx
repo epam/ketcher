@@ -1,4 +1,9 @@
-import { Entities, MonomerOrAmbiguousType } from 'ketcher-core';
+import {
+  Entities,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+  Struct,
+} from 'ketcher-core';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { Provider as StoreProvider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
@@ -10,10 +15,10 @@ import { configureAppStore } from 'state';
 import {
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
+  RnaBuilderPresetsItem,
 } from 'state/rna-builder';
 import { MonomerGroups } from 'src/constants';
 import { defaultTheme } from 'theming/defaultTheme';
-
 const testTheme = merge(createTheme(), { ketcher: defaultTheme });
 
 const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
@@ -111,6 +116,56 @@ describe('Test Rna Editor Expanded component', () => {
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 
+  it('should apply the active monomer group when mounting in edit mode', () => {
+    const base: MonomerItemType = {
+      label: 'Base',
+      props: {
+        MonomerCaps: {},
+        MonomerName: 'Base',
+        MonomerNaturalAnalogCode: 'B',
+        Name: 'Base',
+      },
+      struct: new Struct(),
+    };
+    const sugar: MonomerItemType = {
+      label: 'Sugar',
+      props: {
+        MonomerCaps: {},
+        MonomerName: 'Sugar',
+        MonomerNaturalAnalogCode: 'S',
+        Name: 'Sugar',
+      },
+      struct: new Struct(),
+    };
+
+    render(
+      withThemeAndStoreProvider(
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
+        {
+          rnaBuilder: {
+            activePreset: {
+              name: '',
+              nameInList: '',
+              base,
+              sugar: undefined,
+              phosphate: undefined,
+            },
+            activePresetMonomerGroup: {
+              groupName: MonomerGroups.SUGARS,
+              groupItem: sugar,
+            },
+            activeRnaBuilderItem: MonomerGroups.SUGARS,
+            isEditMode: true,
+          },
+        },
+      ),
+    );
+
+    expect(screen.getByTestId('name-your-structure-editbox')).toHaveValue(
+      'Sugar(Base)',
+    );
+  });
+
   it('should render correctly in view mode', async () => {
     const onDuplicateHandler = jest.fn();
 
@@ -158,6 +213,42 @@ describe('Test Rna Editor Expanded component', () => {
     expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
+
+  it.each([true, false])(
+    'selects the preset root when compact view is %s',
+    (isCompactView) => {
+      useIsCompactViewMock.mockReturnValue(isCompactView);
+      const store = configureAppStore({
+        rnaBuilder: {
+          activePreset: {
+            name: 'Preset',
+            nameInList: 'Preset',
+          },
+          activeRnaBuilderItem: MonomerGroups.SUGARS,
+          groupItemValidations: {
+            [MonomerGroups.BASES]: [],
+            [MonomerGroups.SUGARS]: [],
+            [MonomerGroups.PHOSPHATES]: [],
+          },
+          isEditMode: true,
+        },
+      });
+
+      render(
+        <ThemeProvider theme={testTheme}>
+          <StoreProvider store={store}>
+            <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />
+          </StoreProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.click(screen.getByTestId('name-your-structure-editbox'));
+
+      expect(store.getState().rnaBuilder.activeRnaBuilderItem).toBe(
+        RnaBuilderPresetsItem.Presets,
+      );
+    },
+  );
 
   it('shows "Not selected" for an empty phosphate slot in sequence edit mode', () => {
     useIsCompactViewMock.mockReturnValue(false);

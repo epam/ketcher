@@ -28,6 +28,8 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { FlexMode } from 'application/editor/modes/FlexMode';
+import type { LibraryItemDragDropHandlerDeps } from 'application/editor/libraryItemDragDrop/LibraryItemDragDropHandler';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type RescaleStructForModeTransitionContext = {
   micromoleculesEditor: {
@@ -64,6 +66,33 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('uses the current canvas for library drag/drop after manager swaps', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const { deps } = (
+      editor as unknown as {
+        dragDropHandler: { deps: LibraryItemDragDropHandlerDeps };
+      }
+    ).dragDropHandler;
+    const originalManager = editor.drawingEntitiesManager;
+    const replacementManager = new DrawingEntitiesManager();
+
+    try {
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+      editor.drawingEntitiesManager = replacementManager;
+      expect(deps.drawingEntitiesManager).toBe(replacementManager);
+      editor.drawingEntitiesManager = originalManager;
+      expect(deps.drawingEntitiesManager).toBe(originalManager);
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
   describe('switchToMacromolecules', () => {
     const originalGetBBox = SVGElement.prototype.getBBox;
 
@@ -1624,7 +1653,7 @@ describe('CoreEditor', () => {
       const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'standby';
 
-      window.dispatchEvent(new Event('blur'));
+      globalThis.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).not.toHaveBeenCalled();
     });
@@ -1634,7 +1663,7 @@ describe('CoreEditor', () => {
       const stopMovementSpy = jest.spyOn(selectTool, 'stopMovement');
       selectTool.mode = 'moving';
 
-      window.dispatchEvent(new Event('blur'));
+      globalThis.dispatchEvent(new Event('blur'));
 
       expect(stopMovementSpy).toHaveBeenCalledTimes(1);
     });

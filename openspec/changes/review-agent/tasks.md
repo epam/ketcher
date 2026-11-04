@@ -20,7 +20,7 @@
 - [x] 3.3 `rules.mjs`: select `review-rules.md` blocks by `Scope`, parsed with `parseRules` from `scripts/agent-docs/rules.mjs`.
 - [x] 3.4 `merge.mjs`: drop findings without a failing scenario, merge by file, rule ID and line distance, fingerprint, drop already posted fingerprints, rank, cap N.
 - [x] 3.5 `state.mjs`: write and read the hidden marker, take markers only from the workflow's account, round limit.
-- [ ] 3.6 `format.mjs`: inline comments (cap 10, blockers first), the brief (linked-issue answer, PR type, panel, counts per severity, overflow and out-of-diff findings, failed passes), the round-limit comment.
+- [x] 3.6 `format.mjs`: inline comments (cap 10, blockers first), the brief (linked-issue answer, PR type, panel, counts per severity, overflow and out-of-diff findings, failed passes), the round-limit comment.
 - [ ] 3.7 Tests for 3.1–3.6, including parsing the real `review-rules.md` and ignoring a marker from another account.
 
 ## 4. Model runs

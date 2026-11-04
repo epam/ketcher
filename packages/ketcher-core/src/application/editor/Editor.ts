@@ -2385,6 +2385,12 @@ export class CoreEditor {
     );
   }
 
+  public flushPendingDragRender() {
+    if (this.tool instanceof SelectBase) {
+      this.tool.flushPendingDragRender();
+    }
+  }
+
   public onSelectHistory(name: HistoryOperationType) {
     const history = EditorHistory.getInstance(this);
     if (name === 'undo') {

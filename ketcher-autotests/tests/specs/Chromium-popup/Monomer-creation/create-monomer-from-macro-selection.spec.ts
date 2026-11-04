@@ -16,11 +16,10 @@
  * - The canvas-replacing submit is NOT an undo entry (Ctrl+Z leaves the canvas
  *   unchanged — asserted in 1.5a).
  */
-import { Locator, Page, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { test } from '@fixtures';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
-  ConnectionPointOption,
   MacroMonomerOption,
   MonomerOption,
 } from '@tests/pages/constants/contextMenu/Constants';
@@ -29,17 +28,16 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { Library } from '@tests/pages/macromolecules/Library';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MonomerType as WizardMonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { MonomerType } from '@utils/types';
 import {
-  dragMouseTo,
   getVisibleCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
+  rubberBandSelect,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { markAtomAsConnectionPoint } from '@utils/canvas/atoms/markAtomAsConnectionPoint';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -66,18 +64,6 @@ async function getAtomCount(page: Page): Promise<number> {
 /** Context menu opened on an atom of the selected small molecule. */
 const smallMoleculeMenu = (page: Page) =>
   ContextMenu(page, getAtomLocator(page, {}).first());
-
-/** Marks a chain atom as an attachment point on the open wizard canvas. */
-async function markAtomAsConnectionPoint(page: Page): Promise<void> {
-  // The macro-mode canvas layer stays in the DOM with zero-size atom elements;
-  // only the wizard canvas atoms are visible.
-  const chainAtom = getAtomLocator(page, { atomLabel: 'C' })
-    .filter({ visible: true })
-    .first();
-  await ContextMenu(page, chainAtom).click(
-    ConnectionPointOption.MarkAsConnectionPoint,
-  );
-}
 
 /** The benzene ring auto-grouped as a CHEM fragment monomer. */
 const fragmentMonomer = (page: Page) =>
@@ -474,22 +460,3 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     expect(await getAtomCount(page)).toBe(0);
   });
 });
-
-/** Rubber-band selection around the union of the given monomers' bounding boxes. */
-async function rubberBandSelect(
-  page: Page,
-  monomers: Locator[],
-): Promise<void> {
-  // The area-selection tool is required for a drag to select instead of act on entities.
-  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
-  const boxes = [];
-  for (const monomer of monomers) {
-    boxes.push((await monomer.boundingBox())!);
-  }
-  const minX = Math.min(...boxes.map((box) => box.x)) - 10;
-  const minY = Math.min(...boxes.map((box) => box.y)) - 10;
-  const maxX = Math.max(...boxes.map((box) => box.x + box.width)) + 10;
-  const maxY = Math.max(...boxes.map((box) => box.y + box.height)) + 10;
-  await page.mouse.move(minX, minY);
-  await dragMouseTo(page, maxX, maxY);
-}

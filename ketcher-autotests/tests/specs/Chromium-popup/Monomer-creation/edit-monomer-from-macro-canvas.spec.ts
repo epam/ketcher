@@ -32,8 +32,10 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { assertEditAllHoverHighlight } from '@utils/macromolecules/editAllHighlight';
-import { openFileAndAddToCanvasAsNewProjectMacro } from '@utils';
+import {
+  openFileAndAddToCanvasAsNewProjectMacro,
+  takeEditorScreenshot,
+} from '@utils';
 
 const SEQUENCE_FIXTURE =
   'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket';
@@ -207,24 +209,24 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      * Scenario:
      * 1. Drag alanine, cysteine, alanine onto the flex canvas (the last drop is selected)
      * 2. Right-click the selected alanine and hover "Edit All"
-     * 3. Check the highlight signature on each monomer (helper)
+     * 3. Compare the canvas screenshot with the reference (both alanines highlighted,
+     *    the cysteine not)
      *
      * Version 3.21.0
      */
     const library = Library(page);
     await library.switchToPeptidesTab();
-    await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
-    await library.dragMonomerOnCanvas(Peptide.C, { x: 560, y: 250 });
-    await library.dragMonomerOnCanvas(Peptide.A, { x: 380, y: 420 });
+    // Coordinates are canvas-relative; keep all three drops inside the 472x626 canvas.
+    await library.dragMonomerOnCanvas(Peptide.A, { x: 100, y: 150 });
+    await library.dragMonomerOnCanvas(Peptide.C, { x: 300, y: 150 });
+    await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 400 });
     const monomerA = getMonomerLocator(page, Peptide.A).last();
-    const menu = ContextMenu(page, monomerA);
 
-    await assertEditAllHoverHighlight(
-      page,
-      () => menu.hover(MacroMonomerOption.EditAllMonomers),
-      'A',
-      ['C'],
-    );
+    await ContextMenu(page, monomerA).hover(MacroMonomerOption.EditAllMonomers);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('2.4b: Clicking "Edit All" opens a confirmation dialog before the wizard', async () => {

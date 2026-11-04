@@ -19,9 +19,9 @@ export const StereoBondWidth = 6;
 export const BondSpace = 6;
 export const LinesOffset = BondSpace / 2;
 
-// Clearance applied to a dative bond's arrowhead tip at an unlabeled end atom so that
-// multiple dative arrowheads converging on the same atom do not overlap.
-export const DATIVE_ARROW_END_OFFSET = 7;
+// `#arrow-marker` is 5 units long and centered on the line end (refX = 2.5), in
+// stroke-width units. Shortening the line by half of it puts the tip on the end point.
+export const DativeArrowTipOffset = 2.5 * BondWidth;
 
 export const BondDashArrayMap = {
   [BondType.Aromatic]: '6',

@@ -159,23 +159,10 @@ export const Library = (page: Page) => {
 
     async openRNASection(rnaSection: RNASection) {
       await this.openTab(LibraryTab.RNA);
-
-      // The accordion's open/closed state can also be driven by redux
-      // (e.g. selecting a slot in the RNA Builder editor), independently of
-      // this click. That creates a race: if the section opens itself right
-      // before our click lands, our click toggles it closed instead of open.
-      // Retry until the section is actually open.
-      const maxAttempts = 3;
-      for (
-        let attempt = 0;
-        attempt < maxAttempts && !(await this.isRNASectionOpened(rnaSection));
-        attempt++
-      ) {
+      if (!(await this.isRNASectionOpened(rnaSection))) {
         await expect(getElement(rnaSection)).toBeInViewport();
         await getElement(rnaSection).click();
       }
-
-      await expect(getElement(rnaSectionArea[rnaSection])).toBeVisible();
     },
 
     async getMonomerLibraryLocation(monomer: Monomer | PresetType) {

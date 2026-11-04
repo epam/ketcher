@@ -1,4 +1,4 @@
-import { test } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -8,6 +8,9 @@ import {
   moveMouseAway,
   takePageScreenshot,
   takePresetsScreenshot,
+  MacroFileType,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
+  clickOnCanvas,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import {
@@ -184,6 +187,53 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     );
     await moveMouseAway(page);
   });
+
+  for (const confirm of [false, true]) {
+    test(`#4594: modified C remains selected after ${confirm ? 'Update and Yes' : 'single-nucleotide Update'}`, async ({
+      page,
+    }) => {
+      await pasteFromClipboardAndOpenAsNewProjectMacro(
+        page,
+        MacroFileType.HELM,
+        'RNA1{R(A)P.R(C)P.R(G)P.R(U)P.R(A)P.R(C)}$$$$V2.0',
+      );
+      const nucleotide = getSymbolLocator(page, { nodeIndexOverall: 1 });
+      await expect(nucleotide).toHaveAttribute('data-symbol-alias', 'C');
+      await nucleotide.click();
+      if (confirm) {
+        // Single unpaired nucleotides update directly on this branch. Select
+        // both Cs to exercise confirmation without changing its policy.
+        await getSymbolLocator(page, { nodeIndexOverall: 5 }).click({
+          modifiers: ['Shift'],
+        });
+      }
+      await modifyInRnaBuilder(page, nucleotide);
+      await Library(page).rnaBuilder.selectBaseSlot();
+      await Library(page).selectMonomer(Base.G);
+      await Library(page).rnaBuilder.save();
+      if (confirm) await UpdateSequenceDialog(page).yes();
+      await expect(UpdateSequenceDialog(page).window).toBeHidden();
+      await expect(Library(page).rnaBuilder.saveButton).toBeHidden();
+      await expect(nucleotide).toHaveAttribute('data-symbol-alias', 'G');
+      // Use the existing DOM green-selection assertion, scoped to the edited
+      // position so the original G at position 2 cannot satisfy it.
+      await expect(nucleotide.locator('rect[fill="#57FF8F"]')).toBeVisible();
+      const selectedSymbols = page
+        .getByTestId('sequence-item')
+        .locator('rect[fill="#57FF8F"]');
+      await expect(selectedSymbols).toHaveCount(confirm ? 2 : 1);
+      if (confirm) {
+        const lastNucleotide = getSymbolLocator(page, { nodeIndexOverall: 5 });
+        await expect(lastNucleotide).toHaveAttribute('data-symbol-alias', 'G');
+        await expect(
+          lastNucleotide.locator('rect[fill="#57FF8F"]'),
+        ).toBeVisible();
+      }
+      await clickOnCanvas(page, 400, 300);
+      await expect(selectedSymbols).toHaveCount(0);
+      await expect(nucleotide).toHaveAttribute('data-symbol-alias', 'G');
+    });
+  }
 
   test('Selecting "Modify in RNA Builder" option from context menu after right-clicking on selected monomers switches RNA Builder to edit mode', async ({
     page,

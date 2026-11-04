@@ -27,6 +27,7 @@ import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 
 type KeyboardEventHandler = {
   shortcut: string | string[];
@@ -432,9 +433,8 @@ export abstract class BaseMode {
     drawingEntitiesManager: DrawingEntitiesManager,
   ): void {
     const newNodePosition = this.getNewNodePosition();
-    const firstEntityPosition =
-      drawingEntitiesManager.allEntities[0]?.[1].position;
-    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+    const bbox = getStructureBbox(drawingEntitiesManager.allEntitiesArray);
+    const offset = Vec2.diff(newNodePosition, new Vec2(bbox.left, bbox.top));
 
     drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
       drawingEntitiesManager.moveDrawingEntityModelChange(

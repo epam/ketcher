@@ -23,7 +23,7 @@ import Form, {
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Dialog } from '../../../../components';
+import { Dialog, type DialogParameters } from '../../../../components';
 import {
   type AtomAllAttributeName,
   SettingsManager,
@@ -45,9 +45,10 @@ import {
   customQueryValid,
   pseudoAtomValid,
 } from './helper';
-import AtomElement from './AtomElement/AtomElement';
+import AtomElement, { type AtomFormResult } from './AtomElement/AtomElement';
 
-interface AtomProps extends BaseCallProps, BaseProperties {
+interface AtomProps
+  extends BaseCallProps<AtomFormResult>, BaseProperties<AtomFormResult> {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;
@@ -235,7 +236,7 @@ const Atom: FC<Props> = (props: Props) => {
       className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}
+      params={rest as DialogParameters}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider

@@ -158,7 +158,7 @@ function prefetchRender(
 
   return fetch.then((svgs) => {
     svgs.forEach((svgContent) => {
-      if (svgContent) cacheElement.innerHTML += svgContent;
+      if (svgContent) cacheElement.textContent += svgContent;
     });
 
     return files.filter((_, index) => !!svgs[index]);

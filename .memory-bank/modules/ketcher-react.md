@@ -52,6 +52,12 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 - React, Redux, redux-toolkit
 - Less (CSS preprocessor, compiled at build time)
 - Rollup (build)
+- `miew-react` embeds the Miew 3D viewer. This workspace pins `miew` to
+  `0.11.1` at the root and applies `patches/miew+0.11.1.patch` during root
+  `postinstall` to render non-loop aromatic bonds with dashed offset segments
+  (#12382). Both the ES module and CommonJS/UMD entry points are patched; bond
+  data is unchanged. Independent consumers of the published packages do not
+  receive this workspace patch. See [DEVNOTES.md](../../DEVNOTES.md#dependency-patches).
 
 ## Dependents
 

@@ -1684,6 +1684,10 @@ function buildLabel(
   } = options;
 
   let text = getLabelText(atom.a, atomId, sgroup, options) || 'R#';
+  // Not italic when the attachment point name replaced the pseudo label
+  const isPseudoLabel =
+    Boolean(atom.a.pseudo) &&
+    (atom.a.rglabel === null || text === atom.a.pseudo);
 
   let tooltip: string | null = null;
 
@@ -1728,7 +1732,7 @@ function buildLabel(
     font,
     'font-size': fontszInPx,
     fill: atom.color,
-    'font-style': atom.a.pseudo ? 'italic' : '',
+    'font-style': isPseudoLabel ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
@@ -1791,7 +1795,9 @@ function getLabelText(
 
   if (atom.atomList !== null) return atom.atomList.label();
 
-  if (atom.pseudo) return atom.pseudo;
+  // A leaving atom of a monomer is labelled by its attachment point, even
+  // when it is a pseudo atom (e.g. "OH")
+  if (atom.pseudo && atom.rglabel === null) return atom.pseudo;
 
   if (atom.alias) return atom.alias;
 

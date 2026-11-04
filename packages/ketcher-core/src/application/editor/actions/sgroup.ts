@@ -248,15 +248,8 @@ export function setExpandMonomerSGroup(
       const otherMonomerStereoValue =
         otherMonomerStereo ?? Bond.PATTERN.STEREO.NONE;
 
-      let hasEffectiveCurrentStereo = hasCurrentStereo;
-      let hasEffectiveOtherStereo = hasOtherStereo;
-      if (attrs.expanded !== otherMonomerIsExpanded) {
-        if (hasCurrentStereo && attrs.expanded) {
-          hasEffectiveOtherStereo = false;
-        } else if (otherMonomerIsExpanded && hasOtherStereo) {
-          hasEffectiveCurrentStereo = false;
-        }
-      }
+      const hasEffectiveCurrentStereo = hasCurrentStereo && attrs.expanded;
+      const hasEffectiveOtherStereo = hasOtherStereo && otherMonomerIsExpanded;
 
       if (hasEffectiveCurrentStereo && !hasEffectiveOtherStereo) {
         if (bondToOutside.begin === atomInsideCurrentMonomer) {
@@ -284,7 +277,7 @@ export function setExpandMonomerSGroup(
             ),
           );
         }
-      } else if (hasEffectiveCurrentStereo && hasEffectiveOtherStereo) {
+      } else if (hasCurrentStereo || hasOtherStereo) {
         action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
       }
     }

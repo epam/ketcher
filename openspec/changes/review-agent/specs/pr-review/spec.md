@@ -118,6 +118,18 @@ Each finding sent to verification SHALL get its own verifier run, which SHALL op
 - **WHEN** the verifier finds that the named existing helper behaves differently from the new code
 - **THEN** the finding is dropped and not posted
 
+### Requirement: Deepening
+The verifier MAY name one lens, `security` or `reuse`, that should also check the files of a confirmed finding. The hub SHALL run that lens once more on those files when it reported no finding there in this round, at most once per lens per round, and SHALL verify the extra findings before posting them. Extra findings SHALL NOT start another extra pass.
+
+#### Scenario: Security suspicion outside the panel
+- **WHEN** the panel did not pick `security` and the verifier confirms a finding and names `security`
+- **THEN** one `security` pass runs on the files of that finding
+- **AND** its findings are verified before they are posted
+
+#### Scenario: One extra pass per lens
+- **WHEN** two verdicts in the same round name `reuse`
+- **THEN** one `reuse` pass runs, on the files of both findings
+
 ### Requirement: Posted output
 The hub SHALL post at most 10 confirmed findings as inline comments on lines in the diff, blockers first, and SHALL post one brief as a top-level comment. Findings that do not fit the cap, and findings on lines outside the diff, SHALL go in the brief, one line each. Nothing posted SHALL praise or summarize the diff.
 

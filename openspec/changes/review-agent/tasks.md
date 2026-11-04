@@ -21,7 +21,7 @@
 - [x] 3.4 `merge.mjs`: drop findings without a failing scenario, merge by file, rule ID and line distance, fingerprint, drop already posted fingerprints, rank, cap N.
 - [x] 3.5 `state.mjs`: write and read the hidden marker, take markers only from the workflow's account, round limit.
 - [x] 3.6 `format.mjs`: inline comments (cap 10, blockers first), the brief (linked-issue answer, PR type, panel, counts per severity, overflow and out-of-diff findings, failed passes), the round-limit comment.
-- [ ] 3.7 Tests for 3.1–3.6, including parsing the real `review-rules.md` and ignoring a marker from another account.
+- [x] 3.7 Tests for 3.1–3.6, including parsing the real `review-rules.md` and ignoring a marker from another account.
 
 ## 4. Model runs
 
@@ -30,12 +30,13 @@
 - [ ] 4.3 `passes.mjs`: one finder pass per panel lens, concurrency-limited; the role prompt is the shared part of `SKILL.md` and the lens file from the base checkout; rules, invariants and accepted patterns go in the input as text.
 - [ ] 4.4 `verify.mjs` and the linked-issue run.
 - [ ] 4.5 Run one real `claude -p --safe-mode --restricted` call locally with `CLAUDE_CODE_OAUTH_TOKEN`; confirm authentication, structured output, and that a test hook and a `.claude/settings.json` in the working tree are not loaded. Record the result in `design.md`.
+- [ ] 4.6 Deepening: add `alsoCheck` (`security`, `reuse`, `none`) to the verdict schema; run one extra pass per named lens on the flagged files when that lens reported nothing there in this round; merge and verify the extra findings without further deepening; keep N per round; tests.
 
 ## 5. GitHub and entry point
 
 - [ ] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
 - [ ] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
-- [ ] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel and label removal on failure.
+- [ ] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel, one deepening pass and label removal on failure.
 - [ ] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.
 
 ## 6. Evaluation

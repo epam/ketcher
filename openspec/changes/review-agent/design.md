@@ -96,6 +96,18 @@ Model IDs get retired. The runner passes `--fallback-model` with the alias of th
 
 `claude-review.yml` keeps the `pull_request` `labeled` trigger and the `Autotests` title filter, and drops `claude-code-action`. It checks out the base branch for the hub, the prompts and the panel script, checks out the PR head into a separate directory, installs a pinned Claude Code version, and runs the hub with `CLAUDE_CODE_OAUTH_TOKEN` and `GITHUB_TOKEN`. Permissions: `contents: read`, `pull-requests: write`, `issues: write` (labels). If the AI secrets move to a protected environment (#12513), the job uses it.
 
+### 12. The verifier can ask for one more lens
+
+The panel picks lenses by rules, so a lens can miss a file that needs it. The verifier answer has an `alsoCheck` field: `security`, `reuse` or `none`. The verifier sets it when a confirmed finding suggests a security problem, or shows that the repository already solves the same job. The hub runs the named lens once more, on the files of the flagged findings, when:
+
+- the verdict is `confirmed`, at any severity;
+- that lens reported no finding on those files in this round;
+- that lens has had no extra pass in this round.
+
+The extra findings are merged against the posted and the already found findings, and are verified. Their verdicts cannot ask for another pass. At most N findings go to verification in a round, extra findings included. The hub decides whether to run; the model only names the lens.
+
+*Alternative:* the verifier reports the security or reuse problem itself. Rejected: the verifier checks one finding and has no lens prompt, and a finding needs the lens's focus and checks.
+
 ## Risks / Trade-offs
 
 - **Subscription limits** → The token belongs to a team member's Claude account. A review is up to one finder run per panel lens, one linked-issue run and up to N verifications on that account. Mitigated by manual rounds, the panel, the cap N, Sonnet defaults and `--max-budget-usd` per run.
@@ -103,6 +115,7 @@ Model IDs get retired. The runner passes `--fallback-model` with the alias of th
 - **Safe and restricted mode with the OAuth token are not yet run** → Verified in the first local run (task 4.5). If they fail, run with `--setting-sources` limited and the same tool list, and record the change here.
 - **A model ID is retired** → The runner falls back to the family alias, and the brief names the model that ran. A maintainer then updates the repository variable or the default in `config.mjs`.
 - **`--bare` may become the default for `-p`** → The documentation says so. Bare mode does not read the OAuth token. Mitigated by the pinned Claude Code version, and by checking the flag behavior before each version bump.
+- **Deepening adds model runs** → At most two extra passes per round, only after a confirmed finding, and only on the flagged files.
 - **Prompt injection from PR content** → Model runs cannot run commands, edit files, use the network, read PR settings files, or post. The worst case is a wrong or missing finding, which verification and the human reviewer still filter.
 - **Two review paths** → `/review-pr` (local) and the hub (CI) can drift. Mitigated by sharing the lens files, the shared prompt and the panel script.
 - **Document format as a contract** → A change to the `review-rules.md` block format could drop rules silently. Mitigated by reusing `parseRules`, by tests that parse the real file, and by `check:agent-docs`.

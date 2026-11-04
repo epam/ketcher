@@ -332,7 +332,8 @@ export class SGroup {
 
   addAttachmentPoints(
     attachmentPoints:
-      ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
+      | ReadonlyArray<SGroupAttachmentPoint>
+      | SGroupAttachmentPoint[],
     shouldValidateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {

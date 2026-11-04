@@ -112,7 +112,8 @@ const buildTwoPositionDuplex = (editor: CoreEditor) => {
 
 const rendererForMonomer = (nucleotide: Nucleotide) => {
   const renderer = nucleotide.rnaBase.renderer as unknown as
-    BaseSequenceItemRenderer | undefined;
+    | BaseSequenceItemRenderer
+    | undefined;
 
   if (!renderer) {
     throw new Error('Fixture setup failed: renderer not found for monomer');

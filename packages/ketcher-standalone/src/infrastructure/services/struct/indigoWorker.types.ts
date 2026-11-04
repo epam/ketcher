@@ -134,7 +134,11 @@ export interface WithSelection {
 
 export interface CommandOptions {
   [key: string]:
-    IKetMacromoleculesContent | string | number | boolean | undefined;
+    | IKetMacromoleculesContent
+    | string
+    | number
+    | boolean
+    | undefined;
 }
 
 export interface CommandData {
@@ -215,7 +219,8 @@ interface OutputMessageWithoutError<T> extends OutputMessageBase {
 }
 
 export type OutputMessage<T> =
-  OutputMessageWithError | OutputMessageWithoutError<T>;
+  | OutputMessageWithError
+  | OutputMessageWithoutError<T>;
 
 export interface InputMessage<T> {
   type: Command;

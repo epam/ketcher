@@ -97,7 +97,8 @@ const getTemplateClass = (
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
   const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-    MonomerTemplate | undefined;
+    | MonomerTemplate
+    | undefined;
 
   return templateRef.class ?? template?.class;
 };

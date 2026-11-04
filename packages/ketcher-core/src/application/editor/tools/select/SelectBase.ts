@@ -85,8 +85,11 @@ abstract class SelectBase implements BaseTool {
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
   public mode:
-    'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
-    'standby';
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center' = 'standby';
   /**
   Controls whether auto-scroll is active during a selection drag.
   Override to `false` in subclasses that should not auto-scroll

@@ -31,7 +31,9 @@ class MonomerTool implements BaseTool {
   private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
 
   private monomerPreviewRenderer:
-    BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
+    | BaseMonomerRenderer
+    | AmbiguousMonomerRenderer
+    | undefined;
 
   private readonly monomer: MonomerOrAmbiguousType;
 

@@ -4,6 +4,10 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 
 Spec: [openspec/specs/macromolecules/spec.md](../../openspec/specs/macromolecules/spec.md)
 
+## Expected behavior
+
+- In Sequence edit mode, inserting RNA or DNA immediately before a CHEM creates a nucleotide with a phosphate connecting the new sugar to the CHEM. This also applies on the antisense strand. Existing phosphate neighbors and chain ends retain their usual insertion rules.
+
 ## Limitations
 
 - The eraser is disabled in sequence layout mode.

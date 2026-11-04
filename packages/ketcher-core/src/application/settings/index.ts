@@ -6,6 +6,7 @@
 // Types and interfaces
 export type {
   Settings,
+  ValenceMode,
   ValidationResult,
   ValidationError,
   SettingsListener,

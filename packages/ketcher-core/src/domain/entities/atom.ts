@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +17,7 @@
 import { type AtomListParams, AtomList } from './atomList';
 import { type Point, Vec2 } from './vec2';
 
-import { Elements } from 'domain/constants';
+import { Elements, isMetalElementType } from 'domain/constants';
 import { Pile } from './pile';
 import type { Struct } from './struct';
 import {
@@ -29,6 +28,8 @@ import { isNumber } from 'lodash';
 import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { BondEndpoint } from './bondEndpoint';
+import { SettingsManager } from 'utilities';
 
 /**
  * Return unions of Pick.
@@ -129,7 +130,7 @@ type ValenceComputationResult = {
   hydrogenCount: number;
 };
 
-export class Atom extends BaseMicromoleculeEntity {
+export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -212,7 +213,9 @@ export class Atom extends BaseMicromoleculeEntity {
   hasImplicitH?: boolean;
   pseudo!: string;
 
-  /** @deprecated */
+  /**
+  @deprecated
+  */
   get attpnt() {
     return this.attachmentPoints;
   }
@@ -299,10 +302,10 @@ export class Atom extends BaseMicromoleculeEntity {
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
-      get: function () {
+      get() {
         return getPseudo(this.label);
       },
-      set: function (value) {
+      set(value) {
         if (isCorrectPseudo(value)) {
           this.label = value;
         }
@@ -329,26 +332,20 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
-    const result: number[] = [];
-    for (const [bondId, bond] of struct.bonds.entries()) {
-      if (bond.begin === atomId || bond.end === atomId) {
-        result.push(bondId);
-      }
-    }
-    return result;
+    return struct.getConnectedBondIds(atomId);
   }
 
   static getAttrHash(atom: Atom) {
     const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
-    for (const attr in Atom.attrlist) {
+    for (const attr in this.attrlist) {
       if (atom[attr] !== undefined) attrs[attr] = atom[attr];
     }
     return attrs;
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Atom.attrlist) {
-      return Atom.attrlist[attr];
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
     }
   }
 
@@ -358,7 +355,7 @@ export class Atom extends BaseMicromoleculeEntity {
 
   static isInAromatizedRing(struct: Struct, atomId: number): boolean {
     const atom = struct.atoms.get(atomId);
-    if (atom && Atom.isHeteroAtom(atom.label)) {
+    if (atom && this.isHeteroAtom(atom.label)) {
       for (const [_, loop] of struct.loops) {
         const halfBondIds = loop.hbs;
         if (loop.aromatic) {
@@ -397,13 +394,13 @@ export class Atom extends BaseMicromoleculeEntity {
       this.label === 'GH' ||
       this.label === 'GH*';
     return Boolean(
-      this.substitutionCount !== 0 ||
-      this.unsaturatedAtom !== 0 ||
-      this.ringBondCount !== 0 ||
       isAnyAtom ||
       isAnyMetal ||
       isAnyHalogen ||
       isAnyGroup ||
+      this.substitutionCount !== 0 ||
+      this.unsaturatedAtom !== 0 ||
+      this.ringBondCount !== 0 ||
       this.hCount !== 0 ||
       this.atomList !== null ||
       Object.values(queryProperties).some(
@@ -453,6 +450,26 @@ export class Atom extends BaseMicromoleculeEntity {
       return true;
     }
     const element = Elements.get(label);
+
+    // Per the 2017 BIOVIA Chemical Representation specification, metal
+    // atoms (alkali, alkaline-earth, transition, post-transition,
+    // lanthanide, actinide) are absent from the main-group valence table
+    // and therefore default to zero valence beyond their existing bonds,
+    // with zero implicit hydrogens. This only applies to the default
+    // (no-override) calculation; an explicit implicit-H count set via
+    // "Add/Remove explicit Hydrogen" is still honored.
+    if (
+      SettingsManager.valenceMode === 'biovia-2017' &&
+      isMetalElementType(element?.type)
+    ) {
+      const hydrogenCount = this.overrideHydrogenCountIfNeeded(0);
+      return this.applyValenceResult(
+        connectionCount,
+        hydrogenCount,
+        connectionCount,
+      );
+    }
+
     const radicalCount = radicalElectrons(this.radical);
     const absCharge = Math.abs(charge);
     const valenceResult = this.calculateValenceResult(element?.group, {
@@ -685,7 +702,7 @@ export class Atom extends BaseMicromoleculeEntity {
     }
     if (label === 'Bi' || label === 'Sb' || label === 'As') {
       if (charge === 1) {
-        if (radicalCount + connectionCount <= 2 && label !== 'As') {
+        if (label !== 'As' && radicalCount + connectionCount <= 2) {
           return {
             valence: 2,
             hydrogenCount: 2 - radicalCount - connectionCount,
@@ -942,9 +959,9 @@ export class Atom extends BaseMicromoleculeEntity {
   public static getSuperAtomAttachmentPointByAttachmentAtom(
     struct: Struct,
     atomId: number,
-    searchBySgroups = false,
+    shouldSearchBySgroups = false,
   ) {
-    const sgroup = searchBySgroups
+    const sgroup = shouldSearchBySgroups
       ? struct.getGroupFromAtomIdBySgroups(atomId)
       : struct.getGroupFromAtomId(atomId);
     return sgroup
@@ -955,13 +972,13 @@ export class Atom extends BaseMicromoleculeEntity {
   public static getSuperAtomAttachmentPointByLeavingGroup(
     structOrSgroup: Struct | SGroup,
     atomId: number,
-    searchBySgroups = false,
+    shouldSearchBySgroups = false,
   ) {
     let sgroup: SGroup | undefined;
 
-    if (Atom.isSGroup(structOrSgroup)) {
+    if (this.isSGroup(structOrSgroup)) {
       sgroup = structOrSgroup;
-    } else if (searchBySgroups) {
+    } else if (shouldSearchBySgroups) {
       sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
     } else {
       sgroup = structOrSgroup.getGroupFromAtomId(atomId);
@@ -975,17 +992,17 @@ export class Atom extends BaseMicromoleculeEntity {
   public static isSuperatomLeavingGroupAtom(
     structOrSgroup: Struct | SGroup,
     atomId?: number,
-    searchBySgroups = false,
+    shouldSearchBySgroups = false,
   ) {
     if (atomId === undefined) {
       return false;
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      this.getSuperAtomAttachmentPointByLeavingGroup(
         structOrSgroup,
         atomId,
-        searchBySgroups,
+        shouldSearchBySgroups,
       ),
     );
   }
@@ -996,7 +1013,7 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+      this.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
     );
   }
 
@@ -1004,7 +1021,7 @@ export class Atom extends BaseMicromoleculeEntity {
     struct: Struct,
     attachmentAtomId?: number,
     leavingGroupAtomid?: number,
-    searchBySgroups = false,
+    shouldSearchBySgroups = false,
   ) {
     const bonds = struct.bonds;
     const atomId = isNumber(attachmentAtomId)
@@ -1012,15 +1029,15 @@ export class Atom extends BaseMicromoleculeEntity {
       : (leavingGroupAtomid as number);
     const atom = struct.atoms.get(atomId);
     const attachmentPoint = isNumber(attachmentAtomId)
-      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(
+      ? this.getSuperAtomAttachmentPointByAttachmentAtom(
           struct,
           atomId,
-          searchBySgroups,
+          shouldSearchBySgroups,
         )
-      : Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      : this.getSuperAtomAttachmentPointByLeavingGroup(
           struct,
           atomId,
-          searchBySgroups,
+          shouldSearchBySgroups,
         );
     const attachmentPointAtomBonds = attachmentPoint
       ? bonds.filter(
@@ -1052,14 +1069,14 @@ export class Atom extends BaseMicromoleculeEntity {
   public static isHiddenLeavingGroupAtom(
     struct: Struct,
     atomId: number,
-    searchBySgroups = false,
-    includeAtomsInCollapsedSgroups = false,
+    shouldSearchBySgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const atom = struct.atoms.get(atomId);
 
     if (
       atom &&
-      !includeAtomsInCollapsedSgroups &&
+      !shouldIncludeAtomsInCollapsedSgroups &&
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         struct.sgroups,
@@ -1070,17 +1087,17 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     const attachmentAtomExternalConnections =
-      Atom.getAttachmentAtomExternalConnections(
+      this.getAttachmentAtomExternalConnections(
         struct,
         undefined,
         atomId,
-        searchBySgroups,
+        shouldSearchBySgroups,
       );
-    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+    const attachmentPoint = this.getSuperAtomAttachmentPointByLeavingGroup(
       struct,
       atomId,
     );
-    const sGroup = searchBySgroups
+    const sGroup = shouldSearchBySgroups
       ? struct.getGroupFromAtomIdBySgroups(atomId)
       : struct.getGroupFromAtomId(atomId);
     const isMonomer = sGroup?.isMonomer;
@@ -1090,7 +1107,7 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     return Boolean(
-      Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
+      this.isSuperatomLeavingGroupAtom(struct, atomId, shouldSearchBySgroups) &&
       attachmentAtomExternalConnections?.find((_, bond) =>
         bond.begin === attachmentPoint?.atomId
           ? bond.beginSuperatomAttachmentPointNumber ===
@@ -1122,7 +1139,7 @@ export function radicalElectrons(radical: unknown) {
 }
 
 function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return value !== undefined ? value : defaultValue;
+  return value === undefined ? defaultValue : value;
 }
 
 function isCorrectPseudo(label) {

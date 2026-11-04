@@ -2,6 +2,7 @@ import { fromFragmentDeletion, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
+import { didDeleteWithAttachmentGroupSplitConfirm } from 'src/script/editor/utils/attachmentGroupSplit';
 import type {
   ItemEventParams,
   SelectionContextMenuProps,
@@ -21,8 +22,14 @@ const useDelete = () => {
         atoms: props?.atomIds,
       };
 
-      const action = fromFragmentDeletion(molecule, itemsToDelete);
-      editor.update(action);
+      const didDelete = await didDeleteWithAttachmentGroupSplitConfirm(
+        editor,
+        itemsToDelete,
+        () => fromFragmentDeletion(molecule, itemsToDelete),
+      );
+      if (!didDelete) {
+        return;
+      }
 
       editor.selection(null);
       editor.focusCliparea();

@@ -11,7 +11,6 @@ import {
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
-import { shiftCanvas } from '@utils/index';
 import { MonomerType } from '@utils/types';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -50,7 +49,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     // Set preset name only
@@ -111,7 +109,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'FullyDefinedBase';
@@ -177,7 +174,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'FullyDefinedSugar';
@@ -242,7 +238,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'FullyDefinedPhosphate';
@@ -306,7 +301,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'AllComponentsVisible';
@@ -391,7 +385,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'HiddenComponentsTest';
@@ -472,7 +465,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'MixedVisibilityTest';
@@ -553,7 +545,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
 
     // First create preset with hidden base
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'uniqCase8';
@@ -583,7 +574,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
 
     // Now create visible base with same code
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Base);
     await dialog.codeEditbox.fill('uniqCase8B');
     await dialog.nameEditbox.fill('Visible Base with Duplicate Code');
@@ -621,7 +611,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'TypeMatchTest';
@@ -671,7 +660,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'abc';
@@ -721,7 +709,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'xyz';
@@ -771,7 +758,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'pqr';
@@ -820,7 +806,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'NaturalAnalogueTest';
@@ -874,7 +859,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'APScenario11';
@@ -941,7 +925,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'APScenario12';
@@ -1008,7 +991,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'APScenario21';
@@ -1072,7 +1054,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'APScenario31';
@@ -1138,7 +1119,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'IntegrationTest';
@@ -1204,7 +1184,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
     const presetName = 'ExportImportTest';
@@ -1264,7 +1243,6 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
 
     // Verify uniqueness validation in manual monomer creation flow
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Base);
     await dialog.codeEditbox.fill('R');
     // 'R' is the code of an existing visible monomer (Ribose) - should trigger uniqueness validation error

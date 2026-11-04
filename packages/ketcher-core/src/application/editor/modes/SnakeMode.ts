@@ -15,7 +15,7 @@ export class SnakeMode extends BaseMode {
     super('snake-layout-mode', previousMode);
   }
 
-  public initialize(_needRemoveSelection: boolean, _isUndo = false) {
+  public initialize(_shouldRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
     const editor = provideEditorInstance();
 
@@ -32,6 +32,7 @@ export class SnakeMode extends BaseMode {
     command.setUndoOperationReverse();
 
     if (editor.drawingEntitiesManager.hasMonomers) {
+      editor.zoomTool.rememberZoomTransform();
       editor.scrollToTopLeftCorner();
     }
 

@@ -11,7 +11,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
  * Is used to improve search and opening tab performance in Template Dialog
  * Rendering a lot of structures causes great delay
  */
-type RenderStructOptions = Partial<RenderOptions> & {
+export type RenderStructOptions = Partial<RenderOptions> & {
   cachePrefix?: string;
   needCache?: boolean;
   wrapperDimensions?: Pick<DOMRectReadOnly, 'width' | 'height'>;

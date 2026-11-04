@@ -45,12 +45,12 @@ export type ToolbarAction =
   | { type: 'MODAL_OPEN' };
 
 export interface ToolbarResizeState {
-  editor: {
+  editor?: {
     render: {
       update: () => void;
     };
   } | null;
   actionState?: {
     activeTool: ActiveTool;
-  };
+  } | null;
 }

@@ -102,6 +102,8 @@ type SettingsDialogLocators = {
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
+  resetSubmenuTrigger: Locator;
+  manageSettingsButton: Locator;
   closeWindowButton: Locator;
   generalSection: Locator;
   stereochemistrySection: Locator;
@@ -288,11 +290,13 @@ export const SettingsDialog = (page: Page) => {
   );
 
   const locators: SettingsDialogLocators = {
-    window: page.getByTestId('settings-dialog'),
-    openFromFileButton: page.getByTestId('open-settings-from-file-button'),
-    saveToFileButton: page.getByTestId('save-settings-to-file-button'),
-    resetButton: page.getByTestId('reset-settings-button'),
-    closeWindowButton: page.getByTestId('close-window-button'),
+    window: page.getByTestId('settings-panel'),
+    openFromFileButton: page.getByTestId('load-settings-menu-button'),
+    saveToFileButton: page.getByTestId('save-settings-menu-button'),
+    resetButton: page.getByTestId('reset-to-default-button'),
+    resetSubmenuTrigger: page.getByTestId('reset-to-submenu-trigger'),
+    manageSettingsButton: page.getByTestId('manage-settings-button'),
+    closeWindowButton: page.getByTestId('settings-panel-close'),
     generalSection,
     stereochemistrySection,
     atomsSection,
@@ -301,9 +305,9 @@ export const SettingsDialog = (page: Page) => {
     validationSection,
     threeDViewerSection,
     optionsForDebuggingSection,
-    setACSSettingsButton: page.getByTestId('acs-style-button'),
-    applyButton: page.getByTestId('OK'),
-    cancelButton: page.getByTestId('Cancel'),
+    setACSSettingsButton: page.getByTestId('reset-to-acs-button'),
+    applyButton: page.getByTestId('settings-panel-apply'),
+    cancelButton: page.getByTestId('settings-panel-cancel'),
   };
 
   const sectionLocators: Record<SettingsSection, Locator> = {
@@ -341,6 +345,8 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async setACSSettings() {
+      await locators.manageSettingsButton.click();
+      await locators.resetSubmenuTrigger.hover();
       await locators.setACSSettingsButton.click();
     },
 
@@ -368,9 +374,9 @@ export const SettingsDialog = (page: Page) => {
     },
 
     async reset() {
-      if (await locators.resetButton.isEnabled()) {
-        await locators.resetButton.click();
-      }
+      await locators.manageSettingsButton.click();
+      await locators.resetSubmenuTrigger.hover();
+      await locators.resetButton.click();
     },
   };
 };
@@ -392,6 +398,10 @@ const SECTION_OVERRIDES = new Map<string, SettingsSection>([
   [ServerSetting.IgnorePseudoatomsAtMass, SettingsSection.Validation],
   [ServerSetting.AddRsitesAtMassCalculation, SettingsSection.Reactions],
   [ServerSetting.AddIsotopesAtMassCalculation, SettingsSection.Reactions],
+  // 3D Viewer section was merged into General Editing & Display in the redesign
+  [ThreeDViewerSetting.DisplayMode, SettingsSection.General],
+  [ThreeDViewerSetting.BackgroundColor, SettingsSection.General],
+  [ThreeDViewerSetting.LabelColoring, SettingsSection.General],
 ]);
 
 function createOptionToSectionMap(): Map<string, SettingsSection> {

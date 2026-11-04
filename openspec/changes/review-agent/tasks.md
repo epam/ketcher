@@ -17,7 +17,7 @@
 
 - [x] 3.1 `scope.mjs`: base…head for round 1, previousHead…head later, fallback when previousHead is not an ancestor; drop skipped files and join the remaining patches into the reviewed diff.
 - [x] 3.2 Use `parseDiff` and `pickPanel` from `scripts/review-panel.mjs` directly for the panel, with no wrapper module. Remove the Quick label, the lens lists, the Quick threshold and the sensitive paths from `config.mjs`; test that every lens the panel can pick has a prompt file.
-- [ ] 3.3 `rules.mjs`: select `review-rules.md` blocks by `Scope`, parsed with `parseRules` from `scripts/agent-docs/rules.mjs`.
+- [x] 3.3 `rules.mjs`: select `review-rules.md` blocks by `Scope`, parsed with `parseRules` from `scripts/agent-docs/rules.mjs`.
 - [ ] 3.4 `merge.mjs`: drop findings without a failing scenario, merge by file, rule ID and line distance, fingerprint, drop already posted fingerprints, rank, cap N.
 - [ ] 3.5 `state.mjs`: write and read the hidden marker, take markers only from the workflow's account, round limit.
 - [ ] 3.6 `format.mjs`: inline comments (cap 10, blockers first), the brief (linked-issue answer, PR type, panel, counts per severity, overflow and out-of-diff findings, failed passes), the round-limit comment.

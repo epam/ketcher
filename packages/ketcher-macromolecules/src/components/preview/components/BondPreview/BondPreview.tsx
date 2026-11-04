@@ -19,18 +19,23 @@ const BondPreview = ({ className }: Props) => {
 
   const { polymerBond, style } = preview;
 
-  // Show the monomers in the same left-to-right order as on the canvas,
-  // whichever end the bond was created from (e.g. a 5' phosphate of a preset)
-  const isBondDrawnRightToLeft = Boolean(
-    polymerBond.secondMonomer &&
-    polymerBond.firstMonomer.position.x > polymerBond.secondMonomer.position.x,
+  // Show the monomers in canvas order, left to right and then top to bottom,
+  // whichever end the bond was created from (e.g. a 5' phosphate of a preset).
+  // Attachment points can't decide this: antisense chains reverse their order
+  const firstPosition = polymerBond.firstMonomer.position;
+  const secondPosition = polymerBond.secondMonomer?.position;
+  const isSecondMonomerShownFirst = Boolean(
+    secondPosition &&
+    (secondPosition.x < firstPosition.x ||
+      (secondPosition.x === firstPosition.x &&
+        secondPosition.y < firstPosition.y)),
   );
   const [
     firstMonomer,
     secondMonomer,
     firstMonomerAttachmentPoint,
     secondMonomerAttachmentPoint,
-  ] = isBondDrawnRightToLeft
+  ] = isSecondMonomerShownFirst
     ? [
         polymerBond.secondMonomer,
         polymerBond.firstMonomer,

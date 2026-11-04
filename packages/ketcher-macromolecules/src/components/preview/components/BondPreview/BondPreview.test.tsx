@@ -25,9 +25,9 @@ jest.mock('components/shared/ConnectionOverview/ConnectionOverview', () => ({
   ),
 }));
 
-const createMonomer = (label: string, x: number) => ({
+const createMonomer = (label: string, x: number, y = 0) => ({
   label,
-  position: { x, y: 0 },
+  position: { x, y },
   monomerCaps: {},
   attachmentPointsToBonds: {},
 });
@@ -75,5 +75,27 @@ describe('BondPreview', () => {
     });
 
     expect(order).toBe('R:R2 P:R1');
+  });
+
+  it('shows the top monomer first when the bond is vertical', () => {
+    const order = renderBondPreview({
+      firstMonomer: createMonomer('R', 9, 5),
+      secondMonomer: createMonomer('A', 9, 2),
+      firstMonomerAttachmentPoint: 'R3',
+      secondMonomerAttachmentPoint: 'R1',
+    });
+
+    expect(order).toBe('A:R1 R:R3');
+  });
+
+  it('keeps the order of a vertical bond that starts at the top', () => {
+    const order = renderBondPreview({
+      firstMonomer: createMonomer('A', 9, 2),
+      secondMonomer: createMonomer('R', 9, 5),
+      firstMonomerAttachmentPoint: 'R1',
+      secondMonomerAttachmentPoint: 'R3',
+    });
+
+    expect(order).toBe('A:R1 R:R3');
   });
 });

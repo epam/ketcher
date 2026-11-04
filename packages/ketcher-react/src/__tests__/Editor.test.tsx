@@ -178,6 +178,19 @@ describe('Editor', () => {
     expect(mockMoleculesEditor.focusCliparea).not.toHaveBeenCalled();
   });
 
+  it('preloads the default monomers library once the hidden macro editor initializes', async () => {
+    render(<Editor {...editorProps} />);
+    await screen.findByTestId('macromolecules-editor');
+    const macromoleculesEditor = mockMacromoleculesEditors[0];
+
+    await waitFor(() => {
+      expect(
+        macromoleculesEditor.ensureDefaultMonomersLibraryLoaded,
+      ).toHaveBeenCalledTimes(1);
+    });
+    expect(macromoleculesEditor.switchToMacromolecules).not.toHaveBeenCalled();
+  });
+
   it('does not repeat initialization when the consumer callback changes', async () => {
     const onInit = jest.fn();
     const { rerender } = render(<Editor {...editorProps} onInit={onInit} />);

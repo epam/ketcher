@@ -223,6 +223,30 @@ export const Editor = (props: Props) => {
   }, [isMacromoleculesEditorEnabled, macromoleculesEditor]);
 
   /*
+   * The default monomers library is a lazily loaded chunk, and the switch to
+   * Macromolecules waits for it. Start the load once the browser is idle, so
+   * the chunk stays out of the initial page load and is usually ready before
+   * the user's first switch.
+   */
+  useEffect(() => {
+    if (!isMacromoleculesEditorEnabled || !macromoleculesEditor) {
+      return;
+    }
+
+    const preloadDefaultMonomersLibrary = () => {
+      void macromoleculesEditor.ensureDefaultMonomersLibraryLoaded();
+    };
+
+    if (typeof requestIdleCallback === 'function') {
+      const idleCallbackId = requestIdleCallback(preloadDefaultMonomersLibrary);
+      return () => cancelIdleCallback(idleCallbackId);
+    }
+
+    const timeoutId = setTimeout(preloadDefaultMonomersLibrary, 0);
+    return () => clearTimeout(timeoutId);
+  }, [isMacromoleculesEditorEnabled, macromoleculesEditor]);
+
+  /*
    * This effect is synchronization with the DOM, not event handling.
    * The imperative editors must switch only after React has committed the
    * visibility change of their wrappers (display: none -> visible).

@@ -162,11 +162,13 @@ prettier
 prettier:write
 ```
 
-### Start eslint
+### Start oxlint
 
 ```sh
-test:lint
+npm run lint
 ```
+
+This lints `packages` and `scripts` with `.oxlintrc.json`. In one package, `npm run test:oxlint` lints it and `npm run test:oxlint:fix` fixes what it can.
 
 ### Start stylelint
 

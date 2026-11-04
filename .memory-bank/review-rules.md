@@ -87,7 +87,7 @@ Scope: packages/*/src/**
 Severity: major
 Enforced by: AI
 Status: proposed
-Why: @typescript-eslint/no-unused-vars catches unused locals and imports only. Unused exports, types, props, and flags stay in place unless a reviewer finds them.
+Why: `no-unused-vars` catches unused locals and imports only. Unused exports, types, props, and flags stay in place unless a reviewer finds them.
 Source: PR #9196, PR #11389, PR #11320, PR #10632
 
 ### R9: Reuse existing helpers, types, and constants before adding new ones
@@ -140,7 +140,7 @@ Scope: packages/ketcher-react/src/**
 Severity: major
 Enforced by: AI
 Status: proposed
-Why: An effect that reacts to a user action, or derives a value from props, adds an extra render. A subscription, timer, or listener without a cleanup leaks. Lint covers part of this through react-you-might-not-need-an-effect/no-event-handler and react-hooks/set-state-in-effect (eslint.config.mjs:206 and :213). Missing cleanup and effect-as-derived-state are not covered.
+Why: An effect that reacts to a user action, or derives a value from props, adds an extra render. A subscription, timer, or listener without a cleanup leaks. Lint covers part of this through react-you-might-not-need-an-effect/no-event-handler and react/set-state-in-effect (`.oxlintrc.json`). Missing cleanup and effect-as-derived-state are not covered.
 Source: PR #10316, PR #11333, PR #11313, PR #11375
 Bad: `useEffect(() => setTotal(items.length), [items]);`
 Good: `const total = items.length;`

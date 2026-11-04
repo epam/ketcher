@@ -194,13 +194,17 @@ describe('Editor', () => {
   describe('when the browser has requestIdleCallback', () => {
     let idleCallbacks: Array<() => void>;
     let cancelIdleCallback: jest.Mock;
+    const IDLE_CALLBACK_ID = 42;
 
     beforeEach(() => {
       idleCallbacks = [];
       cancelIdleCallback = jest.fn();
       Object.defineProperty(globalThis, 'requestIdleCallback', {
         configurable: true,
-        value: jest.fn((callback: () => void) => idleCallbacks.push(callback)),
+        value: jest.fn((callback: () => void) => {
+          idleCallbacks.push(callback);
+          return IDLE_CALLBACK_ID;
+        }),
       });
       Object.defineProperty(globalThis, 'cancelIdleCallback', {
         configurable: true,
@@ -238,7 +242,7 @@ describe('Editor', () => {
 
       rerender(<Editor {...editorProps} disableMacromoleculesEditor />);
 
-      expect(cancelIdleCallback).toHaveBeenCalledWith(1);
+      expect(cancelIdleCallback).toHaveBeenCalledWith(IDLE_CALLBACK_ID);
     });
   });
 

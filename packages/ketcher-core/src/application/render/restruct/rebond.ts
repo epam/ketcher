@@ -140,6 +140,7 @@ class ReBond extends ReObject {
       bond.b.len,
     );
     hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2, bond.b.len);
+    keepBondVisible(hb1, hb2, p1, p2, bond.b.len, options);
 
     bond.b.sb = options.lineWidth * 5;
 
@@ -772,6 +773,31 @@ function findIncomingStereoUpBond(
 
     return false;
   });
+}
+
+// A wide or multi-part label (atom list, several properties, CH2 next to a
+// close atom) can trim a bond past its other end (#3508). Each end takes the
+// room its label needs; only when the two trims together leave less than a
+// short visible bond are both scaled back.
+export function keepBondVisible(
+  hb1: HalfBond,
+  hb2: HalfBond,
+  p1: Vec2,
+  p2: Vec2,
+  bondLen: number,
+  options: RenderOptions,
+): void {
+  const atom1 = Scale.modelToCanvas(p1, options);
+  const atom2 = Scale.modelToCanvas(p2, options);
+  const shift1 = Vec2.dist(hb1.p, atom1);
+  const shift2 = Vec2.dist(hb2.p, atom2);
+  const room = Math.max(bondLen - options.lineWidth * 3, 0);
+
+  if (shift1 + shift2 <= room) return;
+
+  const scale = room / (shift1 + shift2);
+  hb1.p = atom1.addScaled(hb1.dir, shift1 * scale);
+  hb2.p = atom2.addScaled(hb2.dir, shift2 * scale);
 }
 
 function findIncomingUpBonds(

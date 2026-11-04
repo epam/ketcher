@@ -37,6 +37,22 @@ The system SHALL ensure that the _Select Attachment Points_ dialog opens so the 
 - **WHEN** the user connects two monomers for which no default bond applies
 - **THEN** the _Select Attachment Points_ dialog opens so the user picks the exact points
 
+### Requirement: Specific attachment point to monomer center
+
+When the user drags a covalent bond from a specific attachment point to the center of another monomer, the system SHALL use the target's R1 if it exists and is free, without opening the _Select Attachment Points_ dialog. If R1 is missing or occupied and other attachment points are available, the system SHALL open the dialog.
+
+#### Scenario: Target R1 is free
+
+- **WHEN** the user drags a bond from a specific attachment point to the center of a monomer with a free R1
+- **THEN** the bond connects the selected source attachment point to the target's R1 without a dialog
+- **AND** other occupied source attachment points do not force the dialog to open
+
+#### Scenario: Target R1 is unavailable
+
+- **WHEN** the user drags a bond from a specific attachment point to the center of a monomer whose R1 is missing or occupied
+- **AND** the target has another free attachment point
+- **THEN** the _Select Attachment Points_ dialog opens
+
 ### Requirement: Monomer replaced by dragged monomer (center proximity drop)
 
 The system SHALL ensure that the canvas monomer shows the replacement-target visual state; no AP indicators appear; and releasing the drag replaces the canvas monomer at the same position with bonds re-established.

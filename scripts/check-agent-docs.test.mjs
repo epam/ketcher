@@ -120,29 +120,64 @@ test('a banned package listed in a manifest is named', () => {
   ]);
 });
 
-test('a lint claim is checked against the ESLint level for a file in Scope', () => {
+test('a lint claim is checked against the Oxlint level for a file in Scope', () => {
   const rules = RULES.replace('Enforced by: AI', 'Enforced by: lint(no-alert)');
-  const calls = [];
-  const exec = (command, args) => {
-    calls.push([command, args]);
-    return {
-      status: 0,
-      stdout: JSON.stringify({ rules: { 'no-alert': [0] } }),
-    };
-  };
-  const repo = memoryRepo({ [RULE_FILE]: rules, 'src/a.js': '' }, exec);
-  assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
+  const repoWith = (config) =>
+    memoryRepo({
+      [RULE_FILE]: rules,
+      'src/a.js': '',
+      '.oxlintrc.json': config,
+    });
+  const off = JSON.stringify({ rules: { 'no-alert': 'off' } });
+  assert.deepEqual(codesAndFiles(check(repoWith(off), CHECKS)), [
     ['lint-claim-not-error', RULE_FILE],
   ]);
-  assert.deepEqual(calls, [
-    ['npx', ['--no-install', 'eslint', '--print-config', 'src/a.js']],
+
+  const error = JSON.stringify({ rules: { 'no-alert': ['error'] } });
+  assert.deepEqual(check(repoWith(error), CHECKS), []);
+
+  const overridden = JSON.stringify({
+    rules: { 'no-alert': 'off' },
+    overrides: [
+      { files: ['src/**/*.{js,ts}'], rules: { 'no-alert': 'error' } },
+    ],
+  });
+  assert.deepEqual(check(repoWith(overridden), CHECKS), []);
+
+  const ignored = JSON.stringify({
+    ignorePatterns: ['src/**'],
+    rules: { 'no-alert': 'error' },
+  });
+  assert.deepEqual(codesAndFiles(check(repoWith(ignored), CHECKS)), [
+    ['lint-claim-not-error', RULE_FILE],
   ]);
 
-  const passing = memoryRepo({ [RULE_FILE]: rules, 'src/a.js': '' }, () => ({
-    status: 0,
-    stdout: JSON.stringify({ rules: { 'no-alert': [2] } }),
-  }));
-  assert.deepEqual(check(passing, CHECKS), []);
+  const commented =
+    '// the config may hold comments\n{ "rules": { "no-alert": 2 } }';
+  assert.deepEqual(check(repoWith(commented), CHECKS), []);
+});
+
+test('a lint claim uses the Oxlint name of a rule from @typescript-eslint', () => {
+  const rules = RULES.replace(
+    'Enforced by: AI',
+    'Enforced by: lint(@typescript-eslint/no-explicit-any)',
+  );
+  const repo = memoryRepo({
+    [RULE_FILE]: rules,
+    'src/a.ts': '',
+    '.oxlintrc.json': JSON.stringify({
+      rules: { 'typescript/no-explicit-any': 'error' },
+    }),
+  });
+  assert.deepEqual(check(repo, CHECKS), []);
+});
+
+test('a lint claim with no .oxlintrc.json is named', () => {
+  const rules = RULES.replace('Enforced by: AI', 'Enforced by: lint(no-alert)');
+  const repo = memoryRepo({ [RULE_FILE]: rules, 'src/a.js': '' });
+  assert.deepEqual(codesAndFiles(check(repo, CHECKS)), [
+    ['lint-config-missing', RULE_FILE],
+  ]);
 });
 
 test('an agent file that asks before committing contradicts AGENTS.md, unless it is a user-reviewed commit flow', () => {

@@ -299,7 +299,7 @@ function toRule(block, file, findings) {
         'rule-bad-value',
         at('Enforced by'),
         `${id} Enforced by "${value}" is not a known enforcer`,
-        'write `lint(<eslint-rule-id>)`, `tsc`, `test`, `AI`, or `human`',
+        'write `lint(<rule-id>)`, `tsc`, `test`, `AI`, or `human`',
       );
   }
 

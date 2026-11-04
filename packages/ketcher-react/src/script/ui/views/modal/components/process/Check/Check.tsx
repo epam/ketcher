@@ -218,8 +218,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    // Decided to suppress because this is intended behaviour for this component
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // Intended behaviour for this component: run the check once on mount.
     handleCheck();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -143,75 +143,10 @@ export class Atom extends DrawingEntity {
     }
   }
 
-  private get valenceWithoutHydrogen() {
-    const charge = this.properties.charge ?? 0;
-    const label = this.label;
-    const element = Elements.get(this.label);
-
-    const elementGroupNumber = element?.group;
-    const radicalAmount = this.radicalAmount;
-    const connectionAmount = this.calculateConnections();
-    const absoluteCharge = Math.abs(charge);
-
-    if (elementGroupNumber === 3) {
-      if (
-        label === AtomLabel.B ||
-        label === AtomLabel.Al ||
-        label === AtomLabel.Ga ||
-        label === AtomLabel.In
-      ) {
-        if (charge === -1) {
-          if (radicalAmount + connectionAmount <= 4) {
-            return radicalAmount + connectionAmount;
-          }
-        }
-      }
-    } else if (elementGroupNumber === 5) {
-      if (
-        label === AtomLabel.N ||
-        label === AtomLabel.P ||
-        label === AtomLabel.Sb ||
-        label === AtomLabel.Bi ||
-        label === AtomLabel.As
-      ) {
-        if (charge === 1 || charge === 2) {
-          return radicalAmount + connectionAmount;
-        }
-      }
-    } else if (elementGroupNumber === 6) {
-      if (label === AtomLabel.O) {
-        if (charge >= 1) {
-          return radicalAmount + connectionAmount;
-        }
-      } else if (
-        label === AtomLabel.S ||
-        label === AtomLabel.Se ||
-        label === AtomLabel.Po
-      ) {
-        if (charge === 1) {
-          return radicalAmount + connectionAmount;
-        }
-      }
-    } else if (elementGroupNumber === 7) {
-      if (
-        label === AtomLabel.Cl ||
-        label === AtomLabel.Br ||
-        label === AtomLabel.I ||
-        label === AtomLabel.At
-      ) {
-        if (charge === 1) {
-          return radicalAmount + connectionAmount;
-        }
-      }
-    }
-
-    return radicalAmount + connectionAmount + absoluteCharge;
-  }
-
   calculateValence() {
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
-      const hydrogenAmount = valence - this.valenceWithoutHydrogen;
+      const hydrogenAmount = valence - this.calculateConnections();
 
       return {
         valence,

@@ -15,9 +15,9 @@ import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
-const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
-const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
+export const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
+export const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
+export const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).

@@ -13,7 +13,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Vec2 } from 'domain/entities/vec2';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Command } from 'domain/entities/Command';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -74,6 +74,8 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
+  private readonly atomsToCheckHydrogenSide = new Set<Atom>();
+
   constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;
   }
@@ -93,6 +95,9 @@ export class RenderersManager {
     drawingEntity.baseRenderer.moveSelection();
 
     if (drawingEntity instanceof Atom) {
+      // The bond directions of the moved atom and of its neighbours changed.
+      this.scheduleHydrogenSideCheck(drawingEntity);
+
       drawingEntity.bonds.forEach((bond) => {
         if (!(bond instanceof Bond)) {
           return;
@@ -103,7 +108,10 @@ export class RenderersManager {
         const connectedAtom =
           bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom;
         connectedAtom.renderer?.move();
+        this.scheduleHydrogenSideCheck(connectedAtom);
       });
+    } else if (drawingEntity instanceof BaseMonomer) {
+      this.scheduleHydrogenSideChecksForMonomer(drawingEntity);
     }
 
     drawingEntity.baseRenderer.drawSelection();
@@ -137,6 +145,51 @@ export class RenderersManager {
   public moveMonomer(monomer: BaseMonomer) {
     monomer.renderer?.move();
     monomer.renderer?.drawSelection();
+
+    this.scheduleHydrogenSideChecksForMonomer(monomer);
+  }
+
+  // The direction of a bond to the monomer changed for its atom.
+  private scheduleHydrogenSideChecksForMonomer(monomer: BaseMonomer) {
+    monomer.monomerToAtomBonds.forEach((bond) =>
+      this.scheduleHydrogenSideCheck(bond.atom),
+    );
+  }
+
+  /**
+   * An atom's label puts the implicit hydrogens on the side the bonds leave
+   * free. When the bonds of an atom or their directions changed, call this: the
+   * atom is checked once, in runPostRenderMethods, after the view model has
+   * the new bonds. A drag moves many atoms and each has several neighbours, so
+   * checking in each call would check an atom once per neighbour.
+   */
+  private scheduleHydrogenSideCheck(atom: Atom) {
+    this.atomsToCheckHydrogenSide.add(atom);
+  }
+
+  // Redraws the label of each scheduled atom whose hydrogens belong on another
+  // side now, and trims the bonds of that atom against the new label.
+  private checkScheduledHydrogenSides() {
+    const atoms = [...this.atomsToCheckHydrogenSide];
+    this.atomsToCheckHydrogenSide.clear();
+
+    let isAnyRedrawn = false;
+    atoms.forEach((atom) => {
+      if (atom.renderer?.redrawLabelIfHydrogenSideChanged()) {
+        isAnyRedrawn = true;
+        atom.bonds.forEach((bond) => bond.renderer?.move());
+      }
+    });
+
+    // This runs after rerenderSGroups, which hid the atoms and bonds inside
+    // collapsed S-groups. A redraw builds new elements that are visible, so
+    // hide what the S-groups hide again. Re-applying the S-group state only
+    // hides, and the redraw only shows, so no S-group is redrawn for it.
+    if (isAnyRedrawn) {
+      this.sgroups.forEach((sgroupRenderer) =>
+        sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds),
+      );
+    }
   }
 
   public redrawDrawingEntity(
@@ -478,6 +531,9 @@ export class RenderersManager {
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
+
+    this.scheduleHydrogenSideCheck(bond.firstAtom);
+    this.scheduleHydrogenSideCheck(bond.secondAtom);
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
@@ -727,6 +783,7 @@ export class RenderersManager {
   }
 
   public runPostRenderMethods() {
+    this.checkScheduledHydrogenSides();
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
     }

@@ -70,7 +70,7 @@ const content = (type: string, t: TFunction): JSX.Element[] =>
     });
 
 interface SGroupFieldsetProps {
-  formState: BaseProperties['formState'];
+  formState: BaseProperties<{ type: string }>['formState'];
 }
 
 function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {

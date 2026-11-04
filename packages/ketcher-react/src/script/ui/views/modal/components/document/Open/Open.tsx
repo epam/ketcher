@@ -18,7 +18,11 @@
 import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, LoadingCircles } from '../../../../components';
+import {
+  Dialog,
+  type DialogParameters,
+  LoadingCircles,
+} from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
@@ -26,6 +30,13 @@ import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+
+type OpenResult = {
+  structStr: string;
+  fragment: boolean;
+  'input-format'?: string;
+};
+
 interface OpenProperties {
   server: any;
   errorHandler: (error: string) => void;
@@ -35,7 +46,7 @@ interface OpenProperties {
 
 type Properties = OpenProperties &
   Pick<BaseProperties, 'className'> &
-  BaseCallProperties & { onImageUpload: (file: File) => void };
+  BaseCallProperties<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
@@ -176,7 +187,8 @@ const Open: FC<Properties> = (properties) => {
     <Dialog
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
-      params={rest}
+      // Dialog expects a looser `onOk` result type
+      params={rest as DialogParameters}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
@@ -217,5 +229,5 @@ const Open: FC<Properties> = (properties) => {
   );
 };
 
-export type { OpenProperties };
+export type { OpenProperties, OpenResult };
 export default Open;

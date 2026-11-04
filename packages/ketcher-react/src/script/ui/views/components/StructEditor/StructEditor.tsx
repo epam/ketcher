@@ -128,6 +128,7 @@ class StructEditor extends Component<
   editor!: Editor;
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
+  private zoomDeltaAccumulator = 0;
 
   constructor(properties: StructEditorProperties) {
     super(properties);
@@ -143,12 +144,21 @@ class StructEditor extends Component<
     if (event.ctrlKey) {
       event.preventDefault();
 
-      const zoomDelta = event.deltaY > 0 ? -1 : 1;
+      // Accumulate scroll delta for smoother zoom on touchpad
+      // Only trigger zoom when accumulated delta exceeds threshold
+      const ZOOM_THRESHOLD = 50;
+      this.zoomDeltaAccumulator += Math.abs(event.deltaY);
 
-      if (zoomDelta === 1) {
-        this.props.onZoomIn?.(event);
-      } else {
-        this.props.onZoomOut?.(event);
+      if (this.zoomDeltaAccumulator >= ZOOM_THRESHOLD) {
+        const zoomDelta = event.deltaY > 0 ? -1 : 1;
+
+        if (zoomDelta === 1) {
+          this.props.onZoomIn?.(event);
+        } else {
+          this.props.onZoomOut?.(event);
+        }
+
+        this.zoomDeltaAccumulator = 0;
       }
     } else {
       this.scrollCanvas(event);

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { type OpenProperties } from './Open';
+import Open, { type OpenProperties, type OpenResult } from './Open';
 
 import type { BaseCallProperties } from '../../../modal.types';
 import { connect } from 'react-redux';
@@ -25,7 +25,7 @@ import { changeImage } from '../../../../../state/options';
 type StateProperties = OpenProperties;
 
 type DispatchProperties = {
-  onOk: BaseCallProperties['onOk'];
+  onOk: BaseCallProperties<OpenResult>['onOk'];
   onImageUpload: (file: File) => void;
 };
 
@@ -37,7 +37,7 @@ const mapStateToProperties = (state): StateProperties => ({
 });
 
 const mapDispatchToProperties = (dispatch): DispatchProperties => ({
-  onOk: (result) => {
+  onOk: (result: OpenResult) => {
     if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
       load(result.structStr, {

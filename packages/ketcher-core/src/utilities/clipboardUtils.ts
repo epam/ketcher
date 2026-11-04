@@ -1,7 +1,9 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type ClipboardTransferData =
-  Pick<DataTransfer, 'getData' | 'setData'> | null | undefined;
+  | Pick<DataTransfer, 'getData' | 'setData'>
+  | null
+  | undefined;
 
 export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 

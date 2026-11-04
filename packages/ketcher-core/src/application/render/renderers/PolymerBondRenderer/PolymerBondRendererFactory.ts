@@ -10,9 +10,11 @@ export enum LayoutMode {
 }
 
 type PolymerBondRendererClass =
-  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 type PolymerBondRendererClassType =
-  typeof FlexModePolymerBondRenderer | typeof SnakeModePolymerBondRenderer;
+  | typeof FlexModePolymerBondRenderer
+  | typeof SnakeModePolymerBondRenderer;
 const polymerBondRendererMap = new Map<
   LayoutMode,
   PolymerBondRendererClassType

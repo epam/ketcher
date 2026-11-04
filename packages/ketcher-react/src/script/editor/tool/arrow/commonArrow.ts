@@ -111,8 +111,8 @@ export class CommonArrowTool extends ArrowTool implements Tool {
       );
     } else {
       // Otherwise build fails during prod build but not dev
-      const dragContext = this
-        .dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
+      const dragContext =
+        this.dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
       dragContext.action = this.reactionMoveTool.mousemove(event, dragContext);
     }
     if (this.dragContext.action) {
@@ -133,8 +133,8 @@ export class CommonArrowTool extends ArrowTool implements Tool {
         );
       } else {
         // Otherwise build fails during prod build but not dev
-        const dragContext = this
-          .dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
+        const dragContext =
+          this.dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
         dragContext.action = this.reactionMoveTool.mouseup(event, dragContext);
       }
       const { action } = this.dragContext;

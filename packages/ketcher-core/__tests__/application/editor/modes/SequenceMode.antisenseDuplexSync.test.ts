@@ -114,7 +114,8 @@ const buildTwoPositionDuplex = (editor: CoreEditor) => {
 
 const rendererForMonomer = (nucleotide: Nucleotide) => {
   const renderer = nucleotide.rnaBase.renderer as unknown as
-    BaseSequenceItemRenderer | undefined;
+    | BaseSequenceItemRenderer
+    | undefined;
 
   if (!renderer) {
     throw new Error('Fixture setup failed: renderer not found for monomer');
@@ -344,7 +345,8 @@ describe('SequenceMode antisense duplex sync (task 6 re-scoped block)', () => {
       const newSenseLabel = () =>
         (
           editor.drawingEntitiesManager.monomers.get(newSenseMonomerId) as
-            { label?: string } | undefined
+            | { label?: string }
+            | undefined
         )?.label;
 
       // Position 0: sense A -> C, antisense (mirrored) U -> G.

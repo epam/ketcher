@@ -15,7 +15,9 @@ export interface ITwoStrandedSnakeLayoutNode {
 
 export interface ISnakeLayoutModelRow {
   snakeLayoutModelItems: (
-    ITwoStrandedSnakeLayoutNode | MoleculeSnakeLayoutNode | EmptySnakeLayoutNode
+    | ITwoStrandedSnakeLayoutNode
+    | MoleculeSnakeLayoutNode
+    | EmptySnakeLayoutNode
   )[];
 }
 

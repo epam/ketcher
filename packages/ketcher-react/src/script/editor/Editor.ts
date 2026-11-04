@@ -1010,6 +1010,16 @@ class Editor implements KetcherEditor {
     return struct.bonds.get(halfBond.bid) ?? null;
   }
 
+  // A rectangle can catch only bond centers, so a bonds-only selection stands
+  // for the atoms of those bonds. A selection with atoms stays as it is: an
+  // outgoing bond can be selected without being part of the monomer.
+  private getMonomerCreationSelection(selection: Selection): Selection {
+    const hasOnlyBondsSelected =
+      !selection.atoms?.length && Boolean(selection.bonds?.length);
+
+    return hasOnlyBondsSelected ? this.explicitSelected() : selection;
+  }
+
   public get isMonomerCreationWizardEnabled() {
     // Reset stale state so openMonomerCreationWizard won't use outdated atom IDs
     this.terminalRGroupAtoms = [];
@@ -1025,7 +1035,9 @@ class Editor implements KetcherEditor {
 
     // When there's no selection, use all atoms from the structure
     const atomsToProcess =
-      selection === null ? [...currentStruct.atoms.keys()] : selection.atoms;
+      selection === null
+        ? [...currentStruct.atoms.keys()]
+        : this.getMonomerCreationSelection(selection).atoms;
 
     if (!atomsToProcess || atomsToProcess.length === 0) {
       return false;
@@ -1535,11 +1547,15 @@ class Editor implements KetcherEditor {
     editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
   ) {
     const currentStruct = this.render.ctab.molecule;
-    const rawSelection = selectionOverride ??
-      this.selection() ?? {
-        atoms: [...this.struct().atoms.keys()],
-        bonds: [...this.struct().bonds.keys()],
-      };
+    const currentSelection = this.selection();
+    const rawSelection =
+      selectionOverride ??
+      (currentSelection === null
+        ? {
+            atoms: [...this.struct().atoms.keys()],
+            bonds: [...this.struct().bonds.keys()],
+          }
+        : this.getMonomerCreationSelection(currentSelection));
     const selection: Selection = {
       rxnArrows: [],
       rxnPluses: [],

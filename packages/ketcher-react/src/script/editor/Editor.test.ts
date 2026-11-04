@@ -1,6 +1,6 @@
-import { Bond, ketcherProvider } from 'ketcher-core';
+import { Atom, Bond, ketcherProvider, Struct, Vec2 } from 'ketcher-core';
 import { Subscription } from 'subscription';
-import Editor from './Editor';
+import Editor, { type Selection } from './Editor';
 
 type MockBond = {
   begin: number;
@@ -122,6 +122,10 @@ const createMockEditorForRGroupBond = (
     potentialLeavingAtomsForAutoAssignment: [],
     potentialLeavingAtomsForManualAssignment: [],
     isMonomerCreationWizardActive: false,
+    getMonomerCreationSelection: Reflect.get(
+      Editor.prototype,
+      'getMonomerCreationSelection',
+    ),
     struct: () => currentStruct,
     selection: () =>
       selectionAtoms === null ? null : { atoms: [...selectionAtoms] },
@@ -129,6 +133,37 @@ const createMockEditorForRGroupBond = (
 
   return editor;
 };
+
+// C0-C1-C2-C3-C4: a chain with enough neighbours for bonds to leave a selection
+const createEditorForChain = (selection: Selection) => {
+  const struct = new Struct();
+  for (let atomId = 0; atomId < 5; atomId++) {
+    struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(atomId, 0) }));
+  }
+  for (let atomId = 0; atomId < 4; atomId++) {
+    struct.bonds.add(
+      new Bond({
+        begin: atomId,
+        end: atomId + 1,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+  }
+  struct.initHalfBonds();
+  struct.initNeighbors();
+
+  const editor = Object.create(Editor.prototype) as Editor;
+  Object.assign(editor, {
+    render: { ctab: { molecule: struct } },
+    struct: () => struct,
+    selection: () => selection,
+  });
+
+  return editor;
+};
+
+const getLeavingAtomsForAutoAssignment = (editor: Editor): number[] =>
+  Reflect.get(editor, 'potentialLeavingAtomsForAutoAssignment');
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
@@ -221,6 +256,47 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
     const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
     expect(terminalRGroupAtoms.length).toBe(1);
     expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+
+  it.each([
+    ['bonds without an atoms list', { bonds: [1] }],
+    ['bonds with an empty atoms list', { atoms: [], bonds: [1] }],
+  ])('treats %s as the atoms of those bonds', (_, selection) => {
+    const editor = createEditorForChain(selection);
+
+    expect(getIsMonomerCreationWizardEnabled(editor)).toBe(true);
+    expect(getLeavingAtomsForAutoAssignment(editor).sort()).toEqual([0, 3]);
+  });
+
+  it('keeps a selected outgoing bond out of a selection with atoms', () => {
+    const editor = createEditorForChain({ atoms: [1, 2], bonds: [0, 1, 2] });
+
+    expect(getIsMonomerCreationWizardEnabled(editor)).toBe(true);
+    expect(getLeavingAtomsForAutoAssignment(editor).sort()).toEqual([0, 3]);
+  });
+
+  it('disables monomer creation when nothing but other objects is selected', () => {
+    const editor = createEditorForChain({ atoms: [], bonds: [] });
+
+    expect(getIsMonomerCreationWizardEnabled(editor)).toBe(false);
+  });
+});
+
+describe('Editor.openMonomerCreationWizard', () => {
+  it('opens a bonds-only selection with the atoms of those bonds', () => {
+    const editor = createEditorForChain({ bonds: [1] });
+    const stopAfterSelection = new Error('selection captured');
+    const structSelected = jest.fn(() => {
+      throw stopAfterSelection;
+    });
+    Object.assign(editor, { structSelected });
+
+    expect(() => editor.openMonomerCreationWizard()).toThrow(
+      stopAfterSelection,
+    );
+    expect(structSelected).toHaveBeenCalledWith(
+      expect.objectContaining({ atoms: [1, 2], bonds: [1] }),
+    );
   });
 });
 

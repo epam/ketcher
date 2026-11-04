@@ -203,14 +203,9 @@ export function serverCall(editor, server, method, options, struct) {
     null,
     bidMap,
   );
-  const expSel = editor.explicitSelected();
   if (selection) {
-    selectedAtoms = (selection.atoms ? selection.atoms : expSel.atoms).map(
-      (aid) => aidMap.get(aid),
-    );
-    selectedBonds = (selection.bonds ? selection.bonds : expSel.bonds).map(
-      (bid) => bidMap.get(bid),
-    );
+    selectedAtoms = (selection.atoms ?? []).map((aid) => aidMap.get(aid));
+    selectedBonds = (selection.bonds ?? []).map((bid) => bidMap.get(bid));
   }
   if (method === 'layout') {
     resetStereoFlagsPosition(currentStruct);

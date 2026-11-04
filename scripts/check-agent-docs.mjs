@@ -8,7 +8,7 @@
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, matchesGlob, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { formatFinding, sortFindings } from './agent-docs/findings.mjs';
 import {
@@ -154,23 +154,92 @@ const pathsExist = {
   },
 };
 
-const printEslintConfig = (repo, target) => {
-  const result = repo.exec('npx', [
-    '--no-install',
-    'eslint',
-    '--print-config',
-    target,
-  ]);
-  if (result.status !== 0) {
+const LINT_CONFIG_FILE = '.oxlintrc.json';
+const LINTED_EXTENSIONS = /\.(?:[cm]?[jt]sx?)$/;
+
+// Oxlint names the rules it took from @typescript-eslint and react-hooks after
+// its own plugins. A claim may use either name.
+const RULE_ALIASES = [
+  ['@typescript-eslint/', 'typescript/'],
+  ['react-hooks/', 'react/'],
+];
+
+const ruleNames = (rule) => [
+  rule,
+  ...RULE_ALIASES.filter(([from]) => rule.startsWith(from)).map(
+    ([from, to]) => to + rule.slice(from.length),
+  ),
+];
+
+// `.oxlintrc.json` may hold comments, which JSON.parse rejects. A `//` or `/*`
+// inside a string (a glob such as "**/*.ts") is not a comment.
+const stripJsonComments = (text) => {
+  let out = '';
+  let inString = false;
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const next = text[i + 1];
+    if (inString) {
+      out += char;
+      if (char === '\\') {
+        out += next ?? '';
+        i++;
+      } else if (char === '"') {
+        inString = false;
+      }
+    } else if (char === '"') {
+      inString = true;
+      out += char;
+    } else if (char === '/' && next === '/') {
+      while (i < text.length && text[i] !== '\n') i++;
+      out += '\n';
+    } else if (char === '/' && next === '*') {
+      i = text.indexOf('*/', i + 2);
+      i = i === -1 ? text.length : i + 1;
+    } else {
+      out += char;
+    }
+  }
+  return out;
+};
+
+const readLintConfig = (repo) => {
+  const text = repo.read(LINT_CONFIG_FILE);
+  if (text === null) {
     return null;
   }
   try {
-    return JSON.parse(result.stdout);
+    return JSON.parse(stripJsonComments(text));
   } catch {
-    // `--print-config` prints the literal string `undefined` for files that no
-    // config block matches, such as JSON or markdown files; no config rules them.
     return null;
   }
+};
+
+// The level Oxlint gives `rule` for `file`: the base rules, then each override
+// whose `files` match, in order. `null` means Oxlint does not lint the file.
+const oxlintLevel = (config, file, rule) => {
+  if (
+    !LINTED_EXTENSIONS.test(file) ||
+    (config.ignorePatterns ?? []).some((glob) => matchesGlob(file, glob))
+  ) {
+    return null;
+  }
+  const names = ruleNames(rule);
+  let setting;
+  const apply = (rules) => {
+    for (const name of names) {
+      if (rules?.[name] !== undefined) {
+        setting = rules[name];
+      }
+    }
+  };
+  apply(config.rules);
+  for (const override of config.overrides ?? []) {
+    if (override.files.some((glob) => matchesGlob(file, glob))) {
+      apply(override.rules);
+    }
+  }
+  return Array.isArray(setting) ? setting[0] : (setting ?? 'off');
 };
 
 const lintClaims = {
@@ -179,23 +248,34 @@ const lintClaims = {
     const claims = parsed.rules.filter(
       (rule) => rule.enforcedBy.kind === 'lint',
     );
+    if (claims.length === 0) {
+      return [];
+    }
+    const config = readLintConfig(repo);
+    if (config === null) {
+      return [
+        {
+          code: 'lint-config-missing',
+          file: RULE_FILE,
+          line: claims[0].line,
+          message: `${LINT_CONFIG_FILE} is missing or is not valid JSON, so the lint claims cannot be checked`,
+          fix: `restore ${LINT_CONFIG_FILE}, or change Enforced by`,
+        },
+      ];
+    }
     const findings = [];
-    const configs = new Map();
     for (const rule of claims) {
       const candidates = repo
         .files()
         .filter((file) =>
           rule.scope.some((glob) => globToRegExp(glob).test(file)),
         );
-      // A rule may cover files ESLint does not lint (package.json, README, ...);
+      // A rule may cover files Oxlint does not lint (package.json, README, ...);
       // the claim holds when at least one scope match runs the claimed rule.
-      const usable = candidates.find((file) => {
-        if (!configs.has(file)) {
-          configs.set(file, printEslintConfig(repo, file));
-        }
-        return configs.get(file) !== null;
-      });
-      if (!usable) {
+      const levels = candidates
+        .map((file) => [file, oxlintLevel(config, file, rule.enforcedBy.rule)])
+        .filter(([, level]) => level !== null);
+      if (levels.length === 0) {
         findings.push({
           code: candidates.length
             ? 'lint-claim-not-error'
@@ -203,22 +283,22 @@ const lintClaims = {
           file: RULE_FILE,
           line: rule.line,
           message: candidates.length
-            ? `${rule.id} is enforced by lint, but eslint never lints any file matching its Scope`
+            ? `${rule.id} is enforced by lint, but oxlint never lints any file matching its Scope`
             : `${rule.id} is enforced by lint, but no file matches its Scope`,
           fix: 'fix the Scope, or change Enforced by to AI or human',
         });
         continue;
       }
-      const config = configs.get(usable);
-      const setting = config?.rules?.[rule.enforcedBy.rule];
-      const level = Array.isArray(setting) ? setting[0] : setting;
+      const [usable, level] =
+        levels.find(([, candidate]) => LINT_ERROR_LEVELS.includes(candidate)) ??
+        levels[0];
       if (!LINT_ERROR_LEVELS.includes(level)) {
         findings.push({
           code: 'lint-claim-not-error',
           file: RULE_FILE,
           line: rule.line,
-          message: `${rule.id} says lint enforces ${rule.enforcedBy.rule}, but eslint gives ${usable} ${JSON.stringify(level ?? null)}`,
-          fix: `set ${rule.enforcedBy.rule} to error in eslint.config.mjs, or change Enforced by`,
+          message: `${rule.id} says lint enforces ${rule.enforcedBy.rule}, but oxlint gives ${usable} ${JSON.stringify(level ?? null)}`,
+          fix: `set ${rule.enforcedBy.rule} to error in ${LINT_CONFIG_FILE}, or change Enforced by`,
         });
       }
     }

@@ -462,7 +462,7 @@ function addAttachmentPointToSuperatom(
   beginAtomId: number,
   endAtomId: number,
 ) {
-  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+  (sgroup.item?.atoms ?? []).forEach((atomId) => {
     if (beginAtomId === atomId || endAtomId === atomId) {
       if (
         !(sgroup.item as SGroup)
@@ -484,7 +484,7 @@ export function removeAttachmentPointFromSuperatom(
   action: Action,
   restruct: ReStruct,
 ) {
-  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+  (sgroup.item?.atoms ?? []).forEach((atomId) => {
     if (beginAtomId === atomId || endAtomId === atomId) {
       const anotherSideAtomId =
         beginAtomId === atomId ? endAtomId : beginAtomId;

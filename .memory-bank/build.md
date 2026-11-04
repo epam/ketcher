@@ -104,10 +104,12 @@ means check `dist/` by hand after changing it.
   glue (the Indigo worker) keeps its calls. Guard: none.
 - **CJS output carries `__esModule`** (`esModule: true`); without it TypeScript and Babel interop
   build namespaces of non-configurable getters. Guard: none.
-- **`example` applies CSS in chunk order, not in `dist/index.css` order.** It bundles the packages'
-  styles from source and splits them by chunk, so of two equally specific rules in different files
-  either can come last. An override of a shared component's style wins by specificity or
-  `!important`, never by file order. Guard: the Settings screenshot specs.
+- **`example` does not apply CSS in `dist/index.css` order.** It bundles the packages' styles from
+  source, so their order follows the example's module graph (chunk order in a production build, load
+  order in the dev server), with or without CSS code splitting. Of two equally specific rules in
+  different files, either can come last, so an override of a shared component's style wins by
+  specificity or `!important`, never by file order. Guard: none (the Settings screenshot specs cover
+  the Settings select only).
 - **CSS Modules class names** follow `[name]_[local]__[hash:base64:5]` in react, macromolecules, and
   `example`, so consumers that match class names keep working. Guard: none.
 - **Declarations come from `tsc`**, so a broken `tsconfig` fails the build.

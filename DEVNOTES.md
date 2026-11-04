@@ -161,7 +161,7 @@ You may pass it as a property while Editor component is used or just add api_pat
 ```sh
 <Editor staticResourcesUrl={process.env.PUBLIC_URL} apiPath={insert link to Indigo service here} />
   or
-http://localhost:3000/?api_path={insert link to Indigo service here}
+http://127.0.0.1:5173/?api_path={insert link to Indigo service here}
 ```
 
 You can find the instruction for service installation

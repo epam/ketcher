@@ -281,7 +281,20 @@ class PasteTool implements Tool {
       const action = this.action;
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        dropAndMerge(this.editor, this.mergeItems, action);
+        // Fix #7106: If there are no atoms/bonds to merge, clear atomToFunctionalGroup
+        // to prevent deleting internal attachment point atoms from the pasted structure
+        let cleanedMergeItems = this.mergeItems;
+        if (
+          this.mergeItems &&
+          (!this.mergeItems.atoms || this.mergeItems.atoms.size === 0) &&
+          (!this.mergeItems.bonds || this.mergeItems.bonds.size === 0)
+        ) {
+          cleanedMergeItems = {
+            atoms: this.mergeItems.atoms || new Map(),
+            bonds: this.mergeItems.bonds || new Map(),
+          };
+        }
+        dropAndMerge(this.editor, cleanedMergeItems, action);
       }
       this.editor.tool('select');
     }

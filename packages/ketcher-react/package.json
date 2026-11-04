@@ -33,7 +33,7 @@
     "pretest": "npm run i18n:generate",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
     "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
-    "test": "run-s test:prettier test:stylelint test:oxlint:quiet test:types test:circ test:unit",
+    "test": "run-s test:oxfmt test:stylelint test:oxlint:quiet test:types test:circ test:unit",
     "test:circ": "dpdm --no-warning --no-tree -T --exit-code circular:1 --skip-dynamic-imports tree ./src/index.tsx",
     "test:oxlint": "oxlint -c ../../.oxlintrc.json .",
     "test:oxlint:quiet": "npm run test:oxlint -- --quiet",
@@ -41,9 +41,9 @@
     "test:types": "tsc --noEmit",
     "test:unit": "jest --passWithNoTests",
     "test:unit:update": "jest -u",
-    "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
+    "test:oxfmt": "oxfmt --check \"./**/*.{js,jsx,json,ts,tsx}\"",
     "test:stylelint": "stylelint \"./**/*.{css,less}\"",
-    "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
+    "oxfmt:write": "oxfmt \"./**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --fix"
   },
   "peerDependencies": {
@@ -120,7 +120,6 @@
     "jest-environment-jsdom": "^30.4.1",
     "less": "^3.12.2",
     "npm-run-all2": "^9.0.3",
-    "prettier": "^3.9.6",
     "rollup": "^2.80.0",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-copy": "^3.4.0",

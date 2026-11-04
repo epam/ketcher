@@ -14,10 +14,15 @@
  * than failing, so this is a visible-but-non-breaking degradation, not a
  * blocker to keep the two packages' locale sets in lockstep.
  */
-import { existsSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { format, resolveConfig } from 'prettier';
+import { format } from 'oxfmt';
 
 const NAMESPACES = ['macromolecules', 'macromoleculesDialogs'];
 
@@ -111,11 +116,26 @@ for (const locale of extraLocales) {
 lines.push('} as const satisfies Record<string, typeof BASE_RESOURCES>;');
 lines.push('');
 
-const prettierConfig = await resolveConfig(outFile, { editorconfig: true });
-const formattedSource = await format(lines.join('\n'), {
-  ...prettierConfig,
-  filepath: outFile,
-});
+// The repo's Oxfmt config, minus the keys that only the CLI reads.
+const {
+  $schema: _schema,
+  ignorePatterns: _ignorePatterns,
+  ...oxfmtConfig
+} = JSON.parse(
+  readFileSync(path.resolve(scriptDir, '../../../.oxfmtrc.json'), 'utf8'),
+);
+const { code: formattedSource, errors } = await format(
+  outFile,
+  lines.join('\n'),
+  oxfmtConfig,
+);
+if (errors.length > 0) {
+  throw new Error(
+    `generate-locale-resources: Oxfmt could not format the output: ${errors
+      .map((error) => error.message)
+      .join('; ')}`,
+  );
+}
 writeFileSync(outFile, formattedSource);
 console.log(
   `generate-locale-resources: wrote ${path.relative(process.cwd(), outFile)} — base "en" + extra [${extraLocales.join(', ') || 'none'}]`,

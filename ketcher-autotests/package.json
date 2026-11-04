@@ -12,9 +12,9 @@
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
     "test:types": "tsc --noEmit",
-    "check:lint": "oxlint -c ../.oxlintrc.json . && prettier --check \"./**/*.{js,ts}\"",
+    "check:lint": "oxlint -c ../.oxlintrc.json . && oxfmt --check \"./**/*.{js,ts}\"",
     "lint:fix": "oxlint -c ../.oxlintrc.json . --fix",
-    "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
+    "oxfmt:write": "oxfmt \"./**/*.{js,ts}\" ",
     "docker:build": "docker-compose build autotests && docker-compose run --rm autotests bash /app/test_prepare.sh",
     "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium",
     "docker:test-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup",
@@ -30,7 +30,6 @@
     "cross-env": "^7.0.3",
     "glob": "^14.0.2",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.9.6",
     "typescript": "^6.0.3"
   },
   "dependencies": {
@@ -39,10 +38,10 @@
   },
   "lint-staged": {
     "*.md": [
-      "prettier --write"
+      "oxfmt"
     ],
     "*.{js,ts}": [
-      "prettier --write",
+      "oxfmt",
       "oxlint -c ../.oxlintrc.json ."
     ]
   },

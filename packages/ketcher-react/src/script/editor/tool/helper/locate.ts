@@ -27,11 +27,7 @@ import {
 
 type ReEnhancedFlagWithPosition = ReEnhancedFlag & { pp?: Vec2 };
 
-function getElementsInRectangle(
-  restruct: ReStruct,
-  p0: { x: number; y: number },
-  p1: { x: number; y: number },
-) {
+function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
@@ -234,21 +230,13 @@ function getElementsInRectangle(
   };
 }
 
-function getElementsInPolygon(
-  restruct: ReStruct,
-  rr: Array<{ x: number; y: number }>,
-) {
+function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
-  const r: Vec2[] = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
-
-  for (const point of rr) {
-    r.push(new Vec2(point.x, point.y));
-  }
 
   restruct.bonds.forEach((bond, bid) => {
     if (

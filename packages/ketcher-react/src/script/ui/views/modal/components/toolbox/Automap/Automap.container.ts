@@ -19,17 +19,18 @@ import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
+import type { AutomapRequest } from '../../../../../state/store.types';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
-type DispatchProps = Pick<BaseCallProps, 'onOk'>;
+type StateProps = Pick<BaseProps<AutomapRequest>, 'formState'>;
+type DispatchProps = Pick<BaseCallProps<AutomapRequest>, 'onOk'>;
 
 const mapStateToProps = (state: any): StateProps => ({
   formState: state.modal.form,
 });
 
 const mapDispatchToProps = (dispatch: any, ownProps: any): DispatchProps => ({
-  onOk: (result) => {
+  onOk: (result: AutomapRequest) => {
     dispatch(automap(result));
     ownProps.onOk(result);
   },

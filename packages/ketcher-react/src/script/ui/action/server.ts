@@ -101,7 +101,19 @@ const config: ServerConfig = {
   'explicit-hydrogens': {
     title: 'toolbar:server.explicitHydrogens',
     action: {
-      thunk: serverTransform('toggleExplicitHydrogens'),
+      thunk: (dispatch, getState) => {
+        // Hydrogens are toggled for the selected atoms only, so a selection of
+        // bonds alone has nothing to toggle (decision in epam/Indigo#1650)
+        const selection = getState().editor.selection();
+        const hasOnlyBondsSelected =
+          Boolean(selection?.bonds?.length) && !selection?.atoms?.length;
+
+        if (hasOnlyBondsSelected) {
+          return;
+        }
+
+        serverTransform('toggleExplicitHydrogens')(dispatch, getState);
+      },
     },
     disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'explicit-hydrogens'),

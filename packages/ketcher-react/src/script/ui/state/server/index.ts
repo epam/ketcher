@@ -246,14 +246,12 @@ export function serverCall<T>(
     bidMap,
   );
 
-  const expSel = editor.explicitSelected();
-
   if (selection) {
-    selectedAtoms = (selection.atoms ?? expSel.atoms ?? [])
+    selectedAtoms = (selection.atoms ?? [])
       .map((aid) => aidMap.get(aid))
       .filter((aid): aid is number => aid !== undefined);
 
-    selectedBonds = (selection.bonds ?? expSel.bonds ?? [])
+    selectedBonds = (selection.bonds ?? [])
       .map((bid) => bidMap.get(bid))
       .filter((bid): bid is number => bid !== undefined);
   }

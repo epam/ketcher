@@ -41,7 +41,7 @@ function findClosestAtom(
 ): ClosestAtom | null {
   let closestAtom: number | undefined;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'atoms' ? skip.id : undefined;
+  const skipId = skip?.map === 'atoms' ? skip.id : undefined;
 
   let effectiveMinDist = minDist || maxMinDist;
   effectiveMinDist = Math.min(effectiveMinDist, maxMinDist);

@@ -2136,22 +2136,14 @@ export class CoreEditor {
 
   private isSequenceStartInViewport() {
     const { left, top } = SequenceRenderer.getRenderedStructuresBbox();
-    const canvasMatrix = this.zoomTool.canvas.node()?.getScreenCTM();
-    const wrapperRect = this.zoomTool.canvasWrapper
-      .node()
-      ?.getBoundingClientRect();
-
-    if (!canvasMatrix || !wrapperRect) {
-      return true;
-    }
-
-    const point = new DOMPoint(left, top).matrixTransform(canvasMatrix);
+    const { width, height } = this.zoomTool.canvasWrapperSize;
+    const sequenceStartInView = Coordinates.canvasToView(new Vec2(left, top));
 
     return (
-      point.x >= wrapperRect.left &&
-      point.x <= wrapperRect.right &&
-      point.y >= wrapperRect.top &&
-      point.y <= wrapperRect.bottom
+      sequenceStartInView.x >= 0 &&
+      sequenceStartInView.x <= width &&
+      sequenceStartInView.y >= 0 &&
+      sequenceStartInView.y <= height
     );
   }
 

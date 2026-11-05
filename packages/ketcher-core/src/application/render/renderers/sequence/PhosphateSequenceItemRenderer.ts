@@ -10,8 +10,10 @@ export class PhosphateSequenceItemRenderer extends BaseSequenceItemRenderer {
     // intentional no-op: this monomer type does not have a modification glyph
   }
 
-  protected appendRootElement() {
-    this.rootElement = super.appendRootElement();
+  protected appendRootElement(
+    parentElement?: D3SvgElementSelection<SVGGElement, void>,
+  ) {
+    this.rootElement = super.appendRootElement(parentElement);
     this.rootElement?.attr('data-symbol-type', 'Phosphate');
 
     return this.rootElement as never as D3SvgElementSelection<

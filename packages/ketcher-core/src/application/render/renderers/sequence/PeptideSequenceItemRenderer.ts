@@ -29,8 +29,10 @@ export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
     this.drawLine();
   }
 
-  protected appendRootElement() {
-    this.rootElement = super.appendRootElement();
+  protected appendRootElement(
+    parentElement?: D3SvgElementSelection<SVGGElement, void>,
+  ) {
+    this.rootElement = super.appendRootElement(parentElement);
     this.rootElement?.attr('data-symbol-type', 'Peptide');
 
     return this.rootElement as never as D3SvgElementSelection<

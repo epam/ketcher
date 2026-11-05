@@ -142,8 +142,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return provideEditorInstance().mode.isSyncEditMode;
   }
 
-  protected appendRootElement() {
-    const rootElement = this.canvas
+  protected appendRootElement(
+    parentElement: D3SvgElementSelection<SVGGElement, void> = this.canvas,
+  ) {
+    const rootElement = parentElement
       .append('g')
       .data([this])
       .attr('class', 'sequence-item')
@@ -692,8 +694,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.rootElement?.attr('opacity', '0.2');
   }
 
-  show(): void {
-    this.rootElement = this.appendRootElement();
+  show(parentElement?: D3SvgElementSelection<SVGGElement, void>): void {
+    this.rootElement = this.appendRootElement(parentElement);
     if (
       (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) ||
       this.isSingleEmptyNode

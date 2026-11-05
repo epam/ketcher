@@ -36,6 +36,7 @@ test.describe('Macromolecules custom presets', () => {
 
   test('Add new preset and duplicate it', async ({ page }) => {
     await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await moveMouseToTheMiddleOfTheScreen(page);
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).hoverMonomer(Preset.MyRNA);

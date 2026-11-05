@@ -56,11 +56,11 @@ export abstract class BaseMode {
     modeName: LayoutMode,
     isUndo = false,
   ): void {
-    editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);
+    editor.events.layoutModeChange.dispatch(modeName);
   }
 
   public initialize(

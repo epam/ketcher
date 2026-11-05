@@ -46,7 +46,8 @@
                         ]
                     },
                     "zOrder": 0
-                }
+                },
+                "selected": true
             }
         ],
         "connections": [],

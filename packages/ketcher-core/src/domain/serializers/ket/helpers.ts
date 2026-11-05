@@ -149,6 +149,40 @@ export const modifyTransformation = (transformation: MonomerTransformation) => {
   return newTransformation;
 };
 
+// Struct.clone() renumbers these pools from 0, so selection ids must follow
+const RENUMBERED_ON_CLONE_KEYS = [
+  'rxnArrows',
+  'rxnPluses',
+  'simpleObjects',
+  'texts',
+  'images',
+  'multitailArrows',
+] as const;
+
+export const remapSelectionForClonedStruct = (
+  originalStruct: Struct,
+  selection?: EditorSelection,
+): EditorSelection | undefined => {
+  if (!selection) {
+    return selection;
+  }
+  const remapped: EditorSelection = { ...selection };
+  RENUMBERED_ON_CLONE_KEYS.forEach((key) => {
+    const selectedIds = selection[key];
+    if (!selectedIds) {
+      return;
+    }
+    const newIdByOldId = new Map<number, number>();
+    Array.from(originalStruct[key].keys()).forEach((oldId, newId) => {
+      newIdByOldId.set(oldId, newId);
+    });
+    remapped[key] = selectedIds
+      .map((oldId) => newIdByOldId.get(oldId))
+      .filter((newId): newId is number => newId !== undefined);
+  });
+  return remapped;
+};
+
 export const populateStructWithSelection = (
   populatedStruct: Struct,
   selection?: EditorSelection,

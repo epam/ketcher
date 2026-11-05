@@ -253,7 +253,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       tailsYOffset,
     } = this.getConstructorParamsFromKetNode(ketFileNode);
 
-    return new MultitailArrow(
+    const arrow = new MultitailArrow(
       spineTopX,
       spineTopY,
       height,
@@ -262,6 +262,8 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       tailsLength,
       tailsYOffset,
     );
+    arrow.setInitiallySelected(ketFileNode.selected);
+    return arrow;
   }
 
   static fromFloatingPointCoordinates(

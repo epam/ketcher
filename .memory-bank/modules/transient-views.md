@@ -49,7 +49,7 @@ Because `update()` fully redraws, views hold no state between frames — they re
 
 - Overlays are **purely visual**: no model mutation, no operations, no undo/redo, not serialized.
 - **Nothing renders until `update()` runs** — every `showX` / `hideX` must be followed by `update()`.
-- Coordinates must be in **canvas space** (angstrom → canvas), matching monomers, because the layers sit inside the zoom transform.
+- Coordinates must be in **canvas space** (angstrom → canvas), matching monomers, because the layers sit inside the zoom transform. Convert with `Coordinates` (see [rendering](./rendering.md#coordinate-spaces)).
 - The **top layer is always raised last**, so views flagged `topLayer` sit above monomers.
 
 

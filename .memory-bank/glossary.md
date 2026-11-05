@@ -49,6 +49,9 @@
 | Drawing Entity   | Base class for all drawable elements in macromolecules mode                         | BaseMonomer, PolymerBond, macromolecules rendering        |
 | Struct Service   | Interface for external chemistry engine operations (layout, validation, conversion) | Service interface, Indigo integration, standalone WASM    |
 | Canvas Matrix    | Grid-based layout system for arranging monomers in sequence view                    | Macromolecules layout, RNA builder, sequence rendering    |
+| Model Space      | Macromolecules coordinates in angstroms, as stored on domain entities               | Domain entities, serialization, `Coordinates`             |
+| Canvas Space     | Model space times `macroModeScale`: the coordinates the SVG is drawn in             | Renderers, transient views, `Coordinates`                 |
+| View Space       | Canvas space after the zoom and pan transform: what the viewport shows              | Viewport checks, canvas wrapper size, `Coordinates`       |
 | Action (Redux)   | State update command in Redux architecture                                          | ketcher-react state management, Redux actions             |
 | Reducer          | Pure function that applies state changes in Redux                                   | Redux state management, immutable updates                 |
 | Hook (React)     | Custom React hook for accessing Ketcher functionality                               | useSettings, useKetcher, React integration                |

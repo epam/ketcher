@@ -33,6 +33,22 @@ const isFingerprintList = (value) =>
   Array.isArray(value) &&
   value.every((item) => FINGERPRINT_PATTERN.test(String(item)));
 
+/** The fields of a marker, and no others. */
+const STATE_KEYS = ['head', 'posted', 'round'];
+
+/** @param {unknown} value */
+const isPlainObject = (value) =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Whether the object has exactly these keys.
+ * @param {object} data
+ * @param {string[]} keys
+ */
+const hasOnlyKeys = (data, keys) =>
+  Object.keys(data).length === keys.length &&
+  keys.every((key) => Object.hasOwn(data, key));
+
 /**
  * Whether a parsed marker has the expected shape. Fields other than these
  * three are not allowed, so a future marker version is not read by mistake.
@@ -40,12 +56,9 @@ const isFingerprintList = (value) =>
  * @returns {data is ReviewState}
  */
 function isValidState(data) {
-  if (data === null || typeof data !== 'object' || Array.isArray(data)) {
-    return false;
-  }
-  const keys = Object.keys(data).sort().join(',');
   return (
-    keys === 'head,posted,round' &&
+    isPlainObject(data) &&
+    hasOnlyKeys(data, STATE_KEYS) &&
     isRound(data.round) &&
     SHA_PATTERN.test(String(data.head)) &&
     isFingerprintList(data.posted)

@@ -63,26 +63,6 @@ export const getEditInstanceInitialValues = (
   };
 };
 
-export const getLibraryEditInitialValues = (
-  libraryItem: MonomerItemType,
-  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
-): MonomerCreationInitialValues => {
-  const initialValues = getInitialValues(libraryItem, false);
-  const presetRequirements = getPresetRequirements(
-    initialValues.type,
-    getMonomerTemplateRefFromMonomerItem(libraryItem),
-    monomersLibraryParsedJson,
-  );
-
-  return {
-    ...initialValues,
-    libraryOnly: true,
-    originalMonomerItem: libraryItem,
-    modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
-    ...(presetRequirements ? { presetRequirements } : {}),
-  };
-};
-
 const sortAttachmentPoints = (attachmentPoints: AttachmentPointName[]) =>
   [...attachmentPoints].sort((firstAttachmentPoint, secondAttachmentPoint) => {
     const firstNumber = Number(firstAttachmentPoint.slice(1));
@@ -219,7 +199,7 @@ const getPresetRequirements = (
           const attachmentPointId = endpoint?.attachmentPointId;
           if (
             attachmentPointId &&
-              isEditedMonomerTemplate(endpoint?.templateId)
+            isEditedMonomerTemplate(endpoint?.templateId)
           ) {
             necessaryAttachmentPoints.add(
               attachmentPointId as AttachmentPointName,
@@ -237,6 +217,26 @@ const getPresetRequirements = (
   return {
     type: monomerType,
     attachmentPoints: sortAttachmentPoints([...necessaryAttachmentPoints]),
+  };
+};
+
+export const getLibraryEditInitialValues = (
+  libraryItem: MonomerItemType,
+  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
+): MonomerCreationInitialValues => {
+  const initialValues = getInitialValues(libraryItem, false);
+  const presetRequirements = getPresetRequirements(
+    initialValues.type,
+    getMonomerTemplateRefFromMonomerItem(libraryItem),
+    monomersLibraryParsedJson,
+  );
+
+  return {
+    ...initialValues,
+    libraryOnly: true,
+    originalMonomerItem: libraryItem,
+    modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
+    ...(presetRequirements ? { presetRequirements } : {}),
   };
 };
 

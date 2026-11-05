@@ -91,6 +91,7 @@ import type {
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 import { useTranslation } from 'react-i18next';
+import i18n from 'src/i18n/i18n';
 import {
   getOtherLibraryMonomers,
   hasMonomerFieldCollision,
@@ -116,6 +117,15 @@ const getInitialWizardState = (
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
+
+/** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
+const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
+  if (points.length <= 1) {
+    return points[0] ?? '';
+  }
+
+  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
+};
 
 /**
  * Builds initial wizard state seeded with values from an existing monomer
@@ -162,22 +172,35 @@ const getInitialWizardStateForEdit = ({
     },
   };
 
-  if (!hasDefaultAttachmentPoints) {
-    return state;
+  const notifications = new Map(state.notifications);
+
+  /*
+   * A library monomer that takes part in an RNA preset must keep its type and
+   * the attachment points its presets require, otherwise it loses preset
+   * eligibility. Reported as a dismissible warning when the wizard loads.
+   */
+  if (initialValues.libraryOnly && initialValues.presetRequirements) {
+    notifications.set('editAllPresetWarning', {
+      type: NotificationTypes.editAllPresetWarning,
+      message: i18n.t(
+        'components:monomerCreationWizard.notifications.editAllPresetWarning',
+        {
+          points: formatAttachmentPoints(
+            initialValues.presetRequirements.attachmentPoints,
+          ),
+        },
+      ),
+    });
   }
 
-  return {
-    ...state,
-    notifications: new Map([
-      [
-        'defaultAttachmentPoints',
-        {
-          type: NotificationTypes.defaultAttachmentPoints,
-          message: NotificationMessages.defaultAttachmentPoints,
-        },
-      ],
-    ]),
-  };
+  if (hasDefaultAttachmentPoints) {
+    notifications.set('defaultAttachmentPoints', {
+      type: NotificationTypes.defaultAttachmentPoints,
+      message: NotificationMessages.defaultAttachmentPoints,
+    });
+  }
+
+  return { ...state, notifications };
 };
 
 // BILN alias errors remain visible until the next submit attempt.
@@ -225,15 +248,6 @@ const getComponentSuffix = (componentType: KetMonomerClass): string => {
     default:
       return '';
   }
-};
-
-/** "R2", "R2 and R3", "R1, R2 and R3" — for preset requirement messages. */
-const formatAttachmentPoints = (points: AttachmentPointName[]): string => {
-  if (points.length <= 1) {
-    return points[0] ?? '';
-  }
-
-  return `${points.slice(0, -1).join(', ')} and ${points[points.length - 1]}`;
 };
 
 const presetTypeLabelKey: Partial<Record<KetMonomerClass, string>> = {
@@ -1327,33 +1341,6 @@ const MonomerCreationWizardInternal = ({
       ]),
     });
   }, [t]);
-
-  // Show a dismissible warning when a library monomer that takes part in an
-  // RNA preset is loaded for editing: its type and the presets' attachment
-  // points must be kept, otherwise it loses preset eligibility.
-  useEffect(() => {
-    if (!libraryOnly || !presetRequirements) {
-      return;
-    }
-
-    const message = t(
-      'components:monomerCreationWizard.notifications.editAllPresetWarning',
-      { points: formatAttachmentPoints(presetRequirements.attachmentPoints) },
-    );
-
-    wizardStateDispatch({
-      type: 'SetNotifications',
-      notifications: new Map([
-        [
-          'editAllPresetWarning',
-          {
-            type: 'warning',
-            message,
-          },
-        ],
-      ]),
-    });
-  }, [t, libraryOnly, presetRequirements]);
 
   const { assignedAttachmentPoints } = monomerCreationState;
 

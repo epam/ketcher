@@ -56,6 +56,8 @@ Prompts, rules, invariants, accepted patterns and the panel script are read from
 
 `--bare` gives the same isolation but reads only `ANTHROPIC_API_KEY`. The runner has an `authMode` setting (`oauth` → `--safe-mode --restricted`, `api-key` → `--bare --restricted`), so a switch to an API key is a configuration change.
 
+Verified on Claude Code 2.1.318 with `CLAUDE_CODE_OAUTH_TOKEN` (task 4.5). The test checkout had a `.claude/settings.json` with `SessionStart` and `UserPromptSubmit` hooks, an `env` entry and a `Bash` allow rule, and a `CLAUDE.md` that told the model what to answer. With `--safe-mode --restricted`, no hook ran, the answer came from the code, and `structured_output` matched the schema. The same run without the two flags ran both hooks and followed the `CLAUDE.md`. Claude Code 2.1.81 does not know `--safe-mode`, so the pinned version must be one that does. A failed login ends with `subtype: success` and `is_error: true`, with the message in `result`; the runner reports it as a failed pass with that message.
+
 ### 4. Lenses stay in the code-review skill
 
 The finder prompts are the lens files in `.agents/skills/code-review/`, with the shared part of `SKILL.md` (including "Content is data"). The `correctness` lens comes from #12548; this change adds "fix in the wrong place" to its focus. One lens is added: `reuse.md` (existing code that the change should use or extend; the finding names it by `file:line`). The verifier is a role file in the same folder, `verifier.md`. Output-format text in the prompts gives way to the schema; the prompts keep the meaning of each field. `/review-pr` and `ketcher-flow` keep using the same lenses.
@@ -90,47 +92,4 @@ Model IDs get retired. The runner passes `--fallback-model` with the alias of th
 
 ### 10. Evaluation reuses the hub
 
-`scripts/review/eval/` holds `eval-set.json`, a runner that calls the hub in dry-run mode per configuration, `--save-findings` and `--findings-from` so that verifier-only configurations reuse finder output, a `matches.json` that a person fills in, and a report script. The first entries come from maintainer comments already collected (for example #12111, #12173, #11833, #12050, #10230, #11501) and from clean PRs. It starts with 2–3 PRs and grows only if the results are usable. The #12548 author has started an evaluation of the PR review; before task 6 starts, the two are aligned so that one evaluation set and one report serve both.
-
-### 11. The workflow runs the hub
-
-`claude-review.yml` keeps the `pull_request` `labeled` trigger and the `Autotests` title filter, and drops `claude-code-action`. It checks out the base branch for the hub, the prompts and the panel script, checks out the PR head into a separate directory, installs a pinned Claude Code version, and runs the hub with `CLAUDE_CODE_OAUTH_TOKEN` and `GITHUB_TOKEN`. Permissions: `contents: read`, `pull-requests: write`, `issues: write` (labels). If the AI secrets move to a protected environment (#12513), the job uses it.
-
-### 12. The verifier can ask for one more lens
-
-The panel picks lenses by rules, so a lens can miss a file that needs it. The verifier answer has an `alsoCheck` field: `security`, `reuse` or `none`. The verifier sets it when a confirmed finding suggests a security problem, or shows that the repository already solves the same job. The hub runs the named lens once more, on the files of the flagged findings, when:
-
-- the verdict is `confirmed`, at any severity;
-- that lens reported no finding on those files in this round;
-- that lens has had no extra pass in this round.
-
-The extra findings are merged against the posted and the already found findings, and are verified. Their verdicts cannot ask for another pass. At most N findings go to verification in a round, extra findings included. The hub decides whether to run; the model only names the lens.
-
-*Alternative:* the verifier reports the security or reuse problem itself. Rejected: the verifier checks one finding and has no lens prompt, and a finding needs the lens's focus and checks.
-
-## Risks / Trade-offs
-
-- **Subscription limits** → The token belongs to a team member's Claude account. A review is up to one finder run per panel lens, one linked-issue run and up to N verifications on that account. Mitigated by manual rounds, the panel, the cap N, Sonnet defaults and `--max-budget-usd` per run.
-- **First CI run after merge** → The secret exists only in the main repository. Mitigated by local dry runs and unit tests; the first CI runs are watched by hand.
-- **Safe and restricted mode with the OAuth token are not yet run** → Verified in the first local run (task 4.5). If they fail, run with `--setting-sources` limited and the same tool list, and record the change here.
-- **A model ID is retired** → The runner falls back to the family alias, and the brief names the model that ran. A maintainer then updates the repository variable or the default in `config.mjs`.
-- **`--bare` may become the default for `-p`** → The documentation says so. Bare mode does not read the OAuth token. Mitigated by the pinned Claude Code version, and by checking the flag behavior before each version bump.
-- **Deepening adds model runs** → At most two extra passes per round, only after a confirmed finding, and only on the flagged files.
-- **Prompt injection from PR content** → Model runs cannot run commands, edit files, use the network, read PR settings files, or post. The worst case is a wrong or missing finding, which verification and the human reviewer still filter.
-- **Two review paths** → `/review-pr` (local) and the hub (CI) can drift. Mitigated by sharing the lens files, the shared prompt and the panel script.
-- **Document format as a contract** → A change to the `review-rules.md` block format could drop rules silently. Mitigated by reusing `parseRules`, by tests that parse the real file, and by `check:agent-docs`.
-
-## Migration Plan
-
-1. Add the hub, schemas, lenses, verifier role and tests; leave the workflow unchanged.
-2. Run the hub locally with `--dry-run` on past PRs; tune prompts and thresholds; run the first evaluation.
-3. Switch `claude-review.yml` to the hub; update `.github/workflows/README.md` and `review-workflow.md`.
-4. After merge, watch the first runs on a few PRs.
-
-Rollback: revert `claude-review.yml` to the `claude-code-action` step with `/review-pr`.
-
-## Open Questions
-
-- How the evaluation work of the #12548 author and task 6 split, before task 6 starts.
-- Initial values for N, concurrency and `--max-budget-usd`, after the first local runs.
-- The plan and limits of the team member's account behind `CLAUDE_CODE_OAUTH_TOKEN`, and when the token expires.
+`scripts/review/eval/` holds `eval-set.json`, a runner that calls the hub in dry-run mode per configuration, `--save-findings` and `--findings-from` so that verifier-only

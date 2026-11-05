@@ -119,6 +119,20 @@ test('a run that hit its turn limit is a failed pass, with its cost', () => {
   assert.equal(result.costUsd, 1.2);
 });
 
+test('a run that cannot log in is a failed pass with the API message', () => {
+  const result = parseResult({
+    exitCode: 1,
+    stdout: fixture('run-not-logged-in.json'),
+    stderr: '',
+    durationMs: 5,
+  });
+  assert.equal(result.ok, false);
+  assert.equal(
+    result.error,
+    'run failed (HTTP 401): Not logged in · Please run /login',
+  );
+});
+
 test('output that is not JSON, or has no structured output, is a failed pass', () => {
   const broken = parseResult({
     exitCode: 1,

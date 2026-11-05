@@ -144,6 +144,19 @@ function parseJson(stdout) {
 }
 
 /**
+ * The error of a run that ended with `success` but reports an error, such as
+ * a failed login: `result` holds the message, `api_error_status` the HTTP
+ * status.
+ * @param {any} data the parsed JSON output
+ */
+function apiError(data) {
+  const status = data.api_error_status
+    ? ` (HTTP ${data.api_error_status})`
+    : '';
+  return `run failed${status}: ${data.result}`;
+}
+
+/**
  * Why a finished run gave no usable answer, or undefined when it did.
  * @param {number | null} exitCode
  * @param {any} data the parsed JSON output
@@ -152,8 +165,11 @@ function failureReason(exitCode, data) {
   if (data === undefined) {
     return 'no JSON output';
   }
-  if (data.is_error || data.subtype !== 'success') {
+  if (data.subtype !== 'success') {
     return `run ended with ${data.subtype ?? 'an error'}`;
+  }
+  if (data.is_error) {
+    return apiError(data);
   }
   if (data.structured_output === undefined) {
     return 'no structured output';

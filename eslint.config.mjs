@@ -17,6 +17,7 @@ import globals from 'globals';
 import { readFileSync } from 'node:fs';
 import {
   rules as invariantRules,
+  ALLOWED_COORDINATE_CONVERSIONS,
   ALLOWED_HTML_SINKS,
   ALLOWED_MODEL_MUTATIONS,
 } from './scripts/eslint-invariants-rules.mjs';
@@ -411,6 +412,24 @@ const invariantsBlocks = [
       'ketcher-invariants/renderer-no-model-mutations': [
         'error',
         { allowedFiles: ALLOWED_MODEL_MUTATIONS },
+      ],
+    },
+  },
+  {
+    files: [
+      'packages/ketcher-core/src/application/**/*.{ts,tsx}',
+      'packages/ketcher-macromolecules/src/**/*.{ts,tsx}',
+    ],
+    ignores: [
+      '**/__tests__/**',
+      '**/*.test.{ts,tsx,js,jsx}',
+      '**/*.spec.{ts,tsx,js,jsx}',
+    ],
+    plugins: { 'ketcher-invariants': invariantsPlugin },
+    rules: {
+      'ketcher-invariants/no-manual-coordinate-conversion': [
+        'error',
+        { allowedFiles: ALLOWED_COORDINATE_CONVERSIONS },
       ],
     },
   },

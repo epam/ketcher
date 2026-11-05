@@ -1,0 +1,15 @@
+{
+  "type": "result",
+  "subtype": "error_max_turns",
+  "is_error": true,
+  "duration_ms": 90210,
+  "num_turns": 30,
+  "total_cost_usd": 1.2,
+  "modelUsage": {
+    "claude-sonnet-5-5": {
+      "inputTokens": 900,
+      "outputTokens": 4000,
+      "costUSD": 1.2
+    }
+  }
+}

@@ -119,7 +119,7 @@ const PresetPreview = ({ className }: Props) => {
               </PhosphatePositionIconWrapper>
             )}
           </PresetMonomerRow>
-        ) : null,
+        ) : undefined,
       )}
       {isMonomerPreviewPropertiesVisible && (
         <MonomerPreviewProperties

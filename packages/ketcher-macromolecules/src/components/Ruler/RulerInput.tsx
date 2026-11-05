@@ -29,9 +29,8 @@ const RulerInput = ({
 
   const stringifiedLineLengthValue = lineLengthValue.toString();
 
-  const [editingValue, setEditingValue] = useState<string | null>(null);
-  const displayValue =
-    editingValue === null ? stringifiedLineLengthValue : editingValue;
+  const [editingValue, setEditingValue] = useState<string>();
+  const displayValue = editingValue ?? stringifiedLineLengthValue;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue(event.target.value);
@@ -39,13 +38,13 @@ const RulerInput = ({
 
   const handleBlur = () => {
     if (!editingValue || editingValue.trim() === '') {
-      setEditingValue(null);
+      setEditingValue(undefined);
       return;
     }
 
     const newValue = Number(editingValue);
     if (Number.isNaN(newValue) || newValue < 1) {
-      setEditingValue(null);
+      setEditingValue(undefined);
       return;
     }
 
@@ -54,7 +53,7 @@ const RulerInput = ({
         ? Math.round(newValue / 10) * 10
         : newValue;
 
-    setEditingValue(null);
+    setEditingValue(undefined);
     onCommitValue(newLineLength);
   };
 

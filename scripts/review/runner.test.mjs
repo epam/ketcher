@@ -22,7 +22,7 @@ const options = (fields) => ({
   schema: FINDINGS_SCHEMA,
   model: 'claude-sonnet-5-5',
   limits: { maxTurns: 30, maxBudgetUsd: 2 },
-  promptFile: '/base/.agents/skills/code-review/correctness.md',
+  systemPrompt: 'You review a diff through the correctness lens.',
   ...fields,
 });
 
@@ -84,8 +84,8 @@ test('model, fallback, limits, schema and prompt are passed', () => {
   assert.equal(valueOf(args, '--max-budget-usd'), '2');
   assert.deepEqual(JSON.parse(valueOf(args, '--json-schema')), FINDINGS_SCHEMA);
   assert.equal(
-    valueOf(args, '--append-system-prompt-file'),
-    '/base/.agents/skills/code-review/correctness.md',
+    valueOf(args, '--append-system-prompt'),
+    'You review a diff through the correctness lens.',
   );
 });
 

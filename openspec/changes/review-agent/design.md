@@ -41,7 +41,7 @@ claude -p --safe-mode --restricted --tools "Read,Grep,Glob" --permission-mode do
   --output-format json --json-schema <schema> \
   --model <id> --fallback-model <family alias> \
   --max-turns <n> --max-budget-usd <x> \
-  --append-system-prompt-file <role prompt> < <input>
+  --append-system-prompt <role prompt> < <input>
 ```
 
 The hub reads only `structured_output`. A non-zero exit, `error_max_structured_output_retries`, or `success` without `structured_output` counts as a failed pass. The schemas (`scripts/review/schemas.mjs`) mirror the output contract: `file`, `line`, `severity` (`blocker`, `major`, `nit`), `id` (`R<n>`, invariant ID or `none`), `claim`, `scenario`, and `references` (`file:line`) for findings that name other code.
@@ -52,7 +52,7 @@ The hub reads only `structured_output`. A non-zero exit, `error_max_structured_o
 
 `--safe-mode` keeps the run from loading `CLAUDE.md`, hooks, skills, plugins, MCP servers, custom agents and auto memory from the checked-out tree; authentication works normally. Safe mode still reads settings files and their permission rules, so `--restricted` is added: it loads only managed settings and `--settings`, confines the file tools to the working directory, removes the tools that run commands and WebFetch unless `--tools` names them, and refuses `bypassPermissions`. `--tools "Read,Grep,Glob"` names the tools explicitly (the Linux default set omits `Glob` and `Grep`); there is no `Bash`, no edit tool, no web tool and no tool that writes to GitHub. The runner builds the argument list in one function, starts the process without a shell, and a unit test fails if `--safe-mode`, `--restricted`, the tool list or `dontAsk` is missing.
 
-Prompts, rules, invariants, accepted patterns and the panel script are read from the base checkout. The hub passes the role prompt as `--append-system-prompt-file` and the rules, invariants and accepted patterns as text in the input, and the shared prompt says that these copies apply, not the copies in the checkout. The PR checkout is the working directory and is only read, so lenses can open code and module docs there.
+Prompts, rules, invariants, accepted patterns and the panel script are read from the base checkout. The hub passes the role prompt (the shared part of `SKILL.md` and the lens or role file) as text with `--append-system-prompt`, and the rules, invariants and accepted patterns as text in the input, and the shared prompt says that these copies apply, not the copies in the checkout. The PR checkout is the working directory and is only read, so lenses can open code and module docs there.
 
 `--bare` gives the same isolation but reads only `ANTHROPIC_API_KEY`. The runner has an `authMode` setting (`oauth` → `--safe-mode --restricted`, `api-key` → `--bare --restricted`), so a switch to an API key is a configuration change.
 

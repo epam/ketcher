@@ -88,10 +88,10 @@ export function familyAlias(model) {
  * @param {object} options.schema JSON Schema of the answer
  * @param {string} options.model exact model ID
  * @param {RunLimits} options.limits
- * @param {string} options.promptFile role prompt, from the base checkout
+ * @param {string} options.systemPrompt role prompt, from the base checkout
  * @returns {string[]}
  */
-export function buildArgs({ authMode, schema, model, limits, promptFile }) {
+export function buildArgs({ authMode, schema, model, limits, systemPrompt }) {
   return [
     '-p',
     isolationFlag(authMode),
@@ -114,8 +114,8 @@ export function buildArgs({ authMode, schema, model, limits, promptFile }) {
     String(limits.maxTurns),
     '--max-budget-usd',
     String(limits.maxBudgetUsd),
-    '--append-system-prompt-file',
-    promptFile,
+    '--append-system-prompt',
+    systemPrompt,
   ];
 }
 

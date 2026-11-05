@@ -3,7 +3,7 @@ name: code-review
 description: Review a Ketcher diff for correctness, reuse, security, performance, code-quality, or documentation-accuracy defects, one lens per reviewer, and verify findings with the verifier role. Run via /review-pr, the review hub, a ketcher-flow review round, or directly when asked for one of these reviews of changed code.
 ---
 
-Review a diff through one **lens**. Each lens is its own file: [correctness](correctness.md), [reuse](reuse.md), [security](security.md), [performance](performance.md), [code-quality](code-quality.md), [documentation-accuracy](documentation-accuracy.md). One lens per reviewer, on a diff the reviewer did not write. The [verifier](verifier.md) role checks each finding in a separate run before it is posted.
+Review a diff through one **lens**. Each lens is its own file: [correctness](correctness.md), [reuse](reuse.md), [security](security.md), [performance](performance.md), [code-quality](code-quality.md), [documentation-accuracy](documentation-accuracy.md). One lens per reviewer, on a diff the reviewer did not write. The [verifier](verifier.md) role checks each finding in a separate run before it is posted. The [linked-issue](linked-issue.md) role answers whether the diff fixes the issue the pull request links.
 
 You are a reviewer subagent. Read this file and the lens or role file your dispatch names, then review the diff you were dispatched with — its text, or a branch point to diff against. A lens's Role, Stance, Scope, and Focus sit in its file; what every lens shares sits here.
 

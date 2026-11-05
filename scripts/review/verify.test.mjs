@@ -4,7 +4,9 @@ import { test } from 'node:test';
 import { parseDiff } from './diff.mjs';
 import {
   applyVerdict,
+  linkedIssueInput,
   parseLocation,
+  runLinkedIssue,
   runVerification,
   verifierInput,
 } from './verify.mjs';
@@ -154,4 +156,83 @@ test('the verifier never sees the finder prompt or other findings', async () => 
   assert.ok(!second.input.includes('First claim.'));
   const prompt = first.args[first.args.indexOf('--append-system-prompt') + 1];
   assert.equal(prompt, 'Verifier prompt');
+});
+
+const issue = {
+  number: 123,
+  title: 'Undo does not restore the bond',
+  body: 'Steps: draw a bond, delete it, press Undo.\n',
+};
+
+const settingsWith = (run) => ({
+  model: 'claude-sonnet-5-5',
+  authMode: 'oauth',
+  cwd: '/pr',
+  run,
+});
+
+test('the linked-issue input holds the issue, the findings and the diff', () => {
+  assert.equal(
+    linkedIssueInput(issue, [finding({ severity: 'blocker' })], context),
+    fixture('linked-issue-input.md').trimEnd(),
+  );
+});
+
+test('the linked-issue input says so when no finding was confirmed', () => {
+  const input = linkedIssueInput(issue, [], context);
+  assert.ok(input.includes('No finding was confirmed.'));
+});
+
+test('without a linked issue no model runs', async () => {
+  const run = async () => assert.fail('no run expected');
+  const result = await runLinkedIssue({
+    issue: undefined,
+    confirmed: [],
+    prompt: 'Linked-issue prompt',
+    context,
+    settings: settingsWith(run),
+  });
+  assert.deepEqual(result, { answer: undefined, failed: [], run: undefined });
+});
+
+test('the answer carries the issue number', async () => {
+  const run = async () => ({
+    ok: true,
+    output: { fixesIssue: 'partly', reason: 'Redo is not fixed.' },
+    costUsd: 0,
+    durationMs: 1,
+    models: [],
+  });
+  const result = await runLinkedIssue({
+    issue,
+    confirmed: [],
+    prompt: 'Linked-issue prompt',
+    context,
+    settings: settingsWith(run),
+  });
+  assert.deepEqual(result.answer, {
+    number: 123,
+    fixesIssue: 'partly',
+    reason: 'Redo is not fixed.',
+  });
+  assert.deepEqual(result.failed, []);
+});
+
+test('a failed linked-issue run gives no answer and is named', async () => {
+  const run = async () => ({
+    ok: false,
+    error: 'boom',
+    costUsd: 0,
+    durationMs: 1,
+    models: [],
+  });
+  const result = await runLinkedIssue({
+    issue,
+    confirmed: [],
+    prompt: 'Linked-issue prompt',
+    context,
+    settings: settingsWith(run),
+  });
+  assert.equal(result.answer, undefined);
+  assert.deepEqual(result.failed, ['linked issue #123']);
 });

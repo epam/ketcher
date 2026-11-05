@@ -15,6 +15,9 @@ export const PROMPT_DIR = '.agents/skills/code-review';
 /** Prompt file of the verifier role, in PROMPT_DIR. */
 export const VERIFIER_ROLE = 'verifier';
 
+/** Prompt file of the linked-issue role, in PROMPT_DIR. */
+export const LINKED_ISSUE_ROLE = 'linked-issue';
+
 /** Labels that start a review. The hub removes the one that started the run. */
 export const LABELS = {
   standard: 'Run Claude Review',

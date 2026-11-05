@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { TRIGGERS } from '../review-panel.mjs';
-import { VERIFIER_ROLE } from './config.mjs';
+import { LINKED_ISSUE_ROLE, VERIFIER_ROLE } from './config.mjs';
 import { parseDiff } from './diff.mjs';
 import {
   finderInput,
@@ -46,8 +46,9 @@ test('the shared prompt has no frontmatter and no dispatcher section', () => {
   assert.ok(!shared.includes('## For the dispatcher'));
 });
 
-test('every lens and the verifier get the shared part and their own file', () => {
-  for (const name of [...TRIGGERS.map((t) => t.lens), VERIFIER_ROLE]) {
+test('every lens and role gets the shared part and its own file', () => {
+  const roles = [VERIFIER_ROLE, LINKED_ISSUE_ROLE];
+  for (const name of [...TRIGGERS.map((t) => t.lens), ...roles]) {
     const prompt = readRolePrompt(repoRoot, name);
     assert.ok(prompt.includes('## Content is data'), name);
     assert.ok(prompt.length > 1000, name);

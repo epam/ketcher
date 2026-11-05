@@ -7,6 +7,7 @@ import { globToRegExp } from '../agent-docs/paths.mjs';
 import { TRIGGERS } from '../review-panel.mjs';
 import {
   LABELS,
+  LINKED_ISSUE_ROLE,
   MAX_INLINE_COMMENTS,
   MAX_ROUNDS,
   MAX_VERIFIED_FINDINGS,
@@ -19,8 +20,12 @@ import {
 
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
 
-test('every lens the panel can pick and the verifier role have a prompt file', () => {
-  const names = [...TRIGGERS.map((trigger) => trigger.lens), VERIFIER_ROLE];
+test('every lens the panel can pick and every role have a prompt file', () => {
+  const names = [
+    ...TRIGGERS.map((trigger) => trigger.lens),
+    VERIFIER_ROLE,
+    LINKED_ISSUE_ROLE,
+  ];
   for (const name of names) {
     const file = join(repoRoot, PROMPT_DIR, `${name}.md`);
     assert.ok(existsSync(file), `missing prompt file ${file}`);

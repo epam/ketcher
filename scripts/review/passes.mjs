@@ -4,6 +4,7 @@
 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import pMap from 'p-map';
 import { CONCURRENCY, PROMPT_DIR, RUN_LIMITS } from './config.mjs';
 import { filePath } from './diff.mjs';
 import { buildArgs, runModel } from './runner.mjs';
@@ -86,16 +87,13 @@ const fileLine = (file) =>
   `- \`${filePath(file)}\` (${file.status}, +${file.additions} -${file.deletions})`;
 
 /**
- * The input of one finder pass. The pull request title and description are
- * not part of it: the first pass reads the diff alone.
- * @param {string} lens
+ * The part of the input that every finder and verifier run of a round shares:
+ * the review documents from the base, the changed files and the diff.
  * @param {ReviewContext} context
  */
-export function finderInput(lens, context) {
+export function contextText(context) {
   const diffFence = fence(context.diffText);
   return [
-    `Review this diff through the \`${lens}\` lens.`,
-    '',
     'The rules, invariants and accepted patterns below come from the base branch. They apply, not the copies in the checkout. The working directory is the pull request checkout: read its files to check the code.',
     '',
     '## Review rules',
@@ -123,42 +121,65 @@ export function finderInput(lens, context) {
 }
 
 /**
- * Maps the items with an async function, at most `limit` at a time, and
- * keeps the order of the items.
- * @template T, R
- * @param {T[]} items
- * @param {number} limit
- * @param {(item: T) => Promise<R>} fn
- * @returns {Promise<R[]>}
+ * The input of one finder pass. The pull request title and description are
+ * not part of it: the first pass reads the diff alone.
+ * @param {string} lens
+ * @param {ReviewContext} context
  */
-export async function mapLimit(items, limit, fn) {
-  const results = new Array(items.length);
-  let next = 0;
-  const worker = async () => {
-    while (next < items.length) {
-      const index = next;
-      next += 1;
-      results[index] = await fn(items[index]);
-    }
-  };
-  const workers = Math.min(limit, items.length);
-  await Promise.all(Array.from({ length: workers }, worker));
-  return results;
+export function finderInput(lens, context) {
+  return [
+    `Review this diff through the \`${lens}\` lens.`,
+    '',
+    contextText(context),
+  ].join('\n');
 }
+
+/**
+ * A finder run together with its lens.
+ * @typedef {RunResult & { lens: string }} FinderRun
+ */
 
 /**
  * The findings of a pass, each with its lens. A run that is ok has an answer
  * that matches FINDINGS_SCHEMA; the check here only guards the hub.
- * @param {string} lens
- * @param {RunResult} result
+ * @param {FinderRun} result
  * @returns {LensFinding[]}
  */
-function lensFindings(lens, result) {
+function lensFindings(result) {
   const findings = result.output?.findings;
   if (!result.ok || !Array.isArray(findings)) {
     return [];
   }
-  return findings.map((finding) => ({ lens, ...finding }));
+  return findings.map((finding) => ({ lens: result.lens, ...finding }));
+}
+
+/**
+ * The arguments of the finder run of one lens.
+ * @param {string} prompt the role prompt of the lens
+ * @param {RunSettings} settings
+ */
+function finderArgs(prompt, { model, authMode }) {
+  return buildArgs({
+    authMode,
+    schema: FINDINGS_SCHEMA,
+    model,
+    limits: RUN_LIMITS.finder,
+    systemPrompt: prompt,
+  });
+}
+
+/**
+ * Runs the finder pass of one lens.
+ * @param {string} lens
+ * @param {{ prompt: string, context: ReviewContext, settings: RunSettings }} options
+ * @returns {Promise<FinderRun>}
+ */
+async function runOnePass(lens, { prompt, context, settings }) {
+  const { cwd, run = runModel } = settings;
+  const args = finderArgs(prompt, settings);
+  const input = finderInput(lens, context);
+  const result = await run({ args, input, cwd });
+  return { lens, ...result };
 }
 
 /**
@@ -178,21 +199,14 @@ export async function runFinderPasses({
   settings,
   concurrency = CONCURRENCY,
 }) {
-  const { model, authMode, cwd, run = runModel } = settings;
-  const runs = await mapLimit(lenses, concurrency, async (lens) => {
-    const args = buildArgs({
-      authMode,
-      schema: FINDINGS_SCHEMA,
-      model,
-      limits: RUN_LIMITS.finder,
-      systemPrompt: prompts[lens],
-    });
-    const result = await run({ args, input: finderInput(lens, context), cwd });
-    return { lens, ...result };
-  });
-  return {
-    findings: runs.flatMap((result) => lensFindings(result.lens, result)),
-    failed: runs.filter((result) => !result.ok).map((result) => result.lens),
-    runs,
-  };
+  const runs = await pMap(
+    lenses,
+    (lens) => runOnePass(lens, { prompt: prompts[lens], context, settings }),
+    { concurrency },
+  );
+  const findings = runs.flatMap(lensFindings);
+  const failed = runs
+    .filter((result) => !result.ok)
+    .map((result) => result.lens);
+  return { findings, failed, runs };
 }

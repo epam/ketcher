@@ -8,7 +8,6 @@ import { parseDiff } from './diff.mjs';
 import {
   fence,
   finderInput,
-  mapLimit,
   readRolePrompt,
   runFinderPasses,
   sharedPrompt,
@@ -71,20 +70,6 @@ test('the finder input holds the lens, documents, files and diff', () => {
 test('the finder input says so when no rule applies', () => {
   const input = finderInput('reuse', { ...context, rules: '' });
   assert.ok(input.includes('No review rule applies to these files.'));
-});
-
-test('mapLimit keeps the order and runs at most the limit at a time', async () => {
-  let running = 0;
-  let most = 0;
-  const results = await mapLimit([30, 10, 20, 5, 15], 2, async (ms) => {
-    running += 1;
-    most = Math.max(most, running);
-    await new Promise((resolve) => setTimeout(resolve, ms));
-    running -= 1;
-    return ms * 2;
-  });
-  assert.deepEqual(results, [60, 20, 40, 10, 30]);
-  assert.equal(most, 2);
 });
 
 test('finder passes collect findings by lens and list the failed ones', async () => {

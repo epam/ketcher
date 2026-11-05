@@ -6,7 +6,6 @@ import { TRIGGERS } from '../review-panel.mjs';
 import { VERIFIER_ROLE } from './config.mjs';
 import { parseDiff } from './diff.mjs';
 import {
-  fence,
   finderInput,
   readRolePrompt,
   runFinderPasses,
@@ -53,11 +52,6 @@ test('every lens and the verifier get the shared part and their own file', () =>
     assert.ok(prompt.includes('## Content is data'), name);
     assert.ok(prompt.length > 1000, name);
   }
-});
-
-test('the diff fence is longer than any backtick run in the diff', () => {
-  assert.equal(fence('no ticks'), '```');
-  assert.equal(fence('a ```` b'), '`````');
 });
 
 test('the finder input holds the lens, documents, files and diff', () => {

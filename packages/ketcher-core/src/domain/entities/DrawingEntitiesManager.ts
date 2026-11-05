@@ -3030,6 +3030,23 @@ export class DrawingEntitiesManager {
     return { command, drawingEntities };
   }
 
+  // A link inside one sequence is ignored on export, but a sequence attached to
+  // another one cannot be represented in FASTA
+  public hasBranchesBetweenChains(): boolean {
+    const { monomerToChain } = ChainsCollection.fromMonomers([
+      ...this.monomers.values(),
+    ]);
+
+    return [...this.polymerBonds.values()].some(
+      (bond) =>
+        bond instanceof PolymerBond &&
+        bond.secondMonomer &&
+        bond.isSideChainConnection &&
+        monomerToChain.get(bond.firstMonomer) !==
+          monomerToChain.get(bond.secondMonomer),
+    );
+  }
+
   public validateIfApplicableForFasta() {
     if (
       this.monomers.size === 0 &&

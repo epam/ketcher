@@ -45,7 +45,7 @@
     ],
     "*.{js,ts}": [
       "prettier --write",
-      "eslint ."
+      "eslint --quiet --no-warn-ignored"
     ]
   },
   "types": "./tests/typings.d.ts"

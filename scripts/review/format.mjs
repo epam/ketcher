@@ -59,8 +59,17 @@ const code = (location) => `\`${location.replaceAll('`', "'")}\``;
 
 /**
  * Model text as safe Markdown on one line. The text comes from runs that read
- * the pull request, so `<` is escaped (no HTML, no hidden comments) and `@`
- * gets a zero-width space after it (no one is notified).
+ * the pull request, so it is treated like user input:
+ *
+ * - Whitespace becomes one space, so the text cannot add headings, lists or
+ *   a second line to a comment.
+ * - `<` is escaped, so the text cannot add HTML or a hidden `<!-- -->`
+ *   comment, such as a fake review marker.
+ * - `@` gets a zero-width space after it, so the text cannot notify a person
+ *   or a team. GitHub shows the name unchanged.
+ *
+ * Other Markdown, such as `**bold**` or a link, stays as it is: it can only
+ * change how the comment looks, and the hub posts nothing else from it.
  * @param {string} text
  */
 export function plain(text) {

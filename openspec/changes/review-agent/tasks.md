@@ -25,9 +25,9 @@
 
 ## 4. Model runs
 
-- [ ] 4.1 `runner.mjs`: build the `claude -p` arguments (`--safe-mode --restricted` or `--bare --restricted` by `authMode`, read-only tools, `dontAsk`, strict MCP, no session persistence, schema, model, `--fallback-model` with the family alias, max turns, budget, role prompt), start without a shell, pipe the input, read `structured_output`, map failures to a failed pass, record cost, duration and the model that ran.
-- [ ] 4.2 Test that the arguments always contain the isolation flag, `--restricted`, `--tools Read,Grep,Glob` and `dontAsk`, and never `Bash`.
-- [ ] 4.3 `passes.mjs`: one finder pass per panel lens, concurrency-limited; the role prompt is the shared part of `SKILL.md` and the lens file from the base checkout; rules, invariants and accepted patterns go in the input as text.
+- [x] 4.1 `runner.mjs`: build the `claude -p` arguments (`--safe-mode --restricted` or `--bare --restricted` by `authMode`, read-only tools, `dontAsk`, strict MCP, no session persistence, schema, model, `--fallback-model` with the family alias, max turns, budget, role prompt), start without a shell, pipe the input, read `structured_output`, map failures to a failed pass, record cost, duration and the model that ran.
+- [x] 4.2 Test that the arguments always contain the isolation flag, `--restricted`, `--tools Read,Grep,Glob` and `dontAsk`, and never `Bash`.
+- [x] 4.3 `passes.mjs`: one finder pass per panel lens, concurrency-limited; the role prompt is the shared part of `SKILL.md` and the lens file from the base checkout; rules, invariants and accepted patterns go in the input as text.
 - [ ] 4.4 `verify.mjs` and the linked-issue run.
 - [ ] 4.5 Run one real `claude -p --safe-mode --restricted` call locally with `CLAUDE_CODE_OAUTH_TOKEN`; confirm authentication, structured output, and that a test hook and a `.claude/settings.json` in the working tree are not loaded. Record the result in `design.md`.
 - [ ] 4.6 Deepening: add `alsoCheck` (`security`, `reuse`, `none`) to the verdict schema; run one extra pass per named lens on the flagged files when that lens reported nothing there in this round; merge and verify the extra findings without further deepening; keep N per round; tests.

@@ -5,7 +5,7 @@
 // The options that isolate a run from the pull request are fixed here, not in
 // config.mjs, so that no configuration can turn them off. A test checks them.
 
-import { spawn } from 'node:child_process';
+import { execa } from 'execa';
 
 /**
  * Limits of one run, from RUN_LIMITS in config.mjs.
@@ -186,6 +186,25 @@ export function parseResult({ exitCode, stdout, stderr, durationMs }) {
 }
 
 /**
+ * Why the process itself failed, or undefined when it ran to its end: it did
+ * not start, it hit the time limit, or a signal stopped it.
+ * @param {{ timedOut: boolean, signal?: string, exitCode?: number, shortMessage?: string }} child
+ * @param {number} timeoutMs
+ */
+function processFailure(child, timeoutMs) {
+  if (child.timedOut) {
+    return `stopped after ${timeoutMs} ms`;
+  }
+  if (child.signal) {
+    return `stopped by ${child.signal}`;
+  }
+  if (child.exitCode === undefined) {
+    return `could not start claude: ${child.shortMessage}`;
+  }
+  return undefined;
+}
+
+/**
  * Runs `claude` once, without a shell, with the input on stdin. Never throws:
  * a run that cannot start, times out or fails gives `ok: false`.
  * @param {object} options
@@ -193,63 +212,37 @@ export function parseResult({ exitCode, stdout, stderr, durationMs }) {
  * @param {string} options.input the text the model reads
  * @param {string} options.cwd the pull request checkout, read only
  * @param {NodeJS.ProcessEnv} [options.env]
- * @param {typeof spawn} [options.spawnProcess] replaced in tests
+ * @param {typeof execa} [options.exec] replaced in tests
  * @param {number} [options.timeoutMs]
  * @returns {Promise<RunResult>}
  */
-export function runModel({
+export async function runModel({
   args,
   input,
   cwd,
   env = process.env,
-  spawnProcess = spawn,
+  exec = execa,
   timeoutMs = RUN_TIMEOUT_MS,
 }) {
   const started = Date.now();
-  return new Promise((resolve) => {
-    const child = spawnProcess('claude', args, {
-      cwd,
-      env: runEnv(env),
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-    let stdout = '';
-    let stderr = '';
-    const timer = setTimeout(() => child.kill('SIGTERM'), timeoutMs);
-    const fail = (error) => {
-      clearTimeout(timer);
-      resolve({
-        ok: false,
-        error,
-        costUsd: 0,
-        durationMs: Date.now() - started,
-        models: [],
-      });
-    };
-    child.stdout.on('data', (chunk) => {
-      stdout += chunk;
-    });
-    child.stderr.on('data', (chunk) => {
-      stderr += chunk;
-    });
-    child.on('error', (error) =>
-      fail(`could not start claude: ${error.message}`),
-    );
-    child.on('close', (exitCode, signal) => {
-      clearTimeout(timer);
-      if (signal) {
-        fail(`stopped by ${signal}`);
-        return;
-      }
-      resolve(
-        parseResult({
-          exitCode,
-          stdout,
-          stderr,
-          durationMs: Date.now() - started,
-        }),
-      );
-    });
-    child.stdin.on('error', () => {});
-    child.stdin.end(input);
+  const child = await exec('claude', args, {
+    cwd,
+    env: runEnv(env),
+    // Without this, execa adds process.env back, GITHUB_TOKEN included.
+    extendEnv: false,
+    input,
+    timeout: timeoutMs,
+    reject: false,
+  });
+  const durationMs = Date.now() - started;
+  const failure = processFailure(child, timeoutMs);
+  if (failure) {
+    return { ok: false, error: failure, costUsd: 0, durationMs, models: [] };
+  }
+  return parseResult({
+    exitCode: child.exitCode,
+    stdout: child.stdout,
+    stderr: child.stderr,
+    durationMs,
   });
 }

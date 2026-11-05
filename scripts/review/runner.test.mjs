@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { EventEmitter } from 'node:events';
 import { readFileSync } from 'node:fs';
-import { PassThrough } from 'node:stream';
 import { test } from 'node:test';
+import { execa } from 'execa';
 import { FINDINGS_SCHEMA } from './schemas.mjs';
 import {
   buildArgs,
@@ -30,30 +29,16 @@ const options = (fields) => ({
 const valueOf = (args, flag) => args[args.indexOf(flag) + 1];
 
 /**
- * A fake child process: records what the hub writes to stdin, and ends with
- * the given stdout and exit code.
+ * A fake execa: records each call and returns the given result, with the
+ * fields execa sets when the process runs to its end.
  */
-function fakeSpawn({ stdout = '', stderr = '', exitCode = 0, signal = null }) {
+function fakeExec(result) {
   const calls = [];
-  const spawnProcess = (command, args, spawnOptions) => {
-    const child = new EventEmitter();
-    child.stdin = new PassThrough();
-    child.stdout = new PassThrough();
-    child.stderr = new PassThrough();
-    child.kill = () => {};
-    let input = '';
-    child.stdin.on('data', (chunk) => {
-      input += chunk;
-    });
-    child.stdin.on('end', () => {
-      calls.push({ command, args, options: spawnOptions, input });
-      child.stdout.end(stdout);
-      child.stderr.end(stderr);
-      setImmediate(() => child.emit('close', exitCode, signal));
-    });
-    return child;
+  const exec = async (command, args, options) => {
+    calls.push({ command, args, options });
+    return { timedOut: false, exitCode: 0, stdout: '', stderr: '', ...result };
   };
-  return { spawnProcess, calls };
+  return { exec, calls };
 }
 
 test('every run is isolated, read only and never asks for permission', () => {
@@ -156,35 +141,67 @@ test('output that is not JSON, or has no structured output, is a failed pass', (
   assert.equal(empty.error, 'no structured output');
 });
 
-test('runModel starts claude without a shell and pipes the input', async () => {
-  const { spawnProcess, calls } = fakeSpawn({
-    stdout: fixture('run-success.json'),
-  });
+test('runModel starts claude with the input, the checkout and a clean env', async () => {
+  const { exec, calls } = fakeExec({ stdout: fixture('run-success.json') });
   const result = await runModel({
     args: buildArgs(options({})),
     input: 'diff text',
     cwd: '/pr',
     env: { PATH: '/bin', GITHUB_TOKEN: 'gh' },
-    spawnProcess,
+    exec,
   });
   assert.equal(result.ok, true);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].command, 'claude');
-  assert.equal(calls[0].input, 'diff text');
+  assert.equal(calls[0].options.input, 'diff text');
   assert.equal(calls[0].options.cwd, '/pr');
   assert.equal(calls[0].options.shell, undefined);
+  assert.equal(calls[0].options.extendEnv, false);
   assert.deepEqual(calls[0].options.env, { PATH: '/bin' });
 });
 
-test('runModel turns a stopped run into a failed pass', async () => {
-  const { spawnProcess } = fakeSpawn({ signal: 'SIGTERM', exitCode: null });
+test('a run that times out, is stopped or cannot start is a failed pass', async () => {
+  const cases = [
+    [
+      { timedOut: true, exitCode: undefined, signal: 'SIGTERM' },
+      'stopped after 1000 ms',
+    ],
+    [{ exitCode: undefined, signal: 'SIGKILL' }, 'stopped by SIGKILL'],
+    [
+      { exitCode: undefined, shortMessage: 'spawn claude ENOENT' },
+      'could not start claude: spawn claude ENOENT',
+    ],
+  ];
+  for (const [child, error] of cases) {
+    const { exec } = fakeExec(child);
+    const result = await runModel({
+      args: [],
+      input: '',
+      cwd: '/pr',
+      env: {},
+      exec,
+      timeoutMs: 1000,
+    });
+    assert.equal(result.ok, false);
+    assert.equal(result.error, error);
+  }
+});
+
+test('runModel passes options that execa accepts', async () => {
+  // Runs node in place of claude: it prints its input, the success fixture.
+  const echo = (command, args, execOptions) =>
+    execa(
+      process.execPath,
+      ['-e', 'process.stdin.pipe(process.stdout)'],
+      execOptions,
+    );
   const result = await runModel({
     args: [],
-    input: '',
-    cwd: '/pr',
+    input: fixture('run-success.json'),
+    cwd: '.',
     env: {},
-    spawnProcess,
+    exec: echo,
   });
-  assert.equal(result.ok, false);
-  assert.equal(result.error, 'stopped by SIGTERM');
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.output, { findings: [] });
 });

@@ -23,3 +23,12 @@ Check, in this order. Stop at the first check that fails and drop the finding.
 7. **The severity.** Set it from the definitions in the [output contract](../../../.memory-bank/review-workflow.md#output-contract): `blocker` for an invariant break, a regression, or a bug; `major` for a rule or PR-type requirement broken with no change in behavior; `nit` for style or wording. A rule's own `Severity` field sets the level for a finding that only breaks that rule. Change the reported severity when it does not match.
 
 Give a one-sentence reason for your verdict, and quote the line it rests on. For a confirmed finding, keep the scenario that you checked, rewritten when you corrected it. Do not add new findings: report only on the one you were given.
+
+## Ask for one more lens
+
+Set `alsoCheck` only for a finding you confirm. The panel picks the lenses by rules, so a lens can miss a file. Name a lens when the code you read shows a problem that lens finds:
+
+- `security` when the finding comes near a security problem: untrusted input reaches HTML, a URL, a file path, a message to another window, or code that runs.
+- `reuse` when the repository already solves the same job, and the finding does not name that code.
+
+Otherwise set `none`. Do not name a lens to look for the finding again: the finding is already checked.

@@ -53,6 +53,7 @@ const verdict = (fields) => ({
   severity: 'major',
   id: 'R5',
   scenario: 'Opening a KET file without atoms throws.',
+  alsoCheck: 'none',
   ...fields,
 });
 
@@ -73,7 +74,13 @@ test('the verifier input holds the finding, the diff notes and the context', () 
 test('a verdict corrects line, severity, ID and scenario, not the fingerprint', () => {
   const checked = applyVerdict(
     finding({}),
-    verdict({ line: 3, severity: 'blocker', id: 'D1', scenario: 'Fixed.' }),
+    verdict({
+      line: 3,
+      severity: 'blocker',
+      id: 'D1',
+      scenario: 'Fixed.',
+      alsoCheck: 'security',
+    }),
   );
   assert.equal(checked.line, 3);
   assert.deepEqual(checked.locations, ['src/Editor.ts:3', 'src/Other.ts:9']);
@@ -81,6 +88,7 @@ test('a verdict corrects line, severity, ID and scenario, not the fingerprint', 
   assert.equal(checked.id, 'D1');
   assert.equal(checked.scenario, 'Fixed.');
   assert.equal(checked.reason, 'Line 2 casts `list[0]`.');
+  assert.equal(checked.alsoCheck, 'security');
   assert.equal(checked.fingerprint, '0123456789abcdef');
 });
 

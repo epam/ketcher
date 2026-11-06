@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  DEEPENING_LENSES,
   FINDINGS_SCHEMA,
   ID_PATTERN,
   LINKED_ISSUE_SCHEMA,
@@ -64,4 +65,11 @@ test('the location pattern takes file:line only', () => {
   for (const bad of ['b.ts', 'b.ts:0', 'b.ts:12-14', 'my file.ts:3', 'b.ts:']) {
     assert.ok(!location.test(bad), bad);
   }
+});
+
+test('the verifier can ask only for the deepening lenses or none', () => {
+  assert.deepEqual(VERDICT_SCHEMA.properties.alsoCheck.enum, [
+    ...DEEPENING_LENSES,
+    'none',
+  ]);
 });

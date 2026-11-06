@@ -11,6 +11,9 @@ export const SEVERITIES = ['blocker', 'major', 'nit'];
 /** A rule (R5), an invariant (D1, A2, B3), or `none`. */
 export const ID_PATTERN = '^(R[0-9]+|[A-Z][0-9]+|none)$';
 
+/** Lenses the verifier can ask to run once more: see design decision 12. */
+export const DEEPENING_LENSES = ['security', 'reuse'];
+
 /** A repo-relative path and a line number in the new version of the file. */
 export const LOCATION_PATTERN = '^[^\\s:]+:[1-9][0-9]*$';
 
@@ -79,7 +82,15 @@ export const VERDICT_SCHEMA = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
   additionalProperties: false,
-  required: ['verdict', 'reason', 'line', 'severity', 'id', 'scenario'],
+  required: [
+    'verdict',
+    'reason',
+    'line',
+    'severity',
+    'id',
+    'scenario',
+    'alsoCheck',
+  ],
   properties: {
     verdict: { enum: ['confirmed', 'dropped'] },
     reason: {
@@ -96,6 +107,11 @@ export const VERDICT_SCHEMA = {
     scenario: {
       ...text,
       description: 'The failing scenario as checked, rewritten when corrected.',
+    },
+    alsoCheck: {
+      enum: [...DEEPENING_LENSES, 'none'],
+      description:
+        'A lens that should also check the files of this finding, or none.',
     },
   },
 };

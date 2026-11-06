@@ -84,11 +84,12 @@ export function verifierInput(finding, context) {
 
 /**
  * The finding as the verifier left it: line, severity, ID and scenario come
- * from the verdict. The fingerprint stays the one from merging, so the next
- * round recognizes the finding when a finder reports it again.
+ * from the verdict, with the lens it asks to run once more. The fingerprint
+ * stays the one from merging, so the next round recognizes the finding when a
+ * finder reports it again.
  * @param {MergedFinding} finding
- * @param {{ line: number, severity: string, id: string, scenario: string, reason: string }} verdict
- * @returns {MergedFinding & { reason: string }}
+ * @param {{ line: number, severity: string, id: string, scenario: string, reason: string, alsoCheck: string }} verdict
+ * @returns {MergedFinding & { reason: string, alsoCheck: string }}
  */
 export function applyVerdict(finding, verdict) {
   const primary = `${finding.file}:${finding.line}`;
@@ -104,6 +105,7 @@ export function applyVerdict(finding, verdict) {
     id: verdict.id,
     scenario: verdict.scenario,
     reason: verdict.reason,
+    alsoCheck: verdict.alsoCheck,
   };
 }
 

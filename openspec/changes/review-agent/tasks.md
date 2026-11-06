@@ -30,7 +30,7 @@
 - [x] 4.3 `passes.mjs`: one finder pass per panel lens, concurrency-limited; the role prompt is the shared part of `SKILL.md` and the lens file from the base checkout; rules, invariants and accepted patterns go in the input as text.
 - [x] 4.4 `verify.mjs` and the linked-issue run.
 - [x] 4.5 Run one real `claude -p --safe-mode --restricted` call locally with `CLAUDE_CODE_OAUTH_TOKEN`; confirm authentication, structured output, and that a test hook and a `.claude/settings.json` in the working tree are not loaded. Record the result in `design.md`.
-- [ ] 4.6 Deepening: add `alsoCheck` (`security`, `reuse`, `none`) to the verdict schema; run one extra pass per named lens on the flagged files when that lens reported nothing there in this round; merge and verify the extra findings without further deepening; keep N per round; tests.
+- [x] 4.6 Deepening: add `alsoCheck` (`security`, `reuse`, `none`) to the verdict schema; run one extra pass per named lens on the flagged files when that lens reported nothing there in this round; merge and verify the extra findings without further deepening; keep N per round; tests.
 
 ## 5. GitHub and entry point
 

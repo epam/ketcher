@@ -2115,7 +2115,9 @@ export class CoreEditor {
     modelChanges.setUndoOperationsByPriority();
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
-    this.scrollToTopLeftCorner();
+    if (this.mode.modeName !== 'flex-layout-mode') {
+      this.scrollToTopLeftCorner();
+    }
     this.clearTransientViews();
   }
 

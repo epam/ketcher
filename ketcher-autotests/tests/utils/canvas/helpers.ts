@@ -313,6 +313,27 @@ export async function selectCanvasArea(
   await dragMouseTo(page, secondCorner.x, secondCorner.y);
 }
 
+/**
+ * Rubber-band selection around the union of the given locators' bounding boxes.
+ * Selects the rectangle area-selection tool, then drags from the top-left to
+ * the bottom-right of the combined box (with a small padding).
+ */
+export async function rubberBandSelect(
+  page: Page,
+  locators: Locator[],
+  padding = 10,
+) {
+  const boxes = [];
+  for (const locator of locators) {
+    boxes.push((await locator.boundingBox())!);
+  }
+  const minX = Math.min(...boxes.map((box) => box.x)) - padding;
+  const minY = Math.min(...boxes.map((box) => box.y)) - padding;
+  const maxX = Math.max(...boxes.map((box) => box.x + box.width)) + padding;
+  const maxY = Math.max(...boxes.map((box) => box.y + box.height)) + padding;
+  await selectCanvasArea(page, { x: minX, y: minY }, { x: maxX, y: maxY });
+}
+
 export async function getVisibleCanvas(page: Page): Promise<Locator> {
   const canvas = page.locator(`[data-testid="ketcher-canvas"]:visible`).first();
   await canvas.waitFor({

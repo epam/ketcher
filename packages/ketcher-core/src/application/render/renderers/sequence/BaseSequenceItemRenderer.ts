@@ -36,6 +36,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public antisenseNodeRenderer?: this;
 
+  /** Overrides the column position within a row for multi-strand rows where
+   *  the display order is reversed relative to the chain index order. */
+  private horizontalIndexInRow?: number;
+
+  public setHorizontalIndexInRow(index: number) {
+    this.horizontalIndexInRow = index;
+  }
+
   constructor(
     public readonly node: SequenceNode,
     private readonly firstNodeInChainPosition: Vec2,
@@ -109,7 +117,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public get scaledMonomerPositionForSequence() {
     const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
-    const indexInRow = this.monomerIndexInChain % lineLength;
+    const indexInRow =
+      this.horizontalIndexInRow ?? this.monomerIndexInChain % lineLength;
     const rowIndex = Math.floor(this.monomerIndexInChain / lineLength);
 
     return new Vec2(
@@ -363,10 +372,21 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendCounterElement(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    // In a multi-strand row the antisense strand is rendered above the sense
+    // strand, so the counter direction is flipped relative to the default.
+    const counterY =
+      this.horizontalIndexInRow !== undefined
+        ? this.isAntisenseNode
+          ? '-24'
+          : '24'
+        : this.node.monomer.monomerItem.isAntisense
+          ? '24'
+          : '-24';
+
     return rootElement
       .append('text')
       .attr('x', '2')
-      .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
+      .attr('y', counterY)
       .text(this.counterNumber)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')

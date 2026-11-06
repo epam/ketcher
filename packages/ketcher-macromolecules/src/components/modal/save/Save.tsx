@@ -159,6 +159,15 @@ export const Save = ({
       ) {
         throw new Error(t('save.sequenceTypeRecognitionError'));
       }
+      if (
+        fileFormat === 'fasta' &&
+        editor.drawingEntitiesManager.hasBranchesBetweenChains()
+      ) {
+        dispatch(openErrorModal(t('save.fastaBranchedStructureError')));
+        setCurrentFileFormat('ket');
+        setStruct(serializedKet);
+        return;
+      }
       const formatProperties = getPropertiesByFormat(fileFormat);
       // Pass format-specific options (e.g., 'molfile-saving-mode': '3000' for MOL V3000)
       // to ensure correct format version is used during conversion

@@ -70,8 +70,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
   {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
     imports: [
-      'application/editor/editorSettings',
-      'application/editor/editorSingleton',
       'application/editor/libraryItemDragDrop/replacementHelpers',
       'application/editor/operations/coreAtom/atom',
       'application/editor/operations/coreBond/bond',

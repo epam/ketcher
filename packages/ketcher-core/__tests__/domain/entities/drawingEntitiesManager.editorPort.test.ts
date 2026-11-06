@@ -18,6 +18,8 @@ import { Nucleotide } from 'domain/entities/Nucleotide';
 import { AttachmentPointName } from 'domain/types';
 import { Subscription } from 'subscription';
 import { SettingsManager } from 'utilities';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { peptideMonomerItem } from '../../mock-data';
 import { createRenderersManager } from '../../helpers/dom';
 import {
@@ -50,6 +52,7 @@ const createFakePort = (overrides: Partial<EditorPort> = {}): EditorPort => ({
   viewModel: { initialize: jest.fn() },
   renderersContainer: createRenderersManager(),
   monomersLibrary: [],
+  sequenceRenderer: { show: jest.fn(), clear: jest.fn() },
   ...overrides,
 });
 
@@ -205,6 +208,26 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
       // (width - one 60 px cell) / 60 px, rounded down.
       expect(lineLengthFor(600)).toBe(9);
       expect(lineLengthFor(300)).toBe(4);
+    });
+
+    it('shows and clears the sequence view through the renderer of the port', () => {
+      const staticShow = jest.spyOn(SequenceRenderer, 'show');
+      const staticClear = jest.spyOn(SequenceRenderer, 'clear');
+      const port = createFakePort();
+      const dem = new DrawingEntitiesManager({ editor: port });
+      addPeptideAt(dem, 0, 0);
+
+      const chains = dem.applyMonomersSequenceLayout();
+      dem.clearCanvas();
+
+      expect(chains).toBeInstanceOf(ChainsCollection);
+      expect(port.sequenceRenderer.show).toHaveBeenCalledTimes(1);
+      expect(jest.mocked(port.sequenceRenderer.show).mock.calls[0][0]).toBe(
+        chains,
+      );
+      expect(port.sequenceRenderer.clear).toHaveBeenCalledTimes(1);
+      expect(staticShow).not.toHaveBeenCalled();
+      expect(staticClear).not.toHaveBeenCalled();
     });
   });
 

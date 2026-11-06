@@ -57,7 +57,7 @@ import {
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { Coordinates } from 'domain/helpers/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
@@ -70,7 +70,6 @@ import {
   type GrouppedChain,
   ChainsCollection,
 } from 'domain/entities/monomer-chains/ChainsCollection';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
@@ -154,9 +153,9 @@ import {
 import {
   collectMonomerBonds,
   computeReestablishableBonds,
-} from 'application/editor/libraryItemDragDrop/replacementHelpers';
+} from 'domain/helpers/replacementHelpers';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import { getRnaPresetPhosphatePosition } from 'domain/helpers/rnaPresetConnections';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -2807,7 +2806,9 @@ export class DrawingEntitiesManager {
 
     chainsCollection.rearrange();
     this.rerenderMolecules();
-    SequenceRenderer.show(chainsCollection);
+    this.requireEditor('applyMonomersSequenceLayout').sequenceRenderer.show(
+      chainsCollection,
+    );
 
     return chainsCollection;
   }
@@ -2857,7 +2858,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteSGroup(sgroup);
     });
 
-    SequenceRenderer.clear();
+    editor.sequenceRenderer.clear();
   }
 
   public applyFlexLayoutMode(shouldRedrawBonds = false) {

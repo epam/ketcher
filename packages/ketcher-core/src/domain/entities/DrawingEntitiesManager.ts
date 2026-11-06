@@ -2108,11 +2108,13 @@ export class DrawingEntitiesManager {
     shouldRepositionMonomers = true,
     shouldRecalculateOldAntisense = true,
     shouldRepositionMolecules = true,
+    monomersToLayout?: BaseMonomer[],
   ) {
     if (this.monomers.size === 0) {
       return new Command();
     }
 
+    const isPartialLayout = Boolean(monomersToLayout);
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
     let chainsCollection: ChainsCollection;
@@ -2147,23 +2149,37 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
 
-      chainsCollection = ChainsCollection.fromMonomers([
-        ...this.monomers.values(),
-      ]);
+      chainsCollection = ChainsCollection.fromMonomers(
+        monomersToLayout ?? [...this.monomers.values()],
+      );
       chainsCollection.rearrange();
 
       const snakeLayoutModel = new SnakeLayoutModel(
         chainsCollection,
         this,
-        shouldRepositionMolecules,
+        shouldRepositionMolecules && !isPartialLayout,
       );
       let hasAntisenseInRow = false;
       let hasRnaInRow = false;
       let previousSenseNode: ISnakeLayoutMonomersNode | undefined;
       let previousAntisenseNode: ISnakeLayoutMonomersNode | undefined;
       let newSenseNodePosition = lastPosition;
+      let rowStartX = MONOMER_START_X_POSITION;
 
       snakeLayoutModel.forEachChain((chain) => {
+        const firstNodeInChain = chain.firstNode;
+        const firstSenseMonomer =
+          isPartialLayout && isTwoStrandedSnakeLayoutNode(firstNodeInChain)
+            ? firstNodeInChain.chain.firstMonomer
+            : undefined;
+
+        if (firstSenseMonomer) {
+          newSenseNodePosition = Coordinates.modelToCanvas(
+            firstSenseMonomer.position,
+          );
+          rowStartX = newSenseNodePosition.x;
+        }
+
         chain.forEachRow((row) => {
           const firstNodeInRow = row.snakeLayoutModelItems[0];
 
@@ -2288,7 +2304,7 @@ export class DrawingEntitiesManager {
           });
 
           newSenseNodePosition = new Vec2(
-            MONOMER_START_X_POSITION,
+            rowStartX,
             lastPosition.y +
               (hasRnaInRow || hasAntisenseInRow // hasAntisenseInPreviousRow used here because currently antisense y reserves space for RNA
                 ? VERTICAL_OFFSET_FROM_ROW_WITH_RNA
@@ -2298,16 +2314,18 @@ export class DrawingEntitiesManager {
         });
       });
 
-      const snakeLayoutMatrix =
-        this.calculateSnakeLayoutMatrix(chainsCollection);
-      this.snakeLayoutMatrix = snakeLayoutMatrix;
+      if (!isPartialLayout) {
+        const snakeLayoutMatrix =
+          this.calculateSnakeLayoutMatrix(chainsCollection);
+        this.snakeLayoutMatrix = snakeLayoutMatrix;
 
-      command.merge(
-        this.recalculateCanvasMatrix(
-          chainsCollection,
-          previousSnakeLayoutMatrix,
-        ),
-      );
+        command.merge(
+          this.recalculateCanvasMatrix(
+            chainsCollection,
+            previousSnakeLayoutMatrix,
+          ),
+        );
+      }
     }
 
     if (shouldRedrawBonds) {
@@ -3900,6 +3918,7 @@ export class DrawingEntitiesManager {
       },
     );
     const selectedPiecesInChains: SubChainNode[][] = [];
+    const monomersBeforeAntisenseCreation = new Set(this.monomers.values());
 
     chainsForAntisenseCreation.forEach((chain) => {
       let selectedPiece: SubChainNode[] = [];
@@ -4134,7 +4153,20 @@ export class DrawingEntitiesManager {
       lastAddedMonomer = undefined;
     });
 
-    command.merge(this.applySnakeLayout(true, true));
+    if (editor.mode.modeName === 'flex-layout-mode') {
+      const addedAntisenseMonomers = [...this.monomers.values()].filter(
+        (monomer) => !monomersBeforeAntisenseCreation.has(monomer),
+      );
+
+      command.merge(
+        this.applySnakeLayout(true, true, true, true, false, [
+          ...chainsForAntisenseCreation.flatMap((chain) => chain.monomers),
+          ...addedAntisenseMonomers,
+        ]),
+      );
+    } else {
+      command.merge(this.applySnakeLayout(true, true));
+    }
 
     if (editor.mode.modeName === 'sequence-layout-mode') {
       command.addOperation(new ReinitializeModeOperation());

@@ -50,7 +50,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     this.data.attachmentPointId = attachmentPointId;
 
     const reAtom = restruct.atoms.get(atomId);
-    assert(reAtom != null);
+    assert(reAtom != undefined);
     restruct.rgroupAttachmentPoints.set(
       attachmentPointId,
       new ReRGroupAttachmentPoint(newAttachmentPoint, reAtom),

@@ -604,26 +604,26 @@ export class CoreEditor {
 
     const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases): string[] =>
       [
-        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : null,
+        idtAliases?.base ? `IDT base alias "${idtAliases.base}"` : undefined,
         idtAliases?.modifications?.endpoint3
           ? `IDT 3' alias "${idtAliases.modifications.endpoint3}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.endpoint5
           ? `IDT 5' alias "${idtAliases.modifications.endpoint5}"`
-          : null,
+          : undefined,
         idtAliases?.modifications?.internal
           ? `IDT internal alias "${idtAliases.modifications.internal}"`
-          : null,
+          : undefined,
       ].filter(Boolean) as string[];
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
-          : null,
+          : undefined,
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
-          : null,
+          : undefined,
         ...formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
         .filter(Boolean)
@@ -2940,7 +2940,7 @@ export class CoreEditor {
       this.micromoleculesEditor?.render?.options?.microModeScale;
     const macroModeScale = provideEditorSettings().macroModeScale;
 
-    if (microModeScale == null || microModeScale === macroModeScale) {
+    if (microModeScale === macroModeScale || microModeScale == undefined) {
       return 1;
     }
 

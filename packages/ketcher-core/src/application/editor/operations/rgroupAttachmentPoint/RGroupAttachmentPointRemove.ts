@@ -30,7 +30,7 @@ class RGroupAttachmentPointRemove extends BaseOperation {
     const struct = restruct.molecule;
     const item = struct.rgroupAttachmentPoints.get(attachmentPointId);
     const reItem = restruct.rgroupAttachmentPoints.get(attachmentPointId);
-    assert(item != null && reItem != null);
+    assert(item != undefined && reItem != undefined);
 
     this.data.atomId = item.atomId;
     this.data.attachmentPointType = item.type;

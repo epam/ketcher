@@ -134,7 +134,7 @@ export class LibraryItemDragDropHandler {
   private dragDropBondTarget: AttachmentPointTarget | null = null;
   private dragCircleHoverTarget: AttachmentPointTarget | null = null;
   private isDragDropBondModalOpen = false;
-  private dragDropModalContext: DragDropModalContext | null = null;
+  private dragDropModalContext: DragDropModalContext | undefined;
   /**
   Tracks whether a library-item drag is currently in progress.
   */
@@ -232,7 +232,7 @@ export class LibraryItemDragDropHandler {
     renderersContainer.update(command);
 
     this.isDragDropBondModalOpen = false;
-    this.dragDropModalContext = null;
+    this.dragDropModalContext = undefined;
   }
 
   /**
@@ -241,7 +241,7 @@ export class LibraryItemDragDropHandler {
    */
   handleMonomerConnectionCancel(): void {
     this.isDragDropBondModalOpen = false;
-    this.dragDropModalContext = null;
+    this.dragDropModalContext = undefined;
   }
 
   /**

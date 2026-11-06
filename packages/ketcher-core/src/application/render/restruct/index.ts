@@ -23,7 +23,7 @@ export * from './showHydrogenLabels';
 export * from './rergroupAttachmentPoint';
 export * from './reImage';
 export * from './remultitailArrow';
-export * from './draftToLexical';
+export * from 'domain/serializers/ket/fromKet/draftToLexical';
 export { default as ReObject } from './reobject';
 export { default as ReAtom } from './reatom';
 export { default as ReBond } from './rebond';

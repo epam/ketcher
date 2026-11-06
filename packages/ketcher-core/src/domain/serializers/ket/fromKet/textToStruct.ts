@@ -18,10 +18,7 @@ import type { Struct } from 'domain/entities/struct';
 import { type TextAttributes, Text } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import type { KetTextNode, KetTextV2Node } from '../types';
-import {
-  type DraftEditorState,
-  convertDraftToLexical,
-} from 'application/render/restruct/draftToLexical';
+import { type DraftEditorState, convertDraftToLexical } from './draftToLexical';
 import type {
   SerializedEditorState,
   SerializedParagraphNode,

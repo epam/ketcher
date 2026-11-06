@@ -3,7 +3,7 @@ import { restruct } from '../../mock-data';
 import { SGroup } from 'domain/entities';
 import { mock } from 'jest-mock-extended';
 import type { Render } from 'src';
-import type { Atom } from 'domain/entities/atom';
+import { Atom } from 'domain/entities/atom';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import type {
   Bond,
@@ -12,6 +12,7 @@ import type {
 } from 'domain/entities/bond';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
+import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 
 describe('sgroup should calculate S-Group bounding box correctly', () => {
@@ -163,4 +164,54 @@ describe('sgroup non-null assertion replacements', () => {
       'SGroup.getMassCentre: atom 1 is not found',
     );
   });
+});
+
+describe('SGroup.calculatePP', () => {
+  // Each atom of an Atom- or Bond-context S-group adds a box that reaches
+  // 0.15 past the atom on every side.
+  const atomBoxMargin = 0.15;
+
+  function dataSGroup(context: string) {
+    const struct = new Struct();
+    const sGroup = new SGroup(SGroup.TYPES.DAT);
+    sGroup.data.context = context;
+    sGroup.data.fieldName = 'Comment';
+    sGroup.atoms = [new Vec2(1, 2), new Vec2(3, 5)].map((pp) =>
+      struct.atoms.add(new Atom({ label: 'C', pp })),
+    );
+    sGroup.bracketBox = new Box2Abs(new Vec2(0, 0), new Vec2(4, 6));
+    struct.sgroups.add(sGroup);
+
+    return { struct, sGroup };
+  }
+
+  it('places an Atom-context descriptor at the top-left corner of the atom boxes', () => {
+    const { struct, sGroup } = dataSGroup('Atom');
+
+    sGroup.calculatePP(struct);
+
+    expect(sGroup.pp?.x).toBeCloseTo(1 - atomBoxMargin);
+    expect(sGroup.pp?.y).toBeCloseTo(2 - atomBoxMargin);
+  });
+
+  it('places a Bond-context descriptor at the centre of the atom boxes', () => {
+    const { struct, sGroup } = dataSGroup('Bond');
+
+    sGroup.calculatePP(struct);
+
+    expect(sGroup.pp?.x).toBeCloseTo(2);
+    expect(sGroup.pp?.y).toBeCloseTo(3.5);
+  });
+
+  it.each(['Fragment', 'Multifragment', 'Group'])(
+    'places a %s-context descriptor half a unit past the bottom-right corner of the bracket box',
+    (context) => {
+      const { struct, sGroup } = dataSGroup(context);
+
+      sGroup.calculatePP(struct);
+
+      expect(sGroup.pp?.x).toBeCloseTo(4.5);
+      expect(sGroup.pp?.y).toBeCloseTo(6.5);
+    },
+  );
 });

@@ -1043,6 +1043,9 @@ export class SequenceMode extends BaseMode {
         : SequenceRenderer.caretPosition,
       (position) => SequenceRenderer.setCaretPosition(position),
     );
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     modelChanges.addOperation(moveCaretOperation);
@@ -2017,6 +2020,10 @@ export class SequenceMode extends BaseMode {
             }
           }
 
+          modelChanges.merge(
+            editor.drawingEntitiesManager.recalculateAntisenseChains(),
+          );
+
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
 
@@ -2546,6 +2553,9 @@ export class SequenceMode extends BaseMode {
       },
     );
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();
@@ -3215,6 +3225,9 @@ export class SequenceMode extends BaseMode {
       },
     );
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();

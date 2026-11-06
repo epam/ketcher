@@ -1484,9 +1484,7 @@ export class Struct {
 
     if (atom.explicitValence >= 0) {
       const elem = Elements.get(atom.label);
-      atom.implicitH = elem
-        ? atom.explicitValence - atom.calcValenceMinusHyd(correctConn)
-        : 0;
+      atom.implicitH = elem ? atom.explicitValence - correctConn : 0;
       if (atom.implicitH < 0) {
         atom.implicitH = 0;
         atom.badConn = true;

@@ -191,7 +191,13 @@ function drawCIPLabel({
 
   path.push(cipValuePath.path.toFront());
 
-  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
+  restruct.addReObjectPath(
+    LayerMap.additionalInfo,
+    visel,
+    path,
+    undefined,
+    true,
+  );
 
   return cipValuePath;
 }

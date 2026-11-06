@@ -264,9 +264,9 @@ export class SGroupRenderer extends BaseRenderer {
       );
     });
 
-    const bracketBox = contentBoxes.reduce<Box2Abs | null>(
+    const bracketBox = contentBoxes.reduce<Box2Abs | undefined>(
       (box, contentBox) => (box ? Box2Abs.union(box, contentBox) : contentBox),
-      null,
+      undefined,
     );
 
     if (!bracketBox) {

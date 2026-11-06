@@ -106,9 +106,9 @@ export class Render {
   public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
   private userOpts: Partial<RenderOptions>;
-  private oldCb: Box2Abs | null = null;
+  private oldCb: Box2Abs | undefined;
   private scrollbar: ScrollbarContainer;
-  private resizeObserver: ResizeObserver | null = null;
+  private resizeObserver: ResizeObserver | undefined;
   private _monomerCreationState: MonomerCreationState = null;
 
   constructor(
@@ -154,7 +154,7 @@ export class Render {
 
   unobserveCanvasResize = () => {
     this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
+    this.resizeObserver = undefined;
   };
 
   /**

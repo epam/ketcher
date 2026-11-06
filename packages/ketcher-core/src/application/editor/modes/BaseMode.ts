@@ -79,6 +79,15 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 

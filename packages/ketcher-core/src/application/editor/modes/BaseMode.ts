@@ -60,7 +60,7 @@ export abstract class BaseMode {
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
+    editor.mode.initialize(true, isUndo, false, false, true);
   }
 
   public initialize(
@@ -68,6 +68,7 @@ export abstract class BaseMode {
     _isUndo = false,
     _shouldReArrangeChains = false,
     _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();

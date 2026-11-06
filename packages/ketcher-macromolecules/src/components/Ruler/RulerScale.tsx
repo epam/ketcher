@@ -17,7 +17,7 @@ type Props = {
 };
 
 const RulerScale = ({ transform, layoutMode }: Props) => {
-  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>(null);
+  const [svgElement, setSvgElement] = useState<SVGSVGElement | null>();
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const getDynamicPositions = (

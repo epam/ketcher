@@ -4,7 +4,7 @@ const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
   ref: RefObject<T | null>,
   offsetX: number,
 ) => {
-  const animateRef = useRef<number | null>(null);
+  const animateRef = useRef<number | undefined>(undefined);
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -19,7 +19,7 @@ const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
     return () => {
       if (animateRef.current) {
         cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+        animateRef.current = undefined;
       }
     };
   }, [ref, offsetX]);

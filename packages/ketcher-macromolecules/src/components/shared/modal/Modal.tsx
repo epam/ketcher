@@ -293,10 +293,7 @@ export const Modal = ({
     [theme.ketcher.color.background.overlay],
   );
 
-  const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
-    Content: null,
-    Footer: null,
-  };
+  const subcomponents: Partial<Record<ModalSubcomponent, JSX.Element>> = {};
 
   React.Children.forEach(children, (child) => {
     if (child.type === Content) {

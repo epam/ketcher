@@ -25,7 +25,7 @@ export const GhostRnaPreset = ({ preset }: Props) => {
         const phosphateInstance = new PhosphateMonomer(phosphate);
         return new PhosphateRenderer(phosphateInstance);
       })()
-    : null;
+    : undefined;
 
   const baseRenderer = base
     ? (() => {
@@ -33,7 +33,7 @@ export const GhostRnaPreset = ({ preset }: Props) => {
         const baseInstance = new BaseMonomer(base);
         return new BaseRenderer(baseInstance);
       })()
-    : null;
+    : undefined;
 
   const sugarSize = sugarRenderer.monomerSize;
   const phosphateSize = phosphateRenderer?.monomerSize;

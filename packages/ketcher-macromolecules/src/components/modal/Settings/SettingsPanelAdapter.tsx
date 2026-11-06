@@ -47,8 +47,7 @@ export const SettingsPanelAdapter = ({
   const { t } = useTranslation(['common', 'dialogs', 'macromoleculesDialogs']);
   const settingsService = globalThis.ketcher?.settingsService;
 
-  const [currentSettings, setCurrentSettings] =
-    useState<SettingsFormValue | null>(null);
+  const [currentSettings, setCurrentSettings] = useState<SettingsFormValue>();
   const [isLoading, setIsLoading] = useState(false);
 
   const { canvasElement, layoutRootElement } = useLayoutBounds();
@@ -67,7 +66,7 @@ export const SettingsPanelAdapter = ({
 
   const handleFieldChange = (name: string, value: SettingFieldValue) => {
     setCurrentSettings((previous) =>
-      previous ? { ...previous, [name]: value } : null,
+      previous ? { ...previous, [name]: value } : undefined,
     );
   };
 

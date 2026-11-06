@@ -30,7 +30,7 @@ const getVisibleEdges = (
 ) => {
   const visibleWidth = canvasContainer?.clientWidth || fallbackWidth;
   if (!visibleWidth) {
-    return null;
+    return;
   }
 
   const left = canvasContainer?.scrollLeft || 0;

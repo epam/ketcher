@@ -52,6 +52,8 @@ There are three concrete modes, all extending a shared abstract base:
 
 The default mode is Sequence. Each mode is registered by name and looked up by name at runtime. The base mode provides common behaviour: initialization, keyboard handling, copy/cut/paste (including conversion from non-KET clipboard content via Indigo), and abstract hooks that each concrete mode implements — how to position a newly added node, whether pasting is allowed, and how to scroll the view.
 
+Snake molecule rows are packed by `SnakeLayoutModel` before `DrawingEntitiesManager.applySnakeLayout()` positions them. Each completed row uses its maximum molecule bounding-box height to align molecule centers; movement remains a Command of reversible operations. Replaying a mode change into Snake skips fresh layout because the stored movement operations restore those positions.
+
 ### Tools
 
 Tools follow the same pattern as the micromolecules side: a map of tool constructors keyed by name, and a shared base class. The macromolecules tool set covers monomer placement, bond creation, erasing, selection variants, rotation, zoom, and sequence editing.

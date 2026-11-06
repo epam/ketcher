@@ -51,7 +51,7 @@ export class FunctionalGroup {
   readonly #sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
-    assert(sgroup != null);
+    assert(sgroup != undefined);
 
     this.#sgroup = sgroup;
     sgroup.setFunctionalGroup(this);
@@ -125,7 +125,7 @@ export class FunctionalGroup {
     id: number,
   ) {
     const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
-    assert(rgroupAttachmentPoint != null);
+    assert(rgroupAttachmentPoint != undefined);
     const attachedAtom = rgroupAttachmentPoint.atomId;
     return this.atomsInFunctionalGroup(molecule.functionalGroups, attachedAtom);
   }
@@ -246,7 +246,7 @@ export class FunctionalGroup {
     struct: Struct,
   ) {
     const bond = struct.bonds.get(halfBond.bid);
-    assert(bond != null);
+    assert(bond != undefined);
     return this.isBondInContractedFunctionalGroup(
       bond,
       struct.sgroups,

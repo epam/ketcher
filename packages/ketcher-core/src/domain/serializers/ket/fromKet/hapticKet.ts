@@ -59,7 +59,14 @@ export function parseMoleculeNode(
   }
 
   const atomIdMap = new Map<number, number>();
-  currentStruct.mergeInto(resultingStruct, null, null, false, false, atomIdMap);
+  currentStruct.mergeInto(
+    resultingStruct,
+    undefined,
+    undefined,
+    false,
+    false,
+    atomIdMap,
+  );
   moleculeAtomIdMaps.set(moleculeId, atomIdMap);
 }
 

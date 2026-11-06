@@ -224,7 +224,7 @@ function parseNode(node: KetMicromoleculeDefinition, struct: Struct) {
 }
 
 export class KetSerializer implements Serializer<Struct> {
-  private static _monomerFactory: MonomerFactoryFn | null = null;
+  private static _monomerFactory: MonomerFactoryFn | undefined;
 
   public static setMonomerFactory(factory: MonomerFactoryFn): void {
     KetSerializer._monomerFactory = factory;
@@ -393,7 +393,7 @@ export class KetSerializer implements Serializer<Struct> {
       result.root.connections = connections;
     }
 
-    return JSON.stringify({ ket_version: '2.0.0', ...result }, null, 4);
+    return JSON.stringify({ ket_version: '2.0.0', ...result }, undefined, 4);
   }
 
   private validateMonomerNodeTemplate(
@@ -924,16 +924,16 @@ export class KetSerializer implements Serializer<Struct> {
 
         monomerItem.struct.mergeInto(
           struct,
-          null,
-          null,
+          undefined,
+          undefined,
           false,
           false,
           atomIdMap,
-          null,
-          null,
-          null,
-          null,
-          null,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
           bondIdMap,
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
@@ -1254,7 +1254,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     return JSON.stringify(
       fileContent,
-      null,
+      undefined,
       isBeautified ? 4 : undefined,
     ) as unknown as string;
   }

@@ -211,7 +211,7 @@ export class Vec2 {
   }
 
   max(v: Vec2): Vec2 {
-    assert(v != null);
+    assert(v != undefined);
 
     return Vec2.max(this, v);
   }

@@ -133,6 +133,7 @@ Containers run on the host's architecture, and Chromium does not survive amd64 e
 
 - **Verify the served build contains the change under test** before running bug-fix E2E specs — rebase onto latest master, rebuild and re-serve. A control that is enabled but does nothing can mask a fix that isn't actually in the build.
 - **Screenshot/snapshot tests only pass where Linux baselines exist.** On macOS they fail with `A snapshot doesn't exist … -darwin.png` because baselines are generated via Docker. Run the screenshot suite through Docker (or CI); don't treat local `-darwin.png` misses as real regressions.
+- **Restore viewport changes on shared pages in `finally`.** Canvas cleanup does not reset the viewport. A resolution test can otherwise affect later screenshots when running with one worker, producing baselines that fail in parallel CI. Validate affected tests both in isolation and as a full file with one worker before accepting snapshot updates.
 - **`GENERATE_DATA=true` rewrites many expected files** under `tests/test-data/`. If that was unintended, restore them with `git checkout`.
 
 ### Playwright Projects

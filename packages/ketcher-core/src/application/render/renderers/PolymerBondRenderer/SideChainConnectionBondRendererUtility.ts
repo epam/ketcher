@@ -18,11 +18,14 @@ interface CalculatePathPartAndTurnPointParameter {
   readonly horizontal: boolean;
   readonly turnPoint: number;
   readonly turnPointIsUsed: boolean;
+  readonly bendYDirection: -1 | 1;
+  readonly currentY: number;
 }
 
 interface CalculatePathPartAndTurnPointResult {
   readonly pathPart: string;
   readonly turnPoint: number;
+  readonly endY: number;
 }
 
 export class SideChainConnectionBondRendererUtility {
@@ -37,6 +40,8 @@ export class SideChainConnectionBondRendererUtility {
     horizontal: isHorizontal,
     turnPoint,
     turnPointIsUsed: isTurnPointUsed,
+    bendYDirection,
+    currentY,
   }: CalculatePathPartAndTurnPointParameter): CalculatePathPartAndTurnPointResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
@@ -78,6 +83,8 @@ export class SideChainConnectionBondRendererUtility {
         (maxYOffset + 1) * 3;
     }
     let pathPart = '';
+    let bendY = bendYDirection;
+    let endY = currentY;
     if (isHorizontal) {
       const absoluteLineX = endOfPathPart - this.smoothCornerSize * cos;
       pathPart +=
@@ -88,12 +95,17 @@ export class SideChainConnectionBondRendererUtility {
       pathPart +=
         SVGPathDAttributeUtility.generateVerticalAbsoluteLine(absoluteLineY) +
         ' ';
+      bendY = absoluteLineY < currentY ? -1 : 1;
+      endY = absoluteLineY;
     }
-    pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
+    pathPart +=
+      this.generateBend(cos, isHorizontal ? sin : bendY, cos, bendY) + ' ';
+    endY += this.smoothCornerSize * bendY;
 
     return {
       pathPart,
       turnPoint: turnPointInternal,
+      endY,
     };
   }
 

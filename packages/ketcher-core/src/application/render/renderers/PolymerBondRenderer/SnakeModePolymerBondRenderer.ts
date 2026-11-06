@@ -12,7 +12,6 @@ import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   type Connection,
   type ConnectionDirectionInDegrees,
-  type ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
@@ -283,6 +282,43 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       return cell.y === firstCell.y;
     });
     const isSecondCellEmpty = cells[1].node === null;
+    const maxHorizontalOffset = cells.reduce(
+      (maxOffset: number, cell: Cell): number => {
+        const cellMaxOffset = cell.connections.reduce(
+          (cellMax: number, connection: Connection): number => {
+            return connection.isVertical || cellMax > connection.xOffset
+              ? cellMax
+              : connection.xOffset;
+          },
+          0,
+        );
+        return Math.max(maxOffset, cellMaxOffset);
+      },
+      0,
+    );
+    const lastCell = cells[cells.length - 1];
+    const lastCellConnection = lastCell.connections.find(
+      (connection: Connection): boolean => {
+        return connection.polymerBond === this.polymerBond;
+      },
+    ) as Connection;
+    const lastCellBeforeEndpoint =
+      cells
+        .slice(0, -1)
+        .reverse()
+        .find((cell) => cell.node !== null) ?? firstCell;
+    const lastYDirection = lastCell.y < lastCellBeforeEndpoint.y ? 270 : 90;
+    const lastSin = Math.sin((lastYDirection * Math.PI) / 180);
+    let finalVerticalLineY =
+      endPosition.y -
+      SideChainConnectionBondRendererUtility.cellHeight / 2 -
+      SideChainConnectionBondRendererUtility.smoothCornerSize -
+      lastSin * (lastCellConnection.yOffset ?? 0) * 3 -
+      (isTwoNeighborRowsConnection
+        ? maxHorizontalOffset - lastCellConnection.xOffset
+        : lastCellConnection.xOffset) *
+        3;
+    let currentPathY = startPosition.y;
 
     if (isEveryCellOnSameRow) {
       {
@@ -296,9 +332,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
+      currentPathY =
+        startPosition.y -
+        SideChainConnectionBondRendererUtility.bondEndLength -
+        horizontalPartIntersectionsOffset * 3;
       pathDAttributeValue +=
         SideChainConnectionBondRendererUtility.generateBend(0, -1, cos, -1) +
         ' ';
+      currentPathY -= SideChainConnectionBondRendererUtility.smoothCornerSize;
     } else {
       {
         const absoluteLineY =
@@ -310,6 +351,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             startPosition.x,
             absoluteLineY,
           ) + ' ';
+        currentPathY = absoluteLineY;
       }
       if (
         !isStraightVerticalConnection &&
@@ -319,9 +361,22 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         pathDAttributeValue +=
           SideChainConnectionBondRendererUtility.generateBend(0, 1, cos, 1) +
           ' ';
+        currentPathY += SideChainConnectionBondRendererUtility.smoothCornerSize;
       }
     }
-
+    const verticalLineYDirection = finalVerticalLineY < currentPathY ? -1 : 1;
+    finalVerticalLineY =
+      verticalLineYDirection < 0
+        ? Math.min(
+            finalVerticalLineY,
+            currentPathY -
+              2 * SideChainConnectionBondRendererUtility.smoothCornerSize,
+          )
+        : Math.max(
+            finalVerticalLineY,
+            currentPathY +
+              2 * SideChainConnectionBondRendererUtility.smoothCornerSize,
+          );
     if (isVerticalConnection && !isStraightVerticalConnection) {
       const direction =
         this.sideConnectionBondTurnPoint &&
@@ -336,12 +391,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           horizontal: true,
           turnPoint: this.sideConnectionBondTurnPoint ?? 0,
           turnPointIsUsed: this.sideConnectionBondTurnPoint !== undefined,
+          bendYDirection: finalVerticalLineY < currentPathY ? -1 : 1,
+          currentY: currentPathY,
         });
       pathDAttributeValue += result.pathPart;
+      currentPathY = result.endY;
       this.sideConnectionBondTurnPoint = result.turnPoint;
     }
-
-    let maxHorizontalOffset = 0;
 
     cells.forEach((cell: Cell, cellIndex: number): void => {
       const cellConnection = cell.connections.find(
@@ -355,51 +411,31 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         _xDirection =
           endPosition.x < this.sideConnectionBondTurnPoint ? 180 : 0;
       }
-      const maxXOffset = cell.connections.reduce(
-        (max: number, connection: Connection): number => {
-          return connection.isVertical || max > connection.xOffset
-            ? max
-            : connection.xOffset;
-        },
-        0,
-      );
-
-      maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 
       if (isLastCell) {
         if (isStraightVerticalConnection) {
           return;
         }
 
-        const directionObject =
-          cellConnection.direction as ConnectionDirectionOfLastCell;
-        const yDirection = isVerticalConnection ? 90 : directionObject.y;
-        const sin = Math.sin((yDirection * Math.PI) / 180);
         const cos = Math.cos((_xDirection * Math.PI) / 180);
 
         if (!isEveryCellOnSameRow) {
-          {
-            const absoluteLineY =
-              endPosition.y -
-              SideChainConnectionBondRendererUtility.cellHeight / 2 -
-              SideChainConnectionBondRendererUtility.smoothCornerSize -
-              sin * (cellConnection.yOffset ?? 0) * 3 -
-              (isTwoNeighborRowsConnection
-                ? maxHorizontalOffset - cellConnection.xOffset
-                : cellConnection.xOffset) *
-                3;
-            pathDAttributeValue +=
-              SVGPathDAttributeUtility.generateVerticalAbsoluteLine(
-                absoluteLineY,
-              ) + ' ';
-          }
+          pathDAttributeValue +=
+            SVGPathDAttributeUtility.generateVerticalAbsoluteLine(
+              finalVerticalLineY,
+            ) + ' ';
+          const bendYDirection = finalVerticalLineY < currentPathY ? -1 : 1;
           pathDAttributeValue +=
             SideChainConnectionBondRendererUtility.generateBend(
               0,
-              sin,
+              bendYDirection,
               cos,
-              1,
+              bendYDirection,
             ) + ' ';
+          currentPathY =
+            finalVerticalLineY +
+            SideChainConnectionBondRendererUtility.smoothCornerSize *
+              bendYDirection;
         }
         pathDAttributeValue +=
           SVGPathDAttributeUtility.generateHorizontalAbsoluteLine(
@@ -430,6 +466,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           ? xDirection
           : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
             (previousConnection.direction as ConnectionDirectionInDegrees);
+        const bendYDirection = finalVerticalLineY < currentPathY ? -1 : 1;
         const result =
           SideChainConnectionBondRendererUtility.calculatePathPartAndTurnPoint({
             cell: previousCell,
@@ -438,8 +475,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             horizontal: isHorizontal,
             turnPoint: this.sideConnectionBondTurnPoint ?? 0,
             turnPointIsUsed: this.sideConnectionBondTurnPoint !== undefined,
+            bendYDirection,
+            currentY: currentPathY,
           });
         pathDAttributeValue += result.pathPart;
+        currentPathY = result.endY;
         this.sideConnectionBondTurnPoint = result.turnPoint;
       }
       previousCell = cell;

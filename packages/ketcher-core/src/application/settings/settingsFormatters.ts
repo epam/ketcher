@@ -19,12 +19,12 @@ export interface NormalizeSettingsFromCoreOptions {
   readonly removeCoreOnlyFields?: boolean;
 }
 
-const CORE_ONLY_SETTING_FIELDS = [
+const CORE_ONLY_SETTING_FIELDS: readonly (keyof Settings)[] = [
   'selectionTool',
   'editorLineLength',
   'disableCustomQuery',
   'monomerLibraryUpdates',
-] as const satisfies ReadonlyArray<keyof Settings>;
+] as const;
 
 type Mutable<T> = {
   -readonly [K in keyof T]: T[K];

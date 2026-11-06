@@ -205,6 +205,7 @@ describe('SequenceItemContextMenu', () => {
     setSyncEditMode(false);
 
     const mockEditor = {
+      mode: { modeName: 'sequence-layout-mode' },
       events: {
         layoutModeChange: { add: jest.fn(), remove: jest.fn() },
         turnOnSequenceEditInRNABuilderMode: { dispatch: jest.fn() },

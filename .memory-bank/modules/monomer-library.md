@@ -46,6 +46,8 @@ The panel lives in the macromolecules package and is composed of:
 
 **State:** A library store slice holds the monomers, default RNA presets, favorites, the search filter, and the selected tab. The filtering logic matches on name, full name, IDT/HELM/BILN/AxoLabs aliases, modification types, and 3-letter amino-acid codes; it excludes `hidden` monomers (preset components). Favorites are keyed by a unique monomer key and persisted to localStorage.
 
+**Layout-dependent card actions:** Monomer and RNA-preset cards use `useLayoutMode` to follow the editor's `layoutModeChange` event through `useSyncExternalStore`. The hook reads the current editor mode, so autochain controls stay in sync when switching layouts, initializing the editor, and mounting cards after changing library tabs. A Redux selector reading the mutable editor instance alone does not subscribe to layout changes.
+
 ## Assumptions & constraints
 
 - The persistent cache means the (large) default library is parsed once per page, not per editor instance.

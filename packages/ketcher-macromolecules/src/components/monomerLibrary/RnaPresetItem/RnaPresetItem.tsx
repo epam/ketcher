@@ -20,7 +20,7 @@ import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
 import { FavoriteStarSymbol } from '../../../constants';
@@ -28,12 +28,9 @@ import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDr
 import {
   AutochainIcon,
   AutochainIconWrapper,
+  CardTitle,
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
-import {
-  selectEditor,
-  isSequenceModeEnabled,
-  isEditorDragging,
-} from 'state/common';
+import { selectEditor, isEditorDragging } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
 import { AUTOCHAIN_ELEMENT_CLASSNAME } from 'components/monomerLibrary/monomerLibraryItem';
@@ -50,7 +47,7 @@ const RnaPresetItem = ({
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
@@ -133,7 +130,7 @@ const RnaPresetItem = ({
           </AutochainIconWrapper>
         </Tooltip>
       )}
-      <span>{preset.name}</span>
+      <CardTitle>{preset.name}</CardTitle>
       <StyledIcon
         name="vertical-dots"
         className="dots"

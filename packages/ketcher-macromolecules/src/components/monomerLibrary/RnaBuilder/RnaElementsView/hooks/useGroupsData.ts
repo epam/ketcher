@@ -4,7 +4,11 @@ import {
   RnaBuilderPresetsItem,
   selectFilteredPresets,
 } from 'state/rna-builder';
-import { KetMonomerClass } from 'ketcher-core';
+import {
+  KetMonomerClass,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
 import {
   selectFilteredMonomers,
   selectMonomerGroups,
@@ -12,6 +16,9 @@ import {
   selectUnsplitNucleotides,
 } from 'state/library';
 import { useAppSelector } from 'hooks';
+
+const isMonomerItem = (item: MonomerOrAmbiguousType): item is MonomerItemType =>
+  !item.isAmbiguous;
 
 export const useGroupsData = (libraryName: LibraryNameType) => {
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -35,7 +42,9 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
           .map((group) => ({
             ...group,
             groupItems: group.groupItems.filter(
-              (item) => item.props?.MonomerClass === KetMonomerClass.Sugar,
+              (item) =>
+                isMonomerItem(item) &&
+                item.props?.MonomerClass === KetMonomerClass.Sugar,
             ),
           }))
           .filter((group) => group.groupItems.length),
@@ -47,7 +56,9 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
           .map((group) => ({
             ...group,
             groupItems: group.groupItems.filter(
-              (item) => item.props?.MonomerClass === KetMonomerClass.Base,
+              (item) =>
+                isMonomerItem(item) &&
+                item.props?.MonomerClass === KetMonomerClass.Base,
             ),
           }))
           .filter((group) => group.groupItems.length),
@@ -59,7 +70,9 @@ export const useGroupsData = (libraryName: LibraryNameType) => {
           .map((group) => ({
             ...group,
             groupItems: group.groupItems.filter(
-              (item) => item.props?.MonomerClass === KetMonomerClass.Phosphate,
+              (item) =>
+                isMonomerItem(item) &&
+                item.props?.MonomerClass === KetMonomerClass.Phosphate,
             ),
           }))
           .filter((group) => group.groupItems.length),

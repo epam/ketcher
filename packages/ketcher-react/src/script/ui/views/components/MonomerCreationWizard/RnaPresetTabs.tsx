@@ -78,7 +78,7 @@ interface IRnaPresetTabsProps {
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
 // Inactive component (its tab is not open): fluorescent-cyan outline (#8851 §2.2.1).
 const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
-const RNA_COMPONENT_KEYS = [
+const RNA_COMPONENT_KEYS: readonly RnaPresetComponentKey[] = [
   'base',
   'sugar',
   'phosphate',

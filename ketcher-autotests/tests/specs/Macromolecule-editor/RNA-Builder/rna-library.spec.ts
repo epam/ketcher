@@ -323,6 +323,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await Library(page).rnaBuilder.collapse();
@@ -344,6 +345,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await Library(page).rnaBuilder.collapse();
@@ -370,6 +372,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await Library(page).rnaBuilder.collapse();
@@ -382,6 +385,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await takeEditorScreenshot(page);
   });
@@ -397,6 +401,7 @@ test.describe('RNA Library', () => {
 
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._3A6, Base.baA, Phosphate.bP]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
     await clickInTheMiddleOfTheCanvas(page);
@@ -452,6 +457,7 @@ test.describe('RNA Library', () => {
 
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._25R, Phosphate.bP]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('25R()bP_._25R_bP');
     await Library(page).rnaBuilder.collapse();
@@ -488,6 +494,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     const customPreset = Library(page).getMonomerLibraryCardLocator(
       Preset._25R_A_Test_6_Ph,
@@ -522,6 +529,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     const customPreset = Library(page).getMonomerLibraryCardLocator(
       Preset._25R_A_Test_6_Ph,
@@ -583,6 +591,7 @@ test.describe('RNA Library', () => {
         Base.A,
         Phosphate.Test_6_Ph,
       ]);
+      await Library(page).rnaBuilder.selectPhosphatePosition('right');
       await Library(page).rnaBuilder.addToPresets();
       const customPreset = Library(page).getMonomerLibraryCardLocator(
         Preset._25R_A_Test_6_Ph,
@@ -603,8 +612,12 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     const customPreset = Library(page).getMonomerLibraryCardLocator(
       Preset._25R_baA_bP,
@@ -644,6 +657,9 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await Library(page).rnaBuilder.expand();
     await Library(page).rnaBuilder.selectSugarSlot();
     await Library(page).selectMonomer(Sugar._25R);
@@ -655,6 +671,7 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphate.Test_6_Ph);
     await Library(page).rnaBuilder.setCustomPresetName('cTest');
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await takeRNABuilderScreenshot(page);
   });
@@ -734,6 +751,7 @@ test.describe('RNA Library', () => {
 
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._3A6, Phosphate.bP]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).dragMonomerOnCanvas(
       {
@@ -1354,6 +1372,7 @@ test.describe('RNA Library', () => {
       Base.A,
       Phosphate.Test_6_Ph,
     ]);
+    await Library(page).rnaBuilder.selectPhosphatePosition('right');
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).rnaBuilder.collapse();
 

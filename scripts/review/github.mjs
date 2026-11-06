@@ -1,8 +1,9 @@
 // Everything the hub reads from or writes to GitHub and the pull request
 // checkout. Only the hub calls this module: no model run gets a tool that
-// writes to GitHub. Commands run without a shell, through `gh` and `git`;
-// tests pass a fake `exec`.
+// writes to GitHub. GitHub calls go through Octokit, git calls through execa
+// without a shell; tests pass fakes for both.
 
+import { Octokit } from '@octokit/rest';
 import { execa } from 'execa';
 
 /**
@@ -21,7 +22,10 @@ import { execa } from 'execa';
  * @typedef {{ number: number, type: string | null }} LinkedIssueRef
  */
 
-/** The same query as dangerfile.ts, so the hub and Danger agree on the link. */
+/**
+ * The same query as dangerfile.ts, so the hub and Danger agree on the link.
+ * REST has no field for the issues a pull request closes.
+ */
 const LINKED_ISSUES = `
   query ($owner: String!, $repo: String!, $number: Int!) {
     repository(owner: $owner, name: $repo) {
@@ -32,6 +36,22 @@ const LINKED_ISSUES = `
       }
     }
   }`;
+
+/**
+ * The token for the GitHub API: GITHUB_TOKEN in CI, or the token of the
+ * local `gh` login, so a dry run needs no extra setup.
+ * @param {object} [options]
+ * @param {NodeJS.ProcessEnv} [options.env]
+ * @param {typeof execa} [options.exec]
+ */
+export async function githubToken({ env = process.env, exec = execa } = {}) {
+  const fromEnv = env.GITHUB_TOKEN ?? env.GH_TOKEN;
+  if (fromEnv) {
+    return fromEnv;
+  }
+  const { stdout } = await exec('gh', ['auth', 'token']);
+  return stdout.trim();
+}
 
 /**
  * One inline comment as the reviews API takes it: on the new side of the
@@ -50,22 +70,18 @@ const reviewComment = ({ path, line, body }) => ({
  * @param {object} options
  * @param {string} options.repo `owner/name`
  * @param {string} options.prDir the pull request checkout, for git
+ * @param {Octokit} [options.octokit] replaced in tests
+ * @param {string} [options.token] used when no octokit is given
  * @param {typeof execa} [options.exec] replaced in tests
  */
-export function createGitHub({ repo, prDir, exec = execa }) {
-  const [owner, name] = repo.split('/');
-  const base = `repos/${owner}/${name}`;
-
-  /** Runs `gh api` and parses its JSON answer. */
-  const api = async (args, body) => {
-    const input = body === undefined ? undefined : JSON.stringify(body);
-    const { stdout } = await exec('gh', ['api', ...args], { input });
-    return stdout === '' ? undefined : JSON.parse(stdout);
-  };
-
-  /** Sends a JSON body with the given method. */
-  const send = (method, path, body) =>
-    api(['--method', method, path, '--input', '-'], body);
+export function createGitHub({
+  repo: fullName,
+  prDir,
+  token,
+  octokit = new Octokit({ auth: token }),
+  exec = execa,
+}) {
+  const [owner, repo] = fullName.split('/');
 
   /** Runs git in the pull request checkout. */
   const git = async (args) => {
@@ -79,14 +95,18 @@ export function createGitHub({ repo, prDir, exec = execa }) {
      * @returns {Promise<PullRequest>}
      */
     async pullRequest(number) {
-      const pr = await api([`${base}/pulls/${number}`]);
+      const { data } = await octokit.rest.pulls.get({
+        owner,
+        repo,
+        pull_number: number,
+      });
       return {
-        number: pr.number,
-        title: pr.title,
-        body: pr.body ?? '',
-        baseSha: pr.base.sha,
-        headSha: pr.head.sha,
-        labels: pr.labels.map((label) => label.name),
+        number: data.number,
+        title: data.title,
+        body: data.body ?? '',
+        baseSha: data.base.sha,
+        headSha: data.head.sha,
+        labels: data.labels.map((label) => label.name),
       };
     },
 
@@ -96,19 +116,12 @@ export function createGitHub({ repo, prDir, exec = execa }) {
      * @returns {Promise<LinkedIssueRef[]>}
      */
     async linkedIssues(number) {
-      const data = await api([
-        'graphql',
-        '-f',
-        `query=${LINKED_ISSUES}`,
-        '-F',
-        `owner=${owner}`,
-        '-F',
-        `repo=${name}`,
-        '-F',
-        `number=${number}`,
-      ]);
-      const nodes =
-        data.data.repository.pullRequest.closingIssuesReferences.nodes;
+      const data = await octokit.graphql(LINKED_ISSUES, {
+        owner,
+        repo,
+        number,
+      });
+      const { nodes } = data.repository.pullRequest.closingIssuesReferences;
       return nodes.map((issue) => ({
         number: issue.number,
         type: issue.issueType?.name ?? null,
@@ -120,25 +133,25 @@ export function createGitHub({ repo, prDir, exec = execa }) {
      * @returns {Promise<{ number: number, title: string, body: string }>}
      */
     async issue(number) {
-      const issue = await api([`${base}/issues/${number}`]);
-      return {
-        number: issue.number,
-        title: issue.title,
-        body: issue.body ?? '',
-      };
+      const { data } = await octokit.rest.issues.get({
+        owner,
+        repo,
+        issue_number: number,
+      });
+      return { number: data.number, title: data.title, body: data.body ?? '' };
     },
 
     /**
      * Every top-level comment of the pull request, all pages.
      * @param {number} number
      */
-    async comments(number) {
-      const pages = await api([
-        '--paginate',
-        '--slurp',
-        `${base}/issues/${number}/comments`,
-      ]);
-      return pages.flat();
+    comments(number) {
+      return octokit.paginate(octokit.rest.issues.listComments, {
+        owner,
+        repo,
+        issue_number: number,
+        per_page: 100,
+      });
     },
 
     /**
@@ -151,7 +164,10 @@ export function createGitHub({ repo, prDir, exec = execa }) {
       if (comments.length === 0) {
         return;
       }
-      await send('POST', `${base}/pulls/${number}/reviews`, {
+      await octokit.rest.pulls.createReview({
+        owner,
+        repo,
+        pull_number: number,
         commit_id: commitId,
         event: 'COMMENT',
         comments: comments.map(reviewComment),
@@ -164,7 +180,12 @@ export function createGitHub({ repo, prDir, exec = execa }) {
      * @param {string} body
      */
     async postComment(number, body) {
-      await send('POST', `${base}/issues/${number}/comments`, { body });
+      await octokit.rest.issues.createComment({
+        owner,
+        repo,
+        issue_number: number,
+        body,
+      });
     },
 
     /**
@@ -173,8 +194,18 @@ export function createGitHub({ repo, prDir, exec = execa }) {
      * @param {string} label
      */
     async removeLabel(number, label) {
-      const path = `${base}/issues/${number}/labels/${encodeURIComponent(label)}`;
-      await exec('gh', ['api', '--method', 'DELETE', path], { reject: false });
+      try {
+        await octokit.rest.issues.removeLabel({
+          owner,
+          repo,
+          issue_number: number,
+          name: label,
+        });
+      } catch (error) {
+        if (error.status !== 404) {
+          throw error;
+        }
+      }
     },
 
     /**

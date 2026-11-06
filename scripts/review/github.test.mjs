@@ -1,50 +1,78 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createGitHub } from './github.mjs';
+import { createGitHub, githubToken } from './github.mjs';
 
 /**
- * A fake execa: records each call and answers with the stdout that the first
- * matching rule gives. A rule matches when the joined arguments include its
- * text.
- * @param {[string, object][]} rules [text, result]
+ * A fake Octokit: each method records its parameters and answers with the
+ * data given for it.
+ * @param {Record<string, unknown>} answers data per method name
  */
+function fakeOctokit(answers = {}) {
+  const calls = [];
+  const method = (name) => async (params) => {
+    calls.push({ name, params });
+    const answer = answers[name];
+    if (answer instanceof Error) {
+      throw answer;
+    }
+    return { data: answer };
+  };
+  const octokit = {
+    rest: {
+      pulls: { get: method('pulls.get'), createReview: method('createReview') },
+      issues: {
+        get: method('issues.get'),
+        listComments: 'issues.listComments',
+        createComment: method('createComment'),
+        removeLabel: method('removeLabel'),
+      },
+    },
+    async paginate(endpoint, params) {
+      calls.push({ name: `paginate ${endpoint}`, params });
+      return answers[endpoint];
+    },
+    async graphql(query, variables) {
+      calls.push({ name: 'graphql', params: { query, ...variables } });
+      return answers.graphql;
+    },
+  };
+  return { octokit, calls };
+}
+
+/** A fake execa for git: answers by a text in the arguments. */
 function fakeExec(rules = []) {
   const calls = [];
   const exec = async (command, args, options = {}) => {
     calls.push({ command, args, options });
-    const joined = args.join(' ');
-    const rule = rules.find(([text]) => joined.includes(text));
+    const rule = rules.find(([text]) => args.join(' ').includes(text));
     return { exitCode: 0, stdout: '', ...rule?.[1] };
   };
   return { exec, calls };
 }
 
-const json = (value) => ({ stdout: JSON.stringify(value) });
-
-const github = (rules) => {
-  const fake = fakeExec(rules);
+const github = (answers, rules) => {
+  const fake = fakeOctokit(answers);
+  const git = fakeExec(rules);
   const gh = createGitHub({
     repo: 'epam/ketcher',
     prDir: '/pr',
-    exec: fake.exec,
+    octokit: fake.octokit,
+    exec: git.exec,
   });
-  return { gh, calls: fake.calls };
+  return { gh, calls: fake.calls, gitCalls: git.calls };
 };
 
 test('the pull request gives its title, body, commits and labels', async () => {
-  const { gh, calls } = github([
-    [
-      'repos/epam/ketcher/pulls/7',
-      json({
-        number: 7,
-        title: '#1 - Fix undo',
-        body: null,
-        base: { sha: 'b'.repeat(40) },
-        head: { sha: 'h'.repeat(40) },
-        labels: [{ name: 'Run Claude Review' }],
-      }),
-    ],
-  ]);
+  const { gh, calls } = github({
+    'pulls.get': {
+      number: 7,
+      title: '#1 - Fix undo',
+      body: null,
+      base: { sha: 'b'.repeat(40) },
+      head: { sha: 'h'.repeat(40) },
+      labels: [{ name: 'Run Claude Review' }],
+    },
+  });
   assert.deepEqual(await gh.pullRequest(7), {
     number: 7,
     title: '#1 - Fix undo',
@@ -53,7 +81,11 @@ test('the pull request gives its title, body, commits and labels', async () => {
     headSha: 'h'.repeat(40),
     labels: ['Run Claude Review'],
   });
-  assert.deepEqual(calls[0].args, ['api', 'repos/epam/ketcher/pulls/7']);
+  assert.deepEqual(calls[0].params, {
+    owner: 'epam',
+    repo: 'ketcher',
+    pull_number: 7,
+  });
 });
 
 test('linked issues come from the same query as Danger, with their type', async () => {
@@ -61,37 +93,28 @@ test('linked issues come from the same query as Danger, with their type', async 
     { number: 12, issueType: { name: 'Bug' } },
     { number: 13, issueType: null },
   ];
-  const { gh, calls } = github([
-    [
-      'graphql',
-      json({
-        data: {
-          repository: { pullRequest: { closingIssuesReferences: { nodes } } },
-        },
-      }),
-    ],
-  ]);
+  const { gh, calls } = github({
+    graphql: {
+      repository: { pullRequest: { closingIssuesReferences: { nodes } } },
+    },
+  });
   assert.deepEqual(await gh.linkedIssues(7), [
     { number: 12, type: 'Bug' },
     { number: 13, type: null },
   ]);
-  const args = calls[0].args;
-  assert.ok(args.includes('number=7'));
-  assert.ok(args.includes('owner=epam'));
-  assert.ok(args.some((arg) => arg.includes('closingIssuesReferences')));
+  const { query, ...variables } = calls[0].params;
+  assert.ok(query.includes('closingIssuesReferences'));
+  assert.deepEqual(variables, { owner: 'epam', repo: 'ketcher', number: 7 });
 });
 
 test('comments of every page come back as one list', async () => {
-  const { gh, calls } = github([
-    ['issues/7/comments', json([[{ id: 1 }, { id: 2 }], [{ id: 3 }]])],
-  ]);
+  const { gh, calls } = github({
+    'issues.listComments': [{ id: 1 }, { id: 2 }, { id: 3 }],
+  });
   const comments = await gh.comments(7);
-  assert.deepEqual(
-    comments.map((comment) => comment.id),
-    [1, 2, 3],
-  );
-  assert.ok(calls[0].args.includes('--paginate'));
-  assert.ok(calls[0].args.includes('--slurp'));
+  assert.equal(comments.length, 3);
+  assert.equal(calls[0].name, 'paginate issues.listComments');
+  assert.equal(calls[0].params.issue_number, 7);
 });
 
 test('a review posts the inline comments on the new side of the diff', async () => {
@@ -100,15 +123,10 @@ test('a review posts the inline comments on the new side of the diff', async () 
     commitId: 'h'.repeat(40),
     comments: [{ path: 'src/a.ts', line: 3, body: 'Body.' }],
   });
-  assert.deepEqual(calls[0].args, [
-    'api',
-    '--method',
-    'POST',
-    'repos/epam/ketcher/pulls/7/reviews',
-    '--input',
-    '-',
-  ]);
-  assert.deepEqual(JSON.parse(calls[0].options.input), {
+  assert.deepEqual(calls[0].params, {
+    owner: 'epam',
+    repo: 'ketcher',
+    pull_number: 7,
     commit_id: 'h'.repeat(40),
     event: 'COMMENT',
     comments: [{ path: 'src/a.ts', line: 3, side: 'RIGHT', body: 'Body.' }],
@@ -121,44 +139,49 @@ test('a review without comments posts nothing', async () => {
   assert.equal(calls.length, 0);
 });
 
-test('the brief is sent as JSON on stdin, not as an argument', async () => {
+test('the brief is posted as a top-level comment', async () => {
   const { gh, calls } = github();
-  const body = '<!-- marker -->\n## Brief with `code` and "quotes"';
-  await gh.postComment(7, body);
-  assert.ok(!calls[0].args.some((arg) => arg.includes('Brief')));
-  assert.deepEqual(JSON.parse(calls[0].options.input), { body });
+  await gh.postComment(7, '## Brief');
+  assert.deepEqual(calls[0], {
+    name: 'createComment',
+    params: {
+      owner: 'epam',
+      repo: 'ketcher',
+      issue_number: 7,
+      body: '## Brief',
+    },
+  });
 });
 
-test('removing a label encodes its name and never throws', async () => {
-  const { gh, calls } = github();
-  await gh.removeLabel(7, 'Claude Review: Opus');
-  assert.deepEqual(calls[0].args, [
-    'api',
-    '--method',
-    'DELETE',
-    'repos/epam/ketcher/issues/7/labels/Claude%20Review%3A%20Opus',
-  ]);
-  assert.equal(calls[0].options.reject, false);
+test('a label that is already gone is not an error, other errors are', async () => {
+  const gone = Object.assign(new Error('Not Found'), { status: 404 });
+  await github({ removeLabel: gone }).gh.removeLabel(7, 'Claude Review: Opus');
+
+  const denied = Object.assign(new Error('Forbidden'), { status: 403 });
+  await assert.rejects(
+    github({ removeLabel: denied }).gh.removeLabel(7, 'Run Claude Review'),
+    /Forbidden/,
+  );
 });
 
 test('git runs in the pull request checkout', async () => {
-  const { gh, calls } = github([
+  const { gh, gitCalls } = github({}, [
     ['merge-base B H', { stdout: 'M\n' }],
     ['--is-ancestor', { exitCode: 1 }],
   ]);
   await gh.diff('B', 'H');
   assert.equal(await gh.mergeBase('B', 'H'), 'M');
   assert.equal(await gh.isAncestor('P', 'H'), false);
-  for (const call of calls) {
+  for (const call of gitCalls) {
     assert.equal(call.command, 'git');
     assert.deepEqual(call.args.slice(0, 2), ['-C', '/pr']);
   }
-  assert.deepEqual(calls[0].args.slice(2), [
-    'diff',
-    '--no-color',
-    '--no-ext-diff',
-    '--find-renames',
-    'B',
-    'H',
-  ]);
+});
+
+test('the token comes from the environment, or else from the gh login', async () => {
+  const { exec, calls } = fakeExec([['auth token', { stdout: 'local\n' }]]);
+  assert.equal(await githubToken({ env: { GITHUB_TOKEN: 'ci' }, exec }), 'ci');
+  assert.equal(calls.length, 0);
+  assert.equal(await githubToken({ env: {}, exec }), 'local');
+  assert.deepEqual(calls[0].args, ['auth', 'token']);
 });

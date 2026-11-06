@@ -1,21 +1,18 @@
 import { AttachmentPoint } from './AttachmentPoint';
 import type { Coordinates } from 'domain/helpers/attachmentPointCalculations';
-import type { PreviewAttachmentPointConstructorParams } from 'domain/types';
-import type { UsageInMacromolecule } from 'application/render';
-import util from 'application/render/util';
+import type {
+  AttachmentPointLabelStyles,
+  PreviewAttachmentPointConstructorParams,
+} from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class PreviewAttachmentPoint extends AttachmentPoint {
-  private readonly connected: boolean;
-  private readonly selected: boolean;
-  private readonly usage: UsageInMacromolecule;
+  private readonly labelStyles: AttachmentPointLabelStyles;
 
   constructor(constructorParams: PreviewAttachmentPointConstructorParams) {
     super(constructorParams, true);
 
-    this.connected = constructorParams.connected;
-    this.selected = constructorParams.selected;
-    this.usage = constructorParams.usage;
+    this.labelStyles = constructorParams.labelStyles;
 
     this.appendAttachmentPoint();
   }
@@ -43,11 +40,7 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
       .attr('stroke-linecap', 'round')
       .attr('stroke-width', '1px');
 
-    const { color, stroke, fill } = util.useLabelStyles(
-      this.selected,
-      this.connected,
-      this.usage,
-    );
+    const { color, stroke, fill } = this.labelStyles;
 
     const labelGroup = this.attachmentPoint?.append('g');
 

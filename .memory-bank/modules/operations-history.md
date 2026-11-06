@@ -2,7 +2,7 @@
 
 > How every model change is encapsulated for undo/redo.
 
-Cross-cutting deep-dive. Every mutation of model in Ketcher is an operation; the editor never mutates the model in place. There are **two parallel systems** that share the same operations folder but use different abstractions — one for micromolecules, one for macromolecules.
+Cross-cutting deep-dive. Every mutation of model in Ketcher is an operation; the editor never mutates the model in place. There are **two parallel systems** that use different abstractions — one for micromolecules, one for macromolecules.
 
 | Aspect  | Micro (small molecules)                | Macro (monomers/polymers)             |
 | ------- | -------------------------------------- | ------------------------------------- |
@@ -45,6 +45,8 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - Example: a "monomer add" operation takes model add/delete callbacks; its `execute` re-adds the model and tells the renderers manager to add the monomer, while its `invert` deletes the model and tells the renderers manager to remove it.
 
 **Macro operation categories:** monomers, polymer bonds, drawing entities, core atoms/bonds/reactions/S-groups, monomer-to-atom bonds, monomer creation, and editor modes.
+
+The macro operations that the drawing-entities manager builds live in `domain/operations/`, beside `Command` and `Operation` (see [the ADR](../adr/2026-11-03-macro-operations-live-in-domain.md)). The mode-reinitialize operation stays in the application layer, and the manager gets it from its editor port.
 
 **Command** groups operations:
 

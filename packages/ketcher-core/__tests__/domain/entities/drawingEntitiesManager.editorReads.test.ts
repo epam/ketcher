@@ -8,7 +8,7 @@ import {
 import type { BaseMode } from 'application/editor/modes/BaseMode';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
+import { RecalculateCanvasMatrixOperation } from 'domain/operations/modes/snake';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';

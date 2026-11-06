@@ -11,18 +11,18 @@ import { Peptide } from 'domain/entities/Peptide';
 import {
   PolymerBondAddOperation,
   PolymerBondDeleteOperation,
-} from 'application/editor/operations/polymerBond';
+} from 'domain/operations/polymerBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   DrawingEntityHoverOperation,
   DrawingEntityMoveOperation,
   DrawingEntitySelectOperation,
-} from 'application/editor/operations/drawingEntity';
+} from 'domain/operations/drawingEntity';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
-} from 'application/editor/operations/monomer';
+} from 'domain/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import {
   createPolymerEditorCanvas,

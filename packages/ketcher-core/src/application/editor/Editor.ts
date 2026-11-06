@@ -117,7 +117,7 @@ import {
   validateMonomerName,
 } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
-import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
+import { SelectLayoutModeOperation } from 'domain/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import {

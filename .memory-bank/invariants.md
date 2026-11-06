@@ -35,7 +35,7 @@ History must be updated via `EditorHistory.update(command)` after every undoable
 
 **A4 — domain layer has no rendering or React imports**
 The `packages/ketcher-core/src/domain/` directory must not import from `application/render/`, `application/editor/` (except types), React, or any UI framework. It must remain a pure TypeScript domain layer.
-Existing runtime violations are allowlisted in `scripts/eslint-invariants-rules.mjs` (`ALLOWED_DOMAIN_IMPORTS`) and flagged by the `ketcher-invariants/domain-no-application-imports` lint rule (review-harness plan, Phase 3.1, enforced by CI). The rule applies to new code: a change may remove a violation but must not add one.
+Enforced by the `ketcher-invariants/domain-no-application-imports` lint rule (review-harness plan, Phase 3.1, enforced by CI). No domain file has a runtime import from `application/render`, `application/editor`, or a UI framework, and the allowlist `ALLOWED_DOMAIN_IMPORTS` in `scripts/eslint-invariants-rules.mjs` is empty. A change must not add a violation, and must not add an allowlist entry in place of fixing one.
 
 **A5 — ketcher-core has no React dependency**
 `packages/ketcher-core` must not declare React as a dependency. It is a framework-agnostic library consumed by React packages.

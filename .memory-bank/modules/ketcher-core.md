@@ -61,5 +61,5 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 ## Assumptions & Constraints
 
 - Must have **no React dependency** — it is consumed by both React packages but must stay framework-agnostic.
-- The `domain/` layer must have **no imports from `application/render/`** (domain must not know about rendering).
+- The `domain/` layer follows invariant A4 ([invariants.md](../invariants.md)).
 - All canvas mutations must go through `Command` + `BaseOperation` — never mutate `DrawingEntitiesManager` or `Struct` directly from UI code.

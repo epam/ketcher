@@ -4,10 +4,13 @@ import {
   SequenceMode,
   SnakeMode,
 } from 'application/editor';
+import { createEditorPort } from 'application/editor/editorPort';
 import type { BaseMode } from 'application/editor/modes/BaseMode';
+import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { resetEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import type { Command } from 'domain/entities/Command';
+import type { Operation } from 'domain/entities/Operation';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   type EditorPort,
@@ -53,6 +56,7 @@ const createFakePort = (overrides: Partial<EditorPort> = {}): EditorPort => ({
   renderersContainer: createRenderersManager(),
   monomersLibrary: [],
   sequenceRenderer: { show: jest.fn(), clear: jest.fn() },
+  createReinitializeModeOperation: () => new ReinitializeModeOperation(),
   ...overrides,
 });
 
@@ -324,6 +328,64 @@ describe('DrawingEntitiesManager takes its editor as a port', () => {
     ])('throws MissingEditorError that names %s', (method, call) => {
       expect(() => call(dem)).toThrow(MissingEditorError);
       expect(() => call(dem)).toThrow(method);
+    });
+  });
+
+  describe('the reinitialize operation after an antisense', () => {
+    // The nucleotide is drawn by a real editor, then copied into a manager
+    // that reads a fake port.
+    const createSelectedNucleotideManager = (port: EditorPort) => {
+      const { editor } = open(new FlexMode());
+      Nucleotide.createOnCanvas(editor, 'A', new Vec2(0, 0));
+      const dem = new DrawingEntitiesManager({ editor: port });
+
+      editor.drawingEntitiesManager.mergeInto(dem);
+      dem.selectDrawingEntities(dem.monomersArray);
+
+      return dem;
+    };
+
+    it('puts the operation of the port last in the command in sequence mode', () => {
+      const stub: Operation = { execute: jest.fn(), invert: jest.fn() };
+      const createReinitializeModeOperation = jest.fn(() => stub);
+      const dem = createSelectedNucleotideManager(
+        createFakePort({
+          mode: { modeName: 'sequence-layout-mode' },
+          createReinitializeModeOperation,
+        }),
+      );
+
+      const command = dem.createAntisenseChain(false);
+
+      expect(createReinitializeModeOperation).toHaveBeenCalledTimes(1);
+      expect(command.operations.at(-1)).toBe(stub);
+      expect(command.operations.length).toBeGreaterThan(1);
+    });
+
+    it('does not ask the port for the operation in flex mode', () => {
+      const stub: Operation = { execute: jest.fn(), invert: jest.fn() };
+      const createReinitializeModeOperation = jest.fn(() => stub);
+      const dem = createSelectedNucleotideManager(
+        createFakePort({
+          mode: { modeName: 'flex-layout-mode' },
+          createReinitializeModeOperation,
+        }),
+      );
+
+      const command = dem.createAntisenseChain(false);
+
+      expect(createReinitializeModeOperation).not.toHaveBeenCalled();
+      expect(command.operations).not.toContain(stub);
+      expect(command.operations.length).toBeGreaterThan(0);
+    });
+
+    it('returns a ReinitializeModeOperation', () => {
+      const { editor } = open(new SequenceMode());
+      const port = createEditorPort(editor);
+
+      expect(port.createReinitializeModeOperation()).toBeInstanceOf(
+        ReinitializeModeOperation,
+      );
     });
   });
 

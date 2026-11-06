@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "featureNotAvailableInBrowser": "Esta función no está disponible en tu navegador"
+  },
+  "button": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "apply": "Aplicar",
+    "close": "Cerrar",
+    "yes": "Sí"
+  },
+  "general": "General",
+  "decimalPlaces": {
+    "n0": "0",
+    "n1": "1",
+    "n2": "2",
+    "n3": "3",
+    "n4": "4",
+    "n5": "5",
+    "n6": "6",
+    "n7": "7"
+  },
+  "delete": "Eliminar",
+  "alreadyInUse": "Ya está en uso",
+  "monomerType": {
+    "base": "Base",
+    "sugar": "Azúcar",
+    "phosphate": "Fosfato"
+  }
+}

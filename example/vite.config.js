@@ -258,7 +258,7 @@ export default defineConfig({
       },
     }),
     vitePluginRaw({
-      match: /\.sdf|\.ket/,
+      match: /\.(sdf|ket)$/,
     }),
     replace({
       include: '**/ketcher-react/src/**',

@@ -74,13 +74,7 @@ export abstract class BaseMode {
 
     command.addOperation(
       new SelectLayoutModeOperation(
-        // Snake positions are replayed by the stored movement operations.
-        this.changeMode.bind(
-          this,
-          editor,
-          this.modeName,
-          this.modeName === 'snake-layout-mode',
-        ),
+        this.changeMode.bind(this, editor, this.modeName),
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,

@@ -17,7 +17,6 @@
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { LayoutMode } from 'application/editor/modes/types';
@@ -181,17 +180,6 @@ export class SelectLayoutModeOperation implements Operation {
 
   public execute(): void {
     this.onExecute();
-  }
-
-  public executeAfterAllOperations(): void {
-    if (this.mode === 'snake-layout-mode') {
-      // Stored movements restore the Snake positions after the mode switch.
-      // Scroll only once their renderers have reached those positions.
-      const editor = provideEditorInstance();
-      if (editor.drawingEntitiesManager.hasMonomers) {
-        editor.scrollToTopLeftCorner();
-      }
-    }
   }
 
   public invert(): void {

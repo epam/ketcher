@@ -2198,6 +2198,14 @@ export class DrawingEntitiesManager {
           hasAntisenseInRow = false;
           hasRnaInRow = false;
 
+          const maxMoleculeHeight = row.snakeLayoutModelItems.reduce(
+            (maxHeight, node) =>
+              node instanceof MoleculeSnakeLayoutNode
+                ? Math.max(maxHeight, getStructureBbox(node.molecule).height)
+                : maxHeight,
+            0,
+          );
+
           for (const twoStrandedSnakeLayoutNode of row.snakeLayoutModelItems) {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
               const moleculeBbox = getStructureBbox(
@@ -2207,7 +2215,9 @@ export class DrawingEntitiesManager {
                 Coordinates.canvasToModel(newSenseNodePosition),
                 new Vec2(
                   moleculeBbox.left + cellWidthInAngstroms / 4,
-                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                  moleculeBbox.top +
+                    cellWidthInAngstroms / 4 -
+                    (maxMoleculeHeight - moleculeBbox.height) / 2,
                 ),
               );
 

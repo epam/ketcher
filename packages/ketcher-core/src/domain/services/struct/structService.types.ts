@@ -86,6 +86,10 @@ export interface CheckResult {
 export interface ConvertData
   extends WithStruct, WithOutputFormat, WithInputFormat {}
 
+export interface ConvertContext {
+  skipMonomerLibraryTransfer?: boolean;
+}
+
 export interface ConvertResult extends WithStruct, WithFormat {}
 
 export interface LayoutData extends WithStruct, WithOutputFormat {}
@@ -197,6 +201,7 @@ export interface StructService {
   convert: (
     data: ConvertData,
     options?: StructServiceOptions,
+    context?: ConvertContext,
   ) => Promise<ConvertResult>;
   layout: (
     data: LayoutData,

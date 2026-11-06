@@ -20,7 +20,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [structServiceProvider, setStructServiceProvider] =
-    useState<StructServiceProvider | null>(null);
+    useState<StructServiceProvider>();
   useEffect(() => {
     getStructServiceProvider().then(setStructServiceProvider);
   }, []);

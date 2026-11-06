@@ -381,7 +381,7 @@ export const SettingsDialog = (page: Page) => {
   };
 };
 
-let cachedMap: Map<string, SettingsSection> | null = null;
+let cachedMap: Map<string, SettingsSection> | undefined;
 
 // The "*Setting" constant groups below no longer line up 1:1 with the
 // Settings dialog's accordion sections (fields were regrouped without

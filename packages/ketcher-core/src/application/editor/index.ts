@@ -38,7 +38,7 @@ export * from './modes';
 export * from './editorEvents';
 export * from './editorSettings';
 export * from './tools';
-export * from './MacromoleculesConverter';
+export * from 'domain/helpers/MacromoleculesConverter';
 export * from './tools/types';
 export { MACROMOLECULES_BOND_TYPES } from 'domain/constants/bonds';
 export type { FlipDirection } from './shared/utils.types';

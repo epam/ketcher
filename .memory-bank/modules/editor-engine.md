@@ -72,8 +72,8 @@ Neither editor is a global singleton so multiple independent Ketcher instances �
 
 **The converter** translates between the two data models when switching modes:
 
-- Micro → macro: converts the current `Struct` and its render-structure into drawing entities (used when switching into macromolecules mode).
-- Macro → micro: converts drawing entities back into a `Struct` and render-structure (used when switching back to micromolecules mode).
+- Micro → macro: converts the current `Struct` into drawing entities (used when switching into macromolecules mode).
+- Macro → micro: converts drawing entities back into a `Struct` (used when switching back to micromolecules mode).
 - It also provides the monomer↔S-group conversion helpers shared with the Monomer Creation Wizard.
 
 ## Assumptions & constraints

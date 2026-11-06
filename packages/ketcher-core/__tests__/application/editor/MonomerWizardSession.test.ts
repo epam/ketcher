@@ -2,7 +2,7 @@ import { CoreEditor } from 'application/editor/Editor';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { EditorType } from 'application/editor/editor.types';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import {
   Atom,
   Command,

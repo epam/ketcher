@@ -49,6 +49,7 @@ export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private elementLabelElement?: D3SvgElementSelection<SVGTSpanElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
@@ -488,7 +489,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     if (!shouldHydrogenBeOnLeft) {
-      textElement
+      this.elementLabelElement = textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
         .text(this.displayLabelText);
@@ -511,7 +512,7 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     if (shouldHydrogenBeOnLeft) {
-      textElement
+      this.elementLabelElement = textElement
         ?.append('tspan')
         .text(this.displayLabelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
@@ -544,6 +545,7 @@ export class AtomRenderer extends BaseRenderer {
 
     this.textElement.remove();
     this.textElement = undefined;
+    this.elementLabelElement = undefined;
   }
 
   public redrawLabel() {
@@ -625,6 +627,13 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const radical = this.atom.properties.radical;
+    // Isotopes and charges shift the element letter away from the atom point.
+    // The offset stays on the marks because a group's getBBox() ignores its own
+    // transform, and bonds are trimmed by that box.
+    const elementLabelBBox = this.elementLabelElement?.node()?.getBBox();
+    const centerX = elementLabelBBox
+      ? elementLabelBBox.x + elementLabelBBox.width / 2
+      : 0;
 
     this.radicalElement = this.rootElement?.append('g');
 
@@ -632,13 +641,13 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Single:
         this.radicalElement
           ?.append('circle')
-          .attr('cx', 3)
+          .attr('cx', centerX + 3)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
         this.radicalElement
           ?.append('circle')
-          .attr('cx', -3)
+          .attr('cx', centerX - 3)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
@@ -646,7 +655,7 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Doublet:
         this.radicalElement
           ?.append('circle')
-          .attr('cx', 0)
+          .attr('cx', centerX)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
@@ -654,7 +663,10 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Triplet:
         this.radicalElement
           ?.append('path')
-          .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
+          .attr(
+            'd',
+            `M ${centerX} -5 L ${centerX + 2} -10 L ${centerX + 4} -5 M ${centerX - 6} -5 L ${centerX - 4} -10 L ${centerX - 2} -5`,
+          )
           .attr('fill', 'none')
           .attr('stroke', this.labelColor)
           .attr('stroke-width', 1.4);
@@ -697,8 +709,9 @@ export class AtomRenderer extends BaseRenderer {
   private appendAtomProperties() {
     this.appendExplicitIsotope();
     this.appendCharge();
-    this.appendRadical();
     this.appendExplicitValence();
+    // Last, because the properties above can shift the element letter
+    this.appendRadical();
   }
 
   private appendBadValenceWarning() {

@@ -1,3 +1,4 @@
+import { select } from 'd3';
 import { AtomRenderer } from '../AtomRenderer';
 import {
   AtomLabel,
@@ -5,7 +6,7 @@ import {
   type GenericAtomLabel,
 } from 'domain/constants';
 import { AtomList } from 'domain/entities/atomList';
-import type { Atom } from 'domain/entities/CoreAtom';
+import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 // The singleton needs a live canvas; isLabelVisible only reads its viewModel.
@@ -141,5 +142,61 @@ describe('AtomRenderer.isLabelVisible', () => {
     expect(getIsLabelVisible({ ...plainCarbon, hasBadValence: true }, 6)).toBe(
       true,
     );
+  });
+});
+
+describe('AtomRenderer.appendRadical', () => {
+  const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+
+  // Draws the radical into a real SVG group, as if the element letter of the
+  // label was laid out at the given box
+  const drawRadical = (
+    radical: AtomRadical,
+    elementLabelBBox?: Pick<DOMRect, 'x' | 'width'>,
+  ) => {
+    const rootNode = document.createElementNS(SVG_NAMESPACE, 'g');
+    const appendRadical = Reflect.get(AtomRenderer.prototype, 'appendRadical');
+
+    appendRadical.call({
+      atom: { hasRadical: true, properties: { radical } },
+      labelColor: '#000',
+      rootElement: select(rootNode),
+      elementLabelElement: elementLabelBBox && {
+        node: () => ({ getBBox: () => elementLabelBBox }),
+      },
+    });
+
+    return rootNode;
+  };
+
+  const getDotPositions = (rootNode: SVGElement) =>
+    [...rootNode.querySelectorAll('circle')].map((dot) =>
+      Number(dot.getAttribute('cx')),
+    );
+
+  it('centers a singlet over the element letter when an isotope shifts it', () => {
+    const rootNode = drawRadical(AtomRadical.Single, { x: 11, width: 10 });
+
+    expect(getDotPositions(rootNode)).toEqual([19, 13]);
+  });
+
+  it('centers a doublet over the element letter', () => {
+    const rootNode = drawRadical(AtomRadical.Doublet, { x: 11, width: 10 });
+
+    expect(getDotPositions(rootNode)).toEqual([16]);
+  });
+
+  it('centers a triplet over the element letter', () => {
+    const rootNode = drawRadical(AtomRadical.Triplet, { x: 11, width: 10 });
+
+    expect(rootNode.querySelector('path')?.getAttribute('d')).toBe(
+      'M 16 -5 L 18 -10 L 20 -5 M 10 -5 L 12 -10 L 14 -5',
+    );
+  });
+
+  it('keeps the radical on the atom point when there is no element letter', () => {
+    const rootNode = drawRadical(AtomRadical.Doublet);
+
+    expect(getDotPositions(rootNode)).toEqual([0]);
   });
 });

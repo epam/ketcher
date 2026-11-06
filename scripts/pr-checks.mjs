@@ -7,6 +7,7 @@
 
 export const LSC_LABEL = 'large-scale-change';
 export const MAX_CHANGED_LINES = 400;
+export const MAX_FILE_LINES = 1000;
 
 const UNCOUNTED_FILES = [/(^|\/)package-lock\.json$/, /(^|\/)__snapshots__\//];
 const UNIT_TESTED_CODE = [
@@ -16,6 +17,7 @@ const UNIT_TESTED_CODE = [
 const UNIT_TEST = /^packages\/.*(\.test\.[jt]sx?$|\/__tests__\/)/;
 const E2E_TEST = /^ketcher-autotests\/tests\/.*\.spec\.ts$/;
 const OPENSPEC_CHANGE = /^openspec\/changes\//;
+const SOURCE = /^packages\/[^/]+\/src\//;
 
 const MEMORY_BANK_LINE = /^\s*(?:[-*]\s*)?memory bank\s*:/im;
 const BACKMERGE = /^Backmerge:\s*/i;
@@ -23,7 +25,8 @@ const TITLE_ISSUES = /^#\d+(\s*,\s*#\d+)*/;
 
 /**
  * @typedef {{ number: number, type: string | null }} LinkedIssue
- * @typedef {{ path: string, status: string, additions: number, deletions: number }} ChangedFile
+ * @typedef {{ path: string, status: string, additions: number, deletions: number, lines?: number }} ChangedFile
+ *   `lines` is the file's line count after the change, when the caller read it.
  * @typedef {{
  *   title: string,
  *   body: string,
@@ -45,6 +48,7 @@ export function checkPullRequest(pr) {
     ...checkTitle(pr),
     ...checkLinkedIssue(pr),
     ...checkSize(pr),
+    ...checkFileLength(pr),
     ...checkUnitTests(pr),
     ...checkBugFix(pr),
     ...checkFeature(pr),
@@ -117,6 +121,23 @@ function checkSize({ files, labels }) {
       `${changed} changed lines (lockfiles and snapshots not counted). Review quality drops above ${MAX_CHANGED_LINES}. Split the PR, or follow the large-scale change protocol in \`.memory-bank/review-workflow.md\`.`,
     ),
   ];
+}
+
+// R16 in .memory-bank/review-rules.md: flag only a file the diff pushes past
+// the limit; a file already over it is not a finding.
+function checkFileLength({ files }) {
+  return files
+    .filter((file) => SOURCE.test(file.path) && file.lines !== undefined)
+    .filter((file) => {
+      const before = file.lines - file.additions + file.deletions;
+      return file.lines > MAX_FILE_LINES && before <= MAX_FILE_LINES;
+    })
+    .map((file) =>
+      warn(
+        'file-length',
+        `\`${file.path}\` grows past ${MAX_FILE_LINES} lines (now ${file.lines}). Split it (rule R16).`,
+      ),
+    );
 }
 
 function checkUnitTests({ files }) {

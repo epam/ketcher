@@ -39,6 +39,12 @@ node .agents/skills/verify-ketcher/scripts/server.mjs doctor
 
 It checks: the PID is alive, the port is listened on by that PID, `index.html` answers, the checkout is still on the commit the server started on, the server started after the newest product commit, and (remote only) the Indigo service answers `<api>/indigo/info`. Exit 1 means do not drive. Stop and start again.
 
+Doctor cannot see a stale page. On a cold server, Vite re-bundles dependencies during the first page load, and that page then fails to load the macromolecules editor (`pageerror: Failed to fetch dynamically imported module`). Warm up once after every `server.mjs start`, before the first recorded drive:
+
+```sh
+node $D open --mode macromolecules && node $D open --mode molecules && node $D errors --clear
+```
+
 ## Drive
 
 `drive.mjs` keeps one headless Chromium page in a background daemon, so commands share state and the console log. Each command prints one JSON line and exits 0 or 1.
@@ -51,7 +57,11 @@ node $D load --text 'CCO'                      # paste dialog, as a user would; 
 node $D load --file path/to/x.ket              # same, from a file's text
 node $D load --text 'PEPTIDE1{A.C.D}$$$$V2.0' --type HELM   # macromolecules: pick the content type
 node $D click --testid undo                    # or --role button --name "Undo"; --nth N for repeats
+node $D click --testid A___Alanine --y-from-bottom 10   # click N px above the bottom edge (monomer cards)
 node $D canvas-click --dx 0 --dy 0             # the active tool acts at that canvas point
+node $D canvas-click --clicks 2                # double-click; --button right opens the context menu
+node $D drag --from-testid A___Alanine --to-dx -561 --to-dy -426 --shot FILE   # or --from-dx/--from-dy; --shot captures mid-drag
+node $D state --testid undo                    # exists, count, visible, enabled, text, value, offset from canvas centre
 node $D press --key ControlOrMeta+z       # not Control: macOS needs Meta; focus the canvas first
 node $D export --format ket --out FILE         # ket mol mol3000 smiles extsmiles smarts cml rxn sdf inchi inchikey cdxml fasta idt axolabs seq1 seq3
 node $D screenshot --out FILE
@@ -65,6 +75,9 @@ Rules:
 - Load structures through the paste dialog. Use `--via api` only to set up a state that is not under test, and say so in the evidence.
 - `load` fails when Ketcher shows an error dialog, and it closes the dialog. An app error dialog is not a console error, so do not wait for `errors` to show it.
 - Reading the structure back with `export` calls the Ketcher API. That is allowed for proof. Making the change with the API is not.
+- Read a disabled control with `state` (`enabled: false`). Read an element's screen position with `state`: `offset.dx` and `offset.dy` feed `canvas-click` and `drag`.
+- The browser context has clipboard permissions, so `ControlOrMeta+c`, `+x`, and `+v` work headless. In `--headed` mode they use the machine's real clipboard.
+- The daemon loads `drive.mjs` once at `start`. After editing `drive.mjs`, run `node $D stop` and `node $D start`.
 - There is no HELM export in the JS API. To prove HELM output, open the Save dialog through the UI (`save-file-button`) and read its preview area.
 - The page is not a Playwright test. Wait with the commands above, not with sleeps.
 
@@ -78,7 +91,7 @@ For each feature you drive, record:
 2. **Structure before.** `export --out before.<ext>`, taken before the action.
 3. **Structure after.** `export --out after.<ext>`, taken after it. Add a second, read-only format when one exists (for example `ket` and `smiles`).
 4. **Screenshot.** `screenshot --out after.png`.
-5. **Console errors.** `errors --out errors.json`. Any entry is a finding unless you can say why it is unrelated.
+5. **Console errors.** Run `errors --clear` before the feature and `errors --out errors.json` after it, so each file holds only that feature's entries. Any entry is a finding unless you can say why it is unrelated.
 6. **Result.** `pass`, `fail`, or `blocked`, plus the reason. Put it in `result.md`.
 
 Proof standards:

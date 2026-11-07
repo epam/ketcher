@@ -23,6 +23,18 @@ In Snake mode, the system SHALL vertically center all small molecules in each mo
 
 Monomers connect through defined attachment points, sequences render as single-letter codes, and layout modes present the same chemistry differently.
 
+### Requirement: Macromolecules editing disabled by integrator
+
+The system SHALL ensure that, when an integrator disables macromolecules editing, the mode switcher is hidden and the macromolecules editor is not loaded; and the micromolecules editor initializes and reports readiness normally; and monomer-creation entry points are unavailable; and sequence API requests reject with a clear unavailable-editor error.
+
+#### Scenario: Macromolecules editing disabled by integrator
+
+- **WHEN** an integrator disables macromolecules editing
+- **THEN** the mode switcher is hidden and the macromolecules editor is not loaded
+- **AND** the micromolecules editor initializes and reports readiness normally
+- **AND** monomer-creation entry points are unavailable
+- **AND** sequence API requests reject with a clear unavailable-editor error
+
 ### Requirement: Editing an attachment point in the monomer creation wizard
 
 The system SHALL ensure that the dialog prefers a position above the attachment atom, leaving atom, and R-label without covering them; when space above is insufficient, it uses space below or to either side; and it follows the attachment point when the canvas is scrolled or zoomed; and its position is constrained to the visible canvas; when no non-overlapping placement fits, keeping the controls reachable takes priority.
@@ -231,7 +243,10 @@ The system SHALL ensure that its position is constrained to keep it visible with
 ## User interaction
 
 - **Mode switch** — the _Molecules/Macromolecules switcher_ enters macromolecules mode.
-- **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`)(available through molecules mode) defines custom monomers/presets with attachment points.Macromolecule canvas context menus and non-ambiguous library cards also provide wizard entry points.
+- **Integrator opt-out** — integrators can disable macromolecules editing. This hides the mode
+  switcher and prevents the macromolecules editor from being loaded; the micromolecules editor
+  remains usable.
+- **Monomer library** — Favorites, Peptides, RNA, and CHEM tabs; search by name, symbol, or IDT alias; hover a card for a preview. The _RNA Builder_ creates sugar-base-phosphate presets, and a _Monomer Creation Wizard_ (`Ctrl+M`) (available through molecules mode when macromolecules editing is enabled) defines custom monomers/presets with attachment points. Macromolecule canvas context menus and non-ambiguous library cards also provide wizard entry points.
   - Exact `-` and `_` searches match only the short name displayed on monomer and RNA preset cards, avoiding matches from internal alias or metadata fields.
 - **Layout modes** — the _modes switcher_ toggles **Sequence** (single-letter, text-editor-like), **Snake** (auto-layouted shapes), and **Flex** (free shapes) views. A _Sequence typing type switcher_ selects RNA/DNA/Peptide interpretation for keyboard input (`Ctrl+Alt+R/D/P`).
 - **Adding monomers** — type/paste in sequence mode, drag-and-drop from the library, use the card _arrow icon_ (autochain), or open/paste files.

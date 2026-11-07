@@ -2,9 +2,9 @@
  * TypeScript AST transformer for ts-jest that replaces import.meta.env
  * with process.env, enabling Jest (CommonJS) compatibility.
  *
- * In rollup builds, @rollup/plugin-replace already statically inlines
- * import.meta.env.* values before any JS execution, so this transformer
- * only runs during Jest test compilation.
+ * In Vite builds, `define` already statically inlines import.meta.env.*
+ * values before any JS execution, so this transformer only runs during Jest
+ * test compilation.
  */
 const ts = require('typescript');
 

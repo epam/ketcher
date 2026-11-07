@@ -199,6 +199,7 @@ function mapWarningGroup(property: string) {
  * @param eventEmitter - The event emitter instance
  * @param workerEvent - The worker event type to listen to
  * @param action - The callback function to execute on success
+ * @param reject - The callback function to execute on timeout
  * @param timeout - Timeout in milliseconds (0 means no timeout)
  * @returns An object with setup method to initialize the timeout wrapper
  */
@@ -206,6 +207,7 @@ function createTimeoutWrapper<T>(
   eventEmitter: EventEmitter,
   workerEvent: WorkerEvent,
   action: (data: OutputMessageWrapper<T>) => void,
+  reject: (reason: Error) => void,
   timeout: number = DEFAULT_WORKER_TIMEOUT,
 ): {
   setup: () => void;
@@ -225,7 +227,9 @@ function createTimeoutWrapper<T>(
     if (timeout !== 0) {
       timeoutId = setTimeout(() => {
         eventEmitter.off(workerEvent, wrappedAction);
-        throw new Error(`${workerEvent} operation timeout after ${timeout}ms`);
+        reject(
+          new Error(`${workerEvent} operation timeout after ${timeout}ms`),
+        );
       }, timeout);
     }
   };
@@ -336,6 +340,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.GetInChIKey,
         action,
+        reject,
       );
 
       const inputMessage: InputMessage<GenerateInchIKeyCommandData> = {
@@ -370,6 +375,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Info,
         action,
+        reject,
         DEFAULT_WORKER_TIMEOUT,
       );
 
@@ -379,7 +385,7 @@ class IndigoService implements StructService {
     });
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
@@ -390,6 +396,9 @@ class IndigoService implements StructService {
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const timeout = options?.['request-timeout'] as number | undefined;
+
+    // Without this, the worker gets no monomer library if macromolecules mode was never opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -412,6 +421,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Convert,
         action,
+        reject,
         timeout,
       );
 
@@ -491,6 +501,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Layout,
         action,
+        reject,
         timeout,
       );
 
@@ -554,6 +565,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Clean,
         action,
+        reject,
         timeout,
       );
 
@@ -590,6 +602,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Aromatize,
         action,
+        reject,
         timeout,
       );
 
@@ -625,6 +638,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Dearomatize,
         action,
+        reject,
         timeout,
       );
 
@@ -671,6 +685,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.CalculateCip,
         action,
+        reject,
         timeout,
       );
 
@@ -717,6 +732,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Automap,
         action,
+        reject,
         timeout,
       );
 
@@ -768,6 +784,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Check,
         action,
+        reject,
         timeout,
       );
 
@@ -823,6 +840,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Calculate,
         action,
+        reject,
         timeout,
       );
 
@@ -875,6 +893,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.GenerateImageAsBase64,
         action,
+        reject,
         timeout,
       );
 
@@ -938,6 +957,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.ExplicitHydrogens,
         action,
+        reject,
         timeout,
       );
 
@@ -981,6 +1001,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.CalculateMacromoleculeProperties,
         action,
+        reject,
         timeout,
       );
 

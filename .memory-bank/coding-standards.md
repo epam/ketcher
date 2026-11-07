@@ -35,5 +35,5 @@ Conventions that hold in the repo today. Each one names its evidence: a lint rul
 
 ## Tooling and process
 
-- Prettier formatting is checked on every `npm test`, and source uses LF line endings. Evidence: the `test:prettier` script in each package's `package.json`, and Prettier's default `endOfLine` of `lf`.
+- Oxfmt formatting is checked on every `npm test`, and source uses LF line endings. Evidence: the `test:oxfmt` script in each package's `package.json`, and `endOfLine` set to `lf` in `.oxfmtrc.json`.
 - Commit and PR titles have the form `#<issue> - <title>`, with an ASCII hyphen. Evidence: 196 of the last 300 commit subjects use this form, and 37 use an en dash.

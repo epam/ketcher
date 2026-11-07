@@ -10,7 +10,8 @@ import util from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
-    D3SvgElementSelection<SVGLineElement, void> | undefined;
+    | D3SvgElementSelection<SVGLineElement, void>
+    | undefined;
 
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);

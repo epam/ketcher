@@ -26,7 +26,11 @@ import classes from './SettingsPanel.module.less';
  * - `color`          — label left, colour swatch dropdown right
  */
 export type SettingsFieldLayout =
-  'toggle' | 'measure' | 'measure-stacked' | 'select' | 'color';
+  | 'toggle'
+  | 'measure'
+  | 'measure-stacked'
+  | 'select'
+  | 'color';
 
 export interface SettingsFieldRowProps {
   label: string;

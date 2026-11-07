@@ -130,7 +130,8 @@ export class SnakeLayoutModel {
       }
       let nodesBeforeHydrogenConnectionToBase: ISnakeLayoutMonomersNode[] = [];
       let lastTwoStrandedNodeWithHydrogenBond:
-        ITwoStrandedSnakeLayoutNode | undefined;
+        | ITwoStrandedSnakeLayoutNode
+        | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
         if (handledChainNodes.has(node)) {
@@ -274,8 +275,8 @@ export class SnakeLayoutModel {
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
           const currentTwoStrandedSnakeLayoutNode:
-            ITwoStrandedSnakeLayoutNode | undefined =
-            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+            | ITwoStrandedSnakeLayoutNode
+            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =

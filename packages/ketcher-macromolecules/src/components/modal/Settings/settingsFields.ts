@@ -29,7 +29,11 @@ export type SettingFieldName = {
 }[keyof SettingsFormValue];
 
 export type SettingsFieldControlType =
-  'checkbox' | 'number' | 'text' | 'select' | 'color';
+  | 'checkbox'
+  | 'number'
+  | 'text'
+  | 'select'
+  | 'color';
 
 export interface SettingsFieldDescriptor {
   name: SettingFieldName;

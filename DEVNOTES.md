@@ -154,13 +154,15 @@ npm run test:unit
 npm run test:watch
 ```
 
-### Start prettier
+### Start oxfmt
 
 ```sh
-prettier
+npm run test:oxfmt
   or
-prettier:write
+npm run oxfmt:write
 ```
+
+Both run in one package and read `.oxfmtrc.json` from the repository root.
 
 ### Start oxlint
 

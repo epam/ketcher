@@ -1362,9 +1362,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isSensePhosphateAdditionallyDeleted
-                ? nodeBeforeSelection.firstMonomerInNode
-                : nodeBeforeSelection.lastMonomerInNode,
+              nodeBeforeSelection.lastMonomerInNode,
               nodeAfterSelection.firstMonomerInNode,
             ),
           );
@@ -1418,9 +1416,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isAntisensePhosphateAdditionallyDeleted
-                ? nodeAfterSelection.firstMonomerInNode
-                : nodeAfterSelection.lastMonomerInNode,
+              nodeAfterSelection.lastMonomerInNode,
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );

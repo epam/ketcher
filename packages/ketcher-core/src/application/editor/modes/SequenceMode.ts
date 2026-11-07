@@ -195,16 +195,17 @@ export class SequenceMode extends BaseMode {
         drawingEntitiesManager,
         serializedKet,
       );
+      const plainText = (async () => {
+        const sequenceString = await sequence;
+        return new Blob([sequenceString ?? serializedKet], {
+          type: PLAIN_TEXT_MIME_TYPE,
+        });
+      })();
 
       await navigator.clipboard.write([
         new ClipboardItem({
           [ketMimeType]: new Blob([serializedKet], { type: ketMimeType }),
-          [PLAIN_TEXT_MIME_TYPE]: sequence.then(
-            (sequenceString) =>
-              new Blob([sequenceString ?? serializedKet], {
-                type: PLAIN_TEXT_MIME_TYPE,
-              }),
-          ),
+          [PLAIN_TEXT_MIME_TYPE]: plainText,
         }),
       ]);
     } catch (error) {

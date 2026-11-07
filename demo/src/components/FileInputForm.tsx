@@ -43,13 +43,12 @@ const parseFile = (file): Promise<string> =>
     };
   });
 
-const submitHandler = (event) => {
+const submitHandler = async (event) => {
   event.preventDefault();
   let file = event.target[0].files[0];
 
-  parseFile(file).then((str) => {
-    KetcherFunctions.renderFromCtab(str);
-  });
+  const str = await parseFile(file);
+  KetcherFunctions.renderFromCtab(str);
 };
 
 interface FileInputProps {
@@ -59,14 +58,13 @@ interface FileInputProps {
 export const FileInputForm = ({ printToTerminal }: FileInputProps) => {
   const [chosenFile, setChosenFile] = useState('');
 
-  const chooseFileHandler = (event) => {
+  const chooseFileHandler = async (event) => {
     const file: File = event.target.files[0];
     setChosenFile(file.name);
 
-    parseFile(file).then((str) => {
-      let message = 'Selected file content:' + str;
-      printToTerminal(message);
-    });
+    const str = await parseFile(file);
+    const message = 'Selected file content:' + str;
+    printToTerminal(message);
   };
 
   return (

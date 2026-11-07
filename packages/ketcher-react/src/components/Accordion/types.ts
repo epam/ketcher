@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface IAccordionProps {
+export interface IAccordionProperties {
   summary: React.ReactNode;
   details: React.ReactNode;
   expanded: boolean;
@@ -23,6 +23,6 @@ export interface IAccordionProps {
   dataTestIdDetails?: string;
 }
 
-export interface IDetailsContainerProps {
+export interface IDetailsContainerProperties {
   expanded: boolean;
 }

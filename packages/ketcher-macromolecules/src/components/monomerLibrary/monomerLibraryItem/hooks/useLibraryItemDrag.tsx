@@ -6,17 +6,17 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const useLibraryItemDrag = <T extends HTMLElement>(
   item: IRnaPreset | MonomerOrAmbiguousType,
-  itemRef: RefObject<T | null>,
+  itemReference: RefObject<T | null>,
 ) => {
   const editor = useSelector(selectEditor);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!editor || !itemRef.current) {
+    if (!editor || !itemReference.current) {
       return;
     }
 
-    const itemElement = select(itemRef.current);
+    const itemElement = select(itemReference.current);
 
     const dragBehavior = drag<T, unknown>()
       .on('start', () => {
@@ -93,5 +93,5 @@ export const useLibraryItemDrag = <T extends HTMLElement>(
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, item, itemRef, dispatch]);
+  }, [editor, item, itemReference, dispatch]);
 };

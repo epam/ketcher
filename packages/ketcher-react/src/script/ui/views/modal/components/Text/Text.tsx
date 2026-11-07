@@ -36,7 +36,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParameters } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
@@ -50,7 +50,7 @@ interface TextFormState {
   form: FormState;
 }
 
-interface TextProps extends DialogParams {
+interface TextProps extends DialogParameters {
   formState: TextFormState;
   id?: string;
   content: string;

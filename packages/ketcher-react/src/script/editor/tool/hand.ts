@@ -60,10 +60,10 @@ class HandTool implements Tool {
     );
     this.begPos = this.endPos;
 
-    rnd.setViewBox((prev) => ({
-      ...prev,
-      minX: prev.minX - diff.x,
-      minY: prev.minY - diff.y,
+    rnd.setViewBox((previous) => ({
+      ...previous,
+      minX: previous.minX - diff.x,
+      minY: previous.minY - diff.y,
     }));
   }
 

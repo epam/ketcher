@@ -3,13 +3,13 @@ import Box from '@mui/material/Box';
 
 import styles from './TabPanel.module.less';
 
-type TabPanelProps = {
+type TabPanelProperties = {
   index: number;
   value: number;
   children: ReactNode;
 };
 
-const TabPanel = ({ children, value, index }: TabPanelProps) => {
+const TabPanel = ({ children, value, index }: TabPanelProperties) => {
   return (
     <div
       className={styles.tabPanelDiv}

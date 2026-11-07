@@ -26,7 +26,7 @@ import {
   CardTitle,
   NumberCircle,
 } from './styles';
-import { IMonomerItemProps } from './types';
+import { IMonomerItemProperties } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
@@ -57,7 +57,7 @@ const MonomerItem = ({
   disabled,
   onClick = EmptyFunction,
   onStarClick = EmptyFunction,
-}: IMonomerItemProps) => {
+}: IMonomerItemProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -67,7 +67,7 @@ const MonomerItem = ({
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardReference = useRef<HTMLDivElement>(null);
 
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
@@ -149,7 +149,7 @@ const MonomerItem = ({
     editor?.events.removeAutochainPreview.dispatch(item);
   }, [editor, item]);
 
-  useLibraryItemDrag(item, cardRef);
+  useLibraryItemDrag(item, cardReference);
 
   return (
     <Card
@@ -165,12 +165,12 @@ const MonomerItem = ({
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       onContextMenu={monomerItem ? openMenu : undefined}
-      onDoubleClick={(e) => {
-        onAutochainIconClick(e);
+      onDoubleClick={(event_) => {
+        onAutochainIconClick(event_);
         onAutochainIconMouseOut();
       }}
-      {...(isDisabled ? {} : { onClick })}
-      ref={cardRef}
+      {...(!isDisabled ? { onClick } : {})}
+      ref={cardReference}
       data-idtalias-base={monomerItem?.props.idtAliases?.base ?? undefined}
       data-idtalias-modifications-endpoint5={
         monomerItem?.props.idtAliases?.modifications?.endpoint5 ?? undefined
@@ -216,7 +216,7 @@ const MonomerItem = ({
                   onMouseOver={onAutochainIconMouseOver}
                   onMouseOut={onAutochainIconMouseOut}
                   onClick={onAutochainIconClick}
-                  onDoubleClick={(e) => e.stopPropagation()}
+                  onDoubleClick={(event_) => event_.stopPropagation()}
                 />
               </AutochainIconWrapper>
             </Tooltip>

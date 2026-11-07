@@ -126,7 +126,7 @@ import Template5Icon from '../../../assets/icons/files/template-5.svg';
 import Template6Icon from '../../../assets/icons/files/template-6.svg';
 import Template7Icon from '../../../assets/icons/files/template-7.svg';
 import TemplateDialogIcon from '../../../assets/icons/files/template-dialog.svg';
-import TemplateLibIcon from '../../../assets/icons/files/template-lib.svg';
+import TemplateLibraryIcon from '../../../assets/icons/files/template-lib.svg';
 import TextBold from '../../../assets/icons/files/text-bold.svg';
 import TextIcon from '../../../assets/icons/files/text.svg';
 import TextItalic from '../../../assets/icons/files/text-italic.svg';
@@ -429,7 +429,7 @@ export const iconNameToIcon = {
   'template-6': Template6Icon,
   'template-7': Template7Icon,
   'template-dialog': TemplateDialogIcon,
-  'template-lib': TemplateLibIcon,
+  'template-lib': TemplateLibraryIcon,
   'snake-mode': SnakeModeIcon,
   text: TextIcon,
   [IMAGE_KEY]: AddImageIcon,

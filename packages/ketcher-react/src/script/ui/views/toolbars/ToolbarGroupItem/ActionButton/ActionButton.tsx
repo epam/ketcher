@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
 import { type IconName, Icon } from 'components';
 
-interface ActionButtonProps {
+interface ActionButtonProperties {
   name: IconName;
   action?: UiAction;
   status?: {
@@ -41,7 +41,7 @@ interface ActionButtonCallProps {
   onAction: (action: UiActionAction) => void;
 }
 
-type Props = ActionButtonProps & ActionButtonCallProps;
+type Props = ActionButtonProperties & ActionButtonCallProps;
 
 const ActionButton = (props: Props) => {
   const {
@@ -93,5 +93,5 @@ const ActionButton = (props: Props) => {
   );
 };
 
-export type { ActionButtonProps, ActionButtonCallProps };
+export type { ActionButtonProperties, ActionButtonCallProps };
 export { ActionButton };

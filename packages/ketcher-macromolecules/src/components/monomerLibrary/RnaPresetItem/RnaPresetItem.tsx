@@ -17,7 +17,7 @@
 import { EmptyFunction } from 'helpers';
 import { useTranslation } from 'react-i18next';
 import { Card } from './styles';
-import { IRNAPresetItemProps } from './types';
+import { IRNAPresetItemProperties } from './types';
 import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -46,7 +46,7 @@ const RnaPresetItem = ({
   onMouseLeave = EmptyFunction,
   onMouseMove = EmptyFunction,
   onStarClick = EmptyFunction,
-}: IRNAPresetItemProps) => {
+}: IRNAPresetItemProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);

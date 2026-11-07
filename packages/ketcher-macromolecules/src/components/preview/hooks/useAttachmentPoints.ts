@@ -1,7 +1,7 @@
 import { AttachmentPointName, AttachmentPointsToBonds } from 'ketcher-core';
 import { useMemo } from 'react';
 
-type Props = {
+type Properties = {
   monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
   attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
 };
@@ -20,7 +20,7 @@ type ReturnType = {
 export const useAttachmentPoints = ({
   monomerCaps,
   attachmentPointsToBonds,
-}: Props): ReturnType => {
+}: Properties): ReturnType => {
   return useMemo(() => {
     const preparedAttachmentPointsData: PreparedAttachmentPointData[] = [];
     const connectedAttachmentPoints: string[] = [];

@@ -40,7 +40,7 @@ export interface Tool extends ToolEventHandler {
 
 export type ToolConstructorInterface = new (
   editor: Editor,
-  ...args: unknown[]
+  ...arguments_: unknown[]
 ) => Tool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

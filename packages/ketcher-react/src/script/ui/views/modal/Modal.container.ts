@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ModalProps, Modal } from './Modal';
+import { type ModalProperties, Modal } from './Modal';
 
 import type { BaseCallProps, ModalContainerProps } from './modal.types';
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { omit } from 'lodash/fp';
 
-type StateProps = Pick<ModalProps, 'modal'>;
+type StateProps = Pick<ModalProperties, 'modal'>;
 
 const mapStateToProps = (state): StateProps => ({
   modal: state.modal,
@@ -40,7 +40,7 @@ const mergeProps = (
   stateProps: StateProps,
   dispatchProps: BaseCallProps,
   ownProps: ModalContainerProps,
-): ModalProps => {
+): ModalProperties => {
   const prop = stateProps.modal?.prop;
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
   return {

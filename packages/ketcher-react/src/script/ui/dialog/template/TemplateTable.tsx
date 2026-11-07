@@ -23,7 +23,7 @@ import {
   useLayoutEffect,
 } from 'react';
 import type { Struct } from 'ketcher-core';
-import type { IStructRenderProps } from 'components';
+import type { IStructRenderProperties } from 'components';
 import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
 import TemplateItem from './TemplateItem';
@@ -47,7 +47,7 @@ interface TemplateTableProps {
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;
   titleRows?: 1 | 2;
-  renderOptions?: IStructRenderProps['options'];
+  renderOptions?: IStructRenderProperties['options'];
 }
 
 // Render all tiles immediately to keep accordion height stable,

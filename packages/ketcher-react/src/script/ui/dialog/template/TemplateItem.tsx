@@ -21,7 +21,7 @@ import { greekify } from '../../utils';
 import {
   Icon,
   MemoizedStructRender,
-  type IStructRenderProps,
+  type IStructRenderProperties,
 } from 'components';
 import type { Template } from './TemplateTable';
 
@@ -70,7 +70,7 @@ export interface TemplateItemProps {
   index: number;
   isSelected: boolean;
   shouldRenderPreview: boolean;
-  renderOptions?: IStructRenderProps['options'];
+  renderOptions?: IStructRenderProperties['options'];
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;

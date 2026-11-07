@@ -17,7 +17,8 @@ import styled from '@emotion/styled';
 import { style } from 'src/components/styles';
 
 export const StyledButton = styled('button', {
-  shouldForwardProp: (prop) => prop !== 'primary' && prop !== 'isActive',
+  shouldForwardProp: (property) =>
+    property !== 'primary' && property !== 'isActive',
 })({
   boxShadow: 'none',
   transition: 'none',

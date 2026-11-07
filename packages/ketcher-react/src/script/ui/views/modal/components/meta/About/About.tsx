@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog, type DialogParams } from '../../../../components';
+import { Dialog, type DialogParameters } from '../../../../components';
 import Logo from './logo.svg';
 import classes from './About.module.less';
 import { connect } from 'react-redux';
@@ -44,7 +44,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
   const { t } = useTranslation('dialogs');
   const indigoInfo = props.indigoVersion?.split('.r') || []; // Indigo version and build info
 
-  const dialogParams: DialogParams = {
+  const dialogParams: DialogParameters = {
     onOk: props.onOk,
     onCancel: props.onOk, // Using onOk for both since About dialog only has an OK button
   };

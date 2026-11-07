@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile';
 import { OpenOptions, OpenOptionsProps } from '../OpenOptions';
-import { TextEditorProps, TextArea } from '../../../shared/TextArea';
+import { TextEditorProperties, TextArea } from '../../../shared/TextArea';
 import styled from '@emotion/styled';
 
 type ViewStates = {
@@ -28,7 +28,7 @@ type SwitchProps = {
   states: ViewStates;
   isAnalyzingFile: boolean;
 } & OpenOptionsProps &
-  TextEditorProps &
+  TextEditorProperties &
   AnalyzingFileProps;
 
 const StyledTextField = styled(TextArea)`

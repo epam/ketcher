@@ -48,11 +48,11 @@ const getIconNameForMonomer = (monomer: MonomerItemType): IconName => {
 
 const PHOSPHATE_INDEX = 2;
 
-interface Props {
+interface Properties {
   className?: string;
 }
 
-const PresetPreview = ({ className }: Props) => {
+const PresetPreview = ({ className }: Properties) => {
   const { t } = useTranslation('macromolecules');
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 

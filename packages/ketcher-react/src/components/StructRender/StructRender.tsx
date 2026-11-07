@@ -22,7 +22,7 @@ import {
 } from 'ketcher-core';
 import { useEffect, useRef } from 'react';
 import { Container } from './styles';
-import type { IStructRenderProps } from './types';
+import type { IStructRenderProperties } from './types';
 
 const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   if (molV2000StringOrStruct instanceof Struct) {
@@ -44,10 +44,10 @@ const StructRender = ({
   fullsize,
   update,
   testId,
-}: IStructRenderProps) => {
-  const renderRef = useRef<HTMLDivElement>(null);
+}: IStructRenderProperties) => {
+  const renderReference = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const container = renderRef.current;
+    const container = renderReference.current;
 
     if (container) {
       container.innerHTML = '';
@@ -59,7 +59,7 @@ const StructRender = ({
   return (
     <Container
       data-testid={testId ?? 'monomer-preview-micro'}
-      ref={renderRef}
+      ref={renderReference}
       className={className}
       fullsize={fullsize}
     ></Container>

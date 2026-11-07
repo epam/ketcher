@@ -47,8 +47,8 @@ class EraserTool implements Tool {
   private readonly lassoHelper: LassoHelper;
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor: Editor, ...args: unknown[]) {
-    const mode = typeof args[0] === 'number' ? args[0] : 0;
+  constructor(editor: Editor, ...arguments_: unknown[]) {
+    const mode = typeof arguments_[0] === 'number' ? arguments_[0] : 0;
     this.editor = editor;
     this.maps = [
       'atoms',

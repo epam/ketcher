@@ -22,28 +22,28 @@ export const Container = styled.div<{ isLongName?: boolean }>`
   align-items: start;
   gap: 8px;
   overflow: hidden;
-  width: ${(props) => (props.isLongName ? '450px' : '345px')};
+  width: ${(properties) => (properties.isLongName ? '450px' : '345px')};
   height: 345px;
-  background: ${(props) => props.theme.ketcher.color.background.primary};
-  border: ${(props) => props.theme.ketcher.border.regular};
-  border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
-  box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
+  background: ${(properties) => properties.theme.ketcher.color.background.primary};
+  border: ${(properties) => properties.theme.ketcher.border.regular};
+  border-radius: ${(properties) => properties.theme.ketcher.border.radius.regular};
+  box-shadow: ${(properties) => properties.theme.ketcher.shadow.regular};
 `;
 
 export const MonomerName = styled.p<{ isLongName?: boolean }>`
   width: calc(100% - 16px);
   padding: 8px;
-  color: ${(props) => props.theme.ketcher.color.text.primary};
+  color: ${(properties) => properties.theme.ketcher.color.text.primary};
   background-color: #cceaee;
-  font-size: ${(props) =>
-    props.isLongName ? '8px' : props.theme.ketcher.font.size.regular};
+  font-size: ${(properties) =>
+    properties.isLongName ? '8px' : properties.theme.ketcher.font.size.regular};
   font-weight: 700;
   word-break: break-all;
   text-align: start;
   margin: 0;
   white-space: pre-wrap;
-  ${(props) =>
-    props.isLongName &&
+  ${(properties) =>
+    properties.isLongName &&
     `
     max-height: 200px;
     overflow: hidden;

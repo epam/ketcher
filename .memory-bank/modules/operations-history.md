@@ -66,6 +66,14 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 - Micro-to-macro conversion works on a clone so scaling and conversion cannot invalidate earlier micro operations. Restored macro commands retain their original model references.
 - `CoreEditor` sets the restored editor type before notifying the UI, making the resulting mode-switch effect a no-op instead of a second conversion/history entry.
 
+**Monomer wizard saves**:
+
+- The molecules editor merges the wizard result into a detached clone of the unselected structure, remapping external bond endpoints to the clone's atom IDs.
+- The clone explicitly includes attachment groups whose member atoms survive. Their endpoint IDs share the atom-ID mapping so haptic bonds remain connected after cloning.
+- The final canvas-load action swaps from the untouched original `Struct` to the merged result. Keeping the original instance intact preserves both the wizard's undo step and earlier history entries.
+- Before loading the merged clone, fragment stereo-atom lists are refreshed from atom stereo labels so imported stereocenters retain their flags without resetting flag positions.
+- Returning from a macro wizard session clears the temporary molecules canvas without adding a history entry or clearing the shared history.
+
 **Standard macro mutation pattern** (repeated across the editor, modes, and tools): get the editor's history adapter, build a Command from a drawing-entities-manager method, then hand the Command to both the history and the renderers container. The drawing-entities manager is the factory that produces Commands, and it is where the vast majority of Command construction happens.
 
 ## Assumptions & constraints

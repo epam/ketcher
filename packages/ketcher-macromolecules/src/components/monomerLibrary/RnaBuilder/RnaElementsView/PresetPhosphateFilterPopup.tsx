@@ -28,7 +28,7 @@ import {
   StyledCheckboxInput,
 } from './styles';
 
-type Props = {
+type Properties = {
   onClose: () => void;
 };
 
@@ -41,20 +41,26 @@ const DEFAULT_FILTER: PresetPhosphateFilter = {
   noPhosphate: false,
 };
 
-export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
+export const PresetPhosphateFilterPopup: React.FC<Properties> = ({
+  onClose,
+}) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const currentFilter = useAppSelector(selectPresetPhosphateFilter);
   const [draftFilter, setDraftFilter] =
     useState<PresetPhosphateFilter>(currentFilter);
-  const popupRef = useRef<HTMLDivElement>(null);
+  const popupReference = useRef<HTMLDivElement>(null);
 
   // Close on outside click / Escape, mirroring common popover patterns in the
   // codebase without introducing new dependencies.
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       const target = event.target as Node | null;
-      if (target && popupRef.current && popupRef.current.contains(target)) {
+      if (
+        popupReference.current &&
+        target &&
+        popupReference.current.contains(target)
+      ) {
         return;
       }
       // Ignore clicks on the trigger button so its own onClick can toggle the
@@ -82,7 +88,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   }, [onClose]);
 
   const toggle = (key: keyof PresetPhosphateFilter) => () => {
-    setDraftFilter((prev) => ({ ...prev, [key]: !prev[key] }));
+    setDraftFilter((previous) => ({ ...previous, [key]: !previous[key] }));
   };
 
   const handleResetAll = () => {
@@ -101,7 +107,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
 
   return (
     <FilterPopup
-      ref={popupRef}
+      ref={popupReference}
       data-testid="preset-phosphate-filter-popup"
       onClick={(event) => event.stopPropagation()}
     >

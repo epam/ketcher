@@ -25,7 +25,7 @@ import { isTouchDevice } from 'ketcher-react';
 import { StyledInput } from 'components/ZoomControls/styles';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
-interface ZoomInputProps {
+interface ZoomInputProperties {
   onZoomSubmit: () => void;
   currentZoom: number;
   inputRef: RefObject<HTMLInputElement>;
@@ -35,11 +35,11 @@ export const ZoomInput = ({
   onZoomSubmit,
   currentZoom,
   inputRef,
-}: ZoomInputProps) => {
+}: ZoomInputProperties) => {
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      const inputEl = inputRef.current;
-      if (!inputEl) return;
+      const inputElement = inputRef.current;
+      if (!inputElement) return;
 
       // Prevent bubbling of keyDown events to capture input and Enter, allow bubbling of shortcuts
       const zoomShortcuts = [
@@ -51,23 +51,23 @@ export const ZoomInput = ({
 
       if (event.key === 'Enter') {
         onZoomSubmit();
-        inputEl.select();
+        inputElement.select();
       }
     },
     [onZoomSubmit, inputRef],
   );
 
   const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
-    const el = event.target;
-    el.select();
+    const element = event.target;
+    element.select();
   };
 
   // Focus on input field upon mounting (skip on touch devices to avoid virtual keyboard)
   useEffect(() => {
-    const inputEl = inputRef.current;
+    const inputElement = inputRef.current;
     if (!isTouchDevice) {
-      inputEl?.focus();
-      inputEl?.select();
+      inputElement?.focus();
+      inputElement?.select();
     }
   }, [inputRef]);
 

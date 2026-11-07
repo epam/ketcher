@@ -16,7 +16,7 @@ import type { Transformer } from '@jest/transform';
  * // typeof content === 'string'
  */
 const textFileTransformer: Transformer = {
-  process(src: string, filename: string): { code: string } {
+  process(source: string, filename: string): { code: string } {
     const fileContents: string = fs.readFileSync(
       path.resolve(filename),
       'utf8',

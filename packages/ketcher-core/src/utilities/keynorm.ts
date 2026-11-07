@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -73,53 +74,53 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
       key = key.toUpperCase();
     }
 
-    if (tokens.some((mod) => ModifiersRegex.Mod.test(mod))) {
+    if (tokens.some((module_) => ModifiersRegex.Mod.test(module_))) {
       activeModifiers.add(
         isMac ? KeyboardModifiers.Meta : KeyboardModifiers.Ctrl,
       );
     }
-    if (tokens.some((mod) => ModifiersRegex.Meta.test(mod))) {
+    if (tokens.some((module_) => ModifiersRegex.Meta.test(module_))) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (tokens.some((mod) => ModifiersRegex.Ctrl.test(mod))) {
+    if (tokens.some((module_) => ModifiersRegex.Ctrl.test(module_))) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (tokens.some((mod) => ModifiersRegex.Alt.test(mod))) {
+    if (tokens.some((module_) => ModifiersRegex.Alt.test(module_))) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (tokens.some((mod) => ModifiersRegex.Shift.test(mod))) {
+    if (tokens.some((module_) => ModifiersRegex.Shift.test(module_))) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
   } else if (input instanceof KeyboardEvent) {
-    const e = input;
+    const event_ = input;
 
-    if (e.code.includes(KeyboardModifiers.Control)) {
+    if (event_.code.includes(KeyboardModifiers.Control)) {
       return KeyboardModifiers.Ctrl;
     }
-    if (e.code.includes(KeyboardModifiers.Alt)) {
+    if (event_.code.includes(KeyboardModifiers.Alt)) {
       return KeyboardModifiers.Alt;
     }
-    if (e.code.includes(KeyboardModifiers.Meta)) {
+    if (event_.code.includes(KeyboardModifiers.Meta)) {
       return KeyboardModifiers.Meta;
     }
-    if (e.code.includes(KeyboardModifiers.Shift)) {
+    if (event_.code.includes(KeyboardModifiers.Shift)) {
       return KeyboardModifiers.Shift;
     }
 
-    if (e.ctrlKey) {
+    if (event_.ctrlKey) {
       activeModifiers.add(KeyboardModifiers.Ctrl);
     }
-    if (e.altKey) {
+    if (event_.altKey) {
       activeModifiers.add(KeyboardModifiers.Alt);
     }
-    if (e.metaKey) {
+    if (event_.metaKey) {
       activeModifiers.add(KeyboardModifiers.Meta);
     }
-    if (e.shiftKey) {
+    if (event_.shiftKey) {
       activeModifiers.add(KeyboardModifiers.Shift);
     }
 
-    key = normalizeCode(e.code);
+    key = normalizeCode(event_.code);
   } else {
     throw new TypeError('normalizeShortcut expects string or KeyboardEvent');
   }
@@ -133,8 +134,8 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
   const copy = Object.create(null) as HotKeyMap;
 
-  Object.keys(map).forEach((prop) => {
-    copy[normalizeShortcut(prop)] = map[prop];
+  Object.keys(map).forEach((property) => {
+    copy[normalizeShortcut(property)] = map[property];
   });
 
   return copy;
@@ -151,19 +152,20 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
  * String and event inputs return a normalized shortcut key, while map inputs
  * return a copy with normalized shortcut keys.
  */
-const keyNormBase = ((obj: string | KeyboardEvent | HotKeyMap) => {
-  if (obj instanceof KeyboardEvent) {
-    return normalizeShortcut(obj);
+function keyNormBase(object: KeyboardEvent): string;
+function keyNormBase(object: string): string;
+function keyNormBase(object: HotKeyMap): HotKeyMap;
+function keyNormBase(
+  object: string | KeyboardEvent | HotKeyMap,
+): string | HotKeyMap {
+  if (object instanceof KeyboardEvent) {
+    return normalizeShortcut(object);
   }
 
-  return typeof obj === 'object'
-    ? normalizeKeyMap(obj)
-    : normalizeShortcut(obj);
-}) as {
-  (obj: KeyboardEvent): string;
-  (obj: string): string;
-  (obj: HotKeyMap): HotKeyMap;
-};
+  return typeof object === 'object'
+    ? normalizeKeyMap(object)
+    : normalizeShortcut(object);
+}
 
 const setHotKey = (key: string, actName: string, hotKeys: HotKeyMap) => {
   const existing = hotKeys[key];

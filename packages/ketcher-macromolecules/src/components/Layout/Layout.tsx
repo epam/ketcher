@@ -81,7 +81,7 @@ export function useLayoutBounds(): Pick<
   return useContext(LayoutBoundsContext);
 }
 
-interface LayoutProps {
+interface LayoutProperties {
   children: JSX.Element | Array<JSX.Element>;
 }
 
@@ -198,37 +198,37 @@ type LayoutSection =
   'Left' | 'Right' | 'Main' | 'Top' | 'Bottom' | 'InsideRoot';
 
 const Top = (
-  props: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
+  properties: React.HTMLAttributes<HTMLDivElement> & { shortened?: boolean },
 ) => {
-  const [startRef, startInView] = useInView({ threshold: 1 });
-  const [endRef, endInView] = useInView({ threshold: 1 });
-  const { children, ...otherProps } = props;
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const [startReference, startInView] = useInView({ threshold: 1 });
+  const [endReference, endInView] = useInView({ threshold: 1 });
+  const { children, ...otherProperties } = properties;
+  const scrollReference = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const SCROLL_PX_PER_SEC = 300;
 
   const scrollRight = (dtMs: number) => {
-    if (!scrollRef.current) {
+    if (!scrollReference.current) {
       return;
     }
-    scrollRef.current.scrollLeft += (SCROLL_PX_PER_SEC * dtMs) / 1000;
+    scrollReference.current.scrollLeft += (SCROLL_PX_PER_SEC * dtMs) / 1000;
   };
 
   const scrollLeft = (dtMs: number) => {
-    if (!scrollRef.current) {
+    if (!scrollReference.current) {
       return;
     }
-    scrollRef.current.scrollLeft -= (SCROLL_PX_PER_SEC * dtMs) / 1000;
+    scrollReference.current.scrollLeft -= (SCROLL_PX_PER_SEC * dtMs) / 1000;
   };
 
   return (
     <div style={{ display: 'flex', position: 'relative' }}>
-      <StyledTop {...otherProps} ref={scrollRef}>
-        <span ref={startRef}></span>
+      <StyledTop {...otherProperties} ref={scrollReference}>
+        <span ref={startReference}></span>
         <StyledTopInnerDiv>
           <>{children}</>
         </StyledTopInnerDiv>
-        <span ref={endRef}></span>
+        <span ref={endReference}></span>
       </StyledTop>
       {startInView && endInView ? null : (
         <StyledArrowScrollWrapper>
@@ -245,20 +245,20 @@ const Top = (
   );
 };
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({ children }: LayoutProperties) => {
   const { setCanvasElement, setLayoutRootElement } =
     useContext(LayoutBoundsContext);
 
   const layoutRootCallbackRef = useCallback(
-    (el: HTMLDivElement | null) => {
-      setLayoutRootElement(el);
+    (element: HTMLDivElement | null) => {
+      setLayoutRootElement(element);
     },
     [setLayoutRootElement],
   );
 
   const canvasCallbackRef = useCallback(
-    (el: HTMLDivElement | null) => {
-      setCanvasElement(el);
+    (element: HTMLDivElement | null) => {
+      setCanvasElement(element);
     },
     [setCanvasElement],
   );

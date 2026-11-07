@@ -16,28 +16,28 @@
 
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
-import { IStyledIconProps } from './types';
+import { IStyledIconProperties } from './types';
 
-export const SummaryContainer = styled.div((props) => ({
+export const SummaryContainer = styled.div((properties) => ({
   minHeight: '32px',
   display: 'flex',
   alignItems: 'center',
   padding: '8px 12px',
   gap: '8px',
-  borderBottom: props.theme.ketcher.border.small,
+  borderBottom: properties.theme.ketcher.border.small,
 }));
 
-export const SummaryText = styled.span((props) => ({
+export const SummaryText = styled.span((properties) => ({
   flexGrow: 1,
-  fontSize: props.theme.ketcher.font.size.regular,
+  fontSize: properties.theme.ketcher.font.size.regular,
 }));
 
 export const StyledIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'expanded',
-})<IStyledIconProps>((props) => ({
+  shouldForwardProp: (property) => property !== 'expanded',
+})<IStyledIconProperties>((properties) => ({
   width: '16px',
   height: '16px',
-  color: props.theme.ketcher.color.icon.grey,
-  transition: props.theme.ketcher.transition.regular,
-  transform: props.expanded ? 'rotate(180deg)' : 'none',
+  color: properties.theme.ketcher.color.icon.grey,
+  transition: properties.theme.ketcher.transition.regular,
+  transform: properties.expanded ? 'rotate(180deg)' : 'none',
 }));

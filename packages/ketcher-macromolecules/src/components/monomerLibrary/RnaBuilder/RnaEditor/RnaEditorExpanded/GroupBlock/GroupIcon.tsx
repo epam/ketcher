@@ -2,13 +2,13 @@ import { GroupIcon as StyledGroupIcon, GroupIconContainer } from './styles';
 import { memo } from 'react';
 import { IconName } from 'ketcher-react';
 
-type Props = {
+type Properties = {
   name: IconName;
   selected: boolean | undefined;
   empty: boolean;
 };
 
-const GroupIcon = ({ selected, empty, name }: Props) => {
+const GroupIcon = ({ selected, empty, name }: Properties) => {
   return (
     <GroupIconContainer>
       <StyledGroupIcon selected={selected} empty={empty} name={name} />

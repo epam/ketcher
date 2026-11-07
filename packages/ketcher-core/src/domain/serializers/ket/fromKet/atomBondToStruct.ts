@@ -21,7 +21,7 @@ import {
 } from 'domain/entities/atom';
 import { Bond, type BondAttributes } from 'domain/entities/bond';
 import { Elements, CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
-import { ifDef } from 'utilities';
+import { ifDefined } from 'utilities';
 
 function assertCustomQueryLength(customQuery: string, context: string): void {
   if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
@@ -47,36 +47,36 @@ export function atomToStruct(source) {
     const ids = source.elements
       .map((el) => Elements.get(el)?.number)
       .filter(Boolean) as number[];
-    ifDef(params, 'atomList', {
+    ifDefined(params, 'atomList', {
       ids,
       notList: source.notList,
     });
   } else {
-    ifDef(params, 'label', source.label);
+    ifDefined(params, 'label', source.label);
     // reaction
-    ifDef(params, 'aam', source.mapping);
+    ifDefined(params, 'aam', source.mapping);
   }
-  ifDef(params, 'alias', source.alias);
-  ifDef(params, 'pp', {
+  ifDefined(params, 'alias', source.alias);
+  ifDefined(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
     z: source.location[2] || 0,
   });
-  ifDef(params, 'charge', source.charge);
-  ifDef(params, 'explicitValence', source.explicitValence);
-  ifDef(params, 'isotope', source.isotope);
-  ifDef(params, 'radical', source.radical);
-  ifDef(params, 'cip', source.cip);
-  ifDef(params, 'attachmentPoints', source.attachmentPoints);
+  ifDefined(params, 'charge', source.charge);
+  ifDefined(params, 'explicitValence', source.explicitValence);
+  ifDefined(params, 'isotope', source.isotope);
+  ifDefined(params, 'radical', source.radical);
+  ifDefined(params, 'cip', source.cip);
+  ifDefined(params, 'attachmentPoints', source.attachmentPoints);
   // stereo
-  ifDef(params, 'stereoLabel', source.stereoLabel);
-  ifDef(params, 'stereoParity', source.stereoParity);
-  ifDef(params, 'weight', source.weight);
+  ifDefined(params, 'stereoLabel', source.stereoLabel);
+  ifDefined(params, 'stereoParity', source.stereoParity);
+  ifDefined(params, 'weight', source.weight);
   // query
-  ifDef(params, 'ringBondCount', source.ringBondCount);
-  ifDef(params, 'substitutionCount', source.substitutionCount);
-  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
-  ifDef(params, 'hCount', source.hCount);
+  ifDefined(params, 'ringBondCount', source.ringBondCount);
+  ifDefined(params, 'substitutionCount', source.substitutionCount);
+  ifDefined(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
+  ifDefined(params, 'hCount', source.hCount);
   if (
     source.queryProperties &&
     Object.values(source.queryProperties).some((property) => property !== null)
@@ -87,7 +87,7 @@ export function atomToStruct(source) {
     params.queryProperties = {};
     const queryProperties = params.queryProperties;
     queryAttribute.forEach((attributeName) => {
-      ifDef(
+      ifDefined(
         queryProperties,
         attributeName,
         source.queryProperties[attributeName],
@@ -101,10 +101,10 @@ export function atomToStruct(source) {
   }
 
   // reaction
-  ifDef(params, 'invRet', source.invRet);
-  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
+  ifDefined(params, 'invRet', source.invRet);
+  ifDefined(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
-  ifDef(params, 'implicitHCount', source.implicitHCount);
+  ifDefined(params, 'implicitHCount', source.implicitHCount);
 
   const newAtom = new Atom(params as AtomAttributes);
   newAtom.setInitiallySelected(source.selected);
@@ -129,18 +129,18 @@ export function atomToStruct(source) {
 export function bondToStruct(source, atomOffset = 0) {
   const params: Partial<BondAttributes> = {};
 
-  ifDef(params, 'type', source.type);
-  ifDef(params, 'topology', source.topology);
-  ifDef(params, 'reactingCenterStatus', source.center);
-  ifDef(params, 'stereo', source.stereo);
-  ifDef(params, 'cip', source.cip);
+  ifDefined(params, 'type', source.type);
+  ifDefined(params, 'topology', source.topology);
+  ifDefined(params, 'reactingCenterStatus', source.center);
+  ifDefined(params, 'stereo', source.stereo);
+  ifDefined(params, 'cip', source.cip);
   if (typeof source.customQuery === 'string') {
     assertCustomQueryLength(source.customQuery, 'Bond');
   }
-  ifDef(params, 'customQuery', source.customQuery);
-  ifDef(params, 'begin', source.atoms[0] + atomOffset);
-  ifDef(params, 'end', source.atoms[1] + atomOffset);
-  ifDef(params, 'initiallySelected', source.selected);
+  ifDefined(params, 'customQuery', source.customQuery);
+  ifDefined(params, 'begin', source.atoms[0] + atomOffset);
+  ifDefined(params, 'end', source.atoms[1] + atomOffset);
+  ifDefined(params, 'initiallySelected', source.selected);
 
   const newBond = new Bond(params as BondAttributes);
   newBond.setInitiallySelected(source.selected);

@@ -127,15 +127,15 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
-    e: React.MouseEvent,
+    event_: React.MouseEvent,
   ): void => {
     closeLibraryPreview();
 
-    if (shouldSkipPreviewForElement(e.target as HTMLElement)) {
+    if (shouldSkipPreviewForElement(event_.target as HTMLElement)) {
       return;
     }
 
-    if (preview?.type === PreviewType.Preset || !e.currentTarget) {
+    if (preview?.type === PreviewType.Preset || !event_.currentTarget) {
       return;
     }
 
@@ -144,7 +144,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       preset.base,
       preset.phosphate,
     ];
-    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const cardCoordinates = event_.currentTarget.getBoundingClientRect();
     const style = {
       left: `${cardCoordinates.left + cardCoordinates.width}px`,
       top: isAmbiguousMonomerLibraryItem(preset.base)
@@ -200,7 +200,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
               preset={preset}
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
-              onMouseMove={(e) => handleItemMouseMove(preset, e)}
+              onMouseMove={(event_) => handleItemMouseMove(preset, event_)}
               onMouseLeave={closeLibraryPreview}
               onStarClick={closeLibraryPreview}
             />

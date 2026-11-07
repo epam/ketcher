@@ -46,11 +46,11 @@ import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
 
-type Props = {
+type Properties = {
   toggleLibraryVisibility: VoidFunction;
 };
 
-const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
+const MonomerLibrary = ({ toggleLibraryVisibility }: Properties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);

@@ -17,7 +17,7 @@
 import { IconName } from 'ketcher-react';
 import { MonomerGroups } from 'src/constants';
 
-export interface IGroupBlockProps {
+export interface IGroupBlockProperties {
   groupName: MonomerGroups;
   iconName: IconName;
   monomerName?: string;

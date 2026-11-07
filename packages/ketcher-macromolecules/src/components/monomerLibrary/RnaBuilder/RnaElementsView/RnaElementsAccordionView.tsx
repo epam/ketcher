@@ -33,10 +33,10 @@ import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'hooks';
-import { RnaElementsViewProps } from './types';
+import { RnaElementsViewProperties } from './types';
 import { IRnaPreset } from 'ketcher-core';
 
-type Props = RnaElementsViewProps & {
+type Properties = RnaElementsViewProperties & {
   newPreset: IRnaPreset;
 };
 
@@ -49,7 +49,7 @@ const RnaElementsAccordionView = ({
   duplicatePreset,
   editPreset,
   libraryName,
-}: Props) => {
+}: Properties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
@@ -70,12 +70,12 @@ const RnaElementsAccordionView = ({
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
-  const [prevActiveRnaBuilderItem, setPrevActiveRnaBuilderItem] =
+  const [previousActiveRnaBuilderItem, setPreviousActiveRnaBuilderItem] =
     useState(activeRnaBuilderItem);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  if (activeRnaBuilderItem !== prevActiveRnaBuilderItem) {
-    setPrevActiveRnaBuilderItem(activeRnaBuilderItem);
+  if (activeRnaBuilderItem !== previousActiveRnaBuilderItem) {
+    setPreviousActiveRnaBuilderItem(activeRnaBuilderItem);
     setExpandedAccordion(activeRnaBuilderItem);
   }
 
@@ -99,7 +99,7 @@ const RnaElementsAccordionView = ({
           groupData.groupName as MonomerGroups,
         );
         const quantity = [...groupData.groups, ...variantMonomers].reduce(
-          (acc, group) => acc + (group.groupItems.length || 0),
+          (accumulator, group) => accumulator + (group.groupItems.length || 0),
           0,
         );
         const summary = (
@@ -127,7 +127,7 @@ const RnaElementsAccordionView = ({
                   hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
-                    setIsFilterOpen((prev) => !prev);
+                    setIsFilterOpen((previous) => !previous);
                   }}
                   aria-label={t('monomerLibrary.filterPresetsAriaLabel')}
                   data-testid="preset-filter-button"

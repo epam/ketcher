@@ -128,7 +128,7 @@ import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProps {
+interface EditorProperties {
   ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
@@ -137,7 +137,7 @@ interface EditorProps {
   onInit?: (editor: CoreEditor) => void;
 }
 
-interface EditorContainerProps extends EditorProps {
+interface EditorContainerProperties extends EditorProperties {
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -149,8 +149,8 @@ function EditorContainer({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
-}: Readonly<EditorContainerProps>) {
-  const rootElRef = useRef<HTMLDivElement>(null);
+}: Readonly<EditorContainerProperties>) {
+  const rootElementReference = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
     : defaultTheme;
@@ -168,10 +168,10 @@ function EditorContainer({
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <RootSizeProvider
-          rootRef={rootElRef as RefObject<HTMLDivElement>}
+          rootRef={rootElementReference as RefObject<HTMLDivElement>}
           isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
         >
-          <EditorWrapper ref={rootElRef} className={EditorClassName}>
+          <EditorWrapper ref={rootElementReference} className={EditorClassName}>
             <Editor
               ketcherId={ketcherId}
               theme={editorTheme}
@@ -193,9 +193,9 @@ function Editor({
   monomersLibraryUpdate,
   monomersLibraryReplace,
   onInit,
-}: Readonly<EditorProps>) {
+}: Readonly<EditorProperties>) {
   const dispatch = useAppDispatch();
-  const canvasRef = useRef<SVGSVGElement>(null);
+  const canvasReference = useRef<SVGSVGElement>(null);
   const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
@@ -223,15 +223,15 @@ function Editor({
     dispatch(
       createEditor({
         theme,
-        canvas: canvasRef.current,
+        canvas: canvasReference.current,
         monomersLibraryUpdate,
         monomersLibraryReplace,
         onInit,
-        onLibraryError: (err) => {
+        onLibraryError: (error) => {
           dispatch(
             setMonomerLibraryLoadError(
-              err instanceof Error
-                ? err.message
+              error instanceof Error
+                ? error.message
                 : 'Failed to load monomers library',
             ),
           );
@@ -352,7 +352,7 @@ function Editor({
   };
 
   const toggleLibraryVisibility = useCallback(() => {
-    setIsMonomerLibraryHidden((prev) => !prev);
+    setIsMonomerLibraryHidden((previous) => !previous);
   }, []);
 
   return (
@@ -396,7 +396,7 @@ function Editor({
             data-testid="ketcher-canvas"
             data-canvasmode="macromolecules-mode"
             preserveAspectRatio="xMidYMid meet"
-            ref={canvasRef}
+            ref={canvasReference}
             width="100%"
             height="100%"
             style={{

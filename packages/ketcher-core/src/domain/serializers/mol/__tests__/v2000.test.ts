@@ -5,7 +5,7 @@ import { basic, reaction, rgroups } from './fixtures';
 
 import { MolSerializer } from '../molSerializer';
 import molParsers from '../v2000';
-import utils from '../utils';
+import utils from '../utilities';
 
 const createCountsLine = (
   atomsCount = 0,

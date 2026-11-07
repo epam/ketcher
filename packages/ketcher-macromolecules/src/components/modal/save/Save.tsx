@@ -35,7 +35,7 @@ import {
   provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
-import { RequiredModalProps } from '../modalContainer';
+import { RequiredModalProperties } from '../modalContainer';
 import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
 import {
   Form,
@@ -89,7 +89,7 @@ const StyledModal = styled(Modal)({
 export const Save = ({
   onClose,
   isModalOpen,
-}: RequiredModalProps): JSX.Element => {
+}: RequiredModalProperties): JSX.Element => {
   const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;

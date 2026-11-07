@@ -30,8 +30,8 @@ import {
 
 const FloatingToolsWrapper = styled.div<{ left: number; top: number }>`
   position: absolute;
-  left: ${(props) => props.left}px;
-  top: ${(props) => props.top}px;
+  left: ${(properties) => properties.left}px;
+  top: ${(properties) => properties.top}px;
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -68,7 +68,7 @@ const ToolButton = styled.button`
   }
 `;
 
-export interface FloatingToolsProps {
+export interface FloatingToolsProperties {
   visible: boolean;
   position: Vec2;
 }
@@ -80,7 +80,7 @@ export const FloatingTools = () => {
   const editor = useAppSelector(selectEditor);
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState<Vec2>(new Vec2(0, 0));
-  const positionRef = useRef<Vec2>(new Vec2(0, 0));
+  const positionReference = useRef<Vec2>(new Vec2(0, 0));
 
   const updatePosition = useCallback(() => {
     if (!editor) return;
@@ -94,11 +94,11 @@ export const FloatingTools = () => {
     const topY = bbox.top - yOffset;
 
     const viewPos = Coordinates.modelToView(new Vec2(centerX, topY));
-    const dx = Math.abs(viewPos.x - positionRef.current.x);
-    const dy = Math.abs(viewPos.y - positionRef.current.y);
+    const dx = Math.abs(viewPos.x - positionReference.current.x);
+    const dy = Math.abs(viewPos.y - positionReference.current.y);
 
     if (dx > POSITION_EPSILON || dy > POSITION_EPSILON) {
-      positionRef.current = viewPos;
+      positionReference.current = viewPos;
       setPosition(viewPos);
     }
   }, [editor]);

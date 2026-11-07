@@ -83,7 +83,7 @@ test('an enforcer outside the allowed set is a bad value', () => {
   assert.equal(findings[0].code, 'rule-bad-value');
 });
 
-test('lint names its ESLint rule and counts as machine-enforced', () => {
+test('lint names its rule and counts as machine-enforced', () => {
   const text = RULE_R1.replace(
     'Enforced by: AI',
     'Enforced by: lint(no-alert)',

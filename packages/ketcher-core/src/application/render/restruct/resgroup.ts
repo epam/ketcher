@@ -19,7 +19,7 @@ import { SGroup, SUPERATOM_CLASS } from 'domain/entities/sgroup';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import { SgContexts } from 'application/editor/shared/constants';
+import { SgContexts } from 'domain/constants/sgroup';
 import ReDataSGroupData from './redatasgroupdata';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';

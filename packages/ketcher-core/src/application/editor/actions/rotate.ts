@@ -36,7 +36,7 @@ import { Action } from './action';
 import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 import type { FlipDirection } from '../shared/utils.types';
-import { flipPointByCenter, rotateDelta } from '../shared/utils';
+import { flipPointByCenter, rotateDelta } from 'domain/helpers/pointTransforms';
 
 export function fromFlip(
   reStruct: ReStruct,

@@ -14,7 +14,7 @@ export const NotificationBannerOnMacro = (page: Page) => {
       .first(),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -43,10 +43,12 @@ export const NotificationBannerOnMacro = (page: Page) => {
     },
 
     async getNotificationText() {
-      await this.waitForBecomeVisible();
+      await pageObject.waitForBecomeVisible();
       return await locators.message.textContent();
     },
   };
+
+  return pageObject;
 };
 
 export type NotificationBannerOnMacroLocatorsType = ReturnType<

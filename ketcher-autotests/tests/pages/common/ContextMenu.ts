@@ -17,7 +17,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     contextMenuBody: page.getByRole('menu'),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async open() {
@@ -29,7 +29,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     },
 
     async click(optionPath: ContextMenuOption | ContextMenuOption[]) {
-      await this.open();
+      await pageObject.open();
 
       const options = Array.isArray(optionPath) ? optionPath : [optionPath];
 
@@ -56,7 +56,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     },
 
     async hover(optionPath: ContextMenuOption | ContextMenuOption[]) {
-      await this.open();
+      await pageObject.open();
 
       const options = Array.isArray(optionPath) ? optionPath : [optionPath];
 
@@ -73,7 +73,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     },
 
     async isOptionVisible(optionId: ContextMenuOption): Promise<boolean> {
-      await this.open();
+      await pageObject.open();
       await locators.contextMenuBody.waitFor({
         state: 'visible',
         timeout: 10000,
@@ -89,7 +89,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     },
 
     async isOptionEnabled(optionId: ContextMenuOption): Promise<boolean> {
-      await this.open();
+      await pageObject.open();
       await locators.contextMenuBody.waitFor({
         state: 'visible',
         timeout: 10000,
@@ -108,6 +108,8 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       return getOption(optionId).first();
     },
   };
+
+  return pageObject;
 };
 
 export type ContextMenuType = ReturnType<typeof ContextMenu>;

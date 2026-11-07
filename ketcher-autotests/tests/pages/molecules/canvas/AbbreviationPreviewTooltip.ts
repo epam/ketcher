@@ -13,7 +13,7 @@ export const AbbreviationPreviewTooltip = (page: Page) => {
     ),
   };
 
-  return {
+  const pageObject = {
     ...locators,
 
     async isVisible() {
@@ -34,9 +34,11 @@ export const AbbreviationPreviewTooltip = (page: Page) => {
 
     async hide() {
       await page.mouse.move(9999, 9999);
-      await this.waitForBecomeHidden();
+      await pageObject.waitForBecomeHidden();
     },
   };
+
+  return pageObject;
 };
 
 export type AbbreviationPreviewTooltipLocatorsType = ReturnType<

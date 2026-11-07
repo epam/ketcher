@@ -337,6 +337,7 @@ export class SequenceMode extends BaseMode {
         )
       : editor.drawingEntitiesManager.recalculateAntisenseChains(
           needRecalculateOldAntisense,
+          false,
         );
     const zoom = ZoomTool.instance;
 
@@ -1041,6 +1042,9 @@ export class SequenceMode extends BaseMode {
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
       (position) => SequenceRenderer.setCaretPosition(position),
+    );
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
     );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -2016,6 +2020,10 @@ export class SequenceMode extends BaseMode {
             }
           }
 
+          modelChanges.merge(
+            editor.drawingEntitiesManager.recalculateAntisenseChains(),
+          );
+
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
 
@@ -2545,6 +2553,9 @@ export class SequenceMode extends BaseMode {
       },
     );
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();
@@ -3214,6 +3225,9 @@ export class SequenceMode extends BaseMode {
       },
     );
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     modelChanges.setUndoOperationReverse();

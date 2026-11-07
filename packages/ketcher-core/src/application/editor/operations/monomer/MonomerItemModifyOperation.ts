@@ -16,6 +16,7 @@
 
 import type { Operation } from 'domain/entities/Operation';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { RenderersManager } from 'application/render';
 
 export class MonomerItemModifyOperation implements Operation {
   monomer: BaseMonomer;
@@ -25,14 +26,15 @@ export class MonomerItemModifyOperation implements Operation {
     public revertMonomerItem: () => BaseMonomer,
   ) {
     this.monomer = monomer;
-    this.execute();
   }
 
-  public execute() {
+  public execute(renderersManager?: RenderersManager) {
     this.monomer = this.updateMonomerItem();
+    renderersManager?.markForReEnumeration();
   }
 
-  public invert() {
+  public invert(renderersManager?: RenderersManager) {
     this.monomer = this.revertMonomerItem();
+    renderersManager?.markForReEnumeration();
   }
 }

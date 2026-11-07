@@ -16,7 +16,7 @@ export class FlexMode extends BaseMode {
     const editor = provideEditorInstance();
 
     const antisenseChanges =
-      editor.drawingEntitiesManager.recalculateAntisenseChains();
+      editor.drawingEntitiesManager.recalculateAntisenseChains(true, false);
 
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
@@ -42,7 +42,7 @@ export class FlexMode extends BaseMode {
     const command = new Command();
     const editor = provideEditorInstance();
 
-    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    editor.drawingEntitiesManager.recalculateAntisenseChains(true, false);
     command.merge(
       editor.drawingEntitiesManager.selectDrawingEntities(
         mergedDrawingEntities.allEntitiesArray,

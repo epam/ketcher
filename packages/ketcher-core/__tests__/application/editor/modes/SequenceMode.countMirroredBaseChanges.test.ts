@@ -88,7 +88,9 @@ const buildTwoPositionDuplex = (editor: CoreEditor) => {
   drawingEntitiesManager.selectDrawingEntities([
     ...drawingEntitiesManager.monomers.values(),
   ]);
-  drawingEntitiesManager.createAntisenseChain(false);
+  editor.renderersContainer.update(
+    drawingEntitiesManager.createAntisenseChain(false),
+  );
   drawingEntitiesManager.unselectAllDrawingEntities();
 
   const antisenseNucleotides = senseNucleotides.map((senseNucleotide) => {
@@ -228,9 +230,11 @@ describe('SequenceMode#countMirroredBaseChanges', () => {
   it('counts 0 when the partner already carries the complement', () => {
     const { senseNucleotides, antisenseNucleotides } =
       buildTwoPositionDuplex(editor);
-    editor.drawingEntitiesManager.modifyMonomerItem(
-      antisenseNucleotides[0].rnaBase,
-      requireBaseLibraryItem(editor, 'G'),
+    editor.renderersContainer.update(
+      editor.drawingEntitiesManager.modifyMonomerItem(
+        antisenseNucleotides[0].rnaBase,
+        requireBaseLibraryItem(editor, 'G'),
+      ),
     );
     selectOnly([senseNucleotides[0]]);
 

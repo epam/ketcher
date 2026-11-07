@@ -67,7 +67,7 @@ export function convertDraftToLexical(
         block.inlineStyleRanges || [],
       );
 
-      segments.forEach((segment) => {
+      for (const segment of segments) {
         textChildren.push({
           type: 'text',
           text: segment.text,
@@ -75,7 +75,7 @@ export function convertDraftToLexical(
           style: segment.style,
           version: 1,
         });
-      });
+      }
     }
 
     return {
@@ -111,14 +111,14 @@ function buildTextSegments(
   );
 
   // Apply each style range to the character positions it covers
-  styleRanges.forEach((range) => {
+  for (const range of styleRanges) {
     const startIdx = range.offset;
     const endIdx = Math.min(range.offset + range.length, text.length);
 
     for (let i = startIdx; i < endIdx; i++) {
       applyStyleToChar(charStyles[i], range.style);
     }
-  });
+  }
 
   // Group consecutive characters with identical styles into segments
   const segments: TextSegment[] = [];

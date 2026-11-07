@@ -90,9 +90,9 @@ class ReRxnArrow extends ReObject {
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
     const dist: MinDistanceWithReferencePoint[] = [];
     const refPoints = this.getReferencePoints();
-    refPoints.forEach((rp) => {
+    for (const rp of refPoints) {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
-    });
+    }
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
@@ -133,14 +133,14 @@ class ReRxnArrow extends ReObject {
     const refPoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
 
-    refPoints.forEach((rp) => {
+    for (const rp of refPoints) {
       const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
           .attr({ fill: 'black' }),
       );
-    });
+    }
 
     return selectionSet;
   }

@@ -159,7 +159,7 @@ export class ReMultitailArrow extends ReObject {
       -1,
       -1,
     );
-    tailsPoints.forEach((tailPoint) => {
+    for (const tailPoint of tailsPoints) {
       ReMultitailArrow.drawSingleLineHover(
         builder,
         offset,
@@ -168,7 +168,7 @@ export class ReMultitailArrow extends ReObject {
         -1,
         -1,
       );
-    });
+    }
     ReMultitailArrow.drawSingleLineHover(
       builder,
       offset,
@@ -294,7 +294,7 @@ export class ReMultitailArrow extends ReObject {
       ),
     };
     points['head-move'] = headMovePoint;
-    Object.entries(points).forEach(([key, point]) => {
+    for (const [key, point] of Object.entries(points)) {
       const isSpineMovePoint = key === 'spine-move';
       const selectionPointRadius = ReMultitailArrow.SELECTION_POINT_RADIUS;
       const element = paper
@@ -320,7 +320,7 @@ export class ReMultitailArrow extends ReObject {
       }
       selectionPoints.push(element);
       selectionPointSet.push(element);
-    });
+    }
     this.testSelectionPoints = selectionPoints;
     reStruct.addReObjectPath(LayerMap.indices, this.visel, selectionPointSet);
     if (spineMoveSelectionPoint) {
@@ -405,19 +405,19 @@ export class ReMultitailArrow extends ReObject {
   }
 
   showPoints() {
-    this.testSelectionPoints.forEach((point) => {
+    for (const point of this.testSelectionPoints) {
       point.attr({
         opacity: ReMultitailArrow.VISIBLE_SELECTION_POINT_OPACITY,
       });
-    });
+    }
   }
 
   hidePoints() {
-    this.testSelectionPoints.forEach((point) => {
+    for (const point of this.testSelectionPoints) {
       point.attr({
         opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
       });
-    });
+    }
   }
 
   private getClosestArrowPartPosition(

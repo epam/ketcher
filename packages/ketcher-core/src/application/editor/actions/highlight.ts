@@ -34,7 +34,7 @@ export function fromHighlightCreate(
 ): Action {
   const action = new Action();
 
-  highlights.forEach((highlight) => {
+  for (const highlight of highlights) {
     const { atoms, bonds, rgroupAttachmentPoints, color, outline } = highlight;
 
     action.addOp(
@@ -47,7 +47,7 @@ export function fromHighlightCreate(
         outline,
       ),
     );
-  });
+  }
   return action.perform(restruct);
 }
 

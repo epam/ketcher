@@ -146,9 +146,9 @@ class ReSimpleObject extends ReObject {
   getReferencePointDistance(p: Vec2): MinDistanceWithReferencePoint {
     const dist: Array<MinDistanceWithReferencePoint> = [];
     const refPoints = this.getReferencePoints();
-    refPoints.forEach((rp) => {
+    for (const rp of refPoints) {
       dist.push({ minDist: Math.abs(Vec2.dist(p, rp)), refPoint: rp });
-    });
+    }
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
       (acc, current) => (acc.minDist < current.minDist ? acc : current),
@@ -183,7 +183,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        for (const i of this.item.pos) refPoints.push(new Vec2(i.x, i.y, 0));
         break;
       }
 
@@ -223,7 +223,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        for (const i of this.item.pos) refPoints.push(new Vec2(i.x, i.y, 0));
         break;
       }
 
@@ -245,9 +245,9 @@ class ReSimpleObject extends ReObject {
   hoverPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = [];
 
-    this.item.pos.forEach((p, index) => {
+    for (const [index, p] of this.item.pos.entries()) {
       point[index] = Scale.modelToCanvas(p, render.options);
-    });
+    }
     const scaleFactor = render.options.microModeScale;
 
     const paths: Array<StyledPath> = [];
@@ -420,14 +420,14 @@ class ReSimpleObject extends ReObject {
         styles.selectionStyleSimpleObject,
       ),
     );
-    refPoints.forEach((rp) => {
+    for (const rp of refPoints) {
       const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       this.selectionPointsSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
           .attr({ fill: 'black' }),
       );
-    });
+    }
     restruct.addReObjectPath(
       LayerMap.selectionPoints,
       this.visel,

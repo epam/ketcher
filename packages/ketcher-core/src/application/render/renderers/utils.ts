@@ -17,8 +17,7 @@ export function getRenderedStructuresBbox(
   let bottom: number | undefined;
   const editor = provideEditorInstance();
 
-  (
-    drawingEntities ||
+  for (const monomer of drawingEntities ||
     [
       ...editor.drawingEntitiesManager.monomers.values(),
       ...editor.drawingEntitiesManager.atoms.values(),
@@ -29,14 +28,13 @@ export function getRenderedStructuresBbox(
           drawindEntity.monomerItem.props.isMicromoleculeFragment &&
           !isMonomerSgroupWithAttachmentPoints(drawindEntity)
         ),
-    )
-  ).forEach((monomer) => {
+    )) {
     if (
       !(monomer.baseRenderer instanceof BaseSequenceItemRenderer) &&
       !(monomer.baseRenderer instanceof BaseMonomerRenderer) &&
       !(monomer.baseRenderer instanceof AtomRenderer)
     ) {
-      return;
+      continue;
     }
 
     const monomerPosition = monomer.baseRenderer?.scaledPosition;
@@ -57,7 +55,7 @@ export function getRenderedStructuresBbox(
       bottom === undefined
         ? monomerPosition.y
         : Math.max(bottom, monomerPosition.y);
-  });
+  }
 
   if (includePolymerBonds) {
     editor.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {

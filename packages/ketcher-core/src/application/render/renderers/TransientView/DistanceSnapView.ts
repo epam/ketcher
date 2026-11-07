@@ -52,10 +52,10 @@ export class DistanceSnapView {
     const alignerPositionInPixels = Coordinates.modelToCanvas(alignerPosition);
 
     let previousMonomerPositionInPixels: Vec2 | undefined;
-    sortedMonomers.forEach((monomer, index, monomers) => {
+    for (const [index, monomer] of sortedMonomers.entries()) {
       const monomerPositionInPixels = Coordinates.modelToCanvas(monomer.center);
       const nextMonomer =
-        index < monomers.length - 1 ? monomers[index + 1] : null;
+        index < sortedMonomers.length - 1 ? sortedMonomers[index + 1] : null;
       const nextMonomerPositionInPixels = nextMonomer
         ? Coordinates.modelToCanvas(nextMonomer.center)
         : null;
@@ -151,6 +151,6 @@ export class DistanceSnapView {
       }
 
       previousMonomerPositionInPixels = monomerPositionInPixels;
-    });
+    }
   }
 }

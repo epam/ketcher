@@ -120,7 +120,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
       -1,
       -1,
     );
-    tailsPoints.forEach((tailPoint) => {
+    for (const tailPoint of tailsPoints) {
       ReMultitailArrow.drawSingleLineHover(
         builder,
         offset,
@@ -129,7 +129,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
         -1,
         -1,
       );
-    });
+    }
     ReMultitailArrow.drawSingleLineHover(
       builder,
       offset,

@@ -173,11 +173,11 @@ export class MacromoleculesConverter {
       const stereoFlag =
         drawingEntitiesManager.getStereoFlagForMonomer(monomer);
       if (stereoFlag) {
-        monomerStruct.frags.forEach((fragment) => {
+        for (const fragment of monomerStruct.frags.values()) {
           if (fragment?.enhancedStereoFlag) {
             fragment.stereoFlagPosition = new Vec2(stereoFlag.position);
           }
-        });
+        }
       }
 
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
@@ -218,7 +218,7 @@ export class MacromoleculesConverter {
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomerStruct.bonds;
 
-        monomerAtoms.forEach((oldAtom, oldAtomId) => {
+        for (const [oldAtomId, oldAtom] of monomerAtoms) {
           const { atom, atomId } = this.addMonomerAtomToStruct(
             oldAtom,
             monomer,
@@ -228,7 +228,7 @@ export class MacromoleculesConverter {
           atomIdsMap.set(oldAtomId, atomId);
           monomerToAtomIdMap.set(monomer, atomIdsMap);
           reStruct?.atoms.set(atomId, new ReAtom(atom));
-        });
+        }
 
         monomerMicromolecule.addAttachmentPoints(
           this.convertMonomerAttachmentPointsToSGroupAttachmentPoints(
@@ -238,13 +238,13 @@ export class MacromoleculesConverter {
           false,
         );
         struct.sGroupForest.insert(monomerMicromolecule);
-        monomerBonds.forEach((bond) => {
+        for (const bond of monomerBonds.values()) {
           const bondClone = bond.clone();
           bondClone.begin = atomIdsMap.get(bondClone.begin) as number;
           bondClone.end = atomIdsMap.get(bondClone.end) as number;
           const bondId = struct.bonds.add(bondClone);
           reStruct?.bonds.set(bondId, new ReBond(bondClone));
-        });
+        }
 
         struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
       }
@@ -488,7 +488,7 @@ export class MacromoleculesConverter {
       // Add new group of fragments with fragments related to one sgroup
       const lastFragmentGroupIndex = groupedFragments.push([fragmentId]) - 1;
       fragmentSgroups.forEach((sgroup) => {
-        sgroup.atoms.forEach((aid) => {
+        for (const aid of sgroup.atoms) {
           const atomFragmentId = struct.atoms.get(aid)?.fragment;
           if (
             isNumber(atomFragmentId) &&
@@ -496,7 +496,7 @@ export class MacromoleculesConverter {
           ) {
             groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
           }
-        });
+        }
       });
     });
 
@@ -509,13 +509,13 @@ export class MacromoleculesConverter {
   ) {
     const attachmentPointFragmentIds = new Set<number>();
 
-    sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+    for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       const fragmentId = struct.atoms.get(attachmentPoint.atomId)?.fragment;
 
       if (isNumber(fragmentId)) {
         attachmentPointFragmentIds.add(fragmentId);
       }
-    });
+    }
 
     return attachmentPointFragmentIds.size > 1;
   }
@@ -571,16 +571,16 @@ export class MacromoleculesConverter {
       }
 
       const partialSgroup = new SGroup(sgroup.type);
-      Object.keys(sgroup.data).forEach((field) => {
+      for (const field of Object.keys(sgroup.data)) {
         partialSgroup.data[field] = sgroup.data[field];
-      });
+      }
       partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : null;
 
       const partialSgroupId = fragmentStruct.sgroups.add(partialSgroup);
       partialSgroup.id = partialSgroupId;
-      mappedAtomIds.forEach((atomId) => {
+      for (const atomId of mappedAtomIds) {
         fragmentStruct.atomAddToSGroup(partialSgroupId, atomId);
-      });
+      }
       partialSgroup.addAttachmentPoints(attachmentPoints);
       fragmentStruct.sGroupForest.insert(partialSgroup);
     });
@@ -622,7 +622,7 @@ export class MacromoleculesConverter {
     const fragmentIdToAtomIdMap = new Map<number, Map<number, number>>();
     const globalAtomIdToMonomerMap = new Map<number, BaseMonomer>();
 
-    fragments.forEach((_fragment) => {
+    for (const _fragment of fragments) {
       const atomIdMap = new Map<number, number>();
       const fragmentStruct = struct.getFragmentOnly(_fragment, atomIdMap);
       this.clonePartialSgroupsWithAttachmentPoints(
@@ -640,10 +640,10 @@ export class MacromoleculesConverter {
       const localAtomIdToGlobalAtomId = invert(atomIdMapObject);
       const atomsMap = new Map<number, Atom>();
 
-      _fragment.forEach((fragmentId) => {
+      for (const fragmentId of _fragment) {
         fragmentIdToMonomer.set(fragmentId, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
-      });
+      }
 
       command.merge(monomerAddCommand);
 
@@ -726,7 +726,7 @@ export class MacromoleculesConverter {
         });
       }
       fragmentNumber++;
-    });
+    }
 
     const superatomAttachmentPointToBond = new Map<
       SGroupAttachmentPoint,

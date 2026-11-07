@@ -41,7 +41,7 @@ export class RxnArrowMove extends Base {
     if (id === undefined || d === undefined) return;
     const item = struct.rxnArrows.get(id);
     if (!item) return;
-    item.pos.forEach((p) => p.add_(d));
+    for (const p of item.pos) p.add_(d);
     const reItem = restruct.rxnArrows.get(id);
     if (!reItem) return;
     reItem.visel.translate(Scale.modelToCanvas(d, restruct.render.options));

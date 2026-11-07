@@ -277,11 +277,11 @@ export class DrawingEntitiesManager {
 
   get selectedEntitiesArr() {
     const selectedEntities: DrawingEntity[] = [];
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       if (drawingEntity.selected) {
         selectedEntities.push(drawingEntity);
       }
-    });
+    }
     return selectedEntities;
   }
 
@@ -309,13 +309,13 @@ export class DrawingEntitiesManager {
   public get externalConnectionsToSelection() {
     const connectedMonomers: MonomerConnectedToSelection[] = [];
 
-    this.selectedMonomers.forEach((monomer) => {
-      monomer.bonds.forEach((bond) => {
+    for (const monomer of this.selectedMonomers) {
+      for (const bond of monomer.bonds) {
         if (
           !(bond instanceof PolymerBond || bond instanceof HydrogenBond) ||
           !bond.secondMonomer
         ) {
-          return;
+          continue;
         }
 
         if (bond.firstMonomer === monomer && !bond.secondMonomer.selected) {
@@ -334,8 +334,8 @@ export class DrawingEntitiesManager {
             bond,
           });
         }
-      });
-    });
+      }
+    }
 
     return connectedMonomers;
   }
@@ -381,19 +381,19 @@ export class DrawingEntitiesManager {
 
   public deleteSelectedEntities() {
     const mergedCommand = new Command();
-    this.selectedEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.selectedEntities) {
       const command = this.deleteDrawingEntity(drawingEntity);
       mergedCommand.merge(command);
-    });
+    }
     return mergedCommand;
   }
 
   public deleteAllEntities() {
     const mergedCommand = new Command();
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
-    });
+    }
     this.sgroups.forEach((sgroup) => {
       mergedCommand.merge(this.deleteSGroup(sgroup));
     });
@@ -530,14 +530,14 @@ export class DrawingEntitiesManager {
 
   public selectDrawingEntities(drawingEntities: DrawingEntity[]) {
     const command = this.unselectAllDrawingEntities();
-    drawingEntities.forEach((drawingEntity: DrawingEntity) => {
+    for (const drawingEntity of drawingEntities) {
       drawingEntity.turnOnSelection();
       const operation = new DrawingEntitySelectOperation(
         drawingEntity,
         this.selectDrawingEntitiesModelChange.bind(this, drawingEntity),
       );
       command.addOperation(operation);
-    });
+    }
 
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
@@ -557,11 +557,11 @@ export class DrawingEntitiesManager {
   public unselectAllDrawingEntities() {
     const command = new Command();
 
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       if (drawingEntity.selected) {
         command.merge(this.unselectDrawingEntity(drawingEntity));
       }
-    });
+    }
 
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
@@ -581,13 +581,13 @@ export class DrawingEntitiesManager {
   public selectAllDrawingEntities() {
     const command = new Command();
 
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       if (!drawingEntity.selected) {
         drawingEntity.turnOnSelection();
         const operation = new DrawingEntitySelectOperation(drawingEntity);
         command.addOperation(operation);
       }
-    });
+    }
 
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
@@ -601,14 +601,14 @@ export class DrawingEntitiesManager {
 
   public addDrawingEntitiesToSelection(drawingEntities: DrawingEntity[]) {
     const command = new Command();
-    drawingEntities.forEach((drawingEntity: DrawingEntity) => {
+    for (const drawingEntity of drawingEntities) {
       if (drawingEntity.selected) {
         drawingEntity.turnOffSelection();
       } else {
         drawingEntity.turnOnSelection();
       }
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
-    });
+    }
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
     return command;
   }
@@ -660,20 +660,20 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    [
+    for (const drawingEntity of [
       ...this.atoms.values(),
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
       ...this.stereoFlags.values(),
-    ].forEach((drawingEntity) => {
+    ]) {
       if (
         drawingEntity instanceof BaseMonomer &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       if (drawingEntity.selected) {
@@ -685,7 +685,7 @@ export class DrawingEntitiesManager {
           ),
         );
       }
-    });
+    }
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -745,19 +745,19 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    [
+    for (const drawingEntity of [
       ...this.atoms.values(),
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
-    ].forEach((drawingEntity) => {
+    ]) {
       if (
         drawingEntity instanceof BaseMonomer &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       if (drawingEntity.selected) {
@@ -781,7 +781,7 @@ export class DrawingEntitiesManager {
           );
         }
       }
-    });
+    }
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -837,19 +837,19 @@ export class DrawingEntitiesManager {
       return command;
     }
 
-    [
+    for (const drawingEntity of [
       ...this.atoms.values(),
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
-    ].forEach((drawingEntity) => {
+    ]) {
       if (
         drawingEntity instanceof BaseMonomer &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       if (drawingEntity.selected) {
@@ -876,7 +876,7 @@ export class DrawingEntitiesManager {
           ),
         );
       }
-    });
+    }
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -1060,13 +1060,13 @@ export class DrawingEntitiesManager {
     isShiftKeyPressed = false,
   ) {
     const command = new Command();
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       if (
         drawingEntity instanceof Chem &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       const isPreviousSelected = previousSelectedEntities.find(
@@ -1094,7 +1094,7 @@ export class DrawingEntitiesManager {
 
         command.merge(selectionCommand);
       }
-    });
+    }
 
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
@@ -1108,13 +1108,13 @@ export class DrawingEntitiesManager {
     isShiftKeyPressed = false,
   ) {
     const command = new Command();
-    this.allEntities.forEach(([, drawingEntity]) => {
+    for (const [, drawingEntity] of this.allEntities) {
       if (
         drawingEntity instanceof Chem &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       const isPreviousSelected = previousSelectedEntities.find(
@@ -1141,7 +1141,7 @@ export class DrawingEntitiesManager {
 
         command.merge(selectionCommand);
       }
-    });
+    }
 
     // Sync stereo flag selection with monomer selection
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
@@ -1708,7 +1708,7 @@ export class DrawingEntitiesManager {
       (monomer) => monomer !== undefined,
     ) as BaseMonomer[];
 
-    monomers.forEach((monomer, monomerIndex) => {
+    for (const [monomerIndex, monomer] of monomers.entries()) {
       const monomerAddOperation =
         monomer instanceof AmbiguousMonomer
           ? new MonomerAddOperation(
@@ -1772,7 +1772,7 @@ export class DrawingEntitiesManager {
         );
         command.addOperation(operation);
       }
-    });
+    }
 
     return command;
   };
@@ -1845,7 +1845,10 @@ export class DrawingEntitiesManager {
 
     const monomers: BaseMonomer[] = [];
 
-    monomersToAdd.forEach(([monomerItem, monomerPosition], monomerIndex) => {
+    for (const [
+      monomerIndex,
+      [monomerItem, monomerPosition],
+    ] of monomersToAdd.entries()) {
       const monomerAddOperation = new MonomerAddOperation(
         this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
         this.deleteMonomerChangeModel.bind(this),
@@ -1895,7 +1898,7 @@ export class DrawingEntitiesManager {
         );
         command.addOperation(operation);
       }
-    });
+    }
 
     return { command, monomers };
   }
@@ -2009,27 +2012,27 @@ export class DrawingEntitiesManager {
     );
     sortedGroupedMonomers.sort((a, b) => a[0] - b[0]);
 
-    sortedGroupedMonomers.forEach(([y, groupedByY], index) => {
+    for (const [index, [y, groupedByY]] of sortedGroupedMonomers.entries()) {
       groupedByY.sort((a, b) => Number(a[0]) - Number(b[0]));
       sortedGroupedMonomers[index] = [y, groupedByY];
-    });
+    }
 
     const monomerXToIndexInMatrix: Record<number, number> = {};
 
     const allXPositions = new Set<number>();
-    sortedGroupedMonomers.forEach(([, groupedByX]) => {
-      groupedByX.forEach(([x]) => {
+    for (const [, groupedByX] of sortedGroupedMonomers) {
+      for (const [x] of groupedByX) {
         allXPositions.add(x);
-      });
-    });
+      }
+    }
 
     const sortedXPositions = [...allXPositions].sort((a, b) => a - b);
-    sortedXPositions.forEach((x, index) => {
+    for (const [index, x] of sortedXPositions.entries()) {
       monomerXToIndexInMatrix[x] = index;
-    });
+    }
 
-    sortedGroupedMonomers.forEach(([, groupedByX], indexY) => {
-      groupedByX.forEach(([x, monomer]) => {
+    for (const [indexY, [, groupedByX]] of sortedGroupedMonomers.entries()) {
+      for (const [x, monomer] of groupedByX) {
         snakeLayoutMatrix.set(
           Number(indexY),
           Number(monomerXToIndexInMatrix[x]),
@@ -2041,8 +2044,8 @@ export class DrawingEntitiesManager {
             monomer,
           ),
         );
-      });
-    });
+      }
+    }
 
     return snakeLayoutMatrix;
   }
@@ -2203,7 +2206,7 @@ export class DrawingEntitiesManager {
             0,
           );
 
-          row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
+          for (const twoStrandedSnakeLayoutNode of row.snakeLayoutModelItems) {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
               const moleculeBbox = getStructureBbox(
                 twoStrandedSnakeLayoutNode.molecule,
@@ -2218,11 +2221,11 @@ export class DrawingEntitiesManager {
                 ),
               );
 
-              twoStrandedSnakeLayoutNode.molecule.forEach((atom) => {
+              for (const atom of twoStrandedSnakeLayoutNode.molecule) {
                 command.merge(
                   this.createDrawingEntityMovingCommand(atom, offset),
                 );
-              });
+              }
             } else if (
               isTwoStrandedSnakeLayoutNode(twoStrandedSnakeLayoutNode)
             ) {
@@ -2295,7 +2298,7 @@ export class DrawingEntitiesManager {
               lastPosition.x + SnakeLayoutCellWidth,
               lastPosition.y,
             );
-          });
+          }
 
           newSenseNodePosition = new Vec2(
             MONOMER_START_X_POSITION,
@@ -2351,11 +2354,11 @@ export class DrawingEntitiesManager {
   public redrawBonds() {
     const command = new Command();
 
-    [
+    for (const polymerBond of [
       ...this.polymerBonds.values(),
       ...this.monomerToAtomBonds.values(),
       ...this.bonds.values(),
-    ].forEach((polymerBond) => {
+    ]) {
       command.merge(
         this.createDrawingEntityRedrawCommand(
           this.redrawBondsModelChange.bind(this, polymerBond),
@@ -2367,7 +2370,7 @@ export class DrawingEntitiesManager {
           ),
         ),
       );
-    });
+    }
 
     return command;
   }
@@ -2619,7 +2622,7 @@ export class DrawingEntitiesManager {
   public filterSelection() {
     const filteredDrawingEntitiesManager = new DrawingEntitiesManager();
 
-    this.selectedEntities.forEach(([, entity]) => {
+    for (const [, entity] of this.selectedEntities) {
       if (entity instanceof BaseMonomer) {
         filteredDrawingEntitiesManager.addMonomerChangeModel(
           entity.monomerItem,
@@ -2702,7 +2705,7 @@ export class DrawingEntitiesManager {
           entity,
         );
       }
-    });
+    }
 
     return filteredDrawingEntitiesManager;
   }
@@ -2714,9 +2717,9 @@ export class DrawingEntitiesManager {
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
 
-    this.allEntities.forEach(([, entity]) => {
+    for (const [, entity] of this.allEntities) {
       this.moveDrawingEntityModelChange(entity, offset);
-    });
+    }
   }
 
   public getCurrentCenterPointOfCanvas() {
@@ -2895,7 +2898,7 @@ export class DrawingEntitiesManager {
       ),
     );
 
-    outstandingBonds.forEach((polymerBond) => {
+    for (const polymerBond of outstandingBonds) {
       const previousIsOverlappedByMonomer = polymerBond.isOverlappedByMonomer;
       // Check overlap against ALL monomers, not just the moved ones
       polymerBond.isOverlappedByMonomer =
@@ -2904,7 +2907,7 @@ export class DrawingEntitiesManager {
         editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
         editor.renderersContainer.addPolymerBond(polymerBond, false);
       }
-    });
+    }
   }
 
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
@@ -2922,9 +2925,8 @@ export class DrawingEntitiesManager {
             true,
             selectedDrawingEntities,
           );
-        res.drawingEntities.forEach((entity) =>
-          command.addOperation(new DrawingEntitySelectOperation(entity)),
-        );
+        for (const entity of res.drawingEntities)
+          command.addOperation(new DrawingEntitySelectOperation(entity));
         return [...selectedDrawingEntities, ...res.drawingEntities];
       },
       [],
@@ -3013,14 +3015,14 @@ export class DrawingEntitiesManager {
         const nucleotide = Nucleotide.fromSugar(sugar);
         drawingEntities = nucleotide.monomers;
       }
-      drawingEntities.forEach((entity) => {
+      for (const entity of drawingEntities) {
         if (!(entity instanceof Sugar)) {
           entity.turnOnSelection();
           command.addOperation(new DrawingEntitySelectOperation(entity));
         }
-      });
+      }
     }
-    drawingEntities.forEach((entity) => {
+    for (const entity of drawingEntities) {
       const monomer = entity as BaseMonomer;
       if (shouldSelectConnectedBonds && monomer.hasBonds) {
         monomer.forEachBond((polymerBond) => {
@@ -3036,7 +3038,7 @@ export class DrawingEntitiesManager {
           }
         });
       }
-    });
+    }
     return { command, drawingEntities };
   }
 
@@ -3311,14 +3313,14 @@ export class DrawingEntitiesManager {
     );
 
     if (shouldDeleteConnectedEntities) {
-      atom.bonds.forEach((bond) => {
+      for (const bond of atom.bonds) {
         if (bond.selected) {
-          return;
+          continue;
         }
         if (bond instanceof Bond) {
           command.merge(this.deleteBond(bond));
         }
-      });
+      }
 
       this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
         if (monomerToAtomBond.atom === atom && !monomerToAtomBond.selected) {
@@ -3394,9 +3396,9 @@ export class DrawingEntitiesManager {
 
     const firstAtom = bond.firstAtom;
     const secondAtom = bond.secondAtom;
-    [firstAtom, secondAtom].forEach((atom) => {
+    for (const atom of [firstAtom, secondAtom]) {
       atom.deleteBond(bond.id);
-    });
+    }
 
     return bond;
   }
@@ -3422,14 +3424,14 @@ export class DrawingEntitiesManager {
 
     const firstAtom = bond.firstAtom;
     const secondAtom = bond.secondAtom;
-    [firstAtom, secondAtom].forEach((atom) => {
+    for (const atom of [firstAtom, secondAtom]) {
       atom.deleteBond(bond.id);
 
       if (
         !shouldDeleteDisconnectedAtoms ||
         !atom.bonds.every((atomBond) => atomBond instanceof MonomerToAtomBond)
       ) {
-        return;
+        continue;
       }
 
       this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
@@ -3438,7 +3440,7 @@ export class DrawingEntitiesManager {
         }
         command.merge(this.deleteAtom(atom, true));
       });
-    });
+    }
     return command;
   }
 
@@ -3672,9 +3674,9 @@ export class DrawingEntitiesManager {
       this.antisenseMonomerToSenseChain = new Map();
     }
 
-    chainsCollection.chains.forEach((chain) => {
+    for (const chain of chainsCollection.chains) {
       if (handledChains.has(chain)) {
-        return;
+        continue;
       }
 
       if (!shouldRecalculateOldAntisense) {
@@ -3686,19 +3688,19 @@ export class DrawingEntitiesManager {
         );
 
         if (isSenseChain) {
-          chain.monomers.forEach((monomer) => {
+          for (const monomer of chain.monomers) {
             command.merge(this.markMonomerAsSense(monomer));
-          });
+          }
 
-          return;
+          continue;
         }
 
         if (isAntisenseChain) {
-          chain.monomers.forEach((monomer) => {
+          for (const monomer of chain.monomers) {
             command.merge(this.markMonomerAsAntisense(monomer));
-          });
+          }
 
-          return;
+          continue;
         }
       }
 
@@ -3708,9 +3710,9 @@ export class DrawingEntitiesManager {
 
       const chainToMonomers = new Map<GrouppedChain, BaseMonomer[]>();
 
-      chainsToCheck.forEach((chainToCheck) => {
+      for (const chainToCheck of chainsToCheck) {
         chainToMonomers.set(chainToCheck, chainToCheck.chain.monomers);
-      });
+      }
 
       const largestChainsMonomersAmount = Math.max(
         ...[...chainToMonomers.values()].map((monomers) =>
@@ -3732,7 +3734,7 @@ export class DrawingEntitiesManager {
           number
         >();
 
-        largestChains.forEach(([chainToCheck]) => {
+        for (const [chainToCheck] of largestChains) {
           const complimentayChains =
             chainsCollection.getComplimentaryChainsWithData(chainToCheck.chain);
 
@@ -3740,9 +3742,9 @@ export class DrawingEntitiesManager {
             chainToCheck,
             complimentayChains.length,
           );
-        });
+        }
 
-        largestChains.forEach(([chainToCheck, monomers]) => {
+        for (const [chainToCheck, monomers] of largestChains) {
           const chainBbox = getStructureBbox(monomers);
 
           chainsToCenters.set(
@@ -3752,7 +3754,7 @@ export class DrawingEntitiesManager {
               chainBbox.top + chainBbox.height / 2,
             ),
           );
-        });
+        }
 
         const chainsToCenterArray = [...chainsToCenters.entries()];
         const chainWithLowestCenter = chainsToCenterArray.reduce(
@@ -3788,20 +3790,20 @@ export class DrawingEntitiesManager {
 
       const { group: senseGroup } = senseChain;
 
-      chainsToCheck.forEach(({ chain, group }) => {
+      for (const { chain, group } of chainsToCheck) {
         handledChains.add(chain);
         if (group === senseGroup) {
-          chain.monomers.forEach((monomer) => {
+          for (const monomer of chain.monomers) {
             command.merge(this.markMonomerAsSense(monomer));
-          });
+          }
         } else {
-          chain.monomers.forEach((monomer) => {
+          for (const monomer of chain.monomers) {
             command.merge(this.markMonomerAsAntisense(monomer));
             this.antisenseMonomerToSenseChain.set(monomer, senseChain.chain);
-          });
+          }
         }
-      });
-    });
+      }
+    }
 
     return command;
   }
@@ -3911,11 +3913,11 @@ export class DrawingEntitiesManager {
     );
     const selectedPiecesInChains: SubChainNode[][] = [];
 
-    chainsForAntisenseCreation.forEach((chain) => {
+    for (const chain of chainsForAntisenseCreation) {
       let selectedPiece: SubChainNode[] = [];
       let hasRnaInPiece = false;
 
-      chain.nodes.forEach((node) => {
+      for (const node of chain.nodes) {
         const hasSelectedMonomerInNode = node.monomers.some(
           (monomer) => monomer.selected,
         );
@@ -3937,21 +3939,18 @@ export class DrawingEntitiesManager {
         ) {
           hasRnaInPiece = true;
         }
-      });
+      }
 
       if (hasRnaInPiece) {
         selectedPiecesInChains.push(selectedPiece);
       }
-
-      selectedPiece = [];
-      hasRnaInPiece = false;
-    });
+    }
 
     let lastAddedNode;
     let lastAddedMonomer: BaseMonomer | undefined;
 
-    selectedPiecesInChains.forEach((selectedPiece) => {
-      [...selectedPiece].reverse().forEach((nodeToHandle) => {
+    for (const selectedPiece of selectedPiecesInChains) {
+      for (const nodeToHandle of [...selectedPiece].reverse()) {
         const senseNode =
           nodeToHandle instanceof Nucleotide &&
           nodeToHandle.phosphate.selected &&
@@ -3963,7 +3962,7 @@ export class DrawingEntitiesManager {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;
 
-          return;
+          continue;
         }
 
         if (
@@ -3981,7 +3980,7 @@ export class DrawingEntitiesManager {
             lastAddedNode = undefined;
             lastAddedMonomer = undefined;
 
-            return;
+            continue;
           }
 
           const { modelChanges: addNucleotideCommand, node: addedNode } =
@@ -4008,7 +4007,7 @@ export class DrawingEntitiesManager {
               lastAddedNode = undefined;
               lastAddedMonomer = undefined;
 
-              return;
+              continue;
             }
 
             const phosphateSeedPosition =
@@ -4066,12 +4065,12 @@ export class DrawingEntitiesManager {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          [...senseNode.monomers].reverse().forEach((monomer) => {
+          for (const monomer of [...senseNode.monomers].reverse()) {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;
 
-              return;
+              continue;
             }
 
             if (!monomer.hasAttachmentPoint(AttachmentPointName.R2)) {
@@ -4079,7 +4078,7 @@ export class DrawingEntitiesManager {
                 `Monomer ${monomer.label} does not have attachment point R2. Antisense was not created for this monomer.`,
               );
 
-              return;
+              continue;
             }
 
             if (
@@ -4090,7 +4089,7 @@ export class DrawingEntitiesManager {
                 `Monomer ${lastAddedMonomer.label} does not have attachment point R1. Antisense was not created for this monomer.`,
               );
 
-              return;
+              continue;
             }
 
             const isModifiedPhosphate =
@@ -4137,12 +4136,12 @@ export class DrawingEntitiesManager {
 
             lastAddedNode = senseNode;
             lastAddedMonomer = addedMonomer;
-          });
+          }
         }
-      });
+      }
       lastAddedNode = undefined;
       lastAddedMonomer = undefined;
-    });
+    }
 
     command.merge(this.applySnakeLayout(true, true));
 
@@ -4232,10 +4231,10 @@ export class DrawingEntitiesManager {
     polymerBonds?: Array<PolymerBond | HydrogenBond>,
   ) {
     const bondsToCheck = polymerBonds ?? this.polymerBondsArray;
-    bondsToCheck.forEach((polymerBond) => {
+    for (const polymerBond of bondsToCheck) {
       polymerBond.isOverlappedByMonomer =
         this.checkBondForOverlapsByMonomers(polymerBond);
-    });
+    }
   }
 
   private deleteRxnArrowModelChange(rxnArrow: RxnArrow) {
@@ -4518,39 +4517,39 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const zeroOffset = new Vec2(0, 0);
 
-    [
+    for (const drawingEntity of [
       ...this.atoms.values(),
       ...this.monomers.values(),
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
-    ].forEach((drawingEntity) => {
+    ]) {
       if (
         drawingEntity instanceof BaseMonomer &&
         drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
-        return;
+        continue;
       }
 
       if (!drawingEntity.selected) {
-        return;
+        continue;
       }
 
       const initialPosition = initialPositions.get(drawingEntity.id);
       if (!initialPosition) {
-        return;
+        continue;
       }
 
       const delta = drawingEntity.position.sub(initialPosition);
       if (delta.length() === 0) {
-        return;
+        continue;
       }
 
       command.merge(
         this.createDrawingEntityMovingCommand(drawingEntity, zeroOffset, delta),
       );
-    });
+    }
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (

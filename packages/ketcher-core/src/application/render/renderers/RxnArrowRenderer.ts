@@ -253,7 +253,7 @@ export class RxnArrowRenderer extends BaseRenderer {
 
     const paths = this.generateArrowPath();
 
-    paths.forEach(({ d, attrs }) => {
+    for (const { d, attrs } of paths) {
       const path = this.rootElement
         ?.append('path')
         .attr('d', d)
@@ -269,10 +269,10 @@ export class RxnArrowRenderer extends BaseRenderer {
         path?.attr('data-arrow-id', String(this.arrow.arrowId));
       }
 
-      Object.entries(attrs).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(attrs)) {
         path?.attr(key, value);
-      });
-    });
+      }
+    }
 
     this.appendHoverAreaElement();
     this.drawSelection();

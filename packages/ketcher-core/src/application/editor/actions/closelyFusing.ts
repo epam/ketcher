@@ -35,12 +35,12 @@ export function fromItemsFuse(restruct, items) {
   );
 
   // merge single atoms
-  items.atoms.forEach((dst, src) => {
-    if (usedAtoms.has(dst) || usedAtoms.has(src)) return;
+  for (const [src, dst] of items.atoms) {
+    if (usedAtoms.has(dst) || usedAtoms.has(src)) continue;
 
     action = fromAtomMerge(restruct, src, dst).mergeWith(action);
     usedAtoms.add(dst).add(src);
-  });
+  }
 
   // merge bonds
   action = fromBondsMerge(restruct, items.bonds).mergeWith(action);
@@ -111,12 +111,12 @@ function closestToMerge(struct, closestMap) {
     ),
   };
 
-  closestMap.bonds.forEach((dstId, srcId) => {
+  for (const [srcId, dstId] of closestMap.bonds) {
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) {
       mergeMap.bonds.delete(srcId);
-      return;
+      continue;
     }
 
     if (
@@ -128,7 +128,7 @@ function closestToMerge(struct, closestMap) {
         mergeMap.atoms.delete(bond.begin);
         mergeMap.atoms.delete(bond.end);
       }
-      return;
+      continue;
     }
 
     const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
@@ -138,7 +138,7 @@ function closestToMerge(struct, closestMap) {
     } else {
       mergeMap.bonds.delete(srcId);
     }
-  });
+  }
 
   if (
     mergeMap.atoms.size === 0 &&
@@ -168,8 +168,9 @@ function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {
     const relevantConnectedComponent = [
       ...restruct.connectedComponents.values(),
     ].find((component) => component.has(initialAtom));
-    if (relevantConnectedComponent)
-      relevantConnectedComponent.forEach((id) => connectedAtoms.add(id));
+    if (relevantConnectedComponent) {
+      for (const id of relevantConnectedComponent) connectedAtoms.add(id);
+    }
   }
 
   return connectedAtoms;
@@ -182,12 +183,12 @@ function valenceCheck(restruct, atomIds) {
   const usedAtoms = new Set();
 
   // merge single atoms
-  atomIds.forEach((atomId) => {
-    if (usedAtoms.has(atomId)) return;
+  for (const atomId of atomIds) {
+    if (usedAtoms.has(atomId)) continue;
 
     action = checkAtomValence(restruct, atomId).mergeWith(action);
     usedAtoms.add(atomId);
-  });
+  }
 
   return action;
 }

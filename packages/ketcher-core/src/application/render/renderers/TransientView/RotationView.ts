@@ -384,7 +384,7 @@ export class RotationView extends TransientView {
             ? STYLE.DEGREE_LINE_LENGTH
             : STYLE.DEGREE_LINE_LENGTH / 2;
 
-        predefinedDegrees.forEach((degree) => {
+        for (const degree of predefinedDegrees) {
           const diff = getDegreeDifference(degree, currentDegrees);
           const angle = startAngle + toRadians(degree);
           const lineStartX = center.x + radius * Math.cos(angle);
@@ -400,7 +400,7 @@ export class RotationView extends TransientView {
             .attr('style', 'pointer-events: none');
 
           if (radius < STYLE.MIN_RADIUS_FOR_TEXT) {
-            return;
+            continue;
           }
 
           const textRadius = radius + STYLE.DEGREE_TEXT_MARGIN + tickLength;
@@ -424,7 +424,7 @@ export class RotationView extends TransientView {
             .attr('font-size', `${STYLE.DEGREE_FONT_SIZE}px`)
             .attr('fill', textFill)
             .text(`${degree}°`);
-        });
+        }
 
         // Draw rotation arc
         transientLayer

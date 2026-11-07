@@ -23,9 +23,9 @@ import { Action } from './action';
 export function fromRGroupAttrs(restruct, id, attrs: RGroupAttributes) {
   const action = new Action();
 
-  (Object.keys(attrs) as Array<RGroupAttributeKey>).forEach((key) => {
+  for (const key of Object.keys(attrs) as Array<RGroupAttributeKey>) {
     action.addOp(new RGroupAttr(id, key, attrs[key]));
-  });
+  }
 
   return action.perform(restruct);
 }

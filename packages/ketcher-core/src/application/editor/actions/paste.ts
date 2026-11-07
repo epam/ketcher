@@ -197,7 +197,7 @@ export function fromPaste(
         ),
       );
     }
-    frag.stereoAtoms.forEach((aid) => {
+    for (const aid of frag.stereoAtoms) {
       const newFragmentId = fridMap.get(frid);
       const newStereoAtomId = aidMap.get(aid);
 
@@ -216,7 +216,7 @@ export function fromPaste(
           restruct,
         ),
       );
-    });
+    }
   });
 
   pstruct.bonds.forEach((bond) => {
@@ -270,15 +270,15 @@ export function fromPaste(
       sg,
     );
     sgAction.operations.reverse();
-    sgAction.operations.forEach((oper) => {
+    for (const oper of sgAction.operations) {
       action.addOp(oper);
-    });
+    }
   });
 
-  pasteItems.atoms.forEach((aid) => {
+  for (const aid of pasteItems.atoms) {
     action.addOp(new CalcImplicitH([aid]).perform(restruct));
     new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
-  });
+  }
 
   pstruct.rxnArrows.forEach((rxnArrow) => {
     const operation = new RxnArrowAdd(

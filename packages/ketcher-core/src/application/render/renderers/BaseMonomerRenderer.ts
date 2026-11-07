@@ -182,9 +182,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
-      this.attachmentPoints.forEach((point) => {
+      for (const point of this.attachmentPoints) {
         point.updateAttachmentPointStyleForHover();
-      });
+      }
     } else {
       this.drawAttachmentPoints();
     }
@@ -235,7 +235,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     // draw used attachment points (hidden when a drag target is active)
     if (!hasDragTarget) {
-      this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+      for (const item of this.monomer.usedAttachmentPointsNamesList) {
         const attachmentPoint = appendFnToUse(item);
         const angle: number = attachmentPoint.getAngle();
 
@@ -249,13 +249,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           );
         });
         this.freeSectorsList = checkFor0and360(newList);
-      });
+      }
     }
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
 
     // draw free attachment points
-    this.monomer.unUsedAttachmentPointsNamesList.forEach((item) => {
+    for (const item of this.monomer.unUsedAttachmentPointsNamesList) {
       const properAngleForFreeAttachmentPoint =
         attachmentPointNumberToAngle[item];
 
@@ -276,13 +276,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         // if this sector is already taken - add name to unrendered list
         unrenderedAtPoints.push(item);
       }
-    });
+    }
 
-    unrenderedAtPoints.forEach((item) => {
+    for (const item of unrenderedAtPoints) {
       const customAngle = this.freeSectorsList.shift();
       const attachmentPoint = appendFnToUse(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
-    });
+    }
   }
 
   protected prepareAttachmentPointsParams(
@@ -340,9 +340,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public removeAttachmentPoints() {
-    this.attachmentPoints.forEach((item) => {
+    for (const item of this.attachmentPoints) {
       item.removeAttachmentPoint();
-    });
+    }
     this.attachmentPoints = [];
     this.freeSectorsList = sectorsList;
   }
@@ -364,9 +364,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   protected raiseAttachmentPoints() {
-    this.attachmentPoints.forEach((attachmentPoint) => {
+    for (const attachmentPoint of this.attachmentPoints) {
       attachmentPoint.raise();
-    });
+    }
   }
 
   protected appendRootElement(
@@ -414,12 +414,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         }) scale(${this.scale ?? 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
-    this.monomer.listOfAttachmentPoints.forEach((attachmentPoint) => {
+    for (const attachmentPoint of this.monomer.listOfAttachmentPoints) {
       rootElement.attr(
         `data-${attachmentPoint}`,
         !!this.monomer.attachmentPointsToBonds[attachmentPoint],
       );
-    });
+    }
     return rootElement;
   }
 

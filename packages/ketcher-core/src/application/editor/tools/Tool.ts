@@ -154,7 +154,7 @@ export type PeptideToolOptions = MonomerItemType;
 
 export type ToolConstructorInterface = new (
   editor: CoreEditor,
-  ...args: unknown[]
+  ...arguments_: unknown[]
 ) => Tool | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

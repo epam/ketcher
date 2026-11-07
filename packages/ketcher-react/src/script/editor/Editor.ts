@@ -17,7 +17,7 @@
 import {
   type Editor as KetcherEditor,
   type EditorSubscriber,
-  type FloatingToolsParams,
+  type FloatingToolsParameters,
   type IKetAttachmentPoint,
   type IKetTemplateConnection,
   type IKetMonomerTemplate,
@@ -44,7 +44,7 @@ import {
   Coordinates,
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
-  fromAtomsAttrs,
+  fromAtomsAttributes,
   fromBondAddition,
   fromDescriptorsAlign,
   fromMultipleMove,
@@ -315,7 +315,7 @@ class Editor implements KetcherEditor {
     showInfo: PipelineSubscription;
     apiSettings: PipelineSubscription;
     cursor: Subscription<EditorCursor>;
-    updateFloatingTools: Subscription<FloatingToolsParams>;
+    updateFloatingTools: Subscription<FloatingToolsParameters>;
     monomerWizardStateChange: Subscription<boolean>;
   };
 
@@ -3116,7 +3116,7 @@ class Editor implements KetcherEditor {
     }
 
     // Change the atom label using fromAtomsAttrs
-    const action = fromAtomsAttrs(
+    const action = fromAtomsAttributes(
       this.render.ctab,
       leavingAtomId,
       { label: newLeavingAtomLabel },

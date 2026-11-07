@@ -27,7 +27,7 @@ type Data<K extends RGroupAttributeKey = RGroupAttributeKey> = {
   value?: RGroup[K];
 };
 
-export class RGroupAttr<
+export class RGroupAttribute<
   K extends RGroupAttributeKey = RGroupAttributeKey,
 > extends BaseOperation {
   data: Data<K> | null;
@@ -68,7 +68,7 @@ export class RGroupAttr<
   }
 
   invert() {
-    const inverted = new RGroupAttr<K>();
+    const inverted = new RGroupAttribute<K>();
     inverted.data = this.data2;
     inverted.data2 = this.data;
     return inverted;

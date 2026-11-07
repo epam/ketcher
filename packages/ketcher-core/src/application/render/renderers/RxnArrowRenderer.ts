@@ -279,11 +279,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
 
     this.hoverElement = this.rootElement
       ?.insert('path', ':first-child')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
@@ -291,11 +291,11 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    const selectionPathDAttr = this.getSelectionContour();
+    const selectionPathDAttribute = this.getSelectionContour();
 
     this.hoverAreaElement = this.rootElement
       ?.append('path')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', 'none')
       .attr('stroke', 'none')
       .attr('pointer-events', 'all')
@@ -322,13 +322,13 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public appendSelection(): void {
-    const selectionPathDAttr = this.getSelectionContour(
+    const selectionPathDAttribute = this.getSelectionContour(
       this.scaledPosition.startPosition,
     );
 
     this.selectionElement = this.canvas
       ?.insert('path', ':first-child')
-      .attr('d', selectionPathDAttr)
+      .attr('d', selectionPathDAttribute)
       .attr('fill', SELECTION_COLOR)
       .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');

@@ -19,14 +19,14 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
-export type SGroupAttrData = {
+export type SGroupAttributeData = {
   sgid?: number;
   attr?: string;
   value?: unknown;
 };
 
-export class SGroupAttr extends BaseOperation {
-  data: SGroupAttrData;
+export class SGroupAttribute extends BaseOperation {
+  data: SGroupAttributeData;
 
   constructor(sgroupId?: number, attribute?: string, value?: unknown) {
     super(OperationType.S_GROUP_ATTR, OperationPriority.S_GROUP_ATTR);
@@ -67,7 +67,7 @@ export class SGroupAttr extends BaseOperation {
   }
 
   invert() {
-    const inverted = new SGroupAttr();
+    const inverted = new SGroupAttribute();
     inverted.data = this.data;
     return inverted;
   }

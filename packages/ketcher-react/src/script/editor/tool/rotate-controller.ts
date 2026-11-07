@@ -4,7 +4,7 @@ import {
   CoordinateTransformation,
   Scale,
   Vec2,
-  vectorUtils,
+  vectorUtilities,
 } from 'ketcher-core';
 import { throttle } from 'lodash';
 import type { RaphaelElement, RaphaelSet } from 'raphael';
@@ -861,7 +861,8 @@ class RotateController implements RotateControllerContract {
     this.snapAngleIndicator = this.paper.set();
     const LINE_LENGTH = 30;
     const TEXT_FONT_SIZE = 12;
-    const relativeSnapAngleInDegrees = vectorUtils.degrees(relativeSnapAngle);
+    const relativeSnapAngleInDegrees =
+      vectorUtilities.degrees(relativeSnapAngle);
 
     const drawText = (textPosition: Vec2) =>
       this.paper

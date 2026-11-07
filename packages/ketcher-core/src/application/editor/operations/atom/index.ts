@@ -21,5 +21,5 @@ AtomAdd.InverseConstructor = AtomDelete;
 AtomDelete.InverseConstructor = AtomAdd;
 
 export { AtomAdd, AtomDelete };
-export * from './AtomAttr';
+export * from './AtomAttribute';
 export * from './AtomMove';

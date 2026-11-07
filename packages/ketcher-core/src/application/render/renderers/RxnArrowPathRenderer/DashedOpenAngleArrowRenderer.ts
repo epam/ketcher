@@ -18,14 +18,14 @@ export class DashedOpenAngleArrowRenderer {
     const pathParts: string[] = [];
 
     // Dashed arrow
-    for (let i = 0; i < arrowLength / dashInterval; i++) {
-      if (i % 2) {
+    for (let index = 0; index < arrowLength / dashInterval; index++) {
+      if (index % 2) {
         pathParts.push(
-          `L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+          `L${toFixed(start.x + index * dashInterval)},${toFixed(start.y)}`,
         );
       } else {
         pathParts.push(
-          `M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`,
+          `M${toFixed(start.x + index * dashInterval)},${toFixed(start.y)}`,
         );
       }
     }

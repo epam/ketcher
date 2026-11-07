@@ -540,13 +540,13 @@ export class BondRenderer extends BaseRenderer {
       });
     });
 
-    const combinedPath = paths.reduce((acc, { d }) => {
-      return acc + d;
+    const combinedPath = paths.reduce((accumulator, { d }) => {
+      return accumulator + d;
     }, '');
 
-    const combinedPathWidth = paths.reduce((acc, { attrs }) => {
+    const combinedPathWidth = paths.reduce((accumulator, { attrs }) => {
       const strokeWidth = Number(attrs['stroke-width'] ?? BOND_WIDTH);
-      return acc + strokeWidth;
+      return accumulator + strokeWidth;
     }, 0);
 
     const hoverPath = this.rootElement
@@ -958,9 +958,9 @@ export class BondRenderer extends BaseRenderer {
 
     // Build path from point pairs
     let pathD = '';
-    for (let i = 0; i < points.length; i += 2) {
-      const p1 = points[i];
-      const p2 = points[i + 1];
+    for (let index = 0; index < points.length; index += 2) {
+      const p1 = points[index];
+      const p2 = points[index + 1];
       if (p1 && p2) {
         pathD += `M${p1.x},${p1.y}L${p2.x},${p2.y}`;
       }

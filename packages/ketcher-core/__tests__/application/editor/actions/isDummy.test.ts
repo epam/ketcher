@@ -1,10 +1,10 @@
 import { Action } from 'application/editor/actions/action';
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { AtomAttr } from 'application/editor/operations/atom/AtomAttr';
+import { AtomAttribute } from 'application/editor/operations/atom/AtomAttribute';
 import { AtomMove } from 'application/editor/operations/atom/AtomMove';
-import { BondAttr } from 'application/editor/operations/bond/BondAttr';
+import { BondAttribute } from 'application/editor/operations/bond/BondAttribute';
 import { BondMove } from 'application/editor/operations/bond/BondMove';
-import { RGroupAttr } from 'application/editor/operations/rgroup/RGroupAttr';
+import { RGroupAttribute } from 'application/editor/operations/rgroup/RGroupAttribute';
 import { TextMove } from 'application/editor/operations/Text/TextMove';
 import { Vec2 } from 'domain/entities';
 import type { ReStruct } from 'application/render';
@@ -31,31 +31,35 @@ describe('BaseOperation.isDummy()', () => {
 describe('attribute operations isDummy()', () => {
   it('AtomAttr is dummy when the attribute already equals the new value', () => {
     const restruct = makeRestruct({ atoms: new Map([[1, { label: 'C' }]]) });
-    expect(new AtomAttr(1, 'label', 'C').isDummy(restruct)).toBe(true);
-    expect(new AtomAttr(1, 'label', 'O').isDummy(restruct)).toBe(false);
+    expect(new AtomAttribute(1, 'label', 'C').isDummy(restruct)).toBe(true);
+    expect(new AtomAttribute(1, 'label', 'O').isDummy(restruct)).toBe(false);
   });
 
   it('AtomAttr does not throw and is not dummy when the atom is gone', () => {
     const restruct = makeRestruct({ atoms: new Map() });
-    expect(() => new AtomAttr(1, 'label', 'C').isDummy(restruct)).not.toThrow();
-    expect(new AtomAttr(1, 'label', 'C').isDummy(restruct)).toBe(false);
+    expect(() =>
+      new AtomAttribute(1, 'label', 'C').isDummy(restruct),
+    ).not.toThrow();
+    expect(new AtomAttribute(1, 'label', 'C').isDummy(restruct)).toBe(false);
   });
 
   it('BondAttr is dummy only when the attribute already matches', () => {
     const restruct = makeRestruct({ bonds: new Map([[1, { type: 1 }]]) });
-    expect(new BondAttr(1, 'type', 1).isDummy(restruct)).toBe(true);
-    expect(new BondAttr(1, 'type', 2).isDummy(restruct)).toBe(false);
+    expect(new BondAttribute(1, 'type', 1).isDummy(restruct)).toBe(true);
+    expect(new BondAttribute(1, 'type', 2).isDummy(restruct)).toBe(false);
   });
 
   it('BondAttr does not throw and is not dummy when the bond is gone', () => {
     const restruct = makeRestruct({ bonds: new Map() });
-    expect(() => new BondAttr(1, 'type', 1).isDummy(restruct)).not.toThrow();
-    expect(new BondAttr(1, 'type', 1).isDummy(restruct)).toBe(false);
+    expect(() =>
+      new BondAttribute(1, 'type', 1).isDummy(restruct),
+    ).not.toThrow();
+    expect(new BondAttribute(1, 'type', 1).isDummy(restruct)).toBe(false);
   });
 
   it('BondAttr execute does not throw when the bond is gone', () => {
     const restruct = makeRestruct({ bonds: new Map() });
-    const operation = new BondAttr(1, 'type', 1, false);
+    const operation = new BondAttribute(1, 'type', 1, false);
 
     expect(() => operation.execute(restruct)).not.toThrow();
     expect(operation.data2).toBeNull();
@@ -64,9 +68,9 @@ describe('attribute operations isDummy()', () => {
   it('RGroupAttr does not throw and is not dummy when the r-group is gone', () => {
     const restruct = makeRestruct({ rgroups: new Map() });
     expect(() =>
-      new RGroupAttr(1, 'range', '>0').isDummy(restruct),
+      new RGroupAttribute(1, 'range', '>0').isDummy(restruct),
     ).not.toThrow();
-    expect(new RGroupAttr(1, 'range', '>0').isDummy(restruct)).toBe(false);
+    expect(new RGroupAttribute(1, 'range', '>0').isDummy(restruct)).toBe(false);
   });
 });
 

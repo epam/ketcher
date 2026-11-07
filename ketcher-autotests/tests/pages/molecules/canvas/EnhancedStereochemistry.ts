@@ -82,14 +82,14 @@ export type EnhancedStereochemistryType = ReturnType<
   typeof EnhancedStereochemistry
 >;
 
-interface RadioSelectionParams {
+interface RadioSelectionParameters {
   selectRadioButton: EnhancedStereochemistryRadio;
   dropdownValue?: number;
 }
 
 export async function applyEnhancedStereochemistry(
   page: Page,
-  { selectRadioButton, dropdownValue = 1 }: RadioSelectionParams,
+  { selectRadioButton, dropdownValue = 1 }: RadioSelectionParameters,
 ) {
   await LeftToolbar(page).stereochemistry();
   await EnhancedStereochemistry(page)[selectRadioButton].check();

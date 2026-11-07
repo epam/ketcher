@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action, fromAtomsAttrs } from 'ketcher-core';
+import { Action, fromAtomsAttributes } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
@@ -50,7 +50,7 @@ class ReactionUnmapTool implements Tool {
       atoms.forEach((atom, aid) => {
         if (atom.aam === aam) {
           action.mergeWith(
-            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null),
+            fromAtomsAttributes(this.editor.render.ctab, aid, { aam: 0 }, null),
           );
         }
       });

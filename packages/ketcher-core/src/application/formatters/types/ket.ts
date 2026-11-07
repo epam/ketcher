@@ -1,5 +1,5 @@
 import type { AttachmentPointName } from 'domain/types';
-import type { FlipDirection } from 'application/editor/shared/utils.types';
+import type { FlipDirection } from 'application/editor/shared/utilities.types';
 import type { KetMonomerClass } from 'domain/constants/monomers';
 
 // KetMonomerClass lives in the domain layer; re-exported here for backward
@@ -141,11 +141,11 @@ export type KetMonomerTemplateAtom = {
   location: [number, number, number];
 };
 
-export interface IKetMonomerTemplateRef {
+export interface IKetMonomerTemplateReference {
   $ref: string;
 }
 
-export interface IKetNodeRef {
+export interface IKetNodeReference {
   $ref: string;
 }
 
@@ -169,9 +169,9 @@ export interface IKetMonomerTemplate {
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
-    nodes: IKetNodeRef[];
+    nodes: IKetNodeReference[];
     connections?: IKetTemplateConnection[];
-    templates?: IKetMonomerTemplateRef[];
+    templates?: IKetMonomerTemplateReference[];
   };
   classHELM?: string;
   name?: string;
@@ -203,7 +203,7 @@ export interface IKetMonomerGroupTemplate {
   name: string;
   type: KetTemplateType;
   class?: KetMonomerGroupTemplateClass;
-  templates: IKetMonomerTemplateRef[];
+  templates: IKetMonomerTemplateReference[];
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
@@ -213,9 +213,9 @@ export interface IKetMonomerGroupTemplate {
 
 export interface IKetMacromoleculesContentRootProperty {
   root: {
-    nodes: IKetNodeRef[];
+    nodes: IKetNodeReference[];
     connections: IKetConnection[];
-    templates: IKetMonomerTemplateRef[];
+    templates: IKetMonomerTemplateReference[];
   };
 }
 

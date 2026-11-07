@@ -18,7 +18,7 @@ import { Action } from './action';
 import { checkAtomValence } from './atom';
 import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
-import utils from '../shared/utils';
+import utilities from '../shared/utilities';
 import { isHapticBondWithAttachmentGroup } from 'domain/helpers/hapticBond';
 
 export function fromItemsFuse(restruct, items) {
@@ -35,11 +35,11 @@ export function fromItemsFuse(restruct, items) {
   );
 
   // merge single atoms
-  items.atoms.forEach((dst, src) => {
-    if (usedAtoms.has(dst) || usedAtoms.has(src)) return;
+  items.atoms.forEach((destination, source) => {
+    if (usedAtoms.has(destination) || usedAtoms.has(source)) return;
 
-    action = fromAtomMerge(restruct, src, dst).mergeWith(action);
-    usedAtoms.add(dst).add(src);
+    action = fromAtomMerge(restruct, source, destination).mergeWith(action);
+    usedAtoms.add(destination).add(source);
   });
 
   // merge bonds
@@ -111,11 +111,11 @@ function closestToMerge(struct, closestMap) {
     ),
   };
 
-  closestMap.bonds.forEach((dstId, srcId) => {
-    const bond = struct.bonds.get(srcId);
-    const bondCI = struct.bonds.get(dstId);
+  closestMap.bonds.forEach((destinationId, sourceId) => {
+    const bond = struct.bonds.get(sourceId);
+    const bondCI = struct.bonds.get(destinationId);
     if (!bond || !bondCI) {
-      mergeMap.bonds.delete(srcId);
+      mergeMap.bonds.delete(sourceId);
       return;
     }
 
@@ -123,7 +123,7 @@ function closestToMerge(struct, closestMap) {
       isHapticBondWithAttachmentGroup(struct, bond) ||
       isHapticBondWithAttachmentGroup(struct, bondCI)
     ) {
-      mergeMap.bonds.delete(srcId);
+      mergeMap.bonds.delete(sourceId);
       if (bond) {
         mergeMap.atoms.delete(bond.begin);
         mergeMap.atoms.delete(bond.end);
@@ -131,12 +131,17 @@ function closestToMerge(struct, closestMap) {
       return;
     }
 
-    const mergeParams = utils.mergeBondsParams(struct, bond, struct, bondCI);
-    if (mergeParams?.merged) {
+    const mergeParameters = utilities.mergeBondsParameters(
+      struct,
+      bond,
+      struct,
+      bondCI,
+    );
+    if (mergeParameters?.merged) {
       mergeMap.atoms.delete(bond.begin);
       mergeMap.atoms.delete(bond.end);
     } else {
-      mergeMap.bonds.delete(srcId);
+      mergeMap.bonds.delete(sourceId);
     }
   });
 

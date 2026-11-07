@@ -19,7 +19,7 @@ import {
   type ReStruct,
   type Struct,
   Vec2,
-  vectorUtils,
+  vectorUtilities,
 } from 'ketcher-core';
 import type { ClosestItemWithMap } from '../shared/closest.types';
 import type { Sign } from './template.types';
@@ -107,8 +107,11 @@ export function getAngleFromEvent(
 
     if (atom && nei) {
       angle = event?.ctrlKey
-        ? vectorUtils.calcAngle(nei.pp, atom.pp)
-        : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom.pp), null);
+        ? vectorUtilities.calcAngle(nei.pp, atom.pp)
+        : vectorUtilities.fracAngle(
+            vectorUtilities.calcAngle(nei.pp, atom.pp),
+            null,
+          );
     } else {
       angle = 0;
     }

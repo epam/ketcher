@@ -32,7 +32,7 @@ const HOVER_RECT_RADIUS = 4;
 const HOVER_STROKE = '#0097A8';
 const HOVER_STROKE_WIDTH = 1.2;
 
-interface BracketParams {
+interface BracketParameters {
   center: Vec2;
   direction: Vec2;
   angleDirection: Vec2;
@@ -304,8 +304,8 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private isMoreRightwardBracket(
-    bracket: BracketParams,
-    rightBracket?: BracketParams,
+    bracket: BracketParameters,
+    rightBracket?: BracketParameters,
   ): boolean {
     return (
       !rightBracket ||
@@ -315,7 +315,7 @@ export class SGroupRenderer extends BaseRenderer {
     );
   }
 
-  private getBracketParameters(bracketBox: Box2Abs): BracketParams[] {
+  private getBracketParameters(bracketBox: Box2Abs): BracketParameters[] {
     const angleDirection = this.sgroup.bracketDirection;
     const bracketDirection = angleDirection.rotateSC(1, 0);
     const bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3);
@@ -357,7 +357,7 @@ export class SGroupRenderer extends BaseRenderer {
     angleDirection,
     width,
     height,
-  }: BracketParams): void {
+  }: BracketParameters): void {
     const scaledCenter = Scale.modelToCanvas(center, this.editorSettings);
     const scaledDirection = Scale.modelToCanvas(direction, this.editorSettings);
     const scaledAngleDirection = Scale.modelToCanvas(
@@ -385,7 +385,7 @@ export class SGroupRenderer extends BaseRenderer {
 
   private appendIndex(
     text: string,
-    bracket: BracketParams,
+    bracket: BracketParameters,
     isLowerText: boolean,
     indexAttribute?: Record<string, string>,
   ): void {

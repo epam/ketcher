@@ -85,3 +85,4 @@ Neither editor is a global singleton so multiple independent Ketcher instances â
 - All model changes must go through Action/Command â€” never mutate `Struct` or `DrawingEntitiesManager` directly from tools or UI. See [operations-history](./operations-history.md).
 - Renderers only read the model; the editor triggers re-render after every mutation. See [rendering](./rendering.md).
 - The Monomer Creation Wizard related logic currently lives in the micromolecules editor; there is a plan to move it to a dedicated module.
+- `Coordinates` (model, canvas, view conversions) lives in `domain/helpers/coordinates.ts`; `application/editor/shared/coordinates.ts` binds the editor settings' scale and `ZoomTool`'s zoom into it when it loads, and re-exports it.

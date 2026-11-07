@@ -8,6 +8,7 @@ import type { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import type { UsageInMacromolecule } from 'application/render';
 import type { D3SvgElementSelection } from 'application/render/types';
+import util from 'application/render/util';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import {
   type HighlightPathData,
@@ -180,10 +181,11 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
     return new PreviewAttachmentPoint({
       ...attachmentPointParams,
-      connected:
+      labelStyles: util.useLabelStyles(
+        selectedAttachmentPoint === attachmentPointName,
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
-      selected: selectedAttachmentPoint === attachmentPointName,
-      usage,
+        usage,
+      ),
       canvas: params.canvas,
       applyZoomForPositionCalculation: false,
     });

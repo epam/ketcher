@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -28,7 +29,11 @@ import {
 // SequenceMode.antisenseDuplexSync.test.ts.
 
 const createNucleotideNode = (base: string, position: Vec2) => {
-  const created = Nucleotide.createOnCanvas(base, position);
+  const created = Nucleotide.createOnCanvas(
+    provideEditorInstance(),
+    base,
+    position,
+  );
 
   if (!created) {
     throw new Error(`Fixture setup failed: nucleotide ${base} not created`);

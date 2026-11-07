@@ -9,8 +9,13 @@ import {
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 
+export type RnaCanvasHost = Pick<
+  CoreEditor,
+  'monomersLibrary' | 'drawingEntitiesManager'
+>;
+
 export function getRnaPartLibraryItem(
-  editor: CoreEditor,
+  editor: Pick<CoreEditor, 'monomersLibrary'>,
   libraryItemLabel: string,
   monomerClass?: KetMonomerClass,
   isDna = false,

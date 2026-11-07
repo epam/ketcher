@@ -111,7 +111,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   });
 
   it('creates antisense for a split nucleotide (green control)', () => {
-    Nucleotide.createOnCanvas('A', new Vec2(0, 0));
+    Nucleotide.createOnCanvas(editor, 'A', new Vec2(0, 0));
     selectAllMonomers(editor);
 
     const monomersBefore = editor.drawingEntitiesManager.monomers.size;
@@ -142,8 +142,16 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   });
 
   it('skips a chain whose base is bonded to something besides its sugar', () => {
-    const eligibleChain = Nucleotide.createOnCanvas('A', new Vec2(0, 0));
-    const blockedChain = Nucleotide.createOnCanvas('nC6n8A', new Vec2(0, 5));
+    const eligibleChain = Nucleotide.createOnCanvas(
+      editor,
+      'A',
+      new Vec2(0, 0),
+    );
+    const blockedChain = Nucleotide.createOnCanvas(
+      editor,
+      'nC6n8A',
+      new Vec2(0, 5),
+    );
     const chemLibraryItem = editor.monomersLibrary.find(
       (item) => item.label === '4aPEGMal',
     );
@@ -177,7 +185,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   });
 
   it('does not add a second antisense to an already paired chain', () => {
-    const pairedChain = Nucleotide.createOnCanvas('A', new Vec2(0, 0));
+    const pairedChain = Nucleotide.createOnCanvas(editor, 'A', new Vec2(0, 0));
 
     if (!pairedChain) {
       throw new Error('Test monomers are not available in the library');
@@ -186,7 +194,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
     selectAllMonomers(editor);
     editor.drawingEntitiesManager.createAntisenseChain(false);
 
-    const newChain = Nucleotide.createOnCanvas('G', new Vec2(0, 10));
+    const newChain = Nucleotide.createOnCanvas(editor, 'G', new Vec2(0, 10));
 
     if (!newChain) {
       throw new Error('Test monomers are not available in the library');
@@ -317,7 +325,11 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
       editor,
       new Vec2(1.5, 0),
     );
-    const creationResult = Nucleotide.createOnCanvas('A', new Vec2(3, 0));
+    const creationResult = Nucleotide.createOnCanvas(
+      editor,
+      'A',
+      new Vec2(3, 0),
+    );
 
     if (!creationResult) {
       return;

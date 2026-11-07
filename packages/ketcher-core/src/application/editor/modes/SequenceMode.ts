@@ -916,11 +916,13 @@ export class SequenceMode extends BaseMode {
         (nextNodeToConnect.secondConnectedNode instanceof Nucleotide ||
           nextNodeToConnect.secondConnectedNode instanceof Nucleoside))
         ? Nucleotide.createOnCanvas(
+            editor,
             enteredSymbol,
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),
           )
         : Nucleoside.createOnCanvas(
+            editor,
             enteredSymbol,
             newNodePosition,
             getSugarBySequenceType(editor.sequenceTypeEnterMode),

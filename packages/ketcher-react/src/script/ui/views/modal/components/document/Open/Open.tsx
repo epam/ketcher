@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -38,7 +37,7 @@ type OpenResult = {
 };
 
 interface OpenProps {
-  server: any;
+  server: unknown;
   errorHandler: (err: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
@@ -117,12 +116,13 @@ const Open: FC<Props> = (props) => {
     [ketcherId],
   );
 
-  const onFileLoad = (files) => {
-    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
+  const onFileLoad = (files: File[]) => {
+    const windowContext = globalThis as unknown as Record<string, unknown>;
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);
@@ -151,7 +151,7 @@ const Open: FC<Props> = (props) => {
       .then(onLoad, onError);
   };
 
-  const onImageLoad = (files) => {
+  const onImageLoad = (files: File[]) => {
     onImageUpload(files[0]);
     setCurrentState(MODAL_STATES.imageRec);
   };

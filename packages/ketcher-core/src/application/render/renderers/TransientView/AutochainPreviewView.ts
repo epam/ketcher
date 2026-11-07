@@ -1,7 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import { getRnaPresetPhosphatePosition } from 'domain/helpers/rnaPresetConnections';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import type { MonomerItemType } from 'domain/types';

@@ -2,6 +2,7 @@ import type {
   DrawingEntitiesManagerDeps,
   EditorPort,
 } from 'domain/entities/EditorPort';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { CoreEditor } from './Editor';
 import { provideEditorSettings } from './editorSettings';
 
@@ -30,6 +31,10 @@ export function createEditorPort(editor: CoreEditor): EditorPort {
     },
     get monomersLibrary() {
       return editor.monomersLibrary;
+    },
+    // The class itself: its static methods use `this`.
+    get sequenceRenderer() {
+      return SequenceRenderer;
     },
   };
 }

@@ -3,11 +3,11 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  MacromoleculeContextMenuProps,
-  ItemEventParams,
+  MacromoleculeContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<MacromoleculeContextMenuProps>;
+type Parameters_ = ItemEventParameters<MacromoleculeContextMenuProperties>;
 
 /**
  * Returns a handler that removes the S-group grouping for each monomer in the
@@ -21,7 +21,7 @@ const useRemoveGrouping = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();

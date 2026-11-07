@@ -25,10 +25,10 @@ export const storage: IStorage = {
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable(): Storage | false {
     try {
-      const localStorageRef: Storage = globalThis.localStorage;
-      return localStorageRef;
+      const localStorageReference: Storage = globalThis.localStorage;
+      return localStorageReference;
     } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::isAvailable', error);
+      KetcherLogger.error('storage-extension.ts::storage::isAvailable', error);
       return false;
     }
   },
@@ -39,10 +39,10 @@ export const storage: IStorage = {
       if (stored !== null) {
         item = JSON.parse(stored);
       }
-    } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::getItem', error);
-      const storageError = error as Error;
-      console.info('LocalStorage:', storageError.name);
+    } catch (error_: unknown) {
+      KetcherLogger.error('storage-extension.ts::storage::getItem', error_);
+      const error = error_ as Error;
+      console.info('LocalStorage:', error.name);
     }
     return item;
   },
@@ -51,10 +51,10 @@ export const storage: IStorage = {
     try {
       globalThis.localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
-    } catch (error: unknown) {
-      KetcherLogger.error('storage-ext.ts::storage::setItem', error);
-      const storageError = error as Error;
-      console.info('LocalStorage:', storageError.name);
+    } catch (error_: unknown) {
+      KetcherLogger.error('storage-extension.ts::storage::setItem', error_);
+      const error = error_ as Error;
+      console.info('LocalStorage:', error.name);
       isSet = false;
     }
     return isSet;

@@ -1,6 +1,6 @@
 import type {
-  AttachmentPointLabelContextMenuProps,
-  MenuItemsProps,
+  AttachmentPointLabelContextMenuProperties,
+  MenuItemsProperties,
 } from '../contextMenu.types';
 import { Item } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import type Editor from '../../../../../editor';
 
 const AttachmentPointLabelMenuItems = ({
   propsFromTrigger,
-}: MenuItemsProps<AttachmentPointLabelContextMenuProps>) => {
+}: MenuItemsProperties<AttachmentPointLabelContextMenuProperties>) => {
   const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);

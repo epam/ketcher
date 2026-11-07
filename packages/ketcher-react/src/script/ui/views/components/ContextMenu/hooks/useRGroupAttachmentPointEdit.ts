@@ -2,26 +2,27 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import type {
-  ItemEventParams,
-  RGroupAttachmentPointContextMenuProps,
+  ItemEventParameters,
+  RGroupAttachmentPointContextMenuProperties,
 } from '../contextMenu.types';
 import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
 import { type Ketcher, ketcherProvider, assert } from 'ketcher-core';
 
-type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
+type Parameters_ =
+  ItemEventParameters<RGroupAttachmentPointContextMenuProperties>;
 
-const getAtomIdByProps = (
-  props: RGroupAttachmentPointContextMenuProps | undefined,
+const getAtomIdByProperties = (
+  properties: RGroupAttachmentPointContextMenuProperties | undefined,
   ketcher: Ketcher,
 ): number => {
   const editor = ketcher.editor as Editor;
   const restruct = editor.render.ctab;
-  const atomId = props?.atomIds?.[0];
+  const atomId = properties?.atomIds?.[0];
   if (atomId != null) {
     return atomId;
   }
 
-  const attachmentPointId = props?.rgroupAttachmentPoints?.[0];
+  const attachmentPointId = properties?.rgroupAttachmentPoints?.[0];
   assert(attachmentPointId != null);
   const attachmentPoint =
     restruct.molecule.rgroupAttachmentPoints.get(attachmentPointId);
@@ -33,10 +34,10 @@ const useRGroupAttachmentPointEdit = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
-      const atomId = getAtomIdByProps(props, ketcher);
+      const atomId = getAtomIdByProperties(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
       assert(atom != null);
 
@@ -46,10 +47,10 @@ const useRGroupAttachmentPointEdit = () => {
   );
 
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
-      const atomId = getAtomIdByProps(props, ketcher);
+      const atomId = getAtomIdByProperties(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
       assert(atom != null);
 
@@ -58,7 +59,7 @@ const useRGroupAttachmentPointEdit = () => {
     [ketcherId],
   );
 
-  const hidden = useCallback(({ props }: Params) => {
+  const hidden = useCallback(({ props }: Parameters_) => {
     const atomLength = props?.atomIds?.length ?? 0;
     return atomLength > 1;
   }, []);

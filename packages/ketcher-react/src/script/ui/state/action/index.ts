@@ -23,7 +23,7 @@ import {
   restorePersistedSelectionTool,
 } from '../selectionToolPersistence';
 
-type ActionParams = {
+type ActionParameters = {
   editor: Editor & {
     struct(): Struct;
     struct(value: Struct | null): Struct;
@@ -44,7 +44,7 @@ type ActionParams = {
   isSettingsPanelOpen?: boolean;
 };
 
-type ExecuteParams = ActionParams & {
+type ExecuteParameters = ActionParameters & {
   action: UiActionAction;
 };
 
@@ -62,11 +62,11 @@ type ActionState = {
 type ReducerAction = {
   type: string;
   action?: UiActionAction;
-} & Partial<ActionParams>;
+} & Partial<ActionParameters>;
 
 function execute(
   activeTool: UiActionAction | null | undefined,
-  { action, editor, server, options }: ExecuteParams,
+  { action, editor, server, options }: ExecuteParameters,
 ): UiActionAction | null | undefined {
   if (typeof action !== 'function' && action.tool) {
     if (editor.tool(action.tool, action.opts)) {
@@ -75,9 +75,9 @@ function execute(
   } else if (typeof action === 'function') {
     (
       action as (
-        editor: ActionParams['editor'],
-        server: ActionParams['server'],
-        options: ActionParams['options'],
+        editor: ActionParameters['editor'],
+        server: ActionParameters['server'],
+        options: ActionParameters['options'],
       ) => void
     )(editor, server, options);
   } else {
@@ -86,63 +86,63 @@ function execute(
   return activeTool;
 }
 
-function isSelected(
-  actObj: UiAction,
+function selected(
+  actObject: UiAction,
   activeTool: UiActionAction | null | undefined,
-  { editor, server }: Pick<ActionParams, 'editor' | 'server'>,
+  { editor, server }: Pick<ActionParameters, 'editor' | 'server'>,
 ): boolean {
-  if (typeof actObj.selected === 'function')
-    return actObj.selected(editor, server);
-  else if (typeof actObj.action !== 'function' && actObj.action?.tool)
-    return isEqual(activeTool, actObj.action);
+  if (typeof actObject.selected === 'function')
+    return actObject.selected(editor, server);
+  else if (typeof actObject.action !== 'function' && actObject.action?.tool)
+    return isEqual(activeTool, actObject.action);
   return false;
 }
 
-function isDisabled(
-  actObj: UiAction,
-  { editor, server, options }: ActionParams,
+function disabled(
+  actObject: UiAction,
+  { editor, server, options }: ActionParameters,
 ): boolean {
-  if (typeof actObj.disabled === 'function')
-    return actObj.disabled(editor, server, options);
+  if (typeof actObject.disabled === 'function')
+    return actObject.disabled(editor, server, options);
   return false;
 }
 
-function isHidden(
-  actObj: UiAction,
-  { options }: Pick<ActionParams, 'options'>,
+function hidden(
+  actObject: UiAction,
+  { options }: Pick<ActionParameters, 'options'>,
 ): boolean {
-  if (typeof actObj.hidden === 'function') return actObj.hidden(options);
+  if (typeof actObject.hidden === 'function') return actObject.hidden(options);
   return false;
 }
 
 function status(
   actionName: string,
   activeTool: UiActionAction | null | undefined,
-  params: ActionParams,
+  parameters: ActionParameters,
 ): ActionStatus {
-  const actObj = actions[actionName];
+  const actObject = actions[actionName];
   return pickBy((x) => x, {
-    selected: isSelected(actObj, activeTool, params),
-    disabled: params.isSettingsPanelOpen || isDisabled(actObj, params),
-    hidden: isHidden(actObj, params),
+    selected: selected(actObject, activeTool, parameters),
+    disabled: parameters.isSettingsPanelOpen || disabled(actObject, parameters),
+    hidden: hidden(actObject, parameters),
   });
 }
 
 /**
  * Builds the state object with action statuses for all actions
  * @param activeTool - The currently active tool
- * @param params - Additional parameters for status computation
+ * @param parameters - Additional parameters for status computation
  * @returns State object containing active tool and action statuses
  */
 function buildStateWithStatuses(
   activeTool: UiActionAction | null | undefined,
-  params: ActionParams,
+  parameters: ActionParameters,
 ): ActionState {
   return Object.keys(actions).reduce(
-    (res, actionName) => {
-      const value = status(actionName, res.activeTool, params);
-      if (!isEmpty(value)) res[actionName] = value;
-      return res;
+    (resource, actionName) => {
+      const value = status(actionName, resource.activeTool, parameters);
+      if (!isEmpty(value)) resource[actionName] = value;
+      return resource;
     },
     { activeTool } as ActionState,
   );
@@ -150,7 +150,7 @@ function buildStateWithStatuses(
 
 export default function (
   state: ActionState | null = null,
-  { type, action, ...params }: ReducerAction,
+  { type, action, ...parameters }: ReducerAction,
 ): ActionState | null {
   let activeTool: UiActionAction | null | undefined;
   switch (type) {
@@ -160,7 +160,7 @@ export default function (
         restorePersistedSelectionTool(savedSelectedTool) ||
         actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
-        ...(params as ActionParams),
+        ...(parameters as ActionParameters),
         action: resolvedAction,
       });
       const persistedSelectionTool =
@@ -170,13 +170,13 @@ export default function (
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
-        params as ActionParams,
+        parameters as ActionParameters,
       );
     }
 
     case 'ACTION': {
       activeTool = execute(state?.activeTool, {
-        ...(params as ActionParams),
+        ...(parameters as ActionParameters),
         action: action as UiActionAction,
       });
       const persistedSelectionTool =
@@ -186,14 +186,14 @@ export default function (
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
-        params as ActionParams,
+        parameters as ActionParameters,
       );
     }
 
     case 'UPDATE':
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
-        params as ActionParams,
+        parameters as ActionParameters,
       );
 
     // Opening or closing a dialog flips `isSettingsPanelOpen`, so the statuses
@@ -201,7 +201,10 @@ export default function (
     case 'MODAL_OPEN':
     case 'MODAL_CLOSE':
       if (!state) return state;
-      return buildStateWithStatuses(state.activeTool, params as ActionParams);
+      return buildStateWithStatuses(
+        state.activeTool,
+        parameters as ActionParameters,
+      );
 
     default:
       return state;

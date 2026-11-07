@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc';
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove';
 import type {
-  FunctionalGroupsContextMenuProps,
-  MenuItemsProps,
+  FunctionalGroupsContextMenuProperties,
+  MenuItemsProperties,
 } from '../contextMenu.types';
 
 const FunctionalGroupMenuItems: FC<
-  MenuItemsProps<FunctionalGroupsContextMenuProps>
-> = (props) => {
+  MenuItemsProperties<FunctionalGroupsContextMenuProperties>
+> = (properties) => {
   const { t } = useTranslation(['components', 'dialogs']);
   const [handleExpandOrContract, ExpandOrContractHidden] =
     useFunctionalGroupEoc();
@@ -19,23 +19,23 @@ const FunctionalGroupMenuItems: FC<
   return (
     <>
       <Item
-        {...props}
+        {...properties}
         data-testid="Expand Abbreviation-option"
-        hidden={(params) => ExpandOrContractHidden(params, true)}
-        onClick={(params) => handleExpandOrContract(params, true)}
+        hidden={(parameters) => ExpandOrContractHidden(parameters, true)}
+        onClick={(parameters) => handleExpandOrContract(parameters, true)}
       >
         {t('components:contextMenu.expandAbbreviation')}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid="Contract Abbreviation-option"
-        hidden={(params) => ExpandOrContractHidden(params, false)}
-        onClick={(params) => handleExpandOrContract(params, false)}
+        hidden={(parameters) => ExpandOrContractHidden(parameters, false)}
+        onClick={(parameters) => handleExpandOrContract(parameters, false)}
       >
         {t('components:contextMenu.contractAbbreviation')}
       </Item>
       <Item
-        {...props}
+        {...properties}
         data-testid="Remove Abbreviation-option"
         onClick={handleRemove}
       >

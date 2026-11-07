@@ -40,10 +40,8 @@ export interface EditorInitState {
   server: Api;
 }
 
-/**
-Parameter shape for the onRgroupEdit callback.
-*/
-export interface RGroupEditParams {
+/** Parameter shape for the onRgroupEdit callback. */
+export interface RGroupEditParameters {
   fragId?: number;
   label: number | null;
   range?: string;

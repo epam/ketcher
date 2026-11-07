@@ -18,8 +18,8 @@ import {
 } from '../utils';
 import type Editor from 'src/script/editor';
 import type {
-  MenuItemsProps,
-  SelectionContextMenuProps,
+  MenuItemsProperties,
+  SelectionContextMenuProperties,
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 import { useAppContext } from 'src/hooks';
@@ -33,9 +33,9 @@ import AttachmentGroupActionMenuItem from './AttachmentGroupActionMenuItem';
 
 const bondNames = getBondNamesForSelectionContextMenu(tools);
 
-const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
-  props,
-) => {
+const SelectionMenuItems: FC<
+  MenuItemsProperties<SelectionContextMenuProperties>
+> = (properties) => {
   const { t } = useTranslation(['toolbar', 'components', 'common']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
@@ -51,10 +51,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
     isDisabled: markAsIsDisabled,
   } = useMarkAs();
   const highlightBondWithColor = (color: string) => {
-    const bondIds = props.propsFromTrigger?.bondIds || [];
-    const atomIds = props.propsFromTrigger?.atomIds || [];
+    const bondIds = properties.propsFromTrigger?.bondIds || [];
+    const atomIds = properties.propsFromTrigger?.atomIds || [];
     const rgroupAttachmentPoints =
-      props.propsFromTrigger?.rgroupAttachmentPoints || [];
+      properties.propsFromTrigger?.rgroupAttachmentPoints || [];
 
     editor.highlights.create({
       atoms: atomIds,
@@ -71,14 +71,14 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
     <>
       {showMarkAsMenu && (
         <Submenu
-          {...props}
+          {...properties}
           data-testid="Mark as a...-option"
           label={t('components:contextMenu.markAsMenu')}
           disabled={markAsDisabled}
           className={styles.subMenu}
         >
           <Item
-            {...props}
+            {...properties}
             data-testid="Mark as Base-option"
             onClick={handleMarkAs('base')}
           >
@@ -89,7 +89,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
             <span>{t('common:monomerType.base')}</span>
           </Item>
           <Item
-            {...props}
+            {...properties}
             data-testid="Mark as Sugar-option"
             onClick={handleMarkAs('sugar')}
           >
@@ -100,7 +100,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
             <span>{t('common:monomerType.sugar')}</span>
           </Item>
           <Item
-            {...props}
+            {...properties}
             data-testid="Mark as Phosphate-option"
             onClick={handleMarkAs('phosphate')}
           >
@@ -114,7 +114,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       )}
 
       <Item
-        {...props}
+        {...properties}
         data-testid="Edit selected bonds...-option"
         disabled={bondEditDisabled}
         onClick={handleBondEdit}
@@ -123,7 +123,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       </Item>
 
       <Item
-        {...props}
+        {...properties}
         data-testid="Edit selected atoms...-option"
         disabled={atomEditDisabled}
         onClick={handleAtomEdit}
@@ -132,7 +132,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       </Item>
 
       <Submenu
-        {...props}
+        {...properties}
         data-testid="Bond type-option"
         label={t('components:contextMenu.bondTypeMenu')}
         disabled={bondTypeChangeDisabled}
@@ -159,7 +159,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
 
       {!isHidden(options, CREATE_MONOMER_TOOL_NAME) && (
         <Item
-          {...props}
+          {...properties}
           data-testid="Create a monomer-option"
           onClick={handleCreateMonomer}
           disabled={createMonomerDisabled}
@@ -168,10 +168,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         </Item>
       )}
 
-      <AttachmentGroupActionMenuItem {...props} showCreate />
+      <AttachmentGroupActionMenuItem {...properties} showCreate />
 
       <Item
-        {...props}
+        {...properties}
         data-testid="Enhanced stereochemistry...-option"
         disabled={atomStereoDisabled}
         onClick={handleAtomStereo}
@@ -180,7 +180,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       </Item>
       <HighlightMenu onHighlight={highlightBondWithColor} />
       <MenuSeparator />
-      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+      <Item {...properties} data-testid="Delete-option" onClick={handleDelete}>
         {t('common:delete')}
       </Item>
     </>

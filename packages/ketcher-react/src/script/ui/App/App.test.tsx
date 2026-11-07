@@ -64,8 +64,8 @@ jest.mock('../state/saltsAndSolvents', () => ({
   })),
 }));
 
-jest.mock('../state/templates/init-lib', () => ({
-  initLib: jest.fn(() => ({ type: 'INIT_LIB' })),
+jest.mock('../state/templates/init-library', () => ({
+  initLibrary: jest.fn(() => ({ type: 'INIT_LIB' })),
 }));
 
 jest.mock('ketcher-core', () => ({

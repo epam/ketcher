@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 import Form, {
   CustomQueryField,
   Field,
@@ -39,7 +39,7 @@ interface BondSettings {
   center: number | null;
   customQuery: string;
 }
-interface BondProps extends BaseProps, BondSettings {}
+interface BondProps extends BaseProperties, BondSettings {}
 
 type Props = BondProps &
   BaseCallProps & {

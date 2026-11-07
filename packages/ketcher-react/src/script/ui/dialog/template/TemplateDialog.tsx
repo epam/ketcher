@@ -34,7 +34,7 @@ import {
   selectTmpl,
   changeTab,
 } from '../../state/templates';
-import { filterLib, filterFGLib, greekify } from '../../utils';
+import { filterLibrary, filterFGLibrary, greekify } from '../../utils';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -129,7 +129,7 @@ enum TemplateTabs {
 const filterLibSelector = createSelector(
   (props: Props) => props.lib,
   (props: Props) => props.filter,
-  filterLib,
+  filterLibrary,
 );
 
 const FUNCTIONAL_GROUPS = 'Functional Groups';
@@ -224,7 +224,7 @@ export const TemplateDialog: FC<Props> = (props) => {
     filter,
   );
   const filteredFG = useMemo(
-    () => filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS],
+    () => filterFGLibrary(functionalGroups, filter)[FUNCTIONAL_GROUPS],
     [functionalGroups, filter],
   );
 

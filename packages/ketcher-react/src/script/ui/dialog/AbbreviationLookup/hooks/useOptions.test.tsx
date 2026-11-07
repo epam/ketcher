@@ -44,7 +44,7 @@ const TEMPLATE = {
 };
 jest.mock('../../../state/templates/selectors', () => {
   return {
-    templatesLibSelector: () => [TEMPLATE, TEMPLATE],
+    templatesLibrarySelector: () => [TEMPLATE, TEMPLATE],
   };
 });
 

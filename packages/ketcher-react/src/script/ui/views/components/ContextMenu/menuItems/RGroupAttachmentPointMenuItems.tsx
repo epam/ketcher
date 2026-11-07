@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import { Item } from 'react-contexify';
 import { useTranslation } from 'react-i18next';
 import type {
-  MenuItemsProps,
-  RGroupAttachmentPointContextMenuProps,
+  MenuItemsProperties,
+  RGroupAttachmentPointContextMenuProperties,
 } from '../contextMenu.types';
 import useRGroupAttachmentPointRemove from '../hooks/useRGroupAttachmentPointRemove';
 import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
@@ -14,8 +14,8 @@ import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors'
 import { ketcherProvider } from 'ketcher-core';
 
 const RGroupAttachmentPointMenuItems: FC<
-  MenuItemsProps<RGroupAttachmentPointContextMenuProps>
-> = (props) => {
+  MenuItemsProperties<RGroupAttachmentPointContextMenuProperties>
+> = (properties) => {
   const { t } = useTranslation('components');
   const { ketcherId } = useAppContext();
   const handleRemove = useRGroupAttachmentPointRemove();
@@ -28,7 +28,7 @@ const RGroupAttachmentPointMenuItems: FC<
 
   const highlight = (color: string) => {
     const rgroupAttachmentPoints =
-      props.propsFromTrigger?.rgroupAttachmentPoints || [];
+      properties.propsFromTrigger?.rgroupAttachmentPoints || [];
     editor.highlights.create({
       rgroupAttachmentPoints,
       atoms: [],
@@ -40,7 +40,7 @@ const RGroupAttachmentPointMenuItems: FC<
   return (
     <>
       <Item
-        {...props}
+        {...properties}
         disabled={rgroupAttachmentPointDisabled}
         hidden={rgroupAttachmentPointHidden}
         onClick={handleEditRGroupAttachmentPoint}
@@ -48,7 +48,7 @@ const RGroupAttachmentPointMenuItems: FC<
         {t('contextMenu.editEllipsis')}
       </Item>
       <HighlightMenu onHighlight={highlight} />
-      <Item {...props} onClick={handleRemove}>
+      <Item {...properties} onClick={handleRemove}>
         {t('contextMenu.remove')}
       </Item>
     </>

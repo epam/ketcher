@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import type {
-  ItemEventParams,
-  MultitailArrowContextMenuProps,
+  ItemEventParameters,
+  MultitailArrowContextMenuProperties,
 } from '../contextMenu.types';
 import { useAppContext } from '../../../../../../hooks';
 import {
@@ -13,7 +13,7 @@ import {
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-type Params = ItemEventParams<MultitailArrowContextMenuProps>;
+type Parameters_ = ItemEventParameters<MultitailArrowContextMenuProperties>;
 
 function updateEditor(editor: unknown, action: Action) {
   // returned Editor type does not match real editor
@@ -27,7 +27,7 @@ export const useMultitailArrowTailsAdd = () => {
   const { ketcherId } = useAppContext();
 
   const addTail = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor;
       const operation = fromMultitailArrowTailAdd(
         editor.render.ctab,
@@ -39,7 +39,7 @@ export const useMultitailArrowTailsAdd = () => {
   );
 
   const isAddTailDisabled = useCallback(
-    ({ props }: Params): boolean => {
+    ({ props }: Parameters_): boolean => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const multitailArrow = editor.render.ctab.molecule.multitailArrows.get(
         props?.itemId as number,
@@ -61,7 +61,7 @@ export const useMultitailArrowTailsRemove = () => {
   const { ketcherId } = useAppContext();
 
   const removeTail = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor;
       const operation = fromMultitailArrowTailRemove(
         editor.render.ctab,
@@ -73,7 +73,7 @@ export const useMultitailArrowTailsRemove = () => {
     [ketcherId],
   );
 
-  const removeTailHidden = useCallback(({ props }: Params) => {
+  const removeTailHidden = useCallback(({ props }: Parameters_) => {
     return props?.tailId === null;
   }, []);
 

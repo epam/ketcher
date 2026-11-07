@@ -17,7 +17,7 @@
 import { type Dispatch, type AnyAction } from 'redux';
 import { formReducer, formsState, type ModalFormState } from './form';
 
-interface ModalDialogProps {
+interface ModalDialogProperties {
   onResult: (value: unknown) => void;
   onCancel: (reason?: unknown) => void;
   isNestedModal?: boolean;
@@ -28,7 +28,7 @@ interface ModalDialogProps {
 interface ModalState {
   name: string;
   form: ModalFormState | null;
-  prop: ModalDialogProps | null;
+  prop: ModalDialogProperties | null;
   parentModal: ModalState | null;
 }
 
@@ -36,7 +36,7 @@ export interface ModalOpenAction {
   type: 'MODAL_OPEN';
   data: {
     name: string;
-    prop?: Partial<ModalDialogProps>;
+    prop?: Partial<ModalDialogProperties>;
   };
 }
 
@@ -46,12 +46,12 @@ export interface ModalCloseAction {
 
 export type ModalAction = ModalOpenAction | ModalCloseAction | AnyAction;
 
-export type { ModalState, ModalDialogProps };
+export type { ModalState, ModalDialogProperties };
 
 export function openDialog(
   dispatch: Dispatch,
   dialogName: string,
-  props?: object | null,
+  properties?: object | null,
 ): Promise<unknown> {
   return new Promise((resolve, reject) => {
     dispatch({
@@ -59,7 +59,7 @@ export function openDialog(
       data: {
         name: dialogName,
         prop: {
-          ...props,
+          ...properties,
           onResult: resolve,
           onCancel: reject,
         },
@@ -88,12 +88,12 @@ function modalReducer(
 
     case 'MODAL_CLOSE': {
       if (state?.parentModal) {
-        const restoredProp = {
+        const restoredProperty = {
           ...state.parentModal.prop,
           ...state.parentModal.form?.result,
           isRestoredModal: true,
-        } as ModalDialogProps;
-        return { ...state.parentModal, prop: restoredProp };
+        } as ModalDialogProperties;
+        return { ...state.parentModal, prop: restoredProperty };
       }
       return null;
     }
@@ -103,7 +103,7 @@ function modalReducer(
       return {
         name: data.name,
         form: formsState[data.name] || null,
-        prop: (data.prop as ModalDialogProps) || null,
+        prop: (data.prop as ModalDialogProperties) || null,
         parentModal: data.prop?.isNestedModal ? state : null,
       };
     }

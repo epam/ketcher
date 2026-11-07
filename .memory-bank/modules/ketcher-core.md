@@ -58,6 +58,13 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 | `src/application/formatters/formatterFactory.ts`                | Multi-format formatter registry         |
 | `src/application/indigo.ts`                                     | StructService wrapper (chemistry ops)   |
 
+## Build and module formats
+
+Rollup emits per-module CJS (`.js`) and ESM (`.modern.js`) files. The ESM Raphael
+module uses a conditional dynamic import, so browser bundles do not need
+CommonJS `require`. Its `globalThis.window` guard skips loading Raphael during
+SSR. The CJS output retains synchronous loading.
+
 ## Assumptions & Constraints
 
 - Must have **no React dependency** — it is consumed by both React packages but must stay framework-agnostic.

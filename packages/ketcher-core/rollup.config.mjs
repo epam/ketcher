@@ -63,6 +63,14 @@ const config = {
         include: includePattern,
       },
     ),
+    // Preserve the SSR guard while removing CommonJS calls from the ESM output.
+    replace({
+      include: /\/raphael-ext\.modern\.js$/,
+      preventAssignment: true,
+      values: {
+        require: 'await import',
+      },
+    }),
     json({ include: includePattern }),
     typescript({
       tsconfig: './tsconfig.json',

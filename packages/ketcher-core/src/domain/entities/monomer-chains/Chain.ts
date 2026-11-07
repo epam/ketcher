@@ -24,6 +24,22 @@ import { KetMonomerClass } from 'domain/constants/monomers';
 
 let id = 0;
 export class Chain {
+  public static createChainWithEmptyNode() {
+    const emptyChain = new Chain();
+    const emptySequenceNode = new EmptySequenceNode();
+    const emptySubChain = new EmptySubChain();
+
+    emptySubChain.add(emptySequenceNode);
+    emptyChain.subChains.push(emptySubChain);
+
+    return { emptyChain, emptySubChain, emptySequenceNode };
+  }
+
+  private nodesChanged = true;
+  private nodesCache: SubChainNode[] = [];
+  private monomersCache: BaseMonomer[] = [];
+  private bondsCache: PolymerBond[] = [];
+
   public subChains: BaseSubChain[] = [];
 
   public firstMonomer?: BaseMonomer;
@@ -31,11 +47,6 @@ export class Chain {
   public isCyclic = false;
 
   public id: number;
-
-  private nodesChanged = true;
-  private nodesCache: SubChainNode[] = [];
-  private monomersCache: BaseMonomer[] = [];
-  private bondsCache: PolymerBond[] = [];
 
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
     this.id = id++;
@@ -106,6 +117,28 @@ export class Chain {
     }
   }
 
+  private fillSubChains(monomer?: BaseMonomer) {
+    if (!monomer) return;
+
+    this.add(monomer);
+
+    this.fillSubChains(
+      getNextMonomerInChain(
+        this.lastNode?.lastMonomerInNode,
+        this.firstMonomer,
+      ),
+    );
+  }
+
+  private getLastSubChain() {
+    const lastSubChain = this.lastSubChain;
+    if (!lastSubChain) {
+      throw new Error('Cannot get the last subchain of an empty chain');
+    }
+
+    return lastSubChain;
+  }
+
   public add(monomer: BaseMonomer) {
     this.nodesChanged = true;
     this.createSubChainIfNeed(monomer);
@@ -160,30 +193,8 @@ export class Chain {
     return this;
   }
 
-  private fillSubChains(monomer?: BaseMonomer) {
-    if (!monomer) return;
-
-    this.add(monomer);
-
-    this.fillSubChains(
-      getNextMonomerInChain(
-        this.lastNode?.lastMonomerInNode,
-        this.firstMonomer,
-      ),
-    );
-  }
-
   public get lastSubChain() {
     return this.subChains.at(-1);
-  }
-
-  private getLastSubChain() {
-    const lastSubChain = this.lastSubChain;
-    if (!lastSubChain) {
-      throw new Error('Cannot get the last subchain of an empty chain');
-    }
-
-    return lastSubChain;
   }
 
   public get nodes() {
@@ -282,17 +293,6 @@ export class Chain {
         nodeIndex--;
       }
     }
-  }
-
-  public static createChainWithEmptyNode() {
-    const emptyChain = new Chain();
-    const emptySequenceNode = new EmptySequenceNode();
-    const emptySubChain = new EmptySubChain();
-
-    emptySubChain.add(emptySequenceNode);
-    emptyChain.subChains.push(emptySubChain);
-
-    return { emptyChain, emptySubChain, emptySequenceNode };
   }
 
   public get isNewSequenceChain() {

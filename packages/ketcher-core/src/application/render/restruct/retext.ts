@@ -73,16 +73,16 @@ const SUPERSCRIPT_FLAG = 64;
 const SCALE = 40; // from ketcher-core
 
 class ReText extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   private readonly item: Text;
   paths: Array<Array<RaphaelBaseElement>> = [];
 
   constructor(text: Text) {
     super('text');
     this.item = text;
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   getReferencePoints(): Array<Vec2> {

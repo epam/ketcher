@@ -23,6 +23,23 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
     return this.monomerToAtomBond.atom;
   }
 
+  private get mainLineY() {
+    const mainLineY1 =
+      this.scaledPosition.startPosition.y -
+      (this.scaledPosition.startPosition.y > this.scaledPosition.endPosition.y
+        ? 15
+        : -3);
+    const mainLineY2 = this.scaledPosition.endPosition.y;
+
+    return { mainLineY1, mainLineY2 };
+  }
+
+  private getBondPath() {
+    return `M ${this.scaledPosition.startPosition.x + 6}, ${
+      this.mainLineY.mainLineY1
+    } L ${this.scaledPosition.endPosition.x}, ${this.mainLineY.mainLineY2}`;
+  }
+
   public get scaledPosition() {
     assert(this.monomer.renderer instanceof BaseSequenceItemRenderer);
 
@@ -50,17 +67,6 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
     );
   }
 
-  private get mainLineY() {
-    const mainLineY1 =
-      this.scaledPosition.startPosition.y -
-      (this.scaledPosition.startPosition.y > this.scaledPosition.endPosition.y
-        ? 15
-        : -3);
-    const mainLineY2 = this.scaledPosition.endPosition.y;
-
-    return { mainLineY1, mainLineY2 };
-  }
-
   public show() {
     this.rootElement = this.canvas
       .insert('g', `:first-child`)
@@ -71,12 +77,6 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
       .attr('stroke', 'black')
       .attr('fill', 'none')
       .attr('d', this.getBondPath());
-  }
-
-  private getBondPath() {
-    return `M ${this.scaledPosition.startPosition.x + 6}, ${
-      this.mainLineY.mainLineY1
-    } L ${this.scaledPosition.endPosition.x}, ${this.mainLineY.mainLineY2}`;
   }
 
   public moveStart(): void {

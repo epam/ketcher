@@ -94,12 +94,12 @@ class PasteTool implements Tool {
     debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
   }
 
-  public setMergeItems(mergeItems) {
-    this.mergeItems = mergeItems;
-  }
-
   private get restruct() {
     return this.editor.render.ctab;
+  }
+
+  public setMergeItems(mergeItems) {
+    this.mergeItems = mergeItems;
   }
 
   mousedown(event) {

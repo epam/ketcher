@@ -20,8 +20,8 @@ import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 class EraserTool implements BaseTool {
-  readonly name = 'eraser-tool';
   private readonly history: EditorHistory;
+  readonly name = 'eraser-tool';
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
     this.history = EditorHistory.getInstance(editor);

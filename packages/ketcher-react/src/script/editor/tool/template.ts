@@ -64,11 +64,11 @@ class TemplateTool implements Tool {
   private readonly mode: string | null;
   private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
-  public templatePreview: TemplatePreview | null;
   private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
+  public templatePreview: TemplatePreview | null;
 
   constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;

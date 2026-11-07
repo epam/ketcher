@@ -50,11 +50,6 @@ export interface RxnArrowAttributes {
 }
 
 export class RxnArrow extends BaseMicromoleculeEntity {
-  mode: RxnArrowMode;
-  pos: Array<Vec2>;
-  height?: number;
-  arrowId?: number;
-
   static isElliptical(arrow) {
     return [
       RxnArrowMode.EllipticalArcFilledBow,
@@ -63,6 +58,11 @@ export class RxnArrow extends BaseMicromoleculeEntity {
       RxnArrowMode.EllipticalArcOpenAngle,
     ].includes(arrow.mode);
   }
+
+  mode: RxnArrowMode;
+  pos: Array<Vec2>;
+  height?: number;
+  arrowId?: number;
 
   constructor(attributes: RxnArrowAttributes) {
     super(attributes?.initiallySelected);

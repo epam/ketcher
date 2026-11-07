@@ -24,6 +24,10 @@ export interface RGroupAttributes {
   range?: string;
 }
 export class RGroup {
+  static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
+    return rgroups.find((_rgid, rgroup) => rgroup.frags.has(frid));
+  }
+
   frags: Pile<number>;
   resth: boolean;
   range: string;
@@ -36,10 +40,6 @@ export class RGroup {
     this.range = atrributes?.range ?? '';
     this.ifthen = atrributes?.ifthen ?? 0;
     this.index = atrributes?.index ?? -1;
-  }
-
-  static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
-    return rgroups.find((_rgid, rgroup) => rgroup.frags.has(frid));
   }
 
   getAttrs(): RGroupAttributes {

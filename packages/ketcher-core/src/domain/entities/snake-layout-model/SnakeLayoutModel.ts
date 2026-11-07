@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
   type BaseMonomer,
@@ -13,7 +12,6 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { provideEditorSettings } from 'application/editor/editorSettings';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { SettingsManager } from 'utilities';
 import {
@@ -27,7 +25,6 @@ import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesMana
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
 import type { Bond } from 'domain/entities/CoreBond';
-import { SnakeLayoutCellWidth } from 'domain/constants';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 export class SnakeLayoutModel {
@@ -41,12 +38,13 @@ export class SnakeLayoutModel {
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
+    cellWidthInAngstroms: number,
     shouldFillMolecules = true,
   ) {
-    this.fillNodes(chainsCollection);
+    this.fillNodes(chainsCollection, drawingEntitiesManager);
     this.fillChains();
     if (shouldFillMolecules) {
-      this.fillMolecules(drawingEntitiesManager);
+      this.fillMolecules(drawingEntitiesManager, cellWidthInAngstroms);
     }
   }
 
@@ -119,10 +117,12 @@ export class SnakeLayoutModel {
     });
   }
 
-  private fillAntisenseNodes(chainsCollection: ChainsCollection) {
+  private fillAntisenseNodes(
+    chainsCollection: ChainsCollection,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -157,7 +157,7 @@ export class SnakeLayoutModel {
                         monomerConnectedByHydrogenBond,
                       ) &&
                         isRnaBaseApplicableForAntisense(monomer)) ||
-                        editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                        drawingEntitiesManager.antisenseMonomerToSenseChain.get(
                           monomer,
                         )?.firstMonomer ===
                           monomerToChain.get(monomerConnectedByHydrogenBond)
@@ -329,9 +329,12 @@ export class SnakeLayoutModel {
     });
   }
 
-  private fillNodes(chainsCollection: ChainsCollection) {
+  private fillNodes(
+    chainsCollection: ChainsCollection,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
     this.fillSenseNodes(chainsCollection);
-    this.fillAntisenseNodes(chainsCollection);
+    this.fillAntisenseNodes(chainsCollection, drawingEntitiesManager);
   }
 
   public forEachNode(
@@ -378,7 +381,10 @@ export class SnakeLayoutModel {
     });
   }
 
-  private fillMolecules(drawingEntitiesManager: DrawingEntitiesManager) {
+  private fillMolecules(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    cellWidthInAngstroms: number,
+  ) {
     const lineLength = SettingsManager.editorLineLength['snake-layout-mode'];
     const handledMonomerConnectedToMolecules = new Set<BaseMonomer>();
     const handledMolecules = [] as (Atom | Bond)[]; // for checking existing of molecule we can check only one atom;
@@ -465,9 +471,6 @@ export class SnakeLayoutModel {
         }
 
         // Place collected molecules in additional rows below the current one
-        const editorSettings = provideEditorSettings();
-        const cellSizeInAngstroms =
-          SnakeLayoutCellWidth / editorSettings.macroModeScale;
         let currentRowToHandle: ISnakeLayoutModelRow = {
           snakeLayoutModelItems: [],
         };
@@ -479,12 +482,12 @@ export class SnakeLayoutModel {
           molecules.forEach((molecule) => {
             const moleculeBbox = getStructureBbox(molecule);
             const cellsNeededHorizontally = Math.ceil(
-              (moleculeBbox.width + cellSizeInAngstroms / 2) /
-                cellSizeInAngstroms,
+              (moleculeBbox.width + cellWidthInAngstroms / 2) /
+                cellWidthInAngstroms,
             );
             const cellsNeededVertically = Math.ceil(
-              (moleculeBbox.height + cellSizeInAngstroms / 2) /
-                cellSizeInAngstroms,
+              (moleculeBbox.height + cellWidthInAngstroms / 2) /
+                cellWidthInAngstroms,
             );
             const isThereEnoughSpaceInCurrentRow =
               nextCellIndexToFill + cellsNeededHorizontally <= lineLength;

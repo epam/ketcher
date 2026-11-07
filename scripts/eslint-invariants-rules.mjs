@@ -68,13 +68,6 @@ export const ALLOWED_UI_IMPORTS = [
  */
 export const ALLOWED_DOMAIN_IMPORTS = [
   {
-    file: 'packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts',
-    imports: [
-      'application/editor/editorSingleton',
-      'application/editor/operations/monomer/resolveMonomerClass',
-    ],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
     imports: [
       'application/editor/editorSettings',
@@ -97,17 +90,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
       'application/editor/tools/rnaPresetConnections',
       'application/render/renderers/sequence/SequenceRenderer',
     ],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/entities/snake-layout-model/SnakeLayoutModel.ts',
-    imports: [
-      'application/editor/editorSettings',
-      'application/editor/editorSingleton',
-    ],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/serializers/ket/fromKet/polymerBondToDrawingEntity.ts',
-    imports: ['application/editor/editorSingleton'],
   },
 ];
 

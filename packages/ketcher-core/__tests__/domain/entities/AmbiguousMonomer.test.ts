@@ -1,8 +1,3 @@
-import type { CoreEditor } from 'application/editor';
-import {
-  resetEditorInstance,
-  setEditorInstance,
-} from 'application/editor/editorSingleton';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
@@ -40,13 +35,13 @@ const createAmbiguousMonomerItem = (
 
 describe('AmbiguousMonomer.isModification', () => {
   afterEach(() => {
-    resetEditorInstance();
+    AmbiguousMonomer.setMonomersLibrarySource(undefined);
   });
 
   it('treats matching library options as the same regardless of option order', () => {
-    setEditorInstance({
+    AmbiguousMonomer.setMonomersLibrarySource({
       monomersLibrary: [createAmbiguousMonomerItem('library', ['B', 'A'])],
-    } as unknown as CoreEditor);
+    });
 
     const monomer = new AmbiguousMonomer(
       createAmbiguousMonomerItem('current', ['A', 'B']),

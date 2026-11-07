@@ -2155,6 +2155,7 @@ export class DrawingEntitiesManager {
       const snakeLayoutModel = new SnakeLayoutModel(
         chainsCollection,
         this,
+        cellWidthInAngstroms,
         shouldRepositionMolecules,
       );
       let hasAntisenseInRow = false;

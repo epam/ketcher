@@ -80,8 +80,18 @@ async function pollDeferred<T>(
   }
 }
 
-function parametrizeUrl(url: string, params: Record<string, string>) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+function parametrizeUrl(url, params) {
+  return url.replace(/:([A-Za-z_]\w*)/g, (match, key) => {
+    if (
+      params &&
+      Object.prototype.hasOwnProperty.call(params, key) &&
+      params[key] !== undefined &&
+      params[key] !== null
+    ) {
+      return String(params[key]);
+    }
+    return match;
+  });
 }
 
 async function request<T = unknown>(

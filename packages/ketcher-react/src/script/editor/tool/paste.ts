@@ -258,7 +258,7 @@ class PasteTool implements Tool {
       idsOfItemsMerged,
     );
 
-    if (groupsIdsInvolvedInMerge.length) {
+    if (groupsIdsInvolvedInMerge.length > 0) {
       dispatchMonomerOrGroupDialog(this.editor, groupsIdsInvolvedInMerge);
       return;
     }

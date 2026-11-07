@@ -520,7 +520,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesBeforeNodeInSubChain() {
-    return !!this.ignoredNodesBeforeFirstNodeInSubChain.length;
+    return this.ignoredNodesBeforeFirstNodeInSubChain.length > 0;
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
@@ -541,7 +541,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesAfterNodeInChain() {
-    return !!this.ignoredNodesAfterLastNodeInSubChain.length;
+    return this.ignoredNodesAfterLastNodeInSubChain.length > 0;
   }
 
   // returns true if node is not in ignore list and is first node in chain

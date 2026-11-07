@@ -358,7 +358,7 @@ function getHoveredItem(
   const hoveredItem = {};
 
   for (const ctabItem in ctab) {
-    if (Object.keys(hoveredItem).length) {
+    if (Object.keys(hoveredItem).length > 0) {
       break;
     }
 
@@ -373,7 +373,7 @@ function getHoveredItem(
     });
   }
 
-  return Object.keys(hoveredItem).length ? hoveredItem : null;
+  return Object.keys(hoveredItem).length > 0 ? hoveredItem : null;
 }
 
 function checkGroupOnTool(group, actionTool) {
@@ -499,9 +499,8 @@ function isAbleToCopy(editor: Editor): boolean {
   if (struct.isBlank()) {
     return false;
   }
-  const hasSimpleObjectOrText = Boolean(
-    struct.simpleObjects.size || struct.texts.size,
-  );
+  const hasSimpleObjectOrText =
+    struct.simpleObjects.size > 0 || struct.texts.size > 0;
   if (hasSimpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +

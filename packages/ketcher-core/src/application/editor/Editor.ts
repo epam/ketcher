@@ -12,7 +12,7 @@ import {
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { MacromoleculesConverter } from 'domain/helpers/MacromoleculesConverter';
 import { MonomerWizardCanvasOperation } from './operations/monomerCreation/MonomerWizardCanvasOperation';
 import {
   DEFAULT_LAYOUT_MODE,
@@ -127,6 +127,7 @@ import {
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import {
+  provideEditorInstance,
   setEditorInstance,
   resetEditorInstance,
 } from 'application/editor/editorSingleton';
@@ -337,6 +338,12 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
+    KetSerializer.setEditorBridge({
+      reportError: (message) =>
+        provideEditorInstance().events.error.dispatch(message),
+      getMonomersLibraryJson: () =>
+        provideEditorInstance()?.monomersLibraryParsedJson,
+    });
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();

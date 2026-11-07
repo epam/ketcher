@@ -36,7 +36,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
-import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
+import type { DialogParameters } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';
@@ -50,7 +50,7 @@ interface TextFormState {
   form: FormState;
 }
 
-interface TextProps extends DialogParams {
+interface TextProperties extends DialogParameters {
   formState: TextFormState;
   id?: string;
   content: string;
@@ -109,7 +109,7 @@ function EnterKeyPlugin(): null {
   return null;
 }
 
-function EditorRefPlugin({
+function EditorReferencePlugin({
   editorRef,
 }: {
   editorRef: React.MutableRefObject<LexicalEditor | null>;
@@ -121,17 +121,17 @@ function EditorRefPlugin({
   return null;
 }
 
-const TextEditorInner = (props: {
+const TextEditorInner = (properties: {
   formState: TextFormState;
   position?: string;
   id?: string;
-  params: TextProps;
+  params: TextProperties;
 }) => {
-  const { formState, position, id, params } = props;
+  const { formState, position, id, params } = properties;
   const { t } = useTranslation(['common', 'dialogs']);
   const [editor] = useLexicalComposerContext();
   const [activeFormats, setActiveFormats] = useState<Set<string>>(new Set());
-  const editorRef = React.useRef<LexicalEditor | null>(null);
+  const editorReference = React.useRef<LexicalEditor | null>(null);
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
@@ -236,7 +236,7 @@ const TextEditorInner = (props: {
       />
       <HistoryPlugin />
       <EnterKeyPlugin />
-      <EditorRefPlugin editorRef={editorRef} />
+      <EditorReferencePlugin editorRef={editorReference} />
       <AutoFocusPlugin />
     </Dialog>
   );
@@ -275,10 +275,10 @@ export const normalizeEditorState = (
   return undefined;
 };
 
-const Text = (props: TextProps) => {
-  const { formState, position, id } = props;
+const Text = (properties: TextProperties) => {
+  const { formState, position, id } = properties;
 
-  const initialEditorState = normalizeEditorState(props.content);
+  const initialEditorState = normalizeEditorState(properties.content);
 
   const initialConfig = {
     namespace: 'KetcherTextEditor',
@@ -295,7 +295,7 @@ const Text = (props: TextProps) => {
         formState={formState}
         position={position}
         id={id}
-        params={props}
+        params={properties}
       />
     </LexicalComposer>
   );

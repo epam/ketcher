@@ -16,12 +16,12 @@
 
 import type { Editor } from 'ketcher-core';
 import Atom from './Atom';
-import type { BaseProps } from '../../../modal.types';
+import type { BaseProperties } from '../../../modal.types';
 import type { StoreState } from '../../../../../state/store.types';
 import type { AtomFormResult } from './AtomElement/AtomElement';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps<AtomFormResult>, 'formState'> & {
+type StateProperties = Pick<BaseProperties<AtomFormResult>, 'formState'> & {
   isMonomerCreationWizardActive?: boolean;
 };
 
@@ -29,10 +29,10 @@ type State = Pick<StoreState, 'modal'> & {
   editor: Editor | null;
 };
 
-const mapStateToProps = (state: State): StateProps => ({
-  formState: state.modal.form as BaseProps<AtomFormResult>['formState'],
+const mapStateToProperties = (state: State): StateProperties => ({
+  formState: state.modal.form as BaseProperties<AtomFormResult>['formState'],
   isMonomerCreationWizardActive: state.editor?.isMonomerCreationWizardActive,
 });
 
-const AtomContainer = connect(mapStateToProps)(Atom);
+const AtomContainer = connect(mapStateToProperties)(Atom);
 export default AtomContainer;

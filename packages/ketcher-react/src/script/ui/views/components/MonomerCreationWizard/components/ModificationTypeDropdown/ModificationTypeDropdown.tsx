@@ -9,12 +9,12 @@ import {
 } from 'ketcher-core';
 
 const OptionsListbox = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
-  (props, ref) => {
+  (properties, reference) => {
     return (
       <div
-        {...props}
-        ref={ref}
-        className={clsx(props.className, styles.optionsList)}
+        {...properties}
+        ref={reference}
+        className={clsx(properties.className, styles.optionsList)}
       />
     );
   },
@@ -28,7 +28,7 @@ interface IOptionType {
 
 const filter = createFilterOptions<IOptionType>();
 
-interface IModificationTypeDropdownProps {
+interface IModificationTypeDropdownProperties {
   naturalAnalogue: string;
   value: string | null;
   error?: string | null;
@@ -37,7 +37,7 @@ interface IModificationTypeDropdownProps {
 }
 
 export default function ModificationTypeDropdown(
-  props: Readonly<IModificationTypeDropdownProps>,
+  properties: Readonly<IModificationTypeDropdownProperties>,
 ) {
   const editor = provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
@@ -45,12 +45,12 @@ export default function ModificationTypeDropdown(
   const modificationTypesOthersFromCurrentNaturalAnalogue = [
     ...new Set(
       Object.entries(modificationTypesGroupedByNaturalAnalogue)
-        .filter(([key]) => key !== props.naturalAnalogue)
+        .filter(([key]) => key !== properties.naturalAnalogue)
         .flatMap(([, types]) => types)
         .filter(
           (type) =>
             !modificationTypesGroupedByNaturalAnalogue[
-              props.naturalAnalogue
+              properties.naturalAnalogue
             ]?.includes(type),
         ),
     ),
@@ -61,11 +61,11 @@ export default function ModificationTypeDropdown(
       return { title: modificationType };
     })
     .sort(compareByTitleWithNaturalFirst);
-  const value = props.value ?? '';
+  const value = properties.value ?? '';
 
   const onValueChange = (newValue) => {
-    if (props.onChange) {
-      props.onChange(newValue ? newValue.title : '');
+    if (properties.onChange) {
+      properties.onChange(newValue ? newValue.title : '');
     }
   };
 
@@ -83,8 +83,8 @@ export default function ModificationTypeDropdown(
           onValueChange(newValue);
         }
       }}
-      filterOptions={(options, params) => {
-        let filteredOptions = filter(options, params);
+      filterOptions={(options, parameters) => {
+        let filteredOptions = filter(options, parameters);
 
         if (filteredOptions.length === 0) {
           filteredOptions = options;
@@ -111,15 +111,15 @@ export default function ModificationTypeDropdown(
         // Regular option
         return option.title;
       }}
-      renderOption={(props, option) => {
-        const { key, ...optionProps } = props;
+      renderOption={(properties, option) => {
+        const { key, ...optionProperties } = properties;
         return (
           <li
             key={key}
-            {...optionProps}
+            {...optionProperties}
             data-testid={`modification-type-option-${option.title}`}
             className={clsx(
-              props.className,
+              properties.className,
               styles.option,
               option.title === value && styles.selectedOption,
             )}
@@ -132,17 +132,17 @@ export default function ModificationTypeDropdown(
       sx={{ width: '100%' }}
       freeSolo
       forcePopupIcon
-      renderInput={(params) => (
+      renderInput={(parameters) => (
         <TextField
-          {...params}
+          {...parameters}
           variant="standard"
-          error={Boolean(props.error)}
+          error={Boolean(properties.error)}
           className={clsx(
             monomerWizardStyles.inputField,
-            props.error && monomerWizardStyles.error,
+            properties.error && monomerWizardStyles.error,
           )}
           placeholder="..."
-          data-testid={props.testId}
+          data-testid={properties.testId}
         />
       )}
     />

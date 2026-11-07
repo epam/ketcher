@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
-  type DialogParams,
+  type DialogParameters,
   LoadingCircles,
 } from '../../../../components';
 import classes from './Open.module.less';
@@ -36,16 +36,16 @@ type OpenResult = {
   'input-format'?: string;
 };
 
-interface OpenProps {
+interface OpenProperties {
   server: unknown;
-  errorHandler: (err: string) => void;
+  errorHandler: (error: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
 }
 
-type Props = OpenProps &
-  Pick<BaseProps, 'className'> &
-  BaseCallProps<OpenResult> & { onImageUpload: (file: File) => void };
+type Properties = OpenProperties &
+  Pick<BaseProperties, 'className'> &
+  BaseCallProperties<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
@@ -94,7 +94,7 @@ const FooterContent = ({
   );
 };
 
-const Open: FC<Props> = (props) => {
+const Open: FC<Properties> = (properties) => {
   const {
     server,
     onImageUpload,
@@ -102,9 +102,9 @@ const Open: FC<Props> = (props) => {
     isAnalyzingFile,
     isRecognizeDisabled,
     ...rest
-  } = props;
+  } = properties;
 
-  const [structStr, setStructStr] = useState<string>('');
+  const [structString, setStructString] = useState<string>('');
   const [structList, setStructList] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>('');
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
@@ -131,11 +131,11 @@ const Open: FC<Props> = (props) => {
         if (!fileContent.structures.length && files[0].size > 0) {
           errorHandler(t('dialogs:document.open.passwordProtectedError'));
         }
-        setStructStr('');
+        setStructString('');
         setStructList(fileContent.structures);
         setCurrentState(MODAL_STATES.presentationViewer);
       } else {
-        setStructStr(fileContent);
+        setStructString(fileContent);
         setCurrentState(MODAL_STATES.textEditor);
       }
       setIsLoading(false);
@@ -162,13 +162,13 @@ const Open: FC<Props> = (props) => {
 
   const copyHandler = () => {
     const format = getFormatMimeTypeByFileName(fileName);
-    onOk({ structStr, fragment: true, 'input-format': format });
+    onOk({ structStr: structString, fragment: true, 'input-format': format });
   };
 
   const openHandler = () => {
     setIsLoading(true);
     setTimeout(() => {
-      onOk({ structStr, fragment: false });
+      onOk({ structStr: structString, fragment: false });
       setIsLoading(false);
     }, 0);
   };
@@ -188,13 +188,13 @@ const Open: FC<Props> = (props) => {
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
       // Dialog expects a looser `onOk` result type
-      params={rest as DialogParams}
+      params={rest as DialogParameters}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
         hasFooterContent ? (
           <FooterContent
-            structStr={structStr}
+            structStr={structString}
             openHandler={openHandler}
             copyHandler={copyHandler}
             onCancel={rest.onCancel}
@@ -215,8 +215,8 @@ const Open: FC<Props> = (props) => {
         imageLoadHandler={onImageLoad}
         errorHandler={errorHandler}
         isRecognizeDisabled={isRecognizeDisabled}
-        structStr={structStr}
-        inputHandler={setStructStr}
+        structStr={structString}
+        inputHandler={setStructString}
         autoFocus
         structList={structList}
       />
@@ -229,5 +229,5 @@ const Open: FC<Props> = (props) => {
   );
 };
 
-export type { OpenProps, OpenResult };
+export type { OpenProperties, OpenResult };
 export default Open;

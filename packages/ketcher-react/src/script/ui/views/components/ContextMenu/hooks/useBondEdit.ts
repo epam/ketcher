@@ -7,7 +7,7 @@ import type {
   BondsContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
-import { getEditableBondIds, noOperation } from '../utils';
+import { getEditableBondIds, noOperation } from '../utilities';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;

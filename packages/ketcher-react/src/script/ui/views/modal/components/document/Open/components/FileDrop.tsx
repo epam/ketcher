@@ -21,7 +21,7 @@ import parentStyles from './OpenOptions.module.less';
 import styles from './FileDrop.module.less';
 import { type IconName, Icon } from 'components';
 
-type FileDropProps = {
+type FileDropProperties = {
   buttonLabel: string;
   textLabel: string;
   iconName: IconName;
@@ -38,7 +38,7 @@ const FileDrop = ({
   disabledText,
   testId,
   ...rest
-}: FileDropProps) => {
+}: FileDropProperties) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,

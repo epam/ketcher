@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog, type DialogParams } from '../../../../components';
+import { Dialog, type DialogParameters } from '../../../../components';
 import Logo from './logo.svg';
 import classes from './About.module.less';
 import { connect } from 'react-redux';
@@ -29,7 +29,7 @@ const OVERVIEW_URL =
 const LIFE_SCIENCES_URL = 'https://lifescience.opensource.epam.com/';
 const INDIGO_URL = 'https://lifescience.opensource.epam.com/indigo/';
 
-interface AboutDialogProps {
+interface AboutDialogProperties {
   date: string;
   indigoVersion?: string;
   indigoMachine?: string;
@@ -40,22 +40,22 @@ interface AboutDialogProps {
   onOk: (result?: unknown) => void;
 }
 
-function AboutDialog(props: Readonly<AboutDialogProps>) {
+function AboutDialog(properties: Readonly<AboutDialogProperties>) {
   const { t } = useTranslation('dialogs');
-  const indigoInfo = props.indigoVersion?.split('.r') || []; // Indigo version and build info
+  const indigoInfo = properties.indigoVersion?.split('.r') || []; // Indigo version and build info
 
-  const dialogParams: DialogParams = {
-    onOk: props.onOk,
-    onCancel: props.onOk, // Using onOk for both since About dialog only has an OK button
+  const dialogParameters: DialogParameters = {
+    onOk: properties.onOk,
+    onCancel: properties.onOk, // Using onOk for both since About dialog only has an OK button
   };
 
   return (
     <Dialog
       className={`${classes.about} ${classes.dialog_body}`}
-      params={dialogParams}
+      params={dialogParameters}
       buttons={[
         <button
-          onClick={props.onOk}
+          onClick={properties.onOk}
           className={classes.okButton}
           key="ok"
           data-testid="ok-button"
@@ -65,7 +65,11 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
       ]}
     >
       <div className={classes.headerContent}>
-        <a href={props.overviewLink} target="_blank" rel="noopener noreferrer">
+        <a
+          href={properties.overviewLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <Logo />
           <span className={classes.title}>Ketcher</span>
         </a>
@@ -75,20 +79,20 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
           <dl className={classes.ketcherVersionInfo}>
             <dt data-testid="build-version">
               <a
-                href={props.overviewLink}
+                href={properties.overviewLink}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t('meta.about.version', { value: props.version })}
+                {t('meta.about.version', { value: properties.version })}
               </a>
             </dt>
             <dd data-testid="build-time">
-              {t('meta.about.buildAt')} <time>{props.date}</time>
+              {t('meta.about.buildAt')} <time>{properties.date}</time>
             </dd>
             <div className={classes.infoLinks}>
               <dt>
                 <a
-                  href={props.feedbackLink}
+                  href={properties.feedbackLink}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -97,7 +101,7 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
               </dt>
               <dt>
                 <a
-                  href={props.lifeScienciesLink}
+                  href={properties.lifeScienciesLink}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -111,10 +115,12 @@ function AboutDialog(props: Readonly<AboutDialogProps>) {
                 {' '}
                 {t('meta.about.indigoToolkit')}
               </a>
-              {props.indigoMachine && <div>{props.indigoMachine}</div>}
+              {properties.indigoMachine && (
+                <div>{properties.indigoMachine}</div>
+              )}
             </div>
             <div data-testid="build-indigo-version">
-              {props.indigoVersion ? (
+              {properties.indigoVersion ? (
                 <Fragment>
                   <dd>{t('meta.about.version', { value: indigoInfo[0] })}</dd>
                   {indigoInfo[1] && (
@@ -143,7 +149,7 @@ interface AppState {
   };
 }
 
-const mapStateToProps = (state: AppState) => ({
+const mapStateToProperties = (state: AppState) => ({
   date: state.options.app.buildDate.replace('T', '; '),
   indigoVersion: state.options.app.indigoVersion,
   indigoMachine: state.options.app.indigoMachine,
@@ -153,12 +159,15 @@ const mapStateToProps = (state: AppState) => ({
   version: state.options.app.version,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProperties = (dispatch: Dispatch) => ({
   onOk: (_result?: unknown) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
 });
 
-const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog);
+const About = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(AboutDialog);
 
 export default About;

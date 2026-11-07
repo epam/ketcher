@@ -16,22 +16,22 @@
 
 import styles from './Tooltip.module.less';
 
-export interface TooltipProps {
+export interface TooltipProperties {
   message: string;
   position: { x: number; y: number };
 }
 const OFFSET_FROM_POSITION = 10;
 
-export const Tooltip = (props: TooltipProps) =>
-  props.message ? (
+export const Tooltip = (properties: TooltipProperties) =>
+  properties.message ? (
     <div
       className={`${styles.container}`}
       style={{
-        left: props.position.x + OFFSET_FROM_POSITION,
-        top: props.position.y + OFFSET_FROM_POSITION,
+        left: properties.position.x + OFFSET_FROM_POSITION,
+        top: properties.position.y + OFFSET_FROM_POSITION,
       }}
       data-testid="tooltip"
     >
-      {props.message}
+      {properties.message}
     </div>
   ) : null;

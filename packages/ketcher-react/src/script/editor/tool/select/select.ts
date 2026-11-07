@@ -45,7 +45,7 @@ import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
-import { isHydrogenBondBetweenMonomers } from '../../../ui/views/components/ContextMenu/utils';
+import { isHydrogenBondBetweenMonomers } from '../../../ui/views/components/ContextMenu/utilities';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
 import type { HoverTarget, Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';

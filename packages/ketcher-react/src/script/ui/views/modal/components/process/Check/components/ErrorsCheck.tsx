@@ -40,14 +40,14 @@ interface MoleculeErrors {
   [key: string]: string;
 }
 
-interface ErrorsCheckProps {
+interface ErrorsCheckProperties {
   moleculeErrors: MoleculeErrors;
   checkSchema: CheckSchema;
 }
 
-function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
+function ErrorsCheck(properties: Readonly<ErrorsCheckProperties>) {
   const { t } = useTranslation('dialogs');
-  const { moleculeErrors, checkSchema } = props;
+  const { moleculeErrors, checkSchema } = properties;
   const moleculeErrorsTypes = Object.keys(moleculeErrors);
 
   const getOptionName = (option: string): string => {

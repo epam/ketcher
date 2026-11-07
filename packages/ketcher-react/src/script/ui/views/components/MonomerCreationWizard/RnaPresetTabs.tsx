@@ -58,7 +58,7 @@ import {
   hasRequiredRnaPresetComponents,
 } from './RnaPresetStructureValidation';
 
-interface IRnaPresetTabsProps {
+interface IRnaPresetTabsProperties {
   wizardState: RnaPresetWizardState;
   editor: Editor;
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
@@ -89,20 +89,20 @@ const RNA_COMPONENT_HINTS = {
   phosphate: i18n.t('components:monomerCreationWizard.selectPhosphateAtoms'),
 } satisfies Record<RnaPresetComponentKey, string>;
 
-export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
+export const RnaPresetTabs = (properties: IRnaPresetTabsProperties) => {
   const { t } = useTranslation(['components', 'common']);
   const [selectedTab, setSelectedTab] = useState(0);
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
-  const { wizardState, wizardStateDispatch, editor } = props;
+  const { wizardState, wizardStateDispatch, editor } = properties;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
   const {
     phosphatePosition,
     onPhosphatePositionChange,
     onConnectionLeavingAtomChange,
     connectionLeavingAtoms,
-  } = props;
+  } = properties;
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();

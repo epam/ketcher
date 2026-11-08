@@ -87,7 +87,12 @@
       "title": "Mostrar valencia"
     },
     "showHydrogenLabels": {
-      "title": "Mostrar explícitamente las etiquetas de hidrógeno"
+      "title": "Mostrar explícitamente las etiquetas de hidrógeno",
+      "enumOff": "Off",
+      "enumHetero": "Hetero",
+      "enumTerminal": "Terminal",
+      "enumTerminalAndHetero": "Terminal and Hetero",
+      "enumOn": "On"
     },
     "aromaticCircle": {
       "title": "Enlaces aromáticos como círculo"

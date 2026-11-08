@@ -87,7 +87,12 @@
       "title": "显示价态"
     },
     "showHydrogenLabels": {
-      "title": "显式显示氢标签"
+      "title": "显式显示氢标签",
+      "enumOff": "Off",
+      "enumHetero": "Hetero",
+      "enumTerminal": "Terminal",
+      "enumTerminalAndHetero": "Terminal and Hetero",
+      "enumOn": "On"
     },
     "aromaticCircle": {
       "title": "芳香键显示为圆圈"

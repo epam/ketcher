@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   DEEPENING_LENSES,
+  DUPLICATES_SCHEMA,
   FINDINGS_SCHEMA,
   ID_PATTERN,
   LINKED_ISSUE_SCHEMA,
@@ -10,7 +11,12 @@ import {
   VERDICT_SCHEMA,
 } from './schemas.mjs';
 
-const SCHEMAS = { FINDINGS_SCHEMA, VERDICT_SCHEMA, LINKED_ISSUE_SCHEMA };
+const SCHEMAS = {
+  FINDINGS_SCHEMA,
+  VERDICT_SCHEMA,
+  LINKED_ISSUE_SCHEMA,
+  DUPLICATES_SCHEMA,
+};
 
 /** Every object schema inside `schema`, the schema itself included. */
 function objectSchemas(schema) {

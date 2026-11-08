@@ -56,12 +56,14 @@ test('a chain of close findings is merged step by step', () => {
   assert.equal(merged[0].locations.length, 3);
 });
 
-test('findings without a rule are never merged', () => {
+test('findings without a rule are merged only with the same claim', () => {
   const merged = mergeFindings([
     finding({ id: 'none', line: 120 }),
     finding({ id: 'none', line: 121, claim: 'Another problem.' }),
+    finding({ id: 'none', line: 122, lens: 'security' }),
   ]);
   assert.equal(merged.length, 2);
+  assert.deepEqual(merged[0].lenses, ['correctness', 'security']);
 });
 
 test('other locations and references are kept without duplicates', () => {

@@ -53,3 +53,6 @@ output.txt
 
 # ketcher-flow skill: run directories and worktrees
 .ketcher-flow/
+
+# Review hub run log (scripts/review/index.mjs)
+review-run.json

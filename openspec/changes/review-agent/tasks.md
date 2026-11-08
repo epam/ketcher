@@ -31,10 +31,11 @@
 - [x] 4.4 `verify.mjs` and the linked-issue run.
 - [x] 4.5 Run one real `claude -p --safe-mode --restricted` call locally with `CLAUDE_CODE_OAUTH_TOKEN`; confirm authentication, structured output, and that a test hook and a `.claude/settings.json` in the working tree are not loaded. Record the result in `design.md`.
 - [x] 4.6 Deepening: add `alsoCheck` (`security`, `reuse`, `none`) to the verdict schema; run one extra pass per named lens on the flagged files when that lens reported nothing there in this round; merge and verify the extra findings without further deepening; keep N per round; tests.
+- [x] 4.7 Duplicates in different words: candidate pairs in code (same file, a few lines apart); one `duplicates` run with `same` and `high`/`low` confidence; merge only sure answers about asked pairs; keep merged fingerprints for later rounds; role prompt; tests.
 
 ## 5. GitHub and entry point
 
-- [ ] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
+- [x] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
 - [ ] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
 - [ ] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel, one deepening pass and label removal on failure.
 - [ ] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.

@@ -34,9 +34,11 @@ import { SEVERITIES } from './schemas.mjs';
  * @property {string[]} references
  * @property {string[]} lenses the lenses that reported it
  * @property {string} fingerprint
+ * @property {string[]} [absorbed] fingerprints of the findings the duplicates
+ *   run merged into this one, so a later round skips them too
  */
 
-/** Findings without a rule are merged only with themselves. */
+/** The ID of a finding that cites no rule or invariant. */
 const NO_RULE = 'none';
 
 /** @param {string} severity lower is more severe */
@@ -49,15 +51,14 @@ const unique = (items) => [...new Set(items)];
 const hasScenario = (finding) => finding.scenario.trim() !== '';
 
 /**
- * Key of the findings that may be merged. A finding without a rule gets a key
- * of its own, because two of them near each other can be about different
- * things.
+ * Key of the findings that may be merged. Findings without a rule are merged
+ * only when their claims are the same, because two of them near each other
+ * can be about different things.
  * @param {LensFinding} finding
- * @param {number} index
  */
-function groupKey(finding, index) {
+function groupKey(finding) {
   if (finding.id === NO_RULE) {
-    return `${finding.file}\n${NO_RULE}\n${index}`;
+    return `${finding.file}\n${NO_RULE}\n${normalizeClaim(finding.claim)}`;
   }
   return `${finding.file}\n${finding.id}`;
 }
@@ -169,27 +170,43 @@ export function verificationRank(finding) {
 }
 
 /**
+ * The new findings of a round: with a failing scenario, merged, and not
+ * posted in an earlier round.
+ * @param {LensFinding[]} findings every finding of every finder pass
+ * @param {string[]} [posted] fingerprints from the marker of earlier rounds
+ */
+export function freshFindings(findings, posted = []) {
+  const withScenario = findings.filter(hasScenario);
+  const merged = mergeFindings(withScenario);
+  const postedSet = new Set(posted);
+  const fresh = merged.filter((finding) => !postedSet.has(finding.fingerprint));
+  return {
+    fresh,
+    noScenario: findings.length - withScenario.length,
+    alreadyPosted: merged.length - fresh.length,
+  };
+}
+
+/**
+ * The findings in verification order, split at the cap.
+ * @param {MergedFinding[]} findings
+ * @param {number} [limit] at most this many go to verification
+ */
+export function rankAndCap(findings, limit = MAX_VERIFIED_FINDINGS) {
+  const ranked = findings.toSorted(
+    (a, b) => verificationRank(a) - verificationRank(b),
+  );
+  return { toVerify: ranked.slice(0, limit), overflow: ranked.slice(limit) };
+}
+
+/**
  * The findings of one round, ready for verification.
  * @param {LensFinding[]} findings every finding of every finder pass
  * @param {{ posted?: string[], limit?: number }} [options]
  *   `posted`: fingerprints from the marker of earlier rounds;
  *   `limit`: at most this many go to verification
  */
-export function prepareFindings(
-  findings,
-  { posted = [], limit = MAX_VERIFIED_FINDINGS } = {},
-) {
-  const withScenario = findings.filter(hasScenario);
-  const merged = mergeFindings(withScenario);
-  const postedSet = new Set(posted);
-  const fresh = merged.filter((finding) => !postedSet.has(finding.fingerprint));
-  const ranked = fresh.toSorted(
-    (a, b) => verificationRank(a) - verificationRank(b),
-  );
-  return {
-    toVerify: ranked.slice(0, limit),
-    overflow: ranked.slice(limit),
-    noScenario: findings.length - withScenario.length,
-    alreadyPosted: merged.length - fresh.length,
-  };
+export function prepareFindings(findings, { posted = [], limit } = {}) {
+  const { fresh, noScenario, alreadyPosted } = freshFindings(findings, posted);
+  return { ...rankAndCap(fresh, limit), noScenario, alreadyPosted };
 }

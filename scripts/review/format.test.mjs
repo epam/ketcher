@@ -148,3 +148,20 @@ test('the limit comment has no marker', () => {
   assert.match(text, /3 review rounds/);
   assert.equal(readMarker(text), undefined);
 });
+
+test('a linked-issue run without an answer still names the issue', () => {
+  const text = brief({
+    state: { round: 1, head: HEAD, posted: [] },
+    range: { from: 'b'.repeat(40), kind: 'full' },
+    linkedIssue: { number: 42 },
+    prType: undefined,
+    panel: [],
+    models: [],
+    findings: [],
+    overflow: [],
+    outsideDiff: [],
+    failedPasses: ['linked issue #42'],
+    skippedFiles: 0,
+  });
+  assert.ok(text.includes('**Linked issue:** #42: the check gave no answer.'));
+});

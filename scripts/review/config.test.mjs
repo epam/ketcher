@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import { globToRegExp } from '../agent-docs/paths.mjs';
 import { TRIGGERS } from '../review-panel.mjs';
 import {
+  DUPLICATES_ROLE,
   LABELS,
   LINKED_ISSUE_ROLE,
   MAX_INLINE_COMMENTS,
@@ -25,6 +26,7 @@ test('every lens the panel can pick and every role have a prompt file', () => {
     ...TRIGGERS.map((trigger) => trigger.lens),
     VERIFIER_ROLE,
     LINKED_ISSUE_ROLE,
+    DUPLICATES_ROLE,
   ];
   for (const name of names) {
     const file = join(repoRoot, PROMPT_DIR, `${name}.md`);

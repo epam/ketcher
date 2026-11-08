@@ -18,6 +18,9 @@ export const VERIFIER_ROLE = 'verifier';
 /** Prompt file of the linked-issue role, in PROMPT_DIR. */
 export const LINKED_ISSUE_ROLE = 'linked-issue';
 
+/** Prompt file of the duplicates role, in PROMPT_DIR. */
+export const DUPLICATES_ROLE = 'duplicates';
+
 /** Labels that start a review. The hub removes the one that started the run. */
 export const LABELS = {
   standard: 'Run Claude Review',
@@ -64,6 +67,12 @@ export const CONCURRENCY = 3;
 /** Findings of the same file and rule at most this many lines apart are merged. */
 export const MERGE_LINE_DISTANCE = 3;
 
+/**
+ * At most this many pairs go to the duplicates run. Pairs past the cap stay
+ * separate findings.
+ */
+export const MAX_DUPLICATE_PAIRS = 20;
+
 /** After this many rounds the hub posts the limit comment and runs no model. */
 export const MAX_ROUNDS = 3;
 
@@ -75,6 +84,7 @@ export const RUN_LIMITS = {
   finder: { maxTurns: 30, maxBudgetUsd: 2 },
   verifier: { maxTurns: 15, maxBudgetUsd: 0.5 },
   linkedIssue: { maxTurns: 10, maxBudgetUsd: 0.5 },
+  duplicates: { maxTurns: 10, maxBudgetUsd: 0.5 },
 };
 
 /** Account that posts the brief. The hub reads round state only from its comments. */

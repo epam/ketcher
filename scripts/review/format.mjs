@@ -11,11 +11,12 @@ import { writeMarker } from './state.mjs';
 /** @typedef {import('./diff.mjs').DiffFile} DiffFile */
 
 /**
- * The answer of the linked-issue run, with the issue number.
+ * The answer of the linked-issue run, with the issue number. Without
+ * `fixesIssue` the run gave no answer.
  * @typedef {object} LinkedIssue
  * @property {number} number
- * @property {'yes' | 'partly' | 'no'} fixesIssue
- * @property {string} reason
+ * @property {'yes' | 'partly' | 'no'} [fixesIssue]
+ * @property {string} [reason]
  */
 
 /**
@@ -136,6 +137,9 @@ export function briefLine(finding) {
 function linkedIssueLine(issue) {
   if (!issue) {
     return '**Linked issue:** no linked issue.';
+  }
+  if (!issue.fixesIssue) {
+    return `**Linked issue:** #${issue.number}: the check gave no answer.`;
   }
   const answer = ANSWERS[issue.fixesIssue];
   return `**Linked issue:** #${issue.number}: ${answer}. ${plain(issue.reason)}`;

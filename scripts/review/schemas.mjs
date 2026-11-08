@@ -131,3 +131,39 @@ export const LINKED_ISSUE_SCHEMA = {
     },
   },
 };
+
+/**
+ * Answer of the duplicates run: one verdict per pair it was asked about.
+ * The hub merges a pair only when it is `same` with `high` confidence.
+ */
+export const DUPLICATES_SCHEMA = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  type: 'object',
+  additionalProperties: false,
+  required: ['pairs'],
+  properties: {
+    pairs: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['first', 'second', 'same', 'confidence', 'reason'],
+        properties: {
+          first: { type: 'integer', minimum: 1 },
+          second: { type: 'integer', minimum: 1 },
+          same: {
+            type: 'boolean',
+            description:
+              'True when both findings describe the same failing scenario on the same code.',
+          },
+          confidence: {
+            enum: ['high', 'low'],
+            description:
+              'high only when you are sure. When in doubt, answer low.',
+          },
+          reason: { ...text, description: 'One sentence.' },
+        },
+      },
+    },
+  },
+};

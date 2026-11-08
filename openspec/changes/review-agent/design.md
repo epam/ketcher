@@ -110,6 +110,12 @@ The extra findings are merged against the posted and the already found findings,
 
 *Alternative:* the verifier reports the security or reuse problem itself. Rejected: the verifier checks one finding and has no lens prompt, and a finding needs the lens's focus and checks.
 
+### 13. A model decides whether two close findings are the same
+
+Merging in code (decision 7) catches findings with the same rule, and findings without a rule only when their claims match word for word. Two lenses often describe one problem in different words, which gives two comments and uses two places of the N verification slots. After merging, the hub picks pairs: two findings in the same file, at most a few lines apart. One duplicates run gets the pairs and answers, for each, `same` and a confidence, `high` or `low`. The hub merges a pair only when it asked about that pair and the answer is `same` with `high` confidence. The most severe finding leads; the merged finding keeps every location and lens, and the other fingerprints, so a later round skips every wording. Without pairs no model runs. A failed run merges nothing.
+
+*Alternative:* a numeric confidence with a threshold. Rejected: a model's numbers are poorly calibrated and change between runs; two levels and the rule "when in doubt, answer low" are steadier. A wrong merge hides a finding, and a missed merge only leaves a second comment, so doubt keeps both.
+
 ## Risks / Trade-offs
 
 - **Subscription limits** → The token belongs to a team member's Claude account. A review is up to one finder run per panel lens, one linked-issue run and up to N verifications on that account. Mitigated by manual rounds, the panel, the cap N, Sonnet defaults and `--max-budget-usd` per run.

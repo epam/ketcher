@@ -111,6 +111,17 @@ The hub SHALL merge findings of the same file and rule within a few lines of eac
 - **WHEN** a finding was posted in round 1 and is reported again in round 2
 - **THEN** it is not verified or posted again
 
+### Requirement: Duplicates in different words
+The hub SHALL ask one model run whether two findings in the same file, a few lines apart, describe the same problem. It SHALL merge a pair only when the answer is the same problem with high confidence, and SHALL keep both findings in every other case, including a failed run. A later round SHALL skip every finding merged into a posted one.
+
+#### Scenario: Same problem, different words
+- **WHEN** `correctness` and `security` describe one unsafe `innerHTML` line in different words, and the run answers same with high confidence
+- **THEN** one finding with both lenses is verified and posted
+
+#### Scenario: The model is not sure
+- **WHEN** the run answers same with low confidence
+- **THEN** both findings are verified separately
+
 ### Requirement: Independent verification
 Each finding sent to verification SHALL get its own verifier run, which SHALL open the cited code, check the failing scenario, and confirm or drop the finding, and MAY change its severity. The hub SHALL tell the verifier whether the cited line is part of the diff. Only confirmed findings SHALL be posted.
 

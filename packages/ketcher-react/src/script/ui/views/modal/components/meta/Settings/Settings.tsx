@@ -255,7 +255,7 @@ const SettingsDialog = (props: Props) => {
     content: (
       <fieldset>
         {SUPPORTED_LANGUAGES.length > 1 && (
-          <Label title={t('settings:language.title')} data-testid="language">
+          <Label title="settings:language.title" data-testid="language">
             <span>
               <Select
                 value={i18n.language}

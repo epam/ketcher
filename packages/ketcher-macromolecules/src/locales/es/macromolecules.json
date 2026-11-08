@@ -86,5 +86,18 @@
     "unknownStructure": "Estructura desconocida",
     "phosphateOnLeft": "Fosfato a la izquierda (5')",
     "phosphateOnRight": "Fosfato a la derecha (3')"
+  },
+  "library": {
+    "ambiguousGroup": {
+      "bases": "Ambiguous Bases",
+      "dnaBases": "Ambiguous DNA Bases",
+      "rnaBases": "Ambiguous RNA Bases",
+      "sugars": "Ambiguous Sugars",
+      "phosphates": "Ambiguous Phosphates",
+      "aminoAcids": "Ambiguous Amino Acids",
+      "nucleotides": "Ambiguous Nucleotides",
+      "chem": "Ambiguous CHEM"
+    },
+    "noNaturalAnalogue": "No natural analogue"
   }
 }

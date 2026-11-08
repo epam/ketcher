@@ -56,7 +56,7 @@ const MonomerList = ({
   duplicatePreset,
   editPreset,
 }: IMonomerListProps) => {
-  const { t } = useTranslation('macromoleculesDialogs');
+  const { t } = useTranslation(['macromoleculesDialogs', 'macromolecules']);
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
@@ -82,10 +82,13 @@ const MonomerList = ({
         <div>{t('monomerLibrary.monomersSectionHeader')}</div>
       )}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
+        const resolvedTitle = groupTitle?.startsWith('macromolecules:')
+          ? t(groupTitle)
+          : groupTitle;
         return (
           <MonomerGroup
             key={groupTitle}
-            title={groups.length === 1 ? undefined : groupTitle}
+            title={groups.length === 1 ? undefined : resolvedTitle}
             items={groupItems}
             libraryName={libraryName}
             onItemClick={onItemClick}
@@ -105,10 +108,15 @@ const MonomerList = ({
       <>
         {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
           ambiguousMonomers.map((group) => {
+            const resolvedTitle = group.groupTitle?.startsWith(
+              'macromolecules:',
+            )
+              ? t(group.groupTitle)
+              : group.groupTitle;
             return (
               <MonomerGroup
                 key={group.groupTitle}
-                title={group.groupTitle}
+                title={resolvedTitle}
                 items={group.groupItems}
                 libraryName={libraryName}
                 onItemClick={onItemClick}

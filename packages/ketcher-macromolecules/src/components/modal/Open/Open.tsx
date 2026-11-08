@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { ViewSwitcher } from './ViewSwitcher';
@@ -126,10 +126,10 @@ const FASTA = 'fasta';
 const ONE_LETTER = 'one-letter';
 const THREE_LETTER = 'three-letter';
 
-const options: Array<Option> = [
+const formatOptionsConfig: Array<Option & { labelKey?: string }> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'seq', label: 'Sequence' },
+  { id: 'seq', label: 'Sequence', labelKey: 'open.formats.sequence' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
@@ -137,16 +137,25 @@ const options: Array<Option> = [
   { id: 'biln', label: 'BILN' },
 ];
 
-const additionalOptions: Array<Option> = [
+const additionalOptionsConfig: Array<Option & { labelKey?: string }> = [
   { id: RNA, label: 'RNA' },
   { id: 'dna', label: 'DNA' },
-  { id: PEPTIDE, label: 'Peptide' },
+  { id: PEPTIDE, label: 'Peptide', labelKey: 'open.formats.peptide' },
 ];
 
-const peptideLettersFormatOptions: Array<Option> = [
-  { id: ONE_LETTER, label: '1-letter code' },
-  { id: THREE_LETTER, label: '3-letter code' },
-];
+const peptideLettersFormatOptionsConfig: Array<Option & { labelKey?: string }> =
+  [
+    {
+      id: ONE_LETTER,
+      label: '1-letter code',
+      labelKey: 'open.formats.oneLetterCode',
+    },
+    {
+      id: THREE_LETTER,
+      label: '3-letter code',
+      labelKey: 'open.formats.threeLetterCode',
+    },
+  ];
 
 const inputFormats = macromoleculesFilesInputFormats;
 
@@ -344,6 +353,27 @@ const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
+  const options = useMemo(
+    () =>
+      formatOptionsConfig.map((option) =>
+        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
+      ),
+    [t],
+  );
+  const additionalOptions = useMemo(
+    () =>
+      additionalOptionsConfig.map((option) =>
+        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
+      ),
+    [t],
+  );
+  const peptideLettersFormatOptions = useMemo(
+    () =>
+      peptideLettersFormatOptionsConfig.map((option) =>
+        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
+      ),
+    [t],
+  );
   const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
@@ -397,7 +427,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     setFileName(fileName);
     if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
+      const option = formatOptionsConfig.find((el) => el.id === fileExtension);
       const id = option?.id ? option.id : SEQ;
       setFormatSelection(id);
     }

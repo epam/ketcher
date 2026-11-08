@@ -290,10 +290,20 @@ export const selectAmbiguousMonomersInCategory = (
   let groupedAmbiguousMonomerLibraryItems: GroupedAmbiguousMonomerLibraryItemType[] =
     [];
 
+  const ambiguousGroupKeyByName: Partial<Record<MonomerGroups, string>> = {
+    [MonomerGroups.SUGARS]: 'macromolecules:library.ambiguousGroup.sugars',
+    [MonomerGroups.PHOSPHATES]:
+      'macromolecules:library.ambiguousGroup.phosphates',
+    [MonomerGroups.PEPTIDES]:
+      'macromolecules:library.ambiguousGroup.aminoAcids',
+    [MonomerGroups.NUCLEOTIDES]:
+      'macromolecules:library.ambiguousGroup.nucleotides',
+  };
+
   if (libraryGroupName === MonomerGroups.BASES) {
     groupedAmbiguousMonomerLibraryItems = [
       {
-        groupTitle: 'Ambiguous Bases',
+        groupTitle: 'macromolecules:library.ambiguousGroup.bases',
         groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
           return (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
@@ -310,7 +320,7 @@ export const selectAmbiguousMonomersInCategory = (
         }),
       },
       {
-        groupTitle: 'Ambiguous DNA Bases',
+        groupTitle: 'macromolecules:library.ambiguousGroup.dnaBases',
         groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
           return (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
@@ -321,7 +331,7 @@ export const selectAmbiguousMonomersInCategory = (
         }),
       },
       {
-        groupTitle: 'Ambiguous RNA Bases',
+        groupTitle: 'macromolecules:library.ambiguousGroup.rnaBases',
         groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
           return (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
@@ -334,7 +344,9 @@ export const selectAmbiguousMonomersInCategory = (
     ];
   } else {
     groupedAmbiguousMonomerLibraryItems.push({
-      groupTitle: `Ambiguous ${libraryGroupName}`,
+      groupTitle:
+        ambiguousGroupKeyByName[libraryGroupName] ??
+        'macromolecules:library.ambiguousGroup.chem',
       groupItems: ambiguousMonomerLibraryItems,
     });
   }

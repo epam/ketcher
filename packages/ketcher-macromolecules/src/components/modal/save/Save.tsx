@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, type MouseEvent } from 'react';
+import { useMemo, useState, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/shared/modal';
@@ -49,15 +49,25 @@ import {
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-const options: Array<Option & { id: SupportedFormats }> = [
+const optionsConfig: Array<
+  Option & { id: SupportedFormats; labelKey?: string }
+> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'sequence', label: 'Sequence (1-letter code)' },
-  { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
+  {
+    id: 'sequence',
+    label: 'Sequence (1-letter code)',
+    labelKey: 'save.formats.sequence1Letter',
+  },
+  {
+    id: 'sequence-3-letter',
+    label: 'Sequence (3-letter code)',
+    labelKey: 'save.formats.sequence3Letter',
+  },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
-  { id: 'svg', label: 'SVG Document' },
+  { id: 'svg', label: 'SVG Document', labelKey: 'save.formats.svgDocument' },
   { id: 'helm', label: 'HELM' },
   { id: 'biln', label: 'BILN' },
 ];
@@ -91,6 +101,13 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const { t } = useTranslation('macromoleculesDialogs');
+  const options = useMemo(
+    () =>
+      optionsConfig.map((option) =>
+        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
+      ),
+    [t],
+  );
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();

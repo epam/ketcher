@@ -119,5 +119,25 @@
       "phosphateLeavingGroupWarning": "磷酸单体通常以羟基作为 R1 和 R2 的离去基团。是否要继续使用当前的连接点？",
       "nucleotideLeavingGroupWarning": "核苷酸单体通常以氢作为 R1 的离去基团，以羟基作为 R2 的离去基团。是否要继续使用当前的连接点？"
     }
+  },
+  "ambiguousMonomerPreview": {
+    "alternatives": "Alternatives",
+    "mixed": "Mixed",
+    "anyAminoAcid": "Any amino acid",
+    "anyBase": "Any base"
+  },
+  "colorPicker": {
+    "customColors": "Custom Colors",
+    "closeCustomColors": "Close custom colors",
+    "openCustomColors": "Open custom colors",
+    "hue": "Hue",
+    "lightness": "Lightness",
+    "colorPreview": "Color preview",
+    "deleteCustomColor": "Delete custom color"
+  },
+  "rgroup": {
+    "removeAttachmentGroup": "Remove attachment group",
+    "createAttachmentGroup": "Create attachment group",
+    "createAttachmentGroupDisabled": "Selection must contain only continuous atoms without extra elements or bonds"
   }
 }

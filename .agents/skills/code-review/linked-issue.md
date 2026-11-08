@@ -24,4 +24,4 @@ Answer:
 - `partly` when it fixes some of them, or when a confirmed blocker breaks one.
 - `no` when it fixes none of them, or changes something the issue does not ask for.
 
-Give the reason in one or two sentences. For `partly` and `no`, name the cases the diff does not fix. Do not review the code again and do not add findings: the lenses did that.
+Give the reason in at most two sentences, about the issue and the diff only. Do not write about what you read or could not read. For `partly` and `no`, name the cases the diff does not fix. Do not review the code again and do not add findings: the lenses did that.

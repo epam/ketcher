@@ -58,27 +58,44 @@ const bySeverity = (a, b) =>
  */
 const code = (location) => `\`${location.replaceAll('`', "'")}\``;
 
+/** A closed inline code span, such as `a < b`. */
+const CODE_SPAN = /(`[^`]*`)/;
+
+/**
+ * Text outside code spans, made safe: `<` is escaped and `@` gets a
+ * zero-width space after it.
+ * @param {string} text
+ */
+const escapeText = (text) =>
+  text.replaceAll('<', '&lt;').replaceAll('@', `@${ZERO_WIDTH_SPACE}`);
+
+/** @param {string} part a code span or the text between two spans */
+const safePart = (part) => (CODE_SPAN.test(part) ? part : escapeText(part));
+
 /**
  * Model text as safe Markdown on one line. The text comes from runs that read
  * the pull request, so it is treated like user input:
  *
  * - Whitespace becomes one space, so the text cannot add headings, lists or
  *   a second line to a comment.
- * - `<` is escaped, so the text cannot add HTML or a hidden `<!-- -->`
- *   comment, such as a fake review marker.
- * - `@` gets a zero-width space after it, so the text cannot notify a person
- *   or a team. GitHub shows the name unchanged.
+ * - Outside code spans, `<` is escaped, so the text cannot add HTML or a
+ *   hidden `<!-- -->` comment, such as a fake review marker.
+ * - Outside code spans, `@` gets a zero-width space after it, so the text
+ *   cannot notify a person or a team. GitHub shows the name unchanged.
+ *
+ * Inside a code span GitHub shows the text as it is: no HTML, no mention.
+ * Escaping there would show `&lt;` instead of `<`, so code spans stay as
+ * they are. A backtick without its pair starts no span. A backslash before a
+ * backtick goes first: on GitHub it would turn the backtick into text, and
+ * what this function takes for a code span would then be raw HTML.
  *
  * Other Markdown, such as `**bold**` or a link, stays as it is: it can only
  * change how the comment looks, and the hub posts nothing else from it.
  * @param {string} text
  */
 export function plain(text) {
-  return text
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replaceAll('<', '&lt;')
-    .replaceAll('@', `@${ZERO_WIDTH_SPACE}`);
+  const oneLine = text.replace(/\s+/g, ' ').trim().replaceAll('\\`', '`');
+  return oneLine.split(CODE_SPAN).map(safePart).join('');
 }
 
 /**

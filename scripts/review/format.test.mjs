@@ -52,6 +52,16 @@ test('model text is one line, without HTML and without mentions', () => {
   );
 });
 
+test('code spans keep < and @, the text around them does not', () => {
+  const space = String.fromCodePoint(0x200b);
+  assert.equal(
+    plain('`a < b` is not <b>, `@Input()` is not @team'),
+    `\`a < b\` is not &lt;b>, \`@Input()\` is not @${space}team`,
+  );
+  assert.equal(plain('one ` <!-- x'), 'one ` &lt;!-- x');
+  assert.equal(plain('\\`<b>\\`'), '`<b>`');
+});
+
 test('only lines in the diff get a comment, blockers first, up to the cap', () => {
   const { inline, overflow, outsideDiff } = splitForPosting(
     [

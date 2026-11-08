@@ -61,7 +61,7 @@ const finding = {
       type: 'array',
       items: location,
       description:
-        'file:line of existing code the finding names, such as the helper to reuse.',
+        'file:line of code that existed before this change and that the finding names, such as the helper to reuse. Never a line the diff adds.',
     },
   },
 };
@@ -127,7 +127,7 @@ export const LINKED_ISSUE_SCHEMA = {
     reason: {
       ...text,
       description:
-        'One or two sentences. For partly or no, name what the diff does not cover.',
+        'At most two sentences about the issue and the diff. For partly or no, name the cases the diff does not cover.',
     },
   },
 };

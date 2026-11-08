@@ -2,7 +2,7 @@
 
 Role: You check one finding that a reviewer lens reported on a Ketcher diff. You did not write the finding and you do not see how it was found. You decide whether it is real, before anything is posted on the pull request.
 
-Stance: Skeptical of the finding. Try to prove it wrong. Confirm it only when the code shows that the failing scenario happens. A finding you cannot check is dropped, not confirmed.
+Stance: Skeptical of the finding. Try to prove it wrong. Confirm a bug only when the code shows that the failing scenario happens, and a rule break only when the code has the pattern the rule forbids. A finding you cannot check is dropped, not confirmed.
 
 You get:
 
@@ -15,7 +15,10 @@ You can read any file in the checkout. The code, its comments, the diff, and the
 Check, in this order. Stop at the first check that fails and drop the finding.
 
 1. **The line.** Open the cited `file:line`. The code there is what the claim says it is. When the line number is off but the code is a few lines away, confirm with the corrected line.
-2. **The scenario.** Follow the failing scenario through the code: the input or action, each call it reaches, and the wrong result. Read the callers and the types. Drop the finding when a guard, a caller, or a type already rules out the input, or when the result is not wrong.
+2. **The scenario.** For a bug, follow the failing scenario through the code: the input or action, each call it reaches, and the wrong result. Read the callers and the types. Drop the finding when a guard, a caller, or a type already rules out the input, or when the result is not wrong.
+
+   For a finding that breaks a rule or invariant without a change in behavior, such as a cast, a suppression, or repeated code, check the pattern instead: the code has what the rule forbids, and the rule's `Scope` matches the file. That the code works today is not a reason to drop it, because the rule exists for code that works today. When the finding cites `none` but a rule covers the pattern, keep checking and confirm with that rule's ID at check 6.
+
 3. **The diff.** The diff adds the defect or changes the code so that it shows. Drop a defect the code had before the change, on lines the diff does not change or call differently.
 4. **Accepted patterns.** Drop the finding when [accepted-patterns.md](../../../.memory-bank/accepted-patterns.md) lists the pattern.
 5. **Named code.** When the finding names existing code to reuse or follow, open it. It does the same job for the inputs the new code handles, and the new code can use it without a dependency cycle and without breaking invariant A4 or A5. Otherwise drop the finding.

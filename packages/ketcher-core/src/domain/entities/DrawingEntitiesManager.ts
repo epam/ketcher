@@ -175,6 +175,10 @@ function isUnsplitNucleotideNode(
   );
 }
 
+// The sense/antisense role recalculateAntisenseChains() decided for a monomer,
+// collected before any monomer item is modified.
+type MonomerSenseRole = { isSense: boolean; isAntisense: boolean };
+
 // Weighs a chain for the sense/antisense flip decision (see issue #5712, req. 2.2):
 // an unsplit nucleotide represents a sugar+base+phosphate triplet, so it counts as
 // three monomers, matching a split nucleotide of the same chain length.
@@ -3655,17 +3659,18 @@ export class DrawingEntitiesManager {
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
+    // The final sense/antisense role of every monomer is collected first and
+    // its monomer item is modified once, at the end. Resetting a monomer here
+    // and then marking it as sense or antisense would put two operations for
+    // the same monomer into one command, and Command.invert() replays
+    // operations in their original order: the second one would restore the
+    // intermediate state, with the sequence ids already cleared, over the
+    // original one.
+    const monomerRoles = new Map<BaseMonomer, MonomerSenseRole>();
 
     if (shouldRecalculateOldAntisense) {
       this.monomers.forEach((monomer) => {
-        command.merge(
-          this.modifyMonomerItem(monomer, {
-            ...monomer.monomerItem,
-            isAntisense: false,
-            isSense: false,
-            seqId: needClearSeqId ? undefined : monomer.monomerItem.seqId,
-          }),
-        );
+        monomerRoles.set(monomer, { isSense: false, isAntisense: false });
       });
       this.antisenseMonomerToSenseChain = new Map();
     }
@@ -3685,7 +3690,7 @@ export class DrawingEntitiesManager {
 
         if (isSenseChain) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsSense(monomer, needClearSeqId));
+            monomerRoles.set(monomer, { isSense: true, isAntisense: false });
           });
 
           return;
@@ -3693,7 +3698,7 @@ export class DrawingEntitiesManager {
 
         if (isAntisenseChain) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsAntisense(monomer, needClearSeqId));
+            monomerRoles.set(monomer, { isSense: false, isAntisense: true });
           });
 
           return;
@@ -3790,15 +3795,26 @@ export class DrawingEntitiesManager {
         handledChains.add(chain);
         if (group === senseGroup) {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsSense(monomer, needClearSeqId));
+            monomerRoles.set(monomer, { isSense: true, isAntisense: false });
           });
         } else {
           chain.monomers.forEach((monomer) => {
-            command.merge(this.markMonomerAsAntisense(monomer, needClearSeqId));
+            monomerRoles.set(monomer, { isSense: false, isAntisense: true });
             this.antisenseMonomerToSenseChain.set(monomer, senseChain.chain);
           });
         }
       });
+    });
+
+    monomerRoles.forEach((role, monomer) => {
+      command.merge(
+        this.modifyMonomerItem(monomer, {
+          ...monomer.monomerItem,
+          isSense: role.isSense,
+          isAntisense: role.isAntisense,
+          seqId: needClearSeqId ? undefined : monomer.monomerItem.seqId,
+        }),
+      );
     });
 
     return command;

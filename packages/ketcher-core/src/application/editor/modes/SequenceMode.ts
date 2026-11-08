@@ -673,6 +673,10 @@ export class SequenceMode extends BaseMode {
       }
     }
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
+
     // Refresh UI
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -1121,6 +1125,9 @@ export class SequenceMode extends BaseMode {
       }
     }
 
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation(true));
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
@@ -1646,6 +1653,9 @@ export class SequenceMode extends BaseMode {
             );
           }
 
+          modelChanges.merge(
+            editor.drawingEntitiesManager.recalculateAntisenseChains(),
+          );
           modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
@@ -1721,6 +1731,9 @@ export class SequenceMode extends BaseMode {
               newNodePosition,
             );
 
+            modelChanges.merge(
+              editor.drawingEntitiesManager.recalculateAntisenseChains(),
+            );
             modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
             history.update(modelChanges);
@@ -1744,6 +1757,9 @@ export class SequenceMode extends BaseMode {
             this.deleteBondToNextNodeInChain(
               previousTwoStrandedNodeInSameChain.senseNode,
               modelChanges,
+            );
+            modelChanges.merge(
+              editor.drawingEntitiesManager.recalculateAntisenseChains(),
             );
             modelChanges.addOperation(new ReinitializeModeOperation(true));
             editor.renderersContainer.update(modelChanges);
@@ -1774,6 +1790,9 @@ export class SequenceMode extends BaseMode {
             );
           }
 
+          modelChanges.merge(
+            editor.drawingEntitiesManager.recalculateAntisenseChains(),
+          );
           modelChanges.addOperation(new ReinitializeModeOperation(true));
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
@@ -2244,6 +2263,13 @@ export class SequenceMode extends BaseMode {
     }
 
     const modelChanges = this.insertNewSequenceFragment(chainsCollection);
+
+    // The fragment goes into the chain under the caret, so the sequence ids
+    // of what is already on canvas no longer describe it. The early return
+    // above (not in edit mode) only adds standalone chains and keeps them.
+    modelChanges.merge(
+      provideEditorInstance().drawingEntitiesManager.recalculateAntisenseChains(),
+    );
 
     modelChanges.addOperation(new ReinitializeModeOperation());
 
@@ -2935,6 +2961,9 @@ export class SequenceMode extends BaseMode {
         ),
       );
 
+      modelChanges.merge(
+        editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.setCaretPositionNextToMonomer(
@@ -3318,6 +3347,9 @@ export class SequenceMode extends BaseMode {
         ),
       );
 
+      modelChanges.merge(
+        editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.setCaretPositionNextToMonomer(
@@ -3676,6 +3708,12 @@ export class SequenceMode extends BaseMode {
       );
     }
 
+    // Pairing a strand with another one decides which of them is the
+    // antisense strand, and so in which direction it is numbered: the
+    // imported ids no longer describe the structure.
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
@@ -3704,6 +3742,12 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(this.deleteHydrogenBondsForNode(node));
     }
 
+    // Pairing a strand with another one decides which of them is the
+    // antisense strand, and so in which direction it is numbered: the
+    // imported ids no longer describe the structure.
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);

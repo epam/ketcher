@@ -89,15 +89,15 @@
   },
   "library": {
     "ambiguousGroup": {
-      "bases": "Ambiguous Bases",
-      "dnaBases": "Ambiguous DNA Bases",
-      "rnaBases": "Ambiguous RNA Bases",
-      "sugars": "Ambiguous Sugars",
-      "phosphates": "Ambiguous Phosphates",
-      "aminoAcids": "Ambiguous Amino Acids",
-      "nucleotides": "Ambiguous Nucleotides",
-      "chem": "Ambiguous CHEM"
+      "bases": "Bases ambiguas",
+      "dnaBases": "Bases de ADN ambiguas",
+      "rnaBases": "Bases de ARN ambiguas",
+      "sugars": "Azúcares ambiguos",
+      "phosphates": "Fosfatos ambiguos",
+      "aminoAcids": "Aminoácidos ambiguos",
+      "nucleotides": "Nucleótidos ambiguos",
+      "chem": "Químicos ambiguos"
     },
-    "noNaturalAnalogue": "No natural analogue"
+    "noNaturalAnalogue": "Sin análogo natural"
   }
 }

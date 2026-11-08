@@ -106,10 +106,10 @@
     "orDragFileHere": "o arrastra el archivo aquí",
     "imageRecognitionUnavailable": "El servicio de reconocimiento de imágenes no está disponible",
     "formats": {
-      "sequence": "Sequence",
-      "peptide": "Peptide",
-      "oneLetterCode": "1-letter code",
-      "threeLetterCode": "3-letter code"
+      "sequence": "Secuencia",
+      "peptide": "Péptido",
+      "oneLetterCode": "Código de 1 letra",
+      "threeLetterCode": "Código de 3 letras"
     }
   },
   "save": {
@@ -122,9 +122,9 @@
     "helmAliasExportNotice": "Algunos monómeros no tienen alias en la biblioteca principal de HELM; se exportan usando los alias de Ketcher.",
     "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)",
     "formats": {
-      "sequence1Letter": "Sequence (1-letter code)",
-      "sequence3Letter": "Sequence (3-letter code)",
-      "svgDocument": "SVG Document"
+      "sequence1Letter": "Secuencia (código de 1 letra)",
+      "sequence3Letter": "Secuencia (código de 3 letras)",
+      "svgDocument": "Documento SVG"
     }
   },
   "updateSequence": {

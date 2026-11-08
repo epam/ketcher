@@ -88,11 +88,11 @@
     },
     "showHydrogenLabels": {
       "title": "Mostrar explícitamente las etiquetas de hidrógeno",
-      "enumOff": "Off",
+      "enumOff": "Desactivado",
       "enumHetero": "Hetero",
       "enumTerminal": "Terminal",
-      "enumTerminalAndHetero": "Terminal and Hetero",
-      "enumOn": "On"
+      "enumTerminalAndHetero": "Terminal y hetero",
+      "enumOn": "Activado"
     },
     "aromaticCircle": {
       "title": "Enlaces aromáticos como círculo"

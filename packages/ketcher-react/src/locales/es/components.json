@@ -121,23 +121,23 @@
     }
   },
   "ambiguousMonomerPreview": {
-    "alternatives": "Alternatives",
-    "mixed": "Mixed",
-    "anyAminoAcid": "Any amino acid",
-    "anyBase": "Any base"
+    "alternatives": "Alternativas",
+    "mixed": "Mezcla",
+    "anyAminoAcid": "Cualquier aminoácido",
+    "anyBase": "Cualquier base"
   },
   "colorPicker": {
-    "customColors": "Custom Colors",
-    "closeCustomColors": "Close custom colors",
-    "openCustomColors": "Open custom colors",
-    "hue": "Hue",
-    "lightness": "Lightness",
-    "colorPreview": "Color preview",
-    "deleteCustomColor": "Delete custom color"
+    "customColors": "Colores personalizados",
+    "closeCustomColors": "Cerrar colores personalizados",
+    "openCustomColors": "Abrir colores personalizados",
+    "hue": "Tono",
+    "lightness": "Luminosidad",
+    "colorPreview": "Vista previa del color",
+    "deleteCustomColor": "Eliminar color personalizado"
   },
   "rgroup": {
-    "removeAttachmentGroup": "Remove attachment group",
-    "createAttachmentGroup": "Create attachment group",
-    "createAttachmentGroupDisabled": "Selection must contain only continuous atoms without extra elements or bonds"
+    "removeAttachmentGroup": "Eliminar grupo de unión",
+    "createAttachmentGroup": "Crear grupo de unión",
+    "createAttachmentGroupDisabled": "La selección debe contener solo átomos continuos sin elementos ni enlaces adicionales"
   }
 }

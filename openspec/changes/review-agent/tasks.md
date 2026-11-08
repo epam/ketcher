@@ -36,8 +36,8 @@
 ## 5. GitHub and entry point
 
 - [x] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
-- [ ] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
-- [ ] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel, one deepening pass and label removal on failure.
+- [x] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
+- [x] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel, one deepening pass and label removal on failure.
 - [ ] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.
 
 ## 6. Evaluation

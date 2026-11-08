@@ -1,0 +1,9 @@
+diff --git a/packages/ketcher-core/src/utilities/label.ts b/packages/ketcher-core/src/utilities/label.ts
+--- a/packages/ketcher-core/src/utilities/label.ts
++++ b/packages/ketcher-core/src/utilities/label.ts
+@@ -1,3 +1,4 @@
+ export function label(atom) {
+-  return atom.label;
++  const text = atom.label.trim();
++  return text.toUpperCase();
+ }

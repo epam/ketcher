@@ -93,7 +93,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return undefined;
   }
 
-  public abstract show(theme, force?: boolean): void;
+  public abstract show(theme, shouldForce?: boolean): void;
   public abstract drawSelection(): void;
   public abstract moveSelection(): void;
   protected abstract appendHover(

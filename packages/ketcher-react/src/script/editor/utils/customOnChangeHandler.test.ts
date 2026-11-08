@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,10 @@
 import { customOnChangeHandler } from './customOnChangeHandler';
 
 describe('customOnChangeHandler', () => {
-  const originalIsPolymerEditorTurnedOn = window.isPolymerEditorTurnedOn;
+  const originalIsPolymerEditorTurnedOn = globalThis.isPolymerEditorTurnedOn;
 
   afterEach(() => {
-    window.isPolymerEditorTurnedOn = originalIsPolymerEditorTurnedOn;
+    globalThis.isPolymerEditorTurnedOn = originalIsPolymerEditorTurnedOn;
   });
 
   it('should call handler with no arguments when action is undefined', () => {
@@ -30,7 +30,7 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should call handler when in macro mode (isPolymerEditorTurnedOn = true)', () => {
-    window.isPolymerEditorTurnedOn = true;
+    globalThis.isPolymerEditorTurnedOn = true;
     const handler = jest.fn();
     const action = { operations: [] };
     customOnChangeHandler(action, handler);
@@ -38,7 +38,7 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should call handler with empty data when action has no operations in micro mode', () => {
-    window.isPolymerEditorTurnedOn = false;
+    globalThis.isPolymerEditorTurnedOn = false;
     const handler = jest.fn();
     const action = {};
     customOnChangeHandler(action, handler);
@@ -46,7 +46,7 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should call handler with empty data when action.operations is not an array in micro mode', () => {
-    window.isPolymerEditorTurnedOn = false;
+    globalThis.isPolymerEditorTurnedOn = false;
     const handler = jest.fn();
     const action = { operations: 'not-an-array' };
     customOnChangeHandler(action, handler);
@@ -54,14 +54,14 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should call handler with empty data when action is null in micro mode', () => {
-    window.isPolymerEditorTurnedOn = false;
+    globalThis.isPolymerEditorTurnedOn = false;
     const handler = jest.fn();
     customOnChangeHandler(null, handler);
     expect(handler).toHaveBeenCalledWith([]);
   });
 
   it('should not mutate the original operations array', () => {
-    window.isPolymerEditorTurnedOn = false;
+    globalThis.isPolymerEditorTurnedOn = false;
     const handler = jest.fn();
     const operation1 = { _inverted: { type: 'test1' } };
     const operation2 = { _inverted: { type: 'test2' } };
@@ -76,7 +76,7 @@ describe('customOnChangeHandler', () => {
   });
 
   it('should process operations and call handler with data in micro mode', () => {
-    window.isPolymerEditorTurnedOn = false;
+    globalThis.isPolymerEditorTurnedOn = false;
     const handler = jest.fn();
     const operation = {
       _inverted: {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,13 @@ import type { Action, compose } from 'redux';
 import type { ButtonsConfig } from '../../builders/ketcher/ButtonsConfig';
 import type { CustomButton } from '../../builders/ketcher/CustomButtons';
 import type { OptionsState } from './options/types';
+import type { ActiveTool, ToolbarState } from './toolbar/types';
+import type { ToolVariant, Tools } from '../action';
+import type { ActionStatus } from './action';
+import type { RequestState } from './request/request.types';
 import type Editor from 'src/script/editor';
 import type { Api } from 'src/script/api';
-import type { ToolVariant } from '../action';
 import type { ThunkAction } from 'redux-thunk';
-import type { ToolbarState } from './toolbar/types';
 
 export type {
   AnalyseRoundName,
@@ -63,6 +65,10 @@ export interface ModalState {
   };
 }
 
+export type ActionStatusesState = { activeTool: ActiveTool } & {
+  [key in keyof Tools]?: ActionStatus;
+};
+
 export interface StoreState {
   editor: Editor;
   server: Api;
@@ -72,6 +78,8 @@ export interface StoreState {
     visibleTools: ToolbarState['visibleTools'] & { select: ToolVariant };
   };
   options: OptionsState;
+  actionState: ActionStatusesState | null;
+  requestsStatuses: RequestState;
 }
 
 export type SetEditor = (editor: Editor) => void;

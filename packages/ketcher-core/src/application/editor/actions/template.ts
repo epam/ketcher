@@ -21,7 +21,7 @@ import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
-import { fromAtomsAttrs, mergeSgroups } from './atom';
+import { fromAtomsAttrs, mergeFragmentsIfNeeded, mergeSgroups } from './atom';
 import { fromBondsAttrs, fromBondAddition } from './bond';
 import { fromBondStereoUpdate } from './bondStereo';
 
@@ -379,16 +379,14 @@ function placeTemplateAtoms(
       pasteItems.atoms.push(operation.data.aid as number);
     } else {
       atomsMap.set(id, mergeA.id);
-      const mappedAtomId = atomsMap.get(id);
-      if (mappedAtomId === undefined) {
-        KetcherLogger.error(
-          `template.ts::placeTemplateAtoms: mapped atom for template atom ${id} not found after merge`,
-        );
-        return;
+      // The template atom landed on an existing atom. If that atom belongs to
+      // another fragment, the template now connects the two structures, so
+      // their fragments are merged — the same rule as bond addition and atom
+      // merge. No-op when the atom is already in the bond's fragment.
+      if (isNumber(frid)) {
+        mergeFragmentsIfNeeded(action, restruct, bond.begin, mergeA.id);
       }
-
-      action.mergeWith(fromAtomsAttrs(restruct, mappedAtomId, attrs, true));
-      // TODO [RB] need to merge fragments?
+      action.mergeWith(fromAtomsAttrs(restruct, mergeA.id, attrs, true));
     }
   });
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin);

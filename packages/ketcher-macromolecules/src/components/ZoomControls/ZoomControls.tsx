@@ -42,7 +42,7 @@ export const ZoomControls = () => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [currentZoom, setCurrentZoom] = useState<number>(100);
   const [containerElement, setContainerElement] =
-    useState<HTMLDivElement | null>(null);
+    useState<HTMLDivElement | null>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const editor = useAppSelector(selectEditor);

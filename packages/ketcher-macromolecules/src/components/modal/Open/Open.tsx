@@ -458,7 +458,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             key={additionalSelection}
             testId="dropdown-select-type"
           />
-        ) : null}
+        ) : undefined}
         {formatSelection === SEQ && additionalSelection === PEPTIDE ? (
           <FooterPeptideLettersSelector
             options={peptideLettersFormatOptions}
@@ -466,7 +466,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             selectionHandler={setPeptideLettersFormatSelection}
             testId="dropdown-select-peptide-letters-format"
           />
-        ) : null}
+        ) : undefined}
       </FooterSelectorContainer>
       <FooterButtonContainer>
         <FooterButton

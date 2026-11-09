@@ -115,6 +115,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       initPromiseRef.current?.then(() => {
         cleanupRef.current?.();
         appRootRef.current?.unmount();
+        ketcherBuilderRef.current?.destroy();
       });
     };
   }, [initKetcher]);

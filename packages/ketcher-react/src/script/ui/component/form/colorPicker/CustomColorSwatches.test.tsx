@@ -3,6 +3,17 @@ import userEvent from '@testing-library/user-event';
 
 import CustomColorSwatches from './CustomColorSwatches';
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'colorPicker.customColors': 'Custom Colors',
+        'colorPicker.openCustomColors': 'Open custom colors',
+        'colorPicker.closeCustomColors': 'Close custom colors',
+      })[key] ?? key,
+  }),
+}));
+
 const defaultProps = {
   customColors: ['#123456', '#ABCDEF'],
   pendingColor: '#123456',

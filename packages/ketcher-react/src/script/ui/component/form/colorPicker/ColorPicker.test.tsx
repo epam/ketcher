@@ -15,6 +15,21 @@ jest.mock('src/hooks', () => ({
   useSettings: jest.fn(),
 }));
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'colorPicker.customColors': 'Custom Colors',
+        'colorPicker.openCustomColors': 'Open custom colors',
+        'colorPicker.closeCustomColors': 'Close custom colors',
+        'colorPicker.hue': 'Hue',
+        'colorPicker.lightness': 'Lightness',
+        'colorPicker.colorPreview': 'Color preview',
+        'colorPicker.deleteCustomColor': 'Delete custom color',
+      })[key] ?? key,
+  }),
+}));
+
 const defaultProps = {
   value: '#000000',
   name: 'testname',

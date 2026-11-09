@@ -92,7 +92,7 @@ describe('SelectBase mouseup', () => {
     expect(stopPropagationSpy).toHaveBeenCalled();
     expect(preventDefaultSpy).toHaveBeenCalled();
     expect(selectTool.mode).toBe('standby');
-    expect(selectTool.exposedUserRotationCenter()).toBeNull();
+    expect(selectTool.exposedUserRotationCenter()).toBeUndefined();
   });
 
   it('starts rotation center drag when selection has no external connections', () => {

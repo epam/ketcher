@@ -43,8 +43,8 @@ export function getStereoAtomsMap(
       ) {
         const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel;
         if (
-          stereoLabel == null ||
-          stereoAtomsMap.get(bond.begin)?.stereoLabel == null
+          stereoLabel == undefined ||
+          stereoAtomsMap.get(bond.begin)?.stereoLabel == undefined
         ) {
           stereoAtomsMap.set(bond.begin, {
             stereoParity: getStereoParity(bond.stereo),

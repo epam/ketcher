@@ -140,7 +140,7 @@ export function setExpandSGroup(
   const struct = restruct.molecule;
 
   const sgroup = struct.sgroups.get(sgid);
-  assert(sgroup != null);
+  assert(sgroup != undefined);
   const atoms = SGroup.getAtoms(struct, sgroup);
 
   atoms.forEach((aid) => {
@@ -162,7 +162,7 @@ export function setExpandMonomerSGroup(
   const struct = restruct.molecule;
 
   const sGroup = struct.sgroups.get(sgid);
-  assert(sGroup != null);
+  assert(sGroup != undefined);
 
   if (attrs.expanded === sGroup.isExpanded()) {
     return action;

@@ -117,14 +117,12 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
     const bond = monomer.attachmentPointsToBonds[apName];
     if (!bond) continue;
 
-    let otherEntity: BaseMonomer | null = null;
+    let otherEntity: BaseMonomer | undefined;
     let otherAttachmentPoint: AttachmentPointName | null = null;
 
     if (bond instanceof PolymerBond) {
       otherEntity =
-        bond.firstMonomer === monomer
-          ? (bond.secondMonomer ?? null)
-          : bond.firstMonomer;
+        bond.firstMonomer === monomer ? bond.secondMonomer : bond.firstMonomer;
       otherAttachmentPoint =
         bond.firstMonomer === monomer
           ? (bond.secondMonomerAttachmentPoint ?? null)
@@ -134,7 +132,7 @@ export function collectMonomerBonds(monomer: BaseMonomer): BondRecord[] {
       // side as the "other entity" placeholder — but MonomerToAtomBond
       // doesn't have a monomer on the other end, so we skip re-routing it
       // through the generic AP matching. These bonds are handled separately.
-      otherEntity = null;
+      otherEntity = undefined;
     }
 
     if (otherEntity) {

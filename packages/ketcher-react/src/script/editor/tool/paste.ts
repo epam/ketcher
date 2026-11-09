@@ -37,18 +37,14 @@ import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 import { dispatchMonomerOrGroupDialog } from './monomerDialog.helpers';
 import type { MergeItems } from './template.types';
-import type { ClosestItemWithMap } from '../shared/closest.types';
+import type { SelectionMoveDragContext } from './select/select.types';
 
 /**
  * Drag context stored while a single contracted group is dragged onto another group.
  */
-interface PasteDragContext {
-  xy0: Vec2;
-  item: ClosestItemWithMap;
-  action?: Action;
+type PasteDragContext = SelectionMoveDragContext & {
   angle?: number;
-  mergeItems?: MergeItems;
-}
+};
 
 let isMovePreviewCalculationInProgress = false;
 

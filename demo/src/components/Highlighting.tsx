@@ -1,21 +1,21 @@
-import styled from '@emotion/styled'
-import { useState } from 'react'
+import styled from '@emotion/styled';
+import { useState } from 'react';
 
-import { PanelButton } from './shared/Buttons'
+import { PanelButton } from './shared/Buttons';
 
-type HighlightingProps = { printToTerminal: (string) => void }
+type HighlightingProps = { printToTerminal: (string) => void };
 
 const HighlightsBox = styled('div')`
   display: flex;
   justify-content: center;
   flex-direction: column;
-`
+`;
 
 const ButtonWithColorBox = styled('div')`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`
+`;
 
 const ColorInput = styled('input')`
   padding: 0;
@@ -25,35 +25,35 @@ const ColorInput = styled('input')`
   margin-left: 5px;
   margin-top: 10px;
   background: none;
-`
+`;
 
 export const Highlighting = ({ printToTerminal }: HighlightingProps) => {
-  const [color, setColor] = useState('#FF7F50')
+  const [color, setColor] = useState('#FF7F50');
 
   const colorHandler = (event) => {
-    setColor(event.target.value)
-  }
+    setColor(event.target.value);
+  };
 
   const getAndPrintHighlights = () => {
-    const highlights = KetcherFunctions.getAllHighlights()
-    printToTerminal(JSON.stringify(highlights, null, 2))
-  }
+    const highlights = KetcherFunctions.getAllHighlights();
+    printToTerminal(JSON.stringify(highlights, undefined, 2));
+  };
 
   const createHighlight = () => {
     const { lastHighlightID, lastHighlight } =
-      KetcherFunctions.highlightSelection(color)
+      KetcherFunctions.highlightSelection(color);
 
     if (!lastHighlight) {
-      return
+      return;
     }
 
     const message =
       'New highlight ID: ' +
       lastHighlightID +
       ', content: \n' +
-      JSON.stringify(lastHighlight, null, 2)
-    printToTerminal(message)
-  }
+      JSON.stringify(lastHighlight, undefined, 2);
+    printToTerminal(message);
+  };
 
   return (
     <HighlightsBox>
@@ -78,5 +78,5 @@ export const Highlighting = ({ printToTerminal }: HighlightingProps) => {
         Get all Highlights
       </PanelButton>
     </HighlightsBox>
-  )
-}
+  );
+};

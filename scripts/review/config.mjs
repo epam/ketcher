@@ -28,12 +28,16 @@ export const LABELS = {
 };
 
 /**
- * Model IDs per role. Defaults until the evaluation (tasks 6.3, 6.4) gives
- * better ones. The Opus label sets both roles to `strong`.
+ * Model IDs per role. Opus for both roles: the maintainer asked for the
+ * strongest review and set the cost aside, and the workflow this change
+ * replaces runs on Opus too. `strong` and the `Claude Review: Opus` label
+ * therefore change nothing now; they stay for a default that goes back to a
+ * cheaper model. A repository variable lowers a role without a pull request,
+ * and the evaluation (tasks 6.3, 6.4) can still change these.
  */
 export const MODELS = {
-  finder: 'claude-sonnet-5-5',
-  verifier: 'claude-sonnet-5-5',
+  finder: 'claude-opus-5-5',
+  verifier: 'claude-opus-5-5',
   strong: 'claude-opus-5-5',
 };
 

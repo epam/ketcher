@@ -84,7 +84,7 @@ The finder passes get the diff, the file list and the rules, not the PR title or
 
 ### 9. Models are configuration; defaults come from the evaluation
 
-`scripts/review/config.mjs` holds exact model IDs per role as defaults. The initial default for both roles is `claude-sonnet-5-5`; the stronger model is `claude-opus-5-5`. Exact IDs keep a run reproducible and make a model change a deliberate step, which an alias such as `sonnet` would not.
+`scripts/review/config.mjs` holds exact model IDs per role as defaults. The default for both roles is `claude-opus-5-5`: the maintainer asked for the strongest review and set the cost aside, and the workflow this change replaces runs on Opus too. The stronger model stays `claude-opus-5-5`, so the `Claude Review: Opus` label changes nothing while the default is Opus; the label and `strong` stay for a default that goes back to a cheaper model. Exact IDs keep a run reproducible and make a model change a deliberate step, which an alias such as `sonnet` would not.
 
 The entry point reads overrides in this order: the environment variables `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, which the workflow takes from GitHub repository variables, so a maintainer can change a model without a pull request; then the local flags `--finder-model` and `--verifier-model`; then the `Claude Review: Opus` label, which sets both roles to the stronger model. Overrides build a new object; the hub never changes the configuration, and `config.mjs` reads no environment.
 

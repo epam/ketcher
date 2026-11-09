@@ -49,7 +49,7 @@
 
 ## 7. Workflow and docs
 
-- [ ] 7.1 Rewrite `.github/workflows/claude-review.yml`: same trigger and filter, no `claude-code-action`, base checkout for the hub, prompts and panel script, PR head checkout as data, pinned Claude Code install, hub run with the `REVIEW_*_MODEL` variables from repository variables, permissions `contents: read`, `pull-requests: write`, `issues: write`, actions pinned to SHAs.
-- [ ] 7.2 Create the label `Claude Review: Opus` (maintainer action).
-- [ ] 7.3 Keep `/review-pr` for local and agent use; update `.agents/skills/review-pr/SKILL.md` where it names the lenses or the verifier.
-- [ ] 7.4 Update the `claude-review.yml` row in `.github/workflows/README.md`.
+- [x] 7.1 Rewrite `.github/workflows/claude-review.yml`: same trigger and filter, no `claude-code-action`, base checkout for the hub, prompts and panel script, PR head checkout as data, pinned Claude Code install, hub run with the `REVIEW_*_MODEL` variables from repository variables, permissions `contents: read`, `pull-requests: write`, `issues: write`, actions pinned to SHAs.
+- [x] 7.2 Create the label `Claude Review: Opus` (maintainer action).
+- [x] 7.3 Keep `/review-pr` for local and agent use; update `.agents/skills/review-pr/SKILL.md` where it names the lenses or the verifier.
+- [x] 7.4 Update the `claude-review.yml` row in `.github/workflows/README.md`.

@@ -18,7 +18,7 @@ Use remote only when the change touches the remote struct service, the `/v2` cli
 
 ## Launch
 
-The app starts with the Vite dev server (`example/vite.config.js`). It serves the package sources live, so no build is needed and the `dist` folders in the packages can be stale without harm. A fresh start takes a few seconds. The dev server serves only `index.html`. The other host pages (two editors, Show/Hide, popup) need the production build in [features/host-pages.md](features/host-pages.md); use `npm run serve:*` only for them.
+The app starts with the Vite dev server (`example/vite.config.js`). It serves the package sources live, so no build is needed and the `dist` folders in the packages can be stale without harm. A fresh start takes a few seconds. The dev server serves only `index.html`. The other host pages (two editors, Show/Hide, popup) need the production build in [modules/example-app.md](../../../.memory-bank/modules/example-app.md); use `npm run serve:*` only for them, with the recipes in [features/host-pages.md](features/host-pages.md).
 
 ```sh
 node .agents/skills/verify-ketcher/scripts/server.mjs start                      # standalone, port 4002

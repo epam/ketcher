@@ -14,7 +14,7 @@ Run from the repo root unless a line says otherwise. Node.js 24.20.0 or newer an
 
 - Install: `npm install`. Run it only from the root.
 - Build the packages and the example app: `npm run build`.
-- Dev server for the example app: `cd example && npm run dev:standalone`. It serves only `index.html`. The host pages for two editors on one page, Show/Hide, and a popup need a production build: [host-pages.md](.agents/skills/verify-ketcher/features/host-pages.md) says which page a change needs.
+- Dev server for the example app: `cd example && npm run dev:standalone`. It serves only `index.html`. The host pages for two editors on one page, Show/Hide, and a popup need a production build: [example-app.md](.memory-bank/modules/example-app.md) says which page a change needs.
 - Checks for the four packages: `npm test`. It runs each package's `test` script.
 - Unit tests in one package: `cd packages/<name> && npm run test:unit`. Unit tests use Jest.
 - Types in all workspaces: `npm run test:types`.

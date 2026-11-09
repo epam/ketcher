@@ -55,4 +55,4 @@ Keep implementation details out. Name only user paths, stable handles, required 
 - [Drag-drop bond establishment](./drag-drop-bond-establishment.md) covers dropping a library monomer onto an attachment point.
 - [Localization](./localization.md) covers the Settings language selector in a multi-language build.
 - [Multi-surface journeys](./multi-surface-journeys.md) covers flows that cross several features.
-- [Host pages](./host-pages.md) covers two editors on one page, Show/Hide of the editor, and the popup. Open it when the change touches editor mount or unmount, state shared across editors, the struct service, or the Indigo worker. It names the pages each change needs.
+- [Host pages](./host-pages.md) covers two editors on one page, Show/Hide of the editor, and the popup. Open it when the change touches editor mount or unmount, state shared across editors, the struct service, or the Indigo worker.

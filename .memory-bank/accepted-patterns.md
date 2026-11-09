@@ -45,13 +45,13 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 ### Underscore prefix on unused names
 
 **Where:** Unused parameters and variables in `packages/ketcher-core/src/`, for example `packages/ketcher-core/src/application/render/restruct/refrag.ts:109`.
-**Why it is accepted:** The lint config exempts names that start with `_` for arguments, variables, and caught errors (`eslint.config.mjs:117-123`). Do not ask to drop the prefix.
+**Why it is accepted:** The lint config exempts names that start with `_` for arguments, variables, and caught errors (`no-unused-vars` options in `.oxlintrc.json`). Do not ask to drop the prefix.
 **Example:** `draw(_render: Render): null {` at `packages/ketcher-core/src/application/render/restruct/refrag.ts:109`.
 
 ### Empty function bodies
 
 **Where:** No-op callbacks and defaults in `packages/ketcher-react/src/`, for example `packages/ketcher-react/src/MicromoleculesEditor.tsx:51`.
-**Why it is accepted:** `@typescript-eslint/no-empty-function` is off (`eslint.config.mjs:112`), and a no-op default is intentional.
+**Why it is accepted:** `.oxlintrc.json` enables no empty-function rule, and a no-op default is intentional.
 **Example:** `const setServerRef = useRef<(structService: Api) => void>(() => {});` at `packages/ketcher-react/src/MicromoleculesEditor.tsx:51`.
 
 ### interface and type aliases for object shapes

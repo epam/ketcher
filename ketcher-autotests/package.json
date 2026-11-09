@@ -12,8 +12,8 @@
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
     "test:types": "tsc --noEmit",
-    "check:lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "check:lint": "oxlint -c ../.oxlintrc.json . && prettier --check \"./**/*.{js,ts}\"",
+    "lint:fix": "oxlint -c ../.oxlintrc.json . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
     "docker:build": "docker-compose build autotests && docker-compose run --rm autotests bash /app/test_prepare.sh",
     "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium",
@@ -28,8 +28,6 @@
   "devDependencies": {
     "@playwright/test": "^1.65.0",
     "cross-env": "^7.0.3",
-    "eslint": "10.9.0",
-    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
     "glob": "^14.0.2",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.6",
@@ -45,7 +43,7 @@
     ],
     "*.{js,ts}": [
       "prettier --write",
-      "eslint ."
+      "oxlint -c ../.oxlintrc.json ."
     ]
   },
   "types": "./tests/typings.d.ts"

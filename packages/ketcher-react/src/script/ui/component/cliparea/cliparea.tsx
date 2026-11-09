@@ -64,7 +64,7 @@ const isUserEditing = (): boolean => {
   );
 };
 
-interface ClipboardData {
+export interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
 }

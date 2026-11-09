@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ClipArea, { type ClipAreaProps } from '../component/cliparea/cliparea';
+import ClipArea from '../component/cliparea/cliparea';
 import { connect } from 'react-redux';
-import type { Dispatch } from 'redux';
+import type { Action } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { initClipboard } from '../state/hotkeys';
+import type { StoreState } from '../state/store.types';
 
-const AppClipArea = connect(null, (dispatch: Dispatch) =>
-  (dispatch as unknown as (thunk: typeof initClipboard) => ClipAreaProps)(
-    initClipboard,
-  ),
+const AppClipArea = connect(
+  null,
+  (dispatch: ThunkDispatch<StoreState, unknown, Action<string>>) =>
+    dispatch(initClipboard),
 )(ClipArea);
 
 export default AppClipArea;

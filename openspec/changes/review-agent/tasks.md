@@ -38,11 +38,11 @@
 - [x] 5.1 `github.mjs`: PR metadata, linked issue, diff for a commit range, previous markers, one review with inline comments, top-level comment, label removal; injectable for tests.
 - [x] 5.2 `index.mjs`: CLI (`--pr`, `--dry-run`, `--finder-model`, `--verifier-model`, `--save-findings`, `--findings-from`, `--log`), model overrides from `REVIEW_FINDER_MODEL`, `REVIEW_VERIFIER_MODEL` and `REVIEW_STRONG_MODEL`, the full flow, label removal in `finally`, JSON run log; the brief names a model that differs from the configured one.
 - [x] 5.3 Test of the full flow with fake GitHub and fake runner, including the round limit, an empty panel, one deepening pass and label removal on failure.
-- [ ] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.
+- [x] 5.4 Local dry runs on 2–3 past PRs; tune prompts and thresholds.
 
 ## 6. Evaluation
 
-- [ ] 6.1 Align with the evaluation work of the #12548 author; then add `scripts/review/eval/eval-set.json` with 2–3 entries from collected maintainer comments (reviewed head commits, expected findings with comment links) and 1–2 clean PRs.
+- [ ] 6.1 Add `scripts/review/eval/eval-set.json` with 2–3 entries from collected maintainer comments (reviewed head commits, expected findings with comment links) and 1–2 clean PRs.
 - [ ] 6.2 Eval runner (configurations, dry run only, finder output reuse) and report script reading `matches.json`.
 - [ ] 6.3 Run `sonnet-finders-sonnet-verifier` and `sonnet-finders-opus-verifier`; fill `matches.json`; decide whether to run `opus-finders-opus-verifier`.
 - [ ] 6.4 Set the default models in `config.mjs` from the results and record the decision in `design.md`.

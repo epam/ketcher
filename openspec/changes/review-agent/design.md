@@ -92,7 +92,7 @@ Model IDs get retired. The runner passes `--fallback-model` with the alias of th
 
 ### 10. Evaluation reuses the hub
 
-`scripts/review/eval/` holds `eval-set.json`, a runner that calls the hub in dry-run mode per configuration, `--save-findings` and `--findings-from` so that verifier-only `scripts/review/eval/` holds `eval-set.json`, a runner that calls the hub in dry-run mode per configuration, `--save-findings` and `--findings-from` so that verifier-only configurations reuse finder output, a `matches.json` that a person fills in, and a report script. The first entries come from maintainer comments already collected (for example #12111, #12173, #11833, #12050, #10230, #11501) and from clean PRs. It starts with 2–3 PRs and grows only if the results are usable. The #12548 author has started an evaluation of the PR review; before task 6 starts, the two are aligned so that one evaluation set and one report serve both.
+`scripts/review/eval/` holds `eval-set.json`, a runner, a `matches.json` that a person fills in, and a report script. The runner calls the hub's round (`flow.mjs`) in dry-run mode per configuration, with the head commit the maintainer reviewed and without round state, so `index.mjs` stays the entry point for real runs. Verifier-only configurations reuse saved finder output. The first entries come from maintainer comments already collected (for example #12111, #12173, #11833, #12050, #10230, #11501) and from clean PRs. It starts with 2–3 PRs and grows only if the results are usable. The #12548 author left the evaluation to this change, so one evaluation set and one report serve the PR review.
 
 ### 11. The workflow runs the hub
 
@@ -139,6 +139,5 @@ Rollback: revert `claude-review.yml` to the `claude-code-action` step with `/rev
 
 ## Open Questions
 
-- How the evaluation work of the #12548 author and task 6 split, before task 6 starts.
 - Initial values for N, concurrency and `--max-budget-usd`, after the first local runs.
 - The plan and limits of the team member's account behind `CLAUDE_CODE_OAUTH_TOKEN`, and when the token expires.

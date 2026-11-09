@@ -37,7 +37,7 @@ const createModuleFileUrl = () =>
 
 module.exports = {
   version: 1,
-  name: 'import-meta-transformer',
+  name: 'import-meta-env-transformer',
   factory: (_params) => {
     // Returns a TransformerFactory<SourceFile>
     return (context) => {

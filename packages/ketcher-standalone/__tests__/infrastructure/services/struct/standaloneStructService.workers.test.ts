@@ -15,9 +15,11 @@ jest.mock('_indigo-worker-import-alias_', () =>
 type MessageListener = (event: MessageEvent) => void;
 
 // Behaves like the Indigo worker for the one command these tests use: it
-// answers every `info` it receives, unless it was terminated.
+// answers every `info` it receives, unless it was terminated or `replying` is
+// off.
 class FakeIndigoWorker {
   static instances: FakeIndigoWorker[] = [];
+  static replying = true;
 
   onmessage: MessageListener | null = null;
   terminated = false;
@@ -36,7 +38,13 @@ class FakeIndigoWorker {
   }
 
   postMessage(message: { type: Command }) {
-    if (this.terminated || message.type !== Command.Info) return;
+    if (
+      this.terminated ||
+      !FakeIndigoWorker.replying ||
+      message.type !== Command.Info
+    ) {
+      return;
+    }
     queueMicrotask(() => this.reply());
   }
 
@@ -84,6 +92,7 @@ describe('StandaloneStructService with several services on one page', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     FakeIndigoWorker.instances = [];
+    FakeIndigoWorker.replying = true;
     Object.assign(globalThis, {
       Worker: FakeIndigoWorker,
       // Node has no window; the service announces "Indigo is ready" on it.
@@ -116,5 +125,22 @@ describe('StandaloneStructService with several services on one page', () => {
     first.destroy();
 
     expect(await settles(second.info())).toBe(true);
+  });
+
+  it('leaves a call that was pending at destroy() unsettled instead of timing it out', async () => {
+    FakeIndigoWorker.replying = false;
+    const StandaloneStructService = loadService();
+    const service = new StandaloneStructService({});
+    let rejected = false;
+    service.info().catch(() => {
+      rejected = true;
+    });
+
+    service.destroy();
+    // Past DEFAULT_WORKER_TIMEOUT: a rejection would reach the editor's error
+    // dialog long after the editor is gone.
+    await jest.advanceTimersByTimeAsync(60_000);
+
+    expect(rejected).toBe(false);
   });
 });

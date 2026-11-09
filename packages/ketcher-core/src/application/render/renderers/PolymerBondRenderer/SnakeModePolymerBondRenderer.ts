@@ -228,6 +228,40 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
+  private getMaxHorizontalOffset(cells: Cell[]): number {
+    return cells.reduce((maxOffset: number, cell: Cell): number => {
+      const cellMaxOffset = cell.connections.reduce(
+        (cellMax: number, connection: Connection): number => {
+          return connection.isVertical || cellMax > connection.xOffset
+            ? cellMax
+            : connection.xOffset;
+        },
+        0,
+      );
+      return Math.max(maxOffset, cellMaxOffset);
+    }, 0);
+  }
+
+  private retrieveLastCellConnection(cells: Cell[]) {
+    const lastCell = cells[cells.length - 1];
+    const lastCellConnection = lastCell.connections.find(
+      (connection: Connection): boolean => {
+        return connection.polymerBond === this.polymerBond;
+      },
+    ) as Connection;
+    const lastCellBeforeEndpoint =
+      cells
+        .slice(0, -1)
+        .reverse()
+        .find((cell) => cell.node !== null) ?? cells[0];
+    const lastYDirection = lastCell.y < lastCellBeforeEndpoint.y ? 270 : 90;
+    const lastSin = Math.sin((lastYDirection * Math.PI) / 180);
+    return {
+      lastCellConnection,
+      lastSin,
+    };
+  }
+
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
     const firstCell = cells[0];
@@ -282,33 +316,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       return cell.y === firstCell.y;
     });
     const isSecondCellEmpty = cells[1].node === null;
-    const maxHorizontalOffset = cells.reduce(
-      (maxOffset: number, cell: Cell): number => {
-        const cellMaxOffset = cell.connections.reduce(
-          (cellMax: number, connection: Connection): number => {
-            return connection.isVertical || cellMax > connection.xOffset
-              ? cellMax
-              : connection.xOffset;
-          },
-          0,
-        );
-        return Math.max(maxOffset, cellMaxOffset);
-      },
-      0,
-    );
-    const lastCell = cells[cells.length - 1];
-    const lastCellConnection = lastCell.connections.find(
-      (connection: Connection): boolean => {
-        return connection.polymerBond === this.polymerBond;
-      },
-    ) as Connection;
-    const lastCellBeforeEndpoint =
-      cells
-        .slice(0, -1)
-        .reverse()
-        .find((cell) => cell.node !== null) ?? firstCell;
-    const lastYDirection = lastCell.y < lastCellBeforeEndpoint.y ? 270 : 90;
-    const lastSin = Math.sin((lastYDirection * Math.PI) / 180);
+    const maxHorizontalOffset = this.getMaxHorizontalOffset(cells);
+    const { lastCellConnection, lastSin } =
+      this.retrieveLastCellConnection(cells);
     let finalVerticalLineY =
       endPosition.y -
       SideChainConnectionBondRendererUtility.cellHeight / 2 -

@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getAtomLocator } from './getAtomLocator/getAtomLocator';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 /**
  * Marks an atom on the canvas as a connection point via its context menu.

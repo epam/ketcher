@@ -34,10 +34,11 @@ import {
   getVisibleCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
   rubberBandSelect,
+  undoByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { markAtomAsConnectionPoint } from '@utils/canvas/atoms/markAtomAsConnectionPoint';
+import { markAtomAsConnectionPoint } from '@utils/canvas/createMonomer/atoms/markAtomAsConnectionPoint';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -48,13 +49,9 @@ const BENZENE_FIXTURE = 'KET/Chromium-popup/benzene-ring-with-atoms.ket';
 const CHAIN_FIXTURE = 'KET/Chromium-popup/chain-with-singleup-bond.ket';
 const MIXED_SELECTION_FIXTURE =
   'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket';
-const NEW_MONOMER_CODE = 'ZZ';
-const NEW_MONOMER_NAME = 'Monomer from macro selection';
 // Alias the editor assigns to the benzene ring auto-grouped as a CHEM fragment.
 const FRAGMENT_ALIAS = 'F1';
 const SMALL_MOLECULE_ATOM_COUNT = 6;
-// Offset from the canvas top-left corner used to right-click an empty area.
-const EMPTY_CANVAS_OFFSET = 60;
 
 /** Number of atom elements rendered on the canvas (DOM — reliable in macro mode). */
 async function getAtomCount(page: Page): Promise<number> {
@@ -121,9 +118,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
     const canvas = await getVisibleCanvas(page);
     const canvasBox = (await canvas.boundingBox())!;
+    // Offset from the canvas top-left corner to right-click an empty area.
     const menu = ContextMenu(page, {
-      x: canvasBox.x + EMPTY_CANVAS_OFFSET,
-      y: canvasBox.y + EMPTY_CANVAS_OFFSET,
+      x: canvasBox.x + 60,
+      y: canvasBox.y + 60,
     });
     await menu.open();
     expect(
@@ -142,7 +140,6 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await Library(page).switchToPeptidesTab();
     await Library(page).dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     const monomer = getMonomerLocator(page, Peptide.A).first();
     await expect(monomer).toBeVisible();
@@ -196,7 +193,6 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await Library(page).switchToPeptidesTab();
     const library = Library(page);
     await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
     await library.dragMonomerOnCanvas(Peptide.C, { x: 380, y: 420 });
@@ -225,7 +221,6 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await Library(page).switchToPeptidesTab();
     const library = Library(page);
     await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
     await library.dragMonomerOnCanvas(Peptide.C, { x: 380, y: 420 });
@@ -357,6 +352,9 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
+    const newMonomerCode = 'ZZ';
+    const newMonomerName = 'Monomer from macro selection';
+
     await openFileAndAddToCanvasAsNewProjectMacro(page, CHAIN_FIXTURE);
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
@@ -366,8 +364,8 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     await expect(dialog.window).toBeVisible();
     await markAtomAsConnectionPoint(page);
     await dialog.selectType(WizardMonomerType.CHEM);
-    await dialog.setCode(NEW_MONOMER_CODE);
-    await dialog.setName(NEW_MONOMER_NAME);
+    await dialog.setCode(newMonomerCode);
+    await dialog.setName(newMonomerName);
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
@@ -375,7 +373,7 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
       LayoutMode.Flex,
     );
     const newMonomer = getMonomerLocator(page, {
-      monomerAlias: NEW_MONOMER_CODE,
+      monomerAlias: newMonomerCode,
     });
     expect(await newMonomer.count()).toBe(1);
     expect(await getAtomCount(page)).toBe(0);
@@ -384,9 +382,9 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     await newMonomer.hover({ force: true });
     const preview = MonomerPreviewTooltip(page);
     await preview.waitForBecomeVisible();
-    expect(await preview.getTitleText()).toBe(NEW_MONOMER_NAME);
+    expect(await preview.getTitleText()).toBe(newMonomerName);
     // The replacing save is not an undo entry (probed): Ctrl+Z leaves it in place.
-    await page.keyboard.press('Control+z');
+    await undoByKeyboard(page);
     expect(await newMonomer.count()).toBe(1);
     expect(await getAtomCount(page)).toBe(0);
   });
@@ -417,9 +415,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
       LayoutMode.Flex,
     );
     expect(await getAtomCount(page)).toBe(SMALL_MOLECULE_ATOM_COUNT);
-    expect(
-      await getMonomerLocator(page, { monomerAlias: NEW_MONOMER_CODE }).count(),
-    ).toBe(0);
+    // No monomer was created by the discarded wizard.
+    expect(await getMonomerLocator(page, { monomerAlias: 'ZZ' }).count()).toBe(
+      0,
+    );
   });
 
   test('1.5c: In snake, submitting the wizard returns to snake with the new monomer on the canvas', async () => {
@@ -435,6 +434,9 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
+    const newMonomerCode = 'ZZ';
+    const newMonomerName = 'Monomer from macro selection';
+
     await openFileAndAddToCanvasAsNewProjectMacro(page, CHAIN_FIXTURE);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
@@ -445,8 +447,8 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     await expect(dialog.window).toBeVisible();
     await markAtomAsConnectionPoint(page);
     await dialog.selectType(WizardMonomerType.CHEM);
-    await dialog.setCode(NEW_MONOMER_CODE);
-    await dialog.setName(NEW_MONOMER_NAME);
+    await dialog.setCode(newMonomerCode);
+    await dialog.setName(newMonomerName);
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
@@ -454,7 +456,7 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
       LayoutMode.Snake,
     );
     const newMonomer = getMonomerLocator(page, {
-      monomerAlias: NEW_MONOMER_CODE,
+      monomerAlias: newMonomerCode,
     }).first();
     await expect(newMonomer).toBeVisible();
     expect(await getAtomCount(page)).toBe(0);

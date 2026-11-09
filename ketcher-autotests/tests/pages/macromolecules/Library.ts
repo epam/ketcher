@@ -242,7 +242,16 @@ export const Library = (page: Page) => {
     },
 
     /** Opens the three-dot menu of a monomer card. */
-    async openMonomerCardMenu(monomer: Monomer | PresetType) {
+    async openMonomerCardMenu(
+      monomer: Monomer | PresetType,
+      shouldSelectOnFavoritesTab = false,
+    ) {
+      if (shouldSelectOnFavoritesTab) {
+        await this.openTab(LibraryTab.Favorites);
+      } else {
+        await this.goToMonomerLibraryLocation(monomer);
+      }
+
       const card = this.getMonomerLibraryCardLocator(monomer);
       await expect(card).toBeVisible();
       await this.getMonomerCardDotsButton(monomer).click();

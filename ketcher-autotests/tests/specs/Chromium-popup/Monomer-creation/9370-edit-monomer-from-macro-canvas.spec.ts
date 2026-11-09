@@ -35,16 +35,15 @@ import {
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   takeEditorScreenshot,
+  undoByKeyboard,
 } from '@utils';
 
 const SEQUENCE_FIXTURE =
   'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket';
-const NEW_MONOMER_CODE = 'ZZ';
 
 /** Drags two alanines from the library; the last drop leaves it selected. */
 async function dragTwoAs(page: Page): Promise<void> {
   const library = Library(page);
-  await library.switchToPeptidesTab();
   await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
   await library.dragMonomerOnCanvas(Peptide.A, { x: 380, y: 420 });
 }
@@ -103,7 +102,6 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.dragMonomerOnCanvas(Peptide.A, { x: 200, y: 250 });
     const monomerA = getMonomerLocator(page, Peptide.A).first();
     const menu = ContextMenu(page, monomerA);
@@ -171,6 +169,8 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      *
      * Version 3.21.0
      */
+    const newMonomerCode = 'ZZ';
+
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
     const editedPosition = (await monomerA.boundingBox())!;
@@ -178,7 +178,7 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    await dialog.setCode(NEW_MONOMER_CODE);
+    await dialog.setCode(newMonomerCode);
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
@@ -186,7 +186,7 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
       LayoutMode.Flex,
     );
     const newMonomer = getMonomerLocator(page, {
-      monomerAlias: NEW_MONOMER_CODE,
+      monomerAlias: newMonomerCode,
     });
     expect(await newMonomer.count()).toBe(1);
     // The edited instance was replaced in place...
@@ -196,7 +196,7 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
     // ...and the other alanine remains untouched.
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
     // The save is not an undo entry (probed): Ctrl+Z leaves the canvas unchanged.
-    await page.keyboard.press('Control+z');
+    await undoByKeyboard(page);
     expect(await newMonomer.count()).toBe(1);
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(1);
   });
@@ -215,7 +215,6 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     // Coordinates are canvas-relative; keep all three drops inside the 472x626 canvas.
     await library.dragMonomerOnCanvas(Peptide.A, { x: 100, y: 150 });
     await library.dragMonomerOnCanvas(Peptide.C, { x: 300, y: 150 });
@@ -307,6 +306,8 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
      *
      * Version 3.21.0
      */
+    const newMonomerCode = 'ZZ';
+
     await dragTwoAs(page);
     const monomerA = getMonomerLocator(page, Peptide.A).last();
     await ContextMenu(page, monomerA).click(MacroMonomerOption.EditAllMonomers);
@@ -314,7 +315,7 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
 
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    await dialog.setCode(NEW_MONOMER_CODE);
+    await dialog.setCode(newMonomerCode);
     await dialog.submit({ ignoreWarning: true });
 
     await expect(dialog.window).toBeHidden();
@@ -322,7 +323,7 @@ test.describe('#9370 Editing monomers from the flex canvas', () => {
       LayoutMode.Flex,
     );
     const newMonomers = getMonomerLocator(page, {
-      monomerAlias: NEW_MONOMER_CODE,
+      monomerAlias: newMonomerCode,
     });
     expect(await newMonomers.count()).toBe(2);
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(0);

@@ -71,7 +71,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.openMonomerCardMenu(Peptide.A);
 
     const editItem = library.getCardMenuItemLocator(LibraryPresetOption.Edit);
@@ -103,7 +102,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     const ambiguousCard = library.getMonomerLibraryCardLocator(Peptide.X);
     await ambiguousCard.scrollIntoViewIfNeeded();
     await expect(ambiguousCard).toBeInViewport();
@@ -126,7 +124,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.openMonomerCardMenu(Peptide.A);
     await library.clickCardMenuItem(LibraryPresetOption.DuplicateAndEdit);
 
@@ -150,7 +147,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.openMonomerCardMenu(Peptide.A);
     await library.clickCardMenuItem(LibraryPresetOption.Edit);
 
@@ -175,7 +171,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.A)).toBeVisible();
 
@@ -214,7 +209,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.A)).toBeVisible();
 
@@ -257,7 +251,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.dragMonomerOnCanvas(Peptide.C, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.C)).toBeVisible();
 
@@ -395,7 +388,6 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
-    await library.switchToPeptidesTab();
     await library.dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.A)).toBeVisible();
 

@@ -69,7 +69,7 @@ interface ClipboardData {
   [key: string]: string;
 }
 
-interface ClipAreaProps {
+export interface ClipAreaProps {
   formats: string[];
   focused: () => boolean;
   onCopy: () => Promise<ClipboardData | null | undefined>;

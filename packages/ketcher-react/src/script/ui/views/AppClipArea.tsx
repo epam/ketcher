@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,12 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ClipArea from '../component/cliparea/cliparea';
+import ClipArea, { type ClipAreaProps } from '../component/cliparea/cliparea';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 import { initClipboard } from '../state/hotkeys';
 
-const AppClipArea = connect(null, (dispatch) => dispatch(initClipboard as any))(
-  ClipArea as any,
-);
+const AppClipArea = connect(null, (dispatch: Dispatch) =>
+  (dispatch as unknown as (thunk: typeof initClipboard) => ClipAreaProps)(
+    initClipboard,
+  ),
+)(ClipArea);
 
 export default AppClipArea;

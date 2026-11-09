@@ -185,7 +185,7 @@ class ReLoop extends ReObject {
         'stroke-dasharray': '- ',
       });
     }
-    restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
+    restruct.addReObjectPath(LayerMap.data, this.visel, path, undefined, true);
   }
 
   isValid(struct: Struct, rlid: number): boolean {

@@ -589,7 +589,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     let implh = 0;
     let isHydrogen = false;
     let label: ElemAttr | undefined;
-    let index: ElemAttr | null = null;
+    let index: ElemAttr | undefined;
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -701,7 +701,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           ps,
           true,
         );
-        if (hydroIndex != null) {
+        if (hydroIndex != undefined) {
           restruct.addReObjectPath(
             LayerMap.data,
             this.visel,
@@ -2052,7 +2052,7 @@ function showHydrogen(
     }
   }
   if (isHydrogenOnLeft) {
-    if (hydroIndex != null) {
+    if (hydroIndex != undefined) {
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,

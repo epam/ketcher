@@ -178,7 +178,7 @@ class ReStruct {
     molecule.rgroupAttachmentPoints.forEach(
       (item: RGroupAttachmentPoint, id: number) => {
         const reAtom = this.atoms.get(item.atomId);
-        assert(reAtom != null);
+        assert(reAtom != undefined);
         this.rgroupAttachmentPoints.set(
           id,
           new ReRGroupAttachmentPoint(item, reAtom),
@@ -206,7 +206,7 @@ class ReStruct {
     return this.rgroupAttachmentPoints.filter((_id, reItem) => {
       const atomId = reItem.item.atomId;
       const atom = this.molecule.atoms.get(atomId);
-      assert(atom != null);
+      assert(atom != undefined);
       return !FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
@@ -451,7 +451,7 @@ class ReStruct {
    */
 
   getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
-    let boundingBox: Box2Abs | null = null;
+    let boundingBox: Box2Abs | undefined;
 
     for (const atomId of selection.atoms ?? []) {
       const reAtom = this.atoms.get(atomId);
@@ -459,7 +459,9 @@ class ReStruct {
       const atomPositionPoint = reAtom.a.pp;
       const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint);
       boundingBox =
-        boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox);
+        boundingBox == undefined
+          ? atomBox
+          : Box2Abs.union(boundingBox, atomBox);
     }
     const selectionExceptAtoms = { ...selection };
     delete selectionExceptAtoms.atoms;
@@ -873,7 +875,7 @@ class ReStruct {
     this.frags.forEach((frag) => {
       const path = frag.draw(this.render);
       if (path) {
-        this.addReObjectPath(LayerMap.data, frag.visel, path, null, true);
+        this.addReObjectPath(LayerMap.data, frag.visel, path, undefined, true);
       }
       // TODO fragment selection & highlighting
     });
@@ -922,7 +924,7 @@ class ReStruct {
         (previousVBox, attachmentPointId) => {
           const attachmentPoint =
             this.rgroupAttachmentPoints.get(attachmentPointId);
-          assert(attachmentPoint != null);
+          assert(attachmentPoint != undefined);
           const currentVBox = attachmentPoint.getVBoxObj(this.render);
           return previousVBox && currentVBox
             ? Box2Abs.union(previousVBox, currentVBox)

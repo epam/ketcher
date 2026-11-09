@@ -8,6 +8,7 @@ import {
   KetMonomerClass,
   MacromoleculesConverter,
   MonomerMicromolecule,
+  OperationType,
   Peptide,
   provideEditorInstance,
   SGroup,
@@ -364,6 +365,126 @@ describe('macro monomer wizard bridge', () => {
     Reflect.set(editor.render, 'monomerCreationState', {});
     editor.closeMonomerCreationWizard(true);
     expect(finish).toHaveBeenLastCalledWith(false);
+  });
+
+  it('serializes wizard attachment points as real R-group atoms for clipboard operations', () => {
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+    struct.atoms.add(new Atom({ label: AtomLabel.H, pp: new Vec2(1, 0) }));
+    struct.bonds.add(new Bond({ begin: 0, end: 1, type: 1 }));
+    const editor = createEditor(struct);
+    Reflect.set(editor.render, 'monomerCreationState', {
+      assignedAttachmentPoints: new Map([[AttachmentPointName.R1, [0, 1]]]),
+      potentialAttachmentPoints: new Map(),
+      problematicAttachmentPoints: new Set(),
+    });
+
+    const selectedStruct = editor.structSelected({ atoms: [0, 1], bonds: [0] });
+
+    expect(selectedStruct.atoms.get(1)).toEqual(
+      expect.objectContaining({ label: 'R#', rglabel: 1 }),
+    );
+    expect(struct.atoms.get(1)).toEqual(
+      expect.objectContaining({ label: AtomLabel.H, rglabel: null }),
+    );
+  });
+
+  it('preserves duplicate attachment point labels through clipboard serialization overrides', () => {
+    const struct = new Struct();
+    [0, 1, 2, 3].forEach((x) =>
+      struct.atoms.add(new Atom({ label: x % 2 ? AtomLabel.H : 'C' })),
+    );
+    struct.bonds.add(new Bond({ begin: 0, end: 1, type: 1 }));
+    struct.bonds.add(new Bond({ begin: 2, end: 3, type: 1 }));
+    const editor = createEditor(struct);
+    Reflect.set(editor.render, 'monomerCreationState', {
+      assignedAttachmentPoints: new Map([
+        [AttachmentPointName.R1, [0, 1]],
+        [AttachmentPointName.R2, [2, 3]],
+      ]),
+      clipboardAttachmentPointNameOverrides: new Map([
+        [AttachmentPointName.R2, AttachmentPointName.R1],
+      ]),
+      potentialAttachmentPoints: new Map(),
+      problematicAttachmentPoints: new Set(),
+    });
+
+    const selectedStruct = editor.structSelected({
+      atoms: [0, 1, 2, 3],
+      bonds: [0, 1],
+    });
+
+    expect(selectedStruct.atoms.get(1)).toEqual(
+      expect.objectContaining({ label: 'R#', rglabel: 1 }),
+    );
+    expect(selectedStruct.atoms.get(3)).toEqual(
+      expect.objectContaining({ label: 'R#', rglabel: 1 }),
+    );
+  });
+
+  it('tracks pasted R-group atoms as wizard attachment points without changing their labels', () => {
+    const struct = new Struct();
+    struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) }));
+    struct.atoms.add(new Atom({ label: 'R#', rglabel: 1, pp: new Vec2(1, 0) }));
+    struct.bonds.add(new Bond({ begin: 0, end: 1, type: 1 }));
+    struct.initHalfBonds();
+    struct.initNeighbors();
+    const editor = createEditor(struct);
+    Reflect.set(editor.render, 'monomerCreationState', {
+      assignedAttachmentPoints: new Map(),
+      potentialAttachmentPoints: new Map(),
+      problematicAttachmentPoints: new Set(),
+    });
+
+    Reflect.get(editor, 'invalidateMonomerCreationWizardState').call(
+      editor,
+      new Map([[OperationType.ATOM_ADD, new Set([1])]]),
+    );
+
+    expect(editor.monomerCreationState?.assignedAttachmentPoints).toEqual(
+      new Map([[AttachmentPointName.R1, [0, 1]]]),
+    );
+    expect(struct.atoms.get(1)).toEqual(
+      expect.objectContaining({ label: 'R#', rglabel: 1 }),
+    );
+  });
+
+  it('keeps pasted duplicate R-group labels available for later clipboard serialization', () => {
+    const struct = new Struct();
+    [0, 1, 2, 3].forEach((x) =>
+      struct.atoms.add(
+        new Atom({
+          label: x % 2 ? 'R#' : 'C',
+          rglabel: x % 2 ? 1 : null,
+          pp: new Vec2(x, 0),
+        }),
+      ),
+    );
+    struct.bonds.add(new Bond({ begin: 0, end: 1, type: 1 }));
+    struct.bonds.add(new Bond({ begin: 2, end: 3, type: 1 }));
+    struct.initHalfBonds();
+    struct.initNeighbors();
+    const editor = createEditor(struct);
+    Reflect.set(editor.render, 'monomerCreationState', {
+      assignedAttachmentPoints: new Map([[AttachmentPointName.R1, [0, 1]]]),
+      potentialAttachmentPoints: new Map(),
+      problematicAttachmentPoints: new Set(),
+    });
+
+    Reflect.get(editor, 'invalidateMonomerCreationWizardState').call(
+      editor,
+      new Map([[OperationType.ATOM_ADD, new Set([3])]]),
+    );
+
+    expect(editor.monomerCreationState?.assignedAttachmentPoints).toEqual(
+      new Map([
+        [AttachmentPointName.R1, [0, 1]],
+        [AttachmentPointName.R2, [2, 3]],
+      ]),
+    );
+    expect(
+      editor.monomerCreationState?.clipboardAttachmentPointNameOverrides,
+    ).toEqual(new Map([[AttachmentPointName.R2, AttachmentPointName.R1]]));
   });
 
   it('restores the original macro canvas if opening or deferred merge fails', () => {

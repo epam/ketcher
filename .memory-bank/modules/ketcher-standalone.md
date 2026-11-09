@@ -115,5 +115,6 @@ Each of these has a regression behind it. The `build-variants.mjs` and `vite.con
 ## Assumptions & Constraints
 
 - When using standalone mode, the `StructService.convert()` and similar calls are synchronous in the Indigo WASM sense but are wrapped in Promises to match the `StructService` async interface.
+- Each `StandaloneStructService` owns one Indigo worker: `getIndigoWorker()` in both worker shims returns a new worker on every call, and `destroy()` terminates only the service's own worker. Do not cache the worker in a shim. A worker's replies carry only a command type, and the service reads them through one `onmessage` slot, so two services on one worker lose each other's replies (the first fails with `info operation timeout after 30000ms`), and `destroy()` of one stops the other. Two editors on one page, or React `StrictMode`, create two services. Each service therefore loads its own Indigo WASM.
 - WASM binary size is significant. Choose a build variant accordingly: base64 variants inline the WASM (no extra fetch, larger JS); binaryWasm variants ship a separate `.wasm`. NoRender variants reduce initial bundle size by splitting out the Indigo render engine.
 - Adding/removing a build variant requires changes in two coordinated places: `VARIANTS` in `build-variants.mjs` (`scripts/build.mjs` iterates it) and the `exports` map in `package.json`.

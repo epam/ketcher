@@ -32,6 +32,12 @@ Each package has its own Jest configuration. Tests live in `__tests__/` director
     ...jest.requireActual('ketcher-core'), provideEditorInstance: jest.fn(...) }))` to control the
     editor instance a test observes (see
     `__tests__/infrastructure/services/struct/standaloneStructService.test.ts` for the pattern).
+  - A test that needs the real worker shim overrides the alias mapping with
+    `jest.mock('_indigo-worker-import-alias_', () => jest.requireActual('<path to a shim>'))`
+    and replaces the browser's `Worker` with a fake. `useNativeWorkerUrl` works under Jest because
+    `jest-import-meta-transformer.js` maps `import.meta.url`; `useViteInlineWorker` does not, since
+    it needs Vite's `?worker&inline` import. See
+    `__tests__/infrastructure/services/struct/standaloneStructService.workers.test.ts`.
 
 Mocking: mock only system boundaries. Ketcher exception: in a component test, a hook that is the only way the component reaches a boundary counts as the boundary. Example: `useSettings` in `ketcher-react` is the only way components reach browser storage. Mock that hook at the top of the test file and keep every other module of the package real.
 

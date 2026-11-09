@@ -5,9 +5,9 @@
 
 import IndigoWorker from './../indigoWorker?worker&inline';
 
-let _indigoWorker: InstanceType<typeof IndigoWorker> | null = null;
-
+// A new worker on every call: the caller owns it. Services that share a worker
+// overwrite each other's `onmessage`, and `destroy()` of one would terminate
+// the worker of the others.
 export function getIndigoWorker(): Worker {
-  _indigoWorker ??= new IndigoWorker();
-  return _indigoWorker;
+  return new IndigoWorker();
 }

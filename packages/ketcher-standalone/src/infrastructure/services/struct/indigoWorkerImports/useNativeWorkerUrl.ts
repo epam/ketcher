@@ -4,12 +4,11 @@
 // INDIGO_WORKER_IMPORTS in build-config/indigo-worker-imports.mjs.
 // It cannot produce cjs output.
 
-let _indigoWorker: Worker | null = null;
-
+// A new worker on every call: the caller owns it. Services that share a worker
+// overwrite each other's `onmessage`, and `destroy()` of one would terminate
+// the worker of the others.
 export function getIndigoWorker(): Worker {
-  _indigoWorker ??= new Worker(
-    new URL('./../indigoWorker.ts', import.meta.url),
-    { type: 'module' },
-  );
-  return _indigoWorker;
+  return new Worker(new URL('./../indigoWorker.ts', import.meta.url), {
+    type: 'module',
+  });
 }

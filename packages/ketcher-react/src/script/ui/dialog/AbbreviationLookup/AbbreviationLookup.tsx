@@ -102,7 +102,8 @@ export const AbbreviationLookup = ({ options }: Props) => {
         inputRef.current
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as
-          HTMLElement | undefined
+          | HTMLElement
+          | undefined
       )?.focus();
     };
   }, []);

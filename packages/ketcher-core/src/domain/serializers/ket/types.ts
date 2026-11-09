@@ -135,7 +135,8 @@ export interface KetTextFont {
 }
 
 export type KetTextIndent =
-  number | { first_line?: number; left?: number; right?: number };
+  | number
+  | { first_line?: number; left?: number; right?: number };
 
 export interface KetTextStyleOverrides {
   font?: KetTextFont;

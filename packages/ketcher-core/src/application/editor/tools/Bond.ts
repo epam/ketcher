@@ -42,7 +42,8 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
-  FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
   private _bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -156,7 +157,8 @@ class PolymerBond implements BaseTool {
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
     const renderer = event.target?.__data__ as
-      FlexModeOrSnakeModePolymerBondRenderer | undefined;
+      | FlexModeOrSnakeModePolymerBondRenderer
+      | undefined;
     if (this.bondRenderer || !renderer?.polymerBond) return;
 
     const modelChanges =
@@ -170,7 +172,8 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) return;
 
     const renderer = event.target?.__data__ as
-      FlexModeOrSnakeModePolymerBondRenderer | undefined;
+      | FlexModeOrSnakeModePolymerBondRenderer
+      | undefined;
     if (!renderer) return;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -253,7 +256,8 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event: MouseEvent) {
     const eventToElementData = event.relatedTarget?.__data__;
     const eventFromElementData = event.target?.__data__ as
-      BaseMonomerRenderer | undefined;
+      | BaseMonomerRenderer
+      | undefined;
     if (
       eventToElementData instanceof AttachmentPoint &&
       eventToElementData.monomer === eventFromElementData?.monomer

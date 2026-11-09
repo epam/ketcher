@@ -115,8 +115,8 @@ function scopeSlug(sortedGlobs) {
 }
 
 function renderFile({ globs, rules }, rulesPath) {
-  // Single quotes and the blank line after the front matter are what Prettier
-  // writes under this repo's config, so generated files pass `prettier --check`.
+  // Single quotes and the blank line after the front matter are what Oxfmt
+  // writes under this repo's config, so generated files pass `oxfmt --check`.
   const out = [
     '---',
     `applyTo: '${globs.join(',')}'`,

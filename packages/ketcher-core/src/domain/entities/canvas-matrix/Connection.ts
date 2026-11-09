@@ -11,7 +11,8 @@ export class Connection {
   constructor(
     public readonly connectedNode: SubChainNode | null,
     public readonly direction:
-      ConnectionDirectionInDegrees | ConnectionDirectionOfLastCell,
+      | ConnectionDirectionInDegrees
+      | ConnectionDirectionOfLastCell,
     public readonly isVertical: boolean,
     public readonly polymerBond: PolymerBond,
     public xOffset: number,

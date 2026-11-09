@@ -322,8 +322,8 @@ export async function rubberBandSelect(
   page: Page,
   locators: Locator[],
   padding = 10,
-) {
-  const boxes = [];
+): Promise<void> {
+  const boxes: NonNullable<Awaited<ReturnType<Locator['boundingBox']>>>[] = [];
   for (const locator of locators) {
     boxes.push((await locator.boundingBox())!);
   }

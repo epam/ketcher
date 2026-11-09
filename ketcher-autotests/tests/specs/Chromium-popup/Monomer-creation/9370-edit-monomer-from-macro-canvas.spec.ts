@@ -38,9 +38,6 @@ import {
   undoByKeyboard,
 } from '@utils';
 
-const SEQUENCE_FIXTURE =
-  'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket';
-
 /** Drags two alanines from the library; the last drop leaves it selected. */
 async function dragTwoAs(page: Page): Promise<void> {
   const library = Library(page);
@@ -384,7 +381,10 @@ test.describe('#9370 Editing monomers from the sequence canvas', () => {
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, SEQUENCE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket',
+    );
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await expect(symbolA).toBeVisible();
     const menu = ContextMenu(page, symbolA);
@@ -408,7 +408,10 @@ test.describe('#9370 Editing monomers from the sequence canvas', () => {
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, SEQUENCE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/Bugs/ketcher-3.9.0-bugs/micro-and-macro-structures.ket',
+    );
     const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     const menu = ContextMenu(page, symbolA);
 

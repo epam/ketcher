@@ -39,12 +39,6 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
-const NEW_DUPLICATE_CODE = 'ZB';
-const NEW_EDIT_CODE = 'ZE';
-// New code used in 3.2.3 to change the type of a preset sugar on submit.
-const PRESET_GAP_CODE = 'ZZ';
-const EDITED_CYS_NAME = 'Edited Cysteine';
-
 let page: Page;
 
 test.describe('#9370 Editing library monomers', () => {
@@ -170,6 +164,7 @@ test.describe('#9370 Editing library monomers', () => {
      *
      * Version 3.21.0
      */
+    const newDuplicateCode = 'ZB';
     const library = Library(page);
     await library.dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.A)).toBeVisible();
@@ -178,7 +173,7 @@ test.describe('#9370 Editing library monomers', () => {
     await library.clickCardMenuItem(LibraryPresetOption.DuplicateAndEdit);
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    await dialog.setCode(NEW_DUPLICATE_CODE);
+    await dialog.setCode(newDuplicateCode);
     await dialog.submit({ ignoreWarning: true });
     await expect(dialog.window).toBeHidden();
 
@@ -186,7 +181,7 @@ test.describe('#9370 Editing library monomers', () => {
     await expect(library.getMonomerLibraryCardLocator(Peptide.A)).toBeVisible();
     await expect(
       library.getMonomerCardByCodeAndNameLocator(
-        NEW_DUPLICATE_CODE,
+        newDuplicateCode,
         'Alanine_Copy',
       ),
     ).toBeVisible();
@@ -208,6 +203,7 @@ test.describe('#9370 Editing library monomers', () => {
      *
      * Version 3.21.0
      */
+    const newEditCode = 'ZE';
     const library = Library(page);
     await library.dragMonomerOnCanvas(Peptide.A, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.A)).toBeVisible();
@@ -216,7 +212,7 @@ test.describe('#9370 Editing library monomers', () => {
     await library.clickCardMenuItem(LibraryPresetOption.Edit);
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    await dialog.setCode(NEW_EDIT_CODE);
+    await dialog.setCode(newEditCode);
     await dialog.submit({ ignoreWarning: true });
     await expect(dialog.window).toBeHidden();
 
@@ -225,14 +221,14 @@ test.describe('#9370 Editing library monomers', () => {
     );
     // A new library entry is created for the new code...
     await expect(
-      library.getMonomerCardByCodeAndNameLocator(NEW_EDIT_CODE, 'Alanine'),
+      library.getMonomerCardByCodeAndNameLocator(newEditCode, 'Alanine'),
     ).toBeVisible();
     // ...the original entry remains visible and usable...
     await expect(library.getMonomerLibraryCardLocator(Peptide.A)).toBeVisible();
     // ...and the canvas instances are replaced with the new version.
     expect(await getMonomerLocator(page, Peptide.A).count()).toBe(0);
     expect(
-      await getMonomerLocator(page, { monomerAlias: NEW_EDIT_CODE }).count(),
+      await getMonomerLocator(page, { monomerAlias: newEditCode }).count(),
     ).toBe(1);
   });
 
@@ -250,6 +246,7 @@ test.describe('#9370 Editing library monomers', () => {
      *
      * Version 3.21.0
      */
+    const editedCysName = 'Edited Cysteine';
     const library = Library(page);
     await library.dragMonomerOnCanvas(Peptide.C, { x: 250, y: 300 });
     await expect(getMonomerLocator(page, Peptide.C)).toBeVisible();
@@ -258,7 +255,7 @@ test.describe('#9370 Editing library monomers', () => {
     await library.clickCardMenuItem(LibraryPresetOption.Edit);
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    await dialog.setName(EDITED_CYS_NAME);
+    await dialog.setName(editedCysName);
     await dialog.submit({ ignoreWarning: true });
     await expect(dialog.window).toBeHidden();
 
@@ -267,7 +264,7 @@ test.describe('#9370 Editing library monomers', () => {
       await library.getMonomerCardByCodeAndNameLocator('C', 'Cysteine').count(),
     ).toBe(0);
     await expect(
-      library.getMonomerCardByCodeAndNameLocator('C', EDITED_CYS_NAME),
+      library.getMonomerCardByCodeAndNameLocator('C', editedCysName),
     ).toBeVisible();
     // The canvas instance is replaced with the edited version: it keeps its code...
     const monomer = getMonomerLocator(page, Peptide.C);
@@ -276,7 +273,7 @@ test.describe('#9370 Editing library monomers', () => {
     await monomer.hover({ force: true });
     const preview = MonomerPreviewTooltip(page);
     await preview.waitForBecomeVisible();
-    expect(await preview.getTitleText()).toBe(EDITED_CYS_NAME);
+    expect(await preview.getTitleText()).toBe(editedCysName);
   });
 
   test('3.2.2: editing a preset-participating monomer shows an entry warning', async () => {
@@ -331,6 +328,8 @@ test.describe('#9370 Editing library monomers', () => {
      *
      * Version 3.21.0
      */
+    // New code used to change the type of the preset sugar on submit.
+    const presetGapCode = 'ZZ';
     const library = Library(page);
     await library.goToMonomerLibraryLocation(Sugar.R);
     await library.openMonomerCardMenu(Sugar.R);
@@ -347,7 +346,7 @@ test.describe('#9370 Editing library monomers', () => {
 
     await dialog.selectType(WizardMonomerType.AminoAcid);
     await dialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
-    await dialog.setCode(PRESET_GAP_CODE);
+    await dialog.setCode(presetGapCode);
     await dialog.submit({ ignoreWarning: true });
 
     const error = NotificationMessageBanner(
@@ -368,7 +367,7 @@ test.describe('#9370 Editing library monomers', () => {
     await library.switchToPeptidesTab();
     expect(
       await library
-        .getMonomerCardByCodeAndNameLocator(PRESET_GAP_CODE, 'Ribose')
+        .getMonomerCardByCodeAndNameLocator(presetGapCode, 'Ribose')
         .count(),
     ).toBe(0);
     await library.goToMonomerLibraryLocation(Sugar.R);

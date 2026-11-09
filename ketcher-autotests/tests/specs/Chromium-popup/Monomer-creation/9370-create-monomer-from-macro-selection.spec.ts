@@ -43,16 +43,6 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
-const BENZENE_FIXTURE = 'KET/Chromium-popup/benzene-ring-with-atoms.ket';
-// A chemically valid five-carbon chain: its atoms can be marked as attachment
-// points in the wizard (the ring fixture's over-bonded atoms cannot).
-const CHAIN_FIXTURE = 'KET/Chromium-popup/chain-with-singleup-bond.ket';
-const MIXED_SELECTION_FIXTURE =
-  'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket';
-// Alias the editor assigns to the benzene ring auto-grouped as a CHEM fragment.
-const FRAGMENT_ALIAS = 'F1';
-const SMALL_MOLECULE_ATOM_COUNT = 6;
-
 /** Number of atom elements rendered on the canvas (DOM — reliable in macro mode). */
 async function getAtomCount(page: Page): Promise<number> {
   return getAtomLocator(page, {}).count();
@@ -65,7 +55,8 @@ const smallMoleculeMenu = (page: Page) =>
 /** The benzene ring auto-grouped as a CHEM fragment monomer. */
 const fragmentMonomer = (page: Page) =>
   getMonomerLocator(page, {
-    monomerAlias: FRAGMENT_ALIAS,
+    // Alias the editor assigns to the ring when it is auto-grouped.
+    monomerAlias: 'F1',
     monomerType: MonomerType.CHEM,
   });
 
@@ -94,7 +85,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
     await menu.open();
@@ -115,7 +109,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     const canvas = await getVisibleCanvas(page);
     const canvasBox = (await canvas.boundingBox())!;
     // Offset from the canvas top-left corner to right-click an empty area.
@@ -168,7 +165,7 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      */
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      MIXED_SELECTION_FIXTURE,
+      'KET/Micro structures connected to polymer chains are not shown on Sequence mode canvas.ket',
     );
     await expect(fragmentMonomer(page)).toBeVisible();
     await selectAllStructuresOnCanvas(page);
@@ -249,7 +246,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
     await menu.open();
@@ -290,17 +290,19 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
     await menu.click(MacroMonomerOption.CreateMonomer);
 
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    // In molecules mode explicit hydrogens may be added to the loaded structure.
-    expect(await getAtomCount(page)).toBeGreaterThanOrEqual(
-      SMALL_MOLECULE_ATOM_COUNT,
-    );
+    // In molecules mode explicit hydrogens may be added to the loaded
+    // structure, so only the ring's six atoms are guaranteed.
+    expect(await getAtomCount(page)).toBeGreaterThanOrEqual(6);
     await dialog.discard();
   });
 
@@ -315,7 +317,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
@@ -329,10 +334,9 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
 
     const dialog = CreateMonomerDialog(page);
     await expect(dialog.window).toBeVisible();
-    // In molecules mode explicit hydrogens may be added to the loaded structure.
-    expect(await getAtomCount(page)).toBeGreaterThanOrEqual(
-      SMALL_MOLECULE_ATOM_COUNT,
-    );
+    // In molecules mode explicit hydrogens may be added to the loaded
+    // structure, so only the ring's six atoms are guaranteed.
+    expect(await getAtomCount(page)).toBeGreaterThanOrEqual(6);
     await dialog.discard();
   });
 
@@ -355,7 +359,12 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     const newMonomerCode = 'ZZ';
     const newMonomerName = 'Monomer from macro selection';
 
-    await openFileAndAddToCanvasAsNewProjectMacro(page, CHAIN_FIXTURE);
+    // A chemically valid five-carbon chain: its atoms can be marked as
+    // attachment points in the wizard (the ring fixture's cannot).
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/chain-with-singleup-bond.ket',
+    );
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
     await menu.click(MacroMonomerOption.CreateMonomer);
@@ -401,7 +410,10 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
      *
      * Version 3.21.0
      */
-    await openFileAndAddToCanvasAsNewProjectMacro(page, BENZENE_FIXTURE);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/benzene-ring-with-atoms.ket',
+    );
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);
     await menu.click(MacroMonomerOption.CreateMonomer);
@@ -414,7 +426,7 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     expect(await MacromoleculesTopToolbar(page).getActiveLayoutMode()).toBe(
       LayoutMode.Flex,
     );
-    expect(await getAtomCount(page)).toBe(SMALL_MOLECULE_ATOM_COUNT);
+    expect(await getAtomCount(page)).toBe(6);
     // No monomer was created by the discarded wizard.
     expect(await getMonomerLocator(page, { monomerAlias: 'ZZ' }).count()).toBe(
       0,
@@ -437,7 +449,12 @@ test.describe('#9370 Creating monomers from selections in macromolecules mode', 
     const newMonomerCode = 'ZZ';
     const newMonomerName = 'Monomer from macro selection';
 
-    await openFileAndAddToCanvasAsNewProjectMacro(page, CHAIN_FIXTURE);
+    // A chemically valid five-carbon chain: its atoms can be marked as
+    // attachment points in the wizard (the ring fixture's cannot).
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      page,
+      'KET/Chromium-popup/chain-with-singleup-bond.ket',
+    );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     const menu = smallMoleculeMenu(page);

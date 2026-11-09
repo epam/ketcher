@@ -49,6 +49,9 @@ The `ketcherProvider` registry enforces at most one `Ketcher` instance per `ketc
 
 A local `SdfSerializer` also exists, but `FormatterFactory` never selects it — the SDF format case always resolves to `ServerFormatter`. `SdfSerializer` is used only to load Ketcher's bundled static template libraries (functional groups, salts/solvents, RNA presets) at startup, not for user-initiated SDF import/export.
 
+**A8 — Each editor owns its resources**
+A page may hold several editors, and one editor may mount many times (React `StrictMode`, a host that shows and hides it). A resource an editor creates (struct service, Web Worker, timer, global listener) belongs to that editor: no other editor shares it, and the editor releases it when it unmounts. A module-level cache of such a resource breaks the first rule. Verify a change here on the host pages in `.agents/skills/verify-ketcher/features/host-pages.md`.
+
 ---
 
 ## Behavioral Invariants

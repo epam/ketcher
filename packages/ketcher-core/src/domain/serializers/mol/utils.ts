@@ -445,12 +445,12 @@ function createReactionArrow(
     });
   }
 
-  let v1: Vec2 | null = bb1
+  let v1: Vec2 | undefined = bb1
     ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2)
-    : null;
-  let v2: Vec2 | null = bb2
+    : undefined;
+  let v2: Vec2 | undefined = bb2
     ? new Vec2(bb2.min.x, (bb2.max.y + bb2.min.y) / 2)
-    : null;
+    : undefined;
 
   if (!v1 && v2) {
     v1 = new Vec2(v2.x - defaultOffset, v2.y);
@@ -544,7 +544,7 @@ function rgMerge(scaffold: Struct, rgroups: Record<number, Struct[]>): Struct {
   */
   const ret = new Struct();
 
-  scaffold.mergeInto(ret, null, null, false, true);
+  scaffold.mergeInto(ret, undefined, undefined, false, true);
 
   Object.keys(rgroups).forEach((id: string) => {
     const rgid = Number.parseInt(id, 10);

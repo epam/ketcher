@@ -50,7 +50,7 @@ export class SGroupAttachmentPoint {
 
   clone(atomIdMap: Map<number, number>): SGroupAttachmentPoint {
     const newAtomId = atomIdMap.get(this.atomId);
-    assert(newAtomId != null);
+    assert(newAtomId != undefined);
     const newLeaveAtomId = atomIdMap.get(this.leaveAtomId as number);
     return new SGroupAttachmentPoint(
       newAtomId,

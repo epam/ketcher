@@ -236,19 +236,19 @@ const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
 
 export const hotkeysConfiguration = {
   RNASequenceType: {
-    shortcut: ['Mod+Alt+r'],
+    shortcut: ['Ctrl+Alt+r', 'Mod+Alt+r'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
     },
   },
   DNASequenceType: {
-    shortcut: ['Mod+Alt+d'],
+    shortcut: ['Ctrl+Alt+d', 'Mod+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.DNA);
     },
   },
   PEPTIDESequenceTYpe: {
-    shortcut: ['Mod+Alt+p'],
+    shortcut: ['Ctrl+Alt+p', 'Mod+Alt+p'],
     handler: (editor: CoreEditor) => {
       editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.PEPTIDE);
     },

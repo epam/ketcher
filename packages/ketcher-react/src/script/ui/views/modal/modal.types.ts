@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-interface BaseProps<TResult = Record<string, unknown>> {
+interface BaseProperties<TResult = Record<string, unknown>> {
   className: string;
   formState: {
     errors: Record<string, string>;
@@ -23,13 +23,13 @@ interface BaseProps<TResult = Record<string, unknown>> {
   };
 }
 
-interface BaseCallProps<TResult = unknown> {
+interface BaseCallProperties<TResult = unknown> {
   onCancel: () => void;
   onOk: (result: TResult) => void;
 }
 
-interface ModalContainerProps {
+interface ModalContainerProperties {
   ketcherId: string;
 }
 
-export type { BaseProps, BaseCallProps, ModalContainerProps };
+export type { BaseProperties, BaseCallProperties, ModalContainerProperties };

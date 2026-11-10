@@ -18,13 +18,13 @@ import styles from './AnalyzingFile.module.less';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { Icon } from 'components';
 
-export type AnalyzingFileProps = {
+export type AnalyzingFileProperties = {
   fileName?: string;
 };
 
 const ICON_NAME = 'file-thumbnail';
 
-export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
+export const AnalyzingFile = ({ fileName }: AnalyzingFileProperties) => (
   <div className={styles.analyzingFileWrapper}>
     {fileName && (
       <div className={styles.fileBox}>

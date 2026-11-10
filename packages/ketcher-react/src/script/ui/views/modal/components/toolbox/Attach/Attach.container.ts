@@ -15,15 +15,17 @@
  ***************************************************************************/
 
 import AttachPoints from './Attach';
-import type { BaseProps } from '../../../modal.types';
+import type { BaseProperties } from '../../../modal.types';
 import type { StoreState } from '../../../../../state/store.types';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
+type StateProperties = Pick<BaseProperties, 'formState'>;
 
-const mapStateToProps = (state: Pick<StoreState, 'modal'>): StateProps => ({
+const mapStateToProperties = (
+  state: Pick<StoreState, 'modal'>,
+): StateProperties => ({
   formState: state.modal.form,
 });
 
-const AttachPointsContainer = connect(mapStateToProps)(AttachPoints);
+const AttachPointsContainer = connect(mapStateToProperties)(AttachPoints);
 export default AttachPointsContainer;

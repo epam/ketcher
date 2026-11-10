@@ -3,7 +3,7 @@ import {
   getEditAllInstancesInitialValues,
   getEditInstanceInitialValues,
   getLibraryEditInitialValues,
-} from './MonomerCreationWizard.utils';
+} from './MonomerCreationWizard.utilities';
 
 const createMonomer = (
   props: BaseMonomer['monomerItem']['props'],

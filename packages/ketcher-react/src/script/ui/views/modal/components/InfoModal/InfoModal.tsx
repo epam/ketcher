@@ -22,54 +22,57 @@ import { PasteErrorModalBody } from './PasteErrorModalBody';
 
 import styles from './InfoModal.module.less';
 
-function ErrorInfoModal(props) {
+function ErrorInfoModal(properties) {
   const { t } = useTranslation(['common', 'dialogs']);
   // props.message is one of the fixed command identifiers dispatched by
   // openInfoModal('Paste' | 'Copy' | 'Cut') in state/shared.ts — not
   // display text, so compare against the literal identifier, not a
   // translatable title (see action/index.ts's `paste` action title key).
-  const isPasteError = props.message === 'Paste';
+  const isPasteError = properties.message === 'Paste';
 
   const defaultCutCopyMessage = t('dialogs:infoModal.defaultCutCopyMessage', {
-    command: props.message,
+    command: properties.message,
   });
 
-  const headerContent = <div>{props.title ?? error.message}</div>;
+  const headerContent = <div>{properties.title ?? error.message}</div>;
 
   return (
     <Dialog
       className={styles.infoModal}
-      params={props}
+      params={properties}
       buttons={[
         <button
-          onClick={props.onOk}
+          onClick={properties.onOk}
           className={styles.ok}
           key="ok"
-          data-testid={props.testId || 'info-modal-close'}
+          data-testid={properties.testId || 'info-modal-close'}
         >
-          {props.button || t('common:button.close')}
+          {properties.button || t('common:button.close')}
         </button>,
       ]}
       headerContent={headerContent}
     >
       <div>
-        {props.customText ||
+        {properties.customText ||
           (isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage)}
       </div>
     </Dialog>
   );
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProperties = (state) => ({
   errorMessage: state.options.app.errorMessage,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProperties = (dispatch) => ({
   onOk: (_result) => {
     dispatch({ type: 'MODAL_CLOSE' });
   },
 });
 
-const InfoModal = connect(mapStateToProps, mapDispatchToProps)(ErrorInfoModal);
+const InfoModal = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
+)(ErrorInfoModal);
 
 export default InfoModal;

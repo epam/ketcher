@@ -7,7 +7,7 @@ import type {
   WizardNotificationType,
 } from '../../MonomerCreationWizard.types';
 
-type Props = {
+type Properties = {
   id: WizardNotificationId;
   type: WizardNotificationType;
   message: string;
@@ -20,7 +20,7 @@ const iconMap: Record<WizardNotificationType, IconName> = {
   warning: 'warningFilled',
 };
 
-const Notification = ({ id, type, message, onDismiss }: Props) => {
+const Notification = ({ id, type, message, onDismiss }: Properties) => {
   const { t } = useTranslation('common');
   const handleButtonClick = () => {
     onDismiss?.(id);

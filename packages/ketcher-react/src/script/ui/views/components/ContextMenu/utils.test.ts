@@ -15,7 +15,7 @@ import {
   isAttachmentGroupCreationSelectionValid,
   isHydrogenBondBetweenMonomers,
   onlyHasProperty,
-} from './utils';
+} from './utilities';
 
 function createTwoConnectedAtoms() {
   const struct = new Struct();

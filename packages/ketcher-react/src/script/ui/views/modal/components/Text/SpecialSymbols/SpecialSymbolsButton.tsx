@@ -39,8 +39,8 @@ const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
     }
   };
 
-  const addSymbol = (e, value) => {
-    e.preventDefault();
+  const addSymbol = (event, value) => {
+    event.preventDefault();
     editor.update(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
@@ -55,8 +55,8 @@ const SpecialSymbolsButton = ({ editor }: { editor: LexicalEditor }) => {
       <button
         title={t('text.specialSymbolsTitle')}
         data-testid="special-symbols-button"
-        onMouseDown={(e) => {
-          e.preventDefault();
+        onMouseDown={(event) => {
+          event.preventDefault();
           setShowSpecialSymbols(!showSpecialSymbols);
         }}
         className={

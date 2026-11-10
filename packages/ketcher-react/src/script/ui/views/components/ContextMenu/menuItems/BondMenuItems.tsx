@@ -15,7 +15,7 @@ import {
   getBondNamesForContextMenu,
   isBondBetweenMonomers,
   queryBondNames,
-} from '../utils';
+} from '../utilities';
 import type {
   BondsContextMenuProps,
   ItemEventParams,

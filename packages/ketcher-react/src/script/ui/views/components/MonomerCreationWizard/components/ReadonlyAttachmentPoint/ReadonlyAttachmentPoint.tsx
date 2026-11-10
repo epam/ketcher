@@ -6,7 +6,7 @@ import styles from '../AttachmentPoint/AttachmentPoint.module.less';
 import { createReadonlyAttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
+type Properties = {
   name: AttachmentPointName;
   leavingAtomLabel: AtomLabel;
   editor: Editor;
@@ -31,14 +31,14 @@ const ReadonlyAttachmentPoint = ({
   editor,
   atomId,
   onLeavingAtomChange,
-}: Props) => {
+}: Properties) => {
   const { t } = useTranslation('components');
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerReference = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
 
   // Panel hover → canvas highlight
   useEffect(() => {
-    const element = containerRef.current;
+    const element = containerReference.current;
     if (!element) return;
 
     const mouseOverHandler = () => {
@@ -123,7 +123,7 @@ const ReadonlyAttachmentPoint = ({
         'monomerCreationWizard.internalAttachmentPointNameTooltip',
       )}
       disabled={!onLeavingAtomChange}
-      ref={containerRef}
+      ref={containerReference}
     />
   );
 };

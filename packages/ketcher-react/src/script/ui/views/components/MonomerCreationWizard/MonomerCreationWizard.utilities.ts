@@ -12,7 +12,7 @@ import {
 import {
   getMonomerPropertyVisibility,
   isNaturalAnalogueRequired,
-} from './MonomerCreationWizardFields.utils';
+} from './MonomerCreationWizardFields.utilities';
 
 const COPY_SUFFIX = '_Copy';
 
@@ -85,7 +85,7 @@ type MonomersLibraryParsedJson = {
   [templateRef: string]: unknown;
 };
 
-type RnaComponentTemplateRef = { $ref?: string; class?: string };
+type RnaComponentTemplateReference = { $ref?: string; class?: string };
 
 type MonomerTemplate = {
   class?: string;
@@ -94,7 +94,7 @@ type MonomerTemplate = {
 type RnaPresetTemplate = {
   type?: string;
   class?: string;
-  templates?: RnaComponentTemplateRef[];
+  templates?: RnaComponentTemplateReference[];
   connections?: Array<{
     endpoint1?: { templateId?: string; attachmentPointId?: string };
     endpoint2?: { templateId?: string; attachmentPointId?: string };
@@ -102,13 +102,13 @@ type RnaPresetTemplate = {
 };
 
 const getTemplateClass = (
-  templateRef: RnaComponentTemplateRef,
+  templateReference: RnaComponentTemplateReference,
   monomersLibraryParsedJson: MonomersLibraryParsedJson,
 ) => {
-  const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
+  const template = monomersLibraryParsedJson[templateReference.$ref ?? ''] as
     MonomerTemplate | undefined;
 
-  return templateRef.class ?? template?.class;
+  return templateReference.class ?? template?.class;
 };
 
 const addDefaultRnaPresetAttachmentPoints = (
@@ -146,12 +146,15 @@ export const getEditAllInstancesInitialValues = (
   monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
 ): MonomerCreationInitialValues => {
   const initialValues = getInitialValues(monomer, true);
-  const monomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
+  const monomerTemplateReference = getMonomerTemplateRefFromMonomerItem(
     monomer.monomerItem,
   );
-  const monomerTemplateId = monomerTemplateRef.replace(/^monomerTemplate-/, '');
+  const monomerTemplateId = monomerTemplateReference.replace(
+    /^monomerTemplate-/,
+    '',
+  );
   const isEditedMonomerTemplate = (templateId?: string) =>
-    templateId === monomerTemplateRef || templateId === monomerTemplateId;
+    templateId === monomerTemplateReference || templateId === monomerTemplateId;
   const necessaryAttachmentPoints = new Set<AttachmentPointName>();
 
   if (
@@ -160,15 +163,16 @@ export const getEditAllInstancesInitialValues = (
     initialValues.type === KetMonomerClass.Phosphate
   ) {
     monomersLibraryParsedJson?.root?.templates?.forEach(
-      (templateRef: { $ref?: string }) => {
-        const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
+      (templateReference: { $ref?: string }) => {
+        const template = monomersLibraryParsedJson[
+          templateReference.$ref ?? ''
+        ] as RnaPresetTemplate | undefined;
         const isRnaPreset =
           template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template?.class === KetMonomerClass.RNA;
         const participatesInPreset = template?.templates?.some(
-          (presetMonomerRef: { $ref?: string }) =>
-            isEditedMonomerTemplate(presetMonomerRef.$ref),
+          (presetMonomerReference: { $ref?: string }) =>
+            isEditedMonomerTemplate(presetMonomerReference.$ref),
         );
 
         if (!isRnaPreset || !participatesInPreset) {
@@ -177,10 +181,13 @@ export const getEditAllInstancesInitialValues = (
 
         if (!template.connections?.length) {
           const componentTypes = new Set(
-            template.templates?.map((presetMonomerRef) =>
-              isEditedMonomerTemplate(presetMonomerRef.$ref)
+            template.templates?.map((presetMonomerReference) =>
+              isEditedMonomerTemplate(presetMonomerReference.$ref)
                 ? initialValues.type
-                : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
+                : getTemplateClass(
+                    presetMonomerReference,
+                    monomersLibraryParsedJson,
+                  ),
             ),
           );
 

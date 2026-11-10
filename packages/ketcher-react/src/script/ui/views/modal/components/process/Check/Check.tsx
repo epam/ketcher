@@ -24,7 +24,7 @@ import Form, {
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
 import { check } from '../../../../../state/server';
-import { checkOpts } from '../../../../../state/options';
+import { checkOptions } from '../../../../../state/options';
 import type {
   CheckOption,
   OptionsCheckState,
@@ -60,24 +60,24 @@ interface CheckFormState extends FormState<CheckState> {
   moleculeErrors: MoleculeErrors;
 }
 
-interface CheckDialogOwnProps {
+interface CheckDialogOwnProperties {
   onOk: (result: unknown) => void;
   onCancel: () => void;
 }
 
-interface CheckDialogStateProps {
+interface CheckDialogStateProperties {
   formState: CheckFormState;
   checkState: CheckState;
 }
 
-interface CheckDialogDispatchProps {
-  onCheck: (opts: CheckOption[]) => Promise<void>;
-  onApply: (res: CheckState) => void;
+interface CheckDialogDispatchProperties {
+  onCheck: (options: CheckOption[]) => Promise<void>;
+  onApply: (resource: CheckState) => void;
 }
 
-type CheckDialogProps = CheckDialogOwnProps &
-  CheckDialogStateProps &
-  CheckDialogDispatchProps;
+type CheckDialogProperties = CheckDialogOwnProperties &
+  CheckDialogStateProperties &
+  CheckDialogDispatchProperties;
 
 interface State {
   modal: {
@@ -131,7 +131,8 @@ const checkSchema: CheckSchema = {
 };
 
 const getFormattedDateString = (date: Date): string => {
-  const getFixedString = (num: number): string => (num + '').padStart(2, '0');
+  const getFixedString = (number_: number): string =>
+    (number_ + '').padStart(2, '0');
   return `${getFixedString(date.getHours())}:${getFixedString(
     date.getMinutes(),
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
@@ -141,7 +142,7 @@ const getFormattedDateString = (date: Date): string => {
   )}`;
 };
 
-interface FooterContentProps {
+interface FooterContentProperties {
   handleCheck: () => void;
   handleApply: () => void;
   onCancel: () => void;
@@ -149,7 +150,7 @@ interface FooterContentProps {
   isCheckedWithNewSettings: boolean;
 }
 
-const FooterContent: FC<FooterContentProps> = ({
+const FooterContent: FC<FooterContentProperties> = ({
   handleCheck,
   handleApply,
   onCancel,
@@ -194,10 +195,16 @@ const FooterContent: FC<FooterContentProps> = ({
   );
 };
 
-const CheckDialog: FC<CheckDialogProps> = (props) => {
+const CheckDialog: FC<CheckDialogProperties> = (properties) => {
   const { t } = useTranslation('dialogs');
-  const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
-    props;
+  const {
+    formState,
+    checkState,
+    onCheck,
+    onApply,
+    onCancel,
+    ...restProperties
+  } = properties;
   const { result = checkState, moleculeErrors } = formState;
   const [isStructureChecking, setIsStructureChecking] = useState(false);
   const [lastCheckDate, setLastCheckDate] = useState<Date | null>(null);
@@ -228,7 +235,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
     <Dialog
       title={t('process.check.dialogTitle')}
       className={style.dialog_body}
-      params={{ ...restProps, onCancel }}
+      params={{ ...restProperties, onCancel }}
       buttons={[]}
       footerContent={
         <FooterContent
@@ -311,26 +318,26 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
   );
 };
 
-const mapStateToProps = (state: State): CheckDialogStateProps => ({
+const mapStateToProperties = (state: State): CheckDialogStateProperties => ({
   formState: state.modal.form,
   checkState: state.options.check,
 });
 
-const mapDispatchToProps = (
+const mapDispatchToProperties = (
   dispatch: AppDispatch,
-  ownProps: CheckDialogOwnProps,
-): CheckDialogDispatchProps => ({
-  onCheck: (opts: CheckOption[]) =>
-    dispatch(check(opts)).catch(ownProps.onCancel),
-  onApply: (res: CheckState) => {
-    dispatch(checkOpts(res));
-    ownProps.onOk(res);
+  ownProperties: CheckDialogOwnProperties,
+): CheckDialogDispatchProperties => ({
+  onCheck: (options: CheckOption[]) =>
+    dispatch(check(options)).catch(ownProperties.onCancel),
+  onApply: (resource: CheckState) => {
+    dispatch(checkOptions(resource));
+    ownProperties.onOk(resource);
   },
 });
 
 const ConnectedCheckDialog = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(CheckDialog);
 
-export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProps>;
+export default ConnectedCheckDialog as ComponentType<CheckDialogOwnProperties>;

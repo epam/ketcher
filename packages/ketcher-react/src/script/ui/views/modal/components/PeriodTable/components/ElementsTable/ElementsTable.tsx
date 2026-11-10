@@ -77,7 +77,7 @@ function rowPartition(elements: Element[]): Row[] {
   }, []);
 }
 
-interface ElementsTableProps {
+interface ElementsTableProperties {
   value: string | string[] | null;
   currentEvents: (element: Element) => {
     onMouseEnter: () => void;
@@ -88,9 +88,9 @@ interface ElementsTableProps {
   onDoubleClick: (label?: string) => void;
 }
 
-class ElementsTable extends Component<ElementsTableProps> {
-  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
-    return nextProps.value !== this.props.value;
+class ElementsTable extends Component<ElementsTableProperties> {
+  shouldComponentUpdate(nextProperties: ElementsTableProperties): boolean {
+    return nextProperties.value !== this.props.value;
   }
 
   getAtomClassNames = (item: Element): string[] => {

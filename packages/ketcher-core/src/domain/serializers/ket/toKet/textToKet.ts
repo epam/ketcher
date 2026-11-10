@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,10 +45,10 @@ interface LexicalParagraph extends KetTextStyleOverrides {
   children?: LexicalTextChild[];
 }
 
-const IS_BOLD = 1;
-const IS_ITALIC = 2;
-const IS_SUBSCRIPT = 32;
-const IS_SUPERSCRIPT = 64;
+const BOLD_FLAG = 1;
+const ITALIC_FLAG = 2;
+const SUBSCRIPT_FLAG = 32;
+const SUPERSCRIPT_FLAG = 64;
 
 /**
  * Extracts font style overrides from a Lexical text node and applies them
@@ -60,10 +60,10 @@ function applyFontStyleOverrides(
 ): void {
   const format = child.format ?? 0;
 
-  if (format & IS_BOLD) target.bold = true;
-  if (format & IS_ITALIC) target.italic = true;
-  if (format & IS_SUPERSCRIPT) target.superscript = true;
-  if (format & IS_SUBSCRIPT) target.subscript = true;
+  if (format & BOLD_FLAG) target.bold = true;
+  if (format & ITALIC_FLAG) target.italic = true;
+  if (format & SUPERSCRIPT_FLAG) target.superscript = true;
+  if (format & SUBSCRIPT_FLAG) target.subscript = true;
 
   // Build font object from Lexical style string and font property
   const font: KetTextFont = {};

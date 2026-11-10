@@ -105,11 +105,11 @@ export class HoverIcon {
     this.shouldBeShownWhenMouseBack = false;
   }
 
-  hide(restShouldBeShownWhenMouseBack?: boolean) {
+  hide(shouldResetVisibilityOnMouseReturn?: boolean) {
     this.element.hide();
     this.isShown = false;
 
-    if (restShouldBeShownWhenMouseBack) {
+    if (shouldResetVisibilityOnMouseReturn) {
       this.shouldBeShownWhenMouseBack = false;
     }
   }

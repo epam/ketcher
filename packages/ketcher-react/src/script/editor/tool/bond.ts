@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -206,9 +206,9 @@ class BondTool implements Tool {
     this.editor.selection(null);
 
     const item: BondItemRef | undefined =
-      attachmentAtomId !== undefined
-        ? { map: 'atoms', id: attachmentAtomId }
-        : (ci ?? undefined);
+      attachmentAtomId === undefined
+        ? (ci ?? undefined)
+        : { map: 'atoms', id: attachmentAtomId };
 
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
@@ -317,7 +317,7 @@ class BondTool implements Tool {
     ));
 
     const dist =
-      endPos !== undefined ? Vec2.dist(dragCtx.xy0, endPos) : Number.MAX_VALUE;
+      endPos === undefined ? Number.MAX_VALUE : Vec2.dist(dragCtx.xy0, endPos);
     this.applyBondAction(event, dragCtx, rnd, molecule, {
       beginAtom,
       endAtom,
@@ -349,9 +349,7 @@ class BondTool implements Tool {
       );
       this.updateHapticAttachmentGroupTarget(attachmentGroupId);
 
-      if (attachmentGroupId !== null) {
-        endAtom = { map: 'attachmentGroups', id: attachmentGroupId };
-      } else {
+      if (attachmentGroupId === null) {
         const closestAtom = closest.atom(
           editor.render.ctab,
           pointerPosition,
@@ -359,6 +357,8 @@ class BondTool implements Tool {
           null,
         );
         endAtom = closestAtom ? { map: 'atoms', id: closestAtom.id } : null;
+      } else {
+        endAtom = { map: 'attachmentGroups', id: attachmentGroupId };
       }
     } else {
       this.updateHapticAttachmentGroupTarget(null);
@@ -367,9 +367,9 @@ class BondTool implements Tool {
 
     const closestSGroup = editor.findItem(event, ['functionalGroups']);
     const sgroup =
-      closestSGroup != null
-        ? molecule.sgroups.get(closestSGroup.id)
-        : undefined;
+      closestSGroup == null
+        ? undefined
+        : molecule.sgroups.get(closestSGroup.id);
 
     if (sgroup && endAtom?.map !== 'attachmentGroups') {
       endAtom = this.adjustEndAtomForSGroup(sgroup, beginAtom, endAtom);
@@ -467,7 +467,7 @@ class BondTool implements Tool {
       functionalGroups,
       atomInFg,
     );
-    return fgId !== null ? [fgId] : [];
+    return fgId === null ? [] : [fgId];
   }
 
   private resolveEndAtomFromFunctionalGroup(
@@ -600,7 +600,7 @@ class BondTool implements Tool {
           )
         : null;
 
-      if (dragCtx.action && dragEndFailure) {
+      if (dragEndFailure && dragCtx.action) {
         const revertedPreviewAction = dragCtx.action.perform(render.ctab);
         delete dragCtx.action;
         this.hapticBond.showValidationError(dragEndFailure);
@@ -766,10 +766,10 @@ class BondTool implements Tool {
       return [null, null] as const;
     }
     for (const [bondId, bond] of struct.bonds.entries()) {
-      const alreadyHasBondInOtherDirection =
+      const hasBondInEitherDirection =
         (bond.begin === end && bond.end === begin) ||
         (bond.begin === begin && bond.end === end);
-      if (alreadyHasBondInOtherDirection) {
+      if (hasBondInEitherDirection) {
         return [bondId, bond] as const;
       }
     }

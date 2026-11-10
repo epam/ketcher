@@ -199,9 +199,9 @@ export const Library = (page: Page) => {
      */
     async selectMonomer(
       monomer: Monomer | PresetType,
-      selectOnFavoritesTab = false,
+      shouldSelectOnFavoritesTab = false,
     ) {
-      if (selectOnFavoritesTab) {
+      if (shouldSelectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLibraryLocation(monomer);
@@ -223,9 +223,9 @@ export const Library = (page: Page) => {
      */
     async hoverMonomer(
       monomer: Monomer | PresetType,
-      selectOnFavoritesTab = false,
+      shouldSelectOnFavoritesTab = false,
     ) {
-      if (selectOnFavoritesTab) {
+      if (shouldSelectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLibraryLocation(monomer);
@@ -279,9 +279,9 @@ export const Library = (page: Page) => {
 
     async isMonomerExist(
       monomer: Monomer | PresetType,
-      selectOnFavoritesTab = false,
+      shouldSelectOnFavoritesTab = false,
     ): Promise<boolean> {
-      if (selectOnFavoritesTab) {
+      if (shouldSelectOnFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLibraryLocation(monomer);
@@ -290,12 +290,16 @@ export const Library = (page: Page) => {
       return await getElement(monomer.testId).isVisible();
     },
 
-    /** Locator of the arrow button (autochain) on the monomer card */
+    /**
+    Locator of the arrow button (autochain) on the monomer card
+    */
     getMonomerAutochainButton(monomer: Monomer): Locator {
       return page.getByTestId(monomer.testId).locator('.autochain');
     },
 
-    /** Hover over the arrow button on the monomer card */
+    /**
+    Hover over the arrow button on the monomer card
+    */
     async hoverMonomerAutochain(monomer: Monomer) {
       await this.goToMonomerLibraryLocation(monomer);
 
@@ -307,7 +311,9 @@ export const Library = (page: Page) => {
       await btn.hover();
     },
 
-    /** Click on the arrow button on the monomer card */
+    /**
+    Click on the arrow button on the monomer card
+    */
     async clickMonomerAutochain(monomer: Monomer | PresetType) {
       await this.goToMonomerLibraryLocation(monomer);
 
@@ -322,7 +328,7 @@ export const Library = (page: Page) => {
     async dragMonomerOnCanvas(
       monomer: Monomer | PresetType,
       coordinates: { x: number; y: number; fromCenter?: boolean },
-      selectOnFavoritesTab = false,
+      shouldSelectOnFavoritesTab = false,
     ) {
       const canvas = await getVisibleCanvas(page);
       const canvasBB = await canvas.boundingBox();
@@ -340,7 +346,7 @@ export const Library = (page: Page) => {
         y = y + centerOfCanvas.y;
       }
 
-      await this.hoverMonomer(monomer, selectOnFavoritesTab);
+      await this.hoverMonomer(monomer, shouldSelectOnFavoritesTab);
       await page.mouse.down();
       await page.mouse.move(x, y);
       await waitForRender(page, async () => {
@@ -400,9 +406,9 @@ export const Library = (page: Page) => {
      */
     async removeMonomerFromFavorites(
       monomer: Monomer | PresetType,
-      removeFromFavoritesTab = true,
+      shouldRemoveFromFavoritesTab = true,
     ) {
-      if (removeFromFavoritesTab) {
+      if (shouldRemoveFromFavoritesTab) {
         await this.openTab(LibraryTab.Favorites);
       } else {
         await this.goToMonomerLibraryLocation(monomer);

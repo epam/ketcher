@@ -28,10 +28,10 @@ export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
   private selectionHitTargetsSet: RaphaelSet;
 
-  private setSelectionPointsVisibility(visible: boolean) {
+  private setSelectionPointsVisibility(isVisible: boolean) {
     this.selectionPointsSet?.attr({
-      opacity: visible ? 1 : 0,
-      'pointer-events': visible ? 'all' : 'none',
+      opacity: isVisible ? 1 : 0,
+      'pointer-events': isVisible ? 'all' : 'none',
     });
   }
 

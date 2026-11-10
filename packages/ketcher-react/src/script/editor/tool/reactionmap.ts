@@ -23,16 +23,15 @@ import {
 } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
-import type { ClosestItemWithMap } from '../shared/closest.types';
-
-interface ReactionMapDragContext {
-  item: ClosestItemWithMap;
-  xy0: Vec2;
-}
+import type { DragContext } from './template.types';
 
 class ReactionMapTool implements Tool {
   private readonly editor: Editor;
-  private dragCtx: ReactionMapDragContext | undefined;
+  private dragCtx:
+    | (Pick<DragContext, 'xy0'> & {
+        item: NonNullable<DragContext['item']>;
+      })
+    | undefined;
   private line: ReturnType<Editor['render']['selectionLine']> | null = null;
 
   constructor(editor: Editor) {

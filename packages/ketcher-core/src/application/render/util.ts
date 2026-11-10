@@ -238,8 +238,9 @@ function useLabelStyles(
       break;
     case UsageInMacromolecule.MonomerConnectionsModal:
       if (isAttachmentPointSelected) {
-        fill = '#167782';
-        color = '#FFF';
+        // Selected leaving group: orange outline instead of a filled pill.
+        fill = '#FFF';
+        stroke = '#FF9A00';
       } else if (isAttachmentPointUsed) {
         fill = '#E1E5EA';
         color = '#B4B9D6';

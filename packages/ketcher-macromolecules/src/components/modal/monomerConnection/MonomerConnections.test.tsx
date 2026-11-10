@@ -28,10 +28,11 @@ const secondPeptide = new Peptide({
   props: { ...monomerData.props, Name: 'Second peptide' },
 });
 
-firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-firstPeptide.monomerItem.props.MonomerCaps = { R1: 'H', R2: 'H' };
-secondPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-secondPeptide.monomerItem.props.MonomerCaps = { R1: 'OH', R2: 'OH' };
+// A single free attachment point is preselected, so its leaving group shows.
+firstPeptide.attachmentPointsToBonds = { R1: null };
+firstPeptide.monomerItem.props.MonomerCaps = { R1: 'H' };
+secondPeptide.attachmentPointsToBonds = { R1: null };
+secondPeptide.monomerItem.props.MonomerCaps = { R1: 'OH' };
 
 const mockProps = {
   onClose: jest.fn(),
@@ -58,7 +59,7 @@ describe('MonomerConnections modal', () => {
     });
     it('should be displayed as OH when O is provided', () => {
       renderComponent();
-      expect(screen.getAllByTestId('leaving-group-value')[2]).toHaveTextContent(
+      expect(screen.getAllByTestId('leaving-group-value')[1]).toHaveTextContent(
         'OH',
       );
     });

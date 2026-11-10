@@ -8,6 +8,7 @@ import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Scale } from 'domain/helpers';
 import { getPolymerPreviewSvgSize } from './polymerPreviewSize';
+import { UsageInMacromolecule } from './render.constants';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -21,6 +22,7 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
+const MONOMER_PREVIEW_PX_PER_ANGSTROM = 45;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
@@ -89,7 +91,11 @@ export class RenderStruct {
     const svgSize = getPolymerPreviewSvgSize({
       contentSizeInUnits,
       unitsPerAngstrom: render.options.microModeScale,
-      pxPerAngstrom: Coordinates.modelToCanvas(new Vec2(1, 0)).x,
+      pxPerAngstrom:
+        render.options.usageInMacromolecule ===
+        UsageInMacromolecule.MonomerPreview
+          ? MONOMER_PREVIEW_PX_PER_ANGSTROM
+          : Coordinates.modelToCanvas(new Vec2(1, 0)).x,
       wrapper: wrapperDimensions,
     });
 

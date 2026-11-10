@@ -195,6 +195,21 @@ function section(title, lines) {
 }
 
 /**
+ * The feedback ask. A wrong finding is what improves the reviewer, so the ask
+ * names it first. A reaction can only be counted; the reason in a reply is
+ * what changes a rule, so the ask gives the `Dismissed:` prefix that a later
+ * script can find. The feedback loop in `review-workflow.md` owns the rule.
+ */
+const FEEDBACK_LINE =
+  '**Feedback:** 👎 a finding that is wrong. Better still, reply to it with `Dismissed: <why>` — one sentence. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.';
+function feedbackAsk(findings) {
+  if (findings.length === 0) {
+    return [];
+  }
+  return ['', FEEDBACK_LINE];
+}
+
+/**
  * The review brief: one top-level comment, with the marker on its first line.
  * @param {BriefInput} input
  * @param {number} [maxRounds]
@@ -225,6 +240,7 @@ export function brief(input, maxRounds = MAX_ROUNDS) {
       'Passes without a result',
       input.failedPasses.map((pass) => `- ${code(pass)}`),
     ),
+    ...feedbackAsk(input.findings),
   ].join('\n');
 }
 

@@ -21,3 +21,5 @@
 ### Passes without a result
 
 - `performance`
+
+**Feedback:** 👎 a finding that is wrong. Better still, reply to it with `Dismissed: <why>` — one sentence. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.

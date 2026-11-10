@@ -98,10 +98,10 @@ Planned:
 
 ### Human review
 
-- The reviewer reads the review brief first (planned: Phase 5), then, for large-scale change PRs, the review map.
+- The reviewer reads the review brief first, then, for large-scale change PRs, the review map.
 - Today, `.github/auto_assign.yml` assigns one reviewer from the `core` group.
 - Large-scale change PRs need two reviewers, one of them a code owner (planned: task 4.3; decision D9). A 30-minute walkthrough call replaces the first async review round.
-- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, and, for large-scale changes, the review map.
+- The brief is one top-level comment. It states whether the diff fixes the linked issue, the PR type, the panel, the count of findings per severity, the findings that did not fit the comment cap, the feedback ask, and, for large-scale changes, the review map.
 
 ## Output contract
 
@@ -120,9 +120,11 @@ Applies to every AI reviewer, including `/review-pr` and the code-review lenses.
 
 ## Feedback loop and rule life cycle
 
-Feedback (planned):
+Feedback on a finding:
 
-- A 👎 on a bot comment makes the pattern a candidate for `.memory-bank/accepted-patterns.md` (planned: tracking in Phase 5, task 5.6).
+- The review brief asks for it. A 👎 on a bot comment marks the finding wrong, and a reply that starts with `Dismissed:` gives the reason in one sentence. The reason is what moves a rule; the reaction alone can only be counted.
+- A reason that says the pattern is fine here makes it a candidate for `.memory-bank/accepted-patterns.md`. A reason that says the rule does not apply to this code narrows the rule's `Scope`.
+- Reading the reactions and the `Dismissed:` replies back is not automated yet (planned: Phase 5, task 5.6). GitHub keeps both, so a later script still sees the feedback given before it existed.
 - A finding that repeats three times becomes a rule proposal (planned: Phase 6, task 6.3).
 - Each escaped defect becomes a case in the golden set for the eval (planned: Phase 5, task 5.1; Phase 6, task 6.3).
 

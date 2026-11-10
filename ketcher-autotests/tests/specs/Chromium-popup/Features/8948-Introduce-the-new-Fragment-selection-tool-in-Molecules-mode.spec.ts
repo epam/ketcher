@@ -191,7 +191,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    const canvas = (await getVisibleCanvas(page)).getByTestId('canvas');
+    const canvas = await getVisibleCanvas(page);
     const middleBond = getBondLocator(page, { bondId: 2 });
 
     await middleBond.hover({ force: true, position: { x: 9, y: 5 } });
@@ -223,9 +223,10 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       position: { x: 10, y: 0 },
     });
 
-    await expect(
-      (await getVisibleCanvas(page)).getByTestId('canvas'),
-    ).toHaveCSS('cursor', /not-allowed/);
+    await expect(await getVisibleCanvas(page)).toHaveCSS(
+      'cursor',
+      /not-allowed/,
+    );
     await page
       .getByText(cycleBondTooltip, { exact: true })
       .waitFor({ state: 'visible' });
@@ -480,9 +481,10 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
     await expect(
       page.getByText(markedComponentTooltip, { exact: true }),
     ).toBeVisible();
-    await expect(
-      (await getVisibleCanvas(page)).getByTestId('canvas'),
-    ).toHaveCSS('cursor', /not-allowed/);
+    await expect(await getVisibleCanvas(page)).toHaveCSS(
+      'cursor',
+      /not-allowed/,
+    );
     await takeEditorScreenshot(page);
 
     await dialog.discard();

@@ -320,5 +320,11 @@ export async function getVisibleCanvas(page: Page): Promise<Locator> {
     timeout: 10000,
   });
 
+  // In Molecules mode "ketcher-canvas" marks the wrapper div; the working canvas
+  // is the SVG inside it (same bounding box), which receives the tool cursor.
+  if ((await canvas.getAttribute('data-canvasmode')) === 'molecules-mode') {
+    return canvas.locator('[data-testid="canvas"]');
+  }
+
   return canvas;
 }

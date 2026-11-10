@@ -1,7 +1,8 @@
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory, ToolName } from 'application/editor';
 import { FlexMode } from 'application/editor/modes/FlexMode';
 import { SequenceMode } from 'application/editor/modes/SequenceMode';
 import { SnakeMode } from 'application/editor/modes/SnakeMode';
+import type { SelectBase } from 'application/editor/tools/select/SelectBase';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { RxnArrowMode, Vec2 } from 'domain/entities';
 import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
@@ -88,6 +89,26 @@ describe.each([
 
     history.redo();
     expect(arrow.startEndPosition[0].y).toBeCloseTo(startPosition.y + step.y);
+  });
+
+  it('redraws the rotation handle without dispatching selectEntities', async () => {
+    editor.selectTool(ToolName.selectRectangle);
+    const updateRotationViewSpy = jest.spyOn(
+      editor.selectedTool as SelectBase,
+      'updateRotationView',
+    );
+    const selectEntitiesSpy = jest.spyOn(
+      editor.events.selectEntities,
+      'dispatch',
+    );
+    selectArrow();
+    updateRotationViewSpy.mockClear();
+    selectEntitiesSpy.mockClear();
+
+    await pressKey(editor, 'ArrowRight');
+
+    expect(updateRotationViewSpy).toHaveBeenCalledTimes(1);
+    expect(selectEntitiesSpy).not.toHaveBeenCalled();
   });
 
   it('does not add history or move anything without selection', async () => {

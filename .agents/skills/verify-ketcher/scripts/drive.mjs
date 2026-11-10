@@ -8,6 +8,7 @@
 // Usage: node drive.mjs <command> [--flag value ...]
 //   start   [--url URL] [--headed]   start the daemon and browser (url default http://127.0.0.1:4002/index.html)
 //   open    --mode molecules|macromolecules   wait for window.ketcher, switch editor mode through the UI
+//           [--no-ketcher]           only load the page (a host page that shows no editor yet)
 //   load    (--text S | --file F) [--via paste|api] [--type 'HELM'] [--api-kind molecule|helm]   load a structure
 //   click   (--testid ID | --role R --name N) [--nth N] [--y-from-bottom N]
 //   canvas-click [--dx N --dy N] [--button left|right] [--clicks 2]   click the canvas, offset in px from its centre
@@ -20,6 +21,8 @@
 //   export  --format F [--out FILE]  F: ket|mol|mol3000|smiles|extsmiles|smarts|cml|rxn|sdf|inchi|inchikey|cdxml|fasta|idt|axolabs|seq1|seq3
 //   screenshot --out FILE
 //   errors  [--out FILE] [--clear]              console errors, page errors, failed requests so far
+//   wait    --ms N                   let the page run N ms (a timeout that fires late, e.g. 30 s)
+//   workers                          Web Workers the page created and terminated since the last open
 //   status                           daemon and page state
 //   stop                             close the browser and the daemon (only ours)
 // Common: --dir DIR  daemon state dir (default <repo>/.verify-ketcher/session)
@@ -127,6 +130,23 @@ async function daemon() {
     // Ketcher copies and pastes through navigator.clipboard.
     permissions: ['clipboard-read', 'clipboard-write'],
   });
+  // Counts Web Workers the page creates and terminates, for the `workers` command.
+  await context.addInitScript(() => {
+    const counts = { created: 0, terminated: 0 };
+    globalThis.__verifyWorkers = counts;
+    const NativeWorker = globalThis.Worker;
+    if (!NativeWorker) return;
+    globalThis.Worker = class extends NativeWorker {
+      constructor(...args) {
+        super(...args);
+        counts.created++;
+      }
+      terminate() {
+        counts.terminated++;
+        super.terminate();
+      }
+    };
+  });
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
   const url = flags.url ?? 'http://127.0.0.1:4002/index.html';
@@ -171,6 +191,7 @@ async function daemon() {
       if (!TESTID.modeOption[mode])
         throw new Error('--mode molecules|macromolecules');
       await page.goto(url, { waitUntil: 'domcontentloaded' });
+      if (f['no-ketcher']) return { url: page.url(), mode: null };
       await page.waitForFunction(() => !!globalThis.ketcher, null, {
         timeout: 90000,
       });
@@ -348,6 +369,15 @@ async function daemon() {
       }
       if (f.clear) problems.length = 0;
       return out;
+    },
+    async wait(f) {
+      const ms = Number(f.ms);
+      if (!(ms > 0)) throw new Error('--ms N');
+      await page.waitForTimeout(ms);
+      return { waitedMs: ms };
+    },
+    async workers() {
+      return page.evaluate(() => ({ ...globalThis.__verifyWorkers }));
     },
     async status() {
       return {

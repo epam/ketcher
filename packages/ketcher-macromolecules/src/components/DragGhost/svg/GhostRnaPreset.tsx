@@ -4,11 +4,11 @@ import {
   monomerFactory,
 } from 'ketcher-core';
 
-type Props = {
+type Properties = {
   preset: IRnaPreset;
 };
 
-export const GhostRnaPreset = ({ preset }: Props) => {
+export const GhostRnaPreset = ({ preset }: Properties) => {
   const { sugar, phosphate, base } = preset;
 
   if (!sugar) {

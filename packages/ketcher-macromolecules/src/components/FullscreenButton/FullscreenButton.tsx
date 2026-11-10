@@ -66,7 +66,7 @@ const ButtonContainer = styled.div`
   }
 `;
 
-export const FullscreenButton = (props) => {
+export const FullscreenButton = (properties) => {
   const { t } = useTranslation('macromolecules');
   const [fullScreenMode, setFullScreenMode] = useState(isFullScreen);
 
@@ -98,7 +98,7 @@ export const FullscreenButton = (props) => {
     }
   };
   return (
-    <ButtonContainer className={props.className}>
+    <ButtonContainer className={properties.className}>
       <IconButton
         onClick={toggleFullscreen}
         iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}

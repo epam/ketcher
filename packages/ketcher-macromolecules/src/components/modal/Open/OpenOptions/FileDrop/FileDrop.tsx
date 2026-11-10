@@ -20,7 +20,7 @@ import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { OpenOptionText, DisabledText } from '../sharedStyles';
 
-export type FileDropProps = {
+export type FileDropProperties = {
   buttonLabel: string;
   textLabel: string;
   iconName: IconName;
@@ -37,11 +37,11 @@ const baseStyle = {
   justifyContent: 'space-between',
 };
 
-interface StyledIconProps {
+interface StyledIconProperties {
   disabled?: boolean;
 }
 
-const StyledIcon = styled(Icon)<StyledIconProps>`
+const StyledIcon = styled(Icon)<StyledIconProperties>`
   filter: ${({ disabled }) => (disabled ? 'grayscale(1)' : '')};
   opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
 `;
@@ -86,7 +86,7 @@ const FileDrop = ({
   disabled,
   disabledText,
   ...rest
-}: FileDropProps) => {
+}: FileDropProperties) => {
   const { t } = useTranslation('macromoleculesDialogs');
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,

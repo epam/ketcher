@@ -43,7 +43,7 @@ export const ZoomControls = () => {
   const [currentZoom, setCurrentZoom] = useState<number>(100);
   const [containerElement, setContainerElement] =
     useState<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputReference = useRef<HTMLInputElement>(null);
 
   const editor = useAppSelector(selectEditor);
   const zoomTool = editor?.zoomTool;
@@ -57,10 +57,10 @@ export const ZoomControls = () => {
       const newZoom = Math.round(zoomTool.getZoomLevel() * 100);
       setCurrentZoom(newZoom);
 
-      const inputEl = inputRef.current;
-      updateInputString(newZoom, inputEl);
-      if (document.activeElement === inputEl) {
-        inputEl?.select();
+      const inputElement = inputReference.current;
+      updateInputString(newZoom, inputElement);
+      if (document.activeElement === inputElement) {
+        inputElement?.select();
       }
     };
 
@@ -72,15 +72,15 @@ export const ZoomControls = () => {
   }, [zoomTool]);
 
   const onZoomSubmit = useCallback(() => {
-    const inputEl = inputRef.current;
-    if (!inputEl) return;
-    const userInput = getIntegerFromString(inputEl.value);
+    const inputElement = inputReference.current;
+    if (!inputElement) return;
+    const userInput = getIntegerFromString(inputElement.value);
     if (userInput && userInput !== currentZoom) {
       const zoomToSet = getValidZoom(userInput, currentZoom);
-      updateInputString(zoomToSet, inputEl);
+      updateInputString(zoomToSet, inputElement);
       ZoomTool.instance.zoomTo(zoomToSet / 100);
     } else {
-      updateInputString(currentZoom, inputEl);
+      updateInputString(currentZoom, inputElement);
     }
   }, [currentZoom]);
 
@@ -131,7 +131,7 @@ export const ZoomControls = () => {
         <DropDownContent>
           <ZoomInput
             onZoomSubmit={onZoomSubmit}
-            inputRef={inputRef as RefObject<HTMLInputElement>}
+            inputRef={inputReference as RefObject<HTMLInputElement>}
             currentZoom={currentZoom}
           />
           <ZoomControlButton

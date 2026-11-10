@@ -18,13 +18,13 @@ import { MenuItem } from './menuItem';
 import { SubMenu } from './subMenu';
 import { IMenuContext, MenuContext } from '../../contexts';
 import { Divider, MenuLayout, StyledGroup, VerticalDivider } from './styles';
-import { GroupProps, MenuProps } from './types';
+import { GroupProperties, MenuProperties } from './types';
 
 const Group = ({
   children,
   divider = false,
   isHorizontal,
-}: React.PropsWithChildren<GroupProps>) => {
+}: React.PropsWithChildren<GroupProperties>) => {
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
@@ -46,7 +46,7 @@ const Menu = ({
   activeMenuItems,
   testId,
   isHorizontal,
-}: React.PropsWithChildren<MenuProps>) => {
+}: React.PropsWithChildren<MenuProperties>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
       isActive: (itemKey) =>

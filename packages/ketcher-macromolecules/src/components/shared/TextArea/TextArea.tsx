@@ -18,7 +18,7 @@ import styled from '@emotion/styled';
 import { forwardRef } from 'react';
 import { scrollbarThin } from 'theming/mixins';
 
-export type TextEditorProps = {
+export type TextEditorProperties = {
   value: string;
   inputHandler?: (str: string) => void;
   readonly?: boolean;
@@ -47,7 +47,7 @@ const StyledTextarea = styled.textarea`
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-export const TextArea = forwardRef<HTMLTextAreaElement, TextEditorProps>(
+export const TextArea = forwardRef<HTMLTextAreaElement, TextEditorProperties>(
   ({ value, inputHandler, readonly = false, className, testId }, ref) => {
     return (
       <StyledTextarea

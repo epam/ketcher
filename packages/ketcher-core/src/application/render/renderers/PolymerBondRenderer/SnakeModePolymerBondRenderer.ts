@@ -537,7 +537,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         previousConnection &&
         previousConnection.direction !== cellConnection.direction
       ) {
-        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
         const previousDirection =
           previousConnection.direction as ConnectionDirectionInDegrees;
         const isHorizontal = new Set([0, 180]).has(previousDirection);
@@ -575,11 +574,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     finalVerticalLineY: number;
     currentPathY: number;
   }): string {
-    const lastXDirection = this.sideConnectionBondTurnPoint
-      ? endPosition.x < this.sideConnectionBondTurnPoint
-        ? 180
-        : 0
-      : xDirection;
+    let lastXDirection = xDirection;
+    if (this.sideConnectionBondTurnPoint) {
+      lastXDirection =
+        endPosition.x < this.sideConnectionBondTurnPoint ? 180 : 0;
+    }
     const cos = Math.cos((lastXDirection * Math.PI) / 180);
     let pathPart = '';
 

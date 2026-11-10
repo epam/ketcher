@@ -8,6 +8,7 @@ import tsParser from '@typescript-eslint/parser';
 import ts from 'typescript';
 import {
   ALLOWED_DOMAIN_IMPORTS,
+  ALLOWED_HTML_SINKS,
   ALLOWED_MODEL_MUTATIONS,
   ALLOWED_UI_IMPORTS,
   rules,
@@ -274,6 +275,74 @@ test('every ALLOWED_MODEL_MUTATIONS entry still suppresses a real violation and 
       violations,
       [],
       `${entry.file} has uncovered invariant A1 violations at lines ${violations.join(', ')}. Extend ALLOWED_MODEL_MUTATIONS or fix the code.`,
+    );
+  }
+});
+
+const lintTsx = (code, rulesConfig, filename) =>
+  linter
+    .verify(
+      code,
+      {
+        ...BASE_CONFIG,
+        files: ['**/*.{ts,tsx}'],
+        languageOptions: {
+          ...BASE_CONFIG.languageOptions,
+          parserOptions: {
+            ...BASE_CONFIG.languageOptions.parserOptions,
+            ecmaFeatures: { jsx: true },
+          },
+        },
+        rules: rulesConfig,
+      },
+      filename,
+    )
+    .map((m) => m.line);
+
+test('R18 flags HTML written from a string and lets innerHTML be cleared', () => {
+  const code = [
+    "el.innerHTML = '';",
+    'el.innerHTML = info;',
+    'el.innerHTML += svg;',
+    'el.outerHTML = info;',
+    "el.insertAdjacentHTML('beforeend', info);",
+    'document.write(info);',
+    'el.textContent = info;',
+    'const a = <div dangerouslySetInnerHTML={{ __html: info }} />;',
+  ].join('\n');
+  assert.deepEqual(
+    lintTsx(code, toRuleConfig('no-html-sinks', { allowedFiles: [] }), 'a.tsx'),
+    [2, 3, 4, 5, 6, 8],
+  );
+});
+
+test('R18 skips an allowlisted file', () => {
+  assert.deepEqual(
+    lintTsx(
+      'el.innerHTML = info;',
+      toRuleConfig('no-html-sinks', { allowedFiles: ['src/known.ts'] }),
+      'lib/src/known.ts',
+    ),
+    [],
+  );
+});
+
+test('every ALLOWED_HTML_SINKS entry still holds a real HTML sink', () => {
+  assert.ok(ALLOWED_HTML_SINKS.length > 0, 'the allowlist is not empty');
+  for (const file of ALLOWED_HTML_SINKS) {
+    const filename = path.join(REPO_ROOT, file);
+    assert.ok(
+      fs.existsSync(filename),
+      `${file} no longer exists. Remove its ALLOWED_HTML_SINKS entry.`,
+    );
+    const sinks = lintTsx(
+      fs.readFileSync(filename, 'utf8'),
+      toRuleConfig('no-html-sinks', { allowedFiles: [] }),
+      filename,
+    );
+    assert.ok(
+      sinks.length > 0,
+      `${file} no longer writes HTML from a string. Remove its ALLOWED_HTML_SINKS entry.`,
     );
   }
 });

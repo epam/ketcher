@@ -41,6 +41,7 @@ import {
   MonomerLibraryToggle,
 } from './styles';
 import { Icon } from 'ketcher-react';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
@@ -54,6 +55,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const presets = useAppSelector(selectAllPresets);
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
 
   useEffect(() => {
     dispatch(setSearchFilter(''));
@@ -117,7 +119,11 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   );
 
   return (
-    <MonomerLibraryContainer data-testid="monomer-library">
+    <MonomerLibraryContainer
+      data-testid="monomer-library"
+      isDisabled={isSettingsPanelOpen}
+      aria-disabled={isSettingsPanelOpen}
+    >
       <MonomerLibraryHeader>
         <MonomerLibraryInputContainer>
           <MonomerLibrarySearchIcon name="search" />

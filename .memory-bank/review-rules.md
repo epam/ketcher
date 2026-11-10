@@ -116,10 +116,21 @@ Good: `const newAtomId = ...`
 
 Scope: packages/*/src/**
 Severity: major
-Enforced by: AI
+Enforced by: Danger
 Status: proposed
-Why: A file past 1,000 lines carries several responsibilities and resists focused review. The rule flags only a file the diff pushes past the threshold; files already over it are not findings.
+Why: A file past 1,000 lines carries several responsibilities and resists focused review. The rule flags only a file the diff pushes past the threshold; files already over it are not findings. Danger warns on it (`file-length` in scripts/pr-checks.mjs).
 Source: agent-docs
+
+### R18: Source code does not write HTML from a string
+
+Scope: packages/*/src/**
+Severity: major
+Enforced by: lint(ketcher-invariants/no-html-sinks)
+Status: proposed
+Why: Ketcher opens files, pasted text, and Indigo replies that it does not control. HTML written from such text runs as markup. The rule flags `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, and `dangerouslySetInnerHTML`; clearing with `innerHTML = ''` passes. The sinks that predate the rule are allowlisted in scripts/eslint-invariants-rules.mjs (`ALLOWED_HTML_SINKS`), and the security lens traces what reaches them. ESLint's `no-eval`, `no-implied-eval`, and `no-new-func` cover code built from a string.
+Source: PR #12548
+Bad: `el.innerHTML = msg.info;`
+Good: `el.textContent = msg.info;`, or a React element
 
 ## React and UI
 

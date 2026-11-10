@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -26,7 +25,6 @@ import { type Schema, Validator } from 'jsonschema';
 
 type ExtendedSchema = Schema & {
   enumNames?: Array<string>;
-  default?: any;
 };
 
 // `title`/`enumNames` below hold translation keys ("settings:fields....."),
@@ -504,18 +502,22 @@ const optionsSchema: ExtendedSchema = {
 
 export default optionsSchema;
 
-export function getDefaultOptions(): Record<string, any> {
+export function getDefaultOptions(): Record<string, unknown> {
   const properties = optionsSchema.properties;
   if (!properties) return {};
 
-  return Object.keys(properties).reduce((result, property) => {
-    result[property] = properties[property].default;
-    return result;
-  }, {});
+  return Object.keys(properties).reduce<Record<string, unknown>>(
+    (result, property) => {
+      result[property] = properties[property].default;
+      return result;
+    },
+    {},
+  );
 }
 
-export function validation(settings): Record<string, string> | null {
-  if (typeof settings !== 'object' || settings === null) return null;
+export function validation(input: unknown): Record<string, string> | null {
+  if (typeof input !== 'object' || input === null) return null;
+  const settings = input as Record<string, string>;
 
   const result = new Validator().validate(settings, optionsSchema as Schema, {
     base: 'https://ketcher.local/',

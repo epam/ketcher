@@ -3,6 +3,7 @@ import {
   BondsSetting,
   GeneralSetting,
   MeasurementUnit,
+  SettingsSection,
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
@@ -405,6 +406,7 @@ test.describe('Ket files', () => {
   */
       await openFileAndAddToCanvas(page, 'KET/layout-with-catalyst.ket');
       await TopRightToolbar(page).Settings();
+      await SettingsDialog(page).openSection(SettingsSection.Reactions);
       await SettingsDialog(page).setOptionValue(
         GeneralSetting.ReactionComponentMarginSize,
         '47.8',

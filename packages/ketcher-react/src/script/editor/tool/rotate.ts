@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -37,8 +36,14 @@ import {
 } from 'ketcher-core';
 import { intersection, throttle } from 'lodash';
 import type { Editor, Selection } from '../Editor';
-import type { Tool } from './Tool';
+import type { MergeItems, MoveDragContext, Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
+
+interface RotateDragContext extends MoveDragContext {
+  angle1: number;
+  angle?: number;
+  mergeItems?: MergeItems;
+}
 
 type SnapMode = 'one-bond' | 'multiple-bonds';
 type SnapInfo = {
@@ -65,7 +70,7 @@ const ANGLE_INDICATOR_VISIBLE_DELTA = Math.PI / 9; // 20 degrees
 
 class RotateTool implements Tool {
   private readonly editor: Editor;
-  dragCtx: any;
+  dragCtx?: RotateDragContext;
   isNotActiveTool = true;
   private centerAtomId?: number;
   private snapInfo: SnapInfo | null = null;
@@ -227,9 +232,7 @@ class RotateTool implements Tool {
         !('angle' in dragContext) ||
         dragContext.angle !== rotateAngleInDegrees
       ) {
-        if ('action' in dragContext) {
-          dragContext.action.perform(this.reStruct);
-        }
+        dragContext.action?.perform(this.reStruct);
 
         dragContext.angle = rotateAngleInDegrees;
         dragContext.action = fromRotate(
@@ -283,14 +286,12 @@ class RotateTool implements Tool {
         }
       });
 
-      let action: Action = dragContext.action;
+      let action = dragContext.action ?? new Action();
 
       if (!isMergingSGroup) {
-        action = action
-          ? fromItemsFuse(this.reStruct, dragContext.mergeItems).mergeWith(
-              action,
-            )
-          : fromItemsFuse(this.reStruct, dragContext.mergeItems);
+        action = fromItemsFuse(this.reStruct, dragContext.mergeItems).mergeWith(
+          action,
+        );
       }
 
       if (this.selection?.atoms) {
@@ -315,7 +316,7 @@ class RotateTool implements Tool {
         const monomerRotateAction = new Action();
         if (hasExpandedMonomer) {
           monomerSGroups.forEach((sGroup) => {
-            const angleInRadians = (dragContext.angle * Math.PI) / 180;
+            const angleInRadians = ((dragContext.angle ?? 0) * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
                 id: sGroup.id,

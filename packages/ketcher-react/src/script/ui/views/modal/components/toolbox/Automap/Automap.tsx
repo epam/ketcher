@@ -15,15 +15,16 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { AutomapRequest } from '../../../../../state/store.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
-import { Dialog } from '../../../../components';
+import { Dialog, type DialogParams } from '../../../../components';
 import classes from './Automap.module.less';
 import Select from '../../../../../component/form/Select/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import i18n from 'src/i18n/i18n';
 
-type Props = BaseProps & BaseCallProps;
+type Props = BaseProps<AutomapRequest> & BaseCallProps<AutomapRequest>;
 
 export const automapSchema = {
   title: i18n.t('dialogs:toolbox.automap.dialogTitle'),
@@ -53,7 +54,8 @@ const Automap = (props: Props) => {
       className={classes.automap}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}
+      // Dialog expects a looser `onOk` result type
+      params={rest as DialogParams}
       withDivider
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: t('common:button.apply') }}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,17 +18,28 @@ import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
+import type {
+  AutomapRequest,
+  StoreState,
+} from '../../../../../state/store.types';
+import type { AppDispatch } from '../../../../../state/hooks';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>;
-type DispatchProps = Pick<BaseCallProps, 'onOk'>;
+type StateProps = Pick<BaseProps<AutomapRequest>, 'formState'>;
+type DispatchProps = Pick<BaseCallProps<AutomapRequest>, 'onOk'>;
+type OwnProps = Pick<BaseCallProps, 'onOk'>;
+type State = Pick<StoreState, 'modal'>;
 
-const mapStateToProps = (state: any): StateProps => ({
-  formState: state.modal.form,
+const mapStateToProps = (state: State): StateProps => ({
+  // The modal store keeps a generic form result for every dialog
+  formState: state.modal.form as StateProps['formState'],
 });
 
-const mapDispatchToProps = (dispatch: any, ownProps: any): DispatchProps => ({
-  onOk: (result) => {
+const mapDispatchToProps = (
+  dispatch: AppDispatch,
+  ownProps: OwnProps,
+): DispatchProps => ({
+  onOk: (result: AutomapRequest) => {
     dispatch(automap(result));
     ownProps.onOk(result);
   },

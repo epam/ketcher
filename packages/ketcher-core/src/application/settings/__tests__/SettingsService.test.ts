@@ -6,6 +6,7 @@ import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import type { Settings, ISettingsStorage, DeepPartial } from '../types';
 import { getDefaultSettings } from '../schema';
+import { SettingsManager } from 'utilities';
 
 describe('SettingsService', () => {
   let service: SettingsService;
@@ -460,6 +461,32 @@ describe('SettingsService', () => {
 
       const stored = await storage.load('ketcher-opts');
       expect(stored?.resetToSelect).toBe(false);
+    });
+  });
+
+  describe('domain-layer settings sync (SettingsManager)', () => {
+    afterEach(() => {
+      SettingsManager.valenceMode = 'default';
+    });
+
+    it('should mirror valence-mode into SettingsManager on init', async () => {
+      await storage.save('ketcher-opts', {
+        resetToSelect: false,
+        'valence-mode': 'biovia-2017',
+      } as Settings);
+
+      SettingsService.resetInstance();
+      await SettingsService.getInstance({ storage });
+
+      expect(SettingsManager.valenceMode).toBe('biovia-2017');
+    });
+
+    it('should mirror valence-mode into SettingsManager on updateSettings', async () => {
+      expect(SettingsManager.valenceMode).toBe('default');
+
+      await service.updateSettings({ 'valence-mode': 'biovia-2017' });
+
+      expect(SettingsManager.valenceMode).toBe('biovia-2017');
     });
   });
 });

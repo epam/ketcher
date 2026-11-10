@@ -103,7 +103,7 @@ export function getSearchFunction(
   return function findPointOnMonomerBorder(
     coordStart: Coordinates,
     length: number,
-    applyZoomForPositionCalculation: boolean,
+    shouldApplyZoomForPositionCalculation: boolean,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -123,7 +123,7 @@ export function getSearchFunction(
     const newLength = Math.round(diff.length() / 1.4);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
-    const zoomedCoordinateOfSecondPoint = applyZoomForPositionCalculation
+    const zoomedCoordinateOfSecondPoint = shouldApplyZoomForPositionCalculation
       ? CoordinatesTool.canvasToView(new Vec2(secondPoint))
       : new Vec2(secondPoint);
 
@@ -151,7 +151,7 @@ export function getSearchFunction(
     return findPointOnMonomerBorder(
       newCoordStart,
       newLength,
-      applyZoomForPositionCalculation,
+      shouldApplyZoomForPositionCalculation,
       newAngle,
     );
   };
@@ -272,13 +272,13 @@ export function getAttachmentPointNumberFromLabel(
 
 export const getNextFreeAttachmentPoint = (
   attachmentPoints: AttachmentPointName[],
-  skipR1AndR2 = false,
+  shouldSkipR1AndR2 = false,
 ) => {
   const orderedAttachmentPointNumbers = attachmentPoints
     .map(getAttachmentPointNumberFromLabel)
     .sort((a, b) => a - b);
 
-  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
+  let nextFreeAttachmentPointNumber = shouldSkipR1AndR2 ? 3 : 1;
   for (const number of orderedAttachmentPointNumbers) {
     if (number === nextFreeAttachmentPointNumber) {
       nextFreeAttachmentPointNumber++;

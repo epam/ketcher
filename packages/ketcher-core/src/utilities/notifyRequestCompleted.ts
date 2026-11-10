@@ -7,5 +7,5 @@ maybe somewhere else
 */
 export function notifyRequestCompleted(): void {
   const event = new Event('requestCompleted');
-  window.dispatchEvent(event);
+  globalThis.dispatchEvent(event);
 }

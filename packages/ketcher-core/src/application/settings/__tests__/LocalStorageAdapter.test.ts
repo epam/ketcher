@@ -12,7 +12,7 @@ describe('LocalStorageAdapter', () => {
 
   beforeAll(() => {
     originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(
-      global,
+      globalThis,
       'localStorage',
     );
   });
@@ -23,7 +23,7 @@ describe('LocalStorageAdapter', () => {
     // Mock localStorage
     mockLocalStorage = {};
 
-    Object.defineProperty(global, 'localStorage', {
+    Object.defineProperty(globalThis, 'localStorage', {
       value: {
         getItem: jest.fn((key: string) => mockLocalStorage[key] || null),
         setItem: jest.fn((key: string, value: string) => {
@@ -41,12 +41,12 @@ describe('LocalStorageAdapter', () => {
   afterEach(() => {
     if (originalLocalStorageDescriptor) {
       Object.defineProperty(
-        global,
+        globalThis,
         'localStorage',
         originalLocalStorageDescriptor,
       );
     } else {
-      Reflect.deleteProperty(global, 'localStorage');
+      Reflect.deleteProperty(globalThis, 'localStorage');
     }
   });
 
@@ -56,7 +56,7 @@ describe('LocalStorageAdapter', () => {
     });
 
     it('should return false when localStorage throws error', () => {
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },
@@ -96,7 +96,7 @@ describe('LocalStorageAdapter', () => {
     });
 
     it('should return null when localStorage is not available', async () => {
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },
@@ -161,7 +161,7 @@ describe('LocalStorageAdapter', () => {
     });
 
     it('should throw error when localStorage is not available', async () => {
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },
@@ -187,7 +187,7 @@ describe('LocalStorageAdapter', () => {
     });
 
     it('should not throw when localStorage is not available', async () => {
-      Object.defineProperty(global, 'localStorage', {
+      Object.defineProperty(globalThis, 'localStorage', {
         get: () => {
           throw new Error('localStorage not available');
         },

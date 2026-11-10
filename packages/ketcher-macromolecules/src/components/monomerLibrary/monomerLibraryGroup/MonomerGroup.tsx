@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateMonomerPreviewTop,
 } from 'ketcher-react';
-import { needSkipPreviewForElement } from 'components/preview/helpers';
+import { shouldSkipPreviewForElement } from 'components/preview/helpers';
 
 const MonomerGroup = ({
   items,
@@ -89,7 +89,7 @@ const MonomerGroup = ({
   ) => {
     closeLibraryPreview();
 
-    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+    if (shouldSkipPreviewForElement(e.target as HTMLElement)) {
       return;
     }
 

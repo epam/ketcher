@@ -60,9 +60,15 @@ export type MonomerEntityClass =
  * domain entity class and KetMonomerClass enum value.
  * This is a pure domain helper — it has no renderer imports.
  */
-export const monomerEntityFactory = ((
+export function monomerEntityFactory(
+  monomer: MonomerItemType,
+): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
+export function monomerEntityFactory(
+  monomer: MonomerOrAmbiguousType,
+): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
+export function monomerEntityFactory(
   monomer: MonomerOrAmbiguousType | MonomerItemType,
-) => {
+): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [
       AmbiguousMonomer,
@@ -107,14 +113,4 @@ export const monomerEntityFactory = ((
   }
 
   return [Chem, KetMonomerClass.CHEM];
-}) as {
-  (
-    monomer: MonomerItemType,
-  ): [
-    EntityClass: ConcreteMonomerEntityClass,
-    ketMonomerClass: KetMonomerClass,
-  ];
-  (
-    monomer: MonomerOrAmbiguousType,
-  ): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
-};
+}

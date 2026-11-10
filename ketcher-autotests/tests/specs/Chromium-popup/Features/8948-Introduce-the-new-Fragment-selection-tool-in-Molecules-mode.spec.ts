@@ -2,6 +2,7 @@ import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SelectionTypePanel } from '@tests/pages/common/SelectionTypePanel';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -50,20 +51,17 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      *
      * Version 3.13.0
      */
-    const leftToolbar = CommonLeftToolbar(page);
+    const selectionTypePanel = SelectionTypePanel(page);
 
-    await leftToolbar.areaSelectionDropdownExpandButton.click();
-    const toolOptions = await leftToolbar.toolSelectionDropdownPanel
-      .getByRole('button')
-      .evaluateAll((buttons) => buttons.map((button) => button.dataset.testid));
+    await selectionTypePanel.expand();
 
-    expect(toolOptions).toEqual([
+    expect(await selectionTypePanel.getToolTypes()).toEqual([
       SelectionToolType.Rectangle,
       SelectionToolType.Lasso,
       SelectionToolType.Structure,
       SelectionToolType.Fragment,
     ]);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await selectionTypePanel.collapse();
   });
 
   test('Case 2 - Fragment Selection is absent in Macro mode', async ({
@@ -79,19 +77,16 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      *
      * Version 3.13.0
      */
-    const leftToolbar = CommonLeftToolbar(page);
+    const selectionTypePanel = SelectionTypePanel(page);
 
-    await leftToolbar.areaSelectionDropdownExpandButton.click();
-    const toolOptions = await leftToolbar.toolSelectionDropdownPanel
-      .getByRole('button')
-      .evaluateAll((buttons) => buttons.map((button) => button.dataset.testid));
+    await selectionTypePanel.expand();
 
-    expect(toolOptions).toEqual([
+    expect(await selectionTypePanel.getToolTypes()).toEqual([
       SelectionToolType.Rectangle,
       SelectionToolType.Lasso,
       SelectionToolType.Structure,
     ]);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await selectionTypePanel.collapse();
   });
 
   test('Case 3 - Fragment Selection tooltip displays the tool name and hotkey', async () => {
@@ -105,17 +100,14 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      *
      * Version 3.13.0
      */
-    const leftToolbar = CommonLeftToolbar(page);
+    const selectionTypePanel = SelectionTypePanel(page);
 
-    await leftToolbar.areaSelectionDropdownExpandButton.click();
+    await selectionTypePanel.expand();
 
     await expect(
-      leftToolbar.toolSelectionDropdownPanel.getByTitle(
-        'Fragment Selection (Shift+Tab)',
-        { exact: true },
-      ),
-    ).toBeVisible();
-    await keyboardPressOnCanvas(page, 'Escape');
+      selectionTypePanel.toolButton(SelectionToolType.Fragment),
+    ).toHaveAttribute('title', 'Fragment Selection (Shift+Tab)');
+    await selectionTypePanel.collapse();
   });
 
   test('Case 4 - Shift+Tab hotkey activates Fragment Selection tool', async () => {
@@ -138,9 +130,10 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       await keyboardPressOnCanvas(page, 'Shift+Tab');
     }
 
-    await expect(
-      page.getByTestId(SelectionToolType.Fragment).filter({ visible: true }),
-    ).toBeVisible();
+    await expect(SelectionTypePanel(page).currentToolButton).toHaveAttribute(
+      'data-testid',
+      SelectionToolType.Fragment,
+    );
   });
 
   test('Case 5 - Structure Selection tool is renamed in tooltip in Micro and Macro modes', async () => {
@@ -155,25 +148,21 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      *
      * Version 3.13.0
      */
-    const leftToolbar = CommonLeftToolbar(page);
+    const selectionTypePanel = SelectionTypePanel(page);
     const structureSelectionTooltip = 'Structure Selection (Shift+Tab)';
 
-    await leftToolbar.areaSelectionDropdownExpandButton.click();
+    await selectionTypePanel.expand();
     await expect(
-      leftToolbar.toolSelectionDropdownPanel.getByTestId(
-        SelectionToolType.Structure,
-      ),
+      selectionTypePanel.toolButton(SelectionToolType.Structure),
     ).toHaveAttribute('title', structureSelectionTooltip);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await selectionTypePanel.collapse();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await leftToolbar.areaSelectionDropdownExpandButton.click();
+    await selectionTypePanel.expand();
     await expect(
-      leftToolbar.toolSelectionDropdownPanel.getByTestId(
-        SelectionToolType.Structure,
-      ),
+      selectionTypePanel.toolButton(SelectionToolType.Structure),
     ).toHaveAttribute('title', structureSelectionTooltip);
-    await keyboardPressOnCanvas(page, 'Escape');
+    await selectionTypePanel.collapse();
   });
 
   test('Case 6 - Hovering left or right side of a bond not in a cycle shows arrows and blue outline', async () => {
@@ -366,9 +355,10 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       SelectionToolType.Rectangle,
     ]) {
       await keyboardPressOnCanvas(page, 'Shift+Tab');
-      await expect(
-        page.getByTestId(toolType).filter({ visible: true }),
-      ).toBeVisible();
+      await expect(SelectionTypePanel(page).currentToolButton).toHaveAttribute(
+        'data-testid',
+        toolType,
+      );
     }
   });
 

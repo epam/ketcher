@@ -133,19 +133,19 @@ class EraserTool implements Tool {
           )
         ) {
           const sgroupAtoms =
-            actualSgroupId !== undefined
-              ? SGroup.getAtoms(
+            actualSgroupId === undefined
+              ? undefined
+              : SGroup.getAtoms(
                   molecule,
                   struct.sgroups.get(actualSgroupId)?.item,
-                )
-              : undefined;
+                );
           const sgroupBonds =
-            actualSgroupId !== undefined
-              ? SGroup.getBonds(
+            actualSgroupId === undefined
+              ? undefined
+              : SGroup.getBonds(
                   molecule,
                   struct.sgroups.get(actualSgroupId)?.item,
-                )
-              : undefined;
+                );
           if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
             newSelected.atoms.push(...sgroupAtoms);
             newSelected.bonds.push(...sgroupBonds);

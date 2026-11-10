@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,6 +17,7 @@
 import {
   type Struct,
   type ReStruct,
+  type ReEnhancedFlag,
   FunctionalGroup,
   IMAGE_KEY,
   Vec2,
@@ -25,7 +25,9 @@ import {
   assert,
 } from 'ketcher-core';
 
-function getElementsInRectangle(restruct: ReStruct, p0, p1) {
+type ReEnhancedFlagWithPosition = ReEnhancedFlag & { pp?: Vec2 };
+
+function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
@@ -118,13 +120,14 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
 
-  // ReRxnArrow item doesn't have center method according to types but somehow it works
-  restruct.rxnArrows.forEach((item: any, id) => {
+  restruct.rxnArrows.forEach((_item, id) => {
+    const center = struct.rxnArrows.get(id)?.center();
     if (
-      item.item.center().x > x0 &&
-      item.item.center().x < x1 &&
-      item.item.center().y > y0 &&
-      item.item.center().y < y1
+      center &&
+      center.x > x0 &&
+      center.x < x1 &&
+      center.y > y0 &&
+      center.y < y1
     ) {
       rxnArrowsList.push(id);
     }
@@ -152,8 +155,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
-  restruct.enhancedFlags.forEach((item: any, id) => {
+  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
     if (!item.pp) return;
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id);
@@ -192,24 +194,25 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
-  const reImages = Array.from(restruct.images.entries()).reduce(
+  const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]): Array<number> => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => point.isInsidePolygon(polygon));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? [...acc, id] : acc;
     },
     [],
   );
 
-  const reMultitailArrows = Array.from(
-    restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]): Array<number> => {
-    const isPointInside = item.multitailArrow
-      .getReferencePositionsArray()
-      .some((point) => point.isInsidePolygon(polygon));
-    return isPointInside ? acc.concat(id) : acc;
-  }, []);
+  const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
+    (acc: Array<number>, [id, item]): Array<number> => {
+      const isPointInside = item.multitailArrow
+        .getReferencePositionsArray()
+        .some((point) => point.isInsidePolygon(polygon));
+      return isPointInside ? [...acc, id] : acc;
+    },
+    [],
+  );
 
   return {
     atoms: atomList,
@@ -227,18 +230,13 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   };
 }
 
-function getElementsInPolygon(restruct: ReStruct, rr) {
+function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
-  const r: any = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
-
-  for (const point of rr) {
-    r.push(new Vec2(point.x, point.y));
-  }
 
   restruct.bonds.forEach((bond, bid) => {
     if (
@@ -345,8 +343,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
-  restruct.enhancedFlags.forEach((item: any, id) => {
+  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
     if (item.pp && isPointInPolygon(r, item.pp)) {
       enhancedFlagList.push(id);
     }
@@ -366,24 +363,25 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     }
   });
 
-  const reImages = Array.from(restruct.images.entries()).reduce(
+  const reImages = [...restruct.images.entries()].reduce(
     (acc: Array<number>, [id, item]) => {
       const isPointInside = Object.values(
         item.image.getReferencePositions(),
       ).some((point) => isPointInPolygon(r, point));
-      return isPointInside ? acc.concat(id) : acc;
+      return isPointInside ? [...acc, id] : acc;
     },
     [],
   );
 
-  const reMultitailArrows = Array.from(
-    restruct.multitailArrows.entries(),
-  ).reduce((acc: Array<number>, [id, item]) => {
-    const isPointInside = item.multitailArrow
-      .getReferencePositionsArray()
-      .some((point) => isPointInPolygon(r, point));
-    return isPointInside ? acc.concat(id) : acc;
-  }, []);
+  const reMultitailArrows = [...restruct.multitailArrows.entries()].reduce(
+    (acc: Array<number>, [id, item]) => {
+      const isPointInside = item.multitailArrow
+        .getReferencePositionsArray()
+        .some((point) => isPointInPolygon(r, point));
+      return isPointInside ? [...acc, id] : acc;
+    },
+    [],
+  );
 
   return {
     atoms: atomList,
@@ -403,7 +401,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
 // TODO: test me see testPolygon from
 // 'Remove unused methods from render' commit
-function isPointInPolygon(r, p) {
+function isPointInPolygon(r: Vec2[], p: Vec2) {
   const d = new Vec2(0, 1);
   const n = d.rotate(Math.PI / 2);
   let v0 = Vec2.diff(r[r.length - 1], p);
@@ -412,36 +410,40 @@ function isPointInPolygon(r, p) {
   let w0 = new Vec2(0, 0);
   let counter = 0;
   const eps = 1e-5;
-  let flag1;
-  let flag0 = false;
+  let hasCurrentRayCrossing: boolean;
+  let hasPreviousRayCrossing = false;
 
   for (const point of r) {
     const v1 = Vec2.diff(point, p);
     const w1 = Vec2.diff(v1, v0);
     const n1 = Vec2.dot(n, v1);
     const d1 = Vec2.dot(d, v1);
-    flag1 = false;
+    hasCurrentRayCrossing = false;
     if (n1 * n0 < 0) {
       if (d1 * d0 > -eps) {
-        if (d0 > -eps) flag1 = true;
+        if (d0 > -eps) hasCurrentRayCrossing = true;
       } else if (
         (Math.abs(n0) * Math.abs(d1) - Math.abs(n1) * Math.abs(d0)) * d1 >
         0
       ) {
-        flag1 = true;
+        hasCurrentRayCrossing = true;
       }
     }
-    if (flag1 && flag0 && Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0) {
-      flag1 = false;
+    if (
+      hasCurrentRayCrossing &&
+      hasPreviousRayCrossing &&
+      Vec2.dot(w1, n) * Vec2.dot(w0, n) >= 0
+    ) {
+      hasCurrentRayCrossing = false;
     }
-    if (flag1) {
+    if (hasCurrentRayCrossing) {
       counter++;
     }
     v0 = v1;
     n0 = n1;
     d0 = d1;
     w0 = w1;
-    flag0 = flag1;
+    hasPreviousRayCrossing = hasCurrentRayCrossing;
   }
   return counter % 2 !== 0;
 }

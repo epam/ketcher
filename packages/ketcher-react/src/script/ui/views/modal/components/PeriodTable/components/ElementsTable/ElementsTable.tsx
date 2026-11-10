@@ -67,11 +67,11 @@ const actinides: Element[] = Elements.filter(
 function rowPartition(elements: Element[]): Row[] {
   return elements.reduce((result: Row[], item: Element) => {
     const row = result[item.period - 1];
-    if (!row) {
-      result.push([item]);
-    } else {
+    if (row) {
       if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
       row.push(item);
+    } else {
+      result.push([item]);
     }
     return result;
   }, []);

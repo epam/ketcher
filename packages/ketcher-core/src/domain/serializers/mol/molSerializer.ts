@@ -70,7 +70,7 @@ export class MolSerializer implements Serializer<Struct> {
           // this sometimes happens when pasting
           return molfile.parseCTFile({
             ...parseCTFileParams,
-            molfileLines: [''].concat(lines),
+            molfileLines: ['', ...lines],
           });
         } catch (missingFirstLineError) {
           KetcherLogger.error(

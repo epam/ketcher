@@ -65,7 +65,7 @@ const peptideColorScheme: Record<string, MonomerColorScheme> = {
 export const defaultTheme: EditorTheme = {
   color: {
     background: {
-      canvas: '#F5F5F5',
+      canvas: '#FCFCFC',
       primary: '#FFFFFF',
       secondary: '#F8FEFF',
       overlay: 'rgba(94,94,94,.8)',

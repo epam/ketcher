@@ -1313,8 +1313,10 @@ const elementsMap = elementsArray.reduce((acc, element) => {
 
 export const Elements = {
   get: (key: number | string): Element | undefined => elementsMap.get(key),
-  filter: (predicate: (element: Element) => boolean): Array<Element> => {
-    return elementsArray.filter(predicate);
+  filter: (
+    isMatchingElement: (element: Element) => boolean,
+  ): Array<Element> => {
+    return elementsArray.filter(isMatchingElement);
   },
   getAll: () => [...elementsArray],
 };

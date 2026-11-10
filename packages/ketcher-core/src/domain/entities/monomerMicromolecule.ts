@@ -39,9 +39,9 @@ export class MonomerMicromolecule extends SGroup {
     }
   }
 
-  public setExpanded(expanded: boolean): void {
+  public setExpanded(isExpanded: boolean): void {
     this.ensureMonomerItemMutable();
-    this.monomer.monomerItem.expanded = expanded;
+    this.monomer.monomerItem.expanded = isExpanded;
   }
 
   public override getContractedPosition(struct: Struct) {
@@ -53,7 +53,7 @@ export class MonomerMicromolecule extends SGroup {
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
-    needCloneAttachmentPoints = false,
+    shouldCloneAttachmentPoints = false,
   ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
@@ -69,7 +69,7 @@ export class MonomerMicromolecule extends SGroup {
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
     monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
-    if (needCloneAttachmentPoints && atomIdMap) {
+    if (shouldCloneAttachmentPoints && atomIdMap) {
       monomerMicromoleculeClone.addAttachmentPoints(
         monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
         false,

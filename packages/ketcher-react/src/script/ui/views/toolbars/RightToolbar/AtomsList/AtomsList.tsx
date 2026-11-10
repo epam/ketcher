@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,14 +18,15 @@ import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
-import type { Tools, UiActionAction } from '../../../../action';
+import type { UiActionAction } from '../../../../action';
+import type { ToolbarStatus } from '../../toolbar.types';
 import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 
 interface AtomsListProps {
   atoms: string[];
-  status: Tools;
+  status: ToolbarStatus;
   active?: {
     tool?: string;
     opts: {
@@ -41,7 +41,7 @@ interface AtomsListCallProps {
 
 type Props = AtomsListProps & AtomsListCallProps;
 
-const StyledAtom = styled(Atom)((props: any) => {
+const StyledAtom = styled(Atom)((props) => {
   const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000';
   return `
        color: ${atomColor};
@@ -81,6 +81,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
     <div ref={ref}>
       {atoms.map((label) => {
         const element = Elements.get(label);
+        if (!element) return null;
         const shortcut = atoms.includes(label)
           ? shortcutStr(atomCuts[label])
           : null;

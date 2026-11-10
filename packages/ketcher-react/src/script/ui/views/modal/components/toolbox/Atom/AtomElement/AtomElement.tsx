@@ -11,10 +11,21 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import classes from './../Atom.module.less';
 import type { BaseProps } from '../../../../modal.types';
+import type { AtomType } from 'ketcher-core';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
-const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
+export type AtomFormResult = {
+  atomType: AtomType;
+  atomList: string;
+  notList: boolean;
+  pseudo: string;
+  label: string;
+};
+
+const AtomElement = ({
+  formState,
+}: Pick<BaseProps<AtomFormResult>, 'formState'>) => {
   type ChangeFunction = (value: string) => void;
 
   const { atomType, atomList, notList, pseudo, label } = formState.result;
@@ -63,7 +74,7 @@ const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
               'period-table',
               {
                 type: notList ? 'not-list' : 'list',
-                values: atomList !== '' ? atomList.split(',') : [],
+                values: atomList === '' ? [] : atomList.split(','),
               },
               onChange,
             )

@@ -291,7 +291,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     lastCellConnection: Connection;
     lastSin: number;
   } {
-    const lastCell = cells[cells.length - 1];
+    const lastCell = cells.at(-1) as Cell;
     const firstCell = cells[0];
     const lastCellConnection = this.getCellConnection(lastCell);
     const lastCellBeforeEndpoint =
@@ -304,8 +304,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return { lastCellConnection, lastSin };
   }
 
-  // TODO: Specify the types.
-  private appendSideConnectionBond(rootElement, cells: Cell[]) {
+  private appendSideConnectionBond(rootElement: unknown, cells: Cell[]) {
     const firstCell = cells[0];
     const firstCellConnection = this.getCellConnection(firstCell);
     const isVerticalConnection = firstCellConnection.isVertical;

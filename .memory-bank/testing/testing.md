@@ -475,10 +475,15 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
       * Version 3.12.0
       */
    ```
-   The `Version` line is the Ketcher release the test targets (take it from `packages/ketcher-react/package.json`, dropping any `-rc.N` suffix).
+   The `Version` line is the Ketcher release of the feature the test covers. Take it from the milestone of the feature issue (the source task linked from the autotest issue), dropping any `-rc.N` suffix: milestone `Ketcher 3.13.0-rc.1` gives `Version 3.13.0`. Do not take it from the autotest issue, whose milestone is `Autotests`, or from the current version in `package.json`.
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
 
 ### Naming
+
+A spec file that covers a feature is named `<featureID>-<Feature-Name>.spec.ts`, where `featureID` is the number of the feature issue (the source task of the autotest issue, not the autotest issue itself) and `Feature-Name` is its title in kebab case, for example `8464-Preset-Creation-Success-Messages.spec.ts`. The `Test task:` line in the comment block still links the autotest issue. Store the file by the mode the feature is tested in:
+
+- popup mode: `ketcher-autotests/tests/specs/Chromium-popup/Features/`;
+- full-screen mode: `ketcher-autotests/tests/specs/Features/`.
 
 Each `test()` title is a plain English sentence that starts with the serial number from the checklist item, such as `Case 1 - ...` or `1. ...`, matching the style of the target file.
 

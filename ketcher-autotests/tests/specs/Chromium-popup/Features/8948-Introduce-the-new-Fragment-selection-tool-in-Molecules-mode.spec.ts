@@ -47,7 +47,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 2. Expand the selection tools menu
      * 3. Verify the menu contains Rectangle, Lasso, Structure and Fragment Selection tools and Fragment Selection is the last one
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const leftToolbar = CommonLeftToolbar(page);
 
@@ -76,7 +76,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 2. Expand the selection tools menu
      * 3. Verify the menu contains only Rectangle, Lasso and Structure Selection tools
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const leftToolbar = CommonLeftToolbar(page);
 
@@ -102,7 +102,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 2. Expand the selection tools menu
      * 3. Verify the tooltip of the Fragment Selection tool is "Fragment Selection (Shift+Tab)"
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const leftToolbar = CommonLeftToolbar(page);
 
@@ -126,7 +126,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 2. Press Shift+Tab three times
      * 3. Verify Fragment Selection tool is active
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -152,7 +152,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 3. Switch to Macro mode and expand the selection tools menu
      * 4. Verify the tooltip of the Structure Selection tool
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const leftToolbar = CommonLeftToolbar(page);
     const structureSelectionTooltip = 'Structure Selection (Shift+Tab)';
@@ -187,7 +187,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 5. Hover the right side of the middle bond
      * 6. Verify the cursor is not forbidden, arrows and outline mark the right fragment
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -213,7 +213,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 3. Hover a bond of the ring
      * 4. Verify the cursor is forbidden and no arrows or outline are shown
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1CCCCC1CC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -242,7 +242,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 3. Hover a bond of the ring
      * 4. Verify the tooltip with the explanation appears not earlier than 200 ms after the hover
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1CCCCC1CC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -269,7 +269,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 3. Hover the bond between the ring and the ethyl group on the ring side
      * 4. Verify all atoms and bonds of the ring are outlined
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1CCCCC1CC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -294,7 +294,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 5. Click the left side of the middle bond
      * 6. Verify only the left fragment is selected
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -325,7 +325,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 3. Click a bond of the ring
      * 4. Verify nothing is selected
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1CCCCC1CC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
@@ -351,7 +351,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 2. Press Shift+Tab four times
      * 3. Verify the active tool after each press: Lasso, Structure, Fragment, Rectangle
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -383,7 +383,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 5. Verify the Sugar component is not outlined
      * 6. Click the hovered side and verify the Sugar component is not selected
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const dialog = CreateMonomerDialog(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
@@ -421,7 +421,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 4. Select Fragment Selection tool and click the bond connecting Sugar with the 3rd atom on the unmarked side
      * 5. Verify the unmarked part is selected without the connecting bond
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const dialog = CreateMonomerDialog(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
@@ -459,7 +459,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      * 4. Select Fragment Selection tool and hover the bond connecting Sugar with the 3rd atom on the Sugar side
      * 5. Verify the tooltip text, the forbidden cursor and gray arrows
      *
-     * Version 3.21.0
+     * Version 3.13.0
      */
     const dialog = CreateMonomerDialog(page);
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');

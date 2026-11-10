@@ -15,23 +15,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 
-interface RemoveFGProps extends BaseProps {
+interface RemoveFGProperties extends BaseProperties {
   fgIds: any;
 }
 
-type Props = RemoveFGProps & BaseCallProps;
+type Properties = RemoveFGProperties & BaseCallProperties;
 
-const RemoveFG = (props: Props) => {
+const RemoveFG = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
-  const { fgIds } = props;
+  const { fgIds } = properties;
 
   const remove = function () {
     if (fgIds.length > 0)
@@ -41,8 +41,8 @@ const RemoveFG = (props: Props) => {
     return true;
   };
 
-  const exit = (key, res) => {
-    props[key](res);
+  const exit = (key, result) => {
+    properties[key](result);
   };
 
   return (
@@ -78,5 +78,5 @@ const RemoveFG = (props: Props) => {
   );
 };
 
-export type { RemoveFGProps };
+export type { RemoveFGProperties };
 export { RemoveFG };

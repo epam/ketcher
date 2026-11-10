@@ -23,9 +23,9 @@ const useVerticalToolbarScroll = () => {
   const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(
     null,
   );
-  const [startRef, startInView] = useInView({ threshold: 1 });
-  const [endRef, endInView] = useInView({ threshold: 1 });
-  const { ref: scrollStepRef, height: scrollStep } =
+  const [startReference, startInView] = useInView({ threshold: 1 });
+  const [endReference, endInView] = useInView({ threshold: 1 });
+  const { ref: scrollStepReference, height: scrollStep } =
     useResizeObserver<HTMLDivElement>();
 
   const scrollBack = () => {
@@ -46,9 +46,9 @@ const useVerticalToolbarScroll = () => {
 
   return {
     scrollContainerRef: setScrollElement,
-    scrollStepRef,
-    startRef,
-    endRef,
+    scrollStepReference,
+    startReference,
+    endReference,
     startInView,
     endInView,
     isOverflowing: !startInView || !endInView,

@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import {
-  type RightToolbarCallProps,
-  type RightToolbarProps,
+  type RightToolbarCallProperties,
+  type RightToolbarProperties,
   RightToolbar,
 } from './RightToolbar';
 
@@ -25,11 +25,11 @@ import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 
-type StateProps = Omit<RightToolbarProps, 'className'>;
-type OwnProps = Pick<RightToolbarProps, 'className'>;
+type StateProperties = Omit<RightToolbarProperties, 'className'>;
+type OwnProperties = Pick<RightToolbarProperties, 'className'>;
 const disableableButtons = [];
 
-const mapStateToProps = (state): StateProps => ({
+const mapStateToProperties = (state): StateProperties => ({
   active: state.actionState?.activeTool,
   status: state.actionState ?? {},
   freqAtoms: state.toolbar.freqAtoms,
@@ -38,7 +38,9 @@ const mapStateToProps = (state): StateProps => ({
   disableableButtons,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({
+const mapDispatchToProperties = (
+  dispatch: Dispatch,
+): RightToolbarCallProperties => ({
   onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
@@ -47,9 +49,9 @@ const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({
     }),
 });
 
-const RightToolbarContainer: ComponentType<OwnProps> = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+const RightToolbarContainer: ComponentType<OwnProperties> = connect(
+  mapStateToProperties,
+  mapDispatchToProperties,
 )(RightToolbar);
 
 export { RightToolbarContainer };

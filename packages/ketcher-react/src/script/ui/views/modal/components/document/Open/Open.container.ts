@@ -16,7 +16,7 @@
 
 import Open, { type OpenProps, type OpenResult } from './Open';
 
-import type { BaseCallProps } from '../../../modal.types';
+import type { BaseCallProperties } from '../../../modal.types';
 import { connect } from 'react-redux';
 import { canExecuteClipboardCommand } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';
@@ -25,7 +25,7 @@ import { changeImage } from '../../../../../state/options';
 type StateProps = OpenProps;
 
 type DispatchProps = {
-  onOk: BaseCallProps<OpenResult>['onOk'];
+  onOk: BaseCallProperties<OpenResult>['onOk'];
   onImageUpload: (file: File) => void;
 };
 

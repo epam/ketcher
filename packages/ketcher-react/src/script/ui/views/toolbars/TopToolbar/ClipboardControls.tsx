@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { ElementWithDropdown } from './ElementWithDropdown';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface ClipboardControlsProps {
+interface ClipboardControlsProperties {
   onCopy: () => void;
   onCopyMol: () => void;
   onCopyKet: () => void;
@@ -40,7 +40,7 @@ export const ClipboardControls = ({
   shortcuts,
   disabledButtons,
   hiddenButtons,
-}: ClipboardControlsProps) => {
+}: ClipboardControlsProperties) => {
   const { t } = useTranslation('toolbar');
   const copyButtons = [
     {
@@ -82,18 +82,18 @@ export const ClipboardControls = ({
     />
   );
 
-  const firstButtonObj = copyButtons.find(
+  const firstButtonObject = copyButtons.find(
     (button) => !hiddenButtons.includes(button.name),
   );
   const collapsibleElements = copyButtons
-    .filter((button) => button !== firstButtonObj)
+    .filter((button) => button !== firstButtonObject)
     .map((button) => getButtonElement(button));
 
   return (
     <>
       {!hiddenButtons.includes('copies') && (
         <ElementWithDropdown
-          topElement={getButtonElement(firstButtonObj)}
+          topElement={getButtonElement(firstButtonObject)}
           dropDownElements={collapsibleElements}
         />
       )}

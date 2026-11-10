@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-interface SystemControlsProps {
+interface SystemControlsProperties {
   disabledButtons: string[];
   hiddenButtons: string[];
   className?: string;
@@ -55,7 +55,7 @@ export const SystemControls = ({
   onHelp,
   onAboutOpen,
   className,
-}: SystemControlsProps) => {
+}: SystemControlsProperties) => {
   const { t } = useTranslation(['toolbar', 'toolbars']);
   const [isFullscreen, setIsFullscreen] = useState(isFullScreen);
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import type { AutomapRequest } from '../../../../../state/store.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,8 @@ import Select from '../../../../../component/form/Select/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import i18n from 'src/i18n/i18n';
 
-type Props = BaseProps<AutomapRequest> & BaseCallProps<AutomapRequest>;
+type Properties = BaseProperties<AutomapRequest> &
+  BaseCallProperties<AutomapRequest>;
 
 export const automapSchema = {
   title: i18n.t('dialogs:toolbox.automap.dialogTitle'),
@@ -45,9 +46,9 @@ export const automapSchema = {
   },
 };
 
-const Automap = (props: Props) => {
+const Automap = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
-  const { formState, ...rest } = props;
+  const { formState, ...rest } = properties;
   return (
     <Dialog
       title={t('dialogs:toolbox.automap.dialogTitle')}
@@ -64,7 +65,7 @@ const Automap = (props: Props) => {
         <Field
           name="mode"
           options={getSelectOptionsFromSchema(automapSchema.properties.mode, t)}
-          {...props}
+          {...properties}
           component={Select}
           data-testid="automap-mode"
         />

@@ -23,7 +23,7 @@ import { UndoRedo } from './UndoRedo';
 import { ZoomControls } from './ZoomControls';
 
 import { SystemControls } from './SystemControls';
-import { ExternalFuncControls } from './ExternalFuncControls';
+import { ExternalFunctionControls } from './ExternalFunctionControls';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
@@ -34,7 +34,7 @@ import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
 
-export interface PanelProps {
+export interface PanelProperties {
   className: string;
   disabledButtons: string[];
   indigoVerification: boolean;
@@ -159,8 +159,9 @@ export const TopToolbar = ({
   togglerComponent,
   isModeSwitcherDisabled,
   customButtons,
-}: PanelProps) => {
-  const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+}: PanelProperties) => {
+  const { ref: resizeReference, width = 50 } =
+    useResizeObserver<HTMLDivElement>();
   const { t } = useTranslation('toolbar');
   const { ketcherId } = useAppContext();
   const ketcher = useMemo(
@@ -189,7 +190,7 @@ export const TopToolbar = ({
   return (
     <ControlsPanel
       className={className}
-      ref={resizeRef}
+      ref={resizeReference}
       data-testid="top-toolbar"
     >
       <BtnsWpapper>
@@ -227,7 +228,7 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           shortcuts={shortcuts}
         />
-        <ExternalFuncControls
+        <ExternalFunctionControls
           onLayout={onLayout}
           onClean={onClean}
           onAromatize={onAromatize}

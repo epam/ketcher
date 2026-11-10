@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../../../../components';
 import dialogClasses from '../../../../../../../components/Dialog/Dialog.module.less';
@@ -28,14 +28,14 @@ import {
 } from 'ketcher-core';
 import type Editor from 'src/script/editor';
 
-interface EditMonomerDialogProps extends BaseProps {
+interface EditMonomerDialogProperties extends BaseProperties {
   fgIds: number[];
   variant: EditMonomerVariant;
 }
 
-type Props = EditMonomerDialogProps & BaseCallProps;
+type Properties = EditMonomerDialogProperties & BaseCallProperties;
 
-const EditMonomer = (props: Props) => {
+const EditMonomer = (properties: Properties) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const BODY_TEXT: Record<EditMonomerVariant, string> = {
     single: t('dialogs:toolbox.editMonomer.bodyTextSingle'),
@@ -44,7 +44,7 @@ const EditMonomer = (props: Props) => {
   };
   const { ketcherId } = useAppContext();
   const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-  const { fgIds, variant, onOk } = props;
+  const { fgIds, variant, onOk } = properties;
 
   const handleCancel = () => {
     onOk(false);
@@ -121,5 +121,5 @@ const EditMonomer = (props: Props) => {
   );
 };
 
-export type { EditMonomerDialogProps };
+export type { EditMonomerDialogProperties };
 export { EditMonomer };

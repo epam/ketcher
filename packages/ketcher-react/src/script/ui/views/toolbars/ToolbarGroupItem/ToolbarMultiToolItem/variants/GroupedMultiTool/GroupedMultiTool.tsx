@@ -14,19 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { MultiToolCallProps, MultiToolProps } from '../variants.types';
+import type {
+  MultiToolCallProperties,
+  MultiToolProperties,
+} from '../variants.types';
 
-import { type ActionButtonProps, ActionButton } from '../../../ActionButton';
+import {
+  type ActionButtonProperties,
+  ActionButton,
+} from '../../../ActionButton';
 import action from '../../../../../../action';
 import classes from './GroupedMultiTool.module.less';
 import { getIconName } from 'components';
 
-type GroupedMultiToolProps = MultiToolProps;
-type GroupedMultiToolCallProps = MultiToolCallProps;
+type GroupedMultiToolProperties = MultiToolProperties;
+type GroupedMultiToolCallProperties = MultiToolCallProperties;
 
-type Props = GroupedMultiToolProps & GroupedMultiToolCallProps;
+type Properties = GroupedMultiToolProperties & GroupedMultiToolCallProperties;
 
-const GroupedMultiTool = (props: Props) => {
+const GroupedMultiTool = (properties: Properties) => {
   const {
     groups,
     options,
@@ -34,7 +40,7 @@ const GroupedMultiTool = (props: Props) => {
     disableableButtons,
     indigoVerification,
     onAction,
-  } = props;
+  } = properties;
 
   if (!groups) {
     return null;
@@ -55,7 +61,7 @@ const GroupedMultiTool = (props: Props) => {
                     key={toolbarItem.id}
                     name={iconName}
                     action={action[toolbarItem.id]}
-                    status={currentStatus as ActionButtonProps['status']}
+                    status={currentStatus as ActionButtonProperties['status']}
                     selected={!!currentStatus?.selected}
                     disableableButtons={disableableButtons}
                     indigoVerification={indigoVerification}
@@ -70,5 +76,5 @@ const GroupedMultiTool = (props: Props) => {
   );
 };
 
-export type { GroupedMultiToolProps, GroupedMultiToolCallProps };
+export type { GroupedMultiToolProperties, GroupedMultiToolCallProperties };
 export { GroupedMultiTool };

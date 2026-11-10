@@ -2110,14 +2110,27 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
-  isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {
-    const editor = provideEditorInstance();
-    const chainsCollection = ChainsCollection.fromMonomers([
-      ...drawingEntitiesManager.monomers.values(),
-    ]);
+  canPasteInMode(drawingEntitiesManager: DrawingEntitiesManager) {
     if (!this.isEditMode) {
       return true;
     }
+
+    return (
+      ChainsCollection.fromMonomers([
+        ...drawingEntitiesManager.monomers.values(),
+      ]).chains.length === 1
+    );
+  }
+
+  isPasteAllowedByMode(drawingEntitiesManager: DrawingEntitiesManager) {
+    const editor = provideEditorInstance();
+    if (!this.isEditMode) {
+      return true;
+    }
+
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
 
     if (chainsCollection.chains.length > 1) {
       editor.events.error.dispatch(

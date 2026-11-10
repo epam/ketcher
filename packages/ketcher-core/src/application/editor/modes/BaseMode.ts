@@ -136,9 +136,22 @@ export abstract class BaseMode {
     _drawingEntitiesManager: DrawingEntitiesManager,
   ): Command;
 
+  /**
+   * Prepares the canvas for a real paste and reports whether it may go on.
+   * May change the model or show errors (Sequence mode deletes the selection).
+   * Call only from an actual paste, never from a check such as Paste availability.
+   */
   abstract isPasteAllowedByMode(
     drawingEntitiesManager: DrawingEntitiesManager,
   ): boolean;
+
+  /**
+   * Side-effect-free check whether the given content could be pasted in this mode.
+   * Used to enable or disable Paste in context menus.
+   */
+  canPasteInMode(_drawingEntitiesManager: DrawingEntitiesManager): boolean {
+    return true;
+  }
 
   abstract isPasteAvailable(
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -340,8 +353,7 @@ export abstract class BaseMode {
       const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
 
       return Boolean(
-        drawingEntitiesManager &&
-        this.isPasteAllowedByMode(drawingEntitiesManager),
+        drawingEntitiesManager && this.canPasteInMode(drawingEntitiesManager),
       );
     } catch (error) {
       KetcherLogger.error('BaseMode.ts::isPasteContentValid', error);

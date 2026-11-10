@@ -70,7 +70,7 @@ export const SelectedMonomersContextMenu = ({
     isAntisenseOptionVisible(selectedMonomers);
 
   const isFlexMode = editor?.mode.modeName === 'flex-layout-mode';
-  const cyclicStructureFormationDisabled =
+  const isCyclicStructureFormationDisabled =
     !isFlexMode ||
     editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length > 0 ||
     !isCycleExistsForSelectedMonomers(selectedMonomers);
@@ -125,7 +125,7 @@ export const SelectedMonomersContextMenu = ({
     {
       name: 'layout_circular',
       title: t('contextMenu.selectedMonomers.arrangeAsRing'),
-      disabled: cyclicStructureFormationDisabled,
+      disabled: isCyclicStructureFormationDisabled,
       hidden: !isFlexMode,
     },
     {

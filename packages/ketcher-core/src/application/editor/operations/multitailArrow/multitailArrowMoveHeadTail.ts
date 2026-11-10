@@ -9,7 +9,7 @@ export class MultitailArrowMoveHeadTail extends BaseOperation {
     private offset: number,
     private readonly name: string,
     private readonly tailId: number | null,
-    private readonly normalize?: true,
+    private readonly shouldNormalize?: true,
   ) {
     super(OperationType.MULTITAIL_ARROW_MOVE_HEAD_TAIL);
   }
@@ -37,7 +37,7 @@ export class MultitailArrowMoveHeadTail extends BaseOperation {
         this.offset = multitailArrow.moveTail(
           this.offset,
           this.tailId as number,
-          this.normalize,
+          this.shouldNormalize,
         );
       }
     }

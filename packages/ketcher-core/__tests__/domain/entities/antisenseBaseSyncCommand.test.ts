@@ -48,7 +48,7 @@ const createNucleosideNode = (base: string, position: Vec2) => {
   return created.node;
 };
 
-global.ResizeObserver = jest.fn().mockImplementation(() => ({
+globalThis.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),

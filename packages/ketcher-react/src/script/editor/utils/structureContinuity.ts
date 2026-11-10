@@ -20,10 +20,10 @@ export function isStructureContinuous(
 ): boolean {
   const atomIds = selection
     ? (selection.atoms ?? [])
-    : Array.from(struct.atoms.keys());
+    : [...struct.atoms.keys()];
   const bondIds = selection
     ? (selection.bonds ?? [])
-    : Array.from(struct.bonds.keys());
+    : [...struct.bonds.keys()];
 
   if (atomIds.length === 0) {
     return false;

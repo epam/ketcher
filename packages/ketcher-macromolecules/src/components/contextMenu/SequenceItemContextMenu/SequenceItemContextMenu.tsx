@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
   setContextMenuActive,
 } from 'state/common';
 import {
@@ -101,7 +101,7 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent,
   );
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(

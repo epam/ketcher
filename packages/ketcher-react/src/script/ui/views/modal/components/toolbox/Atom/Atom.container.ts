@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,10 @@ import type { Editor } from 'ketcher-core';
 import Atom from './Atom';
 import type { BaseProps } from '../../../modal.types';
 import type { StoreState } from '../../../../../state/store.types';
+import type { AtomFormResult } from './AtomElement/AtomElement';
 import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'> & {
+type StateProps = Pick<BaseProps<AtomFormResult>, 'formState'> & {
   isMonomerCreationWizardActive?: boolean;
 };
 
@@ -29,7 +30,7 @@ type State = Pick<StoreState, 'modal'> & {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
-  formState: state.modal.form,
+  formState: state.modal.form as BaseProps<AtomFormResult>['formState'],
   isMonomerCreationWizardActive: state.editor?.isMonomerCreationWizardActive,
 });
 

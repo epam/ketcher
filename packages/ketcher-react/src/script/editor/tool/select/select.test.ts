@@ -154,7 +154,8 @@ function mergeAtom(src: number, dst: number) {
 
 describe('SelectTool', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as unknown as typeof PointerEvent;
+    globalThis.window.PointerEvent =
+      MouseEvent as unknown as typeof PointerEvent;
   });
 
   beforeEach(() => {

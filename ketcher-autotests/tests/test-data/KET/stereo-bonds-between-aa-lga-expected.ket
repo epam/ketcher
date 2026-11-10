@@ -452,8 +452,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 6.438982081413268,
-            "y": -13.97499980032444
+            "x": 6.449999713897705,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -547,8 +547,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 10.938982081413268,
-            "y": -13.97499980032444
+            "x": 10.949999713897705,
+            "y": -13.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -644,8 +644,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 15.438982081413268,
-            "y": -13.97499980032444
+            "x": 15.449999713897705,
+            "y": -13.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -741,8 +741,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 19.93898208141327,
-            "y": -13.97499980032444
+            "x": 19.949999713897704,
+            "y": -13.959295272827148
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -838,8 +838,8 @@
         "type": "monomer",
         "id": "4",
         "position": {
-            "x": 24.43898208141327,
-            "y": -13.97499980032444
+            "x": 24.449999713897704,
+            "y": -13.959295272827148
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -935,8 +935,8 @@
         "type": "monomer",
         "id": "5",
         "position": {
-            "x": 4.938982081413268,
-            "y": -13.97499980032444
+            "x": 4.949999713897705,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -946,8 +946,8 @@
         "type": "monomer",
         "id": "6",
         "position": {
-            "x": 9.438982081413268,
-            "y": -13.97499980032444
+            "x": 9.449999713897705,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -957,8 +957,8 @@
         "type": "monomer",
         "id": "7",
         "position": {
-            "x": 13.938982081413268,
-            "y": -13.97499980032444
+            "x": 13.949999713897705,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -968,8 +968,8 @@
         "type": "monomer",
         "id": "8",
         "position": {
-            "x": 18.43898208141327,
-            "y": -13.97499980032444
+            "x": 18.449999713897704,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -979,8 +979,8 @@
         "type": "monomer",
         "id": "9",
         "position": {
-            "x": 22.93898208141327,
-            "y": -13.97499980032444
+            "x": 22.949999713897704,
+            "y": -13.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -990,8 +990,8 @@
         "type": "monomer",
         "id": "10",
         "position": {
-            "x": 4.938982081413268,
-            "y": -10.97499980032444
+            "x": 4.949999713897705,
+            "y": -10.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1001,8 +1001,8 @@
         "type": "monomer",
         "id": "11",
         "position": {
-            "x": 9.438982081413268,
-            "y": -10.97499980032444
+            "x": 9.449999713897705,
+            "y": -10.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1012,8 +1012,8 @@
         "type": "monomer",
         "id": "12",
         "position": {
-            "x": 13.938982081413268,
-            "y": -10.97499980032444
+            "x": 13.949999713897705,
+            "y": -10.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1023,8 +1023,8 @@
         "type": "monomer",
         "id": "13",
         "position": {
-            "x": 18.43898208141327,
-            "y": -10.975000038743019
+            "x": 18.449999713897704,
+            "y": -10.959295511245728
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1034,8 +1034,8 @@
         "type": "monomer",
         "id": "14",
         "position": {
-            "x": 22.93898208141327,
-            "y": -10.975000038743019
+            "x": 22.949999713897704,
+            "y": -10.959295511245728
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1045,8 +1045,8 @@
         "type": "monomer",
         "id": "15",
         "position": {
-            "x": 6.438982081413268,
-            "y": -10.97499980032444
+            "x": 6.449999713897705,
+            "y": -10.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -1056,8 +1056,8 @@
         "type": "monomer",
         "id": "16",
         "position": {
-            "x": 10.938982081413268,
-            "y": -10.97499980032444
+            "x": 10.949999713897705,
+            "y": -10.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1067,8 +1067,8 @@
         "type": "monomer",
         "id": "17",
         "position": {
-            "x": 15.438982081413268,
-            "y": -10.97499980032444
+            "x": 15.449999713897705,
+            "y": -10.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1078,8 +1078,8 @@
         "type": "monomer",
         "id": "18",
         "position": {
-            "x": 19.93898208141327,
-            "y": -10.975000038743019
+            "x": 19.949999713897704,
+            "y": -10.959295511245728
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1089,8 +1089,8 @@
         "type": "monomer",
         "id": "19",
         "position": {
-            "x": 24.43898208141327,
-            "y": -10.975000038743019
+            "x": 24.449999713897704,
+            "y": -10.959295511245728
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1100,8 +1100,8 @@
         "type": "monomer",
         "id": "20",
         "position": {
-            "x": 4.938982081413268,
-            "y": -7.97499980032444
+            "x": 4.949999713897705,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1111,8 +1111,8 @@
         "type": "monomer",
         "id": "21",
         "position": {
-            "x": 9.438982081413268,
-            "y": -7.97499980032444
+            "x": 9.449999713897705,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1122,8 +1122,8 @@
         "type": "monomer",
         "id": "22",
         "position": {
-            "x": 13.938982081413268,
-            "y": -7.97499980032444
+            "x": 13.949999713897705,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1133,8 +1133,8 @@
         "type": "monomer",
         "id": "23",
         "position": {
-            "x": 18.43898208141327,
-            "y": -7.97499980032444
+            "x": 18.449999713897704,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1144,8 +1144,8 @@
         "type": "monomer",
         "id": "24",
         "position": {
-            "x": 22.93898208141327,
-            "y": -7.975000753998756
+            "x": 22.949999713897704,
+            "y": -7.959296226501465
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1155,8 +1155,8 @@
         "type": "monomer",
         "id": "25",
         "position": {
-            "x": 6.438982081413268,
-            "y": -7.97499980032444
+            "x": 6.449999713897705,
+            "y": -7.959295272827148
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -1166,8 +1166,8 @@
         "type": "monomer",
         "id": "26",
         "position": {
-            "x": 10.938982081413268,
-            "y": -7.97499980032444
+            "x": 10.949999713897705,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1177,8 +1177,8 @@
         "type": "monomer",
         "id": "27",
         "position": {
-            "x": 15.438982081413268,
-            "y": -7.97499980032444
+            "x": 15.449999713897705,
+            "y": -7.959295272827148
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1188,8 +1188,8 @@
         "type": "monomer",
         "id": "28",
         "position": {
-            "x": 19.93898208141327,
-            "y": -7.97499980032444
+            "x": 19.949999713897704,
+            "y": -7.959295272827148
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1199,8 +1199,8 @@
         "type": "monomer",
         "id": "29",
         "position": {
-            "x": 24.43898208141327,
-            "y": -7.975000753998756
+            "x": 24.449999713897704,
+            "y": -7.959296226501465
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1210,8 +1210,8 @@
         "type": "monomer",
         "id": "30",
         "position": {
-            "x": 4.938982081413268,
-            "y": -4.975000753998756
+            "x": 4.949999713897705,
+            "y": -4.959296226501465
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1221,8 +1221,8 @@
         "type": "monomer",
         "id": "31",
         "position": {
-            "x": 9.438982081413268,
-            "y": -4.975000753998756
+            "x": 9.449999713897705,
+            "y": -4.959296226501465
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1232,8 +1232,8 @@
         "type": "monomer",
         "id": "32",
         "position": {
-            "x": 13.938982081413268,
-            "y": -4.975000753998756
+            "x": 13.949999713897705,
+            "y": -4.959296226501465
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1243,8 +1243,8 @@
         "type": "monomer",
         "id": "33",
         "position": {
-            "x": 18.43898208141327,
-            "y": -4.97499980032444
+            "x": 18.449999713897704,
+            "y": -4.959295272827148
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1254,8 +1254,8 @@
         "type": "monomer",
         "id": "34",
         "position": {
-            "x": 22.93898208141327,
-            "y": -4.97499980032444
+            "x": 22.949999713897704,
+            "y": -4.959295272827148
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1265,8 +1265,8 @@
         "type": "monomer",
         "id": "35",
         "position": {
-            "x": 6.438982081413268,
-            "y": -4.975000753998756
+            "x": 6.449999713897705,
+            "y": -4.959296226501465
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -1276,8 +1276,8 @@
         "type": "monomer",
         "id": "36",
         "position": {
-            "x": 10.938982081413268,
-            "y": -4.975000753998756
+            "x": 10.949999713897705,
+            "y": -4.959296226501465
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1287,8 +1287,8 @@
         "type": "monomer",
         "id": "37",
         "position": {
-            "x": 15.438982081413268,
-            "y": -4.975000753998756
+            "x": 15.449999713897705,
+            "y": -4.959296226501465
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1298,8 +1298,8 @@
         "type": "monomer",
         "id": "38",
         "position": {
-            "x": 19.93898208141327,
-            "y": -4.97499980032444
+            "x": 19.949999713897704,
+            "y": -4.959295272827148
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1309,8 +1309,8 @@
         "type": "monomer",
         "id": "39",
         "position": {
-            "x": 24.43898208141327,
-            "y": -4.97499980032444
+            "x": 24.449999713897704,
+            "y": -4.959295272827148
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1320,8 +1320,8 @@
         "type": "monomer",
         "id": "40",
         "position": {
-            "x": 4.938982081413268,
-            "y": -1.97499980032444
+            "x": 4.949999713897705,
+            "y": -1.9592952728271484
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1331,8 +1331,8 @@
         "type": "monomer",
         "id": "41",
         "position": {
-            "x": 9.438982081413268,
-            "y": -1.9750017076730728
+            "x": 9.449999713897705,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1342,8 +1342,8 @@
         "type": "monomer",
         "id": "42",
         "position": {
-            "x": 13.938982081413268,
-            "y": -1.9750017076730728
+            "x": 13.949999713897705,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1353,8 +1353,8 @@
         "type": "monomer",
         "id": "43",
         "position": {
-            "x": 18.43898208141327,
-            "y": -1.9750017076730728
+            "x": 18.449999713897704,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1364,8 +1364,8 @@
         "type": "monomer",
         "id": "44",
         "position": {
-            "x": 22.93898208141327,
-            "y": -1.9750017076730728
+            "x": 22.949999713897704,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",
@@ -1375,8 +1375,8 @@
         "type": "monomer",
         "id": "45",
         "position": {
-            "x": 6.438982081413268,
-            "y": -1.97499980032444
+            "x": 6.449999713897705,
+            "y": -1.9592952728271484
         },
         "alias": "Single",
         "templateId": "Single___Single",
@@ -1386,8 +1386,8 @@
         "type": "monomer",
         "id": "46",
         "position": {
-            "x": 10.938982081413268,
-            "y": -1.9750017076730728
+            "x": 10.949999713897705,
+            "y": -1.9592971801757812
         },
         "alias": "SingleUP",
         "templateId": "SingleUP___SingleUP",
@@ -1397,8 +1397,8 @@
         "type": "monomer",
         "id": "47",
         "position": {
-            "x": 15.438982081413268,
-            "y": -1.9750017076730728
+            "x": 15.449999713897705,
+            "y": -1.9592971801757812
         },
         "alias": "SingleUP2",
         "templateId": "SingleUP2___SingleUP2",
@@ -1408,8 +1408,8 @@
         "type": "monomer",
         "id": "48",
         "position": {
-            "x": 19.93898208141327,
-            "y": -1.9750017076730728
+            "x": 19.949999713897704,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN",
         "templateId": "SingleDOWN___SingleDOWN",
@@ -1419,8 +1419,8 @@
         "type": "monomer",
         "id": "49",
         "position": {
-            "x": 24.43898208141327,
-            "y": -1.9750017076730728
+            "x": 24.449999713897704,
+            "y": -1.9592971801757812
         },
         "alias": "SingleDOWN2",
         "templateId": "SingleDOWN2___SingleDOWN2",

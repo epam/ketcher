@@ -160,18 +160,22 @@ function applyStyleToChar(
   styleString: string,
 ): void {
   switch (styleString) {
-    case 'BOLD':
+    case 'BOLD': {
       charStyle.format |= BOLD_FLAG;
       break;
-    case 'ITALIC':
+    }
+    case 'ITALIC': {
       charStyle.format |= ITALIC_FLAG;
       break;
-    case 'SUBSCRIPT':
+    }
+    case 'SUBSCRIPT': {
       charStyle.format |= SUBSCRIPT_FLAG;
       break;
-    case 'SUPERSCRIPT':
+    }
+    case 'SUPERSCRIPT': {
       charStyle.format |= SUPERSCRIPT_FLAG;
       break;
+    }
     default: {
       // Handle custom font-size styling
       const match = /^CUSTOM_FONT_SIZE_(\d+)px$/.exec(styleString);

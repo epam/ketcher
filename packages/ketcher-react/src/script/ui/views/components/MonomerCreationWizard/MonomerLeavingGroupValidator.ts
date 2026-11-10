@@ -7,18 +7,24 @@ const getNotificationIdForMonomerType = (
   monomerType: KetMonomerClass | 'rnaPreset',
 ): string => {
   switch (monomerType) {
-    case KetMonomerClass.AminoAcid:
+    case KetMonomerClass.AminoAcid: {
       return 'aminoAcidLeavingGroupWarning';
-    case KetMonomerClass.Sugar:
+    }
+    case KetMonomerClass.Sugar: {
       return 'sugarLeavingGroupWarning';
-    case KetMonomerClass.Base:
+    }
+    case KetMonomerClass.Base: {
       return 'baseLeavingGroupWarning';
-    case KetMonomerClass.Phosphate:
+    }
+    case KetMonomerClass.Phosphate: {
       return 'phosphateLeavingGroupWarning';
-    case KetMonomerClass.RNA:
+    }
+    case KetMonomerClass.RNA: {
       return 'nucleotideLeavingGroupWarning';
-    default:
+    }
+    default: {
       return 'nucleotideLeavingGroupWarning';
+    }
   }
 };
 

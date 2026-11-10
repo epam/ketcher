@@ -113,19 +113,22 @@ function throughFileReader(file: FileWithMsClose): Promise<FileContent> {
       const { result } = rd;
       let content: FileContent;
       switch (fileType) {
-        case CDX:
+        case CDX: {
           content = String(result).split(',').at(-1) ?? '';
           break;
-        case PPTX:
+        }
+        case PPTX: {
           content = {
             structures:
               result instanceof ArrayBuffer ? readPPTXStructures(result) : [],
             isPPTX: true,
           };
           break;
-        default:
+        }
+        default: {
           content = typeof result === 'string' ? result : '';
           break;
+        }
       }
       if (file.msClose) file.msClose();
       resolve(content);
@@ -135,15 +138,18 @@ function throughFileReader(file: FileWithMsClose): Promise<FileContent> {
       reject(new Error(`Failed to read file: ${file.name}`));
     };
     switch (fileType) {
-      case CDX:
+      case CDX: {
         rd.readAsDataURL(file);
         break;
-      case PPTX:
+      }
+      case PPTX: {
         rd.readAsArrayBuffer(file);
         break;
-      default:
+      }
+      default: {
         rd.readAsText(file, 'UTF-8');
         break;
+      }
     }
   });
 }

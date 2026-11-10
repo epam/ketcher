@@ -208,11 +208,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
   protected get modificationConfig() {
     switch (this.monomer.monomerClass) {
-      case KetMonomerClass.AminoAcid:
+      case KetMonomerClass.AminoAcid: {
         return { backgroundId: '#modified-background', requiresFill: true };
-      case KetMonomerClass.Base:
+      }
+      case KetMonomerClass.Base: {
         return { backgroundId: '#rna-base-modified-background' };
-      case KetMonomerClass.Sugar:
+      }
+      case KetMonomerClass.Sugar: {
         // Ambiguous monomers render on a white body, so the default white sugar
         // band would be invisible — requiresFill drives the <use> fill to a dark
         // color here (the text color isn't #333333) to keep the band visible.
@@ -220,10 +222,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
           backgroundId: '#sugar-modified-background',
           requiresFill: true,
         };
-      case KetMonomerClass.Phosphate:
+      }
+      case KetMonomerClass.Phosphate: {
         return { backgroundId: '#phosphate-modified-background' };
-      default:
+      }
+      default: {
         return undefined;
+      }
     }
   }
 }

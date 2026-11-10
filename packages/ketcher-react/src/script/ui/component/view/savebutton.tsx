@@ -96,12 +96,14 @@ const SaveButton = (props: SaveButtonProps) => {
   const save = (event: KeyboardEvent | MouseEvent) => {
     event.preventDefault();
     switch (mode) {
-      case 'saveImage':
+      case 'saveImage': {
         saveImage();
         break;
+      }
       case 'saveFile':
-      default:
+      default: {
         saveFile();
+      }
     }
   };
 

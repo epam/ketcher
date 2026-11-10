@@ -73,25 +73,31 @@ export class Atom extends DrawingEntity {
         connectionsAmount += 1;
       } else {
         switch (bond.type) {
-          case BondType.Single:
+          case BondType.Single: {
             connectionsAmount += 1;
             break;
-          case BondType.Double:
+          }
+          case BondType.Double: {
             connectionsAmount += 2;
             break;
-          case BondType.Triple:
+          }
+          case BondType.Triple: {
             connectionsAmount += 3;
             break;
+          }
           case BondType.Dative:
-          case BondType.Hydrogen:
+          case BondType.Hydrogen: {
             break;
-          case BondType.Aromatic:
+          }
+          case BondType.Aromatic: {
             if (this.bonds.length === 1) {
               return -1;
             }
             return this.bonds.length;
-          default:
+          }
+          default: {
             return -1;
+          }
         }
       }
     }
@@ -134,12 +140,15 @@ export class Atom extends DrawingEntity {
   private get radicalAmount() {
     switch (this.properties.radical) {
       case AtomRadical.Single:
-      case AtomRadical.Triplet:
+      case AtomRadical.Triplet: {
         return 2;
-      case AtomRadical.Doublet:
+      }
+      case AtomRadical.Doublet: {
         return 1;
-      default:
+      }
+      default: {
         return 0;
+      }
     }
   }
 

@@ -82,13 +82,16 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
     <div className={clsx(classes.group, className)}>
       {visibleItems.map((item) => {
         switch (item.id) {
-          case 'bond-common':
+          case 'bond-common': {
             return <Bond {...rest} height={height} key={item.id} />;
-          case 'rgroup':
+          }
+          case 'rgroup': {
             return <RGroup {...rest} key={item.id} />;
-          case 'shapes':
+          }
+          case 'shapes': {
             return <Shape {...rest} key={item.id} />;
-          case 'bonds':
+          }
+          case 'bonds': {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -98,7 +101,8 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
                 {...rest}
               />
             );
-          default:
+          }
+          default: {
             return (
               <ToolbarGroupItem
                 id={item.id}
@@ -107,6 +111,7 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
                 {...rest}
               />
             );
+          }
         }
       })}
     </div>

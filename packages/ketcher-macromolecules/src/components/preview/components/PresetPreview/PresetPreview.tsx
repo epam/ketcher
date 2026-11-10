@@ -35,14 +35,18 @@ import { PresetPreviewState } from 'state';
 
 const getIconNameForMonomer = (monomer: MonomerItemType): IconName => {
   switch (monomer.props.MonomerClass) {
-    case KetMonomerClass.Sugar:
+    case KetMonomerClass.Sugar: {
       return 'sugar';
-    case KetMonomerClass.Base:
+    }
+    case KetMonomerClass.Base: {
       return 'base';
-    case KetMonomerClass.Phosphate:
+    }
+    case KetMonomerClass.Phosphate: {
       return 'phosphate';
-    default:
+    }
+    default: {
       return 'chem';
+    }
   }
 };
 

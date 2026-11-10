@@ -252,8 +252,9 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
     }
     case 'GEN':
     case 'queryComponent':
-    default:
+    default: {
       break;
+    }
   }
 
   return result;

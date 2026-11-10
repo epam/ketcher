@@ -180,7 +180,7 @@ class ReRxnArrow extends ReObject {
     );
 
     switch (type) {
-      case 'selection':
+      case 'selection': {
         path = draw.rectangleArrowHighlightAndSelection(
           render.paper,
           { pos, height },
@@ -188,7 +188,8 @@ class ReRxnArrow extends ReObject {
           angle,
         );
         break;
-      case 'arrow':
+      }
+      case 'arrow': {
         path = draw.arrow(
           render.paper,
           { ...item, pos, height },
@@ -198,6 +199,7 @@ class ReRxnArrow extends ReObject {
           this.isResizing,
         );
         break;
+      }
     }
 
     return path;

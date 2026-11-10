@@ -41,7 +41,8 @@ export function getItemCursor(
         ? imageReferencePositionToCursor[closestItem.name]
         : defaultCursor;
     }
-    default:
+    default: {
       return defaultCursor;
+    }
   }
 }

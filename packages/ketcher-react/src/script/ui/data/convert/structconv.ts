@@ -398,14 +398,17 @@ export function toStereoLabel(stereoLabel: {
   orNumber?: number;
 }) {
   switch (stereoLabel.type) {
-    case StereoLabel.And:
+    case StereoLabel.And: {
       return `${StereoLabel.And}${stereoLabel.andNumber ?? 1}`;
+    }
 
-    case StereoLabel.Or:
+    case StereoLabel.Or: {
       return `${StereoLabel.Or}${stereoLabel.orNumber ?? 1}`;
+    }
 
-    default:
+    default: {
       return stereoLabel.type;
+    }
   }
 }
 
@@ -575,20 +578,24 @@ export function toSgroup(sgroup: SGroupFormData) {
   const attached = 'attached';
 
   switch (radiobuttons) {
-    case 'Absolute':
+    case 'Absolute': {
       attrs[absolute] = true;
       attrs[attached] = false;
       break;
-    case 'Attached':
+    }
+    case 'Attached': {
       attrs[absolute] = false;
       attrs[attached] = true;
       break;
-    case 'Relative':
+    }
+    case 'Relative': {
       attrs[absolute] = false;
       attrs[attached] = false;
       break;
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim();

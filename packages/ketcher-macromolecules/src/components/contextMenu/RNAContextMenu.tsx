@@ -43,21 +43,24 @@ export const RNAContextMenu = () => {
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
-      case 'duplicateandedit':
+      case 'duplicateandedit': {
         props.duplicatePreset(activePresetForContextMenu);
         if (selectedTabIndex !== RNA_TAB_INDEX) {
           dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
-      case 'edit':
+      }
+      case 'edit': {
         props.editPreset(activePresetForContextMenu);
         if (selectedTabIndex !== RNA_TAB_INDEX) {
           dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
-      case 'deletepreset':
+      }
+      case 'deletepreset': {
         dispatch(openModal('delete'));
         break;
+      }
     }
   };
 

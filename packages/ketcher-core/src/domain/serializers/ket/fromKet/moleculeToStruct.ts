@@ -203,8 +203,9 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
       break;
     }
     case 'GEN':
-    default:
+    default: {
       break;
+    }
   }
   return sgroup;
 }

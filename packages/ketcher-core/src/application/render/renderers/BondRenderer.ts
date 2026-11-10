@@ -624,7 +624,7 @@ export class BondRenderer extends BaseRenderer {
 
     let bondSVGPaths: SVGPathAttributes[] = [];
     switch (this.bond.type) {
-      case BondType.Single:
+      case BondType.Single: {
         if (this.bond.stereo === BondStereo.Up) {
           bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
             bondVectors,
@@ -638,8 +638,9 @@ export class BondRenderer extends BaseRenderer {
           bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
         }
         break;
+      }
 
-      case BondType.Double:
+      case BondType.Double: {
         if (this.bond.stereo === BondStereo.CisTrans) {
           bondSVGPaths =
             DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
@@ -654,10 +655,12 @@ export class BondRenderer extends BaseRenderer {
           );
         }
         break;
+      }
 
-      case BondType.Triple:
+      case BondType.Triple: {
         bondSVGPaths = TripleBondPathRenderer.preparePaths(bondVectors);
         break;
+      }
 
       case BondType.Aromatic:
       case BondType.SingleAromatic:
@@ -695,21 +698,24 @@ export class BondRenderer extends BaseRenderer {
         break;
       }
 
-      case BondType.SingleDouble:
+      case BondType.SingleDouble: {
         bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);
         break;
+      }
 
       case BondType.Any:
       case BondType.Dative:
-      case BondType.Hydrogen:
+      case BondType.Hydrogen: {
         bondSVGPaths = SingleBondPathRenderer.preparePaths(
           bondVectors,
           this.bond.type,
         );
         break;
+      }
 
-      default:
+      default: {
         break;
+      }
     }
 
     this.createBondHoverablePath(bondSVGPaths);
@@ -868,7 +874,8 @@ export class BondRenderer extends BaseRenderer {
     const points: Vec2[] = [];
 
     switch (reactingCenterStatus) {
-      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: {
+        // X
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -884,7 +891,9 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(direction, tiltTan * acrossSz),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.CENTER: // #
+      }
+      case StructBond.PATTERN.REACTING_CENTER.CENTER: {
+        // #
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -908,7 +917,9 @@ export class BondRenderer extends BaseRenderer {
           center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
+      }
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: {
+        // ||
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -924,13 +935,17 @@ export class BondRenderer extends BaseRenderer {
             .addScaled(direction, -alongIntMadeBroken),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
+      }
+      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: {
+        // |
         points.push(
           center.addScaled(normal, acrossSz),
           center.addScaled(normal, -acrossSz),
         );
         break;
-      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
+      }
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: {
+        // ||| combined
         points.push(
           center
             .addScaled(normal, acrossSz)
@@ -948,8 +963,10 @@ export class BondRenderer extends BaseRenderer {
           center.addScaled(normal, -acrossSz),
         );
         break;
-      default:
+      }
+      default: {
         return;
+      }
     }
 
     if (points.length === 0) {

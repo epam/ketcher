@@ -451,14 +451,14 @@ const monomerWizardDisallowedBondTypes: Set<string> = new Set(
 );
 
 export default bondTypes.reduce<Record<string, ToolActionEntry>>(
-  (res, type, i) => {
-    res[`bond-${type}`] = {
+  (result, type, index) => {
+    result[`bond-${type}`] = {
       // `type` is '' only for the schema's unused placeholder enum entry,
       // which is never rendered in any toolbar group (see Bond/options.ts) -
       // fall back to a real key so it still satisfies the "every tool has a
       // title" invariant without affecting anything user-visible.
       title: bondTypeTitleKeys[type] ?? bondTypeTitleKeys.single,
-      titleParams: { type: bondTypeNames[i] },
+      titleParams: { type: bondTypeNames[index] },
       shortcut: bondCuts[type],
       action: {
         tool: 'bond',
@@ -469,7 +469,7 @@ export default bondTypes.reduce<Record<string, ToolActionEntry>>(
         disabled: (editor) => editor.isMonomerCreationWizardActive,
       }),
     };
-    return res;
+    return result;
   },
   toolActions,
 );

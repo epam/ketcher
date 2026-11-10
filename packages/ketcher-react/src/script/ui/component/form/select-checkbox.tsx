@@ -32,11 +32,11 @@ interface EnumSchema {
 
 type Schema = BooleanSchema | EnumSchema;
 
-interface SelectCheckboxProps {
+interface SelectCheckboxProperties {
   schema: Schema;
   type: string;
   value: number | string | boolean;
-  onChange: (val: unknown) => void;
+  onChange: (value: unknown) => void;
   component?: ComponentType;
   children?: ReactNode;
   className?: string;
@@ -49,7 +49,10 @@ function isBooleanSchema(schema: Schema): schema is BooleanSchema {
   return 'type' in schema && schema.type === 'boolean';
 }
 
-function SelectCheckbox({ schema, ...props }: Readonly<SelectCheckboxProps>) {
+function SelectCheckbox({
+  schema,
+  ...properties
+}: Readonly<SelectCheckboxProperties>) {
   let currentSchema: EnumSchema;
 
   if (isBooleanSchema(schema)) {
@@ -63,7 +66,7 @@ function SelectCheckbox({ schema, ...props }: Readonly<SelectCheckboxProps>) {
     currentSchema = schema;
   }
 
-  return <Input schema={currentSchema} {...props} />;
+  return <Input schema={currentSchema} {...properties} />;
 }
 
 export default SelectCheckbox;

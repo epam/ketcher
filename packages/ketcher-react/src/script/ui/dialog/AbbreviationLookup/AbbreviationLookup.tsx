@@ -43,7 +43,7 @@ import {
   filterOptions,
   getOptionLabel,
   highlightOptionLabel,
-} from './AbbreviationLookup.utils';
+} from './AbbreviationLookup.utilities';
 import {
   type AbbreviationOption,
   AbbreviationType,
@@ -51,19 +51,19 @@ import {
 import { ABBREVIATION_LOOKUP_TEST_ID } from './AbbreviationLookup.constants';
 import { CLIP_AREA_BASE_CLASS } from '../../component/cliparea/cliparea';
 
-interface Props {
+interface Properties {
   options: AbbreviationOption[];
 }
 
-export const AbbreviationLookup = ({ options }: Props) => {
+export const AbbreviationLookup = ({ options }: Properties) => {
   const { t } = useTranslation('dialogs');
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const autocompleteRef = useRef<HTMLInputElement | null>(null);
+  const inputReference = useRef<HTMLInputElement | null>(null);
+  const autocompleteReference = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useDispatch();
 
   const cursorPosition = useSelector(selectCursorPosition);
-  const usedCursorPositionRef = useRef(cursorPosition);
+  const usedCursorPositionReference = useRef(cursorPosition);
   const [portalStyle, setPortalStyle] = useState({} as CSSProperties);
 
   const initialLookupValue = useSelector(selectAbbreviationLookupValue);
@@ -73,8 +73,8 @@ export const AbbreviationLookup = ({ options }: Props) => {
   );
 
   useLayoutEffect(() => {
-    const containerHeight = autocompleteRef.current?.offsetHeight ?? 0;
-    const containerWidth = autocompleteRef.current?.offsetWidth ?? 0;
+    const containerHeight = autocompleteReference.current?.offsetHeight ?? 0;
+    const containerWidth = autocompleteReference.current?.offsetWidth ?? 0;
 
     const parentNode = document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR);
     assert(parentNode !== null, 'Ketcher root node is required');
@@ -83,8 +83,10 @@ export const AbbreviationLookup = ({ options }: Props) => {
     const maxLeft = parentRect.width - containerWidth;
     const maxTop = parentRect.height - containerHeight;
 
-    const calculatedLeft = usedCursorPositionRef.current.x - parentRect.left;
-    const calculatedTop = usedCursorPositionRef.current.y - parentRect.top;
+    const calculatedLeft =
+      usedCursorPositionReference.current.x - parentRect.left;
+    const calculatedTop =
+      usedCursorPositionReference.current.y - parentRect.top;
 
     const left = Math.min(Math.max(0, calculatedLeft), maxLeft);
     const top = Math.min(Math.max(0, calculatedTop), maxTop);
@@ -94,12 +96,12 @@ export const AbbreviationLookup = ({ options }: Props) => {
       top: `${top}px`,
     });
 
-    inputRef.current?.focus();
+    inputReference.current?.focus();
 
     // TODO extract to a separate hook or utils
     return () => {
       (
-        inputRef.current
+        inputReference.current
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus();
@@ -149,7 +151,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
       style={portalStyle}
     >
       <MuiAutocomplete<AbbreviationOption, false, true>
-        ref={autocompleteRef}
+        ref={autocompleteReference}
         options={options}
         inputValue={lookupValue}
         getOptionLabel={getOptionLabel}
@@ -170,23 +172,26 @@ export const AbbreviationLookup = ({ options }: Props) => {
           input: classes.input,
           noOptions: classes.noOptions,
         }}
-        renderInput={(params) => {
+        renderInput={(parameters) => {
           return (
-            <div className={classes.inputContainer} ref={params.InputProps.ref}>
+            <div
+              className={classes.inputContainer}
+              ref={parameters.InputProps.ref}
+            >
               <Icon name="search" className={classes.searchIcon} />
               <input
                 type="text"
-                {...params.inputProps}
-                ref={(ref) => {
-                  inputRef.current = ref;
+                {...parameters.inputProps}
+                ref={(reference) => {
+                  inputReference.current = reference;
 
-                  // this workaround is required to have access to `ref` field of inputProps that isn't provided
+                  // this workaround is required to access `ref` field of inputProps that isn't provided
                   // by types, but present in the field
                   (
-                    params.inputProps as {
+                    parameters.inputProps as {
                       ref: MutableRefObject<HTMLInputElement | null>;
                     }
-                  ).ref.current = ref;
+                  ).ref.current = reference;
                 }}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setLookupValue(event.target.value);
@@ -197,9 +202,9 @@ export const AbbreviationLookup = ({ options }: Props) => {
             </div>
           );
         }}
-        renderOption={(props, option) => {
+        renderOption={(properties, option) => {
           return (
-            <li {...props} title={option.label} key={option.label}>
+            <li {...properties} title={option.label} key={option.label}>
               <div className={classes.optionItemContent}>
                 {highlightOptionLabel(option, loweredLookupValue)}
               </div>

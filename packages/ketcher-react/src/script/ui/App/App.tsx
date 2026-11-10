@@ -38,14 +38,14 @@ import {
   useSettings,
 } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
-import { initLib } from '../state/templates/init-lib';
+import { initLib as initLibrary } from '../state/templates/init-lib';
 import { ketcherProvider } from 'ketcher-core';
 import { useAppDispatch } from '../state/hooks';
 import { selectSnackbarNotificationText } from '../state/notifications';
 import { useSelector } from 'react-redux';
 import { IconButton } from 'components';
 
-interface AppCallProps {
+interface AppCallProperties {
   checkServer: () => void;
   togglerComponent?: JSX.Element;
 }
@@ -60,11 +60,11 @@ const muiTheme = createTheme({
   },
 });
 
-type Props = AppCallProps;
+type Properties = AppCallProperties;
 
-const App = (props: Props) => {
+const App = (properties: Properties) => {
   const dispatch = useAppDispatch();
-  const { checkServer } = props;
+  const { checkServer } = properties;
   const snackbarNotificationText = useSelector(selectSnackbarNotificationText);
 
   // Enable bidirectional sync between Redux and Core settings
@@ -84,7 +84,7 @@ const App = (props: Props) => {
     dispatch(initSaltsAndSolventsTemplates());
 
     return () => {
-      dispatch(initLib([]));
+      dispatch(initLibrary([]));
       dispatch(initSaltsAndSolvents([]));
       dispatch(initFGroups([]));
       // App component is unmounted after editor components (MicromoleculeEditor.tsx and ketcher-react/src/Editor.tsx)
@@ -115,7 +115,7 @@ const App = (props: Props) => {
 
         <TopToolbarContainer
           className={classes.top}
-          togglerComponent={props.togglerComponent}
+          togglerComponent={properties.togglerComponent}
         />
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
@@ -150,5 +150,5 @@ const App = (props: Props) => {
   );
 };
 
-export type { AppCallProps };
+export type { AppCallProperties };
 export { App };

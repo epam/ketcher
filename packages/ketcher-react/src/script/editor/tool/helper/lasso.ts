@@ -100,10 +100,10 @@ class LassoHelper {
   }
 
   end() {
-    const ret = this.getSelection();
+    const returnValue = this.getSelection();
     this.points = null;
     this.update();
-    return ret;
+    return returnValue;
   }
 
   cancel() {

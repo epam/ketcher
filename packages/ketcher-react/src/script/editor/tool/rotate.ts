@@ -206,14 +206,14 @@ class RotateTool implements Tool {
 
   mousemove = throttle((event) => {
     if (this.dragCtx) {
-      const dragCtx = this.dragCtx;
+      const dragContext = this.dragCtx;
 
       const mousePos = CoordinateTransformation.pageToModel(
         event,
         this.editor.render,
       );
       const mouseMoveAngle =
-        vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
+        vectorUtils.calcAngle(dragContext.xy0, mousePos) - dragContext.angle1;
 
       let rotateAngle = mouseMoveAngle;
       this.reStruct.clearSnappingBonds();
@@ -228,14 +228,17 @@ class RotateTool implements Tool {
       }
 
       const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
-      if (!('angle' in dragCtx) || dragCtx.angle !== rotateAngleInDegrees) {
-        dragCtx.action?.perform(this.reStruct);
+      if (
+        !('angle' in dragContext) ||
+        dragContext.angle !== rotateAngleInDegrees
+      ) {
+        dragContext.action?.perform(this.reStruct);
 
-        dragCtx.angle = rotateAngleInDegrees;
-        dragCtx.action = fromRotate(
+        dragContext.angle = rotateAngleInDegrees;
+        dragContext.action = fromRotate(
           this.reStruct,
           this.selection,
-          dragCtx.xy0,
+          dragContext.xy0,
           rotateAngle,
         );
 
@@ -244,10 +247,10 @@ class RotateTool implements Tool {
         });
 
         const expSel = this.editor.explicitSelected();
-        dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
-        this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event);
+        dragContext.mergeItems = getItemsToFuse(this.editor, expSel);
+        this.editor.hover(getHoverToFuse(dragContext.mergeItems), null, event);
 
-        this.editor.update(dragCtx.action, true);
+        this.editor.update(dragContext.action, true);
       }
     } else {
       this.editor.hover(null, null, event);
@@ -260,33 +263,33 @@ class RotateTool implements Tool {
       this.reStruct.clearSnappingBonds();
       this.editor.update(true);
 
-      const dragCtx = this.dragCtx;
+      const dragContext = this.dragCtx;
 
       let isMergingSGroup = false;
 
-      const { atoms, bonds } = dragCtx.mergeItems ?? {};
+      const { atoms, bonds } = dragContext.mergeItems ?? {};
 
-      atoms?.forEach((dst: number, src: number) => {
+      atoms?.forEach((destination: number, source: number) => {
         if (
-          this.struct.isAtomFromMacromolecule(src) ||
-          this.struct.isAtomFromMacromolecule(dst)
+          this.struct.isAtomFromMacromolecule(source) ||
+          this.struct.isAtomFromMacromolecule(destination)
         ) {
           isMergingSGroup = true;
         }
       });
-      bonds?.forEach((dst: number, src: number) => {
+      bonds?.forEach((destination: number, source: number) => {
         if (
-          this.struct.isBondFromMacromolecule(src) ||
-          this.struct.isBondFromMacromolecule(dst)
+          this.struct.isBondFromMacromolecule(source) ||
+          this.struct.isBondFromMacromolecule(destination)
         ) {
           isMergingSGroup = true;
         }
       });
 
-      let action = dragCtx.action ?? new Action();
+      let action = dragContext.action ?? new Action();
 
       if (!isMergingSGroup) {
-        action = fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(
+        action = fromItemsFuse(this.reStruct, dragContext.mergeItems).mergeWith(
           action,
         );
       }
@@ -313,7 +316,7 @@ class RotateTool implements Tool {
         const monomerRotateAction = new Action();
         if (hasExpandedMonomer) {
           monomerSGroups.forEach((sGroup) => {
-            const angleInRadians = ((dragCtx.angle ?? 0) * Math.PI) / 180;
+            const angleInRadians = ((dragContext.angle ?? 0) * Math.PI) / 180;
             monomerRotateAction.addOp(
               new RotateMonomerOperation({
                 id: sGroup.id,
@@ -335,7 +338,7 @@ class RotateTool implements Tool {
       delete this.dragCtx;
       this.editor.update(action);
 
-      if (dragCtx.mergeItems) {
+      if (dragContext.mergeItems) {
         this.editor.selection(null);
       }
 
@@ -452,12 +455,12 @@ class RotateTool implements Tool {
     const absoluteSnapAngles: number[] = [];
     const snapAngleToHalfBonds: Map<number, number[]> = new Map();
     const length = fixedHalfBondIds.length;
-    for (let i = 0; i < length; i++) {
-      const previousHalfBondId = fixedHalfBondIds[i];
-      const previousHalfBondAngle = fixedHalfBondAngles[i];
-      for (let j = i + 1; j < length; j++) {
-        const currentHalfBondId = fixedHalfBondIds[j];
-        const currentHalfBondAngle = fixedHalfBondAngles[j];
+    for (let index = 0; index < length; index++) {
+      const previousHalfBondId = fixedHalfBondIds[index];
+      const previousHalfBondAngle = fixedHalfBondAngles[index];
+      for (let index_ = index + 1; index_ < length; index_++) {
+        const currentHalfBondId = fixedHalfBondIds[index_];
+        const currentHalfBondAngle = fixedHalfBondAngles[index_];
         const difference = currentHalfBondAngle - previousHalfBondAngle;
         const bisectorAngle = normalizeAngle(
           currentHalfBondAngle - difference / 2,

@@ -17,7 +17,7 @@
 import isHidden from './isHidden';
 import { MODES } from 'src/constants';
 
-const functionalGroupsLib = {
+const functionalGroupsLibrary = {
   'functional-groups': {
     shortcut: 'Shift+f',
     // TODO Update HELP about current tools
@@ -31,4 +31,4 @@ const functionalGroupsLib = {
   },
 };
 
-export default functionalGroupsLib;
+export default functionalGroupsLibrary;

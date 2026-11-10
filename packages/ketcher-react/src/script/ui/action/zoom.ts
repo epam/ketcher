@@ -69,9 +69,13 @@ const zoom: ZoomActions = {
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (event) => (editor) => {
       const zoom = editor.zoom();
-      const i = findIndex((z) => z >= zoom, zoomList);
+      const index = findIndex((z) => z >= zoom, zoomList);
       editor.zoom(
-        zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
+        zoomList[
+          zoomList[index] === zoom && index < zoomList.length - 1
+            ? index + 1
+            : index
+        ],
         event,
       );
       refreshToolHover(editor);

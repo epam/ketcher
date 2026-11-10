@@ -7,7 +7,7 @@ import {
   normalizeHexColor,
   sanitizeCustomColors,
   sanitizeHexInput,
-} from './ColorPicker.utils';
+} from './ColorPicker.utilities';
 
 describe('isValidHex', () => {
   it('accepts a valid 6-character lowercase hex string', () => {

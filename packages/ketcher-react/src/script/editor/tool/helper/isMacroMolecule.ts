@@ -8,13 +8,13 @@ const isMacroMolecule = (editor: Editor, id: number): boolean => {
 
 const isMergingToMacroMolecule = (
   editor: Editor,
-  dragCtx: DragContext,
+  dragContext: DragContext,
 ): boolean => {
-  const funcGroups = dragCtx?.mergeItems?.atomToFunctionalGroup;
-  if (!funcGroups?.size) {
+  const functionGroups = dragContext?.mergeItems?.atomToFunctionalGroup;
+  if (!functionGroups?.size) {
     return false;
   }
-  const [[, targetObjectId]] = funcGroups;
+  const [[, targetObjectId]] = functionGroups;
   return isMacroMolecule(editor, targetObjectId);
 };
 

@@ -21,7 +21,7 @@ import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const CLASSNAME_SEPARATOR = ' ';
 
-interface PortalProps {
+interface PortalProperties {
   isOpen: boolean;
   className?: string;
   style?: CSSProperties;
@@ -29,14 +29,14 @@ interface PortalProps {
   testId?: string;
 }
 
-type Props = PortalProps;
+type Properties = PortalProperties;
 
-class Portal extends Component<Props> {
+class Portal extends Component<Properties> {
   private readonly element: HTMLDivElement;
   private isElementInDom: boolean;
 
-  constructor(props: Props) {
-    super(props);
+  constructor(properties: Properties) {
+    super(properties);
     this.element = document.createElement('div');
     this.isElementInDom = false;
 
@@ -65,18 +65,18 @@ class Portal extends Component<Props> {
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>) {
+  componentDidUpdate(previousProperties: Readonly<Properties>) {
     const { isOpen, className, style } = this.props;
-    if (className !== prevProps.className) {
-      this.removeClassNames(prevProps.className);
+    if (className !== previousProperties.className) {
+      this.removeClassNames(previousProperties.className);
       this.addClassName(className);
     }
 
-    if (style !== prevProps.style) {
-      this.updateStyle(style, prevProps.style);
+    if (style !== previousProperties.style) {
+      this.updateStyle(style, previousProperties.style);
     }
 
-    if (isOpen === prevProps.isOpen) {
+    if (isOpen === previousProperties.isOpen) {
       return;
     }
 
@@ -121,9 +121,9 @@ class Portal extends Component<Props> {
     });
   }
 
-  private updateStyle(style?: CSSProperties, prevStyle?: CSSProperties) {
-    if (prevStyle) {
-      Object.keys(prevStyle).forEach((property) => {
+  private updateStyle(style?: CSSProperties, previousStyle?: CSSProperties) {
+    if (previousStyle) {
+      Object.keys(previousStyle).forEach((property) => {
         this.element.style[property] = '';
       });
     }

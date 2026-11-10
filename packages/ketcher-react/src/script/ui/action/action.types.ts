@@ -132,21 +132,21 @@ type ActionStateOptions = {
 };
 
 // Specific action option types
-type AtomActionOpts = {
+type AtomActionOptions = {
   label: string;
 };
 
 // todo: find out types
-type ActionObj = {
+type ActionObject = {
   tool?: string;
   opts?: unknown;
   dialog?: string;
   prop?: Record<string, unknown>;
   thunk?: (dispatch: Dispatch, getState: () => StoreState) => void;
 };
-type ActionFn = (editor: ActionStateEditor) => void;
+type ActionFunction = (editor: ActionStateEditor) => void;
 // todo: come up with better name
-type UiActionAction = ActionObj | ActionFn;
+type UiActionAction = ActionObject | ActionFunction;
 
 // todo: come up with better name
 type GetSelectedState = (
@@ -195,5 +195,5 @@ export type {
   UiAction,
   UiActionAction,
   ActionStateEditor,
-  AtomActionOpts,
+  AtomActionOptions,
 };

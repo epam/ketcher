@@ -122,7 +122,7 @@ function LabelEdit(props: Readonly<LabelEditProps>) {
         <Field
           name="label"
           maxLength={20}
-          // @ts-expect-error FieldProps missing size and isFocused (passed through to Input)
+          // @ts-expect-error FieldProperties missing size and isFocused (passed through to Input)
           size="10"
           isFocused
           className={styles.labelEditInputField}

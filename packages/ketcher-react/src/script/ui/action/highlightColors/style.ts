@@ -26,7 +26,7 @@ export const ColorContainer = styled.div`
 export const ColorSquare = styled.span<{ color: string }>`
   width: 30px;
   height: 30px;
-  background-color: ${(props) => props.color};
+  background-color: ${(properties) => properties.color};
   border-radius: 4px;
   cursor: pointer;
   &:hover {

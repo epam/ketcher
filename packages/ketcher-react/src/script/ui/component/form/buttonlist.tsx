@@ -23,7 +23,7 @@ interface Schema {
   };
 }
 
-interface ButtonListProps {
+interface ButtonListProperties {
   value: string[];
   onChange: (value: string[]) => void;
   schema: Schema;
@@ -53,11 +53,11 @@ function ButtonList({
   multiple,
   classes,
   testId,
-}: Readonly<ButtonListProps>) {
+}: Readonly<ButtonListProperties>) {
   const selected = classes.selected ?? 'selected';
   return (
     <ul>
-      {schema.items.enum.map((item, i) => {
+      {schema.items.enum.map((item, index) => {
         const className = value.includes(item) ? selected : '';
         return (
           <li key={item}>
@@ -70,7 +70,7 @@ function ButtonList({
               }
               onClick={() => onChange(oneOrMore(multiple, value, item))}
             >
-              {schema.items.enumNames[i]}
+              {schema.items.enumNames[index]}
             </button>
           </li>
         );

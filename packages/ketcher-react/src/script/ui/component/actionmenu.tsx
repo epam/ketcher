@@ -49,7 +49,7 @@ interface StatusMap {
   [key: string]: ItemStatus;
 }
 
-interface SharedActionProps {
+interface SharedActionProperties {
   status: StatusMap;
   onOpen: (id: string | undefined, isSelected: boolean) => void;
   onAction: (action: UiActionAction) => void;
@@ -61,7 +61,7 @@ interface SharedActionProps {
 
 interface MenuItemWithComponent {
   id: string;
-  component: (props: SharedActionProps) => JSX.Element;
+  component: (properties: SharedActionProperties) => JSX.Element;
 }
 
 interface MenuItemWithMenu {
@@ -71,7 +71,7 @@ interface MenuItemWithMenu {
 
 type MenuItem = string | MenuItemWithMenu | MenuItemWithComponent;
 
-interface ActionButtonProps {
+interface ActionButtonProperties {
   name: IconName;
   action: UiAction;
   status?: ItemStatus;
@@ -80,7 +80,7 @@ interface ActionButtonProps {
   indigoVerification?: boolean;
 }
 
-interface ActionMenuProps extends SharedActionProps {
+interface ActionMenuProperties extends SharedActionProperties {
   name: string;
   menu: MenuItem[];
   className?: string;
@@ -123,7 +123,7 @@ export function showMenuOrButton(
   action: Tools,
   item: MenuItem,
   status: ItemStatus,
-  props: SharedActionProps,
+  properties: SharedActionProperties,
 ): JSX.Element {
   if (typeof item !== 'object') {
     // item is a string key from the action object, which is typed as Tools
@@ -133,17 +133,17 @@ export function showMenuOrButton(
         name={item as IconName}
         action={action[item]}
         status={status}
-        onAction={props.onAction}
-        disableableButtons={props.disableableButtons}
-        indigoVerification={props.indigoVerification}
+        onAction={properties.onAction}
+        disableableButtons={properties.disableableButtons}
+        indigoVerification={properties.indigoVerification}
       />
     );
   }
   if (isMenuItemWithMenu(item)) {
-    return <ActionMenu {...props} name={item.id} menu={item.menu} />;
+    return <ActionMenu {...properties} name={item.id} menu={item.menu} />;
   }
   if (isMenuItemWithComponent(item)) {
-    return item.component(props);
+    return item.component(properties);
   }
   return <></>;
 }
@@ -155,17 +155,17 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: Readonly<ActionButtonProps>) {
+}: Readonly<ActionButtonProperties>) {
   const { t } = useTranslation();
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
-  const menuRef = useRef<HTMLButtonElement>(null);
+  const menuReference = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
   const title = resolveActionTitle(t, action);
 
   const onClick = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!status.selected || isMenuOpened(menuRef.current)) {
+    if (!status.selected || isMenuOpened(menuReference.current)) {
       onAction(action.action);
       event.stopPropagation();
     }
@@ -173,7 +173,7 @@ function ActionButton({
 
   return (
     <button
-      ref={menuRef}
+      ref={menuReference}
       disabled={disabled}
       onClick={onClick}
       role="menuitem"
@@ -209,10 +209,10 @@ function isOpened(item: MenuItemWithMenu, opened: string | undefined): boolean {
 
 function renderActiveMenuItem(
   item: MenuItemWithMenu,
-  props: SharedActionProps,
+  properties: SharedActionProperties,
 ): JSX.Element | null {
   const menu = item.menu ?? [];
-  const { opened, status } = props;
+  const { opened, status } = properties;
   let activeMenuItem: string | null = null;
   if (isOpened(item, opened)) {
     if (isLeaf(menu)) {
@@ -225,13 +225,16 @@ function renderActiveMenuItem(
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
-      const subMenuItems = menuWithMenuItems.reduce((acc: string[], curr) => {
-        const stringItems = curr.menu.filter(
-          (item): item is string => typeof item === 'string',
-        );
-        acc.push(...stringItems);
-        return acc;
-      }, []);
+      const subMenuItems = menuWithMenuItems.reduce(
+        (accumulator: string[], current) => {
+          const stringItems = current.menu.filter(
+            (item): item is string => typeof item === 'string',
+          );
+          accumulator.push(...stringItems);
+          return accumulator;
+        },
+        [],
+      );
 
       activeMenuItem =
         findActiveMenuItem(subMenuItems, status) ?? subMenuItems[0];
@@ -245,9 +248,9 @@ function renderActiveMenuItem(
       name={activeMenuItem as IconName}
       action={action[activeMenuItem]}
       status={status[activeMenuItem]}
-      onAction={props.onAction}
-      disableableButtons={props.disableableButtons}
-      indigoVerification={props.indigoVerification}
+      onAction={properties.onAction}
+      disableableButtons={properties.disableableButtons}
+      indigoVerification={properties.indigoVerification}
     />
   ) : null;
 }
@@ -257,11 +260,11 @@ function ActionMenu({
   menu,
   className,
   role,
-  ...props
-}: Readonly<ActionMenuProps>) {
+  ...properties
+}: Readonly<ActionMenuProperties>) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
-    const status = props.status[itemKey];
+    const status = properties.status[itemKey];
     // Items without status or with hidden !== true should be visible
     if (status?.hidden !== true) {
       items.push(item);
@@ -271,11 +274,11 @@ function ActionMenu({
   }, []);
 
   const handleMenuItemClick = (event: MouseEvent) =>
-    openHandle(event, props.onOpen);
+    openHandle(event, properties.onOpen);
   const handleMenuItemKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      openHandle(event, props.onOpen);
+      openHandle(event, properties.onOpen);
     }
   };
 
@@ -283,7 +286,7 @@ function ActionMenu({
     <menu
       className={className}
       role={role ?? 'menu'}
-      style={toolMargin(name, menu, props.visibleTools)}
+      style={toolMargin(name, menu, properties.visibleTools)}
     >
       {visibleMenu.map((item) => {
         const itemKey = getItemKey(item);
@@ -291,17 +294,22 @@ function ActionMenu({
           <li
             key={itemKey}
             id={itemKey}
-            className={clsx(props.status[itemKey], {
-              opened: isMenuItemWithMenu(item) && item.id === props.opened,
+            className={clsx(properties.status[itemKey], {
+              opened: isMenuItemWithMenu(item) && item.id === properties.opened,
             })}
             onClick={handleMenuItemClick}
             onKeyDown={handleMenuItemKeyDown}
             role="none"
           >
-            {showMenuOrButton(action, item, props.status[itemKey], props)}
+            {showMenuOrButton(
+              action,
+              item,
+              properties.status[itemKey],
+              properties,
+            )}
             {isMenuItemWithMenu(item) &&
-              props.opened &&
-              renderActiveMenuItem(item, props)}
+              properties.opened &&
+              renderActiveMenuItem(item, properties)}
             {isMenuItemWithMenu(item) && <Icon name="dropdown" />}
           </li>
         );
@@ -350,10 +358,10 @@ function openHandle(
   onOpen: (id: string | undefined, isSelected: boolean) => void,
 ): void {
   const currentTarget = event.currentTarget as HTMLElement;
-  const hiddenEl = hiddenAncestor(currentTarget);
+  const hiddenElement = hiddenAncestor(currentTarget);
   const isSelected = currentTarget?.classList.contains('selected') || false;
 
-  onOpen(hiddenEl?.id, isSelected);
+  onOpen(hiddenElement?.id, isSelected);
   event.stopPropagation();
 }
 

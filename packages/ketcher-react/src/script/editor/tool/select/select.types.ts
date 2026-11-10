@@ -48,25 +48,29 @@ export type ArrowDragContext = CommonArrowDragContext<
 export type DragContext = SelectionMoveDragContext | ArrowDragContext | null;
 
 export function isSelectionMoveDragContext(
-  dragCtx: DragContext,
-): dragCtx is SelectionMoveDragContext {
-  return !!dragCtx && 'item' in dragCtx && 'xy0' in dragCtx;
+  dragContext: DragContext,
+): dragContext is SelectionMoveDragContext {
+  return !!dragContext && 'item' in dragContext && 'xy0' in dragContext;
 }
 
 export function isArrowDragContext(
-  dragCtx: DragContext,
-): dragCtx is ArrowDragContext {
-  return !!dragCtx && 'closestItem' in dragCtx && 'originalPosition' in dragCtx;
+  dragContext: DragContext,
+): dragContext is ArrowDragContext {
+  return (
+    !!dragContext &&
+    'closestItem' in dragContext &&
+    'originalPosition' in dragContext
+  );
 }
 
 export function isImageSelectionDragContext(
-  dragCtx: SelectionMoveDragContext,
-): dragCtx is ImageSelectionDragContext {
-  return dragCtx.item.map === IMAGE_KEY && !!dragCtx.item.ref;
+  dragContext: SelectionMoveDragContext,
+): dragContext is ImageSelectionDragContext {
+  return dragContext.item.map === IMAGE_KEY && !!dragContext.item.ref;
 }
 
 export function isSimpleObjectSelectionDragContext(
-  dragCtx: SelectionMoveDragContext,
-): dragCtx is SimpleObjectSelectionDragContext {
-  return dragCtx.item.map === 'simpleObjects' && !!dragCtx.item.ref;
+  dragContext: SelectionMoveDragContext,
+): dragContext is SimpleObjectSelectionDragContext {
+  return dragContext.item.map === 'simpleObjects' && !!dragContext.item.ref;
 }

@@ -55,7 +55,7 @@ export const atomCuts: Readonly<Record<string, string>> = {
 
 type AtomActionsMap = Record<string, UiAction>;
 
-export default Object.keys(atomCuts).reduce<AtomActionsMap>((res, label) => {
+export default Object.keys(atomCuts).reduce<AtomActionsMap>((result, label) => {
   const atomAction: UiAction = {
     title: `Atom ${label}`,
     shortcut: atomCuts[label],
@@ -64,6 +64,6 @@ export default Object.keys(atomCuts).reduce<AtomActionsMap>((res, label) => {
       opts: { label } as unknown,
     },
   };
-  res[`atom-${label.toLowerCase()}`] = atomAction;
-  return res;
+  result[`atom-${label.toLowerCase()}`] = atomAction;
+  return result;
 }, {});

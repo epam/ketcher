@@ -154,4 +154,4 @@ M  END`,
   8  3  1  0     0  0
   3  2  1  0     0  0
 M  END`,
-].map((structStr) => molSerializer.deserialize(structStr));
+].map((structString) => molSerializer.deserialize(structString));

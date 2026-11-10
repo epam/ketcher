@@ -40,7 +40,7 @@ import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
-export interface FormOwnProps {
+export interface FormOwnProperties {
   children: React.ReactNode;
   schema: FormSchema;
   init?: Record<string, unknown> | null;
@@ -49,7 +49,7 @@ export interface FormOwnProps {
   deserialize?: Record<string, string>;
 }
 
-interface FormDispatchProps {
+interface FormDispatchProperties {
   onUpdate: (
     result: Record<string, unknown>,
     isValid: boolean,
@@ -57,7 +57,7 @@ interface FormDispatchProps {
   ) => void;
 }
 
-interface FormStateProps {
+interface FormStateProperties {
   result: Record<string, unknown>;
   errors?: Record<string, string>;
 }
@@ -69,7 +69,9 @@ export interface FormState<TResult = Record<string, unknown>> {
   errors?: Record<string, string>;
 }
 
-type FormProps = FormOwnProps & FormDispatchProps & FormStateProps;
+type FormProperties = FormOwnProperties &
+  FormDispatchProperties &
+  FormStateProperties;
 
 function applySchemaDefaults<T extends Record<string, unknown>>(
   state: T,
@@ -91,9 +93,9 @@ function applySchemaDefaults<T extends Record<string, unknown>>(
 }
 
 // Keep backward-compatible export
-export type { FormProps };
+export type { FormProperties };
 
-export interface FieldProps {
+export interface FieldProperties {
   title?: string;
   name?: string;
   component?: React.ElementType | string;
@@ -123,14 +125,14 @@ export interface FieldProps {
   classes?: Record<string, string | undefined>;
 }
 
-export interface FieldWithModalProps extends FieldProps {
+export interface FieldWithModalProperties extends FieldProperties {
   onEdit?: (onChange: (value: unknown) => void) => void;
   autoFocus?: boolean;
 }
 
-export type SelectOneOfProps = FieldProps;
+export type SelectOneOfProperties = FieldProperties;
 
-export interface CustomQueryFieldProps extends FieldProps {
+export interface CustomQueryFieldProperties extends FieldProperties {
   name: string;
   labelPos: string;
   checkboxValue?: boolean;
@@ -153,27 +155,27 @@ type FormValidationError = ValidationError & {
 const updateFieldValue = (
   result: Record<string, unknown>,
   fieldName: string,
-  val: unknown,
+  value: unknown,
 ) =>
-  val === undefined
+  value === undefined
     ? omit(result, [fieldName])
-    : { ...result, [fieldName]: val };
+    : { ...result, [fieldName]: value };
 
-class Form extends Component<FormProps> {
-  schema: ReturnType<typeof propSchema>;
+class Form extends Component<FormProperties> {
+  schema: ReturnType<typeof propertySchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
 
-  constructor(props: FormProps) {
-    super(props);
+  constructor(properties: FormProperties) {
+    super(properties);
     const { onUpdate, schema, init } = this.props;
 
-    this.schema = propSchema(schema, props);
+    this.schema = propertySchema(schema, properties);
 
     if (init) {
       const initialState = applySchemaDefaults({ ...init, init: true }, schema);
       const { valid, errors } = this.schema.serialize(initialState);
-      const errs = getErrorsObj(errors);
+      const errs = getErrorsObject(errors);
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
@@ -181,15 +183,19 @@ class Form extends Component<FormProps> {
     this._contextValue = { schema, stateStore: this };
   }
 
-  componentDidUpdate(prevProps: FormProps) {
+  componentDidUpdate(previousProperties: FormProperties) {
     const { schema, result, customValid, serialize, deserialize } = this.props;
 
     if (
-      (schema.key && schema.key !== prevProps.schema.key) ||
-      (customValid !== prevProps.customValid &&
+      (schema.key && schema.key !== previousProperties.schema.key) ||
+      (customValid !== previousProperties.customValid &&
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
-      this.schema = propSchema(schema, { customValid, serialize, deserialize });
+      this.schema = propertySchema(schema, {
+        customValid,
+        serialize,
+        deserialize,
+      });
       const stateWithDefaults = applySchemaDefaults(result, schema);
       this.schema.serialize(stateWithDefaults);
       this.updateState(stateWithDefaults);
@@ -199,7 +205,7 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors);
+    const errs = getErrorsObject(errors);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
@@ -212,17 +218,17 @@ class Form extends Component<FormProps> {
       dataError: errors?.[name],
       value,
       extraValue,
-      onChange: (val: unknown) => {
-        const newState = updateFieldValue(this.props.result, name, val);
+      onChange: (value_: unknown) => {
+        const newState = updateFieldValue(this.props.result, name, value_);
         this.updateState(newState);
-        if (onChange) onChange(val);
+        if (onChange) onChange(value_);
       },
-      onExtraChange: (val: unknown) => {
+      onExtraChange: (value_: unknown) => {
         const extraFieldName = extraName ?? '';
         const newState = updateFieldValue(
           this.props.result,
           extraFieldName,
-          val,
+          value_,
         );
         this.updateState(newState);
       },
@@ -256,11 +262,11 @@ export default connect(null, (dispatch) => ({
     dispatch(updateFormState({ result, valid: isValid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
-}))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
-  FormOwnProps & FormStateProps
->;
+}))(
+  Form as unknown as React.ComponentClass<FormProperties>,
+) as React.ComponentType<FormOwnProperties & FormStateProperties>;
 
-interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProperties extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
   title?: string;
   tooltip?: string;
@@ -329,13 +335,13 @@ function Label({
   title,
   tooltip,
   children,
-  ...props
-}: Readonly<LabelProps>) {
+  ...properties
+}: Readonly<LabelProperties>) {
   const { t } = useTranslation();
   const resolvedTitle = resolveTranslatableText(title, t) ?? '';
   const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
-    <label {...props}>
+    <label {...properties}>
       {labelPos !== 'after' &&
         renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
@@ -345,7 +351,7 @@ function Label({
   );
 }
 
-function Field(props: Readonly<FieldProps>) {
+function Field(properties: Readonly<FieldProperties>) {
   const {
     name,
     extraName,
@@ -357,7 +363,7 @@ function Field(props: Readonly<FieldProps>) {
     hint,
     hintAlign,
     ...rest
-  } = props;
+  } = properties;
   const { t } = useTranslation();
   const {
     anchorEl,
@@ -369,7 +375,7 @@ function Field(props: Readonly<FieldProps>) {
     ((!Array.isArray(rest.schema) && rest.schema) ||
       schema?.properties?.[name ?? '']) ??
     {};
-  const { dataError, onExtraChange, extraValue, ...fieldOpts } =
+  const { dataError, onExtraChange, extraValue, ...fieldOptions } =
     stateStore.field(name ?? '', onChange, extraName);
 
   const Component = component;
@@ -384,7 +390,7 @@ function Field(props: Readonly<FieldProps>) {
       {...(extraName && {
         extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
-      {...fieldOpts}
+      {...fieldOptions}
       {...rest}
     />
   ) : (
@@ -392,9 +398,9 @@ function Field(props: Readonly<FieldProps>) {
       {...(extraLabel && { className: classes.inputWithExtraLabel })}
       name={name}
       schema={desc}
-      {...fieldOpts}
+      {...fieldOptions}
       {...rest}
-      data-testid={props['data-testid'] ?? `${name}-input`}
+      data-testid={properties['data-testid'] ?? `${name}-input`}
     />
   );
 
@@ -409,7 +415,9 @@ function Field(props: Readonly<FieldProps>) {
             [classes.fieldHintRight]: hintAlign === 'right',
           })}
           data-testid={
-            props['data-testid'] ? `${props['data-testid']}-hint` : undefined
+            properties['data-testid']
+              ? `${properties['data-testid']}-hint`
+              : undefined
           }
         >
           {resolveTranslatableText(hint, t)}
@@ -438,8 +446,8 @@ function Field(props: Readonly<FieldProps>) {
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
             data-testid={
-              props['data-testid']
-                ? `${props['data-testid']}-input-span`
+              properties['data-testid']
+                ? `${properties['data-testid']}-input-span`
                 : undefined
             }
             role="none"
@@ -464,13 +472,13 @@ function Field(props: Readonly<FieldProps>) {
       title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
-      data-testid={props['data-testid']}
+      data-testid={properties['data-testid']}
     >
       <span
         className={classes.inputWrapper}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        data-testid={props['data-testid'] + '-input-span'}
+        data-testid={properties['data-testid'] + '-input-span'}
         role="none"
       >
         {formField}
@@ -488,8 +496,8 @@ function Field(props: Readonly<FieldProps>) {
   );
 }
 
-function FieldWithModal(props: Readonly<FieldWithModalProps>) {
-  const { name, onChange, labelPos, className, onEdit, ...rest } = props;
+function FieldWithModal(properties: Readonly<FieldWithModalProperties>) {
+  const { name, onChange, labelPos, className, onEdit, ...rest } = properties;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
     title,
@@ -512,7 +520,7 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
     ((!Array.isArray(inputRest.schema) && inputRest.schema) ||
       schema?.properties?.[name ?? '']) ??
     {};
-  const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
+  const { dataError, ...fieldOptions } = stateStore.field(name ?? '', onChange);
 
   return (
     <Label
@@ -531,10 +539,10 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
         onMouseLeave={handlePopoverClose}
         role="none"
       >
-        <Input name={name} schema={desc} {...fieldOpts} {...inputRest} />
+        <Input name={name} schema={desc} {...fieldOptions} {...inputRest} />
         <IconButton
           onClick={() => {
-            onEdit?.(fieldOpts.onChange);
+            onEdit?.(fieldOptions.onChange);
           }}
           iconName="edit"
           className={classes.editButton}
@@ -553,7 +561,7 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   );
 }
 
-function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
+function CustomQueryField(properties: Readonly<CustomQueryFieldProperties>) {
   const {
     name,
     onChange,
@@ -569,7 +577,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
     extraLabel: _extraLabel,
     extraSchema: _extraSchema,
     ...rest
-  } = props;
+  } = properties;
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -580,12 +588,12 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
     ((!Array.isArray(rest.schema) && rest.schema) ||
       schema?.properties?.[name ?? '']) ??
     {};
-  const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
+  const { dataError, ...fieldOptions } = stateStore.field(name ?? '', onChange);
   const handleCheckboxChange = (value: unknown) => {
     onCheckboxChange?.(
       value as boolean,
       stateStore.props.result,
-      fieldOpts.onChange,
+      fieldOptions.onChange,
       stateStore.updateState,
     );
   };
@@ -615,7 +623,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
           data-testid="custom-query-value"
           name={name}
           schema={desc}
-          {...fieldOpts}
+          {...fieldOptions}
           {...rest}
         />
       </span>
@@ -631,8 +639,8 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   );
 }
 
-const SelectOneOf = (props: SelectOneOfProps) => {
-  const { title, name, schema, ...prop } = props;
+const SelectOneOf = (properties: SelectOneOfProperties) => {
+  const { title, name, schema, ...property } = properties;
   const { t } = useTranslation();
 
   const selectDesc: {
@@ -659,14 +667,14 @@ const SelectOneOf = (props: SelectOneOfProps) => {
       name={name}
       options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
-      {...prop}
+      {...property}
       component={Select}
-      data-testid={props['data-testid']}
+      data-testid={properties['data-testid']}
     />
   );
 };
 
-function propSchema(
+function propertySchema(
   schema: FormSchema,
   {
     customValid,
@@ -733,18 +741,18 @@ function serializeRewrite(
   instance: unknown,
   schema: FormSchema,
 ): unknown {
-  const res: Record<string, unknown> = {};
+  const result: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
     return instance === undefined ? schema.default : instance;
   }
 
-  const instanceObj = instance as Record<string, unknown>;
+  const instanceObject = instance as Record<string, unknown>;
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instanceObj)
-      res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
+    if (p in instanceObject)
+      result[p] = instanceObject[serializeMap[p]] ?? instanceObject[p];
   });
 
-  return res;
+  return result;
 }
 
 function deserializeRewrite(
@@ -761,7 +769,9 @@ function getInvalidMessage(item: FormValidationError): string {
     : item.schema.invalidMessage;
 }
 
-function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
+function getErrorsObject(
+  errors: FormValidationError[],
+): Record<string, string> {
   const errs: Record<string, string> = {};
 
   errors.forEach((item) => {

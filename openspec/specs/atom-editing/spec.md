@@ -44,6 +44,30 @@ The system SHALL ensure that the atom is displayed underlined in red to flag the
 - **WHEN** an element/charge change produces an impossible valence
 - **THEN** the atom is displayed underlined in red to flag the error
 
+### Requirement: Explicit valence takes precedence
+
+The system SHALL use explicitly specified valence and bond connectivity to calculate implicit hydrogens and valence warnings, ignoring charge and radical contributions while preserving those atom properties.
+
+#### Scenario: Charged atom with explicit valence
+
+- **WHEN** oxygen with two single bonds has explicit valence II and charge -1
+- **THEN** it has zero implicit hydrogens and no valence warning, and its charge remains -1
+
+#### Scenario: Radical with explicit valence
+
+- **WHEN** a radical or charge is changed while explicit valence and bonds stay unchanged
+- **THEN** the implicit hydrogen count and valence warning remain unchanged
+
+#### Scenario: Bonds exceed explicit valence
+
+- **WHEN** oxygen with two single bonds has explicit valence I
+- **THEN** it is underlined in red and has zero implicit hydrogens
+
+#### Scenario: Explicit valence is cleared
+
+- **WHEN** the user clears explicit valence
+- **THEN** the normal element, charge, and radical rules determine implicit hydrogens and valence warnings again
+
 ### Requirement: Adjusting charge
 
 The system SHALL ensure that the atom's charge increases or decreases by one and implicit hydrogens are recalculated.

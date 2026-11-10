@@ -16,6 +16,7 @@ import {
 } from 'domain/entities/canvas-matrix/Connection';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
+import { AttachmentPointName } from 'domain/types';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
@@ -53,6 +54,20 @@ const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 //  - `SnakeModeBackboneBondRenderer` (black “snake” line)
 //  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
 //  - `SnakeModeRNABaseAndSugarBondRenderer` (black straight line)
+// Requirement #3532: an R1-R1 connection between the first monomers of two
+// backbone chains is drawn on the left of these monomers. A monomer whose R1 is
+// taken by this bond has no previous monomer, so both start their chains.
+function isR1R1ConnectionOfChainStartsInSameColumn(
+  polymerBond: PolymerBond,
+  cells: Cell[],
+): boolean {
+  return (
+    polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
+    polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
+    cells[0]?.x === cells.at(-1)?.x
+  );
+}
+
 export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private readonly editorEvents: typeof editorEvents;
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
@@ -262,6 +277,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
+
+    if (isR1R1ConnectionOfChainStartsInSameColumn(this.polymerBond, cells)) {
+      return this.appendSideConnectionBodyElement(
+        rootElement,
+        SideChainConnectionBondRendererUtility.generateLeftSideConnectionPath(
+          startPosition,
+          endPosition,
+          this.getLeftSideConnectionLane(),
+        ),
+      );
+    }
+
     const xDirection =
       startPosition.x >= (this.sideConnectionBondTurnPoint ?? endPosition.x)
         ? 180
@@ -452,6 +479,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         endPosition.y,
       ) + ' ';
 
+    return this.appendSideConnectionBodyElement(
+      rootElement,
+      pathDAttributeValue,
+    );
+  }
+
+  // TODO: Specify the types.
+  private appendSideConnectionBodyElement(
+    rootElement,
+    pathDAttributeValue: string,
+  ) {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
@@ -491,6 +529,27 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.path = pathDAttributeValue;
 
     return this.bodyElement;
+  }
+
+  private getLeftSideConnectionLane(): number {
+    const matrix = provideEditorInstance().drawingEntitiesManager.canvasMatrix;
+    const leftSideConnections = [
+      ...(matrix?.polymerBondToCells ?? new Map<PolymerBond, Cell[]>()),
+    ].filter(([polymerBond, cells]) =>
+      isR1R1ConnectionOfChainStartsInSameColumn(polymerBond, cells),
+    );
+    const lanes = SideChainConnectionBondRendererUtility.assignLanes(
+      leftSideConnections.map(([, cells]) => {
+        const rows = cells.map((cell) => cell.y);
+
+        return { start: Math.min(...rows), end: Math.max(...rows) };
+      }),
+    );
+    const index = leftSideConnections.findIndex(
+      ([polymerBond]) => polymerBond === this.polymerBond,
+    );
+
+    return index === -1 ? 0 : lanes[index];
   }
 
   private getMonomerWidth(): number {

@@ -281,197 +281,148 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test(
-    '3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.1.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.1.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
-  test(
-    '3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.2.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.2.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.3.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.3.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.4.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.4.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.5.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.5.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.6.ket`,
-      );
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.6.ket`,
+    );
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
+    /*
     /* Case 3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected from the left. 
     /*
-    /* IMPORTANT: Test results is incorrect now because we have bug https://github.com/epam/ketcher/issues/5069
-    /* Screenshot should be updated after fix.
-    /*
     */
 
-      // Closing Library to enlarge canvas
-      await Library(page).hideLibrary();
-      await openFileAndAddToCanvasMacro(
-        page,
-        `KET/Side-Chain-Connections/3.7.ket`,
-      );
-      await moveMouseAway(page);
-      // Zoom out to see bottom chians
-      await zoomOutByKeyboard(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    // Closing Library to enlarge canvas
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/Side-Chain-Connections/3.7.ket`,
+    );
+    await moveMouseAway(page);
+    // Zoom out to see bottom chians
+    await zoomOutByKeyboard(page);
+    await takeEditorScreenshot(page);
+  });
 
   test(
     '4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',

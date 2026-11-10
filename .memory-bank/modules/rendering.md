@@ -65,6 +65,7 @@ A factory chooses the bond renderer: hydrogen bonds always use the Snake-mode re
 
 - The Flex renderer draws a straight line/path.
 - The Snake renderer draws orthogonal "snake" paths and also renders hydrogen bonds (dashed). There is **no standalone hydrogen-bond renderer**.
+- Side-chain connections in Snake mode are routed through the snake grid cells, with one exception: an R1–R1 bond between two chain-first monomers in the same column runs along the left of both monomers, outside the backbone bonds that wrap chains to the next row. Such bonds spanning overlapping rows get separate lanes, shorter spans innermost.
 
 ### Sequence rendering
 

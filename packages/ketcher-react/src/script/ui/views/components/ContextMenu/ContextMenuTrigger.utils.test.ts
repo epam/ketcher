@@ -1,15 +1,15 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
   getAttachmentGroupTargetForBondHalf,
-  getIsItemInSelection,
+  isItemInSelection,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import type Editor from 'src/script/editor';
 
-describe('getIsItemInSelection', () => {
+describe('isItemInSelection', () => {
   const isAtomSelected = (selection) =>
-    getIsItemInSelection({
+    isItemInSelection({
       item: { map: 'atoms', id: 0, dist: 0 },
       selection,
       selectedSGroupsIds: new Set(),

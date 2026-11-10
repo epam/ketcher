@@ -59,7 +59,7 @@ const measureFixedOriginShift = () => {
   document.body.appendChild(probe);
   const { left, top } = probe.getBoundingClientRect();
   probe.remove();
-  return { left, top };
+  return left || top ? { left, top } : undefined;
 };
 
 const Select = ({
@@ -83,7 +83,9 @@ const Select = ({
     ? document.querySelector('#root')
     : undefined;
 
-  const [fixedShift, setFixedShift] = useState({ left: 0, top: 0 });
+  const [fixedShift, setFixedShift] = useState<
+    { left: number; top: number } | undefined
+  >();
 
   const handleOpen = () => setFixedShift(measureFixedOriginShift());
 
@@ -108,11 +110,8 @@ const Select = ({
       MenuProps={{
         container: portalContainer,
         className: styles.dropdownList,
-        PaperProps: {
-          style: {
-            marginLeft: -fixedShift.left,
-            marginTop: -fixedShift.top,
-          },
+        PaperProps: fixedShift && {
+          style: { marginLeft: -fixedShift.left, marginTop: -fixedShift.top },
         },
       }}
       IconComponent={ChevronIcon}

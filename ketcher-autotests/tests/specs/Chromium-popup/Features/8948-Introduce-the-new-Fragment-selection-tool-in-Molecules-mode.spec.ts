@@ -12,6 +12,7 @@ import {
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import {
   clickInTheMiddleOfTheCanvas,
+  getTooltipLocator,
   getVisibleCanvas,
   keyboardPressOnCanvas,
   takeEditorScreenshot,
@@ -227,9 +228,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       'cursor',
       /not-allowed/,
     );
-    await page
-      .getByText(cycleBondTooltip, { exact: true })
-      .waitFor({ state: 'visible' });
+    await expect(getTooltipLocator(page)).toHaveText(cycleBondTooltip);
     await takeEditorScreenshot(page);
   });
 
@@ -247,7 +246,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'C1CCCCC1CC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    const tooltip = page.getByText(cycleBondTooltip, { exact: true });
+    const tooltip = getTooltipLocator(page);
     await expect(tooltip).toBeHidden();
 
     const hoverStartedAt = Date.now();
@@ -258,6 +257,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
     await tooltip.waitFor({ state: 'visible' });
 
     expect(Date.now() - hoverStartedAt).toBeGreaterThanOrEqual(200);
+    await expect(tooltip).toHaveText(cycleBondTooltip);
   });
 
   test('Case 9 - Hover outlines all atoms and bonds on the hovered side of a bond', async () => {
@@ -478,9 +478,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       position: { x: 9, y: 15 },
     });
 
-    await expect(
-      page.getByText(markedComponentTooltip, { exact: true }),
-    ).toBeVisible();
+    await expect(getTooltipLocator(page)).toHaveText(markedComponentTooltip);
     await expect(await getVisibleCanvas(page)).toHaveCSS(
       'cursor',
       /not-allowed/,

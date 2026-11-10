@@ -2,6 +2,7 @@ import { Vec2 } from 'domain/entities';
 import { provideEditorInstance } from '../editorSingleton';
 import { EditorHistory } from '../EditorHistory';
 import { Coordinates } from '../shared/coordinates';
+import type { SelectBase } from '../tools/select/SelectBase';
 
 // One arrow key press moves the selection by 1 canvas px; holding Shift multiplies that step by 10.
 const SHIFT_STEP_MULTIPLIER = 10;
@@ -34,9 +35,13 @@ function moveSelectionByArrowKey(event: KeyboardEvent) {
   EditorHistory.getInstance(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
   editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
-  editor.events.selectEntities.dispatch(
-    editor.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
-  );
+  // The selection itself is unchanged, so skip `selectEntities`: only the
+  // rotation handle depends on the selection bounds and needs a redraw.
+  // Check the tool by name: a runtime SelectBase import creates a circular
+  // dependency through the renderers.
+  if (editor.selectedTool?.name === 'select-tool') {
+    (editor.selectedTool as SelectBase).updateRotationView();
+  }
 }
 
 export const moveSelectionByArrowKeysHandlers = {

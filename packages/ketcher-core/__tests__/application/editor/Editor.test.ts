@@ -12,7 +12,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
-import { Vec2 } from 'domain/entities';
+import { Atom, SGroup, SGroupBracketType, Struct, Vec2 } from 'domain/entities';
 import {
   coreEditorTheme,
   peptideMonomerItem,
@@ -42,8 +42,8 @@ type RescaleStructForModeTransitionContext = {
 };
 
 type RescaleStructForModeTransitionStruct = {
-  scale: jest.Mock;
-  scaleMonomerMicromoleculeSgroups: jest.Mock;
+  scale: Struct['scale'];
+  scaleMonomerMicromoleculeSgroups: Struct['scaleMonomerMicromoleculeSgroups'];
 };
 
 type RescaleStructForModeTransitionMethod = (
@@ -214,7 +214,9 @@ describe('CoreEditor', () => {
       );
 
       expect(scaleFactor).toBe(0.5);
-      expect(struct.scale).toHaveBeenCalledWith(0.5);
+      expect(struct.scale).toHaveBeenCalledWith(0.5, {
+        scaleBracketPositions: true,
+      });
       expect(struct.scaleMonomerMicromoleculeSgroups).not.toHaveBeenCalled();
     });
 
@@ -242,8 +244,53 @@ describe('CoreEditor', () => {
       );
 
       expect(scaleFactor).toBe(2);
-      expect(struct.scale).toHaveBeenCalledWith(2);
+      expect(struct.scale).toHaveBeenCalledWith(2, {
+        scaleBracketPositions: true,
+      });
       expect(struct.scaleMonomerMicromoleculeSgroups).toHaveBeenCalledWith(2);
+    });
+
+    it('keeps positioned brackets aligned with atoms across different mode scales', () => {
+      const struct = new Struct();
+      const atomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(2, 1) }),
+      );
+      const group = new SGroup(SGroup.TYPES.SRU);
+      group.id = struct.sgroups.add(group);
+      struct.atomAddToSGroup(group.id, atomId);
+      const brackets = {
+        opening: {
+          type: SGroupBracketType.Round,
+          position: { start: { x: 1, y: 0 }, end: { x: 1, y: 2 } },
+        },
+        closing: {
+          type: SGroupBracketType.Round,
+          position: { start: { x: 3, y: 0 }, end: { x: 3, y: 2 } },
+        },
+      };
+      group.data.brackets = brackets;
+      const editor = {
+        micromoleculesEditor: { render: { options: { microModeScale: 40 } } },
+      };
+      provideEditorSettings().macroModeScale = 20;
+
+      callRescaleStructForModeTransition(editor, struct, 'microToMacro');
+
+      expect(struct.atoms.get(atomId)?.pp).toEqual(new Vec2(4, 2));
+      expect(group.data.brackets).toEqual({
+        opening: {
+          type: SGroupBracketType.Round,
+          position: { start: { x: 2, y: 0 }, end: { x: 2, y: 4 } },
+        },
+        closing: {
+          type: SGroupBracketType.Round,
+          position: { start: { x: 6, y: 0 }, end: { x: 6, y: 4 } },
+        },
+      });
+
+      callRescaleStructForModeTransition(editor, struct, 'macroToMicro');
+      expect(struct.atoms.get(atomId)?.pp).toEqual(new Vec2(2, 1));
+      expect(group.data.brackets).toEqual(brackets);
     });
   });
 

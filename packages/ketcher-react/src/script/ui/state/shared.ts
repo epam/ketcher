@@ -25,6 +25,7 @@ import {
   KetcherLogger,
   SettingsManager,
   getSelectionFromStruct,
+  hasSGroupBracketPositions,
 } from 'ketcher-core';
 import { showSnackbarNotification } from './notifications';
 
@@ -126,6 +127,9 @@ export function load(struct: string | Struct, options?) {
     try {
       const parsedStruct = await parseStruct(struct, server, otherOptions);
       const { fragment } = otherOptions;
+      const hasBracketPositions = hasSGroupBracketPositions(parsedStruct);
+      const shouldPreserveBracketPositions =
+        !fragment && !method && hasBracketPositions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
@@ -148,7 +152,11 @@ export function load(struct: string | Struct, options?) {
       // scaling works bad with molecule-to-monomer connections.
       // preserveViewport also skips rescale so aromatize/dearomatize keep the
       // current canvas position instead of re-normalizing coordinates.
-      if (!preserveViewport && !hasMoleculeToMonomerConnections) {
+      if (
+        !preserveViewport &&
+        !hasMoleculeToMonomerConnections &&
+        !hasBracketPositions
+      ) {
         parsedStruct.rescale(); // TODO: move out parsing?
       }
 
@@ -241,7 +249,11 @@ export function load(struct: string | Struct, options?) {
 
       const isIndigoFunctionCalled = !!method;
       if (!fragment && !isPaste && !isIndigoFunctionCalled && !skipCenter) {
-        editor.centerStruct();
+        if (shouldPreserveBracketPositions) {
+          editor.centerViewportAccordingToStruct(parsedStruct);
+        } else {
+          editor.centerStruct();
+        }
       }
       if (!fragment) {
         // do not update selection if fragment is added

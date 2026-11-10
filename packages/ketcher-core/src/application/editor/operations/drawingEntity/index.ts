@@ -8,6 +8,11 @@ import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
+import type { Struct } from 'domain/entities/struct';
+import {
+  getSGroupBracketContext,
+  SGroupBracketPositionChanges,
+} from '../sgroup/sgroupBracketPositions';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private readonly drawingEntity: DrawingEntity) {}
 
@@ -42,12 +47,28 @@ export class DrawingEntitySelectOperation implements Operation {
 }
 export class DrawingEntityMoveOperation implements Operation {
   private wasInverted = false;
+  private readonly bracketStruct?: Struct;
+  private readonly bracketPositions?: SGroupBracketPositionChanges;
+
   constructor(
     private readonly moveDrawingEntityChangeModel: () => void,
     private readonly invertMoveDrawingEntityChangeModel: () => void,
     private readonly redoDrawingEntityChangeModel: () => void,
     private readonly drawingEntity: DrawingEntity,
-  ) {}
+    shouldInvalidateBracketPositions = true,
+  ) {
+    if (!shouldInvalidateBracketPositions) {
+      return;
+    }
+
+    const bracketContext = getSGroupBracketContext(drawingEntity);
+    if (bracketContext) {
+      this.bracketStruct = bracketContext.struct;
+      this.bracketPositions = new SGroupBracketPositionChanges(
+        bracketContext.groups,
+      );
+    }
+  }
 
   public execute() {
     if (this.wasInverted) {
@@ -55,10 +76,16 @@ export class DrawingEntityMoveOperation implements Operation {
     } else {
       this.moveDrawingEntityChangeModel();
     }
+    if (this.bracketStruct) {
+      this.bracketPositions?.toggle(this.bracketStruct);
+    }
   }
 
   public invert() {
     this.invertMoveDrawingEntityChangeModel();
+    if (this.bracketStruct) {
+      this.bracketPositions?.toggle(this.bracketStruct);
+    }
     this.wasInverted = true;
   }
 

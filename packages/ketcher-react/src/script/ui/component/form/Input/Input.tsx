@@ -49,6 +49,9 @@ type Props = {
   innerRef?: React.Ref<HTMLInputElement>;
   schema?: InputSchema;
   multiple?: boolean;
+  checked?: boolean | string;
+  groupAriaLabel?: string;
+  optionAriaLabels?: Record<string, string>;
 };
 
 export function GenericInput({
@@ -183,10 +186,12 @@ function FieldSet({
   type = 'radio',
   checked,
   innerRef,
+  groupAriaLabel,
+  optionAriaLabels,
   ...rest
 }) {
   return (
-    <fieldset>
+    <fieldset aria-label={groupAriaLabel}>
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
@@ -197,6 +202,7 @@ function FieldSet({
                 type === 'radio' ? selected(val, checked) : selected(val, value)
               }
               value={typeof val !== 'object' && val}
+              aria-label={optionAriaLabels?.[String(val)]}
               className={classes.input}
               {...rest}
               data-testid={
@@ -399,7 +405,9 @@ type AnyComponentWithRefProps = {
   type?: string;
   placeholder?: string;
   isFocused?: boolean;
-  checked?: boolean;
+  checked?: boolean | string;
+  groupAriaLabel?: string;
+  optionAriaLabels?: Record<string, string>;
   'data-testid'?: string;
 };
 

@@ -19,10 +19,13 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { SGroup } from 'domain/entities/sgroup';
 import { assert } from 'utilities';
+import { SGroupBracketPositionChanges } from './sgroupBracketPositions';
 
 type Data = {
   sgid?: number;
   aid?: number;
+  bracketPositions?: SGroupBracketPositionChanges;
+  preserveBracketPositions?: boolean;
 };
 
 class SGroupAtomAdd extends BaseOperation {
@@ -51,6 +54,10 @@ class SGroupAtomAdd extends BaseOperation {
       return;
     }
 
+    if (!this.data.preserveBracketPositions) {
+      this.data.bracketPositions ??= new SGroupBracketPositionChanges([sgroup]);
+      this.data.bracketPositions.toggle(struct);
+    }
     struct.atomAddToSGroup(sgid, aid);
     BaseOperation.invalidateAtom(restruct, aid);
   }
@@ -59,12 +66,16 @@ class SGroupAtomAdd extends BaseOperation {
 class SGroupAtomRemove extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: number, aid?: number) {
+  constructor(
+    sgroupId?: number,
+    aid?: number,
+    preserveBracketPositions = false,
+  ) {
     super(
       OperationType.S_GROUP_ATOM_REMOVE,
       OperationPriority.S_GROUP_ATOM_REMOVE,
     );
-    this.data = { sgid: sgroupId, aid };
+    this.data = { sgid: sgroupId, aid, preserveBracketPositions };
   }
 
   execute(restruct: ReStruct) {
@@ -82,6 +93,10 @@ class SGroupAtomRemove extends BaseOperation {
       return;
     }
 
+    if (sgroup.atoms.includes(aid) && !this.data.preserveBracketPositions) {
+      this.data.bracketPositions ??= new SGroupBracketPositionChanges([sgroup]);
+      this.data.bracketPositions.toggle(struct);
+    }
     SGroup.removeAtom(sgroup, aid);
     atom.sgs.delete(sgid);
     BaseOperation.invalidateAtom(restruct, aid);

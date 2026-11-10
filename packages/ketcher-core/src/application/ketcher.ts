@@ -38,7 +38,7 @@ import { provideEditorInstance } from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
-import { SGroup } from 'domain/entities/sgroup';
+import { hasSGroupBracketPositions, SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { EventEmitter } from 'events';
 import {
@@ -57,7 +57,7 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
-import { type EditorSelection, EditorType } from './editor/editor.types';
+import { EditorType } from './editor/editor.types';
 import {
   type DisabledFunctionalityConfig,
   type ExportImageParams,
@@ -342,19 +342,21 @@ export class Ketcher {
   }
 
   getKet(): Promise<string> {
+    const macromoleculesEditor = provideEditorInstance();
+    const isMicromolecules =
+      (macromoleculesEditor?._type ?? EditorType.Micromolecules) ===
+      EditorType.Micromolecules;
     return getStructure(
       this.id,
       this.#formatterFactory,
-      (provideEditorInstance()?._type ?? EditorType.Micromolecules) ===
-        EditorType.Micromolecules
+      isMicromolecules
         ? this.editor.struct()
-        : provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+        : macromoleculesEditor?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
       SupportedFormat.ket,
-      (provideEditorInstance()?._type ?? EditorType.Micromolecules) ===
-        EditorType.Micromolecules
+      isMicromolecules
         ? undefined
-        : provideEditorInstance()?.drawingEntitiesManager,
-      this.editor.selection() as EditorSelection,
+        : macromoleculesEditor?.drawingEntitiesManager,
+      isMicromolecules ? (this.editor.selection() ?? undefined) : undefined,
     );
   }
 
@@ -583,12 +585,13 @@ export class Ketcher {
 
         const shouldPreserveCanvasPosition =
           options?.preserveCanvasPosition === true;
+        const { x, y } = options?.position ?? {};
+        const shouldPreserveBracketPositions =
+          hasSGroupBracketPositions(struct);
 
-        if (!shouldPreserveCanvasPosition) {
+        if (!shouldPreserveCanvasPosition && !shouldPreserveBracketPositions) {
           struct.rescale();
         }
-
-        const { x, y } = options?.position ?? {};
 
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
@@ -603,7 +606,11 @@ export class Ketcher {
           this.editor.zoomAccordingContent(struct);
         }
         if (x == null && y == null && !shouldPreserveCanvasPosition) {
-          this.editor.centerStruct();
+          if (shouldPreserveBracketPositions) {
+            this.editor.centerViewportAccordingToStruct(struct);
+          } else {
+            this.editor.centerStruct();
+          }
         }
       }
     }, this.eventBus);
@@ -651,7 +658,9 @@ export class Ketcher {
           this,
         );
 
-        struct.rescale();
+        if (!hasSGroupBracketPositions(struct)) {
+          struct.rescale();
+        }
         const { x, y } = options?.position ?? {};
 
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.

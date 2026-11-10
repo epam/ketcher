@@ -379,6 +379,12 @@
       "sgroup": {
         "variantData": "数据",
         "variantMultipleGroup": "重复组",
+        "bracketType": {
+          "title": "括号类型",
+          "square": "方括号",
+          "round": "圆括号",
+          "curly": "花括号"
+        },
         "mulCount": {
           "title": "重复次数"
         },

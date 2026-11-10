@@ -524,55 +524,53 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
-    const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+    const sgroup = [...atom.sgs.values()]
+      .map((sgroupId) => sgroups.get(sgroupId))
+      .find(
+        (group) =>
+          group &&
+          FunctionalGroup.isContractedFunctionalGroup(group, functionalGroups),
+      );
 
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom,
-        sgroups,
-        functionalGroups,
-      )
-    ) {
-      if (sgroup) {
-        const { atomId: contractedAtomId, position: contractedPosition } =
-          sgroup.getContractedPosition(restruct.molecule);
-        const isPositionAtom = contractedAtomId === aid;
-        if (isPositionAtom) {
-          // contractedPosition is geometric center for regular SGroups;
-          // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
-          const position = Scale.modelToCanvas(
-            contractedPosition,
-            render.options,
-          );
-          const fontFamily = options.font.substr(
-            options.font.indexOf(' ') + 1,
-            options.font.length,
-          );
-          const sGroupName = sgroup.superatomLabel;
-          const path = render.paper
-            .text(position.x, position.y, sGroupName)
-            .attr({
-              'font-weight': 700,
-              'font-size': options.fontszInPx,
-              'font-family': fontFamily,
-            });
+    if (sgroup) {
+      const { atomId: contractedAtomId, position: contractedPosition } =
+        sgroup.getContractedPosition(restruct.molecule);
+      const isPositionAtom = contractedAtomId === aid;
+      if (isPositionAtom) {
+        // contractedPosition is geometric center for regular SGroups;
+        // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
+        const position = Scale.modelToCanvas(
+          contractedPosition,
+          render.options,
+        );
+        const fontFamily = options.font.substr(
+          options.font.indexOf(' ') + 1,
+          options.font.length,
+        );
+        const sGroupName = sgroup.superatomLabel;
+        const path = render.paper
+          .text(position.x, position.y, sGroupName)
+          .attr({
+            'font-weight': 700,
+            'font-size': options.fontszInPx,
+            'font-family': fontFamily,
+          });
 
-          path.node?.setAttribute('data-testid', 's-group-label');
-          path.node?.setAttribute('data-label-text', sGroupName);
-          path.node?.setAttribute('data-sgroup-id', String(sgroup.id));
-          path.node?.setAttribute('data-sgroup-name', sGroupName);
-          path.node?.setAttribute('data-sgroup-type', String(sgroup.type));
+        path.node?.setAttribute('data-testid', 's-group-label');
+        path.node?.setAttribute('data-label-text', sGroupName);
+        path.node?.setAttribute('data-sgroup-id', String(sgroup.id));
+        path.node?.setAttribute('data-sgroup-name', sGroupName);
+        path.node?.setAttribute('data-sgroup-type', String(sgroup.type));
 
-          restruct.addReObjectPath(
-            LayerMap.data,
-            this.visel,
-            path,
-            position,
-            true,
-          );
-        }
-        return;
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          path,
+          position,
+          true,
+        );
       }
+      return;
     }
 
     if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {

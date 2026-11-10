@@ -17,11 +17,18 @@
 import type { Atom } from 'domain/entities/atom';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Bond } from 'domain/entities/bond';
-import { SGroup } from 'domain/entities/sgroup';
+import {
+  SGroup,
+  SGroupBracketType,
+  type SGroupBracket,
+} from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
-import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import {
+  getNodeWithInvertedYCoord,
+  switchIntoChemistryCoordSystem,
+} from 'domain/serializers/ket/helpers';
 import { CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
@@ -31,6 +38,7 @@ import type {
   KetMoleculeNode,
   KetRgLabelNode,
   KetSGroupAttachmentPointNode,
+  KetSGroupBracket,
   KetSGroupNode,
 } from './types';
 
@@ -256,6 +264,25 @@ function sgroupToKet(struct: Struct, source: SGroup): KetSGroupNode {
       break;
   }
 
+  if (source.type !== SGroup.TYPES.DAT && source.data.brackets) {
+    result.brackets = {
+      opening: bracketToKet(source.data.brackets.opening),
+      closing: bracketToKet(source.data.brackets.closing),
+    };
+  }
+
+  return result;
+}
+
+function bracketToKet(source: SGroupBracket): KetSGroupBracket {
+  const result: KetSGroupBracket = {};
+  if (source.type !== undefined) {
+    result.type =
+      source.type === SGroupBracketType.Round ? 'parenthetic' : source.type;
+  }
+  if (source.position) {
+    result.position = getNodeWithInvertedYCoord(source.position);
+  }
   return result;
 }
 

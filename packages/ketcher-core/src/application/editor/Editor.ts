@@ -57,6 +57,7 @@ import {
   Sugar,
   Vec2,
 } from 'domain/entities';
+import { hasSGroupBracketPositions } from 'domain/entities/sgroup';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -2877,6 +2878,23 @@ export class CoreEditor {
     this.micromoleculesEditor?.render.setMolecule(new Struct());
     this.micromoleculesEditor?.zoom(1);
     this._type = EditorType.Macromolecules;
+    if (
+      hasSGroupBracketPositions(struct) &&
+      this.isCurrentModeWithAutozoom() &&
+      (this.drawingEntitiesManager.atoms.size > 0 ||
+        this.drawingEntitiesManager.hasMonomers)
+    ) {
+      const bounds = getRenderedStructuresBbox();
+      this.zoomTool.scrollTo(
+        new Vec2(
+          (bounds.left + bounds.right) / 2,
+          (bounds.top + bounds.bottom) / 2,
+        ),
+        false,
+        50,
+        50,
+      );
+    }
     this.micromoleculesEditor?.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
@@ -2952,7 +2970,7 @@ export class CoreEditor {
     // between modes by sourceScale / targetScale.
     const scaleFactor = sourceScale / targetScale;
 
-    struct.scale(scaleFactor);
+    struct.scale(scaleFactor, { scaleBracketPositions: true });
 
     if (direction === 'microToMacro') {
       // MonomerMicromolecule centers are skipped by Struct.scale() and need

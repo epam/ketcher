@@ -28,7 +28,7 @@ import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoin
 import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import { assert } from 'utilities';
-import { isNumber } from 'lodash';
+import { cloneDeep, isNumber } from 'lodash';
 import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 export enum SUPERATOM_CLASS {
@@ -42,6 +42,74 @@ export const SUPERATOM_CLASS_TEXT = {
   [SUPERATOM_CLASS.SUGAR]: 'Sugar',
   [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
 };
+
+export enum SGroupBracketType {
+  Square = 'square',
+  Round = 'round',
+  Curly = 'curly',
+}
+
+export const DEFAULT_SGROUP_BRACKET_TYPE = SGroupBracketType.Square;
+
+export const isSGroupBracketType = (
+  value: unknown,
+): value is SGroupBracketType =>
+  Object.values(SGroupBracketType).includes(value as SGroupBracketType);
+
+export interface SGroupBracketPosition {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+}
+
+export interface SGroupBracket {
+  type?: SGroupBracketType;
+  position?: SGroupBracketPosition;
+}
+
+export interface SGroupBrackets {
+  opening: SGroupBracket;
+  closing: SGroupBracket;
+}
+
+export interface SGroupAttributes {
+  [key: string]: unknown;
+  brackets?: SGroupBrackets;
+  bracketType?: SGroupBracketType;
+}
+
+export function hasSGroupBracketPositions(
+  struct: Pick<Struct, 'sgroups'>,
+): boolean {
+  return struct.sgroups.some(
+    (sgroup) =>
+      sgroup.data.brackets?.opening.position !== undefined ||
+      sgroup.data.brackets?.closing.position !== undefined,
+  );
+}
+
+export function withoutSGroupBracketPositions(
+  brackets: SGroupBrackets,
+): SGroupBrackets {
+  const { position: _openingPosition, ...opening } = brackets.opening;
+  const { position: _closingPosition, ...closing } = brackets.closing;
+  return { opening, closing };
+}
+
+export function withSGroupBracketType(
+  brackets: SGroupBrackets | undefined,
+  type: SGroupBracketType,
+): SGroupBrackets | undefined {
+  if (
+    (brackets?.opening.type ?? DEFAULT_SGROUP_BRACKET_TYPE) === type &&
+    (brackets?.closing.type ?? DEFAULT_SGROUP_BRACKET_TYPE) === type
+  ) {
+    return brackets;
+  }
+  return {
+    opening: { ...brackets?.opening, type },
+    closing: { ...brackets?.closing, type },
+  };
+}
 
 const isSuperatomClass = (value?: string | null): value is SUPERATOM_CLASS =>
   typeof value === 'string' && value in SUPERATOM_CLASS_TEXT;
@@ -64,8 +132,7 @@ export class SGroupBracketParams {
 
 type SGroupContext = (typeof SgContexts)[keyof typeof SgContexts];
 
-interface SGroupData {
-  [key: string]: unknown;
+interface SGroupData extends SGroupAttributes {
   mul: number;
   connectivity: string;
   name: string;
@@ -88,6 +155,8 @@ interface SGroupData {
   context?: SGroupContext;
   subtype?: string;
   class?: SUPERATOM_CLASS | string;
+  brackets?: SGroupBrackets;
+  bracketType: SGroupBracketType;
 }
 
 type AtomIdRemap = Record<number, number> | number[];
@@ -190,6 +259,13 @@ export class SGroup {
       units: '',
       query: '',
       queryOp: '',
+      brackets: undefined,
+      get bracketType() {
+        return this.brackets?.opening.type ?? DEFAULT_SGROUP_BRACKET_TYPE;
+      },
+      set bracketType(type: SGroupBracketType) {
+        this.brackets = withSGroupBracketType(this.brackets, type);
+      },
     };
   }
 
@@ -206,10 +282,11 @@ export class SGroup {
   }
 
   // TODO: should be group-specific
-  getAttrs(): Record<string, unknown> {
-    const attrs: Record<string, unknown> = {};
+  getAttrs(): SGroupAttributes {
+    const attrs: SGroupAttributes = {};
     Object.keys(this.data).forEach((attr) => {
-      attrs[attr] = this.data[attr];
+      attrs[attr] =
+        attr === 'brackets' ? cloneDeep(this.data.brackets) : this.data[attr];
     });
     return attrs;
   }
@@ -525,6 +602,7 @@ export class SGroup {
     Object.keys(sgroup.data).forEach((field) => {
       cp.data[field] = sgroup.data[field];
     });
+    cp.data.brackets = cloneDeep(sgroup.data.brackets);
 
     cp.atoms = sgroup.atoms.map((elem) => {
       const remappedAtomId = aidMap.get(elem);
@@ -592,9 +670,7 @@ export class SGroup {
     render?: Render,
   ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = this.isCOPGroup(sGroup)
-      ? new Vec2(1.2, 1.2)
-      : new Vec2(0.2, 0.4);
+    const PADDING_VECTOR = this.getBracketPadding(sGroup);
     const atoms = sGroup.atoms;
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
@@ -639,6 +715,10 @@ export class SGroup {
         : braketBox;
     if (braketBox) braketBox = braketBox.extend(PADDING_VECTOR, PADDING_VECTOR);
     sGroup.bracketBox = braketBox;
+  }
+
+  static getBracketPadding(sGroup: SGroup): Vec2 {
+    return this.isCOPGroup(sGroup) ? new Vec2(1.2, 1.2) : new Vec2(0.2, 0.4);
   }
 
   static getBracketParameters(
@@ -755,6 +835,10 @@ export class SGroup {
     });
 
     return atoms;
+  }
+
+  static getAtomSetKey(mol: StructAtomsAccess, sg: SGroup): string {
+    return [...new Set(this.getAtoms(mol, sg))].sort((a, b) => a - b).join(',');
   }
 
   static getBonds(mol: StructAtomsAndBondsAccess, sg?: SGroup): number[] {

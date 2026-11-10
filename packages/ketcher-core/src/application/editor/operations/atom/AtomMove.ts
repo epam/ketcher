@@ -19,11 +19,13 @@ import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { isAtomPartOfAttachmentGroup, Scale } from 'domain/helpers';
 import type { Vec2 } from 'domain/entities';
+import { SGroupBracketPositionChanges } from '../sgroup/sgroupBracketPositions';
 
 type Data = {
   aid: number | null;
   d: Vec2 | null;
   noinvalidate: boolean;
+  bracketPositions?: SGroupBracketPositionChanges;
 };
 
 export class AtomMove extends BaseOperation {
@@ -44,6 +46,14 @@ export class AtomMove extends BaseOperation {
     if (aid === null || !d) return;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
+    if (d.x !== 0 || d.y !== 0) {
+      this.data.bracketPositions ??= new SGroupBracketPositionChanges(
+        [...struct.sgroups.values()].filter(
+          (group) => group.allAtoms || group.atoms.includes(aid),
+        ),
+      );
+      this.data.bracketPositions.toggle(struct);
+    }
     atom.pp.add_(d);
     const reatom = restruct.atoms.get(aid);
     if (reatom) {

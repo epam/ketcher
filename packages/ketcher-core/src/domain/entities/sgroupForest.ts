@@ -122,7 +122,7 @@ export class SGroupForest {
     assert(!this.parent.has(id), 'sgid already present in the forest');
     assert(!this.children.has(id), 'sgid already present in the forest');
 
-    if (!parent || !children) {
+    if (parent === undefined || children === undefined) {
       // if these are not provided, deduce automatically
       const guess = this.getAtomSetRelations(id, new Pile(atoms));
       parent = guess.parent;
@@ -135,7 +135,7 @@ export class SGroupForest {
     });
     this.children.set(
       id,
-      children.filter((id) => this.parent.get(id)),
+      children.filter((id) => this.parent.has(id)),
     );
     this.parent.set(id, parent);
     this.children.get(parent)?.push(id);

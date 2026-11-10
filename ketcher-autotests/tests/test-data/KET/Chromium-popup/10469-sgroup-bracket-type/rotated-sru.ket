@@ -1,0 +1,27 @@
+{
+  "root": {
+    "nodes": [{ "$ref": "mol0" }]
+  },
+  "mol0": {
+    "type": "molecule",
+    "atoms": [
+      { "label": "C", "location": [0, 0, 0] },
+      { "label": "C", "location": [0.9659, 0.2588, 0] },
+      { "label": "C", "location": [1.2247, 1.2247, 0] },
+      { "label": "C", "location": [2.1907, 1.4835, 0] }
+    ],
+    "bonds": [
+      { "type": 1, "atoms": [0, 1] },
+      { "type": 1, "atoms": [1, 2] },
+      { "type": 1, "atoms": [2, 3] }
+    ],
+    "sgroups": [
+      {
+        "type": "SRU",
+        "subscript": "n",
+        "connectivity": "HT",
+        "atoms": [0, 1, 2, 3]
+      }
+    ]
+  }
+}

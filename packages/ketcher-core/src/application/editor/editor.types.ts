@@ -127,6 +127,7 @@ export interface Editor {
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
+  centerViewportAccordingToStruct: (struct?: Struct) => void;
   zoomAccordingContent: (struct: Struct) => void;
   errorHandler: ((message: string) => void) | null;
   event: {

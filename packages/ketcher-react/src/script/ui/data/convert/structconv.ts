@@ -105,6 +105,7 @@ export interface SGroupInput {
     units?: string;
     query?: string;
     queryOp?: string;
+    bracketType?: string;
   };
 }
 
@@ -133,6 +134,7 @@ export interface SGroupFormData {
   units?: string;
   query?: string;
   queryOp?: string;
+  bracketType?: string;
   selectedSruCount?: number;
 }
 
@@ -590,6 +592,9 @@ export function toSgroup(sgroup: SGroupFormData) {
     default:
       break;
   }
+
+  // Data S-groups have no brackets, so they never carry a bracket type.
+  if (type === 'DAT') delete attrs.bracketType;
 
   if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim();
 

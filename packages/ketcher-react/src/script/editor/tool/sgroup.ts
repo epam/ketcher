@@ -25,9 +25,12 @@ import {
   checkOverlapping,
   fromSeveralSgroupAddition,
   fromSgroupAction,
+  fromSgroupAttrs,
   fromSgroupDeletion,
   FunctionalGroup,
+  isSGroupBracketType,
   SGroup,
+  SUPERATOM_CLASS,
   KetcherLogger,
 } from 'ketcher-core';
 
@@ -789,6 +792,7 @@ class SGroupTool implements Tool {
         context: getContextBySelection(restruct, selection),
       };
     }
+    const initialAttrs = { ...attrs };
 
     const res = editor.event.sgroupEdit.dispatch({
       type: sg?.type,
@@ -809,6 +813,15 @@ class SGroupTool implements Tool {
             error: 'Partial S-group overlapping is not allowed.',
           });
         } else {
+          const inPlaceEdit = sg
+            ? getInPlaceSgroupEdit(struct, sg, initialAttrs, newSg)
+            : null;
+          if (inPlaceEdit && id !== null) {
+            editor.update(fromSgroupAttrs(restruct, id, inPlaceEdit));
+            editor.selection(selection);
+            return;
+          }
+
           if (
             !sg &&
             !isDataSGroup &&
@@ -847,6 +860,66 @@ class SGroupTool implements Tool {
         KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', error);
       });
   }
+}
+
+function getInPlaceSgroupEdit(
+  struct: Struct,
+  sgroup: SGroup,
+  initialAttrs: Record<string, unknown>,
+  result: SGroupDialogResult,
+): Record<string, unknown> | null {
+  const isNucleotideComponent =
+    sgroup.type === SGroup.TYPES.SUP &&
+    Object.values(SUPERATOM_CLASS).some((value) => value === sgroup.data.class);
+  const sameType =
+    (result.type === sgroup.type &&
+      !(result.type === SGroup.TYPES.SUP && isNucleotideComponent)) ||
+    (result.type === SGroup.TYPES.nucleotideComponent && isNucleotideComponent);
+  if (!sameType || !isSGroupBracketType(result.attrs.bracketType)) {
+    return null;
+  }
+
+  if (result.attrs.bracketType === sgroup.data.bracketType) {
+    const atoms = new Pile(SGroup.getAtoms(struct, sgroup));
+    const hasSameAtomPeer =
+      atoms.size > 0 &&
+      [...struct.sgroups.values()].some(
+        (peer) =>
+          peer !== sgroup &&
+          peer.type !== SGroup.TYPES.DAT &&
+          atoms.equals(new Pile(SGroup.getAtoms(struct, peer))),
+      );
+    if (!hasSameAtomPeer) {
+      return null;
+    }
+  }
+
+  const editableFields: Record<string, string[]> = {
+    MUL: ['mul'],
+    SRU: ['subscript', 'connectivity'],
+    COP: ['subtype', 'connectivity'],
+    SUP: ['name'],
+    queryComponent: [],
+    nucleotideComponent: ['class'],
+  };
+  const allowedFields = editableFields[result.type ?? ''];
+  if (!allowedFields) {
+    return null;
+  }
+
+  const changedFields = Object.entries(result.attrs).filter(
+    ([key, value]) =>
+      key !== 'selectedSruCount' && !isEqual(initialAttrs[key], value),
+  );
+  if (
+    changedFields.some(
+      ([key]) => key !== 'bracketType' && !allowedFields.includes(key),
+    )
+  ) {
+    return null;
+  }
+
+  return Object.fromEntries(changedFields);
 }
 
 function createQueryComponentSGroup(

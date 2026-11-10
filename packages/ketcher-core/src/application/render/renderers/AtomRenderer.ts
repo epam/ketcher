@@ -22,6 +22,7 @@ import {
   CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
+  SGROUP_OVERLAY_INSERTION_POINT,
 } from 'application/render/renderers/constants';
 import { isGenericAtom } from 'domain/helpers';
 
@@ -78,7 +79,7 @@ export class AtomRenderer extends BaseRenderer {
     const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
     const rootElement = this.canvas
-      .insert('g', ':first-child')
+      .insert('g', SGROUP_OVERLAY_INSERTION_POINT)
       .data([this])
       .attr('pointer-events', 'all')
       .attr('data-testid', 'atom')

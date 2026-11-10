@@ -38,7 +38,7 @@ import { Action } from './action';
 import type { ReStruct } from 'application/render';
 import type { MultitailArrow } from 'domain/entities/multitailArrow';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { SGroup } from 'domain/entities/sgroup';
+import { SGroup, withoutSGroupBracketPositions } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { fromSgroupAddition } from './sgroup';
@@ -241,6 +241,22 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
+    const attrs = sg.getAttrs();
+    if (attrs.brackets) {
+      const hasMoved = sg.atoms.some((aid) => {
+        const source = getOrThrow(pstruct.atoms, aid, `Atom ${aid} not found`);
+        const pastedId = getOrThrow(aidMap, aid, `Atom ${aid} was not pasted`);
+        const pasted = getOrThrow(
+          restruct.molecule.atoms,
+          pastedId,
+          `Pasted atom ${pastedId} not found`,
+        );
+        return source.pp.x !== pasted.pp.x || source.pp.y !== pasted.pp.y;
+      });
+      if (hasMoved) {
+        attrs.brackets = withoutSGroupBracketPositions(attrs.brackets);
+      }
+    }
     const attachmentPoints: ReadonlyArray<SGroupAttachmentPoint> = (() => {
       try {
         return sg.cloneAttachmentPoints(aidMap);
@@ -261,7 +277,7 @@ export function fromPaste(
       restruct,
       sg.type,
       sgAtoms,
-      sg.data,
+      attrs,
       newsgid,
       attachmentPoints,
       sg.pp ? sg.pp.add(offset) : null,

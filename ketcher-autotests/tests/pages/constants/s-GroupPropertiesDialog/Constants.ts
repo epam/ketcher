@@ -34,20 +34,19 @@ export enum SubtypeOption {
   Alternating = 'Alternating-option',
 }
 
+export enum BracketTypeOption {
+  Square = 'bracketType-input-square',
+  Round = 'bracketType-input-round',
+  Curly = 'bracketType-input-curly',
+}
+
 export enum ComponentOption {
   Sugar = 'Sugar-option',
   Base = 'Base-option',
   Phosphate = 'Phosphate-option',
 }
 
-export type SGroupPropertiesSettings =
-  | {
-      Type: TypeOption.Data;
-      Context: ContextOption;
-      FieldName: string;
-      FieldValue: string;
-      PropertyLabelType: PropertyLabelType;
-    }
+type BracketedSGroupPropertiesSettings = (
   | {
       Type: TypeOption.MultipleGroup;
       RepeatCount: string;
@@ -72,4 +71,15 @@ export type SGroupPropertiesSettings =
   | {
       Type: TypeOption.NucleotideComponent;
       Component: ComponentOption;
-    };
+    }
+) & { BracketType?: BracketTypeOption };
+
+export type SGroupPropertiesSettings =
+  | {
+      Type: TypeOption.Data;
+      Context: ContextOption;
+      FieldName: string;
+      FieldValue: string;
+      PropertyLabelType: PropertyLabelType;
+    }
+  | BracketedSGroupPropertiesSettings;

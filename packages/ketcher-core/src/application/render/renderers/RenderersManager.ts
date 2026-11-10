@@ -51,6 +51,12 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { SGroup } from 'domain/entities/sgroup';
+import {
+  getSGroupAtomSetKey,
+  getSGroupBracketLayout,
+  type SGroupBracketLayout,
+} from 'application/render/sgroupBracketLayout';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -72,6 +78,11 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   public sgroups = new Map<number, SGroupRenderer>();
+
+  private readonly sgroupRenderersByMonomer = new Map<
+    BaseMonomer,
+    Set<SGroupRenderer>
+  >();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -482,21 +493,69 @@ export class RenderersManager {
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
-    if (sgroupDrawingEntity.renderer) {
+    if (this.sgroups.has(sgroupDrawingEntity.id)) {
+      this.deleteSGroup(sgroupDrawingEntity);
+    } else if (sgroupDrawingEntity.renderer) {
       sgroupDrawingEntity.renderer.remove();
     }
 
     const sgroupRenderer = new SGroupRenderer(sgroupDrawingEntity);
-
     this.sgroups.set(sgroupDrawingEntity.id, sgroupRenderer);
-    sgroupRenderer.show();
-    sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
-    sgroupRenderer.moveLabelsToFront();
+
+    const monomer = sgroupDrawingEntity.monomer;
+    const renderers = this.sgroupRenderersByMonomer.get(monomer) ?? new Set();
+    renderers.add(sgroupRenderer);
+    this.sgroupRenderersByMonomer.set(monomer, renderers);
+    this.rerenderSGroupPeers(sgroupDrawingEntity);
   }
 
   public deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    const renderer = this.sgroups.get(sgroupDrawingEntity.id);
+    if (!renderer) {
+      sgroupDrawingEntity.renderer?.remove();
+      return;
+    }
+
     this.sgroups.delete(sgroupDrawingEntity.id);
-    sgroupDrawingEntity.renderer?.remove();
+    renderer.remove();
+
+    const monomer = sgroupDrawingEntity.monomer;
+    const renderers = this.sgroupRenderersByMonomer.get(monomer);
+    renderers?.delete(renderer);
+    if (renderers?.size === 0) {
+      this.sgroupRenderersByMonomer.delete(monomer);
+    }
+
+    if (renderer.wasContracted) {
+      const struct = monomer.monomerItem.struct;
+      const atomIds = new Set(
+        SGroup.getAtoms(struct, sgroupDrawingEntity.sgroup),
+      );
+      this.atoms.forEach((atomRenderer) => {
+        if (
+          atomRenderer.atom.monomer === monomer &&
+          atomIds.has(atomRenderer.atom.atomIdInMicroMode)
+        ) {
+          atomRenderer.setVisibility(true);
+        }
+      });
+      this.bonds.forEach((bondRenderer) => {
+        const { firstAtom, secondAtom } = bondRenderer.bond;
+        if (
+          firstAtom.monomer === monomer &&
+          secondAtom.monomer === monomer &&
+          atomIds.has(firstAtom.atomIdInMicroMode) &&
+          atomIds.has(secondAtom.atomIdInMicroMode)
+        ) {
+          bondRenderer.setVisibility(true);
+        }
+      });
+      renderers?.forEach((peer) =>
+        peer.applyExpandedStateToStructure(this.atoms, this.bonds),
+      );
+    }
+
+    this.rerenderSGroupPeers(sgroupDrawingEntity);
   }
 
   public rerenderSGroups() {
@@ -507,12 +566,64 @@ export class RenderersManager {
       bondRenderer.setVisibility(true);
     });
 
-    this.sgroups.forEach((sgroupRenderer) => {
-      sgroupRenderer.remove();
-      sgroupRenderer.show();
-      sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
-      sgroupRenderer.moveLabelsToFront();
+    this.sgroupRenderersByMonomer.forEach((renderers, monomer) => {
+      const layout = this.getSGroupLayout(monomer, renderers);
+      renderers.forEach((renderer) => this.renderSGroup(renderer, layout));
     });
+  }
+
+  private getSGroupLayout(
+    monomer: BaseMonomer,
+    renderers: Iterable<SGroupRenderer>,
+  ): SGroupBracketLayout {
+    const byGroup = new Map(
+      [...renderers].map((renderer) => [
+        renderer.sgroupDrawingEntity.sgroup,
+        renderer,
+      ]),
+    );
+    return getSGroupBracketLayout(
+      monomer.monomerItem.struct,
+      byGroup.keys(),
+      SGroupRenderer.hasVisibleBrackets,
+      (sgroup) => {
+        const renderer = byGroup.get(sgroup);
+        assert(
+          renderer,
+          'S-group renderer is required to measure its brackets',
+        );
+        return renderer.measureBracketExtents();
+      },
+    );
+  }
+
+  private rerenderSGroupPeers(sgroupDrawingEntity: SGroupDrawingEntity): void {
+    const { monomer, sgroup } = sgroupDrawingEntity;
+    const struct = monomer.monomerItem.struct;
+    const atomSetKey = getSGroupAtomSetKey(struct, sgroup);
+    const peers = [
+      ...(this.sgroupRenderersByMonomer.get(monomer) ?? []),
+    ].filter(
+      (renderer) =>
+        getSGroupAtomSetKey(struct, renderer.sgroupDrawingEntity.sgroup) ===
+        atomSetKey,
+    );
+    const layout = this.getSGroupLayout(monomer, peers);
+    peers.forEach((renderer) => this.renderSGroup(renderer, layout));
+  }
+
+  private renderSGroup(
+    renderer: SGroupRenderer,
+    layout: SGroupBracketLayout,
+  ): void {
+    renderer.remove();
+    renderer.setBracketLayout(layout);
+    renderer.show();
+    renderer.applyExpandedStateToStructure(this.atoms, this.bonds);
+    renderer.moveLabelsToFront();
+    if (renderer.sgroupDrawingEntity.hovered) {
+      renderer.redrawHover();
+    }
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {

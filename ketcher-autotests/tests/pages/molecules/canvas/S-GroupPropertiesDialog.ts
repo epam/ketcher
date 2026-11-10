@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import {
+  BracketTypeOption,
   ComponentOption,
   ContextOption,
   PropertyLabelType,
@@ -26,6 +27,10 @@ type SGroupPropertiesLocators = {
   repeatPatternDropdown: Locator;
   nameEditbox: Locator;
   componentDropdown: Locator;
+  bracketTypePicker: Locator;
+  squareBracketRadioButton: Locator;
+  roundBracketRadioButton: Locator;
+  curlyBracketRadioButton: Locator;
   applyButton: Locator;
   cancelButton: Locator;
 };
@@ -47,6 +52,10 @@ export const SGroupPropertiesDialog = (page: Page) => {
     repeatPatternDropdown: page.getByTestId('connectivity-input-span'),
     nameEditbox: page.getByTestId('name-input'),
     componentDropdown: page.getByTestId('class-input-span'),
+    bracketTypePicker: page.getByRole('group', { name: 'Bracket type' }),
+    squareBracketRadioButton: page.getByTestId(BracketTypeOption.Square),
+    roundBracketRadioButton: page.getByTestId(BracketTypeOption.Round),
+    curlyBracketRadioButton: page.getByTestId(BracketTypeOption.Curly),
     applyButton: page.getByTestId('OK'),
     cancelButton: page.getByTestId('Cancel'),
   };
@@ -161,6 +170,12 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await contextToSelect.waitFor({ state: 'hidden' });
     },
 
+    async selectBracketType(bracketType: BracketTypeOption) {
+      const bracketTypeRadioButton = page.getByTestId(bracketType);
+      await bracketTypeRadioButton.waitFor({ state: 'visible' });
+      await bracketTypeRadioButton.click();
+    },
+
     async setOptions(options: SGroupPropertiesSettings) {
       await this.selectType(options.Type);
       if (options.Type === TypeOption.Data) {
@@ -181,6 +196,9 @@ export const SGroupPropertiesDialog = (page: Page) => {
       } else if (options.Type === TypeOption.NucleotideComponent) {
         await this.selectType(options.Type);
         await this.selectComponent(options.Component);
+      }
+      if (options.Type !== TypeOption.Data && options.BracketType) {
+        await this.selectBracketType(options.BracketType);
       }
       await this.apply();
     },

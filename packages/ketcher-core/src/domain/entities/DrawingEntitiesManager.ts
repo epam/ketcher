@@ -971,6 +971,7 @@ export class DrawingEntitiesManager {
         fullMovementOffset || partOfMovementOffset,
       ),
       drawingEntity,
+      partOfMovementOffset.x !== 0 || partOfMovementOffset.y !== 0,
     );
     command.addOperation(movingCommand);
 
@@ -1928,6 +1929,7 @@ export class DrawingEntitiesManager {
         Coordinates.canvasToModel(newPosition),
       ),
       this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
+      monomer,
     );
     command.addOperation(operation);
   }
@@ -3105,6 +3107,7 @@ export class DrawingEntitiesManager {
     const operation = new MonomerMoveOperation(
       this.rearrangeChainModelChange.bind(this, monomer, position),
       this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
+      monomer,
     );
     command.addOperation(operation);
 

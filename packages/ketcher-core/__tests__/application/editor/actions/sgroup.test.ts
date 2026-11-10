@@ -15,9 +15,13 @@
  ***************************************************************************/
 
 import {
+  fromSeveralSgroupAddition,
+  fromSgroupAttrs,
   fromSgroupDeletion,
   setExpandMonomerSGroup,
 } from 'application/editor/actions/sgroup';
+import { fromMultipleMove } from 'application/editor/actions/fragment';
+import { Action } from 'application/editor/actions/action';
 import { Render } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
 import { ReStruct } from 'application/render/restruct';
@@ -25,6 +29,7 @@ import {
   Atom,
   Bond,
   SGroup,
+  SGroupBracketType,
   SGroupAttachmentPoint,
   Struct,
   Vec2,
@@ -34,7 +39,11 @@ import { prepareStructForKet } from 'domain/serializers/ket/toKet/prepare';
 import { Peptide } from 'domain/entities/Peptide';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { peptideMonomerItem } from '../../../mock-data';
-import { SGroupCreate } from 'application/editor/operations/sgroup';
+import {
+  SGroupAtomAdd,
+  SGroupAtomRemove,
+  SGroupCreate,
+} from 'application/editor/operations/sgroup';
 
 jest.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
   getAttachmentPointStereoBond: jest.fn(),
@@ -313,6 +322,359 @@ describe('setExpandMonomerSGroup', () => {
 
         expect(collapsedBondVector.x).toBeCloseTo(expandedBondVectors[index].x);
         expect(collapsedBondVector.y).toBeCloseTo(expandedBondVectors[index].y);
+      });
+    });
+
+    describe('S-group bracket style actions', () => {
+      const setup = () => {
+        const struct = new Struct();
+        const atoms = createZigZagChain(struct, 3);
+        struct.initNeighbors();
+        return { struct, atoms, restruct: createRestruct(struct) };
+      };
+
+      const geometry = (struct: Struct) => ({
+        atoms: [...struct.atoms.values()].map(({ label, pp }) => ({
+          label,
+          x: pp.x,
+          y: pp.y,
+        })),
+        bonds: [...struct.bonds.values()].map(({ begin, end, type }) => ({
+          begin,
+          end,
+          type,
+        })),
+      });
+
+      const onlyGroup = (struct: Struct) => {
+        const groups = [...struct.sgroups.values()];
+        expect(groups).toHaveLength(1);
+        return groups[0];
+      };
+
+      it('invalidates stored positions when a member moves and restores them on undo', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+          bracketType: SGroupBracketType.Round,
+        });
+        const group = onlyGroup(struct);
+        const brackets = {
+          opening: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: -1, y: -2 }, end: { x: -1, y: 2 } },
+          },
+          closing: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: 4, y: -2 }, end: { x: 4, y: 2 } },
+          },
+        };
+        group.data.brackets = brackets;
+
+        const undo = fromMultipleMove(
+          restruct,
+          { atoms: [atoms[0]] },
+          new Vec2(1, 0),
+        );
+        expect(group.data.brackets).toEqual({
+          opening: { type: SGroupBracketType.Round },
+          closing: { type: SGroupBracketType.Round },
+        });
+        const redo = undo.perform(restruct);
+        expect(group.data.brackets).toEqual(brackets);
+        redo.perform(restruct);
+        expect(group.data.brackets).toEqual({
+          opening: { type: SGroupBracketType.Round },
+          closing: { type: SGroupBracketType.Round },
+        });
+      });
+
+      it('restores positions when several group atoms move in one action', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+          bracketType: SGroupBracketType.Round,
+        });
+        const group = onlyGroup(struct);
+        const brackets = {
+          opening: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: -1, y: -2 }, end: { x: -1, y: 2 } },
+          },
+          closing: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: 4, y: -2 }, end: { x: 4, y: 2 } },
+          },
+        };
+        group.data.brackets = brackets;
+
+        const undo = fromMultipleMove(restruct, { atoms }, new Vec2(2, 1));
+        expect(group.data.brackets?.opening.position).toBeUndefined();
+        const redo = undo.perform(restruct);
+        expect(group.data.brackets).toEqual(brackets);
+        redo.perform(restruct);
+        expect(group.data.brackets?.closing.position).toBeUndefined();
+      });
+
+      it('keeps positions when an unrelated atom or a zero-distance move is used', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(
+          restruct,
+          SGroup.TYPES.MUL,
+          atoms.slice(0, 2),
+          { mul: 3 },
+        );
+        const group = onlyGroup(struct);
+        const brackets = {
+          opening: {
+            position: { start: { x: -1, y: -2 }, end: { x: -1, y: 2 } },
+          },
+          closing: {
+            position: { start: { x: 4, y: -2 }, end: { x: 4, y: 2 } },
+          },
+        };
+        group.data.brackets = brackets;
+
+        fromMultipleMove(restruct, { atoms: [atoms[0]] }, new Vec2(0, 0));
+        fromMultipleMove(restruct, { atoms: [atoms[2]] }, new Vec2(1, 0));
+
+        expect(group.data.brackets).toEqual(brackets);
+      });
+
+      it.each(['add', 'remove'])(
+        'invalidates positions after membership %s and restores them on undo',
+        (change) => {
+          const { struct, atoms, restruct } = setup();
+          fromSeveralSgroupAddition(
+            restruct,
+            SGroup.TYPES.MUL,
+            atoms.slice(0, 2),
+            { mul: 3, bracketType: SGroupBracketType.Curly },
+          );
+          const group = onlyGroup(struct);
+          const brackets = {
+            opening: {
+              type: SGroupBracketType.Curly,
+              position: { start: { x: 1, y: 1 }, end: { x: 1, y: 1 } },
+            },
+            closing: {
+              type: SGroupBracketType.Curly,
+              position: { start: { x: 3, y: 0 }, end: { x: 3, y: 1 } },
+            },
+          };
+          group.data.brackets = brackets;
+          const operation =
+            change === 'add'
+              ? new SGroupAtomAdd(group.id, atoms[2])
+              : new SGroupAtomRemove(group.id, atoms[1]);
+
+          const undo = new Action([operation]).perform(restruct);
+          expect(group.data.brackets).toEqual({
+            opening: { type: SGroupBracketType.Curly },
+            closing: { type: SGroupBracketType.Curly },
+          });
+          const redo = undo.perform(restruct);
+          expect(group.data.brackets).toEqual(brackets);
+          redo.perform(restruct);
+          expect(group.data.brackets).toEqual({
+            opening: { type: SGroupBracketType.Curly },
+            closing: { type: SGroupBracketType.Curly },
+          });
+        },
+      );
+
+      it('restores stored positions when an entire S-group is deleted and undone', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+          bracketType: SGroupBracketType.Round,
+        });
+        const group = onlyGroup(struct);
+        const brackets = {
+          opening: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: -1, y: -2 }, end: { x: -1, y: 2 } },
+          },
+          closing: {
+            type: SGroupBracketType.Round,
+            position: { start: { x: 4, y: -2 }, end: { x: 4, y: 2 } },
+          },
+        };
+        group.data.brackets = brackets;
+
+        const undo = fromSgroupDeletion(restruct, group.id);
+        expect(struct.sgroups.size).toBe(0);
+        const redo = undo.perform(restruct);
+        expect(onlyGroup(struct).data.brackets).toEqual(brackets);
+        const secondUndo = redo.perform(restruct);
+        expect(struct.sgroups.size).toBe(0);
+        secondUndo.perform(restruct);
+        expect(onlyGroup(struct).data.brackets).toEqual(brackets);
+      });
+
+      it('creates a styled group and restores it through undo and redo', () => {
+        const { struct, atoms, restruct } = setup();
+        const originalGeometry = geometry(struct);
+        const undo = fromSeveralSgroupAddition(
+          restruct,
+          SGroup.TYPES.MUL,
+          atoms,
+          {
+            mul: 3,
+            bracketType: SGroupBracketType.Curly,
+          },
+        );
+
+        expect(onlyGroup(struct)).toEqual(
+          expect.objectContaining({
+            atoms,
+            data: expect.objectContaining({
+              mul: 3,
+              bracketType: SGroupBracketType.Curly,
+            }),
+          }),
+        );
+        const redo = undo.perform(restruct);
+        expect(struct.sgroups.size).toBe(0);
+        redo.perform(restruct);
+
+        expect(onlyGroup(struct).getAttrs()).toEqual(
+          expect.objectContaining({
+            mul: 3,
+            bracketType: SGroupBracketType.Curly,
+          }),
+        );
+        expect(onlyGroup(struct).atoms).toEqual(atoms);
+        expect(geometry(struct)).toEqual(originalGeometry);
+      });
+
+      it('undoes and redoes style edits without changing membership or other attributes', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+          bracketType: SGroupBracketType.Round,
+        });
+        const originalGeometry = geometry(struct);
+        const group = onlyGroup(struct);
+        const originalAttributes = group.getAttrs();
+
+        const undo = fromSgroupAttrs(restruct, group.id, {
+          bracketType: SGroupBracketType.Curly,
+        });
+        expect(group.getAttrs()).toEqual({
+          ...originalAttributes,
+          bracketType: SGroupBracketType.Curly,
+          brackets: {
+            opening: { type: SGroupBracketType.Curly },
+            closing: { type: SGroupBracketType.Curly },
+          },
+        });
+        const redo = undo.perform(restruct);
+        expect(group.getAttrs()).toEqual(originalAttributes);
+        redo.perform(restruct);
+
+        expect(group.getAttrs()).toEqual({
+          ...originalAttributes,
+          bracketType: SGroupBracketType.Curly,
+          brackets: {
+            opening: { type: SGroupBracketType.Curly },
+            closing: { type: SGroupBracketType.Curly },
+          },
+        });
+        expect(group.atoms).toEqual(atoms);
+        expect(geometry(struct)).toEqual(originalGeometry);
+      });
+
+      it('restores an absent bracket pair after undoing a style edit', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+        });
+        const group = onlyGroup(struct);
+        expect(group.data.brackets).toBeUndefined();
+
+        const undo = fromSgroupAttrs(restruct, group.id, {
+          bracketType: SGroupBracketType.Round,
+        });
+        expect(group.data.brackets).toEqual({
+          opening: { type: SGroupBracketType.Round },
+          closing: { type: SGroupBracketType.Round },
+        });
+
+        const redo = undo.perform(restruct);
+        expect(group.data.brackets).toBeUndefined();
+        redo.perform(restruct);
+        expect(group.data.brackets).toEqual({
+          opening: { type: SGroupBracketType.Round },
+          closing: { type: SGroupBracketType.Round },
+        });
+      });
+
+      it('restores omitted square types and positions after undoing a style edit', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+        });
+        const group = onlyGroup(struct);
+        const brackets = {
+          opening: {
+            position: { start: { x: -1, y: -2 }, end: { x: -1, y: 2 } },
+          },
+          closing: {
+            type: SGroupBracketType.Square,
+            position: { start: { x: 4, y: -2 }, end: { x: 4, y: 2 } },
+          },
+        };
+        group.data.brackets = brackets;
+
+        const undo = fromSgroupAttrs(restruct, group.id, {
+          bracketType: SGroupBracketType.Curly,
+        });
+        const changed = {
+          opening: { ...brackets.opening, type: SGroupBracketType.Curly },
+          closing: { ...brackets.closing, type: SGroupBracketType.Curly },
+        };
+        expect(group.data.brackets).toEqual(changed);
+        const redo = undo.perform(restruct);
+        expect(group.data.brackets).toEqual(brackets);
+        redo.perform(restruct);
+        expect(group.data.brackets).toEqual(changed);
+      });
+
+      it('restores styles and unrelated fields when a group replacement is undone and redone', () => {
+        const { struct, atoms, restruct } = setup();
+        fromSeveralSgroupAddition(restruct, SGroup.TYPES.MUL, atoms, {
+          mul: 3,
+          bracketType: SGroupBracketType.Round,
+        });
+        const originalGeometry = geometry(struct);
+        const oldGroup = onlyGroup(struct);
+        const oldAttributes = oldGroup.getAttrs();
+        const undo = fromSeveralSgroupAddition(
+          restruct,
+          SGroup.TYPES.MUL,
+          atoms,
+          { ...oldAttributes, mul: 4, bracketType: SGroupBracketType.Curly },
+        ).mergeWith(fromSgroupDeletion(restruct, oldGroup.id));
+
+        const replacementAttributes = onlyGroup(struct).getAttrs();
+        expect(replacementAttributes).toEqual({
+          ...oldAttributes,
+          mul: 4,
+          bracketType: SGroupBracketType.Curly,
+          brackets: {
+            opening: { type: SGroupBracketType.Curly },
+            closing: { type: SGroupBracketType.Curly },
+          },
+        });
+        const redo = undo.perform(restruct);
+        expect(onlyGroup(struct).getAttrs()).toEqual(oldAttributes);
+        expect(onlyGroup(struct).atoms).toEqual(atoms);
+        redo.perform(restruct);
+
+        expect(onlyGroup(struct).getAttrs()).toEqual(replacementAttributes);
+        expect(onlyGroup(struct).atoms).toEqual(atoms);
+        expect(geometry(struct)).toEqual(originalGeometry);
       });
     });
 

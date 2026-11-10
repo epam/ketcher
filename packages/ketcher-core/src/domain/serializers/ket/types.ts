@@ -23,6 +23,10 @@ import type { RxnArrowAttributes } from 'domain/entities/rxnArrow';
 import type { StructProperty } from 'domain/entities/struct';
 import type { SimpleObjectAttributes } from 'domain/entities/simpleObject';
 import type { Point, Vec2 } from 'domain/entities/vec2';
+import type {
+  SGroupBracketPosition,
+  SGroupBracketType,
+} from 'domain/entities/sgroup';
 
 export interface KetHeader {
   moleculeName?: string;
@@ -80,6 +84,18 @@ export interface KetSGroupAttachmentPointNode {
   attachmentId?: string;
 }
 
+export type KetSGroupBracketType = 'square' | 'parenthetic' | 'curly';
+
+export interface KetSGroupBracket {
+  type?: KetSGroupBracketType;
+  position?: SGroupBracketPosition;
+}
+
+export interface KetSGroupBrackets {
+  opening: KetSGroupBracket;
+  closing: KetSGroupBracket;
+}
+
 export interface KetSGroupNode {
   type?: string;
   atoms?: number[];
@@ -98,6 +114,8 @@ export interface KetSGroupNode {
   fieldName?: string;
   fieldData?: string;
   bonds?: number[];
+  brackets?: KetSGroupBrackets;
+  bracketType?: SGroupBracketType;
 }
 
 export interface KetMoleculeNode {

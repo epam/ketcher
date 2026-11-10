@@ -4,10 +4,25 @@ import type { D3SvgElementSelection } from 'application/render/types';
 import {
   CANVAS_BACKGROUND_COLOR,
   SELECTION_COLOR,
+  SGROUP_OVERLAY_CLASS,
+  SGROUP_OVERLAY_INSERTION_POINT,
 } from 'application/render/renderers/constants';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
+import {
+  DEFAULT_SGROUP_BRACKET_TYPE,
+  isSGroupBracketType,
+} from 'domain/entities/sgroup';
+import { getSGroupBracketPath } from 'application/render/sgroupBracketPath';
+import type { SGroupBracketLayout } from 'application/render/sgroupBracketLayout';
+import { getSGroupBracketLabels } from 'application/render/sgroupBracketLabels';
+import {
+  getPositionedSGroupBrackets,
+  getSGroupBracketPositionState,
+  includePositionedSGroupBrackets,
+  type PositionedSGroupBrackets,
+} from 'application/render/sgroupBracketPositions';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -16,8 +31,6 @@ import { editorEvents } from 'application/editor/editorEvents';
 import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
-const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
@@ -50,6 +63,9 @@ export class SGroupRenderer extends BaseRenderer {
   private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
   private atomRenderers = new Map<number, AtomRenderer>();
   private bondRenderers = new Map<number, BondRenderer>();
+  private bracketLayout?: SGroupBracketLayout;
+  private displayBracketBox?: Box2Abs;
+  public wasContracted = false;
 
   constructor(public sgroupDrawingEntity: SGroupDrawingEntity) {
     super(sgroupDrawingEntity);
@@ -62,6 +78,68 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  public static hasVisibleBrackets(sgroup: SGroup): boolean {
+    return (
+      sgroup.data.fieldName !== 'MRV_IMPLICIT_H' &&
+      sgroup.type !== SGroup.TYPES.DAT &&
+      sgroup.isExpanded() &&
+      !sgroup.isSuperatomWithoutLabel &&
+      getSGroupBracketPositionState(sgroup) !== 'suppressed'
+    );
+  }
+
+  public setBracketLayout(layout: SGroupBracketLayout): void {
+    this.bracketLayout = layout;
+  }
+
+  public measureBracketExtents(): Vec2 {
+    const bracketBox = new Box2Abs(0, 0, 2, 2);
+    const previousRoot = this.rootElement;
+    const previousLabels = this.labelElements;
+    this.rootElement = this.canvas.append('g');
+    this.labelElements = [];
+
+    try {
+      this.drawBrackets(
+        bracketBox,
+        getSGroupBracketLabels(this.sgroup),
+        new Vec2(1, 0),
+      );
+      const rootNode = this.rootElement.node();
+      if (!rootNode) {
+        throw new Error('Cannot measure S-group brackets without an SVG root');
+      }
+      const bounds = [rootNode.getBBox()];
+      this.labelElements.forEach((label) => {
+        const node = label.node();
+        if (!(node instanceof SVGGraphicsElement)) {
+          throw new Error(
+            'Cannot measure S-group label without an SVG element',
+          );
+        }
+        bounds.push(node.getBBox());
+      });
+      const scale = this.editorSettings.microModeScale;
+      const rightExtents = bounds.map(
+        (box) => (box.x + box.width) / scale - bracketBox.p1.x,
+      );
+      const verticalExtents = bounds.flatMap((box) => {
+        const top = bracketBox.p0.y - box.y / scale;
+        const bottom = (box.y + box.height) / scale - bracketBox.p1.y;
+        return [top, bottom];
+      });
+      return new Vec2(
+        Math.max(0, ...rightExtents),
+        Math.max(0, ...verticalExtents),
+      );
+    } finally {
+      this.rootElement?.remove();
+      this.labelElements.forEach((label) => label.remove());
+      this.rootElement = previousRoot;
+      this.labelElements = previousLabels;
+    }
   }
 
   public get labelTooltipText(): string | null {
@@ -83,13 +161,16 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   public show(): void {
+    this.displayBracketBox = undefined;
+    this.wasContracted = this.sgroup.isContracted();
     if (this.sgroup.data.fieldName === 'MRV_IMPLICIT_H') {
       return;
     }
 
     this.rootElement = this.canvas
-      .insert('g', '.monomer')
+      .insert('g', SGROUP_OVERLAY_INSERTION_POINT)
       .data([this])
+      .attr('class', SGROUP_OVERLAY_CLASS)
       .attr('data-testid', 's-group')
       .attr('data-sgroup-type', this.sgroup.type)
       .attr('data-sgroup-expanded', String(this.sgroup.isExpanded()))
@@ -108,15 +189,20 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private drawBracketSGroup(): void {
-    const bracketBox = this.calculateBracketBox();
+    const originalBracketBox = this.calculateBracketBox();
 
-    if (!bracketBox || this.sgroup.isSuperatomWithoutLabel) {
+    if (!originalBracketBox || this.sgroup.isSuperatomWithoutLabel) {
       return;
     }
 
-    this.sgroup.bracketBox = bracketBox;
+    this.sgroup.bracketBox = originalBracketBox;
     this.sgroup.bracketDirection = new Vec2(1, 0);
-    this.sgroup.areas = [bracketBox];
+    this.sgroup.areas = [originalBracketBox];
+    const offset = this.bracketLayout?.get(this.sgroup);
+    const bracketBox = offset
+      ? originalBracketBox.extend(offset, offset)
+      : originalBracketBox;
+    this.displayBracketBox = bracketBox;
 
     if (this.sgroup.isContracted()) {
       this.drawContractedSGroupLabel();
@@ -124,35 +210,30 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
-    const options: DrawBracketsOptions = {};
-    switch (this.sgroup.type) {
-      case SGroup.TYPES.MUL:
-        options.lowerIndexText = String(this.sgroup.data.mul);
-        break;
-      case SGroup.TYPES.SRU: {
-        const connectivity =
-          this.sgroup.data.connectivity === 'ht'
-            ? ''
-            : this.sgroup.data.connectivity || 'eu';
-        options.lowerIndexText = this.sgroup.data.subscript || 'n';
-        options.upperIndexText = connectivity;
-        break;
-      }
-      case SGroup.TYPES.COP:
-        options.upperIndexText = this.sgroup.data.connectivity || 'eu';
-        if (this.sgroup.data.subtype) {
-          options.lowerIndexText = this.sgroup.data.subtype;
-        }
-        break;
-      case SGroup.TYPES.SUP:
-        options.lowerIndexText = this.sgroup.superatomLabel;
-        options.indexAttribute = { 'font-style': 'italic' };
-        break;
-      default:
-        break;
+    const positionState = getSGroupBracketPositionState(this.sgroup);
+    if (positionState === 'suppressed') {
+      return;
     }
-
-    this.drawBrackets(bracketBox, options);
+    const positionedBrackets =
+      positionState === 'positioned'
+        ? getPositionedSGroupBrackets(
+            this.sgroup,
+            this.struct,
+            Math.min(0.25, bracketBox.sz().x * 0.3),
+          )
+        : undefined;
+    if (positionedBrackets) {
+      this.displayBracketBox = includePositionedSGroupBrackets(
+        bracketBox,
+        positionedBrackets,
+      );
+    }
+    this.drawBrackets(
+      bracketBox,
+      getSGroupBracketLabels(this.sgroup),
+      this.sgroup.bracketDirection,
+      positionedBrackets,
+    );
   }
 
   private drawContractedSGroupLabel(): void {
@@ -273,9 +354,7 @@ export class SGroupRenderer extends BaseRenderer {
       return null;
     }
 
-    const paddingVector = SGroup.isCOPGroup(this.sgroup)
-      ? COP_PADDING_VECTOR
-      : DEFAULT_PADDING_VECTOR;
+    const paddingVector = SGroup.getBracketPadding(this.sgroup);
 
     return bracketBox.extend(paddingVector, paddingVector);
   }
@@ -283,17 +362,28 @@ export class SGroupRenderer extends BaseRenderer {
   private drawBrackets(
     bracketBox: Box2Abs,
     { lowerIndexText, upperIndexText, indexAttribute }: DrawBracketsOptions,
+    direction = this.sgroup.bracketDirection,
+    positionedBrackets?: PositionedSGroupBrackets,
   ): void {
-    const brackets = this.getBracketParameters(bracketBox);
-    const rightBracket = brackets.reduce(
-      (currentRightBracket, bracket) =>
-        this.isMoreRightwardBracket(bracket, currentRightBracket)
-          ? bracket
-          : currentRightBracket,
-      brackets[0],
-    );
+    const brackets = positionedBrackets
+      ? [positionedBrackets.opening, positionedBrackets.closing]
+      : this.getBracketParameters(bracketBox, direction);
+    const rightBracket =
+      positionedBrackets?.closing ??
+      brackets.reduce(
+        (currentRightBracket, bracket) =>
+          this.isMoreRightwardBracket(bracket, currentRightBracket)
+            ? bracket
+            : currentRightBracket,
+        brackets[0],
+      );
 
-    brackets.forEach((bracket) => this.appendBracket(bracket));
+    brackets.forEach((bracket) =>
+      this.appendBracket(
+        bracket,
+        bracket === rightBracket ? 'closing' : 'opening',
+      ),
+    );
 
     if (lowerIndexText) {
       this.appendIndex(lowerIndexText, rightBracket, true, indexAttribute);
@@ -315,8 +405,10 @@ export class SGroupRenderer extends BaseRenderer {
     );
   }
 
-  private getBracketParameters(bracketBox: Box2Abs): BracketParams[] {
-    const angleDirection = this.sgroup.bracketDirection;
+  private getBracketParameters(
+    bracketBox: Box2Abs,
+    angleDirection: Vec2,
+  ): BracketParams[] {
     const bracketDirection = angleDirection.rotateSC(1, 0);
     const bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3);
     const leftCenter = Vec2.lc2(
@@ -351,32 +443,33 @@ export class SGroupRenderer extends BaseRenderer {
     ];
   }
 
-  private appendBracket({
-    center,
-    direction,
-    angleDirection,
-    width,
-    height,
-  }: BracketParams): void {
+  private appendBracket(
+    { center, direction, angleDirection, width, height }: BracketParams,
+    side: 'opening' | 'closing',
+  ): void {
     const scaledCenter = Scale.modelToCanvas(center, this.editorSettings);
     const scaledDirection = Scale.modelToCanvas(direction, this.editorSettings);
     const scaledAngleDirection = Scale.modelToCanvas(
       angleDirection,
       this.editorSettings,
     );
-    const bracketPoint0 = scaledCenter.addScaled(
-      scaledDirection,
-      -0.5 * height,
-    );
-    const bracketPoint1 = scaledCenter.addScaled(scaledDirection, 0.5 * height);
-    const bracketArc0 = bracketPoint0.addScaled(scaledAngleDirection, -width);
-    const bracketArc1 = bracketPoint1.addScaled(scaledAngleDirection, -width);
+    const bracketType = isSGroupBracketType(this.sgroup.data.bracketType)
+      ? this.sgroup.data.bracketType
+      : DEFAULT_SGROUP_BRACKET_TYPE;
 
     this.rootElement
       ?.append('path')
+      .attr('data-testid', 's-group-bracket')
+      .attr('data-bracket-side', side)
       .attr(
         'd',
-        `M${bracketArc0.x},${bracketArc0.y}L${bracketPoint0.x},${bracketPoint0.y}L${bracketPoint1.x},${bracketPoint1.y}L${bracketArc1.x},${bracketArc1.y}`,
+        getSGroupBracketPath(bracketType, {
+          bracketDirection: scaledDirection,
+          bracketAngleDirection: scaledAngleDirection,
+          center: scaledCenter,
+          width,
+          height,
+        }),
       )
       .attr('fill', 'none')
       .attr('stroke', BRACKET_STROKE)
@@ -509,6 +602,8 @@ export class SGroupRenderer extends BaseRenderer {
       labelElement.remove();
     });
     this.labelElements = [];
+    this.hoverElement = undefined;
+    this.hoverAreaElement = undefined;
   }
 
   public setVisibility(isVisible: boolean): void {
@@ -527,7 +622,7 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private getScaledBracketBox(): Box2Abs | undefined {
-    return this.sgroup.bracketBox?.transform(
+    return (this.displayBracketBox ?? this.sgroup.bracketBox)?.transform(
       Scale.modelToCanvas,
       this.editorSettings,
     );

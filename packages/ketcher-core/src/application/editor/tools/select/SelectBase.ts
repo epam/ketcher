@@ -42,6 +42,7 @@ import {
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
+import { SGroupBracketPositionHistoryOperation } from 'application/editor/operations/sgroup/sgroupBracketPositionHistory';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -84,6 +85,9 @@ abstract class SelectBase implements BaseTool {
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
+  private firstAtomPositionBeforeMove: Vec2 | undefined;
+  private bracketPositionHistory?: SGroupBracketPositionHistoryOperation;
+  private pendingGestureFrame?: { id: number; update: () => void };
   public mode:
     'moving' | 'selecting' | 'standby' | 'rotating' | 'rotating-center' =
     'standby';
@@ -239,6 +243,9 @@ abstract class SelectBase implements BaseTool {
         entity.id,
         new Vec2(entity.position),
       ]),
+    );
+    this.bracketPositionHistory = new SGroupBracketPositionHistoryOperation(
+      this.editor.drawingEntitiesManager.selectedEntitiesArr,
     );
 
     const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
@@ -1018,6 +1025,10 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
+    if (this.mode === 'moving' || this.mode === 'rotating') {
+      this.flushPendingGestureFrame();
+    }
+
     if (this.mode === 'selecting') {
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
@@ -1036,6 +1047,20 @@ abstract class SelectBase implements BaseTool {
       this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
       this.updateRotationView();
       return;
+    }
+
+    if (!this.bracketPositionHistory) {
+      const selectedEntities =
+        this.editor.drawingEntitiesManager.selectedEntitiesArr;
+      this.bracketPositionHistory = new SGroupBracketPositionHistoryOperation(
+        selectedEntities,
+      );
+      const firstAtom = selectedEntities.find(
+        (entity): entity is Atom => entity instanceof Atom,
+      );
+      this.firstAtomPositionBeforeMove = firstAtom
+        ? new Vec2(firstAtom.position)
+        : undefined;
     }
 
     if (!this.firstMonomerPositionBeforeMove) {
@@ -1138,7 +1163,7 @@ abstract class SelectBase implements BaseTool {
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
 
-    requestAnimationFrame(() => {
+    this.scheduleGestureFrame(() => {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
       this.editor.transientDrawingView.update();
@@ -1147,7 +1172,6 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
-    const history = EditorHistory.getInstance(this.editor);
 
     try {
       if (this.mode === 'rotating') {
@@ -1166,49 +1190,9 @@ abstract class SelectBase implements BaseTool {
         (renderer?.drawingEntity?.selected ||
           this.editor.drawingEntitiesManager.selectedEntitiesArr.length > 0)
       ) {
-        const selectedMonomers =
-          this.editor.drawingEntitiesManager.selectedMonomers;
-        const hasMonomerSelection = selectedMonomers.length > 0;
-        if (hasMonomerSelection) {
-          const firstMonomerCurrentPosition = selectedMonomers[0]?.position;
-          const actualMovementDelta =
-            firstMonomerCurrentPosition && this.firstMonomerPositionBeforeMove
-              ? Vec2.diff(
-                  firstMonomerCurrentPosition,
-                  this.firstMonomerPositionBeforeMove,
-                )
-              : undefined;
-          const epsilon = 0.001; // small epsilon at which snapping is not triggered
-          if (!actualMovementDelta || actualMovementDelta.length() < epsilon) {
-            return;
-          }
-
-          const modelChanges =
-            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-              new Vec2(0, 0),
-              actualMovementDelta,
-            );
-          history.update(modelChanges);
-        } else {
-          const canvasDelta = Vec2.diff(
-            this.mousePositionAfterMove,
-            this.mousePositionBeforeMove,
-          );
-          if (canvasDelta.length() === 0) {
-            return;
-          }
-
-          const fullMovementOffset = Coordinates.canvasToModel(canvasDelta);
-          const modelChanges =
-            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-              new Vec2(0, 0),
-              fullMovementOffset,
-            );
-          history.update(modelChanges);
-        }
+        this.finishMovement();
       }
     } finally {
-      this.firstMonomerPositionBeforeMove = undefined;
       this.stopMovement();
       this.setSelectedEntities();
     }
@@ -1350,7 +1334,7 @@ abstract class SelectBase implements BaseTool {
         true,
       );
 
-    requestAnimationFrame(() => {
+    this.scheduleGestureFrame(() => {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
 
@@ -1372,12 +1356,104 @@ abstract class SelectBase implements BaseTool {
     });
   }
 
+  private scheduleGestureFrame(update: () => void) {
+    const pending = { id: 0, update };
+    this.pendingGestureFrame = pending;
+    pending.id = requestAnimationFrame(() => {
+      if (this.pendingGestureFrame === pending) {
+        this.pendingGestureFrame = undefined;
+        pending.update();
+      }
+    });
+  }
+
+  private flushPendingGestureFrame() {
+    const pending = this.pendingGestureFrame;
+    if (!pending) {
+      return;
+    }
+    this.pendingGestureFrame = undefined;
+    cancelAnimationFrame(pending.id);
+    pending.update();
+  }
+
+  private finishBracketPositionHistory() {
+    const bracketPositionHistory = this.bracketPositionHistory;
+    this.bracketPositionHistory = undefined;
+    if (!bracketPositionHistory) {
+      return;
+    }
+
+    bracketPositionHistory.finish();
+    const restoration = bracketPositionHistory.getUnchangedRestoration();
+    if (restoration) {
+      const command = new Command();
+      command.addOperation(restoration);
+      this.editor.renderersContainer.update(command);
+    }
+
+    return bracketPositionHistory.hasChanges
+      ? bracketPositionHistory
+      : undefined;
+  }
+
+  private finishMovement() {
+    this.flushPendingGestureFrame();
+    const bracketPositionHistory = this.finishBracketPositionHistory();
+    const selectedMonomers =
+      this.editor.drawingEntitiesManager.selectedMonomers;
+    let fullMovementOffset: Vec2 | undefined;
+    if (selectedMonomers.length > 0) {
+      const currentPosition = selectedMonomers[0].position;
+      fullMovementOffset = this.firstMonomerPositionBeforeMove
+        ? Vec2.diff(currentPosition, this.firstMonomerPositionBeforeMove)
+        : undefined;
+      const epsilon = 0.001;
+      if (
+        !fullMovementOffset ||
+        (fullMovementOffset.length() < epsilon && !bracketPositionHistory)
+      ) {
+        return;
+      }
+    } else {
+      const firstAtom =
+        this.editor.drawingEntitiesManager.selectedEntitiesArr.find(
+          (entity): entity is Atom => entity instanceof Atom,
+        );
+      const canvasDelta = Vec2.diff(
+        this.mousePositionAfterMove,
+        this.mousePositionBeforeMove,
+      );
+      fullMovementOffset =
+        firstAtom && this.firstAtomPositionBeforeMove
+          ? Vec2.diff(firstAtom.position, this.firstAtomPositionBeforeMove)
+          : Coordinates.canvasToModel(canvasDelta);
+      if (fullMovementOffset.length() === 0 && !bracketPositionHistory) {
+        return;
+      }
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+        new Vec2(0, 0),
+        fullMovementOffset,
+      );
+    if (bracketPositionHistory) {
+      modelChanges.addOperation(bracketPositionHistory);
+    }
+    EditorHistory.getInstance(this.editor).update(modelChanges);
+  }
+
   protected finishRotation() {
+    this.flushPendingGestureFrame();
     const history = EditorHistory.getInstance(this.editor);
+    const bracketPositionHistory = this.finishBracketPositionHistory();
 
     if (
       !this.rotationCenter ||
-      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
+      (Math.abs(this.currentRotationAngle) <
+        SelectBase.ROTATION_ANGLE_EPSILON &&
+        !bracketPositionHistory)
     ) {
       this.mode = 'standby';
       this.rotationCenter = null;
@@ -1392,6 +1468,9 @@ abstract class SelectBase implements BaseTool {
       this.editor.drawingEntitiesManager.createRotationHistoryCommand(
         this.rotationStartPositions,
       );
+    if (bracketPositionHistory) {
+      modelChanges.addOperation(bracketPositionHistory);
+    }
 
     history.update(modelChanges);
 
@@ -1404,6 +1483,9 @@ abstract class SelectBase implements BaseTool {
   }
 
   destroy() {
+    if (this.mode === 'moving' || this.mode === 'rotating') {
+      this.stopMovement();
+    }
     this.canvasResizeObserver?.disconnect();
     this.rotationHandleUnsubscribe?.();
     this.rotationCenterUnsubscribe?.();
@@ -1419,6 +1501,15 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
+    if (this.bracketPositionHistory) {
+      if (this.mode === 'moving') {
+        this.finishMovement();
+      } else if (this.mode === 'rotating') {
+        this.finishRotation();
+      }
+    }
+    this.firstMonomerPositionBeforeMove = undefined;
+    this.firstAtomPositionBeforeMove = undefined;
     this.mode = 'standby';
     this.editor.transientDrawingView.clear();
   }

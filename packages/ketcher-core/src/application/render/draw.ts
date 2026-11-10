@@ -25,6 +25,8 @@ import svgPath from 'svgpath';
 import util from './util';
 import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { toFixed } from 'utilities';
+import { SGroupBracketType } from 'domain/entities/sgroup';
+import { getSGroupBracketPath } from './sgroupBracketPath';
 import { PathBuilder } from './pathBuilder';
 
 export const ARROW_HEAD_LENGHT = 0.25; // 10
@@ -1540,38 +1542,21 @@ function bracket(
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
+  bracketType: SGroupBracketType = SGroupBracketType.Square,
 ) {
-  bracketWidth = bracketWidth || 0.25;
-  bracketHeight = bracketHeight || 1;
-  const halfBracketHeight = 0.5;
-  const bracketPoint0 = bondCenter.addScaled(
-    bracketDirection,
-    -halfBracketHeight * bracketHeight,
-  );
-  const bracketPoint1 = bondCenter.addScaled(
-    bracketDirection,
-    halfBracketHeight * bracketHeight,
-  );
-  const bracketArc0 = bracketPoint0.addScaled(
-    bracketAngleDirection,
-    -bracketWidth,
-  );
-  const bracketArc1 = bracketPoint1.addScaled(
-    bracketAngleDirection,
-    -bracketWidth,
-  );
-
   return paper
     .path(
-      'M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-      toFixed(bracketArc0.x),
-      toFixed(bracketArc0.y),
-      toFixed(bracketPoint0.x),
-      toFixed(bracketPoint0.y),
-      toFixed(bracketPoint1.x),
-      toFixed(bracketPoint1.y),
-      toFixed(bracketArc1.x),
-      toFixed(bracketArc1.y),
+      getSGroupBracketPath(
+        bracketType,
+        {
+          bracketAngleDirection,
+          bracketDirection,
+          center: bondCenter,
+          width: bracketWidth || 0.25,
+          height: bracketHeight || 1,
+        },
+        toFixed,
+      ),
     )
     .attr(options.sgroupBracketStyle);
 }

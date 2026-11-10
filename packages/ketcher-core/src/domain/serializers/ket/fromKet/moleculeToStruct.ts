@@ -19,11 +19,17 @@ import {
   AttachmentPoints,
   type AtomAttributes,
 } from 'domain/entities/atom';
-import { SGroup } from 'domain/entities/sgroup';
+import {
+  isSGroupBracketType,
+  SGroup,
+  SGroupBracketType,
+  type SGroupBracket,
+} from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import { ifDef } from 'utilities';
+import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { atomToStruct, bondToStruct } from './atomBondToStruct';
@@ -32,6 +38,7 @@ import type {
   KetMoleculeNode,
   KetRgLabelNode,
   KetSGroupAttachmentPointNode,
+  KetSGroupBracket,
   KetSGroupNode,
 } from '../types';
 
@@ -206,7 +213,40 @@ export function sgroupToStruct(source: KetSGroupNode): SGroup {
     default:
       break;
   }
+  if (sgroupType !== SGroup.TYPES.DAT) {
+    if (source.brackets) {
+      sgroup.data.brackets = {
+        opening: bracketToStruct(source.brackets.opening),
+        closing: bracketToStruct(source.brackets.closing),
+      };
+    } else if (isSGroupBracketType(source.bracketType)) {
+      sgroup.data.bracketType = source.bracketType;
+    }
+  }
   return sgroup;
+}
+
+function bracketToStruct(source: KetSGroupBracket): SGroupBracket {
+  const bracket: SGroupBracket = {};
+  switch (source.type) {
+    case 'parenthetic':
+      bracket.type = SGroupBracketType.Round;
+      break;
+    case 'square':
+      bracket.type = SGroupBracketType.Square;
+      break;
+    case 'curly':
+      bracket.type = SGroupBracketType.Curly;
+      break;
+    case undefined:
+      break;
+    default:
+      throw new Error(`Unsupported S-group bracket type: ${source.type}`);
+  }
+  if (source.position) {
+    bracket.position = getNodeWithInvertedYCoord(source.position);
+  }
+  return bracket;
 }
 
 function sgroupAttachmentPointToStruct(

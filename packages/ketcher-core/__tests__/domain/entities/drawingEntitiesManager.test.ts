@@ -1,9 +1,10 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { peptideMonomerItem } from '../../mock-data';
+import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {
   Atom,
   Bond,
   SGroup,
+  SGroupBracketType,
   SGroupAttachmentPoint,
   Vec2,
 } from 'domain/entities';
@@ -341,6 +342,173 @@ describe('Drawing Entities Manager', () => {
     expect(editor.renderersContainer.sgroups.size).toEqual(1);
     expect(document.querySelector('[data-testid="s-group"]')).toBeTruthy();
     expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
+  });
+
+  it('invalidates and restores bracket positions when a macro atom is moved', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct, sgroup } = createStructWithSGroup();
+    sgroup.id = 0;
+    const brackets = {
+      opening: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: -1, y: -1 }, end: { x: -1, y: 1 } },
+      },
+      closing: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: 2, y: -1 }, end: { x: 2, y: 1 } },
+      },
+    };
+    sgroup.data.brackets = brackets;
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+    editor.renderersContainer.update(modelChanges);
+    const macroGroup = [...editor.drawingEntitiesManager.sgroups.values()][0]
+      .sgroup;
+    const atom = [...editor.drawingEntitiesManager.atoms.values()][0];
+    const command =
+      editor.drawingEntitiesManager.createDrawingEntityMovingCommand(
+        atom,
+        new Vec2(1, 0),
+      );
+
+    editor.renderersContainer.update(command);
+    expect(macroGroup.data.brackets?.opening.position).toBeUndefined();
+    command.invert(editor.renderersContainer);
+    expect(macroGroup.data.brackets).toEqual(brackets);
+    command.execute(editor.renderersContainer);
+    expect(macroGroup.data.brackets?.closing.position).toBeUndefined();
+  });
+
+  it('invalidates bracket positions and restores membership when a macro atom is deleted', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct, sgroup } = createStructWithSGroup();
+    sgroup.id = 0;
+    const brackets = {
+      opening: {
+        type: SGroupBracketType.Curly,
+        position: { start: { x: -1, y: -1 }, end: { x: -1, y: 1 } },
+      },
+      closing: {
+        type: SGroupBracketType.Curly,
+        position: { start: { x: 2, y: -1 }, end: { x: 2, y: 1 } },
+      },
+    };
+    sgroup.data.brackets = brackets;
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+    editor.renderersContainer.update(modelChanges);
+    const macroGroup = [...editor.drawingEntitiesManager.sgroups.values()][0]
+      .sgroup;
+    const atom = [...editor.drawingEntitiesManager.atoms.values()][0];
+    const originalMembers = [...macroGroup.atoms];
+    const command = editor.drawingEntitiesManager.deleteDrawingEntity(atom);
+
+    editor.renderersContainer.update(command);
+    expect(macroGroup.atoms).not.toContain(atom.atomIdInMicroMode);
+    expect(macroGroup.data.brackets?.opening.position).toBeUndefined();
+    expect(macroGroup.data.bracketType).toBe(SGroupBracketType.Curly);
+    command.invert(editor.renderersContainer);
+    expect(macroGroup.atoms).toEqual(originalMembers);
+    expect(macroGroup.data.brackets).toEqual(brackets);
+    command.execute(editor.renderersContainer);
+    expect(macroGroup.atoms).not.toContain(atom.atomIdInMicroMode);
+    expect(macroGroup.data.brackets?.closing.position).toBeUndefined();
+  });
+
+  it('invalidates and restores bracket positions when a fragment monomer moves', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const { struct, sgroup } = createStructWithSGroup(SGroup.TYPES.SUP);
+    sgroup.id = 0;
+    sgroup.addAttachmentPoint(
+      new SGroupAttachmentPoint(sgroup.atoms[0], undefined, undefined, 1),
+    );
+    const brackets = {
+      opening: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: -1, y: -1 }, end: { x: -1, y: 1 } },
+      },
+      closing: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: 2, y: -1 }, end: { x: 2, y: 1 } },
+      },
+    };
+    sgroup.data.brackets = brackets;
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+    editor.renderersContainer.update(modelChanges);
+    const monomer = [...editor.drawingEntitiesManager.monomers.values()][0];
+    const macroGroup = [...monomer.monomerItem.struct.sgroups.values()][0];
+    const command = editor.drawingEntitiesManager.moveMonomer(
+      monomer,
+      Vec2.sum(monomer.position, new Vec2(1, 0)),
+    );
+
+    editor.renderersContainer.update(command);
+    expect(macroGroup.data.brackets?.opening.position).toBeUndefined();
+    command.invert(editor.renderersContainer);
+    expect(macroGroup.data.brackets).toEqual(brackets);
+    command.execute(editor.renderersContainer);
+    expect(macroGroup.data.brackets?.closing.position).toBeUndefined();
+  });
+
+  it('drops positions from partial S-groups without changing the source', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const struct = createStructWithSplitSGroup();
+    const source = [...struct.sgroups.values()][0];
+    const brackets = {
+      opening: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: -1, y: -1 }, end: { x: -1, y: 1 } },
+      },
+      closing: {
+        type: SGroupBracketType.Round,
+        position: { start: { x: 7, y: -1 }, end: { x: 7, y: 1 } },
+      },
+    };
+    source.data.brackets = brackets;
+
+    MacromoleculesConverter.convertStructToDrawingEntities(
+      struct,
+      editor.drawingEntitiesManager,
+    );
+    const partialGroups = [
+      ...editor.drawingEntitiesManager.monomers.values(),
+    ].map((monomer) => [...monomer.monomerItem.struct.sgroups.values()][0]);
+    expect(partialGroups).toHaveLength(2);
+    partialGroups.forEach((group) => {
+      expect(group.data.bracketType).toBe(SGroupBracketType.Round);
+      expect(group.data.brackets?.opening.position).toBeUndefined();
+      expect(group.data.brackets?.closing.position).toBeUndefined();
+      expect(group.data.brackets).not.toBe(source.data.brackets);
+    });
+    partialGroups[0].data.bracketType = SGroupBracketType.Curly;
+    expect(partialGroups[1].data.bracketType).toBe(SGroupBracketType.Round);
+    expect(source.data.brackets).toEqual(brackets);
   });
 
   it('should split disconnected superatom fragments with attachment points into separate macro molecules', () => {

@@ -15,7 +15,12 @@
  ***************************************************************************/
 
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { SGroup, SUPERATOM_CLASS } from 'domain/entities/sgroup';
+import {
+  DEFAULT_SGROUP_BRACKET_TYPE,
+  isSGroupBracketType,
+  SGroup,
+  SUPERATOM_CLASS,
+} from 'domain/entities/sgroup';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
@@ -37,6 +42,18 @@ import type {
 } from 'raphael';
 import type { RenderOptions } from '../render.types';
 import { uniteHoverPaths } from './hoverPath';
+import {
+  getSGroupBracketEndpoints,
+  type SGroupBracketEndpoints,
+} from '../sgroupBracketPath';
+import type { SGroupBracketLayout } from '../sgroupBracketLayout';
+import { getSGroupBracketLabels } from '../sgroupBracketLabels';
+import {
+  getPositionedSGroupBrackets,
+  getSGroupBracketPositionState,
+  includePositionedSGroupBrackets,
+  type PositionedSGroupBrackets,
+} from '../sgroupBracketPositions';
 export { paperPathFromSVGElement } from './hoverPath';
 interface SGroupdrawBracketsOptions {
   set: RaphaelSet;
@@ -48,11 +65,14 @@ interface SGroupdrawBracketsOptions {
   upperIndexText?: string | null;
   indexAttribute?: Record<string, string>;
   superatomClass?: SUPERATOM_CLASS;
+  positionedBrackets?: PositionedSGroupBrackets;
 }
 
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
+  public bracketBox?: Box2Abs;
+  public hasBracketPeers = false;
   private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
@@ -67,21 +87,88 @@ class ReSGroup extends ReObject {
     return false;
   }
 
+  static hasVisibleBrackets(sgroup: SGroup): boolean {
+    return (
+      sgroup.data.fieldName !== 'MRV_IMPLICIT_H' &&
+      sgroup.isExpanded() &&
+      ['MUL', 'SRU', 'SUP', 'GEN', 'COP', 'queryComponent'].includes(
+        sgroup.type,
+      ) &&
+      sgroup.atoms.length > 0 &&
+      !sgroup.isSuperatomWithoutLabel &&
+      !(sgroup instanceof MonomerMicromolecule) &&
+      getSGroupBracketPositionState(sgroup) !== 'suppressed'
+    );
+  }
+
+  static measureBracketExtents(render: Render, sgroup: SGroup): Vec2 {
+    const bracketBox = new Box2Abs(0, 0, 2, 2);
+    const set = render.paper.set();
+    try {
+      SGroupdrawBrackets({
+        set,
+        render,
+        sgroup,
+        bracketBox,
+        direction: new Vec2(1, 0),
+        ...getSGroupBracketLabels(sgroup),
+      });
+      const bounds = set.getBBox();
+      const scale = render.options.microModeScale;
+      return new Vec2(
+        Math.max(0, (bounds.x + bounds.width) / scale - bracketBox.p1.x),
+        Math.max(
+          0,
+          bracketBox.p0.y - bounds.y / scale,
+          (bounds.y + bounds.height) / scale - bracketBox.p1.y,
+        ),
+      );
+    } finally {
+      set.remove();
+    }
+  }
+
   /**
    * @param remol {ReStruct}
    * @param sgroup {SGroup}
    * @returns {*}
    */
-  draw(remol: ReStruct, sgroup: SGroup): RaphaelSet {
+  draw(
+    remol: ReStruct,
+    sgroup: SGroup,
+    layout?: SGroupBracketLayout,
+  ): RaphaelSet {
     this.render = remol.render;
     let set = this.render.paper.set();
+    this.bracketBox = undefined;
+    this.hasBracketPeers = false;
     SGroup.bracketPos(sgroup, remol.molecule, remol, this.render);
-    const bracketBox = sgroup.bracketBox;
-    if (!bracketBox) {
+    const originalBracketBox = sgroup.bracketBox;
+    if (!originalBracketBox) {
       return set;
     }
+    const offset = layout?.get(sgroup);
+    const bracketBox = offset
+      ? originalBracketBox.extend(offset, offset)
+      : originalBracketBox;
     const direction = sgroup.bracketDirection;
-    sgroup.areas = [bracketBox];
+    sgroup.areas = [originalBracketBox];
+    const hasVisibleBrackets = ReSGroup.hasVisibleBrackets(sgroup);
+    const positionedBrackets =
+      hasVisibleBrackets &&
+      getSGroupBracketPositionState(sgroup) === 'positioned'
+        ? getPositionedSGroupBrackets(
+            sgroup,
+            remol.molecule,
+            Math.min(0.25, bracketBox.sz().x * 0.3),
+          )
+        : undefined;
+    if (hasVisibleBrackets) {
+      this.bracketBox = positionedBrackets
+        ? includePositionedSGroupBrackets(bracketBox, positionedBrackets)
+        : bracketBox;
+      this.hasBracketPeers = offset !== undefined;
+    }
     if (sgroup.isExpanded()) {
       const SGroupdrawBracketsOptions: SGroupdrawBracketsOptions = {
         set,
@@ -89,63 +176,14 @@ class ReSGroup extends ReObject {
         sgroup,
         bracketBox,
         direction,
+        positionedBrackets,
+        ...getSGroupBracketLabels(sgroup),
       };
-      switch (sgroup.type) {
-        case 'MUL': {
-          SGroupdrawBracketsOptions.lowerIndexText = String(sgroup.data.mul);
-          break;
-        }
-        case 'SRU': {
-          let connectivity: string = sgroup.data.connectivity || 'eu';
-          if (connectivity === 'ht') connectivity = '';
-          const subscript = sgroup.data.subscript || 'n';
-          SGroupdrawBracketsOptions.lowerIndexText = subscript;
-          SGroupdrawBracketsOptions.upperIndexText = connectivity;
-          break;
-        }
-        case 'COP': {
-          const connectivity: string = sgroup.data.connectivity || 'eu';
-          SGroupdrawBracketsOptions.upperIndexText = connectivity;
-          const subtype = sgroup.data.subtype;
-          if (sgroup.data.subtype) {
-            SGroupdrawBracketsOptions.lowerIndexText = subtype;
-          }
-          break;
-        }
-        case 'SUP': {
-          const superatomClass = sgroup.data.class as
-            SUPERATOM_CLASS | undefined;
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.superatomLabel;
-          SGroupdrawBracketsOptions.upperIndexText = null;
-          SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
-          SGroupdrawBracketsOptions.superatomClass = superatomClass;
-          // An expanded monomer shows its structure, so it needs no label
-          break;
-        }
-        case 'DAT': {
-          set = drawGroupDat(remol, sgroup);
-          break;
-        }
-        case 'queryComponent':
-        case 'GEN':
-        default:
-          break;
+      if (sgroup.type === 'DAT') {
+        set = drawGroupDat(remol, sgroup);
       }
 
-      // DAT S-Groups do not have brackets
-      const sgroupTypesWithBrackets = [
-        'MUL',
-        'SRU',
-        'SUP',
-        'GEN',
-        'COP',
-        'queryComponent',
-      ];
-      if (
-        sgroupTypesWithBrackets.includes(sgroup.type) &&
-        !sgroup.isSuperatomWithoutLabel &&
-        !(sgroup instanceof MonomerMicromolecule)
-      ) {
+      if (hasVisibleBrackets) {
         SGroupdrawBrackets(SGroupdrawBracketsOptions);
       }
     }
@@ -213,7 +251,11 @@ class ReSGroup extends ReObject {
     const paper = render.paper;
     const sGroupItem = this.item;
     if (sGroupItem) {
-      const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render);
+      const { a0, a1, b0, b1 } = getHighlighPathInfo(
+        sGroupItem,
+        render,
+        this.bracketBox,
+      );
       const functionalGroups = render.ctab.molecule.functionalGroups;
       const hoversToCombine: Array<RaphaelElement | null | undefined> = [];
       const otherHovers = paper.set();
@@ -311,12 +353,12 @@ class ReSGroup extends ReObject {
     }
   }
 
-  show(restruct: ReStruct): void {
+  show(restruct: ReStruct, layout?: SGroupBracketLayout): void {
     const render = restruct.render;
     const sgroup = this.item;
     if (sgroup && sgroup.data.fieldName !== 'MRV_IMPLICIT_H') {
       const remol = render.ctab;
-      const path = this.draw(remol, sgroup);
+      const path = this.draw(remol, sgroup, layout);
       const shouldIncludeInBoundingBox = !(
         sgroup instanceof MonomerMicromolecule && sgroup.isExpanded()
       );
@@ -335,39 +377,78 @@ class ReSGroup extends ReObject {
 function SGroupdrawBrackets({
   set,
   render,
+  sgroup,
   bracketBox,
   direction,
   lowerIndexText,
   upperIndexText,
   indexAttribute,
   superatomClass,
+  positionedBrackets,
 }: SGroupdrawBracketsOptions): void {
-  const brackets = getBracketParameters(bracketBox, direction);
-  let rightBracketIndex = -1;
+  const brackets = positionedBrackets
+    ? [positionedBrackets.opening, positionedBrackets.closing].map(
+        (bracket) =>
+          new BracketParams(
+            bracket.center,
+            bracket.angleDirection,
+            bracket.width,
+            bracket.height,
+            bracket.direction,
+          ),
+      )
+    : getBracketParameters(bracketBox, direction);
+  const bracketType = isSGroupBracketType(sgroup.data.bracketType)
+    ? sgroup.data.bracketType
+    : DEFAULT_SGROUP_BRACKET_TYPE;
+  const bracketEndpoints: SGroupBracketEndpoints[] = [];
+  const rightBracketIndex = positionedBrackets
+    ? 1
+    : brackets.reduce(
+        (rightIndex, bracket, index) =>
+          brackets[rightIndex].bracketAngleDirection.x <
+            bracket.bracketAngleDirection.x ||
+          (brackets[rightIndex].bracketAngleDirection.x ===
+            bracket.bracketAngleDirection.x &&
+            brackets[rightIndex].bracketAngleDirection.y >
+              bracket.bracketAngleDirection.y)
+            ? index
+            : rightIndex,
+        0,
+      );
 
   for (let i = 0; i < brackets.length; ++i) {
     const bracket = brackets[i];
+    const shapeParams = {
+      bracketAngleDirection: Scale.modelToCanvas(
+        bracket.bracketAngleDirection,
+        render.options,
+      ),
+      bracketDirection: Scale.modelToCanvas(
+        bracket.bracketDirection,
+        render.options,
+      ),
+      center: Scale.modelToCanvas(bracket.center, render.options),
+      width: bracket.width || 0.25,
+      height: bracket.height || 1,
+    };
     const path = draw.bracket(
       render.paper,
-      Scale.modelToCanvas(bracket.bracketAngleDirection, render.options),
-      Scale.modelToCanvas(bracket.bracketDirection, render.options),
-      Scale.modelToCanvas(bracket.center, render.options),
+      shapeParams.bracketAngleDirection,
+      shapeParams.bracketDirection,
+      shapeParams.center,
       bracket.width,
       bracket.height,
       render.options,
+      bracketType,
+    );
+    path.node?.setAttribute('data-testid', 's-group-bracket');
+    path.node?.setAttribute(
+      'data-bracket-side',
+      i === rightBracketIndex ? 'closing' : 'opening',
     );
     set.push(path);
-    if (
-      rightBracketIndex < 0 ||
-      brackets[rightBracketIndex].bracketAngleDirection.x <
-        bracket.bracketAngleDirection.x ||
-      (brackets[rightBracketIndex].bracketAngleDirection.x ===
-        bracket.bracketAngleDirection.x &&
-        brackets[rightBracketIndex].bracketAngleDirection.y >
-          bracket.bracketAngleDirection.y)
-    ) {
-      rightBracketIndex = i;
-    }
+    bracketEndpoints.push(getSGroupBracketEndpoints(shapeParams));
   }
   const bracketR = brackets[rightBracketIndex];
   function renderIndex(
@@ -377,14 +458,17 @@ function SGroupdrawBrackets({
   ): void {
     let path: Vec2;
     let lowerPath: Vec2;
+    // Labels anchor to the bracket spine ends, independent of the bracket
+    // shape, rounded the same way as the drawn square path coordinates.
+    const { point0, point1 } = bracketEndpoints[rightBracketIndex];
     const bracketPoint1 = new Vec2(
-      set[rightBracketIndex].getPath()[1][1],
-      set[rightBracketIndex].getPath()[1][2],
+      Number(toFixed(point0.x)),
+      Number(toFixed(point0.y)),
       0,
     );
     const bracketPoint2 = new Vec2(
-      set[rightBracketIndex].getPath()[2][1],
-      set[rightBracketIndex].getPath()[2][2],
+      Number(toFixed(point1.x)),
+      Number(toFixed(point1.y)),
       0,
     );
     if (bracketPoint2.y === bracketPoint1.y) {
@@ -614,6 +698,7 @@ function getBracketParameters(bracketBox: Box2Abs, direction: Vec2) {
 function getHighlighPathInfo(
   sgroup: SGroup,
   render: Render,
+  displayBracketBox = sgroup.bracketBox,
 ): {
   a0: Vec2;
   a1: Vec2;
@@ -624,7 +709,7 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
-  const sGroupBracketBox = sgroup.bracketBox;
+  const sGroupBracketBox = displayBracketBox;
   if (!sGroupBracketBox) {
     throw new Error('SGroup bracket box is not defined');
   }

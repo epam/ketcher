@@ -37,6 +37,7 @@ import ReRGroup from './rergroup';
 import ReRxnArrow from './rerxnarrow';
 import ReRxnPlus from './rerxnplus';
 import ReSGroup from './resgroup';
+import { getSGroupBracketLayout } from '../sgroupBracketLayout';
 import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
 import type { Render } from '../raphaelRender';
@@ -859,13 +860,19 @@ class ReStruct {
   }
 
   showSGroups(): void {
+    const layout = getSGroupBracketLayout(
+      this.molecule,
+      this.molecule.sgroups.values(),
+      ReSGroup.hasVisibleBrackets,
+      (sgroup) => ReSGroup.measureBracketExtents(this.render, sgroup),
+    );
     this.molecule.sGroupForest
       .getSGroupsBFS()
       .reverse()
       .forEach((id) => {
         const resgroup = this.sgroups.get(id);
         if (!resgroup) return;
-        resgroup.show(this);
+        resgroup.show(this, layout);
       });
   }
 

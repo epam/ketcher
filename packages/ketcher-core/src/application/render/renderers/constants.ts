@@ -13,6 +13,9 @@ export const SELECTION_HOVERED_COLOR = '#CCFFDD';
 // shared by both modes so the tools look the same everywhere.
 export const SELECTION_OUTLINE_COLOR = 'gray';
 
+export const SGROUP_OVERLAY_CLASS = 'sgroup-overlay';
+export const SGROUP_OVERLAY_INSERTION_POINT = `:scope > :not(.${SGROUP_OVERLAY_CLASS})`;
+
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {
     hover: '#peptide-hover',

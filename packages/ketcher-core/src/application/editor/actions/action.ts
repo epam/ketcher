@@ -15,7 +15,84 @@
  ***************************************************************************/
 
 import type { BaseOperation } from '../operations/BaseOperation';
+import { OperationType } from '../operations/OperationType';
 import type { ReStruct } from '../../render';
+
+const sGroupLifecycleTypes = new Set<string>([
+  OperationType.S_GROUP_CREATE,
+  OperationType.S_GROUP_DELETE,
+  OperationType.S_GROUP_ADD_TO_HIERACHY,
+  OperationType.S_GROUP_REMOVE_FROM_HIERACHY,
+]);
+
+function reorderSGroupLifecycleInverses(
+  operations: BaseOperation[],
+  groupOrder: ReadonlyMap<number, number>,
+  hierarchyOrder: ReadonlyMap<number, number>,
+): void {
+  const hierarchyIds = new Set<number>();
+  const hierarchyParents: number[] = [];
+  operations.forEach((operation) => {
+    if (
+      operation.type !== OperationType.S_GROUP_ADD_TO_HIERACHY &&
+      operation.type !== OperationType.S_GROUP_REMOVE_FROM_HIERACHY
+    ) {
+      return;
+    }
+
+    const data = operation.data;
+    if (typeof data !== 'object' || data === null) {
+      return;
+    }
+    if ('sgid' in data && typeof data.sgid === 'number') {
+      hierarchyIds.add(data.sgid);
+    }
+    if ('parent' in data && typeof data.parent === 'number') {
+      hierarchyParents.push(data.parent);
+    }
+  });
+  if (!hierarchyParents.some((parent) => hierarchyIds.has(parent))) {
+    return;
+  }
+
+  const positions = new Map<string, number[]>();
+  operations.forEach((operation, index) => {
+    if (sGroupLifecycleTypes.has(operation.type)) {
+      const indices = positions.get(operation.type) ?? [];
+      indices.push(index);
+      positions.set(operation.type, indices);
+    }
+  });
+  positions.forEach((indices, type) => {
+    const order =
+      type === OperationType.S_GROUP_CREATE
+        ? groupOrder
+        : type === OperationType.S_GROUP_ADD_TO_HIERACHY
+          ? hierarchyOrder
+          : undefined;
+    const sorted = indices.map((index) => operations[index]);
+    if (order) {
+      const rank = (operation: BaseOperation): number => {
+        const data = operation.data;
+        if (
+          typeof data !== 'object' ||
+          data === null ||
+          !('sgid' in data) ||
+          typeof data.sgid !== 'number'
+        ) {
+          return Number.MAX_SAFE_INTEGER;
+        }
+        return order.get(data.sgid) ?? Number.MAX_SAFE_INTEGER;
+      };
+      sorted.sort((a, b) => rank(a) - rank(b));
+    } else {
+      sorted.reverse();
+    }
+    indices.forEach((index, i) => {
+      operations[index] = sorted[i];
+    });
+  });
+}
 //
 // Undo/redo actions
 //
@@ -44,6 +121,23 @@ export class Action {
   */
   perform(restruct: ReStruct): Action {
     const action = new Action();
+    const hierarchyOperationCount = this.operations.filter(
+      (operation) =>
+        operation.type === OperationType.S_GROUP_ADD_TO_HIERACHY ||
+        operation.type === OperationType.S_GROUP_REMOVE_FROM_HIERACHY,
+    ).length;
+    // Restore the original pool order and parent-before-child hierarchy order
+    // without changing unrelated operations or the order of DATA groups.
+    const groupOrder = new Map<number, number>();
+    const hierarchyOrder = new Map<number, number>();
+    if (hierarchyOperationCount > 1) {
+      [...restruct.molecule.sgroups.keys()].forEach((id, index) =>
+        groupOrder.set(id, index),
+      );
+      restruct.molecule.sGroupForest
+        .getSGroupsBFS()
+        .forEach((id, index) => hierarchyOrder.set(id, index));
+    }
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority,
     );
@@ -52,6 +146,11 @@ export class Action {
       action.addOp(invertedOperation);
     });
 
+    reorderSGroupLifecycleInverses(
+      action.operations,
+      groupOrder,
+      hierarchyOrder,
+    );
     return action;
   }
 

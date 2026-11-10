@@ -379,6 +379,12 @@
       "sgroup": {
         "variantData": "Datos",
         "variantMultipleGroup": "Grupo múltiple",
+        "bracketType": {
+          "title": "Tipo de corchete",
+          "square": "Corchetes",
+          "round": "Paréntesis",
+          "curly": "Llaves"
+        },
         "mulCount": {
           "title": "Número de repeticiones"
         },

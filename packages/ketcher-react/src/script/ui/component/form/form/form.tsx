@@ -116,7 +116,9 @@ export interface FieldProps {
   value?: string | number | boolean;
   onChange?: (value: unknown) => void;
   placeholder?: string;
-  checked?: boolean;
+  checked?: boolean | string;
+  groupAriaLabel?: string;
+  optionAriaLabels?: Record<string, string>;
   multiple?: boolean;
   testId?: string;
   disabledIds?: unknown[];

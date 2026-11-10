@@ -20,5 +20,6 @@ export type {
   KetMoleculeNode,
   KetRgLabelNode,
   KetSGroupAttachmentPointNode,
+  KetSGroupBracket,
   KetSGroupNode,
 } from '../types';

@@ -190,6 +190,105 @@ describe('SRU S-Group defaults', () => {
   });
 });
 
+describe('S-Group bracket type picker', () => {
+  const renderWithResult = (result: Record<string, unknown>) =>
+    renderWithMockStore(<SGroup type={result.type as string} />, {
+      modal: {
+        name: '',
+        prop: null,
+        parentModal: null,
+        form: { errors: {}, result },
+      },
+    });
+
+  it.each([
+    'MUL',
+    'SRU',
+    'COP',
+    'SUP',
+    'queryComponent',
+    'nucleotideComponent',
+  ])('should show the bracket type picker for %s', (type) => {
+    renderWithResult({ type });
+
+    expect(screen.getByText('Bracket type')).toBeInTheDocument();
+    expect(screen.getByTestId('bracketType-input-square')).toBeInTheDocument();
+    expect(screen.getByTestId('bracketType-input-round')).toBeInTheDocument();
+    expect(screen.getByTestId('bracketType-input-curly')).toBeInTheDocument();
+  });
+
+  it('should select square brackets by default for a new S-group', () => {
+    const { store } = renderWithResult({ type: 'MUL' });
+
+    expect(screen.getByTestId('bracketType-input-square')).toBeChecked();
+    expect(screen.getByTestId('bracketType-input-round')).not.toBeChecked();
+    expect(screen.getByTestId('bracketType-input-curly')).not.toBeChecked();
+    expect(store.getState().modal?.form?.result?.bracketType).toBe('square');
+  });
+
+  it('should show the bracket type of an edited S-group', () => {
+    renderWithResult({ type: 'SRU', subscript: 'n', bracketType: 'curly' });
+
+    expect(screen.getByTestId('bracketType-input-curly')).toBeChecked();
+    expect(screen.getByTestId('bracketType-input-square')).not.toBeChecked();
+  });
+
+  it('should store the bracket type the user picks', () => {
+    const { store } = renderWithResult({ type: 'SUP', name: 'Boc' });
+
+    fireEvent.click(screen.getByTestId('bracketType-input-round'));
+
+    expect(store.getState().modal?.form?.result?.bracketType).toBe('round');
+  });
+
+  it('should give the picker and its symbol-only choices accessible names', () => {
+    renderWithResult({ type: 'SRU', subscript: 'n' });
+
+    const picker = screen.getByRole('group', { name: 'Bracket type' });
+    expect(
+      within(picker).getByRole('radio', { name: 'Square brackets' }),
+    ).toBeChecked();
+    expect(
+      within(picker).getByRole('radio', { name: 'Parentheses' }),
+    ).not.toBeChecked();
+    expect(
+      within(picker).getByRole('radio', { name: 'Curly brackets' }),
+    ).not.toBeChecked();
+    expect(picker).toHaveTextContent('[ ]');
+    expect(picker).toHaveTextContent('( )');
+    expect(picker).toHaveTextContent('{ }');
+  });
+
+  it('should keep repeat-count validation when the bracket type changes', () => {
+    renderWithResult({ type: 'MUL', mul: 2 });
+    const count = screen.getByLabelText('Repeat count');
+
+    fireEvent.change(count, { target: { value: '201' } });
+    fireEvent.click(screen.getByTestId('bracketType-input-curly'));
+    fireEvent.mouseEnter(count);
+
+    expect(screen.getByTestId('bracketType-input-curly')).toBeChecked();
+    expect(
+      screen.getByText('must be less than or equal to 200'),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('OK')).toBeDisabled();
+  });
+
+  it('should not show the bracket type picker for Data S-groups', () => {
+    renderWithResult({
+      type: 'DAT',
+      context: 'Fragment',
+      fieldName: 'Field name',
+      fieldValue: 'Field value',
+    });
+
+    expect(screen.queryByText('Bracket type')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('bracketType-input-square'),
+    ).not.toBeInTheDocument();
+  });
+});
+
 const reducer = combineReducers({
   modal: modalReducer,
 });

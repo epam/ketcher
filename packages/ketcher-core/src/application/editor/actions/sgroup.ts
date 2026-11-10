@@ -33,7 +33,12 @@ import {
 } from '../operations';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Pile } from 'domain/entities/pile';
-import { SGroup } from 'domain/entities/sgroup';
+import {
+  isSGroupBracketType,
+  SGroup,
+  withSGroupBracketType,
+  type SGroupAttributes,
+} from 'domain/entities/sgroup';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
 import { type BondAttributes, Bond } from 'domain/entities/bond';
@@ -116,14 +121,8 @@ export function fromSeveralSgroupAddition(
   }, new Action());
 }
 
-export function fromSgroupAttrs(restruct, id, attrs) {
-  const action = new Action();
-
-  Object.keys(attrs).forEach((key) => {
-    action.addOp(new SGroupAttr(id, key, attrs[key]));
-  });
-
-  return action.perform(restruct);
+export function fromSgroupAttrs(restruct, id, attrs: SGroupAttributes) {
+  return sGroupAttributeAction(id, attrs).perform(restruct);
 }
 
 export function setExpandSGroup(
@@ -562,11 +561,23 @@ export function setExpandMonomerSGroup(
   return action.perform(restruct);
 }
 
-export function sGroupAttributeAction(id, attrs) {
+export function sGroupAttributeAction(id, attrs: SGroupAttributes) {
   const action = new Action();
+  const hasBrackets = Object.prototype.hasOwnProperty.call(attrs, 'brackets');
+  const bracketType = attrs.bracketType;
+  if (bracketType !== undefined && !isSGroupBracketType(bracketType)) {
+    throw new Error(`Unsupported S-group bracket type: ${bracketType}`);
+  }
 
   Object.keys(attrs).forEach((key) => {
-    action.addOp(new SGroupAttr(id, key, attrs[key]));
+    if (hasBrackets && bracketType !== undefined && key === 'bracketType') {
+      return;
+    }
+    const value =
+      hasBrackets && bracketType !== undefined && key === 'brackets'
+        ? withSGroupBracketType(attrs.brackets, bracketType)
+        : attrs[key];
+    action.addOp(new SGroupAttr(id, key, value));
   });
 
   return action;
@@ -627,7 +638,7 @@ export function fromSgroupDeletion(
   }
 
   atoms.forEach((atomId) => {
-    action.addOp(new SGroupAtomRemove(id, atomId));
+    action.addOp(new SGroupAtomRemove(id, atomId, true));
     const atom = struct.atoms.get(atomId);
     if (atom && atom.fragment < 0) {
       action.addOp(new AtomAttr(atomId, 'fragment', fragmentId));
@@ -701,6 +712,7 @@ export function fromSgroupDeletion(
     });
   }
 
+  assert(attrs, 'S-group attributes are required for deletion');
   action.mergeWith(sGroupAttributeAction(id, attrs));
 
   if (shouldPerform) {
@@ -995,23 +1007,37 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 // Add action operations to remove whole s-group if needed
 export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
   const struct = restruct.molecule;
-  const sgCounts = new Map();
+  const sgCounts = new Map<number, number>();
 
   atoms.forEach((atomId) => {
     const sgroups = atomGetSGroups(restruct, atomId);
 
     sgroups.forEach((sid) => {
-      sgCounts.set(sid, sgCounts.has(sid) ? sgCounts.get(sid) + 1 : 1);
+      sgCounts.set(sid, (sgCounts.get(sid) ?? 0) + 1);
     });
   });
 
-  sgCounts.forEach((count, sid) => {
+  // Capture child relationships before removing a parent reparents its children.
+  const groupsDeepestFirst = [...sgCounts.entries()].sort(
+    ([first], [second]) =>
+      struct.sGroupForest.getPathToRoot(second).length -
+      struct.sGroupForest.getPathToRoot(first).length,
+  );
+  groupsDeepestFirst.forEach(([sid, count]) => {
     const sGroup = restruct.sgroups.get(sid)?.item;
     const sgAtoms = SGroup.getAtoms(restruct.molecule, sGroup);
 
     if (sgAtoms.length === count && !sGroup?.isSuperatomWithoutLabel) {
       // delete whole s-group
       const sgroup = struct.sgroups.get(sid) as SGroup;
+      action.operations.forEach((operation) => {
+        if (
+          operation instanceof SGroupAtomRemove &&
+          operation.data.sgid === sid
+        ) {
+          operation.data.preserveBracketPositions = true;
+        }
+      });
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
       action.addOp(new SGroupRemoveFromHierarchy(sid));
       sgroup.getAttachmentPoints().forEach((attachmentPoint) => {

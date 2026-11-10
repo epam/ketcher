@@ -6,7 +6,7 @@ import { Pile } from 'domain/entities/pile';
 import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
-import { SGroup } from 'domain/entities/sgroup';
+import { SGroup, withoutSGroupBracketPositions } from 'domain/entities/sgroup';
 import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
@@ -571,8 +571,14 @@ export class MacromoleculesConverter {
       }
 
       const partialSgroup = new SGroup(sgroup.type);
-      Object.keys(sgroup.data).forEach((field) => {
-        partialSgroup.data[field] = sgroup.data[field];
+      const attributes = sgroup.getAttrs();
+      if (attributes.brackets) {
+        attributes.brackets = withoutSGroupBracketPositions(
+          attributes.brackets,
+        );
+      }
+      Object.keys(attributes).forEach((field) => {
+        partialSgroup.data[field] = attributes[field];
       });
       partialSgroup.pp = sgroup.pp ? new Vec2(sgroup.pp) : null;
 

@@ -1,6 +1,6 @@
 import type { ReStruct } from 'application/render/restruct';
 import { restruct } from '../../mock-data';
-import { SGroup } from 'domain/entities';
+import { SGroup, SGroupBracketType } from 'domain/entities';
 import { mock } from 'jest-mock-extended';
 import type { Render } from 'src';
 import type { Atom } from 'domain/entities/atom';
@@ -68,6 +68,42 @@ describe('SGroup.superatomLabel getter', () => {
   it('returns an empty string when there is neither a name nor a known class', () => {
     expect(createSuperatomSGroup('', undefined).superatomLabel).toBe('');
     expect(createSuperatomSGroup('', 'UNKNOWN_CLASS').superatomLabel).toBe('');
+  });
+});
+
+describe('SGroup bracket style', () => {
+  it('uses square brackets for a new S-group', () => {
+    const sgroup = new SGroup(SGroup.TYPES.SRU);
+
+    expect(sgroup.data.bracketType).toBe(SGroupBracketType.Square);
+    expect(sgroup.getAttrs().bracketType).toBe(SGroupBracketType.Square);
+  });
+
+  it.each([
+    SGroupBracketType.Square,
+    SGroupBracketType.Round,
+    SGroupBracketType.Curly,
+  ])('preserves %s brackets through attribute changes and cloning', (style) => {
+    const sgroup = new SGroup(SGroup.TYPES.SRU);
+    sgroup.atoms = [1, 2];
+    sgroup.setAttr('subscript', 'n');
+
+    expect(sgroup.setAttr('bracketType', style)).toBe(SGroupBracketType.Square);
+    expect(sgroup.getAttrs()).toEqual(
+      expect.objectContaining({ bracketType: style, subscript: 'n' }),
+    );
+
+    const clone = SGroup.clone(
+      sgroup,
+      new Map([
+        [1, 10],
+        [2, 20],
+      ]),
+    );
+    expect(clone.atoms).toEqual([10, 20]);
+    expect(clone.getAttrs()).toEqual(sgroup.getAttrs());
+    clone.setAttr('bracketType', SGroupBracketType.Round);
+    expect(sgroup.data.bracketType).toBe(style);
   });
 });
 

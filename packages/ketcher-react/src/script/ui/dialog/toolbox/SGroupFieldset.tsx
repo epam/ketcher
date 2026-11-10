@@ -19,7 +19,10 @@ import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { Field } from '../../component/form/form/form';
 import Select from '../../component/form/Select';
-import { sgroupMap as schemes } from '../../data/schema/struct-schema';
+import {
+  sgroupMap as schemes,
+  type SchemaProperty,
+} from '../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from '../../utils';
 import classes from './sgroup.module.less';
 import type { BaseProps } from '../../views/modal/modal.types';
@@ -33,6 +36,7 @@ enum SGroupPropType {
   Connectivity = 'connectivity',
   Class = 'class',
   Subtype = 'subtype',
+  BracketType = 'bracketType',
 }
 
 const propMapping: Record<string, PropMappingValue> = {
@@ -42,10 +46,40 @@ const propMapping: Record<string, PropMappingValue> = {
   radiobuttons: { type: 'radio' },
 };
 
-const content = (type: string, t: TFunction): JSX.Element[] =>
+const content = (
+  type: string,
+  t: TFunction,
+  result: Record<string, unknown>,
+): JSX.Element[] =>
   Object.keys(schemes[type].properties)
     .filter((prop) => prop !== 'type')
     .map((prop) => {
+      if (prop === SGroupPropType.BracketType) {
+        const selected =
+          result[prop] === undefined
+            ? (schemes[type].properties[prop] as SchemaProperty).default
+            : result[prop];
+        return (
+          <Field
+            name={prop}
+            key={`${type}-${prop}`}
+            type="radio"
+            checked={typeof selected === 'string' ? selected : undefined}
+            groupAriaLabel={t(
+              'dialogs:toolbox.structSchema.sgroup.bracketType.title',
+            )}
+            optionAriaLabels={{
+              square: t(
+                'dialogs:toolbox.structSchema.sgroup.bracketType.square',
+              ),
+              round: t('dialogs:toolbox.structSchema.sgroup.bracketType.round'),
+              curly: t('dialogs:toolbox.structSchema.sgroup.bracketType.curly'),
+            }}
+            className={classes.bracketType}
+          />
+        );
+      }
+
       if (
         prop === SGroupPropType.Connectivity ||
         prop === SGroupPropType.Class ||
@@ -70,7 +104,7 @@ const content = (type: string, t: TFunction): JSX.Element[] =>
     });
 
 interface SGroupFieldsetProps {
-  formState: BaseProps<{ type: string }>['formState'];
+  formState: BaseProps<{ type: string; bracketType?: string }>['formState'];
 }
 
 function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {
@@ -81,7 +115,7 @@ function SGroupFieldset({ formState }: Readonly<SGroupFieldsetProps>) {
 
   return (
     <fieldset className={type === 'DAT' ? classes.data : 'base'}>
-      {content(type, t)}
+      {content(type, t, result)}
     </fieldset>
   );
 }

@@ -18,6 +18,7 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { cloneDeep } from 'lodash';
 
 export type SGroupAttrData = {
   sgid?: number;
@@ -61,6 +62,14 @@ export class SGroupAttr extends BaseOperation {
       if (typeof value === 'boolean') {
         sgroup.setExpanded(value);
       }
+    }
+
+    if (attr === 'bracketType') {
+      const previousBrackets = cloneDeep(sgroup.data.brackets);
+      sgroup.setAttr(attr, value);
+      this.data.attr = 'brackets';
+      this.data.value = previousBrackets;
+      return;
     }
 
     this.data.value = sgroup.setAttr(attr, value);

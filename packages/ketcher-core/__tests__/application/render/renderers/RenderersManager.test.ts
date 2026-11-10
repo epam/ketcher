@@ -4,14 +4,21 @@ import { AmbiguousMonomerRenderer } from 'application/render/renderers/Ambiguous
 import { SugarRenderer } from 'application/render/renderers/SugarRenderer';
 import { CoreEditor } from 'application/editor';
 import {
+  Atom,
   LinkerSequenceNode,
   MonomerSequenceNode,
   Nucleotide,
   Phosphate,
   RNABase,
+  SGroup,
+  SGroupBracketType,
+  SGroupDrawingEntity,
+  Struct,
   Sugar,
+  Vec2,
 } from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Peptide } from 'domain/entities/Peptide';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -220,6 +227,81 @@ const getRnaSubChains = (collection: ChainsCollection) =>
     );
 
 describe('RenderersManager', () => {
+  it('reflows same-atom S-groups when a D3 drawing entity is added, removed and restored', () => {
+    const canvas = createPolymerEditorCanvas();
+    Object.defineProperty(canvas, 'width', {
+      configurable: true,
+      value: { baseVal: { value: 500 } },
+    });
+    Object.defineProperty(canvas, 'height', {
+      configurable: true,
+      value: { baseVal: { value: 500 } },
+    });
+    const originalGetBBox = Object.getOwnPropertyDescriptor(
+      SVGElement.prototype,
+      'getBBox',
+    );
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: () => ({ x: 0, y: 0, width: 12, height: 12 }),
+    });
+
+    try {
+      const renderers = createRenderersManager();
+      new CoreEditor({ canvas, theme: {}, renderersContainer: renderers });
+      const struct = new Struct();
+      const atoms = [
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(0, 0) })),
+        struct.atoms.add(new Atom({ label: 'C', pp: new Vec2(1, 0) })),
+      ];
+      const outer = new SGroup(SGroup.TYPES.queryComponent);
+      outer.atoms = atoms;
+      outer.data.bracketType = SGroupBracketType.Round;
+      outer.id = struct.sgroups.add(outer);
+      struct.sGroupForest.insert(outer);
+      const inner = new SGroup(SGroup.TYPES.queryComponent);
+      inner.atoms = [...atoms];
+      inner.data.bracketType = SGroupBracketType.Curly;
+      inner.id = struct.sgroups.add(inner);
+      struct.sGroupForest.insert(inner);
+      const monomer = new Peptide({ ...peptideMonomerItem, struct });
+      const outerEntity = new SGroupDrawingEntity(outer, monomer, outer.id);
+      const innerEntity = new SGroupDrawingEntity(inner, monomer, inner.id);
+      const outerPath = () =>
+        canvas
+          .querySelector(
+            `[data-sgroup-id="${outer.id}"] path[stroke="#a9a9a9"]`,
+          )
+          ?.getAttribute('d');
+
+      renderers.addSGroup(outerEntity);
+      const originalPath = outerPath();
+      expect(originalPath).toContain('C');
+      renderers.addSGroup(innerEntity);
+      expect(canvas.querySelectorAll('path[stroke="#a9a9a9"]')).toHaveLength(4);
+      expect(outerPath()).not.toBe(originalPath);
+
+      renderers.deleteSGroup(innerEntity);
+      expect(canvas.querySelectorAll('path[stroke="#a9a9a9"]')).toHaveLength(2);
+      expect(outerPath()).toBe(originalPath);
+
+      renderers.addSGroup(innerEntity);
+      expect(canvas.querySelectorAll('path[stroke="#a9a9a9"]')).toHaveLength(4);
+      expect(outerPath()).not.toBe(originalPath);
+      expect(outer.atoms).toEqual(atoms);
+      expect(inner.atoms).toEqual(atoms);
+      expect(outer.data.bracketType).toBe(SGroupBracketType.Round);
+      expect(inner.data.bracketType).toBe(SGroupBracketType.Curly);
+    } finally {
+      canvas.remove();
+      if (originalGetBBox) {
+        Object.defineProperty(SVGElement.prototype, 'getBBox', originalGetBBox);
+      } else {
+        Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+      }
+    }
+  });
+
   it.each([
     {
       name: 'standalone sugar',

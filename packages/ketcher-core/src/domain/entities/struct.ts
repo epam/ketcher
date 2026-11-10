@@ -30,7 +30,11 @@ import { Pool } from './pool';
 import type { RGroup } from './rgroup';
 import type { RxnArrow } from './rxnArrow';
 import type { RxnPlus } from './rxnPlus';
-import { SGroup } from './sgroup';
+import {
+  SGroup,
+  type SGroupBracket,
+  withoutSGroupBracketPositions,
+} from './sgroup';
 import { SGroupForest } from './sgroupForest';
 import type { SimpleObject } from './simpleObject';
 import type { Text } from './text';
@@ -329,6 +333,42 @@ export class Struct {
     );
   }
 
+  private getSGroupsInCloneOrder(): Array<[number, SGroup]> {
+    const groups = [...this.sgroups.entries()];
+    const positionsByAtomSet = new Map<string, number[]>();
+    groups.forEach(([, group], index) => {
+      if (group.type === SGroup.TYPES.DAT) {
+        return;
+      }
+      const key = SGroup.getAtomSetKey(this, group);
+      if (!key) {
+        return;
+      }
+      const positions = positionsByAtomSet.get(key) ?? [];
+      positions.push(index);
+      positionsByAtomSet.set(key, positions);
+    });
+
+    positionsByAtomSet.forEach((positions) => {
+      if (positions.length < 2) {
+        return;
+      }
+      // The clone reconstructs its forest on insertion, so same-atom parents
+      // must be inserted before their children even after an undo.
+      const ordered = positions
+        .map((index) => groups[index])
+        .sort(
+          ([first], [second]) =>
+            this.sGroupForest.getPathToRoot(first).length -
+            this.sGroupForest.getPathToRoot(second).length,
+        );
+      positions.forEach((index, i) => {
+        groups[index] = ordered[i];
+      });
+    });
+    return groups;
+  }
+
   mergeInto(
     cp: Struct,
     atomSet?: Pile<number> | null,
@@ -447,7 +487,8 @@ export class Struct {
     });
 
     const sgroupIdMap = {};
-    this.sgroups.forEach((sg, sgroupId) => {
+    this.getSGroupsInCloneOrder().forEach(([sgroupId, originalSgroup]) => {
+      let sg = originalSgroup;
       if (sg.atoms.some((aid) => !atoms.has(aid))) return;
       const oldSgroup = sg;
 
@@ -1188,8 +1229,41 @@ export class Struct {
     });
   }
 
-  scale(scale: number) {
+  scale(scale: number, options?: { scaleBracketPositions?: boolean }) {
     if (scale === 1) return;
+
+    if (!options?.scaleBracketPositions) {
+      this.sgroups.forEach((sgroup) => {
+        const brackets = sgroup.data.brackets;
+        if (!brackets?.opening.position && !brackets?.closing.position) {
+          return;
+        }
+        const hasMoved = SGroup.getAtoms(this, sgroup).some((atomId) => {
+          const atom = this.atoms.get(atomId);
+          assert(atom, `Atom ${atomId} not found in S-group ${sgroup.id}`);
+          return (
+            atom.pp.x * scale !== atom.pp.x || atom.pp.y * scale !== atom.pp.y
+          );
+        });
+        if (hasMoved) {
+          sgroup.data.brackets = withoutSGroupBracketPositions(brackets);
+        }
+      });
+    }
+
+    const scaleBracket = (bracket: SGroupBracket): SGroupBracket => {
+      if (!bracket.position) {
+        return bracket;
+      }
+      const { start, end } = bracket.position;
+      return {
+        ...bracket,
+        position: {
+          start: { x: start.x * scale, y: start.y * scale },
+          end: { x: end.x * scale, y: end.y * scale },
+        },
+      };
+    };
 
     this.atoms.forEach((atom) => {
       atom.pp = atom.pp.scaled(scale);
@@ -1207,6 +1281,12 @@ export class Struct {
     });
 
     this.sgroups.forEach((item) => {
+      if (options?.scaleBracketPositions && item.data.brackets) {
+        item.data.brackets = {
+          opening: scaleBracket(item.data.brackets.opening),
+          closing: scaleBracket(item.data.brackets.closing),
+        };
+      }
       // MonomerMicromolecule centers carry their own transform flow and are
       // scaled separately during mode transitions to avoid double-scaling.
       if (item instanceof MonomerMicromolecule) {

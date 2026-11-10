@@ -19,6 +19,11 @@ import type { Operation } from 'domain/entities/Operation';
 import type { Atom } from 'domain/entities/CoreAtom';
 import type { Bond as MicromoleculesBond } from 'domain/entities/bond';
 import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import { SGroup } from 'domain/entities/sgroup';
+import {
+  getSGroupBracketContext,
+  SGroupBracketPositionChanges,
+} from '../sgroup/sgroupBracketPositions';
 import { KetcherLogger } from 'utilities';
 
 interface BondWithIdInMicromolecules {
@@ -120,18 +125,44 @@ export class AtomAddOperation implements Operation {
 
 export class AtomDeleteOperation implements Operation {
   private deletedMoleculeStructItems?: DeletedMoleculeStructItems;
+  private readonly bracketPositions: SGroupBracketPositionChanges;
+  private readonly memberships: {
+    group: SGroup;
+    before: number[];
+    after: number[];
+  }[];
   public priority = 2;
 
   constructor(
     public atom: Atom,
     public deleteAtomChangeModel: () => void,
     public addAtomChangeModel: (atom?: Atom) => Atom,
-  ) {}
+  ) {
+    const groups = getSGroupBracketContext(atom)?.groups ?? [];
+    this.bracketPositions = new SGroupBracketPositionChanges(groups);
+    this.memberships = groups.flatMap((group) => {
+      const index = group.atoms.indexOf(atom.atomIdInMicroMode);
+      return index < 0
+        ? []
+        : [
+            {
+              group,
+              before: group.atoms.slice(0, index),
+              after: group.atoms.slice(index + 1),
+            },
+          ];
+    });
+  }
 
   public execute() {
     this.deleteAtomChangeModel();
-
     this.deletedMoleculeStructItems = deleteAtomFromMoleculeStruct(this.atom);
+    if (this.deletedMoleculeStructItems) {
+      this.memberships.forEach(({ group }) =>
+        SGroup.removeAtom(group, this.atom.atomIdInMicroMode),
+      );
+      this.bracketPositions.toggle(this.atom.monomer.monomerItem.struct);
+    }
   }
 
   public invert() {
@@ -143,6 +174,20 @@ export class AtomDeleteOperation implements Operation {
         this.deletedMoleculeStructItems.atomInMoleculeStruct,
         this.deletedMoleculeStructItems.bondsInMoleculeStruct,
       );
+      this.memberships.forEach(({ group, before, after }) => {
+        const nextAtom = after.find((atomId) => group.atoms.includes(atomId));
+        const previousAtom = [...before]
+          .reverse()
+          .find((atomId) => group.atoms.includes(atomId));
+        const index =
+          nextAtom !== undefined
+            ? group.atoms.indexOf(nextAtom)
+            : previousAtom !== undefined
+              ? group.atoms.indexOf(previousAtom) + 1
+              : 0;
+        group.atoms.splice(index, 0, this.atom.atomIdInMicroMode);
+      });
+      this.bracketPositions.toggle(this.atom.monomer.monomerItem.struct);
     }
   }
 

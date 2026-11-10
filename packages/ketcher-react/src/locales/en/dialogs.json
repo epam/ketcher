@@ -379,6 +379,12 @@
       "sgroup": {
         "variantData": "Data",
         "variantMultipleGroup": "Multiple group",
+        "bracketType": {
+          "title": "Bracket type",
+          "square": "Square brackets",
+          "round": "Parentheses",
+          "curly": "Curly brackets"
+        },
         "mulCount": {
           "title": "Repeat count"
         },

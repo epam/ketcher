@@ -551,12 +551,18 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
     const n = d.rotateSC(1, 0);
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 
-    sg.areas.forEach((box) => {
+    const reSGroup = restruct.sgroups.get(sgid);
+    const areas = reSGroup?.bracketBox ? [reSGroup.bracketBox] : sg.areas;
+
+    areas.forEach((box) => {
+      const bracketMargin = reSGroup?.hasBracketPeers
+        ? Math.min(0.25, box.sz().x * 0.3) + 0.05
+        : 0;
       const isInBox =
         box.p0.y < pg.y &&
         box.p1.y > pg.y &&
-        box.p0.x < pg.x &&
-        box.p1.x > pg.x;
+        box.p0.x - bracketMargin < pg.x &&
+        box.p1.x + bracketMargin > pg.x;
       const xDist = Math.min(
         Math.abs(box.p0.x - pg.x),
         Math.abs(box.p1.x - pg.x),

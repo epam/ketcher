@@ -493,6 +493,37 @@
         ]
       }
     },
+    "sgroupBracketPoint": {
+      "type": "object",
+      "required": ["x", "y"],
+      "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "sgroupBracketPosition": {
+      "type": "object",
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "properties": {
+        "start": { "$ref": "#/definitions/sgroupBracketPoint" },
+        "end": { "$ref": "#/definitions/sgroupBracketPoint" }
+      }
+    },
+    "sgroupBracket": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["square", "parenthetic", "curly"]
+        },
+        "position": {
+          "$ref": "#/definitions/sgroupBracketPosition"
+        }
+      }
+    },
     "sgroups": {
       "type": "array",
       "items": {
@@ -509,6 +540,75 @@
           "type": {
             "type": "string",
             "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent", "COP"]
+          },
+          "bracketType": {
+            "type": "string",
+            "enum": ["square", "round", "curly"]
+          },
+          "brackets": {
+            "type": "object",
+            "required": ["opening", "closing"],
+            "additionalProperties": false,
+            "properties": {
+              "opening": {
+                "$ref": "#/definitions/sgroupBracket"
+              },
+              "closing": {
+                "$ref": "#/definitions/sgroupBracket"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": { "opening": { "required": ["position"] } }
+                },
+                "then": {
+                  "properties": { "closing": { "required": ["position"] } }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "closing": { "required": ["position"] } }
+                },
+                "then": {
+                  "properties": { "opening": { "required": ["position"] } }
+                }
+              }
+            ],
+            "anyOf": [
+              {
+                "properties": {
+                  "opening": {
+                    "properties": { "type": { "const": "square" } }
+                  },
+                  "closing": { "properties": { "type": { "const": "square" } } }
+                }
+              },
+              {
+                "properties": {
+                  "opening": {
+                    "required": ["type"],
+                    "properties": { "type": { "const": "parenthetic" } }
+                  },
+                  "closing": {
+                    "required": ["type"],
+                    "properties": { "type": { "const": "parenthetic" } }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "opening": {
+                    "required": ["type"],
+                    "properties": { "type": { "const": "curly" } }
+                  },
+                  "closing": {
+                    "required": ["type"],
+                    "properties": { "type": { "const": "curly" } }
+                  }
+                }
+              }
+            ]
           }
         },
         "if": {

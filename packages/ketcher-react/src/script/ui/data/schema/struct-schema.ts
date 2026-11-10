@@ -420,6 +420,13 @@ export const bond: StructSchema = {
   },
 };
 
+const sgroupBracketType: SchemaProperty = {
+  title: 'dialogs:toolbox.structSchema.sgroup.bracketType.title',
+  enum: ['square', 'round', 'curly'],
+  enumNames: ['[ ]', '( )', '{ }'],
+  default: 'square',
+};
+
 const sgroup: Omit<StructSchema, 'properties'> & {
   oneOf?: Partial<StructSchema>[];
 } = {
@@ -443,6 +450,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           minimum: 1,
           maximum: 200,
         },
+        bracketType: sgroupBracketType,
       },
       required: ['mul'],
     },
@@ -473,6 +481,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           ],
           default: 'ht',
         },
+        bracketType: sgroupBracketType,
       },
       required: ['subscript', 'connectivity'],
     },
@@ -502,6 +511,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           ],
           default: 'ht',
         },
+        bracketType: sgroupBracketType,
       },
       required: ['connectivity'],
     },
@@ -519,6 +529,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           invalidMessage: () =>
             i18n.t('dialogs:toolbox.structSchema.sgroup.name.invalidMessage'),
         },
+        bracketType: sgroupBracketType,
       },
       required: ['name'],
     },
@@ -528,6 +539,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
       type: 'object',
       properties: {
         type: { enum: ['queryComponent'] },
+        bracketType: sgroupBracketType,
       },
     },
     {
@@ -546,6 +558,7 @@ const sgroup: Omit<StructSchema, 'properties'> & {
           ],
           default: 'Sugar',
         },
+        bracketType: sgroupBracketType,
       },
       required: ['class'],
     },

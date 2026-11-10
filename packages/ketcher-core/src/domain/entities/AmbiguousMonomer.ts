@@ -41,7 +41,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
-    generateId = true,
+    shouldGenerateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.subtype ===
@@ -65,7 +65,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
-      { generateId },
+      { generateId: shouldGenerateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
@@ -77,13 +77,13 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public static getMonomerClass(monomers: BaseMonomer[]) {
     const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
-    const containDifferentMonomerTypes = monomers.some((monomer) => {
+    const hasDifferentMonomerTypes = monomers.some((monomer) => {
       const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
       return monomerClass !== monomerClassToCompare;
     });
 
-    return containDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
+    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
   }
 
   private static getAttachmentPoints(monomers: BaseMonomer[]) {
@@ -115,9 +115,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
     this.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.MonomerCaps) {
-        if (!monomerCaps) {
-          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
-        } else {
+        if (monomerCaps) {
           for (const [attachmentPointName, label] of Object.entries(
             monomer.monomerItem.props.MonomerCaps,
           )) {
@@ -127,6 +125,8 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
               monomerCaps[attachmentPointName] = '';
             }
           }
+        } else {
+          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
         }
       }
     });

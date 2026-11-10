@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -75,13 +75,13 @@ class ReSimpleObject extends ReObject {
         // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
         // in such case distance need to be calculated as a distance between line and current point
         dist =
-          rx !== 0 && ry !== 0
-            ? Math.abs(
+          rx === 0 || ry === 0
+            ? point.calculateDistanceToLine([pos[0], pos[1]])
+            : Math.abs(
                 1 -
                   (pointToCenter.x * pointToCenter.x) / (rx * rx) -
                   (pointToCenter.y * pointToCenter.y) / (ry * ry),
-              )
-            : point.calculateDistanceToLine([pos[0], pos[1]]);
+              );
         break;
       }
       case SimpleObjectMode.rectangle: {

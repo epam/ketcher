@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
@@ -80,7 +77,7 @@ export const SequenceTypeGroupButton = () => {
     editor?.events.changeSequenceTypeEnterMode,
   );
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const layoutMode = useLayoutMode();
   const isSequenceMode = layoutMode === 'sequence-layout-mode';

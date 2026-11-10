@@ -311,13 +311,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       applyHighlights(selectedTab);
     };
 
-    window.addEventListener(
+    globalThis.addEventListener(
       MonomerCreationMarkAsComponentAction,
       handleMarkAsComponent,
     );
 
     return () => {
-      window.removeEventListener(
+      globalThis.removeEventListener(
         MonomerCreationMarkAsComponentAction,
         handleMarkAsComponent,
       );
@@ -417,6 +417,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           <>
             <AttributeField
               title={t('components:monomerCreationWizard.codeFieldLabel')}
+              titleTestId="code-label"
               control={
                 <input
                   type="text"
@@ -466,7 +467,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               </div>
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
-                  {Array.from(presetAttachmentPoints.entries()).map(
+                  {[...presetAttachmentPoints.entries()].map(
                     ([name, atomPair]) => (
                       <AttachmentPoint
                         name={name}

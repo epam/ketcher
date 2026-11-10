@@ -38,7 +38,7 @@ export function guardForMacromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    return window.isPolymerEditorTurnedOn ? handler(...args) : undefined;
+    return globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 
@@ -60,7 +60,7 @@ export function guardForMicromoleculesEditor<TArgs extends unknown[], TResult>(
   handler: (...args: TArgs) => TResult,
 ): (...args: TArgs) => TResult | undefined {
   return (...args: TArgs) => {
-    return !window.isPolymerEditorTurnedOn ? handler(...args) : undefined;
+    return !globalThis.isPolymerEditorTurnedOn ? handler(...args) : undefined;
   };
 }
 

@@ -11,20 +11,23 @@ import type { Editor, Selection } from '../../Editor';
 import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 
-function uniqArray(dest, add, reversible: boolean) {
+function uniqArray(dest, add, isReversible: boolean) {
   return add.reduce((_, item) => {
-    if (reversible) dest = xor(dest, [item]);
+    if (isReversible) dest = xor(dest, [item]);
     else if (!dest.includes(item)) dest.push(item);
     return dest;
   }, []);
 }
 
 // TODO: deep-merge?
-export function selMerge(selection, add, reversible: boolean) {
+export function selMerge(selection, add, isReversible: boolean) {
   if (add) {
     Object.keys(add).forEach((item) => {
-      if (!selection[item]) selection[item] = add[item].slice();
-      else selection[item] = uniqArray(selection[item], add[item], reversible);
+      if (selection[item]) {
+        selection[item] = uniqArray(selection[item], add[item], isReversible);
+      } else {
+        selection[item] = [...add[item]];
+      }
     });
   }
   return selection;
@@ -113,7 +116,7 @@ export function isItemSelected(
     return false;
   }
 
-  const atomsSubsetOfSelection = (atomIds: number[]): boolean => {
+  const areAtomsSubsetOfSelection = (atomIds: number[]): boolean => {
     if (atomIds.length === 0) {
       return false;
     }
@@ -141,19 +144,19 @@ export function isItemSelected(
     case 'functionalGroups': {
       const sgroup = restruct.sgroups.get(ci.id)?.item;
       return sgroup
-        ? atomsSubsetOfSelection(SGroup.getAtoms(restruct.molecule, sgroup))
+        ? areAtomsSubsetOfSelection(SGroup.getAtoms(restruct.molecule, sgroup))
         : false;
     }
     case 'rgroups': {
       const rgroup = restruct.rgroups.get(ci.id);
       return rgroup
-        ? atomsSubsetOfSelection(rgroup.getAtoms(restruct.render))
+        ? areAtomsSubsetOfSelection(rgroup.getAtoms(restruct.render))
         : false;
     }
     case 'frags': {
       const frag = restruct.frags.get(ci.id);
       return frag
-        ? atomsSubsetOfSelection(frag.fragGetAtoms(restruct, ci.id))
+        ? areAtomsSubsetOfSelection(frag.fragGetAtoms(restruct, ci.id))
         : false;
     }
     case 'bonds': {
@@ -234,7 +237,7 @@ export function selectElementsOnCanvas(
       ? selMerge(lassoHelper.end(), elements, false)
       : lassoHelper.end();
   editor.selection(
-    !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+    event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
   );
 }
 
@@ -247,7 +250,7 @@ export function onSelectionStart(
   if (!lassoHelper.fragment) lassoHelper.begin(event);
 }
 
-export function onSelectionMove(
+export function isSelectionMoveHandled(
   event: PointerEvent,
   editor: Editor,
   lassoHelper: LassoHelper,
@@ -256,7 +259,7 @@ export function onSelectionMove(
     const sel = lassoHelper.addPoint(event);
 
     editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+      event.shiftKey ? selMerge(sel, editor.selection(), false) : sel,
     );
     return true;
   }

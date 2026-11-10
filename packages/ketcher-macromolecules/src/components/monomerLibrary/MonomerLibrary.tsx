@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,6 +41,7 @@ import {
   MonomerLibraryToggle,
 } from './styles';
 import { Icon } from 'ketcher-react';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import { MonomerLibraryContextMenu } from './MonomerLibraryContextMenu';
 
 const COPY = '_Copy';
@@ -54,6 +55,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const presets = useAppSelector(selectAllPresets);
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
 
   useEffect(() => {
     dispatch(setSearchFilter(''));
@@ -117,7 +119,11 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   );
 
   return (
-    <MonomerLibraryContainer data-testid="monomer-library">
+    <MonomerLibraryContainer
+      data-testid="monomer-library"
+      isDisabled={isSettingsPanelOpen}
+      aria-disabled={isSettingsPanelOpen}
+    >
       <MonomerLibraryHeader>
         <MonomerLibraryInputContainer>
           <MonomerLibrarySearchIcon name="search" />

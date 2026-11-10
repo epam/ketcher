@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -92,7 +92,10 @@ export class Molfile {
     return ret;
   }
 
-  prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
+  prepareSGroups(
+    shouldSkipErrors: boolean,
+    shouldPreserveIndigoDesc?: boolean,
+  ) {
     const mol = this.molecule;
     if (!mol) return;
 
@@ -105,13 +108,13 @@ export class Molfile {
       .forEach((id) => {
         const sgroup = mol.sgroups.get(id);
         if (!sgroup) return;
-        let errorIgnore = false;
+        let shouldIgnoreError = false;
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
         } catch (error: unknown) {
           KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', error);
-          if (!skipErrors || !isErrorWithNumericId(error)) {
+          if (!shouldSkipErrors || !isErrorWithNumericId(error)) {
             throw new Error(
               `Error: ${
                 isErrorWithMessage(error) ? error.message : String(error)
@@ -119,15 +122,15 @@ export class Molfile {
               { cause: error },
             );
           }
-          errorIgnore = true;
+          shouldIgnoreError = true;
         }
 
         if (
-          errorIgnore ||
-          (!preserveIndigoDesc &&
+          shouldIgnoreError ||
+          (!shouldPreserveIndigoDesc &&
             /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          errors += +errorIgnore;
+          errors += +shouldIgnoreError;
           toRemove.push(sgroup.id);
         }
       });
@@ -146,7 +149,9 @@ export class Molfile {
   }
 
   getCTab(molecule: Struct, rgroups?: Struct['rgroups']) {
-    /* saver */
+    /*
+    saver
+    */
     this.molecule = molecule.clone();
     this.centerMonomerMicromoleculeAtoms();
     this.prepareSGroups(false, false);
@@ -157,11 +162,13 @@ export class Molfile {
 
   saveMolecule(
     molecule: Struct,
-    skipSGroupErrors: boolean,
-    norgroups?: boolean,
-    preserveIndigoDesc?: boolean,
+    shouldSkipSGroupErrors: boolean,
+    shouldOmitRGroups?: boolean,
+    shouldPreserveIndigoDesc?: boolean,
   ) {
-    /* saver */
+    /*
+    saver
+    */
     this.reaction = molecule.hasRxnArrow();
     this.molfile = '' + molecule.name;
     if (this.reaction) {
@@ -174,7 +181,7 @@ export class Molfile {
 
       const reactants = components.reactants;
       const products = components.products;
-      const all = reactants.concat(products);
+      const all = [...reactants, ...products];
       this.molfile =
         '$RXN\n' +
         molecule.name +
@@ -193,7 +200,7 @@ export class Molfile {
     }
 
     if (molecule.rgroups.size > 0) {
-      if (norgroups) {
+      if (shouldOmitRGroups) {
         molecule = molecule.getScaffold();
       } else {
         const scaffold = new Molfile().getCTab(
@@ -223,7 +230,7 @@ export class Molfile {
     this.molecule = molecule.clone();
     this.centerMonomerMicromoleculeAtoms();
 
-    this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
+    this.prepareSGroups(shouldSkipSGroupErrors, shouldPreserveIndigoDesc);
 
     this.writeHeader();
     this.writeCTab2000();
@@ -232,7 +239,9 @@ export class Molfile {
   }
 
   writeHeader() {
-    /* saver */
+    /*
+    saver
+    */
 
     const date = new Date();
 
@@ -252,12 +261,16 @@ export class Molfile {
   }
 
   write(str: string) {
-    /* saver */
+    /*
+    saver
+    */
     this.molfile += str;
   }
 
   writeCR(str?: string) {
-    /* saver */
+    /*
+    saver
+    */
     if (arguments.length === 0) {
       str = '';
     }
@@ -266,7 +279,9 @@ export class Molfile {
   }
 
   writeWhiteSpace(length = 0) {
-    /* saver */
+    /*
+    saver
+    */
     if (arguments.length === 0) {
       length = 1;
     }
@@ -275,13 +290,17 @@ export class Molfile {
   }
 
   writePadded(str: string, width: number) {
-    /* saver */
+    /*
+    saver
+    */
     this.write(str);
     this.writeWhiteSpace(width - str.length);
   }
 
   writePaddedNumber(number: number, width: number) {
-    /* saver */
+    /*
+    saver
+    */
     const str = (number - 0).toString();
 
     this.writeWhiteSpace(width - str.length);
@@ -289,12 +308,16 @@ export class Molfile {
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
-    /* saver */
+    /*
+    saver
+    */
     this.write(utils.paddedNum(number, width, precision));
   }
 
   writeCTab2000Header() {
-    /* saver */
+    /*
+    saver
+    */
     const molecule = this.molecule;
     assert(molecule !== null, 'molecule is not defined');
     this.writePaddedNumber(molecule.atoms.size, 3);
@@ -302,7 +325,7 @@ export class Molfile {
 
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
-    const isAbsFlag = Array.from(molecule.frags.values()).some((fr) =>
+    const isAbsFlag = [...molecule.frags.values()].some((fr) =>
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 
@@ -317,7 +340,9 @@ export class Molfile {
   }
 
   writeCTab2000(rgroups?: Struct['rgroups']) {
-    /* saver */
+    /*
+    saver
+    */
     const molecule = this.molecule;
     if (!molecule) return;
 

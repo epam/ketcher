@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ export class HighlightAdd extends BaseOperation {
     rgroupAttachmentPoints: Array<number>,
     color: string,
     highlightId?: number,
-    outline?: boolean,
+    hasOutline?: boolean,
   ) {
     super(OperationType.ADD_HIGHLIGHT);
     this.data = {
@@ -48,12 +48,18 @@ export class HighlightAdd extends BaseOperation {
       rgroupAttachmentPoints,
       color,
       highlightId,
-      outline,
+      outline: hasOutline,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, rgroupAttachmentPoints, color, outline } = this.data;
+    const {
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+      outline: hasOutline,
+    } = this.data;
 
     if (!color) {
       return;
@@ -65,7 +71,7 @@ export class HighlightAdd extends BaseOperation {
       bonds,
       rgroupAttachmentPoints,
       color,
-      outline,
+      outline: hasOutline,
     });
 
     if (typeof this.data.highlightId === 'number') {

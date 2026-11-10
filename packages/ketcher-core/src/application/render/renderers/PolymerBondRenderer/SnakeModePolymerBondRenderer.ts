@@ -228,16 +228,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  // TODO: Specify the types.
-  private appendSideConnectionBond(rootElement, cells: Cell[]) {
+  private getCellConnection(cell: Cell): Connection {
+    return cell.connections.find((connection: Connection): boolean => {
+      return connection.polymerBond === this.polymerBond;
+    }) as Connection;
+  }
+
+  private isStraightVerticalConnection(
+    cells: Cell[],
+    isVerticalConnection: boolean,
+  ): boolean {
     const firstCell = cells[0];
-    const firstCellConnection = firstCell.connections.find(
-      (connection: Connection): boolean => {
-        return connection.polymerBond === this.polymerBond;
-      },
-    ) as Connection;
-    const isVerticalConnection = firstCellConnection.isVertical;
-    const isStraightVerticalConnection =
+    return (
       (cells.length === 2 ||
         cells.reduce(
           (isStraight: boolean, cell: Cell, index: number): boolean => {
@@ -248,12 +250,16 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           },
           true,
         )) &&
-      isVerticalConnection;
+      isVerticalConnection
+    );
+  }
+
+  private calculateBondPositions(firstCell: Cell): {
+    startPosition: Vec2;
+    endPosition: Vec2;
+  } {
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
-    );
-    const isTwoNeighborRowsConnection = cells.every(
-      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
     );
     const startPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.startPosition
@@ -261,6 +267,54 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
+    return { startPosition, endPosition };
+  }
+
+  private calculateMaxHorizontalOffset(cells: Cell[]): number {
+    return cells.reduce((maxOffset: number, cell: Cell): number => {
+      const cellMaxOffset = cell.connections.reduce(
+        (cellMax: number, connection: Connection): number => {
+          return connection.isVertical || cellMax > connection.xOffset
+            ? cellMax
+            : connection.xOffset;
+        },
+        0,
+      );
+      return Math.max(maxOffset, cellMaxOffset);
+    }, 0);
+  }
+
+  private retrieveLastCellConnection(cells: Cell[]): {
+    lastCellConnection: Connection;
+    lastSin: number;
+  } {
+    const lastCell = cells[cells.length - 1];
+    const firstCell = cells[0];
+    const lastCellConnection = this.getCellConnection(lastCell);
+    const lastCellBeforeEndpoint =
+      cells
+        .slice(0, -1)
+        .reverse()
+        .find((cell) => cell.node !== null) ?? firstCell;
+    const lastYDirection = lastCell.y < lastCellBeforeEndpoint.y ? 270 : 90;
+    const lastSin = Math.sin((lastYDirection * Math.PI) / 180);
+    return { lastCellConnection, lastSin };
+  }
+
+  // TODO: Specify the types.
+  private appendSideConnectionBond(rootElement, cells: Cell[]) {
+    const firstCell = cells[0];
+    const firstCellConnection = this.getCellConnection(firstCell);
+    const isVerticalConnection = firstCellConnection.isVertical;
+    const isStraightVerticalConnection = this.isStraightVerticalConnection(
+      cells,
+      isVerticalConnection,
+    );
+    const isTwoNeighborRowsConnection = cells.every(
+      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
+    );
+    const { startPosition, endPosition } =
+      this.calculateBondPositions(firstCell);
     const xDirection =
       startPosition.x >= (this.sideConnectionBondTurnPoint ?? endPosition.x)
         ? 180
@@ -282,33 +336,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       return cell.y === firstCell.y;
     });
     const isSecondCellEmpty = cells[1].node === null;
-    const maxHorizontalOffset = cells.reduce(
-      (maxOffset: number, cell: Cell): number => {
-        const cellMaxOffset = cell.connections.reduce(
-          (cellMax: number, connection: Connection): number => {
-            return connection.isVertical || cellMax > connection.xOffset
-              ? cellMax
-              : connection.xOffset;
-          },
-          0,
-        );
-        return Math.max(maxOffset, cellMaxOffset);
-      },
-      0,
-    );
-    const lastCell = cells[cells.length - 1];
-    const lastCellConnection = lastCell.connections.find(
-      (connection: Connection): boolean => {
-        return connection.polymerBond === this.polymerBond;
-      },
-    ) as Connection;
-    const lastCellBeforeEndpoint =
-      cells
-        .slice(0, -1)
-        .reverse()
-        .find((cell) => cell.node !== null) ?? firstCell;
-    const lastYDirection = lastCell.y < lastCellBeforeEndpoint.y ? 270 : 90;
-    const lastSin = Math.sin((lastYDirection * Math.PI) / 180);
+    const maxHorizontalOffset = this.calculateMaxHorizontalOffset(cells);
+
+    const { lastSin, lastCellConnection } =
+      this.retrieveLastCellConnection(cells);
+
     let finalVerticalLineY =
       endPosition.y -
       SideChainConnectionBondRendererUtility.cellHeight / 2 -

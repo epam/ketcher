@@ -1,4 +1,1 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npm run prepush
+npx lint-staged --config lint-staged.pre-push.mjs --diff="origin/master...HEAD"

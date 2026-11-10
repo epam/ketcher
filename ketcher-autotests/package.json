@@ -26,11 +26,11 @@
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.62.1",
+    "@playwright/test": "^1.65.0",
     "cross-env": "^7.0.3",
     "eslint": "10.9.0",
     "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
-    "glob": "^13.0.6",
+    "glob": "^14.0.2",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3"
@@ -45,7 +45,7 @@
     ],
     "*.{js,ts}": [
       "prettier --write",
-      "eslint ."
+      "eslint --quiet --no-warn-ignored"
     ]
   },
   "types": "./tests/typings.d.ts"

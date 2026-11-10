@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,7 +17,11 @@
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, LoadingCircles } from '../../../../components';
+import {
+  Dialog,
+  type DialogParams,
+  LoadingCircles,
+} from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
@@ -26,8 +29,15 @@ import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+
+type OpenResult = {
+  structStr: string;
+  fragment: boolean;
+  'input-format'?: string;
+};
+
 interface OpenProps {
-  server: any;
+  server: unknown;
   errorHandler: (err: string) => void;
   isRecognizeDisabled: boolean;
   isAnalyzingFile: boolean;
@@ -35,7 +45,7 @@ interface OpenProps {
 
 type Props = OpenProps &
   Pick<BaseProps, 'className'> &
-  BaseCallProps & { onImageUpload: (file: File) => void };
+  BaseCallProps<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
@@ -106,12 +116,13 @@ const Open: FC<Props> = (props) => {
     [ketcherId],
   );
 
-  const onFileLoad = (files) => {
-    if ((globalThis as any).isKetcherFullscreenBeforeFilePicker) {
+  const onFileLoad = (files: File[]) => {
+    const windowContext = globalThis as unknown as Record<string, unknown>;
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
       document.documentElement.requestFullscreen?.().catch(() => {
         // Restore fullscreen if it was active before file picker opened
       });
-      (globalThis as any).isKetcherFullscreenBeforeFilePicker = false;
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
     }
 
     setIsLoading(true);
@@ -140,7 +151,7 @@ const Open: FC<Props> = (props) => {
       .then(onLoad, onError);
   };
 
-  const onImageLoad = (files) => {
+  const onImageLoad = (files: File[]) => {
     onImageUpload(files[0]);
     setCurrentState(MODAL_STATES.imageRec);
   };
@@ -172,12 +183,12 @@ const Open: FC<Props> = (props) => {
   if (currentState === MODAL_STATES.imageRec) {
     return <Recognize {...rest} />;
   }
-
   return (
     <Dialog
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
-      params={rest}
+      // Dialog expects a looser `onOk` result type
+      params={rest as DialogParams}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={
@@ -218,5 +229,5 @@ const Open: FC<Props> = (props) => {
   );
 };
 
-export type { OpenProps };
+export type { OpenProps, OpenResult };
 export default Open;

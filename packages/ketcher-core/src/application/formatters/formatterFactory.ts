@@ -91,20 +91,20 @@ export class FormatterFactory {
         break;
 
       case SupportedFormat.mol:
-        if (struct && isMolfileV2000LimitExceeded(struct)) {
+        if (shouldDelegateToIndigo) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
+        } else if (struct && isMolfileV2000LimitExceeded(struct)) {
           // V2000 cannot address more than 999 atoms/bonds, so oversized
           // structures are delegated to Indigo, which upgrades them to V3000.
           formatter = new ServerFormatter(
             this.#structService,
             new KetSerializer(),
             SupportedFormat.molAuto,
-            structServiceOptions,
-          );
-        } else if (shouldDelegateToIndigo) {
-          formatter = new ServerFormatter(
-            this.#structService,
-            new KetSerializer(),
-            format,
             structServiceOptions,
           );
         } else {

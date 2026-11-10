@@ -21,6 +21,10 @@ Each module document answers:
 - [ketcher-macromolecules](./ketcher-macromolecules.md) — macromolecules React UI
 - [ketcher-standalone](./ketcher-standalone.md) — offline Indigo WASM bundle
 
+### Apps
+
+- [example-app](./example-app.md) — the host app in `example/`: host pages, which page a change needs, dev vs production
+
 ### Cross-cutting subsystems (deep dives)
 
 These span multiple packages and are the most valuable parts to understand. They are referenced from [../architecture.md](../architecture.md#deep-dives-the-biggest-most-valuable-parts).

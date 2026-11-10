@@ -31,6 +31,10 @@ import {
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
 import { type RotationViewParams, RotationView } from './RotationView';
 import {
+  type BondInsertionIndicatorViewParams,
+  BondInsertionIndicatorView,
+} from './BondInsertionIndicatorView';
+import {
   type ReplacementHighlightViewParams,
   ReplacementHighlightView,
 } from './ReplacementHighlightView';
@@ -243,6 +247,19 @@ export class TransientDrawingView {
 
   public hideReplacementHighlight() {
     this.removeView(ReplacementHighlightView.viewName);
+  }
+
+  public showBondInsertionIndicator(params: BondInsertionIndicatorViewParams) {
+    this.addView(BondInsertionIndicatorView.viewName, {
+      show: (layer, viewParams) =>
+        BondInsertionIndicatorView.show(layer, viewParams),
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideBondInsertionIndicator() {
+    this.removeView(BondInsertionIndicatorView.viewName);
   }
 
   public clear() {

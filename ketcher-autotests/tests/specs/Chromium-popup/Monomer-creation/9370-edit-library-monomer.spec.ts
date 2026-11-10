@@ -96,6 +96,7 @@ test.describe('#9370 Editing library monomers', () => {
      * Version 3.21.0
      */
     const library = Library(page);
+    await library.hoverMonomer(Peptide.X);
     const ambiguousCard = library.getMonomerLibraryCardLocator(Peptide.X);
     await ambiguousCard.scrollIntoViewIfNeeded();
     await expect(ambiguousCard).toBeInViewport();

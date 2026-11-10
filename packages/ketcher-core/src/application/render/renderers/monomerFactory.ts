@@ -27,7 +27,9 @@ import type {
   ConcreteMonomerEntityClass,
 } from 'domain/helpers/monomerEntityFactory';
 
-type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
+type DerivedRendererClass = new (
+  ...arguments_: unknown[]
+) => BaseMonomerRenderer;
 
 /**
  * Maps any monomer library item (concrete or ambiguous) to its entity class,

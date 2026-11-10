@@ -23,7 +23,7 @@ import {
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
 import { SettingsManager } from 'utilities';
 
-interface IForEachNodeParams {
+interface IForEachNodeParameters {
   twoStrandedNode: ITwoStrandedChainItem;
   nodeIndex: number;
   nodeIndexOverall: number;
@@ -164,19 +164,23 @@ export class SequenceViewModel {
           nodesBeforeHydrogenConnectionToBase.push(node);
           lastTwoStrandedNodeWithHydrogenBond =
             this.nodes[twoStrandedSnakeLayoutNodeIndex];
-          for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+          for (
+            let index = 0;
+            index < nodesBeforeHydrogenConnectionToBase.length;
+            index++
+          ) {
             // need to get rid of this repeated index lookup to reduce complexity
             twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
               ? this.nodes.indexOf(twoStrandedSnakeLayoutNode)
               : -1;
 
             const currentTwoStrandedSnakeLayoutNodeIndex =
-              twoStrandedSnakeLayoutNodeIndex - i;
+              twoStrandedSnakeLayoutNodeIndex - index;
             const currentTwoStrandedSnakeLayoutNode =
               this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
             const currentNodeBeforeHydrogenConnectionToBase =
               nodesBeforeHydrogenConnectionToBase[
-                nodesBeforeHydrogenConnectionToBase.length - 1 - i
+                nodesBeforeHydrogenConnectionToBase.length - 1 - index
               ];
             const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
               lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
@@ -236,18 +240,22 @@ export class SequenceViewModel {
         lastTwoStrandedNodeWithHydrogenBond &&
         nodesBeforeHydrogenConnectionToBase.length
       ) {
-        for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+        for (
+          let index = 0;
+          index < nodesBeforeHydrogenConnectionToBase.length;
+          index++
+        ) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
             lastTwoStrandedNodeWithHydrogenBond
               ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
               : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
-            lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
+            lastTwoStrandedNodeWithHydrogenBondIndex + 1 + index;
           const currentTwoStrandedSnakeLayoutNode:
             ITwoStrandedChainItem | undefined =
             this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
-            nodesBeforeHydrogenConnectionToBase[i];
+            nodesBeforeHydrogenConnectionToBase[index];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
             lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
           const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
@@ -313,8 +321,8 @@ export class SequenceViewModel {
     let antisenseNodeIndex = 0;
     let lastHandledAntisenseChain: Chain | undefined;
 
-    for (let i = this.nodes.length - 1; i >= 0; i--) {
-      const node = this.nodes[i];
+    for (let index = this.nodes.length - 1; index >= 0; index--) {
+      const node = this.nodes[index];
       const senseNode = node.senseNode;
       const antisenseNode = node.antisenseNode;
 
@@ -421,8 +429,12 @@ export class SequenceViewModel {
     });
 
     // Insert from the highest index down so the remaining indices stay valid.
-    for (let i = nodesToInsert.length - 1; i >= 0; i--) {
-      this.nodes.splice(nodesToInsert[i].index, 0, nodesToInsert[i].node);
+    for (let index = nodesToInsert.length - 1; index >= 0; index--) {
+      this.nodes.splice(
+        nodesToInsert[index].index,
+        0,
+        nodesToInsert[index].node,
+      );
     }
   }
 
@@ -507,7 +519,10 @@ export class SequenceViewModel {
   }
 
   public get length() {
-    return this.chains.reduce((acc, chain) => acc + chain.length, 0);
+    return this.chains.reduce(
+      (accumulator, chain) => accumulator + chain.length,
+      0,
+    );
   }
 
   public get hasOnlyOneNewChain() {
@@ -532,7 +547,7 @@ export class SequenceViewModel {
     return chainWithEmptyNode;
   }
 
-  public forEachNode(callback: (params: IForEachNodeParams) => void) {
+  public forEachNode(callback: (parameters: IForEachNodeParameters) => void) {
     let nodeIndexOverall = 0;
 
     this.chains.forEach((chain, chainIndex) => {

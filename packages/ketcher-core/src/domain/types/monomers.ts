@@ -98,7 +98,7 @@ export const attachmentPointNames = [
   'R8',
 ];
 
-export type AttachmentPointConstructorParams = {
+export type AttachmentPointConstructorParameters = {
   rootElement: D3SvgElementSelection<SVGGElement, void>;
   monomer: BaseMonomer;
   bodyWidth: number;
@@ -115,7 +115,7 @@ export type AttachmentPointConstructorParams = {
 };
 
 export type PreviewAttachmentPointConstructorParams =
-  AttachmentPointConstructorParams & {
+  AttachmentPointConstructorParameters & {
     selected: boolean;
     connected: boolean;
     usage: UsageInMacromolecule;

@@ -45,16 +45,16 @@ function assertCustomQueryLength(customQuery: string, context: string): void {
 }
 
 function fromRlabel(rg: number): number[] {
-  const res: number[] = [];
+  const result: number[] = [];
   let rgi;
-  let val;
+  let value;
   for (rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      val = rgi + 1;
-      res.push(val); // push the string
+      value = rgi + 1;
+      result.push(value); // push the string
     }
   }
-  return res;
+  return result;
 }
 
 export interface MoleculesSelection {
@@ -167,10 +167,10 @@ function rglabelToKet(source: Atom): KetRgLabelNode {
   ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
-  const refsToRGroups = fromRlabel(source.rglabel ?? 0).map(
+  const referencesToRGroups = fromRlabel(source.rglabel ?? 0).map(
     (rgnumber) => `rg-${rgnumber}`,
   );
-  ifDef(result, '$refs', refsToRGroups);
+  ifDef(result, '$refs', referencesToRGroups);
   ifDef(result, 'selected', source.getInitiallySelected());
 
   return result;

@@ -1,13 +1,13 @@
 /** @jest-environment jsdom */
 
 import {
-  type SelectionViewParams,
+  type SelectionViewParameters,
   SelectionView,
 } from 'application/render/renderers/TransientView/SelectionView';
 import { SELECTION_OUTLINE_COLOR } from 'application/render/renderers/constants';
 import { select } from 'd3';
 
-const renderSelection = (params: SelectionViewParams): SVGSVGElement => {
+const renderSelection = (params: SelectionViewParameters): SVGSVGElement => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   document.body.appendChild(svg);
   select(svg).append('g').attr('class', 'transient-views-layer');

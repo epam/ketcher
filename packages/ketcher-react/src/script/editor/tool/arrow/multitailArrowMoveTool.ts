@@ -6,7 +6,7 @@ import type {
 import {
   type Action,
   CoordinateTransformation,
-  MultitailArrowRefName,
+  MultitailArrowReferenceName,
   fromMultitailArrowHeadTailMove,
   fromMultitailArrowHeadTailsResize,
   fromMultitailArrowMove,
@@ -36,7 +36,7 @@ export class MultitailArrowMoveTool
     const current = CoordinateTransformation.pageToModel(event, this.render);
     const offset = current.sub(originalPosition);
     const ref = closestItem.ref;
-    if (ref && ref.name !== MultitailArrowRefName.SPINE) {
+    if (ref && ref.name !== MultitailArrowReferenceName.SPINE) {
       if (ref.isLine) {
         return fromMultitailArrowHeadTailMove(
           this.reStruct,

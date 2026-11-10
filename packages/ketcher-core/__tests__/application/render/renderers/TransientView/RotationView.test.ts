@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
 import {
-  type RotationViewParams,
+  type RotationViewParameters,
   RotationView,
 } from 'application/render/renderers/TransientView/RotationView';
 import { Coordinates } from 'application/editor';
@@ -9,7 +9,7 @@ import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { select } from 'd3';
 
-const DEFAULT_PARAMS: Omit<RotationViewParams, 'rotationAngle'> = {
+const DEFAULT_PARAMS: Omit<RotationViewParameters, 'rotationAngle'> = {
   center: new Vec2(100, 100),
   boundingBox: { left: 80, top: 80, width: 40, height: 40 },
   isRotating: true,
@@ -17,13 +17,13 @@ const DEFAULT_PARAMS: Omit<RotationViewParams, 'rotationAngle'> = {
 };
 
 const renderRotation = (
-  paramsOverride: Partial<RotationViewParams>,
+  paramsOverride: Partial<RotationViewParameters>,
 ): SVGSVGElement => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const transientLayer = select(svg).append('g');
   RotationView.show(
     transientLayer as unknown as D3SvgElementSelection<SVGGElement, void>,
-    { ...DEFAULT_PARAMS, ...paramsOverride } as RotationViewParams,
+    { ...DEFAULT_PARAMS, ...paramsOverride } as RotationViewParameters,
   );
   return svg;
 };

@@ -15,10 +15,8 @@ type UnitedPaperPath = {
   pathData: string;
 };
 
-export type ReplacementHighlightViewParams = {
-  /**
-  The canvas monomers that will be replaced on drop.
-  */
+export type ReplacementHighlightViewParameters = {
+  /** The canvas monomers that will be replaced on drop. */
   monomers: BaseMonomer[];
 };
 
@@ -120,9 +118,9 @@ export class ReplacementHighlightView extends TransientView {
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
-    params: ReplacementHighlightViewParams,
+    parameters: ReplacementHighlightViewParameters,
   ) {
-    const monomers = params.monomers.filter(
+    const monomers = parameters.monomers.filter(
       (monomer): monomer is BaseMonomer =>
         monomer.renderer instanceof BaseMonomerRenderer,
     );

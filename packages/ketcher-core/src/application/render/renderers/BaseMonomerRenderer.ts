@@ -16,7 +16,7 @@ import {
   sectorsList,
 } from 'domain/helpers/attachmentPointCalculations';
 import type {
-  AttachmentPointConstructorParams,
+  AttachmentPointConstructorParameters,
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
@@ -288,7 +288,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   protected prepareAttachmentPointsParams(
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
-  ): AttachmentPointConstructorParams {
+  ): AttachmentPointConstructorParameters {
     // Attachment points are only ever prepared/drawn after the root element
     // has been appended (see drawAttachmentPoints callers, which bail out
     // early when `rootElement` is not yet set). Reaching this point without

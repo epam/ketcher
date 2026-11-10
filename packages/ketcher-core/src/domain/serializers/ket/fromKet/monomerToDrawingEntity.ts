@@ -22,9 +22,9 @@ import {
   convertMonomerTemplateToStruct,
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
-} from './monomerTemplateUtils';
+} from './monomerTemplateUtilities';
 
-export function templateToMonomerProps(template: IKetMonomerTemplate) {
+export function templateToMonomerProperties(template: IKetMonomerTemplate) {
   return {
     id: template.id,
     Name: template.fullName ?? template.name ?? template.alias ?? template.id,
@@ -65,7 +65,7 @@ export function monomerToDrawingEntity(
       label: alias ?? id,
       colorScheme: undefined,
       favorite: false,
-      props: templateToMonomerProps(template),
+      props: templateToMonomerProperties(template),
       attachmentPoints: getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
@@ -79,7 +79,7 @@ export function monomerToDrawingEntity(
   );
 }
 
-export type MonomerFactoryFn = (
+export type MonomerFactoryFunction = (
   monomerItem: MonomerItemType,
 ) => [
   new (
@@ -93,7 +93,7 @@ export type MonomerFactoryFn = (
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
-  monomerFactory: MonomerFactoryFn,
+  monomerFactory: MonomerFactoryFunction,
 ) {
   const monomerTemplates = variantMonomerTemplate.options.map((option) => {
     return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
@@ -103,7 +103,7 @@ export function createMonomersForVariantMonomer(
       label: monomerTemplate.alias,
       expanded: false,
       struct: convertMonomerTemplateToStruct(monomerTemplate),
-      props: templateToMonomerProps(monomerTemplate),
+      props: templateToMonomerProperties(monomerTemplate),
       attachmentPoints: getTemplateAttachmentPoints(monomerTemplate),
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
@@ -122,7 +122,7 @@ export function variantMonomerToDrawingEntity(
   node: IKetAmbiguousMonomerNode,
   template: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
-  monomerFactory: MonomerFactoryFn,
+  monomerFactory: MonomerFactoryFunction,
 ) {
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),

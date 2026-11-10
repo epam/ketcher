@@ -198,9 +198,9 @@ export class SnakeLayoutModel {
             lastTwoStrandedNodeWithHydrogenBond =
               this.nodes[twoStrandedSnakeLayoutNodeIndex];
             for (
-              let i = 0;
-              i < nodesBeforeHydrogenConnectionToBase.length;
-              i++
+              let index = 0;
+              index < nodesBeforeHydrogenConnectionToBase.length;
+              index++
             ) {
               // need to get rid of this repeated index lookup to reduce complexity
               twoStrandedSnakeLayoutNodeIndex = twoStrandedSnakeLayoutNode
@@ -208,12 +208,12 @@ export class SnakeLayoutModel {
                 : -1;
 
               const currentTwoStrandedSnakeLayoutNodeIndex =
-                twoStrandedSnakeLayoutNodeIndex - i;
+                twoStrandedSnakeLayoutNodeIndex - index;
               const currentTwoStrandedSnakeLayoutNode =
                 this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
               const currentNodeBeforeHydrogenConnectionToBase =
                 nodesBeforeHydrogenConnectionToBase[
-                  nodesBeforeHydrogenConnectionToBase.length - 1 - i
+                  nodesBeforeHydrogenConnectionToBase.length - 1 - index
                 ];
               const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
                 lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
@@ -266,18 +266,22 @@ export class SnakeLayoutModel {
         lastTwoStrandedNodeWithHydrogenBond &&
         nodesBeforeHydrogenConnectionToBase.length
       ) {
-        for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+        for (
+          let index = 0;
+          index < nodesBeforeHydrogenConnectionToBase.length;
+          index++
+        ) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =
             lastTwoStrandedNodeWithHydrogenBond
               ? this.nodes.indexOf(lastTwoStrandedNodeWithHydrogenBond)
               : -1;
           const currentTwoStrandedSnakeLayoutNodeIndex =
-            lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
+            lastTwoStrandedNodeWithHydrogenBondIndex + 1 + index;
           const currentTwoStrandedSnakeLayoutNode:
             ITwoStrandedSnakeLayoutNode | undefined =
             this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
-            nodesBeforeHydrogenConnectionToBase[i];
+            nodesBeforeHydrogenConnectionToBase[index];
           const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
             lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
           const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
@@ -492,7 +496,7 @@ export class SnakeLayoutModel {
 
             if (!isThereEnoughSpaceInCurrentRow) {
               // Fill the rest of the row with empty nodes
-              for (let i = 0; i < freeCellsInCurrentRow; i++) {
+              for (let index = 0; index < freeCellsInCurrentRow; index++) {
                 currentRowToHandle.snakeLayoutModelItems.push(
                   new EmptySnakeLayoutNode(),
                 );
@@ -504,7 +508,7 @@ export class SnakeLayoutModel {
               nextCellIndexToFill = 0;
 
               // Add empty rows if needed (for high molecules)
-              for (let i = 0; i < emptyRowsToAdd; i++) {
+              for (let index = 0; index < emptyRowsToAdd; index++) {
                 newChain.addRow({
                   snakeLayoutModelItems: row.snakeLayoutModelItems.map(
                     (_) => new EmptySnakeLayoutNode(),
@@ -520,7 +524,7 @@ export class SnakeLayoutModel {
             );
 
             // Fill the rest of cells needed for the molecule with empty nodes
-            for (let i = 1; i < cellsNeededHorizontally; i++) {
+            for (let index = 1; index < cellsNeededHorizontally; index++) {
               currentRowToHandle.snakeLayoutModelItems.push(
                 new EmptySnakeLayoutNode(),
               );
@@ -537,9 +541,9 @@ export class SnakeLayoutModel {
         // Fill the rest of the last row with empty nodes
         if (currentRowToHandle.snakeLayoutModelItems.length) {
           for (
-            let i = currentRowToHandle.snakeLayoutModelItems.length;
-            i < lineLength;
-            i++
+            let index = currentRowToHandle.snakeLayoutModelItems.length;
+            index < lineLength;
+            index++
           ) {
             currentRowToHandle.snakeLayoutModelItems.push(
               new EmptySnakeLayoutNode(),
@@ -550,7 +554,7 @@ export class SnakeLayoutModel {
 
         // Add empty rows if needed (for high molecules)
         if (emptyRowsToAdd > 0) {
-          for (let i = 0; i < emptyRowsToAdd; i++) {
+          for (let index = 0; index < emptyRowsToAdd; index++) {
             newChain.addRow({
               snakeLayoutModelItems: row.snakeLayoutModelItems.map(
                 (_) => new EmptySnakeLayoutNode(),

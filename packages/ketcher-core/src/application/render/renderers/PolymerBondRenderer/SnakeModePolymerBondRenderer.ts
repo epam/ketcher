@@ -485,7 +485,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  // TODO: Specify the types.
   private appendSideConnectionBodyElement(
     rootElement,
     pathDAttributeValue: string,

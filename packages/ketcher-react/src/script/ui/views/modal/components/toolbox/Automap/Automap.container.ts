@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -19,20 +18,28 @@ import type { BaseCallProperties, BaseProperties } from '../../../modal.types';
 
 import Automap from './Automap';
 import { automap } from '../../../../../state/server';
+import type {
+  AutomapRequest,
+  StoreState,
+} from '../../../../../state/store.types';
+import type { AppDispatch } from '../../../../../state/hooks';
 import { connect } from 'react-redux';
 
-type StateProperties = Pick<BaseProperties, 'formState'>;
-type DispatchProperties = Pick<BaseCallProperties, 'onOk'>;
+type StateProperties = Pick<BaseProperties<AutomapRequest>, 'formState'>;
+type DispatchProperties = Pick<BaseCallProperties<AutomapRequest>, 'onOk'>;
+type OwnProperties = Pick<BaseCallProperties, 'onOk'>;
+type State = Pick<StoreState, 'modal'>;
 
-const mapStateToProperties = (state: any): StateProperties => ({
-  formState: state.modal.form,
+const mapStateToProperties = (state: State): StateProperties => ({
+  // The modal store keeps a generic form result for every dialog
+  formState: state.modal.form as StateProperties['formState'],
 });
 
 const mapDispatchToProperties = (
-  dispatch: any,
-  ownProperties: any,
+  dispatch: AppDispatch,
+  ownProperties: OwnProperties,
 ): DispatchProperties => ({
-  onOk: (result) => {
+  onOk: (result: AutomapRequest) => {
     dispatch(automap(result));
     ownProperties.onOk(result);
   },

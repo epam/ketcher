@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -22,7 +21,7 @@ import {
   ToolbarGroupItem,
 } from '../ToolbarGroupItem';
 
-import { TemplatesList } from './TemplatesList';
+import { type TemplatesListProperties, TemplatesList } from './TemplatesList';
 import classes from './BottomToolbar.module.less';
 import clsx from 'clsx';
 
@@ -36,10 +35,7 @@ interface BottomToolbarProperties extends Omit<
   'id' | 'options'
 > {
   className?: string;
-  active?: {
-    opts: any;
-    tool: string;
-  };
+  active?: TemplatesListProperties['active'];
 }
 
 type BottomToolbarCallProperties = ToolbarGroupItemCallProperties;

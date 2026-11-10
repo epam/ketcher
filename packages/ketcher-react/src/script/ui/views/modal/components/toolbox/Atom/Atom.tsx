@@ -45,9 +45,9 @@ import {
   customQueryValid,
   pseudoAtomValid,
 } from './helper';
-import AtomElement from './AtomElement/AtomElement';
+import AtomElement, { type AtomFormResult } from './AtomElement/AtomElement';
 
-interface AtomProps extends BaseCallProperties, BaseProperties {
+interface AtomProps extends BaseCallProperties, BaseProperties<AtomFormResult> {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;

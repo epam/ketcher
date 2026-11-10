@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -24,12 +23,14 @@ import {
 import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
+import type { StoreState } from '../../../state/store.types';
 
 type StateProperties = Omit<LeftToolbarProperties, 'className'>;
-const disableableButtons = [];
-const mapStateToProperties = (state: any): StateProperties => ({
+type State = Pick<StoreState, 'actionState' | 'toolbar' | 'requestsStatuses'>;
+const disableableButtons: string[] = [];
+const mapStateToProperties = (state: State): StateProperties => ({
   status: state.actionState ?? {},
-  opened: state.toolbar.opened,
+  opened: state.toolbar.opened ?? null,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,
 });

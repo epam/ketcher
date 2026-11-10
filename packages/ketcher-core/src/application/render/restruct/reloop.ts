@@ -133,10 +133,10 @@ class ReLoop extends ReObject {
     }
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
     if (sgroup?.isContracted()) {
-      const allInSameSgroup = [...atomIds].every(
+      const isEntireLoopInSameSgroup = [...atomIds].every(
         (atomId) => molecule.getGroupFromAtomId(atomId) === sgroup,
       );
-      if (allInSameSgroup) {
+      if (isEntireLoopInSameSgroup) {
         return;
       }
     }

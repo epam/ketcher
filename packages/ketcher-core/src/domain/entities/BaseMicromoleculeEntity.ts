@@ -32,16 +32,16 @@ export abstract class BaseMicromoleculeEntity {
     return this.initiallySelected;
   }
 
-  setInitiallySelected(value?: boolean): void {
+  setInitiallySelected(isInitiallySelected?: boolean): void {
     if (this.initiallySelected === INVALID) {
       throw new Error(
         'this field is used only for serialization/deserialization',
       );
     }
-    this.initiallySelected = value;
+    this.initiallySelected = isInitiallySelected;
   }
 
-  resetInitiallySelected(invalidate?: boolean): void {
-    this.initiallySelected = invalidate ? INVALID : undefined;
+  resetInitiallySelected(shouldInvalidate?: boolean): void {
+    this.initiallySelected = shouldInvalidate ? INVALID : undefined;
   }
 }

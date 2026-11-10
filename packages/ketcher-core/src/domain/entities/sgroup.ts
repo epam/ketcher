@@ -282,9 +282,9 @@ export class SGroup {
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }
 
-    const sgroups = Array.from(struct.sgroups.values());
+    const sgroups = [...struct.sgroups.values()];
     for (const _ of sgroups) {
-      if (!descriptorIntersects(sgroups, topLeftPoint)) break;
+      if (!doesDescriptorIntersect(sgroups, topLeftPoint)) break;
 
       topLeftPoint = topLeftPoint.add(new Vec2(0, 0.5));
     }
@@ -313,7 +313,7 @@ export class SGroup {
 
   addAttachmentPoint(
     attachmentPoint: SGroupAttachmentPoint,
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
       ({ atomId, leaveAtomId, attachmentId, attachmentPointNumber }) =>
@@ -323,7 +323,7 @@ export class SGroup {
         attachmentPoint.attachmentPointNumber === attachmentPointNumber,
     );
 
-    if (isAttachmentPointAlreadyExist && validateUniqueness) {
+    if (isAttachmentPointAlreadyExist && shouldValidateUniqueness) {
       throw new Error(
         'The same attachment point cannot be added to an S-group more than once',
       );
@@ -335,10 +335,10 @@ export class SGroup {
   addAttachmentPoints(
     attachmentPoints:
       ReadonlyArray<SGroupAttachmentPoint> | SGroupAttachmentPoint[],
-    validateUniqueness = true,
+    shouldValidateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
-      this.addAttachmentPoint(attachmentPoint, validateUniqueness);
+      this.addAttachmentPoint(attachmentPoint, shouldValidateUniqueness);
     }
   }
 
@@ -514,7 +514,7 @@ export class SGroup {
   }
 
   static filter(_mol: unknown, sg: SGroup, atomMap: AtomIdRemap): void {
-    sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
+    sg.atoms = this.removeNegative(this.filterAtoms(sg.atoms, atomMap));
   }
 
   static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
@@ -590,9 +590,9 @@ export class SGroup {
     render?: Render,
   ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = !SGroup.isCOPGroup(sGroup)
-      ? new Vec2(0.2, 0.4)
-      : new Vec2(1.2, 1.2);
+    const PADDING_VECTOR = this.isCOPGroup(sGroup)
+      ? new Vec2(1.2, 1.2)
+      : new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Box2Abs[] = [];
@@ -610,7 +610,7 @@ export class SGroup {
       if (!atom) return;
 
       let structBoundingBox: Box2Abs | null = null;
-      if ('getVBoxObj' in atom && atom.getVBoxObj && render) {
+      if (render && 'getVBoxObj' in atom && atom.getVBoxObj) {
         structBoundingBox = atom.getVBoxObj(render);
       } else if (atom.pp) {
         const position = new Vec2(atom.pp);
@@ -622,9 +622,9 @@ export class SGroup {
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
-      braketBox = !braketBox ? bba : Box2Abs.union(braketBox, bba);
+      braketBox = braketBox ? Box2Abs.union(braketBox, bba) : bba;
     });
-    const currentRender = render ?? window.ketcher?.editor?.render;
+    const currentRender = render ?? globalThis.ketcher?.editor?.render;
     assert(currentRender, 'SGroup.bracketPos: render instance is required');
     let attachmentPointsVBox =
       currentRender?.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms) ?? null;
@@ -723,7 +723,7 @@ export class SGroup {
   static getObjBBox(
     atoms: number[],
     mol: Struct,
-    useCollapsedSgroupsPosition = false,
+    shouldUseCollapsedSgroupsPosition = false,
   ): Box2Abs {
     const a0 = mol.atoms.get(atoms[0])?.pp;
     assert(a0, `SGroup.getObjBBox: atom ${atoms[0]} position is not found`);
@@ -734,7 +734,7 @@ export class SGroup {
       const sgroupId = atom.sgs.values().next().value;
       const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
       const p =
-        useCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
+        shouldUseCollapsedSgroupsPosition && sgroup && !sgroup.isExpanded()
           ? sgroup.getContractedPosition(mol).position
           : atom.pp;
       bb = bb.include(p);
@@ -756,7 +756,7 @@ export class SGroup {
   }
 
   static getBonds(mol: StructAtomsAndBondsAccess, sg?: SGroup): number[] {
-    const atoms = SGroup.getAtoms(mol, sg);
+    const atoms = this.getAtoms(mol, sg);
     const bonds: number[] = [];
     mol.bonds.forEach((bond, bid) => {
       if (atoms.indexOf(bond.begin) >= 0 && atoms.indexOf(bond.end) >= 0) {
@@ -907,31 +907,34 @@ export class SGroup {
     if (!sGroup) {
       return false;
     }
-    return sGroup?.type === SGroup.TYPES.SUP;
+    return sGroup?.type === this.TYPES.SUP;
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.DAT;
+    return sGroup.type === this.TYPES.DAT;
   }
 
   static isQuerySGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.queryComponent;
+    return sGroup.type === this.TYPES.queryComponent;
   }
 
   static isSRUSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.SRU;
+    return sGroup.type === this.TYPES.SRU;
   }
 
   static isMulSGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.MUL;
+    return sGroup.type === this.TYPES.MUL;
   }
 
   static isCOPGroup(sGroup: SGroup): boolean {
-    return sGroup.type === SGroup.TYPES.COP;
+    return sGroup.type === this.TYPES.COP;
   }
 }
 
-function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {
+function doesDescriptorIntersect(
+  sgroups: SGroup[],
+  topLeftPoint: Vec2,
+): boolean {
   return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false;
 

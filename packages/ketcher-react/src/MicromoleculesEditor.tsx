@@ -91,10 +91,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       setServerRef.current = setServer;
       initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (typeof initialProps.onInit === 'function' && ketcher) {
+      if (ketcher && typeof initialProps.onInit === 'function') {
         initialProps.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
+        globalThis.dispatchEvent(ketcherInitEvent);
       }
     });
   }, []);

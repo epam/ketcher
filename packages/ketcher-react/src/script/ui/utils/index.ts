@@ -35,7 +35,9 @@ const greekRe = new RegExp(
   'g',
 );
 
-/** Library items grouped by their `props.group` value. */
+/**
+Library items grouped by their `props.group` value.
+*/
 type TemplateGroups = Record<string, Template[]>;
 
 /**
@@ -63,8 +65,8 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
           re.test(greekify(item.props.abbreviation))),
     ),
     reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+      if (res[item.props.group]) res[item.props.group].push(item);
+      else res[item.props.group] = [item];
       return res;
     }, {} as TemplateGroups),
   )(lib);
@@ -84,8 +86,8 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   return flow(
     _filter((item: Template) => !trimmedFilter || searchFunction(item)),
     reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+      if (res[item.props.group]) res[item.props.group].push(item);
+      else res[item.props.group] = [item];
       return res;
     }, {} as TemplateGroups),
   )(lib);

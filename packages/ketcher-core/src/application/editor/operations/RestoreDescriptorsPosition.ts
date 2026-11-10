@@ -30,7 +30,7 @@ class RestoreDescriptorsPosition extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroups: SGroup[] = Array.from(struct.sgroups.values());
+    const sgroups: SGroup[] = [...struct.sgroups.values()];
 
     sgroups.forEach((sgroup) => {
       sgroup.pp = this.history[sgroup.id];

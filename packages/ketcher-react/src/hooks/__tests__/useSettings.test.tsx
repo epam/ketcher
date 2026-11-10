@@ -31,11 +31,11 @@ const TEST_KETCHER_ID = 'use-settings-test';
 
 const detachMockSettingsService = () => {
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
-  delete window.ketcher;
+  delete globalThis.ketcher;
 };
 
 const attachMockSettingsService = (settingsService: ISettingsService) => {
-  window.ketcher = { settingsService } as unknown as Ketcher;
+  globalThis.ketcher = { settingsService } as unknown as Ketcher;
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,

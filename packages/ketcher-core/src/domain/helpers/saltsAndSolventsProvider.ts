@@ -23,10 +23,10 @@ export class SaltsAndSolventsProvider {
   }
 
   public static getInstance(): SaltsAndSolventsProvider {
-    if (!SaltsAndSolventsProvider.instance) {
+    if (!this.instance) {
       SaltsAndSolventsProvider.instance = new SaltsAndSolventsProvider();
     }
-    return SaltsAndSolventsProvider.instance;
+    return this.instance;
   }
 
   public getSaltsAndSolventsList() {

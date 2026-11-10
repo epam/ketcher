@@ -41,11 +41,11 @@ export class SnakeLayoutModel {
   constructor(
     chainsCollection: ChainsCollection,
     drawingEntitiesManager: DrawingEntitiesManager,
-    needFillMolecules = true,
+    shouldFillMolecules = true,
   ) {
     this.fillNodes(chainsCollection);
     this.fillChains();
-    if (needFillMolecules) {
+    if (shouldFillMolecules) {
       this.fillMolecules(drawingEntitiesManager);
     }
   }
@@ -222,8 +222,8 @@ export class SnakeLayoutModel {
 
               if (
                 currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
-                isNodeInSameChain
+                isNodeInSameChain &&
+                !currentTwoStrandedSnakeLayoutNode.antisenseNode
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
@@ -254,8 +254,8 @@ export class SnakeLayoutModel {
       });
 
       if (
-        nodesBeforeHydrogenConnectionToBase.length &&
-        lastTwoStrandedNodeWithHydrogenBond
+        lastTwoStrandedNodeWithHydrogenBond &&
+        nodesBeforeHydrogenConnectionToBase.length
       ) {
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const lastTwoStrandedNodeWithHydrogenBondIndex =

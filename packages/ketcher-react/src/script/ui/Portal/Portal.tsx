@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -36,7 +35,7 @@ class Portal extends Component<Props> {
   private readonly element: HTMLDivElement;
   private isElementInDom: boolean;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.element = document.createElement('div');
     this.isElementInDom = false;
@@ -140,8 +139,7 @@ class Portal extends Component<Props> {
 
   render() {
     const { children } = this.props;
-    const component = ReactDOM.createPortal(children, this.element);
-    return component as any;
+    return ReactDOM.createPortal(children, this.element);
   }
 }
 

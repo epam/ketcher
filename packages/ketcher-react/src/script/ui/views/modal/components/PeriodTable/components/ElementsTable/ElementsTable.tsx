@@ -68,11 +68,11 @@ function rowPartition(elements: Element[]): Row[] {
   const result: Row[] = [];
   elements.forEach((item) => {
     const row = result[item.period - 1];
-    if (!row) {
-      result.push([item]);
-    } else {
+    if (row) {
       if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
       row.push(item);
+    } else {
+      result.push([item]);
     }
   });
   return result;

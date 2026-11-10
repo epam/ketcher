@@ -87,8 +87,13 @@ GenericInput.val = function (ev, schema) {
 
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
+  if (isNumber && value.trim() === '') {
+    return;
+  }
+
   if (isInteger) {
-    return Number(value) || 0;
+    const parsedValue = Number(value);
+    return Number.isNaN(parsedValue) ? value : parsedValue;
   }
 
   // When the value can be a float the validation is passed to the parent component
@@ -271,8 +276,8 @@ function enumSchema(schema, cbOrIndex) {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
       const title = isTypeValue ? item.title : schema.enumNames?.[i];
       return cbOrIndex(
-        title !== undefined ? title : item,
-        item?.value !== undefined ? item.value : item,
+        title === undefined ? item : title,
+        item?.value === undefined ? item : item.value,
       );
     });
   }
@@ -280,7 +285,7 @@ function enumSchema(schema, cbOrIndex) {
   if (!isTypeValue) return schema.enum[cbOrIndex];
 
   const res = schema[cbOrIndex];
-  return res.value !== undefined ? res.value : res;
+  return res.value === undefined ? res : res.value;
 }
 
 function inputCtrl(component, schema, onChange) {
@@ -293,7 +298,7 @@ function inputCtrl(component, schema, onChange) {
 
   return {
     onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       onChange(val);
     },
     ...props,
@@ -304,7 +309,7 @@ function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
     onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema);
+      const val = component.val ? component.val(ev, schema) : ev;
       if (val !== undefined) onChange(val);
     },
   };

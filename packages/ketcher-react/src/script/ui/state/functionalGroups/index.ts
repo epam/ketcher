@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -24,12 +23,20 @@ import {
 } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';
-import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip';
+import {
+  type InfoPanelData,
+  TOOLTIP_DELAY,
+} from '../../../editor/utils/functionalGroupsTooltip';
 import { MODES } from 'src/constants';
+
+export type FunctionalGroupInfo =
+  | InfoPanelData
+  | Record<keyof Omit<InfoPanelData, 'event'>, null>
+  | { group: null; id: null };
 
 export interface FGState {
   lib: [];
-  functionalGroupInfo: any;
+  functionalGroupInfo: FunctionalGroupInfo | null;
   mode: string;
 }
 
@@ -57,12 +64,12 @@ export const initFGroups = (lib: SdfItem[]) => ({
   type: 'FG_INIT',
   payload: { lib },
 });
-const highlightFGroup = (group: any) => ({
+const highlightFGroup = (group: FunctionalGroupInfo) => ({
   type: 'FG_HIGHLIGHT',
   payload: group,
 });
 
-function notDebouncedHighlightFG(dispatch, group: any) {
+function notDebouncedHighlightFG(dispatch, group: FunctionalGroupInfo) {
   dispatch(highlightFGroup(group));
 }
 

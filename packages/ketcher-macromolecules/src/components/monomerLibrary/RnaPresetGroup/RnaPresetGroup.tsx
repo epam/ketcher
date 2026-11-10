@@ -50,7 +50,7 @@ import {
   calculateAmbiguousMonomerPreviewTop,
   calculateNucleoElementPreviewTop,
 } from 'ketcher-react';
-import { needSkipPreviewForElement } from 'components/preview/helpers';
+import { shouldSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
@@ -131,7 +131,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   ): void => {
     closeLibraryPreview();
 
-    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+    if (shouldSkipPreviewForElement(e.target as HTMLElement)) {
       return;
     }
 

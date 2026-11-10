@@ -22,13 +22,21 @@ import type { Struct } from 'domain/entities/struct';
  */
 export interface EditorTemplate {
   molecule: Struct;
-  /** Id of the template attachment atom. */
+  /**
+  Id of the template attachment atom.
+  */
   aid: number;
-  /** Id of the template attachment bond. */
+  /**
+  Id of the template attachment bond.
+  */
   bid: number;
-  /** Reference angle used for rotation when placing on an atom. */
+  /**
+  Reference angle used for rotation when placing on an atom.
+  */
   angle0: number;
 }
 
-/** Atom and bond ids that were created/pasted as part of a template operation. */
+/**
+Atom and bond ids that were created/pasted as part of a template operation.
+*/
 export type PasteItems = { atoms: number[]; bonds: number[] };

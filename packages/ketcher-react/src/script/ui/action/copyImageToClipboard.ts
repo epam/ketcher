@@ -50,8 +50,8 @@ async function copyImageToClipboard(): Promise<void> {
 
     const item = new ClipboardItem({ [image.type]: image });
     await globalThis.navigator.clipboard.write([item]);
-  } catch (e) {
-    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', e);
+  } catch (error) {
+    KetcherLogger.error('copyImageToClipboard.ts::copyImageToClipboard', error);
 
     if (errorHandler) {
       errorHandler(i18n.t('common:errors.featureNotAvailableInBrowser'));

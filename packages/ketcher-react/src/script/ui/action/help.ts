@@ -20,7 +20,9 @@ import type { UiAction } from './action.types';
 const openHelpLink = (): void => {
   window
     .open(
-      `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`,
+      `https://github.com/epam/ketcher/blob/${
+        import.meta.env.HELP_LINK
+      }/documentation/help.md#ketcher-overview`,
     )
     ?.focus();
 };

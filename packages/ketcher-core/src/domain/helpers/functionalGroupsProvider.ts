@@ -23,10 +23,10 @@ export class FunctionalGroupsProvider {
   }
 
   public static getInstance(): FunctionalGroupsProvider {
-    if (!FunctionalGroupsProvider.instance) {
+    if (!this.instance) {
       FunctionalGroupsProvider.instance = new FunctionalGroupsProvider();
     }
-    return FunctionalGroupsProvider.instance;
+    return this.instance;
   }
 
   public getFunctionalGroupsList() {

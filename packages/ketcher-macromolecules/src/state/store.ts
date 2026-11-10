@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { configureStore, Store } from '@reduxjs/toolkit';
+import { configureStore, Store, Tuple } from '@reduxjs/toolkit';
 import { editorReducer } from 'state/common';
 import { libraryReducer } from 'state/library';
 import { modalReducer } from 'state/modal';
@@ -30,10 +30,13 @@ export function configureAppStore(preloadedState = {}) {
       rnaBuilder: rnaBuilderReducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
-        serializableCheck: false,
-      }).concat(toastMiddleware),
+      new Tuple(
+        ...getDefaultMiddleware({
+          // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
+          serializableCheck: false,
+        }),
+        toastMiddleware,
+      ),
     preloadedState,
   });
 

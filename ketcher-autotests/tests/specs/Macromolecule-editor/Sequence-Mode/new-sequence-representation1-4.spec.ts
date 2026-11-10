@@ -1665,13 +1665,15 @@ for (const monomer of monomersToAdd) {
     test(`Case 30-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of antisense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 20
-       * Description: User can add monomer (of every type) to last position in sense chain of sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to the end of antisense row of sequence (of every configuration) in edit mode
+       * Position 9 is past the last sense symbol, so the caret lands at the end of the row: if the antisense chain
+       * reaches it, the monomer extends that chain, otherwise it is added as a new chain (#6770)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
-       * 3. Switch sequence to edit mode and move cursor to the last position of antisencse chain
+       * 3. Switch sequence to edit mode and move cursor to the end of antisense row
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
-       * 5. Press keyboard key to add monomer to the last position of antisencse chain
+       * 5. Press keyboard key to add monomer at the end of antisense row
        * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode

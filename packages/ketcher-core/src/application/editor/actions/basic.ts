@@ -20,7 +20,9 @@ import { Action } from './action';
 import type { Struct } from 'domain/entities/struct';
 import type { ReStruct } from 'application/render';
 
-/** Get action applied {@link struct} to {@link restruct}. */
+/**
+Get action applied {@link struct} to {@link restruct}.
+*/
 export function fromNewCanvas(restruct: ReStruct, struct: Struct) {
   const action = new Action();
 

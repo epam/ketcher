@@ -18,7 +18,9 @@ import type Editor from '../../../editor/Editor';
 import type { Api } from '../../../api';
 import type { ToolVariant, UiActionAction } from '../../action/action.types';
 
-/** The slice of Redux store state accessed by initEditor. */
+/**
+The slice of Redux store state accessed by initEditor.
+*/
 export interface EditorInitState {
   editor: Editor;
   actionState?: {
@@ -38,7 +40,9 @@ export interface EditorInitState {
   server: Api;
 }
 
-/** Parameter shape for the onRgroupEdit callback. */
+/**
+Parameter shape for the onRgroupEdit callback.
+*/
 export interface RGroupEditParams {
   fragId?: number;
   label: number | null;

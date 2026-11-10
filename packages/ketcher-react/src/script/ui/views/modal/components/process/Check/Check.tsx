@@ -253,7 +253,7 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
               {t('toolbar:menu.settings')}
             </span>
             <div
-              className={!isStructureChecking ? style.checkBoxesDisabled : ''}
+              className={isStructureChecking ? '' : style.checkBoxesDisabled}
             >
               <Field
                 name="checkOptions"
@@ -272,9 +272,9 @@ const CheckDialog: FC<CheckDialogProps> = (props) => {
             </span>
             <div
               className={
-                !Object.keys(moleculeErrors).length || !isStructureChecking
-                  ? style.centeredContainer
-                  : style.warnings
+                isStructureChecking && Object.keys(moleculeErrors).length
+                  ? style.warnings
+                  : style.centeredContainer
               }
               data-testid={'checkInfo-messages'}
             >

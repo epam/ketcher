@@ -23,7 +23,7 @@ import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
-global.ketcher = {
+globalThis.ketcher = {
   logging: jest.fn(),
 };
 

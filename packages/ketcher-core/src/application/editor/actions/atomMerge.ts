@@ -38,9 +38,9 @@ function replaceAttachmentGroupAtomId(
   srcId: number,
   dstId: number,
 ) {
-  return Array.from(
-    new Set(atomIds.map((atomId) => (atomId === srcId ? dstId : atomId))),
-  );
+  return [
+    ...new Set(atomIds.map((atomId) => (atomId === srcId ? dstId : atomId))),
+  ];
 }
 
 function updateAttachmentGroupsAfterAtomMerge(

@@ -135,14 +135,14 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return new Box2Abs(this.a.pp, this.a.pp);
   }
 
-  drawHover(render: Render, drawOutline = true) {
-    const ret = this.makeHoverPlate(render, drawOutline);
+  drawHover(render: Render, shouldDrawOutline = true) {
+    const ret = this.makeHoverPlate(render, shouldDrawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
-      drawOutline,
+      shouldDrawOutline,
     );
 
     return ret;
@@ -163,18 +163,18 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     const { assignedAttachmentPoints } = render.monomerCreationState;
 
-    const attachmentPointEntry = Array.from(
-      assignedAttachmentPoints.entries(),
-    ).find(([, atomsPair]) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
-      return attachmentAtomId === atomId || leavingAtomId === atomId;
-    });
+    const attachmentPointEntry = [...assignedAttachmentPoints.entries()].find(
+      ([, atomsPair]) => {
+        const [attachmentAtomId, leavingAtomId] = atomsPair;
+        return attachmentAtomId === atomId || leavingAtomId === atomId;
+      },
+    );
 
     if (attachmentPointEntry && hoverElement) {
       const [attachmentPointName] = attachmentPointEntry;
       hoverElement.hover(
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'highlightAttachmentPointControls',
               {
@@ -184,7 +184,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           );
         },
         () => {
-          window.dispatchEvent(
+          globalThis.dispatchEvent(
             new CustomEvent<AttachmentPointName>(
               'resetHighlightAttachmentPointControls',
               {
@@ -199,9 +199,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
     render: Render,
-    drawOutline = true,
+    shouldDrawOutline = true,
   ) {
-    if (!render.monomerCreationState || !drawOutline) {
+    if (!render.monomerCreationState || !shouldDrawOutline) {
       return;
     }
 
@@ -213,13 +213,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
       return;
     }
 
-    const potentialLeavingGroups = Array.from(
-      potentialAttachmentPoints.values(),
-    );
+    const potentialLeavingGroups = [...potentialAttachmentPoints.values()];
 
-    const isAtomInAssignedAttachmentPoint = Array.from(
-      assignedAttachmentPoints.values(),
-    ).some((atomsPair) => {
+    const isAtomInAssignedAttachmentPoint = [
+      ...assignedAttachmentPoints.values(),
+    ].some((atomsPair) => {
       const [attachmentAtomId, leavingAtomId] = atomsPair;
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
@@ -243,10 +241,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
   }
 
-  setHover(hover: boolean, render: Render, drawOutline = true) {
-    super.setHover(hover, render, drawOutline);
+  setHover(isHovered: boolean, render: Render, shouldDrawOutline = true) {
+    super.setHover(isHovered, render, shouldDrawOutline);
 
-    if (!hover || this.selected) {
+    if (!isHovered || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();
 
       return;
@@ -391,7 +389,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
-  makeHoverPlate(render: Render, drawOutline = true) {
+  makeHoverPlate(render: Render, shouldDrawOutline = true) {
     const atom = this.a;
     const { options } = render;
     if (this.isPlateShouldBeHidden(atom, render)) {
@@ -399,7 +397,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     }
 
     return this.getSelectionContour(render).attr(
-      drawOutline
+      shouldDrawOutline
         ? options.hoverStyle
         : { fill: options.hoverStyle.fill, stroke: 'none' },
     );
@@ -439,11 +437,11 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     return invisibleAtomTarget;
   }
 
-  private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
+  private isNeedShiftForCharge(shouldShowCharge: boolean, bondLength: number) {
     const MIN_BOND_LENGTH = 24;
     const isBondLengthTooShort = bondLength <= MIN_BOND_LENGTH;
     const hasCharge = this.a.charge !== null && this.a.charge !== 0;
-    return showCharge && isBondLengthTooShort && hasCharge;
+    return shouldShowCharge && isBondLengthTooShort && hasCharge;
   }
 
   private getRatio(
@@ -454,9 +452,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const DEFAULT_SUB_FONT_SIZE = 13;
     const subFontSize = renderOptions.fontszsubInPx ?? DEFAULT_SUB_FONT_SIZE;
     if (!bondLen) return 1;
-    const showCharge = renderOptions.showCharge;
+    const shouldShowCharge = renderOptions.showCharge;
 
-    const isNeedShift = this.isNeedShiftForCharge(showCharge, bondLen);
+    const isNeedShift = this.isNeedShiftForCharge(shouldShowCharge, bondLen);
 
     if (!isNeedShift) {
       return 1;
@@ -683,10 +681,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
       if (
         !isHydrogen &&
-        !this.a.alias &&
+        !shouldHideHydrogenInPreview &&
         implh > 0 &&
-        displayHydrogen(struct, this, options.showHydrogenLabels) &&
-        !shouldHideHydrogenInPreview
+        !this.a.alias &&
+        shouldDisplayHydrogen(struct, this, options.showHydrogenLabels)
       ) {
         const data = showHydrogen(this, render, implh, {
           hydroIndex,
@@ -813,13 +811,13 @@ class ReAtom extends ReObject implements ReBondEndpoint {
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
-        const attachmentPointName = Array.from(
-          assignedAttachmentPoints.keys(),
-        ).find((key) => {
-          const atomsPair = assignedAttachmentPoints.get(key);
-          assert(atomsPair);
-          return atomsPair[1] === aid;
-        });
+        const attachmentPointName = [...assignedAttachmentPoints.keys()].find(
+          (key) => {
+            const atomsPair = assignedAttachmentPoints.get(key);
+            assert(atomsPair);
+            return atomsPair[1] === aid;
+          },
+        );
 
         if (attachmentPointName) {
           const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
@@ -913,9 +911,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               assert(render.monomerCreationState);
 
               if (
+                isProblematic ||
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
-                isProblematic
+                  attachmentPointName
               ) {
                 return;
               }
@@ -923,7 +921,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 1 });
               rLabelElement.attr({ fill: '#ffffff' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'highlightAttachmentPointControls',
                   {
@@ -937,9 +935,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               assert(render.monomerCreationState);
 
               if (
+                isProblematic ||
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
-                isProblematic
+                  attachmentPointName
               ) {
                 return;
               }
@@ -947,7 +945,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               background.attr({ opacity: 0 });
               rLabelElement.attr({ fill: '#333333' });
 
-              window.dispatchEvent(
+              globalThis.dispatchEvent(
                 new CustomEvent<AttachmentPointName>(
                   'resetHighlightAttachmentPointControls',
                   {
@@ -988,9 +986,9 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // the connection atom, same visual style as regular attachment atoms
         // but without an R-label. Hover syncs with the panel row.
         if (connectionAttachmentPoints) {
-          const isConnectionAtom = Array.from(
-            connectionAttachmentPoints.values(),
-          ).some(([connectionAtomId]) => connectionAtomId === aid);
+          const isConnectionAtom = [
+            ...connectionAttachmentPoints.values(),
+          ].some(([connectionAtomId]) => connectionAtomId === aid);
 
           if (isConnectionAtom && !problematicAtoms?.has(aid)) {
             // Draw the same blue outline ring used for regular attachment atoms
@@ -1015,9 +1013,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
             });
 
             // Find the AP name(s) for this connection atom to drive panel sync
-            const connectionApNames = Array.from(
-              connectionAttachmentPoints.entries(),
-            )
+            const connectionApNames = [...connectionAttachmentPoints.entries()]
               .filter(([, [caid]]) => caid === aid)
               .map(([apName]) => apName);
 
@@ -1025,7 +1021,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0.15 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'highlightAttachmentPointControls',
                       { detail: apName },
@@ -1036,7 +1032,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
               () => {
                 hitArea.attr({ opacity: 0 });
                 connectionApNames.forEach((apName) => {
-                  window.dispatchEvent(
+                  globalThis.dispatchEvent(
                     new CustomEvent<AttachmentPointName>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apName },
@@ -1089,7 +1085,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
-    const displayStereoLabel = shouldDisplayStereoLabel(
+    const shouldShowStereoLabel = shouldDisplayStereoLabel(
       stereoLabel,
       options.stereoLabelStyle,
       options.ignoreChiralFlag,
@@ -1098,7 +1094,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
 
     let text = '';
 
-    if (displayStereoLabel) {
+    if (shouldShowStereoLabel) {
       text = `${stereoLabel}\n`;
     }
 
@@ -1116,7 +1112,7 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill:
-          options.atomColoring && elem
+          elem && options.atomColoring
             ? ElementColor[this.a.label]
             : DEFAULT_ATOM_COLOR,
       });
@@ -1126,10 +1122,10 @@ class ReAtom extends ReObject implements ReBondEndpoint {
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
         if (color !== undefined) {
-          aamPath.node.childNodes[0].setAttribute('fill', color);
+          aamPath.node.firstChild.setAttribute('fill', color);
         }
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
-        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
+        aamPath.node.firstChild.setAttribute('fill-opacity', opacity);
       }
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
@@ -1179,20 +1175,20 @@ class ReAtom extends ReObject implements ReBondEndpoint {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
-    let highlightOutline = false;
+    let hasHighlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.atoms?.includes(aid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
-        highlightOutline = highlight.outline;
+        hasHighlightOutline = highlight.outline;
       }
     });
 
     // Drawing highlight. Outline highlights (#9441) are drawn as a single
     // merged contour by ReStruct.showHighlightOutlines, so skip them here;
     // only filled (active-tab) highlights are drawn per-atom.
-    if (isHighlighted && !highlightOutline) {
+    if (isHighlighted && !hasHighlightOutline) {
       const style: RenderOptionStyles = {
         fill: highlightColor,
         stroke: 'none',
@@ -1483,7 +1479,7 @@ function getStereoAtomOpacity(options: RenderOptions, stereoLabel: string) {
 function shouldDisplayStereoLabel(
   stereoLabel: string | null | undefined,
   labelStyle: StereoLabelStyleType | undefined,
-  ignoreChiralFlag: boolean | undefined,
+  shouldIgnoreChiralFlag: boolean | undefined,
   flag: StereoFlag | undefined,
 ): boolean {
   if (!stereoLabel) {
@@ -1492,10 +1488,10 @@ function shouldDisplayStereoLabel(
 
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (shouldIgnoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
     return true;
   }
 
@@ -1540,20 +1536,20 @@ function isLabelVisible(
     restruct.molecule,
     atom,
   );
-  const visibleTerminal =
+  const isTerminalVisible =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero;
 
-  const neighborsLength =
+  const hasVisibleTerminalLabel =
     visibleNeighbors.length === 0 ||
-    (visibleNeighbors.length < 2 && visibleTerminal);
+    (visibleNeighbors.length < 2 && isTerminalVisible);
 
   if (isAttachmentPointAtom && isCarbon) {
     return false;
   }
 
-  const shouldBeVisible =
-    neighborsLength ||
+  const labelVisibilityCondition =
+    hasVisibleTerminalLabel ||
     options.carbonExplicitly ||
     options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
@@ -1566,7 +1562,7 @@ function isLabelVisible(
     (atom.a.badConn && options.showValenceWarnings) ||
     atom.a.label.toLowerCase() !== 'c';
 
-  if (shouldBeVisible) return true;
+  if (labelVisibilityCondition) return true;
 
   if (visibleNeighbors.length === 2) {
     const nei1 = visibleNeighbors[0];
@@ -1578,12 +1574,12 @@ function isLabelVisible(
     const bond2 = restruct.bonds.get(hb2.bid);
     if (!bond1 || !bond2) return false;
 
-    const sameNotStereo =
+    const hasSameNonStereoBonds =
       bond1.b.type === bond2.b.type &&
       bond1.b.stereo === Bond.PATTERN.STEREO.NONE &&
       bond2.b.stereo === Bond.PATTERN.STEREO.NONE;
 
-    if (sameNotStereo && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2) {
+    if (hasSameNonStereoBonds && Math.abs(Vec2.cross(hb1.dir, hb2.dir)) < 0.2) {
       return true;
     }
   }
@@ -1591,7 +1587,7 @@ function isLabelVisible(
   return false;
 }
 
-function displayHydrogen(
+function shouldDisplayHydrogen(
   struct: Struct,
   atom: ReAtom,
   hydrogenLabels: ShowHydrogenLabels,
@@ -1654,7 +1650,7 @@ function getOnlyQueryAttributesCustomQuery(atom: Atom) {
 
 function addTooltip(node: SVGElement, text: string) {
   const tooltip = text.split(/(?<=[;,])/).join(' ');
-  (node.childNodes[0] as SVGElement).setAttribute(
+  (node.firstChild as SVGElement).setAttribute(
     'data-tooltip',
     util.escapeHtml(tooltip),
   );
@@ -1673,7 +1669,7 @@ function buildLabel(
   label: ElemAttr;
 } {
   const {
-    atomColoring,
+    atomColoring: shouldColorAtoms,
     font,
     fontszInPx,
     currentlySelectedMonomerAttachmentPoint,
@@ -1687,7 +1683,7 @@ function buildLabel(
 
   if (text === atom.a.label) {
     const element = Elements.get(text);
-    if (atomColoring && element) {
+    if (shouldColorAtoms && element) {
       atom.color = ElementColor[text] ?? DEFAULT_ATOM_COLOR;
     }
   }
@@ -1798,9 +1794,10 @@ function getLabelText(
     atom.rglabel !== null &&
     sgroup instanceof MonomerMicromolecule
   ) {
-    const isExpandMode = options?.usageInMacromolecule === undefined && sgroup;
+    const expandedSgroup =
+      options?.usageInMacromolecule === undefined && sgroup;
 
-    if (isExpandMode) {
+    if (expandedSgroup) {
       return atom.label;
     }
   }
@@ -2001,7 +1998,7 @@ function showHydrogen(
   leftMargin: number;
 } {
   let hydroIndex: ElemAttr | null = data.hydroIndex;
-  const hydrogenLeft = atom.hydrogenOnTheLeft;
+  const isHydrogenOnLeft = atom.hydrogenOnTheLeft;
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
@@ -2013,7 +2010,7 @@ function showHydrogen(
   });
   const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
   draw.recenterText(hydrogenPath, hydrogenRbb);
-  if (!hydrogenLeft) {
+  if (!isHydrogenOnLeft) {
     pathAndRBoxTranslate(
       hydrogenPath,
       hydrogenRbb,
@@ -2036,7 +2033,7 @@ function showHydrogen(
       path: hydroIndexPath,
       rbb: hydroIndexRbb,
     };
-    if (!hydrogenLeft) {
+    if (!isHydrogenOnLeft) {
       pathAndRBoxTranslate(
         hydroIndexPath,
         hydroIndexRbb,
@@ -2048,7 +2045,7 @@ function showHydrogen(
       data.rightMargin += hydroIndexRbb.width + delta;
     }
   }
-  if (hydrogenLeft) {
+  if (isHydrogenOnLeft) {
     if (hydroIndex != null) {
       pathAndRBoxTranslate(
         hydroIndex.path,
@@ -2210,11 +2207,17 @@ type AtomCustomQueryPropertyName =
   | 'substitutionCount'
   | 'unsaturatedAtom';
 type AtomCustomQueryPattern = {
-  /** Atom property name used to determine whether the query attribute applies. */
+  /**
+  Atom property name used to determine whether the query attribute applies.
+  */
   propertyName: AtomCustomQueryPropertyName;
-  /** Reads the raw atom/query-property value before text normalization. */
+  /**
+  Reads the raw atom/query-property value before text normalization.
+  */
   getValue: (atom: AtomQueryInput) => AtomCustomQueryValue | null | undefined;
-  /** Converts a normalized value to its Molfile query attribute representation. */
+  /**
+  Converts a normalized value to its Molfile query attribute representation.
+  */
   format: (value: string) => string;
 };
 
@@ -2247,7 +2250,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
             regExpResult[1] + regExpResult[3] + regExpResult[2],
           ).toString()
         : value;
-      return !charge.startsWith('-') ? `+${charge}` : charge;
+      return charge.startsWith('-') ? charge : `+${charge}`;
     },
   },
   {
@@ -2258,7 +2261,7 @@ const atomCustomQueryPatterns: readonly AtomCustomQueryPattern[] = [
   {
     propertyName: 'explicitValence',
     getValue: (atom) => atom.explicitValence,
-    format: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    format: (value) => (Number(value) === -1 ? '' : `v${value}`),
   },
   {
     propertyName: 'ringBondCount',
@@ -2339,7 +2342,7 @@ export function checkIsSmartPropertiesExist(atom: Atom) {
 
 export function getAtomCustomQuery(
   atom: AtomQueryInput,
-  includeOnlyQueryAttributes?: boolean,
+  shouldIncludeOnlyQueryAttributes?: boolean,
 ) {
   let queryAttrsText = '';
 
@@ -2349,7 +2352,7 @@ export function getAtomCustomQuery(
 
   for (const { propertyName, getValue, format } of atomCustomQueryPatterns) {
     if (
-      includeOnlyQueryAttributes &&
+      shouldIncludeOnlyQueryAttributes &&
       EXCLUDED_QUERY_ATTRIBUTES.has(propertyName)
     ) {
       continue;
@@ -2413,7 +2416,9 @@ function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
 }
 
-/** Project an axis-aligned box onto AP-local along/perp axes. */
+/**
+Project an axis-aligned box onto AP-local along/perp axes.
+*/
 function projectBoxOnApAxes(
   W: number,
   H: number,
@@ -2427,7 +2432,9 @@ function projectBoxOnApAxes(
   };
 }
 
-/** Count atom-relative visel extents that overlap the candidate canvas-space box. */
+/**
+Count atom-relative visel extents that overlap the candidate canvas-space box.
+*/
 function countExtOverlaps(
   exts: Box2Abs[],
   atomPos: Vec2,
@@ -2481,11 +2488,11 @@ function computeLateralApLabelShift(
     apDir,
   );
 
-  const intersectsAlong =
+  const hasLongitudinalIntersection =
     proposedAlongDist - halfAlong < nominalLength + waveFarAlong &&
     proposedAlongDist + halfAlong > 0;
 
-  if (!intersectsAlong || halfPerp === 0) return new Vec2(0, 0);
+  if (!hasLongitudinalIntersection || halfPerp === 0) return new Vec2(0, 0);
 
   const shiftMag = waveHalfPerp + halfPerp + 2;
   const perpDir = new Vec2(-apDir.y, apDir.x);

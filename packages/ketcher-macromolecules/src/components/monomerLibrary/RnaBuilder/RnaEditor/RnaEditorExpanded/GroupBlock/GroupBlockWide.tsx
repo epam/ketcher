@@ -24,7 +24,7 @@ import {
 import { IGroupBlockProps } from './types';
 import { groupNameToRnaEditorItemLabelKey } from './utils';
 import { useAppSelector } from 'hooks';
-import { selectIsEditMode } from 'state/rna-builder';
+import { isRnaBuilderEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
 import { PropsWithChildren } from 'react';
 
@@ -32,30 +32,30 @@ export const GroupBlockWide = ({
   groupName,
   iconName,
   monomerName,
-  selected,
+  selected: isSelected,
   onClick,
   testid,
   children,
 }: IGroupBlockProps & PropsWithChildren) => {
   const { t } = useTranslation('macromoleculesDialogs');
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
 
-  const empty = !monomerName;
+  const isEmpty = !monomerName;
 
   return (
     <GroupBlockContainer
-      selected={selected}
+      selected={isSelected}
       onClick={onClick}
       isEditMode={isEditMode}
       data-testid={testid}
     >
       <>
-        <GroupIcon name={iconName} selected={selected} empty={empty} />
+        <GroupIcon name={iconName} selected={isSelected} empty={isEmpty} />
         <TextContainer>
-          <GroupName selected={selected}>
+          <GroupName selected={isSelected}>
             {t(groupNameToRnaEditorItemLabelKey[groupName])}
           </GroupName>
-          <MonomerName empty={empty} selected={selected}>
+          <MonomerName empty={isEmpty} selected={isSelected}>
             {monomerName ?? t('monomerLibrary.notSelected')}
           </MonomerName>
         </TextContainer>

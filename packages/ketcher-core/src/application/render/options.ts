@@ -80,7 +80,9 @@ function defaultOptions(renderOptions: Partial<RenderOptions>): RenderOptions {
 
     radiusScaleFactor: 0.38,
 
-    /* styles */
+    /*
+    styles
+    */
     lineattr: {
       stroke: '#000',
       'stroke-width': options.bondThicknessInPx || scaleFactorMicro / 20,

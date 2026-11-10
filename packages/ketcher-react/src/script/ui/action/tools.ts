@@ -87,8 +87,7 @@ const toolActions: Record<string, ToolActionEntry> = {
         return true;
       }
       const struct = editor?.struct?.();
-      const atomIds =
-        editor?.selection?.()?.atoms ?? Array.from(struct.atoms.keys());
+      const atomIds = editor?.selection?.()?.atoms ?? [...struct.atoms.keys()];
       return findStereoAtoms(struct, atomIds).length === 0;
     },
     hidden: (options) => isHidden(options, 'enhanced-stereo'),

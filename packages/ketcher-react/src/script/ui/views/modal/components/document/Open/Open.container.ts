@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { type OpenProps } from './Open';
+import Open, { type OpenProps, type OpenResult } from './Open';
 
 import type { BaseCallProps } from '../../../modal.types';
 import { connect } from 'react-redux';
-import { exec } from '../../../../../component/cliparea/cliparea';
+import { canExecuteClipboardCommand } from '../../../../../component/cliparea/cliparea';
 import { load } from '../../../../../state';
 import { changeImage } from '../../../../../state/options';
 
 type StateProps = OpenProps;
 
 type DispatchProps = {
-  onOk: BaseCallProps['onOk'];
+  onOk: BaseCallProps<OpenResult>['onOk'];
   onImageUpload: (file: File) => void;
 };
 
@@ -37,8 +37,8 @@ const mapStateToProps = (state): StateProps => ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
-  onOk: (result) => {
-    if (result.fragment) exec('copy');
+  onOk: (result: OpenResult) => {
+    if (result.fragment) canExecuteClipboardCommand('copy');
     dispatch(
       load(result.structStr, {
         badHeaderRecover: true,

@@ -150,6 +150,33 @@ export interface Element {
   leftH?: boolean;
 }
 
+/**
+ * `Element.type` values that represent metals (alkali, alkaline-earth,
+ * transition, post-transition, lanthanide, actinide), as opposed to
+ * non-metals / metalloids / halogens / noble gases.
+ *
+ * Used to determine, per the 2017 BIOVIA Chemical Representation
+ * specification, which elements fall outside the main-group valence table and
+ * therefore default to zero valence / zero implicit hydrogens.
+ */
+export const METAL_ELEMENT_TYPES = [
+  'alkali',
+  'alkaline-earth',
+  'post-transition',
+  'transition',
+  'lanthanide',
+  'actinide',
+];
+
+/**
+ * Returns true if the given `Element.type` value denotes a metal
+ * (alkali, alkaline-earth, transition, post-transition, lanthanide, or
+ * actinide element).
+ */
+export function isMetalElementType(type?: string): boolean {
+  return !!type && METAL_ELEMENT_TYPES.includes(type);
+}
+
 export enum AtomLabel {
   Ac = 'Ac',
   Ag = 'Ag',

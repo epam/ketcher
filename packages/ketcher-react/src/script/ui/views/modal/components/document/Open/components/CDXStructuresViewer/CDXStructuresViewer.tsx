@@ -52,7 +52,7 @@ export const CDXStructuresViewer = ({
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const selectedStructure = structList[selectedIndex];
   const selectedItem = itemsMap[selectedIndex];
-  const loading = Boolean(selectedStructure) && !selectedItem;
+  const isLoading = Boolean(selectedStructure) && !selectedItem;
 
   useEffect(() => {
     if (!selectedItem || selectedItem.error) {
@@ -104,7 +104,7 @@ export const CDXStructuresViewer = ({
   }, [loadFirstStructure]);
 
   const renderStructure = (structure: item) => {
-    if (loading) {
+    if (isLoading) {
       return (
         <div className={styles.centerWrapper}>
           <LoadingCircles />

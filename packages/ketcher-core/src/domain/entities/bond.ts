@@ -165,11 +165,10 @@ export class Bond extends BaseMicromoleculeEntity {
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
     const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in Bond.attrlist) {
+    for (const attr in this.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      const value = bond[key];
-      if (value || key === 'stereo') {
-        attrs[key] = value as never;
+      if (key === 'stereo' || bond[key]) {
+        attrs[key] = bond[key] as never;
       }
     }
     return attrs;
@@ -226,7 +225,7 @@ export class Bond extends BaseMicromoleculeEntity {
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd);
+      this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -247,7 +246,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
       isAllSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -270,7 +269,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
       return [3];
@@ -284,8 +283,8 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   static attrGetDefault(attr: string) {
-    if (Object.hasOwn(Bond.attrlist, attr)) {
-      return Bond.attrlist[attr];
+    if (Object.hasOwn(this.attrlist, attr)) {
+      return this.attrlist[attr];
     }
   }
 
@@ -359,7 +358,7 @@ export class Bond extends BaseMicromoleculeEntity {
   public static isBondToHiddenLeavingGroup(
     struct: Struct,
     bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -372,7 +371,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.begin,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
@@ -380,7 +379,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.end,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );

@@ -34,13 +34,17 @@ export const useAttachmentPoints = ({
 
       Object.keys(attachmentPointsToBonds).forEach((id) => {
         const bond = attachmentPointsToBonds[id as AttachmentPointName];
-        const connected = Boolean(bond);
+        const isConnected = Boolean(bond);
 
-        if (connected) {
+        if (isConnected) {
           connectedAttachmentPoints.push(id);
         }
 
-        preparedAttachmentPointsData.push({ id, label: '', connected });
+        preparedAttachmentPointsData.push({
+          id,
+          label: '',
+          connected: isConnected,
+        });
       });
 
       return { preparedAttachmentPointsData, connectedAttachmentPoints };
@@ -48,16 +52,16 @@ export const useAttachmentPoints = ({
 
     Object.entries(monomerCaps).forEach(([id, label]) => {
       const bond = attachmentPointsToBonds?.[id];
-      const connected = Boolean(bond);
+      const isConnected = Boolean(bond);
 
-      if (connected) {
+      if (isConnected) {
         connectedAttachmentPoints.push(id);
       }
 
       const preparedData: PreparedAttachmentPointData = {
         id,
         label,
-        connected,
+        connected: isConnected,
       };
 
       preparedAttachmentPointsData.push(preparedData);

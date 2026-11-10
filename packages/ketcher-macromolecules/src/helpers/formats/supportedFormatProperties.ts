@@ -43,13 +43,13 @@ export class SupportedFormatProperties {
     name: string,
     mime: ChemicalMimeType,
     extensions: string[],
-    supportsCoords?: boolean,
+    hasCoordsSupport?: boolean,
     options?: SupportedFormatPropertiesOptions,
   ) {
     this.name = name;
     this.mime = mime;
     this.extensions = extensions;
-    this.supportsCoords = supportsCoords ?? false;
+    this.supportsCoords = hasCoordsSupport ?? false;
     this.options = options ?? {};
   }
 }

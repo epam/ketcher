@@ -343,7 +343,7 @@ function toolMargin(
     index = tools.indexOf(visibleTool); // second level. example: `bond: bond-any`
   }
 
-  return index !== -1 ? { marginTop: -(iconHeight * index) + 'px' } : {};
+  return index === -1 ? {} : { marginTop: -(iconHeight * index) + 'px' };
 }
 
 function openHandle(

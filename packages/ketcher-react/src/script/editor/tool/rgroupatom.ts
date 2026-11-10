@@ -139,15 +139,15 @@ function propsDialog(editor, id, pos) {
         elem.aam = atom.aam; // WTF??
         elem.attachmentPoints = atom.attachmentPoints;
 
-        if (!elem.rglabel && label !== 'R#') {
+        if (label !== 'R#' && !elem.rglabel) {
           elem.label = label;
         }
 
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch((e) => {
-      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    .catch((error) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', error);
     }); // w/o changes
 }
 

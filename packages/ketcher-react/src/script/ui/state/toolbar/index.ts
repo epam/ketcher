@@ -83,7 +83,9 @@ export function removeResizeListener(): void {
   }
 }
 
-/* REDUCER */
+/*
+REDUCER
+*/
 export default function (
   state: ToolbarState = initial,
   action: ToolbarAction,
@@ -126,7 +128,9 @@ export default function (
       return state;
   }
 }
-/* ------- */
+/*
+-------
+*/
 
 function addFreqAtom(
   label: string,

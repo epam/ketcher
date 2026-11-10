@@ -20,7 +20,7 @@ import { Input, Icon } from 'ketcher-react';
 export const MONOMER_LIBRARY_WIDTH = '254px';
 export const MONOMER_HIDE_LIBRARY_BUTTON_WIDTH = '100px';
 
-export const MonomerLibraryContainer = styled.div`
+export const MonomerLibraryContainer = styled.div<{ isDisabled?: boolean }>`
   width: ${MONOMER_LIBRARY_WIDTH};
   height: calc(100% - 16px);
   display: flex;
@@ -29,6 +29,13 @@ export const MonomerLibraryContainer = styled.div`
   box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
   border-radius: 4px;
   z-index: ${({ theme }) => theme.ketcher.zIndex.toolbar};
+
+  ${({ isDisabled }) =>
+    isDisabled &&
+    `
+    pointer-events: none;
+    opacity: 0.4;
+  `}
 `;
 
 export const MonomerLibraryHeader = styled.div`

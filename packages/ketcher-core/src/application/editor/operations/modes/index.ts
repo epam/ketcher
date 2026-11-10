@@ -22,7 +22,7 @@ import type { Operation } from 'domain/entities/Operation';
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
-  constructor(private readonly forceRecalculateAntisense = false) {}
+  constructor(private readonly shouldForceRecalculateAntisense = false) {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = provideEditorInstance();
@@ -31,7 +31,7 @@ export class ReinitializeModeOperation implements Operation {
       false,
       undefined,
       true,
-      this.forceRecalculateAntisense,
+      this.shouldForceRecalculateAntisense,
     );
   }
 

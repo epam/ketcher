@@ -35,11 +35,13 @@ export class Action {
   }
 
   mergeWith(action) {
-    this.operations = this.operations.concat(action.operations);
+    this.operations = [...this.operations, ...action.operations];
     return this;
   }
 
-  /** Perform action and return inverted one */
+  /**
+  Perform action and return inverted one
+  */
   perform(restruct: ReStruct): Action {
     const action = new Action();
     const sortedOperations = [...this.operations].sort(

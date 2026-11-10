@@ -45,15 +45,17 @@ const FileDrop = ({
     onFileDialogOpen: () => {
       if (document.fullscreenElement) {
         (
-          window as unknown as Record<string, unknown>
+          globalThis as unknown as Record<string, unknown>
         ).isKetcherFullscreenBeforeFilePicker = true;
       }
     },
     onFileDialogCancel: () => {
-      const windowContext = window as unknown as Record<string, unknown>;
+      const windowContext = globalThis as unknown as Record<string, unknown>;
       if (windowContext.isKetcherFullscreenBeforeFilePicker) {
         document.documentElement.requestFullscreen?.().catch(() => {
-          /* Restore fullscreen silently if failed */
+          /*
+          Restore fullscreen silently if failed
+          */
         });
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }

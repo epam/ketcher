@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* schema utils */
+/*
+schema utils
+*/
 function constant(schema, prop) {
   const desc = schema.properties[prop];
   return desc.constant || desc.enum[0]; // see https://git.io/v6hyP

@@ -19,17 +19,14 @@ import { useTranslation } from 'react-i18next';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 
 export const LayoutModeButton = () => {
   const { t } = useTranslation('macromolecules');
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
 
   const menuContext = useMemo(

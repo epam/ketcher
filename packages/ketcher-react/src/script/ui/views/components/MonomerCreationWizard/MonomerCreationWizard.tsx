@@ -98,6 +98,7 @@ import {
   isValidMonomerName,
 } from './MonomerCreationWizardFields.utils';
 import { saveLibraryMonomer } from './MonomerCreationWizard.library';
+import { getLeavingAtomPositionTowardsNeighbor } from './MonomerCreationWizard.utils';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -2028,7 +2029,10 @@ const MonomerCreationWizardInternal = ({
               KetMonomerClass.Base,
               AttachmentPointName.R1,
             ),
-            sugarR3AttachmentAtom?.pp,
+            getLeavingAtomPositionTowardsNeighbor(
+              baseR1AttachmentAtom?.pp,
+              sugarR3AttachmentAtom?.pp,
+            ),
           );
           editor.assignConnectionPointAtom(
             sugarR3AttachmentPointAtomId,
@@ -2040,7 +2044,10 @@ const MonomerCreationWizardInternal = ({
               KetMonomerClass.Sugar,
               AttachmentPointName.R3,
             ),
-            baseR1AttachmentAtom?.pp,
+            getLeavingAtomPositionTowardsNeighbor(
+              sugarR3AttachmentAtom?.pp,
+              baseR1AttachmentAtom?.pp,
+            ),
           );
         }
 
@@ -2078,7 +2085,10 @@ const MonomerCreationWizardInternal = ({
               KetMonomerClass.Sugar,
               sugarPhosphateAttachmentPointName,
             ),
-            phosphateSugarAttachmentAtom?.pp,
+            getLeavingAtomPositionTowardsNeighbor(
+              sugarPhosphateAttachmentAtom?.pp,
+              phosphateSugarAttachmentAtom?.pp,
+            ),
           );
           editor.assignConnectionPointAtom(
             phosphateSugarAttachmentPointAtomId,
@@ -2092,7 +2102,10 @@ const MonomerCreationWizardInternal = ({
               KetMonomerClass.Phosphate,
               phosphateSugarAttachmentPointName,
             ),
-            sugarPhosphateAttachmentAtom?.pp,
+            getLeavingAtomPositionTowardsNeighbor(
+              phosphateSugarAttachmentAtom?.pp,
+              sugarPhosphateAttachmentAtom?.pp,
+            ),
           );
         }
       }

@@ -44,7 +44,7 @@ import floatingToolsReducer from './floatingTools';
 import notificationsReducer, { initNotificationsState } from './notifications';
 import type { AppDispatch } from './hooks';
 import type {
-  DevToolsGlobal,
+  DevelopmentToolsGlobal,
   InitAction,
   ServerState,
   SetEditor,
@@ -165,7 +165,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
 }
 
-function sanitizeForDevTools(value: unknown): unknown {
+function sanitizeForDevelopmentTools(value: unknown): unknown {
   if (!isRecord(value)) {
     return value;
   }
@@ -232,9 +232,11 @@ export default function (
   // builds collapse this to plain `compose`.
   const composeEnhancers =
     (import.meta.env.NODE_ENV !== 'production' &&
-      (globalThis as DevToolsGlobal).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({
-        stateSanitizer: sanitizeForDevTools,
-        actionSanitizer: sanitizeForDevTools,
+      (
+        globalThis as DevelopmentToolsGlobal
+      ).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({
+        stateSanitizer: sanitizeForDevelopmentTools,
+        actionSanitizer: sanitizeForDevelopmentTools,
       })) ||
     compose;
 

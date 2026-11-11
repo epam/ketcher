@@ -33,7 +33,7 @@ import { ketcherProvider } from 'ketcher-core';
 import AttachmentPointLabelMenuItems from './menuItems/AttachmentPointLabelMenuItems';
 import AttachmentGroupMenuItems from './menuItems/AttachmentGroupMenuItems';
 
-const props: Partial<MenuProps> = {
+const properties: Partial<MenuProps> = {
   animation: false,
   className: styles.contextMenu,
 };
@@ -194,7 +194,7 @@ const ContextMenu: FC = () => {
     ? createPortal(
         <>
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_BONDS + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(CONTEXT_MENU_ID.FOR_BONDS + ketcherId, visible)
@@ -204,7 +204,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_ATOMS + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS + ketcherId, visible)
@@ -214,7 +214,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_ATTACHMENT_GROUP + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -227,7 +227,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_SELECTION + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -240,7 +240,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -253,7 +253,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -266,7 +266,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -279,7 +279,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_MACROMOLECULE + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(
@@ -292,7 +292,7 @@ const ContextMenu: FC = () => {
           </Menu>
 
           <Menu
-            {...props}
+            {...properties}
             id={CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId}
             onVisibilityChange={(visible) =>
               trackVisibility(

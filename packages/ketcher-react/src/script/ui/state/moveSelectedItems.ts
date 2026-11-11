@@ -47,10 +47,10 @@ export function moveSelectedItems(
     const moveStep = isShiftPressed
       ? getFasterStep(destinationVectorInCanvas)
       : destinationVectorInCanvas;
-    editor.render.setViewBox((prev) => ({
-      ...prev,
-      minX: prev.minX + moveStep.x,
-      minY: prev.minY + moveStep.y,
+    editor.render.setViewBox((previous) => ({
+      ...previous,
+      minX: previous.minX + moveStep.x,
+      minY: previous.minY + moveStep.y,
     }));
   }
   editor.rotateController.rerender();

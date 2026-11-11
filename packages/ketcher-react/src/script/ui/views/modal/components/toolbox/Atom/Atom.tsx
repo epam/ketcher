@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 
 import Form, {
   Field,
@@ -23,7 +23,7 @@ import Form, {
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Dialog } from '../../../../components';
+import { Dialog, type DialogParameters } from '../../../../components';
 import {
   type AtomAllAttributeName,
   SettingsManager,
@@ -47,7 +47,8 @@ import {
 } from './helper';
 import AtomElement, { type AtomFormResult } from './AtomElement/AtomElement';
 
-interface AtomProps extends BaseCallProps, BaseProps<AtomFormResult> {
+interface AtomProps
+  extends BaseCallProps<AtomFormResult>, BaseProperties<AtomFormResult> {
   alias: string;
   charge: string;
   exactChangeFlag: boolean;
@@ -235,7 +236,7 @@ const Atom: FC<Props> = (props: Props) => {
       className={classes.atomProps}
       result={() => formState.result}
       valid={() => formState.valid}
-      params={rest}
+      params={rest as DialogParameters}
       buttonsNameMap={{ OK: t('common:button.apply') }}
       buttons={['Cancel', 'OK']}
       withDivider

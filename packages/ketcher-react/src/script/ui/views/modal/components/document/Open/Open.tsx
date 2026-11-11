@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProperties } from '../../../modal.types';
 import { type FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
-  type DialogParams,
+  type DialogParameters,
   LoadingCircles,
 } from '../../../../components';
 import classes from './Open.module.less';
@@ -44,7 +44,7 @@ interface OpenProps {
 }
 
 type Props = OpenProps &
-  Pick<BaseProps, 'className'> &
+  Pick<BaseProperties, 'className'> &
   BaseCallProps<OpenResult> & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
@@ -188,7 +188,7 @@ const Open: FC<Props> = (props) => {
       title={t('dialogs:document.open.dialogTitle')}
       className={classes.open}
       // Dialog expects a looser `onOk` result type
-      params={rest as DialogParams}
+      params={rest as DialogParameters}
       result={() => null}
       data-testid="openStructureModal"
       footerContent={

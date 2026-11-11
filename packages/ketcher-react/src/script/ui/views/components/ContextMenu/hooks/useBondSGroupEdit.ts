@@ -4,25 +4,25 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
 import type {
-  BondsContextMenuProps,
-  ItemEventParams,
+  BondsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<BondsContextMenuProps>;
+type Parameters_ = ItemEventParameters<BondsContextMenuProperties>;
 
 const useBondSGroupEdit = () => {
   const { ketcherId } = useAppContext();
-  const sGroupsRef = useRef(new Pile<number>());
+  const sGroupsReference = useRef(new Pile<number>());
 
   const handler = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
-    const sGroups = [...sGroupsRef.current];
+    const sGroups = Array.from(sGroupsReference.current);
     SGroupTool.sgroupDialog(editor, sGroups[0]);
   }, [ketcherId]);
 
   // In react-contexify, `disabled` is executed before `hidden`
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const bondIds = props?.bondIds;
       if (!bondIds) {
         return true;
@@ -40,9 +40,9 @@ const useBondSGroupEdit = () => {
         return true;
       }
 
-      sGroupsRef.current = bond.b.getAttachedSGroups(struct.molecule);
+      sGroupsReference.current = bond.b.getAttachedSGroups(struct.molecule);
 
-      return sGroupsRef.current.size > 1;
+      return sGroupsReference.current.size > 1;
     },
     [ketcherId],
   );
@@ -50,12 +50,12 @@ const useBondSGroupEdit = () => {
   const hidden = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct: ReStruct = editor.render.ctab;
-    const [sgGroupId] = sGroupsRef.current;
+    const [sgGroupId] = sGroupsReference.current;
     const sgroup = struct.sgroups.get(sgGroupId)?.item;
     if (sgroup?.isSuperatomWithoutLabel) {
       return true;
     }
-    return sGroupsRef.current.size === 0;
+    return sGroupsReference.current.size === 0;
   }, [ketcherId]);
 
   return [handler, disabled, hidden] as const;

@@ -4,19 +4,19 @@ import type Editor from 'src/script/editor';
 import { mapAtomIdsToAtoms } from 'src/script/editor/tool/select';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import type {
-  AtomContextMenuProps,
-  ItemEventParams,
+  AtomContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 import { getEditableAtomIds } from '../utils';
 
-type Params = ItemEventParams<AtomContextMenuProps>;
+type Parameters_ = ItemEventParameters<AtomContextMenuProperties>;
 
 const useAtomEdit = () => {
   const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: Params) => {
+    async ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const atomIds = getEditableAtomIds(editor.struct(), props?.atomIds ?? []);
@@ -36,7 +36,7 @@ const useAtomEdit = () => {
   );
 
   const disabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       return (
         getEditableAtomIds(editor.struct(), props?.atomIds ?? []).length === 0

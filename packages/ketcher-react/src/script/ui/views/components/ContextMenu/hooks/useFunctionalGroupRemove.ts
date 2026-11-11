@@ -5,18 +5,18 @@ import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
 import type {
-  FunctionalGroupsContextMenuProps,
-  ItemEventParams,
+  FunctionalGroupsContextMenuProperties,
+  ItemEventParameters,
 } from '../contextMenu.types';
 
-type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
+type Parameters_ = ItemEventParameters<FunctionalGroupsContextMenuProperties>;
 
 const useFunctionalGroupRemove = () => {
   const { ketcherId } = useAppContext();
   const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Parameters_) => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();

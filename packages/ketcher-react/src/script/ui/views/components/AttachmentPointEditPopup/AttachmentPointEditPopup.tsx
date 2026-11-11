@@ -15,7 +15,7 @@ import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import type { Editor } from '../../../../editor';
 
-type Props = {
+type Properties = {
   data: AttachmentPointClickData;
   onNameChange: (
     currentName: AttachmentPointName,
@@ -35,13 +35,13 @@ const AttachmentPointEditPopup = ({
   onLeavingAtomChange,
   onClose,
   editor,
-}: Props) => {
+}: Properties) => {
   const { t } = useTranslation('components');
-  const popupRef = useRef<HTMLDivElement>(null);
+  const popupReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const popup = popupRef.current;
+      const popup = popupReference.current;
       const target = event.target as Node;
 
       if (!popup || popup.contains(target)) {
@@ -87,7 +87,7 @@ const AttachmentPointEditPopup = ({
   const { attachmentPointName } = data;
 
   useLayoutEffect(() => {
-    const popup = popupRef.current;
+    const popup = popupReference.current;
     const canvas = editor.render.paper.canvas as SVGSVGElement;
     if (!popup) return;
 
@@ -214,7 +214,7 @@ const AttachmentPointEditPopup = ({
   return (
     <div
       className={clsx(selectStyles.selectContainer, styles.popup)}
-      ref={popupRef}
+      ref={popupReference}
       data-testid="attachment-point-edit-popup"
     >
       <p className={styles.title}>{t('attachmentPointEditPopup.title')}</p>

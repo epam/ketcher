@@ -2796,6 +2796,20 @@ export class CoreEditor {
     // persisted across the switch. Captured before resetZoom() clears it.
     const macroZoom = zoomTool.getZoomLevel();
 
+    // Carry the scroll position too: capture the structural point currently at
+    // the center of the macro viewport, in canvas coordinates. The mode
+    // transition preserves canvas-space footprint (see
+    // rescaleStructForModeTransition), so this canvas point maps 1:1 to the
+    // micro canvas. Captured before resetZoom() clears the transform.
+    const macroWrapperRect = zoomTool.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    const macroViewportCenter = macroWrapperRect
+      ? Coordinates.viewToCanvas(
+          new Vec2(macroWrapperRect.width / 2, macroWrapperRect.height / 2),
+        )
+      : undefined;
+
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations(scaleFactor);
@@ -2804,6 +2818,16 @@ export class CoreEditor {
     // zoom() alone does not notify the toolbar; dispatch so the zoom readout
     // reflects the carried-over value immediately instead of after a click.
     this.micromoleculesEditor.event.zoomChanged.dispatch();
+
+    // Re-center the micro viewport on the carried-over point. Done after zoom()
+    // so viewBox width/height already reflect the persisted zoom level.
+    if (macroViewportCenter) {
+      this.micromoleculesEditor.render.setViewBox((prev) => ({
+        ...prev,
+        minX: macroViewportCenter.x - prev.width / 2,
+        minY: macroViewportCenter.y - prev.height / 2,
+      }));
+    }
 
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -2848,6 +2872,17 @@ export class CoreEditor {
     // Carry the molecules zoom over to the macro canvas so the zoom level is
     // persisted across the switch. Captured before the micro canvas is reset.
     const microZoom = this.micromoleculesEditor?.zoom();
+    // Carry the scroll position too: capture the structural point at the center
+    // of the micro viewport, in canvas coordinates (viewBox min + half span).
+    // Canvas space is preserved across the transition, so this maps 1:1 to the
+    // macro canvas. Captured before the micro viewBox is reset.
+    const microViewBox = this.micromoleculesEditor?.render.viewBox;
+    const microViewportCenter = microViewBox
+      ? new Vec2(
+          microViewBox.minX + microViewBox.width / 2,
+          microViewBox.minY + microViewBox.height / 2,
+        )
+      : undefined;
     const restorePreviousMode = this.captureModeState();
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.zoomTool.drawingEntitiesManager = this.drawingEntitiesManager;
@@ -2890,6 +2925,12 @@ export class CoreEditor {
     this.micromoleculesEditor?.zoom(1);
     if (microZoom) {
       ZoomTool.instance.zoomTo(microZoom);
+    }
+    // Re-center the macro viewport on the carried-over point. Done after the
+    // zoom is applied (zoom anchoring mutates the transform translation).
+    // Passing 50% offsets makes scrollTo center the point exactly.
+    if (microViewportCenter) {
+      ZoomTool.instance.scrollTo(microViewportCenter, false, 50, 50, true);
     }
     this._type = EditorType.Macromolecules;
     this.micromoleculesEditor?.addHistoryAction(

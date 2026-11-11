@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
-import { serverTransform } from '../state/server';
+import { hasOnlyBondsSelected, serverTransform } from '../state/server';
 import type { UiAction } from './action.types';
 
 type ServerConfig = {
@@ -104,11 +104,7 @@ const config: ServerConfig = {
       thunk: (dispatch, getState) => {
         // Hydrogens are toggled for the selected atoms only, so a selection of
         // bonds alone has nothing to toggle (decision in epam/Indigo#1650)
-        const selection = getState().editor.selection();
-        const hasOnlyBondsSelected =
-          Boolean(selection?.bonds?.length) && !selection?.atoms?.length;
-
-        if (hasOnlyBondsSelected) {
+        if (hasOnlyBondsSelected(getState().editor.selection())) {
           return;
         }
 

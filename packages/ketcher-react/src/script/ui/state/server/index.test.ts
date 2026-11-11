@@ -55,4 +55,26 @@ describe('serverCall', () => {
       ).toBe(true);
     },
   );
+
+  it.each(['clean', 'calculate'] as const)(
+    'sends only the selected atoms for %s when atoms are selected',
+    async (methodName) => {
+      const method = jest.fn();
+      const server = Object.assign(Promise.resolve(), { [methodName]: method });
+      const explicitSelected = jest.fn(() => ({ atoms: [0, 1], bonds: [0] }));
+      const editor = {
+        // a rectangle around one atom that also catches its bond
+        selection: () => ({ atoms: [0], bonds: [0] }),
+        explicitSelected,
+        struct: createEthane,
+      };
+
+      await serverCall(editor as never, server as never, methodName, {});
+
+      const [{ selected }] = method.mock.calls[0];
+
+      expect(selected).toEqual([0]);
+      expect(explicitSelected).not.toHaveBeenCalled();
+    },
+  );
 });

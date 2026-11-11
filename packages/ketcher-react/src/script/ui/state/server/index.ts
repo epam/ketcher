@@ -217,6 +217,10 @@ function resetStereoFlagsPosition(struct: Struct): void {
   });
 }
 
+export const hasOnlyBondsSelected = (
+  selection?: { atoms?: number[]; bonds?: number[] } | null,
+) => Boolean(selection?.bonds?.length) && !selection?.atoms?.length;
+
 // TODO: serverCall function should not be exported
 export function serverCall<T>(
   editor: Editor,
@@ -226,12 +230,15 @@ export function serverCall<T>(
   struct?: Struct,
 ): Promise<T> {
   // Clean Up and Calculated Values work on the selected part of the structure,
-  // so a selected bond brings its atoms along. Other methods get the selection
-  // as it is: hydrogens, for example, are toggled for selected atoms only.
+  // so when only bonds are selected, their atoms are sent along with them.
+  // Other methods get the selection as it is: hydrogens, for example, are
+  // toggled for selected atoms only.
+  const currentSelection = editor.selection();
   const isSelectedPartUsed = method === 'clean' || method === 'calculate';
-  const selection = isSelectedPartUsed
-    ? editor.explicitSelected()
-    : editor.selection();
+  const selection =
+    isSelectedPartUsed && hasOnlyBondsSelected(currentSelection)
+      ? editor.explicitSelected()
+      : currentSelection;
 
   let selectedAtoms: number[] = [];
   let selectedBonds: number[] = [];

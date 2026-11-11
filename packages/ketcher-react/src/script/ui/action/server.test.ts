@@ -5,7 +5,12 @@ import config from './server';
 jest.mock('../state/server', () => {
   const transform = jest.fn();
 
-  return { serverTransform: jest.fn(() => transform), transform };
+  return {
+    hasOnlyBondsSelected:
+      jest.requireActual('../state/server').hasOnlyBondsSelected,
+    serverTransform: jest.fn(() => transform),
+    transform,
+  };
 });
 
 const { transform: mockToggleExplicitHydrogens } = jest.requireMock<{

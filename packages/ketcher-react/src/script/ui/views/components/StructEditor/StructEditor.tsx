@@ -48,6 +48,7 @@ interface StructEditorProps {
   serverSettings?: Record<string, unknown>;
   indigoVerification?: boolean;
   showAttachmentPoints?: boolean;
+  disableScroll?: boolean;
   Tag?: ComponentType | string;
   className?: string;
   render?: unknown;
@@ -154,7 +155,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
 
         this.zoomDeltaAccumulator = 0;
       }
-    } else {
+    } else if (!this.props.disableScroll) {
       this.scrollCanvas(event);
       this.editor.rotateController.updateFloatingToolsPosition();
       this.editor.hoverIcon.updatePosition();
@@ -371,6 +372,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       'onShowInfo',
       'onApiSettings',
       'showAttachmentPoints',
+      'disableScroll',
       'onUpdateFloatingTools',
       'onShowMacromoleculesErrorMessage',
       'serverSettings',

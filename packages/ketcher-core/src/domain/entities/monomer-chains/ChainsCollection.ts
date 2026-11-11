@@ -46,6 +46,10 @@ export interface ITwoStrandedChainItem {
   antisenseNode?: SequenceNode;
   antisenseNodeIndex?: number;
   antisenseChain?: Chain;
+  startsNewSenseChainInRow?: boolean;
+  isFollowedByConnectedSenseChain?: boolean;
+  showAntisenseCounterInRow?: boolean;
+  hideAntisenseCounterInRow?: boolean;
 }
 
 export class ChainsCollection {

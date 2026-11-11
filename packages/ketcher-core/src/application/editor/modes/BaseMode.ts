@@ -15,8 +15,10 @@ import {
   keyNorm,
   legacyCopy,
   legacyPaste,
+  getSvgFromDrawnStructures,
   normalizeError,
   PLAIN_TEXT_MIME_TYPE,
+  convertSvgToPng,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -58,14 +60,15 @@ export abstract class BaseMode {
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
+    editor.mode.initialize(true, isUndo, false, false, true);
   }
 
   public initialize(
-    needRemoveSelection = true,
+    shouldRemoveSelection = true,
     _isUndo = false,
-    _needReArrangeChains = false,
-    _forceRecalculateAntisense = false,
+    _shouldReArrangeChains = false,
+    _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
@@ -76,10 +79,19 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 
-    if (needRemoveSelection) {
+    if (shouldRemoveSelection) {
       editor.events.selectSelectionTool.dispatch();
     }
 
@@ -150,7 +162,7 @@ export abstract class BaseMode {
       drawingEntitiesManager,
     );
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(serializedKet);
+      this.writeToClipboard(serializedKet, drawingEntitiesManager);
     } else if (event) {
       legacyCopy(event.clipboardData, {
         [PLAIN_TEXT_MIME_TYPE]: serializedKet,
@@ -181,6 +193,81 @@ export abstract class BaseMode {
     if (event) {
       event.preventDefault();
     }
+  }
+
+  async onCopyAs(format: 'ket' | 'mol' | 'image'): Promise<void> {
+    const editor = provideEditorInstance();
+
+    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+      return;
+    }
+
+    try {
+      if (format === 'image') {
+        await this.copyCanvasAsImage();
+        return;
+      }
+
+      const drawingEntitiesManager =
+        editor.drawingEntitiesManager.filterSelection();
+      const serializedKet = new KetSerializer().serialize(
+        new Struct(),
+        drawingEntitiesManager,
+      );
+      const text =
+        format === 'mol'
+          ? await this.convertKetToMol(serializedKet)
+          : serializedKet;
+
+      await navigator.clipboard.writeText(text);
+    } catch (error) {
+      KetcherLogger.error('BaseMode.ts::onCopyAs', error);
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage: normalizeError(error).message,
+      });
+    }
+  }
+
+  /**
+   * Copies the canvas as a PNG image, the same way as "Save as SVG Document"
+   * exports it (monomers are drawn as they look on the canvas).
+   */
+  private async copyCanvasAsImage(): Promise<void> {
+    const editor = provideEditorInstance();
+    const svg = getSvgFromDrawnStructures(editor.canvas, 'file');
+
+    if (!svg) {
+      throw new Error('Cannot get drawn structures!');
+    }
+
+    const image = await convertSvgToPng(svg, window.devicePixelRatio || 1);
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ [image.type]: image }),
+    ]);
+  }
+
+  private async convertKetToMol(ket: string): Promise<string> {
+    const editor = provideEditorInstance();
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const result = await ketcher.structService.convert(
+      { struct: ket, output_format: ChemicalMimeType.Mol },
+      { 'molfile-saving-mode': '3000' },
+    );
+
+    return result.struct;
+  }
+
+  /**
+   * Puts the copied structure on the clipboard. By default only KET is written
+   * as plain text; modes can override it to add other formats.
+   */
+  protected writeToClipboard(
+    serializedKet: string,
+    _drawingEntitiesManager: DrawingEntitiesManager,
+  ): void | Promise<void> {
+    navigator.clipboard.writeText(serializedKet);
   }
 
   async onPaste(event?: ClipboardEvent): Promise<void> {

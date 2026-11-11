@@ -1,7 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   AttachmentPointOption,
@@ -9,19 +8,11 @@ import {
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import {
-  clickOnCanvas,
-  dragMouseTo,
-  selectAllStructuresOnCanvas,
-} from '@utils';
+import { clickOnCanvas, selectAllStructuresOnCanvas } from '@utils';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
-const dragStartX = 600;
-const dragStartY = 200;
-const dragEndX = 500;
-const dragEndY = 250;
 
 async function openCreateMonomerDialogWithChemType(smiles: string) {
   await pasteFromClipboardAndOpenAsNewProject(page, smiles);
@@ -35,11 +26,6 @@ async function openCreateMonomerDialogWithChemType(smiles: string) {
   const createMonomerDialog = CreateMonomerDialog(page);
   await expect(createMonomerDialog.window).toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
-
-  // Keep structure clear of the attributes panel before atom interactions.
-  await CommonLeftToolbar(page).handTool();
-  await page.mouse.move(dragStartX, dragStartY);
-  await dragMouseTo(page, dragEndX, dragEndY);
 
   return createMonomerDialog;
 }
@@ -71,7 +57,7 @@ async function getVisibleAttachmentPointAtomOptionTexts() {
       continue;
     }
 
-    const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
+    const text = (await option.textContent())?.replaceAll('\u200b', '').trim();
     if (text) {
       optionTexts.push(text);
     }
@@ -241,7 +227,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     );
 
     const currentLgaText = (await r1AtomDropdown.textContent())
-      ?.replace(/\u200b/g, '')
+      ?.replaceAll('\u200b', '')
       .trim();
     expect(currentLgaText).toBeTruthy();
 
@@ -330,7 +316,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     // Verify the leaving atom type has changed.
     await expect
       .poll(async () =>
-        (await r1AtomDropdown.textContent())?.replace(/\u200b/g, '').trim(),
+        (await r1AtomDropdown.textContent())?.replaceAll('\u200b', '').trim(),
       )
       .toBe(getAttachmentPointAtomLabel(AttachmentPointAtom.OH));
   });
@@ -394,7 +380,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
 
     // Create first and second attachment points
     await markAtomAsConnectionPoint('C', 0);
-    await markAtomAsConnectionPoint('C', 1);
+    await markAtomAsLeavingGroup('C', 5);
 
     // Change second attachment point to a non-H/OH LGA.
     await createMonomerDialog.changeAttachmentPointAtom({
@@ -411,7 +397,7 @@ test.describe('Attachment points editing dropdown logic in monomer creation wiza
     );
 
     const r2CurrentLgaText = (await r2AtomDropdown.textContent())
-      ?.replace(/\u200b/g, '')
+      ?.replaceAll('\u200b', '')
       .trim();
     expect(r2CurrentLgaText).toBeTruthy();
 

@@ -18,6 +18,9 @@ export function getItemCursor(
   if (!item) {
     return defaultCursor;
   }
+  if (item.map === 'attachmentGroups') {
+    return 'default';
+  }
   switch (item.map) {
     case MULTITAIL_ARROW_KEY: {
       const closestItem = (

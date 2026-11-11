@@ -81,11 +81,11 @@ export class Chain {
     sugar: Sugar | AmbiguousMonomer,
   ): boolean {
     if (isValidNucleoside(sugar, this.firstMonomer)) {
-      this.lastSubChain.add(Nucleoside.fromSugar(sugar, false));
+      this.getLastSubChain().add(Nucleoside.fromSugar(sugar, false));
       return true;
     }
     if (isValidNucleotide(sugar, this.firstMonomer)) {
-      this.lastSubChain.add(Nucleotide.fromSugar(sugar, false));
+      this.getLastSubChain().add(Nucleotide.fromSugar(sugar, false));
       return true;
     }
     return false;
@@ -100,9 +100,9 @@ export class Chain {
     // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
     // connected to other linker-valid monomers), add it as a LinkerSequenceNode
     if (LinkerSequenceNode.isPartOfLinker(monomer)) {
-      this.lastSubChain.add(new LinkerSequenceNode(monomer));
+      this.getLastSubChain().add(new LinkerSequenceNode(monomer));
     } else {
-      this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
+      this.getLastSubChain().add(new AmbiguousMonomerSequenceNode(monomer));
     }
   }
 
@@ -115,7 +115,7 @@ export class Chain {
       monomer instanceof UnsplitNucleotide ||
       monomer instanceof UnresolvedMonomer
     ) {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      this.getLastSubChain().add(new MonomerSequenceNode(monomer));
       return;
     }
 
@@ -131,29 +131,35 @@ export class Chain {
     }
 
     const nextMonomer = getNextMonomerInChain(monomer);
-    const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
+    const isNextMonomerNucleotideLikeOrPeptide = () => {
       const isNucleosideOrNucleotide =
         nextMonomer instanceof Sugar &&
         (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
-      return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
+      return (
+        isNucleosideOrNucleotide ||
+        nextMonomer instanceof UnsplitNucleotide ||
+        nextMonomer instanceof Peptide
+      );
     };
     if (
       monomer instanceof Phosphate &&
       (!this.lastNode ||
         this.lastNode instanceof Nucleoside ||
         this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
-      (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
+      (!nextMonomer || isNextMonomerNucleotideLikeOrPeptide())
     ) {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      this.getLastSubChain().add(new MonomerSequenceNode(monomer));
       return;
     }
-    this.lastSubChain.add(new LinkerSequenceNode(monomer, this.firstMonomer));
+    this.getLastSubChain().add(
+      new LinkerSequenceNode(monomer, this.firstMonomer),
+    );
   }
 
   public addNode(node: SubChainNode) {
     this.createSubChainIfNeed(node.monomer);
 
-    this.lastSubChain.add(node);
+    this.getLastSubChain().add(node);
     this.nodesChanged = true;
     return this;
   }
@@ -172,7 +178,16 @@ export class Chain {
   }
 
   public get lastSubChain() {
-    return this.subChains[this.subChains.length - 1];
+    return this.subChains.at(-1);
+  }
+
+  private getLastSubChain() {
+    const lastSubChain = this.lastSubChain;
+    if (!lastSubChain) {
+      throw new Error('Cannot get the last subchain of an empty chain');
+    }
+
+    return lastSubChain;
   }
 
   public get nodes() {
@@ -194,7 +209,7 @@ export class Chain {
     if (this.lastNode instanceof EmptySequenceNode) {
       const nodes = this.nodes;
 
-      return nodes[nodes.length - 2];
+      return nodes.at(-2);
     } else {
       return this.lastNode;
     }

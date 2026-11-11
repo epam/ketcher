@@ -6,7 +6,14 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        astTransformers: {
+          before: [{ path: '../jest-import-meta-transformer.js' }],
+        },
+      },
+    ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',
   },
   moduleNameMapper: {

@@ -2,66 +2,65 @@ import {
   AttachmentPointName,
   type BaseMonomer,
   expandIdtAliasesToWizardInputs,
-  type FunctionalGroup,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
+  type MonomerItemType,
   KetMonomerClass,
   KetTemplateType,
-  MonomerMicromolecule,
+  type MonomerMicromolecule,
   Vec2,
 } from 'ketcher-core';
+import {
+  getMonomerPropertyVisibility,
+  isNaturalAnalogueRequired,
+} from './MonomerCreationWizardFields.utils';
 
 const COPY_SUFFIX = '_Copy';
 
 const getCopiedValue = (value?: string) =>
   value ? `${value}${COPY_SUFFIX}` : '';
 
-const isNaturalAnalogueSupported = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) =>
-  monomerType === KetMonomerClass.AminoAcid ||
-  monomerType === KetMonomerClass.Base ||
-  monomerType === KetMonomerClass.RNA;
-
-const isIdtAliasSupported = (
-  monomerType: KetMonomerClass | 'rnaPreset' | undefined,
-) =>
-  monomerType === KetMonomerClass.RNA ||
-  monomerType === KetMonomerClass.CHEM ||
-  monomerType === KetMonomerClass.Phosphate;
-
 const getInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
   shouldAppendCopySuffix: boolean,
 ): MonomerCreationInitialValues => {
-  const { label, props } = monomer.monomerItem;
+  const { label, props } =
+    'monomerItem' in monomer ? monomer.monomerItem : monomer;
   const type = props.MonomerClass ?? KetMonomerClass.CHEM;
   const symbol = props.MonomerCode ?? label;
   const name = props.MonomerFullName ?? props.Name ?? symbol;
-  const naturalAnalogue = isNaturalAnalogueSupported(type)
+  const naturalAnalogue = isNaturalAnalogueRequired(type)
     ? props.MonomerNaturalAnalogCode
     : '';
   const getValue = shouldAppendCopySuffix
     ? getCopiedValue
     : (value?: string) => value ?? '';
-  const position = monomer.position
-    ? { position: new Vec2(monomer.position) }
-    : {};
-  const idtAliases = isIdtAliasSupported(type)
+  const position =
+    'position' in monomer && monomer.position
+      ? { position: new Vec2(monomer.position) }
+      : {};
+  const { displayHelmAlias, displayBilnAlias, displayIdtAlias } =
+    getMonomerPropertyVisibility(type);
+  const idtAliases = displayIdtAlias
     ? expandIdtAliasesToWizardInputs(props.idtAliases)
     : { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
-  const modificationTypes =
-    type === KetMonomerClass.AminoAcid ? (props.modificationTypes ?? []) : [];
 
   return {
     type,
     symbol: getValue(symbol),
     name: getValue(name),
     naturalAnalogue,
-    aliasHELM: getValue(props.aliasHELM),
-    aliasBILN: getValue(props.aliasBILN),
+    aliasHELM: displayHelmAlias ? getValue(props.aliasHELM) : '',
+    aliasBILN: displayBilnAlias ? getValue(props.aliasBILN) : '',
     ...idtAliases,
-    modificationTypes,
+    ...('monomerItem' in monomer
+      ? {
+          modificationTypes:
+            type === KetMonomerClass.AminoAcid
+              ? (props.modificationTypes ?? [])
+              : [],
+        }
+      : {}),
     originalType: type,
     originalSymbol: symbol,
     ...position,
@@ -69,7 +68,7 @@ const getInitialValues = (
 };
 
 export const getEditInstanceInitialValues = (
-  monomer: BaseMonomer,
+  monomer: BaseMonomer | MonomerItemType,
 ): MonomerCreationInitialValues => {
   return {
     ...getInitialValues(monomer, true),
@@ -146,128 +145,137 @@ const addDefaultRnaPresetAttachmentPoints = (
   }
 };
 
-export const getEditAllInstancesInitialValues = (
-  monomer: BaseMonomer,
+/**
+ * Collects the attachment points a monomer must keep to stay eligible for
+ * every RNA preset that references it. Returns undefined when the monomer is
+ * not a preset component (sugar/base/phosphate) or takes part in no preset.
+ */
+const getPresetRequirements = (
+  monomerType: KetMonomerClass,
+  monomerTemplateRef: string,
   monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
-): MonomerCreationInitialValues => {
-  const initialValues = getInitialValues(monomer, true);
-  const monomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
-    monomer.monomerItem,
-  );
+):
+  | {
+      type: KetMonomerClass;
+      attachmentPoints: AttachmentPointName[];
+    }
+  | undefined => {
+  if (
+    monomerType !== KetMonomerClass.Sugar &&
+    monomerType !== KetMonomerClass.Base &&
+    monomerType !== KetMonomerClass.Phosphate
+  ) {
+    return undefined;
+  }
+
   const monomerTemplateId = monomerTemplateRef.replace(/^monomerTemplate-/, '');
   const isEditedMonomerTemplate = (templateId?: string) =>
     templateId === monomerTemplateRef || templateId === monomerTemplateId;
   const necessaryAttachmentPoints = new Set<AttachmentPointName>();
 
-  if (
-    initialValues.type === KetMonomerClass.Sugar ||
-    initialValues.type === KetMonomerClass.Base ||
-    initialValues.type === KetMonomerClass.Phosphate
-  ) {
-    monomersLibraryParsedJson?.root?.templates?.forEach(
-      (templateRef: { $ref?: string }) => {
-        const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
-        const isRnaPreset =
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template?.class === KetMonomerClass.RNA;
-        const participatesInPreset = template?.templates?.some(
-          (presetMonomerRef: { $ref?: string }) =>
-            isEditedMonomerTemplate(presetMonomerRef.$ref),
+  monomersLibraryParsedJson?.root?.templates?.forEach(
+    (templateRef: { $ref?: string }) => {
+      const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
+        RnaPresetTemplate | undefined;
+      const isRnaPreset =
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template?.class === KetMonomerClass.RNA;
+      const participatesInPreset = template?.templates?.some(
+        (presetMonomerRef: { $ref?: string }) =>
+          isEditedMonomerTemplate(presetMonomerRef.$ref),
+      );
+
+      if (!isRnaPreset || !participatesInPreset) {
+        return;
+      }
+
+      if (!template.connections?.length) {
+        const componentTypes = new Set(
+          template.templates?.map((presetMonomerRef) =>
+            isEditedMonomerTemplate(presetMonomerRef.$ref)
+              ? monomerType
+              : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
+          ),
         );
 
-        if (!isRnaPreset || !participatesInPreset) {
-          return;
-        }
+        addDefaultRnaPresetAttachmentPoints(
+          componentTypes,
+          monomerType,
+          necessaryAttachmentPoints,
+        );
 
-        if (!template.connections?.length) {
-          const componentTypes = new Set(
-            template.templates?.map((presetMonomerRef) =>
-              isEditedMonomerTemplate(presetMonomerRef.$ref)
-                ? initialValues.type
-                : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
-            ),
-          );
+        return;
+      }
 
-          addDefaultRnaPresetAttachmentPoints(
-            componentTypes,
-            initialValues.type,
-            necessaryAttachmentPoints,
-          );
-
-          return;
-        }
-
-        template.connections.forEach((connection) => {
-          [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
-            const attachmentPointId = endpoint?.attachmentPointId;
-            if (
-              isEditedMonomerTemplate(endpoint?.templateId) &&
-              attachmentPointId
-            ) {
-              necessaryAttachmentPoints.add(
-                attachmentPointId as AttachmentPointName,
-              );
-            }
-          });
+      template.connections.forEach((connection) => {
+        [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
+          const attachmentPointId = endpoint?.attachmentPointId;
+          if (
+            attachmentPointId &&
+            isEditedMonomerTemplate(endpoint?.templateId)
+          ) {
+            necessaryAttachmentPoints.add(
+              attachmentPointId as AttachmentPointName,
+            );
+          }
         });
-      },
-    );
+      });
+    },
+  );
+
+  if (necessaryAttachmentPoints.size === 0) {
+    return undefined;
   }
+
+  return {
+    type: monomerType,
+    attachmentPoints: sortAttachmentPoints([...necessaryAttachmentPoints]),
+  };
+};
+
+export const getLibraryEditInitialValues = (
+  libraryItem: MonomerItemType,
+  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
+): MonomerCreationInitialValues => {
+  const initialValues = getInitialValues(libraryItem, false);
+  const presetRequirements = getPresetRequirements(
+    initialValues.type,
+    getMonomerTemplateRefFromMonomerItem(libraryItem),
+    monomersLibraryParsedJson,
+  );
+
+  return {
+    ...initialValues,
+    libraryOnly: true,
+    originalMonomerItem: libraryItem,
+    modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
+    ...(presetRequirements ? { presetRequirements } : {}),
+  };
+};
+
+export const getEditAllInstancesInitialValues = (
+  monomer: BaseMonomer,
+  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
+): MonomerCreationInitialValues => {
+  const initialValues = getInitialValues(monomer, true);
+  const presetRequirements = getPresetRequirements(
+    initialValues.type,
+    getMonomerTemplateRefFromMonomerItem(monomer.monomerItem),
+    monomersLibraryParsedJson,
+  );
 
   return {
     ...initialValues,
     editMode: 'all',
-    ...(necessaryAttachmentPoints.size > 0
-      ? {
-          presetRequirements: {
-            type: initialValues.type,
-            attachmentPoints: sortAttachmentPoints([
-              ...necessaryAttachmentPoints,
-            ]),
-          },
-        }
-      : {}),
+    ...(presetRequirements ? { presetRequirements } : {}),
   };
-};
-
-/**
- * Extracts the sgroup IDs from a list of functional groups that match the
- * primary monomer's type and symbol. Returns `undefined` when fewer than two
- * matching groups are found (no restriction needed in that case).
- *
- * Use this when the user has multiple monomers of the same type selected and
- * "Edit All Instances" should be scoped to only those selections.
- */
-export const getSelectedSGroupIdsForEditAll = (
-  functionalGroups: FunctionalGroup[],
-  primaryMonomer: BaseMonomer,
-): number[] | undefined => {
-  const primaryType = primaryMonomer.monomerItem.props.MonomerClass;
-  const primarySymbol =
-    primaryMonomer.monomerItem.props.MonomerCode ??
-    primaryMonomer.monomerItem.label;
-
-  const matchingIds = functionalGroups
-    .filter((fg) => {
-      if (!(fg.relatedSGroup instanceof MonomerMicromolecule)) {
-        return false;
-      }
-      const { props, label } = fg.relatedSGroup.monomer.monomerItem;
-      const symbol = props.MonomerCode ?? label;
-      return props.MonomerClass === primaryType && symbol === primarySymbol;
-    })
-    .map((fg) => fg.relatedSGroupId);
-
-  return matchingIds.length > 1 ? matchingIds : undefined;
 };
 
 /**
  * Returns true when the given `MonomerMicromolecule` sgroup represents the
  * same monomer type and symbol as `primaryMonomer`.
  *
- * Use this to filter a plain list of sgroup IDs (e.g. from a dialog that
- * receives raw IDs rather than `FunctionalGroup` objects).
+ * Use this to scope "edit all instances" to the sgroups the user selected.
  */
 export const isSameMonomerType = (
   sgroup: MonomerMicromolecule,

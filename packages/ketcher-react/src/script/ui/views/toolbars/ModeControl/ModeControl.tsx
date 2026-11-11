@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-/* eslint-disable react-hooks/refs */
-
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTranslation } from 'react-i18next';
 import { Button, Popover } from '@mui/material';
@@ -160,13 +158,13 @@ export const ModeControl = ({
 }: ModeProps) => {
   const { t } = useTranslation('toolbars');
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
+  const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
 
   const handleModeSwitch = (isPolymer: boolean) => {
     toggle(isPolymer);
     setIsExpanded(false);
     setTimeout(() => {
-      if (btnRef.current) btnRef.current.blur();
+      btnElement?.blur();
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
       const canvas = document.querySelector('canvas') as HTMLElement;
@@ -191,7 +189,7 @@ export const ModeControl = ({
         data-testid="polymer-toggler"
         disabled={disabled}
         onClick={onExpand}
-        ref={btnRef}
+        ref={setBtnElement}
       >
         <ModeIconWrapper
           disabled={disabled}
@@ -211,7 +209,7 @@ export const ModeControl = ({
         title=""
         open={isExpanded}
         onClose={onClose}
-        anchorEl={btnRef.current}
+        anchorEl={btnElement}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

@@ -201,8 +201,8 @@ class ReRGroupAttachmentPoint extends ReObject {
     );
     this.addTestAttributes(attachmentPointShape);
 
-    const showLabel = isAttachmentPointLabelRequired(restruct);
-    if (showLabel) {
+    const shouldShowLabel = isAttachmentPointLabelRequired(restruct);
+    if (shouldShowLabel) {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
       const labelText = this.item.type === 'primary' ? '1' : '2';
       showAttachmentPointLabel(
@@ -242,15 +242,9 @@ class ReRGroupAttachmentPoint extends ReObject {
       return;
     }
 
-    attachmentPointElement.setAttribute('data-testid', 'attachment-point');
-    attachmentPointElement.setAttribute(
-      'data-primary-or-secondary',
-      this.item.type,
-    );
-    attachmentPointElement.setAttribute(
-      'data-attached-to-atomid',
-      String(this.item.atomId),
-    );
+    attachmentPointElement.dataset.testid = 'attachment-point';
+    attachmentPointElement.dataset.primaryOrSecondary = this.item.type;
+    attachmentPointElement.dataset.attachedToAtomid = String(this.item.atomId);
   }
 
   private getHoverPlatePath(options: RenderOptions, isHighlight = false) {

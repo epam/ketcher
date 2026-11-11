@@ -50,7 +50,7 @@ describe('getSvgFromDrawnStructures', () => {
         <text>Label</text>
         <rect cursor="text"></rect>
         <g opacity="0.5"></g>
-        <g style="cursor: pointer;"></g>
+        <g style="stroke: #000; cursor: pointer; fill: none;"></g>
       </g>
     `;
 
@@ -84,8 +84,10 @@ describe('getSvgFromDrawnStructures', () => {
     // rect with cursor="text" should have attribute removed
     expect(result).not.toContain('cursor="text"');
 
-    // inline style 'cursor: pointer;' must be removed
+    // inline style 'cursor: pointer;' must be removed while preserving other style declarations
     expect(result).not.toContain('cursor: pointer;');
+    expect(result).toContain('stroke: #000;');
+    expect(result).toContain('fill: none;');
   });
 
   test('returns file SVG with numeric margin and includes xmlns', () => {
@@ -154,5 +156,67 @@ describe('getSvgFromDrawnStructures', () => {
     // call with unknown type string casted to any
     const result = getSvgFromDrawnStructures(canvas, 'unknown' as any);
     expect(result).toBe("<svg xmlns='http://www.w3.org/2000/svg' />");
+  });
+
+  test('leaves transient views (e.g. the rotation frame) out of the SVG', () => {
+    const canvas = document.createElementNS(
+      SVG_NS,
+      'svg',
+    ) as unknown as SVGSVGElement;
+
+    canvas.innerHTML = `
+      <g class="drawn-structures">
+        <g class="structure"><text>Structure</text></g>
+        <g class="transient-views-layer"><rect id="rotation-frame"></rect></g>
+        <g class="transient-views-top-layer"><g id="rotation-handle"></g></g>
+      </g>
+    `;
+
+    const drawn = canvas.getElementsByClassName(
+      'drawn-structures',
+    )[0] as Element & { getBoundingClientRect?: () => any };
+    drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
+
+    const result = getSvgFromDrawnStructures(canvas, 'file', 5);
+
+    expect(result).toContain('Structure');
+    expect(result).not.toContain('transient-views-layer');
+    expect(result).not.toContain('transient-views-top-layer');
+    expect(result).not.toContain('rotation-frame');
+    expect(result).not.toContain('rotation-handle');
+  });
+
+  test('does not count transient views into the image size', () => {
+    const canvas = document.createElementNS(
+      SVG_NS,
+      'svg',
+    ) as unknown as SVGSVGElement;
+
+    canvas.innerHTML = `
+      <g class="drawn-structures">
+        <g class="structure"><text>Structure</text></g>
+        <g class="transient-views-top-layer"><g id="rotation-handle"></g></g>
+      </g>
+    `;
+
+    const drawn = canvas.getElementsByClassName('drawn-structures')[0];
+    const [structure, transientLayer] = Array.from(drawn.children) as Array<
+      Element & { getBoundingClientRect: () => any }
+    >;
+    // the structure itself
+    structure.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
+    // the rotation handle sits 100px above the structure
+    transientLayer.getBoundingClientRect = () => makeRect(100, 100, 300, 500);
+    canvas.getBoundingClientRect = () => makeRect(10, 20, 800, 600);
+
+    const result = getSvgFromDrawnStructures(canvas, 'file', 5);
+
+    // Only the structure is measured, relative to the canvas offset (10, 20):
+    // viewBoxX = 100 - 10 - 5 = 85
+    // viewBoxY = 200 - 20 - 5 = 175
+    // width = 300 + 5*2 = 310
+    // height = 400 + 5*2 = 410
+    expect(result).toContain("viewBox='85 175 310 410'");
   });
 });

@@ -38,9 +38,6 @@ export class SnakeMode extends BaseMode {
 
     if (editor.drawingEntitiesManager.hasMonomers) {
       editor.zoomTool.rememberZoomTransform();
-      if (!isHistoryReplay) {
-        editor.scrollToTopLeftCorner();
-      }
     }
 
     return command;

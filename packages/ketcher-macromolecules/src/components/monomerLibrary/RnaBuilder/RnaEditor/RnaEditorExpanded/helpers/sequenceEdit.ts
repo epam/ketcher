@@ -1,4 +1,8 @@
-import { Entities, LabeledNodesWithPositionInSequence } from 'ketcher-core';
+import {
+  Entities,
+  LabeledNodesWithPositionInSequence,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
 
 export const MULTIPLE_MONOMERS_LABEL = '[multiple]';
 export const DISABLED_MONOMERS_LABEL = '[disabled]';
@@ -61,3 +65,28 @@ export const generateSequenceSelectionName = (
     groupNames?.Phosphates ?? ''
   }`;
 };
+
+export const applyMonomerToSequenceSelection = (
+  sequenceSelection: LabeledNodesWithPositionInSequence[],
+  field: string,
+  groupItem: MonomerOrAmbiguousType,
+  isBaseGroup: boolean,
+) =>
+  sequenceSelection.map((node) => {
+    // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+    // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+    if (
+      (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+        field === 'phosphateLabel') ||
+      (node.type === Entities.Phosphate &&
+        (field === 'sugarLabel' || field === 'baseLabel'))
+    ) {
+      return node;
+    }
+
+    return {
+      ...node,
+      [field]: groupItem.label,
+      rnaBaseMonomerItem: isBaseGroup ? groupItem : node.rnaBaseMonomerItem,
+    };
+  });

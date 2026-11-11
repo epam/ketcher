@@ -6,6 +6,8 @@ import {
 } from 'domain/constants';
 import { AtomList } from 'domain/entities/atomList';
 import type { Atom } from 'domain/entities/CoreAtom';
+import { Vec2 } from 'domain/entities/vec2';
+import { doesCIPLabelOverlapBond } from '../CIPLabelPositioning';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 // The singleton needs a live canvas; isLabelVisible only reads its viewModel.
@@ -98,6 +100,40 @@ describe('AtomRenderer.isGenericLabel', () => {
     expect(
       callGetter('isGenericLabel', mockAtom('L#' as GenericAtomLabel)),
     ).toBe(false);
+  });
+});
+
+describe('AtomRenderer CIP label bond clearance', () => {
+  it('detects a bond crossing the label rectangle', () => {
+    const overlaps = doesCIPLabelOverlapBond(new Vec2(0, 0), 10, 10, [
+      { start: new Vec2(-20, 0), end: new Vec2(20, 0) },
+    ]);
+
+    expect(overlaps).toBe(true);
+  });
+
+  it('detects a bond contained inside the label rectangle', () => {
+    const overlaps = doesCIPLabelOverlapBond(new Vec2(0, 0), 10, 10, [
+      { start: new Vec2(-2, -2), end: new Vec2(2, 2) },
+    ]);
+
+    expect(overlaps).toBe(true);
+  });
+
+  it('treats the configured padding as part of the label collision area', () => {
+    const overlaps = doesCIPLabelOverlapBond(new Vec2(0, 0), 10, 10, [
+      { start: new Vec2(-20, 6), end: new Vec2(20, 6) },
+    ]);
+
+    expect(overlaps).toBe(true);
+  });
+
+  it('allows a bond with sufficient clearance from the label', () => {
+    const overlaps = doesCIPLabelOverlapBond(new Vec2(0, 0), 10, 10, [
+      { start: new Vec2(-20, 10), end: new Vec2(20, 10) },
+    ]);
+
+    expect(overlaps).toBe(false);
   });
 });
 

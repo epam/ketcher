@@ -25,10 +25,50 @@ interface CalculatePathPartAndTurnPointResult {
   readonly turnPoint: number;
 }
 
+export interface SideConnectionLaneRoute {
+  readonly id: number;
+  readonly side: -1 | 1;
+  readonly start: number;
+  readonly end: number;
+}
+
 export class SideChainConnectionBondRendererUtility {
   public static readonly bondEndLength = 15;
   public static readonly cellHeight = 40;
   public static readonly smoothCornerSize = 5;
+
+  public static assignOuterConnectionLanes(
+    routes: readonly SideConnectionLaneRoute[],
+  ): Map<number, number> {
+    const laneById = new Map<number, number>();
+
+    for (const side of [-1, 1] as const) {
+      const laneEnds: number[] = [];
+      const sideRoutes = routes
+        .filter((route) => route.side === side)
+        .map((route) => ({
+          ...route,
+          top: Math.min(route.start, route.end),
+          bottom: Math.max(route.start, route.end),
+        }))
+        .sort(
+          (first, second) =>
+            first.top - second.top ||
+            first.bottom - second.bottom ||
+            first.id - second.id,
+        );
+
+      sideRoutes.forEach((route) => {
+        const lane = laneEnds.findIndex((laneEnd) => laneEnd < route.top);
+        const assignedLane = lane === -1 ? laneEnds.length : lane;
+
+        laneEnds[assignedLane] = route.bottom;
+        laneById.set(route.id, assignedLane);
+      });
+    }
+
+    return laneById;
+  }
 
   public static calculatePathPartAndTurnPoint({
     cell,

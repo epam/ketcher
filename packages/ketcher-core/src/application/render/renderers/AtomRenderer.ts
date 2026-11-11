@@ -308,17 +308,20 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get labelText() {
+    if (this.atom.properties.alias) {
+      return this.atom.properties.alias;
+    }
     if (this.atom.properties.atomList) {
       return this.atom.properties.atomList.label();
     }
-    return this.atom.properties.alias ?? this.atom.label;
+    return this.atom.label;
   }
 
   /**
   True when the atom's label is a generic / pseudo query atom (e.g. A, Q, M, X, *).
   */
   public get isGenericLabel(): boolean {
-    return isGenericAtom(this.atom.label);
+    return !this.atom.properties.alias && isGenericAtom(this.atom.label);
   }
 
   // A bondless D/T isotope still needs its implicit hydrogen suffix (DH, TH); only a

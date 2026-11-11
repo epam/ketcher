@@ -1742,7 +1742,7 @@ function buildLabel(
     font,
     'font-size': fontszInPx,
     fill: atom.color,
-    'font-style': atom.a.pseudo ? 'italic' : '',
+    'font-style': atom.a.pseudo && !atom.a.alias ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
@@ -1769,7 +1769,7 @@ function buildLabel(
   let rightMargin = rbb.width / 2;
   let leftMargin = -rbb.width / 2;
 
-  if (atom.a.atomList !== null) {
+  if (atom.a.atomList !== null && !atom.a.alias) {
     const xShift =
       ((atom.hydrogenOnTheLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
     pathAndRBoxTranslate(path, rbb, xShift, 0);
@@ -1803,11 +1803,11 @@ function getLabelText(
     }
   }
 
+  if (atom.alias) return atom.alias;
+
   if (atom.atomList !== null) return atom.atomList.label();
 
   if (atom.pseudo) return atom.pseudo;
-
-  if (atom.alias) return atom.alias;
 
   if (
     atom.label &&

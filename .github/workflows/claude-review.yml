@@ -70,8 +70,11 @@ jobs:
 
       # The REVIEW_* variables are repository variables, so a maintainer can
       # change a model without a pull request. An unset variable is empty and
-      # leaves the default in scripts/review/config.mjs. The run log stays in
-      # the job log; the brief on the pull request carries the result.
+      # leaves the default in scripts/review/config.mjs. The brief on the pull
+      # request carries the result; the run log of the hub (review-run.json,
+      # with the dropped findings and the cost) stays on the runner and is not
+      # kept, because in a public repository a job log and an artifact are
+      # both public.
       - name: Review the pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -84,3 +87,19 @@ jobs:
           --pr ${{ github.event.pull_request.number }}
           --base-dir .
           --pr-dir pr-head
+
+      # The hub takes the review labels off itself when the run ends, also
+      # after an error. A job that GitHub cancels or times out runs no code of
+      # the hub at all, so the label would stay on and the next round would
+      # need it taken off by hand. A label that is already gone is not an
+      # error here.
+      - name: Take the review labels off
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh pr edit ${{ github.event.pull_request.number }}
+          --repo ${{ github.repository }}
+          --remove-label 'Run Claude Review'
+          --remove-label 'Claude Review: Opus'
+          || true

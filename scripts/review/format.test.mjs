@@ -136,6 +136,27 @@ test('the brief states everything the output contract asks for', () => {
   });
 });
 
+test('a refused review puts its findings and the reason in the brief', () => {
+  const inline = finding({ severity: 'blocker' });
+  const text = brief({
+    state: { round: 1, head: HEAD, posted: [] },
+    range: { from: 'b'.repeat(40), kind: 'full' },
+    prType: 'Bug fix',
+    panel: ['correctness'],
+    models: ['claude-sonnet-5-5'],
+    findings: [inline],
+    overflow: [],
+    outsideDiff: [],
+    failedPasses: [],
+    skippedFiles: 0,
+    inline: [inline],
+    inlineFailure: 'line must be part of the diff',
+  });
+  assert.match(text, /### Findings without an inline comment/);
+  assert.match(text, /GitHub did not take the review: line must be part of/);
+  assert.ok(text.includes(inline.claim));
+});
+
 test('a brief without findings, issue or panel still says so', () => {
   const text = brief({
     state: { round: 1, head: HEAD, posted: [] },

@@ -1,8 +1,8 @@
 // Test of a whole review round with a fake GitHub and a fake model runner.
 // It covers what the unit tests cannot see and what costs money or touches
 // someone else's pull request when it breaks: the round limit, the dry run,
-// label removal on failure, and no repeat in a later round. The prompts,
-// rules and documents are the real ones of this checkout.
+// label removal on failure, a review GitHub refuses, and no repeat in a later
+// round. The prompts, rules and documents are the real ones of this checkout.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -94,8 +94,9 @@ const earlierBrief = (state) => ({
  * @param {object} [options]
  * @param {object[]} [options.comments] earlier comments on the pull request
  * @param {Error} [options.failLinkedIssues] thrown by linkedIssues
+ * @param {Error} [options.failPostReview] thrown by postReview
  */
-function fakeGitHub({ comments = [], failLinkedIssues } = {}) {
+function fakeGitHub({ comments = [], failLinkedIssues, failPostReview } = {}) {
   const writes = [];
   const diffs = [];
   const github = {
@@ -111,7 +112,10 @@ function fakeGitHub({ comments = [], failLinkedIssues } = {}) {
       return [];
     },
     issue: async (number) => ({ number, title: 'Label', body: 'Fix label.' }),
-    postReview: async (number, review) => writes.push(['review', review]),
+    postReview: async (number, review) => {
+      if (failPostReview) throw failPostReview;
+      writes.push(['review', review]);
+    },
     postComment: async (number, body) => writes.push(['comment', body]),
     removeLabel: async (number, label) => writes.push(['label', label]),
   };
@@ -160,6 +164,21 @@ test('after the last round only the limit comment is posted, and no model runs',
   const [limit] = writesOf(writes, 'comment');
   assert.match(limit, /round limit reached/);
   assert.equal(readMarker(limit), undefined);
+  assert.deepEqual(writesOf(writes, 'label'), [LABELS.standard]);
+});
+
+test('a review GitHub refuses still gets a brief that carries the findings', async () => {
+  const { github, writes } = fakeGitHub({
+    failPostReview: new Error('line must be part of the diff'),
+  });
+  const { run } = fakeRunner({ correctness: [FINDING] });
+  await review({ github, run });
+
+  const [briefText] = writesOf(writes, 'comment');
+  assert.notEqual(readMarker(briefText), undefined);
+  assert.match(briefText, /### Findings without an inline comment/);
+  assert.match(briefText, /line must be part of the diff/);
+  assert.ok(briefText.includes(FINDING.claim));
   assert.deepEqual(writesOf(writes, 'label'), [LABELS.standard]);
 });
 

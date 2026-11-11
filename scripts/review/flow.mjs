@@ -368,7 +368,8 @@ async function roundOutput(options, pr, input, results) {
     ...input.plan.posted,
     ...fingerprints(results.confirmed),
   ]);
-  const briefText = brief({
+  /** @type {import('./format.mjs').BriefInput} */
+  const briefInput = {
     state: { round: input.plan.round, head: pr.headSha, posted },
     range: input.range,
     linkedIssue: results.linked.answer,
@@ -384,29 +385,55 @@ async function roundOutput(options, pr, input, results) {
     outsideDiff: split.outsideDiff,
     failedPasses: failedPasses(results),
     skippedFiles: input.diff.skipped.length,
-  });
-  return { comments: split.inline.map(inlineComment), briefText };
+    inline: split.inline,
+  };
+  return {
+    comments: split.inline.map(inlineComment),
+    briefText: (inlineFailure) => brief({ ...briefInput, inlineFailure }),
+  };
 }
 
 /**
- * Posts the round, or prints it on a dry run.
+ * Posts the round, or prints it on a dry run. The brief is written after the
+ * inline review, so that it can name a review GitHub refused and carry the
+ * findings that got no inline comment.
  * @param {ReviewOptions} options
  * @param {PullRequest} pr
- * @param {{ comments: { path: string, line: number, body: string }[], briefText: string }} output
+ * @param {{ comments: { path: string, line: number, body: string }[], briefText: (inlineFailure?: string) => string }} output
  */
 async function publish({ github, prNumber, dryRun, print }, pr, output) {
   if (dryRun) {
     for (const comment of output.comments) {
       print(`--- ${comment.path}:${comment.line}\n${comment.body}\n`);
     }
-    print(output.briefText);
+    print(output.briefText());
     return;
   }
-  await github.postReview(prNumber, {
-    commitId: pr.headSha,
-    comments: output.comments,
-  });
-  await github.postComment(prNumber, output.briefText);
+  const inlineFailure = await postInline(github, prNumber, pr, output.comments);
+  await github.postComment(prNumber, output.briefText(inlineFailure));
+}
+
+/**
+ * Sends the inline comments as one review, and gives back the error instead of
+ * throwing it. The brief carries the round state in its marker, so it has to
+ * go out even when GitHub rejects the review: a round that posts nothing is
+ * paid for, is not counted, and is repeated by the next round.
+ * @param {GitHub} github
+ * @param {number} prNumber
+ * @param {PullRequest} pr
+ * @param {{ path: string, line: number, body: string }[]} comments
+ * @returns {Promise<string | undefined>} the error of a review GitHub refused
+ */
+async function postInline(github, prNumber, pr, comments) {
+  try {
+    await github.postReview(prNumber, {
+      commitId: pr.headSha,
+      comments,
+    });
+    return undefined;
+  } catch (error) {
+    return String(error?.message ?? error);
+  }
 }
 
 /**
@@ -452,7 +479,7 @@ async function reviewRound(options, pr) {
   });
   if (plan.limitReached) {
     log.limitReached = true;
-    await publish(options, pr, { comments: [], briefText: limitComment() });
+    await publish(options, pr, { comments: [], briefText: limitComment });
     return;
   }
   const input = await readRound(options, pr, plan);

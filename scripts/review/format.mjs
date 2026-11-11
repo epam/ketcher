@@ -33,6 +33,8 @@ import { writeMarker } from './state.mjs';
  * @property {Finding[]} outsideDiff confirmed, on a line outside the diff
  * @property {string[]} failedPasses passes that gave no result
  * @property {number} skippedFiles files left out of the finder passes
+ * @property {Finding[]} [inline] confirmed, meant for an inline comment
+ * @property {string} [inlineFailure] why the inline review could not be posted
  */
 
 /** Put after `@`, so GitHub does not notify the named account. */
@@ -195,6 +197,24 @@ function section(title, lines) {
 }
 
 /**
+ * The findings of a review that GitHub would not take, with the reason.
+ * GitHub rejects a whole review when one comment sits on a line outside the
+ * pull request diff, so without this section a round would state a count of
+ * findings that nothing on the pull request shows.
+ * @param {BriefInput} input
+ */
+function inlineFailureSection(input) {
+  if (input.inlineFailure === undefined) {
+    return [];
+  }
+  return section('Findings without an inline comment', [
+    `GitHub did not take the review: ${plain(input.inlineFailure)}`,
+    '',
+    ...(input.inline ?? []).map(briefLine),
+  ]);
+}
+
+/**
  * The feedback ask. A wrong finding is what improves the reviewer, so the ask
  * names it first. A reaction can only be counted; the reason in a reply is
  * what changes a rule, so the ask gives the `Dismissed:` prefix that a later
@@ -202,6 +222,11 @@ function section(title, lines) {
  */
 const FEEDBACK_LINE =
   '**Feedback:** 👎 a finding that is wrong. Better still, reply to it with `Dismissed: <why>` — one sentence. A reaction can only be counted, a reason can change a rule or add an accepted pattern. 👍 marks a good catch.';
+
+/**
+ * The feedback ask, for a brief that states at least one finding.
+ * @param {Finding[]} findings every confirmed finding
+ */
 function feedbackAsk(findings) {
   if (findings.length === 0) {
     return [];
@@ -234,6 +259,7 @@ export function brief(input, maxRounds = MAX_ROUNDS) {
   }
   return [
     ...lines,
+    ...inlineFailureSection(input),
     ...section('Over the comment cap', input.overflow.map(briefLine)),
     ...section('Outside the diff', input.outsideDiff.map(briefLine)),
     ...section(

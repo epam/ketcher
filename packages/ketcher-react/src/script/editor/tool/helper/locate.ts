@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -18,6 +17,7 @@
 import {
   type Struct,
   type ReStruct,
+  type ReEnhancedFlag,
   FunctionalGroup,
   IMAGE_KEY,
   Vec2,
@@ -25,7 +25,9 @@ import {
   assert,
 } from 'ketcher-core';
 
-function getElementsInRectangle(restruct: ReStruct, p0, p1) {
+type ReEnhancedFlagWithPosition = ReEnhancedFlag & { pp?: Vec2 };
+
+function getElementsInRectangle(restruct: ReStruct, p0: Vec2, p1: Vec2) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
@@ -118,13 +120,14 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
 
-  // ReRxnArrow item doesn't have center method according to types but somehow it works
-  restruct.rxnArrows.forEach((item: any, id) => {
+  restruct.rxnArrows.forEach((_item, id) => {
+    const center = struct.rxnArrows.get(id)?.center();
     if (
-      item.item.center().x > x0 &&
-      item.item.center().x < x1 &&
-      item.item.center().y > y0 &&
-      item.item.center().y < y1
+      center &&
+      center.x > x0 &&
+      center.x < x1 &&
+      center.y > y0 &&
+      center.y < y1
     ) {
       rxnArrowsList.push(id);
     }
@@ -152,8 +155,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
-  restruct.enhancedFlags.forEach((item: any, id) => {
+  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
     if (!item.pp) return;
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id);
@@ -228,18 +230,13 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   };
 }
 
-function getElementsInPolygon(restruct: ReStruct, rr) {
+function getElementsInPolygon(restruct: ReStruct, r: Vec2[]) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const attachmentGroupList: Array<number> = [];
-  const r: any = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
-
-  for (const point of rr) {
-    r.push(new Vec2(point.x, point.y));
-  }
 
   restruct.bonds.forEach((bond, bid) => {
     if (
@@ -346,8 +343,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
-  restruct.enhancedFlags.forEach((item: any, id) => {
+  restruct.enhancedFlags.forEach((item: ReEnhancedFlagWithPosition, id) => {
     if (item.pp && isPointInPolygon(r, item.pp)) {
       enhancedFlagList.push(id);
     }
@@ -405,7 +401,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
 // TODO: test me see testPolygon from
 // 'Remove unused methods from render' commit
-function isPointInPolygon(r, p) {
+function isPointInPolygon(r: Vec2[], p: Vec2) {
   const d = new Vec2(0, 1);
   const n = d.rotate(Math.PI / 2);
   let v0 = Vec2.diff(r[r.length - 1], p);
@@ -414,7 +410,7 @@ function isPointInPolygon(r, p) {
   let w0 = new Vec2(0, 0);
   let counter = 0;
   const eps = 1e-5;
-  let hasCurrentRayCrossing;
+  let hasCurrentRayCrossing: boolean;
   let hasPreviousRayCrossing = false;
 
   for (const point of r) {

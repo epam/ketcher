@@ -147,10 +147,20 @@ class TemplatePreview {
   private moveFloatingPreview() {
     const dist = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
+    const previewAtomIds = new Set(this.floatingPreview?.atoms);
+    const sgroups = Array.from(this.struct.sgroups.values())
+      .filter(
+        (sgroup) =>
+          sgroup.atoms.length > 0 &&
+          sgroup.atoms.every((atomId) => previewAtomIds.has(atomId)),
+      )
+      .map((sgroup) => sgroup.id);
     fromMultipleMove(
       this.restruct,
       {
         ...this.floatingPreview,
+        sgroups,
+        sgroupData: [],
         enhancedFlags: this.getFloatingPreviewFragmentIds(),
       },
       dist,

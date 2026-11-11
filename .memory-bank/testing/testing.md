@@ -33,7 +33,7 @@ All E2E tests live in `ketcher-autotests/`. This is a separate npm workspace.
 - **Framework**: Playwright (`@playwright/test` ^1.59.1)
 - **Browser**: Chromium only (headless)
 - **Config**: `ketcher-autotests/playwright.config.ts`
-- **Test file naming**: `*.spec.ts`
+- **Test file naming**: `*.spec.ts`; a spec written for a specific ticket is prefixed with the ticket id — `9370-edit-library-monomer.spec.ts`, `8852-preset-structure-additions.spec.ts`. Specs covering general (non-ticket) behavior keep a plain descriptive name.
 
 ### 3. Type Checking
 
@@ -61,6 +61,7 @@ TypeScript type checks run separately per package: `npm run test:types --workspa
 | `tests/pages/molecules/`                           | Micromolecule editor POMs (`BottomToolbar`, `TopRightToolbar`, …)                                         |
 | `tests/pages/constants/`                           | Typed enum constants per UI area (monomer names, layout modes, file formats, …)                           |
 | `tests/utils/canvas/`                              | Canvas interactions: screenshots, drag-select, atom/bond locators                                         |
+| `tests/utils/canvas/createMonomer/`                | Monomer-creation-wizard canvas utilities (e.g. `markAtomAsConnectionPoint`) — wizard-only actions live here, not in the generic `canvas/atoms/` dir |
 | `tests/utils/clicks/`                              | Mouse helpers: `clickOnCanvas`, `dragMouseTo`, coordinate utilities                                       |
 | `tests/utils/common/loaders/`                      | Async wait helpers: `waitForRender`, `waitForPageInit`, `waitForIndigoToLoad`, `waitForSpinnerFinishedWork` |
 | `tests/utils/files/`                               | File I/O: `openFile`, `verifyFileExport`, `saveToFile`, `receiveFileComparisonData`                       |
@@ -119,15 +120,6 @@ npm run docker:test-popup    # Run chromium-popup project
 npm run docker:update file_name:N   # Regenerate single test snapshot
 npm run docker:update-popup file_name:N   # Regenerate single test snapshot
 ```
-
-Install Docker Desktop for the host OS as the [autotests README](../../ketcher-autotests/README.md) says (macOS, Windows, Linux), and create `ketcher-autotests/.env` from `.env.example`, which has `DOCKER=true`. Where Docker Desktop cannot run (it needs an admin password and a window, and a headless agent session has neither), Colima gives the same Docker on macOS: `brew install colima docker docker-compose`, then `colima start --vm-type vz --cpu 6 --memory 12 --disk 60`. The scripts call the `docker-compose` binary.
-
-Containers run on the host's architecture, and Chromium does not survive amd64 emulation on an arm64 host: QEMU crashes it (`rcu_read_unlock` assertion), and Rosetta may be missing (`arch -x86_64` fails with "Bad CPU type"). CI runners are amd64. Leave `DOCKER_DEFAULT_PLATFORM` unset.
-
-- On an amd64 host the images should match CI's.
-- On an arm64 host (Apple Silicon) the images are arm64. On the spec checked they drew the same differing-pixel counts as CI (36 and 19 pixels). Run one failing spec on `<base>` and on the branch before you regenerate a batch.
-
-`npm run docker:update file_name:N` regenerates one spec. To regenerate a list, call `docker-compose run --rm autotests bash /app/test_run.sh --project=<project> --update-snapshots=changed` with the specs as arguments, and check the count first with `--list`. This avoids `GENERATE_DATA=true`, which `npm run docker:update` sets and which rewrites files under `tests/test-data/`.
 
 ### Local run caveats
 
@@ -415,12 +407,14 @@ All test data files live in `tests/test-data/`. Paths passed to these helpers ar
 
 | Function                                               | Purpose                                                           |
 | ------------------------------------------------------ | ----------------------------------------------------------------- |
-| `Library(page).dragMonomerOnCanvas(monomer, { x, y })` | Drag monomer from library to canvas coordinates                   |
+| `Library(page).dragMonomerOnCanvas(monomer, { x, y })` | Drag monomer from library to canvas coordinates; navigates to the monomer's tab/section itself            |
 | `getMonomerLocator(page, monomerOrOptions)`            | Locate monomer on canvas by alias, type, or ID                    |
 | `bondTwoMonomers(page, m1, m2, ap1?, ap2?)`            | Draw a bond between two monomers; handles attachment point dialog |
 | `bondTwoMonomersPointToPoint(page, m1, m2, ap1, ap2)`  | Bond with explicit attachment points                              |
 | `connectMonomersWithBonds(page, names[], bondType)`    | Bond a sequence of monomers by alias                              |
 | `moveMonomer(page, monomer, x, y)`                     | Select and drag a monomer                                         |
+
+`Library` page-object methods that act on a monomer card (`dragMonomerOnCanvas`, `hoverMonomer`, `selectMonomer`, `openMonomerCardMenu`, …) navigate to the monomer's tab/section themselves via `goToMonomerLibraryLocation`. Tests must not pre-navigate with `switchToPeptidesTab()` / `goToMonomerLibraryLocation()` before calling them — that is redundant and hides which method owns the navigation. Navigate explicitly only when the test itself asserts on a library card (e.g. checking that a new entry appeared in a specific tab).
 
 ### Monomer Enum Catalogs
 
@@ -528,6 +522,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
+21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
 
 ---
 
@@ -536,7 +531,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 ### Timing Anti-Patterns
 
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
-- **Bare `await page.keyboard.press(key)`** for canvas actions — always wrap in `waitForRender` or use `keyboardPressOnCanvas`.
+- **Bare `await page.keyboard.press(key)`** for canvas actions — prefer the named helpers when one exists (`undoByKeyboard`, `deleteByKeyboard`, …); otherwise wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
 - **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 

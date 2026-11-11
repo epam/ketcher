@@ -17,10 +17,14 @@ export class SGroupAddOperation implements Operation {
     this.sgroupDrawingEntity = this.addSGroupChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.sgroupDrawingEntity = this.addSGroupChangeModel(
       this.sgroupDrawingEntity,
     );
+  }
+
+  // render after atoms and bonds so a contracted group can hide them
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addSGroup(this.sgroupDrawingEntity);
   }
 

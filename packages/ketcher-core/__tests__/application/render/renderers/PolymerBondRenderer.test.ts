@@ -29,11 +29,13 @@ const renderSnakeSideConnectionPath = (
     atChainStart = false,
     isVertical = true,
     hydrogen = false,
+    overlappingRoute = false,
   }: {
     chainsHaveBackbones?: boolean;
     atChainStart?: boolean;
     isVertical?: boolean;
     hydrogen?: boolean;
+    overlappingRoute?: boolean;
   } = {},
 ) => {
   createPolymerEditorCanvas();
@@ -60,13 +62,12 @@ const renderSnakeSideConnectionPath = (
     throw new Error('Expected a finished polymer bond');
   }
 
-  polymerBond.firstMonomer.attachmentPointsToBonds[firstAttachmentPoint] =
-    polymerBond;
-  secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = polymerBond;
+  if (!hydrogen) {
+    polymerBond.firstMonomer.attachmentPointsToBonds[firstAttachmentPoint] =
+      polymerBond;
+    secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = polymerBond;
+  }
   polymerBond.moveToLinkedEntities();
-  const additionalRowMonomer = chainsHaveBackbones
-    ? getFinishedPolymerBond(90, y1, 90, y2).firstMonomer
-    : undefined;
 
   const firstNode = {
     monomers: [polymerBond.firstMonomer],
@@ -92,24 +93,46 @@ const renderSnakeSideConnectionPath = (
     new Cell(lastNode, [connection()], 1, 2, secondMonomer),
   ];
 
+  const polymerBondToCells = new Map([[polymerBond, cells]]);
+  const monomerToChain = new Map([
+    [polymerBond.firstMonomer, firstChain],
+    [secondMonomer, secondChain],
+  ]);
+
+  if (overlappingRoute) {
+    const neighborBond = getFinishedPolymerBond(15, y1, 15, y2);
+    const { firstMonomer, secondMonomer } = neighborBond;
+    if (!secondMonomer) {
+      throw new Error('Expected a finished overlapping bond');
+    }
+    firstMonomer.attachmentPointsToBonds.R2 = neighborBond;
+    secondMonomer.attachmentPointsToBonds.R2 = neighborBond;
+    const nodes = [firstMonomer, secondMonomer].map((monomer) => {
+      const node = { monomers: [monomer] } as unknown as SubChainNode;
+      monomerToChain.set(monomer, {
+        length: 2,
+        firstNode: undefined,
+        lastNode: node,
+      });
+      return node;
+    });
+    const connection = new Connection(null, 90, true, neighborBond, 0, 0);
+    polymerBondToCells.set(neighborBond, [
+      new Cell(nodes[0], [connection], 2, 0, firstMonomer),
+      new Cell(nodes[1], [connection], 2, 2, secondMonomer),
+    ]);
+  }
+
   setEditorInstance({
     mode: new SnakeMode(),
     drawingEntitiesManager: {
       canvasMatrix: {
-        polymerBondToCells: new Map([[polymerBond, cells]]),
-        chainsCollection: {
-          monomerToChain: new Map([
-            [polymerBond.firstMonomer, firstChain],
-            [secondMonomer, secondChain],
-          ]),
-        },
+        polymerBondToCells,
+        chainsCollection: { monomerToChain },
       },
       monomers: new Map([
         [polymerBond.firstMonomer.id, polymerBond.firstMonomer],
         [secondMonomer.id, secondMonomer],
-        ...(additionalRowMonomer
-          ? ([[additionalRowMonomer.id, additionalRowMonomer]] as const)
-          : []),
       ]),
     },
   } as unknown as CoreEditor);
@@ -217,7 +240,7 @@ describe('Polymer Bond Renderer', () => {
   it('keeps R3-R3 connections away from chain starts on the existing route', () => {
     const { path } = renderSnakeSideConnectionPath(10, 10, 10, 100, 'R3', 'R3');
 
-    expect(path).not.toContain('375.5');
+    expect(path).toMatch(/^M ([^,]+),[^ ]+ L \1,[^ ]+ H /);
   });
 
   it('routes R2-R2 bonds out the right side of terminals in different columns', () => {
@@ -235,6 +258,22 @@ describe('Polymer Bond Renderer', () => {
       'M 400,400 L 602,400 q 5,0 5,5 L 607,3995 q 0,5 -5,5 L 600,4000',
     );
     expect(endpointAngles).toEqual([Math.PI, Math.PI]);
+  });
+
+  it('places a shorter right-side route against the wider overlapping route baseline', () => {
+    const { path } = renderSnakeSideConnectionPath(
+      10,
+      10,
+      10,
+      100,
+      'R2',
+      'R2',
+      {
+        overlappingRoute: true,
+      },
+    );
+
+    expect(path).toContain('L 607,3995');
   });
 
   it('aligns occupied attachment indicators with the outer side of both endpoints', () => {
@@ -271,6 +310,6 @@ describe('Polymer Bond Renderer', () => {
       { atChainStart: true, hydrogen: true },
     );
 
-    expect(path).not.toContain('375.5');
+    expect(path).toMatch(/^M ([^,]+),[^ ]+ L \1,[^ ]+ H /);
   });
 });

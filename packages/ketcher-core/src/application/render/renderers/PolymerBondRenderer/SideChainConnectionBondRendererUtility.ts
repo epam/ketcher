@@ -30,6 +30,12 @@ export interface SideConnectionLaneRoute {
   readonly side: -1 | 1;
   readonly start: number;
   readonly end: number;
+  readonly edge: number;
+}
+
+export interface OuterConnectionLane {
+  readonly index: number;
+  readonly baseline: { edge: number };
 }
 
 export class SideChainConnectionBondRendererUtility {
@@ -39,8 +45,8 @@ export class SideChainConnectionBondRendererUtility {
 
   public static assignOuterConnectionLanes(
     routes: readonly SideConnectionLaneRoute[],
-  ): Map<number, number> {
-    const laneById = new Map<number, number>();
+  ): Map<number, OuterConnectionLane> {
+    const laneById = new Map<number, OuterConnectionLane>();
 
     for (const side of [-1, 1] as const) {
       const laneEnds: number[] = [];
@@ -58,12 +64,24 @@ export class SideChainConnectionBondRendererUtility {
             first.id - second.id,
         );
 
+      let groupEnd = -Infinity;
+      let baseline = { edge: 0 };
+      const outermost = side === 1 ? Math.max : Math.min;
+
       sideRoutes.forEach((route) => {
+        if (route.top > groupEnd) {
+          baseline = { edge: route.edge };
+          laneEnds.length = 0;
+        } else {
+          baseline.edge = outermost(baseline.edge, route.edge);
+        }
+        groupEnd = Math.max(groupEnd, route.bottom);
+
         const lane = laneEnds.findIndex((laneEnd) => laneEnd < route.top);
         const assignedLane = lane === -1 ? laneEnds.length : lane;
 
         laneEnds[assignedLane] = route.bottom;
-        laneById.set(route.id, assignedLane);
+        laneById.set(route.id, { index: assignedLane, baseline });
       });
     }
 

@@ -80,10 +80,22 @@ function pollDeferred<T>(
 
 function parametrizeUrl(url: string, params: Record<string, string>) {
   return url
-    .split(/:(\w+)/)
-    .map((segment, index) =>
-      index % 2 === 1 ? String(params[segment]) : segment,
-    )
+    .split(/(:[A-Za-z_]\w*)/)
+    .map((segment, index) => {
+      if (index % 2 === 0) {
+        return segment;
+      }
+
+      const key = segment.slice(1);
+      if (
+        Object.prototype.hasOwnProperty.call(params, key) &&
+        params[key] !== undefined &&
+        params[key] !== null
+      ) {
+        return String(params[key]);
+      }
+      return segment;
+    })
     .join('');
 }
 

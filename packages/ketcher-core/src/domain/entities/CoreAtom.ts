@@ -9,6 +9,7 @@ import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
 import type { AtomList } from 'domain/entities/atomList';
+import { isGenericAtom } from 'domain/helpers/isGenericAtom';
 
 export enum AtomRadical {
   None,
@@ -122,6 +123,13 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  // Atom lists and generic atoms (A, Q, X, …) match several elements, so they
+  // have no implicit hydrogens and no bad valence, the same as `Atom.isQuery`
+  // in molecules mode.
+  public get isQueryAtom() {
+    return Boolean(this.properties.atomList) || isGenericAtom(this.label);
+  }
+
   public get hasBadValence() {
     const { hydrogenAmount } = this.calculateValence();
     return hydrogenAmount < 0;
@@ -209,6 +217,15 @@ export class Atom extends DrawingEntity {
   }
 
   calculateValence() {
+    if (this.isQueryAtom) {
+      return {
+        valence: this.hasExplicitValence
+          ? (this.properties.explicitValence as number)
+          : this.calculateConnections(),
+        hydrogenAmount: 0,
+      };
+    }
+
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
       const hydrogenAmount = valence - this.valenceWithoutHydrogen;

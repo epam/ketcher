@@ -100,8 +100,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     `${n}invalidPhosphatePositionAttachmentPoints`,
   ),
   phosphatePositionNotSelected: i18n.t(`${n}phosphatePositionNotSelected`),
-  editAllPresetWarning: '',
-  editAllPresetError: '',
+  editAllPresetWarning: i18n.t(`${n}editAllPresetWarning`),
+  editAllPresetError: i18n.t(`${n}editAllPresetError`),
   usedAttachmentPointsWarning: '',
 };
 

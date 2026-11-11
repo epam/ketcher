@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -24,10 +23,29 @@ import action from 'src/script/ui/action/index';
 import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
+import type { UiActionAction } from '../../../action';
+import type { RequestState } from '../../../state/request/request.types';
+import type { ActionStatus } from '../../../state/action';
+import type { ToolbarState } from '../../../state/toolbar/types';
+import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
+import type Editor from '../../../../editor';
 
-const getActionState = (state) => state.actionState ?? {};
+type State = {
+  // zoom stores the numeric zoom level in `selected`, unlike the boolean
+  // `selected` of other actions, so it is excluded from the shared shape here
+  actionState?: Record<string, Omit<ActionStatus, 'selected'> | undefined> & {
+    zoom?: { selected?: number };
+  };
+  editor?: Pick<Editor, 'zoom' | 'isMonomerCreationWizardActive'> | null;
+  options?: { customButtons?: CustomButton[] };
+  toolbar: Pick<ToolbarState, 'opened'>;
+  requestsStatuses: Pick<RequestState, 'indigoVerification'>;
+};
 
-const selectCustomButtons = (state) => state?.options?.customButtons ?? [];
+const getActionState = (state: State) => state.actionState ?? {};
+
+const selectCustomButtons = (state: State) =>
+  state?.options?.customButtons ?? [];
 
 const disabledButtonsSelector = createSelector(
   [getActionState],
@@ -59,7 +77,7 @@ const disableableButtons = [
 
 const shortcuts = generateMenuShortcuts<typeof action>(action);
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: State) => {
   return {
     currentZoom: Math.round((state.editor?.zoom() ?? 1) * 100),
     disabledButtons: disabledButtonsSelector(state),
@@ -77,7 +95,7 @@ const mapStateToProps = (state: any) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
-  const dispatchAction = (actionName) => {
+  const dispatchAction = (actionName: string) => {
     if (['zoom-in', 'zoom-out'].includes(actionName)) {
       dispatch(onAction(action[actionName].action()));
     } else {
@@ -103,7 +121,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomIn: () => dispatchAction('zoom-in'),
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
-      dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
+      dispatch(onAction((editor: Editor) => editor.zoom(zoomValue / 100))),
     onSettingsOpen: () => {
       dispatchAction('settings');
     },
@@ -115,8 +133,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onCheck: () => dispatchAction('check'),
     onAnalyse: () => dispatchAction('analyse'),
     onMiew: () => dispatchAction('miew'),
-    onAction: (action) => dispatch(onAction(action)),
-    onOpen: (menuName, isSelected) =>
+    onAction: (action: UiActionAction) => dispatch(onAction(action)),
+    onOpen: (menuName: string, isSelected: boolean) =>
       dispatch({
         type: 'OPENED',
         data: { menuName, isSelected },

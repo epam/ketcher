@@ -2981,7 +2981,9 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = getRenderedStructuresBbox();
+    const structureBbox = getRenderedStructuresBbox(undefined, {
+      includePolymerBonds: true,
+    });
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }

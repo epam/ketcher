@@ -3001,6 +3001,7 @@ export class CoreEditor {
   }
 
   public destroy() {
+    this.mode.destroy();
     if (isBaseTool(this.selectedTool)) {
       this.selectedTool.destroy();
     }

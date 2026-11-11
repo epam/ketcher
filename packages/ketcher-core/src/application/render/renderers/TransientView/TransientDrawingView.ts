@@ -1,4 +1,8 @@
 import { select } from 'd3';
+import {
+  PastePreviewView,
+  type PastePreviewViewParams,
+} from './PastePreviewView';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -51,6 +55,17 @@ type StoredViewData = {
 };
 
 export class TransientDrawingView {
+  public showPastePreview(params: PastePreviewViewParams): void {
+    this.addView(PastePreviewView.viewName, {
+      show: PastePreviewView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hidePastePreview(): void {
+    this.removeView(PastePreviewView.viewName);
+  }
   private readonly views: Map<string, StoredViewData> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;

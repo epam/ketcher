@@ -3696,6 +3696,7 @@ export class SequenceMode extends BaseMode {
   }
 
   public destroy() {
+    super.destroy();
     this.turnOffEditMode();
     SequenceRenderer.clear();
   }

@@ -1,4 +1,7 @@
 import { Command } from 'domain/entities/Command';
+import { DrawingEntitySelectOperation } from '../operations/drawingEntity';
+import { PastePreview } from '../PastePreview';
+import { getRGroupDefinitions } from 'domain/helpers/rGroupDefinitions';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { EditorHistory } from '../EditorHistory';
 import type { CoreEditor } from '../Editor';
@@ -37,6 +40,7 @@ type KeyboardEventHandlers = Record<string, KeyboardEventHandler>;
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
+  private pastePreview?: PastePreview;
 
   protected constructor(
     public modeName: LayoutMode,
@@ -274,10 +278,6 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = provideEditorInstance();
-    const isCanvasEmptyBeforePaste =
-      !editor.drawingEntitiesManager.hasDrawingEntities;
-
     if (isClipboardAPIAvailable()) {
       const isSequenceEditInRNABuilderMode =
         provideEditorInstance().isSequenceEditInRNABuilderMode;
@@ -288,12 +288,6 @@ export abstract class BaseMode {
       const clipboardData = await navigator.clipboard.read();
       this.pasteFromClipboard(clipboardData).finally(() => {
         this._pasteIsInProgress = false;
-
-        if (!isCanvasEmptyBeforePaste) {
-          return;
-        }
-
-        editor.zoomToStructuresIfNeeded();
       });
     } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, [
@@ -301,12 +295,6 @@ export abstract class BaseMode {
       ]);
       this.pasteFromClipboard(clipboardData);
       event.preventDefault();
-
-      if (!isCanvasEmptyBeforePaste) {
-        return;
-      }
-
-      editor.zoomToStructuresIfNeeded();
     } else {
       KetcherLogger.warn(
         'Cannot paste because Clipboard API is not available and paste event does not contain clipboardData',
@@ -352,17 +340,21 @@ export abstract class BaseMode {
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
     let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
+    this.pastePreview?.cancel();
+    const preview = !editor.isSequenceAnyEditMode;
+    const wasEmpty = !editor.drawingEntitiesManager.hasDrawingEntities;
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     if (!pastedStr?.trim()) {
       return;
     }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
-      pasteOperations = this.pasteKetFormatFragment(pastedStr);
+      pasteOperations = this.pasteKetFormatFragment(pastedStr, preview);
     } else {
       pasteOperations = await this.pasteWithIndigoConversion(
         pastedStr,
         editor.sequenceTypeEnterMode,
+        preview,
       );
     }
 
@@ -370,14 +362,26 @@ export abstract class BaseMode {
       return;
     }
 
+    await this.applyPasteCommand(pasteOperations, wasEmpty);
+  }
+
+  private async applyPasteCommand(
+    command: Command,
+    wasEmpty: boolean,
+  ): Promise<void> {
+    const editor = provideEditorInstance();
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
-    editor.renderersContainer.update(pasteOperations);
-    EditorHistory.getInstance(editor).update(pasteOperations);
+    editor.renderersContainer.update(command);
+    EditorHistory.getInstance(editor).update(command);
     editor.events.mouseLeaveSequenceItem.dispatch();
+    if (wasEmpty) editor.zoomToStructuresIfNeeded();
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | undefined {
+  pasteKetFormatFragment(
+    pastedStr: string,
+    preview = false,
+  ): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
@@ -388,7 +392,7 @@ export abstract class BaseMode {
     const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
 
     if (
-      !drawingEntitiesManager ||
+      !drawingEntitiesManager?.hasDrawingEntities ||
       !this.isPasteAllowedByMode(drawingEntitiesManager)
     ) {
       return;
@@ -402,7 +406,39 @@ export abstract class BaseMode {
       return;
     }
 
-    this.updateEntitiesPosition(drawingEntitiesManager);
+    const hasRGroupDefinitions =
+      getRGroupDefinitions(
+        drawingEntitiesManager.atoms.values(),
+        drawingEntitiesManager.bonds.values(),
+      ).size > 0;
+    if (preview && hasRGroupDefinitions) {
+      if (editor.mode !== this) return;
+      this.pastePreview?.cancel();
+      this.pastePreview = new PastePreview(
+        editor,
+        drawingEntitiesManager,
+        (position) => {
+          const wasEmpty = !editor.drawingEntitiesManager.hasDrawingEntities;
+          const command = this.placePastedEntities(
+            drawingEntitiesManager,
+            position,
+          );
+          this.applyPasteCommand(command, wasEmpty).catch((error) =>
+            KetcherLogger.error('BaseMode.ts::confirmPaste', error),
+          );
+        },
+      );
+      return;
+    }
+    return this.placePastedEntities(drawingEntitiesManager);
+  }
+
+  private placePastedEntities(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    position?: Vec2,
+  ): Command {
+    const editor = provideEditorInstance();
+    this.updateEntitiesPosition(drawingEntitiesManager, position);
     editor.calculateAndStoreNextAutochainPosition(drawingEntitiesManager);
 
     const { command: modelChanges, mergedDrawingEntities } =
@@ -412,12 +448,29 @@ export abstract class BaseMode {
       this.applyAdditionalPasteOperations(mergedDrawingEntities),
     );
 
+    if (position) {
+      const selected = editor.drawingEntitiesManager.selectedEntitiesArr;
+      modelChanges.merge(
+        editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
+      // Paste selection callbacks run when the command executes (including redo).
+      // Clear their selection here without changing ordinary selection commands.
+      selected.forEach((entity) =>
+        modelChanges.addOperation(
+          new DrawingEntitySelectOperation(entity, () =>
+            entity.turnOffSelection(),
+          ),
+        ),
+      );
+    }
+
     return modelChanges;
   }
 
   async pasteWithIndigoConversion(
     pastedStr: string,
     sequenceType: SequenceType,
+    preview = false,
   ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
@@ -427,7 +480,7 @@ export abstract class BaseMode {
         sequenceType,
       });
 
-      return this.pasteKetFormatFragment(ketStruct.struct);
+      return this.pasteKetFormatFragment(ketStruct.struct, preview);
     } catch (error) {
       const stringError = normalizeError(error).message;
       const errorMessage = 'Convert error! ' + stringError;
@@ -440,8 +493,9 @@ export abstract class BaseMode {
 
   private updateEntitiesPosition(
     drawingEntitiesManager: DrawingEntitiesManager,
+    position?: Vec2,
   ): void {
-    const newNodePosition = this.getNewNodePosition();
+    const newNodePosition = position ?? this.getNewNodePosition();
     const firstEntityPosition =
       drawingEntitiesManager.allEntities[0]?.[1].position;
     const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
@@ -476,6 +530,7 @@ export abstract class BaseMode {
   }
 
   public destroy(): void {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+    this.pastePreview?.cancel();
+    this.pastePreview = undefined;
   }
 }

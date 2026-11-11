@@ -1,10 +1,13 @@
+import {
+  attachmentPointDirection,
+  attachmentPointGeometry,
+  type AttachmentPointGeometry,
+  ATTACHMENT_POINT_OUTLINE_PADDING,
+} from 'application/render/geometry/atomGeometry';
 import type { RaphaelPaper } from 'raphael';
 import { AttachmentPoints } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import type {
-  RGroupAttachmentPoint,
-  RGroupAttachmentPointType,
-} from 'domain/entities/rgroupAttachmentPoint';
+import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
@@ -22,20 +25,13 @@ type AttachmentPointShape = {
   node?: SVGElement | null;
 };
 
-type AttachmentPointGeometry = {
-  atomPositionVector: Vec2;
-  shiftedStemStart: Vec2;
-  attachmentPointEnd: Vec2;
-  labelPosition: Vec2;
-};
-
 class ReRGroupAttachmentPoint extends ReObject {
   item: RGroupAttachmentPoint;
   reAtom: ReAtom;
   lineDirectionVector: Vec2 = new Vec2();
 
   static readonly LINE_OUTLINE_WIDTH = 0.36;
-  static readonly OUTLINE_PADDING = 0.15;
+  static readonly OUTLINE_PADDING = ATTACHMENT_POINT_OUTLINE_PADDING;
   static readonly CURVE_OUTLINE_WIDTH = 1;
   static readonly CURVE_OUTLINE_HEIGHT = 0.42;
 
@@ -308,15 +304,29 @@ class ReRGroupAttachmentPoint extends ReObject {
     if (!this.reAtom.hasAttachmentPoint()) {
       return;
     }
-    if (this.isTrisectionAttachmentPoint()) {
-      return trisectionLargestSector(this.reAtom, struct, this.item.type);
-    } else {
-      const hasOnlyOneBond = this.reAtom.a.neighbors.length === 1;
-      const directionVector = hasOnlyOneBond
-        ? getAttachmentDirectionForOnlyOneBond(this.reAtom, struct)
-        : this.reAtom.bisectLargestSector(struct);
-      return directionVector;
-    }
+    const neighbors = this.reAtom.a.neighbors.flatMap((id) => {
+      const halfBond = struct.halfBonds.get(id);
+      if (!halfBond) {
+        if (this.reAtom.a.neighbors.length === 1) {
+          throw new Error(
+            `HalfBond not found for neighbor id ${id} while resolving R-group attachment point direction`,
+          );
+        }
+        return [];
+      }
+      return [
+        {
+          angle: halfBond.ang,
+          isTriple:
+            struct.bonds.get(halfBond.bid)?.type === Bond.PATTERN.TYPE.TRIPLE,
+        },
+      ];
+    });
+    return attachmentPointDirection(
+      neighbors,
+      this.item.type,
+      this.isTrisectionAttachmentPoint(),
+    );
   }
 
   private isTrisectionAttachmentPoint(): boolean {
@@ -351,56 +361,12 @@ function showAttachmentPointShape(
   return resultShape;
 }
 
-function trisectionLargestSector(
-  atom: ReAtom,
-  struct: Struct,
-  attachmentPointType: RGroupAttachmentPointType,
-) {
-  const { largestAngle, neighborAngle } =
-    atom.getLargestSectorFromNeighbors(struct);
-  const firstTrisectorAngle = neighborAngle + largestAngle / 3;
-  const secondTrisectorAngle = neighborAngle + (largestAngle * 2) / 3;
-
-  return attachmentPointType === 'primary'
-    ? newVectorFromAngle(firstTrisectorAngle)
-    : newVectorFromAngle(secondTrisectorAngle);
-}
-
-function newVectorFromAngle(angle: number): Vec2 {
-  return new Vec2(Math.cos(angle), Math.sin(angle));
-}
-
 function isAttachmentPointLabelRequired(restruct: ReStruct) {
   return restruct.molecule.atoms.some(
     ({ attachmentPoints }) =>
       attachmentPoints === AttachmentPoints.SecondSideOnly ||
       attachmentPoints === AttachmentPoints.BothSides,
   );
-}
-
-function getAttachmentDirectionForOnlyOneBond(
-  atom: ReAtom,
-  struct: Struct,
-): Vec2 {
-  const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3;
-  const DEGREE_180_FOR_TRIPLE_BOND = Math.PI;
-  const onlyNeighbor = atom.a.neighbors[0];
-  const neighbour = struct.halfBonds.get(onlyNeighbor);
-  if (!neighbour) {
-    // Every neighbor id stored on an atom must have a matching half-bond in
-    // the struct; a miss here means the struct's internal bookkeeping is
-    // corrupted, which is a programming error, not a normal runtime case.
-    throw new Error(
-      `HalfBond not found for neighbor id ${onlyNeighbor} while resolving R-group attachment point direction`,
-    );
-  }
-  const angle = neighbour.ang;
-  const isTripleBond =
-    struct.bonds.get(neighbour.bid)?.type === Bond.PATTERN.TYPE.TRIPLE;
-  const finalAngle =
-    angle +
-    (isTripleBond ? DEGREE_180_FOR_TRIPLE_BOND : DEGREE_120_FOR_ONE_BOND);
-  return newVectorFromAngle(finalAngle);
 }
 
 function showAttachmentPointLabel(
@@ -427,61 +393,17 @@ function showAttachmentPointLabel(
   );
 }
 
-function getLabelPositionForAttachmentPoint(
-  atomPositionVector: Vec2,
-  directionVector: Vec2,
-  shapeHeight: number,
-): Vec2 {
-  const normal = directionVector.rotateSC(1, 0);
-  return atomPositionVector
-    .addScaled(normal, 0.17 * shapeHeight)
-    .addScaled(directionVector, shapeHeight * 0.7);
-}
-
 function getAttachmentPointGeometry(
   atom: ReAtom,
   options: RenderOptions,
   directionVector: Vec2,
 ): AttachmentPointGeometry {
-  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
-  const nominalLength = options.microModeScale * 0.85;
-
-  // Endpoint and number are always at their nominal distance from the atom
-  // centre. A wide atom symbol shifts only the stem start, never the endpoint
-  // (#3268).
-  const attachmentPointEnd = atomPositionVector.addScaled(
-    directionVector,
-    nominalLength,
-  );
-  const labelPosition = getLabelPositionForAttachmentPoint(
-    atomPositionVector,
+  return attachmentPointGeometry(
+    Scale.modelToCanvas(atom.a.pp, options),
     directionVector,
     options.microModeScale,
+    atom.getShiftedSegmentPosition(options, directionVector),
   );
-
-  const rawStemStart = atom.getShiftedSegmentPosition(options, directionVector);
-
-  // Safety cap: preserve at least OUTLINE_PADDING × microModeScale of visible
-  // stem so the wave cannot collapse onto or past the endpoint.
-  // Ordinary geometry is unchanged whenever rawProjection ≤ maxStartProjection.
-  const minStemLength =
-    ReRGroupAttachmentPoint.OUTLINE_PADDING * options.microModeScale;
-  const maxStartProjection = Math.max(nominalLength - minStemLength, 0);
-  const rawProjection = Vec2.dot(
-    rawStemStart.sub(atomPositionVector),
-    directionVector,
-  );
-  const shiftedStemStart =
-    rawProjection > maxStartProjection
-      ? atomPositionVector.addScaled(directionVector, maxStartProjection)
-      : rawStemStart;
-
-  return {
-    atomPositionVector,
-    shiftedStemStart,
-    attachmentPointEnd,
-    labelPosition,
-  };
 }
 
 export { ReRGroupAttachmentPoint };

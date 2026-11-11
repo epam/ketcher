@@ -41,6 +41,23 @@ function mockAtom(
 }
 
 describe('AtomRenderer.labelText', () => {
+  it.each([
+    [1, 'R1'],
+    [2, 'R2'],
+    [1 << 31, 'R32'],
+    [5, 'R1R3'],
+    [0, 'R#'],
+    [null, 'R#'],
+  ])('renders R-group mask %s as %s', (rglabel, expected) => {
+    expect(callGetter('labelText', mockAtom('R#', { rglabel }))).toBe(expected);
+  });
+
+  it('preserves an alias on an R-group atom', () => {
+    expect(
+      callGetter('labelText', mockAtom('R#', { rglabel: 1, alias: 'Alias' })),
+    ).toBe('Alias');
+  });
+
   it('returns the element label for a regular atom', () => {
     expect(callGetter('labelText', mockAtom(AtomLabel.C))).toBe('C');
   });

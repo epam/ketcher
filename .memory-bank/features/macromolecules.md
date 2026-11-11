@@ -89,6 +89,12 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the user enters snake mode
 - **THEN** monomers and small molecules on the canvas are automatically laid out; entering flex mode applies no layout
 
+#### Scenario: Closed-chain connections in snake mode
+
+- **WHEN** matching attachment points connect the ends of separate backbone chains in snake mode
+- **THEN** the connection routes beside the snake backbone return with a small clearance
+- **AND** overlapping routes on the same side use separate lanes while non-overlapping routes may share a lane
+
 #### Scenario: Chain enumeration
 
 - **WHEN** a peptide chain forms, or an RNA/DNA sugar-phosphate chain starts from a sugar/phosphate that has no R1 attachment point, a free R1 attachment point, or an R1 occupied by a bond to another attachment point than R2

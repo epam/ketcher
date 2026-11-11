@@ -27,12 +27,12 @@ const renderSnakeSideConnectionPath = (
   {
     chainsHaveBackbones = true,
     atChainStart = false,
-    laneOffset = 0,
+    isVertical = true,
     hydrogen = false,
   }: {
     chainsHaveBackbones?: boolean;
     atChainStart?: boolean;
-    laneOffset?: number;
+    isVertical?: boolean;
     hydrogen?: boolean;
   } = {},
 ) => {
@@ -85,7 +85,7 @@ const renderSnakeSideConnectionPath = (
     lastNode: atChainStart ? undefined : lastNode,
   };
   const connection = () =>
-    new Connection(null, 90, true, polymerBond, 0, laneOffset);
+    new Connection(null, 90, isVertical, polymerBond, 0, 0);
   const cells = [
     new Cell(firstNode, [connection()], 0, 0, polymerBond.firstMonomer),
     new Cell(null, [connection()], 1, 1),
@@ -160,7 +160,7 @@ describe('Polymer Bond Renderer', () => {
     const { path } = renderSnakeSideConnectionPath(10, 10, 10, 100, 'R2', 'R2');
 
     expect(path).toBe(
-      'M 400,400 L 3629,400 q 5,0 5,5 L 3634,3995 q 0,5 -5,5 L 400,4000',
+      'M 400,400 L 402,400 q 5,0 5,5 L 407,3995 q 0,5 -5,5 L 400,4000',
     );
   });
 
@@ -178,7 +178,7 @@ describe('Polymer Bond Renderer', () => {
       );
 
       expect(path).toBe(
-        'M 400,400 L 371,400 q -5,0 -5,5 L 366,3995 q 0,5 5,5 L 400,4000',
+        'M 400,400 L 398,400 q -5,0 -5,5 L 393,3995 q 0,5 5,5 L 400,4000',
       );
     },
   );
@@ -187,16 +187,32 @@ describe('Polymer Bond Renderer', () => {
     const { path } = renderSnakeSideConnectionPath(10, 100, 10, 10, 'R2', 'R2');
 
     expect(path).toBe(
-      'M 400,4000 L 3629,4000 q 5,0 5,-5 L 3634,405 q 0,-5 -5,-5 L 400,400',
+      'M 400,4000 L 402,4000 q 5,0 5,-5 L 407,405 q 0,-5 -5,-5 L 400,400',
     );
   });
 
-  it('keeps mixed attachment-point connections on the existing snake route', () => {
-    const { path } = renderSnakeSideConnectionPath(10, 10, 10, 100, 'R3', 'R2');
+  it.each([
+    ['R3-R2 chain ends', 'R3', 'R2', {}],
+    ['R2-R2 standalone monomers', 'R2', 'R2', { chainsHaveBackbones: false }],
+    ['hydrogen-bonded chain ends', 'R2', 'R2', { hydrogen: true }],
+  ] as const)(
+    'routes %s to the right in Snake mode',
+    (_, first, second, options) => {
+      const { path } = renderSnakeSideConnectionPath(
+        10,
+        10,
+        10,
+        100,
+        first,
+        second,
+        options,
+      );
 
-    expect(path).not.toContain('3624.5');
-    expect(path).toContain('q');
-  });
+      expect(path).toBe(
+        'M 400,400 L 402,400 q 5,0 5,5 L 407,3995 q 0,5 -5,5 L 400,4000',
+      );
+    },
+  );
 
   it('keeps R3-R3 connections away from chain starts on the existing route', () => {
     const { path } = renderSnakeSideConnectionPath(10, 10, 10, 100, 'R3', 'R3');
@@ -204,28 +220,21 @@ describe('Polymer Bond Renderer', () => {
     expect(path).not.toContain('375.5');
   });
 
-  it('keeps overlapping outer connections in separate lanes', () => {
-    const { path: firstPath } = renderSnakeSideConnectionPath(
+  it('routes R2-R2 bonds out the right side of terminals in different columns', () => {
+    const { path, endpointAngles } = renderSnakeSideConnectionPath(
       10,
       10,
-      10,
+      15,
       100,
-      'R3',
-      'R3',
-      { atChainStart: true },
-    );
-    const { path: secondPath } = renderSnakeSideConnectionPath(
-      10,
-      10,
-      10,
-      100,
-      'R3',
-      'R3',
-      { atChainStart: true, laneOffset: 1 },
+      'R2',
+      'R2',
+      { isVertical: false },
     );
 
-    expect(firstPath).toContain('L 366,3995');
-    expect(secondPath).toContain('L 363,3995');
+    expect(path).toBe(
+      'M 400,400 L 602,400 q 5,0 5,5 L 607,3995 q 0,5 -5,5 L 600,4000',
+    );
+    expect(endpointAngles).toEqual([Math.PI, Math.PI]);
   });
 
   it('aligns occupied attachment indicators with the outer side of both endpoints', () => {
@@ -263,18 +272,5 @@ describe('Polymer Bond Renderer', () => {
     );
 
     expect(path).not.toContain('375.5');
-  });
-
-  it('keeps R2-R2 connections between standalone monomers on the existing route', () => {
-    const { path } = renderSnakeSideConnectionPath(
-      10,
-      10,
-      10,
-      100,
-      'R2',
-      'R2',
-      { chainsHaveBackbones: false },
-    );
-    expect(path).toContain('q');
   });
 });

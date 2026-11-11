@@ -20,13 +20,14 @@ import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { Icon } from 'components';
-import type { Struct } from 'ketcher-core';
+import { KetSerializer, type Struct } from 'ketcher-core';
 import { LoadingCircles } from '../../../../../../components';
 import { serverSelector } from '../../../../../../../state/server/selectors';
 import StructRender from '../../../../../../../../../components/StructRender/StructRender';
 import { parseStruct } from '../../../../../../../state/shared';
 import styles from './CDXStructuresViewer.module.less';
 import { editorOptionsSelector } from '../../../../../../../state/editor/selectors';
+import { normalizePptxStructure } from './normalizePptxStructure';
 
 export type CDXStructuresViewerProps = {
   structList?: string[];
@@ -34,7 +35,18 @@ export type CDXStructuresViewerProps = {
   fileName: string;
 };
 
-type item = { base64struct: string; error?: string; struct?: Struct };
+type item =
+  | {
+      structStr: string;
+      struct: Struct;
+      expandSgroups: boolean;
+    }
+  | {
+      error: string;
+      structStr?: never;
+      struct?: never;
+      expandSgroups?: never;
+    };
 
 type itemsMapInterface = {
   [x: number]: item;
@@ -53,26 +65,38 @@ export const CDXStructuresViewer = ({
   const isLoading = !!structList[selectedIndex] && !itemsMap[selectedIndex];
 
   useEffect(() => {
-    if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
+    const selectedStructure = itemsMap[selectedIndex];
+    if (!selectedStructure || 'error' in selectedStructure) {
       inputHandler('');
     } else {
-      inputHandler(itemsMap[selectedIndex].base64struct);
+      inputHandler(selectedStructure.structStr);
     }
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImage = useCallback(
     (str, index) => {
       parseStruct(str, server)
-        .then((struct) => {
+        .then((parsedStruct) => {
+          const { struct, positionAdjusted } =
+            normalizePptxStructure(parsedStruct);
+          const structStr = positionAdjusted
+            ? new KetSerializer().serialize(struct)
+            : str;
           setItemsMap((state) => ({
             ...state,
-            [index]: { base64struct: str, struct },
+            [index]: {
+              structStr,
+              struct,
+              expandSgroups: !positionAdjusted,
+            },
           }));
         })
         .catch((error) => {
           setItemsMap((state) => ({
             ...state,
-            [index]: { base64struct: str, error: error.message || error },
+            [index]: {
+              error: error instanceof Error ? error.message : String(error),
+            },
           }));
         });
     },
@@ -104,19 +128,24 @@ export const CDXStructuresViewer = ({
         </div>
       );
     }
-    if (structure?.error) {
+    if (structure && 'error' in structure) {
       return (
         <div>
-          {t('document.cdxViewer.errorLabel')} {itemsMap[selectedIndex]?.error}
+          {t('document.cdxViewer.errorLabel')} {structure.error}
         </div>
       );
     }
-    if (structure?.struct) {
+    if (structure && 'struct' in structure) {
       return (
         <StructRender
           className={styles.image}
           struct={structure.struct}
-          options={{ ...editorOptions, autoScale: true, needCache: false }}
+          options={{
+            ...editorOptions,
+            autoScale: true,
+            needCache: false,
+            expandSgroups: structure.expandSgroups,
+          }}
         />
       );
     }
@@ -145,7 +174,9 @@ export const CDXStructuresViewer = ({
                 onClick={() => handleSelectStructure(index)}
               >
                 {t('document.cdxViewer.structureN', { number: index + 1 })}
-                {itemsMap[index]?.error && <Icon name="error" />}
+                {itemsMap[index] && 'error' in itemsMap[index] && (
+                  <Icon name="error" />
+                )}
               </MenuItem>
             ))}
           </MenuList>

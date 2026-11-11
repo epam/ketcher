@@ -4,7 +4,6 @@ import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
 import type { RenderOptions } from './render.types';
-import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
@@ -19,10 +18,6 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
-// Width of an R-label in the small connection dialog preview below which
-// the label is enlarged to stay readable
-const MIN_ATTACHMENT_POINT_LABEL_WIDTH = 10;
-const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
@@ -39,42 +34,6 @@ export class RenderStruct {
       return newStruct;
     }
     return struct;
-  }
-
-  static enlargeSmallAttachmentPointLabelsInModal(
-    render: Render,
-    options: RenderStructOptions = {},
-  ) {
-    if (!options.labelInMonomerConnectionsModal) {
-      return;
-    }
-
-    render.ctab.atoms.forEach((atom: ReAtom) => {
-      if (!atom.label) {
-        return;
-      }
-      const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
-
-      if (!isAttachmentPointAtom) {
-        return;
-      }
-
-      const { path, background } = atom.label;
-      const width = path.node.getBoundingClientRect().width;
-      // A zero width means the label is not laid out, so it cannot be measured
-      const isSmall = width > 0 && width < MIN_ATTACHMENT_POINT_LABEL_WIDTH;
-
-      if (!isSmall) {
-        return;
-      }
-
-      // The label and its box share the center, so both are scaled around it
-      const scale = MIN_ATTACHMENT_POINT_LABEL_WIDTH / width;
-      const { x, y, width: boxWidth, height: boxHeight } = path.getBBox();
-      const transform = `...s${scale},${scale},${x + boxWidth / 2},${y + boxHeight / 2}`;
-      path.transform(transform);
-      background?.transform(transform);
-    });
   }
 
   static render(
@@ -165,8 +124,6 @@ export class RenderStruct {
         // can paint the few pixels beyond the viewBox that they need.
         (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
       }
-
-      this.enlargeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (shouldCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);

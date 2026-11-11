@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -140,7 +140,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     const sgroup = restruct.sgroups.get(sgroupId);
     const sgroupAtoms = sgroup.item.atoms;
 
-    selection.atoms = selection.atoms.concat(sgroupAtoms);
+    selection.atoms = [...selection.atoms, ...sgroupAtoms];
 
     restruct.molecule.bonds.forEach((bond, bondId) => {
       if (
@@ -152,8 +152,8 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     });
   });
 
-  selection.atoms = Array.from(new Set(selection.atoms));
-  selection.bonds = Array.from(new Set(selection.bonds));
+  selection.atoms = [...new Set(selection.atoms)];
+  selection.bonds = [...new Set(selection.bonds)];
 
   struct.attachmentGroups.forEach((attachmentGroup, id) => {
     const remainingAtomIds = attachmentGroup.atomIds.filter(
@@ -167,12 +167,12 @@ export function fromFragmentDeletion(restruct, rawSelection) {
       action.addOp(new AttachmentGroupAttr(id, 'atomIds', remainingAtomIds));
     }
   });
-  selection.attachmentGroups = Array.from(new Set(selection.attachmentGroups));
+  selection.attachmentGroups = [...new Set(selection.attachmentGroups)];
 
   selection.attachmentGroups.forEach((attachmentGroupId) => {
     selection.bonds.push(...struct.getConnectedBondIds(attachmentGroupId));
   });
-  selection.bonds = Array.from(new Set(selection.bonds));
+  selection.bonds = [...new Set(selection.bonds)];
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
@@ -196,7 +196,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
       if (!selection.bonds.includes(nei.bid)) {
-        selection.bonds = selection.bonds.concat([nei.bid]);
+        selection.bonds = [...selection.bonds, nei.bid];
       }
     });
   });

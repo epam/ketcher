@@ -21,6 +21,8 @@ Each package has its own Jest configuration. Tests live in `__tests__/` director
   - Config: `packages/ketcher-macromolecules/jest.config.js`
 - **ketcher-standalone**: minimal unit tests
 
+Mocking: mock only system boundaries. Ketcher exception: in a component test, a hook that is the only way the component reaches a boundary counts as the boundary. Example: `useSettings` in `ketcher-react` is the only way components reach browser storage. Mock that hook at the top of the test file and keep every other module of the package real.
+
 Run all unit tests: `npm run test` (from root)
 Run type checks: `npm run test:types`
 
@@ -31,7 +33,7 @@ All E2E tests live in `ketcher-autotests/`. This is a separate npm workspace.
 - **Framework**: Playwright (`@playwright/test` ^1.59.1)
 - **Browser**: Chromium only (headless)
 - **Config**: `ketcher-autotests/playwright.config.ts`
-- **Test file naming**: `*.spec.ts`
+- **Test file naming**: `*.spec.ts`; a spec written for a specific ticket is prefixed with the ticket id — `9370-edit-library-monomer.spec.ts`, `8852-preset-structure-additions.spec.ts`. Specs covering general (non-ticket) behavior keep a plain descriptive name.
 
 ### 3. Type Checking
 
@@ -59,6 +61,7 @@ TypeScript type checks run separately per package: `npm run test:types --workspa
 | `tests/pages/molecules/`                           | Micromolecule editor POMs (`BottomToolbar`, `TopRightToolbar`, …)                                         |
 | `tests/pages/constants/`                           | Typed enum constants per UI area (monomer names, layout modes, file formats, …)                           |
 | `tests/utils/canvas/`                              | Canvas interactions: screenshots, drag-select, atom/bond locators                                         |
+| `tests/utils/canvas/createMonomer/`                | Monomer-creation-wizard canvas utilities (e.g. `markAtomAsConnectionPoint`) — wizard-only actions live here, not in the generic `canvas/atoms/` dir |
 | `tests/utils/clicks/`                              | Mouse helpers: `clickOnCanvas`, `dragMouseTo`, coordinate utilities                                       |
 | `tests/utils/common/loaders/`                      | Async wait helpers: `waitForRender`, `waitForPageInit`, `waitForIndigoToLoad`, `waitForSpinnerFinishedWork` |
 | `tests/utils/files/`                               | File I/O: `openFile`, `verifyFileExport`, `saveToFile`, `receiveFileComparisonData`                       |
@@ -205,11 +208,49 @@ test('some test', async ({ page }) => {
 
 Each canvas fixture also provides an `initXxxCanvas` worker fixture that creates a fresh page already initialized in the right mode. Used only in `test.beforeAll`.
 
+### Choosing a Canvas Fixture
+
+- Start a suite with the `init<Mode>Canvas` fixture for the mode it begins in: `initMoleculesCanvas` (Molecules), `initFlexCanvas` (Macromolecules Flex), `initSnakeCanvas` (Snake), or `initSequenceCanvas` (Sequence).
+- Do not call `waitForPageInit(page)` in a suite that uses an `init*Canvas` fixture. The fixture already opens the app and sets the mode.
+- For API tests and low-level cases that should not use a canvas preset, take the `page` fixture and call `waitForPageInit(page)` (Pattern B).
+- Prefer one `test.describe()` per file, with `let page: Page;` at file scope.
+- If a test changes the mode, restore the default with the matching canvas fixture in `test.afterEach`, for example `test.afterEach(async ({ SnakeCanvas: _ }) => {});`.
+- If a test must run on a canvas other than the suite's default, pass that canvas fixture as a test parameter, for example `async ({ FlexCanvas: _ })`.
+
+**Good**
+
+```ts
+let page: Page;
+
+test.describe('Snake layout', () => {
+  test.beforeAll(async ({ initSnakeCanvas }) => {
+    page = await initSnakeCanvas();
+  });
+
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  test('Case 1 - Example title', async () => {
+    // test steps
+  });
+});
+```
+
+**Bad**
+
+```ts
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
+  await waitForPageInit(page);
+});
+```
+
 ---
 
 ## Page Object Model (POM)
 
-All UI interactions **and assertions** go through POM objects. Never use raw `page.locator` / `page.getByTestId` in test files for reusable UI elements — including state checks like `expect(page.getByTestId('undo')).toBeDisabled()`. Use the locator the POM already exposes (e.g. `expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled()`).
+All UI interactions **and assertions** go through POM objects and repo helpers. Test files never hold raw locators for reusable UI elements, including state checks. See [Selector Order](#selector-order) for how to pick a locator.
 
 ### POM Style: factory function, not class
 
@@ -237,9 +278,31 @@ export const CommonTopLeftToolbar = (page: Page) => {
 export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;
 ```
 
+### Selector Order
+
+Pick the first option that exists:
+
+1. A method or locator the page object already exposes, such as `CommonTopLeftToolbar(page).undoButton`.
+2. A repo helper, such as `getAtomLocator`, `getMonomerLocator`, or `getAbbreviationLocator`.
+3. A new locator in a page object file under `tests/pages/`, built with `getByTestId`.
+
+`getByTestId` appears only inside page objects. Test files under `tests/specs/` do not use `page.getByTestId`, `page.locator`, or other raw locators for reusable UI, and helpers under `tests/utils/` reach the UI through page objects. Use `page.evaluate(...)` only for Ketcher API calls, localStorage checks, and browser APIs that no helper wraps.
+
+**Good**
+
+```ts
+await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+```
+
+**Bad**
+
+```ts
+await expect(page.getByTestId('undo')).toBeDisabled();
+```
+
 ### Locator Best Practices
 
-- **Always prefer `getByTestId`** over CSS selectors, text, or role selectors where `data-testid` attributes exist.
+- **Inside POM files, prefer `getByTestId`** over CSS selectors, text, or role selectors where `data-testid` attributes exist.
 - Filter for visible elements: `.filter({ has: page.locator(':visible') })` when a testId can match multiple elements (e.g. dual-mode toolbars).
 - Use `.nth(index)` only when there is genuinely more than one expected match.
 - Avoid `page.locator('.css-class')` in new POMs — CSS classes are unstable.
@@ -253,6 +316,30 @@ export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;
 | Micromolecule editor  | `tests/pages/molecules/`                    |
 | Typed constants/enums | `tests/pages/constants/<area>/Constants.ts` |
 | Monomer enum catalogs | `tests/pages/constants/monomers/`           |
+
+### Page Objects and Helpers
+
+- Reuse the page objects and helpers in `tests/pages` and `tests/utils` before writing new code. Do not copy a selector that a page object already has; call the page object.
+- When one is missing, add a reusable file under `tests/pages/...` or `tests/utils/...`. Add a helper only when more than one test uses it; one-off steps stay in the test.
+- Keep selector chains out of specs. Wrap them in a page object method and call the method.
+- Canvas mode: switch with `CommonTopRightToolbar(page).turnOnMacromoleculesEditor()` or `turnOnMicromoleculesEditor()`, not raw mode-switcher clicks. Layout and polymer type: `MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex | Snake | Sequence)`, `rna()`, `dna()`, `peptides()`.
+- Reload and state persistence: `pageReload(page)`, `pageReloadMicro(page)`, and `clearLocalStorage(page)` from `@utils/common/helpers`.
+- Loading structures: `openFileAndAddToCanvasAsNewProject`, `openFileAndAddToCanvasAsNewProjectMacro`, `pasteFromClipboardAndAddToCanvas`, `pasteFromClipboardAndAddToMacromoleculesCanvas`.
+- Selection and keyboard: `selectAllStructuresOnCanvas`, `copyToClipboardByKeyboard`, `pasteFromClipboardByKeyboard`, `undoByKeyboard`, and related helpers.
+- Locating rendered objects: `getAtomLocator`, `getMonomerLocator`, `getAbbreviationLocator`.
+- Dialogs, toolbars, context menus, and library interactions go through page objects under `tests/pages/...`.
+
+**Good**
+
+```ts
+await ContextMenu(page, targetAtom).click(MonomerOption.Copy);
+```
+
+**Bad**
+
+```ts
+await page.getByTestId('context-menu').getByText('Copy').click();
+```
 
 ---
 
@@ -279,6 +366,8 @@ export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;
 | `takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true })` | Hides scrollbars before screenshotting   |
 
 All screenshot functions accept `maxDiffPixelRatio` and `maxDiffPixels` options for tolerance.
+
+`takeTopToolbarScreenshot(page)` captures the top toolbar. In macromolecule mode the screenshot helpers already handle padding, masking, hidden preview popups, and hidden scrollbars; do not re-implement those in a test.
 
 ### File I/O
 
@@ -312,12 +401,14 @@ All test data files live in `tests/test-data/`. Paths passed to these helpers ar
 
 | Function                                               | Purpose                                                           |
 | ------------------------------------------------------ | ----------------------------------------------------------------- |
-| `Library(page).dragMonomerOnCanvas(monomer, { x, y })` | Drag monomer from library to canvas coordinates                   |
+| `Library(page).dragMonomerOnCanvas(monomer, { x, y })` | Drag monomer from library to canvas coordinates; navigates to the monomer's tab/section itself            |
 | `getMonomerLocator(page, monomerOrOptions)`            | Locate monomer on canvas by alias, type, or ID                    |
 | `bondTwoMonomers(page, m1, m2, ap1?, ap2?)`            | Draw a bond between two monomers; handles attachment point dialog |
 | `bondTwoMonomersPointToPoint(page, m1, m2, ap1, ap2)`  | Bond with explicit attachment points                              |
 | `connectMonomersWithBonds(page, names[], bondType)`    | Bond a sequence of monomers by alias                              |
 | `moveMonomer(page, monomer, x, y)`                     | Select and drag a monomer                                         |
+
+`Library` page-object methods that act on a monomer card (`dragMonomerOnCanvas`, `hoverMonomer`, `selectMonomer`, `openMonomerCardMenu`, …) navigate to the monomer's tab/section themselves via `goToMonomerLibraryLocation`. Tests must not pre-navigate with `switchToPeptidesTab()` / `goToMonomerLibraryLocation()` before calling them — that is redundant and hides which method owns the navigation. Navigate explicitly only when the test itself asserts on a library card (e.g. checking that a new entry appeared in a specific tab).
 
 ### Monomer Enum Catalogs
 
@@ -356,7 +447,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 
 ### Selectors
 
-4. **Use `getByTestId`** as the primary selector strategy. It is stable, readable, and corresponds to `data-testid` attributes in the source.
+4. **Select through page objects and helpers.** Test files call their methods; `getByTestId` lives inside page objects. It is stable and maps to `data-testid` attributes in the source. See [Selector Order](#selector-order).
 5. **Use monomer enum constants** (e.g. `Peptide.Tza`) and UI enum constants (e.g. `LayoutMode.Flex`) instead of raw strings.
 
 ### Test Structure
@@ -365,7 +456,7 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
 7. **One behavior per test**. Do not pack multiple unrelated assertions into one test.
 8. **Add a comment block** in each test following the standard pattern — issue link, description, numbered scenario steps, and the Ketcher version the test was written for:
    ```ts
-   test('Copy action stays enabled after switching to Macro mode', async () => {
+   test('Case 1 - Copy stays enabled in Macro mode', async () => {
      /*
       * Test task: https://github.com/epam/ketcher/issues/9999
       * Description: Copy action stays enabled for selected microstructure after switching to Macro mode
@@ -380,6 +471,22 @@ Each entry has `{ alias, testId }`. Always use these enums — never hardcode mo
    ```
    The `Version` line is the Ketcher release the test targets (take it from `packages/ketcher-react/package.json`, dropping any `-rc.N` suffix).
 9. **Use `test.describe`** to group related tests. This enables parallel workers to efficiently schedule them.
+
+### Naming
+
+Each `test()` title is a plain English sentence that starts with the serial number from the checklist item, such as `Case 1 - ...` or `1. ...`, matching the style of the target file.
+
+**Good**
+
+```ts
+test('Case 1 - Copy stays enabled in Macro mode', async () => {
+```
+
+**Bad**
+
+```ts
+test('Copy stays enabled in Macro mode', async () => {
+```
 
 ### Screenshot Testing
 
@@ -409,6 +516,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
     (The codebase heavily uses `/* eslint-disable no-magic-numbers */` as a workaround; new tests should avoid needing it.)
 19. **No `as any`** — use proper types or generics.
 20. **Import `Page` and `Locator` from `@fixtures`**, not from `@playwright/test`.
+21. **Do not share test-action values between tests via module-level constants.** Values a test sets during its run (a new monomer's code or name, an edited display name) are defined locally inside that test; hoisting them to the module level couples the tests and makes each one harder to read. Static inputs may stay at module level: fixture file paths and facts describing a fixture (e.g. its atom count).
 
 ---
 
@@ -417,7 +525,7 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 ### Timing Anti-Patterns
 
 - **`await page.waitForTimeout(N)`** as a wait for an action to complete — fragile and slow. Use `waitForRender`, `waitFor({ state })`, or structural waits instead. Raw `waitForTimeout` is only acceptable in rare edge cases (e.g. after a spinner disappears, to allow animation to settle) and must have a comment explaining why.
-- **Bare `await page.keyboard.press(key)`** for canvas actions — always wrap in `waitForRender` or use `keyboardPressOnCanvas`.
+- **Bare `await page.keyboard.press(key)`** for canvas actions — prefer the named helpers when one exists (`undoByKeyboard`, `deleteByKeyboard`, …); otherwise wrap in `waitForRender` or use `keyboardPressOnCanvas`.
 - **Bare `await locator.click()`** without waiting for any result — use the POM method that wraps with the appropriate wait.
 - **Clicking a disabled button via a POM method** — Playwright waits for the element to become enabled, and with `actionTimeout: 0` (no timeout) this hangs forever. To check that a control is disabled, assert `toBeDisabled()`;
 
@@ -436,6 +544,10 @@ Prefer **structural assertions over screenshots** for editor mode and content pr
 - **Commented-out tests or `test.skip`** left indefinitely — use `test.skip` with a comment and a tracking issue reference; do not comment out code.
 - **Overly broad screenshots** — `takePageScreenshot` captures the entire page including the library panel, which is noisy. Prefer `takeEditorScreenshot` or `takeElementScreenshot`.
 - **Single giant test file** (>500 lines) — split by feature or connection rule type. The `connection-rules-for-*.spec.ts` pattern is the right approach.
+
+### Dependency Anti-Patterns
+
+- **New libraries for E2E tests** — do not add a package to `ketcher-autotests` for one test. Use the helpers and Playwright APIs already in the repo.
 
 ### Import Anti-Patterns
 

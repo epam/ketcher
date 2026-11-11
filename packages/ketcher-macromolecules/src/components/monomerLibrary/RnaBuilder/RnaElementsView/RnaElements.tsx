@@ -7,14 +7,11 @@ import {
   setIsEditMode,
   selectActivePreset,
   selectActiveRnaBuilderItem,
-  selectIsEditMode,
+  isRnaBuilderEditMode,
   RnaBuilderPresetsItem,
   setActiveMonomerKey,
 } from 'state/rna-builder';
-import {
-  selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
-} from 'state/common';
+import { selectEditor, isRnaBuilderSequenceEditMode } from 'state/common';
 import { LibraryNameType } from 'src/constants';
 import {
   IRnaPreset,
@@ -46,11 +43,11 @@ export const RnaElements = ({
 
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const isEditMode = useAppSelector(isRnaBuilderEditMode);
   const editor = useAppSelector(selectEditor);
 
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
 
   const [newPreset, setNewPreset] = useState(activePreset);

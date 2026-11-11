@@ -2,6 +2,18 @@
 
 Ketcher is an open source, web-based chemical structure editor that offers high performance, good portability and the ability to easily integrate into a custom web application. Ketcher is designed for chemists, laboratory scientists, and researchers who draw molecules, biomolecules and reactions.
 
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Packages](#packages)
+- [Documentation](#documentation)
+- [API Reference](#api-reference)
+- [Browser Compatibility](#browser-compatibility)
+- [Localization (i18n)](#localization-i18n)
+- [Contribution](#contribution)
+- [Community Projects & Integrations](#community-projects--integrations)
+- [License](#license)
+
 ## Key Features
 
 - :arrow_right: Support for Reactions: Reaction centres, flags, mapping, ability to add catalysts, reaction conditions and other information.
@@ -24,7 +36,7 @@ specification and R-Logic.
 - 🛠️ Settings support (Rendering, Displaying, Debugging)
 - :camera: Use of SVG to achieve best quality in-browser chemical structure rendering
 - :telescope: Built-in 3D viewer [miew-react](https://github.com/epam/miew/tree/master/packages/miew-react)
-- 🌐 Localized UI (English, Simplified Chinese) with a live language switcher in Settings
+- 🌐 Localized UI (English, Simplified Chinese, Spanish) with a live language switcher in Settings
 
 ### Editor builtin tools:
 
@@ -51,7 +63,6 @@ specification and R-Logic.
 
 ## Documentation
 
-- [API Reference](./documentation/api-reference.md)
 - [Configuration](./documentation/configuration.md)
 - [Error Handling](./documentation/error-handling.md)
 - [Help](./documentation/help.md)
@@ -60,21 +71,38 @@ specification and R-Logic.
 - [Supported formats](./documentation/supported-formats.md)
 - [Usage examples](./documentation/usage-examples.md)
 
+## API Reference
+
+The full API reference — export/import methods, editor operations, view control, settings, events, the React component API, and service providers — is in **[documentation/api.md](documentation/api.md)**.
+
+## Browser Compatibility
+
+Ketcher supports modern browsers:
+
+- Chrome/Edge (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+
+**Requirements:**
+- ES6+ JavaScript support
+- WebAssembly support (for standalone mode)
+- SVG rendering
+
+---
+
 ## Localization (i18n)
 
-Ketcher ships as an **English-only build by default**. To enable multiple languages, set
-`KETCHER_MULTI_LANGUAGE_BUILD=true` when building `ketcher-react` or
-`ketcher-macromolecules`. The multi-language build adds a **Settings → General → Language**
-switcher, applies language changes without a reload, and remembers the choice for the next
-visit.
-
-The multi-language build currently supports **English** and **Simplified Chinese (简体中文)**.
-Chemistry vocabulary (element symbols, bond-type names, and file-format codes) remains
-untranslated to stay consistent with chemistry file formats.
+Details on multi-language support and how to opt in to the `KETCHER_MULTI_LANGUAGE_BUILD` are in **[documentation/localization.md](documentation/localization.md)**.
 
 ## Contribution
 
 See [Contributing Guide](./DEVNOTES.md).
+
+## Community Projects & Integrations
+
+- https://github.com/Marco-Matlock/Excel-Addin - Excel plugin to run Ketcher on a task pane as an Office Addin
+- https://github.com/katalystnord/ketcher-desktop - Desktop application for Ketcher made on electron
+- https://github.com/yulei-chen/obsidian-ketcher - An Obsidian plugin to view or draw chemical structures and reactions using Ketcher
 
 ## License
 

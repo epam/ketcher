@@ -50,6 +50,7 @@ export class AtomRenderer extends BaseRenderer {
 
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
+  private atomMappingLabelElement?: D3SvgElementSelection<SVGTextElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
@@ -312,6 +313,11 @@ export class AtomRenderer extends BaseRenderer {
       return this.atom.properties.atomList.label();
     }
     return this.atom.properties.alias ?? this.atom.label;
+  }
+
+  public get atomMappingLabelText() {
+    const aam = this.atom.properties.aam;
+    return aam && aam > 0 ? `.${aam}.` : undefined;
   }
 
   /**
@@ -726,6 +732,34 @@ export class AtomRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
   }
 
+  private appendAtomMappingLabel() {
+    const mappingLabelText = this.atomMappingLabelText;
+    if (!mappingLabelText) {
+      return;
+    }
+
+    this.atomMappingLabelElement = this.rootElement
+      ?.append('text')
+      .text(mappingLabelText)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '10px')
+      .attr('fill', this.labelColor)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('pointer-events', 'none');
+
+    const labelBox = this.atomMappingLabelElement?.node()?.getBBox();
+    if (!labelBox) {
+      return;
+    }
+
+    const offset = this.getAtomMappingLabelOffset(
+      labelBox.width,
+      labelBox.height,
+    );
+    this.atomMappingLabelElement?.attr('x', offset.x).attr('y', offset.y);
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
@@ -736,6 +770,7 @@ export class AtomRenderer extends BaseRenderer {
     this.appendStereoLabel();
     this.appendCIPLabel();
     this.hoverElement = this.appendHover();
+    this.appendAtomMappingLabel();
     this.drawSelection();
   }
 
@@ -991,6 +1026,13 @@ export class AtomRenderer extends BaseRenderer {
     return LABEL_CLEARANCE_OFFSET + baseDistance + forwardShift + backwardShift;
   }
 
+  private getAtomMappingLabelOffset(width: number, height: number): Vec2 {
+    const direction = this.bisectLargestSector();
+    return direction.scaled(
+      this.getProjectedLabelDistance(width, height, direction),
+    );
+  }
+
   private getLabelProjectionRadius(
     width: number,
     height: number,
@@ -1014,6 +1056,7 @@ export class AtomRenderer extends BaseRenderer {
   public remove() {
     this.removeSelection();
     this.cipLabelElement?.remove();
+    this.atomMappingLabelElement?.remove();
     this.stereoLabelElement?.remove();
     // Clear stale ref so show() recreates the hover contour in the new root (#10856).
     this.hoverElement = undefined;

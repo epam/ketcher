@@ -27,6 +27,15 @@ const cycleBondTooltip =
 const markedComponentTooltip =
   'The structure fragment in this direction is already marked as a nucleotide component.';
 
+async function getMoleculesCanvasSvg(page: Page) {
+  const canvas = (await getVisibleCanvas(page)).locator(
+    '[class*="intermediateCanvas"] > svg',
+  );
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toBeVisible();
+  return canvas;
+}
+
 let page: Page;
 
 test.describe('Fragment Selection tool in Molecules mode', () => {
@@ -181,7 +190,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    const canvas = await getVisibleCanvas(page);
+    const canvas = await getMoleculesCanvasSvg(page);
     const middleBond = getBondLocator(page, { bondId: 2 });
 
     await middleBond.hover({ force: true, position: { x: 9, y: 5 } });
@@ -213,7 +222,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       position: { x: 10, y: 0 },
     });
 
-    await expect(await getVisibleCanvas(page)).toHaveCSS(
+    await expect(await getMoleculesCanvasSvg(page)).toHaveCSS(
       'cursor',
       /not-allowed/,
     );
@@ -469,7 +478,7 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
     });
 
     await expect(getTooltipLocator(page)).toHaveText(markedComponentTooltip);
-    await expect(await getVisibleCanvas(page)).toHaveCSS(
+    await expect(await getMoleculesCanvasSvg(page)).toHaveCSS(
       'cursor',
       /not-allowed/,
     );

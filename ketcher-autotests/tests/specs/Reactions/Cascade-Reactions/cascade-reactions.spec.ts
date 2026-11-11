@@ -83,9 +83,7 @@ test.describe('Cascade Reactions', () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/2102
     Description: RDF file with elements without reaction MOL V2000 can't be loaded and error is displayed -
-    Convert error! struct data not recognized as molecule, query, reaction or reaction query.
-    We have a bug https://github.com/epam/ketcher/issues/5273
-    After fix we should update snapshot.
+    Convert error! Given string could not be loaded as (query or plain) molecule or reaction.
     */
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -94,7 +92,9 @@ test.describe('Cascade Reactions', () => {
       true,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Molfile version unknown:');
+    expect(errorMessage).toContain(
+      'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction',
+    );
     await ErrorMessageDialog(page).close();
     await PasteFromClipboardDialog(page).cancel();
   });

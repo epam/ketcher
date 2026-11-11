@@ -49,7 +49,6 @@ export type MonomerCreationInitialValues = {
   idtAlias5: string;
   idtAliasInternal: string;
   idtAlias3: string;
-  modificationTypes: string[];
   position?: Vec2;
   editMode?: 'instance' | 'all';
   libraryOnly?: boolean;

@@ -27,11 +27,7 @@ import {
   AttachmentPointName,
   type MouseEventWithAttachmentPoint,
 } from 'domain/types';
-// FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
-//  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
-//  which probably due to a circular dependency
-//  because of using uncontrolled `index.ts` files.
-import { Coordinates } from '../shared/coordinates';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import {
   MACROMOLECULES_BOND_TYPES,

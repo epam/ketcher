@@ -1169,13 +1169,18 @@ export class SequenceRenderer {
 
     if (arrowKey === 'ArrowRight') {
       const currentEdittingNode = this.currentEdittingNode;
+      const nextNode = this.nextNodeInSameChain;
 
       if (!currentEdittingNode?.senseNode) {
         return;
       }
 
-      modelChanges = this.getShiftArrowChanges(editor, currentEdittingNode);
-      modelChanges.addOperation(this.moveCaretForward());
+      // Only allow selection if next node is in the same chain
+      if (nextNode?.senseNode) {
+        modelChanges = this.getShiftArrowChanges(editor, currentEdittingNode);
+        modelChanges.addOperation(this.moveCaretForward());
+      }
+      // In edit mode, prevent selection from crossing to the next chain
     } else if (arrowKey === 'ArrowLeft') {
       const previousNodeInSameChain = this.previousNodeInSameChain;
 
@@ -1184,36 +1189,24 @@ export class SequenceRenderer {
           editor,
           previousNodeInSameChain,
         );
-      } else if (this.previousChain.lastNode) {
-        const previousChainLastEmptyNode = this.previousChain.lastNode;
-
-        if (previousChainLastEmptyNode.senseNode) {
-          const result =
-            editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-              previousChainLastEmptyNode.senseNode.monomer,
-            );
-          modelChanges.merge(result.command);
-        }
-
-        if (previousChainLastEmptyNode.antisenseNode) {
-          const result =
-            editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-              previousChainLastEmptyNode.antisenseNode.monomer,
-            );
-          modelChanges.merge(result.command);
-        }
+        modelChanges.addOperation(this.moveCaretBack());
       }
-      modelChanges.addOperation(this.moveCaretBack());
+      // In edit mode, do not allow selection to extend to previous chains
+      // If there's no previous node in the same chain, don't move the caret
+      // to prevent crossing into disconnected fragments
     } else if (arrowKey === 'ArrowUp') {
       const previousCaretPosition = this.caretPosition;
+      const currentChain = this.currentEdittingNode?.chain;
       this.moveCaretUp();
       const newCaretPosition = this.caretPosition;
 
+      // Only select nodes within the same chain
       this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
         if (
           nodeIndexOverall < previousCaretPosition &&
           nodeIndexOverall >= newCaretPosition &&
-          twoStrandedNode.senseNode
+          twoStrandedNode.senseNode &&
+          twoStrandedNode.chain === currentChain
         ) {
           modelChanges.merge(
             this.getShiftArrowChanges(editor, twoStrandedNode),
@@ -1222,14 +1215,17 @@ export class SequenceRenderer {
       });
     } else if (arrowKey === 'ArrowDown') {
       const previousCaretPosition = this.caretPosition;
+      const currentChain = this.currentEdittingNode?.chain;
       this.moveCaretDown();
       const newCaretPosition = this.caretPosition;
 
+      // Only select nodes within the same chain
       this.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
         if (
           nodeIndexOverall >= previousCaretPosition &&
           nodeIndexOverall < newCaretPosition &&
-          twoStrandedNode.senseNode
+          twoStrandedNode.senseNode &&
+          twoStrandedNode.chain === currentChain
         ) {
           modelChanges.merge(
             this.getShiftArrowChanges(editor, twoStrandedNode),

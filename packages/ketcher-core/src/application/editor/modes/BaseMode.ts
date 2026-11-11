@@ -52,7 +52,7 @@ export abstract class BaseMode {
     const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo, false);
+    editor.mode.initialize(true, isUndo, false, false, true);
   }
 
   private async copyCanvasAsImage(): Promise<void> {
@@ -123,6 +123,7 @@ export abstract class BaseMode {
     _isUndo = false,
     _shouldReArrangeChains = false,
     _shouldForceRecalculateAntisense = false,
+    _isHistoryReplay = false,
   ): Command {
     const command = new Command();
     const editor = provideEditorInstance();
@@ -133,6 +134,15 @@ export abstract class BaseMode {
         this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
+        () => {
+          const currentEditor = provideEditorInstance();
+          if (
+            currentEditor.mode.modeName === 'snake-layout-mode' &&
+            currentEditor.drawingEntitiesManager.hasMonomers
+          ) {
+            currentEditor.scrollToTopLeftCorner();
+          }
+        },
       ),
     );
 

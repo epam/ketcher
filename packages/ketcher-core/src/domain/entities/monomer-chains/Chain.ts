@@ -164,18 +164,22 @@ export class Chain {
     }
 
     const nextMonomer = getNextMonomerInChain(monomer);
-    const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
+    const isNextMonomerNucleotideLikeOrPeptide = () => {
       const isNucleosideOrNucleotide =
         nextMonomer instanceof Sugar &&
         (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
-      return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
+      return (
+        isNucleosideOrNucleotide ||
+        nextMonomer instanceof UnsplitNucleotide ||
+        nextMonomer instanceof Peptide
+      );
     };
     if (
       monomer instanceof Phosphate &&
       (!this.lastNode ||
         this.lastNode instanceof Nucleoside ||
         this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
-      (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
+      (!nextMonomer || isNextMonomerNucleotideLikeOrPeptide())
     ) {
       this.getLastSubChain().add(new MonomerSequenceNode(monomer));
       return;

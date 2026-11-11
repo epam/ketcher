@@ -95,13 +95,20 @@ const earlierBrief = (state) => ({
  * @param {object[]} [options.comments] earlier comments on the pull request
  * @param {Error} [options.failLinkedIssues] thrown by linkedIssues
  * @param {Error} [options.failPostReview] thrown by postReview
+ * @param {string} [options.previousBase] merge base of the previous head
  */
-function fakeGitHub({ comments = [], failLinkedIssues, failPostReview } = {}) {
+function fakeGitHub({
+  comments = [],
+  failLinkedIssues,
+  failPostReview,
+  previousBase,
+} = {}) {
   const writes = [];
   const diffs = [];
   const github = {
     comments: async () => comments,
-    mergeBase: async () => BASE,
+    mergeBase: async (_base, sha) =>
+      sha === PREVIOUS_HEAD ? (previousBase ?? BASE) : BASE,
     isAncestor: async () => true,
     diff: async (from, to) => {
       diffs.push([from, to]);
@@ -213,6 +220,22 @@ test('a later round reviews the new commits and does not repeat a posted finding
   const [briefText] = writesOf(writes, 'comment');
   assert.match(briefText, /round 2 of 3/);
   assert.deepEqual(readMarker(briefText).posted, [posted]);
+});
+
+test('a later round reviews the whole pull request after a merge of master', async () => {
+  const comments = [
+    earlierBrief({ round: 1, head: PREVIOUS_HEAD, posted: [] }),
+  ];
+  const { github, diffs } = fakeGitHub({
+    comments,
+    previousBase: 'e'.repeat(40),
+  });
+  const { run } = fakeRunner();
+  const log = await review({ github, run });
+
+  assert.equal(log.round, 2);
+  assert.equal(log.range.kind, 'full');
+  assert.deepEqual(diffs[0], [BASE, HEAD]);
 });
 
 test('a dry run prints the round and writes nothing to GitHub', async () => {

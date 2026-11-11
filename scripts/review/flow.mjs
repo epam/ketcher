@@ -100,7 +100,9 @@ const fingerprints = (findings) =>
 
 /**
  * The commit range of the round. A later round checks that the previous head
- * is still on the branch.
+ * is still on the branch, and that the merge base is the one that round saw:
+ * a base branch merged in since then moved the merge base, and its commits
+ * are not this pull request's to review.
  * @param {GitHub} github
  * @param {PullRequest} pr
  * @param {{ round: number, previousHead?: string }} plan
@@ -110,12 +112,16 @@ async function roundRange(github, pr, plan) {
   const previousHeadIsAncestor = plan.previousHead
     ? await github.isAncestor(plan.previousHead, pr.headSha)
     : false;
+  const previousBase = plan.previousHead
+    ? await github.mergeBase(pr.baseSha, plan.previousHead)
+    : base;
   const range = reviewRange({
     round: plan.round,
     base,
     head: pr.headSha,
     previousHead: plan.previousHead,
     previousHeadIsAncestor,
+    baseMoved: previousBase !== base,
   });
   return { base, range };
 }

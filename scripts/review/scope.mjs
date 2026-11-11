@@ -12,16 +12,24 @@ import { filePath } from './diff.mjs';
  *   head: string,
  *   previousHead?: string,
  *   previousHeadIsAncestor?: boolean,
+ *   baseMoved?: boolean,
  * }} RangeInput
  * @typedef {{ from: string, to: string, kind: 'full' | 'incremental' }} Range
  */
 
 /**
- * The commit range to review. Round 1 reviews the whole pull request. A
- * later round reviews only the commits since the head of the previous round,
- * unless that head is gone from the branch (a force push or a rebase).
- * `full` means base...head (from the merge base); `incremental` means
- * previousHead..head.
+ * The commit range to review. Whichever range it gives holds the commits of
+ * the pull request alone, and never a commit of the base branch: `full` is
+ * base...head, measured from the merge base, so the base branch falls out of
+ * it by construction.
+ *
+ * `incremental`, previousHead..head, keeps that true only while the merge
+ * base has not moved. A base branch merged into the branch between two
+ * rounds sits inside previousHead..head, which would review other people's
+ * commits, charge for them, and leave inline comments on lines the pull
+ * request diff does not hold, which GitHub refuses. So a round takes the
+ * incremental range only when the previous head is still on the branch (no
+ * force push) and the merge base is the one that round saw.
  * @param {RangeInput} input
  * @returns {Range}
  */
@@ -31,8 +39,9 @@ export function reviewRange({
   head,
   previousHead,
   previousHeadIsAncestor,
+  baseMoved,
 }) {
-  if (round > 1 && previousHead && previousHeadIsAncestor) {
+  if (round > 1 && previousHead && previousHeadIsAncestor && !baseMoved) {
     return { from: previousHead, to: head, kind: 'incremental' };
   }
   return { from: base, to: head, kind: 'full' };

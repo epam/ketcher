@@ -37,6 +37,20 @@ test('a later round falls back to the whole pull request after a force push', ()
   );
 });
 
+test('a later round reviews the whole pull request when the merge base moved', () => {
+  assert.deepEqual(
+    reviewRange({
+      round: 2,
+      base: 'B',
+      head: 'H',
+      previousHead: 'P',
+      previousHeadIsAncestor: true,
+      baseMoved: true,
+    }),
+    { from: 'B', to: 'H', kind: 'full' },
+  );
+});
+
 test('a later round without a previous head reviews the whole pull request', () => {
   assert.equal(reviewRange({ round: 2, base: 'B', head: 'H' }).kind, 'full');
 });

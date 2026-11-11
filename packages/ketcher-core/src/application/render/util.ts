@@ -320,7 +320,7 @@ function updateHalfBondCoordinates(
 }
 
 function escapeHtml(str) {
-  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
 function useLabelStyles(

@@ -78,18 +78,25 @@ function pollDeferred<T>(
   });
 }
 
-function parametrizeUrl(url, params) {
-  return url.replace(/:([A-Za-z_]\w*)/g, (match, key) => {
-    if (
-      params &&
-      Object.prototype.hasOwnProperty.call(params, key) &&
-      params[key] !== undefined &&
-      params[key] !== null
-    ) {
-      return String(params[key]);
-    }
-    return match;
-  });
+function parametrizeUrl(url: string, params: Record<string, string>) {
+  return url
+    .split(/(:[A-Za-z_]\w*)/)
+    .map((segment, index) => {
+      if (index % 2 === 0) {
+        return segment;
+      }
+
+      const key = segment.slice(1);
+      if (
+        Object.prototype.hasOwnProperty.call(params, key) &&
+        params[key] !== undefined &&
+        params[key] !== null
+      ) {
+        return String(params[key]);
+      }
+      return segment;
+    })
+    .join('');
 }
 
 function request<T = unknown>(

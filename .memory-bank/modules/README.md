@@ -21,11 +21,16 @@ Each module document answers:
 - [ketcher-macromolecules](./ketcher-macromolecules.md) — macromolecules React UI
 - [ketcher-standalone](./ketcher-standalone.md) — offline Indigo WASM bundle
 
+### Apps
+
+- [example-app](./example-app.md) — the host app in `example/`: host pages, which page a change needs, dev vs production
+
 ### Cross-cutting subsystems (deep dives)
 
 These span multiple packages and are the most valuable parts to understand. They are referenced from [../architecture.md](../architecture.md#deep-dives-the-biggest-most-valuable-parts).
 
 - [editor-engine](./editor-engine.md) — the two editor controllers, tools, events, modes, converter bridge
+- [snake-layout](./snake-layout.md) — macromolecule and small-molecule placement in Snake mode
 - [rendering](./rendering.md) — Raphael (`ReStruct`) and D3 (`RenderersManager`) pipelines
 - [atom-rendering](./atom-rendering.md) — atom label placement and CIP collision geometry
 - [transient-views](./transient-views.md) — ephemeral, read-only SVG overlays (selection, snapping, rotation, previews, replacement highlight)

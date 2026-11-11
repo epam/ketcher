@@ -6,7 +6,7 @@ import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {
   beforeAll(() => {
-    global.window.PointerEvent = MouseEvent as any;
+    globalThis.window.PointerEvent = MouseEvent as any;
   });
 
   /**
@@ -306,10 +306,10 @@ describe('Rotate controller', () => {
       {},
     );
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
-    // @ts-ignore
-    editor.rotateController.rotateTool.dragCtx = {
+
+    editor.rotateController['rotateTool'].dragCtx = {
       action: { operations: [], perform: () => undefined },
-    };
+    } as unknown as RotateTool['dragCtx'];
     editor.rotateController.isRotating = true;
     const updateRender = jest.spyOn(editor.render, 'update');
 

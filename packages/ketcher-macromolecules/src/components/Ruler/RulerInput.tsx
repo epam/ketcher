@@ -31,7 +31,7 @@ const RulerInput = ({
 
   const [editingValue, setEditingValue] = useState<string | null>(null);
   const displayValue =
-    editingValue !== null ? editingValue : stringifiedLineLengthValue;
+    editingValue === null ? stringifiedLineLengthValue : editingValue;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue(event.target.value);

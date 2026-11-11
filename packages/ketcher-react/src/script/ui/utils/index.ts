@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,13 +28,6 @@ const GREEK_SIMBOLS: Record<string, string> = {
   gamma: 'γ',
 };
 
-const greekRe = new RegExp(
-  String.raw`\b` +
-    Object.keys(GREEK_SIMBOLS).join(String.raw`\b|\b`) +
-    String.raw`\b`,
-  'g',
-);
-
 /** Library items grouped by their `props.group` value. */
 type TemplateGroups = Record<string, Template[]>;
 
@@ -47,7 +40,10 @@ type TemplateGroups = Record<string, Template[]>;
 type EnumSchemaLike = { enum?: unknown; enumNames?: unknown };
 
 export function greekify(str: string): string {
-  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
+  return str
+    .split(/\b/)
+    .map((part) => GREEK_SIMBOLS[part] ?? part)
+    .join('');
 }
 
 export function filterLib(lib: Template[], filter: string): TemplateGroups {
@@ -63,8 +59,8 @@ export function filterLib(lib: Template[], filter: string): TemplateGroups {
           re.test(greekify(item.props.abbreviation))),
     ),
     reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+      if (res[item.props.group]) res[item.props.group].push(item);
+      else res[item.props.group] = [item];
       return res;
     }, {} as TemplateGroups),
   )(lib);
@@ -84,8 +80,8 @@ export function filterFGLib(lib: Template[], filter: string): TemplateGroups {
   return flow(
     _filter((item: Template) => !trimmedFilter || searchFunction(item)),
     reduce((res: TemplateGroups, item: Template) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+      if (res[item.props.group]) res[item.props.group].push(item);
+      else res[item.props.group] = [item];
       return res;
     }, {} as TemplateGroups),
   )(lib);

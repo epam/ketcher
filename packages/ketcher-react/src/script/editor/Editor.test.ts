@@ -132,7 +132,7 @@ const createMockEditorForRGroupBond = (
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
   beforeEach(() => {
-    jest.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
+    jest.spyOn(globalThis, 'dispatchEvent').mockImplementation(() => true);
   });
 
   afterEach(() => {

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,7 @@ class AlignDescriptors extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroups: SGroup[] = Array.from(struct.sgroups.values()).reverse();
+    const sgroups: SGroup[] = [...struct.sgroups.values()].reverse();
 
     const structBox = struct.getCoordBoundingBoxObj();
     if (!structBox) return;

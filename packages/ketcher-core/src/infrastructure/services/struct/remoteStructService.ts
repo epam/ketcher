@@ -79,7 +79,24 @@ function pollDeferred<T>(
 }
 
 function parametrizeUrl(url: string, params: Record<string, string>) {
-  return url.replace(/:(\w+)/g, (_, val) => params[val]);
+  return url
+    .split(/(:[A-Za-z_]\w*)/)
+    .map((segment, index) => {
+      if (index % 2 === 0) {
+        return segment;
+      }
+
+      const key = segment.slice(1);
+      if (
+        Object.prototype.hasOwnProperty.call(params, key) &&
+        params[key] !== undefined &&
+        params[key] !== null
+      ) {
+        return String(params[key]);
+      }
+      return segment;
+    })
+    .join('');
 }
 
 function request<T = unknown>(

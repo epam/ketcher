@@ -8,6 +8,7 @@ import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointAtomIdsForRnaPreset,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
 
@@ -150,6 +151,28 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
         'base',
       ),
     ).toEqual([AttachmentPointName.R1]);
+  });
+
+  it('returns connection atom IDs for every component in the RNA preset', () => {
+    const wizardState = createWizardState();
+    wizardState.base.structure = { atoms: [1], bonds: [] };
+    wizardState.sugar.structure = { atoms: [2, 4], bonds: [] };
+    wizardState.phosphate.structure = { atoms: [3], bonds: [] };
+    const struct = createStruct([
+      [1, 2],
+      [4, 3],
+    ]);
+
+    expect(
+      getConnectionAttachmentPointAtomIdsForRnaPreset(wizardState, struct, '3'),
+    ).toEqual(
+      new Map([
+        [AttachmentPointName.R1, [1, 2]],
+        [AttachmentPointName.R3, [2, 1]],
+        [AttachmentPointName.R2, [4, 3]],
+        [AttachmentPointName.R4, [3, 4]],
+      ]),
+    );
   });
 
   it.each<{

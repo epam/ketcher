@@ -48,7 +48,7 @@ type ExecuteParams = ActionParams & {
   action: UiActionAction;
 };
 
-type ActionStatus = {
+export type ActionStatus = {
   selected?: boolean;
   disabled?: boolean;
   hidden?: boolean;

@@ -1635,6 +1635,20 @@ function addTooltip(node: SVGElement, text: string) {
   );
 }
 
+// Below 100% zoom, browsers round text metrics to whole screen pixels, which
+// inflates the measured size of labels drawn while zoomed out. Measure them
+// without hinting so the layout matches the one drawn at 100%.
+function getTextRelBox(path: Element, options: RenderOptions) {
+  if (options.zoom >= 1) {
+    return util.relBox(path.getBBox());
+  }
+
+  path.node.setAttribute('text-rendering', 'geometricPrecision');
+  const rbb = util.relBox(path.getBBox());
+  path.node.removeAttribute('text-rendering');
+  return rbb;
+}
+
 function buildLabel(
   atom: ReAtom,
   paper: Render['paper'],
@@ -1723,10 +1737,10 @@ function buildLabel(
     addTooltip(path.node, tooltip);
   }
 
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
-  let rightMargin = (rbb.width / 2) * Math.min(options.zoom, 1);
-  let leftMargin = (-rbb.width / 2) * Math.min(options.zoom, 1);
+  let rightMargin = rbb.width / 2;
+  let leftMargin = -rbb.width / 2;
 
   if (atom.a.atomList !== null) {
     const xShift =
@@ -1809,7 +1823,7 @@ function showHydroIndex(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
   const labelHeight = atom.label?.rbb.height ?? 0;
 
@@ -1878,7 +1892,7 @@ function showIsotope(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1911,7 +1925,7 @@ function showCharge(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1942,7 +1956,7 @@ function showExplicitValence(
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  const rbb = util.relBox(path.getBBox());
+  const rbb = getTextRelBox(path, options);
   draw.recenterText(path, rbb);
 
   pathAndRBoxTranslate(
@@ -1981,7 +1995,7 @@ function showHydrogen(
     'font-size': options.fontszInPx,
     fill: atom.color,
   });
-  const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
+  const hydrogenRbb = getTextRelBox(hydrogenPath, options);
   draw.recenterText(hydrogenPath, hydrogenRbb);
   if (!isHydrogenOnLeft) {
     pathAndRBoxTranslate(
@@ -1999,7 +2013,7 @@ function showHydrogen(
       'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
-    const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
+    const hydroIndexRbb = getTextRelBox(hydroIndexPath, options);
     draw.recenterText(hydroIndexPath, hydroIndexRbb);
     hydroIndex = {
       text: hydroIndexText,
@@ -2010,9 +2024,7 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndexPath,
         hydroIndexRbb,
-        data.rightMargin +
-          0.15 * hydroIndexRbb.width * Math.min(options.zoom, 1) +
-          delta,
+        data.rightMargin + 0.15 * hydroIndexRbb.width + delta,
         0.2 * (atom.label?.rbb.height ?? 0),
       );
       data.rightMargin += hydroIndexRbb.width + delta;
@@ -2031,11 +2043,7 @@ function showHydrogen(
     pathAndRBoxTranslate(
       hydrogenPath,
       hydrogenRbb,
-      data.leftMargin -
-        0.4 *
-          hydrogenRbb.width *
-          (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
-        delta,
+      data.leftMargin - 0.4 * hydrogenRbb.width - delta,
       0,
     );
     data.leftMargin -= hydrogenRbb.width + delta;

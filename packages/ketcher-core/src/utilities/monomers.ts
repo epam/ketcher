@@ -59,16 +59,16 @@ const disallowedModificationTypesSet = new Set<string>(
 );
 
 /**
- * Returns the modification types of a monomer that are not allowed in the
- * library (unknown / ambiguous / molecule markers). Returns an empty array when
- * the monomer has no modification types or all of them are allowed.
- *
- * `modificationTypes` originates from parsed, untrusted library JSON, so it may
- * not actually be an array at runtime (e.g. a caller passing a bare string).
- * The `Array.isArray` guard turns such malformed input into an empty result
- * instead of a `TypeError`, which would otherwise escape the per-monomer loop
- * in `Editor.updateMonomersLibrary` and abort the whole chunk.
- */
+Returns the modification types of a monomer that are not allowed in the
+library (unknown / ambiguous / molecule markers). Returns an empty array when
+the monomer has no modification types or all of them are allowed.
+
+`modificationTypes` originates from parsed, untrusted library JSON, so it may
+not actually be an array at runtime (e.g. a caller passing a bare string).
+The `Array.isArray` guard turns such malformed input into an empty result
+instead of a `TypeError`, which would otherwise escape the per-monomer loop
+in `Editor.updateMonomersLibrary` and abort the whole chunk.
+*/
 export function getDisallowedModificationTypes(
   modificationTypes?: string[],
 ): string[] {
@@ -85,9 +85,9 @@ const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 const BILN_ALIAS_REGEX = /^[A-Za-z0-9_*-]+$/;
 
 /**
- * Validates that slashes in an IDT alias only appear as the first
- * and/or last character. Slashes in the middle are not allowed.
- */
+Validates that slashes in an IDT alias only appear as the first
+and/or last character. Slashes in the middle are not allowed.
+*/
 export function isValidIdtAlias(alias: string): boolean {
   if (!alias) return true;
   const inner = alias.slice(1, -1);
@@ -138,17 +138,17 @@ export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {
 }
 
 /**
- * Validates the modificationTypes value according to the format requirements:
- * - Optional field
- * - Max length 200 characters (total sum of all elements)
- * - Any symbol except formatting ones (tabs, newlines, etc.)
- * - Spaces allowed
- * - An empty array is valid (no modification types)
- * - Cannot contain only whitespace/formatting characters
- *
- * @param modificationTypes - The value to validate (can be string[] or undefined)
- * @returns true if valid, false if invalid
- */
+Validates the modificationTypes value according to the format requirements:
+- Optional field
+- Max length 200 characters (total sum of all elements)
+- Any symbol except formatting ones (tabs, newlines, etc.)
+- Spaces allowed
+- An empty array is valid (no modification types)
+- Cannot contain only whitespace/formatting characters
+
+@param modificationTypes - The value to validate (can be string[] or undefined)
+@returns true if valid, false if invalid
+*/
 export function isValidModificationTypes(
   modificationTypes?: string[],
 ): boolean {

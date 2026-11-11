@@ -1698,10 +1698,10 @@ test.describe('Cascade Reactions', () => {
     (format) => {
       test(`Canvas is empty, click on Save as..., verify that ${format} is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
         /**
-         * Test case: https://github.com/epam/Indigo/issues/2237
-         * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
-         * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
-         */
+        Test case: https://github.com/epam/Indigo/issues/2237
+        Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
+        in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
+        */
         await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(format);
         const errorMessage = await ErrorMessageDialog(page).getErrorMessage();

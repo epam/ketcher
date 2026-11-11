@@ -30,13 +30,13 @@ import type {
 type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
 
 /**
- * Maps any monomer library item (concrete or ambiguous) to its entity class,
- * renderer class, and KetMonomerClass. Lives in the render layer because its
- * primary job is selecting renderer constructors.
- *
- * The old location (application/editor/operations/monomer/monomerFactory) is
- * kept as a re-export shim for backward compatibility.
- */
+Maps any monomer library item (concrete or ambiguous) to its entity class,
+renderer class, and KetMonomerClass. Lives in the render layer because its
+primary job is selecting renderer constructors.
+
+The old location (application/editor/operations/monomer/monomerFactory) is
+kept as a re-export shim for backward compatibility.
+*/
 export function monomerFactory(
   monomer: MonomerItemType,
 ): [

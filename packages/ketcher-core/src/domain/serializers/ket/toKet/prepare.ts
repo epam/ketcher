@@ -122,10 +122,10 @@ function getFragmentCenter(struct, atomSet) {
 }
 
 /**
- * Merge fragments which are in the same S-Groups to one fragment(molecule)
- * and add new fragments(molecules) to KetNodes
- * See: https://github.com/epam/ketcher/issues/2142
- */
+Merge fragments which are in the same S-Groups to one fragment(molecule)
+and add new fragments(molecules) to KetNodes
+See: https://github.com/epam/ketcher/issues/2142
+*/
 function addMolecules(
   ketNodes: KetFileNode[],
   fragmentIds: number[],
@@ -156,17 +156,17 @@ function addMolecules(
 }
 
 /**
- * @example Give `fragmentIds` is `[0, 1]`,
- * and S-Group0 includes fragment0 and fragment1,
- * and S-Group1 includes fragment1,
- * then return value should be
- * ```
- * {
- *   0: [0, 1],
- *   1: [1]
- * }
- * ```
- */
+@example Give `fragmentIds` is `[0, 1]`,
+and S-Group0 includes fragment0 and fragment1,
+and S-Group1 includes fragment1,
+then return value should be
+```
+{
+  0: [0, 1],
+  1: [1]
+}
+```
+*/
 function generateSGroupFragmentsMap(
   ketNodes: KetFileNode[],
   fragmentIds: number[],

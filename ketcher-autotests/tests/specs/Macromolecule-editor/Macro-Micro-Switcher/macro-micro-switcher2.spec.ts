@@ -264,12 +264,12 @@ test.describe('Macro-Micro-Switcher2', () => {
     MoleculesCanvas: _,
   }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro,
-     * verify that Arrows are not presented on the Canvas after switching to Macro mode, Clear Canvas, switch back to Micro mode,
-     * verify that arrows are presented after returning to Micro mode.
-     *
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro,
+    verify that Arrows are not presented on the Canvas after switching to Macro mode, Clear Canvas, switch back to Micro mode,
+    verify that arrows are presented after returning to Micro mode.
+
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -289,11 +289,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     MoleculesCanvas: _,
   }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows aren't presented in Macro mode,
-     * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
-     *
-     */
+    Test case: https://github.com/epam/ketcher/issues/5104
+    Description: Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows aren't presented in Macro mode,
+    Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
+
+    */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(

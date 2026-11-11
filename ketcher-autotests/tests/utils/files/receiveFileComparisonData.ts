@@ -218,18 +218,18 @@ async function receiveFile({
 }
 
 /**
- * Returns file and expected file
- * Usage: for comparison files in tests
- *
- * @param page - required, playwright page object
- * @param expectedFileName - required, path to a file, file name must contain file extension (.mol, .rxn, etc.)
- * @param metaDataIndexes - metadata strings indexes
- * @param fileFormat - optional, v2000 / v3000
- *
- * Based on file extension the function calculates method for getting a file.
- * If no file extension in GetFileMethod enum, getKet method will be used.
- * @see GetFileMethod
- */
+Returns file and expected file
+Usage: for comparison files in tests
+
+@param page - required, playwright page object
+@param expectedFileName - required, path to a file, file name must contain file extension (.mol, .rxn, etc.)
+@param metaDataIndexes - metadata strings indexes
+@param fileFormat - optional, v2000 / v3000
+
+Based on file extension the function calculates method for getting a file.
+If no file extension in GetFileMethod enum, getKet method will be used.
+@see GetFileMethod
+*/
 export async function receiveFileComparisonData({
   page,
   expectedFileName,

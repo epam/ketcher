@@ -325,9 +325,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that a single reaction containing only reactants can be saved/loaded from CDX with appropriate positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/reactant-single-reaction.ket',
@@ -347,9 +347,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that a single reaction containing only products can be saved/loaded from CDX with appropriate positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/products-single-reaction.ket',
@@ -369,9 +369,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -391,9 +391,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multiple-individual-reactions.ket',
@@ -413,9 +413,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/several-cascade-reactions.ket',
@@ -435,9 +435,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/combination-of-single-and-cascade-reactions.ket',
@@ -457,9 +457,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/cascade-of-multiple-reactions.ket',
@@ -479,9 +479,9 @@ test.describe('CDX files without screenshots', () => {
 
   test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2238
-     * Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.
-     */
+    Test case: https://github.com/epam/Indigo/issues/2238
+    Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/pathway-with-mixed-single-reactions-and-cascades.ket',

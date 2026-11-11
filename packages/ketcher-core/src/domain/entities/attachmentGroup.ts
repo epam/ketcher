@@ -28,11 +28,11 @@ export type AttachmentGroupAttributes = Pick<
 };
 
 /**
- * A logical endpoint shared by all atoms in a KET attachment group.
- *
- * It is stored separately from chemical atoms and its position is always
- * derived from its member atoms.
- */
+A logical endpoint shared by all atoms in a KET attachment group.
+
+It is stored separately from chemical atoms and its position is always
+derived from its member atoms.
+*/
 export class AttachmentGroup
   extends BaseMicromoleculeEntity
   implements BondEndpoint

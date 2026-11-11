@@ -1,6 +1,6 @@
 /**
- * Unit tests for LocalStorageAdapter
- */
+Unit tests for LocalStorageAdapter
+*/
 
 import { LocalStorageAdapter } from '../LocalStorageAdapter';
 import type { Settings } from '../types';

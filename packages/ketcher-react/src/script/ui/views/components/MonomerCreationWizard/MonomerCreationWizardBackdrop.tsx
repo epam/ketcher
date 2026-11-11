@@ -19,16 +19,16 @@ import { editorMonomerCreationStateSelector } from '../../../state/editor/select
 import styles from './MonomerCreationWizard.module.less';
 
 /**
- * Renders the white panel that visually backs the MonomerCreationWizard.
- *
- * The wizard panel itself is transparent; this backdrop is mounted earlier in
- * the canvas DOM (before the SVG and other overlays) so the natural paint
- * order produces:
- *   white backdrop  <  canvas SVG / overlays  <  wizard interactive controls
- * This makes the molecule structure and other canvas content visually appear
- * above the white panel while still keeping the wizard buttons/controls on
- * top of the molecule when they overlap.
- */
+Renders the white panel that visually backs the MonomerCreationWizard.
+
+The wizard panel itself is transparent; this backdrop is mounted earlier in
+the canvas DOM (before the SVG and other overlays) so the natural paint
+order produces:
+  white backdrop  <  canvas SVG / overlays  <  wizard interactive controls
+This makes the molecule structure and other canvas content visually appear
+above the white panel while still keeping the wizard buttons/controls on
+top of the molecule when they overlap.
+*/
 const MonomerCreationWizardBackdrop = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 

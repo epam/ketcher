@@ -8,11 +8,11 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 type Point = { x: number; y: number };
 
 /**
- * Draw atoms of a single element on the micro (molecules) canvas.
- * Selects the element tool once, then clicks each point in turn (the tool stays
- * active between clicks), and finally deselects with Escape and moves the mouse
- * away so no hover state lingers.
- */
+Draw atoms of a single element on the micro (molecules) canvas.
+Selects the element tool once, then clicks each point in turn (the tool stays
+active between clicks), and finally deselects with Escape and moves the mouse
+away so no hover state lingers.
+*/
 export async function addAtoms(page: Page, atom: Atom, points: Point[]) {
   await RightToolbar(page).clickAtom(atom);
   for (const point of points) {

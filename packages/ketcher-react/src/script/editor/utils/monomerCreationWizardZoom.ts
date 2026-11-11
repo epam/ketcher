@@ -24,12 +24,12 @@ type MonomerCreationWizardZoomInput = {
 };
 
 /**
- * Creates the zoom calculator used when a structure is loaded into the
- * monomer creation wizard (epam/ketcher#11416).
- *
- * The defaults come from the issue requirements. They can be overridden,
- * e.g. in tests.
- */
+Creates the zoom calculator used when a structure is loaded into the
+monomer creation wizard (epam/ketcher#11416).
+
+The defaults come from the issue requirements. They can be overridden,
+e.g. in tests.
+*/
 export const createMonomerCreationWizardZoomCalculator = (
   config: Partial<MonomerCreationWizardZoomConfig> = {},
 ) => {
@@ -53,15 +53,15 @@ export const createMonomerCreationWizardZoomCalculator = (
   } = config;
 
   /**
-   * Returns the zoom level to use for the structure in the wizard.
-   *
-   * The zoom is only changed when the structure, at the current zoom:
-   * - is outside of the viewport (wider or taller than it), or
-   * - takes up less than half of the viewport both horizontally and
-   *   vertically.
-   * Otherwise the current zoom is kept, even if it is above maxZoom
-   * (e.g. a structure that fits well at 300% stays at 300%).
-   */
+  Returns the zoom level to use for the structure in the wizard.
+
+  The zoom is only changed when the structure, at the current zoom:
+  - is outside of the viewport (wider or taller than it), or
+  - takes up less than half of the viewport both horizontally and
+    vertically.
+  Otherwise the current zoom is kept, even if it is above maxZoom
+  (e.g. a structure that fits well at 300% stays at 300%).
+  */
   return ({
     structBoundingBox,
     microModeScale,

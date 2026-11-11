@@ -133,10 +133,10 @@ export const getConnectionAttachmentPointsForRnaPresetComponent = (
 };
 
 /**
- * Returns a Map of connection (inter-component) attachment point names to
- * [componentAtomId, otherComponentAtomId] pairs for the given RNA component tab.
- * Used to render and highlight these readonly APs on the canvas.
- */
+Returns a Map of connection (inter-component) attachment point names to
+[componentAtomId, otherComponentAtomId] pairs for the given RNA component tab.
+Used to render and highlight these readonly APs on the canvas.
+*/
 export const getConnectionAttachmentPointAtomIdsForComponent = (
   wizardState: RnaPresetWizardState,
   struct: Struct,

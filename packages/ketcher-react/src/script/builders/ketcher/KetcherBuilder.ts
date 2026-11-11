@@ -60,27 +60,27 @@ class KetcherBuilder {
   }
 
   /**
-   * Provide a custom settings service instance
-   * If not provided, a default SettingsService will be created
-   */
+  Provide a custom settings service instance
+  If not provided, a default SettingsService will be created
+  */
   withSettingsService(settingsService: ISettingsService): this {
     this.settingsService = settingsService;
     return this;
   }
 
   /**
-   * Provide a custom storage adapter for settings
-   * Default is LocalStorageAdapter
-   */
+  Provide a custom storage adapter for settings
+  Default is LocalStorageAdapter
+  */
   withStorageAdapter(storageAdapter: ISettingsStorage): this {
     this.storageAdapter = storageAdapter;
     return this;
   }
 
   /**
-   * Provide initial settings to merge with defaults
-   * These will be applied when the settings service is initialized
-   */
+  Provide initial settings to merge with defaults
+  These will be applied when the settings service is initialized
+  */
   withSettings(settings: DeepPartial<Settings>): this {
     this.initialSettings = settings;
     return this;

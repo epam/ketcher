@@ -64,9 +64,9 @@ const createRestruct = (struct: Struct) => {
 };
 
 /**
- * Builds a plain zig-zag carbon chain of unit bond length, the micromolecules
- * equivalent of drawing `CCCCCCCC` on the canvas.
- */
+Builds a plain zig-zag carbon chain of unit bond length, the micromolecules
+equivalent of drawing `CCCCCCCC` on the canvas.
+*/
 const createZigZagChain = (struct: Struct, atomsCount: number) => {
   const atomIds: number[] = [];
   for (let index = 0; index < atomsCount; index++) {

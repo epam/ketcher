@@ -1,6 +1,6 @@
 /**
- * Unit tests for SettingsService
- */
+Unit tests for SettingsService
+*/
 
 import { SettingsService } from '../SettingsService';
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';

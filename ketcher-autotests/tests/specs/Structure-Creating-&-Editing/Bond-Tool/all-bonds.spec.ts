@@ -100,8 +100,8 @@ test.describe(`Bond tool:`, () => {
 
     test(`placing ${bondTypeName} on canvas`, async () => {
       /**
-       *   Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
-       */
+      Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
+      */
       const drawnBonds = 3;
       const drawnBondsWithRing = 7;
       const bondAfterErase = 6;
@@ -160,8 +160,8 @@ test.describe(`Bond tool:`, () => {
 
     test(`click on an existing bond using ${bondTypeName}`, async () => {
       /**
-       * Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
-       */
+      Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
+      */
       await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -262,8 +262,8 @@ test.describe(`Bond tool:`, () => {
 
     test(`Check highlight absence after ${bondTypeName} Bond creation`, async () => {
       /**
-       *  Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
-       */
+      Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
+      */
       await CommonLeftToolbar(page).bondTool(bondType);
       await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
@@ -272,8 +272,8 @@ test.describe(`Bond tool:`, () => {
 
     test.describe('Saving and rendering', () => {
       /**
-       *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
-       */
+      Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
+      */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
         await CommonLeftToolbar(page).bondTool(bondType);
@@ -292,9 +292,9 @@ test.describe(`Bond tool:`, () => {
 
     test(`Check that ${bondTypeName} bond between atoms are centered and drawn symmetrically`, async () => {
       /**
-       *Test case: EPMLSOPKET-16931
-       *Description: Check that Bonds between atoms are centered and drawn symmetrically
-       */
+      Test case: EPMLSOPKET-16931
+      Description: Check that Bonds between atoms are centered and drawn symmetrically
+      */
       await CommonLeftToolbar(page).bondTool(bondType);
       await clickInTheMiddleOfTheCanvas(page);
     });
@@ -316,8 +316,8 @@ test.describe(`Bond tool (copy-paste):`, () => {
       },
       async () => {
         /**
-         * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
-         */
+        Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
+        */
         test.setTimeout(120000);
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
@@ -399,9 +399,9 @@ test.describe('Bond Tool', () => {
   for (const tool of toolsForTest) {
     test(`Functional Group with attach ${tool}`, async () => {
       /**
-       *Test case: EPMLSOPKET-10086
-       *Description: A bond is added to a contracted functional group and form a bond
-       */
+      Test case: EPMLSOPKET-10086
+      Description: A bond is added to a contracted functional group and form a bond
+      */
       await BottomToolbar(page).structureLibrary();
       await StructureLibraryDialog(page).selectFunctionalGroup(
         FunctionalGroupsTabItems.Boc,
@@ -414,8 +414,8 @@ test.describe('Bond Tool', () => {
 
     test(`Creating two (or more) connected ${tool} bonds`, async () => {
       /**
-       * Test cases: EPMLSOPKET - 2920/2921
-       */
+      Test cases: EPMLSOPKET - 2920/2921
+      */
       await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).bondTool(tool);
       await clickInTheMiddleOfTheCanvas(page);
@@ -426,9 +426,9 @@ test.describe('Bond Tool', () => {
 
   test('Drop down list: verification', async () => {
     /**
-     *Test case: EPMLSOPKET-1366
-     *Description: Drop down list: verification
-     */
+    Test case: EPMLSOPKET-1366
+    Description: Drop down list: verification
+    */
     await page.keyboard.press('1');
     await CommonLeftToolbar(page).expandBondSelectionDropdown();
     await takeEditorScreenshot(page);
@@ -436,9 +436,9 @@ test.describe('Bond Tool', () => {
 
   test('Hot keys', async () => {
     /**
-     *Test case: EPMLSOPKET-1368
-     *Description: Bond Tool - Hot keys
-     */
+    Test case: EPMLSOPKET-1368
+    Description: Bond Tool - Hot keys
+    */
     const hotKeys = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit0'];
     await page.keyboard.press('Escape');
     await clickInTheMiddleOfTheCanvas(page);
@@ -457,9 +457,9 @@ test.describe('Bond Tool', () => {
 
   test('Adding custom s-groups to bonds correctly selects bonds', async () => {
     /**
-     *Test case: EPMLSOPKET-8940
-     *Description: Bond Tool - Adding custom s-groups to bonds correctly selects bonds
-     */
+    Test case: EPMLSOPKET-8940
+    Description: Bond Tool - Adding custom s-groups to bonds correctly selects bonds
+    */
     await drawBenzeneRing(page);
     await LeftToolbar(page).sGroup();
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
@@ -469,9 +469,9 @@ test.describe('Bond Tool', () => {
 
   test('Drawing bonds in one direction does not change the bond created in the other direction', async () => {
     /**
-     *Test case: EPMLSOPKET-8922
-     *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
-     */
+    Test case: EPMLSOPKET-8922
+    Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
+    */
     const point = { x: -50, y: 0 };
     const atomToolbar = RightToolbar(page);
 
@@ -517,9 +517,9 @@ test.describe('Bond Tool', () => {
 
   test('Connecting two atoms with Double Bond and rotate', async () => {
     /**
-     *Test case: EPMLSOPKET-10098
-     *Description: Bond Tool - Connecting two atoms with Double Bond and rotate
-     */
+    Test case: EPMLSOPKET-10098
+    Description: Bond Tool - Connecting two atoms with Double Bond and rotate
+    */
     const point1 = { x: -50, y: 0 };
     const yDelta = 100;
     const atomToolbar = RightToolbar(page);
@@ -575,9 +575,9 @@ test.describe('Bond Tool', () => {
 
   test('Multiple bond editing not changes bond types to all selected bonds', async () => {
     /**
-     *Test case: EPMLSOPKET-11853
-     *Description: Bond Tool - Multiple bond editing not changes bond types to all selected bonds
-     */
+    Test case: EPMLSOPKET-11853
+    Description: Bond Tool - Multiple bond editing not changes bond types to all selected bonds
+    */
     const point = { x: -200, y: -200 };
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas(page, 'KET/ketcher-42.ket');
@@ -598,9 +598,9 @@ test.describe('Bond Tool', () => {
 
   test('Add new bonds to the same atom', async () => {
     /**
-     *Test case: EPMLSOPKET-16888
-     *Description: Bond Tool - Add new bonds to the same atom
-     */
+    Test case: EPMLSOPKET-16888
+    Description: Bond Tool - Add new bonds to the same atom
+    */
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await clickInTheMiddleOfTheCanvas(page);
     await clickInTheMiddleOfTheCanvas(page);
@@ -609,9 +609,9 @@ test.describe('Bond Tool', () => {
 
   test('Change the type of bond by clicking on bond', async () => {
     /**
-     *Test case: EPMLSOPKET-16887
-     *Description: Bond Tool - Change the type of bond by clicking on bond
-     */
+    Test case: EPMLSOPKET-16887
+    Description: Bond Tool - Change the type of bond by clicking on bond
+    */
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -692,9 +692,9 @@ for (const bondTool of Object.values(MicroBondTool)) {
 }
 test('Aromatic - Ring inside the cycle structure', async () => {
   /**
-   *Test case: EPMLSOPKET-1436
-   *Description: Aromatic Bond tool - Ring inside the cycle structure
-   */
+  Test case: EPMLSOPKET-1436
+  Description: Aromatic Bond tool - Ring inside the cycle structure
+  */
   await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
   await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).bondTool(MicroBondTool.Aromatic);

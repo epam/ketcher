@@ -1,6 +1,6 @@
 /**
- * Unit tests for MemoryStorageAdapter
- */
+Unit tests for MemoryStorageAdapter
+*/
 
 import { MemoryStorageAdapter } from '../MemoryStorageAdapter';
 import { getDefaultSettings } from '../schema';

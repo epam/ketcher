@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 /**
- * Integration tests for settings bidirectional flow:
- * Redux → Core → Hook → Redux (complete cycle)
- */
+Integration tests for settings bidirectional flow:
+Redux → Core → Hook → Redux (complete cycle)
+*/
 
 import { renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';

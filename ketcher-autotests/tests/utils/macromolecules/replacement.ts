@@ -5,9 +5,9 @@ import { getVisibleCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 
 /**
- * Utilities for the drag-and-drop monomer replacement feature (issue #7455):
- * dropping a library item onto an existing canvas monomer/preset replaces it.
- */
+Utilities for the drag-and-drop monomer replacement feature (issue #7455):
+dropping a library item onto an existing canvas monomer/preset replaces it.
+*/
 
 /** Canvas-relative coordinates of the center of a canvas element (e.g. a monomer). */
 export async function getElementCenterInCanvasCoords(
@@ -26,10 +26,10 @@ export async function getElementCenterInCanvasCoords(
 }
 
 /**
- * Drags a library item (monomer or preset) and drops it on the center of an
- * existing canvas monomer. If the drop lands within the replacement radius
- * (10 px from the monomer center), the target is replaced by the library item.
- */
+Drags a library item (monomer or preset) and drops it on the center of an
+existing canvas monomer. If the drop lands within the replacement radius
+(10 px from the monomer center), the target is replaced by the library item.
+*/
 export async function dragLibraryItemOntoMonomer(
   page: Page,
   libraryItem: Monomer | PresetType,
@@ -40,10 +40,10 @@ export async function dragLibraryItemOntoMonomer(
 }
 
 /**
- * Starts dragging a library item (hovers its card and presses the mouse
- * button) without releasing — use with `moveDragToCanvasCoords` +
- * `releaseDrag` / `cancelDrag` to assert mid-drag states.
- */
+Starts dragging a library item (hovers its card and presses the mouse
+button) without releasing — use with `moveDragToCanvasCoords` +
+`releaseDrag` / `cancelDrag` to assert mid-drag states.
+*/
 export async function startDragLibraryItem(
   page: Page,
   libraryItem: Monomer | PresetType,
@@ -79,9 +79,9 @@ export async function releaseDrag(page: Page) {
 }
 
 /**
- * Moves over the monomer library (outside the canvas) and releases the mouse,
- * cancelling the drag without placing anything on the canvas.
- */
+Moves over the monomer library (outside the canvas) and releases the mouse,
+cancelling the drag without placing anything on the canvas.
+*/
 export async function cancelDrag(page: Page) {
   const libraryBB = await Library(page).libraryBody.boundingBox();
   if (!libraryBB) {

@@ -176,9 +176,9 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   test('Setting reacting center', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3431
-     * Description: setting reacting center option should have no impact on SMARTS output but warning should be displayed
-     */
+    Test case: https://github.com/epam/ketcher/issues/3431
+    Description: setting reacting center option should have no impact on SMARTS output but warning should be displayed
+    */
     await BondPropertiesDialog(page).setOptions({
       reactingCenter: BondReactingCenterOption.Center,
     });
@@ -191,8 +191,8 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   test('Setting custom query - any OR double', async () => {
     /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
-     */
+    This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
+    */
     await BondPropertiesDialog(page).setOptions({
       customQuery: '~,=',
     });
@@ -202,9 +202,9 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 
   test('Setting custom query - directional bond "up or unspecified"', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/1281
-     * Description: "or unspecified"("?") quantifier should be supported
-     */
+    Test case: https://github.com/epam/Indigo/issues/1281
+    Description: "or unspecified"("?") quantifier should be supported
+    */
     await BondPropertiesDialog(page).setOptions({
       customQuery: '/?',
     });
@@ -232,9 +232,9 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3372
-     * Description: If topology = "Either" then customQuery should be empty e.g. Type=Single, Topology=Either => customQuery=-
-     */
+    Test case: https://github.com/epam/ketcher/issues/3372
+    Description: If topology = "Either" then customQuery should be empty e.g. Type=Single, Topology=Either => customQuery=-
+    */
     const expectedValue = '-';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Single);
     await BondPropertiesDialog(page).selectBondTopology(
@@ -249,9 +249,9 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Topology = "Ring" and Type = "Double" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3372
-     * Description: If topology = "Ring" then customQuery should be @, e.g. Type=Double, Topology=Ring=>customQuery==;@
-     */
+    Test case: https://github.com/epam/ketcher/issues/3372
+    Description: If topology = "Ring" then customQuery should be @, e.g. Type=Double, Topology=Ring=>customQuery==;@
+    */
     const expectedValue = '=;@';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Double);
     await BondPropertiesDialog(page).selectBondTopology(
@@ -265,9 +265,9 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Topology = "Chain" and Type = "Triple" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3372
-     * Description: If topology = "Chain" then customQuery should be !@, e.g. Type=Triple, Topology=Chain=>customQuery=#;!@
-     */
+    Test case: https://github.com/epam/ketcher/issues/3372
+    Description: If topology = "Chain" then customQuery should be !@, e.g. Type=Triple, Topology=Chain=>customQuery=#;!@
+    */
     const expectedValue = '#;!@';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Triple);
     await BondPropertiesDialog(page).selectBondTopology(
@@ -281,10 +281,10 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Type = "Aromatic" and Reacting Center = "Center" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3328
-     * Description: aromatic bond should be converted to custom query as: :
-     * Reacting Center option should be ingored at custom query
-     */
+    Test case: https://github.com/epam/ketcher/issues/3328
+    Description: aromatic bond should be converted to custom query as: :
+    Reacting Center option should be ingored at custom query
+    */
     const expectedValue = ':';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Aromatic);
     await BondPropertiesDialog(page).selectBondReactingCenter(
@@ -298,10 +298,10 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Type = "Any" and Reacting Center = "Made/broken" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3328
-     * Description: any bond should be converted to custom query as: ~
-     * Reacting Center option should be ingored at custom query
-     */
+    Test case: https://github.com/epam/ketcher/issues/3328
+    Description: any bond should be converted to custom query as: ~
+    Reacting Center option should be ingored at custom query
+    */
     const expectedValue = '~';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.Any);
     await BondPropertiesDialog(page).selectBondReactingCenter(
@@ -315,10 +315,10 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Type = "Single up" and Reacting Center = "Order changes" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3328
-     * Description: Single up bond should be converted to custom query as: /
-     * Reacting Center option should be ingored at custom query
-     */
+    Test case: https://github.com/epam/ketcher/issues/3328
+    Description: Single up bond should be converted to custom query as: /
+    Reacting Center option should be ingored at custom query
+    */
     const expectedValue = '/';
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleUp);
     await BondPropertiesDialog(page).selectBondReactingCenter(
@@ -332,9 +332,9 @@ test.describe('Checking converting bond attributes to custom query', () => {
 
   test('Converting Type = "Single down" to custom query', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3328
-     * Description: Single down bond should be converted to custom query as: \
-     */
+    Test case: https://github.com/epam/ketcher/issues/3328
+    Description: Single down bond should be converted to custom query as: \
+    */
     const expectedValue = String.raw`${String.fromCharCode(92)}`;
     await BondPropertiesDialog(page).selectBondType(BondTypeOption.SingleDown);
     await BondPropertiesDialog(page).checkCustomQueryCheckbox();
@@ -358,9 +358,9 @@ test.describe('Checking saving attributes to .ket file', () => {
 
   test('Save *.ket file with custom query for bond attribute', async () => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3328
-     * Description: In KET format customQuery should be saved into the bond object without other properties
-     */
+    Test case: https://github.com/epam/ketcher/issues/3328
+    Description: In KET format customQuery should be saved into the bond object without other properties
+    */
     await BondPropertiesDialog(page).setOptions({
       customQuery: '=;@',
     });

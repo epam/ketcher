@@ -71,9 +71,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction with atom and bond properties', async () => {
     /**
-     * Test case: EPMLSOPKET-1897
-     * Description: Reaction with atom and bond properties
-     */
+    Test case: EPMLSOPKET-1897
+    Description: Reaction with atom and bond properties
+    */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/reaction-with-atom-and-bond-properties-saved.rxn',
@@ -83,9 +83,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction from file that contains Rgroup', async () => {
     /**
-     * Test case: EPMLSOPKET-1901
-     * Description: Reaction from file that contains Rgroup
-     */
+    Test case: EPMLSOPKET-1901
+    Description: Reaction from file that contains Rgroup
+    */
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await drawBenzeneRing(page);
@@ -123,9 +123,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction from file that contains Sgroup', async () => {
     /**
-     * Test case: EPMLSOPKET-1903
-     * Description: Reaction from file that contains Sgroup
-     */
+    Test case: EPMLSOPKET-1903
+    Description: Reaction from file that contains Sgroup
+    */
     test.slow();
     await openFileAndAddToCanvas(
       page,
@@ -146,9 +146,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - File without arrow or(and) plus-symbol', async () => {
     /**
-     * Test case: EPMLSOPKET-1905
-     * Description: File without arrow or(and) plus-symbol
-     */
+    Test case: EPMLSOPKET-1905
+    Description: File without arrow or(and) plus-symbol
+    */
     test.slow();
     await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -195,9 +195,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Structure is not missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures', async () => {
     /**
-     * Test case: EPMLSOPKET-8904
-     * Description: Structure isn't missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures
-     */
+    Test case: EPMLSOPKET-8904
+    Description: Structure isn't missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures
+    */
     await pasteFromClipboardAndOpenAsNewProject(
       page,
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
@@ -234,9 +234,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Import the structure from the saved RXN 2000/3000 file', async () => {
     /**
-     * Test case: EPMLSOPKET-12964
-     * Description: Import the structure from the saved RXN 2000/3000 file
-     */
+    Test case: EPMLSOPKET-12964
+    Description: Import the structure from the saved RXN 2000/3000 file
+    */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V3000/reaction-with-several-components.rxn',
@@ -246,9 +246,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Open the RXN v3000 file with S-Group Properties Type = Multiple group', async () => {
     /**
-     * Test case: EPMLSOPKET-12967 for Open RXN v3000 file with 'S-Group Properties Type = Multiple group rxnV3000Multiple.zip
-     * Description: Open the RXN v3000 file with S-Group Properties Type = Multiple group
-     */
+    Test case: EPMLSOPKET-12967 for Open RXN v3000 file with 'S-Group Properties Type = Multiple group rxnV3000Multiple.zip
+    Description: Open the RXN v3000 file with S-Group Properties Type = Multiple group
+    */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V3000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
@@ -258,9 +258,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Open the RXN v2000 file with S-Group Properties Type = Multiple group', async () => {
     /**
-     * Test case: EPMLSOPKET-12967 for Open RXN v2000 file with 'S-Group Properties Type = Multiple group rxnV2000Multiple.zip
-     * Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
-     */
+    Test case: EPMLSOPKET-12967 for Open RXN v2000 file with 'S-Group Properties Type = Multiple group rxnV2000Multiple.zip
+    Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
+    */
     await openFileAndAddToCanvas(
       page,
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
@@ -270,18 +270,18 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction from file that contains abbreviation 1/2 - open', async () => {
     /**
-     * Test case: EPMLSOPKET-1899(1)
-     * Description: Reaction with abbreviations is opened and saved correctly
-     */
+    Test case: EPMLSOPKET-1899(1)
+    Description: Reaction with abbreviations is opened and saved correctly
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/sec-butyl-abr.rxn');
     await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - Reaction from file that contains abbreviation 2/2 - save', async () => {
     /**
-     * Test case: EPMLSOPKET-1899(2)
-     * Description: Reaction with abbreviations is opened and saved correctly
-     */
+    Test case: EPMLSOPKET-1899(2)
+    Description: Reaction with abbreviations is opened and saved correctly
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/sec-butyl-abr.rxn');
     await verifyFileExport(
       page,
@@ -298,9 +298,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction from file that contains Heteroatoms 1/2 - open', async () => {
     /**
-     * Test case: EPMLSOPKET-1904(1)
-     * Description: Reaction with heteroatoms is opened and saved correctly
-     */
+    Test case: EPMLSOPKET-1904(1)
+    Description: Reaction with heteroatoms is opened and saved correctly
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/heteroatoms.rxn');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -308,9 +308,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - Reaction from file that contains Heteroatoms 2/2 - save', async () => {
     /**
-     * Test case: EPMLSOPKET-1904(2)
-     * Description: Reaction with heteroatoms is opened and saved correctly
-     */
+    Test case: EPMLSOPKET-1904(2)
+    Description: Reaction with heteroatoms is opened and saved correctly
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/heteroatoms.rxn');
     await verifyFileExport(
       page,
@@ -322,9 +322,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - V3000 rxn file contains Rgroup 1/2 - open', async () => {
     /**
-     * Test case: EPMLSOPKET-1902(1)
-     * Description: Reaction can be opened correctly from rxn V3000 file
-     */
+    Test case: EPMLSOPKET-1902(1)
+    Description: Reaction can be opened correctly from rxn V3000 file
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V3000/r-group-V3000.rxn');
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
@@ -332,9 +332,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
   test('Open and Save file - V3000 rxn file contains Rgroup 2/2 - save', async () => {
     /**
-     * Test case: EPMLSOPKET-1902(2)
-     * Description: Reaction can be saved correctly to rxn V3000 file
-     */
+    Test case: EPMLSOPKET-1902(2)
+    Description: Reaction can be saved correctly to rxn V3000 file
+    */
     await openFileAndAddToCanvas(page, 'Rxn-V3000/r-group-V3000.rxn');
     await verifyFileExport(
       page,

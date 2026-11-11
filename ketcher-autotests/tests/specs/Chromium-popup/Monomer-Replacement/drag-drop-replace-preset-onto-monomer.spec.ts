@@ -127,9 +127,9 @@ async function collectIds(type: MonomerLocatorOptions): Promise<Set<string>> {
 }
 
 /**
- * The monomers of `type` created by a replacement: their stable ids were not
- * present before the drop (old components are deleted, new ones get fresh ids).
- */
+The monomers of `type` created by a replacement: their stable ids were not
+present before the drop (old components are deleted, new ones get fresh ids).
+*/
 async function findNewMonomers(
   type: MonomerLocatorOptions,
   oldIds: Set<string>,

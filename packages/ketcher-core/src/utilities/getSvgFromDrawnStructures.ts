@@ -10,9 +10,9 @@ const TRANSIENT_LAYERS_SELECTOR =
 type StructuresClientRect = Pick<DOMRect, 'x' | 'y' | 'width' | 'height'>;
 
 /**
- * Bounding rect of the drawn structures without the transient views.
- * Falls back to the whole group if none of its other children has a size.
- */
+Bounding rect of the drawn structures without the transient views.
+Falls back to the whole group if none of its other children has a size.
+*/
 const getDrawnStructuresClientRect = (
   drawnStructures: Element,
 ): StructuresClientRect => {

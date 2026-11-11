@@ -620,9 +620,9 @@ test.describe('Hot key Del', () => {
     page,
   }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3918
-     * Description: Part of structure deleted and canvas can be cleared. No console errors.
-     */
+    Test case: https://github.com/epam/ketcher/issues/3918
+    Description: Part of structure deleted and canvas can be cleared. No console errors.
+    */
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(

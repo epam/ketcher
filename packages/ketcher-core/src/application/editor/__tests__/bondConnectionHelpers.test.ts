@@ -1,9 +1,9 @@
 /**
- * Unit tests for shouldInvokeConnectionModal and findPresetMonomerForBonding.
- *
- * We stub only the BaseMonomer properties actually checked by the functions,
- * keeping tests focused and avoiding the need to construct full domain objects.
- */
+Unit tests for shouldInvokeConnectionModal and findPresetMonomerForBonding.
+
+We stub only the BaseMonomer properties actually checked by the functions,
+keeping tests focused and avoiding the need to construct full domain objects.
+*/
 import {
   shouldInvokeConnectionModal,
   findPresetMonomerForBonding,
@@ -99,9 +99,9 @@ function makeAmbiguousMonomer(
 }
 
 /**
- * Build a stub monomer that optionally passes instanceof checks for
- * Sugar, Phosphate, or RNABase, and has a configurable free AP list.
- */
+Build a stub monomer that optionally passes instanceof checks for
+Sugar, Phosphate, or RNABase, and has a configurable free AP list.
+*/
 function makeStub(
   type: 'Sugar' | 'Phosphate' | 'RNABase' | 'Peptide',
   freeAPs: AttachmentPointName[] = [

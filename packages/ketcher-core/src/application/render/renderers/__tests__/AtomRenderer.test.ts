@@ -14,10 +14,10 @@ jest.mock('application/editor/editorSingleton', () => ({
 }));
 
 /**
- * Helper to call a getter on AtomRenderer without going through the
- * full constructor (which requires a live D3/SVG canvas and editor instance).
- * We set `this.atom` directly on the prototype context using a partial mock.
- */
+Helper to call a getter on AtomRenderer without going through the
+full constructor (which requires a live D3/SVG canvas and editor instance).
+We set `this.atom` directly on the prototype context using a partial mock.
+*/
 function callGetter<K extends keyof AtomRenderer>(
   getterName: K,
   atom: Pick<Atom, 'label' | 'properties'>,

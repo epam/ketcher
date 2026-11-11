@@ -21,9 +21,9 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 import type { Phosphate } from 'domain/entities/Phosphate';
 
 /**
- * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
- * and creating extra dependency edges in core entity/helper graph.
- */
+Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
+and creating extra dependency edges in core entity/helper graph.
+*/
 type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
 type AmbiguousMonomerLike = {
@@ -32,9 +32,9 @@ type AmbiguousMonomerLike = {
 };
 
 /**
- * Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
- * to avoid introducing an additional dependency edge into the entity graph.
- */
+Runtime guard for ambiguous monomers without importing the AmbiguousMonomer class,
+to avoid introducing an additional dependency edge into the entity graph.
+*/
 const isAmbiguousMonomerEntity = (
   monomer?: BaseMonomer,
 ): monomer is AmbiguousMonomerEntity => {
@@ -77,9 +77,9 @@ const isMonomerOfClass = (
 };
 
 /**
- * Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
- * This keeps runtime checks independent from the AmbiguousMonomer class constructor.
- */
+Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
+This keeps runtime checks independent from the AmbiguousMonomer class constructor.
+*/
 type ChainMonomerType = 'Peptide' | 'Phosphate' | 'Sugar' | 'UnsplitNucleotide';
 const CHAIN_MONOMER_TYPE_TO_CLASS: Record<ChainMonomerType, KetMonomerClass> = {
   Peptide: KetMonomerClass.AminoAcid,

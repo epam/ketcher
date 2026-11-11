@@ -1,15 +1,15 @@
 import { Page, Locator } from '@fixtures';
 
 /**
- * Structural bond inspection for the macromolecule canvas.
- *
- * Bonds are rendered with stable data attributes in both flex and snake modes
- * (see FlexModePolymerBondRenderer / SnakeModePolymerBondRenderer /
- * MonomerToAtomBondRenderer): `data-testid="bond"`, `data-frommonomerid`,
- * `data-tomonomerid` (absent on monomer-to-atom bonds), and
- * `data-fromattachmentpoint` / `data-toattachmentpoint`. Prefer these helpers
- * over screenshots whenever a test needs to assert bond existence or structure.
- */
+Structural bond inspection for the macromolecule canvas.
+
+Bonds are rendered with stable data attributes in both flex and snake modes
+(see FlexModePolymerBondRenderer / SnakeModePolymerBondRenderer /
+MonomerToAtomBondRenderer): `data-testid="bond"`, `data-frommonomerid`,
+`data-tomonomerid` (absent on monomer-to-atom bonds), and
+`data-fromattachmentpoint` / `data-toattachmentpoint`. Prefer these helpers
+over screenshots whenever a test needs to assert bond existence or structure.
+*/
 
 const BOND_TEST_ID = 'bond';
 
@@ -40,9 +40,9 @@ export async function getMonomerBonds(
 }
 
 /**
- * Number of bonds connected to a canvas monomer. Pass `attachmentPoint`
- * (e.g. 'R1') to count only bonds using that attachment point on either end.
- */
+Number of bonds connected to a canvas monomer. Pass `attachmentPoint`
+(e.g. 'R1') to count only bonds using that attachment point on either end.
+*/
 export async function countMonomerBonds(
   page: Page,
   monomer: Locator,
@@ -98,10 +98,10 @@ export interface BondAttachmentPoints {
 }
 
 /**
- * Attachment points of the bond between two canvas monomers, or null if they
- * are not bonded. The `from`/`to` roles follow the bond's own direction and do
- * not necessarily match the argument order.
- */
+Attachment points of the bond between two canvas monomers, or null if they
+are not bonded. The `from`/`to` roles follow the bond's own direction and do
+not necessarily match the argument order.
+*/
 export async function getBondAttachmentPoints(
   page: Page,
   monomerA: Locator,

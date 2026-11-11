@@ -4,18 +4,18 @@ import { waitForRender } from '../waitForRender';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 /**
- * Waits till event REQUEST_IS_FINISHED emits
- * from ketcher package and only then resolve promise
- * if event do not trigger then reject promise with message 'Timeout exeeded'
- *
- * Usage:
- * Use it to prevent delays in test cases, create custom helpers above it.
- *
- * Check addToCanvas function, for example.
- * @param page - playwright object
- * @param callback - any function that uses Locator.click, see playwright docs for Locator
- * @returns Promise<string>
- */
+Waits till event REQUEST_IS_FINISHED emits
+from ketcher package and only then resolve promise
+if event do not trigger then reject promise with message 'Timeout exeeded'
+
+Usage:
+Use it to prevent delays in test cases, create custom helpers above it.
+
+Check addToCanvas function, for example.
+@param page - playwright object
+@param callback - any function that uses Locator.click, see playwright docs for Locator
+@returns Promise<string>
+*/
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   const loadingSpinner = page.getByTestId('loading-spinner').first();
 

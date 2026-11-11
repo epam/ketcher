@@ -178,9 +178,9 @@ test.describe('Bond Properties', () => {
 
   test(`Change 'Type' field value - save`, async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1459
-     * Description: The saved structure is correctly rendered on the canvas
-     * */
+    Test case: EPMLSOPKET-1459
+    Description: The saved structure is correctly rendered on the canvas
+    */
 
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
     await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
@@ -282,9 +282,9 @@ test.describe('Bond Properties', () => {
 
   test(`Change 'Topology' field value - 2/2 open`, async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1861(2)
-     * Description: The saved structure is correctly rendered on the canvas
-     */
+    Test case: EPMLSOPKET-1861(2)
+    Description: The saved structure is correctly rendered on the canvas
+    */
 
     await openFileAndAddToCanvas(
       page,

@@ -11,8 +11,8 @@ type Props = {
   leavingAtomLabel: AtomLabel;
   editor: Editor;
   /** When provided, hover highlights this specific atom instead of using the
-   * name-keyed connection map. Use this when multiple components share the
-   * same AP name (e.g. base R1 and phosphate R1). */
+  name-keyed connection map. Use this when multiple components share the
+  same AP name (e.g. base R1 and phosphate R1). */
   atomId?: number;
   onLeavingAtomChange?: (
     apName: AttachmentPointName,
@@ -21,10 +21,10 @@ type Props = {
 };
 
 /**
- * Displays a readonly (inter-component connection) attachment point.
- * Hovering highlights the corresponding atom on canvas,
- * and hovering the atom on canvas highlights this row in the panel.
- */
+Displays a readonly (inter-component connection) attachment point.
+Hovering highlights the corresponding atom on canvas,
+and hovering the atom on canvas highlights this row in the panel.
+*/
 const ReadonlyAttachmentPoint = ({
   name,
   leavingAtomLabel,

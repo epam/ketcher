@@ -1,7 +1,7 @@
 /**
- * Unit tests for SettingsMigration
- * Tests migration from namespaced format back to flat format
- */
+Unit tests for SettingsMigration
+Tests migration from namespaced format back to flat format
+*/
 
 import { SettingsMigration } from '../SettingsMigration';
 

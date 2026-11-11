@@ -745,9 +745,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   });
   test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async () => {
     /**
-     * Test case: #3531
-     * Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
-     */
+    Test case: #3531
+    Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
+    */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -762,9 +762,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
   test('Check that "containsReaction" method returns "false" if structure has not a reaction in micro mode', async () => {
     /**
-     * Test case: #3531
-     * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
-     */
+    Test case: #3531
+    Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
+    */
     await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
       return globalThis.window.ketcher.containsReaction();

@@ -35,9 +35,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting charge to zero', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3339
-     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
-     */
+    Test case: https://github.com/epam/ketcher/issues/3339
+    Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+    */
     test.fail();
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Charge: '0' },
@@ -72,9 +72,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting isotope (atomic mass) to zero', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3339
-     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
-     */
+    Test case: https://github.com/epam/ketcher/issues/3339
+    Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+    */
     test.fail();
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Isotope: '0' },
@@ -85,8 +85,8 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting valence', async ({ page }) => {
     /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
-     */
+    This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
+    */
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Valence: Valence.Four },
     });
@@ -96,9 +96,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting radical', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3431
-     * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
-     */
+    Test case: https://github.com/epam/ketcher/issues/3431
+    Description: setting redical option should have no impact on SMARTS output but warning should be displayed
+    */
     await AtomPropertiesDialog(page).setOptions({
       GeneralProperties: { Radical: Radical.Monoradical },
     });
@@ -109,18 +109,18 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Check that cannot add Charge more than -15', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3943
-     * Description: Validation should be added +-15 range allowed only
-     */
+    Test case: https://github.com/epam/ketcher/issues/3943
+    Description: Validation should be added +-15 range allowed only
+    */
     await AtomPropertiesDialog(page).fillCharge('-16');
     expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });
 
   test('Check that cannot add Charge more than 15', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3943
-     * Description: Validation should be added +-15 range allowed only
-     */
+    Test case: https://github.com/epam/ketcher/issues/3943
+    Description: Validation should be added +-15 range allowed only
+    */
     await AtomPropertiesDialog(page).fillCharge('16');
     expect(AtomPropertiesDialog(page).applyButton).toBeDisabled();
   });

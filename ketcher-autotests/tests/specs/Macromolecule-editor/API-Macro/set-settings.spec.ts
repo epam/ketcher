@@ -17,9 +17,9 @@ test.describe('getKet', () => {
 
   test('Set bond Thickness to 22', async ({ page }) => {
     /**
-     * Test case: #3531
-     * Description: 'setSettings' method does nothing, as there are no settings for macro mode yet
-     */
+    Test case: #3531
+    Description: 'setSettings' method does nothing, as there are no settings for macro mode yet
+    */
     await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await page.waitForFunction(() => globalThis.window.ketcher);
 

@@ -24,9 +24,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting reaction flag - Inverts', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3431
-     * Description: setting reaction flag - inverts should have no impact on SMARTS output but warning should be displayed
-     */
+    Test case: https://github.com/epam/ketcher/issues/3431
+    Description: setting reaction flag - inverts should have no impact on SMARTS output but warning should be displayed
+    */
     await AtomPropertiesDialog(page).setOptions({
       ReactionFlags: {
         Inversion: Inversion.Inverts,
@@ -39,9 +39,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting reaction flag - Retains', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3431
-     * Description: setting reaction flag - retains should have no impact on SMARTS output but warning should be displayed
-     */
+    Test case: https://github.com/epam/ketcher/issues/3431
+    Description: setting reaction flag - retains should have no impact on SMARTS output but warning should be displayed
+    */
     await AtomPropertiesDialog(page).setOptions({
       ReactionFlags: {
         Inversion: Inversion.Retains,
@@ -54,9 +54,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test('Setting reaction flag - Exact change checked', async ({ page }) => {
     /**
-     * Test case: https://github.com/epam/ketcher/issues/3431
-     * Description: checking exact change option at reaction flag section should have no impact on SMARTS output but warning should be displayed
-     */
+    Test case: https://github.com/epam/ketcher/issues/3431
+    Description: checking exact change option at reaction flag section should have no impact on SMARTS output but warning should be displayed
+    */
     await AtomPropertiesDialog(page).setOptions({
       ReactionFlags: {
         ExactChangeCheckbox: true,

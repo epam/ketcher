@@ -167,13 +167,13 @@ export function convertMonomerTemplateToStruct(
 }
 
 /**
- * Builds a display label for a leaving group atom, appending implicit
- * hydrogens computed from the atom's standard valence and the number of
- * bonds it has within the monomer template structure (e.g. an "N" atom
- * with a single bond becomes "NH2", an "O" atom with a single bond
- * becomes "OH").
- * @internal Exported for testing purposes
- */
+Builds a display label for a leaving group atom, appending implicit
+hydrogens computed from the atom's standard valence and the number of
+bonds it has within the monomer template structure (e.g. an "N" atom
+with a single bond becomes "NH2", an "O" atom with a single bond
+becomes "OH").
+@internal Exported for testing purposes
+*/
 export function getLeavingGroupLabelWithHydrogens(
   struct: Struct,
   atomId: number,

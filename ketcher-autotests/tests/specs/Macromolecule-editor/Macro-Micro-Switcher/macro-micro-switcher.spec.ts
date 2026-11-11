@@ -2060,10 +2060,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Verify that added to Canvas images together (PNG, SVG) are not presented on the Canvas after switching to Macro mode and presented after returning to Micro', async () => {
     /**
-     * Test case: #4911
-     * Description: Added to Canvas images together (PNG, SVG) are not presented on the
-     * Canvas after switching to Macro mode and presented after returning to Micro
-     */
+    Test case: #4911
+    Description: Added to Canvas images together (PNG, SVG) are not presented on the
+    Canvas after switching to Macro mode and presented after returning to Micro
+    */
 
     await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
@@ -2075,10 +2075,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2028
-     * Description: Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro
-     */
+    Test case: https://github.com/epam/Indigo/issues/2028
+    Description: Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro
+    */
 
     const fileContent = await readFileContent('CDX/image-png-expected.cdx');
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
@@ -2092,10 +2092,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2028
-     * Description: Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro
-     */
+    Test case: https://github.com/epam/Indigo/issues/2028
+    Description: Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro
+    */
 
     await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
@@ -2107,10 +2107,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2209
-     * Description: Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
-     */
+    Test case: https://github.com/epam/Indigo/issues/2209
+    Description: Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+    */
     await openFileAndAddToCanvas(page, 'CDX/image-svg-expected.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -2121,10 +2121,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDXML file) of allowed formats (SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2209
-     * Description: Added to Canvas (from CDXML file) of allowed formats (SVG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
-     */
+    Test case: https://github.com/epam/Indigo/issues/2209
+    Description: Added to Canvas (from CDXML file) of allowed formats (SVG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+    */
 
     await openFileAndAddToCanvas(page, 'CDXML/image-svg-expected.cdxml');
     await takeEditorScreenshot(page);
@@ -2136,10 +2136,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2209
-     * Description: Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
-     */
+    Test case: https://github.com/epam/Indigo/issues/2209
+    Description: Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+    */
     await openFileAndAddToCanvas(page, 'CDX/image-png-svg-together.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -2150,10 +2150,10 @@ test.describe('Macro-Micro-Switcher', () => {
 
   test('Added to Canvas (from CDXML file) of allowed formats together (PNG, SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2209
-     * Description: Added to Canvas (from CDXML file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
-     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
-     */
+    Test case: https://github.com/epam/Indigo/issues/2209
+    Description: Added to Canvas (from CDXML file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
+    to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+    */
 
     await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);

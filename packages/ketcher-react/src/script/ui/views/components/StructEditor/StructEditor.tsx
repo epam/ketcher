@@ -166,8 +166,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
 
   // TODO https://github.com/epam/ketcher/issues/3472
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   scrollCanvas(event: WheelEvent) {
     if (event.shiftKey) {
       this.handleHorizontalScroll(event);
@@ -177,8 +177,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * @param {WheelEvent} event
-   */
+  @param {WheelEvent} event
+  */
   handleHorizontalScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
@@ -192,9 +192,9 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   }
 
   /**
-   * For mouse wheel and touchpad
-   * @param {WheelEvent} event
-   */
+  For mouse wheel and touchpad
+  @param {WheelEvent} event
+  */
   handleScroll(event: WheelEvent) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,

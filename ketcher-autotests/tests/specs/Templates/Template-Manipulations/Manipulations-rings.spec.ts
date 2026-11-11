@@ -20,15 +20,15 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 /**
- * Get right bond by attributes.
- * If there are no bonds after filtering throws error.
- * @param page - playwright page object
- * @param attributes - Bond attributes like type, angle, begin etc.
- * See BondAttributes in @utils/canvas/types.ts for full list
- * @param index - number to search, starting from 0
- * @returns {BondXy} - searched Bond right object + x, y coordinates
- * returned example {type: 1, x: 123, y: 432 }
- */
+Get right bond by attributes.
+If there are no bonds after filtering throws error.
+@param page - playwright page object
+@param attributes - Bond attributes like type, angle, begin etc.
+See BondAttributes in @utils/canvas/types.ts for full list
+@param index - number to search, starting from 0
+@returns {BondXy} - searched Bond right object + x, y coordinates
+returned example {type: 1, x: 123, y: 432 }
+*/
 
 function getRingButtonName(value: RingButton): string | undefined {
   return Object.entries(RingButton).find(([, val]) => val === value)?.[0];

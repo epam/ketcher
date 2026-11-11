@@ -45,9 +45,9 @@ test.describe('open files with different formats', () => {
   */
   test('Open file - Input .mol, InChi', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1835
-     * Description: Two structures are added to canvas - one opened from clipboard, another from file
-     */
+    Test case: EPMLSOPKET-1835
+    Description: Two structures are added to canvas - one opened from clipboard, another from file
+    */
     // add first stucture from clipboard to canvas
     const fileContent = await readFileContent('Txt/1840225-mol-1.txt');
 
@@ -61,9 +61,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Input .rxn string', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-2860
-     * Description: Two structures are added to canvas - one opened from clipboard, another from file
-     */
+    Test case: EPMLSOPKET-2860
+    Description: Two structures are added to canvas - one opened from clipboard, another from file
+    */
     // add first stucture from clipboard to canvas
     const fileContent = await readFileContent('Txt/1879938-rxn-1[1].txt');
 
@@ -75,9 +75,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Input InChi-string 1/3', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1837
-     * Description: Open structures from InChi string
-     */
+    Test case: EPMLSOPKET-1837
+    Description: Open structures from InChi string
+    */
     // add first stucture from clipboard to canvas
     const fileContent = await readFileContent('Txt/1837-inchi-1.txt');
 
@@ -88,9 +88,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Input InChi-string 2/3', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1837
-     * Description: Open structures from InChi string
-     */
+    Test case: EPMLSOPKET-1837
+    Description: Open structures from InChi string
+    */
     // add first stucture from clipboard to canvas
     const fileContent = await readFileContent('Txt/1837-inchi-2.txt');
 
@@ -101,9 +101,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Input InChi-string 3/3', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1837
-     * Description: Open structures from InChi string
-     */
+    Test case: EPMLSOPKET-1837
+    Description: Open structures from InChi string
+    */
     // add first structure from clipboard to canvas
     const fileContent = await readFileContent('Txt/1837-inchi-3.txt');
 
@@ -114,9 +114,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Open *.mol file 1/2', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1838
-     * Description: Open structures from mol file
-     */
+    Test case: EPMLSOPKET-1838
+    Description: Open structures from mol file
+    */
     // add first structure from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -127,9 +127,9 @@ test.describe('open files with different formats', () => {
 
   test('Open file - Open *.mol file 2/2', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-1838
-     * Description: Open structures from mol file
-     */
+    Test case: EPMLSOPKET-1838
+    Description: Open structures from mol file
+    */
     // add first stucture from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
       page,

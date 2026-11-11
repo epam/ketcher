@@ -1339,9 +1339,9 @@ test.describe('Sequence edit mode', () => {
 
   test('Check that when the caret (sync edit mode) is placed to the right of a symbol associated with a number AND that number is >9, the number should not be visible', async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6425
-     * Description: When the caret (sync edit mode) is placed to the right of a symbol associated with
-     * a number AND that number is >9, the number should not be visible.
+     * Test cases: https://github.com/epam/ketcher/issues/6425 and #8960
+     * In sync editing, upper counters for a strand longer than nine symbols
+     * stay hidden when the caret moves. Lower counters remain visible.
      * Scenario:
      * 1. Go to Macro - Sequence mode - RNA
      * 2. Start typing "AAAAAAAAAA" in the sequence
@@ -1354,11 +1354,21 @@ test.describe('Sequence edit mode', () => {
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
+    const upperCounters = page.locator(
+      'g[data-isAntisense="false"] > text[fill="#7C7C7F"]',
+    );
+    const lowerCounters = page.locator(
+      'g[data-isAntisense="true"] > text[fill="#7C7C7F"]',
+    );
+    await expect(upperCounters).toHaveCount(0);
+    await expect(lowerCounters).toHaveText(['10']);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await expect(upperCounters).toHaveCount(0);
+    await expect(lowerCounters).toHaveText(['10']);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1368,8 +1378,8 @@ test.describe('Sequence edit mode', () => {
   test('Check that when the caret is moved from the above described position, or edit mode changed (to non-sync), or edit mode exited (view mode entered) the number reappear', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6425
-     * Description: When the caret is moved from the above described position, or edit mode changed (to non-sync),
-     * or edit mode exited (view mode entered) the number reappear.
+     * Description: Upper counters return in non-sync or view mode (#8960).
+     * Lower counters remain visible in both modes and during sync editing.
      * Scenario:
      * 1. Go to Macro - Sequence mode - RNA
      * 2. Start typing "AAAAAAAAAA" in the sequence
@@ -1381,15 +1391,28 @@ test.describe('Sequence edit mode', () => {
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
+    const upperCounters = page.locator(
+      'g[data-isAntisense="false"] > text[fill="#7C7C7F"]',
+    );
+    const lowerCounters = page.locator(
+      'g[data-isAntisense="true"] > text[fill="#7C7C7F"]',
+    );
+    await expect(upperCounters).toHaveCount(0);
+    await expect(lowerCounters).toHaveText(['10']);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
+    await expect(upperCounters).toHaveText(['10']);
+    await expect(lowerCounters).toHaveText(['10']);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await keyboardPressOnCanvas(page, 'Escape');
+    await expect(upperCounters).toHaveText(['10']);
+    await expect(lowerCounters).toHaveText(['10']);
   });
 
   test('Verify that options "Copy", "Paste" and "Delete" added to the r-click drop down menu', async () => {

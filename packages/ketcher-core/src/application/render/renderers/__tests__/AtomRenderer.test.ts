@@ -7,10 +7,15 @@ import {
 import { AtomList } from 'domain/entities/atomList';
 import type { Atom } from 'domain/entities/CoreAtom';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 // The singleton needs a live canvas; isLabelVisible only reads its viewModel.
 jest.mock('application/editor/editorSingleton', () => ({
   provideEditorInstance: jest.fn(),
+}));
+
+jest.mock('application/ketcherProvider', () => ({
+  ketcherProvider: { getKetcher: jest.fn() },
 }));
 
 /**
@@ -109,6 +114,11 @@ describe('AtomRenderer.isLabelVisible', () => {
     (provideEditorInstance as jest.Mock).mockReturnValue({
       viewModel: { atomsToHalfEdges: new Map([[atom, halfEdges]]) },
     });
+    (ketcherProvider.getKetcher as jest.Mock).mockReturnValue({
+      settingsService: {
+        getSettings: () => ({ showValenceWarnings: true }),
+      },
+    });
     const descriptor = Object.getOwnPropertyDescriptor(
       AtomRenderer.prototype,
       'isLabelVisible',
@@ -116,10 +126,14 @@ describe('AtomRenderer.isLabelVisible', () => {
     if (!descriptor?.get) {
       throw new Error('No getter found for isLabelVisible');
     }
-    return descriptor.get.call({
-      atom,
-      isAtomTerminal: neighborCount <= 1,
+    // Use an object linked to AtomRenderer.prototype so internal getters
+    // such as `shouldDisplayBadValenceWarning` resolve via the prototype.
+    const context = Object.create(AtomRenderer.prototype);
+    context.atom = atom;
+    Object.defineProperty(context, 'isAtomTerminal', {
+      get: () => neighborCount <= 1,
     });
+    return descriptor.get.call(context);
   };
 
   const plainCarbon = {

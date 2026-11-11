@@ -59,6 +59,19 @@ export const saveLibraryMonomer = async (
       template.aliasHELM = originalMonomerTemplate.aliasHELM;
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
+  } else {
+    /*
+     * Saving as a new entry keeps the original in the library, so the new
+     * version cannot carry the aliases it was loaded with — they are unique
+     * per polymer type and would collide with the original on save. Aliases
+     * the user explicitly changed are kept.
+     */
+    if (template.aliasHELM === editedMonomerTemplate?.aliasHELM) {
+      delete template.aliasHELM;
+    }
+    if (template.aliasBILN === editedMonomerTemplate?.aliasBILN) {
+      delete template.aliasBILN;
+    }
   }
   const ref = originalRef ?? data.monomerRef;
   const ket = JSON.stringify({

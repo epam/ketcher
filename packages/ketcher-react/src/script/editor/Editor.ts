@@ -1509,7 +1509,10 @@ class Editor implements KetcherEditor {
       );
     const initialValues =
       mode === 'library'
-        ? getLibraryEditInitialValues(libraryItem)
+        ? getLibraryEditInitialValues(
+            libraryItem,
+            provideEditorInstance()?.monomersLibraryParsedJson,
+          )
         : { ...getEditInstanceInitialValues(libraryItem), libraryOnly: true };
     this.struct(structure, false);
     this.openMonomerCreationWizard(

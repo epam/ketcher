@@ -161,6 +161,24 @@ export const MacromoleculesTopToolbar = (page: Page) => {
       }
     },
 
+    /** Returns the active layout mode by expanding the layout-mode dropdown. */
+    async getActiveLayoutMode(): Promise<LayoutMode | null> {
+      await this.expandSwitchLayoutModeDropdown();
+      for (const mode of [
+        LayoutMode.Flex,
+        LayoutMode.Snake,
+        LayoutMode.Sequence,
+      ]) {
+        const item = page.getByTestId(mode).first();
+        if ((await item.getAttribute('class'))?.includes('active')) {
+          await page.keyboard.press('Escape');
+          return mode;
+        }
+      }
+      await page.keyboard.press('Escape');
+      return null;
+    },
+
     async rna() {
       await locators.rnaButton.click();
     },

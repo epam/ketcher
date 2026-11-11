@@ -1849,11 +1849,40 @@ describe('CoreEditor', () => {
           editor.drawingEntitiesManager.selectDrawingEntity(firstMonomer),
         );
 
+        const selectEntitiesHandler = jest.fn();
+        editor.events.selectEntities.add(selectEntitiesHandler);
+
         rightClick(secondMonomer);
 
         expect(firstMonomer.selected).toBe(false);
         expect(secondMonomer.selected).toBe(true);
         expect(getMenuSelection()).toEqual([secondMonomer]);
+        // as for a right-clicked monomer in Flex and Snake modes
+        expect(selectEntitiesHandler).toHaveBeenCalledWith(
+          expect.arrayContaining([secondMonomer]),
+        );
+        editor.events.selectEntities.remove(selectEntitiesHandler);
+      });
+
+      it('should keep the selection when the clicked item is selected', () => {
+        editor.renderersContainer.update(
+          editor.drawingEntitiesManager.selectDrawingEntities([
+            firstMonomer,
+            secondMonomer,
+          ]),
+        );
+        const selectEntitiesHandler = jest.fn();
+        editor.events.selectEntities.add(selectEntitiesHandler);
+
+        rightClick(secondMonomer);
+
+        expect(firstMonomer.selected).toBe(true);
+        expect(secondMonomer.selected).toBe(true);
+        expect(selectEntitiesHandler).not.toHaveBeenCalled();
+        expect(getMenuSelection()).toEqual(
+          expect.arrayContaining([firstMonomer, secondMonomer]),
+        );
+        editor.events.selectEntities.remove(selectEntitiesHandler);
       });
 
       it('should keep the selection empty when nothing is selected (#6472)', () => {

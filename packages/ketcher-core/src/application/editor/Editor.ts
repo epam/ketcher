@@ -1275,6 +1275,69 @@ export class CoreEditor {
     document.addEventListener('keydown', this.hotKeyEventHandler);
   }
 
+  private getSequenceMonomers(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const { senseNode, antisenseNode } = sequenceItemRenderer.twoStrandedNode;
+
+    return [senseNode?.monomer, antisenseNode?.monomer].filter(
+      (monomer) => monomer !== undefined,
+    );
+  }
+
+  private isSequenceItemSelected(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    return this.getSequenceMonomers(sequenceItemRenderer).some(
+      (monomer) => monomer.selected,
+    );
+  }
+
+  private selectSequenceItem(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const modelChanges =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+    modelChanges.merge(
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+    );
+    modelChanges.merge(
+      this.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+        this.getSequenceMonomers(sequenceItemRenderer),
+      ).command,
+    );
+    this.renderersContainer.update(modelChanges);
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
+  }
+
+  private getSequenceSelections(): NodesSelection {
+    return SequenceRenderer.selections.map((selectionRange) =>
+      selectionRange.flatMap((twoStrandedNodeSelection) => {
+        const result: NodeSelection[] = [];
+        const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
+
+        // Add sense node if it's selected
+        if (senseNode && senseNode.monomer.selected) {
+          result.push({
+            ...twoStrandedNodeSelection,
+            node: senseNode as SubChainNode,
+            twoStrandedNode: twoStrandedNodeSelection.node,
+          });
+        }
+
+        // Add antisense node if it's selected
+        if (antisenseNode && antisenseNode.monomer.selected) {
+          result.push({
+            ...twoStrandedNodeSelection,
+            node: antisenseNode as SubChainNode,
+            twoStrandedNode: twoStrandedNodeSelection.node,
+          });
+        }
+
+        return result;
+      }),
+    );
+  }
+
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       const target = event.target as Node | null;
@@ -1311,60 +1374,6 @@ export class CoreEditor {
         event.clientY >= canvasBoundingClientRect.top &&
         event.clientY <= canvasBoundingClientRect.bottom;
 
-      // A right-click outside the selection selects the clicked item the same
-      // way a click does, so the menu is offered for it, as in Micro mode.
-      // Without any selection the menu keeps Copy and Delete disabled (#6472)
-      if (
-        eventData instanceof BaseSequenceItemRenderer &&
-        this.drawingEntitiesManager.selectedEntitiesArr.length > 0
-      ) {
-        const clickedMonomers = [
-          eventData.twoStrandedNode.senseNode?.monomer,
-          eventData.twoStrandedNode.antisenseNode?.monomer,
-        ].filter((monomer) => monomer !== undefined);
-
-        if (!clickedMonomers.some((monomer) => monomer.selected)) {
-          const modelChanges =
-            this.drawingEntitiesManager.unselectAllDrawingEntities();
-          modelChanges.merge(
-            SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
-          );
-          modelChanges.merge(
-            this.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
-              clickedMonomers,
-            ).command,
-          );
-          this.renderersContainer.update(modelChanges);
-        }
-      }
-
-      const sequenceSelections: NodesSelection =
-        SequenceRenderer.selections.map((selectionRange) =>
-          selectionRange.flatMap((twoStrandedNodeSelection) => {
-            const result: NodeSelection[] = [];
-            const { senseNode, antisenseNode } = twoStrandedNodeSelection.node;
-
-            // Add sense node if it's selected
-            if (senseNode && senseNode.monomer.selected) {
-              result.push({
-                ...twoStrandedNodeSelection,
-                node: senseNode as SubChainNode,
-                twoStrandedNode: twoStrandedNodeSelection.node,
-              });
-            }
-
-            // Add antisense node if it's selected
-            if (antisenseNode && antisenseNode.monomer.selected) {
-              result.push({
-                ...twoStrandedNodeSelection,
-                node: antisenseNode as SubChainNode,
-                twoStrandedNode: twoStrandedNodeSelection.node,
-              });
-            }
-
-            return result;
-          }),
-        );
       const selectedMonomers = this.drawingEntitiesManager.selectedEntities
         .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
         .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
@@ -1372,7 +1381,17 @@ export class CoreEditor {
         this.drawingEntitiesManager.selectedEntitiesArr.length > 0;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
-        this.events.rightClickSequence.dispatch([event, sequenceSelections]);
+        // As in Flex and Snake modes, an item outside the selection is selected
+        // the way a click selects it, so the menu is offered for it. Without
+        // any selection the menu keeps Copy and Delete disabled (#6472).
+        if (hasSelectedEntities && !this.isSequenceItemSelected(eventData)) {
+          this.selectSequenceItem(eventData);
+        }
+
+        this.events.rightClickSequence.dispatch([
+          event,
+          this.getSequenceSelections(),
+        ]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
         (eventData instanceof SnakeModePolymerBondRenderer &&

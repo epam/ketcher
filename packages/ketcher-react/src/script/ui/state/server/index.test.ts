@@ -31,4 +31,28 @@ describe('serverCall', () => {
       mol0.atoms.some((atom: { selected?: boolean }) => atom.selected),
     ).toBe(false);
   });
+
+  it.each(['clean', 'calculate'] as const)(
+    'sends the atoms of the selected bonds for %s',
+    async (methodName) => {
+      const method = jest.fn();
+      const server = Object.assign(Promise.resolve(), { [methodName]: method });
+      const editor = {
+        selection: () => ({ bonds: [0] }),
+        explicitSelected: () => ({ atoms: [0, 1], bonds: [0] }),
+        struct: createEthane,
+      };
+
+      await serverCall(editor as never, server as never, methodName, {});
+
+      const [{ selected, struct }] = method.mock.calls[0];
+      const { mol0 } = JSON.parse(struct);
+
+      expect(selected).toEqual([0, 1]);
+      expect(mol0.bonds[0].selected).toBe(true);
+      expect(
+        mol0.atoms.every((atom: { selected?: boolean }) => atom.selected),
+      ).toBe(true);
+    },
+  );
 });

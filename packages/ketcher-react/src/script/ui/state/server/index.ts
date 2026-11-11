@@ -225,7 +225,13 @@ export function serverCall<T>(
   options: ServerSettings,
   struct?: Struct,
 ): Promise<T> {
-  const selection = editor.selection();
+  // Clean Up and Calculated Values work on the selected part of the structure,
+  // so a selected bond brings its atoms along. Other methods get the selection
+  // as it is: hydrogens, for example, are toggled for selected atoms only.
+  const isSelectedPartUsed = method === 'clean' || method === 'calculate';
+  const selection = isSelectedPartUsed
+    ? editor.explicitSelected()
+    : editor.selection();
 
   let selectedAtoms: number[] = [];
   let selectedBonds: number[] = [];

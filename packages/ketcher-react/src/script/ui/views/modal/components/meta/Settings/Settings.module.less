@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,32 +17,66 @@
 @import '../../../../../../../style/variables.less';
 @import '../../../../../../../style/mixins.less';
 
-.headerContent {
-  display: flex;
-  gap: 8px;
+// Icon controls in the panel title row: Open from File, Save to File, Reset
+.button {
+  background-color: transparent;
+  border: none;
+  color: @color-icon-active;
+  padding: 0;
+  font-size: 0;
+  cursor: pointer;
 
-  .title {
-    padding-right: 4px;
+  input[type='file'] {
+    display: none;
   }
 
-  .button {
-    background-color: transparent;
-    border: none;
-    color: @color-icon-active;
-    padding: 0;
-    font-size: 0;
+  &:hover {
+    color: @color-icon-hover;
+  }
 
-    input[type='file'] {
-      display: none;
-    }
+  &:disabled {
+    color: @color-icon-disabled;
+    cursor: default;
+  }
+}
 
-    &:hover {
-      color: @color-icon-hover;
-    }
+// Set ACS Settings sits in the title row next to the icon controls
+.acsStyleButton {
+  .button-secondary();
 
-    &:disabled {
-      color: @color-icon-disabled;
-    }
+  min-width: 0;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 10px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+// MeasureInput fields where the label should sit above the controls.
+// Placed before .accordion to satisfy no-descending-specificity — its selectors
+// have lower specificity than the .accordion .stackedField rules that follow.
+.stackedMeasureInput {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 4px;
+
+  // 8px gap between the value input and the unit dropdown (lower specificity — before > div > div)
+  > div {
+    gap: 8px;
+  }
+
+  // 120px width for value input and unit dropdown; reset the inline-layout left margin
+  input,
+  > div > div {
+    width: 120px !important;
+    margin-inline-start: 0 !important;
+  }
+
+  // Neutralise the right-alignment the label rule sets on the second flex child
+  // (needed when .stackedMeasureInput is applied to a plain <label> wrapper)
+  > :nth-child(2) {
+    justify-content: flex-start !important;
   }
 }
 
@@ -51,74 +85,119 @@
     border: none;
     display: flex;
     flex-direction: column;
+    gap: 12px;
     padding: 0;
+    margin: 0;
+    min-width: 0;
   }
 
   ul {
-    >li {
+    > li {
       padding: 10px 16px;
     }
+  }
+
+  // Measure rows: prevent the MeasureInput's outer div from adding extra space
+  fieldset > div {
+    margin-bottom: 0;
   }
 
   label {
     display: flex;
     justify-content: flex-start;
-    font-size: 12px;
+    font-size: @font-size-regular;
     align-items: center;
-    line-height: 14px;
-    margin-bottom: 12px;
+    line-height: @line-height-regular;
+    margin-bottom: 0;
     color: @color-text-primary;
-    height: 24px;
+    min-height: 32px;
 
     input[type='checkbox'] {
       top: 0;
     }
 
-    span>div,
+    span > div,
     select,
     input {
       width: 120px;
-      margin-right: auto;
+      margin-inline-end: auto;
     }
 
     > :first-child {
-      width: 168px;
-      margin-right: @margin-left-right;
+      flex: 1 1 auto;
+      width: auto;
+      margin-inline-end: @margin-left-right;
+    }
+
+    // The control is pinned to the right edge of the row
+    > :nth-child(2) {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: flex-end;
     }
   }
-}
 
-.settings {
-  width: @width-settings;
-  height: 70vh;
-  overflow: hidden;
+  input[type='text'],
+  [role='combobox'] {
+    font-size: @font-size-input;
+  }
+
+  // The colour picker hugs the right edge of the row instead of a 120px box
+  label:not(.stackedField) span > [data-testid='color-picker-field'] {
+    width: auto;
+    margin-inline-end: 0;
+  }
+
+  // Single-value inputs share the width of the value box in measure rows
+  label:not(.stackedField) input[type='text'] {
+    width: 80px;
+    height: 32px;
+  }
+
+  // Dropdown fields: the label sits above a full-width control, as in macro mode
+  .stackedField {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    min-height: 0;
+
+    > :first-child {
+      width: auto;
+      margin-inline-end: 0;
+    }
+
+    > span,
+    span > div,
+    select,
+    input {
+      width: 100%;
+    }
+
+    [role='combobox'] {
+      font-size: @font-size-input;
+    }
+  }
+
+  // Higher specificity than .stackedField rules above — must come after them
+  fieldset > div > div:first-child {
+    margin-bottom: 0;
+  }
+
+  // Switch thumb carries a check glyph while on, as in macro mode
+  input[type='checkbox']:checked + span::before {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' stroke='%23167782' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
 
   fieldset[disabled] {
-    label>span {
+    label > span {
       opacity: 0.3;
     }
 
-    label>div {
+    label > div {
       opacity: 0.6;
     }
   }
-
-  >header {
-    flex-shrink: 0;
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 2px 4px 0 @color-accordion-shadow;
-    z-index: 10;
-  }
-
-  >footer {
-    /* stylelint-disable-next-line declaration-property-value-no-unknown */
-    box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
-    z-index: 10;
-  }
-}
-
-.acsStyleButton {
-  margin-right: auto;
-
-  .button-primary();
 }

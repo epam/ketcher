@@ -8,6 +8,7 @@ import { Icon } from '../../../../../../components';
 import styles from '../ContextMenu.module.less';
 import type { ReactNode } from 'react';
 import { assert } from 'ketcher-core';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   props: MenuItemsProps<AtomContextMenuProps>;
@@ -20,6 +21,7 @@ const useMakeAttachmentPointMenuItems = ({
   selectedAtomId,
   editor,
 }: Props) => {
+  const { t } = useTranslation('components');
   const selectedAtomInMonomerCreationWizard =
     selectedAtomId !== undefined && editor.isMonomerCreationWizardActive;
 
@@ -29,35 +31,42 @@ const useMakeAttachmentPointMenuItems = ({
 
   assert(editor.monomerCreationState);
 
-  const { assignedAttachmentPoints, potentialAttachmentPoints } =
-    editor.monomerCreationState;
+  const {
+    assignedAttachmentPoints,
+    potentialAttachmentPoints,
+    connectionAttachmentPoints,
+  } = editor.monomerCreationState;
 
-  const isAtomInAssignedAttachmentPoint = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
+  const isAtomInAssignedAttachmentPoint = [
+    ...assignedAttachmentPoints.values(),
+  ].some((atomPair) => {
     const [attachmentAtomId, leavingAtomId] = atomPair;
     return (
       selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
     );
   });
 
-  const isAtomAlreadyLeavingAtom = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [, leavingAtomId] = atomPair;
-    return selectedAtomId === leavingAtomId;
-  });
+  const isAtomAlreadyLeavingAtom = [...assignedAttachmentPoints.values()].some(
+    (atomPair) => {
+      const [, leavingAtomId] = atomPair;
+      return selectedAtomId === leavingAtomId;
+    },
+  );
 
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 
-  const isPotentialLeavingGroupAtom = Array.from(
-    potentialAttachmentPoints.values(),
-  ).some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
+  const isPotentialLeavingGroupAtom = [
+    ...potentialAttachmentPoints.values(),
+  ].some((leavingAtomIds) => leavingAtomIds.has(selectedAtomId));
   const isPotentialAttachmentAtom =
     potentialAttachmentPoints.has(selectedAtomId) ||
     (implicitHydrogen !== undefined && implicitHydrogen > 0);
 
-  const attachmentPointsLimitReached = assignedAttachmentPoints.size >= 8;
+  const occupiedAttachmentPointNames = new Set([
+    ...assignedAttachmentPoints.keys(),
+    ...(connectionAttachmentPoints?.keys() ?? []),
+  ]);
+  const isAttachmentPointsLimitReached = occupiedAttachmentPointNames.size >= 8;
 
   const menuItems: ReactNode[] = [];
 
@@ -73,13 +82,13 @@ const useMakeAttachmentPointMenuItems = ({
         {...props}
         onClick={handleMarkLeavingGroupAtomClick}
         disabled={
-          attachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
+          isAttachmentPointsLimitReached || isAtomInAssignedAttachmentPoint
         }
         key="mark-as-leaving-group"
         data-testid="mark-as-leaving-group"
       >
         <Icon name="leavingGroup" className={styles.icon} />
-        Mark as leaving group
+        {t('contextMenu.markAsLeavingGroup')}
       </Item>,
     );
   }
@@ -95,7 +104,7 @@ const useMakeAttachmentPointMenuItems = ({
       {...props}
       onClick={handleMarkConnectionPointAtomClick}
       disabled={
-        attachmentPointsLimitReached ||
+        isAttachmentPointsLimitReached ||
         !isPotentialAttachmentAtom ||
         isAtomAlreadyLeavingAtom
       }
@@ -103,7 +112,7 @@ const useMakeAttachmentPointMenuItems = ({
       key="mark-as-connection-point"
     >
       <Icon name="connectionPoint" className={styles.icon} />
-      Mark as connection point
+      {t('contextMenu.markAsConnectionPoint')}
     </Item>,
   );
 

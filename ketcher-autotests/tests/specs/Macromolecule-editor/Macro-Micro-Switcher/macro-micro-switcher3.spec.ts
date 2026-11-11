@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'node:path';
 import { Page, test, expect } from '@fixtures';
 import {
   dragMouseTo,

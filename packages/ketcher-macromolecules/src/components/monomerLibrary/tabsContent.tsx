@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import {
   MONOMER_TYPES,
   MONOMER_LIBRARY_FAVORITES,
@@ -9,12 +10,13 @@ import { IRnaPreset } from './RnaBuilder/types';
 import { TabsData } from 'components/shared/Tabs';
 
 export const tabsContent = (
+  t: TFunction,
   duplicatePreset: (preset?: IRnaPreset) => void,
   editPreset: (preset: IRnaPreset) => void,
 ): TabsData => [
   {
     caption: FavoriteStarSymbol,
-    tooltip: 'Favorites',
+    tooltip: t('monomerLibrary.favoritesTooltip'),
     component: MonomerList,
     testId: 'FAVORITES-TAB',
     props: {
@@ -24,7 +26,7 @@ export const tabsContent = (
     },
   },
   {
-    caption: 'Peptides',
+    caption: t('monomerLibrary.peptidesTab'),
     component: MonomerList,
     testId: 'PEPTIDES-TAB',
     props: {

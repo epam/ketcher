@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { EmptyFunction } from 'helpers';
+import { useTranslation } from 'react-i18next';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
@@ -30,8 +31,8 @@ import {
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
 import {
   selectEditor,
-  selectIsSequenceMode,
-  selectIsDragging,
+  isSequenceModeEnabled,
+  isEditorDragging,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
@@ -46,10 +47,11 @@ const RnaPresetItem = ({
   onMouseMove = EmptyFunction,
   onStarClick = EmptyFunction,
 }: IRNAPresetItemProps) => {
+  const { t } = useTranslation('macromoleculesDialogs');
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
-  const isDragging = useAppSelector(selectIsDragging);
+  const isSequenceMode = useAppSelector(isSequenceModeEnabled);
+  const isDragging = useAppSelector(isEditorDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -79,8 +81,9 @@ const RnaPresetItem = ({
 
   const onMouseOver = useCallback(
     () =>
-      editor && cardMouseOverHandler(editor, preset, setAutochainErrorMessage),
-    [editor, preset],
+      editor &&
+      cardMouseOverHandler(editor, preset, setAutochainErrorMessage, t),
+    [editor, preset, t],
   );
 
   const onAutochainIconMouseOver = useCallback(() => {

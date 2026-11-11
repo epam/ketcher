@@ -110,7 +110,7 @@ test.describe('getKet', () => {
          * Description: 'getSmiles','getRxn','getSmarts','getCml','getSdf','getCDXml','getCDX', method throws an Error
          */
 
-        await page.waitForFunction(() => (window as any).ketcher);
+        await page.waitForFunction(() => (globalThis as any).ketcher);
 
         let errorCaught = false;
 
@@ -122,7 +122,7 @@ test.describe('getKet', () => {
 
         try {
           await page.evaluate((fmt) => {
-            const ketcher = (window as any).ketcher as unknown as {
+            const ketcher = (globalThis as any).ketcher as unknown as {
               [key: string]: () => Promise<any>;
             };
             if (typeof ketcher[fmt] !== 'function') {

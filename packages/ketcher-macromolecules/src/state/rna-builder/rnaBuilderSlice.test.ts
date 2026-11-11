@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { buildRnaPresetConnections } from 'ketcher-core';
-import { selectPresetFullName } from './rnaBuilderSlice';
+import { buildRnaPresetConnections, IRnaPreset } from 'ketcher-core';
+import {
+  rnaBuilderReducer,
+  selectFilteredPresets,
+  selectPresetFullName,
+  setActivePreset,
+  startPresetDuplication,
+} from './rnaBuilderSlice';
+import { RootState } from 'state';
 
 const presetMonomers = {
   sugar: { label: '5formD', props: { id: 'sugar-template-id' } } as never,
   base: { label: 'baA', props: { id: 'base-template-id' } } as never,
   phosphate: { label: 'cm', props: { id: 'phosphate-template-id' } } as never,
 };
+
+const buildPresetState = (
+  searchFilter: string,
+  presets: IRnaPreset[],
+): RootState =>
+  ({
+    library: {
+      searchFilter,
+      monomers: [],
+      favorites: {},
+      defaultRnaPresets: [],
+      selectedTabIndex: 0,
+    },
+    rnaBuilder: {
+      presetsDefault: presets,
+      presetsCustom: [],
+      presetPhosphateFilter: {
+        fivePrime: false,
+        threePrime: false,
+        noPhosphate: false,
+      },
+    },
+  }) as RootState;
+
+const makePreset = (
+  name: string,
+  overrides?: Partial<IRnaPreset>,
+): IRnaPreset => ({
+  name,
+  nameInList: name,
+  ...overrides,
+});
 
 describe('selectPresetFullName', () => {
   it("appends the phosphate for a preset with the phosphate on 3'", () => {
@@ -40,5 +79,55 @@ describe('selectPresetFullName', () => {
         connections: buildRnaPresetConnections(presetMonomers, 'left'),
       }),
     ).toBe('5formD(baA)cm');
+  });
+});
+
+describe('selectFilteredPresets — hyphen and underscore', () => {
+  it.each(['-', '_'])('filters on preset name only for "%s"', (char) => {
+    const presets = [
+      makePreset(`name${char}match`), // name → matches
+      makePreset('noMatchSugar', {
+        sugar: { label: `sugar${char}only` } as never,
+      }), // sugar only → no match
+      makePreset('noMatchBase', {
+        base: { label: `base${char}only` } as never,
+      }), // base only → no match
+      makePreset('noMatchPhosphate', {
+        phosphate: { label: `phosphate${char}only` } as never,
+      }), // phosphate only → no match
+      makePreset('noMatchAlias', { aliasAxoLabs: `alias${char}only` }), // aliasAxoLabs only → no match
+    ];
+    expect(
+      selectFilteredPresets(buildPresetState(char, presets)).map((p) => p.name),
+    ).toEqual([`name${char}match`]);
+  });
+});
+
+describe('preset duplication', () => {
+  const original = { name: 'A', ...presetMonomers } as IRnaPreset;
+  const copy = { ...original, name: 'A_Copy' } as IRnaPreset;
+  const stateWithActive = (preset: IRnaPreset) =>
+    rnaBuilderReducer(undefined, setActivePreset(preset));
+
+  it('remembers the active preset when a duplicate starts', () => {
+    const state = rnaBuilderReducer(
+      stateWithActive(original),
+      startPresetDuplication(copy),
+    );
+
+    expect(state.activePreset?.name).toBe('A_Copy');
+    expect(state.activePreset?.nameInList).toBe('A_Copy');
+    expect(state.presetBeforeDuplicate?.name).toBe('A');
+  });
+
+  it('forgets the remembered preset once another preset becomes active', () => {
+    const duplicating = rnaBuilderReducer(
+      stateWithActive(original),
+      startPresetDuplication(copy),
+    );
+
+    const state = rnaBuilderReducer(duplicating, setActivePreset(copy));
+
+    expect(state.presetBeforeDuplicate).toBeNull();
   });
 });

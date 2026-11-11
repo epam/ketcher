@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ export function sanitizeCustomColors(
     uniqueColors.add(normalizedColor);
   });
 
-  return Array.from(uniqueColors).slice(0, MAX_CUSTOM_COLORS);
+  return [...uniqueColors].slice(0, MAX_CUSTOM_COLORS);
 }
 
 export function addCustomColor(
@@ -112,8 +112,9 @@ export function isValidHex(hex: string): boolean {
 }
 
 export function sanitizeHexInput(rawInput: string): string {
-  return rawInput
-    .replace(/[^0-9a-fA-F]/g, '')
+  return Array.from(rawInput)
+    .filter((char) => /[0-9a-fA-F]/.test(char))
+    .join('')
     .slice(0, 6)
     .toUpperCase();
 }

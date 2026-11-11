@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ export const GroupBlockContainer = styled('div', {
   return {
     height: '40px',
     position: 'relative',
-    marginLeft: isEditMode ? '30px' : '28.5px',
+    marginInlineStart: isEditMode ? '30px' : '28.5px',
     display: 'flex',
     alignItems: 'center',
     border: isEditMode ? 'none' : `1.5px solid ${theme.ketcher.outline.color}`,
@@ -57,9 +57,9 @@ export const GroupBlockContainer = styled('div', {
       ':after': {
         content: '""',
         position: 'absolute',
-        right: '100%',
+        insetInlineEnd: '100%',
         bottom: 'calc(50% - 1px)',
-        borderLeft: theme.ketcher.outline.medium,
+        borderInlineStart: theme.ketcher.outline.medium,
         borderBottom: theme.ketcher.outline.medium,
         height: '2px',
         width: '17px',
@@ -70,11 +70,11 @@ export const GroupBlockContainer = styled('div', {
       ':after': {
         content: '""',
         position: 'absolute',
-        right: '100%',
+        insetInlineEnd: '100%',
         bottom: 'calc(50% - 1px)',
-        borderLeft: theme.ketcher.outline.medium,
+        borderInlineStart: theme.ketcher.outline.medium,
         borderBottom: theme.ketcher.outline.medium,
-        borderRadius: '0 0 0 4px',
+        borderEndStartRadius: '4px',
         height: '130px',
         width: '17px',
       },
@@ -177,7 +177,7 @@ export const CompactGroupBlockContainer = styled('div', {
 export const CompactGroupConnection = styled.div`
   position: absolute;
   top: -35%;
-  left: 50%;
+  inset-inline-start: 50%;
   height: 15px;
   width: 2px;
   background-color: ${({ theme }) => theme.ketcher.outline.color};

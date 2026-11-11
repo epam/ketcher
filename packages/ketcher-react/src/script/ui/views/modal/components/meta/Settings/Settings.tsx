@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,38 +15,44 @@
  ***************************************************************************/
 
 import type { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, { Field, Label } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
   updateFormState,
 } from '../../../../../state/modal/form';
-import { useMemo } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
-import { Dialog } from '../../../../components';
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input';
-import OpenButton from '../../../../../component/view/openbutton';
-import { SaveButton } from '../../../../../component/view/savebutton';
+import type { FileContent } from '../../../../../component/view/openButton.types';
 import Select from '../../../../../component/form/Select';
-import Accordion from './Accordion';
-import { type StructService, KetcherLogger } from 'ketcher-core';
+import SettingsAccordion from './SettingsAccordion';
+import SettingsPanel from './SettingsPanel';
+import ManageSettingsMenu from './ManageSettingsMenu';
+import {
+  type SettingsFormValue,
+  type StructService,
+  KetcherLogger,
+} from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
+import appClasses from '../../../../../App/App.module.less';
 import { connect } from 'react-redux';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { saveSettings } from '../../../../../state/options';
-import settingsSchema, {
-  getDefaultOptions,
-} from '../../../../../data/schema/options-schema';
-import fieldGroups from './fieldGroups';
-import { isEqual } from 'lodash';
-import { Icon } from 'components';
-import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
+import settingsSchema from '../../../../../data/schema/options-schema';
+import {
+  ACS_STYLE_DEFAULT_SETTINGS,
+  KETCHER_ROOT_NODE_CSS_SELECTOR,
+} from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
+import i18n, { SUPPORTED_LANGUAGES } from 'src/i18n/i18n';
+import { saveAs } from 'file-saver';
 
 interface SettingsProps extends BaseProps {
   ketcherId: string;
-  initState: any;
+  initState: SettingsFormValue;
   appOpts: {
     version: string;
     buildDate: string;
@@ -61,7 +66,7 @@ interface SettingsProps extends BaseProps {
 }
 
 interface SettingsCallProps extends BaseCallProps {
-  onOpenFile: (any) => void;
+  onOpenFile: (content: File | FileContent) => void;
   onReset: () => void;
   onACSStyle: (result) => void;
 }
@@ -69,85 +74,31 @@ interface SettingsCallProps extends BaseCallProps {
 type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
   Pick<BaseCallProps, 'onOk'>;
 
-const defaultSettings = getDefaultOptions();
-
-const HeaderContent = ({
-  server,
-  onOpenFile,
-  onReset,
-  formState,
-  initState,
-}) => {
-  const getIsResetDisabled = () => {
-    if (formState.result.init) return isEqual(defaultSettings, initState);
-    else return isEqual(defaultSettings, formState.result);
-  };
-
-  return (
-    <div className={classes.headerContent}>
-      <span className={classes.title}> Settings</span>
-      <OpenButton
-        title="Open from File"
-        key="settings"
-        server={server}
-        onLoad={onOpenFile}
-        className={classes.button}
-        data-testid="open-settings-from-file-button"
-      >
-        <Icon name="open-1" />
-      </OpenButton>
-      <SaveButton
-        title="Save to File"
-        key="ketcher-settings"
-        data={JSON.stringify(formState.result)}
-        filename="ketcher-settings"
-        className={classes.button}
-        testId="save-settings-to-file-button"
-      >
-        <Icon name="save-1" />
-      </SaveButton>
-      <button
-        title="Reset"
-        key="settings-button"
-        onClick={onReset}
-        className={classes.button}
-        data-testid="reset-settings-button"
-        disabled={getIsResetDisabled()}
-      >
-        <Icon name="reset" />
-      </button>
-    </div>
-  );
-};
-
 type Props = SettingsProps & SettingsCallProps;
 
 const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
-  const {
-    initState,
-    formState,
-    server,
-    onOpenFile,
-    onReset,
-    appOpts,
-    ...prop
-  } = props;
+  const { t } = useTranslation(['common', 'dialogs', 'settings']);
+  const { initState, formState, onOpenFile, onReset, appOpts, ...prop } = props;
 
-  const changedGroups = useMemo(() => {
-    const changed = new Set<string>();
-    for (const key in initState) {
-      if (initState[key] !== formState.result[key]) {
-        changed.add(fieldGroups[key]);
-      }
-    }
-    return changed;
-  }, [initState, formState.result]);
+  // The panel is clamped inside the canvas area, so it never covers a toolbar.
+  // The canvas is mounted long before any dialog can open, so it is resolved once
+  // on the first render rather than from an effect.
+  const [boundsElement] = useState<HTMLElement | null>(() =>
+    document.querySelector<HTMLElement>(
+      `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${appClasses.canvas}`,
+    ),
+  );
+
+  const languageOptions = SUPPORTED_LANGUAGES.map(({ code, label }) => ({
+    value: code,
+    label,
+  }));
 
   const atomsTab = {
     key: 'atoms',
-    label: 'Atoms',
+    label: t('dialogs:meta.settings.atomsTab'),
     content: (
       <fieldset>
         <Field name="carbonExplicitly" data-testid="carbon-explicitly" />
@@ -156,8 +107,10 @@ const SettingsDialog = (props: Props) => {
         <Field
           name="showHydrogenLabels"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
+            t,
           )}
           data-testid="show-hydrogen-labels"
         />
@@ -167,7 +120,7 @@ const SettingsDialog = (props: Props) => {
   };
   const bondsTab = {
     key: 'bonds',
-    label: 'Bonds',
+    label: t('dialogs:meta.settings.bondsTab'),
     content: (
       <fieldset>
         <Field name="aromaticCircle" data-testid="aromatic-circle" />
@@ -177,7 +130,11 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
           extraName="bondLengthUnit"
         />
-        <Field name="bondSpacing" extraLabel="% of length" />
+        <Field
+          name="bondSpacing"
+          hint={t('settings:fields.bondSpacing.extraLabel')}
+          hintAlign="right"
+        />
         <Field
           name="bondThickness"
           component={MeasureInput}
@@ -192,7 +149,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="hashSpacing"
-          tooltip="Sets the spacing for 'down' stereochemical bond."
+          hint={t('dialogs:meta.settings.hashSpacingTooltip')}
           component={MeasureInput}
           labelPos={false}
           extraName="hashSpacingUnit"
@@ -202,50 +159,56 @@ const SettingsDialog = (props: Props) => {
   };
   const stereoTab = {
     key: 'stereo',
-    label: 'Stereochemistry',
+    label: t('dialogs:meta.settings.stereochemistryTab'),
     content: (
       <fieldset>
         <Field
           name="showStereoFlags"
-          tooltip="Display stereochemistry designation labels (ABS, AND Enantiomer, OR Enantiomer and Mixed) for the whole molecule."
+          hint={t('dialogs:meta.settings.showStereoFlagsTooltip')}
           data-testid="show-stereo-flags"
         />
         <Field
           name="stereoLabelStyle"
-          tooltip="Controls the placement of stereochemical labels. At the chiral centers, On displays ‘abs’, ‘or’, ‘and’, and mixed labels; Classic displays ‘or’ and mixed labels; IUPAC Style displays mixed labels; and Off displays none."
+          hint={t('dialogs:meta.settings.stereoLabelStyleTooltip')}
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.stereoLabelStyle,
+            t,
+          )}
           data-testid="stereo-label-style"
         />
         <Field
           name="colorOfAbsoluteCenters"
-          tooltip="Color of atom ABS label (centers with a defined absolute configuration)."
+          hint={t('dialogs:meta.settings.colorOfAbsoluteCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-absolute-centers"
         />
         <Field
           name="colorOfAndCenters"
-          tooltip="Color of atom & (AND) label (both isomers at the marked centers are included)."
+          hint={t('dialogs:meta.settings.colorOfAndCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-and-centers"
         />
         <Field
           name="colorOfOrCenters"
-          tooltip="Color of atom OR labels (one isomer at the marked center is included)."
+          hint={t('dialogs:meta.settings.colorOfOrCentersTooltip')}
           component={ColorPicker}
           data-testid="color-of-or-centers"
         />
         <Field
           name="colorStereogenicCenters"
           component={Select}
+          className={classes.stackedField}
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
+            t,
           )}
           data-testid="color-stereogenic-centers"
         />
         <Field
           name="autoFadeOfStereoLabels"
-          tooltip="Automatically fades center labels when a molecule has many chiral centers."
+          hint={t('dialogs:meta.settings.autoFadeOfStereoLabelsTooltip')}
           data-testid="auto-fade-of-stereo-labels"
         />
         <Field name="absFlagLabel" data-testid="abs-flag-label" />
@@ -254,7 +217,7 @@ const SettingsDialog = (props: Props) => {
         <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
-          tooltip="Hide stereo flags and show labels only for non-absolute chiral centers on load from MOL files."
+          hint={t('dialogs:meta.settings.ignoreChiralFlagTooltip')}
           data-testid="ignore-chiral-flag"
         />
       </fieldset>
@@ -262,15 +225,16 @@ const SettingsDialog = (props: Props) => {
   };
   const reactionsTab = {
     key: 'reactions',
-    label: 'Reactions & Components',
+    label: t('dialogs:meta.settings.reactionsTab'),
     content: (
       <fieldset>
         <Field
           name="reactionComponentMarginSize"
-          tooltip="Adjust the spacing between reactants, products, arrows, catalyst in reaction diagrams."
+          hint={t('dialogs:meta.settings.reactionComponentMarginSizeTooltip')}
           component={MeasureInput}
           labelPos={false}
           extraName="reactionComponentMarginSizeUnit"
+          className={classes.stackedMeasureInput}
         />
         <fieldset disabled={!appOpts.server}>
           <Field
@@ -287,23 +251,38 @@ const SettingsDialog = (props: Props) => {
   };
   const generalTab = {
     key: 'general',
-    label: 'General Editing & Display',
+    label: t('dialogs:meta.settings.generalTab'),
     content: (
       <fieldset>
+        {SUPPORTED_LANGUAGES.length > 1 && (
+          <Label title={t('settings:language.title')} data-testid="language">
+            <span>
+              <Select
+                value={i18n.language}
+                onChange={(lng) => i18n.changeLanguage(lng)}
+                options={languageOptions}
+                data-testid="language-select"
+              />
+            </span>
+          </Label>
+        )}
         <Field
           name="resetToSelect"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(settingsProps?.resetToSelect, t)}
           data-testid="reset-to-select"
         />
         <Field
           name="rotationStep"
-          tooltip="Allows the rotation tool to move only at the specified angle increments. To disable, hold CTRL."
+          hint={t('dialogs:meta.settings.rotationStepTooltip')}
           data-testid="rotation-step"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="font"
           component={SystemFonts}
+          className={classes.stackedField}
           data-testid="font-selection"
         />
         <Field
@@ -311,44 +290,45 @@ const SettingsDialog = (props: Props) => {
           component={MeasureInput}
           labelPos={false}
           extraName="fontszUnit"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="fontszsub"
           component={MeasureInput}
           labelPos={false}
           extraName="fontszsubUnit"
+          className={classes.stackedMeasureInput}
         />
         <Field
           name="imageResolution"
-          tooltip="Set image quality for PNG files: Low = 72 DPI, High = 600 DPI."
+          hint={t('dialogs:meta.settings.imageResolutionTooltip')}
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.imageResolution,
+            t,
+          )}
           data-testid="image-resolution"
         />
-      </fieldset>
-    ),
-  };
-  const threeDViewerTab = {
-    key: '3dviewer',
-    label: '3D Viewer',
-    content: (
-      <fieldset className={classes.viewer}>
         <Field
           name="miewMode"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(settingsProps?.miewMode, t)}
           data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(settingsProps?.miewTheme, t)}
           data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+          className={classes.stackedField}
+          options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel, t)}
           data-testid="label-coloring"
         />
       </fieldset>
@@ -356,31 +336,23 @@ const SettingsDialog = (props: Props) => {
   };
   const validationTab = {
     key: 'validation',
-    label: 'Validation & Calculation',
+    label: t('dialogs:meta.settings.validationTab'),
     content: (
       <fieldset>
         <Field
           name="showValenceWarnings"
-          tooltip="Underline atom in red when their valence is exceeded."
+          hint={t('dialogs:meta.settings.showValenceWarningsTooltip')}
           data-testid="show-valence-warnings"
         />
         <fieldset disabled={!appOpts.server}>
           <Field
             name="ignore-stereochemistry-errors"
-            tooltip="Allow conversion between file formats for structures with invalid stereochemistry without showing errors."
+            hint={t('dialogs:meta.settings.ignoreStereochemistryErrorsTooltip')}
             data-testid="ignore-stereochemistry-errors"
           />
           <Field
             name="mass-skip-error-on-pseudoatoms"
             data-testid="mass-skip-error-on-pseudoatoms"
-          />
-          <Field
-            name="valence-mode"
-            component={Select}
-            options={getSelectOptionsFromSchema(
-              settingsProps?.['valence-mode'],
-            )}
-            data-testid="valence-mode"
           />
         </fieldset>
       </fieldset>
@@ -388,20 +360,36 @@ const SettingsDialog = (props: Props) => {
   };
   const debuggingTab = {
     key: 'debugging',
-    label: 'Debugging',
+    label: t('dialogs:meta.settings.debuggingTab'),
     content: (
       <fieldset>
         <fieldset disabled={!appOpts.server}>
           <Field
             name="smart-layout"
-            tooltip="Displays cyclic structures as regular polygons with equal bond angles and lengths when off, or irregular polygons when on."
+            hint={t('dialogs:meta.settings.smartLayoutTooltip')}
             data-testid="smart-layout"
           />
         </fieldset>
-        <Field name="showAtomIds" data-testid="show-atom-ids" />
-        <Field name="showBondIds" data-testid="show-bond-ids" />
-        <Field name="showHalfBondIds" data-testid="show-half-bond-ids" />
-        <Field name="showLoopIds" data-testid="show-loop-ids" />
+        <Field
+          name="showAtomIds"
+          hint={t('dialogs:meta.settings.showAtomIdsTooltip')}
+          data-testid="show-atom-ids"
+        />
+        <Field
+          name="showBondIds"
+          hint={t('dialogs:meta.settings.showBondIdsTooltip')}
+          data-testid="show-bond-ids"
+        />
+        <Field
+          name="showHalfBondIds"
+          hint={t('dialogs:meta.settings.showHalfBondIdsTooltip')}
+          data-testid="show-half-bond-ids"
+        />
+        <Field
+          name="showLoopIds"
+          hint={t('dialogs:meta.settings.showLoopIdsTooltip')}
+          data-testid="show-loop-ids"
+        />
       </fieldset>
     ),
   };
@@ -413,16 +401,29 @@ const SettingsDialog = (props: Props) => {
     });
   };
 
-  const ACSStyleButton = (
-    <button
-      className={classes.acsStyleButton}
-      key="acsstylebutton"
-      onClick={onACSStyle}
-      data-testid="acs-style-button"
-    >
-      Set ACS Settings
-    </button>
-  );
+  const handleSave = () => {
+    const blob = new Blob([JSON.stringify(formState.result)], {
+      type: 'application/json',
+    });
+    saveAs(blob, 'ketcher-settings.json');
+  };
+
+  const handleLoad = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result;
+        if (typeof content === 'string') onOpenFile(content);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  };
 
   const tabs = [
     generalTab,
@@ -430,39 +431,39 @@ const SettingsDialog = (props: Props) => {
     bondsTab,
     stereoTab,
     reactionsTab,
-    threeDViewerTab,
     validationTab,
     debuggingTab,
   ];
 
+  // Apply commits the staged form result; Cancel and the close button discard it by
+  // closing the dialog without touching `options.settings`.
+  const handleApply = () => {
+    if (!formState.valid) return;
+    prop.onOk?.([formState.result, initState]);
+  };
+
   return (
-    <Dialog
-      className={classes.settings}
-      result={() => [formState.result, initState]}
-      valid={() => formState.valid}
-      params={prop}
-      buttonsNameMap={{ OK: 'Apply' }}
-      buttons={[ACSStyleButton, 'Cancel', 'OK']}
-      withDivider
-      needMargin={false}
-      headerContent={
-        <HeaderContent
-          server={server}
-          onOpenFile={onOpenFile}
-          onReset={onReset}
-          formState={formState}
-          initState={initState}
+    <SettingsPanel
+      className={prop.className}
+      title={t('dialogs:meta.settings.headerTitle')}
+      boundsElement={boundsElement}
+      isApplyDisabled={!formState.valid}
+      onApply={handleApply}
+      onCancel={prop.onCancel}
+      onClose={prop.onCancel}
+      footerLeft={
+        <ManageSettingsMenu
+          onResetToDefault={onReset}
+          onResetToACS={onACSStyle}
+          onSave={handleSave}
+          onLoad={handleLoad}
         />
       }
     >
       <Form schema={settingsSchema} init={initState} {...formState}>
-        <Accordion
-          tabs={tabs}
-          className={classes.accordion}
-          changedGroups={changedGroups}
-        />
+        <SettingsAccordion groups={tabs} className={classes.accordion} />
       </Form>
-    </Dialog>
+    </SettingsPanel>
   );
 };
 
@@ -477,8 +478,8 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
-    } catch (e) {
-      KetcherLogger.error('Settings.tsx::mapDispatchToProps', e);
+    } catch (error) {
+      KetcherLogger.error('Settings.tsx::mapDispatchToProps', error);
       console.info('Bad file');
     }
   },
@@ -489,18 +490,17 @@ const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
     dispatch(saveSettings(result, ownProps.ketcherId));
     ownProps.onOk(result);
 
-    const showNotification =
+    const shouldShowNotification =
       initState.reactionComponentMarginSize !==
       result.reactionComponentMarginSize;
 
-    if (showNotification) {
+    if (shouldShowNotification) {
       dispatch(
         onAction({
           dialog: 'info-modal',
           prop: {
             title: '',
-            customText:
-              'To fully apply these changes, you need to apply the layout.',
+            customText: i18n.t('dialogs:meta.settings.applyLayoutNotice'),
             button: 'OK',
           },
         }),

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,12 +29,16 @@ import Select from '../Select';
 import classes from './form.module.less';
 import clsx from 'clsx';
 import { connect } from 'react-redux';
-import { getSelectOptionsFromSchema } from '../../../utils';
+import {
+  getSelectOptionsFromSchema,
+  resolveTranslatableText,
+} from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext, usePopoverAnchor } from '../../../../../hooks';
 import { cloneDeep, omit } from 'lodash';
 import { Icon, IconButton } from 'components';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export interface FormOwnProps {
   children: React.ReactNode;
@@ -48,7 +52,7 @@ export interface FormOwnProps {
 interface FormDispatchProps {
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => void;
 }
@@ -102,6 +106,9 @@ export interface FieldProps {
   className?: string;
   extraName?: string;
   tooltip?: string;
+  /** Description rendered as static text beneath the control, instead of a hover tooltip */
+  hint?: string;
+  hintAlign?: 'left' | 'right';
   extraLabel?: string;
   schema?: SchemaProperty | unknown[];
   extraSchema?: SchemaProperty;
@@ -128,7 +135,7 @@ export interface CustomQueryFieldProps extends FieldProps {
   labelPos: string;
   checkboxValue?: boolean;
   onCheckboxChange?: (
-    value: boolean,
+    isChecked: boolean,
     formState: Record<string, unknown>,
     onChange: (value: unknown) => void,
     updateFormState: (settings: Record<string, unknown>) => void,
@@ -142,6 +149,15 @@ interface KetcherSchema extends Schema {
 type FormValidationError = ValidationError & {
   schema: KetcherSchema;
 };
+
+const updateFieldValue = (
+  result: Record<string, unknown>,
+  fieldName: string,
+  val: unknown,
+) =>
+  val === undefined
+    ? omit(result, [fieldName])
+    : { ...result, [fieldName]: val };
 
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
@@ -197,12 +213,17 @@ class Form extends Component<FormProps> {
       value,
       extraValue,
       onChange: (val: unknown) => {
-        const newState = { ...this.props.result, [name]: val };
+        const newState = updateFieldValue(this.props.result, name, val);
         this.updateState(newState);
         if (onChange) onChange(val);
       },
       onExtraChange: (val: unknown) => {
-        const newState = { ...this.props.result, [extraName ?? '']: val };
+        const extraFieldName = extraName ?? '';
+        const newState = updateFieldValue(
+          this.props.result,
+          extraFieldName,
+          val,
+        );
         this.updateState(newState);
       },
     };
@@ -229,10 +250,10 @@ class Form extends Component<FormProps> {
 export default connect(null, (dispatch) => ({
   onUpdate: (
     result: Record<string, unknown>,
-    valid: boolean,
+    isValid: boolean,
     errors: Record<string, string>,
   ) => {
-    dispatch(updateFormState({ result, valid, errors }));
+    dispatch(updateFormState({ result, valid: isValid, errors }));
   },
   // Workaround: @types/react version conflict — react-redux's types reference a different @types/react than what Ketcher uses.
 }))(Form as unknown as React.ComponentClass<FormProps>) as React.ComponentType<
@@ -310,12 +331,16 @@ function Label({
   children,
   ...props
 }: Readonly<LabelProps>) {
+  const { t } = useTranslation();
+  const resolvedTitle = resolveTranslatableText(title, t) ?? '';
+  const resolvedTooltip = resolveTranslatableText(tooltip, t) ?? null;
   return (
     <label {...props}>
-      {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
+      {labelPos !== 'after' &&
+        renderLabelContent(resolvedTitle, resolvedTooltip)}
       {children}
       {labelPos === 'after' &&
-        renderLabelContentAfter(title ?? '', tooltip ?? null)}
+        renderLabelContentAfter(resolvedTitle, resolvedTooltip)}
     </label>
   );
 }
@@ -329,8 +354,11 @@ function Field(props: Readonly<FieldProps>) {
     labelPos,
     className,
     extraLabel,
+    hint,
+    hintAlign,
     ...rest
   } = props;
+  const { t } = useTranslation();
   const {
     anchorEl,
     handleOpen: handlePopoverOpen,
@@ -370,18 +398,41 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
+  // A hint replaces the hover tooltip: the description is always readable as static
+  // text under the control, so the field keeps its own layout and grows downwards.
+  const withHint = (field: React.ReactNode) =>
+    hint ? (
+      <div className={classes.fieldWithHint}>
+        {field}
+        <span
+          className={clsx(classes.fieldHint, {
+            [classes.fieldHintRight]: hintAlign === 'right',
+          })}
+          data-testid={
+            props['data-testid'] ? `${props['data-testid']}-hint` : undefined
+          }
+        >
+          {resolveTranslatableText(hint, t)}
+        </span>
+      </div>
+    ) : (
+      field
+    );
+
   if (labelPos === false) {
     if (Component) {
-      return formField;
+      return withHint(formField);
     }
 
     const isSelectableControl =
       rest.type === 'radio' || rest.type === 'checkbox';
-    const showError = Boolean(dataError) && !isSelectableControl;
+    const shouldShowError = Boolean(dataError) && !isSelectableControl;
 
-    return (
+    return withHint(
       <>
-        <span className={clsx({ [classes.dataError]: showError }, className)}>
+        <span
+          className={clsx({ [classes.dataError]: shouldShowError }, className)}
+        >
           <span
             className={classes.inputWrapper}
             onMouseEnter={handlePopoverOpen}
@@ -396,7 +447,7 @@ function Field(props: Readonly<FieldProps>) {
             {formField}
           </span>
         </span>
-        {showError && dataError && anchorEl && (
+        {shouldShowError && dataError && anchorEl && (
           <ErrorPopover
             anchorEl={anchorEl}
             open={!!anchorEl}
@@ -404,10 +455,10 @@ function Field(props: Readonly<FieldProps>) {
             onClose={handlePopoverClose}
           />
         )}
-      </>
+      </>,
     );
   }
-  return (
+  return withHint(
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       title={rest.title ?? desc.title}
@@ -433,7 +484,7 @@ function Field(props: Readonly<FieldProps>) {
         />
       )}
       {extraLabel && <Label className={classes.extraLabel}>{extraLabel}</Label>}
-    </Label>
+    </Label>,
   );
 }
 
@@ -582,6 +633,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
 
 const SelectOneOf = (props: SelectOneOfProps) => {
   const { title, name, schema, ...prop } = props;
+  const { t } = useTranslation();
 
   const selectDesc: {
     title?: string;
@@ -605,7 +657,7 @@ const SelectOneOf = (props: SelectOneOfProps) => {
   return (
     <Field
       name={name}
-      options={getSelectOptionsFromSchema(selectDesc)}
+      options={getSelectOptionsFromSchema(selectDesc, t)}
       title={title}
       {...prop}
       component={Select}
@@ -683,7 +735,7 @@ function serializeRewrite(
 ): unknown {
   const res: Record<string, unknown> = {};
   if (typeof instance !== 'object' || instance === null || !schema.properties) {
-    return instance !== undefined ? instance : schema.default;
+    return instance === undefined ? schema.default : instance;
   }
 
   const instanceObj = instance as Record<string, unknown>;
@@ -721,4 +773,4 @@ function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   return errs;
 }
 
-export { Field, CustomQueryField, FieldWithModal, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf, Label };

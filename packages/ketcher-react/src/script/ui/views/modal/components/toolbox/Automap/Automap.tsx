@@ -18,7 +18,7 @@ import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import type { AutomapRequest } from '../../../../../state/store.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import { useTranslation } from 'react-i18next';
-import { Dialog, type DialogParams } from '../../../../components';
+import { Dialog, type DialogParameters } from '../../../../components';
 import classes from './Automap.module.less';
 import Select from '../../../../../component/form/Select/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
@@ -55,7 +55,7 @@ const Automap = (props: Props) => {
       result={() => formState.result}
       valid={() => formState.valid}
       // Dialog expects a looser `onOk` result type
-      params={rest as DialogParams}
+      params={rest as DialogParameters}
       withDivider
       buttons={['Cancel', 'OK']}
       buttonsNameMap={{ OK: t('common:button.apply') }}

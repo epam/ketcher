@@ -66,7 +66,6 @@ const MonomerOverview = ({
           currentlySelectedMonomerAttachmentPoint:
             selectedAttachmentPoint ?? undefined,
           usageInMacromolecule: usage,
-          labelInMonomerConnectionsModal: true,
           needCache: needCache ?? false,
         }}
         update={update}

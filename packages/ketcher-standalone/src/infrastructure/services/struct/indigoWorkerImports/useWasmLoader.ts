@@ -10,3 +10,8 @@ export function getIndigoWorker(): Worker {
   _indigoWorker ??= new IndigoWorker();
   return _indigoWorker;
 }
+
+export function terminateIndigoWorker(): void {
+  _indigoWorker?.terminate();
+  _indigoWorker = null;
+}

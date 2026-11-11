@@ -627,13 +627,6 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const radical = this.atom.properties.radical;
-    // Isotopes and charges shift the element letter away from the atom point.
-    // The offset stays on the marks because a group's getBBox() ignores its own
-    // transform, and bonds are trimmed by that box.
-    const elementLabelBBox = this.elementLabelElement?.node()?.getBBox();
-    const centerX = elementLabelBBox
-      ? elementLabelBBox.x + elementLabelBBox.width / 2
-      : 0;
 
     this.radicalElement = this.rootElement?.append('g');
 
@@ -641,13 +634,13 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Single:
         this.radicalElement
           ?.append('circle')
-          .attr('cx', centerX + 3)
+          .attr('cx', 3)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
         this.radicalElement
           ?.append('circle')
-          .attr('cx', centerX - 3)
+          .attr('cx', -3)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
@@ -655,7 +648,7 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Doublet:
         this.radicalElement
           ?.append('circle')
-          .attr('cx', centerX)
+          .attr('cx', 0)
           .attr('cy', -10)
           .attr('r', 2)
           .attr('fill', this.labelColor);
@@ -663,10 +656,7 @@ export class AtomRenderer extends BaseRenderer {
       case AtomRadical.Triplet:
         this.radicalElement
           ?.append('path')
-          .attr(
-            'd',
-            `M ${centerX} -5 L ${centerX + 2} -10 L ${centerX + 4} -5 M ${centerX - 6} -5 L ${centerX - 4} -10 L ${centerX - 2} -5`,
-          )
+          .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
           .attr('fill', 'none')
           .attr('stroke', this.labelColor)
           .attr('stroke-width', 1.4);
@@ -690,6 +680,7 @@ export class AtomRenderer extends BaseRenderer {
   private appendExplicitIsotope() {
     if (this.atom.hasExplicitIsotope) {
       const explicitIsotope = this.atom.properties.isotope as number;
+      const elementLabelCenterBeforeIsotope = this.getElementLabelCenterX();
 
       this.textElement
         /*
@@ -703,15 +694,39 @@ export class AtomRenderer extends BaseRenderer {
         .attr('fill', this.labelColor)
         .attr('letter-spacing', 0.2)
         .attr('dy', -4);
+
+      // As in Molecules mode, the element letter stays on the atom point and
+      // the isotope goes to its left, so the label is moved back by as much as
+      // the isotope pushed the letter.
+      const elementLabelCenterAfterIsotope = this.getElementLabelCenterX();
+      if (
+        elementLabelCenterBeforeIsotope !== undefined &&
+        elementLabelCenterAfterIsotope !== undefined
+      ) {
+        const labelX = Number(this.textElement?.attr('x')) || 0;
+
+        this.textElement?.attr(
+          'x',
+          labelX -
+            (elementLabelCenterAfterIsotope - elementLabelCenterBeforeIsotope),
+        );
+      }
     }
+  }
+
+  private getElementLabelCenterX() {
+    const elementLabelBBox = this.elementLabelElement?.node()?.getBBox();
+
+    return elementLabelBBox
+      ? elementLabelBBox.x + elementLabelBBox.width / 2
+      : undefined;
   }
 
   private appendAtomProperties() {
     this.appendExplicitIsotope();
     this.appendCharge();
-    this.appendExplicitValence();
-    // Last, because the properties above can shift the element letter
     this.appendRadical();
+    this.appendExplicitValence();
   }
 
   private appendBadValenceWarning() {

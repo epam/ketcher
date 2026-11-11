@@ -145,58 +145,80 @@ describe('AtomRenderer.isLabelVisible', () => {
   });
 });
 
-describe('AtomRenderer.appendRadical', () => {
+describe('AtomRenderer isotope and radical layout (#12616)', () => {
   const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
-  // Draws the radical into a real SVG group, as if the element letter of the
-  // label was laid out at the given box
-  const drawRadical = (
-    radical: AtomRadical,
-    elementLabelBBox?: Pick<DOMRect, 'x' | 'width'>,
+  // The element letter moves from `before` to `after` once the isotope is put
+  // in front of it, as the browser lays the label out
+  const appendIsotope = (
+    elementLetterBoxes: Array<Pick<DOMRect, 'x' | 'width'>>,
+    labelX: number,
   ) => {
+    const textNode = document.createElementNS(SVG_NAMESPACE, 'text');
+    textNode.setAttribute('x', String(labelX));
+    const getBBox = jest.fn();
+    elementLetterBoxes.forEach((box) => getBBox.mockReturnValueOnce(box));
+    const appendExplicitIsotope = Reflect.get(
+      AtomRenderer.prototype,
+      'appendExplicitIsotope',
+    );
+    const getElementLabelCenterX = Reflect.get(
+      AtomRenderer.prototype,
+      'getElementLabelCenterX',
+    );
+    const renderer = {
+      atom: { hasExplicitIsotope: true, properties: { isotope: 14 } },
+      labelColor: '#000',
+      textElement: select(textNode),
+      elementLabelElement: { node: () => ({ getBBox }) },
+      getElementLabelCenterX,
+    };
+
+    appendExplicitIsotope.call(renderer);
+
+    return textNode;
+  };
+
+  it('keeps the element letter on the atom point when an isotope is added', () => {
+    // the isotope pushed the letter 8 px to the right
+    const textNode = appendIsotope(
+      [
+        { x: -5, width: 9 },
+        { x: 3, width: 9 },
+      ],
+      -5,
+    );
+
+    expect(textNode.getAttribute('x')).toBe('-13');
+    expect(textNode.firstElementChild?.textContent).toBe('14');
+  });
+
+  it('keeps the label where it is when the letter is not moved', () => {
+    const textNode = appendIsotope(
+      [
+        { x: -4, width: 9 },
+        { x: -4, width: 9 },
+      ],
+      5,
+    );
+
+    expect(textNode.getAttribute('x')).toBe('5');
+  });
+
+  it('draws the radical at the atom point, above the element letter', () => {
     const rootNode = document.createElementNS(SVG_NAMESPACE, 'g');
     const appendRadical = Reflect.get(AtomRenderer.prototype, 'appendRadical');
 
     appendRadical.call({
-      atom: { hasRadical: true, properties: { radical } },
+      atom: { hasRadical: true, properties: { radical: AtomRadical.Single } },
       labelColor: '#000',
       rootElement: select(rootNode),
-      elementLabelElement: elementLabelBBox && {
-        node: () => ({ getBBox: () => elementLabelBBox }),
-      },
     });
 
-    return rootNode;
-  };
-
-  const getDotPositions = (rootNode: SVGElement) =>
-    [...rootNode.querySelectorAll('circle')].map((dot) =>
-      Number(dot.getAttribute('cx')),
-    );
-
-  it('centers a singlet over the element letter when an isotope shifts it', () => {
-    const rootNode = drawRadical(AtomRadical.Single, { x: 11, width: 10 });
-
-    expect(getDotPositions(rootNode)).toEqual([19, 13]);
-  });
-
-  it('centers a doublet over the element letter', () => {
-    const rootNode = drawRadical(AtomRadical.Doublet, { x: 11, width: 10 });
-
-    expect(getDotPositions(rootNode)).toEqual([16]);
-  });
-
-  it('centers a triplet over the element letter', () => {
-    const rootNode = drawRadical(AtomRadical.Triplet, { x: 11, width: 10 });
-
-    expect(rootNode.querySelector('path')?.getAttribute('d')).toBe(
-      'M 16 -5 L 18 -10 L 20 -5 M 10 -5 L 12 -10 L 14 -5',
-    );
-  });
-
-  it('keeps the radical on the atom point when there is no element letter', () => {
-    const rootNode = drawRadical(AtomRadical.Doublet);
-
-    expect(getDotPositions(rootNode)).toEqual([0]);
+    expect(
+      [...rootNode.querySelectorAll('circle')].map((dot) =>
+        Number(dot.getAttribute('cx')),
+      ),
+    ).toEqual([3, -3]);
   });
 });

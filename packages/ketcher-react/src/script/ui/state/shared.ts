@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -74,7 +73,7 @@ export function parseStruct(
 
     const format = identifyStructFormat(struct);
     if (format === SupportedFormat.cdx) {
-      struct = `base64::${struct.replace(/\s/g, '')}`;
+      struct = `base64::${struct.split(/\s+/).join('')}`;
     }
     const factory = new FormatterFactory(server);
     const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
@@ -251,11 +250,11 @@ export function load(struct: string | Struct, options?) {
       editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (error: any) {
+    } catch (error) {
       KetcherLogger.error('shared.ts::load', error);
       dispatch(setAnalyzingFile(false));
       if (error) {
-        errorHandler?.(error.message);
+        errorHandler?.(error instanceof Error ? error.message : String(error));
       }
     } finally {
       notifyRequestCompleted();

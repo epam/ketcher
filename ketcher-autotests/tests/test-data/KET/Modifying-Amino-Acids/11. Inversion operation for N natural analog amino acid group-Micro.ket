@@ -289,8 +289,7 @@
             "y": -1.25
         },
         "alias": "dN",
-        "templateId": "dN___D-Asparagine",
-        "seqid": 2
+        "templateId": "dN___D-Asparagine"
     },
     "monomer2": {
         "type": "monomer",

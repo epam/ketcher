@@ -289,8 +289,7 @@
             "y": -1.25
         },
         "alias": "P",
-        "templateId": "P___Proline",
-        "seqid": 1
+        "templateId": "P___Proline"
     },
     "monomerTemplate-P___Proline": {
         "type": "monomerTemplate",

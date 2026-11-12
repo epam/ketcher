@@ -93,6 +93,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     super(
       {
         label: variantMonomerLabel,
+        seqId: variantMonomerItem.seqId,
         props: {
           MonomerNaturalAnalogCode: '',
           MonomerName: variantMonomerLabel,

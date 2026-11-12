@@ -14,8 +14,11 @@ module.exports = {
     '^src(.*)$': '<rootDir>/src/$1',
     '^components$': '<rootDir>/src/components',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
-    // intl-messageformat is ESM-only (no CJS build) — see testIntlMessageFormatMock.js
-    '^intl-messageformat$': '<rootDir>/testIntlMessageFormatMock.js',
+    // intl-messageformat@10 sits in the workspace-local node_modules while
+    // i18next-icu is hoisted to root node_modules; resolve explicitly so Jest
+    // can bridge the two. Consumers get intl-messageformat hoisted to their own
+    // node_modules (CJS) and need no extra config.
+    '^intl-messageformat$': require.resolve('intl-messageformat'),
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   setupFiles: ['./jest.setup.js'],

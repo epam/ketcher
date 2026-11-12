@@ -652,4 +652,22 @@ test.describe('Ketcher bugs in 3.7.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
+
+  test('Case 24: Single ambiguous monomer is placed at canvas center when loaded from KET in Molecules mode', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5782
+     * Description: System puts any macro structure (single monomer) far away from the center of canvas if loaded from KET
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load ambiguous monomer (Peptide X) from KET file as new project
+     * 3. Verify monomer is placed at the canvas center
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
+    );
+    await takeEditorScreenshot(page);
+  });
 });

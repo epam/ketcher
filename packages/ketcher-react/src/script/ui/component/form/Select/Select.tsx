@@ -17,7 +17,7 @@
 import MuiSelect, { type SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -50,6 +50,18 @@ const ChevronIcon = ({ className }) => (
   <Icon name="chevron" className={className} />
 );
 
+// Safari reports `position: fixed` boxes shifted by the visual viewport offset
+// when the page is zoomed, which displaces the MUI menu from its anchor.
+const measureFixedOriginShift = () => {
+  const probe = document.createElement('div');
+  probe.style.cssText =
+    'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none';
+  document.body.appendChild(probe);
+  const { left, top } = probe.getBoundingClientRect();
+  probe.remove();
+  return left || top ? { left, top } : undefined;
+};
+
 const Select = ({
   className,
   value,
@@ -71,6 +83,12 @@ const Select = ({
     ? document.querySelector('#root')
     : undefined;
 
+  const [fixedShift, setFixedShift] = useState<
+    { left: number; top: number } | undefined
+  >();
+
+  const handleOpen = () => setFixedShift(measureFixedOriginShift());
+
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);
   };
@@ -81,6 +99,7 @@ const Select = ({
       value={currentValue?.value ?? ''}
       title={title}
       onChange={handleChange}
+      onOpen={handleOpen}
       renderValue={(selected: string) =>
         currentValue?.children ?? currentValue?.label ?? placeholder ?? selected
       }
@@ -91,6 +110,9 @@ const Select = ({
       MenuProps={{
         container: portalContainer,
         className: styles.dropdownList,
+        PaperProps: fixedShift && {
+          style: { marginLeft: -fixedShift.left, marginTop: -fixedShift.top },
+        },
       }}
       IconComponent={ChevronIcon}
       data-testid={testId}

@@ -16,6 +16,8 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 
 async function expectMicroMode(page: Page) {
   await expect(getCanvasByMode(page, 'molecules')).toBeVisible();
@@ -314,5 +316,135 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await undoByKeyboard(page);
     await expectMicroMode(page);
     expect(await getAtomLocator(page, {}).count()).toBe(0);
+  });
+
+  test('Monomer deletion and additions survive switches in a mixed history', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Undo and redo replay micro edits, mode switches, and macro
+     *              monomer addition and deletion in the original order.
+     * Scenario:
+     * 1. Add a carbon in Molecules mode, then switch to Macromolecules mode
+     * 2. Add two monomers and delete one, then switch back to Molecules mode
+     * 3. Undo the switch, deletion, additions, and first switch and carbon
+     * 4. Redo each action and verify the corresponding mode and structure
+     *
+     * Version 3.21.0
+     */
+    await addAtoms(page, Atom.Carbon, [{ x: 400, y: 300 }]);
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 500, y: 300 });
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+    await ContextMenu(page, getMonomerLocator(page, Peptide.Tza).first()).click(
+      MonomerOption.Delete,
+    );
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await expectMicroMode(page);
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
+
+    await CommonTopLeftToolbar(page).undo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+    await CommonTopLeftToolbar(page).undo();
+    await expectMicroMode(page);
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
+    await CommonTopLeftToolbar(page).undo();
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(0);
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
+    await CommonTopLeftToolbar(page).redo();
+    await expectMacroMode(page);
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(0);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
+    await CommonTopLeftToolbar(page).redo();
+    await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(1);
+    await CommonTopLeftToolbar(page).redo();
+    await expectMicroMode(page);
+    await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(1);
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
+  });
+
+  test('A longer history remains traversable across repeated mode switches', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/12672
+     * Description: Multiple edits and switches remain ordered throughout a
+     *              complete undo and redo traversal.
+     * Scenario:
+     * 1. Add six separate carbons, switching to Macro and back after each pair
+     * 2. Undo all edits and switches, checking each mode and atom count
+     * 3. Redo all edits and switches, checking each mode and atom count
+     *
+     * Version 3.21.0
+     */
+    test.setTimeout(120_000);
+
+    for (let pair = 0; pair < 3; pair++) {
+      await addAtoms(page, Atom.Carbon, [
+        { x: 300 + pair * 100, y: 250 },
+        { x: 300 + pair * 100, y: 350 },
+      ]);
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        (pair + 1) * 2,
+      );
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    }
+
+    for (let pair = 3; pair > 0; pair--) {
+      await CommonTopLeftToolbar(page).undo();
+      await expectMacroMode(page);
+      await CommonTopLeftToolbar(page).undo();
+      await expectMicroMode(page);
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2,
+      );
+      await CommonTopLeftToolbar(page).undo();
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2 - 1,
+      );
+      await CommonTopLeftToolbar(page).undo();
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2 - 2,
+      );
+    }
+    await expect(CommonTopLeftToolbar(page).undoButton).toBeDisabled();
+
+    for (let pair = 0; pair < 3; pair++) {
+      await CommonTopLeftToolbar(page).redo();
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2 + 1,
+      );
+      await CommonTopLeftToolbar(page).redo();
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2 + 2,
+      );
+      await CommonTopLeftToolbar(page).redo();
+      await expectMacroMode(page);
+      await CommonTopLeftToolbar(page).redo();
+      await expectMicroMode(page);
+      await expect(getAtomLocator(page, { atomLabel: 'C' })).toHaveCount(
+        pair * 2 + 2,
+      );
+    }
+    await expect(CommonTopLeftToolbar(page).redoButton).toBeDisabled();
   });
 });

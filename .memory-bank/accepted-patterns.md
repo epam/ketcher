@@ -6,9 +6,9 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 
 ### Domain files that import from application (allowlisted under invariant A4)
 
-**Where:** the domain files list their pre-A4 runtime imports from `application/render/` and `application/editor/` in `scripts/eslint-invariants-rules.mjs` under `ALLOWED_DOMAIN_IMPORTS` (see the array for the current files and modules, for example `packages/ketcher-core/src/domain/AttachmentPoint.ts` with `application/editor/editorSingleton`). The lint rule `ketcher-invariants/domain-no-application-imports` absorbs the listed imports and errors on every new one. The most common module is `editorSingleton`. The list cannot go stale: `scripts/invariant-rules.test.mjs` fails when an entry no longer has a real violation.
+**Where:** the domain files list their pre-A4 runtime imports from `application/render/` and `application/editor/` in `scripts/eslint-invariants-rules.mjs` under `ALLOWED_DOMAIN_IMPORTS` (see the array for the current files and modules, for example `packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts` with `application/editor/editorSingleton`). The lint rule `ketcher-invariants/domain-no-application-imports` absorbs the listed imports and errors on every new one. The most common module is `editorSingleton`. The list cannot go stale: `scripts/invariant-rules.test.mjs` fails when an entry no longer has a real violation.
 **Why it is accepted:** These imports predate rule R1 in review-rules.md. Moving them is a separate refactor. R1 is now enforced by lint, so the reviewer sees only new imports.
-**Example:** `import { provideEditorInstance } from 'application/editor/editorSingleton';` at `packages/ketcher-core/src/domain/AttachmentPoint.ts:1`.
+**Example:** `import { provideEditorInstance } from 'application/editor/editorSingleton';` at `packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts:1`.
 
 ## Naming
 

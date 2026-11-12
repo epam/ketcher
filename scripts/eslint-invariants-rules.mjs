@@ -68,17 +68,6 @@ export const ALLOWED_UI_IMPORTS = [
  */
 export const ALLOWED_DOMAIN_IMPORTS = [
   {
-    file: 'packages/ketcher-core/src/domain/AttachmentPoint.ts',
-    imports: [
-      'application/editor/editorEvents',
-      'application/editor/editorSingleton',
-    ],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/PreviewAttachmentPoint.ts',
-    imports: ['application/render/util'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/AmbiguousMonomer.ts',
     imports: [
       'application/editor/editorSingleton',
@@ -110,10 +99,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
     ],
   },
   {
-    file: 'packages/ketcher-core/src/domain/entities/DrawingEntity.ts',
-    imports: ['application/editor/shared/coordinates'],
-  },
-  {
     file: 'packages/ketcher-core/src/domain/entities/Nucleoside.ts',
     imports: [
       'application/editor/editorSingleton',
@@ -135,10 +120,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
       'application/editor/editorSettings',
       'application/editor/editorSingleton',
     ],
-  },
-  {
-    file: 'packages/ketcher-core/src/domain/helpers/attachmentPointCalculations.ts',
-    imports: ['application/editor/shared/coordinates'],
   },
   {
     file: 'packages/ketcher-core/src/domain/serializers/ket/fromKet/polymerBondToDrawingEntity.ts',

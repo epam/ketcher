@@ -1,4 +1,3 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { D3SvgElementSelection } from 'application/render/types';
@@ -11,9 +10,9 @@ import {
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
-import { editorEvents } from 'application/editor/editorEvents';
 import {
   type AttachmentPointConstructorParams,
+  type AttachmentPointEvents,
   AttachmentPointName,
   type MouseEventWithAttachmentPoint,
 } from './types';
@@ -62,7 +61,8 @@ export class AttachmentPoint {
   private readonly isDragTarget: boolean;
   private readonly isDragCircleHover: boolean;
   private readonly isSnake: boolean;
-  private readonly editorEvents: typeof editorEvents;
+  private readonly editorEvents: AttachmentPointEvents;
+  private readonly isSnakeLayoutMode: () => boolean;
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
@@ -86,7 +86,8 @@ export class AttachmentPoint {
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
-    this.editorEvents = editorEvents;
+    this.editorEvents = constructorParams.editorEvents;
+    this.isSnakeLayoutMode = constructorParams.isSnakeLayoutMode;
     this.attachmentPoint = null;
 
     if (!shouldSkipInit) {
@@ -268,7 +269,6 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
@@ -286,8 +286,7 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode.modeName === 'snake-layout-mode' &&
-          polymerBond.isSideChainConnection))
+        (this.isSnakeLayoutMode() && polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;

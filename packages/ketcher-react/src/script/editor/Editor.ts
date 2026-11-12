@@ -3873,7 +3873,89 @@ class Editor implements KetcherEditor {
       }
     }
 
+    this.syncPastedRGroupAttachmentPointsWithMonomerCreationState(
+      changesMap.get(OperationType.ATOM_ADD),
+    );
     this.monomerCreationState = { ...this.monomerCreationState };
+  }
+
+  private syncPastedRGroupAttachmentPointsWithMonomerCreationState(
+    addedAtomIds?: Set<number>,
+  ) {
+    if (!this.monomerCreationState || !addedAtomIds?.size) {
+      return;
+    }
+
+    const {
+      assignedAttachmentPoints,
+      potentialAttachmentPoints,
+      clipboardAttachmentPointNameOverrides,
+    } = this.monomerCreationState;
+    const assignedLeavingAtomIds = new Set(
+      Array.from(
+        assignedAttachmentPoints.values(),
+        ([, leavingAtomId]) => leavingAtomId,
+      ),
+    );
+    const struct = this.struct();
+
+    addedAtomIds.forEach((atomId) => {
+      if (assignedLeavingAtomIds.has(atomId)) {
+        return;
+      }
+
+      const atom = struct.atoms.get(atomId);
+      if (
+        atom?.label !== 'R#' ||
+        !isNumber(atom.rglabel) ||
+        !isSingleRGroupAttachmentPoint(Number(atom.rglabel)) ||
+        atom.neighbors.length !== 1
+      ) {
+        return;
+      }
+
+      const halfBond = struct.halfBonds.get(atom.neighbors[0]);
+      if (!halfBond) {
+        return;
+      }
+
+      const bond = Editor.getBondByNeighborHalfBondId(
+        struct,
+        atom.neighbors[0],
+      );
+      if (!bond || !Editor.isBondSuitableForAttachmentPoint(bond)) {
+        return;
+      }
+
+      const attachmentAtomId = halfBond.end;
+      const desiredAttachmentPointName = getAttachmentPointLabelWithBinaryShift(
+        Number(atom.rglabel),
+      ) as AttachmentPointName;
+      const occupiedAttachmentPointNames = Array.from(
+        assignedAttachmentPoints.keys(),
+      );
+      let attachmentPointName = desiredAttachmentPointName;
+
+      if (assignedAttachmentPoints.has(attachmentPointName)) {
+        attachmentPointName = getNextFreeAttachmentPoint(
+          occupiedAttachmentPointNames,
+        );
+      }
+
+      assignedAttachmentPoints.set(attachmentPointName, [
+        attachmentAtomId,
+        atomId,
+      ]);
+      potentialAttachmentPoints.get(attachmentAtomId)?.delete(atomId);
+
+      if (attachmentPointName !== desiredAttachmentPointName) {
+        const nextOverrides =
+          clipboardAttachmentPointNameOverrides ?? new Map();
+        nextOverrides.set(attachmentPointName, desiredAttachmentPointName);
+        this.monomerCreationState!.clipboardAttachmentPointNameOverrides =
+          nextOverrides;
+      }
+    });
   }
 
   public setRnaMonomerCreationMode(isActive: boolean) {
@@ -4272,11 +4354,12 @@ class Editor implements KetcherEditor {
   ): Struct {
     const struct = this.render.ctab.molecule;
     const selection = existingSelection ?? this.explicitSelected();
+    const selectedToClonedAtomIdMap = atomIdMap ?? new Map<number, number>();
     const dst = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),
       true,
-      atomIdMap,
+      selectedToClonedAtomIdMap,
       new Pile(selection.simpleObjects),
       new Pile(selection.texts),
       null,
@@ -4300,7 +4383,49 @@ class Editor implements KetcherEditor {
 
     dst.isReaction = struct.isReaction && struct.isRxn();
 
+    this.restoreMonomerCreationAttachmentPointsForClipboard(
+      dst,
+      selectedToClonedAtomIdMap,
+    );
+
     return dst;
+  }
+
+  private restoreMonomerCreationAttachmentPointsForClipboard(
+    struct: Struct,
+    selectedToClonedAtomIdMap: Map<number, number>,
+  ) {
+    if (!this.monomerCreationState) {
+      return;
+    }
+
+    const { assignedAttachmentPoints, clipboardAttachmentPointNameOverrides } =
+      this.monomerCreationState;
+
+    assignedAttachmentPoints.forEach(
+      ([, leavingAtomId], attachmentPointName) => {
+        const clonedLeavingAtomId =
+          selectedToClonedAtomIdMap.get(leavingAtomId);
+        if (!isNumber(clonedLeavingAtomId)) {
+          return;
+        }
+
+        const leavingAtom = struct.atoms.get(clonedLeavingAtomId);
+        if (!leavingAtom) {
+          return;
+        }
+
+        const serializedAttachmentPointName =
+          clipboardAttachmentPointNameOverrides?.get(attachmentPointName) ??
+          attachmentPointName;
+        const attachmentPointNumber = getAttachmentPointNumberFromLabel(
+          serializedAttachmentPointName,
+        );
+
+        leavingAtom.label = 'R#';
+        leavingAtom.rglabel = 1 << (attachmentPointNumber - 1);
+      },
+    );
   }
 
   alignDescriptors() {

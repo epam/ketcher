@@ -92,6 +92,10 @@ export type MonomerCreationState = {
     AttachmentPointName,
     [number, number]
   >;
+  clipboardAttachmentPointNameOverrides?: Map<
+    AttachmentPointName,
+    AttachmentPointName
+  >;
 } | null;
 
 export class Render {

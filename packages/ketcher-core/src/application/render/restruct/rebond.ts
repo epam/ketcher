@@ -147,7 +147,6 @@ class ReBond extends ReObject {
     this.b = bond; // TODO rename b to item
     this.doubleBondShift = 0;
   }
-
   drawHover(render: Render, shouldDrawOutline = true) {
     const ret = this.makeHoverPlate(render, shouldDrawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);

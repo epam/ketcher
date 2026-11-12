@@ -50,6 +50,7 @@ export function prepareStructForKet(struct: Struct) {
     ketNodes.push({
       type: 'arrow',
       center: item.pos[0],
+      selected: item.getInitiallySelected(),
       data: {
         mode: item.mode,
         pos: item.pos,

@@ -1799,6 +1799,7 @@ export class Struct {
     this.bonds.changeInitiallySelectedPropertiesForPool(true);
     this.rxnPluses.changeInitiallySelectedPropertiesForPool(true);
     this.rxnArrows.changeInitiallySelectedPropertiesForPool(true);
+    this.multitailArrows.changeInitiallySelectedPropertiesForPool(true);
     this.texts.changeInitiallySelectedPropertiesForPool(true);
   }
 
@@ -1808,6 +1809,7 @@ export class Struct {
     this.bonds.changeInitiallySelectedPropertiesForPool();
     this.rxnPluses.changeInitiallySelectedPropertiesForPool();
     this.rxnArrows.changeInitiallySelectedPropertiesForPool();
+    this.multitailArrows.changeInitiallySelectedPropertiesForPool();
     this.texts.changeInitiallySelectedPropertiesForPool();
   }
 

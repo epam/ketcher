@@ -35,23 +35,25 @@ export class AtomAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    if (this.data) {
-      const { aid, attribute, value } = this.data;
-      if (aid === undefined || attribute === undefined) {
-        return;
-      }
-
-      const atom = restruct.molecule.atoms.get(aid);
-      if (!atom) return;
-      this.data2 ??= {
-        aid,
-        attribute,
-        value: Reflect.get(atom, attribute),
-      };
-
-      Reflect.set(atom, attribute, value);
-      BaseOperation.invalidateAtom(restruct, aid);
+    if (!this.data) {
+      return;
     }
+
+    const { aid, attribute, value } = this.data;
+    if (aid === undefined || attribute === undefined) {
+      return;
+    }
+
+    const atom = restruct.molecule.atoms.get(aid);
+    if (!atom) return;
+    this.data2 ??= {
+      aid,
+      attribute,
+      value: Reflect.get(atom, attribute),
+    };
+
+    Reflect.set(atom, attribute, value);
+    BaseOperation.invalidateAtom(restruct, aid);
   }
 
   invert() {

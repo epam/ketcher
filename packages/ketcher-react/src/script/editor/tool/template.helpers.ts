@@ -62,23 +62,29 @@ export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
     loopHbs?.forEach((hb) => {
       const halfBondBegin = struct.halfBonds.get(hb)?.begin;
 
-      if (halfBondBegin) {
-        const hbbAtom = struct.atoms.get(halfBondBegin);
-
-        if (hbbAtom) {
-          xy0.add_(hbbAtom.pp);
-          count++;
-        }
+      if (!halfBondBegin) {
+        return;
       }
+
+      const hbbAtom = struct.atoms.get(halfBondBegin);
+
+      if (!hbbAtom) {
+        return;
+      }
+
+      xy0.add_(hbbAtom.pp);
+      count++;
     });
   } else {
     frIds.forEach((id) => {
       const atomById = struct.atoms.get(id);
 
-      if (atomById) {
-        xy0.add_(atomById.pp);
-        count++;
+      if (!atomById) {
+        return;
       }
+
+      xy0.add_(atomById.pp);
+      count++;
     });
   }
 

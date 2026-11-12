@@ -265,10 +265,12 @@ export class FunctionalGroup {
       }
     } else {
       functionalGroups.forEach((fg) => {
-        if (fg.relatedSGroupId === sgroup) {
-          isFunctionalGroup = true;
-          isExpanded = fg.isExpanded;
+        if (!(fg.relatedSGroupId === sgroup)) {
+          return;
         }
+
+        isFunctionalGroup = true;
+        isExpanded = fg.isExpanded;
       });
     }
     return !isExpanded && isFunctionalGroup;

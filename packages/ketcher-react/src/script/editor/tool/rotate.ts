@@ -78,18 +78,20 @@ class RotateTool implements Tool {
   constructor(editor: Editor, flipDirection?: FlipDirection) {
     this.editor = editor;
 
-    if (flipDirection) {
-      const selectionCenter = this.getCenter();
-      const canvasCenter = this.reStruct.getVBoxObj().centre();
-      const action = fromFlip(
-        this.reStruct,
-        this.selection,
-        flipDirection,
-        selectionCenter || canvasCenter,
-      );
-      editor.update(action);
-      editor.rotateController.rerender();
+    if (!flipDirection) {
+      return;
     }
+
+    const selectionCenter = this.getCenter();
+    const canvasCenter = this.reStruct.getVBoxObj().centre();
+    const action = fromFlip(
+      this.reStruct,
+      this.selection,
+      flipDirection,
+      selectionCenter || canvasCenter,
+    );
+    editor.update(action);
+    editor.rotateController.rerender();
   }
 
   private get reStruct() {
@@ -298,9 +300,11 @@ class RotateTool implements Tool {
         );
         const monomerSGroups: MonomerMicromolecule[] = [];
         sGroups.forEach((sGroup) => {
-          if (sGroup instanceof MonomerMicromolecule) {
-            monomerSGroups.push(sGroup);
+          if (!(sGroup instanceof MonomerMicromolecule)) {
+            return;
           }
+
+          monomerSGroups.push(sGroup);
         });
         // If at least one monomer in the selection is expanded, every
         // monomer (including collapsed ones) gets its rotation metadata

@@ -226,11 +226,13 @@ class ReRGroupAttachmentPoint extends ReObject {
         highlightColor = highlight.color;
       }
     });
-    if (isHighlighted) {
-      const style = { fill: highlightColor, stroke: 'none' };
-      const path = this.makeHighlightePlate(restruct, style);
-      restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
+    if (!isHighlighted) {
+      return;
     }
+
+    const style = { fill: highlightColor, stroke: 'none' };
+    const path = this.makeHighlightePlate(restruct, style);
+    restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
   }
 
   private addTestAttributes(attachmentPointShape: AttachmentPointShape) {

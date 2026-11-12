@@ -126,14 +126,16 @@ export class Molfile {
           shouldIgnoreError = true;
         }
 
-        if (
+        if (!(
           shouldIgnoreError ||
           (!shouldPreserveIndigoDesc &&
             /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
-        ) {
-          errors += +shouldIgnoreError;
-          toRemove.push(sgroup.id);
+        )) {
+          return;
         }
+
+        errors += +shouldIgnoreError;
+        toRemove.push(sgroup.id);
       });
 
     if (errors) {
@@ -439,18 +441,20 @@ export class Molfile {
 
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
-        if (rg.resth || rg.ifthen > 0 || rg.range.length > 0) {
-          const line =
-            '  1 ' +
-            utils.paddedNum(rgid, 3) +
-            ' ' +
-            utils.paddedNum(rg.ifthen, 3) +
-            ' ' +
-            utils.paddedNum(rg.resth ? 1 : 0, 3) +
-            '   ' +
-            rg.range;
-          rglogicList.push(line);
+        if (!(rg.resth || rg.ifthen > 0 || rg.range.length > 0)) {
+          return;
         }
+
+        const line =
+          '  1 ' +
+          utils.paddedNum(rgid, 3) +
+          ' ' +
+          utils.paddedNum(rg.ifthen, 3) +
+          ' ' +
+          utils.paddedNum(rg.resth ? 1 : 0, 3) +
+          '   ' +
+          rg.range;
+        rglogicList.push(line);
       });
     }
 

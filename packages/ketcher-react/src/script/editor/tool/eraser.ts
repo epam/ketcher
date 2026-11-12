@@ -67,15 +67,17 @@ class EraserTool implements Tool {
     this.lassoHelper = new LassoHelper(mode, editor, null);
 
     const selection = editor.selection();
-    if (selection) {
-      this.isNotActiveTool = true;
-      runDeleteWithAttachmentGroupSplitConfirm(
-        editor,
-        selection,
-        () => fromFragmentDeletion(editor.render.ctab, selection),
-        () => editor.selection(null),
-      );
+    if (!selection) {
+      return;
     }
+
+    this.isNotActiveTool = true;
+    runDeleteWithAttachmentGroupSplitConfirm(
+      editor,
+      selection,
+      () => fromFragmentDeletion(editor.render.ctab, selection),
+      () => editor.selection(null),
+    );
   }
 
   mousedown(event: PointerEvent) {
@@ -245,19 +247,21 @@ class EraserTool implements Tool {
 
     const rnd = this.editor.render;
 
-    if (this.lassoHelper.running()) {
-      // TODO it catches more events than needed, to be re-factored
-      const sel =
-        newSelected.atoms.length > 0
-          ? selMerge(this.lassoHelper.end(), newSelected, false)
-          : this.lassoHelper.end();
-      runDeleteWithAttachmentGroupSplitConfirm(
-        this.editor,
-        sel,
-        () => fromFragmentDeletion(rnd.ctab, sel),
-        () => this.editor.selection(null),
-      );
+    if (!this.lassoHelper.running()) {
+      return;
     }
+
+    // TODO it catches more events than needed, to be re-factored
+    const sel =
+      newSelected.atoms.length > 0
+        ? selMerge(this.lassoHelper.end(), newSelected, false)
+        : this.lassoHelper.end();
+    runDeleteWithAttachmentGroupSplitConfirm(
+      this.editor,
+      sel,
+      () => fromFragmentDeletion(rnd.ctab, sel),
+      () => this.editor.selection(null),
+    );
   }
 
   click(event: PointerEvent) {

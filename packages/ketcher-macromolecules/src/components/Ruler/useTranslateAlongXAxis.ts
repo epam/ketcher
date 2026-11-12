@@ -17,10 +17,12 @@ const useTranslateAlongXAxis = <T extends HTMLElement | SVGSVGElement>(
     });
 
     return () => {
-      if (animateRef.current) {
-        cancelAnimationFrame(animateRef.current);
-        animateRef.current = null;
+      if (!animateRef.current) {
+        return;
       }
+
+      cancelAnimationFrame(animateRef.current);
+      animateRef.current = null;
     };
   }, [ref, offsetX]);
 };

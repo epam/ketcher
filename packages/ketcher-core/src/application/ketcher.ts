@@ -670,33 +670,35 @@ export class Ketcher {
     const editor = provideEditorInstance();
 
     await runAsyncAction<void>(async () => {
-      if (globalThis.isPolymerEditorTurnedOn) {
-        const ketSerializer = new KetSerializer();
-        const serializedKet = ketSerializer.serialize(
-          new Struct(),
-          editor.drawingEntitiesManager,
-          undefined,
-          false,
-          true,
-        );
-
-        const result = await this.structService.layout(
-          {
-            struct: serializedKet,
-            output_format: ChemicalMimeType.KET,
-          },
-          {
-            'smart-layout': false,
-          },
-        );
-
-        deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(
-          result.struct,
-          this.structService,
-          true,
-        );
+      if (!globalThis.isPolymerEditorTurnedOn) {
+        return;
       }
+
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        new Struct(),
+        editor.drawingEntitiesManager,
+        undefined,
+        false,
+        true,
+      );
+
+      const result = await this.structService.layout(
+        {
+          struct: serializedKet,
+          output_format: ChemicalMimeType.KET,
+        },
+        {
+          'smart-layout': false,
+        },
+      );
+
+      deleteAllEntitiesOnCanvas();
+      await parseAndAddMacromoleculesOnCanvas(
+        result.struct,
+        this.structService,
+        true,
+      );
     }, this.eventBus);
   }
 
@@ -760,10 +762,12 @@ export class Ketcher {
 
   setMode(mode: SupportedModes) {
     const editor = provideEditorInstance();
-    if (editor && mode) {
-      editor.events.selectMode.dispatch(ModeTypes[mode]);
-      editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
+    if (!(editor && mode)) {
+      return;
     }
+
+    editor.events.selectMode.dispatch(ModeTypes[mode]);
+    editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
   }
 
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {

@@ -52,34 +52,35 @@ export class BondAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    if (this.data) {
-      const {
-        attribute,
-        bid,
-        value,
-        needInvalidateBond: shouldInvalidateBond,
-      } = this.data;
-      const bond = restruct.molecule.bonds.get(bid);
-      if (!bond) {
-        return;
-      }
+    if (!this.data) {
+      return;
+    }
 
-      this.data2 ??= {
-        bid,
-        attribute,
-        value: bond[attribute],
-        needInvalidateBond: shouldInvalidateBond,
-      };
+    const {
+      attribute,
+      bid,
+      value,
+      needInvalidateBond: shouldInvalidateBond,
+    } = this.data;
+    const bond = restruct.molecule.bonds.get(bid);
+    if (!bond) {
+      return;
+    }
 
-      (bond as unknown as Record<BondAttributeName, unknown>)[attribute] =
-        value;
+    this.data2 ??= {
+      bid,
+      attribute,
+      value: bond[attribute],
+      needInvalidateBond: shouldInvalidateBond,
+    };
 
-      if (this.data.needInvalidateBond) {
-        BaseOperation.invalidateBond(restruct, bid);
-      }
-      if (attribute === 'type') {
-        BaseOperation.invalidateLoop(restruct, bid);
-      }
+    (bond as unknown as Record<BondAttributeName, unknown>)[attribute] = value;
+
+    if (this.data.needInvalidateBond) {
+      BaseOperation.invalidateBond(restruct, bid);
+    }
+    if (attribute === 'type') {
+      BaseOperation.invalidateLoop(restruct, bid);
     }
   }
 

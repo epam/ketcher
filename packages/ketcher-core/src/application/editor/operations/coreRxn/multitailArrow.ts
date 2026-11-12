@@ -35,10 +35,12 @@ export class MultitailArrowAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.multitailArrow) {
-      this.deleteArrowChangeModel(this.multitailArrow);
-      renderersManager.deleteMultitailArrow(this.multitailArrow);
+    if (!this.multitailArrow) {
+      return;
     }
+
+    this.deleteArrowChangeModel(this.multitailArrow);
+    renderersManager.deleteMultitailArrow(this.multitailArrow);
   }
 }
 

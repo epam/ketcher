@@ -87,16 +87,18 @@ class LassoHelper {
       this.selection = null;
     }
 
-    if (this.points && this.points.length > 1) {
-      const rnd = this.editor.render;
-      const dp = this.points.map((p) =>
-        Scale.modelToCanvas(p, rnd.options).add(rnd.options.offset),
-      );
-      this.selection =
-        this.mode === 0
-          ? rnd.selectionPolygon(dp)
-          : rnd.selectionRectangle(dp[0], dp[1]);
+    if (!(this.points && this.points.length > 1)) {
+      return;
     }
+
+    const rnd = this.editor.render;
+    const dp = this.points.map((p) =>
+      Scale.modelToCanvas(p, rnd.options).add(rnd.options.offset),
+    );
+    this.selection =
+      this.mode === 0
+        ? rnd.selectionPolygon(dp)
+        : rnd.selectionRectangle(dp[0], dp[1]);
   }
 
   end() {

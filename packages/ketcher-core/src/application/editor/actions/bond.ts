@@ -268,10 +268,12 @@ export function fromBondsAttrs(
       if (key === 'type') {
         shouldRecalculateImplicitH = true;
       }
-      if (key === 'stereo' && key in attrs) {
-        shouldRecalculateImplicitH = true;
-        shouldUpdateStereo = true;
+      if (!(key === 'stereo' && key in attrs)) {
+        return;
       }
+
+      shouldRecalculateImplicitH = true;
+      shouldUpdateStereo = true;
     });
 
     if (shouldRecalculateImplicitH) {
@@ -478,18 +480,19 @@ export function removeAttachmentPointFromSuperatom(
   restruct: ReStruct,
 ) {
   (sgroup.item?.atoms as number[]).forEach((atomId) => {
-    if (beginAtomId === atomId || endAtomId === atomId) {
-      const anotherSideAtomId =
-        beginAtomId === atomId ? endAtomId : beginAtomId;
-      action.mergeWith(
-        fromSgroupAttachmentPointRemove(
-          restruct,
-          sgroup.item?.id as number,
-          atomId,
-          anotherSideAtomId,
-          false,
-        ),
-      );
+    if (!(beginAtomId === atomId || endAtomId === atomId)) {
+      return;
     }
+
+    const anotherSideAtomId = beginAtomId === atomId ? endAtomId : beginAtomId;
+    action.mergeWith(
+      fromSgroupAttachmentPointRemove(
+        restruct,
+        sgroup.item?.id as number,
+        atomId,
+        anotherSideAtomId,
+        false,
+      ),
+    );
   });
 }

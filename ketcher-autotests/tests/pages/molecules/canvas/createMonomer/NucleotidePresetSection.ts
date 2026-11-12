@@ -105,18 +105,18 @@ export const NucleotidePresetSection = (page: Page) => {
     },
 
     async openTab(tab: NucleotidePresetTab) {
-      if (!(await this.isTabOpened(tab))) {
-        const tabButton = page.getByTestId(tab);
-        await tabButton.click();
-        await tabButton.evaluate(
-          () =>
-            new Promise<void>((resolve) => {
-              requestAnimationFrame(() =>
-                requestAnimationFrame(() => resolve()),
-              );
-            }),
-        );
+      if (await this.isTabOpened(tab)) {
+        return;
       }
+
+      const tabButton = page.getByTestId(tab);
+      await tabButton.click();
+      await tabButton.evaluate(
+        () =>
+          new Promise<void>((resolve) => {
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+          }),
+      );
     },
 
     async openAliasesSection(tab: NucleotidePresetTab) {
@@ -207,11 +207,13 @@ export const NucleotidePresetSection = (page: Page) => {
         await locators.baseTab.naturalAnalogueCombobox.click();
         await page.getByTestId(options.naturalAnalogue).click();
       }
-      if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Base);
-        await locators.baseTab.aliasesSection.helmAliasEditbox.click();
-        await page.keyboard.type(options.HELMAlias);
+      if (!options.HELMAlias) {
+        return;
       }
+
+      await this.openAliasesSection(NucleotidePresetTab.Base);
+      await locators.baseTab.aliasesSection.helmAliasEditbox.click();
+      await page.keyboard.type(options.HELMAlias);
     },
 
     async setupSugar(options: {
@@ -234,11 +236,13 @@ export const NucleotidePresetSection = (page: Page) => {
       if (options.name) {
         await locators.sugarTab.nameEditbox.fill(options.name);
       }
-      if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Sugar);
-        await locators.sugarTab.aliasesSection.helmAliasEditbox.click();
-        await page.keyboard.type(options.HELMAlias);
+      if (!options.HELMAlias) {
+        return;
       }
+
+      await this.openAliasesSection(NucleotidePresetTab.Sugar);
+      await locators.sugarTab.aliasesSection.helmAliasEditbox.click();
+      await page.keyboard.type(options.HELMAlias);
     },
 
     async setupPhosphate(options: {
@@ -261,11 +265,13 @@ export const NucleotidePresetSection = (page: Page) => {
       if (options.name) {
         await locators.phosphateTab.nameEditbox.fill(options.name);
       }
-      if (options.HELMAlias) {
-        await this.openAliasesSection(NucleotidePresetTab.Phosphate);
-        await locators.phosphateTab.aliasesSection.helmAliasEditbox.click();
-        await page.keyboard.type(options.HELMAlias);
+      if (!options.HELMAlias) {
+        return;
       }
+
+      await this.openAliasesSection(NucleotidePresetTab.Phosphate);
+      await locators.phosphateTab.aliasesSection.helmAliasEditbox.click();
+      await page.keyboard.type(options.HELMAlias);
     },
   };
 };

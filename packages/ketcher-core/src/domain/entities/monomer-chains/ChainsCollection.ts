@@ -527,29 +527,33 @@ export class ChainsCollection {
           if (aNode === antisenseNode) {
             isFindCur = true;
           }
-          if (!isFindCur) {
-            const { complimentaryChain: anotherSenseChain } =
-              this.getComplimentaryChainIfNucleotide(
-                aNode,
-                monomerToChain,
-                monomerToNode,
-              ) ?? {};
-            if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
-              const curChainIdx =
-                reorderedSenseForSequentialAntisenseChains.indexOf(chain);
-              let last = anotherSenseChain;
-              for (
-                let i = curChainIdx;
-                i < reorderedSenseForSequentialAntisenseChains.length;
-                i++
-              ) {
-                const tmp = reorderedSenseForSequentialAntisenseChains[i];
-                reorderedSenseForSequentialAntisenseChains[i] = last;
-                last = tmp;
-              }
-              handledChain.add(anotherSenseChain);
-            }
+          if (isFindCur) {
+            return;
           }
+
+          const { complimentaryChain: anotherSenseChain } =
+            this.getComplimentaryChainIfNucleotide(
+              aNode,
+              monomerToChain,
+              monomerToNode,
+            ) ?? {};
+          if (!(anotherSenseChain && !handledChain.has(anotherSenseChain))) {
+            return;
+          }
+
+          const curChainIdx =
+            reorderedSenseForSequentialAntisenseChains.indexOf(chain);
+          let last = anotherSenseChain;
+          for (
+            let i = curChainIdx;
+            i < reorderedSenseForSequentialAntisenseChains.length;
+            i++
+          ) {
+            const tmp = reorderedSenseForSequentialAntisenseChains[i];
+            reorderedSenseForSequentialAntisenseChains[i] = last;
+            last = tmp;
+          }
+          handledChain.add(anotherSenseChain);
         });
       });
     });

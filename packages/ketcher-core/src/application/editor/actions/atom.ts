@@ -174,10 +174,12 @@ export function fromAtomsFragmentAttr(
 
     action.addOp(new AtomAttr(aid, 'fragment', newfrid));
 
-    if (atom.stereoLabel !== null) {
-      action.addOp(new FragmentAddStereoAtom(newfrid, aid));
-      action.addOp(new FragmentDeleteStereoAtom(oldfrid, aid));
+    if (!(atom.stereoLabel !== null)) {
+      return;
     }
+
+    action.addOp(new FragmentAddStereoAtom(newfrid, aid));
+    action.addOp(new FragmentDeleteStereoAtom(oldfrid, aid));
   });
 
   return action.perform(restruct);

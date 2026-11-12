@@ -1674,11 +1674,13 @@ function aromaticBondPaths(
 
 function recenterText(path: Element, relativeBox: RelativeBox) {
   // TODO: find a better way
-  if (Raphael.vml) {
-    const gap = relativeBox.height * 0.16;
-    path.translateAbs(0, gap);
-    relativeBox.y += gap;
+  if (!Raphael.vml) {
+    return;
   }
+
+  const gap = relativeBox.height * 0.16;
+  path.translateAbs(0, gap);
+  relativeBox.y += gap;
 }
 
 function rgroupAttachmentPoint(

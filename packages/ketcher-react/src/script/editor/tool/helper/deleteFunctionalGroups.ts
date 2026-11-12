@@ -18,25 +18,27 @@ export function deleteFunctionalGroups(
   sGroupsId.forEach((sGroupId) => {
     const sGroupItem = sgroups.get(sGroupId)?.item as SGroup;
     if (
-      FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
+      !FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
     ) {
-      const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem);
-      const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
-        struct.molecule,
-      );
-      const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
-        (atomId) => atomId !== positionAtomId,
-      );
-
-      deletedAtoms.push(...atomsWithoutAttachmentPoint);
-      action.mergeWith(fromSgroupDeletion(struct, sGroupId));
-      action.mergeWith(
-        fromFragmentDeletion(struct, {
-          atoms: atomsWithoutAttachmentPoint,
-          bonds: SGroup.getBonds(struct.molecule, sGroupItem),
-        }),
-      );
+      return;
     }
+
+    const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem);
+    const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
+      struct.molecule,
+    );
+    const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
+      (atomId) => atomId !== positionAtomId,
+    );
+
+    deletedAtoms.push(...atomsWithoutAttachmentPoint);
+    action.mergeWith(fromSgroupDeletion(struct, sGroupId));
+    action.mergeWith(
+      fromFragmentDeletion(struct, {
+        atoms: atomsWithoutAttachmentPoint,
+        bonds: SGroup.getBonds(struct.molecule, sGroupItem),
+      }),
+    );
   });
   return deletedAtoms;
 }

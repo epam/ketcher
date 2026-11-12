@@ -211,10 +211,12 @@ function handleRectangleChangeWithAnchor(
     item.pos[0].x = anchor.x = current.x;
     current.x = previousPos0.x;
   }
-  if (toFixed(anchor.y) === toFixed(item.pos[0].y)) {
-    item.pos[0].y = anchor.y = current.y;
-    current.y = previousPos0.y;
+  if (!(toFixed(anchor.y) === toFixed(item.pos[0].y))) {
+    return;
   }
+
+  item.pos[0].y = anchor.y = current.y;
+  current.y = previousPos0.y;
 }
 
 export class SimpleObjectResize extends Base {

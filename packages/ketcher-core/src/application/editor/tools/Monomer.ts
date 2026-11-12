@@ -94,27 +94,29 @@ class MonomerTool implements BaseTool {
   }
 
   public mouseover() {
-    if (!this.monomerPreview) {
-      if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-        const variantMonomer = new AmbiguousMonomer(this.monomer);
-        this.monomerPreview = variantMonomer;
-        this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
-          variantMonomer,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-        );
-      } else {
-        const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
-
-        this.monomerPreview = new Monomer(this.monomer);
-        this.monomerPreviewRenderer = new MonomerRenderer(
-          this.monomerPreview,
-          this.MONOMER_PREVIEW_SCALE_FACTOR,
-          false,
-        );
-      }
-
-      this.monomerPreviewRenderer?.show(this.editor.theme);
+    if (this.monomerPreview) {
+      return;
     }
+
+    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
+      const variantMonomer = new AmbiguousMonomer(this.monomer);
+      this.monomerPreview = variantMonomer;
+      this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
+        variantMonomer,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+      );
+    } else {
+      const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
+
+      this.monomerPreview = new Monomer(this.monomer);
+      this.monomerPreviewRenderer = new MonomerRenderer(
+        this.monomerPreview,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
+      );
+    }
+
+    this.monomerPreviewRenderer?.show(this.editor.theme);
   }
 
   hidePreview() {

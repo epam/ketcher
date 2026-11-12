@@ -220,15 +220,17 @@ export function fromFragmentSplit(
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);
 
   restruct.molecule.atoms.forEach((atom, aid) => {
-    if (atom.fragment === frid) {
-      const newfrid = (
-        action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
-      ).frid;
-
-      action.mergeWith(processAtom(restruct, aid, frid, newfrid));
-
-      if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
+    if (!(atom.fragment === frid)) {
+      return;
     }
+
+    const newfrid = (
+      action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
+    ).frid;
+
+    action.mergeWith(processAtom(restruct, aid, frid, newfrid));
+
+    if (rgid) action.mergeWith(fromRGroupFragment(restruct, rgid, newfrid));
   });
 
   if (frid !== -1) {

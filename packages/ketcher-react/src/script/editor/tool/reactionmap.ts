@@ -39,13 +39,15 @@ class ReactionMapTool implements Tool {
 
     const closestItem = this.editor.findItem(event, ['atoms']);
 
-    if (closestItem?.map === 'atoms') {
-      this.editor.hover(null);
-      this.dragCtx = {
-        item: closestItem,
-        xy0: CoordinateTransformation.pageToModel(event, rnd),
-      };
+    if (!(closestItem?.map === 'atoms')) {
+      return;
     }
+
+    this.editor.hover(null);
+    this.dragCtx = {
+      item: closestItem,
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
+    };
   }
 
   mousemove(event) {
@@ -84,13 +86,15 @@ class ReactionMapTool implements Tool {
       this.line = null;
     }
 
-    if (p1 && p2) {
-      const rnd = this.editor.render;
-      this.line = rnd.selectionLine(
-        Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
-        Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
-      );
+    if (!(p1 && p2)) {
+      return;
     }
+
+    const rnd = this.editor.render;
+    this.line = rnd.selectionLine(
+      Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
+      Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
+    );
   }
 
   mouseup(event) {

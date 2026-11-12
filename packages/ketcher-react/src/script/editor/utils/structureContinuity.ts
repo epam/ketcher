@@ -40,10 +40,12 @@ export function isStructureContinuous(
     }
 
     const { begin, end } = bond;
-    if (adjacencyList.has(begin) && adjacencyList.has(end)) {
-      adjacencyList.get(begin)?.push(end);
-      adjacencyList.get(end)?.push(begin);
+    if (!(adjacencyList.has(begin) && adjacencyList.has(end))) {
+      return;
     }
+
+    adjacencyList.get(begin)?.push(end);
+    adjacencyList.get(end)?.push(begin);
   });
 
   const visited = new Set<number>();

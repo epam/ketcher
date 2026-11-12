@@ -87,11 +87,13 @@ function applyFontStyleOverrides(
   }
 
   // Extract color from Lexical style string (e.g. "color:#FF0000;")
-  if (child.style) {
-    const colorMatch = /(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/.exec(child.style);
-    if (colorMatch) {
-      target.color = colorMatch[1];
-    }
+  if (!child.style) {
+    return;
+  }
+
+  const colorMatch = /(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/.exec(child.style);
+  if (colorMatch) {
+    target.color = colorMatch[1];
   }
 }
 

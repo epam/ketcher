@@ -66,20 +66,24 @@ export class HoverIcon {
   }
 
   onMouseMove(event: MouseEvent) {
-    if (
+    if (!(
       this.isShown ||
       (this.isOverLoader(event) && this.shouldBeShownWhenMouseBack)
-    ) {
-      this.show();
-      this.updatePosition();
+    )) {
+      return;
     }
+
+    this.show();
+    this.updatePosition();
   }
 
   onMouseLeave(event: MouseEvent) {
-    if (!this.isOverLoader(event) && this.isShown) {
-      this.shouldBeShownWhenMouseBack = true;
-      this.hide();
+    if (!(!this.isOverLoader(event) && this.isShown)) {
+      return;
     }
+
+    this.shouldBeShownWhenMouseBack = true;
+    this.hide();
   }
 
   updatePosition() {

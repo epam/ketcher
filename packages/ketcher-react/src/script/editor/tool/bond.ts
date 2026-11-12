@@ -78,57 +78,59 @@ class BondTool implements Tool {
     this.bondProps = bondProps;
     this.hapticBond = new HapticBondToolHelper(editor, bondProps);
     const selection = editor.selection();
-    if (selection?.bonds) {
-      const struct = editor.render.ctab;
-      const molecule = struct.molecule;
-      const functionalGroups = molecule.functionalGroups;
-      const selectedBonds = selection.bonds;
-
-      const hasAttachmentGroupHapticBond = selectedBonds.some((bondId) => {
-        const bond = molecule.bonds.get(bondId);
-        return (
-          bond?.type === Bond.PATTERN.TYPE.HAPTIC &&
-          (molecule.attachmentGroups.has(bond.begin) ||
-            molecule.attachmentGroups.has(bond.end))
-        );
-      });
-      if (hasAttachmentGroupHapticBond) {
-        this.isNotActiveTool = true;
-        return;
-      }
-
-      if (functionalGroups.size) {
-        const fgIds = new Set<number>();
-        for (const bondId of selectedBonds) {
-          const fgId = FunctionalGroup.findFunctionalGroupByBond(
-            molecule,
-            functionalGroups,
-            bondId,
-          );
-          if (fgId !== null) {
-            fgIds.add(fgId);
-          }
-        }
-        if (fgIds.size) {
-          dispatchMonomerOrGroupDialog(this.editor, [...fgIds]);
-          this.isNotActiveTool = true;
-          return;
-        }
-      }
-
-      if (
-        this.hapticBond.hasInvalidSelectedHapticBonds(molecule, selectedBonds)
-      ) {
-        this.hapticBond.showValidationError('haptic');
-        this.isNotActiveTool = true;
-        return;
-      }
-
-      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
-      editor.update(action);
-      editor.selection(null);
-      this.isNotActiveTool = true;
+    if (!selection?.bonds) {
+      return;
     }
+
+    const struct = editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const selectedBonds = selection.bonds;
+
+    const hasAttachmentGroupHapticBond = selectedBonds.some((bondId) => {
+      const bond = molecule.bonds.get(bondId);
+      return (
+        bond?.type === Bond.PATTERN.TYPE.HAPTIC &&
+        (molecule.attachmentGroups.has(bond.begin) ||
+          molecule.attachmentGroups.has(bond.end))
+      );
+    });
+    if (hasAttachmentGroupHapticBond) {
+      this.isNotActiveTool = true;
+      return;
+    }
+
+    if (functionalGroups.size) {
+      const fgIds = new Set<number>();
+      for (const bondId of selectedBonds) {
+        const fgId = FunctionalGroup.findFunctionalGroupByBond(
+          molecule,
+          functionalGroups,
+          bondId,
+        );
+        if (fgId !== null) {
+          fgIds.add(fgId);
+        }
+      }
+      if (fgIds.size) {
+        dispatchMonomerOrGroupDialog(this.editor, [...fgIds]);
+        this.isNotActiveTool = true;
+        return;
+      }
+    }
+
+    if (
+      this.hapticBond.hasInvalidSelectedHapticBonds(molecule, selectedBonds)
+    ) {
+      this.hapticBond.showValidationError('haptic');
+      this.isNotActiveTool = true;
+      return;
+    }
+
+    const action = fromBondsAttrs(struct, selectedBonds, bondProps);
+    editor.update(action);
+    editor.selection(null);
+    this.isNotActiveTool = true;
   }
 
   mousedown(event: PointerEvent) {
@@ -520,10 +522,12 @@ class BondTool implements Tool {
   ) {
     this.hapticBond.applyValidationFailure(dragCtx, failure);
     this.restoreBondWhenHoveringOnCanvas(event);
-    if (dragCtx.action) {
-      this.editor.update(dragCtx.action, true);
-      delete dragCtx.action;
+    if (!dragCtx.action) {
+      return;
     }
+
+    this.editor.update(dragCtx.action, true);
+    delete dragCtx.action;
   }
 
   private applyBondAction(
@@ -733,22 +737,24 @@ class BondTool implements Tool {
     }
     const existedBond = dragCtx.existedBond;
     const isHoveringOverAtom = this.editor.findItem(event, ['atoms']);
-    if (!isHoveringOverAtom) {
-      if (!dragCtx.item || !dragCtx.action) {
-        return;
-      }
-      const { begin, end } = existedBond;
-      const bondEnd = dragCtx.item.id === begin ? end : begin;
-      dragCtx.action.mergeWith(
-        fromBondAddition(
-          this.editor.render.ctab,
-          existedBond,
-          dragCtx.item.id,
-          bondEnd,
-        )[0],
-      );
-      delete dragCtx.existedBond;
+    if (isHoveringOverAtom) {
+      return;
     }
+
+    if (!dragCtx.item || !dragCtx.action) {
+      return;
+    }
+    const { begin, end } = existedBond;
+    const bondEnd = dragCtx.item.id === begin ? end : begin;
+    dragCtx.action.mergeWith(
+      fromBondAddition(
+        this.editor.render.ctab,
+        existedBond,
+        dragCtx.item.id,
+        bondEnd,
+      )[0],
+    );
+    delete dragCtx.existedBond;
   }
 
   getExistingBond(

@@ -79,10 +79,12 @@ export default async function initTmplLib(
     const lib = [...res, ...userTmpls()];
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
-    if (shouldReinitializeTemplateLibrary) {
-      reinitializeTemplateLibrary();
-      shouldReinitializeTemplateLibrary = false;
+    if (!shouldReinitializeTemplateLibrary) {
+      return;
     }
+
+    reinitializeTemplateLibrary();
+    shouldReinitializeTemplateLibrary = false;
   });
 }
 

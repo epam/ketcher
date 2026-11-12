@@ -207,18 +207,20 @@ class RnaPresetTool implements Tool {
       this.rnaBasePreviewRenderer?.show(this.editor.theme);
     }
 
-    if (this.phosphate) {
-      const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
-
-      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
-
-      this.phosphatePreviewRenderer = new PhosphateRenderer(
-        this.phosphatePreview,
-        this.MONOMER_PREVIEW_SCALE_FACTOR,
-      );
-
-      this.phosphatePreviewRenderer?.show(this.editor.theme);
+    if (!this.phosphate) {
+      return;
     }
+
+    const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
+
+    this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
+
+    this.phosphatePreviewRenderer = new PhosphateRenderer(
+      this.phosphatePreview,
+      this.MONOMER_PREVIEW_SCALE_FACTOR,
+    );
+
+    this.phosphatePreviewRenderer?.show(this.editor.theme);
   }
 
   hidePreview() {

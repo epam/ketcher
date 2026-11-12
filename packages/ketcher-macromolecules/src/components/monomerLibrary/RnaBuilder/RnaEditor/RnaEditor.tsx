@@ -60,10 +60,12 @@ export const RnaEditor = ({ duplicatePreset }) => {
   }
 
   useEffect(() => {
-    if (!activePreset) {
-      dispatch(createNewPreset());
-      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    if (activePreset) {
+      return;
     }
+
+    dispatch(createNewPreset());
+    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset, dispatch]);
 
   useEffect(() => {

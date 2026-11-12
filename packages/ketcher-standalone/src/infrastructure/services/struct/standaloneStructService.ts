@@ -289,10 +289,12 @@ class IndigoService implements StructService {
       }
 
       const message: OutputMessage<string> = e.data;
-      if (message.type !== undefined) {
-        const event = messageTypeToEventMapping[message.type];
-        this.EE.emit(event, { data: message });
+      if (message.type === undefined) {
+        return;
       }
+
+      const event = messageTypeToEventMapping[message.type];
+      this.EE.emit(event, { data: message });
     };
   }
 

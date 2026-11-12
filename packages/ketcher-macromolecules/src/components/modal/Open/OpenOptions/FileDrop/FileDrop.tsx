@@ -101,14 +101,14 @@ const FileDrop = ({
     },
     onFileDialogCancel: () => {
       const windowContext = globalThis as unknown as Record<string, unknown>;
-      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
-        document.documentElement.requestFullscreen?.().catch(() => {
-          /*
-          Restore fullscreen silently if failed
-          */
-        });
-        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      if (!windowContext.isKetcherFullscreenBeforeFilePicker) {
+        return;
       }
+
+      document.documentElement.requestFullscreen?.().catch(() => {
+        /* Restore fullscreen silently if failed */
+      });
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
     },
     ...rest,
   });
@@ -122,11 +122,13 @@ const FileDrop = ({
   ) as React.CSSProperties;
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (!disabled) {
-        open();
-      }
+    if (!(event.key === 'Enter' || event.key === ' ')) {
+      return;
+    }
+
+    event.preventDefault();
+    if (!disabled) {
+      open();
     }
   };
 

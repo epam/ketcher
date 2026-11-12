@@ -66,14 +66,16 @@ export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          const fontSize = $getSelectionStyleValueForProperty(
-            selection,
-            'font-size',
-            DEFAULT_FONT_SIZE,
-          );
-          setCurrentFontSize(fontSize);
+        if (!$isRangeSelection(selection)) {
+          return;
         }
+
+        const fontSize = $getSelectionStyleValueForProperty(
+          selection,
+          'font-size',
+          DEFAULT_FONT_SIZE,
+        );
+        setCurrentFontSize(fontSize);
       });
     });
   }, [editor]);

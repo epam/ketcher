@@ -131,15 +131,17 @@ const countRnaPresetConnectionBonds = (
 
   wizardStruct.bonds.forEach((bond) => {
     if (
-      hasBondBetweenComponents(
+      !hasBondBetweenComponents(
         bond,
         firstComponentAtomIds,
         secondComponentAtomIds,
       )
     ) {
-      count += 1;
-      hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
+      return;
     }
+
+    count += 1;
+    hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
   });
 
   return { count, hasInvalidBond };
@@ -186,10 +188,12 @@ export const getRnaPresetStructureValidationResult = (
 
   let hasAtomsOutsideComponents = false;
   wizardStruct.atoms.forEach((_, atomId) => {
-    if (!atomComponentCount.has(atomId)) {
-      hasAtomsOutsideComponents = true;
-      problematicAtomIds.add(atomId);
+    if (atomComponentCount.has(atomId)) {
+      return;
     }
+
+    hasAtomsOutsideComponents = true;
+    problematicAtomIds.add(atomId);
   });
 
   if (hasAtomsOutsideComponents) {

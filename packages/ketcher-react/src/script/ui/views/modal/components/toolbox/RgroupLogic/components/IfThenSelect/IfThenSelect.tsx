@@ -35,15 +35,17 @@ const IfThenSelect = (props: Props) => {
   };
 
   rgroupLabels.forEach((rgroupLabel) => {
-    if (label !== rgroupLabel) {
-      desc.enum.push(rgroupLabel);
-      desc.enumNames.push(
-        t('toolbox.rgroupLogic.ifThenOption', {
-          ifLabel: label,
-          thenLabel: rgroupLabel,
-        }),
-      );
+    if (!(label !== rgroupLabel)) {
+      return;
     }
+
+    desc.enum.push(rgroupLabel);
+    desc.enumNames.push(
+      t('toolbox.rgroupLogic.ifThenOption', {
+        ifLabel: label,
+        thenLabel: rgroupLabel,
+      }),
+    );
   });
 
   return (

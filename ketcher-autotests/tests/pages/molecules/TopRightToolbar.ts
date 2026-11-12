@@ -16,15 +16,17 @@ export const TopRightToolbar = (page: Page) => {
 
     async Settings(options?: { waitForFontListLoad: boolean }) {
       await locators.settingsButton.click();
-      if (options?.waitForFontListLoad) {
-        // Wait while system loads list of values (i.e. Arial in particular) in Font combobox
-        await page.waitForSelector('div[role="combobox"]', {
-          state: 'attached',
-        });
-        await page.waitForSelector('div[role="combobox"]:has-text("Arial")', {
-          timeout: 5000,
-        });
+      if (!options?.waitForFontListLoad) {
+        return;
       }
+
+      // Wait while system loads list of values (i.e. Arial in particular) in Font combobox
+      await page.waitForSelector('div[role="combobox"]', {
+        state: 'attached',
+      });
+      await page.waitForSelector('div[role="combobox"]:has-text("Arial")', {
+        timeout: 5000,
+      });
     },
   };
 };

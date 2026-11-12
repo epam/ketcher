@@ -53,6 +53,7 @@ import {
   dragMouseTo,
   keyboardTypeOnCanvas,
   MolFileFormat,
+  moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -635,6 +636,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       MacroFileType.FASTA,
       '>Sequence1\nAAA',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -919,6 +921,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       MacroFileType.IDT,
       '/5dSp//idSp//3dSp/',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

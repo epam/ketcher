@@ -9,6 +9,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   MonomerType,
   selectPartOfMolecules,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
@@ -155,6 +156,7 @@ test.describe('Ketcher bugs in 3.5.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{W.D.H.Q.I.U.W.D.U.Q.T.I.V.U}$$$$V2.0',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
       hideMonomerPreview: true,

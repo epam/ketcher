@@ -285,7 +285,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
-    const viewModel = provideEditorInstance().viewModel;
+    const viewModel = this.viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     if (!atomHaldEdges?.length) {
@@ -348,8 +348,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get isAtomTerminal() {
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
+    const viewModel = this.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     // Bonds to monomers are not half-edges, so count them separately
@@ -361,8 +360,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get isLabelVisible() {
-    const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
+    const viewModel = this.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
     const isTerminalVisible = true;
@@ -834,9 +832,7 @@ export class AtomRenderer extends BaseRenderer {
 
   private bisectLargestSector(): Vec2 {
     const { neighborAngle, largestAngle } =
-      provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
-        this.atom,
-      );
+      this.viewModel.getLargestSectorFromAtomNeighbours(this.atom);
 
     const bisectAngle = neighborAngle + largestAngle / 2;
     return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));

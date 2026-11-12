@@ -1516,6 +1516,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/molecule-connected-to-monomers.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);

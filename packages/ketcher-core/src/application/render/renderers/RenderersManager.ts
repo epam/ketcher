@@ -51,6 +51,8 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { type RendererContext } from './BaseRenderer';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -75,8 +77,41 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
-  constructor({ theme }: { theme: ThemeType }) {
+  constructor(
+    { theme }: { theme: ThemeType },
+    private readonly renderContext?: RendererContext,
+  ) {
     this.theme = theme;
+  }
+
+  private prepareRenderer<
+    T extends { setRenderContext(context: RendererContext): void },
+  >(renderer: T): T {
+    if (this.renderContext) {
+      renderer.setRenderContext(this.renderContext);
+    }
+    return renderer;
+  }
+
+  public renderPreview(entities: DrawingEntitiesManager) {
+    if (!this.renderContext) {
+      throw new Error('A render context is required for a structure preview');
+    }
+    this.renderContext.viewModel.initialize([...entities.bonds.values()]);
+    entities.monomers.forEach((monomer) => this.addMonomer(monomer));
+    entities.atoms.forEach((atom) => this.addAtom(atom));
+    entities.bonds.forEach((bond) => this.addBond(bond));
+    entities.polymerBonds.forEach((bond) => this.addPolymerBond(bond));
+    entities.monomerToAtomBonds.forEach((bond) =>
+      this.addMonomerToAtomBond(bond),
+    );
+    entities.sgroups.forEach((sgroup) => this.addSGroup(sgroup));
+    entities.rxnArrows.forEach((arrow) => this.addRxnArrow(arrow));
+    entities.multitailArrows.forEach((arrow) => this.addMultitailArrow(arrow));
+    entities.rxnPluses.forEach((plus) => this.addRxnPlus(plus));
+    entities.stereoFlags.forEach((flag) => this.addStereoFlag(flag));
+    this.recalculateMonomersEnumeration([...entities.monomers.values()]);
+    this.renderAromaticCircles();
   }
 
   public hoverDrawingEntity(drawingEntity: DrawingEntity) {
@@ -128,6 +163,7 @@ export class RenderersManager {
     }
 
     this.monomers.set(monomer.id, monomerRenderer);
+    this.prepareRenderer(monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();
     if (callback) {
@@ -174,8 +210,9 @@ export class RenderersManager {
     polymerBond: PolymerBond | HydrogenBond,
     shouldRedrawAttachmentPoints = true,
   ): void {
-    const polymerBondRenderer =
-      PolymerBondRendererFactory.createInstance(polymerBond);
+    const polymerBondRenderer = this.prepareRenderer(
+      PolymerBondRendererFactory.createInstance(polymerBond),
+    );
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     if (shouldRedrawAttachmentPoints) {
@@ -327,10 +364,10 @@ export class RenderersManager {
     });
   }
 
-  private recalculateMonomersEnumeration() {
+  private recalculateMonomersEnumeration(monomers?: BaseMonomer[]) {
     const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
-      ...editor.drawingEntitiesManager.monomers.values(),
+      ...(monomers ?? editor.drawingEntitiesManager.monomers.values()),
     ]);
 
     chainsCollection.chains.forEach((chain) => {
@@ -418,7 +455,7 @@ export class RenderersManager {
       atom.renderer.remove();
     }
 
-    const atomRenderer = new AtomRenderer(atom);
+    const atomRenderer = this.prepareRenderer(new AtomRenderer(atom));
 
     this.atoms.set(atom.id, atomRenderer);
     atomRenderer.show();
@@ -434,7 +471,7 @@ export class RenderersManager {
       bond.renderer.remove();
     }
 
-    const bondRenderer = new BondRenderer(bond);
+    const bondRenderer = this.prepareRenderer(new BondRenderer(bond));
 
     this.bonds.set(bond.id, bondRenderer);
 
@@ -486,7 +523,9 @@ export class RenderersManager {
       sgroupDrawingEntity.renderer.remove();
     }
 
-    const sgroupRenderer = new SGroupRenderer(sgroupDrawingEntity);
+    const sgroupRenderer = this.prepareRenderer(
+      new SGroupRenderer(sgroupDrawingEntity),
+    );
 
     this.sgroups.set(sgroupDrawingEntity.id, sgroupRenderer);
     sgroupRenderer.show();
@@ -533,7 +572,7 @@ export class RenderersManager {
       return;
     }
 
-    const renderer = new MonomerToAtomBondRenderer(bond);
+    const renderer = this.prepareRenderer(new MonomerToAtomBondRenderer(bond));
     renderer.show();
 
     this.redrawMonomerToAtomBondRelatedState(bond);
@@ -560,7 +599,7 @@ export class RenderersManager {
   }
 
   public addRxnArrow(arrow: RxnArrow) {
-    const arrowRenderer = new RxnArrowRenderer(arrow);
+    const arrowRenderer = this.prepareRenderer(new RxnArrowRenderer(arrow));
 
     arrowRenderer.show();
   }
@@ -570,7 +609,9 @@ export class RenderersManager {
   }
 
   public addMultitailArrow(arrow: MultitailArrow) {
-    const arrowRenderer = new MultitailArrowRenderer(arrow);
+    const arrowRenderer = this.prepareRenderer(
+      new MultitailArrowRenderer(arrow),
+    );
 
     arrowRenderer.show();
   }
@@ -580,7 +621,7 @@ export class RenderersManager {
   }
 
   public addRxnPlus(rxnPlus: RxnPlus) {
-    const rxnPlusRenderer = new RxnPlusRenderer(rxnPlus);
+    const rxnPlusRenderer = this.prepareRenderer(new RxnPlusRenderer(rxnPlus));
 
     rxnPlusRenderer.show();
   }
@@ -590,7 +631,9 @@ export class RenderersManager {
   }
 
   public addStereoFlag(stereoFlag: CoreStereoFlag) {
-    const stereoFlagRenderer = new StereoFlagRenderer(stereoFlag);
+    const stereoFlagRenderer = this.prepareRenderer(
+      new StereoFlagRenderer(stereoFlag),
+    );
 
     stereoFlagRenderer.show();
   }
@@ -601,8 +644,8 @@ export class RenderersManager {
 
   private renderAromaticCircles() {
     const editor = provideEditorInstance();
-    const viewModel = editor.viewModel;
-    const canvas = ZoomTool.instance?.canvas;
+    const viewModel = this.renderContext?.viewModel ?? editor.viewModel;
+    const canvas = this.renderContext?.canvas ?? ZoomTool.instance?.canvas;
 
     if (!canvas?.selectAll) {
       return;

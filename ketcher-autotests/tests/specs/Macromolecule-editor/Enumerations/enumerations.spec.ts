@@ -9,6 +9,7 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
+  moveMouseAway,
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -36,6 +37,7 @@ test.describe('Enumerations', () => {
       page,
       'KET/peptides-connected-with-bonds.ket',
     );
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

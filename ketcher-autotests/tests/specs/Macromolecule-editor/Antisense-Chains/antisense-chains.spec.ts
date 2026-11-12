@@ -51,6 +51,7 @@ import {
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { commitPastePreviewInFlexMode } from '@utils/macromolecules/pastePreview';
 
 let page: Page;
 
@@ -3485,7 +3486,13 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
 
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page, { commitPreview: false });
+  await commitPastePreviewInFlexMode(page, async () => {
+    await clickOnCanvas(page, 290, 430, { from: 'canvasTopLeft' });
+  });
+  await expect(getMonomerLocator(page, Base.U)).toHaveCount(2);
+  await expect(getMonomerLocator(page, Base.A)).toHaveCount(2);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 

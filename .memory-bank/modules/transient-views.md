@@ -10,6 +10,8 @@ Render ephemeral interaction feedback on top of (or beneath) the live drawing wi
 
 Current feedback drawn this way includes: the selection rectangle/lasso, bond / angle / distance / group-center snapping guides, the rotation handle, the autochain insertion preview (a ghost of the item that would be added), the amino-acid modification highlight, the line-length highlight, and the **replacement highlight** used by monomer drag-drop replacement.
 
+Flex-mode paste and _Add to Canvas_ also use a structure preview. `PasteTool` renders the detached imported entities once through a separate `RenderersManager`, with its own canvas group and `ViewModel`, and registers that group with `showStructurePreview`. The group shares the active zoom transform and follows the cursor by translation. The live model and history are updated only on placement; destroying the tool discards the preview.
+
 ## Structure
 
 - A single **manager** owns two sibling SVG `<g>` layers appended to the zoom canvas group: a **default layer** and a **top layer** (kept raised above everything else). Both live _inside_ the zoom transform, so overlays share the same canvas coordinate space as monomers (angstrom → canvas conversion) and track pan/zoom automatically.
@@ -24,6 +26,10 @@ Rendering is **pull-based**:
 1. The manager keeps a map of active views keyed by `viewName`. Registering a view stores its `show` function, its params, an optional `topLayer` flag, and optional `onShow` / `onHide` callbacks.
 2. **`update()`** clears both layers, then re-runs every active view's `show` into its chosen layer (top or default), invokes each `onShow`, and re-raises the top layer.
 3. Paired **`showX` / `hideX`** methods register or remove a view; **both require a following `update()`** to take visual effect. `clear()` removes all views.
+
+Layer updates remove direct children rather than recursively removing every descendant, so a retained structure-preview subtree can be reattached intact. Tools are destroyed before their replacements are constructed, preventing the outgoing tool from clearing the incoming preview. Placement removes the preview before rendering live entities, so renderer descendant queries cannot accidentally match preview monomers.
+
+`CoreEditor.cancelPaste()` cancels clipboard work and the placement tool before layout or document changes. `BaseMode` uses an abort signal across clipboard reads, text extraction, and conversion; cancelled requests cannot create a preview or report stale errors. Clearing an old request never clears the controller for a newer request.
 
 Because `update()` fully redraws, views hold no state between frames — they recompute from their params each time. Registering a view under an existing `viewName` replaces the previous one (and runs its `onHide`).
 
@@ -51,5 +57,3 @@ Because `update()` fully redraws, views hold no state between frames — they re
 - **Nothing renders until `update()` runs** — every `showX` / `hideX` must be followed by `update()`.
 - Coordinates must be in **canvas space** (angstrom → canvas), matching monomers, because the layers sit inside the zoom transform.
 - The **top layer is always raised last**, so views flagged `topLayer` sit above monomers.
-
-

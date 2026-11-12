@@ -159,13 +159,18 @@ The system SHALL ensure that monomers and small molecules on the canvas are auto
 
 ### Requirement: Closed-chain connections in Snake mode
 
-In Snake mode, the system SHALL route terminal R2–R2 bonds between separate backbone chains to the right of both endpoints. Overlapping routes on the same side SHALL use separate lanes.
+In Snake mode, the system SHALL route R2–R2 bonds and hydrogen bonds between the last monomers of separate backbone chains to the right of both endpoints. Overlapping routes on the same side SHALL use separate lanes.
 
-#### Scenario: Terminal R2–R2 between separate backbone chains
+#### Scenario: Terminal R2–R2 and hydrogen bonds between separate backbone chains
 
-- **WHEN** an R2–R2 bond connects the last monomers of separate backbone chains in Snake mode
+- **WHEN** an R2–R2 bond or a hydrogen bond connects the last monomers of separate backbone chains in Snake mode
 - **THEN** both endpoints exit to the right with rounded bends, including when the endpoints are in different columns
 - **AND** overlapping routes on the same side use separate lanes while disjoint routes may reuse a lane
+
+#### Scenario: Hydrogen bond with a nonterminal endpoint
+
+- **WHEN** a hydrogen bond connects separate backbone chains in Snake mode and either endpoint is on a monomer other than the last monomer of its chain
+- **THEN** the bond follows the regular cell-based route
 
 ### Requirement: Chain enumeration
 

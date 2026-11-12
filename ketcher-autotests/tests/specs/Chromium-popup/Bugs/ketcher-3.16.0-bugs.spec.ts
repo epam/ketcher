@@ -10,11 +10,17 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   copyContentToClipboard,
+  MonomerType,
 } from '@utils';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { macromoleculesFilesInputFormats } from 'ketcher-core';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
   page = await initMoleculesCanvas();
@@ -119,24 +125,38 @@ test('Case 4: S-Group labels should be positioned correctly after adding explici
 test('Case 5: ', async () => {
   /**
    * Test task: https://github.com/epam/ketcher/issues/10502
-   * Bug: https://github.com/epam/ketcher/issues/5480
-   * Description: Ambiguous monomer tooltip shouldn't cover top toolbar
+   * Bug: https://github.com/epam/ketcher/issues/5470
+   * Description: Establishing connection between ambiguous phosphate and sugar works wrong
    * Scenario:
-   * 1. Open the app in macromolecules mode
-   * 2. Copy the following HELM: RNA1{[menoe2]([nobn6p],[m2nprn],[nC6n2G],[nC6n8A])[m2nen].[menoe2]([nobn6p]+[m2nprn]+[nC6n2G]+[nC6n8A])[m2nen].[menoe2]([nobn6p],[m2nprn]:1,[nC6n2G]:2,[nC6n8A]:3)[m2nen].[menoe2]([nobn6p]+[m2nprn]:1+[nC6n2G]:2+[nC6n8A]:3)[m2nen].[menoe2]([nobn6p]:4,[m2nprn]:5,[nC6n2G]:6,[nC6n8A]:7)[m2nen].[menoe2]([nobn6p]:4+[m2nprn]:5+[nC6n2G]:6+[nC6n8A]:7)[m2nen]}$$$$V2.0
-   * 3. Paste it to the canvas
-   * 4. Switch to molecules mode
-   * 5. Hover mouse over any base (%)
+   * 1. Open the app in macromolecules -> Flex mode
+   * 2. Copy the following HELM: RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0
+   * 3. Try to connect ambiguous phosphate with sugar using center to center way or ph(R2) to center way or sg(R1) to center way
 
-   * Actual result: Tooltip is overlapped by top toolbar
-   * Expected result: Tooltip is displayed below mouse cursor and fully visible
+   * Actual result: Attachment points are not shown, In case of center-to-center way - Select Connection point dialog appears
+   * Expected result: Attachment points are shown, Select Connection point dialog doesn't appear
    */
-  const helmString =
-    'RNA1{[menoe2]([nobn6p],[m2nprn],[nC6n2G],[nC6n8A])[m2nen].[menoe2]([nobn6p]+[m2nprn]+[nC6n2G]+[nC6n8A])[m2nen].[menoe2]([nobn6p],[m2nprn]:1,[nC6n2G]:2,[nC6n8A]:3)[m2nen].[menoe2]([nobn6p]+[m2nprn]:1+[nC6n2G]:2+[nC6n8A]:3)[m2nen].[menoe2]([nobn6p]:4,[m2nprn]:5,[nC6n2G]:6,[nC6n8A]:7)[m2nen].[menoe2]([nobn6p]:4+[m2nprn]:5+[nC6n2G]:6+[nC6n8A]:7)[m2nen]}$$$$V2.0';
-  await page.evaluate('window.ketcher.switchToMacromoleculesMode();');
-  await page.evaluate("window.ketcher.setMode('sequence');");
-  await copyContentToClipboard(page, helmString);
-  await pasteFromClipboardByKeyboard(page);
-  await page.evaluate('window.ketcher.switchToMoleculesMode();');
-  await takeEditorScreenshot(page);
+  const helmString = 'RNA1{R(A)([bnn],[bP])}|RNA2{R(A)([bnn],[bP])}$$$$V2.0';
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+    enableFlexMode: true,
+  });
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    helmString,
+  );
+  const phosphate = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+  }).first();
+  const sugar = getMonomerLocator(page, { monomerType: MonomerType.Sugar }).nth(
+    1,
+  );
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  await phosphate.getByTestId('shape').hover({ force: true });
+  await page.mouse.down();
+  await sugar.getByTestId('shape').hover({ force: true });
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  await page.mouse.up();
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await page.pause();
 });

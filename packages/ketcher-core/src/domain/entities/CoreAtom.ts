@@ -9,6 +9,7 @@ import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 import type { AtomCIP } from './types';
 import type { AtomList } from 'domain/entities/atomList';
+import type { AtomQueryProperties } from 'domain/entities/atom';
 
 export enum AtomRadical {
   None,
@@ -26,6 +27,12 @@ export interface AtomProperties {
   cip?: AtomCIP | null;
   stereoLabel?: string | null;
   atomList?: AtomList | null;
+  ringBondCount?: number;
+  substitutionCount?: number;
+  unsaturatedAtom?: number;
+  hCount?: number;
+  implicitHCount?: number | null;
+  queryProperties?: AtomQueryProperties;
 }
 
 export class Atom extends DrawingEntity {
@@ -122,6 +129,26 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  public get hasQueryProperties() {
+    const {
+      ringBondCount,
+      substitutionCount,
+      unsaturatedAtom,
+      hCount,
+      queryProperties,
+    } = this.properties;
+
+    return Boolean(
+      ringBondCount ||
+      substitutionCount ||
+      unsaturatedAtom ||
+      hCount ||
+      Object.values(queryProperties ?? {}).some(
+        (value) => Boolean(value) || value === 0,
+      ),
+    );
+  }
+
   public get hasBadValence() {
     const { hydrogenAmount } = this.calculateValence();
     return hydrogenAmount < 0;
@@ -209,6 +236,22 @@ export class Atom extends DrawingEntity {
   }
 
   calculateValence() {
+    if (this.hasQueryProperties) {
+      return {
+        valence: this.calculateConnections(),
+        hydrogenAmount: 0,
+      };
+    }
+
+    const { implicitHCount } = this.properties;
+
+    if (isNumber(implicitHCount)) {
+      return {
+        valence: this.calculateConnections() + implicitHCount,
+        hydrogenAmount: implicitHCount,
+      };
+    }
+
     if (this.hasExplicitValence) {
       const valence = this.properties.explicitValence as number;
       const hydrogenAmount = valence - this.valenceWithoutHydrogen;

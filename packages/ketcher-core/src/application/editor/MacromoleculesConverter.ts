@@ -672,6 +672,12 @@ export class MacromoleculesConverter {
               cip: atom.cip,
               stereoLabel: atom.stereoLabel,
               atomList: atom.atomList,
+              ringBondCount: atom.ringBondCount,
+              substitutionCount: atom.substitutionCount,
+              unsaturatedAtom: atom.unsaturatedAtom,
+              hCount: atom.hCount,
+              implicitHCount: atom.implicitHCount,
+              queryProperties: atom.queryProperties,
             },
           );
 

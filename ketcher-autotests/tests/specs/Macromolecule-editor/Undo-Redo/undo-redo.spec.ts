@@ -4,7 +4,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Locator, test } from '@fixtures';
+import { Locator, expect, test } from '@fixtures';
 import {
   dragMouseTo,
   moveMouseAway,
@@ -71,9 +71,11 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds and do undo redo
     */
 
-    // check that history pointer stops on last operation
-    await CommonTopLeftToolbar(page).redo();
-    await CommonTopLeftToolbar(page).redo();
+    const { undoButton, redoButton } = CommonTopLeftToolbar(page);
+
+    // nothing has been undone yet, so the history pointer is already on the
+    // last operation and there is nothing to redo
+    await expect(redoButton).toBeDisabled();
 
     // check undo
     await CommonTopLeftToolbar(page).undo();
@@ -81,11 +83,10 @@ test.describe('Undo Redo', () => {
     await takeEditorScreenshot(page);
 
     // check that history pointer stops on first operation
-    await CommonTopLeftToolbar(page).undo();
-    await CommonTopLeftToolbar(page).undo();
-    await CommonTopLeftToolbar(page).undo();
-    await CommonTopLeftToolbar(page).undo();
-    await CommonTopLeftToolbar(page).undo();
+    while (await undoButton.isEnabled()) {
+      await CommonTopLeftToolbar(page).undo();
+    }
+    await expect(undoButton).toBeDisabled();
 
     // check redo
     await CommonTopLeftToolbar(page).redo();
@@ -385,7 +386,6 @@ test.describe('Undo-Redo tests', () => {
     /* 
     Test case: Undo-Redo tests
     Description: Undo and Redo buttons turn gray.
-    The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
     await Library(page).switchToRNATab();
     await takePageScreenshot(page);

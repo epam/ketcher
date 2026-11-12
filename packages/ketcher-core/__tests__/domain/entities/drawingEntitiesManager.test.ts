@@ -33,6 +33,8 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';
+import { AttachmentPointName } from 'domain/types';
+import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 function createStructWithSGroup(type = SGroup.TYPES.MUL) {
   const struct = new Struct();
@@ -190,6 +192,109 @@ describe('Drawing Entities Manager', () => {
           R2: null,
         },
       },
+    });
+  });
+
+  describe('connecting a specific attachment point to a monomer center', () => {
+    it.each([
+      [AttachmentPointName.R2, [AttachmentPointName.R1]],
+      [
+        AttachmentPointName.R1,
+        [AttachmentPointName.R1, AttachmentPointName.R2],
+      ],
+      [
+        AttachmentPointName.R3,
+        [AttachmentPointName.R1, AttachmentPointName.R2],
+      ],
+    ])('connects %s to a free R1 without a modal', (sourceAP, targetAPs) => {
+      const manager = new DrawingEntitiesManager();
+      const source = new Peptide(peptideMonomerItem);
+      const connectedMonomer = new Peptide(peptideMonomerItem);
+      const existingBond = new PolymerBond(source, connectedMonomer);
+      source.attachmentPointsToBonds = {
+        R1: sourceAP === AttachmentPointName.R1 ? null : existingBond,
+        R2: null,
+        R3: null,
+        R4: sourceAP === AttachmentPointName.R1 ? existingBond : null,
+      };
+      source.setChosenFirstAttachmentPoint(sourceAP);
+      const target = new Peptide(peptideMonomerItem);
+      target.attachmentPointsToBonds = Object.fromEntries(
+        targetAPs.map((ap) => [ap, null]),
+      );
+      const { polymerBond } = manager.startPolymerBondCreation(
+        source,
+        new Vec2(),
+        new Vec2(10, 10),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
+      );
+
+      const showModalOnHover = shouldInvokeConnectionModal(
+        source,
+        target,
+        false,
+      );
+      expect(showModalOnHover).toBe(false);
+      manager.intendToFinishBondCreation(
+        target,
+        polymerBond,
+        !showModalOnHover,
+      );
+
+      expect(shouldInvokeConnectionModal(source, target)).toBe(false);
+      expect(source.getPotentialAttachmentPointByBond(polymerBond)).toBe(
+        sourceAP,
+      );
+      expect(target.getPotentialAttachmentPointByBond(polymerBond)).toBe(
+        AttachmentPointName.R1,
+      );
+    });
+
+    it.each(['missing', 'occupied'])(
+      'opens the modal when target R1 is %s even if R2 is free',
+      (state) => {
+        const source = new Peptide(peptideMonomerItem);
+        source.attachmentPointsToBonds = { R1: null, R2: null };
+        source.setChosenFirstAttachmentPoint(AttachmentPointName.R2);
+        const target = new Peptide(peptideMonomerItem);
+        target.attachmentPointsToBonds =
+          state === 'missing'
+            ? { R2: null }
+            : {
+                R1: new PolymerBond(target, new Peptide(peptideMonomerItem)),
+                R2: null,
+              };
+
+        expect(shouldInvokeConnectionModal(source, target, false)).toBe(true);
+      },
+    );
+
+    it('keeps an explicitly chosen target attachment point', () => {
+      const manager = new DrawingEntitiesManager();
+      const source = new Peptide(peptideMonomerItem);
+      source.attachmentPointsToBonds = { R1: null, R2: null };
+      source.setChosenFirstAttachmentPoint(AttachmentPointName.R2);
+      const target = new Peptide(peptideMonomerItem);
+      target.attachmentPointsToBonds = { R1: null, R2: null };
+      const { polymerBond } = manager.startPolymerBondCreation(
+        source,
+        new Vec2(),
+        new Vec2(10, 10),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
+      );
+
+      manager.intendToFinishAttachmenPointBondCreation(
+        target,
+        polymerBond,
+        AttachmentPointName.R2,
+        true,
+      );
+      target.setChosenSecondAttachmentPoint(AttachmentPointName.R2);
+
+      expect(shouldInvokeConnectionModal(source, target)).toBe(false);
+      expect(target.getPotentialAttachmentPointByBond(polymerBond)).toBe(
+        AttachmentPointName.R2,
+      );
     });
   });
 

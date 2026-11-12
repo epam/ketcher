@@ -107,6 +107,11 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     getOptionLocator(optionId: ContextMenuOption): Locator {
       return getOption(optionId).first();
     },
+
+    /** Separator lines between the option groups of the open menu. */
+    getSeparatorLocator(): Locator {
+      return locators.contextMenuBody.locator('.contexify_separator');
+    },
   };
 
   return pageObject;

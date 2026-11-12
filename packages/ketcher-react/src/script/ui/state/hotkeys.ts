@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -35,7 +34,10 @@ import {
   getStructStringFromClipboardData,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
+import type { Action } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import { load, onAction, removeStructAction } from './shared';
+import type { StoreState } from './store.types';
 import { restorePersistedSelectionTool } from './selectionToolPersistence';
 
 import actions from '../action';
@@ -392,7 +394,10 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 /*
 ClipArea
 */
-export function initClipboard(dispatch, getState) {
+export function initClipboard(
+  dispatch: ThunkDispatch<StoreState, unknown, Action<string>>,
+  getState: () => StoreState,
+): clipArea.ClipAreaProps {
   const formats = Object.keys(formatProperties).map(
     (format) => formatProperties[format].mime,
   );
@@ -451,7 +456,7 @@ export function initClipboard(dispatch, getState) {
       }, ketcherInstance.eventBus);
       return result;
     },
-    async onPaste(data, isSmarts: boolean) {
+    async onPaste(data, isSmarts?: boolean) {
       const state = getState();
       const ketcherInstance = ketcherProvider.getKetcher(
         state.editor.ketcherId,
@@ -471,7 +476,7 @@ export function initClipboard(dispatch, getState) {
       }, ketcherInstance.eventBus);
       return result;
     },
-    onLegacyPaste(data, isSmarts: boolean) {
+    onLegacyPaste(data, isSmarts?: boolean) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
@@ -514,12 +519,13 @@ function isAbleToCopy(editor: Editor): boolean {
   return true;
 }
 
-async function clipData(editor: Editor) {
+async function clipData(
+  editor: Editor,
+): Promise<clipArea.ClipboardData | null> {
   if (!isAbleToCopy(editor)) {
     return null;
   }
 
-  const res = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
@@ -535,52 +541,50 @@ async function clipData(editor: Editor) {
       SupportedFormat.molAuto,
     );
 
-    res[ChemicalMimeType.KET] = ket;
-
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
 
-    res['text/plain'] = data;
-    res[type] = data;
-
-    return res;
-  } catch (error: any) {
+    return {
+      [ChemicalMimeType.KET]: ket,
+      'text/plain': data,
+      [type]: data,
+    };
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::clipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 
   return null;
 }
 
-function legacyClipData(editor: Editor) {
+function legacyClipData(editor: Editor): clipArea.ClipboardData | null {
   if (!isAbleToCopy(editor)) {
     return null;
   }
 
-  const res = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
   const molSerializer = new MolSerializer();
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
-    res[ChemicalMimeType.KET] = ket;
-
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
     const data = molSerializer.serialize(struct);
-    res['text/plain'] = data;
-    res[type] = data;
 
-    return res;
-  } catch (error: any) {
+    return {
+      [ChemicalMimeType.KET]: ket,
+      'text/plain': data,
+      [type]: data,
+    };
+  } catch (error) {
     KetcherLogger.error('hotkeys.ts::legacyClipData', error);
     if (errorHandler) {
-      errorHandler(error.message);
+      errorHandler(error instanceof Error ? error.message : String(error));
     }
   }
 

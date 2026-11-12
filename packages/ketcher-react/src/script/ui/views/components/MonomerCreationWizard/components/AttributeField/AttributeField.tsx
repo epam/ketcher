@@ -5,15 +5,25 @@ import clsx from 'clsx';
 
 type Props = {
   title: string;
+  titleTestId?: string;
   control: ReactNode;
   required?: boolean;
   disabled?: boolean;
 };
 
-const AttributeField = ({ title, control, required, disabled }: Props) => {
+const AttributeField = ({
+  title,
+  titleTestId,
+  control,
+  required,
+  disabled,
+}: Props) => {
   return (
     <div className={styles.field}>
-      <p className={clsx(styles.fieldTitle, disabled && styles.disabled)}>
+      <p
+        className={clsx(styles.fieldTitle, disabled && styles.disabled)}
+        data-testid={titleTestId}
+      >
         {title}
         {required && (
           <span className={clsx(styles.required, disabled && styles.disabled)}>

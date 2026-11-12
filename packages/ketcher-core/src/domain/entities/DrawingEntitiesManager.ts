@@ -2195,6 +2195,14 @@ export class DrawingEntitiesManager {
           hasAntisenseInRow = false;
           hasRnaInRow = false;
 
+          const maxMoleculeHeight = row.snakeLayoutModelItems.reduce(
+            (maxHeight, node) =>
+              node instanceof MoleculeSnakeLayoutNode
+                ? Math.max(maxHeight, getStructureBbox(node.molecule).height)
+                : maxHeight,
+            0,
+          );
+
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
               const moleculeBbox = getStructureBbox(
@@ -2204,7 +2212,9 @@ export class DrawingEntitiesManager {
                 Coordinates.canvasToModel(newSenseNodePosition),
                 new Vec2(
                   moleculeBbox.left + cellWidthInAngstroms / 4,
-                  moleculeBbox.top + cellWidthInAngstroms / 4,
+                  moleculeBbox.top +
+                    cellWidthInAngstroms / 4 -
+                    (maxMoleculeHeight - moleculeBbox.height) / 2,
                 ),
               );
 
@@ -2413,6 +2423,7 @@ export class DrawingEntitiesManager {
           ? targetDrawingEntitiesManager.addAmbiguousMonomer(
               {
                 ...monomer.variantMonomerItem,
+                seqId: monomer.monomerItem.seqId,
               },
               monomer.position,
             )
@@ -3179,6 +3190,7 @@ export class DrawingEntitiesManager {
           initialFirstMonomerAttachmentPoint: newFirstMonomerAttachmentPoint,
           initialSecondMonomerAttachmentPoint: newSecondMonomerAttachmentPoint,
         }),
+        polymerBond,
       ),
     );
 

@@ -435,8 +435,7 @@
             "y": -2.75
         },
         "alias": "meS",
-        "templateId": "meS___N-Methyl-Serine",
-        "seqid": 8
+        "templateId": "meS___N-Methyl-Serine"
     },
     "monomer8": {
         "type": "monomer",

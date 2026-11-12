@@ -173,6 +173,7 @@ export class SelectLayoutModeOperation implements Operation {
     public _onInvert: () => void,
     public mode: LayoutMode,
     public prevMode,
+    private readonly onChangeComplete?: () => void,
   ) {
     this.onExecute = _onExecute;
     this.onInvert = _onInvert;
@@ -185,13 +186,21 @@ export class SelectLayoutModeOperation implements Operation {
   public invert(): void {
     this.onInvert();
   }
+
+  public executeAfterAllOperations(): void {
+    this.onChangeComplete?.();
+  }
+
+  public invertAfterAllOperations(): void {
+    this.onChangeComplete?.();
+  }
 }
 
 export class ReconnectPolymerBondOperation implements Operation {
-  public polymerBond;
   constructor(
     private readonly reconnectPolymerBondModelChange: () => PolymerBond,
     private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
+    public polymerBond: PolymerBond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

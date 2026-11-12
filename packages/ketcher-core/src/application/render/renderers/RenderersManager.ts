@@ -25,6 +25,7 @@ import { AmbiguousMonomerRenderer } from 'application/render/renderers/Ambiguous
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { BondWidth } from 'application/render/renderers/BondPathRenderer/constants';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
@@ -109,7 +110,7 @@ export class RenderersManager {
     drawingEntity.baseRenderer.drawSelection();
   }
 
-  private markForReEnumeration() {
+  public markForReEnumeration() {
     this.needRecalculateMonomersEnumeration = true;
   }
 
@@ -631,7 +632,7 @@ export class RenderersManager {
           .attr('cy', center.y)
           .attr('r', radius)
           .attr('stroke', '#000')
-          .attr('stroke-width', 1)
+          .attr('stroke-width', BondWidth)
           .attr('fill', 'none');
       } else {
         // For non-convex loops, draw a dashed polygon

@@ -372,8 +372,7 @@
             "y": -2.75
         },
         "alias": "meI",
-        "templateId": "meI___N-Methyl-Isoleucine",
-        "seqid": 6
+        "templateId": "meI___N-Methyl-Isoleucine"
     },
     "monomer6": {
         "type": "monomer",

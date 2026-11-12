@@ -71,8 +71,7 @@
             "y": -1.25
         },
         "alias": "N",
-        "templateId": "N___Asparagine",
-        "seqid": 1
+        "templateId": "N___Asparagine"
     },
     "monomerTemplate-N___Asparagine": {
         "type": "monomerTemplate",

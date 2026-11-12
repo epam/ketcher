@@ -49,6 +49,12 @@ export function identifyStructFormat(
     return SupportedFormat.rxn;
   }
 
+  // An RDF file without reactions is not a molfile: a molfile cannot start
+  // with the $RDFILE tag, so Indigo decides how to read it (#5273)
+  if (sanitizedString.startsWith('$RDFILE')) {
+    return SupportedFormat.unknown;
+  }
+
   if (isSDF) {
     if (isV2000) {
       return SupportedFormat.sdf;

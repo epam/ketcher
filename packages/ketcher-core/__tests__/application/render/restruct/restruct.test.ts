@@ -112,7 +112,7 @@ describe('expanded monomer rendering', () => {
   };
 
   const mockSvgGeometry = () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -146,7 +146,7 @@ describe('expanded monomer rendering', () => {
           return this;
         },
       }) as unknown as DOMPoint;
-    window.SVGElement.prototype.getBBox = () =>
+    globalThis.SVGElement.prototype.getBBox = () =>
       ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
   };
 
@@ -155,7 +155,7 @@ describe('expanded monomer rendering', () => {
   });
 
   it('shows CH3 for an expanded monomer with one visible atom and one leaving group', () => {
-    const svgSvgElement = window.SVGSVGElement
+    const svgSvgElement = globalThis.SVGSVGElement
       .prototype as unknown as SvgSvgElementWithRaphaelMethods;
     svgSvgElement.createSVGMatrix = () =>
       ({
@@ -189,7 +189,7 @@ describe('expanded monomer rendering', () => {
           return this;
         },
       }) as unknown as DOMPoint;
-    window.SVGElement.prototype.getBBox = () =>
+    globalThis.SVGElement.prototype.getBBox = () =>
       ({ x: 0, y: 0, width: 10, height: 10 }) as DOMRect;
 
     const struct = new Struct();
@@ -308,5 +308,50 @@ describe('expanded monomer rendering', () => {
 
     expect(centralStereoBond).not.toBeNull();
     expect(lineCommandsAmount).toBe(3);
+  });
+
+  it('lays out atom labels the same way at any zoom level', () => {
+    mockSvgGeometry();
+
+    const renderLabelTransforms = (zoom: number) => {
+      const struct = new Struct();
+      // NH2 with hydrogens on the right, then H2N with hydrogens on the left
+      const leftCarbonAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+      );
+      const rightHydrogensAtomId = struct.atoms.add(
+        new Atom({ label: 'N', pp: new Vec2(1, 0) }),
+      );
+      const leftHydrogensAtomId = struct.atoms.add(
+        new Atom({ label: 'N', pp: new Vec2(4, 0) }),
+      );
+      const rightCarbonAtomId = struct.atoms.add(
+        new Atom({ label: 'C', pp: new Vec2(5, 0) }),
+      );
+      addBond(struct, leftCarbonAtomId, rightHydrogensAtomId);
+      addBond(struct, leftHydrogensAtomId, rightCarbonAtomId);
+      struct.initNeighbors();
+      struct.setImplicitHydrogen();
+
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const render = new Render(container, { ...option, zoom });
+      const restruct = new ReStruct(struct, render);
+      restruct.update(true);
+
+      return Array.from(container.querySelectorAll('text')).map(
+        (element) =>
+          `${element.textContent}:${element.getAttribute('transform')}`,
+      );
+    };
+
+    const labelsAtFullZoom = renderLabelTransforms(1);
+    const hydrogenPositions = new Set(
+      labelsAtFullZoom.filter((label) => label.startsWith('H:')),
+    );
+
+    // One hydrogen group on each side of its atom
+    expect(hydrogenPositions.size).toBe(2);
+    expect(renderLabelTransforms(0.2)).toEqual(labelsAtFullZoom);
   });
 });

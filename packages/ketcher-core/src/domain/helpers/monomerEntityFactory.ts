@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,7 +37,9 @@ import {
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
 
-/** Entity classes for concrete (non-ambiguous) monomers only. */
+/**
+Entity classes for concrete (non-ambiguous) monomers only.
+*/
 export type ConcreteMonomerEntityClass =
   | typeof Chem
   | typeof Peptide
@@ -47,7 +49,9 @@ export type ConcreteMonomerEntityClass =
   | typeof UnresolvedMonomer
   | typeof UnsplitNucleotide;
 
-/** All monomer entity classes, including ambiguous. */
+/**
+All monomer entity classes, including ambiguous.
+*/
 export type MonomerEntityClass =
   ConcreteMonomerEntityClass | typeof AmbiguousMonomer;
 

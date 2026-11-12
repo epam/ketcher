@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,10 +20,11 @@ import init, { type Config } from './script';
 import { type RefObject, useCallback, useEffect, useRef } from 'react';
 import { type Root, createRoot } from 'react-dom/client';
 
-import type { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
+import type { Api } from './script/api';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -47,7 +48,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
   const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
   const ketcherRef = useRef<Ketcher | null>(null);
 
-  const setServerRef = useRef<(structService: StructService) => void>(() => {});
+  const setServerRef = useRef<(structService: Api) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
 
   const rootElRef = useRef<HTMLDivElement>(null);
@@ -90,10 +91,10 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       setServerRef.current = setServer;
       initialProps.onSetKetcherId?.(ketcher.id);
 
-      if (typeof initialProps.onInit === 'function' && ketcher) {
+      if (ketcher && typeof initialProps.onInit === 'function') {
         initialProps.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
-        window.dispatchEvent(ketcherInitEvent);
+        globalThis.dispatchEvent(ketcherInitEvent);
       }
     });
   }, []);

@@ -98,6 +98,10 @@ import {
   isValidMonomerName,
 } from './MonomerCreationWizardFields.utils';
 import { saveLibraryMonomer } from './MonomerCreationWizard.library';
+import {
+  computeFinalApNames,
+  hasDuplicateApNames,
+} from './MonomerCreationWizardAttachmentPoints';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
@@ -979,6 +983,9 @@ const MonomerCreationWizardInternal = ({
   const [phosphatePosition, setPhosphatePosition] = useState<
     '3' | '5' | undefined
   >();
+  const [pendingApRenames, setPendingApRenames] = useState<
+    Map<AttachmentPointName, AttachmentPointName>
+  >(new Map());
   /**
    * Stores user-overridden leaving atom labels for connection (readonly)
    * attachment points, keyed by "<componentKey>:<apName>" to handle cases
@@ -1134,6 +1141,7 @@ const MonomerCreationWizardInternal = ({
   const applyTypeChange = (newType: KetMonomerClass | string) => {
     setModificationTypes([]);
     setPhosphatePosition(undefined);
+    setPendingApRenames(new Map());
     editor?.setMonomerCreationSelectedType?.(newType as KetMonomerClass);
     if (type !== newType && (type === 'rnaPreset' || newType === 'rnaPreset')) {
       wizardStateDispatch({
@@ -1203,11 +1211,23 @@ const MonomerCreationWizardInternal = ({
     [libraryOnly],
   );
 
+  const handleSidebarApNameChange = useCallback(
+    (currentName: AttachmentPointName, newName: AttachmentPointName) => {
+      setPendingApRenames((prev) => {
+        const next = new Map(prev);
+        next.set(currentName, newName);
+        return next;
+      });
+    },
+    [],
+  );
+
   const resetWizard = () => {
     wizardStateDispatch({ type: 'ResetWizard' });
     rnaPresetWizardStateDispatch({ type: 'ResetWizard' });
     setPhosphatePosition(undefined);
     setAttachmentPointEditPopupData(null);
+    setPendingApRenames(new Map());
   };
 
   const handlePhosphatePositionChange = useCallback(
@@ -1938,6 +1958,41 @@ const MonomerCreationWizardInternal = ({
       );
     }
 
+    // Apply pending AP renames for the non-RNA-preset path
+    if (!isRnaPresetType && pendingApRenames.size > 0) {
+      const finalApNames = computeFinalApNames(
+        [...assignedAttachmentPoints.keys()],
+        pendingApRenames,
+      );
+
+      if (hasDuplicateApNames(finalApNames)) {
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'attachmentPointsNotUnique',
+              {
+                type: 'error',
+                message: NotificationMessages.attachmentPointsNotUnique,
+              },
+            ],
+          ]),
+        });
+        return;
+      }
+
+      const newEntries = new Map<AttachmentPointName, [number, number]>();
+      for (const [originalName, atomPair] of assignedAttachmentPoints) {
+        const targetName = pendingApRenames.get(originalName) ?? originalName;
+        newEntries.set(targetName, atomPair);
+      }
+      assignedAttachmentPoints.clear();
+      for (const [apName, atomPair] of newEntries) {
+        assignedAttachmentPoints.set(apName, atomPair);
+      }
+      setPendingApRenames(new Map());
+    }
+
     // validation
     const canSaveMonomers = validateOnSubmit(assignedAttachmentPointsByMonomer);
 
@@ -2277,6 +2332,8 @@ const MonomerCreationWizardInternal = ({
                 onChangeModificationTypes={(modificationTypes: string[]) => {
                   setModificationTypes(modificationTypes);
                 }}
+                onAttachmentPointNameChange={handleSidebarApNameChange}
+                pendingApNameOverrides={pendingApRenames}
               />
             )}
           </div>

@@ -21,7 +21,7 @@ import classes from './ActionButton.module.less';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { shortcutStr } from 'ketcher-core';
-import { type IconName, Icon } from 'components';
+import { type IconName, Icon, Tooltip } from 'components';
 
 interface ActionButtonProps {
   name: IconName;
@@ -73,23 +73,27 @@ const ActionButton = (props: Props) => {
     }
   };
 
+  const fullTitle = shortcut ? `${title} (${shortcut})` : title;
+
   return (
-    <button
-      data-testid={dataTestId ?? name}
-      disabled={disabled}
-      onClick={handleClick}
-      title={shortcut ? `${title} (${shortcut})` : title}
-      className={clsx(
-        classes.button,
-        {
-          [classes.selected]: selected,
-        },
-        className,
-      )}
-    >
-      <Icon name={name} />
-      <kbd>{shortcut}</kbd>
-    </button>
+    <Tooltip title={fullTitle}>
+      <button
+        data-testid={dataTestId ?? name}
+        disabled={disabled}
+        onClick={handleClick}
+        aria-label={fullTitle}
+        className={clsx(
+          classes.button,
+          {
+            [classes.selected]: selected,
+          },
+          className,
+        )}
+      >
+        <Icon name={name} />
+        <kbd>{shortcut}</kbd>
+      </button>
+    </Tooltip>
   );
 };
 

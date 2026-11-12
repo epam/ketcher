@@ -794,7 +794,7 @@ test.describe('Plus and Arrows tools ', () => {
       await LeftToolbar(page).expandArrowToolsDropdown();
       const button = page.getByTestId(arrowButtonDataTestId).first();
       await expect(button).toHaveAttribute(
-        'title',
+        'aria-label',
         idToTitle[arrowButtonDataTestId],
       );
       await button.click();

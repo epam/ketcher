@@ -4,7 +4,6 @@ import { isEqual } from 'lodash';
 import { getOrThrow } from '../../utilities';
 import { Render } from './raphaelRender';
 import type { RenderOptions } from './render.types';
-import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
@@ -19,8 +18,6 @@ export type RenderStructOptions = Partial<RenderOptions> & {
 
 const renderCache = new Map<string, string>();
 let previousOptions: RenderStructOptions | undefined;
-const MIN_ATTACHMENT_POINT_SIZE = 8;
-const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
@@ -37,34 +34,6 @@ export class RenderStruct {
       return newStruct;
     }
     return struct;
-  }
-
-  static removeSmallAttachmentPointLabelsInModal(
-    render: Render,
-    options: RenderStructOptions = {},
-  ) {
-    if (!options.labelInMonomerConnectionsModal) {
-      return;
-    }
-
-    render.ctab.atoms.forEach((atom: ReAtom) => {
-      if (!atom.label) {
-        return;
-      }
-      const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
-
-      if (!isAttachmentPointAtom) {
-        return;
-      }
-
-      const isSmall =
-        atom.label.path.node.getBoundingClientRect().width <
-        MIN_ATTACHMENT_POINT_SIZE;
-
-      if (isSmall) {
-        atom.label.path.node.remove();
-      }
-    });
   }
 
   static render(
@@ -155,8 +124,6 @@ export class RenderStruct {
         // can paint the few pixels beyond the viewBox that they need.
         (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
       }
-
-      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (shouldCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);

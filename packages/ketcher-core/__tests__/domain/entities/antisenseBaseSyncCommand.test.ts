@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { CoreEditor } from 'application/editor';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
 import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
@@ -29,7 +30,11 @@ import {
 } from '../../helpers/dom';
 
 const createNucleotideNode = (base: string, position: Vec2) => {
-  const created = Nucleotide.createOnCanvas(base, position);
+  const created = Nucleotide.createOnCanvas(
+    provideEditorInstance(),
+    base,
+    position,
+  );
 
   if (!created) {
     throw new Error(`Fixture setup failed: nucleotide ${base} not created`);
@@ -39,7 +44,11 @@ const createNucleotideNode = (base: string, position: Vec2) => {
 };
 
 const createNucleosideNode = (base: string, position: Vec2) => {
-  const created = Nucleoside.createOnCanvas(base, position);
+  const created = Nucleoside.createOnCanvas(
+    provideEditorInstance(),
+    base,
+    position,
+  );
 
   if (!created) {
     throw new Error(`Fixture setup failed: nucleoside ${base} not created`);
@@ -74,7 +83,7 @@ export const buildDuplex = (
   senseBaseLabel: string,
   isDnaAntisense = false,
 ) => {
-  Nucleotide.createOnCanvas(senseBaseLabel, new Vec2(0, 0));
+  Nucleotide.createOnCanvas(editor, senseBaseLabel, new Vec2(0, 0));
   editor.drawingEntitiesManager.selectDrawingEntities([
     ...editor.drawingEntitiesManager.monomers.values(),
   ]);

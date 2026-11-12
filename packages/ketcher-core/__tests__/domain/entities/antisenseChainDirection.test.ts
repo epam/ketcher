@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { CoreEditor, SequenceMode } from 'application/editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -30,7 +31,11 @@ import {
 // that inverting a command that deletes-and-recreates a sugar/phosphate
 // (e.g. undoing a library replacement) can render the recreated monomers.
 const createNucleotideNode = (base: string, position: Vec2) => {
-  const created = Nucleotide.createOnCanvas(base, position);
+  const created = Nucleotide.createOnCanvas(
+    provideEditorInstance(),
+    base,
+    position,
+  );
 
   if (!created) {
     throw new Error(`Fixture setup failed: nucleotide ${base} not created`);

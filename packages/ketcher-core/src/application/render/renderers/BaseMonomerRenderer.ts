@@ -25,7 +25,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   getMonomerSize,
   setMonomerSize,
-} from 'application/render/renderers/monomerSizeState';
+} from 'domain/helpers/monomerSizeState';
 import {
   type HighlightPathData,
   createRectHighlightPath,

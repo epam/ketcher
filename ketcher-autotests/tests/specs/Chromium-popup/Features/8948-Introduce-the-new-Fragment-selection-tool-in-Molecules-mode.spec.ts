@@ -22,11 +22,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
-const cycleBondTooltip =
-  'Fragment Selection Tool cannot be used on bonds that participate in a cycle.';
-const markedComponentTooltip =
-  'The structure fragment in this direction is already marked as a nucleotide component.';
-
 async function getMoleculesCanvasSvg(page: Page) {
   const canvas = (await getVisibleCanvas(page)).locator(
     '[class*="intermediateCanvas"] > svg',
@@ -203,6 +198,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
   });
 
   test('Case 7 - Hovering a bond in a cycle shows forbidden cursor and no arrows', async () => {
+    const cycleBondTooltip =
+      'Fragment Selection Tool cannot be used on bonds that participate in a cycle.';
+
     /*
      * Test task: https://github.com/epam/ketcher/issues/12489
      * Description: Hovering a bond that participates in a cycle shows the forbidden cursor and no arrows
@@ -231,6 +229,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
   });
 
   test('Case 8 - Tooltip appears after 200 ms when hovering over a bond in a cycle', async () => {
+    const cycleBondTooltip =
+      'Fragment Selection Tool cannot be used on bonds that participate in a cycle.';
+
     /*
      * Test task: https://github.com/epam/ketcher/issues/12489
      * Description: Tooltip for a bond in a cycle appears not earlier than 200 ms after hovering
@@ -449,6 +450,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
   });
 
   test('Case 15 - Gray arrows and tooltip are shown when hovering toward an already marked component in Monomer Creation Wizard', async () => {
+    const markedComponentTooltip =
+      'The structure fragment in this direction is already marked as a nucleotide component.';
+
     /*
      * Test task: https://github.com/epam/ketcher/issues/12489
      * Description: Hovering a bond side that leads to a marked component shows gray arrows, forbidden cursor and a tooltip

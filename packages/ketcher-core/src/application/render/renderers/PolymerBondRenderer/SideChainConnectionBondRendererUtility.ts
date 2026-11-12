@@ -43,6 +43,7 @@ export class SideChainConnectionBondRendererUtility {
   public static readonly cellHeight = 40;
   public static readonly smoothCornerSize = 5;
 
+  // Assign lanes per side, reusing a lane once its previous route has ended.
   public static assignOuterConnectionLanes(
     routes: readonly SideConnectionLaneRoute[],
   ): Map<number, OuterConnectionLane> {
@@ -65,18 +66,20 @@ export class SideChainConnectionBondRendererUtility {
         );
 
       let groupEnd = -Infinity;
+      // Lanes in the same overlap group share this object so a later, wider
+      // route can move their common baseline outward.
       let baseline = { edge: 0 };
       const outermost = side === 1 ? Math.max : Math.min;
 
       sideRoutes.forEach((route) => {
         if (route.top > groupEnd) {
           baseline = { edge: route.edge };
-          laneEnds.length = 0;
         } else {
           baseline.edge = outermost(baseline.edge, route.edge);
         }
         groupEnd = Math.max(groupEnd, route.bottom);
 
+        // Routes that meet on the same row still need separate lanes.
         const lane = laneEnds.findIndex((laneEnd) => laneEnd < route.top);
         const assignedLane = lane === -1 ? laneEnds.length : lane;
 

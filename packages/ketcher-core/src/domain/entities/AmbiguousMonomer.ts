@@ -3,13 +3,17 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
+import { resolveMonomerClass } from 'domain/helpers/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import type { IVariantMonomer } from 'domain/entities/types';
-import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
+import type {
+  AmbiguousMonomerType,
+  AttachmentPointName,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
@@ -19,7 +23,6 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { compareStrings } from 'utilities';
 
@@ -34,7 +37,20 @@ export const MONOMER_CLASS_TO_CONSTRUCTOR = {
   [KetMonomerClass.RNA]: UnsplitNucleotide,
 };
 
+export interface MonomersLibrarySource {
+  readonly monomersLibrary: readonly MonomerOrAmbiguousType[];
+}
+
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
+  // The domain cannot import the editor, so CoreEditor binds itself here.
+  private static monomersLibrarySource: MonomersLibrarySource | undefined;
+
+  public static setMonomersLibrarySource(
+    source: MonomersLibrarySource | undefined,
+  ): void {
+    AmbiguousMonomer.monomersLibrarySource = source;
+  }
+
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
   public subtype: KetAmbiguousMonomerTemplateSubType;
@@ -144,7 +160,8 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       .map((option) => option.templateId)
       .sort(compareStrings);
 
-    const monomersLibrary = provideEditorInstance()?.monomersLibrary ?? [];
+    const monomersLibrary =
+      AmbiguousMonomer.monomersLibrarySource?.monomersLibrary ?? [];
 
     const existsInLibrary = monomersLibrary.some((libraryItem) => {
       if (

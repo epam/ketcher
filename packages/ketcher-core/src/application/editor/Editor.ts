@@ -60,6 +60,7 @@ import {
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { Command } from 'domain/entities/Command';
 import {
   DrawingEntitiesManager,
@@ -377,6 +378,7 @@ export class CoreEditor {
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     setEditorInstance(this);
+    AmbiguousMonomer.setMonomersLibrarySource(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -3014,5 +3016,6 @@ export class CoreEditor {
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
     resetEditorInstance();
+    AmbiguousMonomer.setMonomersLibrarySource(undefined);
   }
 }

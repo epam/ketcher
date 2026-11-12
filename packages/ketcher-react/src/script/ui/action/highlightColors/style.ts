@@ -42,7 +42,3 @@ export const ColorItem = styled(Item)`
     padding: 0 !important;
   }
 `;
-export const Divider = styled.div`
-  height: 1px;
-  background-color: #ccc;
-`;

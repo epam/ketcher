@@ -1,29 +1,29 @@
 const KetcherAPI = (ketcherInstance) => {
   return {
     // Accepts CTAB as string
-    renderFromCtab: function (str) {
+    renderFromCtab(str) {
       ketcherInstance.setMolecule(str);
     },
 
-    clearSelection: function () {
+    clearSelection() {
       ketcherInstance.editor.selection(null);
     },
 
-    selectAll: function () {
+    selectAll() {
       ketcherInstance.editor.selection('all');
     },
 
     // Accepts IDs of atoms as an array of integers
-    selectAtomsById: function (ids) {
+    selectAtomsById(ids) {
       ketcherInstance.editor.selection({ atoms: ids });
     },
 
     // Returns Promise<string>
-    exportCtab: function () {
+    exportCtab() {
       return ketcherInstance.getMolfile();
     },
 
-    getSelectedAtomId: function () {
+    getSelectedAtomId() {
       const selection = ketcherInstance.editor.selection();
       if (!selection?.atoms) {
         return null;
@@ -35,7 +35,7 @@ const KetcherAPI = (ketcherInstance) => {
     },
 
     // Accepts color as a string
-    highlightSelection: function (color) {
+    highlightSelection(color) {
       const selection = ketcherInstance.editor.selection() || {};
       const { atoms, bonds } = selection;
       ketcherInstance.editor.highlights.create({ atoms, bonds, color });
@@ -51,11 +51,11 @@ const KetcherAPI = (ketcherInstance) => {
       };
     },
 
-    clearHighlights: function () {
+    clearHighlights() {
       ketcherInstance.editor.highlights.clear();
     },
 
-    getAllHighlights: function () {
+    getAllHighlights() {
       const highlights = ketcherInstance.editor.highlights.getAll();
       return highlights;
     },

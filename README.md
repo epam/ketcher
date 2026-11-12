@@ -155,7 +155,7 @@ Please refer to the `example/src/App.tsx` file for a complete example of how to 
 
 ## API Reference
 
-The full API reference — export/import methods, editor operations, view control, settings, events, the React component API, and service providers — is in **[documentation/api.md](documentation/api.md)**.
+The full API reference — export/import methods, editor operations, view control, settings, events, the React component API, and service providers — is in **[documentation/api-reference.md](documentation/api-reference.md)**.
 
 ## Browser Compatibility
 

@@ -20,8 +20,7 @@
             "y": -1.25
         },
         "alias": "i2AmPr2",
-        "templateId": "unknown_monomer_with_idt_alias_i2AmPr2",
-        "seqid": 0
+        "templateId": "unknown_monomer_with_idt_alias_i2AmPr2"
     },
     "monomerTemplate-unknown_monomer_with_idt_alias_i2AmPr2": {
         "type": "monomerTemplate",

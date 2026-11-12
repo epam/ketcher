@@ -338,7 +338,7 @@ test.describe('Undo/redo across micro-macro mode switches', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 300, y: 300 });
-    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 500, y: 300 });
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, { x: 150, y: 300 });
     await expect(getMonomerLocator(page, Peptide.Tza)).toHaveCount(2);
     await ContextMenu(page, getMonomerLocator(page, Peptide.Tza).first()).click(
       MonomerOption.Delete,

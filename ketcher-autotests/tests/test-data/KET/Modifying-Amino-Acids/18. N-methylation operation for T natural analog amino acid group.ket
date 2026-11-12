@@ -383,8 +383,7 @@
             "y": -2.75
         },
         "alias": "meT",
-        "templateId": "meT___N-Methyl-Threonine",
-        "seqid": 4
+        "templateId": "meT___N-Methyl-Threonine"
     },
     "monomer4": {
         "type": "monomer",

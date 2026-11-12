@@ -70,7 +70,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
   {
     file: 'packages/ketcher-core/src/domain/entities/DrawingEntitiesManager.ts',
     imports: [
-      'application/editor/libraryItemDragDrop/replacementHelpers',
       'application/editor/operations/coreAtom/atom',
       'application/editor/operations/coreBond/bond',
       'application/editor/operations/coreRxn/multitailArrow',
@@ -84,9 +83,6 @@ export const ALLOWED_DOMAIN_IMPORTS = [
       'application/editor/operations/monomerToAtomBond/monomerToAtomBond',
       'application/editor/operations/polymerBond',
       'application/editor/operations/stereoFlag',
-      'application/editor/shared/coordinates',
-      'application/editor/tools/rnaPresetConnections',
-      'application/render/renderers/sequence/SequenceRenderer',
     ],
   },
 ];

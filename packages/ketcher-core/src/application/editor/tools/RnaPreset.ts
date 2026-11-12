@@ -28,7 +28,7 @@ import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import type { IKetTemplateConnection } from 'application/formatters';
-import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
+import { getRnaPresetPhosphatePosition } from 'domain/helpers/rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;

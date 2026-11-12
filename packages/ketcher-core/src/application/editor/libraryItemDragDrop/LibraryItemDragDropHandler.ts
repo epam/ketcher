@@ -37,7 +37,7 @@ import {
   getPresetPhosphateFromSugar,
   getPresetSugarForMonomer,
   type PresetComponentRole,
-} from './replacementHelpers';
+} from 'domain/helpers/replacementHelpers';
 import { KetcherLogger } from 'utilities';
 
 /**

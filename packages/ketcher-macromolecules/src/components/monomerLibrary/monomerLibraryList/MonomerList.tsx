@@ -17,6 +17,7 @@
 import { useTranslation } from 'react-i18next';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import { MonomerListContainer } from './styles';
 import { IMonomerListProps } from './types';
 import {
@@ -82,9 +83,7 @@ const MonomerList = ({
         <div>{t('monomerLibrary.monomersSectionHeader')}</div>
       )}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
-        const resolvedTitle = groupTitle?.startsWith('macromolecules:')
-          ? t(groupTitle)
-          : groupTitle;
+        const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
         return (
           <MonomerGroup
             key={groupTitle}
@@ -108,11 +107,7 @@ const MonomerList = ({
       <>
         {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
           ambiguousMonomers.map((group) => {
-            const resolvedTitle = group.groupTitle?.startsWith(
-              'macromolecules:',
-            )
-              ? t(group.groupTitle)
-              : group.groupTitle;
+            const resolvedTitle = resolveLocalizedTitle(group.groupTitle, t);
             return (
               <MonomerGroup
                 key={group.groupTitle}

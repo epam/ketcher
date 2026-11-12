@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { localizeOptions } from 'helpers/localizeOptions';
 import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
@@ -49,9 +50,7 @@ import {
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-const optionsConfig: Array<
-  Option & { id: SupportedFormats; labelKey?: string }
-> = [
+const optionsConfig: Array<Option & { id: SupportedFormats }> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   {
@@ -101,13 +100,7 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const { t } = useTranslation('macromoleculesDialogs');
-  const options = useMemo(
-    () =>
-      optionsConfig.map((option) =>
-        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
-      ),
-    [t],
-  );
+  const options = useMemo(() => localizeOptions(optionsConfig, t), [t]);
   const dispatch = useAppDispatch();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();

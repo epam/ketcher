@@ -14,6 +14,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
 import { groupNameToTabLabelKey } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/groupNameToTabLabelKey';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -150,11 +151,7 @@ const RnaElementsTabsView = ({
             <DetailsContainer compact>
               <>
                 {groups.map(({ groupItems, groupTitle }) => {
-                  const resolvedTitle = groupTitle?.startsWith(
-                    'macromolecules:',
-                  )
-                    ? t(groupTitle)
-                    : groupTitle;
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
                   return (
                     <MonomerGroup
                       key={groupTitle}
@@ -177,11 +174,7 @@ const RnaElementsTabsView = ({
                   );
                 })}
                 {variantMonomers.map(({ groupTitle, groupItems }) => {
-                  const resolvedTitle = groupTitle?.startsWith(
-                    'macromolecules:',
-                  )
-                    ? t(groupTitle)
-                    : groupTitle;
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
                   return (
                     <MonomerGroup
                       key={groupTitle}

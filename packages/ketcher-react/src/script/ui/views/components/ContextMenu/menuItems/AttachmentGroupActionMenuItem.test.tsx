@@ -28,7 +28,8 @@ jest.mock('@mui/material', () => ({
 
 jest.mock('../hooks/useAttachmentGroupCreate', () => ({
   __esModule: true,
-  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP: 'disabled',
+  ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY:
+    'components:rgroup.createAttachmentGroupDisabled',
   default: () => ({ handler: jest.fn(), isDisabled: () => false }),
 }));
 

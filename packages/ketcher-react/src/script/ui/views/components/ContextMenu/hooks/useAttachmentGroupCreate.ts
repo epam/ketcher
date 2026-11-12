@@ -13,10 +13,6 @@ type Params = ItemEventParams<AtomContextMenuProps>;
 export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY =
   'components:rgroup.createAttachmentGroupDisabled';
 
-/** @deprecated Use ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP_KEY with i18n. */
-export const ATTACHMENT_GROUP_CREATION_DISABLED_TOOLTIP =
-  'Selection must contain only continuous atoms without extra elements or bonds';
-
 const useAttachmentGroupCreate = () => {
   const { ketcherId } = useAppContext();
 

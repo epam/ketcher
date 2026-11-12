@@ -17,7 +17,7 @@
     "createDnaAntisenseStrand": "Crear cadena antisentido de ADN ({shortcut})"
   },
   "leftMenu": {
-    "handTool": "mano ({shortcut})",
+    "handTool": "Mover ({shortcut})",
     "selectRectangle": "Seleccionar rectángulo ({shortcut})",
     "lassoSelection": "Selección con lazo ({shortcut})",
     "structureSelection": "Selección de estructura ({shortcut})",

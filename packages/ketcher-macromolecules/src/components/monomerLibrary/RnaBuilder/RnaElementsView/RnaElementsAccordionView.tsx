@@ -4,6 +4,7 @@ import {
   selectFilteredMonomers,
 } from 'state/library';
 import { MonomerGroups } from '../../../../constants';
+import { resolveLocalizedTitle } from 'helpers/resolveLocalizedTitle';
 import { Summary } from './Summary';
 import { Icon, IconName } from 'ketcher-react';
 import {
@@ -158,11 +159,7 @@ const RnaElementsAccordionView = ({
                     MonomerGroups.NUCLEOTIDES,
                     MonomerGroups.PEPTIDES,
                   ].includes(groupData.groupName as MonomerGroups);
-                  const resolvedTitle = groupTitle?.startsWith(
-                    'macromolecules:',
-                  )
-                    ? t(groupTitle)
-                    : groupTitle;
+                  const resolvedTitle = resolveLocalizedTitle(groupTitle, t);
 
                   return (
                     <MonomerGroup
@@ -178,11 +175,10 @@ const RnaElementsAccordionView = ({
                   );
                 })}
                 {variantMonomers.map((group) => {
-                  const resolvedTitle = group.groupTitle?.startsWith(
-                    'macromolecules:',
-                  )
-                    ? t(group.groupTitle)
-                    : group.groupTitle;
+                  const resolvedTitle = resolveLocalizedTitle(
+                    group.groupTitle,
+                    t,
+                  );
                   return (
                     <MonomerGroup
                       key={group.groupTitle}

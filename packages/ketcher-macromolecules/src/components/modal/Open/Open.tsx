@@ -48,6 +48,7 @@ import { openErrorModal, openErrorTooltip } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { localizeOptions } from 'helpers/localizeOptions';
 import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
 export interface Props {
@@ -126,7 +127,7 @@ const FASTA = 'fasta';
 const ONE_LETTER = 'one-letter';
 const THREE_LETTER = 'three-letter';
 
-const formatOptionsConfig: Array<Option & { labelKey?: string }> = [
+const formatOptionsConfig: Array<Option> = [
   { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence', labelKey: 'open.formats.sequence' },
@@ -137,25 +138,24 @@ const formatOptionsConfig: Array<Option & { labelKey?: string }> = [
   { id: 'biln', label: 'BILN' },
 ];
 
-const additionalOptionsConfig: Array<Option & { labelKey?: string }> = [
+const additionalOptionsConfig: Array<Option> = [
   { id: RNA, label: 'RNA' },
   { id: 'dna', label: 'DNA' },
   { id: PEPTIDE, label: 'Peptide', labelKey: 'open.formats.peptide' },
 ];
 
-const peptideLettersFormatOptionsConfig: Array<Option & { labelKey?: string }> =
-  [
-    {
-      id: ONE_LETTER,
-      label: '1-letter code',
-      labelKey: 'open.formats.oneLetterCode',
-    },
-    {
-      id: THREE_LETTER,
-      label: '3-letter code',
-      labelKey: 'open.formats.threeLetterCode',
-    },
-  ];
+const peptideLettersFormatOptionsConfig: Array<Option> = [
+  {
+    id: ONE_LETTER,
+    label: '1-letter code',
+    labelKey: 'open.formats.oneLetterCode',
+  },
+  {
+    id: THREE_LETTER,
+    label: '3-letter code',
+    labelKey: 'open.formats.threeLetterCode',
+  },
+];
 
 const inputFormats = macromoleculesFilesInputFormats;
 
@@ -353,25 +353,13 @@ const errorHandler = (error: string) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const { t } = useTranslation('macromoleculesDialogs');
-  const options = useMemo(
-    () =>
-      formatOptionsConfig.map((option) =>
-        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
-      ),
-    [t],
-  );
+  const options = useMemo(() => localizeOptions(formatOptionsConfig, t), [t]);
   const additionalOptions = useMemo(
-    () =>
-      additionalOptionsConfig.map((option) =>
-        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
-      ),
+    () => localizeOptions(additionalOptionsConfig, t),
     [t],
   );
   const peptideLettersFormatOptions = useMemo(
-    () =>
-      peptideLettersFormatOptionsConfig.map((option) =>
-        option.labelKey ? { ...option, label: t(option.labelKey) } : option,
-      ),
+    () => localizeOptions(peptideLettersFormatOptionsConfig, t),
     [t],
   );
   const dispatch = useAppDispatch();

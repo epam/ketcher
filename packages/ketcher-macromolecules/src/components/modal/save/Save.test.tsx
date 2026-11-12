@@ -20,6 +20,8 @@ import userEvent from '@testing-library/user-event';
 import { type CoreEditor, Struct } from 'ketcher-core';
 import * as ketcherCore from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
+import { Provider } from 'react-redux';
+import { configureAppStore } from 'state';
 
 const mockOnClose = jest.fn();
 
@@ -159,5 +161,69 @@ describe('Save modal', () => {
 
     expect(molProperties.options).toEqual({ 'molfile-saving-mode': '3000' });
     expect(molProperties.name).toBe('MDL Molfile V3000');
+  });
+
+  it('refuses to export a branched structure to FASTA', async () => {
+    const mockConvert = jest.fn();
+
+    jest.spyOn(IndigoProvider, 'getIndigo').mockReturnValue({
+      convert: mockConvert,
+    } as unknown as ReturnType<typeof IndigoProvider.getIndigo>);
+
+    const mockEditor = {
+      drawingEntitiesManager: {
+        micromoleculesHiddenEntities: {
+          clone: () => new Struct(),
+          mergeInto: jest.fn(),
+        },
+        setMicromoleculesHiddenEntities: jest.fn(),
+        detectBondsOverlappedByMonomers: jest.fn(),
+        validateIfApplicableForFasta: jest.fn().mockReturnValue(true),
+        hasRnaAndDnaMix: jest.fn().mockReturnValue(false),
+        hasBranchesBetweenChains: jest.fn().mockReturnValue(true),
+        molecules: [],
+        monomers: new Map(),
+        polymerBonds: [],
+        bonds: [],
+        monomerToAtomBonds: [],
+        atoms: [],
+        rxnArrows: [],
+        multitailArrows: [],
+        rxnPluses: [],
+      },
+      monomersLibrary: {},
+      canvas: document.createElement('canvas'),
+      viewModel: {
+        initialize: jest.fn(),
+      },
+      events: {
+        error: {
+          dispatch: jest.fn(),
+        },
+      },
+    } as unknown as CoreEditor;
+
+    jest
+      .spyOn(ketcherCore, 'provideEditorInstance')
+      .mockImplementation(() => mockEditor);
+
+    const store = configureAppStore();
+
+    render(
+      <Provider store={store}>
+        {withThemeProvider(<Save {...mockProps} />)}
+      </Provider>,
+    );
+
+    fireEvent.mouseDown(screen.getByRole('combobox'));
+    await act(async () => {
+      fireEvent.click(await screen.findByRole('option', { name: 'FASTA' }));
+    });
+
+    expect(store.getState().modal.errorModalText).toBe(
+      'Exporting branched structures to FASTA is not supported.',
+    );
+    expect(mockConvert).not.toHaveBeenCalled();
+    expect(screen.getByRole('combobox')).toHaveTextContent('Ket Format');
   });
 });

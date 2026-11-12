@@ -114,7 +114,8 @@
     "convertError": "¡Error de conversión! {error}",
     "helmSmilesExportNotice": "La molécula se exportará usando SMILES en línea y, al cargarla, aparecerá como un monómero CHEM",
     "helmAliasExportNotice": "Algunos monómeros no tienen alias en la biblioteca principal de HELM; se exportan usando los alias de Ketcher.",
-    "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)"
+    "sequenceTypeRecognitionError": "Error al reconocer el tipo de secuencia (ARN, ADN o péptido)",
+    "fastaBranchedStructureError": "No se admite la exportación de estructuras ramificadas a FASTA."
   },
   "updateSequence": {
     "title": "Actualizar secuencia",

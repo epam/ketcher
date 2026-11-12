@@ -583,7 +583,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   } | void;
 
   public setEnumeration(enumeration: number | null) {
-    this.enumeration = enumeration;
+    this.enumeration =
+      enumeration === null
+        ? null
+        : (this.monomer.monomerItem.seqId ?? enumeration);
   }
 
   protected appendEnumeration() {

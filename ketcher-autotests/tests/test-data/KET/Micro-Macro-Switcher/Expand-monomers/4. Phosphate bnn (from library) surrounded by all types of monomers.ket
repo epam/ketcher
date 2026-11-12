@@ -8149,7 +8149,7 @@
         },
         "alias": "Unknown",
         "templateId": "unknown_monomer_with_idt_alias_Unknown",
-        "seqid": 0
+        "seqid": 1
     },
     "monomerTemplate-unknown_monomer_with_idt_alias_Unknown": {
         "type": "monomerTemplate",

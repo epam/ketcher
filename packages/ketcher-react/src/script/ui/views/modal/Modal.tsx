@@ -56,7 +56,6 @@ const DRAGGABLE_DIALOGS = new Set([
   'rgroup',
   'attach',
   'templates',
-  'about',
   'miew',
   'atomProps',
   'attachmentPoints',
@@ -66,9 +65,12 @@ const DRAGGABLE_DIALOGS = new Set([
   'enhancedStereo',
   'labelEdit',
   'rgroupLogic',
+  'removeFG',
+  'editMonomer',
   'save',
   'sgroup',
   'text',
+  'confirm',
   'info-modal',
 ]);
 

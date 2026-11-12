@@ -27,8 +27,8 @@ import {
   getHoverToFuse,
   getItemsToFuse,
   isAttachmentBond,
-  vectorUtils,
-  getRelSGroupsBySelection,
+  vectorUtilities,
+  getRelatedSGroupsBySelection,
   MonomerMicromolecule,
   RotateMonomerOperation,
   CoordinateTransformation,
@@ -117,7 +117,7 @@ class RotateTool implements Tool {
   mousedownHandle(handleCenter: Vec2, center: Vec2) {
     this.dragCtx = {
       xy0: center,
-      angle1: vectorUtils.calcAngle(center, handleCenter),
+      angle1: vectorUtilities.calcAngle(center, handleCenter),
     };
     this.initSnapInfo();
   }
@@ -213,7 +213,7 @@ class RotateTool implements Tool {
         this.editor.render,
       );
       const mouseMoveAngle =
-        vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
+        vectorUtilities.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
 
       let rotateAngle = mouseMoveAngle;
       this.reStruct.clearSnappingBonds();
@@ -224,10 +224,10 @@ class RotateTool implements Tool {
         const [isSnapping, rotateAngleWithSnapping] = this.snap(mouseMoveAngle);
         rotateAngle = isSnapping
           ? rotateAngleWithSnapping
-          : vectorUtils.fracAngle(mouseMoveAngle, null);
+          : vectorUtilities.fracAngle(mouseMoveAngle, null);
       }
 
-      const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
+      const rotateAngleInDegrees = vectorUtilities.degrees(rotateAngle);
       if (!('angle' in dragCtx) || dragCtx.angle !== rotateAngleInDegrees) {
         dragCtx.action?.perform(this.reStruct);
 
@@ -292,7 +292,7 @@ class RotateTool implements Tool {
       }
 
       if (this.selection?.atoms) {
-        const sGroups = getRelSGroupsBySelection(
+        const sGroups = getRelatedSGroupsBySelection(
           this.struct,
           this.selection?.atoms,
         );

@@ -30,9 +30,9 @@ Patterns that an AI reviewer must not flag. Each entry says where the pattern ap
 
 ### Empty object pattern in Playwright fixtures
 
-**Where:** Fixture definitions in `ketcher-autotests/tests/fixtures/`, for example `ketcher-autotests/tests/fixtures/utilsFixtures.ts:18` and `ketcher-autotests/tests/fixtures/commonPageObjectFixtures.ts:25`.
+**Where:** Fixture definitions in `ketcher-autotests/tests/fixtures/`, for example `ketcher-autotests/tests/fixtures/utilitiesFixtures.ts:18` and `ketcher-autotests/tests/fixtures/commonPageObjectFixtures.ts:25`.
 **Why it is accepted:** Playwright passes the fixtures object as the first argument of a fixture, and a fixture that uses no other fixture takes `{}` there. Lint passes on `utilsFixtures.ts`.
-**Example:** `resetClipboard: async ({}, use) => {` at `ketcher-autotests/tests/fixtures/utilsFixtures.ts:18`.
+**Example:** `resetClipboard: async ({}, use) => {` at `ketcher-autotests/tests/fixtures/utilitiesFixtures.ts:18`.
 
 ### Raw getByTestId in existing specs
 

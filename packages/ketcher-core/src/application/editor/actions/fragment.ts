@@ -16,7 +16,7 @@
 
 import {
   AtomMove,
-  AttachmentGroupAttr,
+  AttachmentGroupAttribute,
   BondMove,
   EnhancedFlagMove,
   FragmentAdd,
@@ -38,8 +38,8 @@ import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { fromAtomsFragmentAttr } from './atom';
-import { getRelSGroupsBySelection } from './utils';
+import { fromAtomsFragmentAttribute } from './atom';
+import { getRelatedSGroupsBySelection } from './utilities';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
@@ -53,7 +53,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.atoms) {
     const atomSet = new Pile<number>(lists.atoms);
     const bondlist: Array<number> = [];
-    const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
+    const relatedSgroups = getRelatedSGroupsBySelection(struct, lists.atoms);
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -188,13 +188,15 @@ function processAtom(restruct, aid, frid, newfrid) {
   const atomIds = struct
     .findConnectedComponent(aid)
     .filter((id) => struct.atoms.get(id).fragment === frid);
-  const atomAction = fromAtomsFragmentAttr(restruct, atomIds, newfrid);
+  const atomAction = fromAtomsFragmentAttribute(restruct, atomIds, newfrid);
   const action = new Action();
 
   struct.attachmentGroups.forEach((group, groupId) => {
     if (group.atomIds.some((id) => atomIds.has(id))) {
       action.addOp(
-        new AttachmentGroupAttr(groupId, 'fragment', newfrid).perform(restruct),
+        new AttachmentGroupAttribute(groupId, 'fragment', newfrid).perform(
+          restruct,
+        ),
       );
     }
   });

@@ -98,9 +98,9 @@ export class ZoomTool implements BaseTool {
       })
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
-      .filter((e) => {
-        e.preventDefault();
-        if (e.ctrlKey && e.type === 'wheel') {
+      .filter((event_) => {
+        event_.preventDefault();
+        if (event_.ctrlKey && event_.type === 'wheel') {
           return true;
         }
         return false;

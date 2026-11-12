@@ -65,7 +65,7 @@ export interface IAutochainMonomerAddResult {
  * needs from CoreEditor. This keeps the handler decoupled from the concrete
  * editor class and makes it independently testable.
  */
-export interface LibraryItemDragDropHandlerDeps {
+export interface LibraryItemDragDropHandlerDependencies {
   drawingEntitiesManager: DrawingEntitiesManager;
   renderersContainer: RenderersManager;
   events: Pick<
@@ -146,14 +146,16 @@ export class LibraryItemDragDropHandler {
    */
   private dragReplaceTarget: ReplacementTarget | null = null;
 
-  constructor(private readonly deps: LibraryItemDragDropHandlerDeps) {}
+  constructor(
+    private readonly dependencies: LibraryItemDragDropHandlerDependencies,
+  ) {}
 
   /**
    * Wire up editor events. Must be called exactly once during editor
    * initialisation (from Editor.subscribeEvents()).
    */
   subscribe(): void {
-    const { events } = this.deps;
+    const { events } = this.dependencies;
     events.setLibraryItemDragState.add(this.onDragStateChanged.bind(this));
     events.placeLibraryItemOnCanvas.add(
       (
@@ -190,7 +192,7 @@ export class LibraryItemDragDropHandler {
       getEditor,
       getModeName,
       events,
-    } = this.deps;
+    } = this.dependencies;
 
     const command = new Command();
     command.merge(
@@ -282,7 +284,7 @@ export class LibraryItemDragDropHandler {
     state: NonNullable<LibraryItemDragState>,
   ): void {
     // Skip in sequence mode
-    if (this.deps.getModeName() === 'sequence-layout-mode') return;
+    if (this.dependencies.getModeName() === 'sequence-layout-mode') return;
 
     // --- REPLACEMENT CHECK (priority over AP proximity) ---
     const replacementTarget = this.findReplacementTarget(state.position);
@@ -293,14 +295,14 @@ export class LibraryItemDragDropHandler {
         state.item,
       );
 
-      const prevTarget = this.dragReplaceTarget;
+      const previousTarget = this.dragReplaceTarget;
       const hasTargetChanged =
-        classified.monomer !== prevTarget?.monomer ||
-        classified.kind !== prevTarget?.kind;
+        classified.monomer !== previousTarget?.monomer ||
+        classified.kind !== previousTarget?.kind;
 
       if (hasTargetChanged) {
         // Clear previous replacement visual state
-        if (prevTarget) this.clearReplacementVisualState();
+        if (previousTarget) this.clearReplacementVisualState();
 
         // Activate new replacement visual state
         this.applyReplacementVisualState(classified);
@@ -325,9 +327,9 @@ export class LibraryItemDragDropHandler {
 
         const command = new Command();
         command.merge(
-          this.deps.drawingEntitiesManager.removeHoverForAllMonomers(),
+          this.dependencies.drawingEntitiesManager.removeHoverForAllMonomers(),
         );
-        this.deps.renderersContainer.update(command);
+        this.dependencies.renderersContainer.update(command);
       }
       return;
     }
@@ -374,7 +376,7 @@ export class LibraryItemDragDropHandler {
 
     this.dragDropBondTarget = updatedBondTarget;
 
-    const { drawingEntitiesManager, renderersContainer } = this.deps;
+    const { drawingEntitiesManager, renderersContainer } = this.dependencies;
     const command = new Command();
     command.merge(drawingEntitiesManager.removeHoverForAllMonomers());
 
@@ -412,8 +414,8 @@ export class LibraryItemDragDropHandler {
     if (!hasBondTargetChanged) return;
 
     const clearCommand =
-      this.deps.drawingEntitiesManager.removeHoverForAllMonomers();
-    this.deps.renderersContainer.update(clearCommand);
+      this.dependencies.drawingEntitiesManager.removeHoverForAllMonomers();
+    this.dependencies.renderersContainer.update(clearCommand);
   }
 
   // ---------------------------------------------------------------------------
@@ -433,10 +435,10 @@ export class LibraryItemDragDropHandler {
     x: number;
     y: number;
   }): BaseMonomer | null {
-    const rootOffset = this.deps.getKetcherRootRect();
+    const rootOffset = this.dependencies.getKetcherRootRect();
     if (!rootOffset) return null;
 
-    const canvasOffset = this.deps.getCanvasOffset();
+    const canvasOffset = this.dependencies.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
     // viewport coords, then invert the zoom transform to get canvas coords.
     const cursorSVGX = position.x - (canvasOffset.left - rootOffset.left);
@@ -446,22 +448,23 @@ export class LibraryItemDragDropHandler {
     );
 
     let nearest: BaseMonomer | null = null;
-    let minDist = DRAG_REPLACE_PROXIMITY_THRESHOLD_PX;
+    let minDistribution = DRAG_REPLACE_PROXIMITY_THRESHOLD_PX;
 
-    for (const [, monomer] of this.deps.drawingEntitiesManager.monomers) {
+    for (const [, monomer] of this.dependencies.drawingEntitiesManager
+      .monomers) {
       const renderer = monomer.renderer;
       if (!renderer || !(renderer instanceof BaseMonomerRenderer)) continue;
 
       // renderer.center is already in canvas-space pixels — compare directly.
       const center = renderer.center;
 
-      const dist = Math.hypot(
+      const distribution = Math.hypot(
         cursorCanvas.x - center.x,
         cursorCanvas.y - center.y,
       );
 
-      if (dist < minDist) {
-        minDist = dist;
+      if (distribution < minDistribution) {
+        minDistribution = distribution;
         nearest = monomer;
       }
     }
@@ -520,7 +523,7 @@ export class LibraryItemDragDropHandler {
   private applyReplacementVisualState(target: ReplacementTarget): void {
     const monomersToHighlight = this.getHighlightMonomers(target);
 
-    const transientDrawingView = this.deps.getTransientDrawingView();
+    const transientDrawingView = this.dependencies.getTransientDrawingView();
     transientDrawingView.showReplacementHighlight({
       monomers: monomersToHighlight,
     });
@@ -532,7 +535,7 @@ export class LibraryItemDragDropHandler {
    * by `target` and hides the outline.
    */
   private clearReplacementVisualState(): void {
-    const transientDrawingView = this.deps.getTransientDrawingView();
+    const transientDrawingView = this.dependencies.getTransientDrawingView();
     transientDrawingView.hideReplacementHighlight();
     transientDrawingView.update();
   }
@@ -574,7 +577,7 @@ export class LibraryItemDragDropHandler {
       getEditor,
       placeItemOnCanvas,
       calculateAndStoreNextAutochainPosition,
-    } = this.deps;
+    } = this.dependencies;
 
     // -----------------------------------------------------------------------
     // REPLACEMENT BRANCH — takes priority over normal placement
@@ -615,7 +618,7 @@ export class LibraryItemDragDropHandler {
         this.dragCircleHoverTarget;
 
       const addedMonomers = monomersAddResult.drawingEntities.filter(
-        (e): e is BaseMonomer => e instanceof BaseMonomer,
+        (monomer): monomer is BaseMonomer => monomer instanceof BaseMonomer,
       );
 
       const droppedMonomer = isLibraryItemRnaPreset(item)
@@ -725,7 +728,7 @@ export class LibraryItemDragDropHandler {
     item: IRnaPreset | MonomerOrAmbiguousType,
     replaceTarget: ReplacementTarget,
     getModeName: () => string,
-    events: LibraryItemDragDropHandlerDeps['events'],
+    events: LibraryItemDragDropHandlerDependencies['events'],
     drawingEntitiesManager: DrawingEntitiesManager,
     renderersContainer: RenderersManager,
     getEditor: () => CoreEditor,
@@ -1099,10 +1102,10 @@ export class LibraryItemDragDropHandler {
     position: { x: number; y: number },
     threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
   ): AttachmentPointTarget | null {
-    const rootOffset = this.deps.getKetcherRootRect();
+    const rootOffset = this.dependencies.getKetcherRootRect();
     if (!rootOffset) return null;
 
-    const canvasOffset = this.deps.getCanvasOffset();
+    const canvasOffset = this.dependencies.getCanvasOffset();
     // Convert the cursor from ketcherRoot-relative screen coords to SVG
     // viewport coords, then invert the zoom transform to get canvas coords.
     const cursorSVGX = position.x - (canvasOffset.left - rootOffset.left);
@@ -1112,9 +1115,10 @@ export class LibraryItemDragDropHandler {
     );
 
     let nearest: AttachmentPointTarget | null = null;
-    let minDist = threshold;
+    let minDistribution = threshold;
 
-    for (const [, monomer] of this.deps.drawingEntitiesManager.monomers) {
+    for (const [, monomer] of this.dependencies.drawingEntitiesManager
+      .monomers) {
       const renderer = monomer.renderer;
       if (!renderer || !(renderer instanceof BaseMonomerRenderer)) continue;
 
@@ -1133,13 +1137,13 @@ export class LibraryItemDragDropHandler {
           apName,
         );
 
-        const dist = Math.hypot(
+        const distribution = Math.hypot(
           cursorCanvas.x - apCanvasPos.x,
           cursorCanvas.y - apCanvasPos.y,
         );
 
-        if (dist < minDist) {
-          minDist = dist;
+        if (distribution < minDistribution) {
+          minDistribution = distribution;
           nearest = { monomer, attachmentPointName: apName };
         }
       }

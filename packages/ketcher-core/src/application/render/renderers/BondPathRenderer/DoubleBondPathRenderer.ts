@@ -103,11 +103,11 @@ class DoubleBondPathRenderer {
 
       return [svgPath];
     } else {
-      const solidAttrs = {
+      const solidAttributes = {
         stroke: 'black',
         'stroke-width': `${BondWidth}`,
       };
-      const dashedAttrs = {
+      const dashedAttributes = {
         'stroke-dasharray': strokeDasharray,
         'stroke-width': `${BondWidth}`,
       };
@@ -117,7 +117,7 @@ class DoubleBondPathRenderer {
           M${firstLineStartPosition.x},${firstLineStartPosition.y}
           L${firstLineEndPosition.x},${firstLineEndPosition.y}
         `,
-        attrs: shift > 0 ? dashedAttrs : solidAttrs,
+        attrs: shift > 0 ? dashedAttributes : solidAttributes,
       };
 
       const secondSvgPath: SVGPathAttributes = {
@@ -125,7 +125,7 @@ class DoubleBondPathRenderer {
           M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `,
-        attrs: shift > 0 ? solidAttrs : dashedAttrs,
+        attrs: shift > 0 ? solidAttributes : dashedAttributes,
       };
 
       return shift > 0

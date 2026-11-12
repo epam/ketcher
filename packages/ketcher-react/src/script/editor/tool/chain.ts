@@ -25,7 +25,7 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
-  vectorUtils,
+  vectorUtilities,
   removeInfoLabelFromAtoms,
   CoordinateTransformation,
 } from 'ketcher-core';
@@ -196,8 +196,8 @@ class ChainTool implements Tool {
         const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
         const angle = event.ctrlKey
-          ? vectorUtils.calcAngle(pos0, pos1)
-          : vectorUtils.fracAngle(pos0, pos1);
+          ? vectorUtilities.calcAngle(pos0, pos1)
+          : vectorUtilities.fracAngle(pos0, pos1);
 
         const [action, newItems] = fromChain(
           restruct,

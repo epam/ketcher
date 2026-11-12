@@ -24,18 +24,18 @@ class SingleDownBondPathRenderer {
 
     let path = '';
 
-    for (let i = 0; i < numberOfLines; ++i) {
+    for (let index = 0; index < numberOfLines; ++index) {
       const lineCenter: Vec2 = startPosition.addScaled(
         normalizedDirection,
-        step * i,
+        step * index,
       );
       const firstLineEnd: Vec2 = lineCenter.addScaled(
         firstHalfEdge.leftNormal,
-        (halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
+        (halfOfBondEndWidth * (index + 0.5)) / (numberOfLines - 0.5),
       );
       const secondLineEnd: Vec2 = lineCenter.addScaled(
         firstHalfEdge.leftNormal,
-        (-halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
+        (-halfOfBondEndWidth * (index + 0.5)) / (numberOfLines - 0.5),
       );
 
       path += `

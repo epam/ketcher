@@ -81,7 +81,7 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async selectZoomOutTool(count = 1) {
       await locators.zoomSelector.click();
-      for (let i = 0; i < count; i++) {
+      for (let index = 0; index < count; index++) {
         await waitForRender(page, async () => {
           await zoomLocators.zoomOutButton.click();
         });
@@ -92,7 +92,7 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async selectZoomInTool(count = 1) {
       await locators.zoomSelector.click();
-      for (let i = 0; i < count; i++) {
+      for (let index = 0; index < count; index++) {
         await waitForRender(page, async () => {
           await zoomLocators.zoomInButton.click();
         });

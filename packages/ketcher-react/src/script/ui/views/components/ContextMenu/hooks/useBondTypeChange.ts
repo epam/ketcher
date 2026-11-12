@@ -1,6 +1,6 @@
 import {
   type BondAttributes,
-  fromBondsAttrs,
+  fromBondsAttributes,
   ketcherProvider,
   bondChangingAction,
 } from 'ketcher-core';
@@ -55,7 +55,7 @@ const useBondTypeChange = () => {
       }
 
       // For multiple bonds, use fromBondsAttrs
-      editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
+      editor.update(fromBondsAttributes(molecule, bondIds, bondProps));
     },
     [ketcherId],
   );

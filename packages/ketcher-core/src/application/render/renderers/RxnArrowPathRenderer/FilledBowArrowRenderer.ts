@@ -13,7 +13,7 @@ export class FilledBowArrowRenderer {
     const macroModeScale = provideEditorSettings().macroModeScale;
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;
-    const arrowHeadAttr = ARROW_HEAD_ATTR * macroModeScale;
+    const arrowHeadAttribute = ARROW_HEAD_ATTR * macroModeScale;
     const endX = start.x + arrowLength;
 
     const path =
@@ -22,7 +22,7 @@ export class FilledBowArrowRenderer {
       `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth,
       )}` +
-      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttribute)},${toFixed(
         start.y,
       )}` +
       `L${toFixed(endX - arrowHeadLength)},${toFixed(

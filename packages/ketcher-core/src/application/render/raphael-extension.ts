@@ -51,8 +51,8 @@ if (Raphael) {
   };
 
   Raphael.st.translateAbs = function (x: number, y: number): void {
-    this.forEach((el) => {
-      el.translateAbs(x, y);
+    this.forEach((element) => {
+      element.translateAbs(x, y);
     });
   };
 }

@@ -21,7 +21,7 @@ import {
   type AtomQueryPropertiesName,
   type AtomQueryProperties,
   type AtomAllAttributeName,
-  atomGetAttr,
+  atomGetAttribute,
   Atom,
   ketcherProvider,
 } from 'ketcher-core';
@@ -140,9 +140,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     if (editableAtomIds.length > 0) {
       const atomId = editableAtomIds[0];
       if (properties.includes(key as AtomQueryPropertiesName)) {
-        return atomGetAttr(ctab, atomId, 'queryProperties')?.[key];
+        return atomGetAttribute(ctab, atomId, 'queryProperties')?.[key];
       } else {
-        return atomGetAttr(ctab, atomId, key as AtomAttributeName);
+        return atomGetAttribute(ctab, atomId, key as AtomAttributeName);
       }
     } else return null;
   };

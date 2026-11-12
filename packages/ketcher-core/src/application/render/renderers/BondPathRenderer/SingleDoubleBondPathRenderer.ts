@@ -22,14 +22,14 @@ class SingleDoubleBondPathRenderer {
 
     let path = '';
     let midLineStartPosition = startPosition;
-    for (let i = 1; i <= sectionsNumber; ++i) {
+    for (let index = 1; index <= sectionsNumber; ++index) {
       const midLineEndPosition = Vec2.lc2(
         startPosition,
-        (sectionsNumber - i) / sectionsNumber,
+        (sectionsNumber - index) / sectionsNumber,
         endPosition,
-        i / sectionsNumber,
+        index / sectionsNumber,
       );
-      if (i & 1) {
+      if (index & 1) {
         path += `
           M${midLineStartPosition.x},${midLineStartPosition.y}
           L${midLineEndPosition.x},${midLineEndPosition.y}

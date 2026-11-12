@@ -21,20 +21,20 @@ const clearSelection = () => KetcherFunctions.clearSelection();
 
 const selectAll = () => KetcherFunctions.selectAll();
 
-interface Props {
+interface Properties {
   printToTerminal: (string) => void;
   hiddenButtons: string[];
-  buttonsHideHandler: (arg: string[]) => void;
+  buttonsHideHandler: (argument: string[]) => void;
 }
 
 export const Panel = ({
   printToTerminal,
   hiddenButtons,
   buttonsHideHandler,
-}: Props) => {
+}: Properties) => {
   const exportHandler = () => {
-    KetcherFunctions.exportCtab().then((str) => {
-      let message = 'Export content:' + str;
+    KetcherFunctions.exportCtab().then((string_) => {
+      let message = 'Export content:' + string_;
       console.log(message);
       printToTerminal(message);
     });

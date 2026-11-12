@@ -1,8 +1,8 @@
 const KetcherAPI = (ketcherInstance) => {
   return {
     // Accepts CTAB as string
-    renderFromCtab: function (str) {
-      ketcherInstance.setMolecule(str);
+    renderFromCtab: function (string_) {
+      ketcherInstance.setMolecule(string_);
     },
 
     clearSelection: function () {

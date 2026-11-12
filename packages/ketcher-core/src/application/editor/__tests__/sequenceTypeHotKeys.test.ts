@@ -3,7 +3,7 @@
 // through, and the tooltip must show that one.
 
 type HotkeyModules = {
-  hotkeysConfiguration: typeof import('../editorEvents').hotkeysConfiguration;
+  hotkeysConfig: typeof import('../editorEvents').hotkeysConfig;
   keyNorm: typeof import('../../../utilities/keynorm').keyNorm;
   initHotKeys: typeof import('../../../utilities/keynorm').initHotKeys;
   generateMenuShortcuts: typeof import('../../../utilities/shortcutsUtil').generateMenuShortcuts;
@@ -18,7 +18,7 @@ const loadOnPlatform = (platform: string, isMacOs: boolean): HotkeyModules => {
   let modules = {} as HotkeyModules;
   jest.isolateModules(() => {
     jest.doMock('react-device-detect', () => ({ isMacOs }));
-    const { hotkeysConfiguration } = jest.requireActual('../editorEvents');
+    const { hotkeysConfig } = jest.requireActual('../editorEvents');
     const { keyNorm, initHotKeys } = jest.requireActual(
       '../../../utilities/keynorm',
     );
@@ -26,7 +26,7 @@ const loadOnPlatform = (platform: string, isMacOs: boolean): HotkeyModules => {
       '../../../utilities/shortcutsUtil',
     );
     modules = {
-      hotkeysConfiguration,
+      hotkeysConfig,
       keyNorm,
       initHotKeys,
       generateMenuShortcuts,
@@ -59,11 +59,11 @@ describe('sequence-type hotkeys', () => {
     it.each(cases)(
       '$action is triggered by Ctrl+Option+$letter',
       ({ action, code }) => {
-        const { hotkeysConfiguration, keyNorm, initHotKeys } = loadOnPlatform(
+        const { hotkeysConfig, keyNorm, initHotKeys } = loadOnPlatform(
           'MacIntel',
           true,
         );
-        const hotKeys = initHotKeys(hotkeysConfiguration);
+        const hotKeys = initHotKeys(hotkeysConfig);
 
         expect(
           keyNorm.lookup(
@@ -77,11 +77,11 @@ describe('sequence-type hotkeys', () => {
     it.each(cases)(
       '$action still accepts Cmd+Option+$letter',
       ({ action, code }) => {
-        const { hotkeysConfiguration, keyNorm, initHotKeys } = loadOnPlatform(
+        const { hotkeysConfig, keyNorm, initHotKeys } = loadOnPlatform(
           'MacIntel',
           true,
         );
-        const hotKeys = initHotKeys(hotkeysConfiguration);
+        const hotKeys = initHotKeys(hotkeysConfig);
 
         expect(
           keyNorm.lookup(
@@ -95,12 +95,12 @@ describe('sequence-type hotkeys', () => {
     it.each(cases)(
       '$action tooltip shows Ctrl+Option+$letter',
       ({ action, letter }) => {
-        const { hotkeysConfiguration, generateMenuShortcuts } = loadOnPlatform(
+        const { hotkeysConfig, generateMenuShortcuts } = loadOnPlatform(
           'MacIntel',
           true,
         );
 
-        expect(generateMenuShortcuts(hotkeysConfiguration)[action]).toBe(
+        expect(generateMenuShortcuts(hotkeysConfig)[action]).toBe(
           `Ctrl+Option+${letter}`,
         );
       },
@@ -111,13 +111,9 @@ describe('sequence-type hotkeys', () => {
     it.each(cases)(
       '$action is triggered by Ctrl+Alt+$letter, as before',
       ({ action, code, letter }) => {
-        const {
-          hotkeysConfiguration,
-          keyNorm,
-          initHotKeys,
-          generateMenuShortcuts,
-        } = loadOnPlatform('Win32', false);
-        const hotKeys = initHotKeys(hotkeysConfiguration);
+        const { hotkeysConfig, keyNorm, initHotKeys, generateMenuShortcuts } =
+          loadOnPlatform('Win32', false);
+        const hotKeys = initHotKeys(hotkeysConfig);
 
         expect(
           keyNorm.lookup(
@@ -125,7 +121,7 @@ describe('sequence-type hotkeys', () => {
             keydown(code, { ctrlKey: true, altKey: true }),
           ),
         ).toEqual([action]);
-        expect(generateMenuShortcuts(hotkeysConfiguration)[action]).toBe(
+        expect(generateMenuShortcuts(hotkeysConfig)[action]).toBe(
           `Ctrl+Alt+${letter}`,
         );
       },

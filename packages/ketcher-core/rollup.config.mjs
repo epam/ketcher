@@ -13,7 +13,7 @@ import { string } from 'rollup-plugin-string';
 
 const babelPlugin = babel.default ?? babel;
 
-const pkg = JSON.parse(
+const package_ = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
 );
 
@@ -27,7 +27,7 @@ const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
 const config = {
-  input: pkg.source,
+  input: package_.source,
   output: [
     {
       dir: 'dist',
@@ -76,7 +76,7 @@ const config = {
       include: includePattern,
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+      extensions: extensions.map((extension) => extension.replace(/^\./, '')),
       comments: 'none',
       include: includePattern,
     }),

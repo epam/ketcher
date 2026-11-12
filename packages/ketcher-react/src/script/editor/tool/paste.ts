@@ -26,7 +26,7 @@ import {
   notifyItemsToMergeInitializationComplete,
   SGroup,
   Vec2,
-  vectorUtils,
+  vectorUtilities,
   CoordinateTransformation,
 } from 'ketcher-core';
 import type Editor from '../Editor';
@@ -184,13 +184,13 @@ class PasteTool implements Tool {
       }
 
       // calc angle
-      let angle = vectorUtils.calcAngle(pos0, pos1);
+      let angle = vectorUtilities.calcAngle(pos0, pos1);
 
       if (!event.ctrlKey) {
-        angle = vectorUtils.fracAngle(angle, null);
+        angle = vectorUtilities.fracAngle(angle, null);
       }
 
-      const degrees = vectorUtils.degrees(angle);
+      const degrees = vectorUtilities.degrees(angle);
 
       // check if anything changed since last time
       if (
@@ -326,7 +326,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): EditorTemplate {
     aid,
     bid: 0,
     molecule,
-    angle0: atom ? vectorUtils.calcAngle(atom.pp, xy0Center) : 0, // center tilt
+    angle0: atom ? vectorUtilities.calcAngle(atom.pp, xy0Center) : 0, // center tilt
   };
 }
 

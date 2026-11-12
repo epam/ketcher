@@ -56,7 +56,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import {
   horizontalFlipByKeyboard,
   verticalFlipByKeyboard,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utilities';
 import {
   getArrowLocator,
   getPlusLocator,

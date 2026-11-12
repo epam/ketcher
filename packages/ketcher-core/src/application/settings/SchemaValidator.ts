@@ -89,6 +89,6 @@ export class SchemaValidator implements ISettingsValidator {
   }
 
   private escapeJsonPointerToken(token: string | number): string {
-    return String(token).replace(/~/g, '~0').replace(/\//g, '~1');
+    return String(token).replaceAll('~', '~0').replaceAll('/', '~1');
   }
 }

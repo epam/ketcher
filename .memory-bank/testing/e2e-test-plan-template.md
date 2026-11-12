@@ -85,6 +85,15 @@ Short checklist copied/adapted from CLAUDE.md and testing.md so the implementer 
 
 Table: question → mitigation. **Resolve in place** as phases answer them (mark "Resolved in Phase N" with the answer) rather than deleting — the record of how uncertainty was retired is part of the value.
 
+### 11. Items to fix after manual verification
+
+Every plan ends with this section, even if it starts empty (`- none yet`). It is the work queue for defects and gaps found when a **human manually verifies** the implemented tests/app behavior after the suite passes:
+
+- Group items by spec file; each item names the test (requirement number + title) and states the exact problem in one line — e.g. "assertion passes but doesn't actually observe X", "app does not implement ticket requirement Y".
+- Items are checkboxes (`[ ]`). Fix them **one by one, in order**: for each item, fix the source bug/missing feature if the app deviates from the ticket (read the ticket requirements first), rewrite or extend the test to assert the ticket behavior, run the test to confirm it passes, then mark `[x]` with the date and a short note of what was done. Never batch-mark several items at once — losing track of which item is in flight has happened before.
+- A "(gap)" test that documented missing app behavior is **replaced** by the real assertion once the feature is implemented, not kept alongside it; update any plan sections (findings, open questions) that recorded the gap so the living document stays consistent.
+- If an item turns out to be unfixable as described (e.g. the ticket expectation is wrong), mark it `[x]` with a note explaining the decision and flag it to the team rather than silently dropping it.
+
 ## Lessons learned
 
 - **Spike before designing.** A short throwaway spec proving the core interaction works headless end-to-end (and that key thresholds behave as documented) de-risks the whole plan cheaply.

@@ -63,15 +63,6 @@ export const getEditInstanceInitialValues = (
   };
 };
 
-export const getLibraryEditInitialValues = (
-  libraryItem: MonomerItemType,
-): MonomerCreationInitialValues => ({
-  ...getInitialValues(libraryItem, false),
-  libraryOnly: true,
-  originalMonomerItem: libraryItem,
-  modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
-});
-
 const sortAttachmentPoints = (attachmentPoints: AttachmentPointName[]) =>
   [...attachmentPoints].sort((firstAttachmentPoint, secondAttachmentPoint) => {
     const firstNumber = Number(firstAttachmentPoint.slice(1));
@@ -131,98 +122,138 @@ const addDefaultRnaPresetAttachmentPoints = (
   }
 };
 
+/**
+ * Collects the attachment points a monomer must keep to stay eligible for
+ * every RNA preset that references it. Returns undefined when the monomer is
+ * not a preset component (sugar/base/phosphate) or takes part in no preset.
+ */
+const getPresetRequirements = (
+  monomerType: KetMonomerClass,
+  monomerTemplateRef: string,
+  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
+):
+  | {
+      type: KetMonomerClass;
+      attachmentPoints: AttachmentPointName[];
+    }
+  | undefined => {
+  if (
+    monomerType !== KetMonomerClass.Sugar &&
+    monomerType !== KetMonomerClass.Base &&
+    monomerType !== KetMonomerClass.Phosphate
+  ) {
+    return undefined;
+  }
+
+  const monomerTemplateId = monomerTemplateRef.replace(/^monomerTemplate-/, '');
+  const isEditedMonomerTemplate = (templateId?: string) =>
+    templateId === monomerTemplateRef || templateId === monomerTemplateId;
+  const necessaryAttachmentPoints = new Set<AttachmentPointName>();
+  type RnaPresetTemplate = {
+    type?: string;
+    class?: string;
+    templates?: RnaComponentTemplateRef[];
+    connections?: Array<{
+      endpoint1?: { templateId?: string; attachmentPointId?: string };
+      endpoint2?: { templateId?: string; attachmentPointId?: string };
+    }>;
+  };
+
+  monomersLibraryParsedJson?.root?.templates?.forEach(
+    (templateRef: { $ref?: string }) => {
+      const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
+        RnaPresetTemplate | undefined;
+      const isRnaPreset =
+        template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+        template?.class === KetMonomerClass.RNA;
+      const participatesInPreset = template?.templates?.some(
+        (presetMonomerRef: { $ref?: string }) =>
+          isEditedMonomerTemplate(presetMonomerRef.$ref),
+      );
+
+      if (!isRnaPreset || !participatesInPreset) {
+        return;
+      }
+
+      if (!template.connections?.length) {
+        const componentTypes = new Set(
+          template.templates?.map((presetMonomerRef) =>
+            isEditedMonomerTemplate(presetMonomerRef.$ref)
+              ? monomerType
+              : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
+          ),
+        );
+
+        addDefaultRnaPresetAttachmentPoints(
+          componentTypes,
+          monomerType,
+          necessaryAttachmentPoints,
+        );
+
+        return;
+      }
+
+      template.connections.forEach((connection) => {
+        [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
+          const attachmentPointId = endpoint?.attachmentPointId;
+          if (
+            attachmentPointId &&
+            isEditedMonomerTemplate(endpoint?.templateId)
+          ) {
+            necessaryAttachmentPoints.add(
+              attachmentPointId as AttachmentPointName,
+            );
+          }
+        });
+      });
+    },
+  );
+
+  if (necessaryAttachmentPoints.size === 0) {
+    return undefined;
+  }
+
+  return {
+    type: monomerType,
+    attachmentPoints: sortAttachmentPoints([...necessaryAttachmentPoints]),
+  };
+};
+
+export const getLibraryEditInitialValues = (
+  libraryItem: MonomerItemType,
+  monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
+): MonomerCreationInitialValues => {
+  const initialValues = getInitialValues(libraryItem, false);
+  const presetRequirements = getPresetRequirements(
+    initialValues.type,
+    getMonomerTemplateRefFromMonomerItem(libraryItem),
+    monomersLibraryParsedJson,
+  );
+
+  return {
+    ...initialValues,
+    libraryOnly: true,
+    originalMonomerItem: libraryItem,
+    modificationTypes: [...(libraryItem.props.modificationTypes ?? [])],
+    ...(presetRequirements ? { presetRequirements } : {}),
+  };
+};
+
 export const getEditAllInstancesInitialValues = (
   monomer: BaseMonomer,
   monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
 ): MonomerCreationInitialValues => {
   const initialValues = getInitialValues(monomer, true);
-  const monomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
-    monomer.monomerItem,
+  const presetRequirements = getPresetRequirements(
+    initialValues.type,
+    getMonomerTemplateRefFromMonomerItem(monomer.monomerItem),
+    monomersLibraryParsedJson,
   );
-  const monomerTemplateId = monomerTemplateRef.replace(/^monomerTemplate-/, '');
-  const isEditedMonomerTemplate = (templateId?: string) =>
-    templateId === monomerTemplateRef || templateId === monomerTemplateId;
-  const necessaryAttachmentPoints = new Set<AttachmentPointName>();
-
-  if (
-    initialValues.type === KetMonomerClass.Sugar ||
-    initialValues.type === KetMonomerClass.Base ||
-    initialValues.type === KetMonomerClass.Phosphate
-  ) {
-    monomersLibraryParsedJson?.root?.templates?.forEach(
-      (templateRef: { $ref?: string }) => {
-        type RnaPresetTemplate = {
-          type?: string;
-          class?: string;
-          templates?: RnaComponentTemplateRef[];
-          connections?: Array<{
-            endpoint1?: { templateId?: string; attachmentPointId?: string };
-            endpoint2?: { templateId?: string; attachmentPointId?: string };
-          }>;
-        };
-
-        const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
-          RnaPresetTemplate | undefined;
-        const isRnaPreset =
-          template?.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template?.class === KetMonomerClass.RNA;
-        const participatesInPreset = template?.templates?.some(
-          (presetMonomerRef: { $ref?: string }) =>
-            isEditedMonomerTemplate(presetMonomerRef.$ref),
-        );
-
-        if (!isRnaPreset || !participatesInPreset) {
-          return;
-        }
-
-        if (!template.connections?.length) {
-          const componentTypes = new Set(
-            template.templates?.map((presetMonomerRef) =>
-              isEditedMonomerTemplate(presetMonomerRef.$ref)
-                ? initialValues.type
-                : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
-            ),
-          );
-
-          addDefaultRnaPresetAttachmentPoints(
-            componentTypes,
-            initialValues.type,
-            necessaryAttachmentPoints,
-          );
-
-          return;
-        }
-
-        template.connections.forEach((connection) => {
-          [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
-            const attachmentPointId = endpoint?.attachmentPointId;
-            if (
-              attachmentPointId &&
-              isEditedMonomerTemplate(endpoint?.templateId)
-            ) {
-              necessaryAttachmentPoints.add(
-                attachmentPointId as AttachmentPointName,
-              );
-            }
-          });
-        });
-      },
-    );
-  }
 
   return {
     ...initialValues,
     editMode: 'all',
-    ...(necessaryAttachmentPoints.size > 0
-      ? {
-          presetRequirements: {
-            type: initialValues.type,
-            attachmentPoints: sortAttachmentPoints([
-              ...necessaryAttachmentPoints,
-            ]),
-          },
-        }
-      : {}),
+    ...(presetRequirements ? { presetRequirements } : {}),
   };
 };
 

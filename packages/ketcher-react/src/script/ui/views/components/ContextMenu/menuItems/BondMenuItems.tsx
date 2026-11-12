@@ -26,7 +26,6 @@ import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { isHapticBondWithAttachmentGroup, ketcherProvider } from 'ketcher-core';
-
 const bondNamesForContextMenu = getBondNamesForContextMenu(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {

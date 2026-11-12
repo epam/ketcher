@@ -69,10 +69,10 @@ For bonds:
 
 ### Prerequisites:
 
-- **Docker Desktop**
-  - How to install for Mac OS: https://docs.docker.com/desktop/install/mac-install/
-  - How to install for Windows: https://docs.docker.com/desktop/install/windows-install/
-  - How to install for Linux: https://docs.docker.com/desktop/install/linux-install/
+- **Install Docker**
+  - For macOS use https://colima.run/
+  - For windows use WSL
+
 - **Build Docker**:
   - Directory "ketcher-autotests": `npm run docker:build`
 - **Set environment**:

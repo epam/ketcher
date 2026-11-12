@@ -5,6 +5,7 @@ import type {
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Vec2 } from 'domain/entities/vec2';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {
   Connection,
@@ -29,6 +30,49 @@ export class SideChainConnectionBondRendererUtility {
   public static readonly bondEndLength = 15;
   public static readonly cellHeight = 40;
   public static readonly smoothCornerSize = 5;
+  public static readonly laneSpacing = 3;
+
+  // Gives every row span a lane so that spans sharing rows never share a lane
+  // (requirement #3532: vertical side connections should not overlap). Shorter
+  // spans are placed first, so a span nested in another gets the inner lane and
+  // their lines do not cross.
+  public static assignLanes(
+    spans: ReadonlyArray<{ readonly start: number; readonly end: number }>,
+  ): number[] {
+    const lanes: number[] = new Array(spans.length).fill(0);
+    const placed: number[] = [];
+    const getLength = (index: number) => spans[index].end - spans[index].start;
+    const order = spans
+      .map((_, index) => index)
+      .sort(
+        (first, second) =>
+          getLength(first) - getLength(second) ||
+          spans[first].start - spans[second].start,
+      );
+
+    order.forEach((index) => {
+      const span = spans[index];
+      const takenLanes = new Set(
+        placed
+          .filter(
+            (placedIndex) =>
+              spans[placedIndex].start <= span.end &&
+              span.start <= spans[placedIndex].end,
+          )
+          .map((placedIndex) => lanes[placedIndex]),
+      );
+      let lane = 0;
+
+      while (takenLanes.has(lane)) {
+        lane++;
+      }
+
+      lanes[index] = lane;
+      placed.push(index);
+    });
+
+    return lanes;
+  }
 
   public static calculatePathPartAndTurnPoint({
     cell,
@@ -95,6 +139,39 @@ export class SideChainConnectionBondRendererUtility {
       pathPart,
       turnPoint: turnPointInternal,
     };
+  }
+
+  // The connection runs to the left of both monomers: out of the left side of
+  // the first one, vertically outside the cell column (and so outside the
+  // backbone bonds wrapping chains to their next row), into the left side of
+  // the second one.
+  public static generateLeftSideConnectionPath(
+    startPosition: Vec2,
+    endPosition: Vec2,
+    lane = 0,
+  ): string {
+    const verticalLineX =
+      Math.min(startPosition.x, endPosition.x) -
+      SnakeLayoutCellWidth / 2 -
+      this.bondEndLength -
+      lane * this.laneSpacing;
+    const yDirection = endPosition.y < startPosition.y ? -1 : 1;
+
+    return [
+      SVGPathDAttributeUtility.generateMoveTo(startPosition.x, startPosition.y),
+      SVGPathDAttributeUtility.generateHorizontalAbsoluteLine(
+        verticalLineX + this.smoothCornerSize,
+      ),
+      this.generateBend(-1, 0, -1, yDirection),
+      SVGPathDAttributeUtility.generateVerticalAbsoluteLine(
+        endPosition.y - this.smoothCornerSize * yDirection,
+      ),
+      this.generateBend(0, yDirection, 1, yDirection),
+      SVGPathDAttributeUtility.generateAbsoluteLine(
+        endPosition.x,
+        endPosition.y,
+      ),
+    ].join(' ');
   }
 
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?

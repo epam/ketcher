@@ -22,11 +22,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
-const cycleBondTooltip =
-  'Fragment Selection Tool cannot be used on bonds that participate in a cycle.';
-const markedComponentTooltip =
-  'The structure fragment in this direction is already marked as a nucleotide component.';
-
 async function getMoleculesCanvasSvg(page: Page) {
   const canvas = (await getVisibleCanvas(page)).locator(
     '[class*="intermediateCanvas"] > svg',
@@ -226,7 +221,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       'cursor',
       /not-allowed/,
     );
-    await expect(getTooltipLocator(page)).toHaveText(cycleBondTooltip);
+    await expect(getTooltipLocator(page)).toHaveText(
+      'Fragment Selection Tool cannot be used on bonds that participate in a cycle.',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -255,7 +252,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
     await tooltip.waitFor({ state: 'visible' });
 
     expect(Date.now() - hoverStartedAt).toBeGreaterThanOrEqual(200);
-    await expect(tooltip).toHaveText(cycleBondTooltip);
+    await expect(tooltip).toHaveText(
+      'Fragment Selection Tool cannot be used on bonds that participate in a cycle.',
+    );
   });
 
   test('Case 9 - Hover outlines all atoms and bonds on the hovered side of a bond', async () => {
@@ -477,7 +476,9 @@ test.describe('Fragment Selection tool in Molecules mode', () => {
       position: { x: 9, y: 15 },
     });
 
-    await expect(getTooltipLocator(page)).toHaveText(markedComponentTooltip);
+    await expect(getTooltipLocator(page)).toHaveText(
+      'The structure fragment in this direction is already marked as a nucleotide component.',
+    );
     await expect(await getMoleculesCanvasSvg(page)).toHaveCSS(
       'cursor',
       /not-allowed/,

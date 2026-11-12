@@ -159,4 +159,53 @@ describe('SequenceRenderer', () => {
     expect(svg).not.toContain('blinking');
     expect(svg).not.toContain('sequence-start-arrow');
   });
+
+  describe('new sequence "plus" button (#5199)', () => {
+    const getChainElement = () =>
+      canvas.querySelector<SVGGElement>('[data-testid="sequence-chain"]');
+    const getPlusButtonRoot = () =>
+      canvas.querySelector('[data-testid="NewSequencePlusButton"]')
+        ?.parentElement;
+
+    it('groups the sequence items, the hover area and the button of a chain', () => {
+      setupCyclicTwoPeptideStructure();
+
+      const chainElement = getChainElement();
+      const hoverArea = canvas.querySelector(
+        '[data-testid="NewSequenceHoverArea"]',
+      );
+
+      expect(chainElement).not.toBeNull();
+      // Two peptides and the trailing empty node
+      expect(
+        chainElement?.querySelectorAll('[data-testid="sequence-item"]'),
+      ).toHaveLength(3);
+      // The hover area is behind the sequence items to not intercept their events
+      expect(chainElement?.firstElementChild).toBe(hoverArea);
+      expect(getPlusButtonRoot()?.parentElement).toBe(chainElement);
+    });
+
+    it('shows the button while the sequence is hovered', () => {
+      setupCyclicTwoPeptideStructure();
+
+      const chainElement = getChainElement();
+
+      expect(getPlusButtonRoot()?.getAttribute('opacity')).toBe('0');
+
+      chainElement?.dispatchEvent(new MouseEvent('mouseenter'));
+      expect(getPlusButtonRoot()?.getAttribute('opacity')).toBe('1');
+
+      chainElement?.dispatchEvent(new MouseEvent('mouseleave'));
+      expect(getPlusButtonRoot()?.getAttribute('opacity')).toBe('0');
+    });
+
+    it('removes chain elements when the sequence is cleared', () => {
+      setupCyclicTwoPeptideStructure();
+
+      SequenceRenderer.clear();
+
+      expect(getChainElement()).toBeNull();
+      expect(getPlusButtonRoot()).toBeUndefined();
+    });
+  });
 });

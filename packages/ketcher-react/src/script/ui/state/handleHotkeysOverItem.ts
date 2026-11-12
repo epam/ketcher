@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
@@ -11,6 +10,8 @@ import {
   Action,
   KetcherLogger,
   bondChangingAction,
+  type AtomAttributes,
+  type BondAttributes,
 } from 'ketcher-core';
 import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
@@ -34,7 +35,7 @@ import { runDeleteWithAttachmentGroupSplitConfirm } from '../../editor/utils/att
 type TNewAction = {
   tool?: string;
   dialog?: string;
-  opts?: any;
+  opts?: unknown;
 };
 
 type HandlersProps = {
@@ -43,6 +44,8 @@ type HandlersProps = {
   editor: Editor;
   dispatch: Dispatch;
 };
+
+type ItemHandler = (props: HandlersProps) => void;
 
 type HandleHotkeyOverItemProps = {
   hoveredItem: Record<string, number>;
@@ -130,12 +133,12 @@ function handleDialog({
       editor,
       dispatch,
     };
-    return dialogHandler(props);
+    dialogHandler(props);
   }
 }
 
 function getDialogHandler(itemType: string) {
-  const dialogs = {
+  const dialogs: Record<string, ItemHandler> = {
     atoms: (props: HandlersProps) => handleAtomPropsDialog(props),
     bonds: (props: HandlersProps) => handleBondPropsDialog(props),
   };
@@ -258,7 +261,7 @@ async function isFunctionalGroupChange(
 }
 
 function getToolHandler(itemType: string, toolName = '') {
-  const items = {
+  const items: Record<string, Record<string, ItemHandler>> = {
     atoms: {
       atom: (props: HandlersProps) => handleAtomTool(props),
       bond: (props: HandlersProps) => handleBondTool(props),
@@ -285,7 +288,7 @@ function getToolHandler(itemType: string, toolName = '') {
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
+  const atomProps = { ...(newAction.opts as Partial<AtomAttributes>) };
   const updatedAtoms = fromAtomsAttrs(
     editor.render.ctab,
     hoveredItemId,
@@ -300,7 +303,7 @@ function handleSgroupsTool({
   newAction,
   editor,
 }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
+  const atomProps = { ...(newAction.opts as Partial<AtomAttributes>) };
   const action = new Action();
   const ctab = editor.render.ctab;
   const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
@@ -322,7 +325,7 @@ function handleSgroupsTool({
 function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const newBond = fromBondAddition(
     editor.render.ctab,
-    newAction.opts,
+    newAction.opts as Partial<BondAttributes>,
     hoveredItemId,
     { label: 'C' },
   )[0];
@@ -339,7 +342,7 @@ function handleBondTypeChangeTool({
   if (!bond) return;
 
   const action = bondChangingAction(restruct, hoveredItemId, bond, {
-    ...newAction.opts,
+    ...(newAction.opts as Partial<BondAttributes>),
   });
   editor.update(action);
 }
@@ -351,7 +354,7 @@ function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
       editor.render.ctab,
       hoveredItemId,
       {
-        charge: existingAtom.charge + newAction.opts,
+        charge: (existingAtom.charge ?? 0) + (newAction.opts as number),
       },
       null,
     );
@@ -362,7 +365,7 @@ function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
 function mapItemsToArrays(
   items: Record<string, number>,
 ): Record<string, number[]> {
-  const mappedItems = {};
+  const mappedItems: Record<string, number[]> = {};
   for (const item in items) {
     mappedItems[item] = [items[item]];
   }

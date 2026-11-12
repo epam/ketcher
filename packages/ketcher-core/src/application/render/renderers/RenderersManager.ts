@@ -51,6 +51,7 @@ import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
+import { isLongSequenceMonomerCount } from 'domain/constants';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   FlexModePolymerBondRenderer | SnakeModePolymerBondRenderer;
@@ -74,6 +75,9 @@ export class RenderersManager {
   public sgroups = new Map<number, SGroupRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
+  private shouldDeferPolymerBondEndpointRedraws = false;
+  private deferredPolymerBondEndpointRedraws = new Set<BaseMonomer>();
+  private deferredSelectionRedraws = new Set<DrawingEntity>();
 
   constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;
@@ -85,6 +89,11 @@ export class RenderersManager {
   }
 
   public selectDrawingEntity(drawingEntity: DrawingEntity) {
+    if (this.shouldDeferPolymerBondEndpointRedraws) {
+      this.deferredSelectionRedraws.add(drawingEntity);
+      return;
+    }
+
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.drawSelection();
   }
@@ -354,18 +363,64 @@ export class RenderersManager {
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
+    this.markForReEnumeration();
+    const endpointMonomers = [
+      polymerBond.firstMonomer,
+      polymerBond.secondMonomer,
+    ];
+    const editor = provideEditorInstance();
+    const shouldSkipRendererCreation =
+      editor.mode.modeName === 'sequence-layout-mode' &&
+      isLongSequenceMonomerCount(editor.drawingEntitiesManager.monomers.size);
+
+    if (shouldSkipRendererCreation) {
+      if (this.shouldDeferPolymerBondEndpointRedraws) {
+        endpointMonomers.forEach((monomer) =>
+          this.deferredPolymerBondEndpointRedraws.add(monomer),
+        );
+      } else {
+        this.redrawPolymerBondEndpoints(endpointMonomers);
+      }
+      return;
+    }
+
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
-    this.markForReEnumeration();
-    polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
-    polymerBond.firstMonomer.renderer?.drawSelection();
-    polymerBond.firstMonomer.renderer?.redrawHover();
-    polymerBond.secondMonomer.renderer?.redrawAttachmentPoints();
-    polymerBond.secondMonomer.renderer?.drawSelection();
-    polymerBond.secondMonomer.renderer?.redrawHover();
+    if (this.shouldDeferPolymerBondEndpointRedraws) {
+      endpointMonomers.forEach((monomer) =>
+        this.deferredPolymerBondEndpointRedraws.add(monomer),
+      );
+    } else {
+      this.redrawPolymerBondEndpoints(endpointMonomers);
+    }
 
     polymerBond.renderer?.show();
+  }
+
+  private redrawPolymerBondEndpoints(monomers: Iterable<BaseMonomer>) {
+    for (const monomer of monomers) {
+      monomer.renderer?.redrawAttachmentPoints();
+      monomer.renderer?.drawSelection();
+      monomer.renderer?.redrawHover();
+    }
+  }
+
+  private flushDeferredPolymerBondEndpointRedraws() {
+    const monomers = [...this.deferredPolymerBondEndpointRedraws];
+    const endpointEntities = new Set<DrawingEntity>(monomers);
+    const selectedEntities = [...this.deferredSelectionRedraws];
+    this.deferredPolymerBondEndpointRedraws.clear();
+    this.deferredSelectionRedraws.clear();
+
+    this.redrawPolymerBondEndpoints(monomers);
+
+    selectedEntities.forEach((drawingEntity) => {
+      if (!endpointEntities.has(drawingEntity)) {
+        assert(drawingEntity.baseRenderer);
+        drawingEntity.baseRenderer.drawSelection();
+      }
+    });
   }
 
   public cancelPolymerBondCreation(
@@ -406,11 +461,29 @@ export class RenderersManager {
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
-  public update(modelChanges?: Command) {
-    this.reinitializeViewModel();
-    modelChanges?.execute(this);
-    this.runPostRenderMethods();
-    notifyRenderComplete();
+  public update(
+    modelChanges?: Command,
+    shouldBatchPolymerBondEndpointRedraws = false,
+  ) {
+    if (!shouldBatchPolymerBondEndpointRedraws) {
+      this.reinitializeViewModel();
+      modelChanges?.execute(this);
+      this.runPostRenderMethods();
+      notifyRenderComplete();
+      return;
+    }
+
+    this.shouldDeferPolymerBondEndpointRedraws = true;
+    try {
+      this.reinitializeViewModel();
+      modelChanges?.execute(this);
+      this.flushDeferredPolymerBondEndpointRedraws();
+      this.runPostRenderMethods();
+      notifyRenderComplete();
+    } finally {
+      this.shouldDeferPolymerBondEndpointRedraws = false;
+      this.flushDeferredPolymerBondEndpointRedraws();
+    }
   }
 
   public addAtom(atom: Atom) {

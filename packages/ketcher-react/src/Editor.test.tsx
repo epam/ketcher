@@ -12,10 +12,16 @@ const mockMicroEditor = {
   errorHandler: jest.fn(),
 };
 const mockMacroEditor = {
+  isLongSequence: false,
   events: {
-    switchToMacromoleculesMode: new Subscription(),
-    switchToMoleculesMode: new Subscription(),
     openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
+    modelChange: new Subscription(),
+    layoutModeChange: new Subscription(),
+  },
+  modeEvents: {
+    switchToMacromoleculesMode: new Subscription(),
+    macromoleculesModeActivated: new Subscription(),
+    switchToMoleculesMode: new Subscription(),
   },
   switchToMacromolecules: jest.fn(),
   switchToMicromolecules: jest.fn(),
@@ -99,7 +105,7 @@ const initialize = async () => {
   render(<Editor {...({} as ComponentProps<typeof Editor>)} />);
   fireEvent.click(screen.getByText('Init micro'));
   fireEvent.click(await screen.findByTestId('init-macro'));
-  act(() => mockMacroEditor.events.switchToMacromoleculesMode.dispatch());
+  act(() => mockMacroEditor.modeEvents.switchToMacromoleculesMode.dispatch());
   jest.clearAllMocks();
 };
 
@@ -122,7 +128,7 @@ describe('Editor monomer wizard mode bridge', () => {
 
     act(() => mockMicroEditor.event.monomerWizardStateChange.dispatch(false));
     expect(screen.getAllByTestId('mode-switch')[0]).toBeDisabled();
-    act(() => mockMacroEditor.events.switchToMacromoleculesMode.dispatch());
+    act(() => mockMacroEditor.modeEvents.switchToMacromoleculesMode.dispatch());
     expect(mockMacroEditor.switchToMacromolecules).not.toHaveBeenCalled();
 
     const finish =
@@ -198,5 +204,43 @@ describe('Editor monomer wizard mode bridge', () => {
     expect(screen.getAllByTestId('mode-switch')[0]).toBeDisabled();
     act(() => mockMicroEditor.event.monomerWizardStateChange.dispatch(false));
     expect(screen.getAllByTestId('mode-switch')[0]).not.toBeDisabled();
+  });
+
+  it('updates the mode switch when a long sequence is loaded', async () => {
+    await initialize();
+    const modeSwitch = screen.getAllByTestId('mode-switch')[0];
+
+    expect(modeSwitch).not.toBeDisabled();
+
+    mockMacroEditor.isLongSequence = true;
+    act(() => mockMacroEditor.events.modelChange.dispatch());
+
+    expect(modeSwitch).toBeDisabled();
+
+    mockMacroEditor.isLongSequence = false;
+    act(() => mockMacroEditor.events.modelChange.dispatch());
+
+    expect(modeSwitch).not.toBeDisabled();
+  });
+
+  it('updates the mode switch when macromolecules mode is activated', async () => {
+    await initialize();
+    const modeSwitch = screen.getAllByTestId('mode-switch')[0];
+
+    expect(modeSwitch).not.toBeDisabled();
+
+    mockMacroEditor.isLongSequence = true;
+    act(() =>
+      mockMacroEditor.modeEvents.macromoleculesModeActivated.dispatch(),
+    );
+
+    expect(modeSwitch).toBeDisabled();
+
+    mockMacroEditor.isLongSequence = false;
+    act(() =>
+      mockMacroEditor.modeEvents.macromoleculesModeActivated.dispatch(),
+    );
+
+    expect(modeSwitch).not.toBeDisabled();
   });
 });

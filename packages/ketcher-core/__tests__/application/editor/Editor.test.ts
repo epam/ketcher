@@ -1,7 +1,9 @@
 import {
   CoreEditor,
   EditorClassName,
+  EditorType,
   MonomerLibraryConvertError,
+  SequenceMode,
   ToolName,
 } from 'application/editor';
 import { ketcherProvider } from 'application/ketcherProvider';
@@ -12,7 +14,7 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import type { SelectBase } from 'application/editor/tools/select';
-import { Vec2 } from 'domain/entities';
+import { Peptide, Vec2 } from 'domain/entities';
 import {
   coreEditorTheme,
   peptideMonomerItem,
@@ -66,6 +68,56 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
+  it('preserves the current viewport when creating antisense in Sequence mode', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const scrollToTopLeftCornerSpy = jest.spyOn(
+      editor,
+      'scrollToTopLeftCorner',
+    );
+
+    try {
+      editor.setMode(new SequenceMode());
+      editor.events.createAntisenseChain.dispatch(true);
+
+      expect(scrollToTopLeftCornerSpy).not.toHaveBeenCalled();
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
+  it('does not allow changing layout mode with more than 3000 monomers', () => {
+    const canvas = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      canvas,
+      theme: coreEditorTheme,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+    });
+    const currentMode = editor.mode;
+
+    Array.from({ length: 3001 }, (_, index) => {
+      editor.drawingEntitiesManager.monomers.set(
+        index,
+        new Peptide(peptideMonomerItem),
+      );
+    });
+
+    try {
+      editor.events.selectMode.dispatch('snake-layout-mode');
+
+      expect(editor.mode).toBe(currentMode);
+      expect(editor.isLongSequence).toBe(true);
+    } finally {
+      editor.destroy();
+      canvas.remove();
+    }
+  });
+
   it('uses the current canvas for library drag/drop after manager swaps', () => {
     const canvas = createPolymerEditorCanvas();
     const editor = new CoreEditor({
@@ -138,6 +190,24 @@ describe('CoreEditor', () => {
 
       expect(editor.canvasOffset).toBe(bounds);
       expect(EditorHistory.getInstance(editor).historyPointer).toBe(0);
+      editor.destroy();
+    });
+
+    it('notifies after Macromolecules mode is activated', () => {
+      const canvas = createPolymerEditorCanvas();
+      const editor = new CoreEditor({
+        canvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      const onModeActivated = jest.fn();
+      editor.modeEvents.macromoleculesModeActivated.add(onModeActivated);
+
+      editor.switchToMacromolecules();
+
+      expect(editor._type).toBe(EditorType.Macromolecules);
+      expect(onModeActivated).toHaveBeenCalledTimes(1);
+
       editor.destroy();
     });
   });
@@ -1625,6 +1695,86 @@ describe('CoreEditor', () => {
         ).toBe(false);
       } finally {
         getKetcherSpy.mockRestore();
+      }
+    });
+
+    it('keeps mode events isolated between CoreEditor instances', () => {
+      const firstCanvas = createPolymerEditorCanvas();
+      const secondCanvas = createPolymerEditorCanvas();
+      const firstEditor = new CoreEditor({
+        canvas: firstCanvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      const secondEditor = new CoreEditor({
+        canvas: secondCanvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      const firstEditorListener = jest.fn();
+      const secondEditorListener = jest.fn();
+      firstEditor.modeEvents.switchToMacromoleculesMode.add(
+        firstEditorListener,
+      );
+      secondEditor.modeEvents.switchToMacromoleculesMode.add(
+        secondEditorListener,
+      );
+
+      try {
+        firstEditor.modeEvents.switchToMacromoleculesMode.dispatch();
+
+        expect(firstEditorListener).toHaveBeenCalledTimes(1);
+        expect(secondEditorListener).not.toHaveBeenCalled();
+
+        secondEditor.modeEvents.switchToMacromoleculesMode.dispatch();
+
+        expect(firstEditorListener).toHaveBeenCalledTimes(1);
+        expect(secondEditorListener).toHaveBeenCalledTimes(1);
+      } finally {
+        firstEditor.destroy();
+        secondEditor.destroy();
+        firstCanvas.remove();
+        secondCanvas.remove();
+      }
+    });
+
+    it('keeps mode events isolated between CoreEditor instances', () => {
+      const firstCanvas = createPolymerEditorCanvas();
+      const secondCanvas = createPolymerEditorCanvas();
+      const firstEditor = new CoreEditor({
+        canvas: firstCanvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      const secondEditor = new CoreEditor({
+        canvas: secondCanvas,
+        theme: {},
+        renderersContainer: createRenderersManager(),
+      });
+      const firstEditorListener = jest.fn();
+      const secondEditorListener = jest.fn();
+      firstEditor.modeEvents.switchToMacromoleculesMode.add(
+        firstEditorListener,
+      );
+      secondEditor.modeEvents.switchToMacromoleculesMode.add(
+        secondEditorListener,
+      );
+
+      try {
+        firstEditor.modeEvents.switchToMacromoleculesMode.dispatch();
+
+        expect(firstEditorListener).toHaveBeenCalledTimes(1);
+        expect(secondEditorListener).not.toHaveBeenCalled();
+
+        secondEditor.modeEvents.switchToMacromoleculesMode.dispatch();
+
+        expect(firstEditorListener).toHaveBeenCalledTimes(1);
+        expect(secondEditorListener).toHaveBeenCalledTimes(1);
+      } finally {
+        firstEditor.destroy();
+        secondEditor.destroy();
+        firstCanvas.remove();
+        secondCanvas.remove();
       }
     });
   });

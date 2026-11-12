@@ -65,10 +65,10 @@ describe('History across molecule and macromolecule modes', () => {
       }),
     });
     history = EditorHistory.getInstance(macro);
-    macro.events.switchToMacromoleculesMode.add(() =>
+    macro.modeEvents.switchToMacromoleculesMode.add(() =>
       macro.switchToMacromolecules(),
     );
-    macro.events.switchToMoleculesMode.add(() =>
+    macro.modeEvents.switchToMoleculesMode.add(() =>
       macro.switchToMicromolecules(),
     );
   });

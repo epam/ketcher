@@ -161,6 +161,8 @@ export const ModeControl = ({
   const [btnElement, setBtnElement] = useState<HTMLButtonElement | null>(null);
 
   const handleModeSwitch = (isPolymer: boolean) => {
+    if (disabled) return;
+
     toggle(isPolymer);
     setIsExpanded(false);
     setTimeout(() => {
@@ -173,7 +175,9 @@ export const ModeControl = ({
   };
 
   const onClose = () => setIsExpanded(false);
-  const onExpand = () => setIsExpanded(true);
+  const onExpand = () => {
+    if (!disabled) setIsExpanded(true);
+  };
 
   const modeLabel = isPolymerEditor
     ? t('modeControl.macromolecules')
@@ -207,7 +211,7 @@ export const ModeControl = ({
       </DropDownButton>
       <Dropdown
         title=""
-        open={isExpanded}
+        open={isExpanded && !disabled}
         onClose={onClose}
         anchorEl={btnElement}
         anchorOrigin={{

@@ -94,6 +94,7 @@ import {
 import {
   type CoreAtomLabel,
   HalfMonomerSize,
+  isLongSequenceMonomerCount,
   SnakeLayoutCellWidth,
 } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
@@ -2307,7 +2308,6 @@ export class DrawingEntitiesManager {
           );
         });
       });
-
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
       this.snakeLayoutMatrix = snakeLayoutMatrix;
@@ -2788,12 +2788,13 @@ export class DrawingEntitiesManager {
   }
 
   public applyMonomersSequenceLayout() {
-    const chainsCollection = ChainsCollection.fromMonomers([
-      ...this.monomers.values(),
-    ]);
+    const monomers = [...this.monomers.values()];
+    const chainsCollection = ChainsCollection.fromMonomers(monomers);
 
     chainsCollection.rearrange();
+
     this.rerenderMolecules();
+
     SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
@@ -3946,7 +3947,6 @@ export class DrawingEntitiesManager {
       selectedPiece = [];
       hasRnaInPiece = false;
     });
-
     let lastAddedNode;
     let lastAddedMonomer: BaseMonomer | undefined;
 
@@ -4143,11 +4143,22 @@ export class DrawingEntitiesManager {
       lastAddedNode = undefined;
       lastAddedMonomer = undefined;
     });
-
-    command.merge(this.applySnakeLayout(true, true));
+    // Long sequences stay in Sequence mode, so generating snake coordinates
+    // would add substantial work without changing their visible layout.
+    if (
+      editor.mode.modeName !== 'sequence-layout-mode' ||
+      !isLongSequenceMonomerCount(this.monomers.size)
+    ) {
+      command.merge(this.applySnakeLayout(true, true));
+    }
 
     if (editor.mode.modeName === 'sequence-layout-mode') {
-      command.addOperation(new ReinitializeModeOperation());
+      command.addOperation(
+        new ReinitializeModeOperation(
+          false,
+          !isLongSequenceMonomerCount(this.monomers.size),
+        ),
+      );
     }
 
     command.setUndoOperationsByPriority();

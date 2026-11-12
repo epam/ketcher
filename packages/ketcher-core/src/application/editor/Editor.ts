@@ -6,7 +6,9 @@ import {
   type SelectLayoutModePayload,
 } from 'application/editor/editor.types';
 import {
+  type ICoreEditorModeEvents,
   type IEditorEvents,
+  createCoreEditorModeEvents,
   editorEvents,
   hotkeysConfiguration,
   renderersEvents,
@@ -130,7 +132,10 @@ import {
   setEditorInstance,
   resetEditorInstance,
 } from 'application/editor/editorSingleton';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import {
+  isLongSequenceMonomerCount,
+  SnakeLayoutCellWidth,
+} from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
@@ -250,6 +255,8 @@ let persistentUserCreatedMonomerRefs: Set<string> = new Set();
 
 export class CoreEditor {
   public events: IEditorEvents;
+  public readonly modeEvents: ICoreEditorModeEvents =
+    createCoreEditorModeEvents();
   public ketcherId?: string;
 
   public _type: EditorType;
@@ -370,6 +377,7 @@ export class CoreEditor {
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     setEditorInstance(this);
+    ketcherProvider.addCoreEditorInstance(ketcherId, this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -2113,9 +2121,17 @@ export class CoreEditor {
     );
 
     modelChanges.setUndoOperationsByPriority();
-    this.renderersContainer.update(modelChanges);
+    const shouldBatchPolymerBondEndpointRedraws =
+      this.mode.modeName === 'sequence-layout-mode' &&
+      isLongSequenceMonomerCount(this.drawingEntitiesManager.monomers.size);
+    this.renderersContainer.update(
+      modelChanges,
+      shouldBatchPolymerBondEndpointRedraws,
+    );
     history.update(modelChanges);
-    this.scrollToTopLeftCorner();
+    if (this.mode.modeName !== 'sequence-layout-mode') {
+      this.scrollToTopLeftCorner();
+    }
     this.clearTransientViews();
   }
 
@@ -2212,17 +2228,23 @@ export class CoreEditor {
   }
 
   private onSelectMode(data: SelectLayoutModePayload) {
-    const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
+    if (this.isLongSequence && mode !== 'sequence-layout-mode') {
+      return;
+    }
+
+    const shouldReArrangeChains =
+      this.mode.modeName === mode && !this.isLongSequence;
+
+    const command = new Command();
     const ModeConstructor = getModeConstructor(mode);
     const history = EditorHistory.getInstance(this);
-    const hasModeChanged = this.mode.modeName !== mode;
     this.undoLatestSnakeLayout();
 
     this.mode.destroy();
     this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
-    command.merge(this.mode.initialize(true, false, !hasModeChanged));
+    command.merge(this.mode.initialize(true, false, shouldReArrangeChains));
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
@@ -2246,6 +2268,10 @@ export class CoreEditor {
   }
 
   public setMode(mode: BaseMode) {
+    if (this.isLongSequence && mode.modeName !== 'sequence-layout-mode') {
+      return;
+    }
+
     this.mode = mode;
   }
 
@@ -2361,6 +2387,29 @@ export class CoreEditor {
 
   public get isSequenceMode() {
     return this.mode.modeName === 'sequence-layout-mode';
+  }
+
+  public get isMacromoleculesMode() {
+    return this._type === EditorType.Macromolecules;
+  }
+
+  public get isLongSequence() {
+    return isLongSequenceMonomerCount(
+      this.drawingEntitiesManager.monomers.size,
+    );
+  }
+
+  public ensureSequenceModeForLongSequence(additionalMonomerCount = 0) {
+    const shouldUseSequenceMode = isLongSequenceMonomerCount(
+      this.drawingEntitiesManager.monomers.size + additionalMonomerCount,
+    );
+
+    if (shouldUseSequenceMode && !this.isSequenceMode) {
+      this.events.selectMode.dispatch('sequence-layout-mode');
+      this.events.layoutModeChange.dispatch('sequence-layout-mode');
+    }
+
+    return shouldUseSequenceMode;
   }
 
   public get isSequenceEditMode() {
@@ -2749,7 +2798,7 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    if (this.isMonomerWizardSessionActive) {
+    if (this.isMonomerWizardSessionActive || this.isLongSequence) {
       return;
     }
 
@@ -2856,6 +2905,16 @@ export class CoreEditor {
       );
     this.viewModel.initialize([...this.drawingEntitiesManager.bonds.values()]);
 
+    if (this.isLongSequence && !this.isSequenceMode) {
+      const previousMode = this.mode;
+      previousMode.destroy();
+      this.previousModes.push(previousMode);
+      this.mode = new (getModeConstructor('sequence-layout-mode'))(
+        previousMode.modeName,
+      );
+      this.events.layoutModeChange.dispatch('sequence-layout-mode');
+    }
+
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
         this.drawingEntitiesManager.applySnakeLayout(true, true, false),
@@ -2880,6 +2939,7 @@ export class CoreEditor {
     this.micromoleculesEditor?.addHistoryAction(
       new EditorHistoryAction(restorePreviousMode, this.captureModeState()),
     );
+    this.modeEvents.macromoleculesModeActivated.dispatch();
   }
 
   private captureModeState(): () => void {
@@ -2907,7 +2967,7 @@ export class CoreEditor {
       this.zoomTool.resetZoom();
 
       if (type === EditorType.Macromolecules) {
-        this.events.switchToMacromoleculesMode.dispatch();
+        this.modeEvents.switchToMacromoleculesMode.dispatch();
 
         // timeout is needed to render canvas before rendering entities on it, otherwise some of them
         // will be rendered incorrectly. F.e. bonds will overlap with atom labels, because
@@ -2917,7 +2977,7 @@ export class CoreEditor {
           this.mode.initialize(false, false, false);
         }, 0);
       } else {
-        this.events.switchToMoleculesMode.dispatch();
+        this.modeEvents.switchToMoleculesMode.dispatch();
 
         if (!struct) {
           return;
@@ -3006,6 +3066,7 @@ export class CoreEditor {
     }
     EditorHistory.getInstance(this).destroy();
     this.unsubscribeEvents();
+    ketcherProvider.removeCoreEditorInstance(this.ketcherId, this);
     resetEditorInstance();
   }
 }

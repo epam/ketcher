@@ -88,12 +88,24 @@ export interface IEditorEvents {
   autochain: Subscription<MonomerItemType | AmbiguousMonomerType | IRnaPreset>;
   previewAutochain: Subscription<MonomerItemType | IRnaPreset>;
   removeAutochainPreview: Subscription;
-  switchToMacromoleculesMode: Subscription;
-  switchToMoleculesMode: Subscription;
   openMonomerCreationWizard: Subscription<MonomerCreationWizardRequest>;
   layoutCircular: Subscription;
   flipHorizontal: Subscription;
   flipVertical: Subscription;
+}
+
+export interface ICoreEditorModeEvents {
+  switchToMacromoleculesMode: Subscription;
+  macromoleculesModeActivated: Subscription;
+  switchToMoleculesMode: Subscription;
+}
+
+export function createCoreEditorModeEvents(): ICoreEditorModeEvents {
+  return {
+    switchToMacromoleculesMode: new Subscription(),
+    macromoleculesModeActivated: new Subscription(),
+    switchToMoleculesMode: new Subscription(),
+  };
 }
 
 export const editorEvents: IEditorEvents = {
@@ -171,8 +183,6 @@ export const editorEvents: IEditorEvents = {
   >(),
   previewAutochain: new Subscription<MonomerItemType | IRnaPreset>(),
   removeAutochainPreview: new Subscription(),
-  switchToMacromoleculesMode: new Subscription(),
-  switchToMoleculesMode: new Subscription(),
   openMonomerCreationWizard: new Subscription<MonomerCreationWizardRequest>(),
   layoutCircular: new Subscription(),
   flipHorizontal: new Subscription(),

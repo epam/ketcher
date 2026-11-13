@@ -333,7 +333,6 @@
             "y": -2.75
         },
         "alias": "meD",
-        "templateId": "meD___N-Methyl-Aspartic acid",
-        "seqid": 5
+        "templateId": "meD___N-Methyl-Aspartic acid"
     }
 }

@@ -120,8 +120,7 @@
             "y": -1.25
         },
         "alias": "I",
-        "templateId": "I___Isoleucine",
-        "seqid": 1
+        "templateId": "I___Isoleucine"
     },
     "monomerTemplate-I___Isoleucine": {
         "type": "monomerTemplate",

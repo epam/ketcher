@@ -18,19 +18,19 @@
     </colortable>
     <page HeightPages="1" WidthPages="1" BoundingBox="235.417664 257.437500 287.379211 197.437500">
         <fragment id="4">
-            <n id="5" p="25.980778 -0.000000">
+            <n id="5" NodeType="GenericNickname" GenericNickname="*" p="25.980778 -0.000000">
                 <t p="25.980778 -0.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>
             </n>
             <n id="6" p="0.000000 15.000000"/>
-            <n id="7" p="0.000000 45.000000">
+            <n id="7" NodeType="GenericNickname" GenericNickname="*" p="0.000000 45.000000">
                 <t p="0.000000 45.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>
             </n>
             <n id="8" p="25.980778 60.000000"/>
-            <n id="9" p="51.961525 45.000000">
+            <n id="9" NodeType="GenericNickname" GenericNickname="*" p="51.961525 45.000000">
                 <t p="51.961525 45.000000" LabelJustification="Left">
                     <s font="3" size="10" face="96">*</s>
                 </t>

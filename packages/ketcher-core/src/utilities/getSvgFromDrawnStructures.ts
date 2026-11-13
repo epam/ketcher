@@ -21,7 +21,7 @@ const getDrawnStructuresClientRect = (
     .map((child) => child.getBoundingClientRect())
     .filter((rect) => rect.width > 0 || rect.height > 0);
 
-  if (!contentRects.length) {
+  if (contentRects.length === 0) {
     return drawnStructures.getBoundingClientRect();
   }
 
@@ -61,10 +61,18 @@ export const getSvgFromDrawnStructures = (
   wrapper.querySelectorAll('g')?.forEach((el) => {
     if (el.hasAttribute('opacity')) el.removeAttribute('opacity');
   });
+  wrapper.querySelectorAll('[style]')?.forEach((el) => {
+    const styledElement = el as SVGElement;
+
+    if (styledElement.style.cursor === 'pointer') {
+      styledElement.style.removeProperty('cursor');
+
+      if (!styledElement.getAttribute('style')?.trim()) {
+        styledElement.removeAttribute('style');
+      }
+    }
+  });
   svgInnerHTML = wrapper.innerHTML;
-  // remove "cursor: pointer" style only from elements where it appears standalone,
-  // preserving other style properties on bond path elements (stroke, fill, stroke-width, etc.)
-  svgInnerHTML = svgInnerHTML?.replace(/\bcursor:\s*pointer;\s*/g, '');
 
   const drawnStructures = canvas?.getElementsByClassName('drawn-structures')[0];
   const drawStructureClientRect =

@@ -510,8 +510,7 @@
             "y": -1.25
         },
         "alias": "K",
-        "templateId": "K___Lysine",
-        "seqid": 2
+        "templateId": "K___Lysine"
     },
     "monomer2": {
         "type": "monomer",

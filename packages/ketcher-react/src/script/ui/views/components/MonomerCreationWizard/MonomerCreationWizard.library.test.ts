@@ -126,6 +126,37 @@ describe('saving library wizard changes', () => {
     expect(persist.mock.calls[0][0]).toBe(ket);
   });
 
+  it('removes cleared IDT aliases when replacing an editable CHEM monomer', async () => {
+    (provideEditorInstance as jest.Mock).mockReturnValue({
+      monomersLibraryParsedJson: {
+        'monomerTemplate-original': {
+          ...template,
+          id: 'original',
+          alias: 'A',
+          class: KetMonomerClass.CHEM,
+          idtAliases: { base: 'original-idt' },
+        },
+      },
+      updateMonomersLibrary: update,
+      monomersLibrary: [],
+    });
+    await saveLibraryMonomer(
+      ketcher,
+      {
+        monomerTemplate: {
+          ...template,
+          alias: 'A',
+          class: KetMonomerClass.CHEM,
+        },
+        monomerRef: 'monomerTemplate-new-id',
+      },
+      original,
+    );
+    expect(
+      JSON.parse(update.mock.calls[0][0])['monomerTemplate-original'],
+    ).not.toHaveProperty('idtAliases');
+  });
+
   it('adds a distinct monomer when the type changed, leaving the original alone', async () => {
     await saveLibraryMonomer(
       ketcher,

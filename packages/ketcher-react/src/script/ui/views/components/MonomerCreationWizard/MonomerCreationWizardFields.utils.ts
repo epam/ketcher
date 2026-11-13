@@ -1,5 +1,6 @@
 import {
   isAmbiguousMonomerLibraryItem,
+  type IKetIdtAliases,
   KetMonomerClass,
   type MonomerItemType,
   type MonomerOrAmbiguousType,
@@ -25,13 +26,19 @@ export const getMonomerPropertyVisibility = (
     type === KetMonomerClass.CHEM;
   const shouldDisplayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
+  const displayIdtAlias =
+    type === KetMonomerClass.RNA ||
+    type === KetMonomerClass.CHEM ||
+    type === KetMonomerClass.Phosphate;
 
   return {
     displayNaturalAnalogue: shouldDisplayNaturalAnalogue,
     displayModificationTypes: shouldDisplayModificationTypes,
-    displayAliases: shouldDisplayHelmAlias || shouldDisplayBilnAlias,
+    displayAliases:
+      shouldDisplayHelmAlias || shouldDisplayBilnAlias || displayIdtAlias,
     displayHelmAlias: shouldDisplayHelmAlias,
     displayBilnAlias: shouldDisplayBilnAlias,
+    displayIdtAlias,
   };
 };
 
@@ -51,6 +58,40 @@ export const getOtherLibraryMonomers = (
           item.props.MonomerClass !== original.props.MonomerClass
       : item.props.id !== original.props.id;
   });
+
+export const getIdtAliasCollisions = (
+  library: MonomerItemType[],
+  aliases: IKetIdtAliases,
+) => ({
+  base: Boolean(
+    aliases.base &&
+    library.some((item) => item.props.idtAliases?.base === aliases.base),
+  ),
+  endpoint5: Boolean(
+    aliases.modifications?.endpoint5 &&
+    library.some(
+      (item) =>
+        item.props.idtAliases?.modifications?.endpoint5 ===
+        aliases.modifications?.endpoint5,
+    ),
+  ),
+  internal: Boolean(
+    aliases.modifications?.internal &&
+    library.some(
+      (item) =>
+        item.props.idtAliases?.modifications?.internal ===
+        aliases.modifications?.internal,
+    ),
+  ),
+  endpoint3: Boolean(
+    aliases.modifications?.endpoint3 &&
+    library.some(
+      (item) =>
+        item.props.idtAliases?.modifications?.endpoint3 ===
+        aliases.modifications?.endpoint3,
+    ),
+  ),
+});
 
 /*
  * A HELM alias only has to be unique within the polymer type it is written

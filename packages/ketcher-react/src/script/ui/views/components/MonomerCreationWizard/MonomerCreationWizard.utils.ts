@@ -1,6 +1,7 @@
 import {
   AttachmentPointName,
   type BaseMonomer,
+  expandIdtAliasesToWizardInputs,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
   type MonomerItemType,
@@ -38,8 +39,11 @@ const getInitialValues = (
     'position' in monomer && monomer.position
       ? { position: new Vec2(monomer.position) }
       : {};
-  const { displayHelmAlias, displayBilnAlias } =
+  const { displayHelmAlias, displayBilnAlias, displayIdtAlias } =
     getMonomerPropertyVisibility(type);
+  const idtAliases = displayIdtAlias
+    ? expandIdtAliasesToWizardInputs(props.idtAliases)
+    : { idtAlias5: '', idtAliasInternal: '', idtAlias3: '' };
 
   return {
     type,
@@ -48,6 +52,15 @@ const getInitialValues = (
     naturalAnalogue,
     aliasHELM: displayHelmAlias ? getValue(props.aliasHELM) : '',
     aliasBILN: displayBilnAlias ? getValue(props.aliasBILN) : '',
+    ...idtAliases,
+    ...('monomerItem' in monomer
+      ? {
+          modificationTypes:
+            type === KetMonomerClass.AminoAcid
+              ? (props.modificationTypes ?? [])
+              : [],
+        }
+      : {}),
     originalType: type,
     originalSymbol: symbol,
     ...position,

@@ -52,13 +52,14 @@ export const saveLibraryMonomer = async (
     ...(originalMonomerTemplate ? { id: originalMonomerTemplate.id } : {}),
   };
   if (originalMonomerTemplate) {
-    const { displayHelmAlias, displayBilnAlias } = getMonomerPropertyVisibility(
-      template.class,
-    );
+    const { displayHelmAlias, displayBilnAlias, displayIdtAlias } =
+      getMonomerPropertyVisibility(template.class);
     if (!displayHelmAlias)
       template.aliasHELM = originalMonomerTemplate.aliasHELM;
     if (!displayBilnAlias)
       template.aliasBILN = originalMonomerTemplate.aliasBILN;
+    if (displayIdtAlias && !createdTemplate.idtAliases)
+      delete template.idtAliases;
   } else {
     /*
      * Saving as a new entry keeps the original in the library, so the new

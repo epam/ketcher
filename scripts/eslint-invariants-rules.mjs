@@ -15,6 +15,9 @@
  * - R18 `no-html-sinks`: source code must not write HTML from a string
  *   (`innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`,
  *   `dangerouslySetInnerHTML`). Clearing with `innerHTML = ''` passes.
+ * - R19 `no-manual-coordinate-conversion`: model, canvas, and view coordinates
+ *   convert through the `Coordinates` class, so no other file calls the zoom
+ *   tool's `invertZoom` or `scaleCoordinates`, or reads `getScreenCTM`.
  *
  * Known violations that predate the rules are allowlisted per file in the
  * ALLOWED_* lists below instead of eslint-disable comments (rule R7). The unit
@@ -212,6 +215,19 @@ const HTML_PROPERTIES = ['innerHTML', 'outerHTML'];
 const HTML_METHODS = ['insertAdjacentHTML'];
 const R18_MESSAGE =
   'R18: do not write HTML from a string. Build DOM nodes or React elements, or set textContent.';
+
+/**
+ * The one file that may do the coordinate math, because it is the class the
+ * rule sends everyone else to. No other file called these methods when R19 was
+ * added, so the list holds no known debt.
+ */
+export const ALLOWED_COORDINATE_CONVERSIONS = [
+  'packages/ketcher-core/src/application/editor/shared/coordinates.ts',
+];
+
+const COORDINATE_METHODS = ['invertZoom', 'scaleCoordinates', 'getScreenCTM'];
+const R19_MESSAGE =
+  'R19: convert between model, canvas, and view coordinates with the Coordinates class (application/editor/shared/coordinates.ts). See .memory-bank/modules/rendering.md (Coordinate spaces).';
 
 export const MODEL_MUTATING_METHODS = [
   'addDrawingEntitiesToSelection',
@@ -609,6 +625,43 @@ export const rules = {
         JSXAttribute(node) {
           if (node.name.name === 'dangerouslySetInnerHTML') {
             context.report({ node, message: R18_MESSAGE });
+          }
+        },
+      };
+    },
+  },
+
+  'no-manual-coordinate-conversion': {
+    meta: {
+      docs: {
+        description:
+          'R19 — coordinates convert through the Coordinates class, not by hand',
+      },
+      schema: [
+        {
+          type: 'object',
+          properties: {
+            allowedFiles: { type: 'array', items: { type: 'string' } },
+          },
+        },
+      ],
+    },
+    create(context) {
+      const allowedFiles =
+        context.options?.[0]?.allowedFiles ?? ALLOWED_COORDINATE_CONVERSIONS;
+      const filename = context.filename.replace(/\\/g, '/');
+      if (allowedFiles.some((file) => filename.endsWith(file))) {
+        return {};
+      }
+
+      return {
+        CallExpression(node) {
+          if (
+            node.callee.type === 'MemberExpression' &&
+            node.callee.property.type === 'Identifier' &&
+            COORDINATE_METHODS.includes(node.callee.property.name)
+          ) {
+            context.report({ node, message: R19_MESSAGE });
           }
         },
       };

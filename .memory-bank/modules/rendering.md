@@ -57,7 +57,19 @@ There is an abstract base renderer, an abstract base for monomer renderers, and 
 
 Convex aromatic circles use the shared `BondWidth` from `BondPathRenderer/constants`, matching the surrounding atomic bond paths.
 
-Monomer add uses the factory to pick the renderer class; bond add uses a polymer-bond renderer factory. Coordinates are stored in angstroms in model and converted to pixels in the renderer layer. Monomer bodies reference shared `<symbol>` defs via `<use href>`.
+Monomer add uses the factory to pick the renderer class; bond add uses a polymer-bond renderer factory. Coordinates are stored in angstroms in model and converted to pixels in the renderer layer (see [Coordinate spaces](#coordinate-spaces)). Monomer bodies reference shared `<symbol>` defs via `<use href>`.
+
+### Coordinate spaces
+
+A macromolecules position lives in one of three spaces:
+
+| Space  | Unit                                  | Used by                                                   |
+| ------ | ------------------------------------- | --------------------------------------------------------- |
+| model  | angstroms                             | domain entities, serialization                            |
+| canvas | model × the editor's `macroModeScale` | renderers, transient views, anything drawn in the SVG     |
+| view   | canvas after the zoom/pan transform   | viewport checks, comparisons with the canvas wrapper size |
+
+The `Coordinates` class (`application/editor/shared/coordinates.ts`) is the only place that converts between them: `modelToCanvas`, `canvasToModel`, `canvasToView`, `viewToCanvas`, `modelToView`, `viewToModel`. It reads the scale from the editor settings and the transform from the zoom tool, so a caller never touches either. Outside `Coordinates` and the zoom tool itself, no source file calls the zoom tool's `invertZoom` or `scaleCoordinates`.
 
 ### Polymer-bond rendering
 
@@ -81,4 +93,5 @@ On top of the persistent D3 drawing, the macro editor draws **transient views** 
 - Renderers never mutate the model.
 - Micro uses diff-based dirty marking; macro relies on the executing Command to touch exactly the affected renderers.
 - The macro canvas comes from the zoom tool.
+- Convert positions between model, canvas, and view space with `Coordinates`. Do not repeat its math (dividing by `macroModeScale`, inverting the zoom transform, `getScreenCTM`) at a call site: a second copy drifts when the scale or the zoom transform changes.
 - One of the goals is to get rid of Raphael and move to D3 for all rendering, but the micro editor is still Raphael-based.

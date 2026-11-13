@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,30 +61,11 @@ interface TableState {
 }
 
 class Table extends Component<TableProps, TableState> {
-  constructor(props: TableProps) {
-    super(props);
-    const heliumElement = Elements.get(2);
-
-    let initialValue: string | string[] | null = null;
-    if (props.values) {
-      initialValue = props.values;
-    } else if (!props.pseudo && props.label) {
-      initialValue = props.label;
-    }
-
-    this.state = {
-      type: props.type ?? 'atom',
-      value: initialValue,
-      current: heliumElement || ({} as Element),
-      isInfo: false,
-    };
-  }
-
   changeType = (type: PeriodTableType) => {
-    const prevChoice =
+    const isPreviousListChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
-    const currentChoice = type === 'list' || type === 'not-list';
-    if (prevChoice && currentChoice) {
+    const isCurrentListChoice = type === 'list' || type === 'not-list';
+    if (isPreviousListChoice && isCurrentListChoice) {
       this.setState({ type });
     } else {
       this.setState({
@@ -133,7 +114,7 @@ class Table extends Component<TableProps, TableState> {
 
   result = (): PeriodTableResult => {
     const { type, value } = this.state;
-    if (!value || (Array.isArray(value) && !value.length)) {
+    if (!value || (Array.isArray(value) && value.length === 0)) {
       return null;
     }
     if (type === 'atom') {
@@ -150,6 +131,25 @@ class Table extends Component<TableProps, TableState> {
       onMouseLeave: () => this.setState({ isInfo: false }),
     };
   };
+
+  constructor(props: TableProps) {
+    super(props);
+    const heliumElement = Elements.get(2);
+
+    let initialValue: string | string[] | null = null;
+    if (props.values) {
+      initialValue = props.values;
+    } else if (!props.pseudo && props.label) {
+      initialValue = props.label;
+    }
+
+    this.state = {
+      type: props.type ?? 'atom',
+      value: initialValue,
+      current: heliumElement || ({} as Element),
+      isInfo: false,
+    };
+  }
 
   render() {
     const { value } = this.state;
@@ -173,13 +173,13 @@ class Table extends Component<TableProps, TableState> {
         buttonsNameMap={{ OK: i18n.t('dialogs:shared.addButton') }}
         needMargin={false}
         footerContent={
-          !this.props.isNestedModal ? (
+          this.props.isNestedModal ? undefined : (
             <TypeChoice
               value={this.state.type}
               onChange={this.changeType}
               disabled={this.props.isMonomerCreationWizardActive}
             />
-          ) : undefined
+          )
         }
       >
         <div className={classes.periodTable}>

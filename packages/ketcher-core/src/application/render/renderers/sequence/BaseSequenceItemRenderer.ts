@@ -1,7 +1,13 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
-import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
+import {
+  LinkerSequenceNode,
+  Nucleotide,
+  Nucleoside,
+  UnresolvedMonomer,
+  Vec2,
+} from 'domain/entities';
 import type {
   SubChainNode,
   SequenceNode,
@@ -25,9 +31,10 @@ const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
+  private positionalEnumeration: number | null = null;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
-  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
   public caretElement?:
@@ -300,7 +307,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return nodeIndex;
   }
 
+  private get sequenceId() {
+    const monomer =
+      this.node instanceof Nucleotide || this.node instanceof Nucleoside
+        ? this.node.rnaBase
+        : this.node.monomer;
+    return monomer.monomerItem.seqId;
+  }
+
   private get counterNumber() {
+    if (this.sequenceId !== undefined) return this.sequenceId;
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
     let numberToDisplay;
@@ -520,7 +536,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesBeforeNodeInSubChain() {
-    return !!this.ignoredNodesBeforeFirstNodeInSubChain.length;
+    return this.ignoredNodesBeforeFirstNodeInSubChain.length > 0;
   }
 
   // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
@@ -541,7 +557,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get hasOnlyIgnoredNodesAfterNodeInChain() {
-    return !!this.ignoredNodesAfterLastNodeInSubChain.length;
+    return this.ignoredNodesAfterLastNodeInSubChain.length > 0;
   }
 
   // returns true if node is not in ignore list and is first node in chain
@@ -646,7 +662,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
+  public redrawCaret(editingNodeIndexOverall?: number, isAfterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -654,7 +670,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      if (afterRowEnd) {
+      if (isAfterRowEnd) {
         this.showCaretAfterNode();
       } else {
         this.showCaret();
@@ -798,12 +814,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  public setEnumeration(enumeration: number | null) {
+    this.positionalEnumeration = enumeration;
   }
 
   public redrawEnumeration() {
-    // intentional no-op: default base implementation; subclasses override when behavior is needed
+    if (this.positionalEnumeration !== null) {
+      this.counterElement?.text(this.sequenceId ?? this.positionalEnumeration);
+    }
   }
 
   public redrawAttachmentPoints() {

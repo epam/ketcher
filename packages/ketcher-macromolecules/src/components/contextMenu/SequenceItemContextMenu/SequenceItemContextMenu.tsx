@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
-  selectIsSequenceEditInRNABuilderMode,
+  isRnaBuilderSequenceEditMode,
   setContextMenuActive,
 } from 'state/common';
 import {
@@ -88,9 +88,10 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent?.target as
       (EventTarget & { __data__?: BaseSequenceItemRenderer }) | undefined
   )?.__data__;
-  const monomersToEdit = selectedMonomers.length
-    ? selectedMonomers
-    : (clickedRenderer?.node?.monomers ?? []);
+  const monomersToEdit =
+    selectedMonomers.length > 0
+      ? selectedMonomers
+      : (clickedRenderer?.node?.monomers ?? []);
   const monomerCreationMenu = useMonomerCreationMenu(
     editor,
     monomersToEdit,
@@ -101,7 +102,7 @@ export const SequenceItemContextMenu = ({
     contextMenuEvent,
   );
   const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
+    isRnaBuilderSequenceEditMode,
   );
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
@@ -239,7 +240,7 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
       separator: true,
     },

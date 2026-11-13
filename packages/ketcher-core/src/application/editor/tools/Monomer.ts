@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,11 +34,13 @@ class MonomerTool implements BaseTool {
   private monomerPreviewRenderer:
     BaseMonomerRenderer | AmbiguousMonomerRenderer | undefined;
 
+  private readonly monomer: MonomerOrAmbiguousType;
+
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
   readonly MONOMER_PREVIEW_OFFSET_X = 30;
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
-  private readonly monomer: MonomerOrAmbiguousType;
+
   constructor(
     private readonly editor: CoreEditor,
     ...args: unknown[]

@@ -196,8 +196,7 @@
             "y": -1.25
         },
         "alias": "S",
-        "templateId": "S___Serine",
-        "seqid": 1
+        "templateId": "S___Serine"
     },
     "monomerTemplate-S___Serine": {
         "type": "monomerTemplate",

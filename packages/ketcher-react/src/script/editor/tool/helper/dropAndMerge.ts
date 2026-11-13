@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   type ReStruct,
   Action,
@@ -20,7 +19,7 @@ type MergeItems = {
 
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: any,
+  mergeItems?: MergeItems | null,
   action?: Action | null,
   copyAction?: Action,
 ): Action {
@@ -28,7 +27,7 @@ export function dropAndMerge(
   const isMerging = !!mergeItems;
   let dropItemAction = copyAction || new Action();
 
-  if (isMerging) {
+  if (mergeItems) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
       editor.render.ctab,
       mergeItems,
@@ -73,7 +72,7 @@ function getExpandGroupsInMergeAction(
 ): Action {
   const action = new Action();
   const groupsInMerge = getGroupIdsFromItemMaps(restruct.molecule, mergeItems);
-  if (groupsInMerge.length) {
+  if (groupsInMerge.length > 0) {
     groupsInMerge.forEach((groupId) => {
       action.mergeWith(setExpandSGroup(restruct, groupId, { expanded: true }));
     });

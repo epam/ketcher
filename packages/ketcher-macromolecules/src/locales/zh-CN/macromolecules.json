@@ -44,7 +44,9 @@
   },
   "buttons": {
     "help": "帮助 (?)",
-    "about": "关于"
+    "settings": "设置",
+    "about": "关于",
+    "fullscreen": "全屏模式"
   },
   "sequenceType": {
     "rnaTooltip": "RNA ({shortcut})",

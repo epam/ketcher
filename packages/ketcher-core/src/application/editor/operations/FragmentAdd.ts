@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,10 @@ import { type StructProperty, Fragment } from 'domain/entities';
 import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {
+  static InverseConstructor: new (fragmentId: number) => BaseOperation;
+
   frid: number | null;
   readonly properties?: Array<StructProperty>;
-  static InverseConstructor: new (fragmentId: number) => BaseOperation;
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);

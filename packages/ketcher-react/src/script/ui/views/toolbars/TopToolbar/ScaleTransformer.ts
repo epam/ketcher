@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,13 @@ export class ScaleTransformer {
     this.b = Math.pow(Math.max(...this.zoomList) / this.a, 1 / inputMax);
   }
 
+  private pickNearestFromList(value: number, list) {
+    const nearest = list.reduce((prev, curr) =>
+      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
+    );
+    return nearest;
+  }
+
   getSliderValue(zoom: number) {
     // Calculating x as logarighm of (y/a) to base b
     const sliderValue = Math.round(
@@ -50,12 +57,5 @@ export class ScaleTransformer {
       this.zoomList,
     );
     return zoomValue;
-  }
-
-  private pickNearestFromList(value: number, list) {
-    const nearest = list.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
-    );
-    return nearest;
   }
 }

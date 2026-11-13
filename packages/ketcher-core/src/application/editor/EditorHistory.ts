@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,32 +19,48 @@ import type { CoreEditor } from './Editor';
 import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { EditorHistoryAction } from './EditorHistoryAction';
+import { SequenceIdsResetOperation } from './operations/monomer/SequenceIdsResetOperation';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
 
 export class EditorHistory {
+  private static readonly instances = new WeakMap<CoreEditor, EditorHistory>();
+
+  static getInstance(editor: CoreEditor): EditorHistory {
+    let instance = this.instances.get(editor);
+    if (!instance) {
+      instance = new EditorHistory(editor);
+      this.instances.set(editor, instance);
+    }
+    return instance;
+  }
+
   private readonly commands: Command[] = [];
   private pointer = 0;
   editor!: CoreEditor;
-
-  private static readonly instances = new WeakMap<CoreEditor, EditorHistory>();
 
   constructor(editor: CoreEditor) {
     this.editor = editor;
   }
 
-  static getInstance(editor: CoreEditor): EditorHistory {
-    let instance = EditorHistory.instances.get(editor);
-    if (!instance) {
-      instance = new EditorHistory(editor);
-      EditorHistory.instances.set(editor, instance);
-    }
-    return instance;
-  }
-
   private get moleculesEditor() {
     return ketcherProvider.getKetcher(this.editor.ketcherId)?.editor;
+  }
+
+  private performCommand(command: Command, operation: HistoryOperationType) {
+    this.editor.flushPendingDragRender();
+    if (operation === 'undo') {
+      command.invert(this.editor.renderersContainer);
+    } else {
+      command.execute(this.editor.renderersContainer);
+    }
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
+    // Dispatch after the model has been re-applied so subscribers observe the
+    // up-to-date structure.
+    this.editor.events.modelChange.dispatch();
   }
 
   get historyStack() {
@@ -55,10 +71,16 @@ export class EditorHistory {
     return this.moleculesEditor?.historyPtr ?? this.pointer;
   }
 
-  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+  update(command: Command, shouldMergeWithLatestHistoryCommand?: boolean) {
+    const resetSequenceIds = SequenceIdsResetOperation.forCommand(command);
+    if (resetSequenceIds) {
+      command.addOperation(resetSequenceIds);
+      resetSequenceIds.execute(this.editor.renderersContainer);
+      this.editor.renderersContainer.runPostRenderMethods();
+    }
     const latestCommand = this.previousCommand;
     if (
-      megreWithLatestHistoryCommand &&
+      shouldMergeWithLatestHistoryCommand &&
       latestCommand &&
       this.historyPointer === this.historyStack.length
     ) {
@@ -118,21 +140,6 @@ export class EditorHistory {
     const lastCommand = this.commands[this.pointer];
     this.performCommand(lastCommand, 'redo');
     this.pointer++;
-  }
-
-  private performCommand(command: Command, operation: HistoryOperationType) {
-    this.editor.flushPendingDragRender();
-    if (operation === 'undo') {
-      command.invert(this.editor.renderersContainer);
-    } else {
-      command.execute(this.editor.renderersContainer);
-    }
-    const turnOffSelectionCommand =
-      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
-    this.editor?.renderersContainer.update(turnOffSelectionCommand);
-    // Dispatch after the model has been re-applied so subscribers observe the
-    // up-to-date structure.
-    this.editor.events.modelChange.dispatch();
   }
 
   public get previousCommand() {

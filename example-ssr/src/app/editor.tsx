@@ -7,13 +7,13 @@ import 'ketcher-react/dist/index.css';
 
 const safePostMessage = (
   message: Record<string, unknown>,
-  fallbackOrigin: string = window.location.origin,
+  fallbackOrigin: string = globalThis.location.origin,
 ): void => {
-  if (window.parent === window) return;
+  if (globalThis.parent === globalThis.window) return;
 
   let parentOrigin = fallbackOrigin;
   try {
-    parentOrigin = window.parent.location.origin || fallbackOrigin;
+    parentOrigin = globalThis.parent.location.origin || fallbackOrigin;
   } catch {}
 
   if (
@@ -24,7 +24,7 @@ const safePostMessage = (
     parentOrigin = fallbackOrigin;
   }
 
-  window.parent.postMessage(message, parentOrigin);
+  globalThis.parent.postMessage(message, parentOrigin);
 };
 
 const StandaloneStructServiceProvider =
@@ -41,7 +41,7 @@ export function EditorComponent() {
         console.error(message);
       }}
       onInit={(ketcher) => {
-        window.ketcher = ketcher;
+        globalThis.window.ketcher = ketcher;
         safePostMessage({
           eventType: 'init',
         });

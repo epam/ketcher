@@ -70,7 +70,7 @@ export const SelectedMonomersContextMenu = ({
     isAntisenseOptionVisible(selectedMonomers);
 
   const isFlexMode = editor?.mode.modeName === 'flex-layout-mode';
-  const cyclicStructureFormationDisabled =
+  const isCyclicStructureFormationDisabled =
     !isFlexMode ||
     editor?.drawingEntitiesManager.selectedMicromoleculeEntities.length > 0 ||
     !isCycleExistsForSelectedMonomers(selectedMonomers);
@@ -119,13 +119,13 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
       name: 'layout_circular',
       title: t('contextMenu.selectedMonomers.arrangeAsRing'),
-      disabled: cyclicStructureFormationDisabled,
+      disabled: isCyclicStructureFormationDisabled,
       hidden: !isFlexMode,
     },
     {

@@ -73,8 +73,8 @@ export const useRecalculateMacromoleculeProperties = () => {
           .length > 1;
 
       if (
-        !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
         !areAllMonomersConnectedByCovalentOrHydrogenBonds ||
+        !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
         (hasNoSelection && hasNoChainsButMultipleFragments)
       ) {
         dispatch(setMacromoleculesProperties(undefined));
@@ -111,10 +111,10 @@ export const useRecalculateMacromoleculeProperties = () => {
 
         notifyRequestCompleted();
         dispatch(setMacromoleculesProperties(macromoleculeProperties));
-      } catch (e) {
+      } catch (error) {
         KetcherLogger.error(
           'Error during parsing macromolecule properties: ',
-          e,
+          error,
         );
 
         dispatch(setMacromoleculesProperties(undefined));

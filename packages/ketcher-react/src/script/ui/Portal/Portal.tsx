@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,55 +35,13 @@ class Portal extends Component<Props> {
   private readonly element: HTMLDivElement;
   private isElementInDom: boolean;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.element = document.createElement('div');
     this.isElementInDom = false;
 
     if (this.props.testId) {
       this.element.dataset.testid = this.props.testId;
-    }
-  }
-
-  componentDidMount() {
-    if (!this.isElementInDom && this.props.isOpen) {
-      this.addElementInDOM();
-    }
-
-    const { className, style } = this.props;
-    if (className) {
-      this.addClassName(className);
-    }
-    if (style) {
-      this.updateStyle(style);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.isElementInDom) {
-      this.removeElementFromDOM();
-    }
-  }
-
-  componentDidUpdate(prevProps: Readonly<Props>) {
-    const { isOpen, className, style } = this.props;
-    if (className !== prevProps.className) {
-      this.removeClassNames(prevProps.className);
-      this.addClassName(className);
-    }
-
-    if (style !== prevProps.style) {
-      this.updateStyle(style, prevProps.style);
-    }
-
-    if (isOpen === prevProps.isOpen) {
-      return;
-    }
-
-    if (isOpen && !this.isElementInDom) {
-      this.addElementInDOM();
-    } else if (this.isElementInDom) {
-      this.removeElementFromDOM();
     }
   }
 
@@ -138,10 +95,51 @@ class Portal extends Component<Props> {
     });
   }
 
+  componentDidMount() {
+    if (!this.isElementInDom && this.props.isOpen) {
+      this.addElementInDOM();
+    }
+
+    const { className, style } = this.props;
+    if (className) {
+      this.addClassName(className);
+    }
+    if (style) {
+      this.updateStyle(style);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>) {
+    const { isOpen, className, style } = this.props;
+    if (className !== prevProps.className) {
+      this.removeClassNames(prevProps.className);
+      this.addClassName(className);
+    }
+
+    if (style !== prevProps.style) {
+      this.updateStyle(style, prevProps.style);
+    }
+
+    if (isOpen === prevProps.isOpen) {
+      return;
+    }
+
+    if (isOpen && !this.isElementInDom) {
+      this.addElementInDOM();
+    } else if (this.isElementInDom) {
+      this.removeElementFromDOM();
+    }
+  }
+
   render() {
     const { children } = this.props;
-    const component = ReactDOM.createPortal(children, this.element);
-    return component as any;
+    return ReactDOM.createPortal(children, this.element);
   }
 }
 

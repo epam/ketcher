@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,21 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import { Atom, assert, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
 
 class ChargeTool implements Tool {
   private readonly editor: Editor;
-  private readonly charge: any;
+  private readonly charge: number;
 
-  constructor(editor, charge) {
+  constructor(editor: Editor, charge: unknown) {
+    assert(typeof charge === 'number', 'Charge tool requires a numeric charge');
     this.editor = editor;
     this.editor.selection(null);
     this.charge = charge;
   }
 
-  mousemove(event) {
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
+    return !atom.atomList && !atom.rglabel;
+  }
+
+  mousemove(event: PointerEvent) {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
@@ -42,7 +49,7 @@ class ChargeTool implements Tool {
     return true;
   }
 
-  click(event) {
+  click(event: PointerEvent) {
     const editor = this.editor;
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
@@ -52,7 +59,7 @@ class ChargeTool implements Tool {
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -104,13 +111,6 @@ class ChargeTool implements Tool {
       }
     }
     return true;
-  }
-
-  private isChargeableAtom(atom: Atom): boolean {
-    // An atom can have a charge if it's not an atom list or R-group label
-    // This allows charges on regular periodic table elements (C, N, O, etc.)
-    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
-    return !atom.atomList && !atom.rglabel;
   }
 }
 

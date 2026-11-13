@@ -150,7 +150,7 @@ describe('SelectBase event-local bond sorting', () => {
         const uncached = jest
           .spyOn(SelectBase, 'calculateDistanceSnap')
           .mockImplementation((position, initial, connected) =>
-            original(position, initial, connected),
+            original.call(SelectBase, position, initial, connected),
           );
         expect(tool.snap(new MouseEvent('mousemove'), delta)).toEqual(cached);
         uncached.mockRestore();

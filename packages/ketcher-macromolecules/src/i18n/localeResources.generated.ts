@@ -7,12 +7,19 @@
 import macromolecules from '../locales/en/macromolecules.json';
 import macromoleculesDialogs from '../locales/en/macromoleculesDialogs.json';
 
+import macromolecules_es from '../locales/es/macromolecules.json';
+import macromoleculesDialogs_es from '../locales/es/macromoleculesDialogs.json';
+
 import macromolecules_zh_CN from '../locales/zh-CN/macromolecules.json';
 import macromoleculesDialogs_zh_CN from '../locales/zh-CN/macromoleculesDialogs.json';
 
 export const BASE_RESOURCES = { macromolecules, macromoleculesDialogs };
 
 export const EXTRA_LOCALE_RESOURCES = {
+  es: {
+    macromolecules: macromolecules_es,
+    macromoleculesDialogs: macromoleculesDialogs_es,
+  },
   'zh-CN': {
     macromolecules: macromolecules_zh_CN,
     macromoleculesDialogs: macromoleculesDialogs_zh_CN,

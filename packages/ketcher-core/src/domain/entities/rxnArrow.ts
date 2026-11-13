@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,11 +50,6 @@ export interface RxnArrowAttributes {
 }
 
 export class RxnArrow extends BaseMicromoleculeEntity {
-  mode: RxnArrowMode;
-  pos: Array<Vec2>;
-  height?: number;
-  arrowId?: number;
-
   static isElliptical(arrow) {
     return [
       RxnArrowMode.EllipticalArcFilledBow,
@@ -63,6 +58,11 @@ export class RxnArrow extends BaseMicromoleculeEntity {
       RxnArrowMode.EllipticalArcOpenAngle,
     ].includes(arrow.mode);
   }
+
+  mode: RxnArrowMode;
+  pos: Array<Vec2>;
+  height?: number;
+  arrowId?: number;
 
   constructor(attributes: RxnArrowAttributes) {
     super(attributes?.initiallySelected);

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -102,72 +102,13 @@ export class Bond extends BaseMicromoleculeEntity {
     customQuery: null,
   };
 
-  begin: number;
-  end: number;
-  readonly type: number;
-  readonly xxx: string;
-  stereo: number;
-  readonly topology: number | null;
-  readonly reactingCenterStatus: number | null;
-  customQuery: string | null;
-  len: number;
-  sb: number;
-  sa: number;
-  cip?: BondCIP | null;
-  hb1?: number;
-  hb2?: number;
-  angle: number;
-  center: Vec2;
-  isPreview: boolean;
-  beginSuperatomAttachmentPointNumber?: number;
-  endSuperatomAttachmentPointNumber?: number;
-  beginSgroup?: SGroup;
-  endSgroup?: SGroup;
-
-  constructor(attributes: BondAttributes) {
-    super(attributes.initiallySelected);
-    this.begin = attributes.begin;
-    this.end = attributes.end;
-    this.type = attributes.type;
-    this.xxx = attributes.xxx ?? '';
-    this.stereo = Bond.PATTERN.STEREO.NONE;
-    this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
-    this.customQuery = null;
-    this.reactingCenterStatus = 0;
-    this.cip = attributes.cip ?? null;
-    this.len = 0;
-    this.sb = 0;
-    this.sa = 0;
-    this.angle = 0;
-    this.isPreview = false;
-    this.beginSuperatomAttachmentPointNumber =
-      attributes.beginSuperatomAttachmentPointNumber;
-    this.endSuperatomAttachmentPointNumber =
-      attributes.endSuperatomAttachmentPointNumber;
-
-    if (attributes.stereo) this.stereo = attributes.stereo;
-    if (attributes.topology) this.topology = attributes.topology;
-    if (attributes.customQuery) {
-      this.customQuery = attributes.customQuery;
-      this.type = Bond.PATTERN.TYPE.ANY;
-      this.reactingCenterStatus = null;
-      this.topology = null;
-    }
-
-    if (attributes.reactingCenterStatus) {
-      this.reactingCenterStatus = attributes.reactingCenterStatus;
-    }
-
-    this.center = new Vec2();
-  }
-
   static getAttrHash(
     bond: Bond,
   ): Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> {
     const attrs: Partial<Pick<BondAttributes, keyof typeof Bond.attrlist>> = {};
-    for (const attr in Bond.attrlist) {
+    for (const attr in this.attrlist) {
       const key = attr as keyof typeof Bond.attrlist;
-      if (bond[key] || key === 'stereo') {
+      if (key === 'stereo' || bond[key]) {
         attrs[key] = bond[key] as never;
       }
     }
@@ -225,7 +166,7 @@ export class Bond extends BaseMicromoleculeEntity {
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd);
+      this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -246,7 +187,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
       isAllSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
       return DOUBLE;
@@ -269,7 +210,7 @@ export class Bond extends BaseMicromoleculeEntity {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
+    } = this.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
       return [3];
@@ -283,8 +224,8 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Bond.attrlist) {
-      return Bond.attrlist[attr];
+    if (attr in this.attrlist) {
+      return this.attrlist[attr];
     }
   }
 
@@ -358,7 +299,7 @@ export class Bond extends BaseMicromoleculeEntity {
   public static isBondToHiddenLeavingGroup(
     struct: Struct,
     bond: Bond,
-    includeAtomsInCollapsedSgroups = false,
+    shouldIncludeAtomsInCollapsedSgroups = false,
   ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -371,7 +312,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.begin,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
@@ -379,7 +320,7 @@ export class Bond extends BaseMicromoleculeEntity {
           struct,
           bond.end,
           false,
-          includeAtomsInCollapsedSgroups,
+          shouldIncludeAtomsInCollapsedSgroups,
         ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
@@ -396,5 +337,64 @@ export class Bond extends BaseMicromoleculeEntity {
         sgroup.isMonomer
       );
     });
+  }
+
+  begin: number;
+  end: number;
+  readonly type: number;
+  readonly xxx: string;
+  stereo: number;
+  readonly topology: number | null;
+  readonly reactingCenterStatus: number | null;
+  customQuery: string | null;
+  len: number;
+  sb: number;
+  sa: number;
+  cip?: BondCIP | null;
+  hb1?: number;
+  hb2?: number;
+  angle: number;
+  center: Vec2;
+  isPreview: boolean;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
+
+  constructor(attributes: BondAttributes) {
+    super(attributes.initiallySelected);
+    this.begin = attributes.begin;
+    this.end = attributes.end;
+    this.type = attributes.type;
+    this.xxx = attributes.xxx ?? '';
+    this.stereo = Bond.PATTERN.STEREO.NONE;
+    this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+    this.customQuery = null;
+    this.reactingCenterStatus = 0;
+    this.cip = attributes.cip ?? null;
+    this.len = 0;
+    this.sb = 0;
+    this.sa = 0;
+    this.angle = 0;
+    this.isPreview = false;
+    this.beginSuperatomAttachmentPointNumber =
+      attributes.beginSuperatomAttachmentPointNumber;
+    this.endSuperatomAttachmentPointNumber =
+      attributes.endSuperatomAttachmentPointNumber;
+
+    if (attributes.stereo) this.stereo = attributes.stereo;
+    if (attributes.topology) this.topology = attributes.topology;
+    if (attributes.customQuery) {
+      this.customQuery = attributes.customQuery;
+      this.type = Bond.PATTERN.TYPE.ANY;
+      this.reactingCenterStatus = null;
+      this.topology = null;
+    }
+
+    if (attributes.reactingCenterStatus) {
+      this.reactingCenterStatus = attributes.reactingCenterStatus;
+    }
+
+    this.center = new Vec2();
   }
 }

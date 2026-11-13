@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,17 +19,17 @@ import { useTranslation } from 'react-i18next';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
 import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
+import type Editor from 'src/script/editor';
+import type { RemoveFGParams } from 'src/script/editor/Editor.types';
 
-interface RemoveFGProps extends BaseProps {
-  fgIds: any;
-}
+interface RemoveFGProps extends BaseProps, RemoveFGParams {}
 
 type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
   const { t } = useTranslation(['common', 'dialogs']);
   const { ketcherId } = useAppContext();
-  const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const { fgIds } = props;
 
   const remove = function () {
@@ -39,10 +38,6 @@ const RemoveFG = (props: Props) => {
         editor.update(fromSgroupDeletion(editor.render.ctab, id));
       }
     return true;
-  };
-
-  const exit = (key, res) => {
-    props[key](res);
   };
 
   return (
@@ -63,7 +58,7 @@ const RemoveFG = (props: Props) => {
           type="button"
           value={t('common:button.cancel')}
           className={classes.buttonCancel}
-          onClick={() => exit('onOk', false)}
+          onClick={() => props.onOk(false)}
           data-testid="Cancel"
         />
         <input
@@ -71,7 +66,7 @@ const RemoveFG = (props: Props) => {
           value={t('dialogs:toolbox.removeFG.removeAbbreviation')}
           data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
-          onClick={() => exit('onOk', remove())}
+          onClick={() => props.onOk(remove())}
         />
       </footer>
     </div>

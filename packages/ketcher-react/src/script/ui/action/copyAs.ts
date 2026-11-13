@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,7 +61,7 @@ export default function copyAs(type: SerializationType): void {
     }
 
     const hasSimpleObjectsOrTexts = Boolean(
-      struct.simpleObjects.size || struct.texts.size,
+      struct.simpleObjects.size > 0 || struct.texts.size > 0,
     );
 
     // MOL format doesn't support simple objects and text objects
@@ -80,8 +80,8 @@ export default function copyAs(type: SerializationType): void {
     } else {
       navigator.clipboard.writeText(structData);
     }
-  } catch (e) {
-    KetcherLogger.error('copyAs.ts::copyAs', e);
+  } catch (error) {
+    KetcherLogger.error('copyAs.ts::copyAs', error);
     errorHandler?.(i18n.t('common:errors.featureNotAvailableInBrowser'));
   }
 }

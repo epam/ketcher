@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,33 +54,6 @@ export class StereoFlagRenderer extends BaseRenderer {
     }
   }
 
-  public show() {
-    if (!this.shouldDisplayStereoFlag()) {
-      return;
-    }
-
-    this.rootElement = this.canvas
-      .insert('g', `.monomer`)
-      .data([this])
-      .attr('data-testid', 'stereo-flag')
-      .attr('pointer-events', 'all')
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
-
-    this.textElement = this.rootElement
-      .append('text')
-      .attr('font-family', 'Arial')
-      .attr('font-size', '13px')
-      .attr('fill', '#000')
-      .attr('y', 4)
-      .text(this.flagLabel);
-
-    this.appendHoverAreaElement();
-    this.drawSelection();
-  }
-
   private shouldDisplayStereoFlag(): boolean {
     const editor = provideEditorInstance();
     const settings = ketcherProvider
@@ -117,6 +90,33 @@ export class StereoFlagRenderer extends BaseRenderer {
       .attr('width', bbox.width + HOVER_PADDING * 2)
       .attr('height', bbox.height + HOVER_PADDING * 2)
       .attr('rx', 4);
+  }
+
+  public show() {
+    if (!this.shouldDisplayStereoFlag()) {
+      return;
+    }
+
+    this.rootElement = this.canvas
+      .insert('g', `.monomer`)
+      .data([this])
+      .attr('data-testid', 'stereo-flag')
+      .attr('pointer-events', 'all')
+      .attr(
+        'transform',
+        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    this.textElement = this.rootElement
+      .append('text')
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', '#000')
+      .attr('y', 4)
+      .text(this.flagLabel);
+
+    this.appendHoverAreaElement();
+    this.drawSelection();
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {

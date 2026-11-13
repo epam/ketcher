@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import {
   selectIsMacromoleculesPropertiesWindowOpened,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
+import { selectIsSettingsPanelOpen } from 'state/modal';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -57,13 +58,14 @@ export const CalculateMacromoleculePropertiesButton = () => {
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
+  const isSettingsPanelOpen = useAppSelector(selectIsSettingsPanelOpen);
 
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
 
   const handleClick = async () => {
-    const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
-    await recalculateMacromoleculeProperties(skipDataFetch);
+    const shouldSkipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+    await recalculateMacromoleculeProperties(shouldSkipDataFetch);
 
     dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
 
@@ -74,6 +76,7 @@ export const CalculateMacromoleculePropertiesButton = () => {
     <StyledButton
       isActive={isMacromoleculesPropertiesWindowOpened}
       onClick={handleClick}
+      disabled={isSettingsPanelOpen}
       title={t('macromoleculeProperties.calculateProperties', {
         shortcut: hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility,
       })}

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,22 +30,22 @@ function cloneMeta<T extends { clone(): T; resetInitiallySelected(): void }>(
   return clone;
 }
 
-export function needsMetaPreservation(struct: Struct): boolean {
+export function shouldPreserveMeta(struct: Struct): boolean {
   return !!(
-    struct.rxnArrows.size ||
-    struct.rxnPluses.size ||
-    struct.texts.size ||
-    struct.simpleObjects.size ||
-    struct.images.size ||
-    struct.multitailArrows.size
+    struct.rxnArrows.size > 0 ||
+    struct.rxnPluses.size > 0 ||
+    struct.texts.size > 0 ||
+    struct.simpleObjects.size > 0 ||
+    struct.images.size > 0 ||
+    struct.multitailArrows.size > 0
   );
 }
 
-export function needsStructurePreservation(struct: Struct): boolean {
+export function shouldPreserveStructure(struct: Struct): boolean {
   return struct.sgroups.size > 0 || struct.rgroups.size > 0;
 }
 
-export function mergeCoordinatesFromResult(
+export function didMergeCoordinatesFromResult(
   result: Struct,
   original: Struct,
 ): boolean {
@@ -137,7 +137,7 @@ export function collapseExpandedSuperatoms(struct: Struct): void {
 }
 
 export function mergeMetaObjects(result: Struct, original: Struct): void {
-  if (original.rxnArrows.size || original.rxnPluses.size) {
+  if (original.rxnArrows.size > 0 || original.rxnPluses.size > 0) {
     result.isReaction = true;
   }
 

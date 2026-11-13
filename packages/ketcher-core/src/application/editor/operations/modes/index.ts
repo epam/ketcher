@@ -7,7 +7,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +22,7 @@ import type { Operation } from 'domain/entities/Operation';
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
-  constructor(private readonly forceRecalculateAntisense = false) {}
+  constructor(private readonly shouldForceRecalculateAntisense = false) {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = provideEditorInstance();
@@ -31,7 +31,7 @@ export class ReinitializeModeOperation implements Operation {
       false,
       undefined,
       true,
-      this.forceRecalculateAntisense,
+      this.shouldForceRecalculateAntisense,
     );
   }
 

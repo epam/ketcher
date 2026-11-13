@@ -48,70 +48,6 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     return this.render.ctab;
   }
 
-  mousedown(event: MouseEvent) {
-    this.dragCtx = {
-      p0: CoordinateTransformation.pageToModel(event, this.render),
-      action: null,
-      itemId: null,
-    };
-  }
-
-  mousemove(event: MouseEvent) {
-    if (!this.dragCtx) return;
-    const current = CoordinateTransformation.pageToModel(event, this.render);
-    const diff = current.sub(this.dragCtx.p0);
-    if (!this.dragCtx.action) {
-      const action = fromArrowAddition(
-        this.reStruct,
-        [this.dragCtx.p0, this.dragCtx.p0],
-        this.mode,
-      );
-      // TODO: need to rework  actions/operations logic
-      const firstOp = action.operations[0];
-      if (!(firstOp instanceof RxnArrowDelete)) {
-        throw new TypeError(
-          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
-        );
-      }
-      const arrowId = firstOp.data.id;
-      assert(arrowId != null);
-      const dragCtx: DragContextInProgress = {
-        ...this.dragCtx,
-        itemId: arrowId,
-        action,
-      };
-      this.dragCtx = dragCtx;
-      this.editor.update(dragCtx.action, true);
-    } else {
-      this.dragCtx.action.perform(this.reStruct);
-    }
-
-    const dragCtx = this.dragCtx;
-    assert(dragCtx?.action != null);
-    this.updateResizingState(dragCtx.itemId, true);
-    const isSnappingEnabled = !event.ctrlKey;
-    dragCtx.action = fromArrowResizing(
-      this.reStruct,
-      dragCtx.itemId,
-      diff,
-      current,
-      null,
-      isSnappingEnabled,
-    );
-    this.editor.update(dragCtx.action, true);
-  }
-
-  mouseup(event: MouseEvent) {
-    if (!this.dragCtx) return;
-    if (this.dragCtx.action) {
-      this.dragCtx = this.addNewArrowWithDragging(this.dragCtx);
-      this.editor.update(this.dragCtx.action);
-    } else {
-      this.addNewArrowWithClicking(event);
-    }
-    this.dragCtx = null;
-  }
-
   private getArrowWithMinimalLengthEnd(start: Vec2, end: Vec2 | null): Vec2 {
     if (!end) {
       return new Vec2(start.x + ReactionArrowAddTool.DEFAULT_LENGTH, start.y);
@@ -159,5 +95,69 @@ export class ReactionArrowAddTool implements ArrowAddTool {
     const reArrow = this.reStruct.rxnArrows.get(arrowId);
     assert(reArrow != null);
     reArrow.isResizing = isResizing;
+  }
+
+  mousedown(event: MouseEvent) {
+    this.dragCtx = {
+      p0: CoordinateTransformation.pageToModel(event, this.render),
+      action: null,
+      itemId: null,
+    };
+  }
+
+  mousemove(event: MouseEvent) {
+    if (!this.dragCtx) return;
+    const current = CoordinateTransformation.pageToModel(event, this.render);
+    const diff = current.sub(this.dragCtx.p0);
+    if (this.dragCtx.action) {
+      this.dragCtx.action.perform(this.reStruct);
+    } else {
+      const action = fromArrowAddition(
+        this.reStruct,
+        [this.dragCtx.p0, this.dragCtx.p0],
+        this.mode,
+      );
+      // TODO: need to rework  actions/operations logic
+      const firstOp = action.operations[0];
+      if (!(firstOp instanceof RxnArrowDelete)) {
+        throw new TypeError(
+          'Expected RxnArrowDelete as the first operation of fromArrowAddition',
+        );
+      }
+      const arrowId = firstOp.data.id;
+      assert(arrowId != null);
+      const dragCtx: DragContextInProgress = {
+        ...this.dragCtx,
+        itemId: arrowId,
+        action,
+      };
+      this.dragCtx = dragCtx;
+      this.editor.update(dragCtx.action, true);
+    }
+
+    const dragCtx = this.dragCtx;
+    assert(dragCtx?.action != null);
+    this.updateResizingState(dragCtx.itemId, true);
+    const isSnappingEnabled = !event.ctrlKey;
+    dragCtx.action = fromArrowResizing(
+      this.reStruct,
+      dragCtx.itemId,
+      diff,
+      current,
+      null,
+      isSnappingEnabled,
+    );
+    this.editor.update(dragCtx.action, true);
+  }
+
+  mouseup(event: MouseEvent) {
+    if (!this.dragCtx) return;
+    if (this.dragCtx.action) {
+      this.dragCtx = this.addNewArrowWithDragging(this.dragCtx);
+      this.editor.update(this.dragCtx.action);
+    } else {
+      this.addNewArrowWithClicking(event);
+    }
+    this.dragCtx = null;
   }
 }

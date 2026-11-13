@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -110,7 +110,7 @@ class EraserTool implements Tool {
     const bondsResult: Array<number> = [];
     const preResult: Array<number> = [];
 
-    if (selected && functionalGroups.size && selected.atoms) {
+    if (selected && functionalGroups.size > 0 && selected.atoms) {
       for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
@@ -133,19 +133,19 @@ class EraserTool implements Tool {
           )
         ) {
           const sgroupAtoms =
-            actualSgroupId !== undefined
-              ? SGroup.getAtoms(
+            actualSgroupId === undefined
+              ? undefined
+              : SGroup.getAtoms(
                   molecule,
                   struct.sgroups.get(actualSgroupId)?.item,
-                )
-              : undefined;
+                );
           const sgroupBonds =
-            actualSgroupId !== undefined
-              ? SGroup.getBonds(
+            actualSgroupId === undefined
+              ? undefined
+              : SGroup.getBonds(
                   molecule,
                   struct.sgroups.get(actualSgroupId)?.item,
-                )
-              : undefined;
+                );
           if (sgroupAtoms && sgroupBonds && atom === sgroupAtoms[0]) {
             newSelected.atoms.push(...sgroupAtoms);
             newSelected.bonds.push(...sgroupBonds);
@@ -165,7 +165,7 @@ class EraserTool implements Tool {
       }
     }
 
-    if (selected && functionalGroups.size && selected.bonds) {
+    if (selected && functionalGroups.size > 0 && selected.bonds) {
       for (const bond of selected.bonds) {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,
@@ -187,7 +187,11 @@ class EraserTool implements Tool {
       }
     }
 
-    if (selected && functionalGroups.size && selected.rgroupAttachmentPoints) {
+    if (
+      selected &&
+      functionalGroups.size > 0 &&
+      selected.rgroupAttachmentPoints
+    ) {
       for (const rgroupAttachmentPointId of selected.rgroupAttachmentPoints) {
         const attachedAtomId =
           FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(
@@ -328,7 +332,7 @@ class EraserTool implements Tool {
       }
     }
 
-    if (atomResult.length) {
+    if (atomResult.length > 0) {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
@@ -339,7 +343,7 @@ class EraserTool implements Tool {
           result.push(fgId);
         }
       }
-    } else if (bondResult.length) {
+    } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
@@ -353,7 +357,7 @@ class EraserTool implements Tool {
       }
     }
 
-    if (result.length) {
+    if (result.length > 0) {
       dispatchMonomerOrGroupDialog(this.editor, result);
       return;
     }

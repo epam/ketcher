@@ -1011,8 +1011,7 @@
             "y": -2.75
         },
         "alias": "meF",
-        "templateId": "meF___N-Methyl-Phenylalanine",
-        "seqid": 14
+        "templateId": "meF___N-Methyl-Phenylalanine"
     },
     "monomer14": {
         "type": "monomer",

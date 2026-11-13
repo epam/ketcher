@@ -7,6 +7,7 @@ import {
 import { AtomList } from 'domain/entities/atomList';
 import type { Atom } from 'domain/entities/CoreAtom';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { Vec2 } from 'domain/entities/vec2';
 
 // The singleton needs a live canvas; isLabelVisible only reads its viewModel.
 jest.mock('application/editor/editorSingleton', () => ({
@@ -70,6 +71,88 @@ describe('AtomRenderer.labelText', () => {
     expect(callGetter('labelText', mockAtom('Q' as GenericAtomLabel))).toBe(
       'Q',
     );
+  });
+});
+
+describe('AtomRenderer.atomMappingLabelText', () => {
+  it('formats a positive atom mapping number as molecules mode does', () => {
+    expect(
+      callGetter('atomMappingLabelText', mockAtom(AtomLabel.C, { aam: 7 })),
+    ).toBe('.7.');
+  });
+
+  it('does not render a label when no atom mapping number is assigned', () => {
+    expect(
+      callGetter('atomMappingLabelText', mockAtom(AtomLabel.C, { aam: 0 })),
+    ).toBeUndefined();
+    expect(
+      callGetter('atomMappingLabelText', mockAtom(AtomLabel.C)),
+    ).toBeUndefined();
+  });
+});
+
+describe('AtomRenderer atom mapping label placement', () => {
+  it('places the mapping label in the largest sector with molecule-mode clearance', () => {
+    const method = Object.getOwnPropertyDescriptor(
+      AtomRenderer.prototype,
+      'getAtomMappingLabelOffset',
+    )?.value;
+    if (typeof method !== 'function') {
+      throw new Error('No method found for getAtomMappingLabelOffset');
+    }
+
+    const direction = new Vec2(0, -1);
+    const getProjectedLabelDistance = jest.fn().mockReturnValue(12);
+    const offset = method.call(
+      {
+        bisectLargestSector: jest.fn().mockReturnValue(direction),
+        getProjectedLabelDistance,
+      },
+      20,
+      10,
+    ) as Vec2;
+
+    expect(offset).toEqual(new Vec2(0, -12));
+    expect(getProjectedLabelDistance).toHaveBeenCalledWith(20, 10, direction);
+  });
+
+  it('renders the mapping label without intercepting atom interactions', () => {
+    const method = Object.getOwnPropertyDescriptor(
+      AtomRenderer.prototype,
+      'appendAtomMappingLabel',
+    )?.value;
+    if (typeof method !== 'function') {
+      throw new Error('No method found for appendAtomMappingLabel');
+    }
+
+    const selection = {
+      text: jest.fn(),
+      attr: jest.fn(),
+      node: jest.fn().mockReturnValue({
+        getBBox: () => ({ width: 20, height: 10 }),
+      }),
+    };
+    selection.text.mockReturnValue(selection);
+    selection.attr.mockReturnValue(selection);
+
+    const append = jest.fn().mockReturnValue(selection);
+    const getAtomMappingLabelOffset = jest
+      .fn()
+      .mockReturnValue(new Vec2(0, -12));
+
+    method.call({
+      atomMappingLabelText: '.7.',
+      rootElement: { append },
+      labelColor: 'black',
+      getAtomMappingLabelOffset,
+    });
+
+    expect(append).toHaveBeenCalledWith('text');
+    expect(selection.text).toHaveBeenCalledWith('.7.');
+    expect(selection.attr).toHaveBeenCalledWith('pointer-events', 'none');
+    expect(selection.attr).toHaveBeenCalledWith('x', 0);
+    expect(selection.attr).toHaveBeenCalledWith('y', -12);
+    expect(getAtomMappingLabelOffset).toHaveBeenCalledWith(20, 10);
   });
 });
 

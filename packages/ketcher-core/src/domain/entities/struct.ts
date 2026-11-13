@@ -40,12 +40,9 @@ import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import type { Image } from './image';
-import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { getStereoAtomsMap } from 'domain/helpers/getStereoAtomsMap';
 import type { MultitailArrow } from './multitailArrow';
-import {
-  flipPointByCenter,
-  rotateDelta,
-} from 'application/editor/shared/utils';
+import { flipPointByCenter, rotateDelta } from 'domain/helpers/pointTransforms';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { isAllowedNonAttachmentGroupHapticBondMetal } from 'domain/helpers/hapticBond';
 

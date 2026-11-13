@@ -61,25 +61,6 @@ interface TableState {
 }
 
 class Table extends Component<TableProps, TableState> {
-  constructor(props: TableProps) {
-    super(props);
-    const heliumElement = Elements.get(2);
-
-    let initialValue: string | string[] | null = null;
-    if (props.values) {
-      initialValue = props.values;
-    } else if (!props.pseudo && props.label) {
-      initialValue = props.label;
-    }
-
-    this.state = {
-      type: props.type ?? 'atom',
-      value: initialValue,
-      current: heliumElement || ({} as Element),
-      isInfo: false,
-    };
-  }
-
   changeType = (type: PeriodTableType) => {
     const isPreviousListChoice =
       this.state.type === 'list' || this.state.type === 'not-list';
@@ -150,6 +131,25 @@ class Table extends Component<TableProps, TableState> {
       onMouseLeave: () => this.setState({ isInfo: false }),
     };
   };
+
+  constructor(props: TableProps) {
+    super(props);
+    const heliumElement = Elements.get(2);
+
+    let initialValue: string | string[] | null = null;
+    if (props.values) {
+      initialValue = props.values;
+    } else if (!props.pseudo && props.label) {
+      initialValue = props.label;
+    }
+
+    this.state = {
+      type: props.type ?? 'atom',
+      value: initialValue,
+      current: heliumElement || ({} as Element),
+      isInfo: false,
+    };
+  }
 
   render() {
     const { value } = this.state;

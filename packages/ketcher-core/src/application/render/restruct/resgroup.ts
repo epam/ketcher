@@ -51,9 +51,13 @@ interface SGroupdrawBracketsOptions {
 }
 
 class ReSGroup extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
+  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
   public item: SGroup | undefined;
   public render!: Render;
-  private expandedMonomerAttachmentPoints?: RaphaelSet; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -61,10 +65,6 @@ class ReSGroup extends ReObject {
     @type {SGroup}
     */
     this.item = sgroup;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   /**

@@ -38,8 +38,8 @@ function deleteBondFromMoleculeStruct(bond: Bond) {
 }
 
 export class BondAddOperation implements Operation {
-  public bond: Bond;
   private bondInMoleculeStruct?: MicromoleculesBond;
+  public bond: Bond;
   public priority = 1;
   constructor(
     public addBondChangeModel: (bond?: Bond) => Bond,

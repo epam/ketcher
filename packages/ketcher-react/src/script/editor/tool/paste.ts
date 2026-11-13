@@ -103,12 +103,12 @@ class PasteTool implements Tool {
     debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
   }
 
-  public setMergeItems(mergeItems: MergeItems) {
-    this.mergeItems = mergeItems;
-  }
-
   private get restruct() {
     return this.editor.render.ctab;
+  }
+
+  public setMergeItems(mergeItems: MergeItems) {
+    this.mergeItems = mergeItems;
   }
 
   mousedown(event: PointerEvent) {
@@ -255,8 +255,12 @@ class PasteTool implements Tool {
   mouseup() {
     const idsOfItemsMerged = this.mergeItems
       ? {
-          atoms: [...this.mergeItems.atoms.values()],
-          bonds: [...this.mergeItems.bonds.values()],
+          ...(this.mergeItems.atoms && {
+            atoms: [...this.mergeItems.atoms.values()],
+          }),
+          ...(this.mergeItems.bonds && {
+            bonds: [...this.mergeItems.bonds.values()],
+          }),
         }
       : undefined;
 

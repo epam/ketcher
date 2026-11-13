@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import type { TwoStrandedNodesSelection } from 'application/render/renderers/sequence/SequenceRenderer';
@@ -23,7 +24,11 @@ import {
 // monomer is replaced along with the sense one.
 
 const createNucleotideNode = (base: string, position: Vec2) => {
-  const created = Nucleotide.createOnCanvas(base, position);
+  const created = Nucleotide.createOnCanvas(
+    provideEditorInstance(),
+    base,
+    position,
+  );
 
   if (!created) {
     throw new Error(`Fixture setup failed: nucleotide ${base} not created`);

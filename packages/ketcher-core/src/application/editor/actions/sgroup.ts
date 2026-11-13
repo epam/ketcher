@@ -99,11 +99,12 @@ export function fromSeveralSgroupAddition(
     );
   }
 
-  return descriptors.reduce((acc, fValue) => {
+  let action = new Action();
+  for (const fValue of descriptors) {
     const localAttrs = { ...attrs };
     localAttrs.fieldValue = fValue;
 
-    return acc.mergeWith(
+    action = action.mergeWith(
       fromSgroupAddition(
         restruct,
         type,
@@ -113,7 +114,8 @@ export function fromSeveralSgroupAddition(
         attachmentPoints,
       ),
     );
-  }, new Action());
+  }
+  return action;
 }
 
 export function fromSgroupAttrs(restruct, id, attrs) {
@@ -423,14 +425,15 @@ export function setExpandMonomerSGroup(
     });
   });
 
-  const largestHeightInLine = [...sameLine.values()].reduce((acc, sGroupId) => {
+  let largestHeightInLine = 0;
+  for (const sGroupId of sameLine.values()) {
     const sGroupInLine = restruct.molecule.sgroups.get(sGroupId);
     if (!sGroupInLine) {
-      return acc;
+      continue;
     }
 
     if (sGroupInLine.isContracted()) {
-      return acc;
+      continue;
     }
 
     const sGroupInLineAtoms = SGroup.getAtoms(struct, sGroupInLine);
@@ -440,8 +443,8 @@ export function setExpandMonomerSGroup(
     );
     const sGroupInLineHeight = sGroupInLineBBox.p1.y - sGroupInLineBBox.p0.y;
 
-    return Math.max(acc, sGroupInLineHeight);
-  }, 0);
+    largestHeightInLine = Math.max(largestHeightInLine, sGroupInLineHeight);
+  }
   const baseVerticalOffset =
     largestHeightInLine > sGroupHeight
       ? 0
@@ -829,21 +832,19 @@ export function fromSgroupAction(
 }
 
 function fromAtomAction(restruct, newSg, sourceAtoms) {
-  return sourceAtoms.reduce(
-    (acc, atom) => {
-      acc.action = acc.action.mergeWith(
-        fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs),
-      );
-      return acc;
+  const result = {
+    action: new Action(),
+    selection: {
+      atoms: sourceAtoms,
+      bonds: [],
     },
-    {
-      action: new Action(),
-      selection: {
-        atoms: sourceAtoms,
-        bonds: [],
-      },
-    },
-  );
+  };
+  for (const atom of sourceAtoms) {
+    result.action = result.action.mergeWith(
+      fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs),
+    );
+  }
+  return result;
 }
 
 function fromQueryComponentSGroupAction(
@@ -867,18 +868,16 @@ function fromQueryComponentSGroupAction(
     sourceAtoms.map((aid) => restruct.atoms.get(aid)?.a.fragment),
   );
 
-  [...allFragments].forEach((fragId) => {
-    const atoms = targetAtoms.reduce((res: number[], aid: number) => {
+  Array.from(allFragments).forEach((fragId) => {
+    const atoms = targetAtoms.filter((aid) => {
       const atom = restruct.atoms.get(aid)?.a;
-      if (fragId === atom?.fragment) res.push(aid);
-
-      return res;
-    }, []);
+      return fragId === atom?.fragment;
+    });
 
     const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
-    selection.atoms = [...selection.atoms, ...atoms];
-    selection.bonds = [...selection.bonds, ...bonds];
+    selection.atoms = selection.atoms.concat(atoms);
+    selection.bonds = selection.bonds.concat(bonds);
   });
 
   return {
@@ -897,34 +896,29 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
     sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
-  return [...allFragments].reduce(
-    (acc, fragId) => {
-      const atoms = targetAtoms.reduce((res, aid) => {
-        const atom = restruct.atoms.get(aid).a;
-        if (fragId === atom.fragment) res.push(aid);
-
-        return res;
-      }, []);
-
-      const bonds = getAtomsBondIds(restruct.molecule, atoms);
-
-      acc.action = acc.action.mergeWith(
-        fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
-      );
-
-      acc.selection.atoms = [...acc.selection.atoms, ...atoms];
-      acc.selection.bonds = [...acc.selection.bonds, ...bonds];
-
-      return acc;
+  const result = {
+    action: new Action(),
+    selection: {
+      atoms: [] as number[],
+      bonds: [] as number[],
     },
-    {
-      action: new Action(),
-      selection: {
-        atoms: [] as number[],
-        bonds: [] as number[],
-      },
-    },
-  );
+  };
+  for (const fragId of Array.from(allFragments)) {
+    const atoms = targetAtoms.filter((aid) => {
+      const atom = restruct.atoms.get(aid).a;
+      return fragId === atom.fragment;
+    });
+
+    const bonds = getAtomsBondIds(restruct.molecule, atoms);
+
+    result.action = result.action.mergeWith(
+      fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
+    );
+
+    result.selection.atoms.push(...atoms);
+    result.selection.bonds.push(...bonds);
+  }
+  return result;
 }
 
 function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
@@ -1043,11 +1037,10 @@ function getAtomsBondIds(struct: Struct, atoms: number[]): number[] {
 
 function getAtomsFromBonds(struct, bonds) {
   bonds = bonds || [];
-  return bonds.reduce((acc, bondid) => {
+  return bonds.flatMap((bondid) => {
     const bond = struct.bonds.get(bondid);
-    acc = [...acc, bond.begin, bond.end];
-    return acc;
-  }, []);
+    return [bond.begin, bond.end];
+  });
 }
 
 export function fromSgroupAttachmentPointAddition(

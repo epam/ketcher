@@ -232,18 +232,16 @@ export const selectAxoLabsAliasesByPresetName = createSelector(
   (state: RootState) => state.library.defaultRnaPresets,
   (defaultPresets: IKetMonomerGroupTemplate[]): Map<string, string> => {
     const presets = defaultPresets ?? [];
-    return presets.reduce(
-      (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
-        if (preset.aliasAxoLabs && preset.name) {
-          aliases.set(
-            preset.name.toLowerCase(),
-            preset.aliasAxoLabs.toLowerCase(),
-          );
-        }
-        return aliases;
-      },
-      new Map<string, string>(),
-    );
+    const aliases = new Map<string, string>();
+    presets.forEach((preset) => {
+      if (preset.aliasAxoLabs && preset.name) {
+        aliases.set(
+          preset.name.toLowerCase(),
+          preset.aliasAxoLabs.toLowerCase(),
+        );
+      }
+    });
+    return aliases;
   },
 );
 
@@ -667,47 +665,40 @@ export const selectMonomers = (state: RootState) => {
 };
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
-  const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
-    (result, monomerItem) => {
-      // separate monomers by NaturalAnalogCode
-      const code =
-        monomerItem.props.MonomerNaturalAnalogCode ||
-        NoNaturalAnalogueGroupCode;
-      if (!result[code]) {
-        result[code] = [];
-      }
-      result[code].push({
-        ...monomerItem,
-        label: monomerItem.props.MonomerName,
-      });
-      return result;
-    },
-    {},
-  );
+  const preparedData: Record<string, MonomerItemType[]> = {};
+  monomers.forEach((monomerItem) => {
+    // separate monomers by NaturalAnalogCode
+    const code =
+      monomerItem.props.MonomerNaturalAnalogCode || NoNaturalAnalogueGroupCode;
+    if (!preparedData[code]) {
+      preparedData[code] = [];
+    }
+    preparedData[code].push({
+      ...monomerItem,
+      label: monomerItem.props.MonomerName,
+    });
+  });
 
-  const sortedPreparedData = Object.entries(preparedData).reduce(
-    (result, [code, monomers]) => {
-      const sortedMonomers = [...monomers];
-      sortedMonomers.sort((a, b) => a.label.localeCompare(b.label));
-      const baseIndex = sortedMonomers.findIndex(
-        (monomer) => monomer.label === code,
-      );
-      if (baseIndex !== -1) {
-        const base = sortedMonomers.splice(baseIndex, 1);
-        sortedMonomers.unshift(base[0]);
-      }
-      result[code] = sortedMonomers;
-      return result;
-    },
-    {},
-  );
+  const sortedPreparedData: Record<string, MonomerItemType[]> = {};
+  Object.entries(preparedData).forEach(([code, groupMonomers]) => {
+    const sortedMonomers = [...groupMonomers];
+    sortedMonomers.sort((a, b) => a.label.localeCompare(b.label));
+    const baseIndex = sortedMonomers.findIndex(
+      (monomer) => monomer.label === code,
+    );
+    if (baseIndex !== -1) {
+      const base = sortedMonomers.splice(baseIndex, 1);
+      sortedMonomers.unshift(base[0]);
+    }
+    sortedPreparedData[code] = sortedMonomers;
+  });
 
   // generate list of monomer groups
-  const preparedGroups: Group[] = [];
   const sortedGroupCodes = Object.keys(sortedPreparedData);
   sortedGroupCodes.sort((a, b) => a.localeCompare(b));
 
-  return sortedGroupCodes.reduce((result, code) => {
+  const groups: Group[] = [];
+  sortedGroupCodes.forEach((code) => {
     const group: Group = {
       groupTitle:
         code === NoNaturalAnalogueGroupCode
@@ -722,10 +713,10 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
       });
     });
     if (group.groupItems.length) {
-      result.push(group);
+      groups.push(group);
     }
-    return result;
-  }, preparedGroups);
+  });
+  return groups;
 };
 
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;

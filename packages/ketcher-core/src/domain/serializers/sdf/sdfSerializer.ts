@@ -42,25 +42,22 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
           .split(/^$\n?/m);
 
         const struct = molSerializer.deserialize(chunk.substring(0, end + 6));
-        const props = propChunks.reduce(
-          (acc: StructAssociatedData, pc: string) => {
-            const m = /^> [ \d]*<(\S+)>/.exec(pc);
-            if (m) {
-              const field = m[1];
-              const valueArr = pc.split('\n').slice(1, -1);
-              let value: string;
-              if (valueArr.length > 1) {
-                value = valueArr.join(',');
-              } else {
-                value = pc.split('\n')[1].trim();
-              }
-
-              acc[field] = Number.isFinite(value) ? +value : value.toString();
+        const props: StructAssociatedData = {};
+        propChunks.forEach((pc) => {
+          const m = /^> [ \d]*<(\S+)>/.exec(pc);
+          if (m) {
+            const field = m[1];
+            const valueArr = pc.split('\n').slice(1, -1);
+            let value: string;
+            if (valueArr.length > 1) {
+              value = valueArr.join(',');
+            } else {
+              value = pc.split('\n')[1].trim();
             }
-            return acc;
-          },
-          {} as StructAssociatedData,
-        );
+
+            props[field] = Number.isFinite(value) ? +value : value.toString();
+          }
+        });
 
         result.push({ struct, props });
       }
@@ -71,15 +68,17 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
   serialize(sdfItems: Array<SdfItem>): string {
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    return sdfItems.reduce((res, item) => {
-      res += molSerializer.serialize(item.struct);
+    let result = '';
+    sdfItems.forEach((item) => {
+      result += molSerializer.serialize(item.struct);
 
       Object.keys(item.props).forEach((prop) => {
-        res += `> <${prop}>\n`;
-        res += `${item.props[prop]}\n\n`;
+        result += `> <${prop}>\n`;
+        result += `${item.props[prop]}\n\n`;
       });
 
-      return `${res}$$$$\n`;
-    }, '');
+      result += '$$$$\n';
+    });
+    return result;
   }
 }

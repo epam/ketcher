@@ -22,13 +22,14 @@ const useDelete = () => {
       const restruct = editor.render.ctab;
       const pointsToDelete = props?.rgroupAttachmentPoints ?? [];
 
-      const action = pointsToDelete.reduce((previousAction, currentPoint) => {
+      let action = new Action();
+      pointsToDelete.forEach((currentPoint) => {
         const currentAction = fromRGroupAttachmentPointDeletion(
           restruct,
           currentPoint,
         );
-        return previousAction.mergeWith(currentAction);
-      }, new Action());
+        action = action.mergeWith(currentAction);
+      });
 
       editor.update(action);
       editor.selection(null);

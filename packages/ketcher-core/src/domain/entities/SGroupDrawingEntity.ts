@@ -36,9 +36,10 @@ export class SGroupDrawingEntity extends DrawingEntity {
 
     const atomWeight = 1 / atoms.length;
 
-    return atoms.reduce(
-      (center, position) => center.addScaled(position, atomWeight),
-      new Vec2(),
-    );
+    let center = new Vec2();
+    atoms.forEach((position) => {
+      center = center.addScaled(position, atomWeight);
+    });
+    return center;
   }
 }

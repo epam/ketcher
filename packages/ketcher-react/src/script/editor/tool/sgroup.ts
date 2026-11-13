@@ -871,6 +871,8 @@ function createQueryComponentSGroup(
   } else {
     return fromContextType(id, editor, newSg, selection);
   }
+
+  return undefined;
 }
 
 function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
@@ -960,15 +962,20 @@ function fromContextType(
     currSelection,
   );
 
-  result.selection = result.selection || currSelection;
+  const actionResult = {
+    action: result.action,
+    selection: ('selection' in result && result.selection) || currSelection,
+  };
 
   if (id !== null && id !== undefined) {
-    result.action = result.action.mergeWith(fromSgroupDeletion(restruct, id));
+    actionResult.action = actionResult.action.mergeWith(
+      fromSgroupDeletion(restruct, id),
+    );
   }
 
-  editor.selection(result.selection);
+  editor.selection(actionResult.selection);
 
-  return result;
+  return actionResult;
 }
 
 function anyChainedBonds(bonds: Array<Bond>) {

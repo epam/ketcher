@@ -1305,11 +1305,11 @@ const elementsArray: Array<Element> = [
   },
 ];
 
-const elementsMap = elementsArray.reduce((acc, element) => {
-  acc.set(element.label, element);
-  acc.set(element.number, element);
-  return acc;
-}, new Map<string | number, Element>());
+const elementsMap = new Map<string | number, Element>();
+elementsArray.forEach((element) => {
+  elementsMap.set(element.label, element);
+  elementsMap.set(element.number, element);
+});
 
 export const Elements = {
   get: (key: number | string): Element | undefined => elementsMap.get(key),

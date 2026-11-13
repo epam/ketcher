@@ -28,7 +28,11 @@ export class Matrix<T> {
   }
 
   public get width() {
-    return this.matrix.reduce((max, row) => Math.max(max, row.length), 0);
+    let max = 0;
+    this.matrix.forEach((row) => {
+      max = Math.max(max, row.length);
+    });
+    return max;
   }
 
   forEach(callback: (value: T, x: number, y: number) => void): void {

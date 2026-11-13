@@ -109,35 +109,24 @@ export class SequenceViewModel {
           return;
         }
 
-        const senseMonomersConnectedByHydrogenBond = node.monomers.reduce(
-          (foundMonomersInNode, monomer) => {
-            return [
-              ...foundMonomersInNode,
-              ...monomer.hydrogenBonds.reduce(
-                (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
-                  const monomerConnectedByHydrogenBond =
-                    hydrogenBond.getAnotherMonomer(monomer);
-                  return monomerConnectedByHydrogenBond &&
-                    ((isRnaBaseApplicableForAntisense(
-                      monomerConnectedByHydrogenBond,
-                    ) &&
-                      isRnaBaseApplicableForAntisense(monomer)) ||
-                      editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
-                        monomer,
-                      )?.firstMonomer ===
-                        monomerToChain.get(monomerConnectedByHydrogenBond)
-                          ?.firstMonomer)
-                    ? [
-                        ...foundMonomersConnectedHydrogenBonds,
-                        monomerConnectedByHydrogenBond,
-                      ]
-                    : foundMonomersConnectedHydrogenBonds;
-                },
-                [] as BaseMonomer[],
-              ),
-            ];
-          },
-          [] as BaseMonomer[],
+        const senseMonomersConnectedByHydrogenBond = node.monomers.flatMap(
+          (monomer) =>
+            monomer.hydrogenBonds.flatMap((hydrogenBond) => {
+              const monomerConnectedByHydrogenBond =
+                hydrogenBond.getAnotherMonomer(monomer);
+              return monomerConnectedByHydrogenBond &&
+                ((isRnaBaseApplicableForAntisense(
+                  monomerConnectedByHydrogenBond,
+                ) &&
+                  isRnaBaseApplicableForAntisense(monomer)) ||
+                  editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                    monomer,
+                  )?.firstMonomer ===
+                    monomerToChain.get(monomerConnectedByHydrogenBond)
+                      ?.firstMonomer)
+                ? [monomerConnectedByHydrogenBond]
+                : [];
+            }),
         );
         const firstSenseMonomerConnectedByHydrogenBond =
           senseMonomersConnectedByHydrogenBond[0];

@@ -44,16 +44,15 @@ const bondSpecial: ToolbarItem[] = makeItems([
 
 const groups = [bondCommon, bondStereo, bondQuery, bondSpecial];
 const groupOptions = groups.flat();
-const groupDescriptors = groups.reduce((accum, group, index) => {
-  const start = accum[index - 1]?.end ?? 0;
+const groupDescriptors: GroupDescriptor[] = [];
+groups.forEach((group) => {
+  const start = groupDescriptors.at(-1)?.end ?? 0;
 
-  accum.push({
+  groupDescriptors.push({
     start,
     end: start + group.length,
   });
-
-  return accum;
-}, [] as GroupDescriptor[]);
+});
 
 export {
   bondCommon,

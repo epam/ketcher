@@ -18,7 +18,6 @@ import type { AnyAction } from 'redux';
 import { appUpdate } from '../options/actions';
 import {
   type SdfItem,
-  type Struct,
   SaltsAndSolventsProvider,
   FunctionalGroupsProvider,
   SdfSerializer,
@@ -55,14 +54,10 @@ export function initSaltsAndSolventsTemplates() {
     const functionalGroupsProvider = FunctionalGroupsProvider.getInstance();
     const sdfSerializer = new SdfSerializer();
     const templates = sdfSerializer.deserialize(templatesRawData);
-    const saltsAndSolvents = templates.reduce(
-      (acc: Struct[], { struct, props }) => {
-        struct.abbreviation = String(props.abbreviation);
-        acc.push(struct);
-        return acc;
-      },
-      [],
-    );
+    const saltsAndSolvents = templates.map(({ struct, props }) => {
+      struct.abbreviation = String(props.abbreviation);
+      return struct;
+    });
     saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents);
     functionalGroupsProvider.addToFunctionalGroupsList(saltsAndSolvents);
     dispatch(initSaltsAndSolvents(templates));

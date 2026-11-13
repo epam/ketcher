@@ -326,27 +326,24 @@ export class ReImage extends ReObject {
     const entries = Object.entries(
       this.getSelectionReferencePositions(renderOptions),
     ) as Array<[ImageReferenceName, Vec2]>;
-    return entries.reduce(
-      (acc, [key, position]) => {
-        const offset = Vec2.diff(position, point);
-        const distance = offset.length();
-        if (distance < acc.distance) {
-          return {
-            distance,
-            ref: {
-              name: key,
-              offset: Scale.canvasToModel(offset, renderOptions),
-            },
-          };
-        } else {
-          return acc;
-        }
-      },
-      {
-        ref: null,
-        distance: Number.POSITIVE_INFINITY,
-      } as ClosestReferencePosition,
-    );
+    let closestReferencePosition: ClosestReferencePosition = {
+      ref: null,
+      distance: Number.POSITIVE_INFINITY,
+    };
+    entries.forEach(([key, position]) => {
+      const offset = Vec2.diff(position, point);
+      const distance = offset.length();
+      if (distance < closestReferencePosition.distance) {
+        closestReferencePosition = {
+          distance,
+          ref: {
+            name: key,
+            offset: Scale.canvasToModel(offset, renderOptions),
+          },
+        };
+      }
+    });
+    return closestReferencePosition;
   }
 
   isPointInsidePolygon(point: Vec2, renderOptions: RenderOptions): boolean {

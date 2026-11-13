@@ -506,10 +506,11 @@ export function getDefaultOptions(): Record<string, unknown> {
   const props = optionsSchema.properties;
   if (!props) return {};
 
-  return Object.keys(props).reduce<Record<string, unknown>>((res, prop) => {
-    res[prop] = props[prop].default;
-    return res;
-  }, {});
+  const defaults: Record<string, unknown> = {};
+  Object.keys(props).forEach((prop) => {
+    defaults[prop] = props[prop].default;
+  });
+  return defaults;
 }
 
 export function validation(input: unknown): Record<string, string> | null {
@@ -523,12 +524,14 @@ export function validation(input: unknown): Record<string, string> | null {
     result.errors.map((e) => e.property.replace(/^instance\./, '')),
   );
 
-  return Object.keys(settings).reduce((res, prop) => {
-    if (!optionsSchema.properties) return res;
+  const validSettings: Record<string, string> = {};
+  Object.keys(settings).forEach((prop) => {
+    if (!optionsSchema.properties) return;
 
-    if (optionsSchema.properties[prop] && !errorsProps.has(prop))
-      res[prop] = settings[prop];
+    if (optionsSchema.properties[prop] && !errorsProps.has(prop)) {
+      validSettings[prop] = settings[prop];
+    }
+  });
 
-    return res;
-  }, {});
+  return validSettings;
 }

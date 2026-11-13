@@ -312,10 +312,7 @@ export const SequenceItemContextMenu = ({
         const selectedTwoStrandedNodes: ITwoStrandedChainItem[] =
           selections?.length
             ? selections
-                .reduce(
-                  (acc, selectionRange) => [...acc, ...selectionRange],
-                  [],
-                )
+                .flat()
                 .map((nodeSelection) => nodeSelection.twoStrandedNode)
             : [props.sequenceItemRenderer?.twoStrandedNode];
 

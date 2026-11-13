@@ -240,15 +240,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
       (cells.length === 2 ||
-        cells.reduce(
-          (isStraight: boolean, cell: Cell, index: number): boolean => {
-            if (!isStraight || index === 0 || index === cells.length - 1) {
-              return isStraight;
-            }
-            return cell.x === firstCell.x && !cell.monomer;
-          },
-          true,
-        )) &&
+        cells
+          .slice(1, -1)
+          .every((cell) => cell.x === firstCell.x && !cell.monomer)) &&
       isVerticalConnection;
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
@@ -355,14 +349,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         _xDirection =
           endPosition.x < this.sideConnectionBondTurnPoint ? 180 : 0;
       }
-      const maxXOffset = cell.connections.reduce(
-        (max: number, connection: Connection): number => {
-          return connection.isVertical || max > connection.xOffset
-            ? max
-            : connection.xOffset;
-        },
-        0,
-      );
+      let maxXOffset = 0;
+      for (const connection of cell.connections) {
+        if (!connection.isVertical && !(maxXOffset > connection.xOffset)) {
+          maxXOffset = connection.xOffset;
+        }
+      }
 
       maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 

@@ -67,26 +67,23 @@ class EnhancedStereoTool implements Tool {
         return null;
       }
 
-      const action = stereoAtoms.reduce(
-        (acc, stereoAtom) => {
-          const frid = struct.atoms.get(stereoAtom)?.fragment;
-          const frag =
-            frid === undefined ? null : restruct.molecule.frags.get(frid);
-
-          if (frag?.stereoAtoms) {
-            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
-          }
-          return acc;
+      let action = fromAtomsAttrs(
+        restruct,
+        stereoAtoms,
+        {
+          stereoLabel,
         },
-        fromAtomsAttrs(
-          restruct,
-          stereoAtoms,
-          {
-            stereoLabel,
-          },
-          false,
-        ),
+        false,
       );
+      stereoAtoms.forEach((stereoAtom) => {
+        const frid = struct.atoms.get(stereoAtom)?.fragment;
+        const frag =
+          frid === undefined ? null : restruct.molecule.frags.get(frid);
+
+        if (frag?.stereoAtoms) {
+          action = action.mergeWith(fromStereoFlagUpdate(restruct, frid));
+        }
+      });
       action.operations.reverse();
       return action;
     });

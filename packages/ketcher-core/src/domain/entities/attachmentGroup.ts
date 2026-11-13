@@ -81,20 +81,19 @@ export class AttachmentGroup
       return this.pp;
     }
 
-    const { minX, minY, maxX, maxY } = positions.reduce(
-      (bounds, position) => ({
-        minX: Math.min(bounds.minX, position.x),
-        minY: Math.min(bounds.minY, position.y),
-        maxX: Math.max(bounds.maxX, position.x),
-        maxY: Math.max(bounds.maxY, position.y),
-      }),
-      {
-        minX: positions[0].x,
-        minY: positions[0].y,
-        maxX: positions[0].x,
-        maxY: positions[0].y,
-      },
-    );
+    const bounds = {
+      minX: positions[0].x,
+      minY: positions[0].y,
+      maxX: positions[0].x,
+      maxY: positions[0].y,
+    };
+    for (const position of positions.slice(1)) {
+      bounds.minX = Math.min(bounds.minX, position.x);
+      bounds.minY = Math.min(bounds.minY, position.y);
+      bounds.maxX = Math.max(bounds.maxX, position.x);
+      bounds.maxY = Math.max(bounds.maxY, position.y);
+    }
+    const { minX, minY, maxX, maxY } = bounds;
     const position = new Vec2((minX + maxX) / 2, (minY + maxY) / 2);
 
     this.pp = position;

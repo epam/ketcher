@@ -36,6 +36,8 @@ Key capabilities:
 
 About 25 tools are registered in a map by name. Each tool implements a standard set of mouse/keyboard event handlers (click, double-click, mousedown, mousemove, mouseup, mouseleave, mouseover). DOM events are wired to the active tool, but the whole pipeline is silenced while the macromolecules editor is active — the two input pipelines never run at the same time.
 
+The micromolecule template tool includes contracted group labels in hit testing for atom-bearing templates. For ordinary templates, drag calculations and final replacement resolve the same group atom: the externally connected atom, otherwise the contracted-position atom. Canvas placement checks the provisional template's atom positions for existing contracted-group collisions independently of cursor hit testing. A collision selects the template attachment vertex; provisional placement is reverted, then group extraction and atom-anchored insertion are composed into one history action. Product behavior and abbreviation-editing restrictions are owned by the [templates-and-groups spec](../../openspec/specs/templates-and-groups/spec.md).
+
 ## Macromolecules editor (CoreEditor)
 
 The macromolecules editor owns the drawing-entities manager (the model), the renderers manager (the D3/SVG visual layer), the active mode, and the active tool. It also holds a back-reference to the micromolecules editor instance for operations that need to cross the boundary.

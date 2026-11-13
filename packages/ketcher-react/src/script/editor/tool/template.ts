@@ -28,7 +28,7 @@ import {
   SGroup,
   fromFragmentDeletion,
   fromSgroupDeletion,
-  Action,
+  type Action,
   vectorUtils,
   BondAttr,
   AtomAttr,
@@ -118,7 +118,7 @@ class TemplateTool implements Tool {
     this.findItems = [];
 
     if (templateAtom) {
-      this.findItems.push('atoms');
+      this.findItems.push('atoms', 'functionalGroups');
     }
 
     const bond = frag.bonds.get(this.template.bid);
@@ -126,11 +126,6 @@ class TemplateTool implements Tool {
       // template location sign against attachment bond
       this.template.sign = getSign(frag, bond, xy0Center);
       this.findItems.push('bonds');
-    }
-
-    const sGroupSize = frag.sgroups.size;
-    if (sGroupSize) {
-      this.findItems.push('functionalGroups');
     }
   }
 
@@ -170,7 +165,9 @@ class TemplateTool implements Tool {
 
     const isTargetExpanded = functionalGroup?.isExpanded;
     const isTargetAtomOrBond =
-      this.targetGroupsIds.length > 0 && !this.isModeFunctionalGroup;
+      this.targetGroupsIds.length > 0 &&
+      !this.isModeFunctionalGroup &&
+      (this.closestItem?.map === 'atoms' || this.closestItem?.map === 'bonds');
 
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
@@ -359,7 +356,7 @@ class TemplateTool implements Tool {
       //  ci.type == 'Canvas'
       targetPos = dragCtx.xy0;
     } else if (ci.map === 'atoms' || ci.map === 'functionalGroups') {
-      const atomId = getTargetAtomId(this.struct, ci);
+      const atomId = getTargetAtomId(this.struct, ci, this.mode);
 
       if (atomId !== undefined) {
         const atom = this.struct.atoms.get(atomId);
@@ -421,7 +418,7 @@ class TemplateTool implements Tool {
         angle,
       );
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
-      const atomId = getTargetAtomId(this.struct, ci);
+      const atomId = getTargetAtomId(this.struct, ci, this.mode);
       if (atomId === undefined) return;
       [action] = fromTemplateOnAtom(
         this.editor.render.ctab,
@@ -440,6 +437,76 @@ class TemplateTool implements Tool {
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length > 0) this.targetGroupsIds.length = 0;
+  }
+
+  private addOnCanvas(dragCtx: DragContext, event?: MouseEvent) {
+    const restruct = this.editor.render.ctab;
+    dragCtx.action?.perform(restruct);
+    let [action, pasteItems, createdItems] = fromTemplateOnCanvas(
+      restruct,
+      this.template,
+      dragCtx.xy0,
+      ((dragCtx.angle ?? 0) * Math.PI) / 180,
+      false,
+    );
+    // The cursor follows the template center; a vertex can hit a group while
+    // cursor hit testing still reports empty canvas.
+    const groupMerges = this.editor.findMerge(pasteItems, [
+      'atoms',
+    ]).atomToFunctionalGroup;
+    // Atom-anchored insertion cannot carry nonmolecular template items.
+    const supportsAtomAttachment =
+      Object.entries(createdItems).every(
+        ([map, ids]) => map === 'atoms' || map === 'bonds' || ids.length === 0,
+      ) &&
+      this.template.molecule.rgroups.size === 0 &&
+      this.template.molecule.rgroupAttachmentPoints.size === 0;
+    const match =
+      supportsAtomAttachment &&
+      [...groupMerges].find(([, groupId]) => {
+        const group = this.struct.sgroups.get(groupId);
+        return (
+          group &&
+          !group.atoms.some((id) => pasteItems.atoms.includes(id)) &&
+          FunctionalGroup.isContractedFunctionalGroup(
+            groupId,
+            this.functionalGroups,
+          ) &&
+          !this.struct.isTargetFromMacromolecule({
+            map: 'functionalGroups',
+            id: groupId,
+          })
+        );
+      });
+    if (match) {
+      const [atomId, groupId] = match;
+      const group = this.struct.sgroups.get(groupId);
+      if (!group) return;
+      const templateAtomId = [...this.template.molecule.atoms.keys()][
+        pasteItems.atoms.indexOf(atomId)
+      ];
+      action.perform(restruct);
+      const targetAtomId = getGroupTargetAtomId(this.struct, group);
+      const removal = extractGroupAtom(restruct, group, targetAtomId);
+      [action] = fromTemplateOnAtom(
+        restruct,
+        { ...this.template, aid: templateAtomId },
+        targetAtomId,
+        this.template.angle0 + ((dragCtx.angle ?? 0) * Math.PI) / 180,
+        false,
+      );
+      action = removal.mergeWith(action);
+    }
+    this.editor.update(action);
+    this.editor.selection(null);
+    if (event) {
+      this.editor.hover(
+        this.editor.findItem(event, null),
+        null,
+        event as PointerEvent,
+      );
+    }
+    this.editor.event.message.dispatch({ info: false });
   }
 
   mouseup(event?: Event) {
@@ -479,6 +546,11 @@ class TemplateTool implements Tool {
     end
     */
 
+    if (!ci && !this.isModeFunctionalGroup) {
+      this.addOnCanvas(dragCtx, mouseEvent);
+      return;
+    }
+
     let action, functionalGroupRemoveAction;
 
     if (
@@ -487,10 +559,12 @@ class TemplateTool implements Tool {
         ci.id,
         this.functionalGroups,
       ) &&
-      this.isModeFunctionalGroup &&
-      this.targetGroupsIds.length > 0
+      (!this.isModeFunctionalGroup || this.targetGroupsIds.length > 0)
     ) {
-      const restruct = this.editor.render.ctab;
+      if (dragCtx.action) {
+        dragCtx.action.perform(restruct);
+        dragCtx.action = null;
+      }
       const functionalGroupToReplace = this.struct.sgroups.get(ci.id);
       if (!functionalGroupToReplace) {
         return;
@@ -510,19 +584,13 @@ class TemplateTool implements Tool {
         return;
       }
 
-      functionalGroupRemoveAction = new Action();
-      const { atomId: sGroupPositionAtomId } =
-        functionalGroupToReplace.getContractedPosition(restruct.molecule);
-      const atomsWithoutAttachmentAtom = SGroup.getAtoms(
-        this.struct,
+      const sGroupPositionAtomId = this.isModeFunctionalGroup
+        ? functionalGroupToReplace.getContractedPosition(this.struct).atomId
+        : getGroupTargetAtomId(this.struct, functionalGroupToReplace);
+      functionalGroupRemoveAction = extractGroupAtom(
+        restruct,
         functionalGroupToReplace,
-      ).filter((id) => id !== sGroupPositionAtomId);
-
-      functionalGroupRemoveAction.mergeWith(
-        fromSgroupDeletion(restruct, ci.id),
-      );
-      functionalGroupRemoveAction.mergeWith(
-        fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom }),
+        sGroupPositionAtomId,
       );
 
       // Reassign ci to the attachment atom of the replaced functional group so
@@ -557,14 +625,17 @@ class TemplateTool implements Tool {
           return;
         }
 
-        const angle = getAngleFromEvent(mouseEvent, ci, restruct);
+        const angle =
+          functionalGroupRemoveAction && dragCtx.angle !== undefined
+            ? (dragCtx.angle * Math.PI) / 180
+            : getAngleFromEvent(mouseEvent, ci, restruct);
 
         [action] = fromTemplateOnAtom(
           restruct,
           this.template,
           ci.id,
           angle,
-          false,
+          dragCtx.extra_bond ?? false,
         );
         if (functionalGroupRemoveAction) {
           action = functionalGroupRemoveAction.mergeWith(action);
@@ -669,6 +740,7 @@ function getTemplateMode(tmpl: TemplateToolInput): string | null {
 function getTargetAtomId(
   struct: Struct,
   ci: ClosestItemWithMap,
+  mode: string | null,
 ): number | void {
   if (ci.map === 'atoms') {
     return ci.id;
@@ -676,8 +748,34 @@ function getTargetAtomId(
 
   if (ci.map === 'functionalGroups') {
     const group = struct.sgroups.get(ci.id);
-    return group?.getAttachmentAtomId();
+    if (group) {
+      return mode === MODES.FG
+        ? group.getAttachmentAtomId()
+        : getGroupTargetAtomId(struct, group);
+    }
   }
+}
+
+function getGroupTargetAtomId(struct: Struct, group: SGroup): number {
+  const groupAtoms = SGroup.getAtoms(struct, group);
+  // Imported groups may have external bonds without attachment points.
+  return (
+    groupAtoms.find((id) =>
+      struct.atomGetNeighbors(id)?.some(({ aid }) => !groupAtoms.includes(aid)),
+    ) ?? group.getContractedPosition(struct).atomId
+  );
+}
+
+function extractGroupAtom(
+  restruct: ReStruct,
+  group: SGroup,
+  targetAtomId: number,
+): Action {
+  const atoms = SGroup.getAtoms(restruct.molecule, group).filter(
+    (id) => id !== targetAtomId,
+  );
+  const action = fromSgroupDeletion(restruct, group.id);
+  return action.mergeWith(fromFragmentDeletion(restruct, { atoms }));
 }
 
 export default TemplateTool;

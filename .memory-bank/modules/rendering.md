@@ -42,6 +42,8 @@ Selection is drawn on dedicated selection/info layers. The layer map fixes z-ord
 
 The render object is constructed by the micro editor. Operations mutate `Struct` and mark the render-structure dirty; after an action the render update re-shows only the marked items.
 
+`RenderStruct` expands S-groups in previews by default. A caller can set `expandSgroups: false` to preserve the labeled group representation.
+
 ## Macromolecules rendering (D3)
 
 Each drawing-entity subclass gets a renderer subclass that draws D3 selections into the SVG canvas. A renderers manager orchestrates create/update/delete in response to a Command.

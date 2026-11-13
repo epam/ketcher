@@ -5,6 +5,19 @@ import { mergeTests, Page } from '@playwright/test';
 import { SettingsDialog } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
+// Clearing the canvas and resetting zoom keep any pan left by a previous test
+// (e.g. a Hand tool drag), which shifts the absolute coordinates of the next
+// loaded structure. Move the viewport origin back to where a fresh editor has it.
+async function resetCanvasPan(page: Page) {
+  await page.evaluate(() => {
+    window.ketcher.editor.render.setViewBox((viewBox) => ({
+      ...viewBox,
+      minX: 0,
+      minY: 0,
+    }));
+  });
+}
+
 export const test = mergeTests(utils, pageObjects).extend<
   { MoleculesCanvas: void },
   { initMoleculesCanvas: () => Promise<Page> }
@@ -33,6 +46,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await waitForIndigoToLoad(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
+    await resetCanvasPan(page);
     await resetSettingsValuesToDefault(page);
     await clearLocalStorage(page);
     await resetClipboard(page);

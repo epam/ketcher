@@ -63,11 +63,12 @@ interface AnalyseDialogCallProps {
 type Props = AnalyseDialogProps & AnalyseDialogCallProps;
 
 function roundOff(value: string | number, round: number): string {
-  if (typeof value === 'number') return value.toFixed(round);
-  return value
-    .split(/(\d*\.\d+)/)
-    .map((part, index) => (index % 2 === 1 ? (+part).toFixed(round) : part))
-    .join('');
+  return typeof value === 'number'
+    ? value.toFixed(round)
+    : value
+        .split(/(\d*\.\d+)/)
+        .map((part, index) => (index % 2 === 1 ? (+part).toFixed(round) : part))
+        .join('');
 }
 
 const DECIMAL_PLACES_ENUM_NAMES = range(0, 8).map(

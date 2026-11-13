@@ -19,10 +19,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
 
     try {
       const item = localStorage.getItem(key);
-      if (!item) {
-        return null;
-      }
-      return JSON.parse(item);
+      return !item ? null : JSON.parse(item);
     } catch (error) {
       KetcherLogger.error(
         `Failed to load settings from localStorage (key: ${key}):`,

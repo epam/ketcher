@@ -349,10 +349,9 @@ function ctrlMap(component, props: Props) {
   }
 
   // schema is an array
-  if (multiple) {
-    return multipleSelectCtrl(component, schema, onChange);
-  }
-  return singleSelectCtrl(component, schema, onChange);
+  return multiple
+    ? multipleSelectCtrl(component, schema, onChange)
+    : singleSelectCtrl(component, schema, onChange);
 }
 
 function componentMap(props: Props) {

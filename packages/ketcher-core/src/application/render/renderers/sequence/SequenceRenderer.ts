@@ -432,16 +432,13 @@ export class SequenceRenderer {
               // If side connection comes from rna base then take connected sugar and draw side connection from it
               // because for rna we display only one letter instead of three
               const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
-              if (
+              bondRenderer =
                 connectedSugarToBase &&
                 isRnaBaseOrAmbiguousRnaBase(anotherMonomer)
-              ) {
-                bondRenderer = new PolymerBondSequenceRenderer(
-                  new PolymerBond(monomer, connectedSugarToBase),
-                );
-              } else {
-                bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
-              }
+                  ? new PolymerBondSequenceRenderer(
+                      new PolymerBond(monomer, connectedSugarToBase),
+                    )
+                  : new PolymerBondSequenceRenderer(polymerBond);
               this.showBondRenderer(bondRenderer);
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
@@ -696,15 +693,11 @@ export class SequenceRenderer {
   private static get currentChainRow() {
     const currentEdittingNode = this.currentEdittingNode;
 
-    if (!currentEdittingNode) {
-      return [];
-    }
-
-    return (
-      this.nodesGroupedByRows.find((idexRow) =>
-        idexRow.includes(currentEdittingNode),
-      ) ?? []
-    );
+    return !currentEdittingNode
+      ? []
+      : (this.nodesGroupedByRows.find((idexRow) =>
+          idexRow.includes(currentEdittingNode),
+        ) ?? []);
   }
 
   private static get previousRowOfNodes() {
@@ -1039,11 +1032,9 @@ export class SequenceRenderer {
   public static get previousNodeInSameChain() {
     const currentEdittingNode = this.currentEdittingNode;
 
-    if (!currentEdittingNode) {
-      return undefined;
-    }
-
-    return this.getPreviousNodeInSameChain(currentEdittingNode);
+    return !currentEdittingNode
+      ? undefined
+      : this.getPreviousNodeInSameChain(currentEdittingNode);
   }
 
   private static get nextCaretPosition(): number | undefined {
@@ -1254,15 +1245,13 @@ export class SequenceRenderer {
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           senseNodeMonomer,
         );
-      if (shouldTurnOffSelection) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-            result.drawingEntities,
-          ),
-        );
-      } else {
-        modelChanges.merge(result.command);
-      }
+      modelChanges.merge(
+        shouldTurnOffSelection
+          ? editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+              result.drawingEntities,
+            )
+          : result.command,
+      );
     }
 
     if (antiSenseNodeMonomer) {
@@ -1270,15 +1259,13 @@ export class SequenceRenderer {
         editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           antiSenseNodeMonomer,
         );
-      if (shouldTurnOffSelection) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-            result.drawingEntities,
-          ),
-        );
-      } else {
-        modelChanges.merge(result.command);
-      }
+      modelChanges.merge(
+        shouldTurnOffSelection
+          ? editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+              result.drawingEntities,
+            )
+          : result.command,
+      );
     }
 
     return modelChanges;

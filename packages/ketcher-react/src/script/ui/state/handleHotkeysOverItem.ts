@@ -255,8 +255,9 @@ async function isFunctionalGroupChange(
   props: HandlersProps,
   type: string,
 ): Promise<boolean> {
-  if (type === 'sgroups') return true;
-  return await isChangingFunctionalGroup(props, type);
+  return type === 'sgroups'
+    ? true
+    : await isChangingFunctionalGroup(props, type);
 }
 
 function getToolHandler(itemType: string, toolName = '') {
@@ -283,10 +284,7 @@ function getToolHandler(itemType: string, toolName = '') {
 
   const item = items[itemType];
 
-  if (item) {
-    return item[toolName];
-  }
-  return items._default[toolName];
+  return item ? item[toolName] : items._default[toolName];
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {

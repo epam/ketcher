@@ -44,11 +44,9 @@ const getAmbiguousMonomerName = (
 };
 
 const getMonomerName = (monomer: BaseMonomer, t: TFunction) => {
-  if (monomer instanceof AmbiguousMonomer) {
-    return getAmbiguousMonomerName(monomer, t);
-  }
-
-  return monomer.monomerItem.props.Name;
+  return monomer instanceof AmbiguousMonomer
+    ? getAmbiguousMonomerName(monomer, t)
+    : monomer.monomerItem.props.Name;
 };
 
 export default getMonomerName;

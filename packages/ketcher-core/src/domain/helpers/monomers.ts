@@ -165,13 +165,10 @@ export function isChemMonomer(monomer: BaseMonomer): boolean {
 }
 
 export function isLinearChem(monomer?: BaseMonomer): boolean {
-  if (!monomer) {
-    return false;
-  }
-
-  return (
-    isChemMonomer(monomer) && monomer.usedAttachmentPointsNamesList.length <= 2
-  );
+  return !monomer
+    ? false
+    : isChemMonomer(monomer) &&
+        monomer.usedAttachmentPointsNamesList.length <= 2;
 }
 
 function getOrientedChemNeighbors(chem: BaseMonomer): {

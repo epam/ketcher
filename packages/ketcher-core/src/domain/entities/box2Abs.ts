@@ -145,15 +145,13 @@ export class Box2Abs {
     const da = (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x);
     const db = (c.x - b.x) * (d.y - b.y) - (c.y - b.y) * (d.x - b.x);
 
-    if (dc === 0 && dd === 0 && da === 0 && db === 0) {
-      // Check for collinearity and overlapping cases
-      return (
-        Box2Abs.#isPointOnSegment(a, b, c) ||
-        Box2Abs.#isPointOnSegment(a, b, d) ||
-        Box2Abs.#isPointOnSegment(c, d, a) ||
-        Box2Abs.#isPointOnSegment(c, d, b)
-      );
-    } else return dc * dd < 0 && da * db < 0;
+    // Check for collinearity and overlapping cases
+    return dc === 0 && dd === 0 && da === 0 && db === 0
+      ? Box2Abs.#isPointOnSegment(a, b, c) ||
+          Box2Abs.#isPointOnSegment(a, b, d) ||
+          Box2Abs.#isPointOnSegment(c, d, a) ||
+          Box2Abs.#isPointOnSegment(c, d, b)
+      : dc * dd < 0 && da * db < 0;
   }
 
   // Helper function to check if a point is on a line segment

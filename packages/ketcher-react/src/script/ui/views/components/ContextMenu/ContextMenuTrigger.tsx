@@ -169,11 +169,9 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         ) {
           triggerType = ContextMenuTriggerType.Selection;
         } else {
-          if (selection[MULTITAIL_ARROW_KEY]) {
-            triggerType = ContextMenuTriggerType.ClosestItem;
-          } else {
-            triggerType = ContextMenuTriggerType.None;
-          }
+          triggerType = selection[MULTITAIL_ARROW_KEY]
+            ? ContextMenuTriggerType.ClosestItem
+            : ContextMenuTriggerType.None;
         }
       } else {
         // closestItem is outside of selection

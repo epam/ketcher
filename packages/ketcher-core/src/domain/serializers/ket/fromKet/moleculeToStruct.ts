@@ -56,13 +56,12 @@ export function moleculeToStruct(ketItem: KetMoleculeItem): Struct {
 
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      let atomId: number | null = null;
-      if (atom.type === 'rg-label') {
-        atomId = struct.atoms.add(rglabelToStruct(atom));
-      }
-      if (!atom.type || atom.type === 'atom-list') {
-        atomId = struct.atoms.add(atomToStruct(atom));
-      }
+      const atomId: number | null =
+        atom.type === 'rg-label'
+          ? struct.atoms.add(rglabelToStruct(atom))
+          : !atom.type || atom.type === 'atom-list'
+            ? struct.atoms.add(atomToStruct(atom))
+            : null;
       if (atomId !== null) {
         addRGroupAttachmentPointsToStruct(
           struct,

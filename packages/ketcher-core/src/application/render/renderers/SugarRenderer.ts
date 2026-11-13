@@ -39,10 +39,9 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return undefined;
-    }
-    return { backgroundId: '#sugar-modified-background', requiresFill: true };
+    return this.monomer.monomerItem.props.unresolved
+      ? undefined
+      : { backgroundId: '#sugar-modified-background', requiresFill: true };
   }
 
   protected getMonomerColor(theme) {

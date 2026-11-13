@@ -640,19 +640,17 @@ export class BondRenderer extends BaseRenderer {
         break;
 
       case BondType.Double:
-        if (this.bond.stereo === BondStereo.CisTrans) {
-          bondSVGPaths =
-            DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-          );
-        }
+        bondSVGPaths =
+          this.bond.stereo === BondStereo.CisTrans
+            ? DoubleCisTransBondPathRenderer.preparePaths(bondVectors)
+            : DoubleBondPathRenderer.preparePaths(
+                bondVectors,
+                this.getDoubleBondShift(
+                  viewModel,
+                  bondVectors.firstHalfEdge,
+                  bondVectors.secondHalfEdge,
+                ),
+              );
         break;
 
       case BondType.Triple:
@@ -679,19 +677,17 @@ export class BondRenderer extends BaseRenderer {
 
         // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
         // Otherwise, render as a dashed double bond
-        if (isInConvexAromaticLoop) {
-          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
-        } else {
-          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-            bondVectors,
-            this.getDoubleBondShift(
-              viewModel,
-              bondVectors.firstHalfEdge,
-              bondVectors.secondHalfEdge,
-            ),
-            this.bond.type,
-          );
-        }
+        bondSVGPaths = isInConvexAromaticLoop
+          ? SingleBondPathRenderer.preparePaths(bondVectors)
+          : DoubleBondPathRenderer.preparePaths(
+              bondVectors,
+              this.getDoubleBondShift(
+                viewModel,
+                bondVectors.firstHalfEdge,
+                bondVectors.secondHalfEdge,
+              ),
+              this.bond.type,
+            );
         break;
       }
 

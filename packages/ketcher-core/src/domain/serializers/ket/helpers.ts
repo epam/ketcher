@@ -69,11 +69,9 @@ export const getMonomerTemplateRefFromMonomerItem = (
 ) => {
   const { props } = monomerItem;
 
-  if (props.id) {
-    return setMonomerTemplatePrefix(props.id);
-  }
-
-  return setMonomerTemplatePrefix(getMonomerUniqueKey(monomerItem));
+  return setMonomerTemplatePrefix(
+    props.id ? props.id : getMonomerUniqueKey(monomerItem),
+  );
 };
 
 export const getHELMClassByKetMonomerClass = (

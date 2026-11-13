@@ -72,11 +72,7 @@ function FormulaInput({ value, contentEditable }: FormulaInputProps) {
     cnd = formulaRegexp.exec(value);
   }
 
-  if (pos === 0) {
-    content.push(value);
-  } else {
-    content.push(value.substring(pos, value.length));
-  }
+  content.push(pos === 0 ? value : value.substring(pos, value.length));
 
   return formulaInputMarkdown({ content, contentEditable });
 }

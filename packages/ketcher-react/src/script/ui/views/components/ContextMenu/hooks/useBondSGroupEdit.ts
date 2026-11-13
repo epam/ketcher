@@ -52,10 +52,9 @@ const useBondSGroupEdit = () => {
     const struct: ReStruct = editor.render.ctab;
     const [sgGroupId] = sGroupsRef.current;
     const sgroup = struct.sgroups.get(sgGroupId)?.item;
-    if (sgroup?.isSuperatomWithoutLabel) {
-      return true;
-    }
-    return sGroupsRef.current.size === 0;
+    return sgroup?.isSuperatomWithoutLabel
+      ? true
+      : sGroupsRef.current.size === 0;
   }, [ketcherId]);
 
   return [handler, disabled, hidden] as const;

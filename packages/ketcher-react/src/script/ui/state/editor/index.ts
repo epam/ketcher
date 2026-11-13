@@ -212,13 +212,13 @@ export default function initEditor(
 
       const disabledIds = [...struct.atoms.values()].reduce<unknown[]>(
         (acc, atom) => {
-          if (atom.fragment === rgroup.fragId && atom.rglabel !== null)
-            return [
-              ...acc,
-              ...((fromElement(atom) as { values?: (string | number)[] })
-                ?.values ?? []),
-            ];
-          return acc;
+          return atom.fragment === rgroup.fragId && atom.rglabel !== null
+            ? [
+                ...acc,
+                ...((fromElement(atom) as { values?: (string | number)[] })
+                  ?.values ?? []),
+              ]
+            : acc;
         },
         [],
       );

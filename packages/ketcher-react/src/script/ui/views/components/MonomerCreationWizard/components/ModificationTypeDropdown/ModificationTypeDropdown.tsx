@@ -105,11 +105,8 @@ export default function ModificationTypeDropdown(
       options={options}
       getOptionLabel={(option) => {
         // Value selected with enter, right from the input
-        if (typeof option === 'string') {
-          return option;
-        }
         // Regular option
-        return option.title;
+        return typeof option === 'string' ? option : option.title;
       }}
       renderOption={(props, option) => {
         const { key, ...optionProps } = props;

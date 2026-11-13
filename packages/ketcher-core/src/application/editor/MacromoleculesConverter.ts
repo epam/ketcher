@@ -80,10 +80,9 @@ export class MacromoleculesConverter {
   public static convertAttachmentPointNameToNumber(
     attachmentPointName: AttachmentPointName,
   ) {
-    if (attachmentPointName === 'hydrogen') {
-      return 0;
-    }
-    return Number(attachmentPointName?.replace('R', ''));
+    return attachmentPointName === 'hydrogen'
+      ? 0
+      : Number(attachmentPointName?.replace('R', ''));
   }
 
   public static findAttachmentPointAtom(

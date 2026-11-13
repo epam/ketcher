@@ -178,18 +178,12 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     }
 
     const result = tailsFixedPrecision.every((tail, index, allTails) => {
-      if (
-        index > 0 &&
+      return index > 0 &&
         allTails[index - 1].y.value < tail.y.add(this.KET_MIN_DISTANCE).value
-      ) {
-        return false;
-      }
-
-      return (
-        tail.x.value === firstTailX.value &&
-        tail.y.value >= spineEndY.value &&
-        tail.y.value <= spineStartY.value
-      );
+        ? false
+        : tail.x.value === firstTailX.value &&
+            tail.y.value >= spineEndY.value &&
+            tail.y.value <= spineStartY.value;
     });
 
     return result ? null : MultitailValidationErrors.INCORRECT_TAILS;

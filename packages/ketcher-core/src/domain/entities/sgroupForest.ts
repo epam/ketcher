@@ -91,11 +91,9 @@ export class SGroupForest {
 
     const children = [...this.atomSets.keys()].filter((id) => {
       const parentId = this.parent.get(id);
-      if (parentId !== undefined && strictSupersetById.get(parentId) === true) {
-        return false;
-      }
-
-      return strictSupersetById.get(id) === true;
+      return parentId !== undefined && strictSupersetById.get(parentId) === true
+        ? false
+        : strictSupersetById.get(id) === true;
     });
 
     return {

@@ -69,8 +69,9 @@ export function moleculeToKet(
   const body: Omit<KetMoleculeNode, 'type'> = {
     atoms: [...struct.atoms.values()].map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
-      if (!monomer && atom.label === 'R#') return rglabelToKet(atom);
-      return atomToKet(atom, monomer);
+      return !monomer && atom.label === 'R#'
+        ? rglabelToKet(atom)
+        : atomToKet(atom, monomer);
     }),
   };
 

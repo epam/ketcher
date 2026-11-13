@@ -84,11 +84,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
       return monomerClass !== monomerClassToCompare;
     });
 
-    if (hasDifferentMonomerTypes) {
-      return KetMonomerClass.CHEM;
-    }
-
-    return monomerClass;
+    return hasDifferentMonomerTypes ? KetMonomerClass.CHEM : monomerClass;
   }
 
   private static getAttachmentPoints(monomers: BaseMonomer[]) {

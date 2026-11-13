@@ -931,15 +931,13 @@ class ReStruct {
         null as Box2Abs | null,
       );
 
-      if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
-        allAtomAttachmentPointsVBox = Box2Abs.union(
-          allAtomAttachmentPointsVBox,
-          oneAtomAttachmentPointsVBox,
-        );
-      } else {
-        allAtomAttachmentPointsVBox =
-          allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
-      }
+      allAtomAttachmentPointsVBox =
+        allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox
+          ? Box2Abs.union(
+              allAtomAttachmentPointsVBox,
+              oneAtomAttachmentPointsVBox,
+            )
+          : (allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox);
     });
 
     return allAtomAttachmentPointsVBox;

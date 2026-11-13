@@ -767,19 +767,18 @@ export class DrawingEntitiesManager {
         );
         const positionDelta = newPosition.sub(drawingEntity.position);
 
-        if (isPartialRotation) {
-          command.merge(
-            this.createDrawingEntityMovingCommand(drawingEntity, positionDelta),
-          );
-        } else {
-          command.merge(
-            this.createDrawingEntityMovingCommand(
-              drawingEntity,
-              positionDelta,
-              positionDelta,
-            ),
-          );
-        }
+        command.merge(
+          isPartialRotation
+            ? this.createDrawingEntityMovingCommand(
+                drawingEntity,
+                positionDelta,
+              )
+            : this.createDrawingEntityMovingCommand(
+                drawingEntity,
+                positionDelta,
+                positionDelta,
+              ),
+        );
       }
     });
 
@@ -855,17 +854,16 @@ export class DrawingEntitiesManager {
       if (drawingEntity.selected) {
         let newPosition: Vec2;
 
-        if (flipDirection === 'horizontal') {
-          newPosition = new Vec2(
-            center.x - (drawingEntity.position.x - center.x),
-            drawingEntity.position.y,
-          );
-        } else {
-          newPosition = new Vec2(
-            drawingEntity.position.x,
-            center.y - (drawingEntity.position.y - center.y),
-          );
-        }
+        newPosition =
+          flipDirection === 'horizontal'
+            ? new Vec2(
+                center.x - (drawingEntity.position.x - center.x),
+                drawingEntity.position.y,
+              )
+            : new Vec2(
+                drawingEntity.position.x,
+                center.y - (drawingEntity.position.y - center.y),
+              );
 
         const positionDelta = newPosition.sub(drawingEntity.position);
         command.merge(
@@ -931,18 +929,16 @@ export class DrawingEntitiesManager {
 
   public getSelectedEntitiesBoundingBox() {
     const selectedEntities = this.selectedEntitiesArr;
-    if (selectedEntities.length === 0) {
-      return null;
-    }
-    return getStructureBbox(selectedEntities);
+    return selectedEntities.length === 0
+      ? null
+      : getStructureBbox(selectedEntities);
   }
 
   public getSelectedEntitiesCenter(): Vec2 | null {
     const bbox = this.getSelectedEntitiesBoundingBox();
-    if (!bbox) {
-      return null;
-    }
-    return new Vec2(bbox.left + bbox.width / 2, bbox.top + bbox.height / 2);
+    return !bbox
+      ? null
+      : new Vec2(bbox.left + bbox.width / 2, bbox.top + bbox.height / 2);
   }
 
   public createDrawingEntityMovingCommand(
@@ -1075,19 +1071,16 @@ export class DrawingEntitiesManager {
 
       let isValueChanged;
       const editor = provideEditorInstance();
-      if (
+      isValueChanged =
         editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
-      ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
-      } else {
-        isValueChanged = drawingEntity.selectIfLocatedInRectangle(
-          rectangleTopLeftPoint,
-          rectangleBottomRightPoint,
-          !!isPreviousSelected,
-          isShiftKeyPressed,
-        );
-      }
+          ? this.checkBondSelectionForSequenceMode(drawingEntity)
+          : drawingEntity.selectIfLocatedInRectangle(
+              rectangleTopLeftPoint,
+              rectangleBottomRightPoint,
+              !!isPreviousSelected,
+              isShiftKeyPressed,
+            );
       if (isValueChanged) {
         const selectionCommand =
           this.createDrawingEntitySelectionCommand(drawingEntity);
@@ -1123,18 +1116,15 @@ export class DrawingEntitiesManager {
 
       let isValueChanged;
       const editor = provideEditorInstance();
-      if (
+      isValueChanged =
         editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
-      ) {
-        isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
-      } else {
-        isValueChanged = drawingEntity.selectIfLocatedInPolygon(
-          polygonPoints,
-          !!isPreviousSelected,
-          isShiftKeyPressed,
-        );
-      }
+          ? this.checkBondSelectionForSequenceMode(drawingEntity)
+          : drawingEntity.selectIfLocatedInPolygon(
+              polygonPoints,
+              !!isPreviousSelected,
+              isShiftKeyPressed,
+            );
       if (isValueChanged) {
         const selectionCommand =
           this.createDrawingEntitySelectionCommand(drawingEntity);
@@ -3841,14 +3831,10 @@ export class DrawingEntitiesManager {
     if (node instanceof Nucleotide || node instanceof Nucleoside) {
       const { rnaBase } = node;
 
-      if (
-        rnaBase.hydrogenBonds.length > 0 ||
+      return rnaBase.hydrogenBonds.length > 0 ||
         rnaBase.covalentBonds.length > 1
-      ) {
-        return undefined;
-      }
-
-      return this.getAntisenseBaseLabel(rnaBase, isDnaAntisense);
+        ? undefined
+        : this.getAntisenseBaseLabel(rnaBase, isDnaAntisense);
     }
 
     if (isUnsplitNucleotideNode(node)) {
@@ -5004,9 +4990,8 @@ export class DrawingEntitiesManager {
       return newPhosphate;
     }
     const newBase = newComponents.find(isRnaBaseOrAmbiguousRnaBase);
-    if (newBase?.isAttachmentPointExistAndFree(record.attachmentPointName)) {
-      return newBase;
-    }
-    return undefined;
+    return newBase?.isAttachmentPointExistAndFree(record.attachmentPointName)
+      ? newBase
+      : undefined;
   }
 }

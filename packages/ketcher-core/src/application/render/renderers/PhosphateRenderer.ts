@@ -54,10 +54,9 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    if (this.monomer.monomerItem.props.unresolved) {
-      return undefined;
-    }
-    return { backgroundId: '#phosphate-modified-background' };
+    return this.monomer.monomerItem.props.unresolved
+      ? undefined
+      : { backgroundId: '#phosphate-modified-background' };
   }
 
   protected appendBody(

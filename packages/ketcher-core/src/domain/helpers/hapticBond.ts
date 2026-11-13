@@ -101,14 +101,10 @@ export function isHapticBondWithAttachmentGroup(
   struct: Struct,
   bond?: Pick<Bond, 'type' | 'begin' | 'end'> | null,
 ) {
-  if (!bond || bond.type !== HAPTIC_BOND_TYPE) {
-    return false;
-  }
-
-  return (
-    isAttachmentGroupId(struct, bond.begin) ||
-    isAttachmentGroupId(struct, bond.end)
-  );
+  return !bond || bond.type !== HAPTIC_BOND_TYPE
+    ? false
+    : isAttachmentGroupId(struct, bond.begin) ||
+        isAttachmentGroupId(struct, bond.end);
 }
 
 export function getAttachmentGroupIdForHapticBondHalf(
@@ -141,15 +137,13 @@ export function isAttachmentGroupWithHapticBond(
   struct: Struct,
   attachmentGroupId: number,
 ) {
-  if (!struct.attachmentGroups.has(attachmentGroupId)) {
-    return false;
-  }
-
-  return struct.bonds.some(
-    (bond) =>
-      bond.type === HAPTIC_BOND_TYPE &&
-      (bond.begin === attachmentGroupId || bond.end === attachmentGroupId),
-  );
+  return !struct.attachmentGroups.has(attachmentGroupId)
+    ? false
+    : struct.bonds.some(
+        (bond) =>
+          bond.type === HAPTIC_BOND_TYPE &&
+          (bond.begin === attachmentGroupId || bond.end === attachmentGroupId),
+      );
 }
 
 export function isAtomPartOfAttachmentGroup(struct: Struct, atomId: number) {
@@ -195,11 +189,9 @@ export function isBondTypeAllowedForEndpoints(
   const beginEndpoint = struct.getBondEndpoint(bond.begin);
   const endEndpoint = struct.getBondEndpoint(bond.end);
 
-  if (type === HAPTIC_BOND_TYPE) {
-    return isHapticBondPairAllowed(beginEndpoint, endEndpoint);
-  }
-
-  return !isAttachmentGroup(beginEndpoint) && !isAttachmentGroup(endEndpoint);
+  return type === HAPTIC_BOND_TYPE
+    ? isHapticBondPairAllowed(beginEndpoint, endEndpoint)
+    : !isAttachmentGroup(beginEndpoint) && !isAttachmentGroup(endEndpoint);
 }
 
 export function isAtomLabelAllowedByHapticBonds(

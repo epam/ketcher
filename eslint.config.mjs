@@ -22,15 +22,13 @@ import {
 } from './scripts/eslint-invariants-rules.mjs';
 
 const sanitizeGlobals = (source) => {
-  if (!source || typeof source !== 'object') {
-    return {};
-  }
-
-  return Object.fromEntries(
-    Object.entries(source).filter(([name]) =>
-      /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
-    ),
-  );
+  return !source || typeof source !== 'object'
+    ? {}
+    : Object.fromEntries(
+        Object.entries(source).filter(([name]) =>
+          /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(name),
+        ),
+      );
 };
 
 const defaults = [

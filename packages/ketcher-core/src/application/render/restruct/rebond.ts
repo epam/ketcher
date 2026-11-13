@@ -110,17 +110,15 @@ class ReBond extends ReObject {
     let p1: Vec2;
     let p2: Vec2;
 
-    if (sgroup1 !== sgroup2 && sgroup1?.isContracted()) {
-      p1 = sgroup1.getContractedPosition(restruct.molecule).position;
-    } else {
-      p1 = beginAtom.a.pp;
-    }
+    p1 =
+      sgroup1 !== sgroup2 && sgroup1?.isContracted()
+        ? sgroup1.getContractedPosition(restruct.molecule).position
+        : beginAtom.a.pp;
 
-    if (sgroup1 !== sgroup2 && sgroup2?.isContracted()) {
-      p2 = sgroup2.getContractedPosition(restruct.molecule).position;
-    } else {
-      p2 = endAtom.a.pp;
-    }
+    p2 =
+      sgroup1 !== sgroup2 && sgroup2?.isContracted()
+        ? sgroup2.getContractedPosition(restruct.molecule).position
+        : endAtom.a.pp;
 
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
@@ -330,9 +328,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, false);
-    if (!rect) return null;
-
-    return rect.attr(options.selectionStyle);
+    return !rect ? null : rect.attr(options.selectionStyle);
   }
 
   private readonly isPlateShouldBeHidden = (
@@ -382,8 +378,7 @@ class ReBond extends ReObject {
     }
 
     const rect = this.getSelectionContour(restruct.render, true);
-    if (!rect) return null;
-    return rect.attr(highlightStyle);
+    return !rect ? null : rect.attr(highlightStyle);
   }
 
   show(restruct: ReStruct, bid: number, options: RenderOptions): void {
@@ -752,25 +747,18 @@ function findIncomingStereoUpBond(
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (isSingleUp) {
-      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
-        return false;
-      }
-      return (
-        neibond.b.end === hb.begin ||
-        (neibond.boldStereo && shouldIncludeBoldStereoBond)
-      );
+      return Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)
+        ? false
+        : neibond.b.end === hb.begin ||
+            (neibond.boldStereo && shouldIncludeBoldStereoBond);
     }
 
-    if (
-      neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
+    return neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
       shouldIncludeBoldStereoBond &&
       neibond.boldStereo
-    ) {
-      return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
-    }
-
-    return false;
+      ? !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)
+      : false;
   });
 }
 
@@ -828,24 +816,17 @@ function getBondPath(
       switch (bond.b.stereo) {
         case Bond.PATTERN.STEREO.UP:
           findIncomingUpBonds(hb1.bid, bond, restruct);
-          if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-            path = getBondSingleStereoBoldPath(
-              render,
-              hb1,
-              hb2,
-              bond,
-              struct,
-              isSnapping,
-            );
-          } else
-            path = getBondSingleUpPath(
-              render,
-              hb1,
-              hb2,
-              bond,
-              struct,
-              isSnapping,
-            );
+          path =
+            bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0
+              ? getBondSingleStereoBoldPath(
+                  render,
+                  hb1,
+                  hb2,
+                  bond,
+                  struct,
+                  isSnapping,
+                )
+              : getBondSingleUpPath(render, hb1, hb2, bond, struct, isSnapping);
           break;
         case Bond.PATTERN.STEREO.DOWN:
           path = getBondSingleDownPath(
@@ -881,32 +862,30 @@ function getBondPath(
       break;
     case Bond.PATTERN.TYPE.DOUBLE:
       findIncomingUpBonds(hb1.bid, bond, restruct);
-      if (
+      path =
         bond.b.stereo === Bond.PATTERN.STEREO.NONE &&
         bond.boldStereo &&
         bond.neihbid1 >= 0 &&
         bond.neihbid2 >= 0
-      ) {
-        path = getBondDoubleStereoBoldPath(
-          render,
-          hb1,
-          hb2,
-          bond,
-          struct,
-          shouldShiftA,
-          shouldShiftB,
-          isSnapping,
-        );
-      } else
-        path = getBondDoublePath(
-          render,
-          hb1,
-          hb2,
-          bond,
-          shouldShiftA,
-          shouldShiftB,
-          isSnapping,
-        );
+          ? getBondDoubleStereoBoldPath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              struct,
+              shouldShiftA,
+              shouldShiftB,
+              isSnapping,
+            )
+          : getBondDoublePath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              shouldShiftA,
+              shouldShiftB,
+              isSnapping,
+            );
       break;
     case Bond.PATTERN.TYPE.TRIPLE:
       path = draw.bondTriple(
@@ -1088,16 +1067,12 @@ function getStereoBondColor(
     stereoLabel = endAtomStereoLabel;
   }
 
-  if (
-    // if no stereolabel presents or presents in both then use default color
-    !stereoLabel ||
+  // if no stereolabel presents or presents in both then use default color
+  return !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.LabelsOnly
-  ) {
-    return defaultColor;
-  }
-
-  return getColorFromStereoLabel(options, stereoLabel) ?? defaultColor;
+    ? defaultColor
+    : (getColorFromStereoLabel(options, stereoLabel) ?? defaultColor);
 }
 
 function getBondSingleStereoBoldPath(
@@ -1201,8 +1176,7 @@ function getBondDoubleStereoBoldPath(
 }
 
 export function getBondLineShift(cos: number, sin: number): number {
-  if (sin < 0 || Math.abs(cos) > 0.9) return 0;
-  return sin / (1 - cos);
+  return sin < 0 || Math.abs(cos) > 0.9 ? 0 : sin / (1 - cos);
 }
 
 function stereoUpBondGetCoordinates(

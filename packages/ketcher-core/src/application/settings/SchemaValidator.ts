@@ -81,11 +81,9 @@ export class SchemaValidator implements ISettingsValidator {
   }
 
   private getErrorPath(error: JsonSchemaValidationError): string {
-    if (error.path.length === 0) {
-      return '';
-    }
-
-    return `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
+    return error.path.length === 0
+      ? ''
+      : `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
   }
 
   private escapeJsonPointerToken(token: string | number): string {

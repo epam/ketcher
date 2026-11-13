@@ -19,12 +19,9 @@ export class SettingsMigration {
     const storedRecord = stored as Record<string, unknown>;
 
     // Check if already in flat format
-    if (this.isFlatFormat(storedRecord)) {
-      return storedRecord as DeepPartial<Settings>;
-    }
-
-    // Migrate from namespaced format to flat format
-    return this.migrateFromNamespacedFormat(storedRecord);
+    return this.isFlatFormat(storedRecord)
+      ? (storedRecord as DeepPartial<Settings>)
+      : this.migrateFromNamespacedFormat(storedRecord);
   }
 
   /**

@@ -40,9 +40,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return undefined;
-
-    return rootNode.getBBox();
+    return !rootNode ? undefined : rootNode.getBBox();
   }
 
   public get width(): number {
@@ -137,11 +135,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
     let thirdPoint: Vec2;
 
-    if (isBoundingBoxVertical) {
-      thirdPoint = new Vec2(firstPoint.x, secondPoint.y);
-    } else {
-      thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
-    }
+    thirdPoint = isBoundingBoxVertical
+      ? new Vec2(firstPoint.x, secondPoint.y)
+      : new Vec2(secondPoint.x, firstPoint.y);
 
     this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}`;
 

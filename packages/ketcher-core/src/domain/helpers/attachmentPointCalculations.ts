@@ -142,11 +142,7 @@ export function getSearchFunction(
       !!monomerBodyElement && elementsAtPoint.includes(monomerBodyElement);
 
     let newAngle: number;
-    if (isCurrentMonomerAtNewPoint) {
-      newAngle = initialAngle;
-    } else {
-      newAngle = initialAngle - 180;
-    }
+    newAngle = isCurrentMonomerAtNewPoint ? initialAngle : initialAngle - 180;
 
     return findPointOnMonomerBorder(
       newCoordStart,

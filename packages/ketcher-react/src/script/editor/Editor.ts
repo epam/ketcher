@@ -398,10 +398,9 @@ class Editor implements KetcherEditor {
   isDitrty(): boolean {
     const position = this.historyPtr;
     const length = this.historyStack.length;
-    if (!length || !this.#origin) {
-      return false;
-    }
-    return !isEqual(this.historyStack[position - 1], this.#origin);
+    return !length || !this.#origin
+      ? false
+      : !isEqual(this.historyStack[position - 1], this.#origin);
   }
 
   setOrigin(): void {
@@ -914,11 +913,9 @@ class Editor implements KetcherEditor {
   ]);
 
   private static isBondSuitableForAttachmentPoint(bond: Bond) {
-    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-      return false;
-    }
-
-    return this.suitableAttachmentPointStereoTypes.has(bond.stereo);
+    return bond.type !== Bond.PATTERN.TYPE.SINGLE
+      ? false
+      : this.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
   /**
@@ -1003,11 +1000,7 @@ class Editor implements KetcherEditor {
     }
 
     const halfBond = struct.halfBonds.get(neighborHalfBondId);
-    if (!halfBond) {
-      return null;
-    }
-
-    return struct.bonds.get(halfBond.bid) ?? null;
+    return !halfBond ? null : (struct.bonds.get(halfBond.bid) ?? null);
   }
 
   public get isMonomerCreationWizardEnabled() {
@@ -3839,17 +3832,12 @@ class Editor implements KetcherEditor {
 
                 const leavingAtomIds =
                   potentialAttachmentPoints.get(attachmentAtomId);
-                if (leavingAtomIds) {
-                  potentialAttachmentPoints.set(
-                    attachmentAtomId,
-                    new Set(leavingAtomIds).add(leavingAtomId),
-                  );
-                } else {
-                  potentialAttachmentPoints.set(
-                    attachmentAtomId,
-                    new Set([leavingAtomId]),
-                  );
-                }
+                potentialAttachmentPoints.set(
+                  attachmentAtomId,
+                  leavingAtomIds
+                    ? new Set(leavingAtomIds).add(leavingAtomId)
+                    : new Set([leavingAtomId]),
+                );
               });
             }
 
@@ -3895,11 +3883,10 @@ class Editor implements KetcherEditor {
     let shouldSelectAll = false;
     this._selection = null;
     let resolvedCi: Record<string, number[]> | null;
-    if (typeof ci === 'object' && ci !== null) {
-      resolvedCi = ci as Record<string, number[]>;
-    } else {
-      resolvedCi = null;
-    }
+    resolvedCi =
+      typeof ci === 'object' && ci !== null
+        ? (ci as Record<string, number[]>)
+        : null;
 
     if (ci === 'all') {
       shouldSelectAll = true;
@@ -4575,11 +4562,7 @@ function setHover(ci: HoverTarget, isVisible: boolean, render: Render) {
           paperPath.closePath();
         }
 
-        if (combinedPath) {
-          combinedPath = combinedPath.unite(paperPath);
-        } else {
-          combinedPath = paperPath;
-        }
+        combinedPath = combinedPath ? combinedPath.unite(paperPath) : paperPath;
       }
 
       if (!combinedPath) {

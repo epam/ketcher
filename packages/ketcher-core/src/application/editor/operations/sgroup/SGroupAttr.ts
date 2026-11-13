@@ -81,7 +81,6 @@ export class SGroupAttr extends BaseOperation {
     }
 
     const sgroup = restruct.molecule.sgroups.get(sgid);
-    if (!sgroup) return false;
-    return sgroup.checkAttr(attr, value);
+    return !sgroup ? false : sgroup.checkAttr(attr, value);
   }
 }

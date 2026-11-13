@@ -448,14 +448,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     if (moleculeErrors) {
       const filteredMoleculeErrors = Object.values(moleculeErrors).filter(
         (error) => {
-          if (
-            format === SupportedFormat.smarts ||
+          return format === SupportedFormat.smarts ||
             format === SupportedFormat.ket
-          ) {
-            return !error.includes('Structure contains query features');
-          } else {
-            return true;
-          }
+            ? !error.includes('Structure contains query features')
+            : true;
         },
       );
       warnings.push(...filteredMoleculeErrors);

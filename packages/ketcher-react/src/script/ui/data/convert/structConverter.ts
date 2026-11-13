@@ -156,10 +156,9 @@ export function couldBeSaved(
   if (
     (['mol', 'rxn'] as SupportedFormat[]).includes(format) &&
     [...struct.frags.values()].some((fr) => {
-      if (fr?.enhancedStereoFlag) {
-        return fr.enhancedStereoFlag !== StereoFlag.Abs;
-      }
-      return false;
+      return fr?.enhancedStereoFlag
+        ? fr.enhancedStereoFlag !== StereoFlag.Abs
+        : false;
     })
   ) {
     warnings.push(
@@ -191,7 +190,5 @@ export function couldBeSaved(
       );
   }
 
-  if (warnings.length !== 0) return warnings.join('\n');
-
-  return null;
+  return warnings.length !== 0 ? warnings.join('\n') : null;
 }

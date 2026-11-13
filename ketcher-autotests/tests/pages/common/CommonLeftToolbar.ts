@@ -171,15 +171,11 @@ export const CommonLeftToolbar = (page: Page) => {
     },
 
     async isBondToolActive() {
-      if (!(await locators.bondSelectionDropdownButton.isVisible())) {
-        return false;
-      }
-
-      return (
-        (await locators.bondSelectionDropdownButton.getAttribute(
-          'data-is-selected',
-        )) === 'true'
-      );
+      return !(await locators.bondSelectionDropdownButton.isVisible())
+        ? false
+        : (await locators.bondSelectionDropdownButton.getAttribute(
+            'data-is-selected',
+          )) === 'true';
     },
 
     async isBondToolSelected(bondTool: MacroBondTool | MicroBondTool) {

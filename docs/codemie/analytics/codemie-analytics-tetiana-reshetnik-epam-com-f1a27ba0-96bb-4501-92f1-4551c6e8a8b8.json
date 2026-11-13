@@ -1,0 +1,381 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-12T08:04:56.595Z",
+    "rangeLabel": "all",
+    "agents": ["claude"],
+    "projectFilter": "all",
+    "totals": {
+      "sessions": 1,
+      "durationMs": 2006010,
+      "turns": 20,
+      "files": 10,
+      "netLines": 27,
+      "toolCallsTotal": 33,
+      "toolSuccessRate": 97,
+      "totalCostUSD": 0.6444451,
+      "cacheReadCostUSD": 0.12161510000000002,
+      "pricedSessions": 1
+    },
+    "unpricedModels": [],
+    "estimatedModels": [],
+    "localModels": [],
+    "coverage": [
+      {
+        "agentName": "claude",
+        "total": 1,
+        "priced": 1,
+        "withLog": 1
+      }
+    ],
+    "userEmail": "tetiana_reshetnik@epam.com",
+    "periodStart": "2026-11-11T14:47:41.144Z",
+    "periodEnd": "2026-11-11T15:21:07.154Z"
+  },
+  "sessions": [
+    {
+      "sessionId": "f1a27ba0-96bb-4501-92f1-4551c6e8a8b8",
+      "agentName": "claude",
+      "provider": "ai-run-sso",
+      "title": "need to have the position of polimer, monomer ect. in Snake mode the same it was before mode was switched from flex",
+      "project": "/Users/Tetiana_Reshetnik_1/Desktop/proj/ketcher",
+      "branch": "HEAD",
+      "startTime": 1794408461144,
+      "durationMs": 2006010,
+      "turns": 20,
+      "fileOps": 10,
+      "linesAdded": 36,
+      "linesRemoved": 9,
+      "linesModified": 0,
+      "netLines": 27,
+      "filesChanged": 2,
+      "filesWritten": 0,
+      "filesEdited": 2,
+      "toolCallsTotal": 33,
+      "toolCallsSuccess": 32,
+      "toolCallsFailure": 1,
+      "models": ["claude-sonnet-5-5"],
+      "languages": ["typescript"],
+      "tools": [
+        {
+          "toolName": "Read",
+          "totalCalls": 15,
+          "successCount": 15,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Grep",
+          "totalCalls": 7,
+          "successCount": 7,
+          "failureCount": 0,
+          "successRate": 100
+        },
+        {
+          "toolName": "Bash",
+          "totalCalls": 6,
+          "successCount": 5,
+          "failureCount": 1,
+          "successRate": 83.33333333333334
+        },
+        {
+          "toolName": "Edit",
+          "totalCalls": 5,
+          "successCount": 5,
+          "failureCount": 0,
+          "successRate": 100
+        }
+      ],
+      "tokens": {
+        "input": 46,
+        "output": 15713,
+        "cacheRead": 1216151,
+        "cacheCreation": 91402,
+        "cacheCreation1h": 91402,
+        "total": 1323312
+      },
+      "costUSD": 0.6444451,
+      "cacheReadCostUSD": 0.12161510000000002,
+      "perModelCost": [
+        {
+          "model": "claude-sonnet-5-5",
+          "tokens": {
+            "input": 10,
+            "output": 1425,
+            "cacheRead": 140904,
+            "cacheCreation": 33665,
+            "cacheCreation1h": 33665,
+            "total": 176004
+          },
+          "costUSD": 0.1630204,
+          "unpriced": false
+        },
+        {
+          "model": "claude-sonnet-5-5",
+          "tokens": {
+            "input": 36,
+            "output": 14288,
+            "cacheRead": 1075247,
+            "cacheCreation": 57737,
+            "cacheCreation1h": 57737,
+            "total": 1147308
+          },
+          "costUSD": 0.4814247,
+          "unpriced": false
+        }
+      ],
+      "hadLog": true,
+      "agentSessionFile": "/Users/Tetiana_Reshetnik_1/.claude/projects/-Users-Tetiana-Reshetnik-1-Desktop-proj-ketcher/594831e4-5a65-4d9a-87b2-82eb40ee5075.jsonl",
+      "costSeries": [
+        {
+          "t": 1794408819584,
+          "cost": 0.127438,
+          "tokens": 31374
+        },
+        {
+          "t": 1794408829002,
+          "cost": 0.1457625,
+          "tokens": 65298
+        },
+        {
+          "t": 1794408837103,
+          "cost": 0.19489089999999998,
+          "tokens": 108803
+        },
+        {
+          "t": 1794408840707,
+          "cost": 0.21026789999999998,
+          "tokens": 153833
+        },
+        {
+          "t": 1794409036557,
+          "cost": 0.22764279999999998,
+          "tokens": 200105
+        },
+        {
+          "t": 1794409050589,
+          "cost": 0.25984799999999997,
+          "tokens": 251597
+        },
+        {
+          "t": 1794409063054,
+          "cost": 0.28715139999999995,
+          "tokens": 306082
+        },
+        {
+          "t": 1794409070398,
+          "cost": 0.34453849999999997,
+          "tokens": 370974
+        },
+        {
+          "t": 1794409089194,
+          "cost": 0.3872421,
+          "tokens": 439799
+        },
+        {
+          "t": 1794409145714,
+          "cost": 0.40954539999999995,
+          "tokens": 509416
+        },
+        {
+          "t": 1794409425610,
+          "cost": 0.42129589999999995,
+          "tokens": 579606
+        },
+        {
+          "t": 1794410301805,
+          "cost": 0.4383446999999999,
+          "tokens": 651117
+        },
+        {
+          "t": 1794410335196,
+          "cost": 0.4568782999999999,
+          "tokens": 724236
+        },
+        {
+          "t": 1794410343954,
+          "cost": 0.4889550999999999,
+          "tokens": 801930
+        },
+        {
+          "t": 1794410355576,
+          "cost": 0.5129166999999999,
+          "tokens": 881239
+        },
+        {
+          "t": 1794410370018,
+          "cost": 0.5563261999999999,
+          "tokens": 965943
+        },
+        {
+          "t": 1794410425967,
+          "cost": 0.5726251999999998,
+          "tokens": 1050832
+        },
+        {
+          "t": 1794410435425,
+          "cost": 0.6077898999999999,
+          "tokens": 1140787
+        },
+        {
+          "t": 1794410442087,
+          "cost": 0.6248241999999999,
+          "tokens": 1231205
+        },
+        {
+          "t": 1794410467186,
+          "cost": 0.6444451,
+          "tokens": 1323312
+        }
+      ],
+      "costSource": "native-estimate",
+      "costBasis": "standard-api-tokens",
+      "dispatchesComplete": true,
+      "rootOwnCostUSD": 0.6444451,
+      "unlinkedCostUSD": 0,
+      "unlinkedAgentIds": [],
+      "rootOwnTokens": {
+        "input": 46,
+        "output": 15713,
+        "cacheRead": 1216151,
+        "cacheCreation": 91402,
+        "cacheCreation1h": 91402,
+        "total": 1323312
+      },
+      "unlinkedTokens": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheCreation": 0,
+        "cacheCreation1h": 0,
+        "total": 0
+      },
+      "modelTimeline": [
+        {
+          "t": 1794408819584,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.127438,
+          "tokens": 31374
+        },
+        {
+          "t": 1794408829002,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0183245,
+          "tokens": 33924
+        },
+        {
+          "t": 1794408837103,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0491284,
+          "tokens": 43505
+        },
+        {
+          "t": 1794408840707,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.015377,
+          "tokens": 45030
+        },
+        {
+          "t": 1794409036557,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0173749,
+          "tokens": 46272
+        },
+        {
+          "t": 1794409050589,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0322052,
+          "tokens": 51492
+        },
+        {
+          "t": 1794409063054,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0273034,
+          "tokens": 54485
+        },
+        {
+          "t": 1794409070398,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0573871,
+          "tokens": 64892
+        },
+        {
+          "t": 1794409089194,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0427036,
+          "tokens": 68825
+        },
+        {
+          "t": 1794409145714,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0223033,
+          "tokens": 69617
+        },
+        {
+          "t": 1794409425610,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0117505,
+          "tokens": 70190
+        },
+        {
+          "t": 1794410301805,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0170488,
+          "tokens": 71511
+        },
+        {
+          "t": 1794410335196,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0185336,
+          "tokens": 73119
+        },
+        {
+          "t": 1794410343954,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0320768,
+          "tokens": 77694
+        },
+        {
+          "t": 1794410355576,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0239616,
+          "tokens": 79309
+        },
+        {
+          "t": 1794410370018,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0434095,
+          "tokens": 84704
+        },
+        {
+          "t": 1794410425967,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.016299,
+          "tokens": 84889
+        },
+        {
+          "t": 1794410435425,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0351647,
+          "tokens": 89955
+        },
+        {
+          "t": 1794410442087,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0170343,
+          "tokens": 90418
+        },
+        {
+          "t": 1794410467186,
+          "model": "claude-sonnet-5-5",
+          "costUSD": 0.0196209,
+          "tokens": 92107
+        }
+      ],
+      "routedTurnsPct": 0,
+      "skillInvocations": [],
+      "agentInvocations": [],
+      "commandInvocations": [],
+      "sessionSource": "Pure chat"
+    }
+  ]
+}

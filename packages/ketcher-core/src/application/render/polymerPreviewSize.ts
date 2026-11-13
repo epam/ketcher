@@ -12,6 +12,21 @@ interface PolymerPreviewSizeParams {
   wrapper: Pick<DOMRectReadOnly, 'width' | 'height'>;
 }
 
+// Ketcher default label font in Molecules mode: 10pt
+export const MICRO_LABEL_FONT_PX = (10 * 96) / 72;
+
+/**
+ * Font size in render units that shows up as `fontPx` on screen when one
+ * angstrom (`unitsPerAngstrom` units) is drawn at `pxPerAngstrom` px.
+ */
+export function getFontSizeInUnits(
+  fontPx: number,
+  unitsPerAngstrom: number,
+  pxPerAngstrom: number,
+): number {
+  return (fontPx * unitsPerAngstrom) / pxPerAngstrom;
+}
+
 /**
  * Side (px) of the square svg that shows a structure in polymer mode at the
  * bond length of the macromolecules canvas.

@@ -16,6 +16,7 @@
 import {
   type ReSGroup,
   type ReStruct,
+  type Struct,
   type Vec2,
   CoordinateTransformation,
   fromImageResize,
@@ -30,6 +31,7 @@ import {
   IMAGE_KEY,
   KetcherLogger,
   MULTITAIL_ARROW_KEY,
+  MonomerMicromolecule,
   isControlKey,
   SGroup,
   vectorUtils,
@@ -77,6 +79,7 @@ import {
 import {
   type DragContext,
   type SelectMode,
+  type SelectionMoveDragContext,
   type SimpleObjectSelectionDragContext,
   isArrowDragContext,
   isImageSelectionDragContext,
@@ -468,6 +471,33 @@ class SelectTool implements Tool {
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
+    const isDraggingLabeledCustomSgroupOnStructure =
+      isDraggingCustomSgroupOnStructure &&
+      !possibleSaltOrSolvent?.item?.isSuperatomWithoutLabel;
+    // Runs before the salt guard; monomer FGs are skipped to keep macro merging unchanged.
+    if (
+      isSelectionMoveDragContext(dragCtx) &&
+      !isDraggingSaltOrSolventOnStructure &&
+      !isDraggingLabeledCustomSgroupOnStructure
+    ) {
+      const fgIds = getFunctionalGroupIdsOfMergeTargets(
+        molecule,
+        dragCtx.mergeItems,
+      );
+      if (fgIds.length) {
+        dragCtx.action?.perform(struct);
+        dragCtx.copyAction?.perform(struct);
+        struct.needRecalculateVisibleAtomsAndBonds = true;
+        editor.render.update();
+        editor.hover(null);
+        editor.selection(null);
+        editor.event.message.dispatch({ info: false });
+        this.dragCtx = null;
+        editor.event.removeFG.dispatch({ fgIds });
+        this.editor.rotateController.rerender();
+        return;
+      }
+    }
     const isMergePrevented =
       Boolean(dragCtx) &&
       (isDraggingCustomSgroupOnStructure ||
@@ -823,6 +853,31 @@ function getHoverTarget(
     id: item.id,
     items: fragSelection,
   };
+}
+
+function getFunctionalGroupIdsOfMergeTargets(
+  molecule: Struct,
+  mergeItems: SelectionMoveDragContext['mergeItems'],
+): number[] {
+  const { functionalGroups } = molecule;
+  const candidateIds = [
+    ...Array.from(mergeItems?.atoms?.values() ?? [], (atomId) =>
+      FunctionalGroup.findFunctionalGroupByAtom(functionalGroups, atomId),
+    ),
+    ...Array.from(mergeItems?.bonds?.values() ?? [], (bondId) =>
+      FunctionalGroup.findFunctionalGroupByBond(
+        molecule,
+        functionalGroups,
+        bondId,
+      ),
+    ),
+  ];
+
+  return [...new Set(candidateIds)].filter(
+    (fgId): fgId is number =>
+      fgId !== null &&
+      !(molecule.sgroups.get(fgId) instanceof MonomerMicromolecule),
+  );
 }
 
 function getMapsForClosestItem(shouldSelectFragment: boolean) {

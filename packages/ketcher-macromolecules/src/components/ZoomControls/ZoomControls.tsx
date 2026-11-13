@@ -64,6 +64,10 @@ export const ZoomControls = () => {
       }
     };
 
+    // Sync the displayed value with the current zoom level immediately, so a
+    // zoom set before this subscription (e.g. carried over when switching from
+    // the molecules canvas) is reflected without waiting for the next event.
+    handler();
     zoomTool.subscribeOnZoomEvent(handler);
 
     return () => {

@@ -19,7 +19,7 @@ import type { ToolbarItem } from '../../toolbar.types';
 type HookParams = [string, string | null, ToolbarItem[]];
 
 function usePortalOpening([id, opened, options]: HookParams): [boolean] {
-  const currentId = (options.length && options[0].id) || '';
+  const currentId = (options.length > 0 && options[0].id) || '';
   const isOpen = opened === id || opened === currentId;
   return [isOpen];
 }

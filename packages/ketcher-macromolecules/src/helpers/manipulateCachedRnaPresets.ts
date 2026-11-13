@@ -41,7 +41,7 @@ export const deleteCachedCustomRnaPreset = (presetName?: string) => {
   if (cachedPresets) {
     cachedPresets.splice(presetIndexInCachedList, 1);
 
-    if (cachedPresets.length)
+    if (cachedPresets.length > 0)
       localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
     else localStorageWrapper.removeItem(CUSTOM_PRESETS);
   }

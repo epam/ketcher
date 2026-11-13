@@ -119,7 +119,7 @@ export const SelectedMonomersContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: t('contextMenu.modifyAminoAcids'),
       disabled: false,
-      hidden: !modifyAminoAcidsMenuItems.length,
+      hidden: modifyAminoAcidsMenuItems.length === 0,
       subMenuItems: modifyAminoAcidsMenuItems,
     },
     {

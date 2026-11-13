@@ -42,6 +42,10 @@ interface SimpleObjectItem {
   pos: Array<Vec2>;
 }
 class ReSimpleObject extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   private readonly item: SimpleObjectItem;
   private selectionSet: RaphaelSet;
   private selectionPointsSet: RaphaelSet;
@@ -49,10 +53,6 @@ class ReSimpleObject extends ReObject {
   constructor(simpleObject: SimpleObjectItem) {
     super('simpleObject');
     this.item = simpleObject;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {

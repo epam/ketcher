@@ -508,8 +508,7 @@
             "y": -2.75
         },
         "alias": "dW",
-        "templateId": "dW___D-Tryptophan",
-        "seqid": 4
+        "templateId": "dW___D-Tryptophan"
     },
     "monomer4": {
         "type": "monomer",

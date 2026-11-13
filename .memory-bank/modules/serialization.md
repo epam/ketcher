@@ -24,6 +24,7 @@ The **central** serializer — the only one that handles **both** micro `Struct`
 
 - **Micro:** deserialization parses the JSON, validates it against a schema, and dispatches each node to the matching "from KET" converter; serialization prepares the structure and emits each node via its "to KET" converter, tagging the document with a KET version.
 - **Macro:** parse-and-validate, then deserialize macromolecules entities converting into drawing entities (there is also a path to deserialize straight into a `Struct`); serialization emits nodes, connections, and templates.
+- Imported monomer `seqid` values are preserved in KET exports and used for amino-acid and base numbering. Sequence edits remove the affected sequence's IDs, restoring positional numbering; undo restores the imported IDs. Moving monomers or switching layouts does not reset them.
 
 ### MOL
 
@@ -38,12 +39,14 @@ Splits records on the record separator, parses each MOL block via the MOL serial
 A formatter exposes async methods to get a string from a structure and a structure from a string. A factory chooses the implementation per format:
 
 - **KET** → local KET formatter.
-- **MOL V2000** → local formatter — unless query properties are used, in which case it falls back to the server formatter.
+- **MOL V2000** → local formatter — unless query properties are used, in which case it falls back to the server formatter. A structure over the V2000 limit of 999 atoms or bonds goes to the server in auto mode instead, which writes V3000; this check comes first, query properties or not.
 - **Everything else** (V3000, SMILES/SMARTS variants, RXN, InChI, CML, CDX/CDXML, SDF, FASTA, sequence, IDT, HELM, BILN, AxoLabs, …) → the server formatter (Indigo).
 
 So only **KET and plain MOL V2000** are local; all other formats require Indigo.
 
 The server formatter serializes to KET, calls Indigo convert or layout (chosen by whether the format carries coordinates).It also deserializes the KET result returned by Indigo. A format-identification step sniffs raw input (JSON → KET, reaction marker → RXN, version markers → MOL, InChI prefix → InChI, etc.). A format-properties table maps each supported format to its MIME type, extensions, and Indigo options.
+
+Every V2000 and V3000 MDL format (MOL, RXN, SDF, RDF) pins Indigo's `molfile-saving-mode` to `2000` or `3000`. Without it Indigo picks the version itself and writes V3000 whenever the structure holds something V2000 cannot express, such as enhanced-stereo groups. Only the auto MOL format leaves the choice to Indigo.
 
 ## 3. StructService
 

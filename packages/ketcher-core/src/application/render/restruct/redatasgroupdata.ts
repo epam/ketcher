@@ -22,15 +22,15 @@ import { Scale } from 'domain/helpers';
 import type { SGroup } from 'domain/entities/sgroup';
 
 class ReDataSGroupData extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   public sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
     super('sgroupData');
     this.sgroup = sgroup;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   hoverPath(render: Render) {

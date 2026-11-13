@@ -419,7 +419,6 @@
             "y": -2.75
         },
         "alias": "meO",
-        "templateId": "meO___N-Methyl-Pyrrolysine",
-        "seqid": 3
+        "templateId": "meO___N-Methyl-Pyrrolysine"
     }
 }

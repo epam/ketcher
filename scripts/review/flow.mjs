@@ -391,11 +391,16 @@ async function roundOutput(options, pr, input, results) {
     outsideDiff: split.outsideDiff,
     failedPasses: failedPasses(results),
     skippedFiles: input.diff.skipped.length,
-    inline: split.inline,
   };
   return {
     comments: split.inline.map(inlineComment),
-    briefText: (inlineFailure) => brief({ ...briefInput, inlineFailure }),
+    findings: split.inline,
+    briefText: (failure) =>
+      brief({
+        ...briefInput,
+        inlineFailure: failure?.error,
+        inline: failure?.findings,
+      }),
   };
 }
 
@@ -415,31 +420,79 @@ async function publish({ github, prNumber, dryRun, print }, pr, output) {
     print(output.briefText());
     return;
   }
-  const inlineFailure = await postInline(github, prNumber, pr, output.comments);
-  await github.postComment(prNumber, output.briefText(inlineFailure));
+  const failure = await postInline(github, prNumber, pr, output);
+  await github.postComment(prNumber, output.briefText(failure));
 }
 
+/** @typedef {{ error: string, findings: MergedFinding[] }} InlineFailure */
+
+/** @param {any} error */
+const message = (error) => String(error?.message ?? error);
+
+/** @param {any} error the HTTP status of a GitHub error, when it has one */
+const httpStatus = (error) => error?.status ?? error?.response?.status;
+
 /**
- * Sends the inline comments as one review, and gives back the error instead of
- * throwing it. The brief carries the round state in its marker, so it has to
- * go out even when GitHub rejects the review: a round that posts nothing is
- * paid for, is not counted, and is repeated by the next round.
+ * Sends the inline comments as one review, and gives back what stayed out
+ * instead of throwing. The brief carries the round state in its marker, so it
+ * has to go out even when GitHub takes no comment: a round that posts nothing
+ * is paid for, is not counted, and is repeated by the next round.
+ *
+ * GitHub answers 422 for a review whose comments it will not take, and it
+ * takes a review whole or not at all, so one comment on a line the pull
+ * request diff does not hold would keep every other finding off the pull
+ * request. The comments are then sent one by one, and only the ones GitHub
+ * refuses again go to the brief. Another status is not about a single
+ * comment, so it is reported as it is.
  * @param {GitHub} github
  * @param {number} prNumber
  * @param {PullRequest} pr
- * @param {{ path: string, line: number, body: string }[]} comments
- * @returns {Promise<string | undefined>} the error of a review GitHub refused
+ * @param {{ comments: { path: string, line: number, body: string }[], findings: MergedFinding[] }} output
+ * @returns {Promise<InlineFailure | undefined>}
  */
-async function postInline(github, prNumber, pr, comments) {
+async function postInline(github, prNumber, pr, output) {
   try {
     await github.postReview(prNumber, {
       commitId: pr.headSha,
-      comments,
+      comments: output.comments,
     });
     return undefined;
   } catch (error) {
-    return String(error?.message ?? error);
+    if (httpStatus(error) === 422) {
+      return postOneByOne(github, prNumber, pr, output);
+    }
+    return { error: message(error), findings: output.findings };
   }
+}
+
+/**
+ * Posts each inline comment on its own, after GitHub refused them as one
+ * review, and gives back the findings whose comment it refused again.
+ * @param {GitHub} github
+ * @param {number} prNumber
+ * @param {PullRequest} pr
+ * @param {{ comments: { path: string, line: number, body: string }[], findings: MergedFinding[] }} output
+ * @returns {Promise<InlineFailure | undefined>}
+ */
+async function postOneByOne(github, prNumber, pr, output) {
+  const refused = [];
+  for (const [index, comment] of output.comments.entries()) {
+    try {
+      await github.postReviewComment(prNumber, {
+        commitId: pr.headSha,
+        comment,
+      });
+    } catch (error) {
+      refused.push({ finding: output.findings[index], error });
+    }
+  }
+  if (refused.length === 0) {
+    return undefined;
+  }
+  return {
+    error: message(refused[0].error),
+    findings: refused.map((item) => item.finding),
+  };
 }
 
 /**
@@ -485,7 +538,11 @@ async function reviewRound(options, pr) {
   });
   if (plan.limitReached) {
     log.limitReached = true;
-    await publish(options, pr, { comments: [], briefText: limitComment });
+    await publish(options, pr, {
+      comments: [],
+      findings: [],
+      briefText: () => limitComment(),
+    });
     return;
   }
   const input = await readRound(options, pr, plan);

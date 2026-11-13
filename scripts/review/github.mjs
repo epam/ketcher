@@ -175,6 +175,23 @@ export function createGitHub({
     },
 
     /**
+     * Posts one inline comment on its own. GitHub takes a review as a whole
+     * or not at all, so this is how the comments of a refused review are
+     * tried one by one, to keep the ones it does take.
+     * @param {number} number
+     * @param {{ commitId: string, comment: { path: string, line: number, body: string } }} input
+     */
+    async postReviewComment(number, { commitId, comment }) {
+      await octokit.rest.pulls.createReviewComment({
+        owner,
+        repo,
+        pull_number: number,
+        commit_id: commitId,
+        ...reviewComment(comment),
+      });
+    },
+
+    /**
      * Posts one top-level comment, such as the brief.
      * @param {number} number
      * @param {string} body

@@ -47,6 +47,14 @@ const VERDICT = {
   alsoCheck: 'none',
 };
 
+/**
+ * An error in the shape Octokit throws, so the flow reads its status.
+ * @param {number} status
+ * @param {string} message
+ */
+const httpError = (status, message) =>
+  Object.assign(new Error(message), { status });
+
 /** The role of a run, read from its JSON Schema. */
 function roleOf(args) {
   const schema = args[args.indexOf('--json-schema') + 1];
@@ -95,12 +103,14 @@ const earlierBrief = (state) => ({
  * @param {object[]} [options.comments] earlier comments on the pull request
  * @param {Error} [options.failLinkedIssues] thrown by linkedIssues
  * @param {Error} [options.failPostReview] thrown by postReview
+ * @param {(comment: object) => boolean} [options.refuseComment] refused alone
  * @param {string} [options.previousBase] merge base of the previous head
  */
 function fakeGitHub({
   comments = [],
   failLinkedIssues,
   failPostReview,
+  refuseComment,
   previousBase,
 } = {}) {
   const writes = [];
@@ -122,6 +132,12 @@ function fakeGitHub({
     postReview: async (number, review) => {
       if (failPostReview) throw failPostReview;
       writes.push(['review', review]);
+    },
+    postReviewComment: async (number, { comment }) => {
+      if (refuseComment?.(comment)) {
+        throw httpError(422, 'line must be part of the diff');
+      }
+      writes.push(['reviewComment', comment]);
     },
     postComment: async (number, body) => writes.push(['comment', body]),
     removeLabel: async (number, label) => writes.push(['label', label]),
@@ -172,6 +188,25 @@ test('after the last round only the limit comment is posted, and no model runs',
   assert.match(limit, /round limit reached/);
   assert.equal(readMarker(limit), undefined);
   assert.deepEqual(writesOf(writes, 'label'), [LABELS.standard]);
+});
+
+test('a refused review is sent comment by comment, and only what stays out goes in the brief', async () => {
+  const other = { ...FINDING, claim: 'The trim drops a space that matters.' };
+  const { github, writes } = fakeGitHub({
+    failPostReview: httpError(422, 'line must be part of the diff'),
+    refuseComment: (comment) => comment.body.includes('trim drops'),
+  });
+  const { run } = fakeRunner({ correctness: [FINDING, other] });
+  await review({ github, run });
+
+  const posted = writesOf(writes, 'reviewComment');
+  assert.equal(posted.length, 1);
+  assert.ok(posted[0].body.includes(FINDING.claim));
+
+  const [briefText] = writesOf(writes, 'comment');
+  assert.match(briefText, /### Findings without an inline comment/);
+  assert.ok(briefText.includes(other.claim));
+  assert.ok(!briefText.includes(FINDING.claim));
 });
 
 test('a review GitHub refuses still gets a brief that carries the findings', async () => {

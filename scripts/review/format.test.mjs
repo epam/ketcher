@@ -153,7 +153,10 @@ test('a refused review puts its findings and the reason in the brief', () => {
     inlineFailure: 'line must be part of the diff',
   });
   assert.match(text, /### Findings without an inline comment/);
-  assert.match(text, /GitHub did not take the review: line must be part of/);
+  assert.match(
+    text,
+    /GitHub did not take these findings as comments: line must/,
+  );
   assert.ok(text.includes(inline.claim));
 });
 

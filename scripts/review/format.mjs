@@ -208,7 +208,7 @@ function inlineFailureSection(input) {
     return [];
   }
   return section('Findings without an inline comment', [
-    `GitHub did not take the review: ${plain(input.inlineFailure)}`,
+    `GitHub did not take these findings as comments: ${plain(input.inlineFailure)}`,
     '',
     ...(input.inline ?? []).map(briefLine),
   ]);

@@ -64,12 +64,12 @@ const isUserEditing = (): boolean => {
   );
 };
 
-interface ClipboardData {
+export interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
 }
 
-interface ClipAreaProps {
+export interface ClipAreaProps {
   formats: string[];
   focused: () => boolean;
   onCopy: () => Promise<ClipboardData | null | undefined>;

@@ -6,6 +6,21 @@ Beyond small molecules, users work with biopolymers — peptides and nucleic aci
 
 ## Requirements
 
+### Requirement: Center small molecules within Snake layout rows
+
+In Snake mode, the system SHALL vertically center all small molecules in each molecule row on the horizontal axis through the center of the tallest molecule's bounding box. This SHALL apply to connected and unconnected small molecules. When the ruler causes wrapping, each resulting row SHALL use its own tallest molecule while retaining the space reserved for that row.
+
+#### Scenario: Align molecules of different heights
+
+- **WHEN** small molecules with different bounding-box heights occupy the same Snake layout row
+- **THEN** their bounding-box centers share a vertical coordinate
+- **AND** the tallest molecule retains its vertical placement
+
+#### Scenario: Wrap the tallest molecule onto another row
+
+- **WHEN** the ruler moves the tallest molecule to the next molecule row
+- **THEN** each row aligns its molecules using the tallest bounding box remaining in that row
+
 Monomers connect through defined attachment points, sequences render as single-letter codes, and layout modes present the same chemistry differently.
 
 ### Requirement: Macromolecules editing disabled by integrator

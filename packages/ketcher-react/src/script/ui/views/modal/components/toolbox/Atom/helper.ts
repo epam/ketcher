@@ -30,7 +30,7 @@ export function AtomListValid(
   if (atomType !== 'list' || isCustomQuery) {
     return true;
   }
-  return value.length >= 1;
+  return value.length > 0;
 }
 
 export function pseudoAtomValid(

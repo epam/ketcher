@@ -19,20 +19,13 @@ import type { CoreEditor } from './Editor';
 import { assert } from 'utilities';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { EditorHistoryAction } from './EditorHistoryAction';
+import { SequenceIdsResetOperation } from './operations/monomer/SequenceIdsResetOperation';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
 
 export class EditorHistory {
-  private readonly commands: Command[] = [];
-  private pointer = 0;
-  editor!: CoreEditor;
-
   private static readonly instances = new WeakMap<CoreEditor, EditorHistory>();
-
-  constructor(editor: CoreEditor) {
-    this.editor = editor;
-  }
 
   static getInstance(editor: CoreEditor): EditorHistory {
     let instance = this.instances.get(editor);
@@ -43,8 +36,30 @@ export class EditorHistory {
     return instance;
   }
 
+  private readonly commands: Command[] = [];
+  private pointer = 0;
+  editor!: CoreEditor;
+
+  constructor(editor: CoreEditor) {
+    this.editor = editor;
+  }
+
   private get moleculesEditor() {
     return ketcherProvider.getKetcher(this.editor.ketcherId)?.editor;
+  }
+
+  private performCommand(command: Command, operation: HistoryOperationType) {
+    if (operation === 'undo') {
+      command.invert(this.editor.renderersContainer);
+    } else {
+      command.execute(this.editor.renderersContainer);
+    }
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
+    // Dispatch after the model has been re-applied so subscribers observe the
+    // up-to-date structure.
+    this.editor.events.modelChange.dispatch();
   }
 
   get historyStack() {
@@ -56,6 +71,12 @@ export class EditorHistory {
   }
 
   update(command: Command, shouldMergeWithLatestHistoryCommand?: boolean) {
+    const resetSequenceIds = SequenceIdsResetOperation.forCommand(command);
+    if (resetSequenceIds) {
+      command.addOperation(resetSequenceIds);
+      resetSequenceIds.execute(this.editor.renderersContainer);
+      this.editor.renderersContainer.runPostRenderMethods();
+    }
     const latestCommand = this.previousCommand;
     if (
       shouldMergeWithLatestHistoryCommand &&
@@ -118,20 +139,6 @@ export class EditorHistory {
     const lastCommand = this.commands[this.pointer];
     this.performCommand(lastCommand, 'redo');
     this.pointer++;
-  }
-
-  private performCommand(command: Command, operation: HistoryOperationType) {
-    if (operation === 'undo') {
-      command.invert(this.editor.renderersContainer);
-    } else {
-      command.execute(this.editor.renderersContainer);
-    }
-    const turnOffSelectionCommand =
-      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
-    this.editor?.renderersContainer.update(turnOffSelectionCommand);
-    // Dispatch after the model has been re-applied so subscribers observe the
-    // up-to-date structure.
-    this.editor.events.modelChange.dispatch();
   }
 
   public get previousCommand() {

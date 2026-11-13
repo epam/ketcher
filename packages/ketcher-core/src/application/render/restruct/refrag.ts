@@ -24,15 +24,15 @@ import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReFrag extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   public item: Fragment;
 
   constructor(frag: Fragment) {
     super('frag');
     this.item = frag;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   fragGetAtoms(restruct: ReStruct, fid: number): number[] {

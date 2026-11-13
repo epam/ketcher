@@ -500,8 +500,7 @@
             "y": -2.75
         },
         "alias": "SerPO3",
-        "templateId": "SerPO3___O-phospho-L-serine",
-        "seqid": 10
+        "templateId": "SerPO3___O-phospho-L-serine"
     },
     "monomer10": {
         "type": "monomer",

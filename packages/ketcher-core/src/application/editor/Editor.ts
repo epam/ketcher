@@ -251,6 +251,44 @@ const loadDefaultMonomersData = async () =>
   (await import('./data/monomers.ket')).default;
 
 export class CoreEditor {
+  private _monomersLibraryParsedJson: IKetMacromoleculesContent =
+    getEmptyMonomersLibraryJson();
+  private _monomersLibrary: MonomerItemType[] = [];
+  private defaultMonomersLibraryReady?: Promise<void>;
+  private defaultMonomersLibraryInitialized = false;
+  private pendingMonomerLibraryUpdates: Array<{
+    data: string;
+    editedMonomerRef?: string;
+    isUserCreated?: boolean;
+  }> = [];
+  private libraryItemDragCancelled = false;
+  /** Handles all drag-and-drop attachment-point logic for library items. */
+  private dragDropHandler!: LibraryItemDragDropHandler;
+  private tool?: Tool | BaseTool;
+  private readonly previousModes: BaseMode[] = [];
+  private readonly micromoleculesEditor: Editor;
+  private monomerWizardMode?: BaseMode;
+  private pendingMonomerWizardInstanceReplacement?: MonomerInstanceReplacement;
+  private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
+  private copyEventHandler: (event: ClipboardEvent) => void = () => {};
+  private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
+  private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
+  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
+  private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private readonly handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.cancelActiveDrag();
+    }
+  };
+  private readonly handleWindowBlur = (): void => {
+    this.cancelActiveDrag();
+  };
+  private readonly handleWindowResize = () => {
+    this.resetCanvasOffset();
+    this.resetKetcherRootElementOffset();
+  };
+
   public events: IEditorEvents;
   public ketcherId?: string;
 
@@ -261,9 +299,6 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson: IKetMacromoleculesContent =
-    getEmptyMonomersLibraryJson();
-  private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public ketcherRootElement: HTMLDivElement | null;
   public drawnStructuresWrapperElement: SVGGElement;
@@ -278,29 +313,18 @@ export class CoreEditor {
 
   public nextAutochainPosition?: Vec2 = undefined;
 
-  private libraryItemDragCancelled = false;
-
   public theme: CoreEditorTheme;
-  /**
-  Handles all drag-and-drop attachment-point logic for library items.
-  */
-  private dragDropHandler!: LibraryItemDragDropHandler;
   public zoomTool: ZoomTool;
-  private tool?: Tool | BaseTool;
 
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;
   }
 
   public mode: BaseMode;
-  private readonly previousModes: BaseMode[] = [];
   public sequenceTypeEnterMode = SequenceType.RNA;
   // True while a macromolecules dialog is open, so the canvas does not react
   // to clipboard paste behind it (as in micro mode)
   private isModalOpen = false;
-  private readonly micromoleculesEditor: Editor;
-  private monomerWizardMode?: BaseMode;
-  private pendingMonomerWizardInstanceReplacement?: MonomerInstanceReplacement;
 
   public setIsModalOpen(isModalOpen: boolean) {
     this.isModalOpen = isModalOpen;
@@ -309,20 +333,6 @@ export class CoreEditor {
   public get isMonomerWizardSessionActive() {
     return Boolean(this.monomerWizardMode);
   }
-  private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
-  private copyEventHandler: (event: ClipboardEvent) => void = () => {};
-  private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
-  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
-  private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
-  private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
-  private readonly cleanupsForDomEvents: Array<() => void> = [];
-  private defaultMonomersLibraryReady?: Promise<void>;
-  private defaultMonomersLibraryInitialized = false;
-  private pendingMonomerLibraryUpdates: Array<{
-    data: string;
-    editedMonomerRef?: string;
-    isUserCreated?: boolean;
-  }> = [];
 
   constructor({
     ketcherId,
@@ -396,21 +406,6 @@ export class CoreEditor {
     window.addEventListener('blur', this.handleWindowBlur);
     window.addEventListener('resize', this.handleWindowResize);
   }
-
-  private readonly handleVisibilityChange = (): void => {
-    if (document.hidden) {
-      this.cancelActiveDrag();
-    }
-  };
-
-  private readonly handleWindowBlur = (): void => {
-    this.cancelActiveDrag();
-  };
-
-  private readonly handleWindowResize = () => {
-    this.resetCanvasOffset();
-    this.resetKetcherRootElementOffset();
-  };
 
   private cancelActiveDrag(): void {
     if (this.tool instanceof SelectBase && this.tool.mode !== 'standby') {
@@ -565,7 +560,7 @@ export class CoreEditor {
   private setMonomersLibrary(monomersDataRaw: string): 'loaded' | 'cached' {
     if (
       persistentMonomersLibraryParsedJson !== null &&
-      persistentMonomersLibrary.length !== 0
+      persistentMonomersLibrary.length > 0
     ) {
       this._monomersLibrary = persistentMonomersLibrary;
       this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;

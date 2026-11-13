@@ -855,8 +855,7 @@
             "y": -4.25
         },
         "alias": "dA",
-        "templateId": "dA___D-Alanine",
-        "seqid": 20
+        "templateId": "dA___D-Alanine"
     },
     "monomer20": {
         "type": "monomer",

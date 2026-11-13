@@ -545,8 +545,7 @@
             "y": -2.75
         },
         "alias": "dP",
-        "templateId": "dP___D-Proline",
-        "seqid": 9
+        "templateId": "dP___D-Proline"
     },
     "monomer9": {
         "type": "monomer",

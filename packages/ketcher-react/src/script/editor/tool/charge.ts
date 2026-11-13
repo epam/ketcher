@@ -29,6 +29,13 @@ class ChargeTool implements Tool {
     this.charge = charge;
   }
 
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
+    return !atom.atomList && !atom.rglabel;
+  }
+
   mousemove(event: PointerEvent) {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
@@ -52,7 +59,7 @@ class ChargeTool implements Tool {
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
 
-    if (ci && functionalGroups.size && ci.map === 'atoms') {
+    if (ci && functionalGroups.size > 0 && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id,
@@ -104,13 +111,6 @@ class ChargeTool implements Tool {
       }
     }
     return true;
-  }
-
-  private isChargeableAtom(atom: Atom): boolean {
-    // An atom can have a charge if it's not an atom list or R-group label
-    // This allows charges on regular periodic table elements (C, N, O, etc.)
-    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
-    return !atom.atomList && !atom.rglabel;
   }
 }
 

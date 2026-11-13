@@ -24,6 +24,7 @@ import {
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 import { isGenericAtom } from 'domain/helpers';
+import { getAtomQueryLabelText } from 'application/render/restruct/atomQueryText';
 
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
@@ -52,12 +53,15 @@ export class AtomRenderer extends BaseRenderer {
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private queryLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
   private stereoLabelElementBBox?: SVGRect;
   private stereoTextElementBBox?: SVGRect;
+  private queryLabelElementBBox?: SVGRect;
+  private cipLabelDistance = 0;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -76,6 +80,8 @@ export class AtomRenderer extends BaseRenderer {
     const editor = provideEditorInstance();
     const { hydrogenAmount } = this.atom.calculateValence();
     const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
+    const { properties } = this.atom;
+    const queryProperties = properties.queryProperties ?? {};
 
     const rootElement = this.canvas
       .insert('g', ':first-child')
@@ -91,19 +97,19 @@ export class AtomRenderer extends BaseRenderer {
       .attr('data-atomIsotopeAtomicMass', this.atom.properties.isotope ?? '')
       .attr('data-atomValence', this.atom.properties.explicitValence ?? '')
       .attr('data-atomRadical', this.atom.properties.radical ?? '')
-      .attr('data-atomRingBondCount', '')
+      .attr('data-atomRingBondCount', properties.ringBondCount ?? '')
       .attr('data-atomHCount', hydrogenAmount ?? '')
-      .attr('data-atomSubstitutionCount', '')
-      .attr('data-atomUnsaturated', '')
-      .attr('data-atomAromaticity', '')
-      .attr('data-atomImplicitHCount', '')
-      .attr('data-atomRingMembership', '')
-      .attr('data-atomRingSize', '')
-      .attr('data-atomConnectivity', '')
-      .attr('data-atomChirality', '')
+      .attr('data-atomSubstitutionCount', properties.substitutionCount ?? '')
+      .attr('data-atomUnsaturated', properties.unsaturatedAtom ?? '')
+      .attr('data-atomAromaticity', queryProperties.aromaticity ?? '')
+      .attr('data-atomImplicitHCount', properties.implicitHCount ?? '')
+      .attr('data-atomRingMembership', queryProperties.ringMembership ?? '')
+      .attr('data-atomRingSize', queryProperties.ringSize ?? '')
+      .attr('data-atomConnectivity', queryProperties.connectivity ?? '')
+      .attr('data-atomChirality', queryProperties.chirality ?? '')
       .attr('data-atomInversion', '')
       .attr('data-atomExactChange', '')
-      .attr('data-atomCustomQuery', '')
+      .attr('data-atomCustomQuery', queryProperties.customQuery ?? '')
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
@@ -344,7 +350,16 @@ export class AtomRenderer extends BaseRenderer {
   */
   public get labelTooltipText(): string | null {
     const text = this.labelText;
-    return text.length > MAX_LABEL_LENGTH ? text : null;
+    if (text.length > MAX_LABEL_LENGTH) {
+      return text;
+    }
+
+    const queryText = this.queryLabelText;
+    return queryText.length > MAX_LABEL_LENGTH ? queryText : null;
+  }
+
+  public get queryLabelText() {
+    return getAtomQueryLabelText(this.atom.properties);
   }
 
   private get isAtomTerminal() {
@@ -559,6 +574,9 @@ export class AtomRenderer extends BaseRenderer {
     this.stereoLabelElement = undefined;
     this.stereoLabelElementBBox = undefined;
     this.stereoTextElementBBox = undefined;
+    this.queryLabelElement?.remove();
+    this.queryLabelElement = undefined;
+    this.queryLabelElementBBox = undefined;
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
@@ -566,6 +584,7 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = this.appendHover();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
+    this.appendQueryLabel();
   }
 
   public appendSelection() {
@@ -735,6 +754,7 @@ export class AtomRenderer extends BaseRenderer {
     // Must come before appendCIPLabel: CIP positioning depends on the stereo bbox.
     this.appendStereoLabel();
     this.appendCIPLabel();
+    this.appendQueryLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }
@@ -814,6 +834,8 @@ export class AtomRenderer extends BaseRenderer {
           STEREO_CIP_GAP,
       );
     }
+
+    this.cipLabelDistance = projectedDistance;
 
     const shiftVector = direction.scaled(projectedDistance);
 
@@ -952,6 +974,90 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  private appendQueryLabel() {
+    const queryText = this.queryLabelText;
+
+    if (!queryText) {
+      return;
+    }
+
+    this.queryLabelElement = this.canvas
+      ?.append('g')
+      ?.attr('id', `query-atom-${this.atom.id}`);
+
+    this.queryLabelElement
+      ?.append('text')
+      .text(
+        queryText.length > MAX_LABEL_LENGTH
+          ? `${queryText.substring(0, MAX_LABEL_LENGTH)}...`
+          : queryText,
+      )
+      .attr('data-testid', 'atom-query-label')
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', ElementColor[this.atom.label] ?? '#000')
+      .attr('pointer-events', 'none');
+
+    this.queryLabelElementBBox = this.queryLabelElement?.node()?.getBBox();
+
+    this.positionQueryLabel();
+  }
+
+  private positionQueryLabel() {
+    if (!this.queryLabelElementBBox) {
+      return;
+    }
+
+    const { x, y, width, height } = this.queryLabelElementBBox;
+    const direction = this.bisectLargestSector();
+    let projectedDistance = this.getProjectedLabelDistance(
+      width,
+      height,
+      direction,
+    );
+    // stereo and CIP labels are placed in the same direction, the query label goes after them
+    let previousLabelBBox = this.stereoTextElementBBox;
+    let previousLabelDistance = 0;
+
+    if (this.cipLabelElement && this.cipTextElementBBox) {
+      previousLabelBBox = this.cipTextElementBBox;
+      previousLabelDistance = this.cipLabelDistance;
+    } else if (previousLabelBBox) {
+      previousLabelDistance = this.getProjectedLabelDistance(
+        previousLabelBBox.width,
+        previousLabelBBox.height,
+        direction,
+      );
+    }
+
+    if (previousLabelBBox) {
+      projectedDistance = Math.max(
+        projectedDistance,
+        previousLabelDistance +
+          this.getLabelProjectionRadius(
+            previousLabelBBox.width,
+            previousLabelBBox.height,
+            direction,
+          ) +
+          this.getLabelProjectionRadius(width, height, direction) +
+          STEREO_CIP_GAP,
+      );
+    }
+
+    const shiftVector = direction.scaled(projectedDistance);
+    const queryPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x - (x + width / 2),
+        shiftVector.y - (y + height / 2),
+      ),
+    );
+
+    this.queryLabelElement?.attr(
+      'transform',
+      `translate(${queryPosition.x}, ${queryPosition.y})`,
+    );
+  }
+
   private getProjectedLabelDistance(
     width: number,
     height: number,
@@ -1009,12 +1115,14 @@ export class AtomRenderer extends BaseRenderer {
 
     this.positionCIPLabel();
     this.positionStereoLabel();
+    this.positionQueryLabel();
   }
 
   public remove() {
     this.removeSelection();
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
+    this.queryLabelElement?.remove();
     // Clear stale ref so show() recreates the hover contour in the new root (#10856).
     this.hoverElement = undefined;
     super.remove();
@@ -1028,6 +1136,7 @@ export class AtomRenderer extends BaseRenderer {
     this.selectionElement?.style('display', display);
     this.cipLabelElement?.style('display', display);
     this.stereoLabelElement?.style('display', display);
+    this.queryLabelElement?.style('display', display);
   }
 
   protected appendHoverAreaElement(): void {

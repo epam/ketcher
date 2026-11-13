@@ -6,9 +6,17 @@ import {
 } from 'domain/constants/monomers';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 
+export type ResolvedMonomerClass =
+  | KetMonomerClass.RNA
+  | KetMonomerClass.AminoAcid
+  | KetMonomerClass.Sugar
+  | KetMonomerClass.Phosphate
+  | KetMonomerClass.Base
+  | KetMonomerClass.CHEM;
+
 export const resolveMonomerClass = (
   monomer: MonomerItemType,
-): KetMonomerClass => {
+): ResolvedMonomerClass => {
   if (
     monomer.props.MonomerClass === KetMonomerClass.RNA ||
     monomer.props.MonomerClass === KetMonomerClass.DNA

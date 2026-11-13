@@ -96,7 +96,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     editor = new CoreEditor({
@@ -104,6 +104,7 @@ describe('createAntisenseChain with unsplit nucleotides', () => {
       theme: {},
       renderersContainer: createRenderersManager(),
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
   });
 
   afterEach(() => {

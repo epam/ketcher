@@ -21,3 +21,5 @@ Renaming to `KETCHER_MULTI_LANGUAGE_BUILD` (opt-in, default off) makes the flag'
 
 - Any existing consumer relying on the old `KETCHER_SINGLE_LANGUAGE_BUILD` flag silently loses multi-language support on upgrade (the old flag name is no longer read by either package) — this is a breaking change for multi-language consumers and must be called out in release notes/changelog.
 - At the time of this decision, Jest's i18n regression guards (`i18n.test.ts`, `noHardcodedStrings.test.ts`) forced `KETCHER_MULTI_LANGUAGE_BUILD=true` in `jest.setup.js` so they kept exercising full-language parity regardless of the shipped default. Both test files (and the `jest.setup.js` override) were later removed — see [modules/i18n.md](../modules/i18n.md) for current test coverage, which no longer includes automated `en`/`zh-CN` key or placeholder parity checks.
+
+Note (Vite 8 migration): the constant is now injected through `define` in each package's `vite.config.mjs` (`build-config/replace-values.mjs`), and Rolldown does the tree-shaking. The flag and its default are unchanged. See [build.md](../build.md).

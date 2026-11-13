@@ -190,7 +190,7 @@ describe('SequenceMode library replacement visits each strand separately', () =>
   let editor: CoreEditor;
   let mode: SequenceMode;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     canvas = createPolymerEditorCanvas();
     stubCanvasDimensions(canvas);
     mode = new SequenceMode();
@@ -200,6 +200,7 @@ describe('SequenceMode library replacement visits each strand separately', () =>
       renderersContainer: createRenderersManager(testRenderTheme),
       mode,
     });
+    await editor.ensureDefaultMonomersLibraryLoaded();
     // Sync editing off: the monomer replacements below must not mirror bases.
     (mode as unknown as { _isSyncEditMode: boolean })._isSyncEditMode = false;
   });

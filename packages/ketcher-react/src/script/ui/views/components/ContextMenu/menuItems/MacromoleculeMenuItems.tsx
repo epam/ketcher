@@ -15,6 +15,7 @@ import {
   ketcherProvider,
   KetcherFunctionality,
   MonomerMicromolecule,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { useAppContext, useIsFunctionalityDisabled } from 'src/hooks';
 import type Editor from 'src/script/editor';
@@ -76,7 +77,10 @@ const MacromoleculeMenuItems = (
       ? sgroup.monomer.monomerItem.label
       : '';
 
-  const handleEdit = (shouldEditAllInstances = false) => {
+  const handleEdit = async (shouldEditAllInstances = false) => {
+    // Reachable from molecules mode before macromolecules mode has loaded the library.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroupIds = (functionalGroups ?? []).map((fg) => fg.relatedSGroupId);
 

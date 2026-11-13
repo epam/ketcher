@@ -108,6 +108,15 @@ class KetcherBuilder {
     return structService;
   }
 
+  /**
+   * Ends the struct service this builder currently holds. The editor calls it
+   * on unmount: a standalone service owns an Indigo worker that stays alive
+   * until it is destroyed.
+   */
+  destroy() {
+    this.structService?.destroy?.();
+  }
+
   reinitializeApi(
     ketcherId: string,
     structServiceProvider: StructServiceProvider,

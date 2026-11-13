@@ -194,11 +194,26 @@ function mapWarningGroup(property: string) {
   return property.toLowerCase();
 }
 
+// Timers of the calls of one service that still wait for a worker reply, keyed
+// by the service's event emitter. destroy() cancels them: a destroyed service
+// never gets a reply, and a timeout that fired afterwards would reject a call
+// of an editor that is already gone.
+const pendingTimeouts = new WeakMap<
+  EventEmitter,
+  Set<ReturnType<typeof setTimeout>>
+>();
+
+function cancelPendingTimeouts(eventEmitter: EventEmitter) {
+  pendingTimeouts.get(eventEmitter)?.forEach(clearTimeout);
+  pendingTimeouts.delete(eventEmitter);
+}
+
 /**
  * Creates a wrapper that adds timeout functionality to worker communication
  * @param eventEmitter - The event emitter instance
  * @param workerEvent - The worker event type to listen to
  * @param action - The callback function to execute on success
+ * @param reject - The callback function to execute on timeout
  * @param timeout - Timeout in milliseconds (0 means no timeout)
  * @returns An object with setup method to initialize the timeout wrapper
  */
@@ -206,15 +221,19 @@ function createTimeoutWrapper<T>(
   eventEmitter: EventEmitter,
   workerEvent: WorkerEvent,
   action: (data: OutputMessageWrapper<T>) => void,
+  reject: (reason: Error) => void,
   timeout: number = DEFAULT_WORKER_TIMEOUT,
 ): {
   setup: () => void;
 } {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timers = pendingTimeouts.get(eventEmitter) ?? new Set();
+  pendingTimeouts.set(eventEmitter, timers);
 
   const wrappedAction = (data: OutputMessageWrapper<T>) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
+      timers.delete(timeoutId);
     }
     action(data);
   };
@@ -223,10 +242,15 @@ function createTimeoutWrapper<T>(
     eventEmitter.once(workerEvent, wrappedAction);
 
     if (timeout !== 0) {
-      timeoutId = setTimeout(() => {
+      const id = setTimeout(() => {
+        timers.delete(id);
         eventEmitter.off(workerEvent, wrappedAction);
-        throw new Error(`${workerEvent} operation timeout after ${timeout}ms`);
+        reject(
+          new Error(`${workerEvent} operation timeout after ${timeout}ms`),
+        );
       }, timeout);
+      timeoutId = id;
+      timers.add(id);
     }
   };
 
@@ -336,6 +360,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.GetInChIKey,
         action,
+        reject,
       );
 
       const inputMessage: InputMessage<GenerateInchIKeyCommandData> = {
@@ -370,6 +395,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Info,
         action,
+        reject,
         DEFAULT_WORKER_TIMEOUT,
       );
 
@@ -379,7 +405,7 @@ class IndigoService implements StructService {
     });
   }
 
-  convert(
+  async convert(
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
@@ -390,6 +416,9 @@ class IndigoService implements StructService {
     } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const timeout = options?.['request-timeout'] as number | undefined;
+
+    // Without this, the worker gets no monomer library if macromolecules mode was never opened.
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
@@ -412,6 +441,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Convert,
         action,
+        reject,
         timeout,
       );
 
@@ -491,6 +521,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Layout,
         action,
+        reject,
         timeout,
       );
 
@@ -554,6 +585,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Clean,
         action,
+        reject,
         timeout,
       );
 
@@ -590,6 +622,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Aromatize,
         action,
+        reject,
         timeout,
       );
 
@@ -625,6 +658,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Dearomatize,
         action,
+        reject,
         timeout,
       );
 
@@ -671,6 +705,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.CalculateCip,
         action,
+        reject,
         timeout,
       );
 
@@ -717,6 +752,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Automap,
         action,
+        reject,
         timeout,
       );
 
@@ -768,6 +804,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Check,
         action,
+        reject,
         timeout,
       );
 
@@ -823,6 +860,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.Calculate,
         action,
+        reject,
         timeout,
       );
 
@@ -875,6 +913,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.GenerateImageAsBase64,
         action,
+        reject,
         timeout,
       );
 
@@ -938,6 +977,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.ExplicitHydrogens,
         action,
+        reject,
         timeout,
       );
 
@@ -981,6 +1021,7 @@ class IndigoService implements StructService {
         this.EE,
         WorkerEvent.CalculateMacromoleculeProperties,
         action,
+        reject,
         timeout,
       );
 
@@ -1003,6 +1044,7 @@ class IndigoService implements StructService {
   }
 
   public destroy() {
+    cancelPendingTimeouts(this.EE);
     this.worker.terminate();
     this.worker.onmessage = null;
   }

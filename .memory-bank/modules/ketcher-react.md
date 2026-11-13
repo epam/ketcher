@@ -12,7 +12,8 @@ Provides the React component tree that hosts the Raphael-based 2D small molecule
   - `structServiceProvider` — remote or standalone chemistry backend
   - `errorHandler` — optional error callback
   - `onInit(ketcher: Ketcher)` — called after Ketcher is ready
-  - `disableMacromoleculesEditor?: boolean` — opt out of macro mode
+  - `disableMacromoleculesEditor?: boolean` — opt out of macro mode; the macromolecules package
+    is not requested and the molecule editor still reports readiness through `onInit`
   - `monomersLibraryUpdate?: string | JSON` — load/merge custom monomer library
   - `monomersLibraryReplace?: string | JSON` — replace entire monomer library
 - `MicromoleculesEditor` — inner component that mounts the Raphael canvas and Redux store
@@ -22,7 +23,7 @@ Provides the React component tree that hosts the Raphael-based 2D small molecule
 
 | Path                             | Purpose                                                              |
 | -------------------------------- | -------------------------------------------------------------------- |
-| `src/Editor.tsx`                 | Top-level: toggles micro ↔ macro, lazy-loads macro package           |
+| `src/Editor.tsx`                 | Top-level: toggles micro ↔ macro, imports macro package at startup   |
 | `src/MicromoleculesEditor.tsx`   | Redux Provider + Raphael canvas mount                                |
 | `src/script/api.ts`              | `ketcherBuilder` entry point (creates Ketcher + Editor instances)    |
 | `src/script/editor/Editor.ts`    | Micromolecules editor controller (wraps Raphael, tools, selection)   |
@@ -51,7 +52,7 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 - `ketcher-core` (domain + application layer)
 - React, Redux, redux-toolkit
 - Less (CSS preprocessor, compiled at build time)
-- Rollup (build)
+- Vite 8 / Rolldown (build)
 
 ## Dependents
 
@@ -63,5 +64,7 @@ Uses **Redux** (via `react-redux`). Key slices in `src/script/ui/state/`:
 - The paste tool and S-Group dialog do not run a canvas-wide S-Group expansion pass. Non-SUP groups are always expanded according to `SGroup.isExpanded()`; these UI paths do not normalize the raw `data.expanded` flag of unrelated groups.
 
 - The `Editor.tsx` file manages the `window.isPolymerEditorTurnedOn` global flag. This is used to turn on/off some functionality in ketcher (f.e. some api methods, events). It is bad practice and should be refactored in the future to get rid of this flag.
-- `ketcher-macromolecules` is imported dynamically (`React.lazy`) to avoid a circular dependency. If changed to a static import, the circular dependency must be resolved first.
+- `ketcher-macromolecules` is imported dynamically (`React.lazy`) to avoid a circular dependency. If changed to a static import, the circular dependency must be resolved first. `React.lazy` splits the code but does not defer it: the component mounts hidden as soon as the molecules editor has a Ketcher id, so the package downloads at startup even in molecules mode. When the integrator opts out of macromolecules, it is never mounted or downloaded and no macromolecules core editor is created. The default monomer library (`monomers.ket`) is a second, separate dynamic import that this component preloads at browser idle once the macromolecules core editor exists; with the opt-out nothing preloads it ([monomer-library](./monomer-library.md)).
+- The Monomer Creation Wizard requires the macromolecules core editor. Its entry points are disabled and its UI stays unmounted while that editor is unavailable; sequence API requests reject with a clear unavailable-editor error.
 - The Redux store in `ketcher-react` is **separate** from the Redux store in `ketcher-macromolecules` — they do not share state.
+- `MicromoleculesEditor` ends the struct service its `KetcherBuilder` created when it unmounts (`KetcherBuilder.destroy()`), and `reinitializeApi` ends the service it replaces. A standalone service owns an Indigo worker that runs until then, so a host that shows and hides the editor leaks one worker per show without it. Each mount creates its own builder and service (React `StrictMode` mounts twice, so it creates two), so unmount ends only the service of its own mount.

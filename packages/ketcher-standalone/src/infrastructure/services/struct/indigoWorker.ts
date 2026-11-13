@@ -55,7 +55,7 @@ type HandlerType = (
   indigoOptions: IndigoOptions,
 ) => string;
 
-const module = indigoModuleFn();
+const indigoModulePromise = indigoModuleFn();
 
 function handle(
   handler: HandlerType,
@@ -63,7 +63,7 @@ function handle(
   messageType?: Command,
   inputData?: string,
 ) {
-  module.then((indigo: IndigoModule) => {
+  indigoModulePromise.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
     let msg: OutputMessage<string>;
     try {

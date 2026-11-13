@@ -102,6 +102,11 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
+// A whole-library convert can carry thousands of monomers, so give it more
+// room than a single interactive edit, but still a finite bound so a
+// crashed/unresponsive worker rejects instead of hanging forever.
+const MONOMER_LIBRARY_CONVERT_TIMEOUT_MS = 5 * 60 * 1000;
+
 export class Ketcher {
   readonly #formatterFactory: FormatterFactory;
   #editor: Editor | null = null;
@@ -341,7 +346,9 @@ export class Ketcher {
     return rxnfile;
   }
 
-  getKet(): Promise<string> {
+  async getKet(): Promise<string> {
+    await provideEditorInstance()?.ensureDefaultMonomersLibraryLoaded();
+
     return getStructure(
       this.id,
       this.#formatterFactory,
@@ -368,11 +375,19 @@ export class Ketcher {
     );
   }
 
+  /**
+   * Rejects if the macromolecules editor is unavailable or disabled.
+   */
   async getSequence(
     format: '1-letter' | '3-letter' = '1-letter',
   ): Promise<string> {
     if (format === '1-letter' || format === '3-letter') {
       const editor = provideEditorInstance();
+      if (!editor) {
+        throw new Error(
+          'Cannot get a sequence because the macromolecules editor is unavailable.',
+        );
+      }
       const indigo = this.indigo;
 
       const ketSerializer = new KetSerializer();
@@ -563,6 +578,8 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
+    await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
+
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -631,6 +648,8 @@ export class Ketcher {
     const macromoleculesEditor = provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
+
+    await macromoleculesEditor?.ensureDefaultMonomersLibraryLoaded();
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
@@ -868,6 +887,7 @@ export class Ketcher {
           {
             ...serverSettings,
             outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+            'request-timeout': MONOMER_LIBRARY_CONVERT_TIMEOUT_MS,
           },
         );
 
@@ -920,6 +940,10 @@ export class Ketcher {
       );
     }
 
+    // A default load still in flight would otherwise resolve afterwards and
+    // overwrite this update with its own wholesale library replace.
+    await editor.ensureDefaultMonomersLibraryLoaded();
+
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -957,6 +981,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    await editor.ensureDefaultMonomersLibraryLoaded();
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

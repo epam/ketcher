@@ -49,6 +49,7 @@ export class EditorHistory {
   }
 
   private performCommand(command: Command, operation: HistoryOperationType) {
+    this.editor.flushPendingDragRender();
     if (operation === 'undo') {
       command.invert(this.editor.renderersContainer);
     } else {

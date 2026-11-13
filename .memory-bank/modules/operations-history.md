@@ -54,6 +54,8 @@ Action factory functions (the `fromXxx(...)` helpers, organized by concern such 
 
 **EditorHistory** (macro):
 
+Selection dragging applies its movement operations synchronously and batches their visual hooks separately (see [rendering](./rendering.md)). Mouseup records the aggregate movement for Undo/Redo without reapplying it. History execution first flushes any pending drag visuals; normal Command execution and inversion remain unchanged.
+
 - An instance per CoreEditor, released on teardown.
 - In the combined editor, `EditorHistoryAction` adapts Command inversion/execution to the micro editor's Action stack. Macro-only core consumers retain a local Command stack.
 - **update** — either merges into the latest Command or inserts at the pointer, shifting out the oldest when over the cap.

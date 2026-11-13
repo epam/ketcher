@@ -26,13 +26,15 @@ import type { Tool } from './Tool';
 class EnhancedStereoTool implements Tool {
   isNotActiveTool: true;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     const selection = editor.selection();
     this.isNotActiveTool = true;
 
     const stereoAtoms = findStereoAtoms(
       editor.struct(),
-      selection ? selection.atoms || [] : [...editor.struct().atoms.keys()],
+      selection
+        ? selection.atoms || []
+        : Array.from(editor.struct().atoms.keys()),
     );
     if (stereoAtoms.length === 0) {
       return;

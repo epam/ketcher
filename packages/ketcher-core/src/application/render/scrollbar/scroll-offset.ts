@@ -14,6 +14,22 @@ export class ScrollOffset {
     this.#render = render;
   }
 
+  #calculateOffset() {
+    const absBoundingBox = this.getAbsBoundingBox();
+    if (absBoundingBox.hasZeroArea()) {
+      this.up = 0;
+      this.down = 0;
+      this.left = 0;
+      this.right = 0;
+    } else {
+      const absViewBox = this.getAbsViewBox();
+      this.up = absViewBox.p0.y - absBoundingBox.p0.y;
+      this.down = absBoundingBox.p1.y - absViewBox.p1.y;
+      this.left = absViewBox.p0.x - absBoundingBox.p0.x;
+      this.right = absBoundingBox.p1.x - absViewBox.p1.x;
+    }
+  }
+
   getAbsViewBox(): Box2Abs {
     const viewBox = this.#render.viewBox;
     const viewBoxMinXY = new Vec2(viewBox.minX, viewBox.minY);
@@ -35,22 +51,6 @@ export class ScrollOffset {
       this.#render.options,
     );
     return new Box2Abs(boundingBoxMinXY, boundingBoxMaxXY);
-  }
-
-  #calculateOffset() {
-    const absBoundingBox = this.getAbsBoundingBox();
-    if (absBoundingBox.hasZeroArea()) {
-      this.up = 0;
-      this.down = 0;
-      this.left = 0;
-      this.right = 0;
-    } else {
-      const absViewBox = this.getAbsViewBox();
-      this.up = absViewBox.p0.y - absBoundingBox.p0.y;
-      this.down = absBoundingBox.p1.y - absViewBox.p1.y;
-      this.left = absViewBox.p0.x - absBoundingBox.p0.x;
-      this.right = absBoundingBox.p1.x - absViewBox.p1.x;
-    }
   }
 
   update() {

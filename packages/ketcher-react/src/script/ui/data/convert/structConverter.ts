@@ -104,7 +104,7 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    if (struct.rgroups.size !== 0)
+    if (struct.rgroups.size > 0)
       warnings.push(
         `In ${formatName} the structure will be saved without R-group fragments`,
       );
@@ -178,20 +178,20 @@ export function couldBeSaved(
       ] as SupportedFormat[]
     ).includes(format)
   ) {
-    if (struct.functionalGroups.size !== 0)
+    if (struct.functionalGroups.size > 0)
       warnings.push(
         `In ${formatName} the structure will be saved without functional groups.`,
       );
   }
 
   if ((['cml'] as SupportedFormat[]).includes(format)) {
-    if (struct.functionalGroups.size !== 0)
+    if (struct.functionalGroups.size > 0)
       warnings.push(
         `Structure contains functional groups. In ${formatName} information will be partly lost.`,
       );
   }
 
-  if (warnings.length !== 0) return warnings.join('\n');
+  if (warnings.length > 0) return warnings.join('\n');
 
   return null;
 }

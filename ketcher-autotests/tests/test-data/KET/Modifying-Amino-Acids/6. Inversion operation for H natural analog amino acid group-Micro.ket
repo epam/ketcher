@@ -398,8 +398,7 @@
             "y": -1.25
         },
         "alias": "dH",
-        "templateId": "dH___D-Histidine",
-        "seqid": 2
+        "templateId": "dH___D-Histidine"
     },
     "monomer2": {
         "type": "monomer",

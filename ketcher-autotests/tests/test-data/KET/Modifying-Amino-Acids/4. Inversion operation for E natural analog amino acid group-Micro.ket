@@ -336,8 +336,7 @@
             "y": -1.25
         },
         "alias": "dE",
-        "templateId": "dE___D-Glutamic acid",
-        "seqid": 3
+        "templateId": "dE___D-Glutamic acid"
     },
     "monomer3": {
         "type": "monomer",

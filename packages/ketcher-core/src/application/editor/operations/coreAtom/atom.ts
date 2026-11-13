@@ -78,8 +78,8 @@ function deleteAtomFromMoleculeStruct(atom: Atom) {
   };
 }
 export class AtomAddOperation implements Operation {
-  public atom: Atom;
   private deletedMoleculeStructItems?: DeletedMoleculeStructItems;
+  public atom: Atom;
   public priority = 2;
 
   constructor(

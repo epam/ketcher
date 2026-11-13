@@ -64,11 +64,11 @@ class TemplateTool implements Tool {
   private readonly mode: string | null;
   private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
-  public templatePreview: TemplatePreview | null;
   private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
+  public templatePreview: TemplatePreview | null;
 
   constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;
@@ -170,7 +170,7 @@ class TemplateTool implements Tool {
 
     const isTargetExpanded = functionalGroup?.isExpanded;
     const isTargetAtomOrBond =
-      this.targetGroupsIds.length && !this.isModeFunctionalGroup;
+      this.targetGroupsIds.length > 0 && !this.isModeFunctionalGroup;
 
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
@@ -211,7 +211,7 @@ class TemplateTool implements Tool {
 
     this.templatePreview?.hidePreview();
 
-    if (this.functionalGroups.size) {
+    if (this.functionalGroups.size > 0) {
       this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
         ...(this.closestItem?.map === 'atoms' && {
           atoms: [this.closestItem.id],
@@ -435,7 +435,7 @@ class TemplateTool implements Tool {
     }
 
     // TODO: refactor after #2195 comes into effect
-    if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
+    if (this.targetGroupsIds.length > 0) this.targetGroupsIds.length = 0;
   }
 
   mouseup(event?: Event) {
@@ -484,7 +484,7 @@ class TemplateTool implements Tool {
         this.functionalGroups,
       ) &&
       this.isModeFunctionalGroup &&
-      this.targetGroupsIds.length
+      this.targetGroupsIds.length > 0
     ) {
       const restruct = this.editor.render.ctab;
       const functionalGroupToReplace = this.struct.sgroups.get(ci.id);

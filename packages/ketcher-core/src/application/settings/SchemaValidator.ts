@@ -29,6 +29,28 @@ export class SchemaValidator implements ISettingsValidator {
     } as Schema;
   }
 
+  private convertJsonSchemaErrors(
+    jsonSchemaErrors: JsonSchemaValidationError[],
+  ): SettingsValidationError[] {
+    return jsonSchemaErrors.map((error) => ({
+      path: this.getErrorPath(error),
+      message: error.message || 'Validation error',
+      value: error.instance,
+    }));
+  }
+
+  private getErrorPath(error: JsonSchemaValidationError): string {
+    if (error.path.length === 0) {
+      return '';
+    }
+
+    return `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
+  }
+
+  private escapeJsonPointerToken(token: string | number): string {
+    return String(token).replace(/~/g, '~0').replace(/\//g, '~1');
+  }
+
   /**
    * Validate complete settings object
    */
@@ -65,30 +87,5 @@ export class SchemaValidator implements ISettingsValidator {
       valid: false,
       errors,
     };
-  }
-
-  /**
-   * Convert jsonschema errors to our ValidationError format
-   */
-  private convertJsonSchemaErrors(
-    jsonSchemaErrors: JsonSchemaValidationError[],
-  ): SettingsValidationError[] {
-    return jsonSchemaErrors.map((error) => ({
-      path: this.getErrorPath(error),
-      message: error.message || 'Validation error',
-      value: error.instance,
-    }));
-  }
-
-  private getErrorPath(error: JsonSchemaValidationError): string {
-    if (error.path.length === 0) {
-      return '';
-    }
-
-    return `/${error.path.map(this.escapeJsonPointerToken).join('/')}`;
-  }
-
-  private escapeJsonPointerToken(token: string | number): string {
-    return String(token).replace(/~/g, '~0').replace(/\//g, '~1');
   }
 }

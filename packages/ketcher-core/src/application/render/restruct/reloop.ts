@@ -28,6 +28,10 @@ import type ReStruct from './restruct';
 import type { RenderOptions, RenderPath } from '../render.types';
 
 class ReLoop extends ReObject {
+  static isSelectable(): boolean {
+    return false;
+  }
+
   loop: Loop;
   centre: Vec2;
   radius: number;
@@ -37,10 +41,6 @@ class ReLoop extends ReObject {
     this.loop = loop;
     this.centre = new Vec2();
     this.radius = 0;
-  }
-
-  static isSelectable(): boolean {
-    return false;
   }
 
   show(restruct: ReStruct, _rlid: number, options: RenderOptions): void {

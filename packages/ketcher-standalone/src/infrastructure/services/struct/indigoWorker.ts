@@ -66,9 +66,9 @@ function handle(
   void (async () => {
     const indigo = await module;
     const indigoOptions = new indigo.MapStringString();
-    setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;
     try {
+      setOptions(indigoOptions, options ?? {});
       const payload = handler(indigo, indigoOptions);
       msg = {
         type: messageType,
@@ -84,6 +84,8 @@ function handle(
         error: errorMessage,
         inputData,
       };
+    } finally {
+      indigoOptions.delete();
     }
 
     globalThis.postMessage(msg);
@@ -180,10 +182,14 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
-          data.selectedAtoms.forEach((atomId) =>
-            selectedAtoms.push_back(atomId),
-          );
-          return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
+          try {
+            data.selectedAtoms.forEach((atomId) =>
+              selectedAtoms.push_back(atomId),
+            );
+            return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
+          } finally {
+            selectedAtoms.delete();
+          }
         },
         data.options,
         Command.Calculate,
@@ -218,15 +224,19 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
-          data.selectedAtoms.forEach((atomId) =>
-            selectedAtoms.push_back(atomId),
-          );
-          return indigo.clean2d(
-            data.struct,
-            data.format,
-            indigoOptions,
-            selectedAtoms,
-          );
+          try {
+            data.selectedAtoms.forEach((atomId) =>
+              selectedAtoms.push_back(atomId),
+            );
+            return indigo.clean2d(
+              data.struct,
+              data.format,
+              indigoOptions,
+              selectedAtoms,
+            );
+          } finally {
+            selectedAtoms.delete();
+          }
         },
         data.options,
         Command.Clean,

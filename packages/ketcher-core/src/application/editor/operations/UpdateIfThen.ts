@@ -19,15 +19,16 @@ import { OperationType } from './OperationType';
 import type { ReStruct } from '../../render';
 
 class UpdateIfThen extends BaseOperation {
-  readonly rgid_new: number;
-  readonly rgid_old: number;
-  readonly ifThenHistory: Map<number, number>;
-  readonly skipRgids: Array<number>;
   static InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     history: Map<number, number>,
   ) => BaseOperation;
+
+  readonly rgid_new: number;
+  readonly rgid_old: number;
+  readonly ifThenHistory: Map<number, number>;
+  readonly skipRgids: Array<number>;
 
   constructor(rgNew: number, rgOld: number, skipRgids: Array<number> = []) {
     super(OperationType.UPDATE_IF_THEN);

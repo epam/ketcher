@@ -67,11 +67,11 @@ function isIgnoredSequenceNode(node: SequenceNode) {
 }
 
 function isIgnoredForSubChainBoundary(node: SequenceNode) {
+  // Match the previous boundary scan, which did not ignore ambiguous neighbors.
   return (
     node instanceof LinkerSequenceNode ||
     node instanceof EmptySequenceNode ||
     node instanceof BackBoneSequenceNode ||
-    isAmbiguousMonomerNotPeptide(node) ||
     node.monomer instanceof Phosphate ||
     node.monomer instanceof UnresolvedMonomer
   );

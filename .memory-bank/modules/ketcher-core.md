@@ -66,3 +66,4 @@ Key exports from `packages/ketcher-core/src/index.ts`:
 - All canvas mutations must go through `Command` + `BaseOperation` — never mutate `DrawingEntitiesManager` or `Struct` directly from UI code.
 - Macromolecules mode-transition signals belong to each `CoreEditor` instance; they must not use the shared renderer/editor event bus.
 - Resolve an instance-specific `CoreEditor` through `ketcherProvider` using its Ketcher ID; the editor singleton is only a compatibility context for existing code paths.
+- After antisense creation, `CoreEditor` preserves the viewport only in Sequence mode with more than 3000 monomers; shorter structures retain the existing `scrollToTopLeftCorner()` behavior.

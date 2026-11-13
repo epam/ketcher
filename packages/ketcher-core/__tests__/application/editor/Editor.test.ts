@@ -68,28 +68,46 @@ const callRescaleStructForModeTransition = (
 };
 
 describe('CoreEditor', () => {
-  it('preserves the current viewport when creating antisense in Sequence mode', () => {
-    const canvas = createPolymerEditorCanvas();
-    const editor = new CoreEditor({
-      canvas,
-      theme: coreEditorTheme,
-      renderersContainer: createRenderersManager(polymerEditorTheme),
-    });
-    const scrollToTopLeftCornerSpy = jest.spyOn(
-      editor,
-      'scrollToTopLeftCorner',
-    );
+  it.each([
+    { monomerCount: 0, shouldScroll: true },
+    { monomerCount: 3000, shouldScroll: true },
+    { monomerCount: 3001, shouldScroll: false },
+  ])(
+    'scrolls after antisense creation in Sequence mode: $shouldScroll with $monomerCount monomers',
+    ({ monomerCount, shouldScroll }) => {
+      const canvas = createPolymerEditorCanvas();
+      Object.defineProperties(canvas, {
+        width: { value: { baseVal: { value: 500 } } },
+        height: { value: { baseVal: { value: 500 } } },
+      });
+      const editor = new CoreEditor({
+        canvas,
+        theme: coreEditorTheme,
+        renderersContainer: createRenderersManager(polymerEditorTheme),
+      });
+      const scrollToTopLeftCornerSpy = jest
+        .spyOn(editor, 'scrollToTopLeftCorner')
+        .mockImplementation(() => undefined);
 
-    try {
-      editor.setMode(new SequenceMode());
-      editor.events.createAntisenseChain.dispatch(true);
+      try {
+        editor.setMode(new SequenceMode());
+        for (let index = 0; index < monomerCount; index++) {
+          editor.drawingEntitiesManager.monomers.set(
+            index,
+            new Peptide(peptideMonomerItem),
+          );
+        }
+        editor.events.createAntisenseChain.dispatch(true);
 
-      expect(scrollToTopLeftCornerSpy).not.toHaveBeenCalled();
-    } finally {
-      editor.destroy();
-      canvas.remove();
-    }
-  });
+        expect(scrollToTopLeftCornerSpy).toHaveBeenCalledTimes(
+          shouldScroll ? 1 : 0,
+        );
+      } finally {
+        editor.destroy();
+        canvas.remove();
+      }
+    },
+  );
 
   it('does not allow changing layout mode with more than 3000 monomers', () => {
     const canvas = createPolymerEditorCanvas();

@@ -5,6 +5,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   clickOnCanvas,
+  pasteFromClipboardAndOpenAsNewProjectMacro,
 } from '@utils';
 
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -12,8 +13,38 @@ import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
+import { MacroFileType } from '@utils/canvas/types';
+import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
+
+async function loadShortDnaForSnake() {
+  const toolbar = MacromoleculesTopToolbar(page);
+  await toolbar.expandSwitchLayoutModeDropdown();
+  await expect(page.getByTestId(LayoutMode.Snake).first()).toBeDisabled();
+  await expect(page.getByTestId(LayoutMode.Sequence).first()).toHaveClass(
+    /active/,
+  );
+  await toolbar.switchLayoutModeDropdownButton.click();
+  await expect(page.getByTestId('multi-tool-dropdown')).toBeHidden();
+
+  // 100 bases contain 299 monomers, safely below the Snake layout limit.
+  await pasteFromClipboardAndOpenAsNewProjectMacro(
+    page,
+    [MacroFileType.Sequence, SequenceMonomerType.DNA],
+    'ACGT'.repeat(25),
+  );
+  await toolbar.expandSwitchLayoutModeDropdown();
+  await expect(page.getByTestId(LayoutMode.Snake).first()).toBeEnabled();
+  await page.getByTestId(LayoutMode.Snake).first().click();
+  await expect(page.getByTestId('multi-tool-dropdown')).toBeHidden();
+  await toolbar.expandSwitchLayoutModeDropdown();
+  await expect(page.getByTestId(LayoutMode.Snake).first()).toHaveClass(
+    /active/,
+  );
+  await toolbar.switchLayoutModeDropdownButton.click();
+  await expect(page.getByTestId('multi-tool-dropdown')).toBeHidden();
+}
 
 test.describe('Tests for Ruler', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -482,7 +513,7 @@ test.describe('Tests for Ruler', () => {
      * 1. Go to Macro - Sequence mode
      * 2. Set the ruler value to 10
      * 3. Set the ruler value to 40
-     * 4. Switch to Snake mode
+     * 4. Verify Snake is disabled for 1001 DNA bases, then load 100 bases and switch to Snake
      * 5. Set the ruler value to 7
      * 6. Set the ruler value to 12
      * 7. Take screenshot
@@ -508,7 +539,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await loadShortDnaForSnake();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -552,7 +583,7 @@ test.describe('Tests for Ruler', () => {
      * 2. Open Calculate properties window
      * 3. Drag ruler slider to the right and verify that the layout is changed
      * 4. Drag ruler slider to the left and verify that the layout is changed
-     * 5. Switch to Snake mode
+     * 5. Verify Snake is disabled for 1001 DNA bases, then load 100 bases and switch to Snake
      * 6. Drag ruler slider to the right and verify that the layout is changed
      * 7. Drag ruler slider to the left and verify that the layout is changed
      * 8. Take screenshot
@@ -581,7 +612,10 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CalculateVariablesPanel(page).closeWindow();
+    await loadShortDnaForSnake();
+    await MacromoleculesTopToolbar(page).calculateProperties();
+    await expect(CalculateVariablesPanel(page).panel).toBeVisible();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -607,7 +641,7 @@ test.describe('Tests for Ruler', () => {
      * 1. Go to Macro - Sequence mode
      * 2. Drag ruler slider to the right and verify that the layout is changed
      * 3. Drag ruler slider to the left and verify that the layout is changed
-     * 4. Switch to Snake mode
+     * 4. Verify Snake is disabled for 1001 DNA bases, then load 100 bases and switch to Snake
      * 5. Drag ruler slider to the right and verify that the layout is changed
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
@@ -634,7 +668,7 @@ test.describe('Tests for Ruler', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await loadShortDnaForSnake();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

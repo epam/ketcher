@@ -282,6 +282,28 @@ describe('antisense chain direction', () => {
     canvas.remove();
   });
 
+  it.each([false, true])(
+    'scrolls after creating a short antisense chain through the editor event (DNA: %s)',
+    (isDnaAntisense) => {
+      editor.setMode(new SequenceMode());
+      const nucleotide = createNucleotideNode('A', new Vec2(0, 0));
+      selectAllMonomers(editor);
+      const scrollSpy = jest
+        .spyOn(editor, 'scrollToTopLeftCorner')
+        .mockImplementation(() => undefined);
+
+      try {
+        editor.events.createAntisenseChain.dispatch(isDnaAntisense);
+
+        expect(editor.drawingEntitiesManager.monomers.size).toBe(6);
+        expect(nucleotide.rnaBase.hydrogenBonds).toHaveLength(1);
+        expect(scrollSpy).toHaveBeenCalledTimes(1);
+      } finally {
+        scrollSpy.mockRestore();
+      }
+    },
+  );
+
   it('runs an antisense chain in the opposite direction to the sense chain', () => {
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const applySnakeLayoutSpy = jest.spyOn(

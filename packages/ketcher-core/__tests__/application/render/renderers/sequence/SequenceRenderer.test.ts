@@ -14,6 +14,9 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import type { AmbiguousMonomerType } from 'domain/types';
@@ -181,7 +184,7 @@ describe('SequenceRenderer', () => {
     }
   });
 
-  it('does not display a counter after a non-peptide ambiguous node at chain start', () => {
+  it('retains the counter after a non-peptide ambiguous node at chain start', () => {
     const chemMonomerItem = {
       ...peptideMonomerItem,
       label: 'Chem',
@@ -212,7 +215,50 @@ describe('SequenceRenderer', () => {
 
     expect(
       canvas.querySelectorAll('.sequence-item > text[font-size="12px"]'),
-    ).toHaveLength(0);
+    ).toHaveLength(1);
+  });
+
+  it('does not treat a trailing ambiguous non-peptide as an ignored node when numbering a peptide', () => {
+    const peptide = new Peptide(peptideMonomerItem);
+    const ambiguousPeptide = new AmbiguousMonomer({
+      ...peptideMonomerItem,
+      id: 'ambiguous-peptide',
+      isAmbiguous: true,
+      subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
+      options: [{ templateId: peptideMonomerItem.label }],
+      monomers: [new Peptide(peptideMonomerItem)],
+    });
+    const chemItem = {
+      ...peptideMonomerItem,
+      props: {
+        ...peptideMonomerItem.props,
+        MonomerType: 'CHEM',
+        MonomerClass: KetMonomerClass.CHEM,
+      },
+    };
+    const ambiguousChem = new AmbiguousMonomer({
+      ...chemItem,
+      id: 'ambiguous-chem',
+      isAmbiguous: true,
+      subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
+      options: [{ templateId: chemItem.label }],
+      monomers: [new Chem(chemItem)],
+    });
+    const chain = new Chain(new Chem(chemItem));
+    const subChain = new PeptideSubChain();
+    subChain.add(new AmbiguousMonomerSequenceNode(ambiguousPeptide));
+    subChain.add(new MonomerSequenceNode(peptide));
+    subChain.add(
+      new MonomerSequenceNode(new UnresolvedMonomer(peptideMonomerItem)),
+    );
+    subChain.add(new AmbiguousMonomerSequenceNode(ambiguousChem));
+    chain.subChains.push(subChain);
+
+    SequenceRenderer.show(new ChainsCollection().add(chain));
+
+    expect(
+      (peptide.renderer as BaseSequenceItemRenderer).counterElement,
+    ).toBeUndefined();
   });
 
   it('removes sequence bond paths created across multiple renders when ClearTool runs', () => {

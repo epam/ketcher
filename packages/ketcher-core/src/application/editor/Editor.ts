@@ -2121,15 +2121,12 @@ export class CoreEditor {
     );
 
     modelChanges.setUndoOperationsByPriority();
-    const shouldBatchPolymerBondEndpointRedraws =
+    const isLongSequenceInSequenceMode =
       this.mode.modeName === 'sequence-layout-mode' &&
       isLongSequenceMonomerCount(this.drawingEntitiesManager.monomers.size);
-    this.renderersContainer.update(
-      modelChanges,
-      shouldBatchPolymerBondEndpointRedraws,
-    );
+    this.renderersContainer.update(modelChanges, isLongSequenceInSequenceMode);
     history.update(modelChanges);
-    if (this.mode.modeName !== 'sequence-layout-mode') {
+    if (!isLongSequenceInSequenceMode) {
       this.scrollToTopLeftCorner();
     }
     this.clearTransientViews();

@@ -76,7 +76,10 @@ describe('useMonomerCreationMenu', () => {
       useMonomerCreationMenu(editor, [monomer]),
     );
     result.current.menuItems[1].onMouseOver?.('edit_all_monomers');
-    expect(highlightMonomers).toHaveBeenCalledWith(state.matchingMonomers);
+    expect(highlightMonomers).toHaveBeenCalledWith(
+      editor,
+      state.matchingMonomers,
+    );
     result.current.onVisibilityChange(false);
     expect(clearHighlight).toHaveBeenCalledTimes(1);
     result.current.menuItems[1].onMouseOver?.('edit_all_monomers');

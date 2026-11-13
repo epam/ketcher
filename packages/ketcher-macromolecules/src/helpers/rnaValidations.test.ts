@@ -40,6 +40,35 @@ const phosphateWithR1Only = {
 };
 
 describe('rnaValidations', () => {
+  it.each(['', undefined, null, false, 0])(
+    'recognizes an own cap with value %p',
+    (cap) => {
+      expect(
+        getPhosphatePositionAvailability({
+          sugar: { props: { MonomerCaps: { R1: cap, R2: cap } } } as never,
+        }),
+      ).toEqual({
+        is3PrimeAvailable: true,
+        is5PrimeAvailable: true,
+      });
+    },
+  );
+
+  it('does not accept inherited caps', () => {
+    expect(
+      getPhosphatePositionAvailability({
+        sugar: {
+          props: {
+            MonomerCaps: Object.create({ R1: 'H', R2: 'OH' }),
+          },
+        } as never,
+      }),
+    ).toEqual({
+      is3PrimeAvailable: false,
+      is5PrimeAvailable: false,
+    });
+  });
+
   it('returns both phosphate orientations as available when sugar and phosphate support both', () => {
     expect(
       getPhosphatePositionAvailability({

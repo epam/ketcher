@@ -23,7 +23,12 @@ import {
 } from 'ketcher-core';
 import { AMINO_ACID_ONE_TO_THREE_LETTER_CODE } from 'src/constants';
 import { RootState } from 'state';
-import { selectFilteredMonomers } from './librarySlice';
+import {
+  libraryReducer,
+  librarySlice,
+  selectFilteredMonomers,
+  selectMonomerGroups,
+} from './librarySlice';
 
 const sortLabels = (labels: string[]) =>
   labels.sort((firstLabel, secondLabel) =>
@@ -146,6 +151,79 @@ const buildState = (
       selectedTabIndex: 0,
     },
   }) as RootState;
+
+describe('library own-property lookups', () => {
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it.each(['constructor', 'toString', '__proto__'])(
+    'groups natural analogue code %s without using inherited arrays',
+    (code) => {
+      const monomer = createAminoAcid('A', 'Alanine');
+      monomer.props.MonomerNaturalAnalogCode = code;
+
+      expect(selectMonomerGroups([monomer])).toEqual([
+        {
+          groupTitle: code,
+          groupItems: [monomer],
+        },
+      ]);
+    },
+  );
+
+  it('handles an empty monomer array', () => {
+    expect(selectMonomerGroups([])).toEqual([]);
+  });
+
+  it.each([undefined, null, false, 0, ''])(
+    'recognizes an own favorite entry with value %p',
+    (favorite) => {
+      const state = buildState('', [aminoAcids[0]]);
+      state.library.favorites = { A___Alanine: favorite } as never;
+
+      expect(selectFilteredMonomers(state)[0].favorite).toBe(true);
+    },
+  );
+
+  it('ignores inherited favorite entries', () => {
+    const monomer = { ...ambiguousAminoAcidB, id: 'constructor' };
+    expect(selectFilteredMonomers(buildState('', [monomer]))[0].favorite).toBe(
+      false,
+    );
+  });
+
+  it.each(['constructor', 'toString', '__proto__'])(
+    'adds a favorite whose key %s exists only on the prototype',
+    (key) => {
+      const monomer = { ...ambiguousAminoAcidB, id: key };
+      const state = libraryReducer(
+        undefined,
+        librarySlice.actions.toggleMonomerFavorites(monomer),
+      );
+
+      expect(Object.hasOwn(state.favorites, key)).toBe(true);
+      expect(state.favorites[key]).toEqual({
+        ...monomer,
+        favorite: true,
+      });
+    },
+  );
+
+  it('removes a favorite even when its own value is falsy', () => {
+    const state = {
+      ...libraryReducer(undefined, { type: 'init' }),
+      favorites: { A___Alanine: undefined },
+    };
+
+    const updated = libraryReducer(
+      state,
+      librarySlice.actions.toggleMonomerFavorites(aminoAcids[0]),
+    );
+
+    expect(Object.hasOwn(updated.favorites, 'A___Alanine')).toBe(false);
+  });
+});
 
 const getMatchedLabels = (searchFilter: string) =>
   selectFilteredMonomers(buildState(searchFilter)).map((item) =>

@@ -74,7 +74,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
       const attachmentPointLabel = getAttachmentPointLabel(i);
 
-      if (attachmentPointLabel in this.attachmentPointsToBonds) {
+      if (Object.hasOwn(this.attachmentPointsToBonds, attachmentPointLabel)) {
         attachmentPointList.push(attachmentPointLabel);
       }
     }
@@ -227,11 +227,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     ) => void,
   ) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (this.attachmentPointsToBonds[attachmentPointName]) {
-        callback(
-          this.attachmentPointsToBonds[attachmentPointName],
-          attachmentPointName as AttachmentPointName,
-        );
+      const bond = this.attachmentPointsToBonds[attachmentPointName];
+      if (bond !== null && bond !== undefined) {
+        callback(bond, attachmentPointName as AttachmentPointName);
       }
     }
 
@@ -320,7 +318,8 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get hasBonds() {
     let hasBonds = false;
     for (const bondName in this.attachmentPointsToBonds) {
-      if (this.attachmentPointsToBonds[bondName]) {
+      const bond = this.attachmentPointsToBonds[bondName];
+      if (bond !== null && bond !== undefined) {
         hasBonds = true;
       }
     }
@@ -634,9 +633,9 @@ export abstract class BaseMonomer extends DrawingEntity {
 
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (oldAttachmentPointsToBonds[attachmentPointName]) {
-        this.attachmentPointsToBonds[attachmentPointName] =
-          oldAttachmentPointsToBonds[attachmentPointName];
+      const bond = oldAttachmentPointsToBonds[attachmentPointName];
+      if (bond !== null && bond !== undefined) {
+        this.attachmentPointsToBonds[attachmentPointName] = bond;
       }
     }
 

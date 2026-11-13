@@ -6,7 +6,7 @@ export class Matrix<T> {
   }
 
   get(x: number, y: number): T | undefined {
-    if (!this.matrix[x]) {
+    if (!Object.hasOwn(this.matrix, x)) {
       return undefined;
     }
     return this.matrix[x][y];
@@ -17,7 +17,7 @@ export class Matrix<T> {
   }
 
   set(x: number, y: number, value: T) {
-    if (!this.matrix[x]) {
+    if (!Object.hasOwn(this.matrix, x)) {
       this.matrix[x] = [];
     }
     this.matrix[x][y] = value;

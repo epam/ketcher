@@ -1,10 +1,36 @@
 import { AttachmentGroup, Atom, Bond, Struct, Vec2 } from 'ketcher-core';
 import {
   getAttachmentGroupTargetForBondHalf,
+  isItemInSelection,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import { CONTEXT_MENU_ID } from './contextMenu.types';
 import type Editor from 'src/script/editor';
+
+describe('isItemInSelection', () => {
+  const isAtomSelected = (selection) =>
+    isItemInSelection({
+      item: { map: 'atoms', id: 0, dist: 0 },
+      selection,
+      selectedSGroupsIds: new Set(),
+      selectedFunctionalGroups: new Map(),
+    });
+
+  it('recognizes zero-valued IDs in an own selection array', () => {
+    expect(isAtomSelected({ atoms: [0] })).toBe(true);
+  });
+
+  it('ignores inherited selection arrays', () => {
+    expect(isAtomSelected(Object.create({ atoms: [0] }))).toBe(false);
+  });
+
+  it.each([false, 0, '', null, undefined])(
+    'does not treat the own non-array value %p as a selection',
+    (atoms) => {
+      expect(isAtomSelected({ atoms })).toBe(false);
+    },
+  );
+});
 
 describe('getMenuPropsForSelection', () => {
   it('uses the atom menu for a multi-atom selection', () => {

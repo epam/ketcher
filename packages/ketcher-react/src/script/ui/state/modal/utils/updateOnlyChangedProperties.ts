@@ -3,7 +3,7 @@ function castAtomPropToType(property, value) {
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
   };
-  if (typesMapping[property]) {
+  if (Object.hasOwn(typesMapping, property)) {
     return typesMapping[property](value);
   }
   return value;

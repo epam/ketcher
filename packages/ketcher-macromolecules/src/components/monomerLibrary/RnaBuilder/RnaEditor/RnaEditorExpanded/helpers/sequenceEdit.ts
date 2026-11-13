@@ -28,13 +28,14 @@ export const generateSequenceSelectionGroupNames = (
 
   for (const labeledNucleotide of labeledNucleotides) {
     for (const item of ['sugarLabel', 'baseLabel', 'phosphateLabel']) {
+      const label = labeledNucleotide?.[item];
       if (
-        labeledNucleotide?.[item] ||
-        (!labeledNucleotide?.[item] &&
+        label ||
+        (!label &&
           labeledNucleotide.type === Entities.Nucleoside &&
           !labeledNucleotide.isNucleosideConnectedAndSelectedWithPhosphate)
       )
-        namesSets[item].add(labeledNucleotide?.[item]);
+        namesSets[item].add(label);
     }
   }
 

@@ -4206,7 +4206,7 @@ class Editor implements KetcherEditor {
   explicitSelected(shouldAutoSelectBonds = true) {
     const selection = this.selection() ?? {};
     const res = structObjects.reduce((acc, key) => {
-      acc[key] = selection[key] ? [...selection[key]] : [];
+      acc[key] = [...(selection[key] ?? [])];
       return acc;
     }, {} as Selection);
 
@@ -4377,7 +4377,7 @@ function useToolIfNeeded(
 
   editor.lastEvent = event;
   const conditions = [
-    eventHandlerName in editorTool,
+    typeof editorTool[eventHandlerName] === 'function',
     clientArea.contains(event.target as Node | null) ||
       editorTool.isSelectionRunning?.(),
     isContextMenuClosed(editor.contextMenu),

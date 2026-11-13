@@ -224,7 +224,7 @@ export class Bond extends BaseMicromoleculeEntity {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in this.attrlist) {
+    if (Object.hasOwn(this.attrlist, attr)) {
       return this.attrlist[attr];
     }
   }

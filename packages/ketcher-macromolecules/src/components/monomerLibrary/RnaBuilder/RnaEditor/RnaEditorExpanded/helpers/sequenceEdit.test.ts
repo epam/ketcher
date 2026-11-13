@@ -26,6 +26,68 @@ describe('generateSequenceSelectionName', () => {
 });
 
 describe('generateSequenceSelectionGroupNames', () => {
+  it('returns undefined for an empty selection array', () => {
+    expect(generateSequenceSelectionGroupNames([])).toBeUndefined();
+  });
+
+  it.each([undefined, ''])(
+    'ignores a nucleotide phosphate label of %p instead of checking property presence',
+    (phosphateLabel) => {
+      const selectedNodes: LabeledNodesWithPositionInSequence[] = [
+        {
+          type: Entities.Nucleotide,
+          sugarLabel: 'R',
+          baseLabel: 'A',
+          phosphateLabel: 'P',
+          nodeIndexOverall: 0,
+          hasR1Connection: false,
+          strandType: STRAND_TYPE.SENSE,
+        },
+        {
+          type: Entities.Nucleotide,
+          sugarLabel: 'R',
+          baseLabel: 'A',
+          phosphateLabel,
+          nodeIndexOverall: 1,
+          hasR1Connection: false,
+          strandType: STRAND_TYPE.SENSE,
+        },
+      ];
+
+      expect(generateSequenceSelectionGroupNames(selectedNodes)).toEqual({
+        Sugars: 'R',
+        Bases: 'A',
+        Phosphates: 'P',
+      });
+    },
+  );
+
+  it('retains an empty nucleoside phosphate label in a mixed selection', () => {
+    const selectedNodes: LabeledNodesWithPositionInSequence[] = [
+      {
+        type: Entities.Nucleoside,
+        sugarLabel: 'R',
+        baseLabel: 'A',
+        phosphateLabel: '',
+        nodeIndexOverall: 0,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+        isNucleosideConnectedAndSelectedWithPhosphate: false,
+      },
+      {
+        type: Entities.Phosphate,
+        phosphateLabel: 'P',
+        nodeIndexOverall: 1,
+        hasR1Connection: false,
+        strandType: STRAND_TYPE.SENSE,
+      },
+    ];
+
+    expect(generateSequenceSelectionGroupNames(selectedNodes)?.Phosphates).toBe(
+      '[multiple]',
+    );
+  });
+
   it('returns undefined when no nucleotide passed', () => {
     expect(generateSequenceSelectionGroupNames()).toBeUndefined();
   });

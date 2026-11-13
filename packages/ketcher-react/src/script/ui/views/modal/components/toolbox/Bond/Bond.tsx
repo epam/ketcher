@@ -205,11 +205,11 @@ function getBondCustomQuery(bond: BondSettings) {
     },
   };
 
-  if (type in patterns.bondType) {
+  if (Object.hasOwn(patterns.bondType, type)) {
     queryAttrsText += patterns.bondType[type];
   }
 
-  if (topology && topology in patterns.topology) {
+  if (topology && Object.hasOwn(patterns.topology, topology)) {
     if (queryAttrsText) {
       queryAttrsText += ';';
     }

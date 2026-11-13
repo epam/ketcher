@@ -193,7 +193,7 @@ export class Atom extends BaseMicromoleculeEntity implements BondEndpoint {
   }
 
   static attrGetDefault(attr: string) {
-    if (attr in Atom.attrlist) {
+    if (Object.hasOwn(Atom.attrlist, attr)) {
       return Atom.attrlist[attr];
     }
   }

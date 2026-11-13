@@ -43,6 +43,26 @@ describe('AmbiguousMonomer.isModification', () => {
     resetEditorInstance();
   });
 
+  describe('AmbiguousMonomer.monomerCaps', () => {
+    it('does not treat an empty cap label as a usable cap', () => {
+      const item = createAmbiguousMonomerItem('current', ['A', 'B']);
+      item.monomers[0].monomerItem.props.MonomerCaps = { R1: '' };
+      item.monomers[1].monomerItem.props.MonomerCaps = { R1: 'H' };
+      const monomer = new AmbiguousMonomer(item, undefined, false);
+
+      expect(monomer.monomerCaps).toEqual({});
+    });
+
+    it('keeps matching nonempty cap labels', () => {
+      const item = createAmbiguousMonomerItem('current', ['A', 'B']);
+      item.monomers[0].monomerItem.props.MonomerCaps = { R1: 'H' };
+      item.monomers[1].monomerItem.props.MonomerCaps = { R1: 'H' };
+      const monomer = new AmbiguousMonomer(item, undefined, false);
+
+      expect(monomer.monomerCaps).toEqual({ R1: 'H' });
+    });
+  });
+
   it('treats matching library options as the same regardless of option order', () => {
     setEditorInstance({
       monomersLibrary: [createAmbiguousMonomerItem('library', ['B', 'A'])],

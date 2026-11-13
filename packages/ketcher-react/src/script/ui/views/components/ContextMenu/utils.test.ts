@@ -175,6 +175,21 @@ describe('Utils', () => {
   });
 
   describe('onlyHasProperty', () => {
+    it.each([false, 0, '', null, undefined])(
+      'recognizes an own property with value %p',
+      (value) => {
+        expect(onlyHasProperty({ atoms: value }, 'atoms')).toBe(true);
+      },
+    );
+
+    it('does not count inherited properties', () => {
+      const selection = Object.assign(Object.create({ atoms: [0] }), {
+        bonds: [1],
+      });
+      expect(onlyHasProperty(selection, 'atoms')).toBe(false);
+      expect(onlyHasProperty(selection, 'bonds')).toBe(true);
+    });
+
     type OptionalObject = Record<string, unknown>;
     const REQUIRED_PROP_NAME = 'atoms';
     const ANOTHER_PROP_NAME = 'bonds';

@@ -142,14 +142,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
-  if (lists[IMAGE_KEY]) {
-    lists[IMAGE_KEY].forEach((image) => {
+  const images = lists[IMAGE_KEY];
+  if (images !== undefined && images !== null) {
+    images.forEach((image) => {
       action.addOp(new ImageMove(image, d));
     });
   }
 
-  if (lists[MULTITAIL_ARROW_KEY]) {
-    lists[MULTITAIL_ARROW_KEY].forEach((multitailArrow) => {
+  const multitailArrows = lists[MULTITAIL_ARROW_KEY];
+  if (multitailArrows !== undefined && multitailArrows !== null) {
+    multitailArrows.forEach((multitailArrow) => {
       action.addOp(new MultitailArrowMove(multitailArrow, d));
     });
   }

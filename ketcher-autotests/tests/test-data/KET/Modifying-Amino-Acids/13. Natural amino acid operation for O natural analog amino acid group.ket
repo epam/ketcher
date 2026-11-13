@@ -57,8 +57,7 @@
             "y": -1.25
         },
         "alias": "O",
-        "templateId": "O___Pyrrolysine",
-        "seqid": 1
+        "templateId": "O___Pyrrolysine"
     },
     "monomerTemplate-O___Pyrrolysine": {
         "type": "monomerTemplate",

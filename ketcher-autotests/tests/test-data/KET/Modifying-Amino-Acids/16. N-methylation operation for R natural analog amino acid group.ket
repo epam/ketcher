@@ -545,7 +545,6 @@
             "y": -5.75
         },
         "alias": "meR",
-        "templateId": "meR___N-Methyl-Arginine",
-        "seqid": 11
+        "templateId": "meR___N-Methyl-Arginine"
     }
 }

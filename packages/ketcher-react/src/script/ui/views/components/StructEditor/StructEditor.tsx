@@ -126,17 +126,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editorRef: RefObject<HTMLDivElement | null>;
   logRef: RefObject<HTMLDivElement | null>;
   private zoomDeltaAccumulator = 0;
-
-  constructor(props: StructEditorProps) {
-    super(props);
-    this.state = {
-      enableCursor: false,
-      tooltip: '',
-    };
-    this.editorRef = createRef();
-    this.logRef = createRef();
-  }
-
   handleWheel = (event: WheelEvent) => {
     if (event.ctrlKey) {
       event.preventDefault();
@@ -166,6 +155,16 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
       }
     }
   };
+
+  constructor(props: StructEditorProps) {
+    super(props);
+    this.state = {
+      enableCursor: false,
+      tooltip: '',
+    };
+    this.editorRef = createRef();
+    this.logRef = createRef();
+  }
 
   // TODO https://github.com/epam/ketcher/issues/3472
   /**

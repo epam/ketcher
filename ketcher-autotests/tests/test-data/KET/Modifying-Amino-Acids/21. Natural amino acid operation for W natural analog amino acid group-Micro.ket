@@ -166,8 +166,7 @@
             "y": -1.25
         },
         "alias": "W",
-        "templateId": "W___Tryptophan",
-        "seqid": 1
+        "templateId": "W___Tryptophan"
     },
     "monomerTemplate-W___Tryptophan": {
         "type": "monomerTemplate",

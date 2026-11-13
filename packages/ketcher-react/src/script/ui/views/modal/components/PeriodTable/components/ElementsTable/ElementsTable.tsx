@@ -90,10 +90,6 @@ interface ElementsTableProps {
 }
 
 class ElementsTable extends Component<ElementsTableProps> {
-  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
-    return nextProps.value !== this.props.value;
-  }
-
   getAtomClassNames = (item: Element): string[] => {
     const { selected } = this.props;
 
@@ -113,6 +109,10 @@ class ElementsTable extends Component<ElementsTableProps> {
       return styles[className as keyof typeof styles];
     });
   };
+
+  shouldComponentUpdate(nextProps: ElementsTableProps): boolean {
+    return nextProps.value !== this.props.value;
+  }
 
   render(): JSX.Element {
     const { currentEvents, onAtomSelect, onDoubleClick } = this.props;

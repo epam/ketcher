@@ -27,14 +27,14 @@ import { assert } from 'utilities';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {
+  static isSelectable() {
+    return true;
+  }
+
   #path: Element | null = null;
 
   constructor() {
     super('enhancedFlag');
-  }
-
-  static isSelectable() {
-    return true;
   }
 
   hoverPath(render: Render): Element {

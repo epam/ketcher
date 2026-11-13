@@ -244,20 +244,6 @@ export class LibraryItemDragDropHandler {
     this.dragDropModalContext = null;
   }
 
-  /**
-  Whether a drag-drop connection modal is currently open.
-  */
-  get isModalOpen(): boolean {
-    return this.isDragDropBondModalOpen;
-  }
-
-  /**
-  Whether a library item is currently being dragged.
-  */
-  get isDragging(): boolean {
-    return this.currentDragState !== null;
-  }
-
   // ---------------------------------------------------------------------------
   // Private: drag-over proximity / hover
   // ---------------------------------------------------------------------------
@@ -1205,5 +1191,15 @@ export class LibraryItemDragDropHandler {
     targetAP: AttachmentPointName,
   ): BaseMonomer | undefined {
     return findPresetMonomerForBondingHelper(addedMonomers, targetAP);
+  }
+
+  /** Whether a drag-drop connection modal is currently open. */
+  get isModalOpen(): boolean {
+    return this.isDragDropBondModalOpen;
+  }
+
+  /** Whether a library item is currently being dragged. */
+  get isDragging(): boolean {
+    return this.currentDragState !== null;
   }
 }

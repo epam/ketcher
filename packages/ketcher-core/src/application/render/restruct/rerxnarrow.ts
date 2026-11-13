@@ -47,16 +47,16 @@ interface MinDistanceWithReferencePoint {
 }
 
 class ReRxnArrow extends ReObject {
+  static isSelectable(): boolean {
+    return true;
+  }
+
   item: Arrow;
   isResizing = false;
 
   constructor(/* chem.RxnArrow */ arrow: Arrow) {
     super('rxnArrow');
     this.item = arrow;
-  }
-
-  static isSelectable(): boolean {
-    return true;
   }
 
   calcDistance(p: Vec2, s: number): MinDistanceWithReferencePoint {

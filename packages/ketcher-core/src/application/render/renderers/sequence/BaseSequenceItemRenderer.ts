@@ -31,10 +31,10 @@ const CARET_X_OFFSET_BEFORE_NODE = -17;
 const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   private positionalEnumeration: number | null = null;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
-  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
   public caretElement?:

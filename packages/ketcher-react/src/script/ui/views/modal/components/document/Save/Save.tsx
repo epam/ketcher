@@ -232,10 +232,10 @@ const PreviewContent = ({
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
-  declare context: ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
+  declare context: ContextType<typeof ErrorsContext>;
 
   constructor(props: SaveDialogProps) {
     super(props);

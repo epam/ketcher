@@ -229,6 +229,17 @@ export class RemoteStructService implements StructService {
     this.ketcherId = null;
   }
 
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+    if (!this.ketcherId) {
+      throw new Error('ketcherId is missed when options getting');
+    }
+
+    return pickStandardServerOptions(this.ketcherId, options);
+  }
+
   addKetcherId(ketcherId: string) {
     this.ketcherId = ketcherId;
   }
@@ -250,17 +261,6 @@ export class RemoteStructService implements StructService {
       },
       {},
     );
-  }
-
-  private getStandardServerOptions(options?: StructServiceOptions) {
-    if (!options) {
-      return this.defaultOptions;
-    }
-    if (!this.ketcherId) {
-      throw new Error('ketcherId is missed when options getting');
-    }
-
-    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   async info(): Promise<InfoResult> {

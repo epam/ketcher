@@ -175,7 +175,7 @@ const ContextMenu: FC = () => {
           setTimeout(() => resetMenuPosition(contextMenuElement, ketcherId), 0);
         }
 
-        if (submenuElements.length) {
+        if (submenuElements.length > 0) {
           for (const submenuElement of submenuElements) {
             adjustSubmenuPosition(submenuElement);
           }

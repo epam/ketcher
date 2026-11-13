@@ -72,7 +72,7 @@ function getExpandGroupsInMergeAction(
 ): Action {
   const action = new Action();
   const groupsInMerge = getGroupIdsFromItemMaps(restruct.molecule, mergeItems);
-  if (groupsInMerge.length) {
+  if (groupsInMerge.length > 0) {
     for (const groupId of groupsInMerge) {
       action.mergeWith(setExpandSGroup(restruct, groupId, { expanded: true }));
     }

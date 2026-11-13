@@ -381,7 +381,6 @@
             "y": -2.75
         },
         "alias": "meE",
-        "templateId": "meE___N-Methyl-Glutamic acid",
-        "seqid": 6
+        "templateId": "meE___N-Methyl-Glutamic acid"
     }
 }

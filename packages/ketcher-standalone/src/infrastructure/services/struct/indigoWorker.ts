@@ -65,9 +65,9 @@ function handle(
 ) {
   module.then((indigo: IndigoModule) => {
     const indigoOptions = new indigo.MapStringString();
-    setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;
     try {
+      setOptions(indigoOptions, options ?? {});
       const payload = handler(indigo, indigoOptions);
       msg = {
         type: messageType,
@@ -83,6 +83,8 @@ function handle(
         error: errorMessage,
         inputData,
       };
+    } finally {
+      indigoOptions.delete();
     }
 
     globalThis.postMessage(msg);
@@ -179,10 +181,14 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
-          for (const atomId of data.selectedAtoms) {
-            selectedAtoms.push_back(atomId);
+          try {
+            for (const atomId of data.selectedAtoms) {
+              selectedAtoms.push_back(atomId);
+            }
+            return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
+          } finally {
+            selectedAtoms.delete();
           }
-          return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
         },
         data.options,
         Command.Calculate,
@@ -217,15 +223,19 @@ globalThis.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
-          for (const atomId of data.selectedAtoms) {
-            selectedAtoms.push_back(atomId);
+          try {
+            for (const atomId of data.selectedAtoms) {
+              selectedAtoms.push_back(atomId);
+            }
+            return indigo.clean2d(
+              data.struct,
+              data.format,
+              indigoOptions,
+              selectedAtoms,
+            );
+          } finally {
+            selectedAtoms.delete();
           }
-          return indigo.clean2d(
-            data.struct,
-            data.format,
-            indigoOptions,
-            selectedAtoms,
-          );
         },
         data.options,
         Command.Clean,

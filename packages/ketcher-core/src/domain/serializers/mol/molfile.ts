@@ -588,7 +588,7 @@ export class Molfile {
         expandedGroups.push(sg.id + 1);
     }
 
-    if (expandedGroups.length) {
+    if (expandedGroups.length > 0) {
       const expandedGroupsLine = `M  SDS EXP  ${
         expandedGroups.length
       }   ${expandedGroups.join('   ')}`;

@@ -15,6 +15,42 @@
  ***************************************************************************/
 
 export class Pile<TValue = unknown> extends Set<TValue> {
+  /**
+   * Union multiple sets which have intersections
+   * @example ```
+   * const setA = new Pile([0, 1])
+   * const setB = new Pile([1, 2])
+   * const setC = new Pile([2, 3])
+   * const setD = new Pile([4, 5])
+   * console.log(Pile.unionMultiple([setA, setB, setC, setD]))
+   * // [{0, 1, 2, 3}, {4, 5}]
+   * ```
+   */
+  static unionIntersections<T>(sets: Array<Pile<T>>): Array<Pile<T>> {
+    let unionized = false;
+
+    // Union two of sets
+    const setsToReturn = sets.reduce((prevSets, curSet) => {
+      let isCurSetMerged = false;
+
+      const newSets = prevSets.map((set) => {
+        const intersec = set.intersection(curSet);
+        if (intersec.size > 0) {
+          unionized = true;
+          isCurSetMerged = true;
+          return set.union(curSet);
+        }
+        return set;
+      });
+
+      if (!isCurSetMerged) newSets.push(curSet);
+      return newSets;
+    }, new Array<Pile<T>>());
+
+    // Recursively union two of sets === union all sets
+    return unionized ? Pile.unionIntersections(setsToReturn) : setsToReturn;
+  }
+
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
   find(isMatchingItem: (item: TValue) => boolean) {
@@ -56,43 +92,5 @@ export class Pile<TValue = unknown> extends Set<TValue> {
       }
     }
     return result;
-  }
-
-  /**
-   * Union multiple sets which have intersections
-   * @example ```
-   * const setA = new Pile([0, 1])
-   * const setB = new Pile([1, 2])
-   * const setC = new Pile([2, 3])
-   * const setD = new Pile([4, 5])
-   * console.log(Pile.unionMultiple([setA, setB, setC, setD]))
-   * // [{0, 1, 2, 3}, {4, 5}]
-   * ```
-   */
-  static unionIntersections<T>(sets: Array<Pile<T>>): Array<Pile<T>> {
-    let hasUnionizedSets = false;
-
-    // Union two of sets
-    const setsToReturn = sets.reduce((prevSets, curSet) => {
-      let isCurSetMerged = false;
-
-      const newSets = prevSets.map((set) => {
-        const intersec = set.intersection(curSet);
-        if (intersec.size > 0) {
-          hasUnionizedSets = true;
-          isCurSetMerged = true;
-          return set.union(curSet);
-        }
-        return set;
-      });
-
-      if (!isCurSetMerged) newSets.push(curSet);
-      return newSets;
-    }, new Array<Pile<T>>());
-
-    // Recursively union two of sets === union all sets
-    return hasUnionizedSets
-      ? this.unionIntersections(setsToReturn)
-      : setsToReturn;
   }
 }

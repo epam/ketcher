@@ -606,8 +606,7 @@
             "y": -2.75
         },
         "alias": "meG",
-        "templateId": "meG___Sarcosine",
-        "seqid": 11
+        "templateId": "meG___Sarcosine"
     },
     "monomer11": {
         "type": "monomer",

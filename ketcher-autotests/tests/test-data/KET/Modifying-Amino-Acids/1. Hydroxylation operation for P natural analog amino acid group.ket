@@ -573,8 +573,7 @@
             "y": -2.75
         },
         "alias": "Hyp",
-        "templateId": "Hyp___trans-4-hydroxy-L-proline",
-        "seqid": 10
+        "templateId": "Hyp___trans-4-hydroxy-L-proline"
     },
     "monomer10": {
         "type": "monomer",

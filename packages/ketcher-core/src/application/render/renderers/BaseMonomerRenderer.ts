@@ -655,10 +655,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected drawModification() {
     const config = this.modificationConfig;
-    const DARK_COLOR = '#333333';
-    const LIGHT_COLOR = 'white';
-
     if (config && this.monomer.isModification) {
+      const DARK_COLOR = '#333333';
+      const LIGHT_COLOR = 'white';
       let fillColor: string | undefined;
 
       if (config.requiresFill) {
